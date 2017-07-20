@@ -19,7 +19,7 @@
   "bugs": {
     "url": "https://github.com/openlattice/baltimore-health/issues"
   },
-  "license": "Apache-2.0",
+  "license": "GPLv3",
   "main": "index.js",
   "dependencies": {
     "polished": "^1.2.1",
