@@ -5,12 +5,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const SectionView = (props) => {
+const SectionView = ({header, ...props}) => {
 	return (
 		<div>
-			{props.children}
+			<div>
+				{header}
+			</div>
+			<div>
+				{props.children}
+			</div>
+
 		</div>
 	);
 }
+
+SectionView.propTypes = {
+  header: PropTypes.string.isRequired
+};
 
 export default SectionView;

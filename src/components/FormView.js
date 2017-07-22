@@ -7,14 +7,14 @@ import PropTypes from 'prop-types';
 import styled, { injectGlobal } from 'styled-components';
 import { normalize } from 'polished';
 
-import ReportInfoView from './ReportInfoView';
+import Form from '../containers/Form';
 
-function FormView(props) {
+function FormView() {
 	return (
 		<form>
 			<div>Behavioral Health Report</div>
 			<div>Baltimore Police Department</div>
-			<ReportInfoView />
+			<Form />
 		</form>
 	);
 }
