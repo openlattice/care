@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import ReportInfoView from '../components/ReportInfoView';
+import ConsumerInfoView from '../components/ConsumerInfoView';
 
 class Form extends React.Component {
 	constructor(props) {
@@ -70,11 +71,18 @@ class Form extends React.Component {
 
 	render() {
 		return (
-			<ReportInfoView
-					handleInput={this.handleInput}
-					handleRadioChange={this.handleRadioChange}
-					input={this.state.reportInfo}
-					section='reportInfo' />
+			<div>
+				<ReportInfoView
+						handleInput={this.handleInput}
+						handleRadioChange={this.handleRadioChange}
+						input={this.state.reportInfo}
+						section='reportInfo' />
+				<ConsumerInfoView
+						handleInput={this.handleInput}
+						handleRadioChange={this.handleRadioChange}
+						input={this.state.consumerInfo}
+						section='consumerInfo' />
+			</div>
 		);
 	}
 }
