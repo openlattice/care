@@ -27,10 +27,10 @@ class Form extends React.Component {
 				'13b': '',
 				'13c': '',
 				'14a': null,
-				'14b': null,
+				'14b': '',
 				'14c': null,
 				'14d': '',
-				'14e': null,
+				'14e': '',
 				15: null,
 				16: null,
 				'17a': null,
@@ -60,13 +60,13 @@ class Form extends React.Component {
 	}
 
 	handleRadioChange(e) {
-		console.log('name, val:', e.target.name, e.target.value);
 		const sectionKey = e.target.dataset.section;
 		const sectionState = this.state[sectionKey];
 		sectionState[e.target.name] = e.target.value;
 		this.setState({ [sectionKey]: sectionState }, () => {console.log('section state:', this.state[sectionKey])});
 	}
 
+	// handleCheckboxChange
 	//handleSubmit
 
 	render() {
@@ -88,6 +88,6 @@ class Form extends React.Component {
 }
 
 export default Form;
-// NEXT: Create each section.
-// NEXT: Handle checkbox selection
+// NEXT: Handle selection
+// NEXT: Handle checkbox 
 // TODO: Alter formview to take children / consolidate.

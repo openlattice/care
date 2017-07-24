@@ -53,22 +53,22 @@ const ConsumerInfoView = ({ section, handleInput, handleRadioChange, input }) =>
                 onChange={handleRadioChange} />N/A
           </ControlLabel>
           <ControlLabel>Gender
-            <FormControl componentClass='select' placeholder='select'>
-              <option data-section={section} name='14b' value='select'>select</option>
-              <option data-section={section} name='14b' value='female'>female</option>
-              <option data-section={section} name='14b' value='male'>male</option>
+            <FormControl componentClass='select' placeholder='select' data-section={section} name='14b' onChange={handleRadioChange}>
+              <option value=''>select</option>
+              <option value='female'>female</option>
+              <option value='male'>male</option>
             </FormControl>
           </ControlLabel>
           <ControlLabel>Race
-            <FormControl componentClass='select' placeholder='select'>
-              <option data-section={section} name='14c' value='select'>select</option>
-              <option data-section={section} name='14c' value='americanIndian'>American Indian or Alaska Native</option>
-              <option data-section={section} name='14c' value='asian'>Asian</option>
-              <option data-section={section} name='14c' value='black'>Black or African American</option>
-              <option data-section={section} name='14c' value='hispanic'>Hispanic or Latino</option>
-              <option data-section={section} name='14c' value='nativeHawaiian'>Native Hawaiian or Other Pacific Islander</option>
-              <option data-section={section} name='14c' value='white'>White</option>
-              <option data-section={section} name='14c' value='other'>Other</option>
+            <FormControl componentClass='select' placeholder='select' data-section={section} name='14c' onChange={handleRadioChange}>
+              <option value='select'>select</option>
+              <option value='americanIndian'>American Indian or Alaska Native</option>
+              <option value='asian'>Asian</option>
+              <option value='black'>Black or African American</option>
+              <option value='hispanic'>Hispanic or Latino</option>
+              <option value='nativeHawaiian'>Native Hawaiian or Other Pacific Islander</option>
+              <option value='white'>White</option>
+              <option value='other'>Other</option>
             </FormControl>
           </ControlLabel>
         </ControlLabel>
@@ -85,3 +85,5 @@ const ConsumerInfoView = ({ section, handleInput, handleRadioChange, input }) =>
 }
 
 export default ConsumerInfoView;
+
+// NEXT: CREATE CONTROLLED SELECT COMPONENT
