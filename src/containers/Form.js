@@ -20,6 +20,28 @@ class Form extends React.Component {
 				9: null,
 				10: '',
 				11: ''
+			},
+			consumerInfo: {
+				'13a': '',
+				'13b': '',
+				'13c': '',
+				'14a': null,
+				'14b': null,
+				'14c': null,
+				'14d': '',
+				'14e': null,
+				15: null,
+				16: null,
+				'17a': null,
+				'17b': null,
+				18: null,
+				19: [],
+				20: null,
+				21: null,
+				22: [],
+				23: [],
+				24: [],
+				25: null
 			}
 		};
 
@@ -29,10 +51,10 @@ class Form extends React.Component {
 
 	handleInput(e) {
 		const sectionKey = e.target.dataset.section
-		const num = e.target.dataset.num;
+		const name = e.target.name;
 		const input = e.target.value;
 		const sectionState = this.state[sectionKey]; 
-		sectionState[num] = input;
+		sectionState[name] = input;
 		this.setState({ [sectionKey]: sectionState }, () => {console.log('section state:', this.state[sectionKey])});
 	}
 
@@ -42,7 +64,6 @@ class Form extends React.Component {
 		const sectionState = this.state[sectionKey];
 		sectionState[e.target.name] = e.target.value;
 		this.setState({ [sectionKey]: sectionState }, () => {console.log('section state:', this.state[sectionKey])});
-		// ALLOW TOGGLE ON/OFF
 	}
 
 	//handleSubmit
@@ -52,14 +73,13 @@ class Form extends React.Component {
 			<ReportInfoView
 					handleInput={this.handleInput}
 					handleRadioChange={this.handleRadioChange}
-					input={this.state.reportInfo}/>
+					input={this.state.reportInfo}
+					section='reportInfo' />
 		);
 	}
 }
 
 export default Form;
-// NEXT: controlled component for radio selection
-// NEXT: Handle each section name
 // NEXT: Create each section.
 // NEXT: Handle checkbox selection
 // TODO: Alter formview to take children / consolidate.
