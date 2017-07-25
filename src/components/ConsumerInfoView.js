@@ -53,15 +53,27 @@ const ConsumerInfoView = ({ section, handleInput, handleRadioChange, input }) =>
                 onChange={handleRadioChange} />N/A
           </ControlLabel>
           <ControlLabel>Gender
-            <FormControl componentClass='select' placeholder='select' data-section={section} name='14b' onChange={handleRadioChange}>
+            <FormControl
+                componentClass='select'
+                placeholder='select'
+                data-section={section}
+                name='14b'
+                value={input['14b']}
+                onChange={handleRadioChange}>
               <option value=''>select</option>
               <option value='female'>female</option>
               <option value='male'>male</option>
             </FormControl>
           </ControlLabel>
           <ControlLabel>Race
-            <FormControl componentClass='select' placeholder='select' data-section={section} name='14c' onChange={handleRadioChange}>
-              <option value='select'>select</option>
+            <FormControl
+                componentClass='select'
+                placeholder='select'
+                data-section={section}
+                name='14c'
+                value={input['14c']}
+                onChange={handleRadioChange}>
+              <option value=''>select</option>
               <option value='americanIndian'>American Indian or Alaska Native</option>
               <option value='asian'>Asian</option>
               <option value='black'>Black or African American</option>

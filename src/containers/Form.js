@@ -29,7 +29,7 @@ class Form extends React.Component {
 				'13c': '',
 				'14a': null,
 				'14b': '',
-				'14c': null,
+				'14c': '',
 				'14d': '',
 				'14e': '',
 				15: null,
