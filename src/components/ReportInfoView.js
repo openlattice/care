@@ -8,7 +8,7 @@ import { FormGroup, FormControl, ControlLabel, Checkbox, Radio } from 'react-boo
 
 import SectionView from './SectionView';
 
-const ReportInfoView = ({ section, handleInput, handleRadioChange, input }) => {
+const ReportInfoView = ({ section, handleInput, handleSingleSelection, input }) => {
 
 	return (
 		<SectionView header='Report Info'>
@@ -28,7 +28,7 @@ const ReportInfoView = ({ section, handleInput, handleRadioChange, input }) => {
                     name='3'
                     value='yes'
                     checked={input[3] === 'yes'}
-                    onChange={handleRadioChange} />Yes
+                    onChange={handleSingleSelection} />Yes
               </ControlLabel>
               <ControlLabel>
                 <input
@@ -37,7 +37,7 @@ const ReportInfoView = ({ section, handleInput, handleRadioChange, input }) => {
                     name ='3'
                     value='no'
                     checked={input[3] === 'no'}
-                    onChange={handleRadioChange} />No
+                    onChange={handleSingleSelection} />No
               </ControlLabel>
             </ControlLabel>
             <ControlLabel>4. Crime / Incident
@@ -62,7 +62,7 @@ const ReportInfoView = ({ section, handleInput, handleRadioChange, input }) => {
                     data-section={section}
                     name='9'
                     value='yes'
-                    onChange={handleRadioChange} />Yes
+                    onChange={handleSingleSelection} />Yes
               </ControlLabel>
               <ControlLabel>
                 <input
@@ -70,7 +70,7 @@ const ReportInfoView = ({ section, handleInput, handleRadioChange, input }) => {
                     data-section={section}
                     name ='9'
                     value='no'
-                    onChange={handleRadioChange} />No
+                    onChange={handleSingleSelection} />No
               </ControlLabel>
             </ControlLabel>
             <ControlLabel>10. Date / Time Occurred

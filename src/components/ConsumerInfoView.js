@@ -8,7 +8,7 @@ import { FormGroup, FormControl, ControlLabel, Checkbox } from 'react-bootstrap'
 
 import SectionView from './SectionView';
 
-const ConsumerInfoView = ({ section, handleInput, handleRadioChange, input }) => {
+const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, input }) => {
 
   return (
     <SectionView header='Consumer Info'>
@@ -32,7 +32,7 @@ const ConsumerInfoView = ({ section, handleInput, handleRadioChange, input }) =>
                 name='14a'
                 value='active'
                 checked={input['14a'] === 'active'}
-                onChange={handleRadioChange} />Active
+                onChange={handleSingleSelection} />Active
           </ControlLabel>
           <ControlLabel>
             <input
@@ -41,7 +41,7 @@ const ConsumerInfoView = ({ section, handleInput, handleRadioChange, input }) =>
                 name ='14a' 
                 value='veteran'
                 checked={input['14a'] === 'veteran'}
-                onChange={handleRadioChange} />Veteran
+                onChange={handleSingleSelection} />Veteran
           </ControlLabel>
           <ControlLabel>
             <input
@@ -50,7 +50,7 @@ const ConsumerInfoView = ({ section, handleInput, handleRadioChange, input }) =>
                 name ='14a'
                 value='n/a'
                 checked={input['14a'] === 'n/a'}
-                onChange={handleRadioChange} />N/A
+                onChange={handleSingleSelection} />N/A
           </ControlLabel>
           <ControlLabel>Gender
             <FormControl
@@ -59,7 +59,7 @@ const ConsumerInfoView = ({ section, handleInput, handleRadioChange, input }) =>
                 data-section={section}
                 name='14b'
                 value={input['14b']}
-                onChange={handleRadioChange}>
+                onChange={handleSingleSelection}>
               <option value=''>select</option>
               <option value='female'>female</option>
               <option value='male'>male</option>
@@ -72,7 +72,7 @@ const ConsumerInfoView = ({ section, handleInput, handleRadioChange, input }) =>
                 data-section={section}
                 name='14c'
                 value={input['14c']}
-                onChange={handleRadioChange}>
+                onChange={handleSingleSelection}>
               <option value=''>select</option>
               <option value='americanIndian'>American Indian or Alaska Native</option>
               <option value='asian'>Asian</option>

@@ -48,7 +48,7 @@ class Form extends React.Component {
 		};
 
 		this.handleInput = this.handleInput.bind(this);
-		this.handleRadioChange = this.handleRadioChange.bind(this);
+		this.handleSingleSelection = this.handleSingleSelection.bind(this);
 	}
 
 	handleInput(e) {
@@ -60,7 +60,7 @@ class Form extends React.Component {
 		this.setState({ [sectionKey]: sectionState }, () => {console.log('section state:', this.state[sectionKey])});
 	}
 
-	handleRadioChange(e) {
+	handleSingleSelection(e) {
 		const sectionKey = e.target.dataset.section;
 		const sectionState = this.state[sectionKey];
 		sectionState[e.target.name] = e.target.value;
@@ -141,12 +141,12 @@ class Form extends React.Component {
 			<div>
 				<ReportInfoView
 						handleInput={this.handleInput}
-						handleRadioChange={this.handleRadioChange}
+						handleSingleSelection={this.handleSingleSelection}
 						input={this.state.reportInfo}
 						section='reportInfo' />
 				<ConsumerInfoView
 						handleInput={this.handleInput}
-						handleRadioChange={this.handleRadioChange}
+						handleSingleSelection={this.handleSingleSelection}
 						input={this.state.consumerInfo}
 						section='consumerInfo' />
 			</div>
