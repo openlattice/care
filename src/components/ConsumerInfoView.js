@@ -8,7 +8,7 @@ import { FormGroup, FormControl, ControlLabel, Checkbox } from 'react-bootstrap'
 
 import SectionView from './SectionView';
 
-const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, input }) => {
+const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleCheckboxChange, input }) => {
 
   return (
     <SectionView header='Consumer Info'>
@@ -236,6 +236,57 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, input }
               value='unk'
               checked={input[18] === 'unk'}
               onChange={handleSingleSelection} />Unk
+        </ControlLabel>
+      </ControlLabel>
+
+      <ControlLabel>19. Self Diagnosis
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name={19}
+              checked={input[19].indexOf('bipolar') !== -1}
+              value='bipolar'
+              onChange={handleCheckboxChange} />Bipolar
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name={19}
+              value='depression'
+              checked={input[19].indexOf('depression') !== -1}
+              onChange={handleCheckboxChange} />Depression
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name={19} 
+              value='ptsd'
+              checked={input[19].indexOf('ptsd') !== -1}
+              onChange={handleCheckboxChange} />PTSD
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name={19}
+              checked={input[19].indexOf('schizophrenia') !== -1}
+              value='schizophrenia'
+              onChange={handleCheckboxChange} />Schizophrenia
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name={19}
+              value='dementia'
+              checked={input[19].indexOf('dementia') !== -1}
+              onChange={handleCheckboxChange} />Dementia
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name={19} 
+              value='other'
+              checked={input[19].indexOf('other') !== -1}
+              onChange={handleCheckboxChange} />Other
         </ControlLabel>
       </ControlLabel>
     </SectionView>

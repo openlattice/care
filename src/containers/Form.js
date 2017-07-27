@@ -49,6 +49,7 @@ class Form extends React.Component {
 
 		this.handleInput = this.handleInput.bind(this);
 		this.handleSingleSelection = this.handleSingleSelection.bind(this);
+		this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
 	}
 
 	// For text input
@@ -69,7 +70,21 @@ class Form extends React.Component {
 		this.setState({ [sectionKey]: sectionState }, () => {console.log('section state:', this.state[sectionKey])});
 	}
 
-	// handleCheckboxChange
+	handleCheckboxChange(e) {
+		const sectionKey = e.target.dataset.section;
+		const sectionState = this.state[sectionKey];
+		const idx = sectionState[e.target.name].indexOf(e.target.value);
+		console.log('checkbox sectionState before addition', sectionState);
+		if (idx === -1) {
+			console.log('does not exist');
+			sectionState[e.target.name].push(e.target.value);
+		} else {
+			console.log('does exist, idx:', idx);
+			sectionState[e.target.name].splice(idx, 1);
+		}
+		console.log('checkbox sectionState before saving:', sectionState);
+		this.setState({ [sectionKey]: sectionState }, () => {console.log('section state:', this.state[sectionKey])});
+	}
 
 	handleSubmit() {
 		// send request to backend, submitting state data
@@ -149,6 +164,7 @@ class Form extends React.Component {
 				<ConsumerInfoView
 						handleInput={this.handleInput}
 						handleSingleSelection={this.handleSingleSelection}
+						handleCheckboxChange={this.handleCheckboxChange}
 						input={this.state.consumerInfo}
 						section='consumerInfo' />
 			</div>
@@ -157,5 +173,4 @@ class Form extends React.Component {
 }
 
 export default Form;
-// NEXT: Handle checkbox 
 // TODO: Alter formview to take children / consolidate.
