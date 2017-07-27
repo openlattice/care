@@ -4,6 +4,7 @@ import { EdmApi, DataApi } from 'loom-data';
 
 import ReportInfoView from '../components/ReportInfoView';
 import ConsumerInfoView from '../components/ConsumerInfoView';
+import ComplainantInfoView from '../components/ComplainantInfoView';
 
 class Form extends React.Component {
 	constructor(props) {
@@ -47,6 +48,12 @@ class Form extends React.Component {
 				'25a': null,
 				'25b': [],
 				26: []
+			},
+			complainantInfo: {
+				'27a': '',
+				'27b': '',
+				'27c': '',
+				'27d': ''
 			}
 		};
 
@@ -170,6 +177,10 @@ class Form extends React.Component {
 						handleCheckboxChange={this.handleCheckboxChange}
 						input={this.state.consumerInfo}
 						section='consumerInfo' />
+				<ComplainantInfoView
+						handleInput={this.handleInput}
+						input={this.state.complainantInfo}
+						section='complainantInfo' />
 			</div>
 		);
 	}
@@ -177,3 +188,5 @@ class Form extends React.Component {
 
 export default Form;
 // TODO: Alter formview to take children / consolidate.
+// TODO:  Add proptypes to all views
+// TODO: Use constants

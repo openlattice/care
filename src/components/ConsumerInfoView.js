@@ -643,7 +643,6 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
         </ControlLabel>
       </ControlLabel>
     </SectionView>
-
   );
 }
 
