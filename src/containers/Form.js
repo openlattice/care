@@ -5,6 +5,7 @@ import { EdmApi, DataApi } from 'loom-data';
 import ReportInfoView from '../components/ReportInfoView';
 import ConsumerInfoView from '../components/ConsumerInfoView';
 import ComplainantInfoView from '../components/ComplainantInfoView';
+import DispositionView from '../components/DispositionView';
 
 class Form extends React.Component {
 	constructor(props) {
@@ -54,6 +55,14 @@ class Form extends React.Component {
 				'27b': '',
 				'27c': '',
 				'27d': ''
+			},
+			dispositionInfo: {
+				'28a': [],
+				'28b': [],
+				'28c': '',
+				29: [],
+				30: [],
+				31: ''
 			}
 		};
 
@@ -181,6 +190,12 @@ class Form extends React.Component {
 						handleInput={this.handleInput}
 						input={this.state.complainantInfo}
 						section='complainantInfo' />
+				<DispositionView
+						handleInput={this.handleInput}
+						handleCheckboxChange={this.handleCheckboxChange}
+						handleSingleSelection={this.handleSingleSelection}
+						input={this.state.dispositionInfo}
+						section='dispositionInfo' />
 			</div>
 		);
 	}
