@@ -11,15 +11,15 @@ import SectionView from './SectionView';
 const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleCheckboxChange, input }) => {
 
   return (
-    <SectionView header='Consumer Info'>
+    <SectionView header='Consumer Information'>
 
       <ControlLabel>13. Consumer Name (Last, First, MI)
         <FormControl data-section={section} name='13a' value={input['13a']} onChange={handleInput}></FormControl>
       </ControlLabel>
-      <ControlLabel>Residence Address (include Apt, City, County, State and Zip)
+      <ControlLabel>Residence / Address (Include Apartment Number, City, County, State, Zip) if Applicable
         <FormControl data-section={section} name='13b' value={input['13b']} onChange={handleInput}></FormControl>
       </ControlLabel>
-      <ControlLabel>Consumer phone number
+      <ControlLabel>Consumer Phone Number
         <FormControl data-section={section} name='13c' value={input['13c']} onChange={handleInput}></FormControl>
       </ControlLabel>
 
@@ -59,9 +59,10 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               name='14b'
               value={input['14b']}
               onChange={handleSingleSelection}>
-            <option value=''>select</option>
-            <option value='female'>female</option>
-            <option value='male'>male</option>
+            <option value=''>Select</option>
+            <option value='female'>Female</option>
+            <option value='male'>Male</option>
+            <option value='nonbinary'>Non-binary</option>
           </FormControl>
         </ControlLabel>
         <ControlLabel>Race
@@ -84,10 +85,10 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
         </ControlLabel>
       </ControlLabel>
       <ControlLabel>Age
-        <FormControl data-section={section} name='14d' value={input['14d']} onChange={handleInput}></FormControl>
+        <FormControl data-section={section} name='14d' value={input['14d']} onChange={handleInput} />
       </ControlLabel>
       <ControlLabel>DOB
-        <FormControl data-section={section} name='14e' value={input['14e']} onChange={handleInput}></FormControl>
+        <FormControl data-section={section} name='14e' value={input['14e']} onChange={handleInput} />
       </ControlLabel>
 
       <ControlLabel>15. Homeless
@@ -95,62 +96,68 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
           <input
               type='radio'
               data-section={section}
-              name={15}
+              name='15a'
               value='yes'
-              checked={input[15] === 'yes'}
+              checked={input['15a'] === 'yes'}
               onChange={handleSingleSelection} />Yes
         </ControlLabel>
         <ControlLabel>
           <input
               type='radio'
               data-section={section}
-              name ={15} 
+              name ='15a' 
               value='no'
-              checked={input[15] === 'no'}
+              checked={input['15a'] === 'no'}
               onChange={handleSingleSelection} />No
         </ControlLabel>
       </ControlLabel>
+      <ControlLabel>If yes, where do they usually sleep / frequent?
+        <FormControl data-section={section} name='15b' value={input['15b']} onChange={handleInput} />
+      </ControlLabel>
 
-      <ControlLabel>16. Consumer Using Drugs, Alcohol, Both
+      <ControlLabel>16. Consumer Using Drugs, Alcohol, Both (If possible, include type of drugs)
         <ControlLabel>
           <input
               type='radio'
               data-section={section}
-              name={16}
+              name='16a'
               value='drugs'
-              checked={input[16] === 'drugs'}
+              checked={input['16a'] === 'drugs'}
               onChange={handleSingleSelection} />Drugs
         </ControlLabel>
         <ControlLabel>
           <input
               type='radio'
               data-section={section}
-              name ={16} 
+              name ='16a' 
               value='alcohol'
-              checked={input[16] === 'alcohol'}
+              checked={input['16a'] === 'alcohol'}
               onChange={handleSingleSelection} />Alcohol
         </ControlLabel>
         <ControlLabel>
           <input
               type='radio'
               data-section={section}
-              name ={16} 
+              name ='16a' 
               value='both'
-              checked={input[16] === 'both'}
+              checked={input['16a'] === 'both'}
               onChange={handleSingleSelection} />Both
         </ControlLabel>
         <ControlLabel>
           <input
               type='radio'
               data-section={section}
-              name ={16} 
+              name ='16a' 
               value='n/a'
-              checked={input[16] === 'n/a'}
+              checked={input['16a'] === 'n/a'}
               onChange={handleSingleSelection} />N/A
+        </ControlLabel>
+        <ControlLabel>Drug type
+          <FormControl data-section={section} name='16b' value={input['16b']} onChange={handleInput} />
         </ControlLabel>
       </ControlLabel>
 
-      <ControlLabel>17. Prescribed Medication
+      <ControlLabel>17. Is Consumer Prescribed Medication?
         <ControlLabel>
           <input
               type='radio'
@@ -174,12 +181,12 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               type='radio'
               data-section={section}
               name='17a' 
-              value='unk'
-              checked={input['17a'] === 'unk'}
-              onChange={handleSingleSelection} />Unk
+              value='unknown'
+              checked={input['17a'] === 'unknown'}
+              onChange={handleSingleSelection} />Unknown
         </ControlLabel>
       </ControlLabel>
-      <ControlLabel>Taking Medication
+      <ControlLabel>If yes, is Consumer Taking Medication?
         <ControlLabel>
           <input
               type='radio'
@@ -203,13 +210,13 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               type='radio'
               data-section={section}
               name='17b' 
-              value='unk'
-              checked={input['17b'] === 'unk'}
-              onChange={handleSingleSelection} />Unk
+              value='unknown'
+              checked={input['17b'] === 'unknown'}
+              onChange={handleSingleSelection} />Unknown
         </ControlLabel>
       </ControlLabel>
 
-      <ControlLabel>18. Prev Psych Hospital Admission
+      <ControlLabel>18. Does Consumer Have Previous Psychiatric Hospital Admission?
         <ControlLabel>
           <input
               type='radio'
@@ -233,9 +240,9 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               type='radio'
               data-section={section}
               name={18} 
-              value='unk'
-              checked={input[18] === 'unk'}
-              onChange={handleSingleSelection} />Unk
+              value='unknown'
+              checked={input[18] === 'unknown'}
+              onChange={handleSingleSelection} />Unknown
         </ControlLabel>
       </ControlLabel>
 
@@ -295,19 +302,22 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
           <input
               type='radio'
               data-section={section}
-              name={20}
+              name='20a'
               value='yes'
-              checked={input[20] === 'yes'}
+              checked={input['20a'] === 'yes'}
               onChange={handleSingleSelection} />Yes
         </ControlLabel>
         <ControlLabel>
           <input
               type='radio'
               data-section={section}
-              name={20}
+              name='20a'
               value='no'
-              checked={input[20] === 'no'}
+              checked={input['20a'] === 'no'}
               onChange={handleSingleSelection} />No
+        </ControlLabel>
+        <ControlLabel>If Yes, Weapon Type
+          <FormControl data-section={section} name='20b' value={input['20b']} onChange={handleInput} />
         </ControlLabel>
       </ControlLabel>
 
@@ -316,23 +326,26 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
           <input
               type='radio'
               data-section={section}
-              name={21}
+              name='21a'
               value='yes'
-              checked={input[21] === 'yes'}
+              checked={input['21a'] === 'yes'}
               onChange={handleSingleSelection} />Yes
         </ControlLabel>
         <ControlLabel>
           <input
               type='radio'
               data-section={section}
-              name={21}
+              name='21a'
               value='no'
-              checked={input[21] === 'no'}
+              checked={input['21a'] === 'no'}
               onChange={handleSingleSelection} />No
+        </ControlLabel>
+        <ControlLabel>If Yes, Weapon Type
+          <FormControl data-section={section} name='21b' value={input['20b']} onChange={handleInput} />
         </ControlLabel>
       </ControlLabel>
 
-      <ControlLabel>22. Observed Behaviors (check all that apply)
+      <ControlLabel>22. Observed Behaviors (Check all that apply)
         <ControlLabel>
           <Checkbox
               data-section={section}
@@ -363,7 +376,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               name='22a'
               value='abnormalBehavior'
               checked={input['22a'].indexOf('abnormalBehavior') !== -1}
-              onChange={handleCheckboxChange} />Abnormal Behavior/Appearance (neglect self care)
+              onChange={handleCheckboxChange} />Abnormal Behavior/Appearance (neglect self-care)
         </ControlLabel>
         <ControlLabel>
           <Checkbox
@@ -648,3 +661,4 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
 
 export default ConsumerInfoView;
 // NEXT: Add text field for Other checkboxes
+// TODO: IF 15 is yes -> send copy of report to Homelessoutreach@BaltimorePolice.org

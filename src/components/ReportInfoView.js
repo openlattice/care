@@ -11,7 +11,7 @@ import SectionView from './SectionView';
 const ReportInfoView = ({ section, handleInput, handleSingleSelection, input }) => {
 
 	return (
-		<SectionView header='Report Info'>
+		<SectionView header='Report Information'>
 			<FormGroup>
         <div>
   				  <ControlLabel>1. Primary Reason for Dispatch
@@ -43,13 +43,13 @@ const ReportInfoView = ({ section, handleInput, handleSingleSelection, input }) 
             <ControlLabel>4. Crime / Incident
               <FormControl data-section={section} name='4' value={input[4]} onChange={handleInput}></FormControl>
             </ControlLabel>
-            <ControlLabel>5. Location of Offense / Incident (exact street address)
+            <ControlLabel>5. Location of Offense / Incident (exact street address, if applicable)
               <FormControl data-section={section} name='5' value={input[5]} onChange={handleInput}></FormControl>
             </ControlLabel>
             <ControlLabel>6. Unit
               <FormControl data-section={section} name='6' value={input[6]} onChange={handleInput}></FormControl>
             </ControlLabel>
-            <ControlLabel>7. Post
+            <ControlLabel>7. Post of Occurrence
               <FormControl data-section={section} name='7' value={input[7]} onChange={handleInput}></FormControl>
             </ControlLabel>
             <ControlLabel>8. CAD Number
