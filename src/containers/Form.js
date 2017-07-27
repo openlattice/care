@@ -51,6 +51,7 @@ class Form extends React.Component {
 		this.handleSingleSelection = this.handleSingleSelection.bind(this);
 	}
 
+	// For text input
 	handleInput(e) {
 		const sectionKey = e.target.dataset.section
 		const name = e.target.name;
@@ -60,6 +61,7 @@ class Form extends React.Component {
 		this.setState({ [sectionKey]: sectionState }, () => {console.log('section state:', this.state[sectionKey])});
 	}
 
+	// For radio or select input
 	handleSingleSelection(e) {
 		const sectionKey = e.target.dataset.section;
 		const sectionState = this.state[sectionKey];
@@ -155,6 +157,5 @@ class Form extends React.Component {
 }
 
 export default Form;
-// NEXT: Handle selection
 // NEXT: Handle checkbox 
 // TODO: Alter formview to take children / consolidate.
