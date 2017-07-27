@@ -226,6 +226,9 @@ const DispositionView = ({ section, handleInput, handleCheckboxChange, handleSin
               onChange={handleCheckboxChange} />Homeless Outreach
         </ControlLabel>
       </ControlLabel>
+      <ControlLabel>31. Narrative of Incident, to include: Results of investigation, basis for actions taken, emotional states, additional witnesses. Property listing.
+        <FormControl data-section={section} name={31} componentClass='textarea' onChange={handleInput} />
+      </ControlLabel>
     </SectionView>
   );
 }
