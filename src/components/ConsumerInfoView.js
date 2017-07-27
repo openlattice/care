@@ -111,7 +111,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               onChange={handleSingleSelection} />No
         </ControlLabel>
       </ControlLabel>
-      <ControlLabel>If yes, where do they usually sleep / frequent?
+      <ControlLabel>If Yes, Where Do They Usually Sleep / Frequent?
         <FormControl data-section={section} name='15b' value={input['15b']} onChange={handleInput} />
       </ControlLabel>
 
@@ -250,50 +250,51 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
         <ControlLabel>
           <Checkbox
               data-section={section}
-              name={19}
+              name='19a'
               value='bipolar'
-              checked={input[19].indexOf('bipolar') !== -1}
+              checked={input['19a'].indexOf('bipolar') !== -1}
               onChange={handleCheckboxChange} />Bipolar
         </ControlLabel>
         <ControlLabel>
           <Checkbox
               data-section={section}
-              name={19}
+              name='19a'
               value='depression'
-              checked={input[19].indexOf('depression') !== -1}
+              checked={input['19a'].indexOf('depression') !== -1}
               onChange={handleCheckboxChange} />Depression
         </ControlLabel>
         <ControlLabel>
           <Checkbox
               data-section={section}
-              name={19} 
+              name='19a' 
               value='ptsd'
-              checked={input[19].indexOf('ptsd') !== -1}
+              checked={input['19a'].indexOf('ptsd') !== -1}
               onChange={handleCheckboxChange} />PTSD
         </ControlLabel>
         <ControlLabel>
           <Checkbox
               data-section={section}
-              name={19}
+              name='19a'
               value='schizophrenia'
-              checked={input[19].indexOf('schizophrenia') !== -1}
+              checked={input['19a'].indexOf('schizophrenia') !== -1}
               onChange={handleCheckboxChange} />Schizophrenia
         </ControlLabel>
         <ControlLabel>
           <Checkbox
               data-section={section}
-              name={19}
+              name='19a'
               value='dementia'
-              checked={input[19].indexOf('dementia') !== -1}
+              checked={input['19a'].indexOf('dementia') !== -1}
               onChange={handleCheckboxChange} />Dementia
         </ControlLabel>
         <ControlLabel>
           <Checkbox
               data-section={section}
-              name={19} 
+              name='19a' 
               value='other'
-              checked={input[19].indexOf('other') !== -1}
-              onChange={handleCheckboxChange} />Other
+              checked={input['19a'].indexOf('other') !== -1}
+              onChange={handleCheckboxChange} />Other:
+          <FormControl data-section={section} name='19b' value={input['19b']} onChange={handleInput} />
         </ControlLabel>
       </ControlLabel>
 
@@ -352,23 +353,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               name='22a'
               value='disorientation'
               checked={input['22a'].indexOf('disorientation') !== -1}
-              onChange={handleCheckboxChange} />Disorientation/Confusion
-        </ControlLabel>
-        <ControlLabel>
-          <Checkbox
-              data-section={section}
-              name='22a'
-              value='anxious'
-              checked={input['22a'].indexOf('anxious') !== -1}
-              onChange={handleCheckboxChange} />Anxious/Excited/Agitated
-        </ControlLabel>
-        <ControlLabel>
-          <Checkbox
-              data-section={section}
-              name='22a'
-              value='self-mutilation'
-              checked={input['22a'].indexOf('self-mutilation') !== -1}
-              onChange={handleCheckboxChange} />Self-mutilation
+              onChange={handleCheckboxChange} />Disorientation / Confusion
         </ControlLabel>
         <ControlLabel>
           <Checkbox
@@ -376,7 +361,23 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               name='22a'
               value='abnormalBehavior'
               checked={input['22a'].indexOf('abnormalBehavior') !== -1}
-              onChange={handleCheckboxChange} />Abnormal Behavior/Appearance (neglect self-care)
+              onChange={handleCheckboxChange} />Abnormal Behavior / Appearance (neglect self-care)
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name='22a' 
+              value='hearingVoices'
+              checked={input['22a'].indexOf('hearingVoices') !== -1}
+              onChange={handleCheckboxChange} />Hearing Voices / Hallucinating
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name='22a'
+              value='anxious'
+              checked={input['22a'].indexOf('anxious') !== -1}
+              onChange={handleCheckboxChange} />Anxious / Excited / Agitated
         </ControlLabel>
         <ControlLabel>
           <Checkbox
@@ -389,26 +390,26 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
         <ControlLabel>
           <Checkbox
               data-section={section}
-              name='22a' 
-              value='threatening'
-              checked={input['22a'].indexOf('threatening') !== -1}
-              onChange={handleCheckboxChange} />Threatening/Violent Towards Others
-        </ControlLabel>
-        <ControlLabel>
-          <Checkbox
-              data-section={section}
-              name='22a' 
-              value='hearingVoices'
-              checked={input['22a'].indexOf('hearingVoices') !== -1}
-              onChange={handleCheckboxChange} />Hearing Voices/Hallucinating
+              name='22a'
+              value='paranoid'
+              checked={input['22a'].indexOf('paranoid') !== -1}
+              onChange={handleCheckboxChange} />Paranoid or Suspicious
         </ControlLabel>
         <ControlLabel>
           <Checkbox
               data-section={section}
               name='22a'
-              value='paranoid'
-              checked={input['22a'].indexOf('paranoid') !== -1}
-              onChange={handleCheckboxChange} />Paranoid/Suspicious
+              value='self-mutilation'
+              checked={input['22a'].indexOf('self-mutilation') !== -1}
+              onChange={handleCheckboxChange} />Self-mutilation
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name='22a' 
+              value='threatening'
+              checked={input['22a'].indexOf('threatening') !== -1}
+              onChange={handleCheckboxChange} />Threatening / Violent Towards Others
         </ControlLabel>
         <ControlLabel>
           <Checkbox
@@ -416,78 +417,80 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               name='22a'
               value='other'
               checked={input['22a'].indexOf('other') !== -1}
-              onChange={handleCheckboxChange} />Other
+              onChange={handleCheckboxChange} />Other:
+          <FormControl data-section={section} name='22b' value={input['22b']} onChange={handleInput} />
         </ControlLabel>
       </ControlLabel>
 
-      <ControlLabel>Emotional State (check all that apply)
+      <ControlLabel>Emotional State (Check all that apply)
         <ControlLabel>
           <Checkbox
               data-section={section}
-              name='22b'
+              name='22c'
               value='angry'
-              checked={input['22b'].indexOf('angry') !== -1}
+              checked={input['22c'].indexOf('angry') !== -1}
               onChange={handleCheckboxChange} />Angry
         </ControlLabel>
         <ControlLabel>
           <Checkbox
               data-section={section}
-              name='22b'
+              name='22c'
               value='afraid'
-              checked={input['22b'].indexOf('afraid') !== -1}
+              checked={input['22c'].indexOf('afraid') !== -1}
               onChange={handleCheckboxChange} />Afraid
         </ControlLabel>
         <ControlLabel>
           <Checkbox
               data-section={section}
-              name='22b' 
+              name='22c' 
               value='apologetic'
-              checked={input['22b'].indexOf('apologetic') !== -1}
+              checked={input['22c'].indexOf('apologetic') !== -1}
               onChange={handleCheckboxChange} />Apologetic
         </ControlLabel>
         <ControlLabel>
           <Checkbox
               data-section={section}
-              name='22b'
+              name='22c'
               value='calm'
-              checked={input['22b'].indexOf('calm') !== -1}
+              checked={input['22c'].indexOf('calm') !== -1}
               onChange={handleCheckboxChange} />Calm
         </ControlLabel>
         <ControlLabel>
           <Checkbox
               data-section={section}
-              name='22b'
+              name='22c'
               value='crying'
-              checked={input['22b'].indexOf('crying') !== -1}
+              checked={input['22c'].indexOf('crying') !== -1}
               onChange={handleCheckboxChange} />Crying
         </ControlLabel>
         <ControlLabel>
           <Checkbox
               data-section={section}
-              name='22b' 
+              name='22c' 
               value='fearful'
-              checked={input['22b'].indexOf('fearful') !== -1}
+              checked={input['22c'].indexOf('fearful') !== -1}
               onChange={handleCheckboxChange} />Fearful
         </ControlLabel>
         <ControlLabel>
           <Checkbox
               data-section={section}
-              name='22b' 
+              name='22c' 
               value='nervous'
-              checked={input['22b'].indexOf('nervous') !== -1}
+              checked={input['22c'].indexOf('nervous') !== -1}
               onChange={handleCheckboxChange} />Nervous
         </ControlLabel>
         <ControlLabel>
           <Checkbox
               data-section={section}
-              name='22b'
+              name='22c'
               value='other'
-              checked={input['22b'].indexOf('other') !== -1}
-              onChange={handleCheckboxChange} />Other
+              checked={input['22c'].indexOf('other') !== -1}
+              onChange={handleCheckboxChange} />Other:
+          <FormControl data-section={section} name='22d' value={input['22d']} onChange={handleInput} />
         </ControlLabel>
       </ControlLabel>
 
-      <ControlLabel>23. Photos Taken Of
+      <ControlLabel>23. Photos Taken Of:
         <ControlLabel>
           <Checkbox
               data-section={section}
@@ -502,7 +505,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               name={23} 
               value='propertyDamage'
               checked={input[23].indexOf('propertyDamage') !== -1}
-              onChange={handleCheckboxChange} />Property Damage/Crime Scene
+              onChange={handleCheckboxChange} />Property Damage / Crime Scene
         </ControlLabel>
       </ControlLabel>
 
@@ -510,50 +513,51 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
         <ControlLabel>
           <Checkbox
               data-section={section}
-              name={24} 
+              name='24a' 
               value='abrasions'
-              checked={input[24].indexOf('abrasions') !== -1}
+              checked={input['24a'].indexOf('abrasions') !== -1}
               onChange={handleCheckboxChange} />Abrasions
         </ControlLabel>
         <ControlLabel>
           <Checkbox
               data-section={section}
-              name={24} 
-              value='complaintsOfPain'
-              checked={input[24].indexOf('complaintsOfPain') !== -1}
-              onChange={handleCheckboxChange} />Complaints of Pain
-        </ControlLabel>
-        <ControlLabel>
-          <Checkbox
-              data-section={section}
-              name={24} 
-              value='fractures'
-              checked={input[24].indexOf('fractures') !== -1}
-              onChange={handleCheckboxChange} />Fractures
-        </ControlLabel>
-        <ControlLabel>
-          <Checkbox
-              data-section={section}
-              name={24} 
+              name='24a' 
               value='bruises'
-              checked={input[24].indexOf('bruises') !== -1}
+              checked={input['24a'].indexOf('bruises') !== -1}
               onChange={handleCheckboxChange} />Bruises
         </ControlLabel>
         <ControlLabel>
           <Checkbox
               data-section={section}
-              name={24} 
+              name='24a' 
+              value='complaintsOfPain'
+              checked={input['24a'].indexOf('complaintsOfPain') !== -1}
+              onChange={handleCheckboxChange} />Complaints of Pain
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name='24a' 
               value='concussion'
-              checked={input[24].indexOf('concussion') !== -1}
+              checked={input['24a'].indexOf('concussion') !== -1}
               onChange={handleCheckboxChange} />Concussion
         </ControlLabel>
         <ControlLabel>
           <Checkbox
               data-section={section}
-              name={24} 
+              name='24a' 
+              value='fractures'
+              checked={input['24a'].indexOf('fractures') !== -1}
+              onChange={handleCheckboxChange} />Fractures
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name='24a' 
               value='other'
-              checked={input[24].indexOf('other') !== -1}
-              onChange={handleCheckboxChange} />Other
+              checked={input['24a'].indexOf('other') !== -1}
+              onChange={handleCheckboxChange} />Other:
+          <FormControl data-section={section} name='24b' value={input['24b']} onChange={handleInput} />
         </ControlLabel>
       </ControlLabel>
 
@@ -578,7 +582,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
         </ControlLabel>
       </ControlLabel>
 
-      <ControlLabel>If Suicidal
+      <ControlLabel>If Suicidal:
         <ControlLabel>
           <Checkbox
               data-section={section}
@@ -617,42 +621,43 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
         <ControlLabel>
           <Checkbox
               data-section={section}
-              name={26}
+              name='26a'
               value='narcotics'
-              checked={input[26].indexOf('narcotics') !== -1}
+              checked={input['26a'].indexOf('narcotics') !== -1}
               onChange={handleCheckboxChange} />Narcotics (Prescription or Illicit)
         </ControlLabel>
         <ControlLabel>
           <Checkbox
               data-section={section}
-              name={26}
+              name='26a'
               value='alcohol'
-              checked={input[26].indexOf('alcohol') !== -1}
+              checked={input['26a'].indexOf('alcohol') !== -1}
               onChange={handleCheckboxChange} />Alcohol
         </ControlLabel>
         <ControlLabel>
           <Checkbox
               data-section={section}
-              name={26}
+              name='26a'
               value='knife'
-              checked={input[26].indexOf('knife') !== -1}
-              onChange={handleCheckboxChange} />Knife/Cutting Tool
+              checked={input['26a'].indexOf('knife') !== -1}
+              onChange={handleCheckboxChange} />Knife / Cutting Tool
         </ControlLabel>
         <ControlLabel>
           <Checkbox
               data-section={section}
-              name={26}
+              name='26a'
               value='firearm'
-              checked={input[26].indexOf('firearm') !== -1}
+              checked={input['26a'].indexOf('firearm') !== -1}
               onChange={handleCheckboxChange} />Firearm
         </ControlLabel>
         <ControlLabel>
           <Checkbox
               data-section={section}
-              name={26}
+              name='26a'
               value='other'
-              checked={input[26].indexOf('other') !== -1}
-              onChange={handleCheckboxChange} />Other
+              checked={input['26a'].indexOf('other') !== -1}
+              onChange={handleCheckboxChange} />Other:
+          <FormControl data-section={section} name='26b' value={input['26b']} onChange={handleInput} />
         </ControlLabel>
       </ControlLabel>
     </SectionView>
