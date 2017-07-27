@@ -113,57 +113,58 @@ const DispositionView = ({ section, handleInput, handleCheckboxChange, handleSin
         <ControlLabel>
           <Checkbox
               data-section={section}
-              name={29}
+              name='29a'
               value='verbalization'
-              checked={input[29].indexOf('verbalization') !== -1}
+              checked={input['29a'].indexOf('verbalization') !== -1}
               onChange={handleCheckboxChange} />Verbalization
         </ControlLabel>
         <ControlLabel>
           <Checkbox
               data-section={section}
-              name={29}
+              name='29a'
               value='handcuffs'
-              checked={input[29].indexOf('handcuffs') !== -1}
+              checked={input['29a'].indexOf('handcuffs') !== -1}
               onChange={handleCheckboxChange} />Handcuffs
         </ControlLabel>
         <ControlLabel>
           <Checkbox
               data-section={section}
-              name={29}
+              name='29a'
               value='legRestraints'
-              checked={input[29].indexOf('legRestraints') !== -1}
+              checked={input['29a'].indexOf('legRestraints') !== -1}
               onChange={handleCheckboxChange} />Leg Restraints
         </ControlLabel>
         <ControlLabel>
           <Checkbox
               data-section={section}
-              name={29}
+              name='29a'
               value='taser'
-              checked={input[29].indexOf('taser') !== -1}
+              checked={input['29a'].indexOf('taser') !== -1}
               onChange={handleCheckboxChange} />Taser
         </ControlLabel>
         <ControlLabel>
           <Checkbox
               data-section={section}
-              name={29}
+              name='29a'
               value='arrestControl'
-              checked={input[29].indexOf('arrestControl') !== -1}
-              onChange={handleCheckboxChange} />Arrest Control (hand/feet)
+              checked={input['29a'].indexOf('arrestControl') !== -1}
+              onChange={handleCheckboxChange} />Arrest Control (Hands / Feet)
         </ControlLabel>
         <ControlLabel>
           <Checkbox
               data-section={section}
-              name={29}
+              name='29a'
               value='other'
-              checked={input[29].indexOf('other') !== -1}
-              onChange={handleCheckboxChange} />Other
+              checked={input['29a'].indexOf('other') !== -1}
+              onChange={handleCheckboxChange} />Other:
+          <FormControl data-section={section} name='29b' value={input['29b']} onChange={handleInput} />
         </ControlLabel>
         <ControlLabel>
           <Checkbox
               data-section={section}
-              name={29}
+              name='29a'
               value='n/a'
-              checked={input[29].indexOf('n/a') !== -1}
+              checked={input['29a'].indexOf('n/a') !== -1}
               onChange={handleCheckboxChange} />N/A
         </ControlLabel>
       </ControlLabel>
@@ -175,7 +176,7 @@ const DispositionView = ({ section, handleInput, handleCheckboxChange, handleSin
               name={30}
               value='bcri'
               checked={input[30].indexOf('bcri') !== -1}
-              onChange={handleCheckboxChange} />BCRI/Mobile Crisis Response Team
+              onChange={handleCheckboxChange} />BCRI / Mobile Crisis Response Team
         </ControlLabel>
         <ControlLabel>
           <Checkbox

@@ -70,7 +70,8 @@ class Form extends React.Component {
 				'28a': [],
 				'28b': [],
 				'28c': '',
-				29: [],
+				'29a': [],
+				'29b': '',
 				30: [],
 				31: ''
 			},
