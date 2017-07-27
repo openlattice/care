@@ -99,7 +99,7 @@ const DispositionView = ({ section, handleInput, handleCheckboxChange, handleSin
           <input
               type='radio'
               data-section={section}
-              name='28b'
+              name='28b'  
               value='no'
               checked={input['28b'] === 'no'}
               onChange={handleSingleSelection} />No
@@ -107,6 +107,124 @@ const DispositionView = ({ section, handleInput, handleCheckboxChange, handleSin
       </ControlLabel>
       <ControlLabel>Hospital Name
         <FormControl data-section={section} name='28c' value={input['28c']} onChange={handleInput}></FormControl>
+      </ControlLabel>
+
+      <ControlLabel>29. De-escalation Techniques/Equipment Used
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name={29}
+              value='verbalization'
+              checked={input[29].indexOf('verbalization') !== -1}
+              onChange={handleCheckboxChange} />Verbalization
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name={29}
+              value='handcuffs'
+              checked={input[29].indexOf('handcuffs') !== -1}
+              onChange={handleCheckboxChange} />Handcuffs
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name={29}
+              value='legRestraints'
+              checked={input[29].indexOf('legRestraints') !== -1}
+              onChange={handleCheckboxChange} />Leg Restraints
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name={29}
+              value='taser'
+              checked={input[29].indexOf('taser') !== -1}
+              onChange={handleCheckboxChange} />Taser
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name={29}
+              value='arrestControl'
+              checked={input[29].indexOf('arrestControl') !== -1}
+              onChange={handleCheckboxChange} />Arrest Control (hand/feet)
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name={29}
+              value='other'
+              checked={input[29].indexOf('other') !== -1}
+              onChange={handleCheckboxChange} />Other
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name={29}
+              value='n/a'
+              checked={input[29].indexOf('n/a') !== -1}
+              onChange={handleCheckboxChange} />N/A
+        </ControlLabel>
+      </ControlLabel>
+
+      <ControlLabel>30. Called for Specialized Resources
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name={30}
+              value='bcri'
+              checked={input[30].indexOf('bcri') !== -1}
+              onChange={handleCheckboxChange} />BCRI/Mobile Crisis Response Team
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name={30}
+              value='citOfficer'
+              checked={input[30].indexOf('citOfficer') !== -1}
+              onChange={handleCheckboxChange} />CIT Officer
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name={30}
+              value='crtUnit'
+              checked={input[30].indexOf('crtUnit') !== -1}
+              onChange={handleCheckboxChange} />CRT Unit
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name={30}
+              value='esu'
+              checked={input[30].indexOf('esu') !== -1}
+              onChange={handleCheckboxChange} />ESU
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name={30}
+              value='swat'
+              checked={input[30].indexOf('swat') !== -1}
+              onChange={handleCheckboxChange} />SWAT
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name={30}
+              value='negotiationTeam'
+              checked={input[30].indexOf('negotiationTeam') !== -1}
+              onChange={handleCheckboxChange} />Negotiation Team
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name={30}
+              value='homelessOutreach'
+              checked={input[30].indexOf('homelessOutreach') !== -1}
+              onChange={handleCheckboxChange} />Homeless Outreach
+        </ControlLabel>
       </ControlLabel>
     </SectionView>
   );
