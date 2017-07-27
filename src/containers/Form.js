@@ -6,6 +6,7 @@ import ReportInfoView from '../components/ReportInfoView';
 import ConsumerInfoView from '../components/ConsumerInfoView';
 import ComplainantInfoView from '../components/ComplainantInfoView';
 import DispositionView from '../components/DispositionView';
+import OfficerInfoView from '../components/OfficerInfoView';
 
 class Form extends React.Component {
 	constructor(props) {
@@ -63,6 +64,14 @@ class Form extends React.Component {
 				29: [],
 				30: [],
 				31: ''
+			},
+			officerInfo: {
+				32: '',
+				34: '',
+				35: '',
+				36: [],
+				'37a': '',
+				'37b': ''
 			}
 		};
 
@@ -196,6 +205,11 @@ class Form extends React.Component {
 						handleSingleSelection={this.handleSingleSelection}
 						input={this.state.dispositionInfo}
 						section='dispositionInfo' />
+				<OfficerInfoView
+						handleInput={this.handleInput}
+						handleCheckboxChange={this.handleCheckboxChange}
+						input={this.state.officerInfo}
+						section='officerInfo' />
 			</div>
 		);
 	}
