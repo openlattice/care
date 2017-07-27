@@ -40,10 +40,13 @@ class Form extends React.Component {
 				19: [],
 				20: null,
 				21: null,
-				22: [],
+				'22a': [],
+				'22b': [],
 				23: [],
 				24: [],
-				25: null
+				'25a': null,
+				'25b': [],
+				26: []
 			}
 		};
 

@@ -244,8 +244,8 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
           <Checkbox
               data-section={section}
               name={19}
-              checked={input[19].indexOf('bipolar') !== -1}
               value='bipolar'
+              checked={input[19].indexOf('bipolar') !== -1}
               onChange={handleCheckboxChange} />Bipolar
         </ControlLabel>
         <ControlLabel>
@@ -268,8 +268,8 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
           <Checkbox
               data-section={section}
               name={19}
-              checked={input[19].indexOf('schizophrenia') !== -1}
               value='schizophrenia'
+              checked={input[19].indexOf('schizophrenia') !== -1}
               onChange={handleCheckboxChange} />Schizophrenia
         </ControlLabel>
         <ControlLabel>
@@ -289,11 +289,363 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               onChange={handleCheckboxChange} />Other
         </ControlLabel>
       </ControlLabel>
+
+      <ControlLabel>20. Armed with Weapon?
+        <ControlLabel>
+          <input
+              type='radio'
+              data-section={section}
+              name={20}
+              value='yes'
+              checked={input[20] === 'yes'}
+              onChange={handleSingleSelection} />Yes
+        </ControlLabel>
+        <ControlLabel>
+          <input
+              type='radio'
+              data-section={section}
+              name={20}
+              value='no'
+              checked={input[20] === 'no'}
+              onChange={handleSingleSelection} />No
+        </ControlLabel>
+      </ControlLabel>
+
+      <ControlLabel>21. Have Access to Weapons?
+        <ControlLabel>
+          <input
+              type='radio'
+              data-section={section}
+              name={21}
+              value='yes'
+              checked={input[21] === 'yes'}
+              onChange={handleSingleSelection} />Yes
+        </ControlLabel>
+        <ControlLabel>
+          <input
+              type='radio'
+              data-section={section}
+              name={21}
+              value='no'
+              checked={input[21] === 'no'}
+              onChange={handleSingleSelection} />No
+        </ControlLabel>
+      </ControlLabel>
+
+      <ControlLabel>22. Observed Behaviors (check all that apply)
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name='22a'
+              value='disorientation'
+              checked={input['22a'].indexOf('disorientation') !== -1}
+              onChange={handleCheckboxChange} />Disorientation/Confusion
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name='22a'
+              value='anxious'
+              checked={input['22a'].indexOf('anxious') !== -1}
+              onChange={handleCheckboxChange} />Anxious/Excited/Agitated
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name='22a'
+              value='self-mutilation'
+              checked={input['22a'].indexOf('self-mutilation') !== -1}
+              onChange={handleCheckboxChange} />Self-mutilation
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name='22a'
+              value='abnormalBehavior'
+              checked={input['22a'].indexOf('abnormalBehavior') !== -1}
+              onChange={handleCheckboxChange} />Abnormal Behavior/Appearance (neglect self care)
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name='22a'
+              value='depressed'
+              checked={input['22a'].indexOf('depressed') !== -1}
+              onChange={handleCheckboxChange} />Depressed Mood
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name='22a' 
+              value='threatening'
+              checked={input['22a'].indexOf('threatening') !== -1}
+              onChange={handleCheckboxChange} />Threatening/Violent Towards Others
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name='22a' 
+              value='hearingVoices'
+              checked={input['22a'].indexOf('hearingVoices') !== -1}
+              onChange={handleCheckboxChange} />Hearing Voices/Hallucinating
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name='22a'
+              value='paranoid'
+              checked={input['22a'].indexOf('paranoid') !== -1}
+              onChange={handleCheckboxChange} />Paranoid/Suspicious
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name='22a'
+              value='other'
+              checked={input['22a'].indexOf('other') !== -1}
+              onChange={handleCheckboxChange} />Other
+        </ControlLabel>
+      </ControlLabel>
+
+      <ControlLabel>Emotional State (check all that apply)
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name='22b'
+              value='angry'
+              checked={input['22b'].indexOf('angry') !== -1}
+              onChange={handleCheckboxChange} />Angry
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name='22b'
+              value='afraid'
+              checked={input['22b'].indexOf('afraid') !== -1}
+              onChange={handleCheckboxChange} />Afraid
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name='22b' 
+              value='apologetic'
+              checked={input['22b'].indexOf('apologetic') !== -1}
+              onChange={handleCheckboxChange} />Apologetic
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name='22b'
+              value='calm'
+              checked={input['22b'].indexOf('calm') !== -1}
+              onChange={handleCheckboxChange} />Calm
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name='22b'
+              value='crying'
+              checked={input['22b'].indexOf('crying') !== -1}
+              onChange={handleCheckboxChange} />Crying
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name='22b' 
+              value='fearful'
+              checked={input['22b'].indexOf('fearful') !== -1}
+              onChange={handleCheckboxChange} />Fearful
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name='22b' 
+              value='nervous'
+              checked={input['22b'].indexOf('nervous') !== -1}
+              onChange={handleCheckboxChange} />Nervous
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name='22b'
+              value='other'
+              checked={input['22b'].indexOf('other') !== -1}
+              onChange={handleCheckboxChange} />Other
+        </ControlLabel>
+      </ControlLabel>
+
+      <ControlLabel>23. Photos Taken Of
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name={23} 
+              value='injuries'
+              checked={input[23].indexOf('injuries') !== -1}
+              onChange={handleCheckboxChange} />Injuries
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name={23} 
+              value='propertyDamage'
+              checked={input[23].indexOf('propertyDamage') !== -1}
+              onChange={handleCheckboxChange} />Property Damage/Crime Scene
+        </ControlLabel>
+      </ControlLabel>
+
+      <ControlLabel>24. Consumer Injuries
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name={24} 
+              value='abrasions'
+              checked={input[24].indexOf('abrasions') !== -1}
+              onChange={handleCheckboxChange} />Abrasions
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name={24} 
+              value='complaintsOfPain'
+              checked={input[24].indexOf('complaintsOfPain') !== -1}
+              onChange={handleCheckboxChange} />Complaints of Pain
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name={24} 
+              value='fractures'
+              checked={input[24].indexOf('fractures') !== -1}
+              onChange={handleCheckboxChange} />Fractures
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name={24} 
+              value='bruises'
+              checked={input[24].indexOf('bruises') !== -1}
+              onChange={handleCheckboxChange} />Bruises
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name={24} 
+              value='concussion'
+              checked={input[24].indexOf('concussion') !== -1}
+              onChange={handleCheckboxChange} />Concussion
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name={24} 
+              value='other'
+              checked={input[24].indexOf('other') !== -1}
+              onChange={handleCheckboxChange} />Other
+        </ControlLabel>
+      </ControlLabel>
+
+      <ControlLabel>25. Suicidal
+        <ControlLabel>
+          <input
+              type='radio'
+              data-section={section}
+              name='25a'
+              value='yes'
+              checked={input['25a'] === 'yes'}
+              onChange={handleSingleSelection} />Yes
+        </ControlLabel>
+        <ControlLabel>
+          <input
+              type='radio'
+              data-section={section}
+              name='25a'
+              value='no'
+              checked={input['25a'] === 'no'}
+              onChange={handleSingleSelection} />No
+        </ControlLabel>
+      </ControlLabel>
+
+      <ControlLabel>If Suicidal
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name='25b'
+              value='thoughts'
+              checked={input['25b'].indexOf('thoughts') !== -1}
+              onChange={handleCheckboxChange} />Thoughts
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name='25b'
+              value='threat'
+              checked={input['25b'].indexOf('threat') !== -1}
+              onChange={handleCheckboxChange} />Threat
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name='25b'
+              value='attempt'
+              checked={input['25b'].indexOf('attempt') !== -1}
+              onChange={handleCheckboxChange} />Attempt
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name='25b'
+              value='completed'
+              checked={input['25b'].indexOf('completed') !== -1}
+              onChange={handleCheckboxChange} />Completed
+        </ControlLabel>
+      </ControlLabel>
+
+      <ControlLabel>26. Method Used to Attempt, Threaten, or Complete Suicide
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name={26}
+              value='narcotics'
+              checked={input[26].indexOf('narcotics') !== -1}
+              onChange={handleCheckboxChange} />Narcotics (Prescription or Illicit)
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name={26}
+              value='alcohol'
+              checked={input[26].indexOf('alcohol') !== -1}
+              onChange={handleCheckboxChange} />Alcohol
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name={26}
+              value='knife'
+              checked={input[26].indexOf('knife') !== -1}
+              onChange={handleCheckboxChange} />Knife/Cutting Tool
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name={26}
+              value='firearm'
+              checked={input[26].indexOf('firearm') !== -1}
+              onChange={handleCheckboxChange} />Firearm
+        </ControlLabel>
+        <ControlLabel>
+          <Checkbox
+              data-section={section}
+              name={26}
+              value='other'
+              checked={input[26].indexOf('other') !== -1}
+              onChange={handleCheckboxChange} />Other
+        </ControlLabel>
+      </ControlLabel>
     </SectionView>
 
   );
 }
 
 export default ConsumerInfoView;
-
-// NEXT: CREATE CONTROLLED SELECT COMPONENT
+// NEXT: Add text field for Other checkboxes
