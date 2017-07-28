@@ -18,4 +18,8 @@ export const RadioInput = styled.div`
   margin-right: 6px;
 `;
 
+export const SelectInput = styled(FormControl)`
+  margin-right: 20px;
+`;
+
 // TODO: SIZE PROPS FOR TEXTINPUT
