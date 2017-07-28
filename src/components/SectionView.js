@@ -12,7 +12,7 @@ const SectionWrapper = styled.div`
 
 const Header = styled.div`
 	font-size: 24px;
-	margin-bottom: 14px;
+	margin-bottom: 20px;
 `;
 
 const SectionView = ({header, ...props}) => {

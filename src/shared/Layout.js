@@ -7,7 +7,7 @@ export const Row = styled.div`
 `;
 
 export const Label = styled(ControlLabel)`
-  margin-right: 10px;
+  margin-right: 6px;
 `;
 
 export const TextInput = styled(FormControl)`
@@ -15,5 +15,7 @@ export const TextInput = styled(FormControl)`
 `;
 
 export const RadioInput = styled.div`
-  margin-right: 10px;
+  margin-right: 6px;
 `;
+
+// TODO: SIZE PROPS FOR TEXTINPUT
