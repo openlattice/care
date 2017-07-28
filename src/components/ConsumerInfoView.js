@@ -7,21 +7,25 @@ import PropTypes from 'prop-types';
 import { FormGroup, FormControl, ControlLabel, Checkbox } from 'react-bootstrap';
 
 import SectionView from './SectionView';
+import { Row } from '../shared/Layout';
 
 const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleCheckboxChange, input }) => {
 
   return (
     <SectionView header='Consumer Information'>
-
-      <ControlLabel>13. Consumer Name (Last, First, MI)
-        <FormControl data-section={section} name='13a' value={input['13a']} onChange={handleInput}></FormControl>
-      </ControlLabel>
-      <ControlLabel>Residence / Address (Include Apartment Number, City, County, State, Zip) if Applicable
-        <FormControl data-section={section} name='13b' value={input['13b']} onChange={handleInput}></FormControl>
-      </ControlLabel>
-      <ControlLabel>Consumer Phone Number
-        <FormControl data-section={section} name='13c' value={input['13c']} onChange={handleInput}></FormControl>
-      </ControlLabel>
+      <Row>
+        <ControlLabel>13. Consumer Name (Last, First, MI)
+          <FormControl data-section={section} name='13a' value={input['13a']} onChange={handleInput}></FormControl>
+        </ControlLabel>
+      </Row>
+      <Row>
+        <ControlLabel>Residence / Address (Include Apartment Number, City, County, State, Zip) if Applicable
+          <FormControl data-section={section} name='13b' value={input['13b']} onChange={handleInput}></FormControl>
+        </ControlLabel>
+        <ControlLabel>Consumer Phone Number
+          <FormControl data-section={section} name='13c' value={input['13c']} onChange={handleInput}></FormControl>
+        </ControlLabel>
+      </Row>
 
       <ControlLabel>14. Military Status
         <ControlLabel>

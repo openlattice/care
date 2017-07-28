@@ -4,18 +4,27 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import styled, { injectGlobal } from 'styled-components';
+
+const SectionWrapper = styled.div`
+	margin-bottom: 60px;
+`;
+
+const Header = styled.div`
+	font-size: 24px;
+	margin-bottom: 14px;
+`;
 
 const SectionView = ({header, ...props}) => {
 	return (
-		<div>
-			<div>
+		<SectionWrapper>
+			<Header>
 				{header}
-			</div>
+			</Header>
 			<div>
 				{props.children}
 			</div>
-
-		</div>
+		</SectionWrapper>
 	);
 }
 
