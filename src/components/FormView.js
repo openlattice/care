@@ -10,22 +10,29 @@ import { normalize } from 'polished';
 import Form from '../containers/Form';
 
 const Page = styled.div`
-  margin: 60px;
+  background: #F4F4F4;
 `;
 
 const PageHeader = styled.div`
-  margin-bottom: 60px;
+  padding: 60px;
+  background: white;
+  border-bottom: 1px solid darkgray;
 `;
 
 const Title = styled.h1`
   text-align: center;
-  color: lightblue;
+  color: #37454A;
   font-size: 40px;
 `;
 
 const Description = styled.div`
   text-align: center;
   font-size: 24px;
+  color: #37454A;
+`;
+
+const FormWrapper = styled.div`
+  margin: 0 60px 60px 60px;
 `;
 
 function FormView() {
@@ -35,9 +42,11 @@ function FormView() {
     		<Title>Behavioral Health Report</Title>
     		<Description>Baltimore Police Department</Description>
       </PageHeader>
-      <form>
-        <Form />
-      </form>
+      <FormWrapper>
+        <form>
+          <Form />
+        </form>
+      </FormWrapper>
     </Page>
 	);
 }
