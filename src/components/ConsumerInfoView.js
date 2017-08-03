@@ -178,8 +178,9 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
                 name='17a'
                 value='yes'
                 checked={input['17a'] === 'yes'}
-                onChange={handleSingleSelection} />Yes
+                onChange={handleSingleSelection} />
           </RadioInput>
+          <Label>Yes</Label>
           <RadioInput>
             <input
                 type='radio'
@@ -187,8 +188,9 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
                 name='17a'
                 value='no'
                 checked={input['17a'] === 'no'}
-                onChange={handleSingleSelection} />No
+                onChange={handleSingleSelection} />
           </RadioInput>
+          <Label>No</Label>
           <RadioInput>
             <input
                 type='radio'
@@ -196,8 +198,9 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
                 name='17a' 
                 value='unknown'
                 checked={input['17a'] === 'unknown'}
-                onChange={handleSingleSelection} />Unknown
+                onChange={handleSingleSelection} />
           </RadioInput>
+          <Label>Unknown</Label>
         <Label>If yes, is Consumer Taking Medication?</Label>
           <RadioInput>
             <input
@@ -241,8 +244,8 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
                 value='yes'
                 checked={input[18] === 'yes'}
                 onChange={handleSingleSelection} />
-            <Label>Yes</Label>
           </RadioInput>
+          <Label>Yes</Label>
           <RadioInput>
             <input
                 type='radio'
@@ -251,8 +254,8 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
                 value='no'
                 checked={input[18] === 'no'}
                 onChange={handleSingleSelection} />
-            <Label>No</Label>
           </RadioInput>
+          <Label>No</Label>
           <RadioInput>
             <input
                 type='radio'
@@ -261,8 +264,8 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
                 value='unknown'
                 checked={input[18] === 'unknown'}
                 onChange={handleSingleSelection} />
-            <Label>Unknown</Label>
           </RadioInput>
+          <Label>Unknown</Label>
       </Row>
 
       <Row>
@@ -283,8 +286,8 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
                 value='depression'
                 checked={input['19a'].indexOf('depression') !== -1}
                 onChange={handleCheckboxChange} />
-            <Label>Depression</Label>
           </RadioInput>
+          <Label>Depression</Label>
           <RadioInput>
             <Checkbox
                 data-section={section}
@@ -292,8 +295,8 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
                 value='ptsd'
                 checked={input['19a'].indexOf('ptsd') !== -1}
                 onChange={handleCheckboxChange} />
-            <Label>PTSD</Label>
           </RadioInput>
+          <Label>PTSD</Label>
           <RadioInput>
             <Checkbox
                 data-section={section}
@@ -301,8 +304,8 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
                 value='schizophrenia'
                 checked={input['19a'].indexOf('schizophrenia') !== -1}
                 onChange={handleCheckboxChange} />
-            <Label>Schizophrenia</Label>
           </RadioInput>
+          <Label>Schizophrenia</Label>
           <RadioInput>
             <Checkbox
                 data-section={section}
@@ -310,17 +313,18 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
                 value='dementia'
                 checked={input['19a'].indexOf('dementia') !== -1}
                 onChange={handleCheckboxChange} />
-            <Label>Dementia</Label>
           </RadioInput>
+          <Label>Dementia</Label>
           <RadioInput>
             <Checkbox
                 data-section={section}
                 name='19a' 
                 value='other'
                 checked={input['19a'].indexOf('other') !== -1}
-                onChange={handleCheckboxChange} />Other:
-            <TextInput data-section={section} name='19b' value={input['19b']} onChange={handleInput} />
+                onChange={handleCheckboxChange} />
           </RadioInput>
+          <Label>Other:</Label>
+          <TextInput data-section={section} name='19b' value={input['19b']} onChange={handleInput} />
         </Row>
 
       <Row>
@@ -333,8 +337,8 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               value='yes'
               checked={input['20a'] === 'yes'}
               onChange={handleSingleSelection} />
-          <Label>Yes</Label>
         </RadioInput>
+        <Label>Yes</Label>
         <RadioInput>
           <input
               type='radio'
@@ -343,8 +347,8 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               value='no'
               checked={input['20a'] === 'no'}
               onChange={handleSingleSelection} />
-          <Label>No</Label>
         </RadioInput>
+        <Label>No</Label>
         <Label>If Yes, Weapon Type</Label>
         <TextInput data-section={section} name='20b' value={input['20b']} onChange={handleInput} />
       </Row>
@@ -384,8 +388,8 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               value='disorientation'
               checked={input['22a'].indexOf('disorientation') !== -1}
               onChange={handleCheckboxChange} />
-          <Label>Disorientation / Confusion</Label>
         </RadioInput>
+        <Label>Disorientation / Confusion</Label>
         <RadioInput>
           <Checkbox
               data-section={section}
@@ -393,8 +397,8 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               value='abnormalBehavior'
               checked={input['22a'].indexOf('abnormalBehavior') !== -1}
               onChange={handleCheckboxChange} />
-          <Label>Abnormal Behavior / Appearance (neglect self-care)</Label>
         </RadioInput>
+        <Label>Abnormal Behavior / Appearance (neglect self-care)</Label>
         <RadioInput>
           <Checkbox
               data-section={section}
@@ -402,8 +406,8 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               value='hearingVoices'
               checked={input['22a'].indexOf('hearingVoices') !== -1}
               onChange={handleCheckboxChange} />
-          <Label>Hearing Voices / Hallucinating</Label>
         </RadioInput>
+        <Label>Hearing Voices / Hallucinating</Label>
         <RadioInput>
           <Checkbox
               data-section={section}
@@ -411,8 +415,8 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               value='anxious'
               checked={input['22a'].indexOf('anxious') !== -1}
               onChange={handleCheckboxChange} />
-          <Label>Anxious / Excited / Agitated</Label>
         </RadioInput>
+        <Label>Anxious / Excited / Agitated</Label>
       </Row>
       <Row>
         <RadioInput>
@@ -422,8 +426,8 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               value='depressed'
               checked={input['22a'].indexOf('depressed') !== -1}
               onChange={handleCheckboxChange} />
-          <Label>Depressed Mood</Label>
         </RadioInput>
+        <Label>Depressed Mood</Label>
         <RadioInput>
           <Checkbox
               data-section={section}
@@ -431,8 +435,8 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               value='paranoid'
               checked={input['22a'].indexOf('paranoid') !== -1}
               onChange={handleCheckboxChange} />
-          <Label>Paranoid or Suspicious</Label>
         </RadioInput>
+        <Label>Paranoid or Suspicious</Label>
         <RadioInput>
           <Checkbox
               data-section={section}
@@ -440,8 +444,8 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               value='self-mutilation'
               checked={input['22a'].indexOf('self-mutilation') !== -1}
               onChange={handleCheckboxChange} />
-          <Label>Self-mutilation</Label>
         </RadioInput>
+        <Label>Self-mutilation</Label>
         <RadioInput>
           <Checkbox
               data-section={section}
@@ -449,8 +453,8 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               value='threatening'
               checked={input['22a'].indexOf('threatening') !== -1}
               onChange={handleCheckboxChange} />
-          <Label>Threatening / Violent Towards Others</Label>
         </RadioInput>
+        <Label>Threatening / Violent Towards Others</Label>
         <RadioInput>
           <Checkbox
               data-section={section}
@@ -458,253 +462,285 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               value='other'
               checked={input['22a'].indexOf('other') !== -1}
               onChange={handleCheckboxChange} />
-          <Label>Other:</Label>
-          <TextInput data-section={section} name='22b' value={input['22b']} onChange={handleInput} />
         </RadioInput>
+        <Label>Other:</Label>
+        <TextInput data-section={section} name='22b' value={input['22b']} onChange={handleInput} />
       </Row>
 
-      <ControlLabel>Emotional State (Check all that apply)
-        <ControlLabel>
+      <Row>
+        <Label>Emotional State (Check all that apply)</Label>
+        <RadioInput>
           <Checkbox
               data-section={section}
               name='22c'
               value='angry'
               checked={input['22c'].indexOf('angry') !== -1}
-              onChange={handleCheckboxChange} />Angry
-        </ControlLabel>
-        <ControlLabel>
+              onChange={handleCheckboxChange} />
+        </RadioInput>
+        <Label>Angry</Label>
+        <RadioInput>
           <Checkbox
               data-section={section}
               name='22c'
               value='afraid'
               checked={input['22c'].indexOf('afraid') !== -1}
-              onChange={handleCheckboxChange} />Afraid
-        </ControlLabel>
-        <ControlLabel>
+              onChange={handleCheckboxChange} />
+        </RadioInput>
+        <Label>Afraid</Label>
+        <RadioInput>
           <Checkbox
               data-section={section}
               name='22c' 
               value='apologetic'
               checked={input['22c'].indexOf('apologetic') !== -1}
-              onChange={handleCheckboxChange} />Apologetic
-        </ControlLabel>
-        <ControlLabel>
+              onChange={handleCheckboxChange} />
+        </RadioInput>
+        <Label>Apologetic</Label>
+        <RadioInput>
           <Checkbox
               data-section={section}
               name='22c'
               value='calm'
               checked={input['22c'].indexOf('calm') !== -1}
-              onChange={handleCheckboxChange} />Calm
-        </ControlLabel>
-        <ControlLabel>
+              onChange={handleCheckboxChange} />
+        </RadioInput>
+        <Label>Calm</Label>
+        <RadioInput>
           <Checkbox
               data-section={section}
               name='22c'
               value='crying'
               checked={input['22c'].indexOf('crying') !== -1}
-              onChange={handleCheckboxChange} />Crying
-        </ControlLabel>
-        <ControlLabel>
+              onChange={handleCheckboxChange} />
+        </RadioInput>
+        <Label>Crying</Label>
+        <RadioInput>
           <Checkbox
               data-section={section}
               name='22c' 
               value='fearful'
               checked={input['22c'].indexOf('fearful') !== -1}
-              onChange={handleCheckboxChange} />Fearful
-        </ControlLabel>
-        <ControlLabel>
+              onChange={handleCheckboxChange} />
+        </RadioInput>
+        <Label>Fearful</Label>
+        <RadioInput>
           <Checkbox
               data-section={section}
               name='22c' 
               value='nervous'
               checked={input['22c'].indexOf('nervous') !== -1}
-              onChange={handleCheckboxChange} />Nervous
-        </ControlLabel>
-        <ControlLabel>
+              onChange={handleCheckboxChange} />
+        </RadioInput>
+        <Label>Nervous</Label>
+        <RadioInput>
           <Checkbox
               data-section={section}
               name='22c'
               value='other'
               checked={input['22c'].indexOf('other') !== -1}
-              onChange={handleCheckboxChange} />Other:
-          <FormControl data-section={section} name='22d' value={input['22d']} onChange={handleInput} />
-        </ControlLabel>
-      </ControlLabel>
+              onChange={handleCheckboxChange} />
+        </RadioInput>
+        <Label>Other:</Label>
+        <TextInput data-section={section} name='22d' value={input['22d']} onChange={handleInput} />
+      </Row>
 
-      <ControlLabel>23. Photos Taken Of:
-        <ControlLabel>
+      <Row>
+        <Label>23. Photos Taken Of:</Label>
+        <RadioInput>
           <Checkbox
               data-section={section}
               name={23} 
               value='injuries'
               checked={input[23].indexOf('injuries') !== -1}
-              onChange={handleCheckboxChange} />Injuries
-        </ControlLabel>
-        <ControlLabel>
+              onChange={handleCheckboxChange} />
+        </RadioInput>
+        <Label>Injuries</Label>
+        <RadioInput>
           <Checkbox
               data-section={section}
               name={23} 
               value='propertyDamage'
               checked={input[23].indexOf('propertyDamage') !== -1}
-              onChange={handleCheckboxChange} />Property Damage / Crime Scene
-        </ControlLabel>
-      </ControlLabel>
+              onChange={handleCheckboxChange} />
+        </RadioInput>
+        <Label>Property Damage / Crime Scene</Label>
+      </Row>
 
-      <ControlLabel>24. Consumer Injuries
-        <ControlLabel>
+      <Row>
+        <Label>24. Consumer Injuries</Label>
+        <RadioInput>
           <Checkbox
               data-section={section}
               name='24a' 
               value='abrasions'
               checked={input['24a'].indexOf('abrasions') !== -1}
-              onChange={handleCheckboxChange} />Abrasions
-        </ControlLabel>
-        <ControlLabel>
+              onChange={handleCheckboxChange} />
+        </RadioInput>
+        <Label>Abrasions</Label>
+        <RadioInput>
           <Checkbox
               data-section={section}
               name='24a' 
               value='bruises'
               checked={input['24a'].indexOf('bruises') !== -1}
-              onChange={handleCheckboxChange} />Bruises
-        </ControlLabel>
-        <ControlLabel>
+              onChange={handleCheckboxChange} />
+        </RadioInput>
+        <Label>Bruises</Label>
+        <RadioInput>
           <Checkbox
               data-section={section}
               name='24a' 
               value='complaintsOfPain'
               checked={input['24a'].indexOf('complaintsOfPain') !== -1}
-              onChange={handleCheckboxChange} />Complaints of Pain
-        </ControlLabel>
-        <ControlLabel>
+              onChange={handleCheckboxChange} />
+        </RadioInput>
+        <Label>Complaints of Pain</Label>
+        <RadioInput>
           <Checkbox
               data-section={section}
               name='24a' 
               value='concussion'
               checked={input['24a'].indexOf('concussion') !== -1}
-              onChange={handleCheckboxChange} />Concussion
-        </ControlLabel>
-        <ControlLabel>
+              onChange={handleCheckboxChange} />
+        </RadioInput>
+        <Label>Concussion</Label>
+        <RadioInput>
           <Checkbox
               data-section={section}
               name='24a' 
               value='fractures'
               checked={input['24a'].indexOf('fractures') !== -1}
-              onChange={handleCheckboxChange} />Fractures
-        </ControlLabel>
-        <ControlLabel>
+              onChange={handleCheckboxChange} />
+        </RadioInput>
+        <Label>Fractures</Label>
+        <RadioInput>
           <Checkbox
               data-section={section}
               name='24a' 
               value='other'
               checked={input['24a'].indexOf('other') !== -1}
-              onChange={handleCheckboxChange} />Other:
-          <FormControl data-section={section} name='24b' value={input['24b']} onChange={handleInput} />
-        </ControlLabel>
-      </ControlLabel>
+              onChange={handleCheckboxChange} />
+        </RadioInput>
+        <Label>Other:</Label>
+        <TextInput data-section={section} name='24b' value={input['24b']} onChange={handleInput} />
+      </Row>
 
-      <ControlLabel>25. Suicidal
-        <ControlLabel>
+      <Row>
+        <Label>25. Suicidal</Label>
+        <RadioInput>
           <input
               type='radio'
               data-section={section}
               name='25a'
               value='yes'
               checked={input['25a'] === 'yes'}
-              onChange={handleSingleSelection} />Yes
-        </ControlLabel>
-        <ControlLabel>
+              onChange={handleSingleSelection} />
+        </RadioInput>
+        <Label>Yes</Label>
+        <RadioInput>
           <input
               type='radio'
               data-section={section}
               name='25a'
               value='no'
               checked={input['25a'] === 'no'}
-              onChange={handleSingleSelection} />No
-        </ControlLabel>
-      </ControlLabel>
+              onChange={handleSingleSelection} />
+        </RadioInput>
+        <Label>No</Label>
+      </Row>
 
-      <ControlLabel>If Suicidal:
-        <ControlLabel>
+      <Row>
+        <Label>If Suicidal:</Label>
+        <RadioInput>
           <Checkbox
               data-section={section}
               name='25b'
               value='thoughts'
               checked={input['25b'].indexOf('thoughts') !== -1}
-              onChange={handleCheckboxChange} />Thoughts
-        </ControlLabel>
-        <ControlLabel>
+              onChange={handleCheckboxChange} />
+        </RadioInput>
+        <Label>Thoughts</Label>
+        <RadioInput>
           <Checkbox
               data-section={section}
               name='25b'
               value='threat'
               checked={input['25b'].indexOf('threat') !== -1}
-              onChange={handleCheckboxChange} />Threat
-        </ControlLabel>
-        <ControlLabel>
+              onChange={handleCheckboxChange} />
+        </RadioInput>
+        <Label>Threat</Label>
+        <RadioInput>
           <Checkbox
               data-section={section}
               name='25b'
               value='attempt'
               checked={input['25b'].indexOf('attempt') !== -1}
-              onChange={handleCheckboxChange} />Attempt
-        </ControlLabel>
-        <ControlLabel>
+              onChange={handleCheckboxChange} />
+        </RadioInput>
+        <Label>Attempt</Label>
+        <RadioInput>
           <Checkbox
               data-section={section}
               name='25b'
               value='completed'
               checked={input['25b'].indexOf('completed') !== -1}
-              onChange={handleCheckboxChange} />Completed
-        </ControlLabel>
-      </ControlLabel>
+              onChange={handleCheckboxChange} />
+        </RadioInput>
+        <Label>Completed</Label>
+      </Row>
 
-      <ControlLabel>26. Method Used to Attempt, Threaten, or Complete Suicide
-        <ControlLabel>
+      <Row>
+        <Label>26. Method Used to Attempt, Threaten, or Complete Suicide</Label>
+        <RadioInput>
           <Checkbox
               data-section={section}
               name='26a'
               value='narcotics'
               checked={input['26a'].indexOf('narcotics') !== -1}
-              onChange={handleCheckboxChange} />Narcotics (Prescription or Illicit)
-        </ControlLabel>
-        <ControlLabel>
+              onChange={handleCheckboxChange} />
+        </RadioInput>
+        <Label>Narcotics (Prescription or Illicit)</Label>
+        <RadioInput>
           <Checkbox
               data-section={section}
               name='26a'
               value='alcohol'
               checked={input['26a'].indexOf('alcohol') !== -1}
-              onChange={handleCheckboxChange} />Alcohol
-        </ControlLabel>
-        <ControlLabel>
+              onChange={handleCheckboxChange} />
+        </RadioInput>
+        <Label>Alcohol</Label>
+        <RadioInput>
           <Checkbox
               data-section={section}
               name='26a'
               value='knife'
               checked={input['26a'].indexOf('knife') !== -1}
-              onChange={handleCheckboxChange} />Knife / Cutting Tool
-        </ControlLabel>
-        <ControlLabel>
+              onChange={handleCheckboxChange} />
+        </RadioInput>
+        <Label>Knife / Cutting Tool</Label>
+        <RadioInput>
           <Checkbox
               data-section={section}
               name='26a'
               value='firearm'
               checked={input['26a'].indexOf('firearm') !== -1}
-              onChange={handleCheckboxChange} />Firearm
-        </ControlLabel>
-        <ControlLabel>
+              onChange={handleCheckboxChange} />
+        </RadioInput>
+        <Label>Firearm</Label>
+        <RadioInput>
           <Checkbox
               data-section={section}
               name='26a'
               value='other'
               checked={input['26a'].indexOf('other') !== -1}
-              onChange={handleCheckboxChange} />Other:
-          <FormControl data-section={section} name='26b' value={input['26b']} onChange={handleInput} />
-        </ControlLabel>
-      </ControlLabel>
+              onChange={handleCheckboxChange} />
+        </RadioInput>
+        <Label>Other:</Label>
+        <TextInput data-section={section} name='26b' value={input['26b']} onChange={handleInput} />
+      </Row>
     </SectionView>
   );
 }
 
 export default ConsumerInfoView;
-// NEXT: FIX CHECKBOX LABEL ALIGNMENT
 // TODO: IF 15 is yes -> send copy of report to Homelessoutreach@BaltimorePolice.org
