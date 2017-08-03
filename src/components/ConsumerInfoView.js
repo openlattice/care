@@ -4,7 +4,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormGroup, FormControl, ControlLabel, Checkbox } from 'react-bootstrap';
+import { Checkbox } from 'react-bootstrap';
 
 import SectionView from './SectionView';
 import { Row, TextInput, RadioInput, SelectInput, Label } from '../shared/Layout';
