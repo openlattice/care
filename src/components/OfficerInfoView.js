@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { FormGroup, FormControl, ControlLabel, Checkbox } from 'react-bootstrap';
 
 import SectionView from './SectionView';
-import { Row, TextInput, RadioInput, Label } from '../shared/Layout';
+import { Row, TextInput, SingleSelectInput, Label } from '../shared/Layout';
 
 
 const OfficerInfoView = ({ section, handleInput, handleCheckboxChange, input }) => {
@@ -24,41 +24,41 @@ const OfficerInfoView = ({ section, handleInput, handleCheckboxChange, input }) 
 
       <Row>
         <Label>36. Officer Certification</Label>
-        <RadioInput>
+        <SingleSelectInput>
           <Checkbox
               data-section={section}
               name={36}
               value='crtUnit'
               checked={input[36].indexOf('crtUnit') !== -1}
               onChange={handleCheckboxChange} />
-        </RadioInput>
+        </SingleSelectInput>
         <Label>CRT Unit</Label>
-        <RadioInput>
+        <SingleSelectInput>
           <Checkbox
               data-section={section}
               name={36}
               value='best'
               checked={input[36].indexOf('best') !== -1}
               onChange={handleCheckboxChange} />
-        </RadioInput>
+        </SingleSelectInput>
         <Label>BEST</Label>
-        <RadioInput>
+        <SingleSelectInput>
           <Checkbox
               data-section={section}
               name={36}
               value='cit'
               checked={input[36].indexOf('cit') !== -1}
               onChange={handleCheckboxChange} />
-        </RadioInput>
+        </SingleSelectInput>
         <Label>CIT</Label>
-        <RadioInput>
+        <SingleSelectInput>
           <Checkbox
               data-section={section}
               name={36}
               value='n/a'
               checked={input[36].indexOf('n/a') !== -1}
               onChange={handleCheckboxChange} />
-        </RadioInput>
+        </SingleSelectInput>
         <Label>N/A</Label>
       </Row>
     </SectionView>
