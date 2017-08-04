@@ -21,10 +21,6 @@ export const TextInput = styled(FormControl)`
   width: 100%;
 `;
 
-export const SingleSelectInput = styled.span`
-  margin-right: 6px;
-`;
-
 // TODO: take size parameter (flex ratio)
 export const InputWrapper = styled.span`
   margin-right: 30px;
@@ -39,3 +35,5 @@ export const InputWrapper = styled.span`
 export const SelectInput = styled(FormControl)`
   margin-right: 20px;
 `;
+
+// NEXT: economizing elements -> reducing divs, SingleSelectInput + radio / checkbox

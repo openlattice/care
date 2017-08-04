@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import styled, { injectGlobal } from 'styled-components';
 
 import SectionView from './SectionView';
-import { Row, Label, TextInput, SingleSelectInput, InputWrapper } from '../shared/Layout';
+import { Row, Label, TextInput, InputWrapper } from '../shared/Layout';
 
 const ReportInfoView = ({ section, handleInput, handleSingleSelection, input }) => {
 
@@ -26,25 +26,21 @@ const ReportInfoView = ({ section, handleInput, handleSingleSelection, input }) 
         <InputWrapper>
           <div><Label>3. Comparison Offense Report Prepared</Label></div>
           <div>
-            <SingleSelectInput>
-              <input
-                  type='radio'
-                  data-section={section}
-                  name='3'
-                  value='yes'
-                  checked={input[3] === 'yes'}
-                  onChange={handleSingleSelection} />
-            </SingleSelectInput>
+            <input
+                type='radio'
+                data-section={section}
+                name='3'
+                value='yes'
+                checked={input[3] === 'yes'}
+                onChange={handleSingleSelection} />
             <Label>Yes</Label>
-            <SingleSelectInput>
-              <input
-                  type='radio'
-                  data-section={section}
-                  name ='3'
-                  value='no'
-                  checked={input[3] === 'no'}
-                  onChange={handleSingleSelection} />
-            </SingleSelectInput>
+            <input
+                type='radio'
+                data-section={section}
+                name ='3'
+                value='no'
+                checked={input[3] === 'no'}
+                onChange={handleSingleSelection} />
             <Label>No</Label>
           </div>
         </InputWrapper>
@@ -79,24 +75,20 @@ const ReportInfoView = ({ section, handleInput, handleSingleSelection, input }) 
       <Row>
         <InputWrapper>
           <Label>9. On View</Label>
-          <SingleSelectInput>
-            <input
-                type='radio'
-                data-section={section}
-                name='9'
-                value='yes'
-                onChange={handleSingleSelection} />
-          </SingleSelectInput>
+          <input
+              type='radio'
+              data-section={section}
+              name='9'
+              value='yes'
+              onChange={handleSingleSelection} />
           <Label>Yes</Label>
-          <SingleSelectInput>
-            <input
-                type='radio'
-                data-section={section}
-                name ='9'
-                value='no'
-                onChange={handleSingleSelection} />
-            <Label>No</Label>
-          </SingleSelectInput>
+          <input
+              type='radio'
+              data-section={section}
+              name ='9'
+              value='no'
+              onChange={handleSingleSelection} />
+          <Label>No</Label>
         </InputWrapper>
         <InputWrapper>
           <Label>10. Date / Time Occurred</Label>
