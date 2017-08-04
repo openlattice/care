@@ -1,5 +1,5 @@
 import styled, { injectGlobal } from 'styled-components';
-import { ControlLabel, FormControl } from 'react-bootstrap';
+import { ControlLabel, FormControl, Checkbox, Radio } from 'react-bootstrap';
 
 export const Row = styled.div`
   display: -webkit-box;
@@ -7,18 +7,22 @@ export const Row = styled.div`
   display: -webkit-flex;
   display: flex;
   justify-content: start;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
 `;
 
-
 export const Label = styled(ControlLabel)`
-  margin-right: 6px;
+  margin: 0 8px 6px 4px;
   color: #37454A;
 `;
 
+export const TitleLabel = Label.extend`
+  display: block;
+`;
+
 export const TextInput = styled(FormControl)`
-  margin-top: 6px;
   width: 100%;
+  height: 24px;
+  display: inline-block;
 `;
 
 // TODO: take size parameter (flex ratio)
@@ -31,9 +35,17 @@ export const InputWrapper = styled.span`
   -ms-flex: 1 0 0;
 `;
 
+export const InlineCheckbox = styled(Checkbox)`
+  display: inline-block;
+`;
+
+export const InlineRadio = styled(Radio)`
+  display: inline-block;
+`;
 
 export const SelectInput = styled(FormControl)`
   margin-right: 20px;
+  width: 100%;
 `;
 
-// NEXT: economizing elements -> reducing divs, SingleSelectInput + radio / checkbox
+// NEXT: pass props to styled component (inputwrapper's width)
