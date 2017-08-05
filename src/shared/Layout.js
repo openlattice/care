@@ -47,4 +47,5 @@ export const InlineRadio = styled(Radio)`
 export const SelectInput = styled(FormControl)`
   margin-right: 20px;
   width: 100%;
+  height: 30px;
 `;
