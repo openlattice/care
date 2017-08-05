@@ -11,16 +11,18 @@ export const Row = styled.div`
 `;
 
 export const Label = styled(ControlLabel)`
-  margin: 0 8px 6px 4px;
+  margin: 0 8px 4px 4px;
   color: #37454A;
 `;
 
 export const TitleLabel = Label.extend`
   display: block;
+  line-height: 1.5;
 `;
 
 export const CheckboxLabel = Label.extend`
-  line-height: 1.5;
+  margin: 0 8px 0 4px;
+  line-height: 2;
 `;
 
 export const TextInput = styled(FormControl)`
@@ -34,6 +36,16 @@ export const InputWrapper = styled.span.attrs({
 })`
   padding-right: 30px;
   flex: ${props => props.flex};
+`;
+
+export const CheckboxWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+`;
+
+export const OtherWrapper = styled.span`
+  display: flex;
+  align-items: center;
 `;
 
 export const InlineCheckbox = styled(Checkbox)`

@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { Checkbox } from 'react-bootstrap';
 
 import SectionView from './SectionView';
-import { Row, TextInput, SelectInput, InputWrapper, Label, InlineCheckbox, InlineRadio, TitleLabel } from '../shared/Layout';
+import { Row, TextInput, SelectInput, InputWrapper, Label, InlineCheckbox, InlineRadio, TitleLabel, CheckboxLabel, CheckboxWrapper, OtherWrapper } from '../shared/Layout';
 import { FLEX } from '../shared/Consts'
 
 const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleCheckboxChange, input }) => {
@@ -262,52 +262,65 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
 
         <InputWrapper flex={FLEX['100']}>
           <TitleLabel>19. Self Diagnosis</TitleLabel>
-          <InlineCheckbox
-              type='checkbox'
-              data-section={section}
-              name='19a'
-              value='bipolar'
-              checked={input['19a'].indexOf('bipolar') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>Bipolar</Label>
-          <InlineCheckbox
-              data-section={section}
-              name='19a'
-              value='depression'
-              checked={input['19a'].indexOf('depression') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>Depression</Label>
-          <InlineCheckbox
-              data-section={section}
-              name='19a' 
-              value='ptsd'
-              checked={input['19a'].indexOf('ptsd') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>PTSD</Label>
-          <InlineCheckbox
-              data-section={section}
-              name='19a'
-              value='schizophrenia'
-              checked={input['19a'].indexOf('schizophrenia') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>Schizophrenia</Label>
-          <InlineCheckbox
-              data-section={section}
-              name='19a'
-              value='dementia'
-              checked={input['19a'].indexOf('dementia') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>Dementia</Label>
-          <div>
+          <CheckboxWrapper>
+            <span>
+              <InlineCheckbox
+                  type='checkbox'
+                  data-section={section}
+                  name='19a'
+                  value='bipolar'
+                  checked={input['19a'].indexOf('bipolar') !== -1}
+                  onChange={handleCheckboxChange} />
+              <CheckboxLabel>Bipolar</CheckboxLabel>
+            </span>
+            <span>
+              <InlineCheckbox
+                  data-section={section}
+                  name='19a'
+                  value='depression'
+                  checked={input['19a'].indexOf('depression') !== -1}
+                  onChange={handleCheckboxChange} />
+              <CheckboxLabel>Depression</CheckboxLabel>
+            </span>
+            <span>
+              <InlineCheckbox
+                  data-section={section}
+                  name='19a' 
+                  value='ptsd'
+                  checked={input['19a'].indexOf('ptsd') !== -1}
+                  onChange={handleCheckboxChange} />
+              <CheckboxLabel>PTSD</CheckboxLabel>
+            </span>
+            <span>
+              <InlineCheckbox
+                  data-section={section}
+                  name='19a'
+                  value='schizophrenia'
+                  checked={input['19a'].indexOf('schizophrenia') !== -1}
+                  onChange={handleCheckboxChange} />
+              <CheckboxLabel>Schizophrenia</CheckboxLabel>
+            </span>
+            <span>
+              <InlineCheckbox
+                  data-section={section}
+                  name='19a'
+                  value='dementia'
+                  checked={input['19a'].indexOf('dementia') !== -1}
+                  onChange={handleCheckboxChange} />
+              <CheckboxLabel>Dementia</CheckboxLabel>
+            </span>
+          </CheckboxWrapper>
+
+          <OtherWrapper>
             <InlineCheckbox
                 data-section={section}
                 name='19a' 
                 value='other'
                 checked={input['19a'].indexOf('other') !== -1}
                 onChange={handleCheckboxChange} />
-            <Label>Other:</Label>
+            <CheckboxLabel>Other:</CheckboxLabel>
             <TextInput data-section={section} name='19b' value={input['19b']} onChange={handleInput} />
-          </div>
+          </OtherWrapper>
         </InputWrapper>
       </Row>
 
@@ -364,200 +377,254 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
       <Row>
         <InputWrapper flex={FLEX['1_2']}>
           <TitleLabel>22. Observed Behaviors (Check all that apply)</TitleLabel>
-          <InlineCheckbox
-              data-section={section}
-              name='22a'
-              value='disorientation'
-              checked={input['22a'].indexOf('disorientation') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>Disorientation / Confusion</Label>
-          <InlineCheckbox
-              data-section={section}
-              name='22a'
-              value='abnormalBehavior'
-              checked={input['22a'].indexOf('abnormalBehavior') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>Abnormal Behavior / Appearance (neglect self-care)</Label>
-          <InlineCheckbox
-              data-section={section}
-              name='22a' 
-              value='hearingVoices'
-              checked={input['22a'].indexOf('hearingVoices') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>Hearing Voices / Hallucinating</Label>
-          <InlineCheckbox
-              data-section={section}
-              name='22a'
-              value='anxious'
-              checked={input['22a'].indexOf('anxious') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>Anxious / Excited / Agitated</Label>
-          <InlineCheckbox
-              data-section={section}
-              name='22a'
-              value='depressed'
-              checked={input['22a'].indexOf('depressed') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>Depressed Mood</Label>
-          <InlineCheckbox
-              data-section={section}
-              name='22a'
-              value='paranoid'
-              checked={input['22a'].indexOf('paranoid') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>Paranoid or Suspicious</Label>
-          <div>
-            <InlineCheckbox
-                data-section={section}
-                name='22a'
-                value='self-mutilation'
-                checked={input['22a'].indexOf('self-mutilation') !== -1}
-                onChange={handleCheckboxChange} />
-            <Label>Self-mutilation</Label>
-            <InlineCheckbox
-                data-section={section}
-                name='22a' 
-                value='threatening'
-                checked={input['22a'].indexOf('threatening') !== -1}
-                onChange={handleCheckboxChange} />
-            <Label>Threatening / Violent Towards Others</Label>
-            <InlineCheckbox
-                data-section={section}
-                name='22a'
-                value='other'
-                checked={input['22a'].indexOf('other') !== -1}
-                onChange={handleCheckboxChange} />
-            <Label>Other:</Label>
-            <TextInput data-section={section} name='22b' value={input['22b']} onChange={handleInput} />
-          </div>
+          <CheckboxWrapper>
+            <span>
+              <InlineCheckbox
+                  data-section={section}
+                  name='22a'
+                  value='disorientation'
+                  checked={input['22a'].indexOf('disorientation') !== -1}
+                  onChange={handleCheckboxChange} />
+              <CheckboxLabel>Disorientation / Confusion</CheckboxLabel>
+            </span>
+            <span>
+              <InlineCheckbox
+                  data-section={section}
+                  name='22a'
+                  value='abnormalBehavior'
+                  checked={input['22a'].indexOf('abnormalBehavior') !== -1}
+                  onChange={handleCheckboxChange} />
+              <CheckboxLabel>Abnormal Behavior / Appearance (neglect self-care)</CheckboxLabel>
+            </span>
+            <span>
+              <InlineCheckbox
+                  data-section={section}
+                  name='22a' 
+                  value='hearingVoices'
+                  checked={input['22a'].indexOf('hearingVoices') !== -1}
+                  onChange={handleCheckboxChange} />
+              <CheckboxLabel>Hearing Voices / Hallucinating</CheckboxLabel>
+            </span>
+            <span>
+              <InlineCheckbox
+                  data-section={section}
+                  name='22a'
+                  value='anxious'
+                  checked={input['22a'].indexOf('anxious') !== -1}
+                  onChange={handleCheckboxChange} />
+              <CheckboxLabel>Anxious / Excited / Agitated</CheckboxLabel>
+            </span>
+            <span>
+              <InlineCheckbox
+                  data-section={section}
+                  name='22a'
+                  value='depressed'
+                  checked={input['22a'].indexOf('depressed') !== -1}
+                  onChange={handleCheckboxChange} />
+              <CheckboxLabel>Depressed Mood</CheckboxLabel>
+            </span>
+            <span>
+              <InlineCheckbox
+                  data-section={section}
+                  name='22a'
+                  value='paranoid'
+                  checked={input['22a'].indexOf('paranoid') !== -1}
+                  onChange={handleCheckboxChange} />
+              <CheckboxLabel>Paranoid or Suspicious</CheckboxLabel>
+            </span>
+            <span>
+              <InlineCheckbox
+                  data-section={section}
+                  name='22a'
+                  value='self-mutilation'
+                  checked={input['22a'].indexOf('self-mutilation') !== -1}
+                  onChange={handleCheckboxChange} />
+              <CheckboxLabel>Self-mutilation</CheckboxLabel>
+            </span>
+            <span>
+              <InlineCheckbox
+                  data-section={section}
+                  name='22a' 
+                  value='threatening'
+                  checked={input['22a'].indexOf('threatening') !== -1}
+                  onChange={handleCheckboxChange} />
+              <CheckboxLabel>Threatening / Violent Towards Others</CheckboxLabel>
+            </span>
+            </CheckboxWrapper>
+            <OtherWrapper>
+              <InlineCheckbox
+                  data-section={section}
+                  name='22a'
+                  value='other'
+                  checked={input['22a'].indexOf('other') !== -1}
+                  onChange={handleCheckboxChange} />
+              <CheckboxLabel>Other:</CheckboxLabel>
+              <TextInput data-section={section} name='22b' value={input['22b']} onChange={handleInput} />
+            </OtherWrapper>
         </InputWrapper>
 
         <InputWrapper flex={FLEX['1_2']}>
           <TitleLabel>Emotional State (Check all that apply)</TitleLabel>
-          <InlineCheckbox
-              data-section={section}
-              name='22c'
-              value='angry'
-              checked={input['22c'].indexOf('angry') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>Angry</Label>
-          <InlineCheckbox
-              data-section={section}
-              name='22c'
-              value='afraid'
-              checked={input['22c'].indexOf('afraid') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>Afraid</Label>
-          <InlineCheckbox
-              data-section={section}
-              name='22c' 
-              value='apologetic'
-              checked={input['22c'].indexOf('apologetic') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>Apologetic</Label>
-          <InlineCheckbox
-              data-section={section}
-              name='22c'
-              value='calm'
-              checked={input['22c'].indexOf('calm') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>Calm</Label>
-          <InlineCheckbox
-              data-section={section}
-              name='22c'
-              value='crying'
-              checked={input['22c'].indexOf('crying') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>Crying</Label>
-          <InlineCheckbox
-              data-section={section}
-              name='22c' 
-              value='fearful'
-              checked={input['22c'].indexOf('fearful') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>Fearful</Label>
-          <InlineCheckbox
-              data-section={section}
-              name='22c' 
-              value='nervous'
-              checked={input['22c'].indexOf('nervous') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>Nervous</Label>
-          <InlineCheckbox
-              data-section={section}
-              name='22c'
-              value='other'
-              checked={input['22c'].indexOf('other') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>Other:</Label>
-          <TextInput data-section={section} name='22d' value={input['22d']} onChange={handleInput} />
+          <CheckboxWrapper>
+            <span>
+              <InlineCheckbox
+                  data-section={section}
+                  name='22c'
+                  value='angry'
+                  checked={input['22c'].indexOf('angry') !== -1}
+                  onChange={handleCheckboxChange} />
+              <CheckboxLabel>Angry</CheckboxLabel>
+            </span>
+            <span>
+              <InlineCheckbox
+                  data-section={section}
+                  name='22c'
+                  value='afraid'
+                  checked={input['22c'].indexOf('afraid') !== -1}
+                  onChange={handleCheckboxChange} />
+              <CheckboxLabel>Afraid</CheckboxLabel>
+            </span>
+            <span>
+              <InlineCheckbox
+                  data-section={section}
+                  name='22c' 
+                  value='apologetic'
+                  checked={input['22c'].indexOf('apologetic') !== -1}
+                  onChange={handleCheckboxChange} />
+              <CheckboxLabel>Apologetic</CheckboxLabel>
+            </span>
+              <InlineCheckbox
+                  data-section={section}
+                  name='22c'
+                  value='calm'
+                  checked={input['22c'].indexOf('calm') !== -1}
+                  onChange={handleCheckboxChange} />
+              <CheckboxLabel>Calm</CheckboxLabel>
+            <span>
+              <InlineCheckbox
+                  data-section={section}
+                  name='22c'
+                  value='crying'
+                  checked={input['22c'].indexOf('crying') !== -1}
+                  onChange={handleCheckboxChange} />
+              <CheckboxLabel>Crying</CheckboxLabel>
+            </span>
+            <span>
+              <InlineCheckbox
+                  data-section={section}
+                  name='22c' 
+                  value='fearful'
+                  checked={input['22c'].indexOf('fearful') !== -1}
+                  onChange={handleCheckboxChange} />
+              <CheckboxLabel>Fearful</CheckboxLabel>
+            </span>
+            <span>
+              <InlineCheckbox
+                  data-section={section}
+                  name='22c' 
+                  value='nervous'
+                  checked={input['22c'].indexOf('nervous') !== -1}
+                  onChange={handleCheckboxChange} />
+              <CheckboxLabel>Nervous</CheckboxLabel>
+            </span>
+          </CheckboxWrapper>
+          <OtherWrapper>
+            <InlineCheckbox
+                data-section={section}
+                name='22c'
+                value='other'
+                checked={input['22c'].indexOf('other') !== -1}
+                onChange={handleCheckboxChange} />
+            <CheckboxLabel>Other:</CheckboxLabel>
+            <TextInput data-section={section} name='22d' value={input['22d']} onChange={handleInput} />
+          </OtherWrapper>
         </InputWrapper>
       </Row>
 
       <Row>
         <InputWrapper flex={FLEX['1_5']}>
           <TitleLabel>23. Photos Taken Of:</TitleLabel>
-          <InlineCheckbox
-              data-section={section}
-              name={23} 
-              value='injuries'
-              checked={input[23].indexOf('injuries') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>Injuries</Label>
-          <InlineCheckbox
-              data-section={section}
-              name={23} 
-              value='propertyDamage'
-              checked={input[23].indexOf('propertyDamage') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>Property Damage / Crime Scene</Label>
+          <CheckboxWrapper>
+            <span>
+              <InlineCheckbox
+                  data-section={section}
+                  name={23} 
+                  value='injuries'
+                  checked={input[23].indexOf('injuries') !== -1}
+                  onChange={handleCheckboxChange} />
+              <CheckboxLabel>Injuries</CheckboxLabel>
+            </span>
+            <span>
+              <InlineCheckbox
+                  data-section={section}
+                  name={23} 
+                  value='propertyDamage'
+                  checked={input[23].indexOf('propertyDamage') !== -1}
+                  onChange={handleCheckboxChange} />
+              <CheckboxLabel>Property Damage / Crime Scene</CheckboxLabel>
+            </span>
+          </CheckboxWrapper>
         </InputWrapper>
 
         <InputWrapper flex={FLEX['100']}>
           <TitleLabel>24. Consumer Injuries</TitleLabel>
-          <InlineCheckbox
-              data-section={section}
-              name='24a' 
-              value='abrasions'
-              checked={input['24a'].indexOf('abrasions') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>Abrasions</Label>
-          <InlineCheckbox
-              data-section={section}
-              name='24a' 
-              value='bruises'
-              checked={input['24a'].indexOf('bruises') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>Bruises</Label>
-          <InlineCheckbox
-              data-section={section}
-              name='24a' 
-              value='complaintsOfPain'
-              checked={input['24a'].indexOf('complaintsOfPain') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>Complaints of Pain</Label>
-          <InlineCheckbox
-              data-section={section}
-              name='24a' 
-              value='concussion'
-              checked={input['24a'].indexOf('concussion') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>Concussion</Label>
-          <InlineCheckbox
-              data-section={section}
-              name='24a' 
-              value='fractures'
-              checked={input['24a'].indexOf('fractures') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>Fractures</Label>
-          <InlineCheckbox
-              data-section={section}
-              name='24a' 
-              value='other'
-              checked={input['24a'].indexOf('other') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>Other:</Label>
-          <TextInput data-section={section} name='24b' value={input['24b']} onChange={handleInput} />
+          <CheckboxWrapper>
+            <span>
+              <InlineCheckbox
+                  data-section={section}
+                  name='24a' 
+                  value='abrasions'
+                  checked={input['24a'].indexOf('abrasions') !== -1}
+                  onChange={handleCheckboxChange} />
+              <CheckboxLabel>Abrasions</CheckboxLabel>
+            </span>
+            <span>
+              <InlineCheckbox
+                  data-section={section}
+                  name='24a' 
+                  value='bruises'
+                  checked={input['24a'].indexOf('bruises') !== -1}
+                  onChange={handleCheckboxChange} />
+              <CheckboxLabel>Bruises</CheckboxLabel>
+            </span>
+            <span>
+              <InlineCheckbox
+                  data-section={section}
+                  name='24a' 
+                  value='complaintsOfPain'
+                  checked={input['24a'].indexOf('complaintsOfPain') !== -1}
+                  onChange={handleCheckboxChange} />
+              <CheckboxLabel>Complaints of Pain</CheckboxLabel>
+            </span>
+            <span>
+              <InlineCheckbox
+                  data-section={section}
+                  name='24a' 
+                  value='concussion'
+                  checked={input['24a'].indexOf('concussion') !== -1}
+                  onChange={handleCheckboxChange} />
+              <CheckboxLabel>Concussion</CheckboxLabel>
+            </span>
+            <span>
+              <InlineCheckbox
+                  data-section={section}
+                  name='24a' 
+                  value='fractures'
+                  checked={input['24a'].indexOf('fractures') !== -1}
+                  onChange={handleCheckboxChange} />
+              <CheckboxLabel>Fractures</CheckboxLabel>
+            </span>
+          </CheckboxWrapper>
+          <OtherWrapper>
+            <InlineCheckbox
+                data-section={section}
+                name='24a' 
+                value='other'
+                checked={input['24a'].indexOf('other') !== -1}
+                onChange={handleCheckboxChange} />
+            <CheckboxLabel>Other:</CheckboxLabel>
+            <TextInput data-section={section} name='24b' value={input['24b']} onChange={handleInput} />
+          </OtherWrapper>
         </InputWrapper>
       </Row>
 
@@ -584,76 +651,98 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
 
         <InputWrapper flex={FLEX['100']}>
           <TitleLabel>If Suicidal:</TitleLabel>
-          <InlineCheckbox
-              data-section={section}
-              name='25b'
-              value='thoughts'
-              checked={input['25b'].indexOf('thoughts') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>Thoughts</Label>
-          <InlineCheckbox
-              data-section={section}
-              name='25b'
-              value='threat'
-              checked={input['25b'].indexOf('threat') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>Threat</Label>
-          <InlineCheckbox
-              data-section={section}
-              name='25b'
-              value='attempt'
-              checked={input['25b'].indexOf('attempt') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>Attempt</Label>
-          <InlineCheckbox
-              data-section={section}
-              name='25b'
-              value='completed'
-              checked={input['25b'].indexOf('completed') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>Completed</Label>
+          <CheckboxWrapper>
+            <span>
+              <InlineCheckbox
+                  data-section={section}
+                  name='25b'
+                  value='thoughts'
+                  checked={input['25b'].indexOf('thoughts') !== -1}
+                  onChange={handleCheckboxChange} />
+              <CheckboxLabel>Thoughts</CheckboxLabel>
+            </span>
+            <span>
+              <InlineCheckbox
+                  data-section={section}
+                  name='25b'
+                  value='threat'
+                  checked={input['25b'].indexOf('threat') !== -1}
+                  onChange={handleCheckboxChange} />
+              <CheckboxLabel>Threat</CheckboxLabel>
+            </span>
+            <span>
+              <InlineCheckbox
+                  data-section={section}
+                  name='25b'
+                  value='attempt'
+                  checked={input['25b'].indexOf('attempt') !== -1}
+                  onChange={handleCheckboxChange} />
+              <CheckboxLabel>Attempt</CheckboxLabel>
+            </span>
+            <span>
+              <InlineCheckbox
+                  data-section={section}
+                  name='25b'
+                  value='completed'
+                  checked={input['25b'].indexOf('completed') !== -1}
+                  onChange={handleCheckboxChange} />
+              <CheckboxLabel>Completed</CheckboxLabel>
+            </span>
+          </CheckboxWrapper>
         </InputWrapper>
       </Row>
 
       <Row>
         <InputWrapper flex={FLEX['100']}>
           <TitleLabel>26. Method Used to Attempt, Threaten, or Complete Suicide</TitleLabel>
-          <InlineCheckbox
-              data-section={section}
-              name='26a'
-              value='narcotics'
-              checked={input['26a'].indexOf('narcotics') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>Narcotics (Prescription or Illicit)</Label>
-          <InlineCheckbox
-              data-section={section}
-              name='26a'
-              value='alcohol'
-              checked={input['26a'].indexOf('alcohol') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>Alcohol</Label>
-          <InlineCheckbox
-              data-section={section}
-              name='26a'
-              value='knife'
-              checked={input['26a'].indexOf('knife') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>Knife / Cutting Tool</Label>
-          <InlineCheckbox
-              data-section={section}
-              name='26a'
-              value='firearm'
-              checked={input['26a'].indexOf('firearm') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>Firearm</Label>
-          <InlineCheckbox
-              data-section={section}
-              name='26a'
-              value='other'
-              checked={input['26a'].indexOf('other') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>Other:</Label>
-          <TextInput data-section={section} name='26b' value={input['26b']} onChange={handleInput} />
+          <CheckboxWrapper>
+            <span>
+              <InlineCheckbox
+                  data-section={section}
+                  name='26a'
+                  value='narcotics'
+                  checked={input['26a'].indexOf('narcotics') !== -1}
+                  onChange={handleCheckboxChange} />
+              <CheckboxLabel>Narcotics (Prescription or Illicit)</CheckboxLabel>
+            </span>
+            <span>
+              <InlineCheckbox
+                  data-section={section}
+                  name='26a'
+                  value='alcohol'
+                  checked={input['26a'].indexOf('alcohol') !== -1}
+                  onChange={handleCheckboxChange} />
+              <CheckboxLabel>Alcohol</CheckboxLabel>
+            </span>
+            <span>
+              <InlineCheckbox
+                  data-section={section}
+                  name='26a'
+                  value='knife'
+                  checked={input['26a'].indexOf('knife') !== -1}
+                  onChange={handleCheckboxChange} />
+              <CheckboxLabel>Knife / Cutting Tool</CheckboxLabel>
+            </span>
+            <span>
+              <InlineCheckbox
+                  data-section={section}
+                  name='26a'
+                  value='firearm'
+                  checked={input['26a'].indexOf('firearm') !== -1}
+                  onChange={handleCheckboxChange} />
+              <CheckboxLabel>Firearm</CheckboxLabel>
+            </span>
+          </CheckboxWrapper>
+          <OtherWrapper>
+            <InlineCheckbox
+                data-section={section}
+                name='26a'
+                value='other'
+                checked={input['26a'].indexOf('other') !== -1}
+                onChange={handleCheckboxChange} />
+            <CheckboxLabel>Other:</CheckboxLabel>
+            <TextInput data-section={section} name='26b' value={input['26b']} onChange={handleInput} />
+          </OtherWrapper>
         </InputWrapper>
       </Row>
     </SectionView>
