@@ -232,7 +232,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
       </Row>
 
       <Row>
-        <InputWrapper flex={FLEX['1_3']}>
+        <InputWrapper flex={FLEX['1_5']}>
           <TitleLabel>18. Does Consumer Have Previous Psychiatric Hospital Admission?</TitleLabel>
           <InlineRadio
               type='radio'
@@ -495,7 +495,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
       </Row>
 
       <Row>
-        <InputWrapper flex={FLEX['1_3']}>
+        <InputWrapper flex={FLEX['1_5']}>
           <TitleLabel>23. Photos Taken Of:</TitleLabel>
           <InlineCheckbox
               data-section={section}
@@ -562,7 +562,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
       </Row>
 
       <Row>
-        <InputWrapper flex={FLEX['1_3']}>
+        <InputWrapper flex={FLEX['1_5']}>
           <TitleLabel>25. Suicidal</TitleLabel>
           <InlineRadio
               type='radio'
