@@ -6,7 +6,6 @@ export const Row = styled.div`
   display: -ms-flexbox;
   display: -webkit-flex;
   display: flex;
-  justify-content: start;
   margin-bottom: 24px;
 `;
 
@@ -26,13 +25,11 @@ export const TextInput = styled(FormControl)`
 `;
 
 // TODO: take size parameter (flex ratio)
-export const InputWrapper = styled.span`
-  margin-right: 30px;
-  display: inline-block;
-  flex: 1 0 0;
-  -webkit-box-flex: 1 0 0;
-  -webkit-flex: 1 0 0;
-  -ms-flex: 1 0 0;
+export const InputWrapper = styled.span.attrs({
+  flex: props => props.flex || '0 0 490px',
+})`
+  padding-right: 30px;
+  flex: ${props => props.flex};
 `;
 
 export const InlineCheckbox = styled(Checkbox)`
