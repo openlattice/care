@@ -8,6 +8,7 @@ import styled, { injectGlobal } from 'styled-components';
 
 import SectionView from './SectionView';
 import { Row, Label, TitleLabel, TextInput, InputWrapper, InlineRadio } from '../shared/Layout';
+import { FLEX } from '../shared/Consts';
 
 const ReportInfoView = ({ section, handleInput, handleSingleSelection, input }) => {
 
@@ -48,7 +49,7 @@ const ReportInfoView = ({ section, handleInput, handleSingleSelection, input }) 
           <TitleLabel>4. Crime / Incident</TitleLabel>
           <TextInput data-section={section} name='4' value={input[4]} onChange={handleInput} />
         </InputWrapper>
-        <InputWrapper>
+        <InputWrapper flex={FLEX['2_3']}>
           <TitleLabel>5. Location of Offense / Incident (exact street address, if applicable)</TitleLabel>
           <TextInput data-section={section} name='5' value={input[5]} onChange={handleInput} />
         </InputWrapper>
