@@ -8,6 +8,7 @@ import { Checkbox } from 'react-bootstrap';
 
 import SectionView from './SectionView';
 import { Row, TextInput, SelectInput, InputWrapper, Label, InlineCheckbox, InlineRadio, TitleLabel } from '../shared/Layout';
+import { FLEX } from '../shared/Consts'
 
 const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleCheckboxChange, input }) => {
 
@@ -19,12 +20,9 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
           <TextInput data-section={section} name='13a' value={input['13a']} onChange={handleInput} />
         </InputWrapper>
         <InputWrapper>
-          <TitleLabel>Residence / Address (Include Apartment Number, City, County, State, Zip) if Applicable</TitleLabel>
+          <TitleLabel>Residence / Address (Apt Number, City, County, State, Zip)</TitleLabel>
           <TextInput data-section={section} name='13b' value={input['13b']} onChange={handleInput} />
         </InputWrapper>
-      </Row>
-
-      <Row>
         <InputWrapper>
           <TitleLabel>Consumer Phone Number</TitleLabel>
           <TextInput data-section={section} name='13c' value={input['13c']} onChange={handleInput} />
@@ -32,7 +30,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
       </Row>
 
       <Row>
-        <InputWrapper>
+        <InputWrapper flex={FLEX['1_5']}>
           <TitleLabel>14. Military Status</TitleLabel>
             <InlineRadio
                 type='radio'
@@ -60,7 +58,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
             <Label>N/A</Label>
           </InputWrapper>
 
-          <InputWrapper>
+          <InputWrapper flex={FLEX['1_5']}>
             <TitleLabel>Gender</TitleLabel>
             <SelectInput
                 componentClass='select'
@@ -76,7 +74,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
             </SelectInput>
           </InputWrapper>
 
-          <InputWrapper>
+          <InputWrapper flex={FLEX['1_5']}>
             <TitleLabel>Race</TitleLabel>
             <SelectInput
                 componentClass='select'
@@ -96,19 +94,19 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
             </SelectInput>
           </InputWrapper>
 
-        <InputWrapper>
+        <InputWrapper flex={FLEX['1_5']}>
           <TitleLabel>Age</TitleLabel>
           <TextInput data-section={section} name='14d' value={input['14d']} onChange={handleInput} />
         </InputWrapper>
 
-        <InputWrapper>
+        <InputWrapper flex={FLEX['1_5']}>
           <TitleLabel>DOB</TitleLabel>
           <TextInput data-section={section} name='14e' value={input['14e']} onChange={handleInput} />
         </InputWrapper>
       </Row>
 
       <Row>
-        <InputWrapper>
+        <InputWrapper flex={FLEX['1_5']}>
           <TitleLabel>15. Homeless</TitleLabel>
           <InlineRadio
               type='radio'
@@ -127,15 +125,15 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               onChange={handleSingleSelection} />
           <Label>No</Label>
         </InputWrapper>
-        <InputWrapper>
+        <InputWrapper flex={FLEX['100']}>
           <TitleLabel>If Yes, Where Do They Usually Sleep / Frequent?</TitleLabel>
           <TextInput data-section={section} name='15b' value={input['15b']} onChange={handleInput} />
         </InputWrapper>
       </Row>
 
       <Row>
-        <InputWrapper>
-          <TitleLabel>16. Consumer Using Drugs, Alcohol, Both (If possible, include type of drugs)</TitleLabel>
+        <InputWrapper flex={FLEX['1_5']}>
+          <TitleLabel>16. Consumer Using Drugs, Alcohol</TitleLabel>
           <InlineRadio
               type='radio'
               data-section={section}
@@ -170,15 +168,15 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
           <Label>N/A</Label>
         </InputWrapper>
 
-        <InputWrapper>
+        <InputWrapper flex={FLEX['100']}>
           <TitleLabel>Drug type</TitleLabel>
           <TextInput data-section={section} name='16b' value={input['16b']} onChange={handleInput} />
         </InputWrapper>
       </Row>
 
       <Row>
-        <InputWrapper>
-          <TitleLabel>17. Is Consumer Prescribed Medication?</TitleLabel>
+        <InputWrapper flex={FLEX['1_5']}>
+          <TitleLabel>17. Prescribed Medication</TitleLabel>
           <InlineRadio
               type='radio'
               data-section={section}
@@ -234,7 +232,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
       </Row>
 
       <Row>
-        <InputWrapper>
+        <InputWrapper flex={FLEX['1_3']}>
           <TitleLabel>18. Does Consumer Have Previous Psychiatric Hospital Admission?</TitleLabel>
           <InlineRadio
               type='radio'
@@ -261,10 +259,8 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               onChange={handleSingleSelection} />
           <Label>Unknown</Label>
         </InputWrapper>
-      </Row>
 
-      <Row>
-        <InputWrapper>
+        <InputWrapper flex={FLEX['100']}>
           <TitleLabel>19. Self Diagnosis</TitleLabel>
           <InlineCheckbox
               type='checkbox'
@@ -316,7 +312,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
       </Row>
 
       <Row>
-        <InputWrapper>
+        <InputWrapper flex={FLEX['1_5']}>
           <TitleLabel>20. Armed with Weapon?</TitleLabel>
           <InlineRadio
               type='radio'
@@ -335,14 +331,12 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               onChange={handleSingleSelection} />
           <Label>No</Label>
         </InputWrapper>
-        <InputWrapper>
+        <InputWrapper flex={FLEX['100']}>
           <Label>If Yes, Weapon Type</Label>
           <TextInput data-section={section} name='20b' value={input['20b']} onChange={handleInput} />
         </InputWrapper>
-      </Row>
 
-      <Row>
-        <InputWrapper>
+        <InputWrapper flex={FLEX['1_5']}>
           <TitleLabel>21. Have Access to Weapons?</TitleLabel>
           <InlineRadio
               type='radio'
@@ -361,14 +355,14 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               onChange={handleSingleSelection} />
           <Label>No</Label>
         </InputWrapper>
-        <InputWrapper>
+        <InputWrapper flex={FLEX['100']}>
           <Label>If Yes, Weapon Type</Label>
           <TextInput data-section={section} name='21b' value={input['20b']} onChange={handleInput} />
         </InputWrapper>
       </Row>
 
       <Row>
-        <InputWrapper>
+        <InputWrapper flex={FLEX['1_2']}>
           <TitleLabel>22. Observed Behaviors (Check all that apply)</TitleLabel>
           <InlineCheckbox
               data-section={section}
@@ -437,10 +431,8 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
             <TextInput data-section={section} name='22b' value={input['22b']} onChange={handleInput} />
           </div>
         </InputWrapper>
-      </Row>
 
-      <Row>
-        <InputWrapper>
+        <InputWrapper flex={FLEX['1_2']}>
           <TitleLabel>Emotional State (Check all that apply)</TitleLabel>
           <InlineCheckbox
               data-section={section}
@@ -503,7 +495,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
       </Row>
 
       <Row>
-        <InputWrapper>
+        <InputWrapper flex={FLEX['1_3']}>
           <TitleLabel>23. Photos Taken Of:</TitleLabel>
           <InlineCheckbox
               data-section={section}
@@ -521,7 +513,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
           <Label>Property Damage / Crime Scene</Label>
         </InputWrapper>
 
-        <InputWrapper>
+        <InputWrapper flex={FLEX['100']}>
           <TitleLabel>24. Consumer Injuries</TitleLabel>
           <InlineCheckbox
               data-section={section}
@@ -570,7 +562,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
       </Row>
 
       <Row>
-        <InputWrapper>
+        <InputWrapper flex={FLEX['1_3']}>
           <TitleLabel>25. Suicidal</TitleLabel>
           <InlineRadio
               type='radio'
@@ -590,7 +582,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
           <Label>No</Label>
         </InputWrapper>
 
-        <InputWrapper>
+        <InputWrapper flex={FLEX['100']}>
           <TitleLabel>If Suicidal:</TitleLabel>
           <InlineCheckbox
               data-section={section}
@@ -624,7 +616,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
       </Row>
 
       <Row>
-        <InputWrapper>
+        <InputWrapper flex={FLEX['100']}>
           <TitleLabel>26. Method Used to Attempt, Threaten, or Complete Suicide</TitleLabel>
           <InlineCheckbox
               data-section={section}

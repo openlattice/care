@@ -6,7 +6,7 @@ export const Row = styled.div`
   display: -ms-flexbox;
   display: -webkit-flex;
   display: flex;
-  margin-bottom: 24px;
+  margin-bottom: 36px;
 `;
 
 export const Label = styled(ControlLabel)`
