@@ -1,5 +1,6 @@
 import styled, { injectGlobal } from 'styled-components';
 import { ControlLabel, FormControl, Checkbox, Radio } from 'react-bootstrap';
+import { FLEX } from './Consts';
 
 export const Row = styled.div`
   display: -webkit-box;
@@ -18,15 +19,18 @@ export const TitleLabel = Label.extend`
   display: block;
 `;
 
+export const CheckboxLabel = Label.extend`
+  line-height: 1.5;
+`;
+
 export const TextInput = styled(FormControl)`
   width: 100%;
   height: 24px;
   display: inline-block;
 `;
 
-// TODO: take size parameter (flex ratio)
 export const InputWrapper = styled.span.attrs({
-  flex: props => props.flex || '0 0 490px',
+  flex: props => props.flex || FLEX['1_3'],
 })`
   padding-right: 30px;
   flex: ${props => props.flex};
@@ -44,5 +48,3 @@ export const SelectInput = styled(FormControl)`
   margin-right: 20px;
   width: 100%;
 `;
-
-// NEXT: pass props to styled component (inputwrapper's width)
