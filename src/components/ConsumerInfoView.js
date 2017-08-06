@@ -4,7 +4,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Checkbox } from 'react-bootstrap';
 
 import SectionView from './SectionView';
 import { Row, TextInput, SelectInput, InputWrapper, Label, InlineCheckbox, InlineRadio, TitleLabel, CheckboxLabel, CheckboxWrapper, OtherWrapper } from '../shared/Layout';

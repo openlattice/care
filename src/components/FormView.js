@@ -8,6 +8,7 @@ import styled, { injectGlobal } from 'styled-components';
 import { normalize } from 'polished';
 
 import Form from '../containers/Form';
+import { SubmitButton } from '../shared/Layout';
 
 const Page = styled.div`
   background: #F4F4F4;
@@ -45,6 +46,7 @@ function FormView() {
       <FormWrapper>
         <form>
           <Form />
+          <SubmitButton type='submit'>Submit</SubmitButton>
         </form>
       </FormWrapper>
     </Page>
