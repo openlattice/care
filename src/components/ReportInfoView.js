@@ -9,6 +9,7 @@ import styled, { injectGlobal } from 'styled-components';
 import SectionView from './SectionView';
 import { Row, Label, TitleLabel, TextInput, InputWrapper, InlineRadio } from '../shared/Layout';
 import { FLEX } from '../shared/Consts';
+import { FormGroup } from 'react-bootstrap';
 
 const ReportInfoView = ({ section, handleInput, handleSingleSelection, input }) => {
 
@@ -26,21 +27,19 @@ const ReportInfoView = ({ section, handleInput, handleSingleSelection, input }) 
         <InputWrapper>
           <TitleLabel>3. Comparison Offense Report Prepared</TitleLabel>
           <InlineRadio
-              type='radio'
+              inline
               data-section={section}
               name='3'
               value='yes'
               checked={input[3] === 'yes'}
-              onChange={handleSingleSelection} />
-          <Label>Yes</Label>
-          <input
-              type='radio'
+              onChange={handleSingleSelection}>Yes</InlineRadio>
+          <InlineRadio
+              inline
               data-section={section}
               name ='3'
               value='no'
               checked={input[3] === 'no'}
-              onChange={handleSingleSelection} />
-          <Label>No</Label>
+              onChange={handleSingleSelection}>No</InlineRadio>
         </InputWrapper>
       </Row>
 
@@ -74,19 +73,17 @@ const ReportInfoView = ({ section, handleInput, handleSingleSelection, input }) 
         <InputWrapper>
           <TitleLabel>9. On View</TitleLabel>
           <InlineRadio
-              type='radio'
+              inline
               data-section={section}
               name='9'
               value='yes'
-              onChange={handleSingleSelection} />
-          <Label>Yes</Label>
+              onChange={handleSingleSelection}>Yes</InlineRadio>
           <InlineRadio
-              type='radio'
+              inline
               data-section={section}
               name ='9'
               value='no'
-              onChange={handleSingleSelection} />
-          <Label>No</Label>
+              onChange={handleSingleSelection}>No</InlineRadio>
         </InputWrapper>
         <InputWrapper>
           <TitleLabel>10. Date / Time Occurred</TitleLabel>

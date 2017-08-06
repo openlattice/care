@@ -29,33 +29,33 @@ const OfficerInfoView = ({ section, handleInput, handleCheckboxChange, input }) 
         <InputWrapper flex={FLEX['1_4']}>
           <TitleLabel>36. Officer Certification</TitleLabel>
           <InlineCheckbox
+              inline
               data-section={section}
               name={36}
               value='crtUnit'
               checked={input[36].indexOf('crtUnit') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>CRT Unit</Label>
+              onChange={handleCheckboxChange}>CRT Unit</InlineCheckbox>
           <InlineCheckbox
+              inline
               data-section={section}
               name={36}
               value='best'
               checked={input[36].indexOf('best') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>BEST</Label>
+              onChange={handleCheckboxChange}>BEST</InlineCheckbox>
           <InlineCheckbox
+              inline
               data-section={section}
               name={36}
               value='cit'
               checked={input[36].indexOf('cit') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>CIT</Label>
+              onChange={handleCheckboxChange}>CIT</InlineCheckbox>
           <InlineCheckbox
+              inline
               data-section={section}
               name={36}
               value='n/a'
               checked={input[36].indexOf('n/a') !== -1}
-              onChange={handleCheckboxChange} />
-          <Label>N/A</Label>
+              onChange={handleCheckboxChange}>N/A</InlineCheckbox>
         </InputWrapper>
       </Row>
     </SectionView>

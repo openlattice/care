@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import SectionView from './SectionView';
 import { Row, TextInput, SelectInput, InputWrapper, Label, InlineCheckbox, InlineRadio, TitleLabel, CheckboxLabel, CheckboxWrapper, OtherWrapper } from '../shared/Layout';
 import { FLEX } from '../shared/Consts'
+import { FormGroup } from 'react-bootstrap';
 
 const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleCheckboxChange, input }) => {
 
@@ -32,29 +33,26 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
         <InputWrapper flex={FLEX['1_5']}>
           <TitleLabel>14. Military Status</TitleLabel>
             <InlineRadio
-                type='radio'
+                inline
                 data-section={section}
                 name='14a'
                 value='active'
                 checked={input['14a'] === 'active'}
-                onChange={handleSingleSelection} />
-            <Label>Active</Label>
+                onChange={handleSingleSelection}>Active</InlineRadio>
             <InlineRadio
-                type='radio'
+                inline
                 data-section={section}
                 name ='14a' 
                 value='veteran'
                 checked={input['14a'] === 'veteran'}
-                onChange={handleSingleSelection} />
-            <Label>Veteran</Label>
+                onChange={handleSingleSelection}>Veteran</InlineRadio>
             <InlineRadio
-                type='radio'
+                inline
                 data-section={section}
                 name ='14a'
                 value='n/a'
                 checked={input['14a'] === 'n/a'}
-                onChange={handleSingleSelection} />
-            <Label>N/A</Label>
+                onChange={handleSingleSelection}>N/A</InlineRadio>
           </InputWrapper>
 
           <InputWrapper flex={FLEX['1_5']}>
@@ -108,21 +106,19 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
         <InputWrapper flex={FLEX['1_5']}>
           <TitleLabel>15. Homeless</TitleLabel>
           <InlineRadio
-              type='radio'
+              inline
               data-section={section}
               name='15a'
               value='yes'
               checked={input['15a'] === 'yes'}
-              onChange={handleSingleSelection} />
-          <Label>Yes</Label>
+              onChange={handleSingleSelection}>Yes</InlineRadio>
           <InlineRadio
-              type='radio'
+              inline
               data-section={section}
               name ='15a' 
               value='no'
               checked={input['15a'] === 'no'}
-              onChange={handleSingleSelection} />
-          <Label>No</Label>
+              onChange={handleSingleSelection}>No</InlineRadio>
         </InputWrapper>
         <InputWrapper flex={FLEX['100']}>
           <TitleLabel>If Yes, Where Do They Usually Sleep / Frequent?</TitleLabel>
@@ -134,37 +130,33 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
         <InputWrapper flex={FLEX['1_5']}>
           <TitleLabel>16. Consumer Using Drugs, Alcohol</TitleLabel>
           <InlineRadio
-              type='radio'
+              inline
               data-section={section}
               name='16a'
               value='drugs'
               checked={input['16a'] === 'drugs'}
-              onChange={handleSingleSelection} />
-          <Label>Drugs</Label>
+              onChange={handleSingleSelection}>Drugs</InlineRadio>
           <InlineRadio
-              type='radio'
+              inline
               data-section={section}
               name ='16a' 
               value='alcohol'
               checked={input['16a'] === 'alcohol'}
-              onChange={handleSingleSelection} />
-          <Label>Alcohol</Label>
+              onChange={handleSingleSelection}>Alcohol</InlineRadio>
           <InlineRadio
-              type='radio'
+              inline
               data-section={section}
               name ='16a' 
               value='both'
               checked={input['16a'] === 'both'}
-              onChange={handleSingleSelection} />
-          <Label>Both</Label>
+              onChange={handleSingleSelection}>Both</InlineRadio>
           <InlineRadio
-              type='radio'
+              inline
               data-section={section}
               name ='16a' 
               value='n/a'
               checked={input['16a'] === 'n/a'}
-              onChange={handleSingleSelection} />
-          <Label>N/A</Label>
+              onChange={handleSingleSelection}>N/A</InlineRadio>
         </InputWrapper>
 
         <InputWrapper flex={FLEX['100']}>
@@ -177,56 +169,50 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
         <InputWrapper flex={FLEX['1_5']}>
           <TitleLabel>17. Prescribed Medication</TitleLabel>
           <InlineRadio
-              type='radio'
+              inline
               data-section={section}
               name='17a'
               value='yes'
               checked={input['17a'] === 'yes'}
-              onChange={handleSingleSelection} />
-          <Label>Yes</Label>
+              onChange={handleSingleSelection}>Yes</InlineRadio>
           <InlineRadio
-              type='radio'
+              inline
               data-section={section}
               name='17a'
               value='no'
               checked={input['17a'] === 'no'}
-              onChange={handleSingleSelection} />
-          <Label>No</Label>
+              onChange={handleSingleSelection}>No</InlineRadio>
           <InlineRadio
-              type='radio'
+              inline
               data-section={section}
               name='17a' 
               value='unknown'
               checked={input['17a'] === 'unknown'}
-              onChange={handleSingleSelection} />
-          <Label>Unknown</Label>
+              onChange={handleSingleSelection}>Unknown</InlineRadio>
         </InputWrapper>
         <InputWrapper>
           <TitleLabel>If yes, is Consumer Taking Medication?</TitleLabel>
           <InlineRadio
-              type='radio'
+              inline
               data-section={section}
               name='17b'
               value='yes'
               checked={input['17b'] === 'yes'}
-              onChange={handleSingleSelection} />
-          <Label>Yes</Label>
+              onChange={handleSingleSelection}>Yes</InlineRadio>
           <InlineRadio
-              type='radio'
+              inline
               data-section={section}
               name='17b' 
               value='no'
               checked={input['17b'] === 'no'}
-              onChange={handleSingleSelection} />
-          <Label>No</Label>
+              onChange={handleSingleSelection}>No</InlineRadio>
           <InlineRadio
-              type='radio'
+              inline
               data-section={section}
               name='17b' 
               value='unknown'
               checked={input['17b'] === 'unknown'}
-              onChange={handleSingleSelection} />
-          <Label>Unknown</Label> 
+              onChange={handleSingleSelection}>Unknown</InlineRadio>
         </InputWrapper>
       </Row>
 
@@ -234,92 +220,77 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
         <InputWrapper flex={FLEX['1_5']}>
           <TitleLabel>18. Does Consumer Have Previous Psychiatric Hospital Admission?</TitleLabel>
           <InlineRadio
+              inline
               type='radio'
               data-section={section}
               name={18}
               value='yes'
               checked={input[18] === 'yes'}
-              onChange={handleSingleSelection} />
-          <Label>Yes</Label>
+              onChange={handleSingleSelection}>Yes</InlineRadio>
           <InlineRadio
+              inline
               type='radio'
               data-section={section}
               name={18}
               value='no'
               checked={input[18] === 'no'}
-              onChange={handleSingleSelection} />
-          <Label>No</Label>
+              onChange={handleSingleSelection}>No</InlineRadio>
           <InlineRadio
+              inline
               type='radio'
               data-section={section}
               name={18} 
               value='unknown'
               checked={input[18] === 'unknown'}
-              onChange={handleSingleSelection} />
-          <Label>Unknown</Label>
+              onChange={handleSingleSelection}>Unknown</InlineRadio>
         </InputWrapper>
 
         <InputWrapper flex={FLEX['100']}>
           <TitleLabel>19. Self Diagnosis</TitleLabel>
-          <CheckboxWrapper>
-            <span>
-              <InlineCheckbox
-                  type='checkbox'
-                  data-section={section}
-                  name='19a'
-                  value='bipolar'
-                  checked={input['19a'].indexOf('bipolar') !== -1}
-                  onChange={handleCheckboxChange} />
-              <CheckboxLabel>Bipolar</CheckboxLabel>
-            </span>
-            <span>
-              <InlineCheckbox
-                  data-section={section}
-                  name='19a'
-                  value='depression'
-                  checked={input['19a'].indexOf('depression') !== -1}
-                  onChange={handleCheckboxChange} />
-              <CheckboxLabel>Depression</CheckboxLabel>
-            </span>
-            <span>
+            <InlineCheckbox
+                inline
+                data-section={section}
+                name='19a'
+                value='bipolar'
+                checked={input['19a'].indexOf('bipolar') !== -1}
+                onChange={handleCheckboxChange}>Bipolar</InlineCheckbox>
+            <InlineCheckbox
+                inline
+                data-section={section}
+                name='19a'
+                value='depression'
+                checked={input['19a'].indexOf('depression') !== -1}
+                onChange={handleCheckboxChange}>Depression</InlineCheckbox>
+            <InlineCheckbox
+                inline
+                data-section={section}
+                name='19a' 
+                value='ptsd'
+                checked={input['19a'].indexOf('ptsd') !== -1}
+                onChange={handleCheckboxChange}>PTSD</InlineCheckbox>
+            <InlineCheckbox
+                inline
+                data-section={section}
+                name='19a'
+                value='schizophrenia'
+                checked={input['19a'].indexOf('schizophrenia') !== -1}
+                onChange={handleCheckboxChange}>Schizophrenia</InlineCheckbox>
+            <InlineCheckbox
+                inline
+                data-section={section}
+                name='19a'
+                value='dementia'
+                checked={input['19a'].indexOf('dementia') !== -1}
+                onChange={handleCheckboxChange}>Dementia</InlineCheckbox>
+            <OtherWrapper>
               <InlineCheckbox
                   data-section={section}
                   name='19a' 
-                  value='ptsd'
-                  checked={input['19a'].indexOf('ptsd') !== -1}
-                  onChange={handleCheckboxChange} />
-              <CheckboxLabel>PTSD</CheckboxLabel>
-            </span>
-            <span>
-              <InlineCheckbox
-                  data-section={section}
-                  name='19a'
-                  value='schizophrenia'
-                  checked={input['19a'].indexOf('schizophrenia') !== -1}
-                  onChange={handleCheckboxChange} />
-              <CheckboxLabel>Schizophrenia</CheckboxLabel>
-            </span>
-            <span>
-              <InlineCheckbox
-                  data-section={section}
-                  name='19a'
-                  value='dementia'
-                  checked={input['19a'].indexOf('dementia') !== -1}
-                  onChange={handleCheckboxChange} />
-              <CheckboxLabel>Dementia</CheckboxLabel>
-            </span>
-          </CheckboxWrapper>
-
-          <OtherWrapper>
-            <InlineCheckbox
-                data-section={section}
-                name='19a' 
-                value='other'
-                checked={input['19a'].indexOf('other') !== -1}
-                onChange={handleCheckboxChange} />
-            <CheckboxLabel>Other:</CheckboxLabel>
-            <TextInput data-section={section} name='19b' value={input['19b']} onChange={handleInput} />
-          </OtherWrapper>
+                  value='other'
+                  checked={input['19a'].indexOf('other') !== -1}
+                  onChange={handleCheckboxChange}>Other:</InlineCheckbox>
+              <TextInput data-section={section} name='19b' value={input['19b']} onChange={handleInput} />
+            </OtherWrapper>
         </InputWrapper>
       </Row>
 
@@ -327,21 +298,19 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
         <InputWrapper flex={FLEX['1_5']}>
           <TitleLabel>20. Armed with Weapon?</TitleLabel>
           <InlineRadio
-              type='radio'
+              inline
               data-section={section}
               name='20a'
               value='yes'
               checked={input['20a'] === 'yes'}
-              onChange={handleSingleSelection} />
-          <Label>Yes</Label>
+              onChange={handleSingleSelection}>Yes</InlineRadio>
           <InlineRadio
-              type='radio'
+              inline
               data-section={section}
               name='20a'
               value='no'
               checked={input['20a'] === 'no'}
-              onChange={handleSingleSelection} />
-          <Label>No</Label>
+              onChange={handleSingleSelection}>No</InlineRadio>
         </InputWrapper>
         <InputWrapper flex={FLEX['100']}>
           <Label>If Yes, Weapon Type</Label>
@@ -351,21 +320,19 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
         <InputWrapper flex={FLEX['1_5']}>
           <TitleLabel>21. Have Access to Weapons?</TitleLabel>
           <InlineRadio
-              type='radio'
+              inline
               data-section={section}
               name='21a'
               value='yes'
               checked={input['21a'] === 'yes'}
-              onChange={handleSingleSelection} />
-          <Label>Yes</Label>
+              onChange={handleSingleSelection}>Yes</InlineRadio>
           <InlineRadio
-              type='radio'
+              inline
               data-section={section}
               name='21a'
               value='no'
               checked={input['21a'] === 'no'}
-              onChange={handleSingleSelection} />
-          <Label>No</Label>
+              onChange={handleSingleSelection}>No</InlineRadio>
         </InputWrapper>
         <InputWrapper flex={FLEX['100']}>
           <Label>If Yes, Weapon Type</Label>
@@ -376,165 +343,133 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
       <Row>
         <InputWrapper flex={FLEX['1_2']}>
           <TitleLabel>22. Observed Behaviors (Check all that apply)</TitleLabel>
-          <CheckboxWrapper>
-            <span>
-              <InlineCheckbox
-                  data-section={section}
-                  name='22a'
-                  value='disorientation'
-                  checked={input['22a'].indexOf('disorientation') !== -1}
-                  onChange={handleCheckboxChange} />
-              <CheckboxLabel>Disorientation / Confusion</CheckboxLabel>
-            </span>
-            <span>
-              <InlineCheckbox
-                  data-section={section}
-                  name='22a'
-                  value='abnormalBehavior'
-                  checked={input['22a'].indexOf('abnormalBehavior') !== -1}
-                  onChange={handleCheckboxChange} />
-              <CheckboxLabel>Abnormal Behavior / Appearance (neglect self-care)</CheckboxLabel>
-            </span>
-            <span>
-              <InlineCheckbox
-                  data-section={section}
-                  name='22a' 
-                  value='hearingVoices'
-                  checked={input['22a'].indexOf('hearingVoices') !== -1}
-                  onChange={handleCheckboxChange} />
-              <CheckboxLabel>Hearing Voices / Hallucinating</CheckboxLabel>
-            </span>
-            <span>
-              <InlineCheckbox
-                  data-section={section}
-                  name='22a'
-                  value='anxious'
-                  checked={input['22a'].indexOf('anxious') !== -1}
-                  onChange={handleCheckboxChange} />
-              <CheckboxLabel>Anxious / Excited / Agitated</CheckboxLabel>
-            </span>
-            <span>
-              <InlineCheckbox
-                  data-section={section}
-                  name='22a'
-                  value='depressed'
-                  checked={input['22a'].indexOf('depressed') !== -1}
-                  onChange={handleCheckboxChange} />
-              <CheckboxLabel>Depressed Mood</CheckboxLabel>
-            </span>
-            <span>
-              <InlineCheckbox
-                  data-section={section}
-                  name='22a'
-                  value='paranoid'
-                  checked={input['22a'].indexOf('paranoid') !== -1}
-                  onChange={handleCheckboxChange} />
-              <CheckboxLabel>Paranoid or Suspicious</CheckboxLabel>
-            </span>
-            <span>
-              <InlineCheckbox
-                  data-section={section}
-                  name='22a'
-                  value='self-mutilation'
-                  checked={input['22a'].indexOf('self-mutilation') !== -1}
-                  onChange={handleCheckboxChange} />
-              <CheckboxLabel>Self-mutilation</CheckboxLabel>
-            </span>
-            <span>
-              <InlineCheckbox
-                  data-section={section}
-                  name='22a' 
-                  value='threatening'
-                  checked={input['22a'].indexOf('threatening') !== -1}
-                  onChange={handleCheckboxChange} />
-              <CheckboxLabel>Threatening / Violent Towards Others</CheckboxLabel>
-            </span>
-            </CheckboxWrapper>
-            <OtherWrapper>
-              <InlineCheckbox
-                  data-section={section}
-                  name='22a'
-                  value='other'
-                  checked={input['22a'].indexOf('other') !== -1}
-                  onChange={handleCheckboxChange} />
-              <CheckboxLabel>Other:</CheckboxLabel>
-              <TextInput data-section={section} name='22b' value={input['22b']} onChange={handleInput} />
-            </OtherWrapper>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name='22a'
+              value='disorientation'
+              checked={input['22a'].indexOf('disorientation') !== -1}
+              onChange={handleCheckboxChange}>Disorientation / Confusion</InlineCheckbox>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name='22a'
+              value='abnormalBehavior'
+              checked={input['22a'].indexOf('abnormalBehavior') !== -1}
+              onChange={handleCheckboxChange}>Abnormal Behavior / Appearance (neglect self-care)</InlineCheckbox>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name='22a' 
+              value='hearingVoices'
+              checked={input['22a'].indexOf('hearingVoices') !== -1}
+              onChange={handleCheckboxChange}>Hearing Voices / Hallucinating</InlineCheckbox>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name='22a'
+              value='anxious'
+              checked={input['22a'].indexOf('anxious') !== -1}
+              onChange={handleCheckboxChange}>Anxious / Excited / Agitated</InlineCheckbox>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name='22a'
+              value='depressed'
+              checked={input['22a'].indexOf('depressed') !== -1}
+              onChange={handleCheckboxChange}>Depressed Mood</InlineCheckbox>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name='22a'
+              value='paranoid'
+              checked={input['22a'].indexOf('paranoid') !== -1}
+              onChange={handleCheckboxChange}>Paranoid or Suspicious</InlineCheckbox>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name='22a'
+              value='self-mutilation'
+              checked={input['22a'].indexOf('self-mutilation') !== -1}
+              onChange={handleCheckboxChange}>Self-mutilation</InlineCheckbox>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name='22a' 
+              value='threatening'
+              checked={input['22a'].indexOf('threatening') !== -1}
+              onChange={handleCheckboxChange}>Threatening / Violent Towards Others</InlineCheckbox>
+          <OtherWrapper>
+            <InlineCheckbox
+                data-section={section}
+                name='22a'
+                value='other'
+                checked={input['22a'].indexOf('other') !== -1}
+                onChange={handleCheckboxChange} />
+            <CheckboxLabel>Other:</CheckboxLabel>
+            <TextInput data-section={section} name='22b' value={input['22b']} onChange={handleInput} />
+          </OtherWrapper>
         </InputWrapper>
 
         <InputWrapper flex={FLEX['1_2']}>
           <TitleLabel>Emotional State (Check all that apply)</TitleLabel>
-          <CheckboxWrapper>
-            <span>
-              <InlineCheckbox
-                  data-section={section}
-                  name='22c'
-                  value='angry'
-                  checked={input['22c'].indexOf('angry') !== -1}
-                  onChange={handleCheckboxChange} />
-              <CheckboxLabel>Angry</CheckboxLabel>
-            </span>
-            <span>
-              <InlineCheckbox
-                  data-section={section}
-                  name='22c'
-                  value='afraid'
-                  checked={input['22c'].indexOf('afraid') !== -1}
-                  onChange={handleCheckboxChange} />
-              <CheckboxLabel>Afraid</CheckboxLabel>
-            </span>
-            <span>
-              <InlineCheckbox
-                  data-section={section}
-                  name='22c' 
-                  value='apologetic'
-                  checked={input['22c'].indexOf('apologetic') !== -1}
-                  onChange={handleCheckboxChange} />
-              <CheckboxLabel>Apologetic</CheckboxLabel>
-            </span>
-              <InlineCheckbox
-                  data-section={section}
-                  name='22c'
-                  value='calm'
-                  checked={input['22c'].indexOf('calm') !== -1}
-                  onChange={handleCheckboxChange} />
-              <CheckboxLabel>Calm</CheckboxLabel>
-            <span>
-              <InlineCheckbox
-                  data-section={section}
-                  name='22c'
-                  value='crying'
-                  checked={input['22c'].indexOf('crying') !== -1}
-                  onChange={handleCheckboxChange} />
-              <CheckboxLabel>Crying</CheckboxLabel>
-            </span>
-            <span>
-              <InlineCheckbox
-                  data-section={section}
-                  name='22c' 
-                  value='fearful'
-                  checked={input['22c'].indexOf('fearful') !== -1}
-                  onChange={handleCheckboxChange} />
-              <CheckboxLabel>Fearful</CheckboxLabel>
-            </span>
-            <span>
-              <InlineCheckbox
-                  data-section={section}
-                  name='22c' 
-                  value='nervous'
-                  checked={input['22c'].indexOf('nervous') !== -1}
-                  onChange={handleCheckboxChange} />
-              <CheckboxLabel>Nervous</CheckboxLabel>
-            </span>
-          </CheckboxWrapper>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name='22c'
+              value='angry'
+              checked={input['22c'].indexOf('angry') !== -1}
+              onChange={handleCheckboxChange}>Angry</InlineCheckbox>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name='22c'
+              value='afraid'
+              checked={input['22c'].indexOf('afraid') !== -1}
+              onChange={handleCheckboxChange}>Afraid</InlineCheckbox>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name='22c' 
+              value='apologetic'
+              checked={input['22c'].indexOf('apologetic') !== -1}
+              onChange={handleCheckboxChange}>Apologetic</InlineCheckbox>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name='22c'
+              value='calm'
+              checked={input['22c'].indexOf('calm') !== -1}
+              onChange={handleCheckboxChange}>Calm</InlineCheckbox>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name='22c'
+              value='crying'
+              checked={input['22c'].indexOf('crying') !== -1}
+              onChange={handleCheckboxChange}>Crying</InlineCheckbox>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name='22c' 
+              value='fearful'
+              checked={input['22c'].indexOf('fearful') !== -1}
+              onChange={handleCheckboxChange}>Fearful</InlineCheckbox>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name='22c' 
+              value='nervous'
+              checked={input['22c'].indexOf('nervous') !== -1}
+              onChange={handleCheckboxChange}>Nervous</InlineCheckbox>
           <OtherWrapper>
             <InlineCheckbox
+                inline
                 data-section={section}
                 name='22c'
                 value='other'
                 checked={input['22c'].indexOf('other') !== -1}
-                onChange={handleCheckboxChange} />
-            <CheckboxLabel>Other:</CheckboxLabel>
+                onChange={handleCheckboxChange}>Other:</InlineCheckbox>
             <TextInput data-section={section} name='22d' value={input['22d']} onChange={handleInput} />
           </OtherWrapper>
         </InputWrapper>
@@ -543,77 +478,59 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
       <Row>
         <InputWrapper flex={FLEX['1_5']}>
           <TitleLabel>23. Photos Taken Of:</TitleLabel>
-          <CheckboxWrapper>
-            <span>
-              <InlineCheckbox
-                  data-section={section}
-                  name={23} 
-                  value='injuries'
-                  checked={input[23].indexOf('injuries') !== -1}
-                  onChange={handleCheckboxChange} />
-              <CheckboxLabel>Injuries</CheckboxLabel>
-            </span>
-            <span>
-              <InlineCheckbox
-                  data-section={section}
-                  name={23} 
-                  value='propertyDamage'
-                  checked={input[23].indexOf('propertyDamage') !== -1}
-                  onChange={handleCheckboxChange} />
-              <CheckboxLabel>Property Damage / Crime Scene</CheckboxLabel>
-            </span>
-          </CheckboxWrapper>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name={23} 
+              value='injuries'
+              checked={input[23].indexOf('injuries') !== -1}
+              onChange={handleCheckboxChange}>Injuries</InlineCheckbox>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name={23} 
+              value='propertyDamage'
+              checked={input[23].indexOf('propertyDamage') !== -1}
+              onChange={handleCheckboxChange}>Property Damage / Crime Scene</InlineCheckbox>
         </InputWrapper>
 
         <InputWrapper flex={FLEX['100']}>
           <TitleLabel>24. Consumer Injuries</TitleLabel>
-          <CheckboxWrapper>
-            <span>
-              <InlineCheckbox
-                  data-section={section}
-                  name='24a' 
-                  value='abrasions'
-                  checked={input['24a'].indexOf('abrasions') !== -1}
-                  onChange={handleCheckboxChange} />
-              <CheckboxLabel>Abrasions</CheckboxLabel>
-            </span>
-            <span>
-              <InlineCheckbox
-                  data-section={section}
-                  name='24a' 
-                  value='bruises'
-                  checked={input['24a'].indexOf('bruises') !== -1}
-                  onChange={handleCheckboxChange} />
-              <CheckboxLabel>Bruises</CheckboxLabel>
-            </span>
-            <span>
-              <InlineCheckbox
-                  data-section={section}
-                  name='24a' 
-                  value='complaintsOfPain'
-                  checked={input['24a'].indexOf('complaintsOfPain') !== -1}
-                  onChange={handleCheckboxChange} />
-              <CheckboxLabel>Complaints of Pain</CheckboxLabel>
-            </span>
-            <span>
-              <InlineCheckbox
-                  data-section={section}
-                  name='24a' 
-                  value='concussion'
-                  checked={input['24a'].indexOf('concussion') !== -1}
-                  onChange={handleCheckboxChange} />
-              <CheckboxLabel>Concussion</CheckboxLabel>
-            </span>
-            <span>
-              <InlineCheckbox
-                  data-section={section}
-                  name='24a' 
-                  value='fractures'
-                  checked={input['24a'].indexOf('fractures') !== -1}
-                  onChange={handleCheckboxChange} />
-              <CheckboxLabel>Fractures</CheckboxLabel>
-            </span>
-          </CheckboxWrapper>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name='24a' 
+              value='abrasions'
+              checked={input['24a'].indexOf('abrasions') !== -1}
+              onChange={handleCheckboxChange}>Abrasions</InlineCheckbox>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name='24a' 
+              value='bruises'
+              checked={input['24a'].indexOf('bruises') !== -1}
+              onChange={handleCheckboxChange}>Bruises</InlineCheckbox>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name='24a' 
+              value='complaintsOfPain'
+              checked={input['24a'].indexOf('complaintsOfPain') !== -1}
+              onChange={handleCheckboxChange}>Complaints of Pain</InlineCheckbox>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name='24a' 
+              value='concussion'
+              checked={input['24a'].indexOf('concussion') !== -1}
+              onChange={handleCheckboxChange}>Concussion</InlineCheckbox>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name='24a' 
+              value='fractures'
+              checked={input['24a'].indexOf('fractures') !== -1}
+              onChange={handleCheckboxChange}>Fractures</InlineCheckbox>
           <OtherWrapper>
             <InlineCheckbox
                 data-section={section}
@@ -631,107 +548,85 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
         <InputWrapper flex={FLEX['1_5']}>
           <TitleLabel>25. Suicidal</TitleLabel>
           <InlineRadio
-              type='radio'
+              inline
               data-section={section}
               name='25a'
               value='yes'
               checked={input['25a'] === 'yes'}
-              onChange={handleSingleSelection} />
-          <Label>Yes</Label>
+              onChange={handleSingleSelection}>Yes</InlineRadio>
           <InlineRadio
-              type='radio'
+              inline
               data-section={section}
               name='25a'
               value='no'
               checked={input['25a'] === 'no'}
-              onChange={handleSingleSelection} />
-          <Label>No</Label>
+              onChange={handleSingleSelection}>No</InlineRadio>
         </InputWrapper>
 
         <InputWrapper flex={FLEX['100']}>
           <TitleLabel>If Suicidal:</TitleLabel>
-          <CheckboxWrapper>
-            <span>
-              <InlineCheckbox
-                  data-section={section}
-                  name='25b'
-                  value='thoughts'
-                  checked={input['25b'].indexOf('thoughts') !== -1}
-                  onChange={handleCheckboxChange} />
-              <CheckboxLabel>Thoughts</CheckboxLabel>
-            </span>
-            <span>
-              <InlineCheckbox
-                  data-section={section}
-                  name='25b'
-                  value='threat'
-                  checked={input['25b'].indexOf('threat') !== -1}
-                  onChange={handleCheckboxChange} />
-              <CheckboxLabel>Threat</CheckboxLabel>
-            </span>
-            <span>
-              <InlineCheckbox
-                  data-section={section}
-                  name='25b'
-                  value='attempt'
-                  checked={input['25b'].indexOf('attempt') !== -1}
-                  onChange={handleCheckboxChange} />
-              <CheckboxLabel>Attempt</CheckboxLabel>
-            </span>
-            <span>
-              <InlineCheckbox
-                  data-section={section}
-                  name='25b'
-                  value='completed'
-                  checked={input['25b'].indexOf('completed') !== -1}
-                  onChange={handleCheckboxChange} />
-              <CheckboxLabel>Completed</CheckboxLabel>
-            </span>
-          </CheckboxWrapper>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name='25b'
+              value='thoughts'
+              checked={input['25b'].indexOf('thoughts') !== -1}
+              onChange={handleCheckboxChange}>Thoughts</InlineCheckbox>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name='25b'
+              value='threat'
+              checked={input['25b'].indexOf('threat') !== -1}
+              onChange={handleCheckboxChange}>Threat</InlineCheckbox>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name='25b'
+              value='attempt'
+              checked={input['25b'].indexOf('attempt') !== -1}
+              onChange={handleCheckboxChange}>Attempt</InlineCheckbox>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name='25b'
+              value='completed'
+              checked={input['25b'].indexOf('completed') !== -1}
+              onChange={handleCheckboxChange}>Completed</InlineCheckbox>
         </InputWrapper>
       </Row>
 
       <Row>
         <InputWrapper flex={FLEX['100']}>
           <TitleLabel>26. Method Used to Attempt, Threaten, or Complete Suicide</TitleLabel>
-          <CheckboxWrapper>
-            <span>
-              <InlineCheckbox
-                  data-section={section}
-                  name='26a'
-                  value='narcotics'
-                  checked={input['26a'].indexOf('narcotics') !== -1}
-                  onChange={handleCheckboxChange} />
-              <CheckboxLabel>Narcotics (Prescription or Illicit)</CheckboxLabel>
-            </span>
-            <span>
-              <InlineCheckbox
-                  data-section={section}
-                  name='26a'
-                  value='alcohol'
-                  checked={input['26a'].indexOf('alcohol') !== -1}
-                  onChange={handleCheckboxChange} />
-              <CheckboxLabel>Alcohol</CheckboxLabel>
-            </span>
-            <span>
-              <InlineCheckbox
-                  data-section={section}
-                  name='26a'
-                  value='knife'
-                  checked={input['26a'].indexOf('knife') !== -1}
-                  onChange={handleCheckboxChange} />
-              <CheckboxLabel>Knife / Cutting Tool</CheckboxLabel>
-            </span>
-            <span>
-              <InlineCheckbox
-                  data-section={section}
-                  name='26a'
-                  value='firearm'
-                  checked={input['26a'].indexOf('firearm') !== -1}
-                  onChange={handleCheckboxChange} />
-              <CheckboxLabel>Firearm</CheckboxLabel>
-            </span>
-          </CheckboxWrapper>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name='26a'
+              value='narcotics'
+              checked={input['26a'].indexOf('narcotics') !== -1}
+              onChange={handleCheckboxChange}>Narcotics (Prescription or Illicit)</InlineCheckbox>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name='26a'
+              value='alcohol'
+              checked={input['26a'].indexOf('alcohol') !== -1}
+              onChange={handleCheckboxChange}>Alcohol</InlineCheckbox>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name='26a'
+              value='knife'
+              checked={input['26a'].indexOf('knife') !== -1}
+              onChange={handleCheckboxChange}>Knife / Cutting Tool</InlineCheckbox>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name='26a'
+              value='firearm'
+              checked={input['26a'].indexOf('firearm') !== -1}
+              onChange={handleCheckboxChange}>Firearm</InlineCheckbox>
           <OtherWrapper>
             <InlineCheckbox
                 data-section={section}
