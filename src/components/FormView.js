@@ -58,4 +58,12 @@ function FormView({ handleInput, handleSingleSelection, handleCheckboxChange, ha
 	);
 }
 
+FormView.propTypes = {
+  handleInput: PropTypes.func.isRequired,
+  handleSingleSelection: PropTypes.func.isRequired,
+  handleCheckboxChange: PropTypes.func.isRequired,
+  handleSubmit: PropTypes.func.isRequired,
+  input: PropTypes.object.isRequired
+}
+
 export default FormView;

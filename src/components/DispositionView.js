@@ -238,4 +238,12 @@ const DispositionView = ({ section, handleInput, handleCheckboxChange, handleSin
   );
 }
 
+DispositionView.propTypes = {
+  handleInput: PropTypes.func.isRequired,
+  handleSingleSelection: PropTypes.func.isRequired,
+  handleCheckboxChange: PropTypes.func.isRequired,
+  input: PropTypes.object.isRequired,
+  section: PropTypes.string.isRequired
+}
+
 export default DispositionView;

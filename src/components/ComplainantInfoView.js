@@ -35,4 +35,10 @@ const ComplainantInfoView = ({ section, handleInput, input }) => {
   );
 }
 
+ComplainantInfoView.propTypes = {
+  handleInput: PropTypes.func.isRequired,
+  input: PropTypes.object.isRequired,
+  section: PropTypes.string.isRequired
+}
+
 export default ComplainantInfoView;

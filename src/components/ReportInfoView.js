@@ -99,4 +99,11 @@ const ReportInfoView = ({ section, handleInput, handleSingleSelection, input }) 
 	);
 }
 
+ReportInfoView.propTypes = {
+  handleInput: PropTypes.func.isRequired,
+  handleSingleSelection: PropTypes.func.isRequired,
+  input: PropTypes.object.isRequired,
+  section: PropTypes.string.isRequired
+}
+
 export default ReportInfoView;
