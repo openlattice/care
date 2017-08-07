@@ -2,6 +2,33 @@ import styled, { injectGlobal } from 'styled-components';
 import { FormGroup, ControlLabel, FormControl, Checkbox, Radio, Button } from 'react-bootstrap';
 import { FLEX } from './Consts';
 
+export const Page = styled.div`
+  background: #F4F4F4;
+`;
+
+export const PageHeader = styled.div`
+  padding: 60px;
+  background: white;
+  border-bottom: 1px solid darkgray;
+`;
+
+export const Title = styled.h1`
+  text-align: center;
+  color: #37454A;
+  font-size: 40px;
+`;
+
+export const Description = styled.div`
+  text-align: center;
+  font-size: 24px;
+  color: #37454A;
+`;
+
+export const FormWrapper = styled.div`
+  margin: 0 60px 0 60px;
+  padding-bottom: 100px;
+`;
+
 export const Row = styled.div`
   display: -webkit-box;
   display: -ms-flexbox;
