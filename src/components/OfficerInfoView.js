@@ -4,9 +4,10 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { FormControl } from 'react-bootstrap';
 
 import SectionView from './SectionView';
-import { Row, TextInput, Label, TitleLabel, CheckboxLabel, InlineCheckbox, InputWrapper } from '../shared/Layout';
+import { Row, Label, TitleLabel, CheckboxLabel, InlineCheckbox, InputWrapper } from '../shared/Layout';
 import { FLEX } from '../shared/Consts';
 
 
@@ -16,15 +17,15 @@ const OfficerInfoView = ({ section, handleInput, handleCheckboxChange, input }) 
       <Row>
         <InputWrapper flex={FLEX['1_4']}>
           <TitleLabel>32. Officer Name</TitleLabel>
-          <TextInput data-section={section} name={32} value={input[32]} onChange={handleInput} />
+          <FormControl data-section={section} name={32} value={input[32]} onChange={handleInput} />
         </InputWrapper>
         <InputWrapper flex={FLEX['1_4']}>
           <TitleLabel>34. Seq ID</TitleLabel>
-          <TextInput data-section={section} name={34} value={input[34]} onChange={handleInput} />
+          <FormControl data-section={section} name={34} value={input[34]} onChange={handleInput} />
         </InputWrapper>
         <InputWrapper flex={FLEX['1_4']}>
           <TitleLabel>35. Officer Injuries</TitleLabel>
-          <TextInput data-section={section} name={35} value={input[35]} onChange={handleInput} />
+          <FormControl data-section={section} name={35} value={input[35]} onChange={handleInput} />
         </InputWrapper>
         <InputWrapper flex={FLEX['1_4']}>
           <TitleLabel>36. Officer Certification</TitleLabel>

@@ -4,11 +4,11 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { FormGroup, FormControl } from 'react-bootstrap';
 
 import SectionView from './SectionView';
-import { Row, TextInput, SelectInput, InputWrapper, Label, InlineCheckbox, InlineRadio, TitleLabel, CheckboxLabel, CheckboxWrapper, OtherWrapper } from '../shared/Layout';
+import { Row, InputWrapper, Label, InlineCheckbox, InlineRadio, TitleLabel, OtherWrapper } from '../shared/Layout';
 import { FLEX } from '../shared/Consts'
-import { FormGroup, InputGroup } from 'react-bootstrap';
 
 const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleCheckboxChange, input }) => {
 
@@ -17,15 +17,15 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
       <Row>
         <InputWrapper>
           <TitleLabel>13. Consumer Name (Last, First, MI)</TitleLabel>
-          <TextInput data-section={section} name='13a' value={input['13a']} onChange={handleInput} />
+          <FormControl data-section={section} name='13a' value={input['13a']} onChange={handleInput} />
         </InputWrapper>
         <InputWrapper>
           <TitleLabel>Residence / Address (Apt Number, City, County, State, Zip)</TitleLabel>
-          <TextInput data-section={section} name='13b' value={input['13b']} onChange={handleInput} />
+          <FormControl data-section={section} name='13b' value={input['13b']} onChange={handleInput} />
         </InputWrapper>
         <InputWrapper>
           <TitleLabel>Consumer Phone Number</TitleLabel>
-          <TextInput data-section={section} name='13c' value={input['13c']} onChange={handleInput} />
+          <FormControl data-section={section} name='13c' value={input['13c']} onChange={handleInput} />
         </InputWrapper>
       </Row>
 
@@ -57,7 +57,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
 
           <InputWrapper flex={FLEX['1_5']}>
             <TitleLabel>Gender</TitleLabel>
-            <SelectInput
+            <FormControl
                 componentClass='select'
                 placeholder='select'
                 data-section={section}
@@ -68,12 +68,12 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               <option value='female'>Female</option>
               <option value='male'>Male</option>
               <option value='nonbinary'>Non-binary</option>
-            </SelectInput>
+            </FormControl>
           </InputWrapper>
 
           <InputWrapper flex={FLEX['1_5']}>
             <TitleLabel>Race</TitleLabel>
-            <SelectInput
+            <FormControl
                 componentClass='select'
                 placeholder='select'
                 data-section={section}
@@ -88,17 +88,17 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               <option value='nativeHawaiian'>Native Hawaiian or Other Pacific Islander</option>
               <option value='white'>White</option>
               <option value='other'>Other</option>
-            </SelectInput>
+            </FormControl>
           </InputWrapper>
 
         <InputWrapper flex={FLEX['1_5']}>
           <TitleLabel>Age</TitleLabel>
-          <TextInput data-section={section} name='14d' value={input['14d']} onChange={handleInput} />
+          <FormControl data-section={section} name='14d' value={input['14d']} onChange={handleInput} />
         </InputWrapper>
 
         <InputWrapper flex={FLEX['1_5']}>
           <TitleLabel>DOB</TitleLabel>
-          <TextInput data-section={section} name='14e' value={input['14e']} onChange={handleInput} />
+          <FormControl data-section={section} name='14e' value={input['14e']} onChange={handleInput} />
         </InputWrapper>
       </Row>
 
@@ -122,7 +122,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
         </InputWrapper>
         <InputWrapper flex={FLEX['100']}>
           <TitleLabel>If Yes, Where Do They Usually Sleep / Frequent?</TitleLabel>
-          <TextInput data-section={section} name='15b' value={input['15b']} onChange={handleInput} />
+          <FormControl data-section={section} name='15b' value={input['15b']} onChange={handleInput} />
         </InputWrapper>
       </Row>
 
@@ -161,7 +161,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
 
         <InputWrapper flex={FLEX['100']}>
           <TitleLabel>Drug type</TitleLabel>
-          <TextInput data-section={section} name='16b' value={input['16b']} onChange={handleInput} />
+          <FormControl data-section={section} name='16b' value={input['16b']} onChange={handleInput} />
         </InputWrapper>
       </Row>
 
@@ -291,7 +291,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
                   value='other'
                   checked={input['19a'].indexOf('other') !== -1}
                   onChange={handleCheckboxChange}>Other:</InlineCheckbox>
-              <TextInput data-section={section} name='19b' value={input['19b']} onChange={handleInput} />
+              <FormControl data-section={section} name='19b' value={input['19b']} onChange={handleInput} />
             </OtherWrapper>
         </InputWrapper>
       </Row>
@@ -316,7 +316,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
         </InputWrapper>
         <InputWrapper flex={FLEX['100']}>
           <Label>If Yes, Weapon Type</Label>
-          <TextInput data-section={section} name='20b' value={input['20b']} onChange={handleInput} />
+          <FormControl data-section={section} name='20b' value={input['20b']} onChange={handleInput} />
         </InputWrapper>
 
         <InputWrapper flex={FLEX['1_5']}>
@@ -338,7 +338,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
         </InputWrapper>
         <InputWrapper flex={FLEX['100']}>
           <Label>If Yes, Weapon Type</Label>
-          <TextInput data-section={section} name='21b' value={input['20b']} onChange={handleInput} />
+          <FormControl data-section={section} name='21b' value={input['20b']} onChange={handleInput} />
         </InputWrapper>
       </Row>
 
@@ -413,9 +413,8 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
                 name='22a'
                 value='other'
                 checked={input['22a'].indexOf('other') !== -1}
-                onChange={handleCheckboxChange} />
-            <CheckboxLabel>Other:</CheckboxLabel>
-            <TextInput data-section={section} name='22b' value={input['22b']} onChange={handleInput} />
+                onChange={handleCheckboxChange}>Other:</InlineCheckbox>
+            <FormControl data-section={section} name='22b' value={input['22b']} onChange={handleInput} />
           </OtherWrapper>
         </InputWrapper>
 
@@ -480,7 +479,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
                 value='other'
                 checked={input['22c'].indexOf('other') !== -1}
                 onChange={handleCheckboxChange}>Other:</InlineCheckbox>
-            <TextInput data-section={section} name='22d' value={input['22d']} onChange={handleInput} />
+            <FormControl data-section={section} name='22d' value={input['22d']} onChange={handleInput} />
           </OtherWrapper>
         </InputWrapper>
       </Row>
@@ -551,9 +550,8 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
                 name='24a' 
                 value='other'
                 checked={input['24a'].indexOf('other') !== -1}
-                onChange={handleCheckboxChange} />
-            <CheckboxLabel>Other:</CheckboxLabel>
-            <TextInput data-section={section} name='24b' value={input['24b']} onChange={handleInput} />
+                onChange={handleCheckboxChange}>Other:</InlineCheckbox>
+            <FormControl data-section={section} name='24b' value={input['24b']} onChange={handleInput} />
           </OtherWrapper>
         </InputWrapper>
       </Row>
@@ -649,9 +647,8 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
                 name='26a'
                 value='other'
                 checked={input['26a'].indexOf('other') !== -1}
-                onChange={handleCheckboxChange} />
-            <CheckboxLabel>Other:</CheckboxLabel>
-            <TextInput data-section={section} name='26b' value={input['26b']} onChange={handleInput} />
+                onChange={handleCheckboxChange}>Other:</InlineCheckbox>
+            <FormControl data-section={section} name='26b' value={input['26b']} onChange={handleInput} />
           </OtherWrapper>
         </InputWrapper>
       </Row>

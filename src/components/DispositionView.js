@@ -4,10 +4,10 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormGroup } from 'react-bootstrap';
+import { FormGroup, FormControl } from 'react-bootstrap';
 
 import SectionView from './SectionView';
-import { Row, TextInput, Label, TitleLabel, CheckboxLabel, CheckboxWrapper, OtherWrapper, InlineCheckbox, InlineRadio, InputWrapper } from '../shared/Layout';
+import { Row, Label, TitleLabel, CheckboxLabel, OtherWrapper, InlineCheckbox, InlineRadio, InputWrapper } from '../shared/Layout';
 import { FLEX } from '../shared/Consts';
 
 
@@ -109,7 +109,7 @@ const DispositionView = ({ section, handleInput, handleCheckboxChange, handleSin
         </InputWrapper>
         <InputWrapper flex={FLEX['100']}>
           <TitleLabel>Hospital Name</TitleLabel>
-          <TextInput data-section={section} name='28c' value={input['28c']} onChange={handleInput} />
+          <FormControl data-section={section} name='28c' value={input['28c']} onChange={handleInput} />
         </InputWrapper>
       </Row>
 
@@ -168,7 +168,7 @@ const DispositionView = ({ section, handleInput, handleCheckboxChange, handleSin
                 value='other'
                 checked={input['29a'].indexOf('other') !== -1}
                 onChange={handleCheckboxChange}>Other:</InlineCheckbox>
-            <TextInput data-section={section} name='29b' value={input['29b']} onChange={handleInput} />
+            <FormControl data-section={section} name='29b' value={input['29b']} onChange={handleInput} />
           </OtherWrapper>
         </InputWrapper>
       </Row>
@@ -231,7 +231,7 @@ const DispositionView = ({ section, handleInput, handleCheckboxChange, handleSin
       <Row>
         <InputWrapper flex={FLEX['100']}>
           <TitleLabel>31. Narrative of Incident, to include: Results of investigation, basis for actions taken, emotional states, additional witnesses. Property listing.</TitleLabel>
-          <TextInput data-section={section} name={31} componentClass='textarea' onChange={handleInput} />
+          <FormControl data-section={section} name={31} componentClass='textarea' onChange={handleInput} />
         </InputWrapper>
       </Row>
     </SectionView>
