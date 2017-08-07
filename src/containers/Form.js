@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { EdmApi, DataApi } from 'loom-data';
+import { DataApi } from 'lattice';
 
 import FormView from '../components/FormView';
 
@@ -78,7 +78,9 @@ class Form extends React.Component {
 				36: [],
 				'37a': '',
 				'37b': ''
-			}
+			},
+			submitSuccess: null,
+			submitFailure: null
 		};
 
 		this.handleInput = this.handleInput.bind(this);
@@ -124,7 +126,34 @@ class Form extends React.Component {
 	handleSubmit(e) {
 		e.preventDefault();
 		console.log('SUBMIT:', this.state);
-		// TODO: send request
+		// const entities = Object.assign({}, this.state.reportInfo, this.state.consumerInfo, this.state.complainantInfo, this.state.dispositionInfo, this.state.officerInfo);
+
+		// 'Pillows' test entity set id
+		const entitySetId = '78075393-3449-434d-a41e-0e30d42ba96f';
+		const entities = {
+			// color property type id
+			'01703452-0cd6-4bb6-a8f4-ba2d8ef43c26': 'yellow',
+			// texture property type id
+			'135f73d5-4d91-4735-97bc-09fb1e72555b': 'sharp'
+		}
+		console.log('entities:', entities);
+
+
+		DataApi.createEntityData(entitySetId, '', entities)
+		.then((res) => {
+			console.log('success! res:', res);
+			this.setState({
+				submitSuccess: true,
+				submitFailure: false				
+			});
+		})
+		.catch(() => {
+			console.log('failure!');
+			this.setState({
+				submitSuccess: false,
+				submitFailure: true
+			})
+		})
 	}
 
 	render() {

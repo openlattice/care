@@ -22,6 +22,7 @@
   "license": "GPLv3",
   "main": "index.js",
   "dependencies": {
+    "lattice": "^0.27.0",
     "loom-data": "^0.24.0",
     "polished": "^1.2.1",
     "prop-types": "^15.5.10",
