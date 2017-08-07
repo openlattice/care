@@ -49,7 +49,6 @@ export const OtherWrapper = styled.span`
 
 export const InlineCheckbox = styled(Checkbox)`
   font-size: 16px;
-  line-height: 2;
 `;
 
 export const InlineRadio = styled(Radio)`

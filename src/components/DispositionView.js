@@ -4,6 +4,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { FormGroup } from 'react-bootstrap';
 
 import SectionView from './SectionView';
 import { Row, TextInput, Label, TitleLabel, CheckboxLabel, CheckboxWrapper, OtherWrapper, InlineCheckbox, InlineRadio, InputWrapper } from '../shared/Layout';
@@ -16,69 +17,77 @@ const DispositionView = ({ section, handleInput, handleCheckboxChange, handleSin
       <Row>
         <InputWrapper flex={FLEX['1_3']}>
           <TitleLabel>28. Disposition</TitleLabel>
-          <InlineCheckbox
-              inline
-              data-section={section}
-              name='28a'
-              value='arrest'
-              checked={input['28a'].indexOf('arrest') !== -1}
-              onChange={handleCheckboxChange}>Arrest</InlineCheckbox>
-          <InlineCheckbox
-              inline
-              data-section={section}
-              name='28a'
-              value='ep'
-              checked={input['28a'].indexOf('ep') !== -1}
-              onChange={handleCheckboxChange}>EP</InlineCheckbox>
-          <InlineCheckbox
-              inline
-              data-section={section}
-              name='28a'
-              value='voluntaryER'
-              checked={input['28a'].indexOf('voluntaryER') !== -1}
-              onChange={handleCheckboxChange}>Voluntary ER Intake</InlineCheckbox>
-          <InlineCheckbox
-              inline
-              data-section={section}
-              name='28a'
-              value='bcri'
-              checked={input['28a'].indexOf('bcri') !== -1}
-              onChange={handleCheckboxChange}>BCRI</InlineCheckbox>
-          <InlineCheckbox
-              inline
-              data-section={section}
-              name='28a'
-              value='infoAndReferral'
-              checked={input['28a'].indexOf('infoAndReferral') !== -1}
-              onChange={handleCheckboxChange}>Information and Referral</InlineCheckbox>
-          <InlineCheckbox
-              inline
-              data-section={section}
-              name='28a'
-              value='lead'
-              checked={input['28a'].indexOf('lead') !== -1}
-              onChange={handleCheckboxChange}>LEAD</InlineCheckbox>
-          <InlineCheckbox
-              inline
-              data-section={section}
-              name='28a'
-              value='contactedTreatementProvider'
-              checked={input['28a'].indexOf('contactedTreatementProvider') !== -1}
-              onChange={handleCheckboxChange}>Contacted or Referred to Current Treatment Provider</InlineCheckbox>
-          <InlineCheckbox
-              inline
-              data-section={section}
-              name='28a'
-              value='criminalCitation'
-              checked={input['28a'].indexOf('criminalCitation') !== -1}
-              onChange={handleCheckboxChange}>Criminal Citation</InlineCheckbox>
-          <InlineCheckbox
-              inline
-              data-section={section}
-              name='28a'
-              value='civilCitation'
-              checked={input['28a'].indexOf('civilCitation') !== -1}
-              onChange={handleCheckboxChange}>Civil Citation</InlineCheckbox>
+          <FormGroup>
+            <InlineCheckbox
+                inline
+                data-section={section}
+                name='28a'
+                value='arrest'
+                checked={input['28a'].indexOf('arrest') !== -1}
+                onChange={handleCheckboxChange}>Arrest</InlineCheckbox>
+            <InlineCheckbox
+                inline
+                data-section={section}
+                name='28a'
+                value='ep'
+                checked={input['28a'].indexOf('ep') !== -1}
+                onChange={handleCheckboxChange}>EP</InlineCheckbox>
+            <InlineCheckbox
+                inline
+                data-section={section}
+                name='28a'
+                value='voluntaryER'
+                checked={input['28a'].indexOf('voluntaryER') !== -1}
+                onChange={handleCheckboxChange}>Voluntary ER Intake</InlineCheckbox>
+            <InlineCheckbox
+                inline
+                data-section={section}
+                name='28a'
+                value='bcri'
+                checked={input['28a'].indexOf('bcri') !== -1}
+                onChange={handleCheckboxChange}>BCRI</InlineCheckbox>
+          </FormGroup>
+          <FormGroup>
+            <InlineCheckbox
+                inline
+                data-section={section}
+                name='28a'
+                value='infoAndReferral'
+                checked={input['28a'].indexOf('infoAndReferral') !== -1}
+                onChange={handleCheckboxChange}>Information and Referral</InlineCheckbox>
+            <InlineCheckbox
+                inline
+                data-section={section}
+                name='28a'
+                value='lead'
+                checked={input['28a'].indexOf('lead') !== -1}
+                onChange={handleCheckboxChange}>LEAD</InlineCheckbox>
+          </FormGroup>
+          <FormGroup>
+            <InlineCheckbox
+                inline
+                data-section={section}
+                name='28a'
+                value='contactedTreatementProvider'
+                checked={input['28a'].indexOf('contactedTreatementProvider') !== -1}
+                onChange={handleCheckboxChange}>Contacted or Referred to Current Treatment Provider</InlineCheckbox>
+          </FormGroup>
+          <FormGroup>
+            <InlineCheckbox
+                inline
+                data-section={section}
+                name='28a'
+                value='criminalCitation'
+                checked={input['28a'].indexOf('criminalCitation') !== -1}
+                onChange={handleCheckboxChange}>Criminal Citation</InlineCheckbox>
+            <InlineCheckbox
+                inline
+                data-section={section}
+                name='28a'
+                value='civilCitation'
+                checked={input['28a'].indexOf('civilCitation') !== -1}
+                onChange={handleCheckboxChange}>Civil Citation</InlineCheckbox>
+          </FormGroup>
         </InputWrapper>
 
         <InputWrapper flex={FLEX['1_5']}>
@@ -107,48 +116,50 @@ const DispositionView = ({ section, handleInput, handleCheckboxChange, handleSin
       <Row>
         <InputWrapper flex={FLEX['100']}>
           <TitleLabel>29. De-escalation Techniques/Equipment Used</TitleLabel>
-          <InlineCheckbox
-              data-section={section}
-              inline
-              name='29a'
-              value='verbalization'
-              checked={input['29a'].indexOf('verbalization') !== -1}
-              onChange={handleCheckboxChange}>Verbalization</InlineCheckbox>
-          <InlineCheckbox
-              data-section={section}
-              inline
-              name='29a'
-              value='handcuffs'
-              checked={input['29a'].indexOf('handcuffs') !== -1}
-              onChange={handleCheckboxChange}>Handcuffs</InlineCheckbox>
-          <InlineCheckbox
-              data-section={section}
-              inline
-              name='29a'
-              value='legRestraints'
-              checked={input['29a'].indexOf('legRestraints') !== -1}
-              onChange={handleCheckboxChange}>Leg Restraints</InlineCheckbox>
-          <InlineCheckbox
-              data-section={section}
-              inline
-              name='29a'
-              value='taser'
-              checked={input['29a'].indexOf('taser') !== -1}
-              onChange={handleCheckboxChange}>Taser</InlineCheckbox>
-          <InlineCheckbox
-              data-section={section}
-              inline
-              name='29a'
-              value='arrestControl'
-              checked={input['29a'].indexOf('arrestControl') !== -1}
-              onChange={handleCheckboxChange}>Arrest Control (Hands / Feet)</InlineCheckbox>
-          <InlineCheckbox
-              data-section={section}
-              inline
-              name='29a'
-              value='n/a'
-              checked={input['29a'].indexOf('n/a') !== -1}
-              onChange={handleCheckboxChange}>N/A</InlineCheckbox>
+          <FormGroup>
+            <InlineCheckbox
+                data-section={section}
+                inline
+                name='29a'
+                value='verbalization'
+                checked={input['29a'].indexOf('verbalization') !== -1}
+                onChange={handleCheckboxChange}>Verbalization</InlineCheckbox>
+            <InlineCheckbox
+                data-section={section}
+                inline
+                name='29a'
+                value='handcuffs'
+                checked={input['29a'].indexOf('handcuffs') !== -1}
+                onChange={handleCheckboxChange}>Handcuffs</InlineCheckbox>
+            <InlineCheckbox
+                data-section={section}
+                inline
+                name='29a'
+                value='legRestraints'
+                checked={input['29a'].indexOf('legRestraints') !== -1}
+                onChange={handleCheckboxChange}>Leg Restraints</InlineCheckbox>
+            <InlineCheckbox
+                data-section={section}
+                inline
+                name='29a'
+                value='taser'
+                checked={input['29a'].indexOf('taser') !== -1}
+                onChange={handleCheckboxChange}>Taser</InlineCheckbox>
+            <InlineCheckbox
+                data-section={section}
+                inline
+                name='29a'
+                value='arrestControl'
+                checked={input['29a'].indexOf('arrestControl') !== -1}
+                onChange={handleCheckboxChange}>Arrest Control (Hands / Feet)</InlineCheckbox>
+            <InlineCheckbox
+                data-section={section}
+                inline
+                name='29a'
+                value='n/a'
+                checked={input['29a'].indexOf('n/a') !== -1}
+                onChange={handleCheckboxChange}>N/A</InlineCheckbox>
+          </FormGroup>
           <OtherWrapper>
             <InlineCheckbox
                 data-section={section}
