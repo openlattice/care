@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { DataApi } from 'lattice';
+import { EntityDataModelApi, DataApi } from 'lattice';
 
 import FormView from '../components/FormView';
 
@@ -138,8 +138,10 @@ class Form extends React.Component {
 		}
 		console.log('entities:', entities);
 
-
-		DataApi.createEntityData(entitySetId, '', entities)
+		EntityDataModelApi.getEntitySetId('pillows')
+		.then((id) => {
+			return DataApi.createEntityData(id, '', entities);
+		})
 		.then((res) => {
 			console.log('success! res:', res);
 			this.setState({
