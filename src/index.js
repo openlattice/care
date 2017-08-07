@@ -8,7 +8,7 @@ import ReactDOM from 'react-dom';
 import styled, { injectGlobal } from 'styled-components';
 import { normalize } from 'polished';
 
-import FormView from './components/FormView';
+import Form from './containers/Form';
 
 injectGlobal`${normalize()}`
 
@@ -58,6 +58,6 @@ function ComingSoon(props) {
 }
 
 ReactDOM.render(
-  <FormView />,
+  <Form />,
   document.getElementById('app')
 );

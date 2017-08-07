@@ -2,11 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { EdmApi, DataApi } from 'loom-data';
 
-import ReportInfoView from '../components/ReportInfoView';
-import ConsumerInfoView from '../components/ConsumerInfoView';
-import ComplainantInfoView from '../components/ComplainantInfoView';
-import DispositionView from '../components/DispositionView';
-import OfficerInfoView from '../components/OfficerInfoView';
+import FormView from '../components/FormView';
 
 class Form extends React.Component {
 	constructor(props) {
@@ -88,6 +84,7 @@ class Form extends React.Component {
 		this.handleInput = this.handleInput.bind(this);
 		this.handleSingleSelection = this.handleSingleSelection.bind(this);
 		this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
+		this.handleSubmit = this.handleSubmit.bind(this);
 	}
 
 	// For text input
@@ -124,7 +121,9 @@ class Form extends React.Component {
 		this.setState({ [sectionKey]: sectionState }, () => {console.log('section state:', this.state[sectionKey])});
 	}
 
-	handleSubmit() {
+	handleSubmit(e) {
+		e.preventDefault();
+		console.log('SUBMIT:', this.state);
 		// send request to backend, submitting state data
 
 
@@ -193,39 +192,14 @@ class Form extends React.Component {
 
 	render() {
 		return (
-			<div>
-				<ReportInfoView
-						handleInput={this.handleInput}
-						handleSingleSelection={this.handleSingleSelection}
-						input={this.state.reportInfo}
-						section='reportInfo' />
-				<ConsumerInfoView
-						handleInput={this.handleInput}
-						handleSingleSelection={this.handleSingleSelection}
-						handleCheckboxChange={this.handleCheckboxChange}
-						input={this.state.consumerInfo}
-						section='consumerInfo' />
-				<ComplainantInfoView
-						handleInput={this.handleInput}
-						input={this.state.complainantInfo}
-						section='complainantInfo' />
-				<DispositionView
-						handleInput={this.handleInput}
-						handleCheckboxChange={this.handleCheckboxChange}
-						handleSingleSelection={this.handleSingleSelection}
-						input={this.state.dispositionInfo}
-						section='dispositionInfo' />
-				<OfficerInfoView
-						handleInput={this.handleInput}
-						handleCheckboxChange={this.handleCheckboxChange}
-						input={this.state.officerInfo}
-						section='officerInfo' />
-			</div>
+			<FormView
+					handleInput={this.handleInput}
+					handleSingleSelection={this.handleSingleSelection}
+					handleCheckboxChange={this.handleCheckboxChange}
+					handleSubmit={this.handleSubmit}
+					input={this.state} />
 		);
 	}
 }
 
 export default Form;
-// TODO: Alter formview to take children / consolidate.
-// TODO:  Add proptypes to all views
-// TODO: Use constants
