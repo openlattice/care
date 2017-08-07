@@ -124,70 +124,7 @@ class Form extends React.Component {
 	handleSubmit(e) {
 		e.preventDefault();
 		console.log('SUBMIT:', this.state);
-		// send request to backend, submitting state data
-
-
-		/* EXAMPLE API USAGE (Gallery: NewEdmObjectInput.js) */
-
-		// case EdmConsts.PROPERTY_TYPE_TITLE: {
-		//   const propertyType = new PropertyTypeBuilder()
-		//     .setType(fqn)
-		//     .setTitle(this.state[TITLE_FIELD])
-		//     .setDescription(this.state[DESCRIPTION_FIELD])
-		//     .setDataType(this.state.datatype)
-		//     .build();
-		//   propertyType.piiField = this.state.pii;
-		//   propertyType.analyzer = (this.state.datatype === STRING && this.state.phonetic) ?
-		//     EdmConsts.ANALYZERS.metaphone : EdmConsts.ANALYZERS.standard;
-		//   return EntityDataModelApi.createPropertyType(propertyType);
-		// }
-
-		// case EdmConsts.ENTITY_TYPE_TITLE: {
-		//   const propertyTypes = this.state.propertyTypes.map((propertyType) => {
-		//     return propertyType.id;
-		//   });
-		//   const entityType = new EntityTypeBuilder()
-		//     .setType(fqn)
-		//     .setTitle(this.state[TITLE_FIELD])
-		//     .setDescription(this.state[DESCRIPTION_FIELD])
-		//     .setPropertyTypes(propertyTypes)
-		//     .setKey(this.state.pKeys)
-		//     .setCategory(SecurableTypes.EntityType)
-		//     .build();
-		//   return EntityDataModelApi.createEntityType(entityType);
-		// }
-
-		/* Gallery: (CreateEntitySetEpic.js) */
-		// function createEntitySet(entitySet) {
-		//   return Observable.from(EntityDataModelApi.createEntitySets([entitySet]))
-		//     .map((response) => {
-		//       return Object.assign({}, entitySet, {
-		//         id: response[entitySet.name]
-		//       });
-		//     })
-		//     .mergeMap((savedEntitySet) => {
-		//       const reference = {
-		//         collection: COLLECTIONS.ENTITY_TYPE,
-		//         id: savedEntitySet.id
-		//       };
-		//       return Observable.of(
-		//         actionFactories.createEntitySetResolve(reference)
-		//       );
-		//     })
-		//     .catch(() => {
-		//       return Observable.of(
-		//         actionFactories.createEntitySetReject('Error saving entity set')
-		//       );
-		//     });
-		// }
-
-		// // TODO: Cancellation and Error handling
-		// function createEntitySetEpic(action$) {
-		//   return action$.ofType(actionTypes.CREATE_ENTITY_SET_REQUEST)
-		//   // Run search
-		//     .map(action => action.entitySet)
-		//     .mergeMap(createEntitySet);
-		// }
+		// TODO: send request
 	}
 
 	render() {
