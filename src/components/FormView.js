@@ -8,7 +8,7 @@ import styled, { injectGlobal } from 'styled-components';
 import { normalize } from 'polished';
 
 import Form from '../containers/Form';
-import { SubmitButton } from '../shared/Layout';
+import { SubmitButton, BtnWrapper } from '../shared/Layout';
 
 const Page = styled.div`
   background: #F4F4F4;
@@ -33,7 +33,8 @@ const Description = styled.div`
 `;
 
 const FormWrapper = styled.div`
-  margin: 0 60px 60px 60px;
+  margin: 0 60px 0 60px;
+  padding-bottom: 100px;
 `;
 
 function FormView() {
@@ -46,7 +47,9 @@ function FormView() {
       <FormWrapper>
         <form>
           <Form />
-          <SubmitButton type='submit'>Submit</SubmitButton>
+          <BtnWrapper>
+            <SubmitButton type='submit' bsStyle='primary' bsSize='lg'>Submit</SubmitButton>
+          </BtnWrapper>
         </form>
       </FormWrapper>
     </Page>
