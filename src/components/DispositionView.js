@@ -15,7 +15,7 @@ const DispositionView = ({ section, handleInput, handleCheckboxChange, handleSin
   return(
     <SectionView header="Disposition">
       <Row>
-        <InputWrapper flex={FLEX['1_3']}>
+        <InputWrapper flex={FLEX.COL_1_3}>
           <TitleLabel>28. Disposition</TitleLabel>
           <FormGroup>
             <InlineCheckbox
@@ -107,14 +107,14 @@ const DispositionView = ({ section, handleInput, handleCheckboxChange, handleSin
               checked={input['28b'] === 'no'}
               onChange={handleSingleSelection}>No</InlineRadio>
         </InputWrapper>
-        <InputWrapper flex={FLEX['100']}>
+        <InputWrapper flex={FLEX.COL_100}>
           <TitleLabel>Hospital Name</TitleLabel>
           <FormControl data-section={section} name='28c' value={input['28c']} onChange={handleInput} />
         </InputWrapper>
       </Row>
 
       <Row>
-        <InputWrapper flex={FLEX['100']}>
+        <InputWrapper flex={FLEX.COL_100}>
           <TitleLabel>29. De-escalation Techniques/Equipment Used</TitleLabel>
           <FormGroup>
             <InlineCheckbox
@@ -174,7 +174,7 @@ const DispositionView = ({ section, handleInput, handleCheckboxChange, handleSin
       </Row>
 
       <Row>
-        <InputWrapper flex={FLEX['100']}>
+        <InputWrapper flex={FLEX.COL_100}>
           <TitleLabel>30. Called for Specialized Resources</TitleLabel>
           <InlineCheckbox
               data-section={section}
@@ -229,7 +229,7 @@ const DispositionView = ({ section, handleInput, handleCheckboxChange, handleSin
       </Row>
 
       <Row>
-        <InputWrapper flex={FLEX['100']}>
+        <InputWrapper flex={FLEX.COL_100}>
           <TitleLabel>31. Narrative of Incident, to include: Results of investigation, basis for actions taken, emotional states, additional witnesses. Property listing.</TitleLabel>
           <FormControl data-section={section} name={31} componentClass='textarea' onChange={handleInput} />
         </InputWrapper>

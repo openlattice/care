@@ -48,7 +48,7 @@ const ReportInfoView = ({ section, handleInput, handleSingleSelection, input }) 
           <TitleLabel>4. Crime / Incident</TitleLabel>
           <FormControl data-section={section} name='4' value={input[4]} onChange={handleInput} />
         </InputWrapper>
-        <InputWrapper flex={FLEX['2_3']}>
+        <InputWrapper flex={FLEX.COL_2_3}>
           <TitleLabel>5. Location of Offense / Incident (exact street address, if applicable)</TitleLabel>
           <FormControl data-section={section} name='5' value={input[5]} onChange={handleInput} />
         </InputWrapper>

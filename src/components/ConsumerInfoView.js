@@ -30,7 +30,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
       </Row>
 
       <Row>
-        <InputWrapper flex={FLEX['1_5']}>
+        <InputWrapper flex={FLEX.COL_1_5}>
           <TitleLabel>14. Military Status</TitleLabel>
             <InlineRadio
                 inline
@@ -55,7 +55,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
                 onChange={handleSingleSelection}>N/A</InlineRadio>
           </InputWrapper>
 
-          <InputWrapper flex={FLEX['1_5']}>
+          <InputWrapper flex={FLEX.COL_1_5}>
             <TitleLabel>Gender</TitleLabel>
             <FormControl
                 componentClass='select'
@@ -71,7 +71,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
             </FormControl>
           </InputWrapper>
 
-          <InputWrapper flex={FLEX['1_5']}>
+          <InputWrapper flex={FLEX.COL_1_5}>
             <TitleLabel>Race</TitleLabel>
             <FormControl
                 componentClass='select'
@@ -91,19 +91,19 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
             </FormControl>
           </InputWrapper>
 
-        <InputWrapper flex={FLEX['1_5']}>
+        <InputWrapper flex={FLEX.COL_1_5}>
           <TitleLabel>Age</TitleLabel>
           <FormControl data-section={section} name='14d' value={input['14d']} onChange={handleInput} />
         </InputWrapper>
 
-        <InputWrapper flex={FLEX['1_5']}>
+        <InputWrapper flex={FLEX.COL_1_5}>
           <TitleLabel>DOB</TitleLabel>
           <FormControl data-section={section} name='14e' value={input['14e']} onChange={handleInput} />
         </InputWrapper>
       </Row>
 
       <Row>
-        <InputWrapper flex={FLEX['1_5']}>
+        <InputWrapper flex={FLEX.COL_1_5}>
           <TitleLabel>15. Homeless</TitleLabel>
           <InlineRadio
               inline
@@ -120,14 +120,14 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               checked={input['15a'] === 'no'}
               onChange={handleSingleSelection}>No</InlineRadio>
         </InputWrapper>
-        <InputWrapper flex={FLEX['100']}>
+        <InputWrapper flex={FLEX.COL_100}>
           <TitleLabel>If Yes, Where Do They Usually Sleep / Frequent?</TitleLabel>
           <FormControl data-section={section} name='15b' value={input['15b']} onChange={handleInput} />
         </InputWrapper>
       </Row>
 
       <Row>
-        <InputWrapper flex={FLEX['1_5']}>
+        <InputWrapper flex={FLEX.COL_1_5}>
           <TitleLabel>16. Consumer Using Drugs, Alcohol</TitleLabel>
           <InlineRadio
               inline
@@ -159,14 +159,14 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               onChange={handleSingleSelection}>N/A</InlineRadio>
         </InputWrapper>
 
-        <InputWrapper flex={FLEX['100']}>
+        <InputWrapper flex={FLEX.COL_100}>
           <TitleLabel>Drug type</TitleLabel>
           <FormControl data-section={section} name='16b' value={input['16b']} onChange={handleInput} />
         </InputWrapper>
       </Row>
 
       <Row>
-        <InputWrapper flex={FLEX['1_5']}>
+        <InputWrapper flex={FLEX.COL_1_5}>
           <TitleLabel>17. Prescribed Medication</TitleLabel>
           <InlineRadio
               inline
@@ -217,7 +217,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
       </Row>
 
       <Row>
-        <InputWrapper flex={FLEX['1_5']}>
+        <InputWrapper flex={FLEX.COL_1_5}>
           <TitleLabel>18. Does Consumer Have Previous Psychiatric Hospital Admission?</TitleLabel>
           <InlineRadio
               inline
@@ -245,7 +245,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               onChange={handleSingleSelection}>Unknown</InlineRadio>
         </InputWrapper>
 
-        <InputWrapper flex={FLEX['100']}>
+        <InputWrapper flex={FLEX.COL_100}>
           <TitleLabel>19. Self Diagnosis</TitleLabel>
             <FormGroup>
               <InlineCheckbox
@@ -297,7 +297,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
       </Row>
 
       <Row>
-        <InputWrapper flex={FLEX['1_5']}>
+        <InputWrapper flex={FLEX.COL_1_5}>
           <TitleLabel>20. Armed with Weapon?</TitleLabel>
           <InlineRadio
               inline
@@ -314,12 +314,12 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               checked={input['20a'] === 'no'}
               onChange={handleSingleSelection}>No</InlineRadio>
         </InputWrapper>
-        <InputWrapper flex={FLEX['100']}>
+        <InputWrapper flex={FLEX.COL_100}>
           <Label>If Yes, Weapon Type</Label>
           <FormControl data-section={section} name='20b' value={input['20b']} onChange={handleInput} />
         </InputWrapper>
 
-        <InputWrapper flex={FLEX['1_5']}>
+        <InputWrapper flex={FLEX.COL_1_5}>
           <TitleLabel>21. Have Access to Weapons?</TitleLabel>
           <InlineRadio
               inline
@@ -336,14 +336,14 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               checked={input['21a'] === 'no'}
               onChange={handleSingleSelection}>No</InlineRadio>
         </InputWrapper>
-        <InputWrapper flex={FLEX['100']}>
+        <InputWrapper flex={FLEX.COL_100}>
           <Label>If Yes, Weapon Type</Label>
           <FormControl data-section={section} name='21b' value={input['20b']} onChange={handleInput} />
         </InputWrapper>
       </Row>
 
       <Row>
-        <InputWrapper flex={FLEX['1_2']}>
+        <InputWrapper flex={FLEX.COL_1_2}>
           <TitleLabel>22. Observed Behaviors (Check all that apply)</TitleLabel>
           <FormGroup>
             <InlineCheckbox
@@ -418,7 +418,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
           </OtherWrapper>
         </InputWrapper>
 
-        <InputWrapper flex={FLEX['1_2']}>
+        <InputWrapper flex={FLEX.COL_1_2}>
           <TitleLabel>Emotional State (Check all that apply)</TitleLabel>
           <FormGroup>
             <InlineCheckbox
@@ -485,7 +485,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
       </Row>
 
       <Row>
-        <InputWrapper flex={FLEX['1_5']}>
+        <InputWrapper flex={FLEX.COL_1_5}>
           <TitleLabel>23. Photos Taken Of:</TitleLabel>
           <FormGroup>
             <InlineCheckbox
@@ -505,7 +505,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
           </FormGroup>
         </InputWrapper>
 
-        <InputWrapper flex={FLEX['100']}>
+        <InputWrapper flex={FLEX.COL_100}>
           <TitleLabel>24. Consumer Injuries</TitleLabel>
           <FormGroup>
             <InlineCheckbox
@@ -557,7 +557,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
       </Row>
 
       <Row>
-        <InputWrapper flex={FLEX['1_5']}>
+        <InputWrapper flex={FLEX.COL_1_5}>
           <TitleLabel>25. Suicidal</TitleLabel>
           <InlineRadio
               inline
@@ -575,7 +575,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               onChange={handleSingleSelection}>No</InlineRadio>
         </InputWrapper>
 
-        <InputWrapper flex={FLEX['100']}>
+        <InputWrapper flex={FLEX.COL_100}>
           <TitleLabel>If Suicidal:</TitleLabel>
           <InlineCheckbox
               inline
@@ -609,7 +609,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
       </Row>
 
       <Row>
-        <InputWrapper flex={FLEX['100']}>
+        <InputWrapper flex={FLEX.COL_100}>
           <TitleLabel>26. Method Used to Attempt, Threaten, or Complete Suicide</TitleLabel>
           <FormGroup>
             <InlineCheckbox

@@ -15,19 +15,19 @@ const OfficerInfoView = ({ section, handleInput, handleCheckboxChange, input }) 
   return(
     <SectionView header="Officer Information">
       <Row>
-        <InputWrapper flex={FLEX['1_4']}>
+        <InputWrapper flex={FLEX.COL_1_4}>
           <TitleLabel>32. Officer Name</TitleLabel>
           <FormControl data-section={section} name={32} value={input[32]} onChange={handleInput} />
         </InputWrapper>
-        <InputWrapper flex={FLEX['1_4']}>
+        <InputWrapper flex={FLEX.COL_1_4}>
           <TitleLabel>34. Seq ID</TitleLabel>
           <FormControl data-section={section} name={34} value={input[34]} onChange={handleInput} />
         </InputWrapper>
-        <InputWrapper flex={FLEX['1_4']}>
+        <InputWrapper flex={FLEX.COL_1_4}>
           <TitleLabel>35. Officer Injuries</TitleLabel>
           <FormControl data-section={section} name={35} value={input[35]} onChange={handleInput} />
         </InputWrapper>
-        <InputWrapper flex={FLEX['1_4']}>
+        <InputWrapper flex={FLEX.COL_1_4}>
           <TitleLabel>36. Officer Certification</TitleLabel>
           <InlineCheckbox
               inline

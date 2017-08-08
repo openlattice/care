@@ -45,7 +45,7 @@ export const TitleLabel = Label.extend`
 `;
 
 export const InputWrapper = styled(FormGroup).attrs({
-  flex: props => props.flex || FLEX['1_3']
+  flex: props => props.flex || FLEX.COL_1_3
 })`
   padding-right: 30px;
   flex: ${props => props.flex};
