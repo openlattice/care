@@ -25,7 +25,7 @@ const ReportInfoView = ({ section, handleInput, handleSingleSelection, input }) 
           <FormControl data-section={section} name='2' value={input[2]} onChange={handleInput} />
         </InputWrapper>
         <InputWrapper>
-          <TitleLabel>3. Comparison Offense Report Prepared</TitleLabel>
+          <TitleLabel>3. Companion Offense Report Prepared</TitleLabel>
           <InlineRadio
               inline
               data-section={section}
