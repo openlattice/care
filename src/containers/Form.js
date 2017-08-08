@@ -118,24 +118,58 @@ class Form extends React.Component {
 		this.setState({ [sectionKey]: sectionState }, () => {console.log('section state:', this.state[sectionKey])});
 	}
 
+	// EXAMPLE ENTITIES FROM ADD DATA FORM
+	// const entities = {
+	// 	'ccHVycGxl': {
+	// 		'135f73d5-4d91-4735-97bc-09fb1e72555b': ["soft"],
+	// 		'01703452-0cd6-4bb6-a8f4-ba2d8ef43c26': ["purple"]
+	// 	};
+
+	// PROBLEMS
+	// 403 on getEntitySetId
+		// Am I hitting prod? no error logs locally
+		// Need auth0 token
+	// 400 on createEntityData
+		// Looks like entities format is incorrect. What is the entityKey?
+	// Get entitySetId & propertyTypeIds -> how to match state keys w/ property type ids?
+		// For each property key (state key), get propertyTypeId... create new object w/ ids as keys, then use this as entities arg
 	handleSubmit = (e) => {
 		e.preventDefault();
-		console.log('SUBMIT:', this.state);
-		// const entities = Object.assign({}, this.state.reportInfo, this.state.consumerInfo, this.state.complainantInfo, this.state.dispositionInfo, this.state.officerInfo);
+		console.log('SUBMIT!');
+		let entitySetId = '';
 
-		// 'Pillows' test entity set id
-		const entitySetId = '78075393-3449-434d-a41e-0e30d42ba96f';
-		const entities = {
-			// color property type id
-			'01703452-0cd6-4bb6-a8f4-ba2d8ef43c26': 'yellow',
-			// texture property type id
-			'135f73d5-4d91-4735-97bc-09fb1e72555b': 'sharp'
-		}
-		console.log('entities:', entities);
-
-		EntityDataModelApi.getEntitySetId('pillows')
+		EntityDataModelApi.getEntitySetId('baltimorehealthreporttest')
 		.then((id) => {
-			return DataApi.createEntityData(id, '', entities);
+			console.log('entity set id:', id);
+			entitySetId = id;
+			EntityDataModelApi.getEntitySet(id)
+			.then((entitySet) => {
+				console.log('entity set:', entitySet);
+				EntityDataModelApi.getEntityType(entitySet.entityTypeId) // entityType contains property types
+				.then((entityType) => {
+					console.log('entityType:', entityType);
+					Promise.map(entityType.properties, (propertyId) => {
+	        	return EntityDataModelApi.getPropertyType(propertyId);
+					})
+					.then((propertyTypes) => {
+						console.log('propertyTypes', propertyTypes);
+						// TODO: format entities correctly. e.g. {[entityKey]: {propertyKey: val, propertyKey: val}}
+						// TODO: get entityKey / what is the entityKey?
+						const entityKey = '';
+						const entities = {
+							[entityKey]: {
+
+							}
+						};
+						propertyTypes.forEach((propertyType) => {
+							// TODO: flatten state & make change keys to strings that match propertyType names, e.g. 'disposition', for easier lookup here by propertyType
+							// check that 'title' and 'id' are correct keys
+							entities[entityKey][propertyType.id] = this.state[propertyType.title];
+						});
+						DataApi.createEntityData(entitySetId, '', entities);
+					});
+				});
+			});
 		})
 		.then((res) => {
 			console.log('success! res:', res);
@@ -144,13 +178,13 @@ class Form extends React.Component {
 				submitFailure: false				
 			});
 		})
-		.catch(() => {
-			console.log('failure!');
+		.catch((err) => {
+			console.log('err!', err);
 			this.setState({
 				submitSuccess: false,
 				submitFailure: true
 			})
-		})
+		});
 	}
 
 	render() {
