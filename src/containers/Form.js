@@ -82,15 +82,10 @@ class Form extends React.Component {
 			submitSuccess: null,
 			submitFailure: null
 		};
-
-		this.handleInput = this.handleInput.bind(this);
-		this.handleSingleSelection = this.handleSingleSelection.bind(this);
-		this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
-		this.handleSubmit = this.handleSubmit.bind(this);
 	}
 
 	// For text input
-	handleInput(e) {
+	handleInput = (e) => {
 		const sectionKey = e.target.dataset.section
 		const name = e.target.name;
 		const input = e.target.value;
@@ -100,14 +95,14 @@ class Form extends React.Component {
 	}
 
 	// For radio or select input
-	handleSingleSelection(e) {
+	handleSingleSelection = (e) => {
 		const sectionKey = e.target.dataset.section;
 		const sectionState = this.state[sectionKey];
 		sectionState[e.target.name] = e.target.value;
 		this.setState({ [sectionKey]: sectionState }, () => {console.log('section state:', this.state[sectionKey])});
 	}
 
-	handleCheckboxChange(e) {
+	handleCheckboxChange = (e) => {
 		const sectionKey = e.target.dataset.section;
 		const sectionState = this.state[sectionKey];
 		const idx = sectionState[e.target.name].indexOf(e.target.value);
@@ -123,7 +118,7 @@ class Form extends React.Component {
 		this.setState({ [sectionKey]: sectionState }, () => {console.log('section state:', this.state[sectionKey])});
 	}
 
-	handleSubmit(e) {
+	handleSubmit = (e) => {
 		e.preventDefault();
 		console.log('SUBMIT:', this.state);
 		// const entities = Object.assign({}, this.state.reportInfo, this.state.consumerInfo, this.state.complainantInfo, this.state.dispositionInfo, this.state.officerInfo);
