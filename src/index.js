@@ -48,15 +48,6 @@ const Container = styled.div`
   justify-content: center;
 `;
 
-function ComingSoon(props) {
-  return (
-    <Container>
-      <Title>BALTIMORE HEALTH</Title>
-      <Description>Coming Soon!</Description>
-    </Container>
-  );
-}
-
 ReactDOM.render(
   <Form />,
   document.getElementById('app')
