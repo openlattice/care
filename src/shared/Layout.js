@@ -30,9 +30,6 @@ export const FormWrapper = styled.div`
 `;
 
 export const Row = styled.div`
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: -webkit-flex;
   display: flex;
   margin-bottom: 24px;
 `;
