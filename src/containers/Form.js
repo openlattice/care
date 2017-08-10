@@ -84,8 +84,7 @@ class Form extends React.Component {
       propertyTypes: [],
       submitSuccess: null,
       submitFailure: null,
-      name: 'name test',
-      address: 'address test'
+
     };
   }
 
@@ -151,9 +150,22 @@ class Form extends React.Component {
   handleSubmit = (e) => {
     e.preventDefault();
     console.log('SUBMIT!');
+    // QUESTION: What is optimal way to flatten state for property value lookup? 
+      // 1. Can flatten initial state, and pass entire object down to components (seems unneseccary)
+      // 2. Can create new object w/ section states assigned to it (as below), but duplicates state object
+      // 3. Can iterate through the section states' values to find match (seems time-consuming);
+    const formInputs = Object.assign(
+      {},
+      this.state.reportInfo,
+      this.state.consumerInfo,
+      this.state.complainantInfo,
+      this.state.dispositionInfo,
+      this.state.officerInfo
+    );
+
     const formattedValues = {};
     this.state.propertyTypes.forEach((propertyType) => {
-      formattedValues[propertyType.id] = [this.state[propertyType.title]];
+      formattedValues[propertyType.id] = [formInputs[propertyType.title]];
     });
     console.log('formattedValues:', formattedValues);
 
