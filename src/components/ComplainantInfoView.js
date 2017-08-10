@@ -16,19 +16,19 @@ const ComplainantInfoView = ({ section, handleInput, input }) => {
       <Row>
         <InputWrapper flex={FLEX.COL_1_4}>
           <TitleLabel>27. Complainant Name (Last, First, MI)</TitleLabel>
-          <FormControl data-section={section} name='27a' value={input['27a']} onChange={handleInput} />
+          <FormControl data-section={section} name='complainantName' value={input.complainantName} onChange={handleInput} />
         </InputWrapper>
         <InputWrapper flex={FLEX.COL_1_4}>
           <TitleLabel>Address (Apt Number, City, County, State, Zip)</TitleLabel>
-          <FormControl data-section={section} name='27b' value={input['27b']} onChange={handleInput} />
+          <FormControl data-section={section} name='complainantAddress' value={input.complainantAddress} onChange={handleInput} />
         </InputWrapper>
         <InputWrapper flex={FLEX.COL_1_4}>
           <TitleLabel>Relationship to Consumer</TitleLabel>
-          <FormControl data-section={section} name='27c' value={input['27c']} onChange={handleInput} />
+          <FormControl data-section={section} name='complainantConsumerRelationship' value={input.complainantConsumerRelationship} onChange={handleInput} />
         </InputWrapper>
         <InputWrapper flex={FLEX.COL_1_4}>
           <TitleLabel>Phone Number</TitleLabel>
-          <FormControl data-section={section} name='27d' value={input['27d']} onChange={handleInput} />
+          <FormControl data-section={section} name='complainantPhone' value={input.complainantPhone} onChange={handleInput} />
         </InputWrapper>
       </Row>
     </SectionView>

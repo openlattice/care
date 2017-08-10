@@ -17,15 +17,15 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
       <Row>
         <InputWrapper>
           <TitleLabel>13. Consumer Name (Last, First, MI)</TitleLabel>
-          <FormControl data-section={section} name='13a' value={input['13a']} onChange={handleInput} />
+          <FormControl data-section={section} name='name' value={input.name} onChange={handleInput} />
         </InputWrapper>
         <InputWrapper>
           <TitleLabel>Residence / Address (Apt Number, City, County, State, Zip)</TitleLabel>
-          <FormControl data-section={section} name='13b' value={input['13b']} onChange={handleInput} />
+          <FormControl data-section={section} name='address' value={input.address} onChange={handleInput} />
         </InputWrapper>
         <InputWrapper>
           <TitleLabel>Consumer Phone Number</TitleLabel>
-          <FormControl data-section={section} name='13c' value={input['13c']} onChange={handleInput} />
+          <FormControl data-section={section} name='phone' value={input.phone} onChange={handleInput} />
         </InputWrapper>
       </Row>
 
@@ -35,23 +35,23 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
             <InlineRadio
                 inline
                 data-section={section}
-                name='14a'
+                name='militaryStatus'
                 value='active'
-                checked={input['14a'] === 'active'}
+                checked={input.militaryStatus === 'active'}
                 onChange={handleSingleSelection}>Active</InlineRadio>
             <InlineRadio
                 inline
                 data-section={section}
-                name ='14a' 
+                name ='militaryStatus' 
                 value='veteran'
-                checked={input['14a'] === 'veteran'}
+                checked={input.militaryStatus === 'veteran'}
                 onChange={handleSingleSelection}>Veteran</InlineRadio>
             <InlineRadio
                 inline
                 data-section={section}
-                name ='14a'
+                name ='militaryStatus'
                 value='n/a'
-                checked={input['14a'] === 'n/a'}
+                checked={input.militaryStatus === 'n/a'}
                 onChange={handleSingleSelection}>N/A</InlineRadio>
           </InputWrapper>
 
@@ -61,8 +61,8 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
                 componentClass='select'
                 placeholder='select'
                 data-section={section}
-                name='14b'
-                value={input['14b']}
+                name='gender'
+                value={input.gender}
                 onChange={handleSingleSelection}>
               <option value=''>Select</option>
               <option value='female'>Female</option>
@@ -77,8 +77,8 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
                 componentClass='select'
                 placeholder='select'
                 data-section={section}
-                name='14c'
-                value={input['14c']}
+                name='race'
+                value={input.race}
                 onChange={handleSingleSelection}>
               <option value=''>Select</option>
               <option value='americanIndian'>American Indian or Alaska Native</option>
@@ -93,12 +93,12 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
 
         <InputWrapper flex={FLEX.COL_1_5}>
           <TitleLabel>Age</TitleLabel>
-          <FormControl data-section={section} name='14d' value={input['14d']} onChange={handleInput} />
+          <FormControl data-section={section} name='age' value={input.age} onChange={handleInput} />
         </InputWrapper>
 
         <InputWrapper flex={FLEX.COL_1_5}>
           <TitleLabel>DOB</TitleLabel>
-          <FormControl data-section={section} name='14e' value={input['14e']} onChange={handleInput} />
+          <FormControl data-section={section} name='dob' value={input.dob} onChange={handleInput} />
         </InputWrapper>
       </Row>
 
@@ -108,21 +108,21 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
           <InlineRadio
               inline
               data-section={section}
-              name='15a'
+              name='homeless'
               value='yes'
-              checked={input['15a'] === 'yes'}
+              checked={input.homeless === 'yes'}
               onChange={handleSingleSelection}>Yes</InlineRadio>
           <InlineRadio
               inline
               data-section={section}
-              name ='15a' 
+              name ='homeless' 
               value='no'
-              checked={input['15a'] === 'no'}
+              checked={input.homeless === 'no'}
               onChange={handleSingleSelection}>No</InlineRadio>
         </InputWrapper>
         <InputWrapper flex={FLEX.COL_100}>
           <TitleLabel>If Yes, Where Do They Usually Sleep / Frequent?</TitleLabel>
-          <FormControl data-section={section} name='15b' value={input['15b']} onChange={handleInput} />
+          <FormControl data-section={section} name='homelessLocation' value={input.homelessLocation} onChange={handleInput} />
         </InputWrapper>
       </Row>
 
@@ -132,36 +132,36 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
           <InlineRadio
               inline
               data-section={section}
-              name='16a'
+              name='drugsAlcohol'
               value='drugs'
-              checked={input['16a'] === 'drugs'}
+              checked={input.drugsAlcohol === 'drugs'}
               onChange={handleSingleSelection}>Drugs</InlineRadio>
           <InlineRadio
               inline
               data-section={section}
-              name ='16a' 
+              name ='drugsAlcohol' 
               value='alcohol'
-              checked={input['16a'] === 'alcohol'}
+              checked={input.drugsAlcohol === 'alcohol'}
               onChange={handleSingleSelection}>Alcohol</InlineRadio>
           <InlineRadio
               inline
               data-section={section}
-              name ='16a' 
+              name ='drugsAlcohol' 
               value='both'
-              checked={input['16a'] === 'both'}
+              checked={input.drugsAlcohol === 'both'}
               onChange={handleSingleSelection}>Both</InlineRadio>
           <InlineRadio
               inline
               data-section={section}
-              name ='16a' 
+              name ='drugsAlcohol' 
               value='n/a'
-              checked={input['16a'] === 'n/a'}
+              checked={input.drugsAlcohol === 'n/a'}
               onChange={handleSingleSelection}>N/A</InlineRadio>
         </InputWrapper>
 
         <InputWrapper flex={FLEX.COL_100}>
           <TitleLabel>Drug type</TitleLabel>
-          <FormControl data-section={section} name='16b' value={input['16b']} onChange={handleInput} />
+          <FormControl data-section={section} name='drugType' value={input.drugType} onChange={handleInput} />
         </InputWrapper>
       </Row>
 
@@ -171,23 +171,23 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
           <InlineRadio
               inline
               data-section={section}
-              name='17a'
+              name='prescribedMedication'
               value='yes'
-              checked={input['17a'] === 'yes'}
+              checked={input.prescribedMedication === 'yes'}
               onChange={handleSingleSelection}>Yes</InlineRadio>
           <InlineRadio
               inline
               data-section={section}
-              name='17a'
+              name='prescribedMedication'
               value='no'
-              checked={input['17a'] === 'no'}
+              checked={input.prescribedMedication === 'no'}
               onChange={handleSingleSelection}>No</InlineRadio>
           <InlineRadio
               inline
               data-section={section}
-              name='17a' 
+              name='prescribedMedication' 
               value='unknown'
-              checked={input['17a'] === 'unknown'}
+              checked={input.prescribedMedication === 'unknown'}
               onChange={handleSingleSelection}>Unknown</InlineRadio>
         </InputWrapper>
         <InputWrapper>
@@ -195,23 +195,23 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
           <InlineRadio
               inline
               data-section={section}
-              name='17b'
+              name='takingMedication'
               value='yes'
-              checked={input['17b'] === 'yes'}
+              checked={input.takingMedication === 'yes'}
               onChange={handleSingleSelection}>Yes</InlineRadio>
           <InlineRadio
               inline
               data-section={section}
-              name='17b' 
+              name='takingMedication' 
               value='no'
-              checked={input['17b'] === 'no'}
+              checked={input.takingMedication === 'no'}
               onChange={handleSingleSelection}>No</InlineRadio>
           <InlineRadio
               inline
               data-section={section}
-              name='17b' 
+              name='takingMedication' 
               value='unknown'
-              checked={input['17b'] === 'unknown'}
+              checked={input.takingMedication === 'unknown'}
               onChange={handleSingleSelection}>Unknown</InlineRadio>
         </InputWrapper>
       </Row>
@@ -223,25 +223,25 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               inline
               type='radio'
               data-section={section}
-              name={18}
+              name='prevPsychAdmission'
               value='yes'
-              checked={input[18] === 'yes'}
+              checked={input.prevPsychAdmission === 'yes'}
               onChange={handleSingleSelection}>Yes</InlineRadio>
           <InlineRadio
               inline
               type='radio'
               data-section={section}
-              name={18}
+              name='prevPsychAdmission'
               value='no'
-              checked={input[18] === 'no'}
+              checked={input.prevPsychAdmission === 'no'}
               onChange={handleSingleSelection}>No</InlineRadio>
           <InlineRadio
               inline
               type='radio'
               data-section={section}
-              name={18} 
+              name='prevPsychAdmission'
               value='unknown'
-              checked={input[18] === 'unknown'}
+              checked={input.prevPsychAdmission === 'unknown'}
               onChange={handleSingleSelection}>Unknown</InlineRadio>
         </InputWrapper>
 
@@ -251,47 +251,47 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               <InlineCheckbox
                   inline
                   data-section={section}
-                  name='19a'
+                  name='selfDiagnosis'
                   value='bipolar'
-                  checked={input['19a'].indexOf('bipolar') !== -1}
+                  checked={input.selfDiagnosis.indexOf('bipolar') !== -1}
                   onChange={handleCheckboxChange}>Bipolar</InlineCheckbox>
               <InlineCheckbox
                   inline
                   data-section={section}
-                  name='19a'
+                  name='selfDiagnosis'
                   value='depression'
-                  checked={input['19a'].indexOf('depression') !== -1}
+                  checked={input.selfDiagnosis.indexOf('depression') !== -1}
                   onChange={handleCheckboxChange}>Depression</InlineCheckbox>
               <InlineCheckbox
                   inline
                   data-section={section}
-                  name='19a' 
+                  name='selfDiagnosis' 
                   value='ptsd'
-                  checked={input['19a'].indexOf('ptsd') !== -1}
+                  checked={input.selfDiagnosis.indexOf('ptsd') !== -1}
                   onChange={handleCheckboxChange}>PTSD</InlineCheckbox>
               <InlineCheckbox
                   inline
                   data-section={section}
-                  name='19a'
+                  name='selfDiagnosis'
                   value='schizophrenia'
-                  checked={input['19a'].indexOf('schizophrenia') !== -1}
+                  checked={input.selfDiagnosis.indexOf('schizophrenia') !== -1}
                   onChange={handleCheckboxChange}>Schizophrenia</InlineCheckbox>
               <InlineCheckbox
                   inline
                   data-section={section}
-                  name='19a'
+                  name='selfDiagnosis'
                   value='dementia'
-                  checked={input['19a'].indexOf('dementia') !== -1}
+                  checked={input.selfDiagnosis.indexOf('dementia') !== -1}
                   onChange={handleCheckboxChange}>Dementia</InlineCheckbox>
             </FormGroup>
             <OtherWrapper>
               <InlineCheckbox
                   data-section={section}
-                  name='19a' 
+                  name='selfDiagnosis' 
                   value='other'
-                  checked={input['19a'].indexOf('other') !== -1}
+                  checked={input.selfDiagnosis.indexOf('other') !== -1}
                   onChange={handleCheckboxChange}>Other:</InlineCheckbox>
-              <FormControl data-section={section} name='19b' value={input['19b']} onChange={handleInput} />
+              <FormControl data-section={section} name='selfDiagnosisOther' value={input['selfDiagnosisOther']} onChange={handleInput} />
             </OtherWrapper>
         </InputWrapper>
       </Row>
@@ -302,21 +302,21 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
           <InlineRadio
               inline
               data-section={section}
-              name='20a'
+              name='armedWithWeapon'
               value='yes'
-              checked={input['20a'] === 'yes'}
+              checked={input.armedWithWeapon === 'yes'}
               onChange={handleSingleSelection}>Yes</InlineRadio>
           <InlineRadio
               inline
               data-section={section}
-              name='20a'
+              name='armedWithWeapon'
               value='no'
-              checked={input['20a'] === 'no'}
+              checked={input.armedWithWeapon === 'no'}
               onChange={handleSingleSelection}>No</InlineRadio>
         </InputWrapper>
         <InputWrapper flex={FLEX.COL_100}>
           <Label>If Yes, Weapon Type</Label>
-          <FormControl data-section={section} name='20b' value={input['20b']} onChange={handleInput} />
+          <FormControl data-section={section} name='armedWeaponType' value={input.armedWeaponType} onChange={handleInput} />
         </InputWrapper>
 
         <InputWrapper flex={FLEX.COL_1_5}>
@@ -324,21 +324,21 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
           <InlineRadio
               inline
               data-section={section}
-              name='21a'
+              name='accessToWeapons'
               value='yes'
-              checked={input['21a'] === 'yes'}
+              checked={input.accessToWeapons === 'yes'}
               onChange={handleSingleSelection}>Yes</InlineRadio>
           <InlineRadio
               inline
               data-section={section}
-              name='21a'
+              name='accessToWeapons'
               value='no'
-              checked={input['21a'] === 'no'}
+              checked={input.accessToWeapons === 'no'}
               onChange={handleSingleSelection}>No</InlineRadio>
         </InputWrapper>
         <InputWrapper flex={FLEX.COL_100}>
           <Label>If Yes, Weapon Type</Label>
-          <FormControl data-section={section} name='21b' value={input['20b']} onChange={handleInput} />
+          <FormControl data-section={section} name='accessibleWeaponType' value={input.accessibleWeaponType} onChange={handleInput} />
         </InputWrapper>
       </Row>
 
@@ -349,72 +349,72 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='22a'
+                name='observedBehaviors'
                 value='disorientation'
-                checked={input['22a'].indexOf('disorientation') !== -1}
+                checked={input.observedBehaviors.indexOf('disorientation') !== -1}
                 onChange={handleCheckboxChange}>Disorientation / Confusion</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='22a'
+                name='observedBehaviors'
                 value='abnormalBehavior'
-                checked={input['22a'].indexOf('abnormalBehavior') !== -1}
+                checked={input.observedBehaviors.indexOf('abnormalBehavior') !== -1}
                 onChange={handleCheckboxChange}>Abnormal Behavior / Appearance (neglect self-care)</InlineCheckbox>
           </FormGroup>
           <FormGroup>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='22a' 
+                name='observedBehaviors' 
                 value='hearingVoices'
-                checked={input['22a'].indexOf('hearingVoices') !== -1}
+                checked={input.observedBehaviors.indexOf('hearingVoices') !== -1}
                 onChange={handleCheckboxChange}>Hearing Voices / Hallucinating</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='22a'
+                name='observedBehaviors'
                 value='anxious'
-                checked={input['22a'].indexOf('anxious') !== -1}
+                checked={input.observedBehaviors.indexOf('anxious') !== -1}
                 onChange={handleCheckboxChange}>Anxious / Excited / Agitated</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='22a'
+                name='observedBehaviors'
                 value='depressed'
-                checked={input['22a'].indexOf('depressed') !== -1}
+                checked={input.observedBehaviors.indexOf('depressed') !== -1}
                 onChange={handleCheckboxChange}>Depressed Mood</InlineCheckbox>
           </FormGroup>
           <FormGroup>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='22a'
+                name='observedBehaviors'
                 value='paranoid'
-                checked={input['22a'].indexOf('paranoid') !== -1}
+                checked={input.observedBehaviors.indexOf('paranoid') !== -1}
                 onChange={handleCheckboxChange}>Paranoid or Suspicious</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='22a'
+                name='observedBehaviors'
                 value='self-mutilation'
-                checked={input['22a'].indexOf('self-mutilation') !== -1}
+                checked={input.observedBehaviors.indexOf('self-mutilation') !== -1}
                 onChange={handleCheckboxChange}>Self-mutilation</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='22a' 
+                name='observedBehaviors' 
                 value='threatening'
-                checked={input['22a'].indexOf('threatening') !== -1}
+                checked={input.observedBehaviors.indexOf('threatening') !== -1}
                 onChange={handleCheckboxChange}>Threatening / Violent Towards Others</InlineCheckbox>
             </FormGroup>
           <OtherWrapper>
             <InlineCheckbox
                 data-section={section}
-                name='22a'
+                name='observedBehaviors'
                 value='other'
-                checked={input['22a'].indexOf('other') !== -1}
+                checked={input.observedBehaviors.indexOf('other') !== -1}
                 onChange={handleCheckboxChange}>Other:</InlineCheckbox>
-            <FormControl data-section={section} name='22b' value={input['22b']} onChange={handleInput} />
+            <FormControl data-section={section} name='observedBehaviorsOther' value={input.observedBehaviorsOther} onChange={handleInput} />
           </OtherWrapper>
         </InputWrapper>
 
@@ -424,60 +424,60 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='22c'
+                name='emotionalState'
                 value='angry'
-                checked={input['22c'].indexOf('angry') !== -1}
+                checked={input.emotionalState.indexOf('angry') !== -1}
                 onChange={handleCheckboxChange}>Angry</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='22c'
+                name='emotionalState'
                 value='afraid'
-                checked={input['22c'].indexOf('afraid') !== -1}
+                checked={input.emotionalState.indexOf('afraid') !== -1}
                 onChange={handleCheckboxChange}>Afraid</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='22c' 
+                name='emotionalState' 
                 value='apologetic'
-                checked={input['22c'].indexOf('apologetic') !== -1}
+                checked={input.emotionalState.indexOf('apologetic') !== -1}
                 onChange={handleCheckboxChange}>Apologetic</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='22c'
+                name='emotionalState'
                 value='calm'
-                checked={input['22c'].indexOf('calm') !== -1}
+                checked={input.emotionalState.indexOf('calm') !== -1}
                 onChange={handleCheckboxChange}>Calm</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='22c'
+                name='emotionalState'
                 value='crying'
-                checked={input['22c'].indexOf('crying') !== -1}
+                checked={input.emotionalState.indexOf('crying') !== -1}
                 onChange={handleCheckboxChange}>Crying</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='22c' 
+                name='emotionalState' 
                 value='fearful'
-                checked={input['22c'].indexOf('fearful') !== -1}
+                checked={input.emotionalState.indexOf('fearful') !== -1}
                 onChange={handleCheckboxChange}>Fearful</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='22c' 
+                name='emotionalState' 
                 value='nervous'
-                checked={input['22c'].indexOf('nervous') !== -1}
+                checked={input.emotionalState.indexOf('nervous') !== -1}
                 onChange={handleCheckboxChange}>Nervous</InlineCheckbox>
           </FormGroup>
           <OtherWrapper>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='22c'
+                name='emotionalState'
                 value='other'
-                checked={input['22c'].indexOf('other') !== -1}
+                checked={input.emotionalState.indexOf('other') !== -1}
                 onChange={handleCheckboxChange}>Other:</InlineCheckbox>
             <FormControl data-section={section} name='22d' value={input['22d']} onChange={handleInput} />
           </OtherWrapper>
@@ -491,16 +491,16 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
             <InlineCheckbox
                 inline
                 data-section={section}
-                name={23} 
+                name='photosTakenOf' 
                 value='injuries'
-                checked={input[23].indexOf('injuries') !== -1}
+                checked={input.photosTakenOf.indexOf('injuries') !== -1}
                 onChange={handleCheckboxChange}>Injuries</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name={23} 
+                name='photosTakenOf' 
                 value='propertyDamage'
-                checked={input[23].indexOf('propertyDamage') !== -1}
+                checked={input.photosTakenOf.indexOf('propertyDamage') !== -1}
                 onChange={handleCheckboxChange}>Damage / Crime Scene</InlineCheckbox>
           </FormGroup>
         </InputWrapper>
@@ -511,47 +511,47 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='24a' 
+                name='injuries' 
                 value='abrasions'
-                checked={input['24a'].indexOf('abrasions') !== -1}
+                checked={input.injuries.indexOf('abrasions') !== -1}
                 onChange={handleCheckboxChange}>Abrasions</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='24a' 
+                name='injuries' 
                 value='bruises'
-                checked={input['24a'].indexOf('bruises') !== -1}
+                checked={input.injuries.indexOf('bruises') !== -1}
                 onChange={handleCheckboxChange}>Bruises</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='24a' 
+                name='injuries' 
                 value='complaintsOfPain'
-                checked={input['24a'].indexOf('complaintsOfPain') !== -1}
+                checked={input.injuries.indexOf('complaintsOfPain') !== -1}
                 onChange={handleCheckboxChange}>Complaints of Pain</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='24a' 
+                name='injuries' 
                 value='concussion'
-                checked={input['24a'].indexOf('concussion') !== -1}
+                checked={input.injuries.indexOf('concussion') !== -1}
                 onChange={handleCheckboxChange}>Concussion</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='24a' 
+                name='injuries' 
                 value='fractures'
-                checked={input['24a'].indexOf('fractures') !== -1}
+                checked={input.injuries.indexOf('fractures') !== -1}
                 onChange={handleCheckboxChange}>Fractures</InlineCheckbox>
           </FormGroup>
           <OtherWrapper>
             <InlineCheckbox
                 data-section={section}
-                name='24a' 
+                name='injuries' 
                 value='other'
-                checked={input['24a'].indexOf('other') !== -1}
+                checked={input.injuries.indexOf('other') !== -1}
                 onChange={handleCheckboxChange}>Other:</InlineCheckbox>
-            <FormControl data-section={section} name='24b' value={input['24b']} onChange={handleInput} />
+            <FormControl data-section={section} name='injuriesOther' value={input.injuriesOther} onChange={handleInput} />
           </OtherWrapper>
         </InputWrapper>
       </Row>
@@ -562,16 +562,16 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
           <InlineRadio
               inline
               data-section={section}
-              name='25a'
+              name='suicidal'
               value='yes'
-              checked={input['25a'] === 'yes'}
+              checked={input.suicidal === 'yes'}
               onChange={handleSingleSelection}>Yes</InlineRadio>
           <InlineRadio
               inline
               data-section={section}
-              name='25a'
+              name='suicidal'
               value='no'
-              checked={input['25a'] === 'no'}
+              checked={input.suicidal === 'no'}
               onChange={handleSingleSelection}>No</InlineRadio>
         </InputWrapper>
 
@@ -580,30 +580,30 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
           <InlineCheckbox
               inline
               data-section={section}
-              name='25b'
+              name='suicidalActions'
               value='thoughts'
-              checked={input['25b'].indexOf('thoughts') !== -1}
+              checked={input.suicidalActions.indexOf('thoughts') !== -1}
               onChange={handleCheckboxChange}>Thoughts</InlineCheckbox>
           <InlineCheckbox
               inline
               data-section={section}
-              name='25b'
+              name='suicidalActions'
               value='threat'
-              checked={input['25b'].indexOf('threat') !== -1}
+              checked={input.suicidalActions.indexOf('threat') !== -1}
               onChange={handleCheckboxChange}>Threat</InlineCheckbox>
           <InlineCheckbox
               inline
               data-section={section}
-              name='25b'
+              name='suicidalActions'
               value='attempt'
-              checked={input['25b'].indexOf('attempt') !== -1}
+              checked={input.suicidalActions.indexOf('attempt') !== -1}
               onChange={handleCheckboxChange}>Attempt</InlineCheckbox>
           <InlineCheckbox
               inline
               data-section={section}
-              name='25b'
+              name='suicidalActions'
               value='completed'
-              checked={input['25b'].indexOf('completed') !== -1}
+              checked={input.suicidalActions.indexOf('completed') !== -1}
               onChange={handleCheckboxChange}>Completed</InlineCheckbox>
         </InputWrapper>
       </Row>
@@ -615,40 +615,40 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='26a'
+                name='suicideAttemptMethod'
                 value='narcotics'
-                checked={input['26a'].indexOf('narcotics') !== -1}
+                checked={input.suicideAttemptMethod.indexOf('narcotics') !== -1}
                 onChange={handleCheckboxChange}>Narcotics (Prescription or Illicit)</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='26a'
+                name='suicideAttemptMethod'
                 value='alcohol'
-                checked={input['26a'].indexOf('alcohol') !== -1}
+                checked={input.suicideAttemptMethod.indexOf('alcohol') !== -1}
                 onChange={handleCheckboxChange}>Alcohol</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='26a'
+                name='suicideAttemptMethod'
                 value='knife'
-                checked={input['26a'].indexOf('knife') !== -1}
+                checked={input.suicideAttemptMethod.indexOf('knife') !== -1}
                 onChange={handleCheckboxChange}>Knife / Cutting Tool</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='26a'
+                name='suicideAttemptMethod'
                 value='firearm'
-                checked={input['26a'].indexOf('firearm') !== -1}
+                checked={input.suicideAttemptMethod.indexOf('firearm') !== -1}
                 onChange={handleCheckboxChange}>Firearm</InlineCheckbox>
           </FormGroup>
           <OtherWrapper>
             <InlineCheckbox
                 data-section={section}
-                name='26a'
+                name='suicideAttemptMethod'
                 value='other'
-                checked={input['26a'].indexOf('other') !== -1}
+                checked={input.suicideAttemptMethod.indexOf('other') !== -1}
                 onChange={handleCheckboxChange}>Other:</InlineCheckbox>
-            <FormControl data-section={section} name='26b' value={input['26b']} onChange={handleInput} />
+            <FormControl data-section={section} name='suicideAttemptMethodOther' value={input.suicideAttemptMethodOther} onChange={handleInput} />
           </OtherWrapper>
         </InputWrapper>
       </Row>

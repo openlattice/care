@@ -21,71 +21,71 @@ const DispositionView = ({ section, handleInput, handleCheckboxChange, handleSin
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='28a'
+                name='disposition'
                 value='arrest'
-                checked={input['28a'].indexOf('arrest') !== -1}
+                checked={input.disposition.indexOf('arrest') !== -1}
                 onChange={handleCheckboxChange}>Arrest</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='28a'
+                name='disposition'
                 value='ep'
-                checked={input['28a'].indexOf('ep') !== -1}
+                checked={input.disposition.indexOf('ep') !== -1}
                 onChange={handleCheckboxChange}>EP</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='28a'
+                name='disposition'
                 value='voluntaryER'
-                checked={input['28a'].indexOf('voluntaryER') !== -1}
+                checked={input.disposition.indexOf('voluntaryER') !== -1}
                 onChange={handleCheckboxChange}>Voluntary ER Intake</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='28a'
+                name='disposition'
                 value='bcri'
-                checked={input['28a'].indexOf('bcri') !== -1}
+                checked={input.disposition.indexOf('bcri') !== -1}
                 onChange={handleCheckboxChange}>BCRI</InlineCheckbox>
           </FormGroup>
           <FormGroup>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='28a'
+                name='disposition'
                 value='infoAndReferral'
-                checked={input['28a'].indexOf('infoAndReferral') !== -1}
+                checked={input.disposition.indexOf('infoAndReferral') !== -1}
                 onChange={handleCheckboxChange}>Information and Referral</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='28a'
+                name='disposition'
                 value='lead'
-                checked={input['28a'].indexOf('lead') !== -1}
+                checked={input.disposition.indexOf('lead') !== -1}
                 onChange={handleCheckboxChange}>LEAD</InlineCheckbox>
           </FormGroup>
           <FormGroup>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='28a'
+                name='disposition'
                 value='contactedTreatementProvider'
-                checked={input['28a'].indexOf('contactedTreatementProvider') !== -1}
+                checked={input.disposition.indexOf('contactedTreatementProvider') !== -1}
                 onChange={handleCheckboxChange}>Contacted or Referred to Current Treatment Provider</InlineCheckbox>
           </FormGroup>
           <FormGroup>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='28a'
+                name='disposition'
                 value='criminalCitation'
-                checked={input['28a'].indexOf('criminalCitation') !== -1}
+                checked={input.disposition.indexOf('criminalCitation') !== -1}
                 onChange={handleCheckboxChange}>Criminal Citation</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='28a'
+                name='disposition'
                 value='civilCitation'
-                checked={input['28a'].indexOf('civilCitation') !== -1}
+                checked={input.disposition.indexOf('civilCitation') !== -1}
                 onChange={handleCheckboxChange}>Civil Citation</InlineCheckbox>
           </FormGroup>
         </InputWrapper>
@@ -95,21 +95,21 @@ const DispositionView = ({ section, handleInput, handleCheckboxChange, handleSin
           <InlineRadio
               inline
               data-section={section}
-              name='28b'
+              name='hospitalTransport'
               value='yes'
-              checked={input['28b'] === 'yes'}
+              checked={input.hospitalTransport === 'yes'}
               onChange={handleSingleSelection}>Yes</InlineRadio>
           <InlineRadio
               inline
               data-section={section}
-              name='28b'  
+              name='hospitalTransport'  
               value='no'
-              checked={input['28b'] === 'no'}
+              checked={input.hospitalTransport === 'no'}
               onChange={handleSingleSelection}>No</InlineRadio>
         </InputWrapper>
         <InputWrapper flex={FLEX.COL_100}>
           <TitleLabel>Hospital Name</TitleLabel>
-          <FormControl data-section={section} name='28c' value={input['28c']} onChange={handleInput} />
+          <FormControl data-section={section} name='hospital' value={input.hospital} onChange={handleInput} />
         </InputWrapper>
       </Row>
 
@@ -120,55 +120,55 @@ const DispositionView = ({ section, handleInput, handleCheckboxChange, handleSin
             <InlineCheckbox
                 data-section={section}
                 inline
-                name='29a'
+                name='deescalationTechniques'
                 value='verbalization'
-                checked={input['29a'].indexOf('verbalization') !== -1}
+                checked={input.deescalationTechniques.indexOf('verbalization') !== -1}
                 onChange={handleCheckboxChange}>Verbalization</InlineCheckbox>
             <InlineCheckbox
                 data-section={section}
                 inline
-                name='29a'
+                name='deescalationTechniques'
                 value='handcuffs'
-                checked={input['29a'].indexOf('handcuffs') !== -1}
+                checked={input.deescalationTechniques.indexOf('handcuffs') !== -1}
                 onChange={handleCheckboxChange}>Handcuffs</InlineCheckbox>
             <InlineCheckbox
                 data-section={section}
                 inline
-                name='29a'
+                name='deescalationTechniques'
                 value='legRestraints'
-                checked={input['29a'].indexOf('legRestraints') !== -1}
+                checked={input.deescalationTechniques.indexOf('legRestraints') !== -1}
                 onChange={handleCheckboxChange}>Leg Restraints</InlineCheckbox>
             <InlineCheckbox
                 data-section={section}
                 inline
-                name='29a'
+                name='deescalationTechniques'
                 value='taser'
-                checked={input['29a'].indexOf('taser') !== -1}
+                checked={input.deescalationTechniques.indexOf('taser') !== -1}
                 onChange={handleCheckboxChange}>Taser</InlineCheckbox>
             <InlineCheckbox
                 data-section={section}
                 inline
-                name='29a'
+                name='deescalationTechniques'
                 value='arrestControl'
-                checked={input['29a'].indexOf('arrestControl') !== -1}
+                checked={input.deescalationTechniques.indexOf('arrestControl') !== -1}
                 onChange={handleCheckboxChange}>Arrest Control (Hands / Feet)</InlineCheckbox>
             <InlineCheckbox
                 data-section={section}
                 inline
-                name='29a'
+                name='deescalationTechniques'
                 value='n/a'
-                checked={input['29a'].indexOf('n/a') !== -1}
+                checked={input.deescalationTechniques.indexOf('n/a') !== -1}
                 onChange={handleCheckboxChange}>N/A</InlineCheckbox>
           </FormGroup>
           <OtherWrapper>
             <InlineCheckbox
                 data-section={section}
                 inline
-                name='29a'
+                name='deescalationTechniques'
                 value='other'
-                checked={input['29a'].indexOf('other') !== -1}
+                checked={input['deescalationTechniques'].indexOf('other') !== -1}
                 onChange={handleCheckboxChange}>Other:</InlineCheckbox>
-            <FormControl data-section={section} name='29b' value={input['29b']} onChange={handleInput} />
+            <FormControl data-section={section} name='deescalationTechniquesOther' value={input.deescalationTechniquesOther} onChange={handleInput} />
           </OtherWrapper>
         </InputWrapper>
       </Row>
@@ -179,51 +179,51 @@ const DispositionView = ({ section, handleInput, handleCheckboxChange, handleSin
           <InlineCheckbox
               data-section={section}
               inline
-              name={30}
+              name='specializedResourcesCalled'
               value='bcri'
-              checked={input[30].indexOf('bcri') !== -1}
+              checked={input.specializedResourcesCalled.indexOf('bcri') !== -1}
               onChange={handleCheckboxChange}>BCRI / Mobile Crisis Response Team</InlineCheckbox>
           <InlineCheckbox
               data-section={section}
               inline
-              name={30}
+              name='specializedResourcesCalled'
               value='citOfficer'
-              checked={input[30].indexOf('citOfficer') !== -1}
+              checked={input.specializedResourcesCalled.indexOf('citOfficer') !== -1}
               onChange={handleCheckboxChange}>CIT Officer</InlineCheckbox>
           <InlineCheckbox
               data-section={section}
               inline
-              name={30}
+              name='specializedResourcesCalled'
               value='crtUnit'
-              checked={input[30].indexOf('crtUnit') !== -1}
+              checked={input.specializedResourcesCalled.indexOf('crtUnit') !== -1}
               onChange={handleCheckboxChange}>CRT Unit</InlineCheckbox>
           <InlineCheckbox
               data-section={section}
               inline
-              name={30}
+              name='specializedResourcesCalled'
               value='esu'
-              checked={input[30].indexOf('esu') !== -1}
+              checked={input.specializedResourcesCalled.indexOf('esu') !== -1}
               onChange={handleCheckboxChange}>ESU</InlineCheckbox>
           <InlineCheckbox
               data-section={section}
               inline
-              name={30}
+              name='specializedResourcesCalled'
               value='swat'
-              checked={input[30].indexOf('swat') !== -1}
+              checked={input.specializedResourcesCalled.indexOf('swat') !== -1}
               onChange={handleCheckboxChange}>SWAT</InlineCheckbox>
           <InlineCheckbox
               data-section={section}
               inline
-              name={30}
+              name='specializedResourcesCalled'
               value='negotiationTeam'
-              checked={input[30].indexOf('negotiationTeam') !== -1}
+              checked={input.specializedResourcesCalled.indexOf('negotiationTeam') !== -1}
               onChange={handleCheckboxChange}>Negotiation Team</InlineCheckbox>
           <InlineCheckbox
               data-section={section}
               inline
-              name={30}
+              name='specializedResourcesCalled'
               value='homelessOutreach'
-              checked={input[30].indexOf('homelessOutreach') !== -1}
+              checked={input.specializedResourcesCalled.indexOf('homelessOutreach') !== -1}
               onChange={handleCheckboxChange}>Homeless Outreach</InlineCheckbox>
         </InputWrapper>
       </Row>
@@ -231,7 +231,7 @@ const DispositionView = ({ section, handleInput, handleCheckboxChange, handleSin
       <Row>
         <InputWrapper flex={FLEX.COL_100}>
           <TitleLabel>31. Narrative of Incident, to include: Results of investigation, basis for actions taken, emotional states, additional witnesses. Property listing.</TitleLabel>
-          <FormControl data-section={section} name={31} componentClass='textarea' onChange={handleInput} />
+          <FormControl data-section={section} name='incidentNarrative' componentClass='textarea' value={input.incidentNarrative} onChange={handleInput} />
         </InputWrapper>
       </Row>
     </SectionView>

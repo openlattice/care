@@ -17,45 +17,45 @@ const OfficerInfoView = ({ section, handleInput, handleCheckboxChange, input }) 
       <Row>
         <InputWrapper flex={FLEX.COL_1_4}>
           <TitleLabel>32. Officer Name</TitleLabel>
-          <FormControl data-section={section} name={32} value={input[32]} onChange={handleInput} />
+          <FormControl data-section={section} name='officerName' value={input.officerName} onChange={handleInput} />
         </InputWrapper>
         <InputWrapper flex={FLEX.COL_1_4}>
           <TitleLabel>34. Seq ID</TitleLabel>
-          <FormControl data-section={section} name={34} value={input[34]} onChange={handleInput} />
+          <FormControl data-section={section} name='officerSeqID' value={input.officerSeqID} onChange={handleInput} />
         </InputWrapper>
         <InputWrapper flex={FLEX.COL_1_4}>
           <TitleLabel>35. Officer Injuries</TitleLabel>
-          <FormControl data-section={section} name={35} value={input[35]} onChange={handleInput} />
+          <FormControl data-section={section} name='officerInjuries' value={input.officerInjuries} onChange={handleInput} />
         </InputWrapper>
         <InputWrapper flex={FLEX.COL_1_4}>
           <TitleLabel>36. Officer Certification</TitleLabel>
           <InlineCheckbox
               inline
               data-section={section}
-              name={36}
+              name='officerCertification'
               value='crtUnit'
-              checked={input[36].indexOf('crtUnit') !== -1}
+              checked={input.officerCertification.indexOf('crtUnit') !== -1}
               onChange={handleCheckboxChange}>CRT Unit</InlineCheckbox>
           <InlineCheckbox
               inline
               data-section={section}
-              name={36}
+              name='officerCertification'
               value='best'
-              checked={input[36].indexOf('best') !== -1}
+              checked={input.officerCertification.indexOf('best') !== -1}
               onChange={handleCheckboxChange}>BEST</InlineCheckbox>
           <InlineCheckbox
               inline
               data-section={section}
-              name={36}
+              name='officerCertification'
               value='cit'
-              checked={input[36].indexOf('cit') !== -1}
+              checked={input.officerCertification.indexOf('cit') !== -1}
               onChange={handleCheckboxChange}>CIT</InlineCheckbox>
           <InlineCheckbox
               inline
               data-section={section}
-              name={36}
+              name='officerCertification'
               value='n/a'
-              checked={input[36].indexOf('n/a') !== -1}
+              checked={input.officerCertification.indexOf('n/a') !== -1}
               onChange={handleCheckboxChange}>N/A</InlineCheckbox>
         </InputWrapper>
       </Row>
