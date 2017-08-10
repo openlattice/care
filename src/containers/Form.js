@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { EntityDataModelApi, DataApi } from 'lattice';
+import Promise from 'bluebird';
 
 import FormView from '../components/FormView';
 
@@ -79,10 +80,41 @@ class Form extends React.Component {
 				'37a': '',
 				'37b': ''
 			},
+			entitySetId: '',
+			entitySet: {},
+			entityType: {},
+			propertyTypes: [],
 			submitSuccess: null,
 			submitFailure: null
 		};
 	}
+
+	componentDidMount() {
+			EntityDataModelApi.getEntitySetId('baltimorehealthreporttest1')
+			.then((id) => {
+				console.log('entity set id:', id);
+				this.setState({entitySetId: id});
+				EntityDataModelApi.getEntitySet(id)
+				.then((entitySet) => {
+					console.log('entity set:', entitySet);
+					this.setState({entitySet});
+					EntityDataModelApi.getEntityType(entitySet.entityTypeId) // entityType contains property types
+					.then((entityType) => {
+						console.log('entityType:', entityType);
+						this.setState({entityType});
+						Promise.map(entityType.properties, (propertyId) => {
+		        	return EntityDataModelApi.getPropertyType(propertyId);
+						})
+						.then((propertyTypes) => {
+							console.log('propertyTypes', propertyTypes); // == authorizedPropertyTypes
+							this.setState({propertyTypes}, () => {
+								console.log('STATE AFTER GETTING ALL THE SHIT:', this.state);
+							});
+						});
+					});
+				});
+			});
+		}
 
 	// For text input
 	handleInput = (e) => {
@@ -126,19 +158,81 @@ class Form extends React.Component {
 	// 	};
 
 	// PROBLEMS
-	// 403 on getEntitySetId
-		// Am I hitting prod? no error logs locally
-		// Need auth0 token
 	// 400 on createEntityData
 		// Looks like entities format is incorrect. What is the entityKey?
 	// Get entitySetId & propertyTypeIds -> how to match state keys w/ property type ids?
 		// For each property key (state key), get propertyTypeId... create new object w/ ids as keys, then use this as entities arg
+
+
+// TODO: move everything thru getting property types -> componentDidMount
+// TODO: get primary keys
+	// generateEntities = () => {
+	//   const { propValues, authorizedPropertyTypes } = this.state;
+	//   console.log('propValues:', propValues);
+	//   console.log('authorizedPropertyTypes:', authorizedPropertyTypes.toJS());
+	//   const localDateTimes = {};
+	//   authorizedPropertyTypes.forEach((propertyType :Map) => {
+	//     if (EdmConsts.EDM_DATE_TYPES.includes(propertyType.get('datatype'))) {
+	//       const propertyTypeId :string = propertyType.get('id');
+	//       localDateTimes[propertyTypeId] = [moment(propValues[propertyTypeId]).format('YYYY-MM-DDThh:mm:ss')];
+	//     }
+	//   });
+	//   const formattedValues = Object.assign({}, propValues, localDateTimes); // are localDateTimes required?
+	//   console.log('formattedValues:', formattedValues);
+	//   const entityKey = this.props.primaryKey.map((keyId) => {
+	//     console.log('keyId:', keyId);
+	//     const utf8Val = (formattedValues[keyId].length > 0) ? encodeURI(formattedValues[keyId][0]) : '';
+	//     console.log('utf8val:', utf8Val);
+	//     console.log('btoa utf8:', btoa(utf8Val));
+	//     return btoa(utf8Val);
+	//   }).join(',');
+	//   console.log('entityKey:', entityKey);
+	//   // MTAwMSUyMFBlcmVyZW5hbg==,VW5pdmVyc2U=
+	//   console.log('formattedValues after primaryKey mapping:', formattedValues);
+	//   // {
+	//   //   '062ff81e-417c-4a67-9906-380b4a0865b2': ["1001 Pererenan"], //address
+	//   //   '77e7ceb2-ec2e-494c-b62f-e013d8d3541b': ["Universe"] // name
+	//   // }
+	//   return { [entityKey]: formattedValues };
+	// }
+
+	generateEntities = () => {
+	  const { propValues, authorizedPropertyTypes } = this.state;
+	  console.log('propValues:', propValues);
+	  console.log('authorizedPropertyTypes:', authorizedPropertyTypes.toJS());
+	  const localDateTimes = {};
+	  authorizedPropertyTypes.forEach((propertyType :Map) => {
+	    if (EdmConsts.EDM_DATE_TYPES.includes(propertyType.get('datatype'))) {
+	      const propertyTypeId :string = propertyType.get('id');
+	      localDateTimes[propertyTypeId] = [moment(propValues[propertyTypeId]).format('YYYY-MM-DDThh:mm:ss')];
+	    }
+	  });
+	  const formattedValues = Object.assign({}, propValues, localDateTimes); // are localDateTimes required?
+	  console.log('formattedValues:', formattedValues);
+	  const entityKey = this.props.primaryKey.map((keyId) => {
+	    console.log('keyId:', keyId);
+	    const utf8Val = (formattedValues[keyId].length > 0) ? encodeURI(formattedValues[keyId][0]) : '';
+	    console.log('utf8val:', utf8Val);
+	    console.log('btoa utf8:', btoa(utf8Val));
+	    return btoa(utf8Val);
+	  }).join(',');
+	  console.log('entityKey:', entityKey);
+	  // MTAwMSUyMFBlcmVyZW5hbg==,VW5pdmVyc2U=
+	  console.log('formattedValues after primaryKey mapping:', formattedValues);
+	  // {
+	  //   '062ff81e-417c-4a67-9906-380b4a0865b2': ["1001 Pererenan"], //address
+	  //   '77e7ceb2-ec2e-494c-b62f-e013d8d3541b': ["Universe"] // name
+	  // }
+	  return { [entityKey]: formattedValues };
+	}
+
+	//TODO: try/catch error in/after propertyTypes block;
 	handleSubmit = (e) => {
 		e.preventDefault();
 		console.log('SUBMIT!');
 		let entitySetId = '';
 
-		EntityDataModelApi.getEntitySetId('baltimorehealthreporttest')
+		EntityDataModelApi.getEntitySetId('baltimorehealthreporttest1')
 		.then((id) => {
 			console.log('entity set id:', id);
 			entitySetId = id;
@@ -152,10 +246,11 @@ class Form extends React.Component {
 	        	return EntityDataModelApi.getPropertyType(propertyId);
 					})
 					.then((propertyTypes) => {
-						console.log('propertyTypes', propertyTypes);
+						console.log('propertyTypes', propertyTypes); // == authorizedPropertyTypes
 						// TODO: format entities correctly. e.g. {[entityKey]: {propertyKey: val, propertyKey: val}}
 						// TODO: get entityKey / what is the entityKey?
-						const entityKey = '';
+						const entityKey = 'something';
+						// string mapping to setMultiMap; i
 						const entities = {
 							[entityKey]: {
 
@@ -166,11 +261,14 @@ class Form extends React.Component {
 							// check that 'title' and 'id' are correct keys
 							entities[entityKey][propertyType.id] = this.state[propertyType.title];
 						});
-						DataApi.createEntityData(entitySetId, '', entities);
+						console.log('entitySetId:', entitySetId);
+
 					});
 				});
 			});
-		})
+		});
+
+		DataApi.createEntityData(entitySetId, '', entities)
 		.then((res) => {
 			console.log('success! res:', res);
 			this.setState({
