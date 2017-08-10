@@ -85,7 +85,9 @@ class Form extends React.Component {
 			entityType: {},
 			propertyTypes: [],
 			submitSuccess: null,
-			submitFailure: null
+			submitFailure: null,
+			name: 'name test',
+			address: 'address test'
 		};
 	}
 
@@ -98,7 +100,7 @@ class Form extends React.Component {
 				.then((entitySet) => {
 					console.log('entity set:', entitySet);
 					this.setState({entitySet});
-					EntityDataModelApi.getEntityType(entitySet.entityTypeId) // entityType contains property types
+					EntityDataModelApi.getEntityType(entitySet.entityTypeId)
 					.then((entityType) => {
 						console.log('entityType:', entityType);
 						this.setState({entityType});
@@ -106,10 +108,8 @@ class Form extends React.Component {
 		        	return EntityDataModelApi.getPropertyType(propertyId);
 						})
 						.then((propertyTypes) => {
-							console.log('propertyTypes', propertyTypes); // == authorizedPropertyTypes
-							this.setState({propertyTypes}, () => {
-								console.log('STATE AFTER GETTING ALL THE SHIT:', this.state);
-							});
+							console.log('propertyTypes', propertyTypes);
+							this.setState({propertyTypes});
 						});
 					});
 				});
@@ -150,60 +150,12 @@ class Form extends React.Component {
 		this.setState({ [sectionKey]: sectionState }, () => {console.log('section state:', this.state[sectionKey])});
 	}
 
-	// EXAMPLE ENTITIES FROM ADD DATA FORM
-	// const entities = {
-	// 	'ccHVycGxl': {
-	// 		'135f73d5-4d91-4735-97bc-09fb1e72555b': ["soft"],
-	// 		'01703452-0cd6-4bb6-a8f4-ba2d8ef43c26': ["purple"]
-	// 	};
-
-	// PROBLEMS
-	// 400 on createEntityData
-		// Looks like entities format is incorrect. What is the entityKey?
-	// Get entitySetId & propertyTypeIds -> how to match state keys w/ property type ids?
-		// For each property key (state key), get propertyTypeId... create new object w/ ids as keys, then use this as entities arg
-
-
-// TODO: move everything thru getting property types -> componentDidMount
-// TODO: get primary keys
-	// generateEntities = () => {
-	//   const { propValues, authorizedPropertyTypes } = this.state;
-	//   console.log('propValues:', propValues);
-	//   console.log('authorizedPropertyTypes:', authorizedPropertyTypes.toJS());
-	//   const localDateTimes = {};
-	//   authorizedPropertyTypes.forEach((propertyType :Map) => {
-	//     if (EdmConsts.EDM_DATE_TYPES.includes(propertyType.get('datatype'))) {
-	//       const propertyTypeId :string = propertyType.get('id');
-	//       localDateTimes[propertyTypeId] = [moment(propValues[propertyTypeId]).format('YYYY-MM-DDThh:mm:ss')];
-	//     }
-	//   });
-	//   const formattedValues = Object.assign({}, propValues, localDateTimes); // are localDateTimes required?
-	//   console.log('formattedValues:', formattedValues);
-	//   const entityKey = this.props.primaryKey.map((keyId) => {
-	//     console.log('keyId:', keyId);
-	//     const utf8Val = (formattedValues[keyId].length > 0) ? encodeURI(formattedValues[keyId][0]) : '';
-	//     console.log('utf8val:', utf8Val);
-	//     console.log('btoa utf8:', btoa(utf8Val));
-	//     return btoa(utf8Val);
-	//   }).join(',');
-	//   console.log('entityKey:', entityKey);
-	//   // MTAwMSUyMFBlcmVyZW5hbg==,VW5pdmVyc2U=
-	//   console.log('formattedValues after primaryKey mapping:', formattedValues);
-	//   // {
-	//   //   '062ff81e-417c-4a67-9906-380b4a0865b2': ["1001 Pererenan"], //address
-	//   //   '77e7ceb2-ec2e-494c-b62f-e013d8d3541b': ["Universe"] // name
-	//   // }
-	//   return { [entityKey]: formattedValues };
-	// }
-
-	//TODO: try/catch error in/after propertyTypes block;
 	handleSubmit = (e) => {
 		e.preventDefault();
 		console.log('SUBMIT!');
-		// update to use state's values instead of propertyType title;
 		const formattedValues = {};
 		this.state.propertyTypes.forEach((propertyType) => {
-			formattedValues[propertyType.id] = propertyType.title;
+			formattedValues[propertyType.id] = [this.state[propertyType.title]];
 		});
 		console.log('formattedValues:', formattedValues);
 
@@ -215,31 +167,26 @@ class Form extends React.Component {
 		}).join(',');
 		console.log('entityKey:', entityKey);
 
-		const submissionData = {
-			entityKey: formattedValues
+		const entities = {
+			[entityKey]: formattedValues
 		};
-		console.log('submissionData', submissionData);
-		// this.state.propertyTypes.forEach((propertyType) => {
-		// 	// TODO: flatten state & make change keys to strings that match propertyType names, e.g. 'disposition', for easier lookup here by propertyType
-		// 	// check that 'title' and 'id' are correct keys
-		// 	entities[entityKey][propertyType.id] = this.state[propertyType.title];
-		// });
+		console.log('entities', entities);
 
-		// DataApi.createEntityData(entitySetId, '', entities)
-		// .then((res) => {
-		// 	console.log('success! res:', res);
-		// 	this.setState({
-		// 		submitSuccess: true,
-		// 		submitFailure: false				
-		// 	});
-		// })
-		// .catch((err) => {
-		// 	console.log('err!', err);
-		// 	this.setState({
-		// 		submitSuccess: false,
-		// 		submitFailure: true
-		// 	})
-		// });
+		DataApi.createEntityData(this.state.entitySetId, '', entities)
+		.then((res) => {
+			console.log('success! res:', res);
+			this.setState({
+				submitSuccess: true,
+				submitFailure: false				
+			});
+		})
+		.catch((err) => {
+			console.log('err!', err);
+			this.setState({
+				submitSuccess: false,
+				submitFailure: true
+			})
+		});
 	}
 
 	render() {
