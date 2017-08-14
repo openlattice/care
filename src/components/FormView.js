@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import styled, { injectGlobal } from 'styled-components';
 import { normalize } from 'polished';
 
-import { Page, PageHeader, Title, Description, FormWrapper, SubmitButton, BtnWrapper } from '../shared/Layout';
+import { Page, PageHeader, Title, Description, FormWrapper, SubmitButton, SubmitButtonWrapper } from '../shared/Layout';
 import ReportInfoView from '../components/ReportInfoView';
 import ConsumerInfoView from '../components/ConsumerInfoView';
 import ComplainantInfoView from '../components/ComplainantInfoView';
@@ -49,9 +49,9 @@ function FormView({ handleInput, handleSingleSelection, handleCheckboxChange, ha
               handleCheckboxChange={handleCheckboxChange}
               input={input.officerInfo}
               section='officerInfo' />
-          <BtnWrapper>
+          <SubmitButtonWrapper>
             <SubmitButton type='submit' bsStyle='primary' bsSize='lg'>Submit</SubmitButton>
-          </BtnWrapper>
+          </SubmitButtonWrapper>
         </form>
       </FormWrapper>
     </Page>

@@ -64,10 +64,13 @@ export const InlineRadio = styled(Radio)`
   font-size: 16px;
 `;
 
-export const BtnWrapper = styled.div`
+export const ButtonWrapper = styled.div`
+  text-align: center;
+`;
+
+export const SubmitButtonWrapper = ButtonWrapper.extend`
   padding-top: 80px;
   width: 1520px;
-  text-align: center;
 `;
 
 export const SubmitButton = styled(Button).attrs({

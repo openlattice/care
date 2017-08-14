@@ -4,6 +4,7 @@ import { EntityDataModelApi, DataApi } from 'lattice';
 import Promise from 'bluebird';
 
 import FormView from '../components/FormView';
+import ConfirmationModal from '../components/ConfirmationModalView';
 
 class Form extends React.Component {
   constructor(props) {
@@ -199,14 +200,25 @@ class Form extends React.Component {
     });
   }
 
+  handleModalButtonClick = () => {
+    this.setState({submitSuccess: false});
+  }
+
   render() {
     return (
-      <FormView
-          handleInput={this.handleInput}
-          handleSingleSelection={this.handleSingleSelection}
-          handleCheckboxChange={this.handleCheckboxChange}
-          handleSubmit={this.handleSubmit}
-          input={this.state} />
+      <div>
+        <FormView
+            handleInput={this.handleInput}
+            handleSingleSelection={this.handleSingleSelection}
+            handleCheckboxChange={this.handleCheckboxChange}
+            handleSubmit={this.handleSubmit}
+            input={this.state} />
+        {
+          this.state.submitSuccess ? 
+          <ConfirmationModal handleModalButtonClick={this.handleModalButtonClick} /> :
+          null
+        }
+      </div>
     );
   }
 }
