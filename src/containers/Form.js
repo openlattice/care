@@ -6,6 +6,7 @@ import Promise from 'bluebird';
 import FormView from '../components/FormView';
 import ConfirmationModal from '../components/ConfirmationModalView';
 
+
 class Form extends React.Component {
   constructor(props) {
     super(props);
@@ -84,12 +85,18 @@ class Form extends React.Component {
       entityType: {},
       propertyTypes: [],
       submitSuccess: null,
-      submitFailure: null,
-
+      submitFailure: null
     };
+
+    this.initialReportState = Object.assign({}, this.state.reportInfo);
+    this.initialConsumerState = Object.assign({}, this.state.consumerInfo);
+    this.initialComplainantState = Object.assign({}, this.state.complainantInfo);
+    this.initialDispositionState = Object.assign({}, this.state.dispositionInfo);
+    this.initialOfficerState = Object.assign({}, this.state.officerInfo);
   }
 
   componentDidMount() {
+    console.log('this state:', this.state);
     EntityDataModelApi.getEntitySetId('baltimorehealthreporttest1')
     .then((id) => {
       console.log('entity set id:', id);
@@ -201,7 +208,16 @@ class Form extends React.Component {
   }
 
   handleModalButtonClick = () => {
-    this.setState({submitSuccess: false});
+    console.log('initialOfficerState:', this.initialOfficerState);
+    this.setState({
+      reportInfo: this.initialReportState,
+      consumerInfo: this.initialConsumerState,
+      complainantInfo: this.initialComplainantState,
+      dispositionInfo: this.initialDispositionState,
+      officerInfo: this.initialOfficerState,
+      submitSuccess: null,
+      submitFailure: null
+    });
   }
 
   render() {
