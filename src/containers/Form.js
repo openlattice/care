@@ -96,7 +96,7 @@ class Form extends React.Component {
 
   componentDidMount() {
     console.log('report state:', this.initialReportState);
-    EntityDataModelApi.getEntitySetId('baltimorehealthreporttest1')
+    EntityDataModelApi.getEntitySetId('baltimoreHealthReport')
     .then((id) => {
       console.log('entity set id:', id);
       this.setState({entitySetId: id});
@@ -174,7 +174,7 @@ class Form extends React.Component {
 
     const formattedValues = {};
     this.state.propertyTypes.forEach((propertyType) => {
-      formattedValues[propertyType.id] = [formInputs[propertyType.title]];
+      formattedValues[propertyType.id] = [formInputs[propertyType.type.name]];
     });
     console.log('formattedValues:', formattedValues);
 
