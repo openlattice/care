@@ -6,7 +6,6 @@ import Promise from 'bluebird';
 import FormView from '../components/FormView';
 import ConfirmationModal from '../components/ConfirmationModalView';
 
-
 class Form extends React.Component {
   constructor(props) {
     super(props);
@@ -96,7 +95,7 @@ class Form extends React.Component {
   }
 
   componentDidMount() {
-    console.log('this state:', this.state);
+    console.log('report state:', this.initialReportState);
     EntityDataModelApi.getEntitySetId('baltimorehealthreporttest1')
     .then((id) => {
       console.log('entity set id:', id);
@@ -128,7 +127,9 @@ class Form extends React.Component {
     const input = e.target.value;
     const sectionState = this.state[sectionKey]; 
     sectionState[name] = input;
-    this.setState({ [sectionKey]: sectionState }, () => {console.log('section state:', this.state[sectionKey])});
+    // this.setState({ [sectionKey]: sectionState }, () => {console.log('section state:', this.state[sectionKey])});
+    this.setState({ [sectionKey]: sectionState }, () => {console.log('report initial state', this.initialReportState)});
+
   }
 
   // For radio or select input
@@ -207,17 +208,9 @@ class Form extends React.Component {
     });
   }
 
+//QUESTION: Is there a better way to reset state?
   handleModalButtonClick = () => {
-    console.log('initialOfficerState:', this.initialOfficerState);
-    this.setState({
-      reportInfo: this.initialReportState,
-      consumerInfo: this.initialConsumerState,
-      complainantInfo: this.initialComplainantState,
-      dispositionInfo: this.initialDispositionState,
-      officerInfo: this.initialOfficerState,
-      submitSuccess: null,
-      submitFailure: null
-    });
+    window.location.reload();
   }
 
   render() {
