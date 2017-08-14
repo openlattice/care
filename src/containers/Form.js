@@ -215,7 +215,10 @@ class Form extends React.Component {
             input={this.state} />
         {
           this.state.submitSuccess ? 
-          <ConfirmationModal handleModalButtonClick={this.handleModalButtonClick} /> :
+          <ConfirmationModal 
+              submitSuccess={this.state.submitSuccess}
+              submitFailure={this.state.submitFailure}
+              handleModalButtonClick={this.handleModalButtonClick} /> :
           null
         }
       </div>
