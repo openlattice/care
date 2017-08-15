@@ -72,7 +72,7 @@ const ReportInfoView = ({ section, handleInput, handleDateInput, handleTimeInput
       </Row>
 
       <Row>
-        <InputWrapper>
+        <InputWrapper flex={FLEX.COL_1_5}>
           <TitleLabel>9. On View</TitleLabel>
           <InlineRadio
               inline
@@ -89,12 +89,21 @@ const ReportInfoView = ({ section, handleInput, handleDateInput, handleTimeInput
               checked={input.onView === 'false'}
               onChange={handleSingleSelection}>No</InlineRadio>
         </InputWrapper>
-        <InputWrapper>
-          <TitleLabel>10. Date / Time Occurred</TitleLabel>
-          <TimePicker value={input.timeTest} onChange={(e) => {handleTimeInput(e, section, 'timeOccurred')}} />
+        <InputWrapper flex={FLEX.COL_1_5}>
+          <TitleLabel>10. Date Occurred</TitleLabel>
+          <DatePicker value={input.dateOccurred} onChange={(e) => {handleDateInput(e, section, 'dateOccurred')}} />
         </InputWrapper>
-        <InputWrapper>
-          <TitleLabel>11. Date / Time Reported</TitleLabel>
+        <InputWrapper flex={FLEX.COL_1_5}>
+          <TitleLabel>Time Occurred</TitleLabel>
+          <TimePicker value={input.timeOccurred} onChange={(e) => {handleTimeInput(e, section, 'timeOccurred')}} />
+        </InputWrapper>
+        <InputWrapper flex={FLEX.COL_1_5}>
+          <TitleLabel>11. Date Reported</TitleLabel>
+          <DatePicker value={input.dateReported} onChange={(e) => {handleDateInput(e, section, 'dateReported')}} />
+        </InputWrapper>
+        <InputWrapper flex={FLEX.COL_1_5}>
+          <TitleLabel>Time Reported</TitleLabel>
+          <TimePicker value={input.timeReported} onChange={(e) => {handleTimeInput(e, section, 'timeReported')}} />
         </InputWrapper>
       </Row>
 		</SectionView>

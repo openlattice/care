@@ -86,8 +86,7 @@ class Form extends React.Component {
       entityType: {},
       propertyTypes: [],
       submitSuccess: null,
-      submitFailure: null,
-      timeTest: ''
+      submitFailure: null
     };
   }
 
@@ -125,7 +124,6 @@ class Form extends React.Component {
     this.setState({ [sectionKey]: sectionState }, () => {console.log('entities', this.getEntities())});
   }
 
-  // For date input
   handleDateInput = (e, section, name) => {
     const input = e;
     const sectionState = this.state[section];
@@ -165,10 +163,9 @@ class Form extends React.Component {
   handleTimeInput = (e, section, name) => {
     console.log('handle time input, e:', e);
     const input = this.formatTime(e);
-    // const sectionState = this.state[section];
-    // sectionState[name] = input;
-    // this.setState({ [section]: sectionState }, () => {console.log('section state', this.state[section])});
-    this.setState({timeTest: input}, () => {console.log('timeTest state:', this.state.timeTest)});
+    const sectionState = this.state[section];
+    sectionState[name] = input;
+    this.setState({ [section]: sectionState }, () => {console.log('section state', this.state[section])});
   }
 
   // For radio or select input
@@ -192,18 +189,14 @@ class Form extends React.Component {
   }
 
   getEntities = () => {
-    // const formInputs = Object.assign(
-    //   {},
-    //   this.state.reportInfo,
-    //   this.state.consumerInfo,
-    //   this.state.complainantInfo,
-    //   this.state.dispositionInfo,
-    //   this.state.officerInfo
-    // );
-
-    const formInputs = {
-      timeTest: this.state.timeTest
-    }
+    const formInputs = Object.assign(
+      {},
+      this.state.reportInfo,
+      this.state.consumerInfo,
+      this.state.complainantInfo,
+      this.state.dispositionInfo,
+      this.state.officerInfo
+    );
 
     const formattedValues = {};
     this.state.propertyTypes.forEach((propertyType) => {
