@@ -137,6 +137,7 @@ class Form extends React.Component {
     const sectionKey = e.target.dataset.section;
     const sectionState = this.state[sectionKey];
     sectionState[e.target.name] = e.target.value;
+    console.log('boolean:', e.target.value);
     this.setState({ [sectionKey]: sectionState }, () => {console.log('section state:', this.state[sectionKey])});
   }
 
@@ -179,7 +180,9 @@ class Form extends React.Component {
       // [], [""], ["hi"], "", "hi"
       formattedValue = Array.isArray(value) ? value : [value];
       console.log('FORMATTED VALUE TO ARRAY', formattedValue);
-      formattedValue = (formattedValue.length > 0 && formattedValue[0] === "") ? [] : formattedValue;
+      formattedValue = (formattedValue.length === 1 && formattedValue[0] === "false") ? [false] : formattedValue;
+      formattedValue = (formattedValue.length === 1 && formattedValue[0] === "true") ? [true] : formattedValue;
+      formattedValue = (formattedValue.length > 0 && (formattedValue[0] === "" || formattedValue[0] === null)) ? [] : formattedValue;
       console.log('FORMATTEED VALUE FINAL:', formattedValue);
       formattedValues[propertyType.id] = formattedValue;
       // formattedValues[propertyType.id] = Array.isArray(value) ? value : [value];

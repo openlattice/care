@@ -96,15 +96,15 @@ const DispositionView = ({ section, handleInput, handleCheckboxChange, handleSin
               inline
               data-section={section}
               name='hospitalTransport'
-              value='yes'
-              checked={input.hospitalTransport === 'yes'}
+              value={true}
+              checked={input.hospitalTransport === 'true'}
               onChange={handleSingleSelection}>Yes</InlineRadio>
           <InlineRadio
               inline
               data-section={section}
               name='hospitalTransport'  
-              value='no'
-              checked={input.hospitalTransport === 'no'}
+              value={false}
+              checked={input.hospitalTransport === 'false'}
               onChange={handleSingleSelection}>No</InlineRadio>
         </InputWrapper>
         <InputWrapper flex={FLEX.COL_100}>

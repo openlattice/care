@@ -30,15 +30,15 @@ const ReportInfoView = ({ section, handleInput, handleSingleSelection, input }) 
               inline
               data-section={section}
               name='companionOffenseReport'
-              value='yes'
-              checked={input.companionOffenseReport === 'yes'}
+              value={true}
+              checked={input.companionOffenseReport === 'true'}
               onChange={handleSingleSelection}>Yes</InlineRadio>
           <InlineRadio
               inline
               data-section={section}
               name ='companionOffenseReport'
-              value='no'
-              checked={input.companionOffenseReport === 'no'}
+              value={false}
+              checked={input.companionOffenseReport === 'false'}
               onChange={handleSingleSelection}>No</InlineRadio>
         </InputWrapper>
       </Row>
@@ -76,15 +76,15 @@ const ReportInfoView = ({ section, handleInput, handleSingleSelection, input }) 
               inline
               data-section={section}
               name='onView'
-              value='yes'
-              checked={input.onView === 'yes'}
+              value={true}
+              checked={input.onView === 'true'}
               onChange={handleSingleSelection}>Yes</InlineRadio>
           <InlineRadio
               inline
               data-section={section}
               name ='onView'
-              value='no'
-              checked={input.onView === 'no'}
+              value={false}
+              checked={input.onView === 'false'}
               onChange={handleSingleSelection}>No</InlineRadio>
         </InputWrapper>
         <InputWrapper>

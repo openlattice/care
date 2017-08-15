@@ -109,15 +109,15 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               inline
               data-section={section}
               name='homeless'
-              value='yes'
-              checked={input.homeless === 'yes'}
+              value={true}
+              checked={input.homeless === 'true'}
               onChange={handleSingleSelection}>Yes</InlineRadio>
           <InlineRadio
               inline
               data-section={section}
               name ='homeless' 
-              value='no'
-              checked={input.homeless === 'no'}
+              value={false}
+              checked={input.homeless === 'false'}
               onChange={handleSingleSelection}>No</InlineRadio>
         </InputWrapper>
         <InputWrapper flex={FLEX.COL_100}>
@@ -303,15 +303,15 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               inline
               data-section={section}
               name='armedWithWeapon'
-              value='yes'
-              checked={input.armedWithWeapon === 'yes'}
+              value={true}
+              checked={input.armedWithWeapon === 'true'}
               onChange={handleSingleSelection}>Yes</InlineRadio>
           <InlineRadio
               inline
               data-section={section}
               name='armedWithWeapon'
-              value='no'
-              checked={input.armedWithWeapon === 'no'}
+              value={false}
+              checked={input.armedWithWeapon === 'false'}
               onChange={handleSingleSelection}>No</InlineRadio>
         </InputWrapper>
         <InputWrapper flex={FLEX.COL_100}>
@@ -325,15 +325,15 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               inline
               data-section={section}
               name='accessToWeapons'
-              value='yes'
-              checked={input.accessToWeapons === 'yes'}
+              value={true}
+              checked={input.accessToWeapons === 'true'}
               onChange={handleSingleSelection}>Yes</InlineRadio>
           <InlineRadio
               inline
               data-section={section}
               name='accessToWeapons'
-              value='no'
-              checked={input.accessToWeapons === 'no'}
+              value={false}
+              checked={input.accessToWeapons === 'false'}
               onChange={handleSingleSelection}>No</InlineRadio>
         </InputWrapper>
         <InputWrapper flex={FLEX.COL_100}>
@@ -563,15 +563,15 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
               inline
               data-section={section}
               name='suicidal'
-              value='yes'
-              checked={input.suicidal === 'yes'}
+              value={true}
+              checked={input.suicidal === 'true'}
               onChange={handleSingleSelection}>Yes</InlineRadio>
           <InlineRadio
               inline
               data-section={section}
               name='suicidal'
-              value='no'
-              checked={input.suicidal === 'no'}
+              value={false}
+              checked={input.suicidal === 'false'}
               onChange={handleSingleSelection}>No</InlineRadio>
         </InputWrapper>
 
