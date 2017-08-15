@@ -13,18 +13,18 @@ import SectionView from './SectionView';
 import { Row, Label, TitleLabel, InputWrapper, InlineRadio } from '../shared/Layout';
 import { FLEX } from '../shared/Consts';
 
-const ReportInfoView = ({ section, handleInput, handleDateInput, handleTimeInput, handleSingleSelection, input }) => {
+const ReportInfoView = ({ section, handleTextInput, handleDateInput, handleTimeInput, handleSingleSelection, input }) => {
 
 	return (
 		<SectionView header='Report Information'>
       <Row>
         <InputWrapper>
     		  <TitleLabel>1. Primary Reason for Dispatch</TitleLabel>
-          <FormControl data-section={section} name='dispatchReason' value={input.dispatchReason} onChange={handleInput} />
+          <FormControl data-section={section} name='dispatchReason' value={input.dispatchReason} onChange={handleTextInput} />
         </InputWrapper>
         <InputWrapper>
           <TitleLabel>2. Complaint Number</TitleLabel>
-          <FormControl data-section={section} name='complaintNumber' value={input.complaintNumber} onChange={handleInput} />
+          <FormControl data-section={section} name='complaintNumber' value={input.complaintNumber} onChange={handleTextInput} />
         </InputWrapper>
         <InputWrapper>
           <TitleLabel>3. Companion Offense Report Prepared</TitleLabel>
@@ -48,26 +48,26 @@ const ReportInfoView = ({ section, handleInput, handleDateInput, handleTimeInput
       <Row>
         <InputWrapper>
           <TitleLabel>4. Crime / Incident</TitleLabel>
-          <FormControl data-section={section} name='incident' value={input.incident} onChange={handleInput} />
+          <FormControl data-section={section} name='incident' value={input.incident} onChange={handleTextInput} />
         </InputWrapper>
         <InputWrapper flex={FLEX.COL_2_3}>
           <TitleLabel>5. Location of Offense / Incident (exact street address, if applicable)</TitleLabel>
-          <FormControl data-section={section} name='locationOfIncident' value={input.locationOfIncident} onChange={handleInput} />
+          <FormControl data-section={section} name='locationOfIncident' value={input.locationOfIncident} onChange={handleTextInput} />
         </InputWrapper>
       </Row>
 
       <Row>
         <InputWrapper>
           <TitleLabel>6. Unit</TitleLabel>
-          <FormControl data-section={section} name='unit' value={input.unit} onChange={handleInput} />
+          <FormControl data-section={section} name='unit' value={input.unit} onChange={handleTextInput} />
         </InputWrapper>
         <InputWrapper>
           <TitleLabel>7. Post of Occurrence</TitleLabel>
-          <FormControl data-section={section} name='postOfOccurrence' value={input.postOfOccurrence} onChange={handleInput} />
+          <FormControl data-section={section} name='postOfOccurrence' value={input.postOfOccurrence} onChange={handleTextInput} />
         </InputWrapper>
         <InputWrapper>
           <TitleLabel>8. CAD Number</TitleLabel>
-          <FormControl data-section={section} name='cadNumber' value={input.cadNumber} onChange={handleInput} />
+          <FormControl data-section={section} name='cadNumber' value={input.cadNumber} onChange={handleTextInput} />
         </InputWrapper>
       </Row>
 
@@ -112,7 +112,7 @@ const ReportInfoView = ({ section, handleInput, handleDateInput, handleTimeInput
 }
 
 ReportInfoView.propTypes = {
-  handleInput: PropTypes.func.isRequired,
+  handleTextInput: PropTypes.func.isRequired,
   handleSingleSelection: PropTypes.func.isRequired,
   input: PropTypes.object.isRequired,
   section: PropTypes.string.isRequired

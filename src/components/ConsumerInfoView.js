@@ -11,22 +11,22 @@ import SectionView from './SectionView';
 import { Row, InputWrapper, Label, InlineCheckbox, InlineRadio, TitleLabel, OtherWrapper } from '../shared/Layout';
 import { FLEX } from '../shared/Consts'
 
-const ConsumerInfoView = ({ section, handleInput, handleDateInput, handleSingleSelection, handleCheckboxChange, input }) => {
+const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSingleSelection, handleCheckboxChange, input }) => {
 
   return (
     <SectionView header='Consumer Information'>
       <Row>
         <InputWrapper>
           <TitleLabel>13. Consumer Name (Last, First, MI)</TitleLabel>
-          <FormControl data-section={section} name='name' value={input.name} onChange={handleInput} />
+          <FormControl data-section={section} name='name' value={input.name} onChange={handleTextInput} />
         </InputWrapper>
         <InputWrapper>
           <TitleLabel>Residence / Address (Apt Number, City, County, State, Zip)</TitleLabel>
-          <FormControl data-section={section} name='address' value={input.address} onChange={handleInput} />
+          <FormControl data-section={section} name='address' value={input.address} onChange={handleTextInput} />
         </InputWrapper>
         <InputWrapper>
           <TitleLabel>Consumer Phone Number</TitleLabel>
-          <FormControl data-section={section} name='phone' value={input.phone} onChange={handleInput} />
+          <FormControl data-section={section} name='phone' value={input.phone} onChange={handleTextInput} />
         </InputWrapper>
       </Row>
 
@@ -94,7 +94,7 @@ const ConsumerInfoView = ({ section, handleInput, handleDateInput, handleSingleS
 
         <InputWrapper flex={FLEX.COL_1_5}>
           <TitleLabel>Age</TitleLabel>
-          <FormControl data-section={section} name='age' value={input.age} onChange={handleInput} />
+          <FormControl data-section={section} name='age' value={input.age} onChange={handleTextInput} />
         </InputWrapper>
 
         <InputWrapper flex={FLEX.COL_1_5}>
@@ -123,7 +123,7 @@ const ConsumerInfoView = ({ section, handleInput, handleDateInput, handleSingleS
         </InputWrapper>
         <InputWrapper flex={FLEX.COL_100}>
           <TitleLabel>If Yes, Where Do They Usually Sleep / Frequent?</TitleLabel>
-          <FormControl data-section={section} name='homelessLocation' value={input.homelessLocation} onChange={handleInput} />
+          <FormControl data-section={section} name='homelessLocation' value={input.homelessLocation} onChange={handleTextInput} />
         </InputWrapper>
       </Row>
 
@@ -162,7 +162,7 @@ const ConsumerInfoView = ({ section, handleInput, handleDateInput, handleSingleS
 
         <InputWrapper flex={FLEX.COL_100}>
           <TitleLabel>Drug type</TitleLabel>
-          <FormControl data-section={section} name='drugType' value={input.drugType} onChange={handleInput} />
+          <FormControl data-section={section} name='drugType' value={input.drugType} onChange={handleTextInput} />
         </InputWrapper>
       </Row>
 
@@ -292,7 +292,7 @@ const ConsumerInfoView = ({ section, handleInput, handleDateInput, handleSingleS
                   value='other'
                   checked={input.selfDiagnosis.indexOf('other') !== -1}
                   onChange={handleCheckboxChange}>Other:</InlineCheckbox>
-              <FormControl data-section={section} name='selfDiagnosisOther' value={input['selfDiagnosisOther']} onChange={handleInput} />
+              <FormControl data-section={section} name='selfDiagnosisOther' value={input['selfDiagnosisOther']} onChange={handleTextInput} />
             </OtherWrapper>
         </InputWrapper>
       </Row>
@@ -317,7 +317,7 @@ const ConsumerInfoView = ({ section, handleInput, handleDateInput, handleSingleS
         </InputWrapper>
         <InputWrapper flex={FLEX.COL_100}>
           <Label>If Yes, Weapon Type</Label>
-          <FormControl data-section={section} name='armedWeaponType' value={input.armedWeaponType} onChange={handleInput} />
+          <FormControl data-section={section} name='armedWeaponType' value={input.armedWeaponType} onChange={handleTextInput} />
         </InputWrapper>
 
         <InputWrapper flex={FLEX.COL_1_5}>
@@ -339,7 +339,7 @@ const ConsumerInfoView = ({ section, handleInput, handleDateInput, handleSingleS
         </InputWrapper>
         <InputWrapper flex={FLEX.COL_100}>
           <Label>If Yes, Weapon Type</Label>
-          <FormControl data-section={section} name='accessibleWeaponType' value={input.accessibleWeaponType} onChange={handleInput} />
+          <FormControl data-section={section} name='accessibleWeaponType' value={input.accessibleWeaponType} onChange={handleTextInput} />
         </InputWrapper>
       </Row>
 
@@ -415,7 +415,7 @@ const ConsumerInfoView = ({ section, handleInput, handleDateInput, handleSingleS
                 value='other'
                 checked={input.observedBehaviors.indexOf('other') !== -1}
                 onChange={handleCheckboxChange}>Other:</InlineCheckbox>
-            <FormControl data-section={section} name='observedBehaviorsOther' value={input.observedBehaviorsOther} onChange={handleInput} />
+            <FormControl data-section={section} name='observedBehaviorsOther' value={input.observedBehaviorsOther} onChange={handleTextInput} />
           </OtherWrapper>
         </InputWrapper>
 
@@ -480,7 +480,7 @@ const ConsumerInfoView = ({ section, handleInput, handleDateInput, handleSingleS
                 value='other'
                 checked={input.emotionalState.indexOf('other') !== -1}
                 onChange={handleCheckboxChange}>Other:</InlineCheckbox>
-            <FormControl data-section={section} name='emotionalStateOther' value={input.emotionalStateOther} onChange={handleInput} />
+            <FormControl data-section={section} name='emotionalStateOther' value={input.emotionalStateOther} onChange={handleTextInput} />
           </OtherWrapper>
         </InputWrapper>
       </Row>
@@ -552,7 +552,7 @@ const ConsumerInfoView = ({ section, handleInput, handleDateInput, handleSingleS
                 value='other'
                 checked={input.injuries.indexOf('other') !== -1}
                 onChange={handleCheckboxChange}>Other:</InlineCheckbox>
-            <FormControl data-section={section} name='injuriesOther' value={input.injuriesOther} onChange={handleInput} />
+            <FormControl data-section={section} name='injuriesOther' value={input.injuriesOther} onChange={handleTextInput} />
           </OtherWrapper>
         </InputWrapper>
       </Row>
@@ -649,7 +649,7 @@ const ConsumerInfoView = ({ section, handleInput, handleDateInput, handleSingleS
                 value='other'
                 checked={input.suicideAttemptMethod.indexOf('other') !== -1}
                 onChange={handleCheckboxChange}>Other:</InlineCheckbox>
-            <FormControl data-section={section} name='suicideAttemptMethodOther' value={input.suicideAttemptMethodOther} onChange={handleInput} />
+            <FormControl data-section={section} name='suicideAttemptMethodOther' value={input.suicideAttemptMethodOther} onChange={handleTextInput} />
           </OtherWrapper>
         </InputWrapper>
       </Row>
@@ -658,7 +658,7 @@ const ConsumerInfoView = ({ section, handleInput, handleDateInput, handleSingleS
 }
 
 ConsumerInfoView.propTypes = {
-  handleInput: PropTypes.func.isRequired,
+  handleTextInput: PropTypes.func.isRequired,
   handleSingleSelection: PropTypes.func.isRequired,
   handleCheckboxChange: PropTypes.func.isRequired,
   input: PropTypes.object.isRequired,

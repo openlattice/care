@@ -11,21 +11,21 @@ import { Row, Label, TitleLabel, CheckboxLabel, InlineCheckbox, InputWrapper } f
 import { FLEX } from '../shared/Consts';
 
 
-const OfficerInfoView = ({ section, handleInput, handleCheckboxChange, input }) => {
+const OfficerInfoView = ({ section, handleTextInput, handleCheckboxChange, input }) => {
   return(
     <SectionView header="Officer Information">
       <Row>
         <InputWrapper flex={FLEX.COL_1_4}>
           <TitleLabel>32. Officer Name</TitleLabel>
-          <FormControl data-section={section} name='officerName' value={input.officerName} onChange={handleInput} />
+          <FormControl data-section={section} name='officerName' value={input.officerName} onChange={handleTextInput} />
         </InputWrapper>
         <InputWrapper flex={FLEX.COL_1_4}>
           <TitleLabel>34. Seq ID</TitleLabel>
-          <FormControl data-section={section} name='officerSeqID' value={input.officerSeqID} onChange={handleInput} />
+          <FormControl data-section={section} name='officerSeqID' value={input.officerSeqID} onChange={handleTextInput} />
         </InputWrapper>
         <InputWrapper flex={FLEX.COL_1_4}>
           <TitleLabel>35. Officer Injuries</TitleLabel>
-          <FormControl data-section={section} name='officerInjuries' value={input.officerInjuries} onChange={handleInput} />
+          <FormControl data-section={section} name='officerInjuries' value={input.officerInjuries} onChange={handleTextInput} />
         </InputWrapper>
         <InputWrapper flex={FLEX.COL_1_4}>
           <TitleLabel>36. Officer Certification</TitleLabel>
@@ -64,7 +64,7 @@ const OfficerInfoView = ({ section, handleInput, handleCheckboxChange, input }) 
 }
 
 OfficerInfoView.propTypes = {
-  handleInput: PropTypes.func.isRequired,
+  handleTextInput: PropTypes.func.isRequired,
   handleCheckboxChange: PropTypes.func.isRequired,
   input: PropTypes.object.isRequired,
   section: PropTypes.string.isRequired

@@ -14,7 +14,7 @@ import ComplainantInfoView from '../components/ComplainantInfoView';
 import DispositionView from '../components/DispositionView';
 import OfficerInfoView from '../components/OfficerInfoView';
 
-function FormView({ handleInput, handleDateInput, handleTimeInput, handleSingleSelection, handleCheckboxChange, handleSubmit, input }) {
+function FormView({ handleTextInput, handleDateInput, handleTimeInput, handleSingleSelection, handleCheckboxChange, handleSubmit, input }) {
 	return (
     <Page>
       <PageHeader>
@@ -24,31 +24,31 @@ function FormView({ handleInput, handleDateInput, handleTimeInput, handleSingleS
       <FormWrapper>
         <form onSubmit={handleSubmit}>
           <ReportInfoView
-              handleInput={handleInput}
+              handleTextInput={handleTextInput}
               handleDateInput={handleDateInput}
               handleTimeInput={handleTimeInput}
               handleSingleSelection={handleSingleSelection}
               input={input.reportInfo}
               section='reportInfo' />
           <ConsumerInfoView
-              handleInput={handleInput}
+              handleTextInput={handleTextInput}
               handleDateInput={handleDateInput}
               handleSingleSelection={handleSingleSelection}
               handleCheckboxChange={handleCheckboxChange}
               input={input.consumerInfo}
               section='consumerInfo' />
           <ComplainantInfoView
-              handleInput={handleInput}
+              handleTextInput={handleTextInput}
               input={input.complainantInfo}
               section='complainantInfo' />
           <DispositionView
-              handleInput={handleInput}
+              handleTextInput={handleTextInput}
               handleCheckboxChange={handleCheckboxChange}
               handleSingleSelection={handleSingleSelection}
               input={input.dispositionInfo}
               section='dispositionInfo' />
           <OfficerInfoView
-              handleInput={handleInput}
+              handleTextInput={handleTextInput}
               handleCheckboxChange={handleCheckboxChange}
               input={input.officerInfo}
               section='officerInfo' />
@@ -62,7 +62,7 @@ function FormView({ handleInput, handleDateInput, handleTimeInput, handleSingleS
 }
 
 FormView.propTypes = {
-  handleInput: PropTypes.func.isRequired,
+  handleTextInput: PropTypes.func.isRequired,
   handleSingleSelection: PropTypes.func.isRequired,
   handleCheckboxChange: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,

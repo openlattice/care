@@ -11,7 +11,7 @@ import { Row, Label, TitleLabel, CheckboxLabel, OtherWrapper, InlineCheckbox, In
 import { FLEX } from '../shared/Consts';
 
 
-const DispositionView = ({ section, handleInput, handleCheckboxChange, handleSingleSelection, input }) => {
+const DispositionView = ({ section, handleTextInput, handleCheckboxChange, handleSingleSelection, input }) => {
   return(
     <SectionView header="Disposition">
       <Row>
@@ -109,7 +109,7 @@ const DispositionView = ({ section, handleInput, handleCheckboxChange, handleSin
         </InputWrapper>
         <InputWrapper flex={FLEX.COL_100}>
           <TitleLabel>Hospital Name</TitleLabel>
-          <FormControl data-section={section} name='hospital' value={input.hospital} onChange={handleInput} />
+          <FormControl data-section={section} name='hospital' value={input.hospital} onChange={handleTextInput} />
         </InputWrapper>
       </Row>
 
@@ -168,7 +168,7 @@ const DispositionView = ({ section, handleInput, handleCheckboxChange, handleSin
                 value='other'
                 checked={input['deescalationTechniques'].indexOf('other') !== -1}
                 onChange={handleCheckboxChange}>Other:</InlineCheckbox>
-            <FormControl data-section={section} name='deescalationTechniquesOther' value={input.deescalationTechniquesOther} onChange={handleInput} />
+            <FormControl data-section={section} name='deescalationTechniquesOther' value={input.deescalationTechniquesOther} onChange={handleTextInput} />
           </OtherWrapper>
         </InputWrapper>
       </Row>
@@ -231,7 +231,7 @@ const DispositionView = ({ section, handleInput, handleCheckboxChange, handleSin
       <Row>
         <InputWrapper flex={FLEX.COL_100}>
           <TitleLabel>31. Narrative of Incident, to include: Results of investigation, basis for actions taken, emotional states, additional witnesses. Property listing.</TitleLabel>
-          <FormControl data-section={section} name='incidentNarrative' componentClass='textarea' value={input.incidentNarrative} onChange={handleInput} />
+          <FormControl data-section={section} name='incidentNarrative' componentClass='textarea' value={input.incidentNarrative} onChange={handleTextInput} />
         </InputWrapper>
       </Row>
     </SectionView>
@@ -239,7 +239,7 @@ const DispositionView = ({ section, handleInput, handleCheckboxChange, handleSin
 }
 
 DispositionView.propTypes = {
-  handleInput: PropTypes.func.isRequired,
+  handleTextInput: PropTypes.func.isRequired,
   handleSingleSelection: PropTypes.func.isRequired,
   handleCheckboxChange: PropTypes.func.isRequired,
   input: PropTypes.object.isRequired,

@@ -114,7 +114,7 @@ class Form extends React.Component {
   }
 
   // For text input
-  handleInput = (e) => {
+  handleTextInput = (e) => {
     const sectionKey = e.target.dataset.section
     const name = e.target.name;
     const input = e.target.value;
@@ -256,7 +256,7 @@ class Form extends React.Component {
     return (
       <div>
         <FormView
-            handleInput={this.handleInput}
+            handleTextInput={this.handleTextInput}
             handleDateInput={this.handleDateInput}
             handleTimeInput={this.handleTimeInput}
             handleSingleSelection={this.handleSingleSelection}
