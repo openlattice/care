@@ -91,7 +91,7 @@ class Form extends React.Component {
   }
 
   componentDidMount() {
-    EntityDataModelApi.getEntitySetId('timeTestEntitySet')
+    EntityDataModelApi.getEntitySetId('baltimoreHealthReport')
     .then((id) => {
       this.setState({entitySetId: id});
       EntityDataModelApi.getEntitySet(id)
@@ -119,8 +119,7 @@ class Form extends React.Component {
     const name = e.target.name;
     const input = e.target.value;
     const sectionState = this.state[sectionKey]; 
-    const formattedInput = Number(input) ? Number(input) : input;
-    sectionState[name] = formattedInput;
+    sectionState[name] = input;
     this.setState({ [sectionKey]: sectionState }, () => {console.log('entities', this.getEntities())});
   }
 
@@ -203,18 +202,13 @@ class Form extends React.Component {
       const value = formInputs[propertyType.type.name];
       let formattedValue;
       formattedValue = Array.isArray(value) ? value : [value];
-      console.log('first run:', formattedValue);
-      formattedValue = (formattedValue.length === 1 && formattedValue[0] === "false") ? [false] : formattedValue;
-      formattedValue = (formattedValue.length === 1 && formattedValue[0] === "true") ? [true] : formattedValue;
       formattedValue = (formattedValue.length > 0 && (formattedValue[0] === "" || formattedValue[0] === null)) ? [] : formattedValue;
       formattedValues[propertyType.id] = formattedValue;
     });
     console.log('formattedValues:', formattedValues);
 
     const primaryKeys = this.state.entityType.key;
-    // console.log('primaryKeys:', primaryKeys);
     const entityKey = primaryKeys.map((keyId) => {
-      // console.log('formattedValue,i.e. is there a value?:', formattedValues[keyId]);
       const utf8Val = (formattedValues[keyId].length > 0) ? encodeURI(formattedValues[keyId][0]) : '';
       return btoa(utf8Val);
     }).join(',');
@@ -222,7 +216,7 @@ class Form extends React.Component {
     const entities = {
       [entityKey]: formattedValues
     };
-    // console.log('entities', entities);
+    
     return entities;
   }
 
