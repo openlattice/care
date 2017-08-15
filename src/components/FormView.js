@@ -14,7 +14,7 @@ import ComplainantInfoView from '../components/ComplainantInfoView';
 import DispositionView from '../components/DispositionView';
 import OfficerInfoView from '../components/OfficerInfoView';
 
-function FormView({ handleInput, handleDateInput, handleSingleSelection, handleCheckboxChange, handleSubmit, input }) {
+function FormView({ handleInput, handleDateInput, handleTimeInput, handleSingleSelection, handleCheckboxChange, handleSubmit, input }) {
 	return (
     <Page>
       <PageHeader>
@@ -26,6 +26,7 @@ function FormView({ handleInput, handleDateInput, handleSingleSelection, handleC
           <ReportInfoView
               handleInput={handleInput}
               handleDateInput={handleDateInput}
+              handleTimeInput={handleTimeInput}
               handleSingleSelection={handleSingleSelection}
               input={input.reportInfo}
               section='reportInfo' />

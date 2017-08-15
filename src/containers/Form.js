@@ -22,7 +22,9 @@ class Form extends React.Component {
         cadNumber: '',
         onView: null,
         dateOccurred: '',
-        dateReported: new Date().toISOString()
+        timeOccurred: '',
+        dateReported: new Date().toISOString(),
+        timeReported: ''
       },
       consumerInfo: {
         name: '',
@@ -84,12 +86,13 @@ class Form extends React.Component {
       entityType: {},
       propertyTypes: [],
       submitSuccess: null,
-      submitFailure: null
+      submitFailure: null,
+      timeTest: ''
     };
   }
 
   componentDidMount() {
-    EntityDataModelApi.getEntitySetId('baltimoreHealthReport')
+    EntityDataModelApi.getEntitySetId('timeTestEntitySet')
     .then((id) => {
       this.setState({entitySetId: id});
       EntityDataModelApi.getEntitySet(id)
@@ -102,7 +105,9 @@ class Form extends React.Component {
             return EntityDataModelApi.getPropertyType(propertyId);
           })
           .then((propertyTypes) => {
-            this.setState({propertyTypes});
+            this.setState({propertyTypes}, () => {
+              console.log('INITIAL STATE after GET:', this.state);
+            });
           });
         });
       });
@@ -117,9 +122,7 @@ class Form extends React.Component {
     const sectionState = this.state[sectionKey]; 
     const formattedInput = Number(input) ? Number(input) : input;
     sectionState[name] = formattedInput;
-    this.setState({ [sectionKey]: sectionState }, () => {console.log('section state', this.state[sectionKey])});
-
-    console.log('ENTITIES:', this.getEntities());
+    this.setState({ [sectionKey]: sectionState }, () => {console.log('entities', this.getEntities())});
   }
 
   // For date input
@@ -128,6 +131,44 @@ class Form extends React.Component {
     const sectionState = this.state[section];
     sectionState[name] = input;
     this.setState({ [section]: sectionState }, () => {console.log('section state', this.state[section])})
+  }
+
+  formatTime = (seconds) => {
+    let hh = 0;
+    let mm = 0;
+    let ss = seconds;
+
+    while (ss >= 60) {
+      mm++;
+      ss = ss - 60;
+    }
+
+    while (mm >= 60) {
+      hh++;
+      mm = mm - 60;
+    }
+
+    let hhStr = hh.toString();
+    hhStr = hhStr.length === 1 ? '0' + hhStr : hhStr;
+
+    let mmStr = mm.toString();
+    mmStr = mmStr.length === 1 ? '0' + mmStr : mmStr;
+
+    let ssStr = ss.toString();
+    ssStr = ssStr.length === 1 ? '0' + ssStr : ssStr;
+
+    const res = hhStr + ':' + mmStr + ':' + ssStr;
+    console.log('formatted time:', res);
+    return res;
+  }
+
+  handleTimeInput = (e, section, name) => {
+    console.log('handle time input, e:', e);
+    const input = this.formatTime(e);
+    // const sectionState = this.state[section];
+    // sectionState[name] = input;
+    // this.setState({ [section]: sectionState }, () => {console.log('section state', this.state[section])});
+    this.setState({timeTest: input}, () => {console.log('timeTest state:', this.state.timeTest)});
   }
 
   // For radio or select input
@@ -151,28 +192,36 @@ class Form extends React.Component {
   }
 
   getEntities = () => {
-    const formInputs = Object.assign(
-      {},
-      this.state.reportInfo,
-      this.state.consumerInfo,
-      this.state.complainantInfo,
-      this.state.dispositionInfo,
-      this.state.officerInfo
-    );
+    // const formInputs = Object.assign(
+    //   {},
+    //   this.state.reportInfo,
+    //   this.state.consumerInfo,
+    //   this.state.complainantInfo,
+    //   this.state.dispositionInfo,
+    //   this.state.officerInfo
+    // );
+
+    const formInputs = {
+      timeTest: this.state.timeTest
+    }
 
     const formattedValues = {};
     this.state.propertyTypes.forEach((propertyType) => {
       const value = formInputs[propertyType.type.name];
       let formattedValue;
       formattedValue = Array.isArray(value) ? value : [value];
+      console.log('first run:', formattedValue);
       formattedValue = (formattedValue.length === 1 && formattedValue[0] === "false") ? [false] : formattedValue;
       formattedValue = (formattedValue.length === 1 && formattedValue[0] === "true") ? [true] : formattedValue;
       formattedValue = (formattedValue.length > 0 && (formattedValue[0] === "" || formattedValue[0] === null)) ? [] : formattedValue;
       formattedValues[propertyType.id] = formattedValue;
     });
+    console.log('formattedValues:', formattedValues);
 
     const primaryKeys = this.state.entityType.key;
+    // console.log('primaryKeys:', primaryKeys);
     const entityKey = primaryKeys.map((keyId) => {
+      // console.log('formattedValue,i.e. is there a value?:', formattedValues[keyId]);
       const utf8Val = (formattedValues[keyId].length > 0) ? encodeURI(formattedValues[keyId][0]) : '';
       return btoa(utf8Val);
     }).join(',');
@@ -180,7 +229,7 @@ class Form extends React.Component {
     const entities = {
       [entityKey]: formattedValues
     };
-    console.log('entities', entities);
+    // console.log('entities', entities);
     return entities;
   }
 
@@ -188,6 +237,7 @@ class Form extends React.Component {
     e.preventDefault();
 
     const entities = this.getEntities();
+    console.log('entities!', entities);
     DataApi.createEntityData(this.state.entitySetId, '', entities)
     .then((res) => {
       console.log('SUBMIT 200!');
@@ -215,6 +265,7 @@ class Form extends React.Component {
         <FormView
             handleInput={this.handleInput}
             handleDateInput={this.handleDateInput}
+            handleTimeInput={this.handleTimeInput}
             handleSingleSelection={this.handleSingleSelection}
             handleCheckboxChange={this.handleCheckboxChange}
             handleSubmit={this.handleSubmit}

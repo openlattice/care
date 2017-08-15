@@ -480,7 +480,7 @@ const ConsumerInfoView = ({ section, handleInput, handleDateInput, handleSingleS
                 value='other'
                 checked={input.emotionalState.indexOf('other') !== -1}
                 onChange={handleCheckboxChange}>Other:</InlineCheckbox>
-            <FormControl data-section={section} name='22d' value={input['22d']} onChange={handleInput} />
+            <FormControl data-section={section} name='emotionalStateOther' value={input.emotionalStateOther} onChange={handleInput} />
           </OtherWrapper>
         </InputWrapper>
       </Row>
