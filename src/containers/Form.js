@@ -86,33 +86,22 @@ class Form extends React.Component {
       submitSuccess: null,
       submitFailure: null
     };
-
-    this.initialReportState = Object.assign({}, this.state.reportInfo);
-    this.initialConsumerState = Object.assign({}, this.state.consumerInfo);
-    this.initialComplainantState = Object.assign({}, this.state.complainantInfo);
-    this.initialDispositionState = Object.assign({}, this.state.dispositionInfo);
-    this.initialOfficerState = Object.assign({}, this.state.officerInfo);
   }
 
   componentDidMount() {
-    console.log('report state:', this.initialReportState);
     EntityDataModelApi.getEntitySetId('baltimoreHealthReport')
     .then((id) => {
-      console.log('entity set id:', id);
       this.setState({entitySetId: id});
       EntityDataModelApi.getEntitySet(id)
       .then((entitySet) => {
-        console.log('entity set:', entitySet);
         this.setState({entitySet});
         EntityDataModelApi.getEntityType(entitySet.entityTypeId)
         .then((entityType) => {
-          console.log('entityType:', entityType);
           this.setState({entityType});
           Promise.map(entityType.properties, (propertyId) => {
             return EntityDataModelApi.getPropertyType(propertyId);
           })
           .then((propertyTypes) => {
-            console.log('propertyTypes', propertyTypes);
             this.setState({propertyTypes});
           });
         });
@@ -127,13 +116,14 @@ class Form extends React.Component {
     const input = e.target.value;
     const sectionState = this.state[sectionKey]; 
     const formattedInput = Number(input) ? Number(input) : input;
-    console.log('formattedInput:', formattedInput);
     sectionState[name] = formattedInput;
     this.setState({ [sectionKey]: sectionState }, () => {console.log('section state', this.state[sectionKey])});
+
+    console.log('ENTITIES:', this.getEntities());
   }
 
+  // For date input
   handleDateInput = (e, section, name) => {
-    console.log('e:', e);
     const input = e;
     const sectionState = this.state[section];
     sectionState[name] = input;
@@ -145,7 +135,6 @@ class Form extends React.Component {
     const sectionKey = e.target.dataset.section;
     const sectionState = this.state[sectionKey];
     sectionState[e.target.name] = e.target.value;
-    console.log('boolean:', e.target.value);
     this.setState({ [sectionKey]: sectionState }, () => {console.log('section state:', this.state[sectionKey])});
   }
 
@@ -153,25 +142,15 @@ class Form extends React.Component {
     const sectionKey = e.target.dataset.section;
     const sectionState = this.state[sectionKey];
     const idx = sectionState[e.target.name].indexOf(e.target.value);
-    console.log('checkbox sectionState before addition', sectionState);
     if (idx === -1) {
-      console.log('does not exist');
       sectionState[e.target.name].push(e.target.value);
     } else {
-      console.log('does exist, idx:', idx);
       sectionState[e.target.name].splice(idx, 1);
     }
-    console.log('checkbox sectionState before saving:', sectionState);
     this.setState({ [sectionKey]: sectionState }, () => {console.log('section state:', this.state[sectionKey])});
   }
 
-  handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('SUBMIT!');
-    // QUESTION: What is optimal way to flatten state for property value lookup? 
-      // 1. Can flatten initial state, and pass entire object down to components (seems unneseccary)
-      // 2. Can create new object w/ section states assigned to it (as below), but duplicates state object
-      // 3. Can iterate through the section states' values to find match (seems time-consuming);
+  getEntities = () => {
     const formInputs = Object.assign(
       {},
       this.state.reportInfo,
@@ -185,34 +164,33 @@ class Form extends React.Component {
     this.state.propertyTypes.forEach((propertyType) => {
       const value = formInputs[propertyType.type.name];
       let formattedValue;
-      // [], [""], ["hi"], "", "hi"
       formattedValue = Array.isArray(value) ? value : [value];
-      console.log('FORMATTED VALUE TO ARRAY', formattedValue);
       formattedValue = (formattedValue.length === 1 && formattedValue[0] === "false") ? [false] : formattedValue;
       formattedValue = (formattedValue.length === 1 && formattedValue[0] === "true") ? [true] : formattedValue;
       formattedValue = (formattedValue.length > 0 && (formattedValue[0] === "" || formattedValue[0] === null)) ? [] : formattedValue;
-      console.log('FORMATTEED VALUE FINAL:', formattedValue);
       formattedValues[propertyType.id] = formattedValue;
-      // formattedValues[propertyType.id] = Array.isArray(value) ? value : [value];
     });
-    console.log('formattedValues:', formattedValues);
 
     const primaryKeys = this.state.entityType.key;
     const entityKey = primaryKeys.map((keyId) => {
-      console.log('keyID:', keyId);
       const utf8Val = (formattedValues[keyId].length > 0) ? encodeURI(formattedValues[keyId][0]) : '';
       return btoa(utf8Val);
     }).join(',');
-    console.log('entityKey:', entityKey);
 
     const entities = {
       [entityKey]: formattedValues
     };
     console.log('entities', entities);
+    return entities;
+  }
 
+  handleSubmit = (e) => {
+    e.preventDefault();
+
+    const entities = this.getEntities();
     DataApi.createEntityData(this.state.entitySetId, '', entities)
     .then((res) => {
-      console.log('success! res:', res);
+      console.log('SUBMIT 200!');
       this.setState({
         submitSuccess: true,
         submitFailure: false				
@@ -227,7 +205,6 @@ class Form extends React.Component {
     });
   }
 
-//QUESTION: Is there a better way to reset state?
   handleModalButtonClick = () => {
     window.location.reload();
   }
