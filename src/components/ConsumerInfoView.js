@@ -5,12 +5,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FormGroup, FormControl } from 'react-bootstrap';
+import DatePicker from 'react-bootstrap-date-picker';
 
 import SectionView from './SectionView';
 import { Row, InputWrapper, Label, InlineCheckbox, InlineRadio, TitleLabel, OtherWrapper } from '../shared/Layout';
 import { FLEX } from '../shared/Consts'
 
-const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleCheckboxChange, input }) => {
+const ConsumerInfoView = ({ section, handleInput, handleDateInput, handleSingleSelection, handleCheckboxChange, input }) => {
 
   return (
     <SectionView header='Consumer Information'>
@@ -98,7 +99,7 @@ const ConsumerInfoView = ({ section, handleInput, handleSingleSelection, handleC
 
         <InputWrapper flex={FLEX.COL_1_5}>
           <TitleLabel>DOB</TitleLabel>
-          <FormControl data-section={section} name='dob' value={input.dob} onChange={handleInput} />
+          <DatePicker value={input.dob} onChange={(e) => {handleDateInput(e, section, 'dob')}} />
         </InputWrapper>
       </Row>
 

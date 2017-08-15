@@ -6,12 +6,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled, { injectGlobal } from 'styled-components';
 import { FormGroup, FormControl } from 'react-bootstrap';
+import DatePicker from 'react-bootstrap-date-picker';
 
 import SectionView from './SectionView';
 import { Row, Label, TitleLabel, InputWrapper, InlineRadio } from '../shared/Layout';
 import { FLEX } from '../shared/Consts';
 
-const ReportInfoView = ({ section, handleInput, handleSingleSelection, input }) => {
+const ReportInfoView = ({ section, handleInput, handleDateInput, handleSingleSelection, input }) => {
 
 	return (
 		<SectionView header='Report Information'>
@@ -89,11 +90,11 @@ const ReportInfoView = ({ section, handleInput, handleSingleSelection, input }) 
         </InputWrapper>
         <InputWrapper>
           <TitleLabel>10. Date / Time Occurred</TitleLabel>
-          <FormControl data-section={section} name='dateOccurred' value={input.dateOccurred} onChange={handleInput} />
+          <DatePicker value={input.dateOccurred} onChange={(e) => {handleDateInput(e, section, 'dateOccurred')}} />
         </InputWrapper>
         <InputWrapper>
           <TitleLabel>11. Date / Time Reported</TitleLabel>
-          <FormControl data-section={section} name='dateReported' value={input.dateReported} onChange={handleInput} />
+          <DatePicker value={input.dateReported} onChange={(e) => {handleDateInput(e, section, 'dateReported')}} />
         </InputWrapper>
       </Row>
 		</SectionView>

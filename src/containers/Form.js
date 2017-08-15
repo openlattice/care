@@ -22,7 +22,7 @@ class Form extends React.Component {
         cadNumber: '',
         onView: null,
         dateOccurred: '',
-        dateReported: ''
+        dateReported: new Date().toISOString()
       },
       consumerInfo: {
         name: '',
@@ -132,6 +132,14 @@ class Form extends React.Component {
     this.setState({ [sectionKey]: sectionState }, () => {console.log('section state', this.state[sectionKey])});
   }
 
+  handleDateInput = (e, section, name) => {
+    console.log('e:', e);
+    const input = e;
+    const sectionState = this.state[section];
+    sectionState[name] = input;
+    this.setState({ [section]: sectionState }, () => {console.log('section state', this.state[section])})
+  }
+
   // For radio or select input
   handleSingleSelection = (e) => {
     const sectionKey = e.target.dataset.section;
@@ -229,6 +237,7 @@ class Form extends React.Component {
       <div>
         <FormView
             handleInput={this.handleInput}
+            handleDateInput={this.handleDateInput}
             handleSingleSelection={this.handleSingleSelection}
             handleCheckboxChange={this.handleCheckboxChange}
             handleSubmit={this.handleSubmit}
