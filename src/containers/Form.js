@@ -126,10 +126,10 @@ class Form extends React.Component {
     const name = e.target.name;
     const input = e.target.value;
     const sectionState = this.state[sectionKey]; 
-    sectionState[name] = input;
-    // this.setState({ [sectionKey]: sectionState }, () => {console.log('section state:', this.state[sectionKey])});
-    this.setState({ [sectionKey]: sectionState }, () => {console.log('report initial state', this.initialReportState)});
-
+    const formattedInput = Number(input) ? Number(input) : input;
+    console.log('formattedInput:', formattedInput);
+    sectionState[name] = formattedInput;
+    this.setState({ [sectionKey]: sectionState }, () => {console.log('section state', this.state[sectionKey])});
   }
 
   // For radio or select input
