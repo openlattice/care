@@ -30,7 +30,7 @@ export const FormWrapper = styled.div`
 `;
 
 export const PaddedRow = styled(Row)`
-  margin-bottom: 28px;
+  margin-bottom: 38px;
 `;
 
 export const Label = styled(ControlLabel)`
@@ -50,7 +50,7 @@ export const OtherWrapper = styled.span`
 
 export const InlineCheckbox = styled(Checkbox)`
   font-size: 16px;
-  margin-right: 8px;
+  margin-right: 12px;
   margin-bottom: 10px;
   margin-left: 0px !important;
 `;
