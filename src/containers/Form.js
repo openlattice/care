@@ -104,9 +104,7 @@ class Form extends React.Component {
             return EntityDataModelApi.getPropertyType(propertyId);
           })
           .then((propertyTypes) => {
-            this.setState({propertyTypes}, () => {
-              console.log('INITIAL STATE after GET:', this.state);
-            });
+            this.setState({propertyTypes});
           });
         });
       });
@@ -120,14 +118,14 @@ class Form extends React.Component {
     const input = e.target.value;
     const sectionState = this.state[sectionKey]; 
     sectionState[name] = input;
-    this.setState({ [sectionKey]: sectionState }, () => {console.log('entities', this.getEntities())});
+    this.setState({ [sectionKey]: sectionState });
   }
 
   handleDateInput = (e, section, name) => {
     const input = e;
     const sectionState = this.state[section];
     sectionState[name] = input;
-    this.setState({ [section]: sectionState }, () => {console.log('section state', this.state[section])})
+    this.setState({ [section]: sectionState });
   }
 
   formatTime = (seconds) => {
@@ -155,16 +153,14 @@ class Form extends React.Component {
     ssStr = ssStr.length === 1 ? '0' + ssStr : ssStr;
 
     const res = hhStr + ':' + mmStr + ':' + ssStr;
-    console.log('formatted time:', res);
     return res;
   }
 
   handleTimeInput = (e, section, name) => {
-    console.log('handle time input, e:', e);
     const input = this.formatTime(e);
     const sectionState = this.state[section];
     sectionState[name] = input;
-    this.setState({ [section]: sectionState }, () => {console.log('section state', this.state[section])});
+    this.setState({ [section]: sectionState });
   }
 
   // For radio or select input
@@ -172,7 +168,7 @@ class Form extends React.Component {
     const sectionKey = e.target.dataset.section;
     const sectionState = this.state[sectionKey];
     sectionState[e.target.name] = e.target.value;
-    this.setState({ [sectionKey]: sectionState }, () => {console.log('section state:', this.state[sectionKey])});
+    this.setState({ [sectionKey]: sectionState });
   }
 
   handleCheckboxChange = (e) => {
@@ -184,7 +180,7 @@ class Form extends React.Component {
     } else {
       sectionState[e.target.name].splice(idx, 1);
     }
-    this.setState({ [sectionKey]: sectionState }, () => {console.log('section state:', this.state[sectionKey])});
+    this.setState({ [sectionKey]: sectionState });
   }
 
   getEntities = () => {
@@ -205,7 +201,6 @@ class Form extends React.Component {
       formattedValue = (formattedValue.length > 0 && (formattedValue[0] === "" || formattedValue[0] === null)) ? [] : formattedValue;
       formattedValues[propertyType.id] = formattedValue;
     });
-    console.log('formattedValues:', formattedValues);
 
     const primaryKeys = this.state.entityType.key;
     const entityKey = primaryKeys.map((keyId) => {
@@ -224,17 +219,14 @@ class Form extends React.Component {
     e.preventDefault();
 
     const entities = this.getEntities();
-    console.log('entities!', entities);
     DataApi.createEntityData(this.state.entitySetId, '', entities)
     .then((res) => {
-      console.log('SUBMIT 200!');
       this.setState({
         submitSuccess: true,
         submitFailure: false				
       });
     })
     .catch((err) => {
-      console.log('err!', err);
       this.setState({
         submitSuccess: false,
         submitFailure: true

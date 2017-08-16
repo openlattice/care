@@ -30,27 +30,6 @@ injectGlobal`
   }
 `;
 
-const Title = styled.h1`
-  color: #815dd2;
-  font-size: 40px;
-  letter-spacing: 30px;
-  text-align: center;
-  text-indent: 30px;
-`;
-
-const Description = styled.p`
-  color: #737d8c;
-  text-align: center;
-`;
-
-const Container = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  justify-content: center;
-`;
-
 ReactDOM.render(
   <Form />,
   document.getElementById('app')

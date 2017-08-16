@@ -1,5 +1,5 @@
 import styled, { injectGlobal } from 'styled-components';
-import { FormGroup, ControlLabel, FormControl, Checkbox, Radio, Button } from 'react-bootstrap';
+import { FormGroup, ControlLabel, Checkbox, Radio, Button } from 'react-bootstrap';
 import { FLEX } from './Consts';
 
 export const Page = styled.div`
