@@ -4,7 +4,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormControl, Col } from 'react-bootstrap';
+import { FormControl, Col, FormGroup } from 'react-bootstrap';
 
 import SectionView from './SectionView';
 import { PaddedRow, Label, TitleLabel, CheckboxLabel, InlineCheckbox, InputWrapper } from '../shared/Layout';
@@ -29,34 +29,36 @@ const OfficerInfoView = ({ section, handleTextInput, handleCheckboxChange, input
         </Col>
         <Col lg={3}>
           <TitleLabel>36. Officer Certification</TitleLabel>
-          <InlineCheckbox
-              inline
-              data-section={section}
-              name='officerCertification'
-              value='crtUnit'
-              checked={input.officerCertification.indexOf('crtUnit') !== -1}
-              onChange={handleCheckboxChange}>CRT Unit</InlineCheckbox>
-          <InlineCheckbox
-              inline
-              data-section={section}
-              name='officerCertification'
-              value='best'
-              checked={input.officerCertification.indexOf('best') !== -1}
-              onChange={handleCheckboxChange}>BEST</InlineCheckbox>
-          <InlineCheckbox
-              inline
-              data-section={section}
-              name='officerCertification'
-              value='cit'
-              checked={input.officerCertification.indexOf('cit') !== -1}
-              onChange={handleCheckboxChange}>CIT</InlineCheckbox>
-          <InlineCheckbox
-              inline
-              data-section={section}
-              name='officerCertification'
-              value='n/a'
-              checked={input.officerCertification.indexOf('n/a') !== -1}
-              onChange={handleCheckboxChange}>N/A</InlineCheckbox>
+          <FormGroup>
+            <InlineCheckbox
+                inline
+                data-section={section}
+                name='officerCertification'
+                value='crtUnit'
+                checked={input.officerCertification.indexOf('crtUnit') !== -1}
+                onChange={handleCheckboxChange}>CRT Unit</InlineCheckbox>
+            <InlineCheckbox
+                inline
+                data-section={section}
+                name='officerCertification'
+                value='best'
+                checked={input.officerCertification.indexOf('best') !== -1}
+                onChange={handleCheckboxChange}>BEST</InlineCheckbox>
+            <InlineCheckbox
+                inline
+                data-section={section}
+                name='officerCertification'
+                value='cit'
+                checked={input.officerCertification.indexOf('cit') !== -1}
+                onChange={handleCheckboxChange}>CIT</InlineCheckbox>
+            <InlineCheckbox
+                inline
+                data-section={section}
+                name='officerCertification'
+                value='n/a'
+                checked={input.officerCertification.indexOf('n/a') !== -1}
+                onChange={handleCheckboxChange}>N/A</InlineCheckbox>
+          </FormGroup>
         </Col>
       </PaddedRow>
     </SectionView>

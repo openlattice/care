@@ -18,15 +18,15 @@ const ReportInfoView = ({ section, handleTextInput, handleDateInput, handleTimeI
 	return (
 		<SectionView header='Report Information'>
       <PaddedRow>
-        <Col lg={4}>
+        <Col lg={3}>
     		  <TitleLabel>1. Primary Reason for Dispatch</TitleLabel>
           <FormControl data-section={section} name='dispatchReason' value={input.dispatchReason} onChange={handleTextInput} />
         </Col>
-        <Col lg={4}>
+        <Col lg={3}>
           <TitleLabel>2. Complaint Number</TitleLabel>
           <FormControl data-section={section} name='complaintNumber' value={input.complaintNumber} onChange={handleTextInput} />
         </Col>
-        <Col lg={4}>
+        <Col lg={3}>
           <TitleLabel>3. Companion Offense Report Prepared</TitleLabel>
           <InlineRadio
               inline
@@ -43,36 +43,30 @@ const ReportInfoView = ({ section, handleTextInput, handleDateInput, handleTimeI
               checked={input.companionOffenseReport === 'false'}
               onChange={handleSingleSelection}>No</InlineRadio>
         </Col>
-      </PaddedRow>
-
-      <PaddedRow>
-        <Col lg={6}>
+        <Col lg={3}>
           <TitleLabel>4. Crime / Incident</TitleLabel>
           <FormControl data-section={section} name='incident' value={input.incident} onChange={handleTextInput} />
         </Col>
-        <Col lg={6} flex={FLEX.COL_2_3}>
-          <TitleLabel>5. Location of Offense / Incident (exact street address, if applicable)</TitleLabel>
-          <FormControl data-section={section} name='locationOfIncident' value={input.locationOfIncident} onChange={handleTextInput} />
-        </Col>
       </PaddedRow>
 
       <PaddedRow>
-        <Col lg={4}>
+        <Col lg={3} flex={FLEX.COL_2_3}>
+          <TitleLabel>5. Location of Offense / Incident</TitleLabel>
+          <FormControl data-section={section} name='locationOfIncident' value={input.locationOfIncident} onChange={handleTextInput} />
+        </Col>
+        <Col lg={2}>
           <TitleLabel>6. Unit</TitleLabel>
           <FormControl data-section={section} name='unit' value={input.unit} onChange={handleTextInput} />
         </Col>
-        <Col lg={4}>
+        <Col lg={3}>
           <TitleLabel>7. Post of Occurrence</TitleLabel>
           <FormControl data-section={section} name='postOfOccurrence' value={input.postOfOccurrence} onChange={handleTextInput} />
         </Col>
-        <Col lg={4}>
+        <Col lg={2}>
           <TitleLabel>8. CAD Number</TitleLabel>
           <FormControl data-section={section} name='cadNumber' value={input.cadNumber} onChange={handleTextInput} />
         </Col>
-      </PaddedRow>
-
-      <PaddedRow>
-        <Col lg={4}>
+        <Col lg={2}>
           <TitleLabel>9. On View</TitleLabel>
           <InlineRadio
               inline
@@ -89,19 +83,22 @@ const ReportInfoView = ({ section, handleTextInput, handleDateInput, handleTimeI
               checked={input.onView === 'false'}
               onChange={handleSingleSelection}>No</InlineRadio>
         </Col>
-        <Col lg={2}>
+      </PaddedRow>
+
+      <PaddedRow>
+        <Col lg={3}>
           <TitleLabel>10. Date Occurred</TitleLabel>
           <DatePicker value={input.dateOccurred} onChange={(e) => {handleDateInput(e, section, 'dateOccurred')}} />
         </Col>
-        <Col lg={2}>
+        <Col lg={3}>
           <TitleLabel>Time Occurred</TitleLabel>
           <TimePicker value={input.timeOccurred} onChange={(e) => {handleTimeInput(e, section, 'timeOccurred')}} />
         </Col>
-        <Col lg={2}>
+        <Col lg={3}>
           <TitleLabel>11. Date Reported</TitleLabel>
           <DatePicker value={input.dateReported} onChange={(e) => {handleDateInput(e, section, 'dateReported')}} />
         </Col>
-        <Col lg={2}>
+        <Col lg={3}>
           <TitleLabel>Time Reported</TitleLabel>
           <TimePicker value={input.timeReported} onChange={(e) => {handleTimeInput(e, section, 'timeReported')}} />
         </Col>

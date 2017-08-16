@@ -29,10 +29,9 @@ export const FormWrapper = styled.div`
   padding-bottom: 100px;
 `;
 
-// export const Row = styled.div`
-//   display: flex;
-//   margin-bottom: 24px;
-// `;
+export const PaddedRow = styled(Row)`
+  margin-bottom: 28px;
+`;
 
 export const Label = styled(ControlLabel)`
   color: #37454A;
@@ -44,13 +43,6 @@ export const TitleLabel = Label.extend`
   line-height: 1.5;
 `;
 
-export const InputWrapper = styled(FormGroup).attrs({
-  flex: props => props.flex || FLEX.COL_1_3
-})`
-  padding-right: 30px;
-  flex: ${props => props.flex};
-`;
-
 export const OtherWrapper = styled.span`
   display: flex;
   align-items: center;
@@ -58,7 +50,9 @@ export const OtherWrapper = styled.span`
 
 export const InlineCheckbox = styled(Checkbox)`
   font-size: 16px;
-  margin-right: 4px;
+  margin-right: 8px;
+  margin-bottom: 10px;
+  margin-left: 0px !important;
 `;
 
 export const InlineRadio = styled(Radio)`
@@ -78,8 +72,4 @@ export const SubmitButton = styled(Button).attrs({
   type: props => props.type || 'submit'
 })`
 
-`;
-
-export const PaddedRow = styled(Row)`
-  margin-bottom: 24px;
 `;

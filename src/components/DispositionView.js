@@ -15,7 +15,7 @@ const DispositionView = ({ section, handleTextInput, handleCheckboxChange, handl
   return(
     <SectionView header="Disposition">
       <PaddedRow>
-        <Col lg={7}>
+        <Col lg={5}>
           <TitleLabel>28. Disposition</TitleLabel>
           <FormGroup>
             <InlineCheckbox
@@ -46,8 +46,6 @@ const DispositionView = ({ section, handleTextInput, handleCheckboxChange, handl
                 value='bcri'
                 checked={input.disposition.indexOf('bcri') !== -1}
                 onChange={handleCheckboxChange}>BCRI</InlineCheckbox>
-          </FormGroup>
-          <FormGroup>
             <InlineCheckbox
                 inline
                 data-section={section}
@@ -62,8 +60,6 @@ const DispositionView = ({ section, handleTextInput, handleCheckboxChange, handl
                 value='lead'
                 checked={input.disposition.indexOf('lead') !== -1}
                 onChange={handleCheckboxChange}>LEAD</InlineCheckbox>
-          </FormGroup>
-          <FormGroup>
             <InlineCheckbox
                 inline
                 data-section={section}
@@ -71,8 +67,6 @@ const DispositionView = ({ section, handleTextInput, handleCheckboxChange, handl
                 value='contactedTreatementProvider'
                 checked={input.disposition.indexOf('contactedTreatementProvider') !== -1}
                 onChange={handleCheckboxChange}>Contacted or Referred to Current Treatment Provider</InlineCheckbox>
-          </FormGroup>
-          <FormGroup>
             <InlineCheckbox
                 inline
                 data-section={section}
@@ -107,7 +101,7 @@ const DispositionView = ({ section, handleTextInput, handleCheckboxChange, handl
               checked={input.hospitalTransport === 'false'}
               onChange={handleSingleSelection}>No</InlineRadio>
         </Col>
-        <Col lg={3}>
+        <Col lg={5}>
           <TitleLabel>Hospital Name</TitleLabel>
           <FormControl data-section={section} name='hospital' value={input.hospital} onChange={handleTextInput} />
         </Col>
@@ -159,72 +153,74 @@ const DispositionView = ({ section, handleTextInput, handleCheckboxChange, handl
                 value='n/a'
                 checked={input.deescalationTechniques.indexOf('n/a') !== -1}
                 onChange={handleCheckboxChange}>N/A</InlineCheckbox>
+            <OtherWrapper>
+              <InlineCheckbox
+                  data-section={section}
+                  inline
+                  name='deescalationTechniques'
+                  value='other'
+                  checked={input['deescalationTechniques'].indexOf('other') !== -1}
+                  onChange={handleCheckboxChange}>Other:</InlineCheckbox>
+              <FormControl data-section={section} name='deescalationTechniquesOther' value={input.deescalationTechniquesOther} onChange={handleTextInput} />
+            </OtherWrapper>
           </FormGroup>
-          <OtherWrapper>
-            <InlineCheckbox
-                data-section={section}
-                inline
-                name='deescalationTechniques'
-                value='other'
-                checked={input['deescalationTechniques'].indexOf('other') !== -1}
-                onChange={handleCheckboxChange}>Other:</InlineCheckbox>
-            <FormControl data-section={section} name='deescalationTechniquesOther' value={input.deescalationTechniquesOther} onChange={handleTextInput} />
-          </OtherWrapper>
         </Col>
       </PaddedRow>
 
       <PaddedRow>
         <Col lg={12}>
           <TitleLabel>30. Called for Specialized Resources</TitleLabel>
-          <InlineCheckbox
-              data-section={section}
-              inline
-              name='specializedResourcesCalled'
-              value='bcri'
-              checked={input.specializedResourcesCalled.indexOf('bcri') !== -1}
-              onChange={handleCheckboxChange}>BCRI / Mobile Crisis Response Team</InlineCheckbox>
-          <InlineCheckbox
-              data-section={section}
-              inline
-              name='specializedResourcesCalled'
-              value='citOfficer'
-              checked={input.specializedResourcesCalled.indexOf('citOfficer') !== -1}
-              onChange={handleCheckboxChange}>CIT Officer</InlineCheckbox>
-          <InlineCheckbox
-              data-section={section}
-              inline
-              name='specializedResourcesCalled'
-              value='crtUnit'
-              checked={input.specializedResourcesCalled.indexOf('crtUnit') !== -1}
-              onChange={handleCheckboxChange}>CRT Unit</InlineCheckbox>
-          <InlineCheckbox
-              data-section={section}
-              inline
-              name='specializedResourcesCalled'
-              value='esu'
-              checked={input.specializedResourcesCalled.indexOf('esu') !== -1}
-              onChange={handleCheckboxChange}>ESU</InlineCheckbox>
-          <InlineCheckbox
-              data-section={section}
-              inline
-              name='specializedResourcesCalled'
-              value='swat'
-              checked={input.specializedResourcesCalled.indexOf('swat') !== -1}
-              onChange={handleCheckboxChange}>SWAT</InlineCheckbox>
-          <InlineCheckbox
-              data-section={section}
-              inline
-              name='specializedResourcesCalled'
-              value='negotiationTeam'
-              checked={input.specializedResourcesCalled.indexOf('negotiationTeam') !== -1}
-              onChange={handleCheckboxChange}>Negotiation Team</InlineCheckbox>
-          <InlineCheckbox
-              data-section={section}
-              inline
-              name='specializedResourcesCalled'
-              value='homelessOutreach'
-              checked={input.specializedResourcesCalled.indexOf('homelessOutreach') !== -1}
-              onChange={handleCheckboxChange}>Homeless Outreach</InlineCheckbox>
+          <FormGroup>
+            <InlineCheckbox
+                data-section={section}
+                inline
+                name='specializedResourcesCalled'
+                value='bcri'
+                checked={input.specializedResourcesCalled.indexOf('bcri') !== -1}
+                onChange={handleCheckboxChange}>BCRI / Mobile Crisis Response Team</InlineCheckbox>
+            <InlineCheckbox
+                data-section={section}
+                inline
+                name='specializedResourcesCalled'
+                value='citOfficer'
+                checked={input.specializedResourcesCalled.indexOf('citOfficer') !== -1}
+                onChange={handleCheckboxChange}>CIT Officer</InlineCheckbox>
+            <InlineCheckbox
+                data-section={section}
+                inline
+                name='specializedResourcesCalled'
+                value='crtUnit'
+                checked={input.specializedResourcesCalled.indexOf('crtUnit') !== -1}
+                onChange={handleCheckboxChange}>CRT Unit</InlineCheckbox>
+            <InlineCheckbox
+                data-section={section}
+                inline
+                name='specializedResourcesCalled'
+                value='esu'
+                checked={input.specializedResourcesCalled.indexOf('esu') !== -1}
+                onChange={handleCheckboxChange}>ESU</InlineCheckbox>
+            <InlineCheckbox
+                data-section={section}
+                inline
+                name='specializedResourcesCalled'
+                value='swat'
+                checked={input.specializedResourcesCalled.indexOf('swat') !== -1}
+                onChange={handleCheckboxChange}>SWAT</InlineCheckbox>
+            <InlineCheckbox
+                data-section={section}
+                inline
+                name='specializedResourcesCalled'
+                value='negotiationTeam'
+                checked={input.specializedResourcesCalled.indexOf('negotiationTeam') !== -1}
+                onChange={handleCheckboxChange}>Negotiation Team</InlineCheckbox>
+            <InlineCheckbox
+                data-section={section}
+                inline
+                name='specializedResourcesCalled'
+                value='homelessOutreach'
+                checked={input.specializedResourcesCalled.indexOf('homelessOutreach') !== -1}
+                onChange={handleCheckboxChange}>Homeless Outreach</InlineCheckbox>
+          </FormGroup>
         </Col>
       </PaddedRow>
 
