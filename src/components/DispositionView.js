@@ -4,18 +4,18 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormGroup, FormControl } from 'react-bootstrap';
+import { FormGroup, FormControl, Col } from 'react-bootstrap';
 
 import SectionView from './SectionView';
-import { Row, Label, TitleLabel, CheckboxLabel, OtherWrapper, InlineCheckbox, InlineRadio, InputWrapper } from '../shared/Layout';
+import { PaddedRow, Label, TitleLabel, CheckboxLabel, OtherWrapper, InlineCheckbox, InlineRadio, InputWrapper } from '../shared/Layout';
 import { FLEX } from '../shared/Consts';
 
 
 const DispositionView = ({ section, handleTextInput, handleCheckboxChange, handleSingleSelection, input }) => {
   return(
     <SectionView header="Disposition">
-      <Row>
-        <InputWrapper flex={FLEX.COL_1_3}>
+      <PaddedRow>
+        <Col lg={7}>
           <TitleLabel>28. Disposition</TitleLabel>
           <FormGroup>
             <InlineCheckbox
@@ -88,9 +88,9 @@ const DispositionView = ({ section, handleTextInput, handleCheckboxChange, handl
                 checked={input.disposition.indexOf('civilCitation') !== -1}
                 onChange={handleCheckboxChange}>Civil Citation</InlineCheckbox>
           </FormGroup>
-        </InputWrapper>
+        </Col>
 
-        <InputWrapper flex={FLEX['1_5']}>
+        <Col lg={2}>
           <TitleLabel>Transported to Hospital</TitleLabel>
           <InlineRadio
               inline
@@ -106,15 +106,15 @@ const DispositionView = ({ section, handleTextInput, handleCheckboxChange, handl
               value={false}
               checked={input.hospitalTransport === 'false'}
               onChange={handleSingleSelection}>No</InlineRadio>
-        </InputWrapper>
-        <InputWrapper flex={FLEX.COL_100}>
+        </Col>
+        <Col lg={3}>
           <TitleLabel>Hospital Name</TitleLabel>
           <FormControl data-section={section} name='hospital' value={input.hospital} onChange={handleTextInput} />
-        </InputWrapper>
-      </Row>
+        </Col>
+      </PaddedRow>
 
-      <Row>
-        <InputWrapper flex={FLEX.COL_100}>
+      <PaddedRow>
+        <Col lg={12}>
           <TitleLabel>29. De-escalation Techniques/Equipment Used</TitleLabel>
           <FormGroup>
             <InlineCheckbox
@@ -170,11 +170,11 @@ const DispositionView = ({ section, handleTextInput, handleCheckboxChange, handl
                 onChange={handleCheckboxChange}>Other:</InlineCheckbox>
             <FormControl data-section={section} name='deescalationTechniquesOther' value={input.deescalationTechniquesOther} onChange={handleTextInput} />
           </OtherWrapper>
-        </InputWrapper>
-      </Row>
+        </Col>
+      </PaddedRow>
 
-      <Row>
-        <InputWrapper flex={FLEX.COL_100}>
+      <PaddedRow>
+        <Col lg={12}>
           <TitleLabel>30. Called for Specialized Resources</TitleLabel>
           <InlineCheckbox
               data-section={section}
@@ -225,15 +225,15 @@ const DispositionView = ({ section, handleTextInput, handleCheckboxChange, handl
               value='homelessOutreach'
               checked={input.specializedResourcesCalled.indexOf('homelessOutreach') !== -1}
               onChange={handleCheckboxChange}>Homeless Outreach</InlineCheckbox>
-        </InputWrapper>
-      </Row>
+        </Col>
+      </PaddedRow>
 
-      <Row>
-        <InputWrapper flex={FLEX.COL_100}>
+      <PaddedRow>
+        <Col lg={12}>
           <TitleLabel>31. Narrative of Incident, to include: Results of investigation, basis for actions taken, emotional states, additional witnesses. Property listing.</TitleLabel>
           <FormControl data-section={section} name='incidentNarrative' componentClass='textarea' value={input.incidentNarrative} onChange={handleTextInput} />
-        </InputWrapper>
-      </Row>
+        </Col>
+      </PaddedRow>
     </SectionView>
   );
 }

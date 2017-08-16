@@ -1,5 +1,5 @@
 import styled, { injectGlobal } from 'styled-components';
-import { FormGroup, ControlLabel, Checkbox, Radio, Button } from 'react-bootstrap';
+import { FormGroup, ControlLabel, Checkbox, Radio, Button, Row } from 'react-bootstrap';
 import { FLEX } from './Consts';
 
 export const Page = styled.div`
@@ -29,10 +29,10 @@ export const FormWrapper = styled.div`
   padding-bottom: 100px;
 `;
 
-export const Row = styled.div`
-  display: flex;
-  margin-bottom: 24px;
-`;
+// export const Row = styled.div`
+//   display: flex;
+//   margin-bottom: 24px;
+// `;
 
 export const Label = styled(ControlLabel)`
   color: #37454A;
@@ -78,4 +78,8 @@ export const SubmitButton = styled(Button).attrs({
   type: props => props.type || 'submit'
 })`
 
+`;
+
+export const PaddedRow = styled(Row)`
+  margin-bottom: 24px;
 `;

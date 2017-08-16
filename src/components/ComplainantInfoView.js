@@ -4,33 +4,33 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormControl } from 'react-bootstrap';
+import { FormControl, Col } from 'react-bootstrap';
 
 import SectionView from './SectionView';
-import { Row, InputWrapper, TitleLabel } from '../shared/Layout';
+import { PaddedRow, InputWrapper, TitleLabel } from '../shared/Layout';
 import { FLEX } from '../shared/Consts';
 
 const ComplainantInfoView = ({ section, handleTextInput, input }) => {
   return(
     <SectionView header="Complainant/Next of Kin Information">
-      <Row>
-        <InputWrapper flex={FLEX.COL_1_4}>
+      <PaddedRow>
+        <Col lg={3}>
           <TitleLabel>27. Complainant Name (Last, First, MI)</TitleLabel>
           <FormControl data-section={section} name='complainantName' value={input.complainantName} onChange={handleTextInput} />
-        </InputWrapper>
-        <InputWrapper flex={FLEX.COL_1_4}>
+        </Col>
+        <Col lg={3}>
           <TitleLabel>Address (Apt Number, City, County, State, Zip)</TitleLabel>
           <FormControl data-section={section} name='complainantAddress' value={input.complainantAddress} onChange={handleTextInput} />
-        </InputWrapper>
-        <InputWrapper flex={FLEX.COL_1_4}>
+        </Col>
+        <Col lg={3}>
           <TitleLabel>Relationship to Consumer</TitleLabel>
           <FormControl data-section={section} name='complainantConsumerRelationship' value={input.complainantConsumerRelationship} onChange={handleTextInput} />
-        </InputWrapper>
-        <InputWrapper flex={FLEX.COL_1_4}>
+        </Col>
+        <Col lg={3}>
           <TitleLabel>Phone Number</TitleLabel>
           <FormControl data-section={section} name='complainantPhone' value={input.complainantPhone} onChange={handleTextInput} />
-        </InputWrapper>
-      </Row>
+        </Col>
+      </PaddedRow>
     </SectionView>
   );
 }

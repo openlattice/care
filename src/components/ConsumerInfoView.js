@@ -4,34 +4,34 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormGroup, FormControl } from 'react-bootstrap';
+import { FormGroup, FormControl, Col } from 'react-bootstrap';
 import DatePicker from 'react-bootstrap-date-picker';
 
 import SectionView from './SectionView';
-import { Row, InputWrapper, Label, InlineCheckbox, InlineRadio, TitleLabel, OtherWrapper } from '../shared/Layout';
+import { PaddedRow, InputWrapper, Label, InlineCheckbox, InlineRadio, TitleLabel, OtherWrapper } from '../shared/Layout';
 import { FLEX } from '../shared/Consts'
 
 const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSingleSelection, handleCheckboxChange, input }) => {
 
   return (
     <SectionView header='Consumer Information'>
-      <Row>
-        <InputWrapper>
+      <PaddedRow>
+        <Col lg={4}>
           <TitleLabel>13. Consumer Name (Last, First, MI)</TitleLabel>
           <FormControl data-section={section} name='name' value={input.name} onChange={handleTextInput} />
-        </InputWrapper>
-        <InputWrapper>
+        </Col>
+        <Col lg={4}>
           <TitleLabel>Residence / Address (Apt Number, City, County, State, Zip)</TitleLabel>
           <FormControl data-section={section} name='address' value={input.address} onChange={handleTextInput} />
-        </InputWrapper>
-        <InputWrapper>
+        </Col>
+        <Col lg={4}>
           <TitleLabel>Consumer Phone Number</TitleLabel>
           <FormControl data-section={section} name='phone' value={input.phone} onChange={handleTextInput} />
-        </InputWrapper>
-      </Row>
+        </Col>
+      </PaddedRow>
 
-      <Row>
-        <InputWrapper flex={FLEX.COL_1_5}>
+      <PaddedRow>
+        <Col lg={4}>
           <TitleLabel>14. Military Status</TitleLabel>
             <InlineRadio
                 inline
@@ -54,9 +54,9 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
                 value='n/a'
                 checked={input.militaryStatus === 'n/a'}
                 onChange={handleSingleSelection}>N/A</InlineRadio>
-          </InputWrapper>
+          </Col>
 
-          <InputWrapper flex={FLEX.COL_1_5}>
+          <Col lg={2}>
             <TitleLabel>Gender</TitleLabel>
             <FormControl
                 componentClass='select'
@@ -70,9 +70,9 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
               <option value='male'>Male</option>
               <option value='nonbinary'>Non-binary</option>
             </FormControl>
-          </InputWrapper>
+          </Col>
 
-          <InputWrapper flex={FLEX.COL_1_5}>
+          <Col lg={2}>
             <TitleLabel>Race</TitleLabel>
             <FormControl
                 componentClass='select'
@@ -90,21 +90,21 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
               <option value='white'>White</option>
               <option value='other'>Other</option>
             </FormControl>
-          </InputWrapper>
+          </Col>
 
-        <InputWrapper flex={FLEX.COL_1_5}>
+        <Col lg={2}>
           <TitleLabel>Age</TitleLabel>
           <FormControl data-section={section} name='age' value={input.age} onChange={handleTextInput} />
-        </InputWrapper>
+        </Col>
 
-        <InputWrapper flex={FLEX.COL_1_5}>
+        <Col lg={2}>
           <TitleLabel>DOB</TitleLabel>
           <DatePicker value={input.dob} onChange={(e) => {handleDateInput(e, section, 'dob')}} />
-        </InputWrapper>
-      </Row>
+        </Col>
+      </PaddedRow>
 
-      <Row>
-        <InputWrapper flex={FLEX.COL_1_5}>
+      <PaddedRow>
+        <Col lg={3}>
           <TitleLabel>15. Homeless</TitleLabel>
           <InlineRadio
               inline
@@ -120,15 +120,15 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
               value={false}
               checked={input.homeless === 'false'}
               onChange={handleSingleSelection}>No</InlineRadio>
-        </InputWrapper>
-        <InputWrapper flex={FLEX.COL_100}>
+        </Col>
+        <Col lg={9}>
           <TitleLabel>If Yes, Where Do They Usually Sleep / Frequent?</TitleLabel>
           <FormControl data-section={section} name='homelessLocation' value={input.homelessLocation} onChange={handleTextInput} />
-        </InputWrapper>
-      </Row>
+        </Col>
+      </PaddedRow>
 
-      <Row>
-        <InputWrapper flex={FLEX.COL_1_5}>
+      <PaddedRow>
+        <Col lg={3}>
           <TitleLabel>16. Consumer Using Drugs, Alcohol</TitleLabel>
           <InlineRadio
               inline
@@ -158,16 +158,16 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
               value='n/a'
               checked={input.drugsAlcohol === 'n/a'}
               onChange={handleSingleSelection}>N/A</InlineRadio>
-        </InputWrapper>
+        </Col>
 
-        <InputWrapper flex={FLEX.COL_100}>
+        <Col lg={9}>
           <TitleLabel>Drug type</TitleLabel>
           <FormControl data-section={section} name='drugType' value={input.drugType} onChange={handleTextInput} />
-        </InputWrapper>
-      </Row>
+        </Col>
+      </PaddedRow>
 
-      <Row>
-        <InputWrapper flex={FLEX.COL_1_5}>
+      <PaddedRow>
+        <Col lg={3}>
           <TitleLabel>17. Prescribed Medication</TitleLabel>
           <InlineRadio
               inline
@@ -190,8 +190,8 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
               value='unknown'
               checked={input.prescribedMedication === 'unknown'}
               onChange={handleSingleSelection}>Unknown</InlineRadio>
-        </InputWrapper>
-        <InputWrapper>
+        </Col>
+        <Col lg={3}>
           <TitleLabel>If yes, is Consumer Taking Medication?</TitleLabel>
           <InlineRadio
               inline
@@ -214,11 +214,11 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
               value='unknown'
               checked={input.takingMedication === 'unknown'}
               onChange={handleSingleSelection}>Unknown</InlineRadio>
-        </InputWrapper>
-      </Row>
+        </Col>
+      </PaddedRow>
 
-      <Row>
-        <InputWrapper flex={FLEX.COL_1_5}>
+      <PaddedRow>
+        <Col lg={12}>
           <TitleLabel>18. Does Consumer Have Previous Psychiatric Hospital Admission?</TitleLabel>
           <InlineRadio
               inline
@@ -244,9 +244,11 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
               value='unknown'
               checked={input.prevPsychAdmission === 'unknown'}
               onChange={handleSingleSelection}>Unknown</InlineRadio>
-        </InputWrapper>
+        </Col>
+      </PaddedRow>
 
-        <InputWrapper flex={FLEX.COL_100}>
+      <PaddedRow>
+        <Col lg={12}>
           <TitleLabel>19. Self Diagnosis</TitleLabel>
             <FormGroup>
               <InlineCheckbox
@@ -294,11 +296,11 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
                   onChange={handleCheckboxChange}>Other:</InlineCheckbox>
               <FormControl data-section={section} name='selfDiagnosisOther' value={input['selfDiagnosisOther']} onChange={handleTextInput} />
             </OtherWrapper>
-        </InputWrapper>
-      </Row>
+        </Col>
+      </PaddedRow>
 
-      <Row>
-        <InputWrapper flex={FLEX.COL_1_5}>
+      <PaddedRow>
+        <Col lg={2}>
           <TitleLabel>20. Armed with Weapon?</TitleLabel>
           <InlineRadio
               inline
@@ -314,13 +316,15 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
               value={false}
               checked={input.armedWithWeapon === 'false'}
               onChange={handleSingleSelection}>No</InlineRadio>
-        </InputWrapper>
-        <InputWrapper flex={FLEX.COL_100}>
+        </Col>
+        <Col lg={10}>
           <Label>If Yes, Weapon Type</Label>
           <FormControl data-section={section} name='armedWeaponType' value={input.armedWeaponType} onChange={handleTextInput} />
-        </InputWrapper>
+        </Col>
+      </PaddedRow>
 
-        <InputWrapper flex={FLEX.COL_1_5}>
+      <PaddedRow>
+        <Col lg={2}>
           <TitleLabel>21. Have Access to Weapons?</TitleLabel>
           <InlineRadio
               inline
@@ -336,15 +340,15 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
               value={false}
               checked={input.accessToWeapons === 'false'}
               onChange={handleSingleSelection}>No</InlineRadio>
-        </InputWrapper>
-        <InputWrapper flex={FLEX.COL_100}>
+        </Col>
+        <Col lg={10}>
           <Label>If Yes, Weapon Type</Label>
           <FormControl data-section={section} name='accessibleWeaponType' value={input.accessibleWeaponType} onChange={handleTextInput} />
-        </InputWrapper>
-      </Row>
+        </Col>
+      </PaddedRow>
 
-      <Row>
-        <InputWrapper flex={FLEX.COL_1_2}>
+      <PaddedRow>
+        <Col lg={12}>
           <TitleLabel>22. Observed Behaviors (Check all that apply)</TitleLabel>
           <FormGroup>
             <InlineCheckbox
@@ -417,9 +421,11 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
                 onChange={handleCheckboxChange}>Other:</InlineCheckbox>
             <FormControl data-section={section} name='observedBehaviorsOther' value={input.observedBehaviorsOther} onChange={handleTextInput} />
           </OtherWrapper>
-        </InputWrapper>
+        </Col>
+      </PaddedRow>
 
-        <InputWrapper flex={FLEX.COL_1_2}>
+      <PaddedRow>
+        <Col lg={12}>
           <TitleLabel>Emotional State (Check all that apply)</TitleLabel>
           <FormGroup>
             <InlineCheckbox
@@ -482,11 +488,11 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
                 onChange={handleCheckboxChange}>Other:</InlineCheckbox>
             <FormControl data-section={section} name='emotionalStateOther' value={input.emotionalStateOther} onChange={handleTextInput} />
           </OtherWrapper>
-        </InputWrapper>
-      </Row>
+        </Col>
+      </PaddedRow>
 
-      <Row>
-        <InputWrapper flex={FLEX.COL_1_5}>
+      <PaddedRow>
+        <Col lg={12}>
           <TitleLabel>23. Photos Taken Of:</TitleLabel>
           <FormGroup>
             <InlineCheckbox
@@ -504,9 +510,11 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
                 checked={input.photosTakenOf.indexOf('propertyDamage') !== -1}
                 onChange={handleCheckboxChange}>Damage / Crime Scene</InlineCheckbox>
           </FormGroup>
-        </InputWrapper>
+        </Col>
+      </PaddedRow>
 
-        <InputWrapper flex={FLEX.COL_100}>
+      <PaddedRow>
+        <Col lg={12}>
           <TitleLabel>24. Consumer Injuries</TitleLabel>
           <FormGroup>
             <InlineCheckbox
@@ -554,11 +562,11 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
                 onChange={handleCheckboxChange}>Other:</InlineCheckbox>
             <FormControl data-section={section} name='injuriesOther' value={input.injuriesOther} onChange={handleTextInput} />
           </OtherWrapper>
-        </InputWrapper>
-      </Row>
+        </Col>
+      </PaddedRow>
 
-      <Row>
-        <InputWrapper flex={FLEX.COL_1_5}>
+      <PaddedRow>
+        <Col lg={1}>
           <TitleLabel>25. Suicidal</TitleLabel>
           <InlineRadio
               inline
@@ -574,9 +582,9 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
               value={false}
               checked={input.suicidal === 'false'}
               onChange={handleSingleSelection}>No</InlineRadio>
-        </InputWrapper>
+        </Col>
 
-        <InputWrapper flex={FLEX.COL_100}>
+        <Col lg={11}>
           <TitleLabel>If Suicidal:</TitleLabel>
           <InlineCheckbox
               inline
@@ -606,11 +614,11 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
               value='completed'
               checked={input.suicidalActions.indexOf('completed') !== -1}
               onChange={handleCheckboxChange}>Completed</InlineCheckbox>
-        </InputWrapper>
-      </Row>
+        </Col>
+      </PaddedRow>
 
-      <Row>
-        <InputWrapper flex={FLEX.COL_100}>
+      <PaddedRow>
+        <Col lg={12}>
           <TitleLabel>26. Method Used to Attempt, Threaten, or Complete Suicide</TitleLabel>
           <FormGroup>
             <InlineCheckbox
@@ -651,8 +659,8 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
                 onChange={handleCheckboxChange}>Other:</InlineCheckbox>
             <FormControl data-section={section} name='suicideAttemptMethodOther' value={input.suicideAttemptMethodOther} onChange={handleTextInput} />
           </OtherWrapper>
-        </InputWrapper>
-      </Row>
+        </Col>
+      </PaddedRow>
     </SectionView>
   );
 }

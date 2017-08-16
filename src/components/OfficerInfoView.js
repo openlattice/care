@@ -4,30 +4,30 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormControl } from 'react-bootstrap';
+import { FormControl, Col } from 'react-bootstrap';
 
 import SectionView from './SectionView';
-import { Row, Label, TitleLabel, CheckboxLabel, InlineCheckbox, InputWrapper } from '../shared/Layout';
+import { PaddedRow, Label, TitleLabel, CheckboxLabel, InlineCheckbox, InputWrapper } from '../shared/Layout';
 import { FLEX } from '../shared/Consts';
 
 
 const OfficerInfoView = ({ section, handleTextInput, handleCheckboxChange, input }) => {
   return(
     <SectionView header="Officer Information">
-      <Row>
-        <InputWrapper flex={FLEX.COL_1_4}>
+      <PaddedRow>
+        <Col lg={3}>
           <TitleLabel>32. Officer Name</TitleLabel>
           <FormControl data-section={section} name='officerName' value={input.officerName} onChange={handleTextInput} />
-        </InputWrapper>
-        <InputWrapper flex={FLEX.COL_1_4}>
+        </Col>
+        <Col lg={3}>
           <TitleLabel>34. Seq ID</TitleLabel>
           <FormControl data-section={section} name='officerSeqID' value={input.officerSeqID} onChange={handleTextInput} />
-        </InputWrapper>
-        <InputWrapper flex={FLEX.COL_1_4}>
+        </Col>
+        <Col lg={3}>
           <TitleLabel>35. Officer Injuries</TitleLabel>
           <FormControl data-section={section} name='officerInjuries' value={input.officerInjuries} onChange={handleTextInput} />
-        </InputWrapper>
-        <InputWrapper flex={FLEX.COL_1_4}>
+        </Col>
+        <Col lg={3}>
           <TitleLabel>36. Officer Certification</TitleLabel>
           <InlineCheckbox
               inline
@@ -57,8 +57,8 @@ const OfficerInfoView = ({ section, handleTextInput, handleCheckboxChange, input
               value='n/a'
               checked={input.officerCertification.indexOf('n/a') !== -1}
               onChange={handleCheckboxChange}>N/A</InlineCheckbox>
-        </InputWrapper>
-      </Row>
+        </Col>
+      </PaddedRow>
     </SectionView>
   );
 }
