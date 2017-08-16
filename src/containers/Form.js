@@ -23,7 +23,7 @@ class Form extends React.Component {
         onView: null,
         dateOccurred: '',
         timeOccurred: '',
-        dateReported: new Date().toISOString(),
+        dateReported: '',
         timeReported: ''
       },
       consumerInfo: {
