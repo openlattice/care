@@ -26,7 +26,7 @@ export default function initializeAuth0Lock(reduxStore :any) {
     auth: {
       autoParseHash: true,
       redirect: true,
-      redirectUrl: `${window.location.origin}${RoutePaths.AUTH}`,
+      // redirectUrl: `${window.location.origin}`, // TODO: fix this hardcoded path
       responseType: 'token'
     },
     closable: false,
