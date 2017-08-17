@@ -42,7 +42,6 @@ class Form extends React.Component {
         timeReported: ''
       },
       consumerInfo: {
-        name: '',
         firstName: '',
         lastName: '',
         middleName: '',
@@ -403,34 +402,11 @@ class Form extends React.Component {
       });
   }
 
-  handleSubmitInFull = (e) => {
+  handleSubmit = (e) => {
     e.preventDefault();
     this.getBulkData().then((bulkData) => {
       DataApi.createEntityAndAssociationData(bulkData);
     });
-
-  //  const bulkedData;
-  }
-
-  handleSubmit = (e) => {
-    e.preventDefault();
-
-    this.handleSubmitInFull(e);
-    //
-    // const entities = this.getEntities();
-    // DataApi.createEntityData(this.state.entitySetId, '', entities)
-    // .then((res) => {
-    //   this.setState({
-    //     submitSuccess: true,
-    //     submitFailure: false
-    //   });
-    // })
-    // .catch((err) => {
-    //   this.setState({
-    //     submitSuccess: false,
-    //     submitFailure: true
-    //   });
-    // });
   }
 
   handleModalButtonClick = () => {
@@ -442,7 +418,7 @@ class Form extends React.Component {
       <div>
         <LogoutButton />
         <FormView
-          handleTextInput={this.handleTextInput}
+            handleTextInput={this.handleTextInput}
             handleDateInput={this.handleDateInput}
             handleTimeInput={this.handleTimeInput}
             handleSingleSelection={this.handleSingleSelection}
