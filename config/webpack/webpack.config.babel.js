@@ -9,13 +9,17 @@ import prodWebpackConfig from './webpack.config.prod.js';
 
 import { isDev, isProd } from '../app/env.config.js';
 
-const appWebpackConfig = {};
+module.exports = (env :Object) => {
 
-if (isProd) {
-  Object.assign(appWebpackConfig, prodWebpackConfig);
-}
-else if (isDev) {
-  Object.assign(appWebpackConfig, devWebpackConfig);
-}
+  const appWebpackConfig :Object = {};
+  const webpackEnvironment :Object = env || {};
 
-module.exports = appWebpackConfig;
+  if (isProd) {
+    Object.assign(appWebpackConfig, prodWebpackConfig(webpackEnvironment));
+  }
+  else if (isDev) {
+    Object.assign(appWebpackConfig, devWebpackConfig(webpackEnvironment));
+  }
+
+  return appWebpackConfig;
+}
