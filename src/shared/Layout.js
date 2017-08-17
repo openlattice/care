@@ -1,4 +1,5 @@
-import styled, { injectGlobal } from 'styled-components';
+import React from 'react';
+import styled from 'styled-components';
 import { FormGroup, ControlLabel, Checkbox, Radio, Button, Row } from 'react-bootstrap';
 import { FLEX } from './Consts';
 
@@ -43,6 +44,17 @@ export const TitleLabel = Label.extend`
   line-height: 1.5;
 `;
 
+export const InputWrapper = styled(({ flex, children, ...rest }) => {
+  return (
+    <FormGroup {...rest}>{children}</FormGroup>
+  );
+})`
+  padding-right: 30px;
+  flex: ${(props) => {
+    return props.flex || FLEX.COL_1_3;
+  }};
+`;
+
 export const OtherWrapper = styled.span`
   display: flex;
   align-items: center;
@@ -69,7 +81,9 @@ export const SubmitButtonWrapper = ButtonWrapper.extend`
 `;
 
 export const SubmitButton = styled(Button).attrs({
-  type: props => props.type || 'submit'
+  type: (props) => {
+    return props.type || 'submit';
+  }
 })`
 
 `;

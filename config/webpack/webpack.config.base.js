@@ -12,6 +12,7 @@ import APP_CONFIG from '../app/app.config.js';
 import APP_PATHS from '../app/paths.config.js';
 
 import { isDev, isProd } from '../app/env.config.js';
+import { AUTH0_CLIENT_ID, AUTH0_DOMAIN } from '../auth/auth0.config.js';
 
 /*
  * loaders
@@ -39,9 +40,10 @@ export const BANNER_PLUGIN = new webpack.BannerPlugin({
 export const DEFINE_PLUGIN = new webpack.DefinePlugin({
   __DEV__: JSON.stringify(isDev),
   __PROD__: JSON.stringify(isProd),
-  __VERSION__: JSON.stringify(`v${PACKAGE.version}`)
+  __VERSION__: JSON.stringify(`v${PACKAGE.version}`),
+  __AUTH0_CLIENT_ID__: JSON.stringify(AUTH0_CLIENT_ID),
+  __AUTH0_DOMAIN__: JSON.stringify(AUTH0_DOMAIN)
 });
-
 
 /*
  * base webpack config
@@ -57,7 +59,7 @@ export default {
   ],
   output: {
     path: APP_PATHS.ABS.BUILD,
-    publicPath: '/'
+    publicPath: '/bhr/'
   },
   module: {
     rules: [

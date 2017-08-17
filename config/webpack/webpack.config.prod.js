@@ -15,8 +15,7 @@ import baseWebpackConfig from './webpack.config.base.js';
 
 const output = Object.assign({}, baseWebpackConfig.output, {
   filename: `${APP_PATHS.REL.STATIC_JS}/app.[hash:8].js`,
-  chunkFilename: `${APP_PATHS.REL.STATIC_JS}/app.chunk.[id].[chunkhash:8].js`,
-  publicPath: '/'
+  chunkFilename: `${APP_PATHS.REL.STATIC_JS}/app.chunk.[id].[chunkhash:8].js`
 });
 
 const plugins = [

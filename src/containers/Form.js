@@ -5,6 +5,7 @@ import Promise from 'bluebird';
 
 import FormView from '../components/FormView';
 import ConfirmationModal from '../components/ConfirmationModalView';
+import LogoutButton from './LogoutButton';
 
 class Form extends React.Component {
   constructor(props) {
@@ -116,7 +117,7 @@ class Form extends React.Component {
     const sectionKey = e.target.dataset.section
     const name = e.target.name;
     const input = e.target.value;
-    const sectionState = this.state[sectionKey]; 
+    const sectionState = this.state[sectionKey];
     sectionState[name] = input;
     this.setState({ [sectionKey]: sectionState });
   }
@@ -211,7 +212,7 @@ class Form extends React.Component {
     const entities = {
       [entityKey]: formattedValues
     };
-    
+
     return entities;
   }
 
@@ -223,7 +224,7 @@ class Form extends React.Component {
     .then((res) => {
       this.setState({
         submitSuccess: true,
-        submitFailure: false				
+        submitFailure: false
       });
     })
     .catch((err) => {
@@ -241,8 +242,9 @@ class Form extends React.Component {
   render() {
     return (
       <div>
+        <LogoutButton />
         <FormView
-            handleTextInput={this.handleTextInput}
+          handleTextInput={this.handleTextInput}
             handleDateInput={this.handleDateInput}
             handleTimeInput={this.handleTimeInput}
             handleSingleSelection={this.handleSingleSelection}
@@ -250,8 +252,8 @@ class Form extends React.Component {
             handleSubmit={this.handleSubmit}
             input={this.state} />
         {
-          this.state.submitSuccess ? 
-          <ConfirmationModal 
+          this.state.submitSuccess ?
+          <ConfirmationModal
               submitSuccess={this.state.submitSuccess}
               submitFailure={this.state.submitFailure}
               handleModalButtonClick={this.handleModalButtonClick} /> :

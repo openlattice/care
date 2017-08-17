@@ -50,7 +50,7 @@ const ReportInfoView = ({ section, handleTextInput, handleDateInput, handleTimeI
       </PaddedRow>
 
       <PaddedRow>
-        <Col lg={3} flex={FLEX.COL_2_3}>
+        <Col lg={3}>
           <TitleLabel>5. Location of Offense / Incident</TitleLabel>
           <FormControl data-section={section} name='locationOfIncident' value={input.locationOfIncident} onChange={handleTextInput} />
         </Col>
