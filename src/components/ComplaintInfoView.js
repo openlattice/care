@@ -10,12 +10,12 @@ import SectionView from './SectionView';
 import { PaddedRow, InputWrapper, TitleLabel } from '../shared/Layout';
 import { FLEX } from '../shared/Consts';
 
-const ComplainantInfoView = ({ section, handleTextInput, input }) => {
+const ComplaintInfoView = ({ section, handleTextInput, input }) => {
   return(
-    <SectionView header="Complainant/Next of Kin Information">
+    <SectionView header="Complaint/Next of Kin Information">
       <PaddedRow>
         <Col lg={3}>
-          <TitleLabel>27. Complainant Name (Last, First, MI)</TitleLabel>
+          <TitleLabel>28. Complaint Name (Last, First, MI)</TitleLabel>
           <FormControl data-section={section} name='complainantName' value={input.complainantName} onChange={handleTextInput} />
         </Col>
         <Col lg={3}>
@@ -35,10 +35,10 @@ const ComplainantInfoView = ({ section, handleTextInput, input }) => {
   );
 }
 
-ComplainantInfoView.propTypes = {
+ComplaintInfoView.propTypes = {
   handleTextInput: PropTypes.func.isRequired,
   input: PropTypes.object.isRequired,
   section: PropTypes.string.isRequired
-}
+};
 
-export default ComplainantInfoView;
+export default ComplaintInfoView;
