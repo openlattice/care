@@ -1,0 +1,6 @@
+[ignore]
+.*/build/.*
+.*/node_modules/.*
+
+[options]
+esproposal.class_static_fields=enable
