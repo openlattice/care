@@ -2,9 +2,7 @@
  * @flow
  */
 
-const ROOT :string = '/bhr';
+// injected by Webpack.DefinePlugin
+declare var __BASE_PATH__;
 
-export default {
-  ROOT: `${ROOT}/`,
-  AUTH: `${ROOT}/auth`
-};
+export default {};
