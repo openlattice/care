@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { EntityDataModelApi, DataApi, SyncApi } from 'lattice';
 import Promise from 'bluebird';
 
@@ -19,16 +18,6 @@ const MIDDLE_NAME_FQN = 'nc.PersonMiddleName';
 const SEX_FQN = 'nc.PersonSex';
 const RACE_FQN = 'nc.PersonRace';
 const DOB_FQN = 'nc.PersonBirthDate';
-
-const PEOPLE_TYPES = [
-  ID_FQN,
-  FIRST_NAME_FQN,
-  LAST_NAME_FQN,
-  MIDDLE_NAME_FQN,
-  SEX_FQN,
-  RACE_FQN,
-  DOB_FQN
-];
 
 const STRING_ID_FQN = 'general.stringid';
 
@@ -407,7 +396,6 @@ class Form extends React.Component {
                 return Promise.map(esIdsAndSyncIds, (pair) => {
                   return DataApi.acquireSyncTicket(pair[0], pair[1]);
                 }).then((syncTickets) => {
-                  console.log({ syncTickets, entities, associations })
                   return { syncTickets, entities, associations };
                 });
               });
@@ -416,10 +404,8 @@ class Form extends React.Component {
   }
 
   handleSubmitInFull = (e) => {
-    console.log('in full!');
     e.preventDefault();
     this.getBulkData().then((bulkData) => {
-      console.log('it has arrived');
       DataApi.createEntityAndAssociationData(bulkData);
     });
 
