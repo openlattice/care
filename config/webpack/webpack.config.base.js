@@ -12,7 +12,6 @@ import APP_CONFIG from '../app/app.config.js';
 import APP_PATHS from '../app/paths.config.js';
 
 import { isDev, isProd } from '../app/env.config.js';
-
 import { AUTH0_CLIENT_ID, AUTH0_DOMAIN } from '../auth/auth0.config.js';
 
 /*
@@ -60,7 +59,7 @@ export default {
   ],
   output: {
     path: APP_PATHS.ABS.BUILD,
-    publicPath: '/'
+    publicPath: '/bhr/'
   },
   module: {
     rules: [
