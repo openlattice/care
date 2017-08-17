@@ -53,7 +53,7 @@ class AuthContainer extends React.Component {
 
     if (this.props.isLoggedIn) {
       return (
-        <Redirect to={RoutePaths.ROOT} />
+        <Redirect to="/" />
       );
     }
 

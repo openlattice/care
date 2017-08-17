@@ -46,14 +46,16 @@ const routerHistory = initializeRouterHistory();
 const reduxStore = initializeReduxStore(routerHistory);
 initializeAuth0Lock(reduxStore);
 
+// TODO: reimplement this routing
+// TODO: I'm so confused now... how is this even working?!
 ReactDOM.render(
   <Provider store={reduxStore}>
     <ConnectedRouter history={routerHistory}>
       <div>
         <Switch>
-          <AuthRoute exact path={RoutePaths.ROOT} component={Form} />
-          <Route path={RoutePaths.AUTH} component={AuthContainer} />
-          <Redirect to={RoutePaths.ROOT} />
+          <AuthRoute exact path="/" component={Form} />
+          <Route component={AuthContainer} />
+          <Redirect to="/" />
         </Switch>
       </div>
     </ConnectedRouter>

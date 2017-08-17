@@ -70,7 +70,7 @@ class AuthRoute extends React.Component {
               );
             }
             return (
-              <Redirect to={{ pathname: `${RoutePaths.AUTH}` }} />
+              <Redirect to={{ pathname: 'auth' }} />
             );
           }} />
     );
