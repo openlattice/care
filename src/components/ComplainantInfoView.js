@@ -7,8 +7,7 @@ import PropTypes from 'prop-types';
 import { FormControl, Col } from 'react-bootstrap';
 
 import SectionView from './SectionView';
-import { PaddedRow, InputWrapper, TitleLabel } from '../shared/Layout';
-import { FLEX } from '../shared/Consts';
+import { PaddedRow, TitleLabel } from '../shared/Layout';
 
 const ComplainantInfoView = ({ section, handleTextInput, input }) => {
   return(

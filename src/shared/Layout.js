@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import { FormGroup, ControlLabel, Checkbox, Radio, Button, Row } from 'react-bootstrap';
-import { FLEX } from './Consts';
 
 export const Page = styled.div`
   background: #F4F4F4;
@@ -42,17 +41,6 @@ export const Label = styled(ControlLabel)`
 export const TitleLabel = Label.extend`
   display: block;
   line-height: 1.5;
-`;
-
-export const InputWrapper = styled(({ flex, children, ...rest }) => {
-  return (
-    <FormGroup {...rest}>{children}</FormGroup>
-  );
-})`
-  padding-right: 30px;
-  flex: ${(props) => {
-    return props.flex || FLEX.COL_1_3;
-  }};
 `;
 
 export const OtherWrapper = styled.span`

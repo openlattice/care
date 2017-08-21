@@ -7,8 +7,7 @@ import PropTypes from 'prop-types';
 import { FormControl, Col, FormGroup } from 'react-bootstrap';
 
 import SectionView from './SectionView';
-import { PaddedRow, Label, TitleLabel, CheckboxLabel, InlineCheckbox, InputWrapper } from '../shared/Layout';
-import { FLEX } from '../shared/Consts';
+import { PaddedRow, Label, TitleLabel, InlineCheckbox } from '../shared/Layout';
 
 
 const OfficerInfoView = ({ section, handleTextInput, handleCheckboxChange, input }) => {

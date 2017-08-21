@@ -10,8 +10,7 @@ import DatePicker from 'react-bootstrap-date-picker';
 import TimePicker from 'react-bootstrap-time-picker';
 
 import SectionView from './SectionView';
-import { Label, TitleLabel, InputWrapper, InlineRadio, PaddedRow } from '../shared/Layout';
-import { FLEX } from '../shared/Consts';
+import { Label, TitleLabel, InlineRadio, PaddedRow } from '../shared/Layout';
 
 const ReportInfoView = ({ section, handleTextInput, handleDateInput, handleTimeInput, handleSingleSelection, input }) => {
 

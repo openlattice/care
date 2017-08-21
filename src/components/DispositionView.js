@@ -7,8 +7,7 @@ import PropTypes from 'prop-types';
 import { FormGroup, FormControl, Col } from 'react-bootstrap';
 
 import SectionView from './SectionView';
-import { PaddedRow, Label, TitleLabel, CheckboxLabel, OtherWrapper, InlineCheckbox, InlineRadio, InputWrapper } from '../shared/Layout';
-import { FLEX } from '../shared/Consts';
+import { PaddedRow, Label, TitleLabel, OtherWrapper, InlineCheckbox, InlineRadio } from '../shared/Layout';
 
 
 const DispositionView = ({ section, handleTextInput, handleCheckboxChange, handleSingleSelection, input }) => {
