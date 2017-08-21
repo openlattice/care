@@ -28,7 +28,7 @@
     "history": "^4.6.3",
     "immutable": "^4.0.0-rc.2",
     "jwt-decode": "^2.2.0",
-    "lattice": "^0.27.0",
+    "lattice": "^0.28.0",
     "loom-data": "^0.24.0",
     "moment": "^2.18.1",
     "polished": "^1.2.1",

@@ -1,11 +1,25 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { EntityDataModelApi, DataApi } from 'lattice';
+import { EntityDataModelApi, DataApi, SyncApi } from 'lattice';
 import Promise from 'bluebird';
 
 import FormView from '../components/FormView';
 import ConfirmationModal from '../components/ConfirmationModalView';
 import LogoutButton from './LogoutButton';
+
+const FORM_ENTITY_SET_NAME = 'baltimoreHealthReportForm';
+const PEOPLE_ENTITY_SET_NAME = 'baltimoreHealthReportPeople';
+const APPEARS_IN_ENTITY_SET_NAME = 'baltimoreHealthReportAppearsIn';
+
+
+const ID_FQN = 'nc.SubjectIdentification';
+const FIRST_NAME_FQN = 'nc.PersonGivenName';
+const LAST_NAME_FQN = 'nc.PersonSurName';
+const MIDDLE_NAME_FQN = 'nc.PersonMiddleName';
+const SEX_FQN = 'nc.PersonSex';
+const RACE_FQN = 'nc.PersonRace';
+const DOB_FQN = 'nc.PersonBirthDate';
+
+const STRING_ID_FQN = 'general.stringid';
 
 class Form extends React.Component {
   constructor(props) {
@@ -28,9 +42,12 @@ class Form extends React.Component {
         timeReported: ''
       },
       consumerInfo: {
-        name: '',
+        firstName: '',
+        lastName: '',
+        middleName: '',
         address: '',
         phone: '',
+        identification: '',
         militaryStatus: null,
         gender: '',
         race: '',
@@ -83,38 +100,90 @@ class Form extends React.Component {
         officerCertification: []
       },
       entitySetId: '',
+      personEntitySetId: '',
+      appearsInEntitySetId: '',
       entitySet: {},
+      personEntitySet: {},
+      appearsInEntitySet: {},
       entityType: {},
+      personEntityType: {},
+      appearsInEntityType: {},
       propertyTypes: [],
+      personPropertyTypes: [],
+      appearsInPropertyTypes: [],
       submitSuccess: null,
       submitFailure: null
     };
   }
 
   componentDidMount() {
-    EntityDataModelApi.getEntitySetId('baltimoreHealthReport')
-    .then((id) => {
-      this.setState({entitySetId: id});
-      EntityDataModelApi.getEntitySet(id)
-      .then((entitySet) => {
-        this.setState({entitySet});
-        EntityDataModelApi.getEntityType(entitySet.entityTypeId)
-        .then((entityType) => {
-          this.setState({entityType});
-          Promise.map(entityType.properties, (propertyId) => {
-            return EntityDataModelApi.getPropertyType(propertyId);
-          })
-          .then((propertyTypes) => {
-            this.setState({propertyTypes});
+    EntityDataModelApi.getEntitySetId(FORM_ENTITY_SET_NAME)
+      .then((id) => {
+        this.setState({ entitySetId: id });
+        EntityDataModelApi.getEntitySet(id)
+          .then((entitySet) => {
+            this.setState({ entitySet });
+            EntityDataModelApi.getEntityType(entitySet.entityTypeId)
+              .then((entityType) => {
+                this.setState({ entityType });
+                Promise.map(entityType.properties, (propertyId) => {
+                  return EntityDataModelApi.getPropertyType(propertyId);
+                })
+                  .then((propertyTypes) => {
+                    this.setState({ propertyTypes });
+                    this.getPersonEntitySet();
+                  });
+              });
           });
-        });
       });
-    });
+  }
+
+  getPersonEntitySet = () => {
+    EntityDataModelApi.getEntitySetId(PEOPLE_ENTITY_SET_NAME)
+      .then((personEntitySetId) => {
+        this.setState({ personEntitySetId });
+        EntityDataModelApi.getEntitySet(personEntitySetId)
+          .then((personEntitySet) => {
+            this.setState({ personEntitySet });
+            EntityDataModelApi.getEntityType(personEntitySet.entityTypeId)
+              .then((personEntityType) => {
+                this.setState({ personEntityType });
+                Promise.map(personEntityType.properties, (propertyId) => {
+                  return EntityDataModelApi.getPropertyType(propertyId);
+                })
+                  .then((personPropertyTypes) => {
+                    this.setState({ personPropertyTypes });
+                    this.getAppearsInEntitySet();
+                  });
+              });
+          });
+      });
+  }
+
+  getAppearsInEntitySet = () => {
+    EntityDataModelApi.getEntitySetId(APPEARS_IN_ENTITY_SET_NAME)
+      .then((appearsInEntitySetId) => {
+        this.setState({ appearsInEntitySetId });
+        EntityDataModelApi.getEntitySet(appearsInEntitySetId)
+          .then((appearsInEntitySet) => {
+            this.setState({ appearsInEntitySet });
+            EntityDataModelApi.getEntityType(appearsInEntitySet.entityTypeId)
+              .then((appearsInEntityType) => {
+                this.setState({ appearsInEntityType });
+                Promise.map(appearsInEntityType.properties, (propertyId) => {
+                  return EntityDataModelApi.getPropertyType(propertyId);
+                })
+                  .then((appearsInPropertyTypes) => {
+                    this.setState({ appearsInPropertyTypes });
+                  });
+              });
+          });
+      });
   }
 
   // For text input
   handleTextInput = (e) => {
-    const sectionKey = e.target.dataset.section
+    const sectionKey = e.target.dataset.section;
     const name = e.target.name;
     const input = e.target.value;
     const sectionState = this.state[sectionKey];
@@ -178,7 +247,8 @@ class Form extends React.Component {
     const idx = sectionState[e.target.name].indexOf(e.target.value);
     if (idx === -1) {
       sectionState[e.target.name].push(e.target.value);
-    } else {
+    }
+    else {
       sectionState[e.target.name].splice(idx, 1);
     }
     this.setState({ [sectionKey]: sectionState });
@@ -216,22 +286,126 @@ class Form extends React.Component {
     return entities;
   }
 
+  getAppearsInEntity = (syncId) => {
+    const entityId = btoa(this.state.consumerInfo.identification);
+    const key = {
+      entitySetId: this.state.appearsInEntitySetId,
+      entityId,
+      syncId
+    };
+
+    const stringIdPropId = this.state.appearsInPropertyTypes.filter((propertyType) => {
+      const fqn = `${propertyType.type.namespace}.${propertyType.type.name}`;
+      return (fqn === STRING_ID_FQN);
+    })[0].id;
+
+    const details = {
+      [stringIdPropId]: [this.state.consumerInfo.identification]
+    };
+
+    return { key, details };
+  }
+
+  getPersonEntity = (syncId) => {
+    const { identification, firstName, lastName, middleName, dob, gender, race } = this.state.consumerInfo;
+    const entityId = btoa(identification);
+    const key = {
+      entitySetId: this.state.personEntitySetId,
+      entityId,
+      syncId
+    };
+
+    const props = {};
+    this.state.personPropertyTypes.forEach((propertyType) => {
+      const fqn = `${propertyType.type.namespace}.${propertyType.type.name}`;
+      props[fqn] = propertyType.id;
+    });
+
+    const details = {};
+    details[props[ID_FQN]] = [identification];
+    details[props[LAST_NAME_FQN]] = (lastName && lastName.length) ? [lastName] : [];
+    details[props[FIRST_NAME_FQN]] = (firstName && firstName.length) ? [firstName] : [];
+    details[props[MIDDLE_NAME_FQN]] = (middleName && middleName.length) ? [middleName] : [];
+    details[props[DOB_FQN]] = (dob && dob.length) ? [dob] : [];
+    details[props[SEX_FQN]] = (gender && gender.length) ? [gender] : [];
+    details[props[RACE_FQN]] = (race && race.length) ? [race] : [];
+
+    return { key, details };
+  }
+
+  getFormEntity = (syncId) => {
+    const formInputs = Object.assign(
+      {},
+      this.state.reportInfo,
+      this.state.consumerInfo,
+      this.state.complainantInfo,
+      this.state.dispositionInfo,
+      this.state.officerInfo
+    );
+
+    const details = {};
+    this.state.propertyTypes.forEach((propertyType) => {
+      const value = formInputs[propertyType.type.name];
+      let formattedValue;
+      formattedValue = Array.isArray(value) ? value : [value];
+      formattedValue = (formattedValue.length > 0 && (formattedValue[0] === '' || formattedValue[0] === null))
+        ? [] : formattedValue;
+      details[propertyType.id] = formattedValue;
+    });
+
+    const primaryKeys = this.state.entityType.key;
+    const entityId = primaryKeys.map((keyId) => {
+      const val = (details[keyId] && details[keyId][0]) ? details[keyId][0] : '';
+      const utf8Val = (details[keyId].length > 0) ? encodeURI(val) : '';
+      return btoa(utf8Val);
+    }).join(',');
+
+    const key = {
+      entitySetId: this.state.entitySetId,
+      entityId,
+      syncId
+    };
+
+    return { key, details };
+  }
+
+  getBulkData = () => {
+    const { entitySetId, personEntitySetId, appearsInEntitySetId } = this.state;
+    return SyncApi.getCurrentSyncId(entitySetId)
+      .then((formSyncId) => {
+        const formEntity = this.getFormEntity(formSyncId);
+        return SyncApi.getCurrentSyncId(personEntitySetId)
+          .then((personSyncId) => {
+            const personEntity = this.getPersonEntity(personSyncId);
+            return SyncApi.getCurrentSyncId(appearsInEntitySetId)
+              .then((appearsInSyncId) => {
+                const appearsInEntity = this.getAppearsInEntity(appearsInSyncId);
+                appearsInEntity.src = personEntity.key;
+                appearsInEntity.dst = formEntity.key;
+
+                const entities = [formEntity, personEntity];
+                const associations = [appearsInEntity];
+
+                const esIdsAndSyncIds = [
+                  [entitySetId, formSyncId],
+                  [personEntitySetId, personSyncId],
+                  [appearsInEntitySetId, appearsInSyncId]
+                ];
+
+                return Promise.map(esIdsAndSyncIds, (pair) => {
+                  return DataApi.acquireSyncTicket(pair[0], pair[1]);
+                }).then((syncTickets) => {
+                  return { syncTickets, entities, associations };
+                });
+              });
+          });
+      });
+  }
+
   handleSubmit = (e) => {
     e.preventDefault();
-
-    const entities = this.getEntities();
-    DataApi.createEntityData(this.state.entitySetId, '', entities)
-    .then((res) => {
-      this.setState({
-        submitSuccess: true,
-        submitFailure: false
-      });
-    })
-    .catch((err) => {
-      this.setState({
-        submitSuccess: false,
-        submitFailure: true
-      });
+    this.getBulkData().then((bulkData) => {
+      DataApi.createEntityAndAssociationData(bulkData);
     });
   }
 
@@ -244,7 +418,7 @@ class Form extends React.Component {
       <div>
         <LogoutButton />
         <FormView
-          handleTextInput={this.handleTextInput}
+            handleTextInput={this.handleTextInput}
             handleDateInput={this.handleDateInput}
             handleTimeInput={this.handleTimeInput}
             handleSingleSelection={this.handleSingleSelection}

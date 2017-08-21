@@ -10,7 +10,7 @@ import { normalize } from 'polished';
 import { Page, PageHeader, Title, Description, FormWrapper, SubmitButton, SubmitButtonWrapper } from '../shared/Layout';
 import ReportInfoView from '../components/ReportInfoView';
 import ConsumerInfoView from '../components/ConsumerInfoView';
-import ComplainantInfoView from '../components/ComplainantInfoView';
+import ComplaintInfoView from '../components/ComplaintInfoView';
 import DispositionView from '../components/DispositionView';
 import OfficerInfoView from '../components/OfficerInfoView';
 
@@ -37,7 +37,7 @@ function FormView({ handleTextInput, handleDateInput, handleTimeInput, handleSin
               handleCheckboxChange={handleCheckboxChange}
               input={input.consumerInfo}
               section='consumerInfo' />
-          <ComplainantInfoView
+          <ComplaintInfoView
               handleTextInput={handleTextInput}
               input={input.complainantInfo}
               section='complainantInfo' />
