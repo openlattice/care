@@ -20,7 +20,7 @@ export default function baseWebpackConfig(env :Object) {
    * constants
    */
 
-  const BASE_PATH :string = `/${env.basePath || 'bhr'}/`;
+  const BASE_PATH :string = `/${env.basePath || 'psa'}/`;
 
   /*
    * loaders
