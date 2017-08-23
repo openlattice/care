@@ -1,5 +1,5 @@
 {
-  "name": "baltimore-health",
+  "name": "psa",
   "version": "0.0.0",
   "homepage": "https://github.com/openlattice/baltimore-health",
   "contributors": [
@@ -8,8 +8,8 @@
       "email": "hristo@openlattice.com"
     },
     {
-      "name": "Corwin Crownover",
-      "email": "corwin@openlattice.com"
+      "name": "Katherine Bernstein",
+      "email": "katherine@openlattice.com"
     }
   ],
   "repository": {
