@@ -8,22 +8,32 @@ import * as AuthActionTypes from './AuthActionTypes';
 import * as AuthUtils from './AuthUtils';
 
 /*
- * INITIAL_STATE depends on localStorage. if localStorage holds the Auth0 ID token, and it has not yet expired,
- * then the user is considered to be logged in.
+ * INITIAL_STATE depends on localStorage. if localStorage holds the Auth0 id token, and it has not yet expired,
+ * then the user is considered to be authenticated.
  */
 const INITIAL_STATE :Map<> = Immutable.Map().withMutations((map :Map<>) => {
-  map.set('isLoggedIn', AuthUtils.isLoggedIn());
+
+  const expiration :number = AuthUtils.getAuthTokenExpiration();
+
+  if (AuthUtils.hasAuthTokenExpired(expiration)) {
+    map.set('authTokenExpiration', -1);
+  }
+  else {
+    map.set('authTokenExpiration', expiration);
+  }
 });
 
 function authReducer(state :Map<> = INITIAL_STATE, action :Object) {
 
   switch (action.type) {
 
-    case AuthActionTypes.LOGGED_IN:
-      return state.set('isLoggedIn', true);
+    case AuthActionTypes.AUTH_SUCCESS:
+      return state.set('authTokenExpiration', AuthUtils.getAuthTokenExpiration());
 
+    case AuthActionTypes.AUTH_FAILURE:
+    case AuthActionTypes.AUTH_TOKEN_EXPIRED:
     case AuthActionTypes.LOGOUT:
-      return state.set('isLoggedIn', false);
+      return state.set('authTokenExpiration', -1);
 
     default:
       return state;
