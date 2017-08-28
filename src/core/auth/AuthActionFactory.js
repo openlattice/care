@@ -4,40 +4,33 @@
 
 import * as AuthActionTypes from './AuthActionTypes';
 
-export function authenticate() :Object {
-
-  return {
-    type: AuthActionTypes.AUTHENTICATE
-  };
-}
-
-export function authenticated(authInfo :Object) :Object {
+export function authenticated(authToken :string) :Object {
 
   return {
     type: AuthActionTypes.AUTHENTICATED,
-    authInfo
+    authToken
   };
 }
 
-export function authError(error :any) :Object {
+export function authSuccess() :Object {
 
   return {
-    type: AuthActionTypes.AUTH_ERROR,
+    type: AuthActionTypes.AUTH_SUCCESS
+  };
+}
+
+export function authFailure(error :any) :Object {
+
+  return {
+    type: AuthActionTypes.AUTH_FAILURE,
     error
   };
 }
 
-export function configureLattice() :Object {
+export function authTokenExpired() :Object {
 
   return {
-    type: AuthActionTypes.CONFIGURE_LATTICE
-  };
-}
-
-export function loggedIn() :Object {
-
-  return {
-    type: AuthActionTypes.LOGGED_IN
+    type: AuthActionTypes.AUTH_TOKEN_EXPIRED
   };
 }
 

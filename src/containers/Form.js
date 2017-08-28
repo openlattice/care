@@ -1,11 +1,14 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { EntityDataModelApi, DataApi } from 'lattice';
+
 import Promise from 'bluebird';
+import { EntityDataModelApi, DataApi } from 'lattice';
+import { Redirect, Route, Switch } from 'react-router-dom';
 
 import FormView from '../components/FormView';
 import ConfirmationModal from '../components/ConfirmationModalView';
 import LogoutButton from './LogoutButton';
+
+import * as RoutePaths from '../core/router/RoutePaths';
 
 class Form extends React.Component {
   constructor(props) {
@@ -239,12 +242,13 @@ class Form extends React.Component {
     window.location.reload();
   }
 
-  render() {
+  renderForm = () => {
+
     return (
       <div>
         <LogoutButton />
         <FormView
-          handleTextInput={this.handleTextInput}
+            handleTextInput={this.handleTextInput}
             handleDateInput={this.handleDateInput}
             handleTimeInput={this.handleTimeInput}
             handleSingleSelection={this.handleSingleSelection}
@@ -252,14 +256,23 @@ class Form extends React.Component {
             handleSubmit={this.handleSubmit}
             input={this.state} />
         {
-          this.state.submitSuccess ?
-          <ConfirmationModal
-              submitSuccess={this.state.submitSuccess}
-              submitFailure={this.state.submitFailure}
-              handleModalButtonClick={this.handleModalButtonClick} /> :
-          null
+          this.state.submitSuccess
+            ? <ConfirmationModal
+                  submitSuccess={this.state.submitSuccess}
+                  submitFailure={this.state.submitFailure}
+                  handleModalButtonClick={this.handleModalButtonClick} />
+            : null
         }
       </div>
+    );
+  }
+
+  render() {
+    return (
+      <Switch>
+        <Route exact strict path={RoutePaths.ROOT} render={this.renderForm} />
+        <Redirect to={RoutePaths.ROOT} />
+      </Switch>
     );
   }
 }

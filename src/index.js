@@ -8,18 +8,16 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { normalize } from 'polished';
-import { Provider } from 'react-redux'
-import { Redirect, Route, Switch } from 'react-router-dom'
+import { Provider } from 'react-redux';
+import { Switch } from 'react-router-dom';
 import { ConnectedRouter } from 'react-router-redux';
 import { injectGlobal } from 'styled-components';
 
-import AuthContainer from './core/auth/AuthContainer';
 import AuthRoute from './core/auth/AuthRoute';
-import RoutePaths from './core/router/RoutePaths';
-
-import initializeAuth0Lock from './core/auth/Auth0';
 import initializeReduxStore from './core/redux/ReduxStore';
 import initializeRouterHistory from './core/router/RouterHistory';
+import * as Auth0 from './core/auth/Auth0';
+import * as RoutePaths from './core/router/RoutePaths';
 
 import Form from './containers/Form';
 
@@ -42,22 +40,21 @@ injectGlobal`
 `;
 /* eslint-enable */
 
+// !!! MUST !!! happen before initializing router history
+// TODO: figure out a way to guarantee auth flow, either using promises or sagas
+const auth0HashPath :string = Auth0.parseHashPath();
+
 const routerHistory = initializeRouterHistory();
 const reduxStore = initializeReduxStore(routerHistory);
-initializeAuth0Lock(reduxStore);
 
-// TODO: reimplement this routing
-// TODO: I'm so confused now... how is this even working?!
+Auth0.initializeAuth0Lock(reduxStore, auth0HashPath);
+
 ReactDOM.render(
   <Provider store={reduxStore}>
     <ConnectedRouter history={routerHistory}>
-      <div>
-        <Switch>
-          <AuthRoute exact path="/" component={Form} />
-          <Route component={AuthContainer} />
-          <Redirect to="/" />
-        </Switch>
-      </div>
+      <Switch>
+        <AuthRoute path={RoutePaths.ROOT} component={Form} />
+      </Switch>
     </ConnectedRouter>
   </Provider>,
   document.getElementById('app')
