@@ -11,7 +11,7 @@ import { Button } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { logout } from '../core/auth/AuthActionFactory';
+import { logout } from '../../core/auth/AuthActionFactory';
 
 const StyledLogoutButton = styled(Button)`
   position: absolute;

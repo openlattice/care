@@ -15,7 +15,7 @@ import * as Auth0 from './Auth0';
 import * as AuthActionFactory from './AuthActionFactory';
 import * as AuthUtils from './AuthUtils';
 
-function mapStateToProps(state :Map<>) {
+function mapStateToProps(state :Map<>) :Object {
 
   let authTokenExpiration :number = state.getIn(['auth', 'authTokenExpiration'], -1);
   if (AuthUtils.hasAuthTokenExpired(authTokenExpiration)) {
@@ -27,7 +27,7 @@ function mapStateToProps(state :Map<>) {
   };
 }
 
-function mapDispatchToProps(dispatch :Function) {
+function mapDispatchToProps(dispatch :Function) :Object {
 
   const actions = {
     authAttempt: AuthActionFactory.authAttempt,
