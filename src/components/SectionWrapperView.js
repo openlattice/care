@@ -12,6 +12,7 @@ import ConsumerInfoView from '../components/ConsumerInfoView';
 import ComplaintInfoView from '../components/ComplaintInfoView';
 import DispositionView from '../components/DispositionView';
 import OfficerInfoView from '../components/OfficerInfoView';
+import { SubmitButton } from '../shared/Layout';
 
 
 const StyledProgressBar = styled(ProgressBar)`
@@ -112,8 +113,8 @@ const SectionWrapperView = ({ handleTextInput, handleDateInput, handleTimeInput,
       { renderHeader(page) }
       <StyledProgressBar now={getProgress().num} label={getProgress().percentage} />
       { renderSection(page) }
-      { page > 1 ? <Button onClick={() => handlePageChange('prev')}>Prev</Button> : null }
-      { <Button onClick={() => handlePageChange('next')}>Next</Button> }
+      { page > 1 && page < maxPage ? <Button onClick={() => handlePageChange('prev')}>Prev</Button> : null }
+      { page === maxPage ? <SubmitButton>Submit</SubmitButton> : <Button onClick={() => handlePageChange('next')}>Next</Button> }
     </div>
   );
 }
