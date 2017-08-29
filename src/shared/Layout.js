@@ -2,31 +2,49 @@ import React from 'react';
 import styled from 'styled-components';
 import { FormGroup, ControlLabel, Checkbox, Radio, Button, Row } from 'react-bootstrap';
 
+
+  // background: #393F46;
+  // FIX height to be %
 export const Page = styled.div`
+  position: relative;
   background: #F4F4F4;
+  height: 2000px;
+  width: 100%;
 `;
 
 export const PageHeader = styled.div`
-  padding: 60px;
+  position: relative;
+  height: 50px;
   background: white;
   border-bottom: 1px solid darkgray;
 `;
 
 export const Title = styled.h1`
-  text-align: center;
   color: #37454A;
-  font-size: 40px;
+  font-size: 24px;
+  margin-left: 60px;
 `;
 
-export const Description = styled.div`
-  text-align: center;
-  font-size: 24px;
-  color: #37454A;
-`;
+// export const Description = styled.div`
+//   text-align: center;
+//   font-size: 24px;
+//   color: #37454A;
+// `;
+
+// export const FormWrapper = styled.div`
+//   margin: 0 60px 0 60px;
+//   padding-bottom: 100px;
+// `;
 
 export const FormWrapper = styled.div`
-  margin: 0 60px 0 60px;
-  padding-bottom: 100px;
+  display: block;
+  position: absolute;
+  padding: 60px;
+  top: 200px;
+  left: 50%;
+  width: 800px;
+  margin-left: -400px;
+  background: white;
 `;
 
 export const PaddedRow = styled(Row)`

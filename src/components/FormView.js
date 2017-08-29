@@ -8,6 +8,7 @@ import styled, { injectGlobal } from 'styled-components';
 import { normalize } from 'polished';
 
 import { Page, PageHeader, Title, Description, FormWrapper, SubmitButton, SubmitButtonWrapper } from '../shared/Layout';
+import LogoutButton from '../containers/LogoutButton';
 import SectionWrapperView from '../components/SectionWrapperView';
 import ReportInfoView from '../components/ReportInfoView';
 import ConsumerInfoView from '../components/ConsumerInfoView';
@@ -20,7 +21,7 @@ function FormView({ handleTextInput, handleDateInput, handleTimeInput, handleSin
     <Page>
       <PageHeader>
     		<Title>Behavioral Health Report</Title>
-    		<Description>Baltimore Police Department</Description>
+        <LogoutButton />
       </PageHeader>
       <FormWrapper>
         <form onSubmit={handleSubmit}>

@@ -5,6 +5,7 @@ import Promise from 'bluebird';
 import FormView from '../components/FormView';
 import ConfirmationModal from '../components/ConfirmationModalView';
 import LogoutButton from './LogoutButton';
+import {Page} from '../shared/Layout';
 
 const FORM_ENTITY_SET_NAME = 'baltimoreHealthReportForm2';
 const PEOPLE_ENTITY_SET_NAME = 'baltimoreHealthReportPeople';
@@ -441,7 +442,6 @@ class Form extends React.Component {
   render() {
     return (
       <div>
-        <LogoutButton />
         <FormView
             handleTextInput={this.handleTextInput}
             handleDateInput={this.handleDateInput}

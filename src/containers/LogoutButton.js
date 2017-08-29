@@ -15,7 +15,8 @@ import { logout } from '../core/auth/AuthActionFactory';
 
 const StyledLogoutButton = styled(Button)`
   position: absolute;
-  top: 30px;
+  top: 50%;
+  margin-top: -24px;
   right: 60px;
 `;
 
