@@ -54,9 +54,7 @@ const reduxStore = initializeReduxStore(routerHistory);
 ReactDOM.render(
   <Provider store={reduxStore}>
     <ConnectedRouter history={routerHistory}>
-      <Switch>
-        <AuthRoute path={RoutePaths.ROOT} component={Form} />
-      </Switch>
+      <AuthRoute path={RoutePaths.ROOT} component={Form} />
     </ConnectedRouter>
   </Provider>,
   document.getElementById('app')
