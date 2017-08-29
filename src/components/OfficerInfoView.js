@@ -12,7 +12,7 @@ import { PaddedRow, Label, TitleLabel, InlineCheckbox } from '../shared/Layout';
 
 const OfficerInfoView = ({ section, handleTextInput, handleCheckboxChange, input }) => {
   return(
-    <SectionView header="Officer Information">
+    <div>
       <PaddedRow>
         <Col lg={3}>
           <TitleLabel>33. Officer Name</TitleLabel>
@@ -60,7 +60,7 @@ const OfficerInfoView = ({ section, handleTextInput, handleCheckboxChange, input
           </FormGroup>
         </Col>
       </PaddedRow>
-    </SectionView>
+    </div>
   );
 }
 

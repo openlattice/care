@@ -15,7 +15,7 @@ import { Label, TitleLabel, InlineRadio, PaddedRow } from '../shared/Layout';
 const ReportInfoView = ({ section, handleTextInput, handleDateInput, handleTimeInput, handleSingleSelection, input }) => {
 
 	return (
-		<SectionView header='Report Information'>
+		<div>
       <PaddedRow>
         <Col lg={3}>
     		  <TitleLabel>1. Primary Reason for Dispatch</TitleLabel>
@@ -102,7 +102,7 @@ const ReportInfoView = ({ section, handleTextInput, handleDateInput, handleTimeI
           <TimePicker value={input.timeReported} onChange={(e) => {handleTimeInput(e, section, 'timeReported')}} />
         </Col>
       </PaddedRow>
-		</SectionView>
+		</div>
 
 	);
 }

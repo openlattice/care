@@ -13,7 +13,7 @@ import { PaddedRow, Label, InlineCheckbox, InlineRadio, TitleLabel, OtherWrapper
 const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSingleSelection, handleCheckboxChange, input }) => {
 
   return (
-    <SectionView header='Consumer Information'>
+    <div>
       <PaddedRow>
         <Col lg={3}>
           <TitleLabel>12. Consumer Last Name</TitleLabel>
@@ -665,7 +665,7 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
           </FormGroup>
         </Col>
       </PaddedRow>
-    </SectionView>
+    </div>
   );
 }
 

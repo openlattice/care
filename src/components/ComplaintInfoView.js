@@ -11,7 +11,7 @@ import { PaddedRow, TitleLabel } from '../shared/Layout';
 
 const ComplaintInfoView = ({ section, handleTextInput, input }) => {
   return(
-    <SectionView header="Complaint/Next of Kin Information">
+    <div>
       <PaddedRow>
         <Col lg={3}>
           <TitleLabel>28. Complaint Name (Last, First, MI)</TitleLabel>
@@ -30,7 +30,7 @@ const ComplaintInfoView = ({ section, handleTextInput, input }) => {
           <FormControl data-section={section} name='complainantPhone' value={input.complainantPhone} onChange={handleTextInput} />
         </Col>
       </PaddedRow>
-    </SectionView>
+    </div>
   );
 }
 

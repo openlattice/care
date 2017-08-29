@@ -18,7 +18,31 @@ const StyledProgressBar = styled(ProgressBar)`
   margin: 60px 0;
 `;
 
+const Header = styled.div`
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #37454A;
+  font-weight: bold;
+`;
+
 const SectionWrapperView = ({ handleTextInput, handleDateInput, handleTimeInput, handleSingleSelection, handleCheckboxChange, input, page, maxPage, handlePageChange, ...props }) => {
+  const renderHeader = (page) => {
+    switch(page) {
+      case 1:
+        return <Header>Report Information</Header>;
+      case 2:
+        return <Header>Consumer Information</Header>;
+      case 3:
+        return <Header>Complainant Information</Header>;
+      case 4:
+        return <Header>Disposition Information</Header>;
+      case 5:
+        return <Header>Officer Information</Header>;
+      default:
+        return;
+    }
+  }
+
   const renderSection = (page) => {
     console.log('page:', page);
     switch(page) {
@@ -67,15 +91,7 @@ const SectionWrapperView = ({ handleTextInput, handleDateInput, handleTimeInput,
               section='officerInfo' />
         );
       default:
-        return (
-          <ReportInfoView
-              handleTextInput={handleTextInput}
-              handleDateInput={handleDateInput}
-              handleTimeInput={handleTimeInput}
-              handleSingleSelection={handleSingleSelection}
-              input={input.reportInfo}
-              section='reportInfo' />
-        );
+        return;
     }
     return (
       <div>SECTION</div>
@@ -83,7 +99,7 @@ const SectionWrapperView = ({ handleTextInput, handleDateInput, handleTimeInput,
   }
 
   const getProgress = () => {
-    const num = Math.ceil((100 / maxPage) * page);
+    const num = Math.ceil((100 / (maxPage + 1)) * page);
     const percentage = num.toString() + '%';
     return {
       num,
@@ -93,6 +109,7 @@ const SectionWrapperView = ({ handleTextInput, handleDateInput, handleTimeInput,
 
   return (
     <div>
+      { renderHeader(page) }
       <StyledProgressBar now={getProgress().num} label={getProgress().percentage} />
       { renderSection(page) }
       { page > 1 ? <Button onClick={() => handlePageChange('prev')}>Prev</Button> : null }

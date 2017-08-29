@@ -25,17 +25,6 @@ export const Title = styled.h1`
   margin-left: 60px;
 `;
 
-// export const Description = styled.div`
-//   text-align: center;
-//   font-size: 24px;
-//   color: #37454A;
-// `;
-
-// export const FormWrapper = styled.div`
-//   margin: 0 60px 0 60px;
-//   padding-bottom: 100px;
-// `;
-
 export const FormWrapper = styled.div`
   display: block;
   position: absolute;

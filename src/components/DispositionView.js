@@ -12,7 +12,7 @@ import { PaddedRow, Label, TitleLabel, OtherWrapper, InlineCheckbox, InlineRadio
 
 const DispositionView = ({ section, handleTextInput, handleCheckboxChange, handleSingleSelection, input }) => {
   return(
-    <SectionView header="Disposition">
+    <div>
       <PaddedRow>
         <Col lg={5}>
           <TitleLabel>29. Disposition</TitleLabel>
@@ -229,7 +229,7 @@ const DispositionView = ({ section, handleTextInput, handleCheckboxChange, handl
           <FormControl data-section={section} name='incidentNarrative' componentClass='textarea' value={input.incidentNarrative} onChange={handleTextInput} />
         </Col>
       </PaddedRow>
-    </SectionView>
+    </div>
   );
 }
 
