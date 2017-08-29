@@ -8,6 +8,7 @@ import styled, { injectGlobal } from 'styled-components';
 import { Button, ProgressBar } from 'react-bootstrap';
 
 import ReportInfoView from '../components/ReportInfoView';
+import ConsumerSearch from '../containers/ConsumerSearch';
 import ConsumerInfoView from '../components/ConsumerInfoView';
 import ComplainantInfoView from '../components/ComplainantInfoView';
 import DispositionView from '../components/DispositionView';
@@ -46,12 +47,14 @@ const SectionWrapperView = ({ handleTextInput, handleDateInput, handleTimeInput,
       case 1:
         return <Header>Report Information</Header>;
       case 2:
-        return <Header>Consumer Information</Header>;
+        return <Header>Search Existing Consumers</Header>
       case 3:
-        return <Header>Complainant Information</Header>;
+        return <Header>Consumer Information</Header>;
       case 4:
-        return <Header>Disposition Information</Header>;
+        return <Header>Complainant Information</Header>;
       case 5:
+        return <Header>Disposition Information</Header>;
+      case 6:
         return <Header>Officer Information</Header>;
       default:
         return;
@@ -73,6 +76,10 @@ const SectionWrapperView = ({ handleTextInput, handleDateInput, handleTimeInput,
         );
       case 2:
         return (
+          <ConsumerSearch />
+        );
+      case 3:
+        return (
           <ConsumerInfoView
               handleTextInput={handleTextInput}
               handleDateInput={handleDateInput}
@@ -81,14 +88,14 @@ const SectionWrapperView = ({ handleTextInput, handleDateInput, handleTimeInput,
               input={input.consumerInfo}
               section='consumerInfo' />
         );
-      case 3:
+      case 4:
         return (
           <ComplainantInfoView
               handleTextInput={handleTextInput}
               input={input.complainantInfo}
               section='complainantInfo' />
         );
-      case 4:
+      case 5:
         return (
           <DispositionView
               handleTextInput={handleTextInput}
@@ -97,7 +104,7 @@ const SectionWrapperView = ({ handleTextInput, handleDateInput, handleTimeInput,
               input={input.dispositionInfo}
               section='dispositionInfo' />
         );
-      case 5:
+      case 6:
         return (
           <OfficerInfoView
               handleTextInput={handleTextInput}

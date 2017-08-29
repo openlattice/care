@@ -119,7 +119,7 @@ class Form extends React.Component {
       submitSuccess: null,
       submitFailure: null,
       page: 1,
-      maxPage: 5
+      maxPage: 6
     };
   }
 
