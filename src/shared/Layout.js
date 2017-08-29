@@ -31,8 +31,8 @@ export const FormWrapper = styled.div`
   padding: 60px;
   top: 200px;
   left: 50%;
-  width: 800px;
-  margin-left: -400px;
+  width: 900px;
+  margin-left: -450px;
   background: white;
 `;
 

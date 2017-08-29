@@ -15,37 +15,43 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
   return (
     <div>
       <PaddedRow>
-        <Col lg={3}>
+        <Col lg={6}>
           <TitleLabel>12. Consumer Last Name</TitleLabel>
           <FormControl data-section={section} name='lastName' value={input.lastName} onChange={handleTextInput} />
         </Col>
-        <Col lg={3}>
+        <Col lg={6}>
           <TitleLabel>Consumer First Name</TitleLabel>
           <FormControl data-section={section} name='firstName' value={input.firstName} onChange={handleTextInput} />
         </Col>
-        <Col lg={3}>
+      </PaddedRow>
+
+      <PaddedRow>
+        <Col lg={6}>
           <TitleLabel>Consumer Middle Name</TitleLabel>
           <FormControl data-section={section} name='middleName' value={input.middleName} onChange={handleTextInput} />
         </Col>
-        <Col lg={3}>
+        <Col lg={6}>
           <TitleLabel>13. Consumer Identification</TitleLabel>
           <FormControl data-section={section} name='identification' value={input.identification} onChange={handleTextInput} />
         </Col>
       </PaddedRow>
 
       <PaddedRow>
-        <Col lg={9}>
+        <Col lg={12}>
           <TitleLabel>14. Residence / Address (Street, Apt Number, City, County, State, Zip)</TitleLabel>
           <FormControl data-section={section} name='address' value={input.address} onChange={handleTextInput} />
         </Col>
-        <Col lg={3}>
+      </PaddedRow>
+
+      <PaddedRow>
+        <Col lg={6}>
           <TitleLabel>Consumer Phone Number</TitleLabel>
           <FormControl data-section={section} name='phone' value={input.phone} onChange={handleTextInput} />
         </Col>
       </PaddedRow>
 
       <PaddedRow>
-        <Col lg={4}>
+        <Col lg={3}>
           <TitleLabel>15. Military Status</TitleLabel>
             <InlineRadio
                 inline
@@ -68,57 +74,58 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
                 value='n/a'
                 checked={input.militaryStatus === 'n/a'}
                 onChange={handleSingleSelection}>N/A</InlineRadio>
-          </Col>
+        </Col>
 
-          <Col lg={2}>
-            <TitleLabel>Gender</TitleLabel>
-            <FormControl
-                componentClass='select'
-                placeholder='select'
-                data-section={section}
-                name='gender'
-                value={input.gender}
-                onChange={handleSingleSelection}>
-              <option value=''>Select</option>
-              <option value='female'>Female</option>
-              <option value='male'>Male</option>
-              <option value='nonbinary'>Non-binary</option>
-            </FormControl>
-          </Col>
+        <Col lg={3}>
+          <TitleLabel>Gender</TitleLabel>
+          <FormControl
+              componentClass='select'
+              placeholder='select'
+              data-section={section}
+              name='gender'
+              value={input.gender}
+              onChange={handleSingleSelection}>
+            <option value=''>Select</option>
+            <option value='female'>Female</option>
+            <option value='male'>Male</option>
+            <option value='nonbinary'>Non-binary</option>
+          </FormControl>
+        </Col>
 
-          <Col lg={2}>
-            <TitleLabel>Race</TitleLabel>
-            <FormControl
-                componentClass='select'
-                placeholder='select'
-                data-section={section}
-                name='race'
-                value={input.race}
-                onChange={handleSingleSelection}>
-              <option value=''>Select</option>
-              <option value='americanIndian'>American Indian or Alaska Native</option>
-              <option value='asian'>Asian</option>
-              <option value='black'>Black or African American</option>
-              <option value='hispanic'>Hispanic or Latino</option>
-              <option value='nativeHawaiian'>Native Hawaiian or Other Pacific Islander</option>
-              <option value='white'>White</option>
-              <option value='other'>Other</option>
-            </FormControl>
-          </Col>
+        <Col lg={6}>
+          <TitleLabel>Race</TitleLabel>
+          <FormControl
+              componentClass='select'
+              placeholder='select'
+              data-section={section}
+              name='race'
+              value={input.race}
+              onChange={handleSingleSelection}>
+            <option value=''>Select</option>
+            <option value='americanIndian'>American Indian or Alaska Native</option>
+            <option value='asian'>Asian</option>
+            <option value='black'>Black or African American</option>
+            <option value='hispanic'>Hispanic or Latino</option>
+            <option value='nativeHawaiian'>Native Hawaiian or Other Pacific Islander</option>
+            <option value='white'>White</option>
+            <option value='other'>Other</option>
+          </FormControl>
+        </Col>
+      </PaddedRow>
 
-        <Col lg={2}>
+      <PaddedRow>
+        <Col lg={6}>
           <TitleLabel>Age</TitleLabel>
           <FormControl data-section={section} name='age' value={input.age} onChange={handleTextInput} />
         </Col>
-
-        <Col lg={2}>
+        <Col lg={6}>
           <TitleLabel>DOB</TitleLabel>
           <DatePicker value={input.dob} onChange={(e) => {handleDateInput(e, section, 'dob')}} />
         </Col>
       </PaddedRow>
 
       <PaddedRow>
-        <Col lg={3}>
+        <Col lg={6}>
           <TitleLabel>16. Homeless</TitleLabel>
           <InlineRadio
               inline
@@ -135,14 +142,17 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
               checked={input.homeless === 'false'}
               onChange={handleSingleSelection}>No</InlineRadio>
         </Col>
-        <Col lg={9}>
+      </PaddedRow>
+
+      <PaddedRow>
+        <Col lg={12}>
           <TitleLabel>If Yes, Where Do They Usually Sleep / Frequent?</TitleLabel>
           <FormControl data-section={section} name='homelessLocation' value={input.homelessLocation} onChange={handleTextInput} />
         </Col>
       </PaddedRow>
 
       <PaddedRow>
-        <Col lg={3}>
+        <Col lg={6}>
           <TitleLabel>17. Consumer Using Drugs, Alcohol</TitleLabel>
           <InlineRadio
               inline
@@ -173,15 +183,17 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
               checked={input.drugsAlcohol === 'n/a'}
               onChange={handleSingleSelection}>N/A</InlineRadio>
         </Col>
+      </PaddedRow>
 
-        <Col lg={9}>
+      <PaddedRow>
+        <Col lg={12}>
           <TitleLabel>Drug type</TitleLabel>
           <FormControl data-section={section} name='drugType' value={input.drugType} onChange={handleTextInput} />
         </Col>
       </PaddedRow>
 
       <PaddedRow>
-        <Col lg={3}>
+        <Col lg={6}>
           <TitleLabel>18. Prescribed Medication</TitleLabel>
           <InlineRadio
               inline
@@ -205,7 +217,7 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
               checked={input.prescribedMedication === 'unknown'}
               onChange={handleSingleSelection}>Unknown</InlineRadio>
         </Col>
-        <Col lg={3}>
+        <Col lg={6}>
           <TitleLabel>If yes, is Consumer Taking Medication?</TitleLabel>
           <InlineRadio
               inline
@@ -229,7 +241,10 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
               checked={input.takingMedication === 'unknown'}
               onChange={handleSingleSelection}>Unknown</InlineRadio>
         </Col>
-        <Col lg={6}>
+      </PaddedRow>
+
+      <PaddedRow>
+        <Col lg={12}>
           <TitleLabel>19. Does Consumer Have Previous Psychiatric Hospital Admission?</TitleLabel>
           <InlineRadio
               inline
