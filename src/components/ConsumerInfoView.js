@@ -326,7 +326,7 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
       </PaddedRow>
 
       <PaddedRow>
-        <Col lg={2}>
+        <Col lg={6}>
           <TitleLabel>20. Armed with Weapon?</TitleLabel>
           <InlineRadio
               inline
@@ -343,11 +343,17 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
               checked={input.armedWithWeapon === 'false'}
               onChange={handleSingleSelection}>No</InlineRadio>
         </Col>
-        <Col lg={4}>
+      </PaddedRow>
+
+      <PaddedRow>
+        <Col lg={6}>
           <Label>If Yes, Weapon Type</Label>
           <FormControl data-section={section} name='armedWeaponType' value={input.armedWeaponType} onChange={handleTextInput} />
         </Col>
-        <Col lg={2}>
+      </PaddedRow>
+
+      <PaddedRow>
+        <Col lg={6}>
           <TitleLabel>21. Have Access to Weapons?</TitleLabel>
           <InlineRadio
               inline
@@ -364,7 +370,10 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
               checked={input.accessToWeapons === 'false'}
               onChange={handleSingleSelection}>No</InlineRadio>
         </Col>
-        <Col lg={4}>
+      </PaddedRow>
+
+      <PaddedRow>
+        <Col lg={6}>
           <Label>If Yes, Weapon Type</Label>
           <FormControl data-section={section} name='accessibleWeaponType' value={input.accessibleWeaponType} onChange={handleTextInput} />
         </Col>
@@ -585,7 +594,7 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
       </PaddedRow>
 
       <PaddedRow>
-        <Col lg={1}>
+        <Col lg={6}>
           <TitleLabel>26. Suicidal</TitleLabel>
           <InlineRadio
               inline
@@ -602,8 +611,10 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
               checked={input.suicidal === 'false'}
               onChange={handleSingleSelection}>No</InlineRadio>
         </Col>
+      </PaddedRow>
 
-        <Col lg={11}>
+      <PaddedRow>
+        <Col lg={12}>
           <TitleLabel>If Suicidal:</TitleLabel>
           <InlineCheckbox
               inline

@@ -14,19 +14,22 @@ const OfficerInfoView = ({ section, handleTextInput, handleCheckboxChange, input
   return(
     <div>
       <PaddedRow>
-        <Col lg={3}>
+        <Col lg={6}>
           <TitleLabel>33. Officer Name</TitleLabel>
           <FormControl data-section={section} name='officerName' value={input.officerName} onChange={handleTextInput} />
         </Col>
-        <Col lg={3}>
+        <Col lg={6}>
           <TitleLabel>34. Seq ID</TitleLabel>
           <FormControl data-section={section} name='officerSeqID' value={input.officerSeqID} onChange={handleTextInput} />
         </Col>
-        <Col lg={3}>
+      </PaddedRow>
+
+      <PaddedRow>
+        <Col lg={6}>
           <TitleLabel>35. Officer Injuries</TitleLabel>
           <FormControl data-section={section} name='officerInjuries' value={input.officerInjuries} onChange={handleTextInput} />
         </Col>
-        <Col lg={3}>
+        <Col lg={6}>
           <TitleLabel>36. Officer Certification</TitleLabel>
           <FormGroup>
             <InlineCheckbox

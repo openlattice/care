@@ -14,7 +14,7 @@ const DispositionView = ({ section, handleTextInput, handleCheckboxChange, handl
   return(
     <div>
       <PaddedRow>
-        <Col lg={5}>
+        <Col lg={12}>
           <TitleLabel>29. Disposition</TitleLabel>
           <FormGroup>
             <InlineCheckbox
@@ -82,8 +82,10 @@ const DispositionView = ({ section, handleTextInput, handleCheckboxChange, handl
                 onChange={handleCheckboxChange}>Civil Citation</InlineCheckbox>
           </FormGroup>
         </Col>
+      </PaddedRow>
 
-        <Col lg={2}>
+      <PaddedRow>
+        <Col lg={6}>
           <TitleLabel>Transported to Hospital</TitleLabel>
           <InlineRadio
               inline
@@ -100,7 +102,10 @@ const DispositionView = ({ section, handleTextInput, handleCheckboxChange, handl
               checked={input.hospitalTransport === 'false'}
               onChange={handleSingleSelection}>No</InlineRadio>
         </Col>
-        <Col lg={5}>
+      </PaddedRow>
+
+      <PaddedRow>
+        <Col lg={6}>
           <TitleLabel>Hospital Name</TitleLabel>
           <FormControl data-section={section} name='hospital' value={input.hospital} onChange={handleTextInput} />
         </Col>
