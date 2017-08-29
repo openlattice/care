@@ -4,18 +4,18 @@
 
 import * as AuthActionTypes from './AuthActionTypes';
 
-export function authenticated(authToken :string) :Object {
+export function authAttempt() :Object {
 
   return {
-    type: AuthActionTypes.AUTHENTICATED,
-    authToken
+    type: AuthActionTypes.AUTH_ATTEMPT
   };
 }
 
-export function authSuccess() :Object {
+export function authSuccess(authToken :?string) :Object {
 
   return {
-    type: AuthActionTypes.AUTH_SUCCESS
+    type: AuthActionTypes.AUTH_SUCCESS,
+    authToken
   };
 }
 
@@ -27,10 +27,10 @@ export function authFailure(error :any) :Object {
   };
 }
 
-export function authTokenExpired() :Object {
+export function authExpired() :Object {
 
   return {
-    type: AuthActionTypes.AUTH_TOKEN_EXPIRED
+    type: AuthActionTypes.AUTH_EXPIRED
   };
 }
 
