@@ -1,12 +1,12 @@
 import React from 'react';
-import { EntityDataModelApi, DataApi, SyncApi } from 'lattice';
+import { EntityDataModelApi, DataApi, SyncApi, SearchApi } from 'lattice';
 import Promise from 'bluebird';
 
 import FormView from '../components/FormView';
 import ConfirmationModal from '../components/ConfirmationModalView';
 import LogoutButton from './LogoutButton';
 
-const FORM_ENTITY_SET_NAME = 'baltimoreHealthReportForm';
+const FORM_ENTITY_SET_NAME = 'baltimoreHealthReportForm2';
 const PEOPLE_ENTITY_SET_NAME = 'baltimoreHealthReportPeople';
 const APPEARS_IN_ENTITY_SET_NAME = 'baltimoreHealthReportAppearsIn';
 
@@ -112,7 +112,8 @@ class Form extends React.Component {
       personPropertyTypes: [],
       appearsInPropertyTypes: [],
       submitSuccess: null,
-      submitFailure: null
+      submitFailure: null,
+      page: 5
     };
   }
 
@@ -136,6 +137,19 @@ class Form extends React.Component {
               });
           });
       });
+
+      const start = 0;
+      const maxHits = 50;
+      const searchTerm = '*';
+      const searchOptions = {
+        start,
+        maxHits,
+        searchTerm
+      };
+      SearchApi.searchEntitySetData("5e004de9-ac2a-47f0-96a4-cfe060e1f916", searchOptions)
+        .then((res) => {
+          console.log('search res:', res);
+        });
   }
 
   getPersonEntitySet = () => {
@@ -254,37 +268,37 @@ class Form extends React.Component {
     this.setState({ [sectionKey]: sectionState });
   }
 
-  getEntities = () => {
-    const formInputs = Object.assign(
-      {},
-      this.state.reportInfo,
-      this.state.consumerInfo,
-      this.state.complainantInfo,
-      this.state.dispositionInfo,
-      this.state.officerInfo
-    );
+  // getEntities = () => {
+  //   const formInputs = Object.assign(
+  //     {},
+  //     this.state.reportInfo,
+  //     this.state.consumerInfo,
+  //     this.state.complainantInfo,
+  //     this.state.dispositionInfo,
+  //     this.state.officerInfo
+  //   );
 
-    const formattedValues = {};
-    this.state.propertyTypes.forEach((propertyType) => {
-      const value = formInputs[propertyType.type.name];
-      let formattedValue;
-      formattedValue = Array.isArray(value) ? value : [value];
-      formattedValue = (formattedValue.length > 0 && (formattedValue[0] === "" || formattedValue[0] === null)) ? [] : formattedValue;
-      formattedValues[propertyType.id] = formattedValue;
-    });
+  //   const formattedValues = {};
+  //   this.state.propertyTypes.forEach((propertyType) => {
+  //     const value = formInputs[propertyType.type.name];
+  //     let formattedValue;
+  //     formattedValue = Array.isArray(value) ? value : [value];
+  //     formattedValue = (formattedValue.length > 0 && (formattedValue[0] === "" || formattedValue[0] === null)) ? [] : formattedValue;
+  //     formattedValues[propertyType.id] = formattedValue;
+  //   });
 
-    const primaryKeys = this.state.entityType.key;
-    const entityKey = primaryKeys.map((keyId) => {
-      const utf8Val = (formattedValues[keyId].length > 0) ? encodeURI(formattedValues[keyId][0]) : '';
-      return btoa(utf8Val);
-    }).join(',');
+  //   const primaryKeys = this.state.entityType.key;
+  //   const entityKey = primaryKeys.map((keyId) => {
+  //     const utf8Val = (formattedValues[keyId].length > 0) ? encodeURI(formattedValues[keyId][0]) : '';
+  //     return btoa(utf8Val);
+  //   }).join(',');
 
-    const entities = {
-      [entityKey]: formattedValues
-    };
+  //   const entities = {
+  //     [entityKey]: formattedValues
+  //   };
 
-    return entities;
-  }
+  //   return entities;
+  // }
 
   getAppearsInEntity = (syncId) => {
     const entityId = btoa(this.state.consumerInfo.identification);
@@ -371,6 +385,7 @@ class Form extends React.Component {
 
   getBulkData = () => {
     const { entitySetId, personEntitySetId, appearsInEntitySetId } = this.state;
+    console.log('entity set id:', entitySetId);
     return SyncApi.getCurrentSyncId(entitySetId)
       .then((formSyncId) => {
         const formEntity = this.getFormEntity(formSyncId);
@@ -405,7 +420,8 @@ class Form extends React.Component {
   handleSubmit = (e) => {
     e.preventDefault();
     this.getBulkData().then((bulkData) => {
-      DataApi.createEntityAndAssociationData(bulkData);
+      console.log('bulk data:', bulkData);
+      DataApi.createEntityAndAssociationData(bulkData).then(() => {console.log('success!')});
     });
   }
 
@@ -424,7 +440,8 @@ class Form extends React.Component {
             handleSingleSelection={this.handleSingleSelection}
             handleCheckboxChange={this.handleCheckboxChange}
             handleSubmit={this.handleSubmit}
-            input={this.state} />
+            input={this.state}
+            page={this.state.page} />
         {
           this.state.submitSuccess ?
           <ConfirmationModal
