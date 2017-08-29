@@ -14,7 +14,7 @@ import DispositionView from '../components/DispositionView';
 import OfficerInfoView from '../components/OfficerInfoView';
 
 
-const SectionWrapperView = ({ handleTextInput, handleDateInput, handleTimeInput, handleSingleSelection, handleCheckboxChange, input, page, ...props }) => {
+const SectionWrapperView = ({ handleTextInput, handleDateInput, handleTimeInput, handleSingleSelection, handleCheckboxChange, input, page, handlePageChange, ...props }) => {
   const renderSection = (page) => {
     console.log('page:', page);
     switch(page) {
@@ -82,8 +82,8 @@ const SectionWrapperView = ({ handleTextInput, handleDateInput, handleTimeInput,
     <div>
       <h2>Progress Bar</h2>
       { renderSection(page) }
-      { page > 1 ? <Button>Prev</Button> : null }
-      { <Button>Next</Button> }
+      { page > 1 ? <Button onClick={() => handlePageChange('prev')}>Prev</Button> : null }
+      { <Button onClick={() => handlePageChange('next')}>Next</Button> }
     </div>
   );
 }

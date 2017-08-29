@@ -113,7 +113,7 @@ class Form extends React.Component {
       appearsInPropertyTypes: [],
       submitSuccess: null,
       submitFailure: null,
-      page: 5
+      page: 1
     };
   }
 
@@ -266,6 +266,14 @@ class Form extends React.Component {
       sectionState[e.target.name].splice(idx, 1);
     }
     this.setState({ [sectionKey]: sectionState });
+  }
+
+  handlePageChange = (direction) => {
+    if (direction === 'prev') {
+      this.setState({ page: --this.state.page });
+    } else if (direction === 'next') {
+      this.setState({ page: ++this.state.page });
+    }
   }
 
   // getEntities = () => {
@@ -441,7 +449,8 @@ class Form extends React.Component {
             handleCheckboxChange={this.handleCheckboxChange}
             handleSubmit={this.handleSubmit}
             input={this.state}
-            page={this.state.page} />
+            page={this.state.page}
+            handlePageChange={this.handlePageChange} />
         {
           this.state.submitSuccess ?
           <ConfirmationModal
