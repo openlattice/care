@@ -1,3 +1,7 @@
+/*
+ * @flow
+ */
+
 import React from 'react';
 import { EntityDataModelApi, DataApi, SyncApi, SearchApi } from 'lattice';
 import Promise from 'bluebird';

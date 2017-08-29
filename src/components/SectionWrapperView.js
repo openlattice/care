@@ -38,6 +38,8 @@ const StyledButton = styled(Button)`
   margin: 0 10px;
 `;
 
+
+// When it receives props and the page has changed, window.scrollTo(0,0)
 const SectionWrapperView = ({ handleTextInput, handleDateInput, handleTimeInput, handleSingleSelection, handleCheckboxChange, input, page, maxPage, handlePageChange, ...props }) => {
   const renderHeader = (page) => {
     switch(page) {

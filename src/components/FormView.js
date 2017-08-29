@@ -9,7 +9,7 @@ import { normalize } from 'polished';
 
 import { Page, PageHeader, Title, Description, FormWrapper, SubmitButton, SubmitButtonWrapper } from '../shared/Layout';
 import LogoutButton from '../containers/LogoutButton';
-import SectionWrapperView from '../components/SectionWrapperView';
+import SectionWrapper from '../containers/SectionWrapper';
 
 
 function FormView({ handleTextInput, handleDateInput, handleTimeInput, handleSingleSelection, handleCheckboxChange, handleSubmit, page, maxPage, handlePageChange, input }) {
@@ -21,7 +21,7 @@ function FormView({ handleTextInput, handleDateInput, handleTimeInput, handleSin
       </PageHeader>
       <FormWrapper>
         <form onSubmit={handleSubmit}>
-          <SectionWrapperView
+          <SectionWrapper
               handleTextInput={handleTextInput}
               handleDateInput={handleDateInput}
               handleTimeInput={handleTimeInput}
