@@ -17,8 +17,6 @@ import * as AuthUtils from './AuthUtils';
 
 function mapStateToProps(state :Map<>) {
 
-  // console.log('AuthyRoute : mapStateToProps()');
-
   let authTokenExpiration :number = state.getIn(['auth', 'authTokenExpiration'], -1);
   if (AuthUtils.hasAuthTokenExpired(authTokenExpiration)) {
     authTokenExpiration = -1;
@@ -32,8 +30,9 @@ function mapStateToProps(state :Map<>) {
 function mapDispatchToProps(dispatch :Function) {
 
   const actions = {
-    authenticated: AuthActionFactory.authenticated,
-    authTokenExpired: AuthActionFactory.authTokenExpired
+    authAttempt: AuthActionFactory.authAttempt,
+    authSuccess: AuthActionFactory.authSuccess,
+    authExpired: AuthActionFactory.authExpired
   };
 
   return {
@@ -45,8 +44,9 @@ class AuthRoute extends React.Component {
 
   static propTypes = {
     actions: PropTypes.shape({
-      authenticated: PropTypes.func.isRequired,
-      authTokenExpired: PropTypes.func.isRequired
+      authAttempt: PropTypes.func.isRequired,
+      authExpired: PropTypes.func.isRequired,
+      authSuccess: PropTypes.func.isRequired
     }).isRequired,
     authTokenExpiration: PropTypes.number.isRequired,
     component: PropTypes.func.isRequired,
@@ -58,42 +58,28 @@ class AuthRoute extends React.Component {
 
   componentWillMount() {
 
-    // console.log('AuthyRoute : componentWillMount() - ', this.props.authTokenExpiration);
-
     if (!AuthUtils.hasAuthTokenExpired(this.props.authTokenExpiration)) {
-      this.props.actions.authenticated(AuthUtils.getAuthToken());
-      return;
+      this.props.actions.authSuccess(AuthUtils.getAuthToken());
     }
-
-    // TODO: race condition currently causes the lock to start showing even after being logged in, though it is hidden
-    // almost immediately in componentWillReceiveProps(). we need a way to guarantee we are showing the lock ONLY
-    // when the user is not logged in, and not while authentication is in progress.
-    Auth0.getAuth0LockInstance().show();
+    else {
+      this.props.actions.authAttempt();
+    }
   }
-
-  // componentDidMount() {
-  //
-  //   // console.log('AuthyRoute : componentDidMount() - ', this.props.authTokenExpiration);
-  //   // Auth0.getAuth0LockInstance().show();
-  // }
 
   componentWillUnmount() {
 
-    // console.log('AuthyRoute : componentWillUnmount() - ', this.props.authTokenExpiration);
-
-    // TODO: lock.show() will not actually show the lock if invoked immediately after lock.hide()
+    // TODO: minor edge case: lock.hide() only needs to be invoked if the lock is already showing
+    // TODO: extreme edge case: lock.show() will not actually show the lock if invoked immediately after lock.hide()
     // TODO: https://github.com/auth0/lock/issues/1089
     Auth0.getAuth0LockInstance().hide();
   }
 
   componentWillReceiveProps(nextProps :Object) {
 
-    // console.log('AuthyRoute : componentWillReceiveProps() - ', nextProps.authTokenExpiration);
-
     if (AuthUtils.hasAuthTokenExpired(nextProps.authTokenExpiration)) {
-      // if nextProps.authTokenExpiration === -1, we've already dispatched AUTH_TOKEN_EXPIRED
+      // if nextProps.authTokenExpiration === -1, we've already dispatched AUTH_EXPIRED
       if (nextProps.authTokenExpiration !== -1) {
-        this.props.actions.authTokenExpired();
+        this.props.actions.authExpired();
       }
       Auth0.getAuth0LockInstance().show();
     }
@@ -102,20 +88,7 @@ class AuthRoute extends React.Component {
     }
   }
 
-  // componentWillUpdate(nextProps, nextState) {
-  //
-  //   console.log('AuthyRoute : componentWillUpdate() - ', this.props.authTokenExpiration);
-  // }
-
-  // shouldComponentUpdate(nextProps, nextState) {
-  //
-  //   console.log('AuthyRoute : shouldComponentUpdate() - ', nextProps.authTokenExpiration);
-  //   return true;
-  // }
-
   render() {
-
-    // console.log('AuthyRoute : render() - ', this.props.authTokenExpiration);
 
     const {
       component: WrappedComponent,

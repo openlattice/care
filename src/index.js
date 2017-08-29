@@ -40,14 +40,16 @@ injectGlobal`
 `;
 /* eslint-enable */
 
-// !!! MUST !!! happen before initializing router history
-// TODO: figure out a way to guarantee auth flow, either using promises or sagas
-const auth0HashPath :string = Auth0.parseHashPath();
+/*
+ * // !!! MUST HAPPEN FIRST !!!
+ */
+Auth0.initialize();
+/*
+ * // !!! MUST HAPPEN FIRST !!!
+ */
 
 const routerHistory = initializeRouterHistory();
 const reduxStore = initializeReduxStore(routerHistory);
-
-Auth0.initializeAuth0Lock(reduxStore, auth0HashPath);
 
 ReactDOM.render(
   <Provider store={reduxStore}>

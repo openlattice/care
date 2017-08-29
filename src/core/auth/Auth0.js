@@ -5,74 +5,45 @@
 import Auth0Lock from 'auth0-lock';
 
 import * as RoutePaths from '../router/RoutePaths';
-import * as AuthActionFactory from './AuthActionFactory';
 import * as AuthUtils from './AuthUtils';
 
 // injected by Webpack.DefinePlugin
 declare var __AUTH0_CLIENT_ID__;
 declare var __AUTH0_DOMAIN__;
 
-let auth0Lock :Auth0Lock;
+let auth0HashPath :?string;
 
-export function initializeAuth0Lock(reduxStore :any, auth0HashPath :?string) {
-
-  /*
-   * https://auth0.com/docs/libraries/lock/v10
-   * https://auth0.com/docs/libraries/lock/v10/api
-   * https://auth0.com/docs/libraries/lock/v10/customization
-   */
-
-  auth0Lock = new Auth0Lock(__AUTH0_CLIENT_ID__, __AUTH0_DOMAIN__, {
-    auth: {
-      autoParseHash: false,
-      params: {
-        scope: 'openid email user_id'
-      },
-      responseType: 'token'
+/*
+ * https://auth0.com/docs/libraries/lock/v10
+ * https://auth0.com/docs/libraries/lock/v10/api
+ * https://auth0.com/docs/libraries/lock/v10/customization
+ */
+const auth0Lock :Auth0Lock = new Auth0Lock(__AUTH0_CLIENT_ID__, __AUTH0_DOMAIN__, {
+  auth: {
+    autoParseHash: false,
+    params: {
+      scope: 'openid email user_id'
     },
-    closable: false,
-    hashCleanup: false,
-    languageDictionary: {
-      title: 'Behavioral Health Report'
-    }
-  });
-
-  auth0Lock.on('authorization_error', (error) => {
-    reduxStore.dispatch(AuthActionFactory.authFailure(error));
-  });
-
-  auth0Lock.on('unrecoverable_error', (error) => {
-    reduxStore.dispatch(AuthActionFactory.authFailure(error));
-  });
-
-  auth0Lock.on('authenticated', (authInfo :Object) => {
-    if (!authInfo || !authInfo.accessToken || !authInfo.idToken) {
-      reduxStore.dispatch(AuthActionFactory.authFailure('Auth0Lock onAuthenticated - missing auth info'));
-    }
-    else if (AuthUtils.hasAuthTokenExpired(authInfo.idToken)) {
-      reduxStore.dispatch(AuthActionFactory.authFailure('Auth0Lock onAuthenticated - id token expired'));
-    }
-    else {
-      reduxStore.dispatch(AuthActionFactory.authenticated(authInfo.idToken));
-    }
-  });
-
-  if (auth0HashPath) {
-    auth0Lock.resumeAuth(auth0HashPath, (error, authInfo) => {
-      if (error || !authInfo || !authInfo.accessToken || !authInfo.idToken) {
-        auth0Lock.show({
-          flashMessage: {
-            type: 'error',
-            text: 'authentication failure'
-          }
-        });
-      }
-    });
+    responseType: 'token'
+  },
+  closable: false,
+  hashCleanup: false,
+  languageDictionary: {
+    title: 'Behavioral Health Report'
   }
+});
+
+export function getAuth0LockInstance() :Auth0Lock {
+
+  if (!auth0Lock) {
+    throw new Error('Auth0Lock is not initialized!');
+  }
+
+  return auth0Lock;
 }
 
 /*
- * Ideally, we should be using browser history and OIDC conformant authentication. Until then, we have to take extra
+ * ideally, we should be using browser history and OIDC conformant authentication. until then, we have to take extra
  * steps in the auth flow to handle the Auth0 redirect. Auth0 redirects back to "#access_token...", which will be
  * immediately replaced with "#/access_token..." when hash history is initializing:
  *
@@ -99,11 +70,50 @@ export function parseHashPath() {
   return '';
 }
 
-export function getAuth0LockInstance() :Auth0Lock {
+export function initialize() {
 
-  if (!auth0Lock) {
-    throw new Error('Auth0Lock is not initialized!');
+  auth0HashPath = parseHashPath();
+}
+
+export function authenticate() :Promise<> {
+
+  if (!auth0HashPath) {
+    return Promise.reject('Auth0Lock authenticate() - cannot authenticate');
   }
 
-  return auth0Lock;
+  return new Promise((resolve :Function, reject :Function) => {
+
+    auth0Lock.on('authorization_error', (error) => {
+      reject(error);
+    });
+
+    auth0Lock.on('unrecoverable_error', (error) => {
+      reject(error);
+    });
+
+    auth0Lock.on('authenticated', (authInfo :Object) => {
+      if (!authInfo || !authInfo.accessToken || !authInfo.idToken) {
+        reject('Auth0Lock onAuthenticated() - missing auth info');
+      }
+      else if (AuthUtils.hasAuthTokenExpired(authInfo.idToken)) {
+        reject('Auth0Lock onAuthenticated() - id token expired');
+      }
+      else {
+        auth0HashPath = null;
+        resolve(authInfo.idToken);
+      }
+    });
+
+    auth0Lock.on('hash_parsed', (authInfo :Object) => {
+      if (!authInfo || !authInfo.accessToken || !authInfo.idToken) {
+        reject('Auth0Lock onHashParsed() - missing auth info');
+      }
+      else if (AuthUtils.hasAuthTokenExpired(authInfo.idToken)) {
+        reject('Auth0Lock onHashParsed() - id token expired');
+      }
+    });
+
+    // TODO: consider implementing the callback function any special error handling
+    auth0Lock.resumeAuth(auth0HashPath, () => {});
+  });
 }

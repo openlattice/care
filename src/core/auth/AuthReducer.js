@@ -28,10 +28,10 @@ function authReducer(state :Map<> = INITIAL_STATE, action :Object) {
   switch (action.type) {
 
     case AuthActionTypes.AUTH_SUCCESS:
-      return state.set('authTokenExpiration', AuthUtils.getAuthTokenExpiration());
+      return state.set('authTokenExpiration', AuthUtils.getAuthTokenExpiration(action.authToken));
 
+    case AuthActionTypes.AUTH_EXPIRED:
     case AuthActionTypes.AUTH_FAILURE:
-    case AuthActionTypes.AUTH_TOKEN_EXPIRED:
     case AuthActionTypes.LOGOUT:
       return state.set('authTokenExpiration', -1);
 
