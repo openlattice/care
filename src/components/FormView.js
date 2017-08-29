@@ -6,19 +6,38 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled, { injectGlobal } from 'styled-components';
 import { normalize } from 'polished';
+import { ProgressBar } from 'react-bootstrap';
 
 import { Page, PageHeader, Title, Description, FormWrapper, SubmitButton, SubmitButtonWrapper } from '../shared/Layout';
 import LogoutButton from '../containers/LogoutButton';
 import SectionWrapper from '../containers/SectionWrapper';
 
+const StyledProgressBar = styled(ProgressBar)`
+  position: absolute;
+  top: 120px;
+  left: 50%;
+  width: 900px;
+  margin-left: -450px;
+`;
+
 
 function FormView({ handleTextInput, handleDateInput, handleTimeInput, handleSingleSelection, handleCheckboxChange, handleSubmit, page, maxPage, handlePageChange, input }) {
-	return (
+	const getProgress = () => {
+    const num = Math.ceil((100 / maxPage) * page);
+    const percentage = num.toString() + '%';
+    return {
+      num,
+      percentage
+    }
+  }
+
+  return (
     <Page>
       <PageHeader>
     		<Title>Behavioral Health Report</Title>
         <LogoutButton />
       </PageHeader>
+      <StyledProgressBar now={getProgress().num} label={getProgress().percentage} />
       <FormWrapper>
         <form onSubmit={handleSubmit}>
           <SectionWrapper

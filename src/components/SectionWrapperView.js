@@ -125,7 +125,6 @@ const SectionWrapperView = ({ handleTextInput, handleDateInput, handleTimeInput,
   return (
     <div>
       { renderHeader(page) }
-      <StyledProgressBar now={getProgress().num} label={getProgress().percentage} />
       { renderSection(page) }
       <NavBtnWrapper>
         { page > 1 && page < maxPage ? <StyledButton onClick={() => handlePageChange('prev')}>Prev</StyledButton> : null }

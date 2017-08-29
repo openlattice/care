@@ -4,10 +4,11 @@ import { FormGroup, ControlLabel, Checkbox, Radio, Button, Row } from 'react-boo
 
 
   // background: #393F46;
+  // #F4F4F4
   // FIX height to be %
 export const Page = styled.div`
   position: relative;
-  background: #F4F4F4;
+  background: #393F46;
   height: 2000px;
   width: 100%;
 `;
