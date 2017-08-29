@@ -9,7 +9,6 @@ import ReactDOM from 'react-dom';
 
 import { normalize } from 'polished';
 import { Provider } from 'react-redux';
-import { Switch } from 'react-router-dom';
 import { ConnectedRouter } from 'react-router-redux';
 import { injectGlobal } from 'styled-components';
 
@@ -19,7 +18,7 @@ import initializeRouterHistory from './core/router/RouterHistory';
 import * as Auth0 from './core/auth/Auth0';
 import * as RoutePaths from './core/router/RoutePaths';
 
-import Form from './containers/Form';
+import AppContainer from './containers/app/AppContainer';
 
 /* eslint-disable */
 injectGlobal`${normalize()}`;
@@ -54,7 +53,7 @@ const reduxStore = initializeReduxStore(routerHistory);
 ReactDOM.render(
   <Provider store={reduxStore}>
     <ConnectedRouter history={routerHistory}>
-      <AuthRoute path={RoutePaths.ROOT} component={Form} />
+      <AuthRoute path={RoutePaths.ROOT} component={AppContainer} />
     </ConnectedRouter>
   </Provider>,
   document.getElementById('app')

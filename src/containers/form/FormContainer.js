@@ -2,13 +2,12 @@ import React from 'react';
 
 import Promise from 'bluebird';
 import { EntityDataModelApi, DataApi } from 'lattice';
-import { Redirect, Route, Switch } from 'react-router-dom';
 
-import FormView from '../components/FormView';
-import ConfirmationModal from '../components/ConfirmationModalView';
-import LogoutButton from './LogoutButton';
+import FormView from '../../components/FormView';
+import ConfirmationModal from '../../components/ConfirmationModalView';
+import LogoutButton from '../app/LogoutButton';
 
-import * as RoutePaths from '../core/router/RoutePaths';
+import * as RoutePaths from '../../core/router/RoutePaths';
 
 class Form extends React.Component {
   constructor(props) {
@@ -242,7 +241,7 @@ class Form extends React.Component {
     window.location.reload();
   }
 
-  renderForm = () => {
+  render() {
 
     return (
       <div>
@@ -264,15 +263,6 @@ class Form extends React.Component {
             : null
         }
       </div>
-    );
-  }
-
-  render() {
-    return (
-      <Switch>
-        <Route exact strict path={RoutePaths.ROOT} render={this.renderForm} />
-        <Redirect to={RoutePaths.ROOT} />
-      </Switch>
     );
   }
 }
