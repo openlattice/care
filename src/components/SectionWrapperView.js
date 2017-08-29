@@ -112,7 +112,7 @@ const SectionWrapperView = ({ handleTextInput, handleDateInput, handleTimeInput,
   }
 
   const getProgress = () => {
-    const num = Math.ceil((100 / (maxPage + 1)) * page);
+    const num = Math.ceil((100 / maxPage) * page);
     const percentage = num.toString() + '%';
     return {
       num,
