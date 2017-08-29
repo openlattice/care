@@ -5,7 +5,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled, { injectGlobal } from 'styled-components';
-import { Button } from 'react-bootstrap';
+import { Button, ProgressBar } from 'react-bootstrap';
 
 import ReportInfoView from '../components/ReportInfoView';
 import ConsumerInfoView from '../components/ConsumerInfoView';
@@ -14,7 +14,11 @@ import DispositionView from '../components/DispositionView';
 import OfficerInfoView from '../components/OfficerInfoView';
 
 
-const SectionWrapperView = ({ handleTextInput, handleDateInput, handleTimeInput, handleSingleSelection, handleCheckboxChange, input, page, handlePageChange, ...props }) => {
+const StyledProgressBar = styled(ProgressBar)`
+  margin: 60px 0;
+`;
+
+const SectionWrapperView = ({ handleTextInput, handleDateInput, handleTimeInput, handleSingleSelection, handleCheckboxChange, input, page, maxPage, handlePageChange, ...props }) => {
   const renderSection = (page) => {
     console.log('page:', page);
     switch(page) {
@@ -78,9 +82,18 @@ const SectionWrapperView = ({ handleTextInput, handleDateInput, handleTimeInput,
     );
   }
 
+  const getProgress = () => {
+    const num = Math.ceil((100 / maxPage) * page);
+    const percentage = num.toString() + '%';
+    return {
+      num,
+      percentage
+    }
+  }
+
   return (
     <div>
-      <h2>Progress Bar</h2>
+      <StyledProgressBar now={getProgress().num} label={getProgress().percentage} />
       { renderSection(page) }
       { page > 1 ? <Button onClick={() => handlePageChange('prev')}>Prev</Button> : null }
       { <Button onClick={() => handlePageChange('next')}>Next</Button> }

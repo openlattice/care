@@ -113,7 +113,8 @@ class Form extends React.Component {
       appearsInPropertyTypes: [],
       submitSuccess: null,
       submitFailure: null,
-      page: 1
+      page: 1,
+      maxPage: 5
     };
   }
 
@@ -450,6 +451,7 @@ class Form extends React.Component {
             handleSubmit={this.handleSubmit}
             input={this.state}
             page={this.state.page}
+            maxPage={this.state.maxPage}
             handlePageChange={this.handlePageChange} />
         {
           this.state.submitSuccess ?
