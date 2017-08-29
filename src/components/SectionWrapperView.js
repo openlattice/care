@@ -26,6 +26,18 @@ const Header = styled.div`
   font-weight: bold;
 `;
 
+const NavBtnWrapper = styled.div`
+  position: absolute;
+  width: 300px;
+  left: 50%;
+  margin-left: -150px;
+  text-align: center;
+`;
+
+const StyledButton = styled(Button)`
+  margin: 0 10px;
+`;
+
 const SectionWrapperView = ({ handleTextInput, handleDateInput, handleTimeInput, handleSingleSelection, handleCheckboxChange, input, page, maxPage, handlePageChange, ...props }) => {
   const renderHeader = (page) => {
     switch(page) {
@@ -113,8 +125,10 @@ const SectionWrapperView = ({ handleTextInput, handleDateInput, handleTimeInput,
       { renderHeader(page) }
       <StyledProgressBar now={getProgress().num} label={getProgress().percentage} />
       { renderSection(page) }
-      { page > 1 && page < maxPage ? <Button onClick={() => handlePageChange('prev')}>Prev</Button> : null }
-      { page === maxPage ? <SubmitButton>Submit</SubmitButton> : <Button onClick={() => handlePageChange('next')}>Next</Button> }
+      <NavBtnWrapper>
+        { page > 1 && page < maxPage ? <StyledButton onClick={() => handlePageChange('prev')}>Prev</StyledButton> : null }
+        { page === maxPage ? <SubmitButton>Submit</SubmitButton> : <StyledButton onClick={() => handlePageChange('next')}>Next</StyledButton> }
+      </NavBtnWrapper>
     </div>
   );
 }
