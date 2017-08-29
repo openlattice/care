@@ -9,7 +9,7 @@ import { Button, ProgressBar } from 'react-bootstrap';
 
 import ReportInfoView from '../components/ReportInfoView';
 import ConsumerInfoView from '../components/ConsumerInfoView';
-import ComplaintInfoView from '../components/ComplaintInfoView';
+import ComplainantInfoView from '../components/ComplainantInfoView';
 import DispositionView from '../components/DispositionView';
 import OfficerInfoView from '../components/OfficerInfoView';
 import { SubmitButton } from '../shared/Layout';
@@ -69,7 +69,7 @@ const SectionWrapperView = ({ handleTextInput, handleDateInput, handleTimeInput,
         );
       case 3:
         return (
-          <ComplaintInfoView
+          <ComplainantInfoView
               handleTextInput={handleTextInput}
               input={input.complainantInfo}
               section='complainantInfo' />

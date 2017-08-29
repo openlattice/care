@@ -9,12 +9,12 @@ import { FormControl, Col } from 'react-bootstrap';
 import SectionView from './SectionView';
 import { PaddedRow, TitleLabel } from '../shared/Layout';
 
-const ComplaintInfoView = ({ section, handleTextInput, input }) => {
+const ComplainantInfoView = ({ section, handleTextInput, input }) => {
   return(
     <div>
       <PaddedRow>
         <Col lg={6}>
-          <TitleLabel>28. Complaint Name (Last, First, MI)</TitleLabel>
+          <TitleLabel>28. Complainant Name (Last, First, MI)</TitleLabel>
           <FormControl data-section={section} name='complainantName' value={input.complainantName} onChange={handleTextInput} />
         </Col>
         <Col lg={6}>
@@ -36,10 +36,10 @@ const ComplaintInfoView = ({ section, handleTextInput, input }) => {
   );
 }
 
-ComplaintInfoView.propTypes = {
+ComplainantInfoView.propTypes = {
   handleTextInput: PropTypes.func.isRequired,
   input: PropTypes.object.isRequired,
   section: PropTypes.string.isRequired
 };
 
-export default ComplaintInfoView;
+export default ComplainantInfoView;

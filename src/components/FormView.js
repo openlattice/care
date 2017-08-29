@@ -10,11 +10,7 @@ import { normalize } from 'polished';
 import { Page, PageHeader, Title, Description, FormWrapper, SubmitButton, SubmitButtonWrapper } from '../shared/Layout';
 import LogoutButton from '../containers/LogoutButton';
 import SectionWrapperView from '../components/SectionWrapperView';
-import ReportInfoView from '../components/ReportInfoView';
-import ConsumerInfoView from '../components/ConsumerInfoView';
-import ComplaintInfoView from '../components/ComplaintInfoView';
-import DispositionView from '../components/DispositionView';
-import OfficerInfoView from '../components/OfficerInfoView';
+
 
 function FormView({ handleTextInput, handleDateInput, handleTimeInput, handleSingleSelection, handleCheckboxChange, handleSubmit, page, maxPage, handlePageChange, input }) {
 	return (
