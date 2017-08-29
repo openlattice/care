@@ -24,6 +24,7 @@ export const Title = styled.h1`
   color: #37454A;
   font-size: 24px;
   margin-left: 60px;
+  font-weight: bold;
 `;
 
 export const FormWrapper = styled.div`
@@ -34,7 +35,7 @@ export const FormWrapper = styled.div`
   left: 50%;
   width: 900px;
   margin-left: -450px;
-  background: white;
+  background: #F4F4F4;
 `;
 
 export const PaddedRow = styled(Row)`
