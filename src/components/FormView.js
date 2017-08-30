@@ -8,7 +8,7 @@ import styled, { injectGlobal } from 'styled-components';
 import { normalize } from 'polished';
 import { ProgressBar } from 'react-bootstrap';
 
-import { Page, PageHeader, Title, Description, FormWrapper, SubmitButton, SubmitButtonWrapper } from '../shared/Layout';
+import { Page, InnerPageWrapper, PageHeader, Title, Description, FormWrapper, SubmitButton, SubmitButtonWrapper } from '../shared/Layout';
 import LogoutButton from '../containers/LogoutButton';
 import SectionWrapper from '../containers/SectionWrapper';
 

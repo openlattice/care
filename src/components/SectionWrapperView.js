@@ -17,6 +17,7 @@ import { SubmitButton } from '../shared/Layout';
 
 const StyledProgressBar = styled(ProgressBar)`
   margin: 60px 0;
+  position: relative;
 `;
 
 const Header = styled.div`

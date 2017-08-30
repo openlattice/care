@@ -3,20 +3,13 @@ import styled from 'styled-components';
 import { FormGroup, ControlLabel, Checkbox, Radio, Button, Row } from 'react-bootstrap';
 
 
-  // background: #393F46;
-  // #F4F4F4
-  // FIX height to be %
 export const Page = styled.div`
-  position: relative;
   background: #393F46;
-  width: 100%;
-  height: 2000px;
   overflow: auto;
 `;
 
-// add wrapper to make relative placement of title?
 export const PageHeader = styled.div`
-  position: absolute;
+  position: relative;
   width: 100%;
   height: 50px;
   background: white;
@@ -34,13 +27,14 @@ export const Title = styled.h1`
 `;
 
 export const FormWrapper = styled.div`
+  position: relative;
   display: block;
-  position: absolute;
   padding: 60px;
-  top: 200px;
+  top: 160px;
   left: 50%;
   width: 900px;
   margin-left: -450px;
+  margin-bottom: 200px;
   background: #F4F4F4;
 `;
 
