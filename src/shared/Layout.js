@@ -27,7 +27,7 @@ export const PageHeader = styled.div`
 
 export const Title = styled.h1`
   color: #37454A;
-  font-size: 24px;
+  font-size: 20px;
   margin: 0 0 0 60px;
   font-weight: bold;
 

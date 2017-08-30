@@ -20,10 +20,12 @@ const StyledProgressBar = styled(ProgressBar)`
 `;
 
 const Header = styled.div`
-  font-size: 24px;
-  margin-bottom: 20px;
+  font-size: 32px;
+  margin-bottom: 40px;
   color: #37454A;
   font-weight: bold;
+  width: 100%;
+  text-align: center;
 `;
 
 const NavBtnWrapper = styled.div`
