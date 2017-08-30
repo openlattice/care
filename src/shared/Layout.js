@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { FormGroup, ControlLabel, Checkbox, Radio, Button, Row } from 'react-bootstrap';
+import { ControlLabel, Checkbox, Radio, Button, Row } from 'react-bootstrap';
 
 
 export const Page = styled.div`

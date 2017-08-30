@@ -118,7 +118,7 @@ class Form extends React.Component {
       appearsInPropertyTypes: [],
       submitSuccess: null,
       submitFailure: null,
-      page: 1,
+      page: 2,
       maxPage: 6
     };
   }

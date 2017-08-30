@@ -3,10 +3,15 @@
  */
 
 import React from 'react';
+import { Button } from 'react-bootstrap';
 
-const ConsumerSearchView = ({ onSearchSubmit }) => {
+import SearchBar from './SearchBar';
+
+const ConsumerSearchView = ({ handleInput, query, onSearchSubmit }) => {
   return (
-    <div>Consumer Search View</div>
+    <div>
+      <SearchBar handleInput={handleInput} query={query} onSearchSubmit={onSearchSubmit} />
+    </div>
   );
 }
 
