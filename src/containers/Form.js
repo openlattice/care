@@ -435,7 +435,20 @@ class Form extends React.Component {
     e.preventDefault();
     this.getBulkData().then((bulkData) => {
       console.log('bulk data:', bulkData);
-      DataApi.createEntityAndAssociationData(bulkData).then(() => {console.log('success!')});
+      DataApi.createEntityAndAssociationData(bulkData).then(() => {
+        console.log('success!');
+        this.setState({ 
+          submitSuccess: true,
+          submitFailure: false
+        });
+      })
+      .catch((err) => {
+        console.log('err: ', err);
+        this.setState({
+          submitSuccess: false,
+          submitFailure: true
+        });
+      })
     });
   }
 
