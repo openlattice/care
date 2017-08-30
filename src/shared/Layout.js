@@ -9,22 +9,28 @@ import { FormGroup, ControlLabel, Checkbox, Radio, Button, Row } from 'react-boo
 export const Page = styled.div`
   position: relative;
   background: #393F46;
-  height: 2000px;
   width: 100%;
+  height: 2000px;
+  overflow: auto;
 `;
 
+// add wrapper to make relative placement of title?
 export const PageHeader = styled.div`
-  position: relative;
+  position: absolute;
+  width: 100%;
   height: 50px;
   background: white;
   border-bottom: 1px solid darkgray;
+  display: flex;
+  align-items: center;
 `;
 
 export const Title = styled.h1`
   color: #37454A;
   font-size: 24px;
-  margin-left: 60px;
+  margin: 0 0 0 60px;
   font-weight: bold;
+
 `;
 
 export const FormWrapper = styled.div`
