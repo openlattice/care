@@ -6,6 +6,7 @@ import { ControlLabel, Checkbox, Radio, Button, Row } from 'react-bootstrap';
 export const Page = styled.div`
   background: #393F46;
   overflow: auto;
+  min-height: 56.5vw;
 `;
 
 export const PageHeader = styled.div`
