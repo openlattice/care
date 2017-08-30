@@ -16,18 +16,18 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
     <div>
       <PaddedRow>
         <Col lg={6}>
-          <TitleLabel>12. Consumer Last Name</TitleLabel>
+          <TitleLabel>12. Last Name</TitleLabel>
           <FormControl data-section={section} name='lastName' value={input.lastName} onChange={handleTextInput} />
         </Col>
         <Col lg={6}>
-          <TitleLabel>Consumer First Name</TitleLabel>
+          <TitleLabel>First Name</TitleLabel>
           <FormControl data-section={section} name='firstName' value={input.firstName} onChange={handleTextInput} />
         </Col>
       </PaddedRow>
 
       <PaddedRow>
         <Col lg={6}>
-          <TitleLabel>Consumer Middle Name</TitleLabel>
+          <TitleLabel>Middle Name</TitleLabel>
           <FormControl data-section={section} name='middleName' value={input.middleName} onChange={handleTextInput} />
         </Col>
         <Col lg={6}>
