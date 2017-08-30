@@ -13,8 +13,8 @@ import LogoutButton from '../containers/LogoutButton';
 import SectionWrapper from '../containers/SectionWrapper';
 
 const StyledProgressBar = styled(ProgressBar)`
-  position: absolute;
-  top: 120px;
+  position: relative;
+  top: 90px;
   left: 50%;
   width: 900px;
   margin-left: -450px;

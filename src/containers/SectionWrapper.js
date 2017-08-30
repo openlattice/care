@@ -11,6 +11,7 @@ class SectionWrapper extends React.Component {
     super(props);
   }
 
+// Created this wrapper solely to scroll to top after each section change. Is there a better way?
   componentWillReceiveProps(nextProps) {
     if (this.props.page !== nextProps.page) {
       window.scrollTo(0,0);
