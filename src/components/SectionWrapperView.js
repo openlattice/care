@@ -44,7 +44,20 @@ const StyledButton = styled(Button)`
 
 
 // When it receives props and the page has changed, window.scrollTo(0,0)
-const SectionWrapperView = ({ handleTextInput, handleDateInput, handleTimeInput, handleSingleSelection, handleCheckboxChange, input, page, maxPage, handlePageChange, ...props }) => {
+const SectionWrapperView = ({
+  handleTextInput,
+  handleDateInput,
+  handleTimeInput,
+  handleSingleSelection,
+  handleCheckboxChange,
+  handlePersonSelection,
+  personEntitySetId,
+  input,
+  page,
+  maxPage,
+  handlePageChange,
+  ...props
+}) => {
   const renderHeader = (page) => {
     switch(page) {
       case 1:
@@ -79,7 +92,9 @@ const SectionWrapperView = ({ handleTextInput, handleDateInput, handleTimeInput,
         );
       case 2:
         return (
-          <ConsumerSearch />
+          <ConsumerSearch
+              handlePersonSelection={handlePersonSelection}
+              personEntitySetId={personEntitySetId} />
         );
       case 3:
         return (

@@ -119,7 +119,8 @@ class Form extends React.Component {
       submitSuccess: null,
       submitFailure: null,
       page: 2,
-      maxPage: 6
+      maxPage: 6,
+      consumer: {}
     };
   }
 
@@ -282,37 +283,15 @@ class Form extends React.Component {
     }
   }
 
-  // getEntities = () => {
-  //   const formInputs = Object.assign(
-  //     {},
-  //     this.state.reportInfo,
-  //     this.state.consumerInfo,
-  //     this.state.complainantInfo,
-  //     this.state.dispositionInfo,
-  //     this.state.officerInfo
-  //   );
-
-  //   const formattedValues = {};
-  //   this.state.propertyTypes.forEach((propertyType) => {
-  //     const value = formInputs[propertyType.type.name];
-  //     let formattedValue;
-  //     formattedValue = Array.isArray(value) ? value : [value];
-  //     formattedValue = (formattedValue.length > 0 && (formattedValue[0] === "" || formattedValue[0] === null)) ? [] : formattedValue;
-  //     formattedValues[propertyType.id] = formattedValue;
-  //   });
-
-  //   const primaryKeys = this.state.entityType.key;
-  //   const entityKey = primaryKeys.map((keyId) => {
-  //     const utf8Val = (formattedValues[keyId].length > 0) ? encodeURI(formattedValues[keyId][0]) : '';
-  //     return btoa(utf8Val);
-  //   }).join(',');
-
-  //   const entities = {
-  //     [entityKey]: formattedValues
-  //   };
-
-  //   return entities;
-  // }
+  handlePersonSelection = (e) => {
+    console.log('person e:', e);
+    // this.setState({ 
+    //   consumer: e.target.value
+    // })
+    // .then(() => {
+    //   this.handlePageChange('next');
+    // });
+  }
 
   getAppearsInEntity = (syncId) => {
     const entityId = btoa(this.state.consumerInfo.identification);
@@ -469,7 +448,9 @@ class Form extends React.Component {
             input={this.state}
             page={this.state.page}
             maxPage={this.state.maxPage}
-            handlePageChange={this.handlePageChange} />
+            handlePageChange={this.handlePageChange}
+            handlePersonSelection={this.handlePersonSelection}
+            personEntitySetId={this.state.personEntitySetId} />
         {
           this.state.submitSuccess ?
           <ConfirmationModal

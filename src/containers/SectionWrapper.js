@@ -28,7 +28,10 @@ class SectionWrapper extends React.Component {
           input={this.props.input}
           page={this.props.page}
           maxPage={this.props.maxPage}
-          handlePageChange={this.props.handlePageChange} />    );
+          handlePageChange={this.props.handlePageChange}
+          handlePersonSelection={this.props.handlePersonSelection}
+          personEntitySetId={this.props.personEntitySetId} />
+    );
   }
 }
 

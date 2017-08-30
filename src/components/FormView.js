@@ -21,7 +21,20 @@ const StyledProgressBar = styled(ProgressBar)`
 `;
 
 
-function FormView({ handleTextInput, handleDateInput, handleTimeInput, handleSingleSelection, handleCheckboxChange, handleSubmit, page, maxPage, handlePageChange, input }) {
+function FormView({ 
+  handleTextInput,
+  handleDateInput,
+  handleTimeInput,
+  handleSingleSelection,
+  handleCheckboxChange,
+  handlePersonSelection,
+  personEntitySetId,
+  handleSubmit,
+  page,
+  maxPage,
+  handlePageChange,
+  input
+}) {
 	const getProgress = () => {
     const num = Math.ceil((100 / maxPage) * page);
     const percentage = num.toString() + '%';
@@ -49,7 +62,9 @@ function FormView({ handleTextInput, handleDateInput, handleTimeInput, handleSin
               input={input}
               page={page}
               maxPage={maxPage}
-              handlePageChange={handlePageChange} />
+              handlePageChange={handlePageChange}
+              handlePersonSelection={handlePersonSelection}
+              personEntitySetId={personEntitySetId} />
         </form>
       </FormWrapper>
     </Page>
