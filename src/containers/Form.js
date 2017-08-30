@@ -118,7 +118,7 @@ class Form extends React.Component {
       appearsInPropertyTypes: [],
       submitSuccess: null,
       submitFailure: null,
-      page: 1,
+      page: 2,
       maxPage: 6,
       consumer: {}
     };
@@ -283,14 +283,13 @@ class Form extends React.Component {
     }
   }
 
-  handlePersonSelection = (e) => {
-    console.log('person e:', e);
-    // this.setState({ 
-    //   consumer: e.target.value
-    // })
-    // .then(() => {
-    //   this.handlePageChange('next');
-    // });
+  handlePersonSelection = (person) => {
+    console.log('selected person:', person);
+    this.setState({ 
+      consumer: person
+    }, () => {
+      this.handlePageChange('next');
+    });
   }
 
   getAppearsInEntity = (syncId) => {

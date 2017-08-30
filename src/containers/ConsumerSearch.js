@@ -65,7 +65,7 @@ class ConsumerSearch extends React.Component {
     return (
       <div>
         <SearchBar handleInput={this.handleInput} query={this.state.query} onSearchSubmit={this.onSearchSubmit} />
-        <SearchResults results={this.state.results} onPersonSelection={this.props.handlePersonSelection} />
+        <SearchResults results={this.state.results} handlePersonSelection={this.props.handlePersonSelection} />
       </div>
     );
   }

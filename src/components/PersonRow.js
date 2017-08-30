@@ -38,7 +38,7 @@ const UserProfileDetailItem = styled.div`
   font-size: 15px;
 `;
 
-const PersonRow = ({ person }) => {
+const PersonRow = ({ person, handlePersonSelection }) => {
   // const formatValue = (rawValue) => {
   //   if (rawValue instanceof Array) {
   //     let formattedValue = '';
@@ -75,7 +75,7 @@ const PersonRow = ({ person }) => {
   // }
 
   return (
-    <PersonWrapper key={person.id}>
+    <PersonWrapper key={person.id} onClick={() => handlePersonSelection(person)}>
       <FakeAvatar />
       <UserProfileDetails>
         <UserProfileDetailItem><Label>First name:</Label>{ person['nc.PersonGivenName'][0] }</UserProfileDetailItem>
