@@ -10,21 +10,8 @@ import FormView from '../components/FormView';
 import ConfirmationModal from '../components/ConfirmationModalView';
 import LogoutButton from './LogoutButton';
 import {Page} from '../shared/Layout';
+import { ENTITY_SET_NAMES, PERSON, STRING_ID_FQN } from '../shared/Consts';
 
-const FORM_ENTITY_SET_NAME = 'baltimoreHealthReportForm2';
-const PEOPLE_ENTITY_SET_NAME = 'baltimoreHealthReportPeople';
-const APPEARS_IN_ENTITY_SET_NAME = 'baltimoreHealthReportAppearsIn';
-
-
-const ID_FQN = 'nc.SubjectIdentification';
-const FIRST_NAME_FQN = 'nc.PersonGivenName';
-const LAST_NAME_FQN = 'nc.PersonSurName';
-const MIDDLE_NAME_FQN = 'nc.PersonMiddleName';
-const SEX_FQN = 'nc.PersonSex';
-const RACE_FQN = 'nc.PersonRace';
-const DOB_FQN = 'nc.PersonBirthDate';
-
-const STRING_ID_FQN = 'general.stringid';
 
 class Form extends React.Component {
   constructor(props) {
@@ -120,12 +107,12 @@ class Form extends React.Component {
       submitFailure: null,
       page: 2,
       maxPage: 6,
-      consumer: {}
+      consumerIsSelected: false
     };
   }
 
   componentDidMount() {
-    EntityDataModelApi.getEntitySetId(FORM_ENTITY_SET_NAME)
+    EntityDataModelApi.getEntitySetId(ENTITY_SET_NAMES.FORM)
       .then((id) => {
         this.setState({ entitySetId: id });
         EntityDataModelApi.getEntitySet(id)
@@ -160,7 +147,7 @@ class Form extends React.Component {
   }
 
   getPersonEntitySet = () => {
-    EntityDataModelApi.getEntitySetId(PEOPLE_ENTITY_SET_NAME)
+    EntityDataModelApi.getEntitySetId(ENTITY_SET_NAMES.PEOPLE)
       .then((personEntitySetId) => {
         this.setState({ personEntitySetId });
         EntityDataModelApi.getEntitySet(personEntitySetId)
@@ -182,7 +169,7 @@ class Form extends React.Component {
   }
 
   getAppearsInEntitySet = () => {
-    EntityDataModelApi.getEntitySetId(APPEARS_IN_ENTITY_SET_NAME)
+    EntityDataModelApi.getEntitySetId(ENTITY_SET_NAMES.APPEARS_IN)
       .then((appearsInEntitySetId) => {
         this.setState({ appearsInEntitySetId });
         EntityDataModelApi.getEntitySet(appearsInEntitySetId)
@@ -285,6 +272,8 @@ class Form extends React.Component {
 
   handlePersonSelection = (person) => {
     console.log('selected person:', person);
+    let consumerState = this.state.consumerInfo;
+
     this.setState({ 
       consumer: person
     }, () => {
@@ -328,13 +317,13 @@ class Form extends React.Component {
     });
 
     const details = {};
-    details[props[ID_FQN]] = [identification];
-    details[props[LAST_NAME_FQN]] = (lastName && lastName.length) ? [lastName] : [];
-    details[props[FIRST_NAME_FQN]] = (firstName && firstName.length) ? [firstName] : [];
-    details[props[MIDDLE_NAME_FQN]] = (middleName && middleName.length) ? [middleName] : [];
-    details[props[DOB_FQN]] = (dob && dob.length) ? [dob] : [];
-    details[props[SEX_FQN]] = (gender && gender.length) ? [gender] : [];
-    details[props[RACE_FQN]] = (race && race.length) ? [race] : [];
+    details[props[PERSON.ID_FQN]] = [identification];
+    details[props[PERSON.LAST_NAME_FQN]] = (lastName && lastName.length) ? [lastName] : [];
+    details[props[PERSON.FIRST_NAME_FQN]] = (firstName && firstName.length) ? [firstName] : [];
+    details[props[PERSON.MIDDLE_NAME_FQN]] = (middleName && middleName.length) ? [middleName] : [];
+    details[props[PERSON.DOB_FQN]] = (dob && dob.length) ? [dob] : [];
+    details[props[PERSON.SEX_FQN]] = (gender && gender.length) ? [gender] : [];
+    details[props[PERSON.RACE_FQN]] = (race && race.length) ? [race] : [];
 
     return { key, details };
   }
