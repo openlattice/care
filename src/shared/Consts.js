@@ -25,3 +25,13 @@ export const CONSUMER_STATE = {
 }
 
 export const STRING_ID_FQN = 'general.stringid';
+
+export const RACE = {
+  americanIndian: 'American Indian or Alaska Native',
+  asian: 'Asian',
+  black: 'Black or African American',
+  hispanic: 'Hispanic or Latino',
+  nativeHawaiian: 'Native Hawaiian or Other Pacific Islander',
+  white: 'White',
+  other: 'Other'
+}

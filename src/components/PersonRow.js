@@ -4,6 +4,9 @@
 
 import React from 'react';
 import styled from 'styled-components';
+import { Row, Col } from 'react-bootstrap';
+
+import { PERSON, RACE } from '../shared/Consts';
 
 const PersonWrapper = styled.div`
   display: flex;
@@ -36,6 +39,13 @@ const UserProfileDetails = styled.div`
 const UserProfileDetailItem = styled.div`
   margin: 3px 0;
   font-size: 15px;
+`;
+
+const UserDetailsWrapper = styled.div`
+  display: flex;
+`;
+
+const StyledRow = styled(Row)`
 `;
 
 const PersonRow = ({ person, handlePersonSelection }) => {
@@ -74,13 +84,27 @@ const PersonRow = ({ person, handlePersonSelection }) => {
   //     </div>);
   // }
 
+  const getRace = () => {
+    return RACE[person[PERSON.RACE_FQN][0]];
+  }
+
   return (
     <PersonWrapper key={person.id} onClick={() => handlePersonSelection(person)}>
       <FakeAvatar />
       <UserProfileDetails>
-        <UserProfileDetailItem><Label>First name:</Label>{ person['nc.PersonGivenName'][0] }</UserProfileDetailItem>
-        <UserProfileDetailItem><Label>Last name:</Label>{ person['nc.PersonSurName'][0] }</UserProfileDetailItem>
-        <UserProfileDetailItem><Label>Date of Birth:</Label>{ person['nc.PersonBirthDate'][0] }</UserProfileDetailItem>
+        <UserProfileDetailItem>
+          <Label>
+            { `${person[PERSON.LAST_NAME_FQN][0]}, ${person[PERSON.FIRST_NAME_FQN][0]}, ${person[PERSON.MIDDLE_NAME_FQN][0]}` }
+          </Label>
+        </UserProfileDetailItem>
+        <StyledRow>
+          <Col lg={6}><Label>ID:</Label>{ person[PERSON.ID_FQN][0] }</Col>
+          <Col lg={6}><Label>DOB:</Label>{ person[PERSON.DOB_FQN][0] }</Col>
+        </StyledRow>
+        <StyledRow>
+          <Col lg={6}><Label>Gender:</Label>{ person[PERSON.SEX_FQN][0] }</Col>
+          <Col lg={6}><Label>Race:</Label>{ getRace() }</Col>
+        </StyledRow>
       </UserProfileDetails>
     </PersonWrapper>
   );
