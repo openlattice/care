@@ -10,7 +10,7 @@ import FormView from '../components/FormView';
 import ConfirmationModal from '../components/ConfirmationModalView';
 import LogoutButton from './LogoutButton';
 import {Page} from '../shared/Layout';
-import { ENTITY_SET_NAMES, PERSON, STRING_ID_FQN } from '../shared/Consts';
+import { ENTITY_SET_NAMES, PERSON, CONSUMER_STATE, STRING_ID_FQN } from '../shared/Consts';
 
 
 class Form extends React.Component {
@@ -271,11 +271,16 @@ class Form extends React.Component {
   }
 
   handlePersonSelection = (person) => {
-    console.log('selected person:', person);
-    let consumerState = this.state.consumerInfo;
-
+    let consumerState = Object.assign({}, this.state.consumerInfo);
+    Object.keys(PERSON).forEach((key) => {
+      const consumerKey = CONSUMER_STATE[key];
+      const personKey = PERSON[key];
+      const personVal = person[personKey][0];
+      consumerState[consumerKey] = personVal;
+    });
     this.setState({ 
-      consumer: person
+      consumerInfo: consumerState,
+      consumerIsSelected: true
     }, () => {
       this.handlePageChange('next');
     });

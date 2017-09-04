@@ -10,29 +10,29 @@ import DatePicker from 'react-bootstrap-date-picker';
 import SectionView from './SectionView';
 import { PaddedRow, Label, InlineCheckbox, InlineRadio, TitleLabel, OtherWrapper } from '../shared/Layout';
 
-const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSingleSelection, handleCheckboxChange, input }) => {
+const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSingleSelection, handleCheckboxChange, input, consumerIsSelected }) => {
 
   return (
     <div>
       <PaddedRow>
         <Col lg={6}>
           <TitleLabel>12. Last Name</TitleLabel>
-          <FormControl data-section={section} name='lastName' value={input.lastName} onChange={handleTextInput} />
+          <FormControl data-section={section} name='lastName' value={input.lastName} onChange={handleTextInput} disabled={consumerIsSelected} />
         </Col>
         <Col lg={6}>
           <TitleLabel>First Name</TitleLabel>
-          <FormControl data-section={section} name='firstName' value={input.firstName} onChange={handleTextInput} />
+          <FormControl data-section={section} name='firstName' value={input.firstName} onChange={handleTextInput} disabled={consumerIsSelected} />
         </Col>
       </PaddedRow>
 
       <PaddedRow>
         <Col lg={6}>
           <TitleLabel>Middle Name</TitleLabel>
-          <FormControl data-section={section} name='middleName' value={input.middleName} onChange={handleTextInput} />
+          <FormControl data-section={section} name='middleName' value={input.middleName} onChange={handleTextInput} disabled={consumerIsSelected} />
         </Col>
         <Col lg={6}>
           <TitleLabel>13. Consumer Identification</TitleLabel>
-          <FormControl data-section={section} name='identification' value={input.identification} onChange={handleTextInput} />
+          <FormControl data-section={section} name='identification' value={input.identification} onChange={handleTextInput} disabled={consumerIsSelected} />
         </Col>
       </PaddedRow>
 
@@ -84,7 +84,8 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
               data-section={section}
               name='gender'
               value={input.gender}
-              onChange={handleSingleSelection}>
+              onChange={handleSingleSelection}
+              disabled={consumerIsSelected}>
             <option value=''>Select</option>
             <option value='female'>Female</option>
             <option value='male'>Male</option>
@@ -100,7 +101,8 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
               data-section={section}
               name='race'
               value={input.race}
-              onChange={handleSingleSelection}>
+              onChange={handleSingleSelection}
+              disabled={consumerIsSelected}>
             <option value=''>Select</option>
             <option value='americanIndian'>American Indian or Alaska Native</option>
             <option value='asian'>Asian</option>
@@ -120,7 +122,7 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
         </Col>
         <Col lg={6}>
           <TitleLabel>DOB</TitleLabel>
-          <DatePicker value={input.dob} onChange={(e) => {handleDateInput(e, section, 'dob')}} />
+          <DatePicker value={input.dob} onChange={(e) => {handleDateInput(e, section, 'dob')}} disabled={consumerIsSelected} />
         </Col>
       </PaddedRow>
 

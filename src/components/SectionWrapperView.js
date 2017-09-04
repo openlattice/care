@@ -99,6 +99,7 @@ const SectionWrapperView = ({
               handleSingleSelection={handleSingleSelection}
               handleCheckboxChange={handleCheckboxChange}
               input={input.consumerInfo}
+              consumerIsSelected={input.consumerIsSelected}
               section='consumerInfo' />
         );
       case 4:

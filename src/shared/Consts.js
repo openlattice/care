@@ -11,7 +11,17 @@ export const PERSON = {
   RACE_FQN: 'nc.PersonRace',
   SEX_FQN: 'nc.PersonSex',
   DOB_FQN: 'nc.PersonBirthDate',
-  ID_FQN: 'nc.PersonIdentification'
+  ID_FQN: 'nc.SubjectIdentification'
+}
+
+export const CONSUMER_STATE = {
+  LAST_NAME_FQN: 'lastName',
+  FIRST_NAME_FQN: 'firstName',
+  MIDDLE_NAME_FQN: 'middleName',
+  RACE_FQN: 'race',
+  SEX_FQN: 'gender',
+  DOB_FQN: 'dob',
+  ID_FQN: 'identification'
 }
 
 export const STRING_ID_FQN = 'general.stringid';
