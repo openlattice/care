@@ -58,7 +58,7 @@ const SectionWrapperView = ({
       case 1:
         return <Header>Report Information</Header>;
       case 2:
-        return <Header>Search Existing Consumers</Header>
+        return <Header>Select Consumer</Header>
       case 3:
         return <Header>Consumer Information</Header>;
       case 4:
@@ -89,6 +89,7 @@ const SectionWrapperView = ({
         return (
           <ConsumerSearch
               handlePersonSelection={handlePersonSelection}
+              handlePageChange={handlePageChange}
               personEntitySetId={personEntitySetId} />
         );
       case 3:

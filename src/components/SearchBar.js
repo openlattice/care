@@ -3,21 +3,19 @@
  */
 
 import React from 'react';
-import { Button, FormGroup, InputGroup, FormControl } from 'react-bootstrap';
+import { Button, FormGroup, InputGroup, FormControl, ControlLabel } from 'react-bootstrap';
 import styled from 'styled-components';
 
 
 const SearchWrapper = styled(FormGroup)`
-  display: flex;
+  margin-bottom: 50px;
 `;
 
 const SearchInputGroup = styled(InputGroup)`
-  width: 100%;
-  display: inline-block;
+
 `;
 
 const SearchButton = styled(Button)`
-  margin: 0 10px;
 `;
 
 
@@ -30,8 +28,10 @@ const SearchBar = ({ handleInput, query, onSearchSubmit }) => {
               value={query}
               type="text"
               onChange={handleInput} />
+          <InputGroup.Button>
+            <SearchButton type="submit" onClick={onSearchSubmit}>Search</SearchButton>
+          </InputGroup.Button>
         </SearchInputGroup>
-        <SearchButton type="submit" bsStyle="primary" onClick={onSearchSubmit}>Search</SearchButton>
       </SearchWrapper>
     </div>
   );

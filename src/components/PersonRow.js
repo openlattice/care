@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import { Row, Col } from 'react-bootstrap';
 
 import { PERSON, RACE } from '../shared/Consts';
+// import userPhotoPlaceholder from '../images/user-profile-icon.png';
 
 const PersonWrapper = styled.div`
   display: flex;
@@ -19,7 +20,7 @@ const PersonWrapper = styled.div`
   }
 `;
 
-const FakeAvatar = styled.div`
+const FakeAvatar = styled.img`
   height: 100px;
   width: 100px;
   background: white;
@@ -46,6 +47,11 @@ const UserDetailsWrapper = styled.div`
 `;
 
 const StyledRow = styled(Row)`
+  flex: 1;
+`;
+
+const StyledCol = styled(Col)`
+  flex: 1;
 `;
 
 const PersonRow = ({ person, handlePersonSelection }) => {
@@ -98,12 +104,12 @@ const PersonRow = ({ person, handlePersonSelection }) => {
           </Label>
         </UserProfileDetailItem>
         <StyledRow>
-          <Col lg={6}><Label>ID:</Label>{ person[PERSON.ID_FQN][0] }</Col>
-          <Col lg={6}><Label>DOB:</Label>{ person[PERSON.DOB_FQN][0] }</Col>
+          <StyledCol lg={6}><Label>ID:</Label>{ person[PERSON.ID_FQN][0] }</StyledCol>
+          <StyledCol lg={6}><Label>DOB:</Label>{ person[PERSON.DOB_FQN][0] }</StyledCol>
         </StyledRow>
         <StyledRow>
-          <Col lg={6}><Label>Gender:</Label>{ person[PERSON.SEX_FQN][0] }</Col>
-          <Col lg={6}><Label>Race:</Label>{ getRace() }</Col>
+          <StyledCol lg={6}><Label>Gender:</Label>{ person[PERSON.SEX_FQN][0] }</StyledCol>
+          <StyledCol lg={6}><Label>Race:</Label>{ getRace() }</StyledCol>
         </StyledRow>
       </UserProfileDetails>
     </PersonWrapper>

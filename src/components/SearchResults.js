@@ -7,6 +7,10 @@ import styled from 'styled-components';
 
 import PersonRow from './PersonRow';
 
+const ResultsWrapper = styled.div`
+  margin-bottom: 50px;
+`;
+
 const SearchResults = ({ results, handlePersonSelection }) => {
   const renderResults = () => {
     const firstNameFqn = 'nc.PersonGivenName';
@@ -26,9 +30,9 @@ const SearchResults = ({ results, handlePersonSelection }) => {
   }
 
   return (
-    <div>
+    <ResultsWrapper>
       { renderResults() }
-    </div>
+    </ResultsWrapper>
   );
 }
 

@@ -4,11 +4,23 @@
 
 import React from 'react';
 import { SearchApi } from 'lattice';
+import { Button } from 'react-bootstrap';
+import styled from 'styled-components';
 
 import SearchBar from '../components/SearchBar';
 import SearchResults from '../components/SearchResults';
 
 const MAX_HITS = 10;
+
+const StyledButton = styled(Button)`
+  margin-bottom: 20px;
+`;
+
+const DividerStatement = styled.div`
+  text-align: center;
+  font-size: 20px;
+  margin-bottom: 20px;
+`;
 
 class ConsumerSearch extends React.Component {
   constructor(props) {
@@ -64,6 +76,8 @@ class ConsumerSearch extends React.Component {
   render () {
     return (
       <div>
+        <StyledButton onClick={() => this.props.handlePageChange('next')} block>Create New Consumer Entry</StyledButton>
+        <DividerStatement>—OR—</DividerStatement>
         <SearchBar handleInput={this.handleInput} query={this.state.query} onSearchSubmit={this.onSearchSubmit} />
         <SearchResults results={this.state.results} handlePersonSelection={this.props.handlePersonSelection} />
       </div>
