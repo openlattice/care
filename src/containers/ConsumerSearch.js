@@ -29,7 +29,8 @@ class ConsumerSearch extends React.Component {
     this.state = {
       query: '',
       results: [],
-      resultsPage: 1
+      resultsPage: 1,
+      didSearch: false
     }
   }
 
@@ -49,28 +50,12 @@ class ConsumerSearch extends React.Component {
       SearchApi.searchEntitySetData(this.props.personEntitySetId, searchRequest)
       .then((results) => {
         console.log('got search results!:', results);
-        this.setState({ results: results.hits });
+        this.setState({ 
+          results: results.hits,
+          didSearch: true
+        });
       });
     }
-
-  }
-
-  executeSearch = (searchTerm, page) => {
-    const searchRequest = {
-      searchTerm,
-      start: ((page - 1) * MAX_HITS),
-      maxHits: MAX_HITS
-    };
-    SearchApi.searchEntitySetData(this.props.params.entitySetId, searchRequest)
-    .then((response) => {
-      this.setState({
-        searchResults: response.hits,
-        totalHits: response.numHits,
-        asyncStatus: ASYNC_STATUS.SUCCESS
-      });
-    }).catch(() => {
-      this.setState({ asyncStatus: ASYNC_STATUS.ERROR });
-    });
   }
 
   render () {
@@ -79,7 +64,7 @@ class ConsumerSearch extends React.Component {
         <StyledButton onClick={() => this.props.handlePageChange('next')} block>Create New Consumer Entry</StyledButton>
         <DividerStatement>—OR—</DividerStatement>
         <SearchBar handleInput={this.handleInput} query={this.state.query} onSearchSubmit={this.onSearchSubmit} />
-        <SearchResults results={this.state.results} handlePersonSelection={this.props.handlePersonSelection} />
+        <SearchResults results={this.state.results} handlePersonSelection={this.props.handlePersonSelection} didSearch={this.state.didSearch} />
       </div>
     );
   }
