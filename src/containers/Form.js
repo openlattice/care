@@ -37,7 +37,12 @@ class Form extends React.Component {
         firstName: '',
         lastName: '',
         middleName: '',
-        address: '',
+        addressLine1: '',
+        addressLine2: '',
+        city: '',
+        state: '',
+        county: '',
+        zip: '',
         phone: '',
         identification: '',
         militaryStatus: null,
@@ -71,8 +76,15 @@ class Form extends React.Component {
         suicideAttemptMethodOther: ''
       },
       complainantInfo: {
-        complainantName: '',
-        complainantAddress: '',
+        complainantLastName: '',
+        complainantFirstName: '',
+        complainantMiddleName: '',
+        complainantAddressLine1: '',
+        complainantAddressLine2: '',
+        complainantCity: '',
+        complainantState: '',
+        complainantZip: '',
+        complainantCounty: '',
         complainantConsumerRelationship: '',
         complainantPhone: ''
       },
@@ -86,7 +98,9 @@ class Form extends React.Component {
         incidentNarrative: ''
       },
       officerInfo: {
-        officerName: '',
+        officerLastName: '',
+        officerFirstName: '',
+
         officerSeqID: '',
         officerInjuries: '',
         officerCertification: []

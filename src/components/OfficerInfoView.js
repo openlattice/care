@@ -15,20 +15,27 @@ const OfficerInfoView = ({ section, handleTextInput, handleCheckboxChange, input
     <div>
       <PaddedRow>
         <Col lg={6}>
-          <TitleLabel>33. Officer Name</TitleLabel>
-          <FormControl data-section={section} name='officerName' value={input.officerName} onChange={handleTextInput} />
+          <TitleLabel>33. Last Name</TitleLabel>
+          <FormControl data-section={section} name='officerLastName' value={input.officerLastName} onChange={handleTextInput} />
         </Col>
         <Col lg={6}>
-          <TitleLabel>34. Seq ID</TitleLabel>
-          <FormControl data-section={section} name='officerSeqID' value={input.officerSeqID} onChange={handleTextInput} />
+          <TitleLabel>First Name</TitleLabel>
+          <FormControl data-section={section} name='officerFirstName' value={input.officerFirstName} onChange={handleTextInput} />
         </Col>
       </PaddedRow>
 
       <PaddedRow>
         <Col lg={6}>
+          <TitleLabel>34. Seq ID</TitleLabel>
+          <FormControl data-section={section} name='officerSeqID' value={input.officerSeqID} onChange={handleTextInput} />
+        </Col>
+        <Col lg={6}>
           <TitleLabel>35. Officer Injuries</TitleLabel>
           <FormControl data-section={section} name='officerInjuries' value={input.officerInjuries} onChange={handleTextInput} />
         </Col>
+      </PaddedRow>
+
+      <PaddedRow>
         <Col lg={6}>
           <TitleLabel>36. Officer Certification</TitleLabel>
           <FormGroup>

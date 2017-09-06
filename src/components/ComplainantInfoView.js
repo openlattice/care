@@ -14,12 +14,50 @@ const ComplainantInfoView = ({ section, handleTextInput, input }) => {
     <div>
       <PaddedRow>
         <Col lg={6}>
-          <TitleLabel>28. Complainant Name (Last, First, MI)</TitleLabel>
-          <FormControl data-section={section} name='complainantName' value={input.complainantName} onChange={handleTextInput} />
+          <TitleLabel>28. Last Name</TitleLabel>
+          <FormControl data-section={section} name='complainantLastName' value={input.complainantLastName} onChange={handleTextInput} />
         </Col>
         <Col lg={6}>
-          <TitleLabel>Address (Apt Number, City, County, State, Zip)</TitleLabel>
-          <FormControl data-section={section} name='complainantAddress' value={input.complainantAddress} onChange={handleTextInput} />
+          <TitleLabel>First Name</TitleLabel>
+          <FormControl data-section={section} name='complainantFirstName' value={input.complainantFirstName} onChange={handleTextInput} />
+        </Col>
+      </PaddedRow>
+      <PaddedRow>
+        <Col lg={6}>
+          <TitleLabel>Middle Name</TitleLabel>
+          <FormControl data-section={section} name='complainantMiddleName' value={input.complainantMiddleName} onChange={handleTextInput} />
+        </Col>
+      </PaddedRow>
+      <PaddedRow>
+        <Col lg={12}>
+          <TitleLabel>Address Line 1</TitleLabel>
+          <FormControl data-section={section} name='complainantAddressLine1' value={input.complainantAddressLine1} onChange={handleTextInput} />
+        </Col>
+      </PaddedRow>
+      <PaddedRow>
+        <Col lg={12}>
+          <TitleLabel>Address Line 2</TitleLabel>
+          <FormControl data-section={section} name='complainantAddressLine2' value={input.complainantAddressLine2} onChange={handleTextInput} />
+        </Col>
+      </PaddedRow>
+      <PaddedRow>
+        <Col lg={6}>
+          <TitleLabel>City</TitleLabel>
+          <FormControl data-section={section} name='complainantCity' value={input.complainantCity} onChange={handleTextInput} />
+        </Col>
+        <Col lg={6}>
+          <TitleLabel>State</TitleLabel>
+          <FormControl data-section={section} name='complainantState' value={input.complainantState} onChange={handleTextInput} />
+        </Col>
+      </PaddedRow>
+      <PaddedRow>
+        <Col lg={6}>
+          <TitleLabel>County</TitleLabel>
+          <FormControl data-section={section} name='complainantCounty' value={input.complainantCounty} onChange={handleTextInput} />
+        </Col>
+        <Col lg={6}>
+          <TitleLabel>Zip</TitleLabel>
+          <FormControl data-section={section} name='complainantZip' value={input.complainantZip} onChange={handleTextInput} />
         </Col>
       </PaddedRow>
       <PaddedRow>
@@ -34,6 +72,7 @@ const ComplainantInfoView = ({ section, handleTextInput, input }) => {
       </PaddedRow>
     </div>
   );
+  // (Apt Number, City, County, State, Zip)
 }
 
 ComplainantInfoView.propTypes = {

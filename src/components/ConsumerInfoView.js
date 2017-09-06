@@ -38,8 +38,34 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
 
       <PaddedRow>
         <Col lg={12}>
-          <TitleLabel>14. Residence / Address (Street, Apt Number, City, County, State, Zip)</TitleLabel>
-          <FormControl data-section={section} name='address' value={input.address} onChange={handleTextInput} />
+          <TitleLabel>14. Address Line 1</TitleLabel>
+          <FormControl data-section={section} name='addressLine1' value={input.addressLine1} onChange={handleTextInput} />
+        </Col>
+      </PaddedRow>
+      <PaddedRow>
+        <Col lg={12}>
+          <TitleLabel>Address Line 2</TitleLabel>
+          <FormControl data-section={section} name='addressLine2' value={input.addressLine2} onChange={handleTextInput} />
+        </Col>
+      </PaddedRow>
+      <PaddedRow>
+        <Col lg={6}>
+          <TitleLabel>City</TitleLabel>
+          <FormControl data-section={section} name='city' value={input.city} onChange={handleTextInput} />
+        </Col>
+        <Col lg={6}>
+          <TitleLabel>State</TitleLabel>
+          <FormControl data-section={section} name='state' value={input.state} onChange={handleTextInput} />
+        </Col>
+      </PaddedRow>
+      <PaddedRow>
+        <Col lg={6}>
+          <TitleLabel>County</TitleLabel>
+          <FormControl data-section={section} name='county' value={input.county} onChange={handleTextInput} />
+        </Col>
+        <Col lg={6}>
+          <TitleLabel>Zip</TitleLabel>
+          <FormControl data-section={section} name='zip' value={input.zip} onChange={handleTextInput} />
         </Col>
       </PaddedRow>
 
