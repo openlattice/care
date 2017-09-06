@@ -5,9 +5,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Grid, Row, Col } from 'react-bootstrap';
+import FontAwesome from 'react-fontawesome';
 
 import { PERSON, RACE } from '../shared/Consts';
-// import userPhotoPlaceholder from '../images/user-profile-icon.png';
 
 const PersonWrapper = styled.div`
   display: flex;
@@ -52,7 +52,7 @@ const PersonRow = ({ person, handlePersonSelection }) => {
       <Grid>
         <Row>
           <Col lg={2}>
-            <FakeAvatar />  
+            <FontAwesome name="id-card-o" size="5x" />  
           </Col>
           <Col lg={10}>
             <StyledRow>
