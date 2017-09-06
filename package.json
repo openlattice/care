@@ -25,6 +25,7 @@
     "auth0-lock": "^10.19.0",
     "babel-polyfill": "^6.23.0",
     "bluebird": "^3.5.0",
+    "dateformat": "^2.0.0",
     "history": "^4.6.3",
     "immutable": "^4.0.0-rc.2",
     "jwt-decode": "^2.2.0",

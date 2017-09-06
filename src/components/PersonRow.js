@@ -6,6 +6,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Grid, Row, Col } from 'react-bootstrap';
 import FontAwesome from 'react-fontawesome';
+import dateformat from 'dateformat';
 
 import { PERSON, RACE } from '../shared/Consts';
 
@@ -47,6 +48,10 @@ const PersonRow = ({ person, handlePersonSelection }) => {
     return RACE[person[PERSON.RACE_FQN][0]];
   }
 
+  const getFormattedDOB = () => {
+    return dateformat(person[PERSON.DOB_FQN][0], 'm/d/yyyy');
+  }
+
   return (
     <PersonWrapper onClick={() => handlePersonSelection(person)}>
       <Grid>
@@ -62,7 +67,7 @@ const PersonRow = ({ person, handlePersonSelection }) => {
             </StyledRow>
             <StyledRow>
               <StyledCol lg={6}><Label>ID:</Label>{ person[PERSON.ID_FQN][0] }</StyledCol>
-              <StyledCol lg={6}><Label>DOB:</Label>{ person[PERSON.DOB_FQN][0] }</StyledCol>
+              <StyledCol lg={6}><Label>DOB:</Label>{ getFormattedDOB() }</StyledCol>
             </StyledRow>
             <StyledRow>
               <StyledCol lg={6}><Label>Gender:</Label>{ person[PERSON.SEX_FQN][0] }</StyledCol>
@@ -76,38 +81,3 @@ const PersonRow = ({ person, handlePersonSelection }) => {
 }
 
 export default PersonRow;
-
-// const formatValue = (rawValue) => {
-//   if (rawValue instanceof Array) {
-//     let formattedValue = '';
-//     if (rawValue.length > 0) formattedValue = formattedValue.concat(rawValue[0]);
-//     if (rawValue.length > 1) {
-//       for (let i = 1; i < rawValue.length; i += 1) {
-//         formattedValue = formattedValue.concat(', ').concat(rawValue[i]);
-//       }
-//     }
-//     return formattedValue;
-//   }
-//   return rawValue;
-// }
-
-// const getFormattedVal = (prop) => {
-//   const value = this.props.row[`${prop.type.namespace}.${prop.type.name}`] || '';
-//   return formatValue(value);
-// }
-
-// const getFirstNameVal = () => {
-//   return getFormattedVal(this.props.firstName);
-// }
-
-// const getLastNameVal = () => {
-//   return getFormattedVal(this.props.lastName);
-// }
-
-// const renderDOB = () => {
-//   if (!this.props.dob) return null;
-//   return (
-//     <div className={styles.userProfileDetailItem}>
-//       <b>Date of Birth:</b> {getFormattedVal(this.props.dob)}
-//     </div>);
-// }
