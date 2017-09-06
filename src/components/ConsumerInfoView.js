@@ -38,16 +38,11 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
 
       <PaddedRow>
         <Col lg={12}>
-          <TitleLabel>14. Address Line 1</TitleLabel>
-          <FormControl data-section={section} name='addressLine1' value={input.addressLine1} onChange={handleTextInput} />
+          <TitleLabel>14. Address</TitleLabel>
+          <FormControl data-section={section} name='street' value={input.street} onChange={handleTextInput} />
         </Col>
       </PaddedRow>
-      <PaddedRow>
-        <Col lg={12}>
-          <TitleLabel>Address Line 2</TitleLabel>
-          <FormControl data-section={section} name='addressLine2' value={input.addressLine2} onChange={handleTextInput} />
-        </Col>
-      </PaddedRow>
+
       <PaddedRow>
         <Col lg={6}>
           <TitleLabel>City</TitleLabel>

@@ -30,14 +30,8 @@ const ComplainantInfoView = ({ section, handleTextInput, input }) => {
       </PaddedRow>
       <PaddedRow>
         <Col lg={12}>
-          <TitleLabel>Address Line 1</TitleLabel>
-          <FormControl data-section={section} name='complainantAddressLine1' value={input.complainantAddressLine1} onChange={handleTextInput} />
-        </Col>
-      </PaddedRow>
-      <PaddedRow>
-        <Col lg={12}>
-          <TitleLabel>Address Line 2</TitleLabel>
-          <FormControl data-section={section} name='complainantAddressLine2' value={input.complainantAddressLine2} onChange={handleTextInput} />
+          <TitleLabel>Address</TitleLabel>
+          <FormControl data-section={section} name='complainantStreet' value={input.complainantStreet} onChange={handleTextInput} />
         </Col>
       </PaddedRow>
       <PaddedRow>
