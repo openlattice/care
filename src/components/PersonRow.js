@@ -95,7 +95,7 @@ const PersonRow = ({ person, handlePersonSelection }) => {
   }
 
   return (
-    <PersonWrapper key={person.id} onClick={() => handlePersonSelection(person)}>
+    <PersonWrapper onClick={() => handlePersonSelection(person)}>
       <FakeAvatar />
       <UserProfileDetails>
         <UserProfileDetailItem>

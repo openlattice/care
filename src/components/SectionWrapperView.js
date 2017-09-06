@@ -73,7 +73,6 @@ const SectionWrapperView = ({
   }
 
   const renderSection = (page) => {
-    console.log('page:', page);
     switch(page) {
       case 1:
         return (
