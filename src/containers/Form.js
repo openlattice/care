@@ -117,7 +117,7 @@ class Form extends React.Component {
       appearsInPropertyTypes: [],
       submitSuccess: null,
       submitFailure: null,
-      page: 2,
+      page: 1,
       maxPage: 6,
       consumerIsSelected: false
     };
@@ -275,11 +275,13 @@ class Form extends React.Component {
   }
 
   handlePageChange = (direction) => {
-    if (direction === 'prev') {
-      this.setState({ page: --this.state.page });
-    } else if (direction === 'next') {
-      this.setState({ page: ++this.state.page });
-    }
+    // if (direction === 'prev') {
+    //   this.setState({ page: --this.state.page });
+    // } else if (direction === 'next') {
+    //   this.setState({ page: ++this.state.page });
+    // }
+    // GET PAGE PARAMS FROM URL
+    // PUSH NEW INCREMENTED/DECREMENTED LOCATION ONTO HISTORY
   }
 
   handlePersonSelection = (person) => {

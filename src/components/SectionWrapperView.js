@@ -6,6 +6,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled, { injectGlobal } from 'styled-components';
 import { Button, ProgressBar } from 'react-bootstrap';
+import { Redirect, Route, Switch } from 'react-router-dom';
 
 import ReportInfoView from '../components/ReportInfoView';
 import ConsumerSearch from '../containers/ConsumerSearch';
@@ -13,6 +14,7 @@ import ConsumerInfoView from '../components/ConsumerInfoView';
 import ComplainantInfoView from '../components/ComplainantInfoView';
 import DispositionView from '../components/DispositionView';
 import OfficerInfoView from '../components/OfficerInfoView';
+import TestView from '../components/TestView';
 import { SubmitButton } from '../shared/Layout';
 
 
@@ -37,8 +39,6 @@ const StyledButton = styled(Button)`
   margin: 0 10px;
 `;
 
-
-// When it receives props and the page has changed, window.scrollTo(0,0)
 const SectionWrapperView = ({
   handleTextInput,
   handleDateInput,
@@ -53,6 +53,7 @@ const SectionWrapperView = ({
   handlePageChange,
   ...props
 }) => {
+
   const renderHeader = (page) => {
     switch(page) {
       case 1:
@@ -72,65 +73,67 @@ const SectionWrapperView = ({
     }
   }
 
-  const renderSection = (page) => {
-    switch(page) {
-      case 1:
-        return (
-          <ReportInfoView
-              handleTextInput={handleTextInput}
-              handleDateInput={handleDateInput}
-              handleTimeInput={handleTimeInput}
-              handleSingleSelection={handleSingleSelection}
-              input={input.reportInfo}
-              section='reportInfo' />
-        );
-      case 2:
-        return (
-          <ConsumerSearch
-              handlePersonSelection={handlePersonSelection}
-              handlePageChange={handlePageChange}
-              personEntitySetId={personEntitySetId} />
-        );
-      case 3:
-        return (
-          <ConsumerInfoView
-              handleTextInput={handleTextInput}
-              handleDateInput={handleDateInput}
-              handleSingleSelection={handleSingleSelection}
-              handleCheckboxChange={handleCheckboxChange}
-              input={input.consumerInfo}
-              consumerIsSelected={input.consumerIsSelected}
-              section='consumerInfo' />
-        );
-      case 4:
-        return (
-          <ComplainantInfoView
-              handleTextInput={handleTextInput}
-              input={input.complainantInfo}
-              section='complainantInfo' />
-        );
-      case 5:
-        return (
-          <DispositionView
-              handleTextInput={handleTextInput}
-              handleCheckboxChange={handleCheckboxChange}
-              handleSingleSelection={handleSingleSelection}
-              input={input.dispositionInfo}
-              section='dispositionInfo' />
-        );
-      case 6:
-        return (
-          <OfficerInfoView
-              handleTextInput={handleTextInput}
-              handleCheckboxChange={handleCheckboxChange}
-              input={input.officerInfo}
-              section='officerInfo' />
-        );
-      default:
-        return;
-    }
+  const getReportInfoView = () => {
     return (
-      <div>SECTION</div>
+      <ReportInfoView
+          handleTextInput={handleTextInput}
+          handleDateInput={handleDateInput}
+          handleTimeInput={handleTimeInput}
+          handleSingleSelection={handleSingleSelection}
+          input={input.reportInfo}
+          section='reportInfo' />
+    );
+  }
+
+  const getConsumerSearchView = () => {
+    return (
+      <ConsumerSearch
+          handlePersonSelection={handlePersonSelection}
+          handlePageChange={handlePageChange}
+          personEntitySetId={personEntitySetId} />
+    );
+  }
+
+  const getConsumerInfoView = () => {
+    return (
+      <ConsumerInfoView
+          handleTextInput={handleTextInput}
+          handleDateInput={handleDateInput}
+          handleSingleSelection={handleSingleSelection}
+          handleCheckboxChange={handleCheckboxChange}
+          input={input.consumerInfo}
+          consumerIsSelected={input.consumerIsSelected}
+          section='consumerInfo' />
+    );
+  }
+
+  const getComplainantInfoView = () => {
+    return (
+      <ComplainantInfoView
+          handleTextInput={handleTextInput}
+          input={input.complainantInfo}
+          section='complainantInfo' />
+    );
+  }
+
+  const getDispositionView = () => {
+    return (
+      <DispositionView
+          handleTextInput={handleTextInput}
+          handleCheckboxChange={handleCheckboxChange}
+          handleSingleSelection={handleSingleSelection}
+          input={input.dispositionInfo}
+          section='dispositionInfo' />
+    );
+  }
+
+  const getOfficerInfoView = () => {
+    return (
+      <OfficerInfoView
+          handleTextInput={handleTextInput}
+          handleCheckboxChange={handleCheckboxChange}
+          input={input.officerInfo}
+          section='officerInfo' />
     );
   }
 
@@ -146,7 +149,14 @@ const SectionWrapperView = ({
   return (
     <div>
       { renderHeader(page) }
-      { renderSection(page) }
+      <Switch>
+        <Route path="/1" render={getReportInfoView} />
+        <Route path="/2" render={getConsumerSearchView} />
+        <Route path="/3" render={getConsumerInfoView} />
+        <Route path="/4" render={getComplainantInfoView} />
+        <Route path="/5" render={getDispositionView} />
+        <Route path="/6" render={getOfficerInfoView} />
+      </Switch>
       <NavBtnWrapper>
         { page > 1 && page < maxPage ? <StyledButton onClick={() => handlePageChange('prev')}>Prev</StyledButton> : null }
         { page === maxPage ? <SubmitButton>Submit</SubmitButton> : <StyledButton onClick={() => handlePageChange('next')}>Next</StyledButton> }
