@@ -5,6 +5,7 @@
 import React from 'react';
 import { EntityDataModelApi, DataApi, SyncApi, SearchApi } from 'lattice';
 import Promise from 'bluebird';
+import {withRouter} from "react-router-dom";
 
 import FormView from '../components/FormView';
 import ConfirmationModal from '../components/ConfirmationModalView';
@@ -275,13 +276,13 @@ class Form extends React.Component {
   }
 
   handlePageChange = (direction) => {
-    // if (direction === 'prev') {
-    //   this.setState({ page: --this.state.page });
-    // } else if (direction === 'next') {
-    //   this.setState({ page: ++this.state.page });
-    // }
-    // GET PAGE PARAMS FROM URL
-    // PUSH NEW INCREMENTED/DECREMENTED LOCATION ONTO HISTORY
+    let currentPage = window.location.hash.substr(2);
+    if (direction === 'prev') {
+      this.props.history.push(`/${-currentPage}`);
+    } else if (direction === 'next') {
+      console.log('current, next page:', currentPage, ++currentPage);
+      this.props.history.push(`/${+currentPage}`);
+    }
   }
 
   handlePersonSelection = (person) => {
@@ -471,4 +472,4 @@ class Form extends React.Component {
   }
 }
 
-export default Form;
+export default withRouter(Form);
