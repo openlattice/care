@@ -10,7 +10,7 @@ import { ProgressBar } from 'react-bootstrap';
 
 import { Page, InnerPageWrapper, PageHeader, Title, Description, FormWrapper, SubmitButton, SubmitButtonWrapper } from '../shared/Layout';
 import LogoutButton from '../containers/app/LogoutButton';
-import SectionWrapper from '../containers/SectionWrapper';
+import SectionWrapperView from './SectionWrapperView';
 
 const StyledProgressBar = styled(ProgressBar)`
   position: relative;
@@ -55,7 +55,7 @@ function FormView({
       <StyledProgressBar now={getProgress().num} label={getProgress().percentage} />
       <FormWrapper>
         <form onSubmit={handleSubmit}>
-          <SectionWrapper
+          <SectionWrapperView
               handleTextInput={handleTextInput}
               handleDateInput={handleDateInput}
               handleTimeInput={handleTimeInput}

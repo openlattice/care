@@ -19,6 +19,7 @@ import * as Auth0 from './core/auth/Auth0';
 import * as RoutePaths from './core/router/RoutePaths';
 
 import AppContainer from './containers/app/AppContainer';
+import ScrollToTop from './containers/app/ScrollToTop';
 
 /* eslint-disable */
 injectGlobal`${normalize()}`;
@@ -63,7 +64,9 @@ const reduxStore = initializeReduxStore(routerHistory);
 ReactDOM.render(
   <Provider store={reduxStore}>
     <ConnectedRouter history={routerHistory}>
-      <AuthRoute path={RoutePaths.ROOT} component={AppContainer} />
+      <ScrollToTop>
+        <AuthRoute path={RoutePaths.ROOT} component={AppContainer} />
+      </ScrollToTop>
     </ConnectedRouter>
   </Provider>,
   document.getElementById('app')
