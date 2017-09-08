@@ -56,7 +56,6 @@ const SectionWrapperView = ({
 }) => {
 
   const renderHeader = (page) => {
-    console.log('page:', page);
     switch(page) {
       case 1:
         return <Header>Report Information</Header>;
@@ -137,16 +136,6 @@ const SectionWrapperView = ({
           input={input.officerInfo}
           section='officerInfo' />
     );
-  }
-
-// this is fucked
-  const getProgress = () => {
-    const num = Math.ceil((100 / maxPage) * (page - 1));
-    const percentage = num.toString() + '%';
-    return {
-      num,
-      percentage
-    }
   }
 
   return (
