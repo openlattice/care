@@ -63,7 +63,7 @@ ReactDOM.render(
     <ConnectedRouter history={routerHistory}>
       <div>
         <Switch>
-          <AuthRoute path="/" component={Form} />
+          <AuthRoute exact path="/" component={Form} />
           <Route component={AuthContainer} />
           <Redirect to="/" />
         </Switch>
