@@ -3,16 +3,16 @@
  */
 
 import React from 'react';
-import { EntityDataModelApi, DataApi, SyncApi, SearchApi } from 'lattice';
-import Promise from 'bluebird';
 import {withRouter} from "react-router-dom";
+import Promise from 'bluebird';
+import { EntityDataModelApi, DataApi } from 'lattice';
 
-import FormView from '../components/FormView';
-import ConfirmationModal from '../components/ConfirmationModalView';
-import LogoutButton from './LogoutButton';
+import FormView from '../../components/FormView';
+import ConfirmationModal from '../../components/ConfirmationModalView';
+import LogoutButton from '../app/LogoutButton';
+import * as RoutePaths from '../../core/router/RoutePaths';
 import {Page} from '../shared/Layout';
 import { ENTITY_SET_NAMES, PERSON, CONSUMER_STATE, STRING_ID_FQN } from '../shared/Consts';
-
 
 class Form extends React.Component {
   constructor(props) {
@@ -444,6 +444,7 @@ class Form extends React.Component {
   }
 
   render() {
+
     return (
       <div>
         <FormView
@@ -460,12 +461,12 @@ class Form extends React.Component {
             handlePersonSelection={this.handlePersonSelection}
             personEntitySetId={this.state.personEntitySetId} />
         {
-          this.state.submitSuccess ?
-          <ConfirmationModal
-              submitSuccess={this.state.submitSuccess}
-              submitFailure={this.state.submitFailure}
-              handleModalButtonClick={this.handleModalButtonClick} /> :
-          null
+          this.state.submitSuccess
+            ? <ConfirmationModal
+                  submitSuccess={this.state.submitSuccess}
+                  submitFailure={this.state.submitFailure}
+                  handleModalButtonClick={this.handleModalButtonClick} />
+            : null
         }
       </div>
     );
