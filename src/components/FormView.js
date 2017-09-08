@@ -9,7 +9,7 @@ import { normalize } from 'polished';
 import { ProgressBar } from 'react-bootstrap';
 
 import { Page, InnerPageWrapper, PageHeader, Title, Description, FormWrapper, SubmitButton, SubmitButtonWrapper } from '../shared/Layout';
-import LogoutButton from '../containers/LogoutButton';
+import LogoutButton from '../containers/app/LogoutButton';
 import SectionWrapper from '../containers/SectionWrapper';
 
 const StyledProgressBar = styled(ProgressBar)`

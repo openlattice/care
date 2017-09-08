@@ -5,14 +5,14 @@
 import React from 'react';
 import {withRouter} from "react-router-dom";
 import Promise from 'bluebird';
-import { EntityDataModelApi, DataApi } from 'lattice';
+import { EntityDataModelApi, DataApi, SearchApi } from 'lattice';
 
 import FormView from '../../components/FormView';
 import ConfirmationModal from '../../components/ConfirmationModalView';
 import LogoutButton from '../app/LogoutButton';
 import * as RoutePaths from '../../core/router/RoutePaths';
-import {Page} from '../shared/Layout';
-import { ENTITY_SET_NAMES, PERSON, CONSUMER_STATE, STRING_ID_FQN } from '../shared/Consts';
+import { Page } from '../../shared/Layout';
+import { ENTITY_SET_NAMES, PERSON, CONSUMER_STATE, STRING_ID_FQN } from '../../shared/Consts';
 
 class Form extends React.Component {
   constructor(props) {
