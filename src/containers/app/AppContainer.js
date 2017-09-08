@@ -14,8 +14,8 @@ const AppContainer = () => {
 
   return (
     <Switch>
-      <Route exact strict path={RoutePaths.ROOT} component={FormContainer} />
-      <Redirect to={RoutePaths.ROOT} />
+      <Route exact strict path={"/:page"} component={FormContainer} />
+      <Redirect to="/1" />
     </Switch>
   );
 };

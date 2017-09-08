@@ -28,6 +28,7 @@ class SectionWrapper extends React.Component {
           handleCheckboxChange={this.props.handleCheckboxChange}
           input={this.props.input}
           page={this.props.page}
+          getPage={this.props.getPage}
           maxPage={this.props.maxPage}
           handlePageChange={this.props.handlePageChange}
           handlePersonSelection={this.props.handlePersonSelection}

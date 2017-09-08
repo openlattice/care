@@ -30,11 +30,13 @@ function FormView({
   handlePersonSelection,
   personEntitySetId,
   handleSubmit,
-  page,
   maxPage,
   handlePageChange,
+  page,
+  getPage,
   input
 }) {
+
 	const getProgress = () => {
     const num = Math.ceil((100 / maxPage) * page);
     const percentage = num.toString() + '%';
@@ -61,6 +63,7 @@ function FormView({
               handleCheckboxChange={handleCheckboxChange}
               input={input}
               page={page}
+              getPage={getPage}
               maxPage={maxPage}
               handlePageChange={handlePageChange}
               handlePersonSelection={handlePersonSelection}

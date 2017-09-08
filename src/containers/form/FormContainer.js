@@ -118,7 +118,7 @@ class Form extends React.Component {
       appearsInPropertyTypes: [],
       submitSuccess: null,
       submitFailure: null,
-      page: 1,
+      page: null,
       maxPage: 6,
       consumerIsSelected: false
     };
@@ -202,6 +202,10 @@ class Form extends React.Component {
       });
   }
 
+  getPage = () => {
+    this.setState({page: window.location.hash.substr(2)});
+  }
+
   // For text input
   handleTextInput = (e) => {
     const sectionKey = e.target.dataset.section;
@@ -278,10 +282,11 @@ class Form extends React.Component {
   handlePageChange = (direction) => {
     let currentPage = window.location.hash.substr(2);
     if (direction === 'prev') {
-      this.props.history.push(`/${-currentPage}`);
+      const prev = --currentPage;
+      this.props.history.push(`/${prev}`);
     } else if (direction === 'next') {
-      console.log('current, next page:', currentPage, ++currentPage);
-      this.props.history.push(`/${+currentPage}`);
+      const next = ++currentPage;
+      this.props.history.push(`/${next}`);
     }
   }
 
@@ -455,11 +460,12 @@ class Form extends React.Component {
             handleCheckboxChange={this.handleCheckboxChange}
             handleSubmit={this.handleSubmit}
             input={this.state}
-            page={this.state.page}
             maxPage={this.state.maxPage}
             handlePageChange={this.handlePageChange}
             handlePersonSelection={this.handlePersonSelection}
-            personEntitySetId={this.state.personEntitySetId} />
+            personEntitySetId={this.state.personEntitySetId}
+            page={this.state.page}
+            getPage={this.getPage} />
         {
           this.state.submitSuccess
             ? <ConfirmationModal
