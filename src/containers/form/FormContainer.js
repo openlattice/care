@@ -119,7 +119,7 @@ class Form extends React.Component {
       submitSuccess: null,
       submitFailure: null,
       page: window.location.hash.substr(2),
-      maxPage: 6,
+      maxPage: 7,
       consumerIsSelected: false
     };
   }
@@ -446,6 +446,11 @@ class Form extends React.Component {
     window.location.reload();
   }
 
+  isInReview = () => {
+    if (this.state.page && this.state.page == this.state.maxPage) return true;
+    return false; 
+  }
+
   render() {
 
     return (
@@ -462,7 +467,8 @@ class Form extends React.Component {
             handlePageChange={this.handlePageChange}
             handlePersonSelection={this.handlePersonSelection}
             personEntitySetId={this.state.personEntitySetId}
-            page={this.state.page} />
+            page={this.state.page}
+            isInReview={this.isInReview} />
         {
           this.state.submitSuccess
             ? <ConfirmationModal
