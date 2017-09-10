@@ -11,7 +11,6 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 
 import { Page, InnerPageWrapper, PageHeader, Title, Description, FormWrapper, SubmitButton, SubmitButtonWrapper } from '../shared/Layout';
 import LogoutButton from '../containers/app/LogoutButton';
-import SectionWrapperView from './SectionWrapperView';
 import ReportInfoView from '../components/ReportInfoView';
 import ConsumerSearch from '../containers/ConsumerSearch';
 import ConsumerInfoView from '../components/ConsumerInfoView';
