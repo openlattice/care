@@ -41,13 +41,13 @@ function FormView({
   handleSubmit,
   maxPage,
   handlePageChange,
-  page,
   getPage,
   input,
   isInReview
 }) {
 
 	const getProgress = () => {
+    const page = window.location.hash.substr(2);
     const num = Math.ceil((page - 1) / (maxPage - 1) * 100);
     const percentage = num.toString() + '%';
     return {
