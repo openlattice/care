@@ -34,7 +34,8 @@ function FormView({
   handlePageChange,
   page,
   getPage,
-  input
+  input,
+  isInReview
 }) {
 
 	const getProgress = () => {
@@ -67,7 +68,8 @@ function FormView({
               maxPage={maxPage}
               handlePageChange={handlePageChange}
               handlePersonSelection={handlePersonSelection}
-              personEntitySetId={personEntitySetId} />
+              personEntitySetId={personEntitySetId}
+              isInReview={isInReview} />
         </form>
       </FormWrapper>
     </Page>

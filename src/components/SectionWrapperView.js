@@ -14,6 +14,7 @@ import ConsumerInfoView from '../components/ConsumerInfoView';
 import ComplainantInfoView from '../components/ComplainantInfoView';
 import DispositionView from '../components/DispositionView';
 import OfficerInfoView from '../components/OfficerInfoView';
+import ReviewView from '../components/ReviewView';
 import TestView from '../components/TestView';
 import { SubmitButton } from '../shared/Layout';
 import * as RoutePaths from '../core/router/RoutePaths';
@@ -52,6 +53,7 @@ const SectionWrapperView = ({
   maxPage,
   handlePageChange,
   page,
+  isInReview,
   ...props
 }) => {
 
@@ -82,6 +84,7 @@ const SectionWrapperView = ({
           handleTimeInput={handleTimeInput}
           handleSingleSelection={handleSingleSelection}
           input={input.reportInfo}
+          isInReview={isInReview}
           section='reportInfo' />
     );
   }
@@ -91,7 +94,8 @@ const SectionWrapperView = ({
       <ConsumerSearch
           handlePersonSelection={handlePersonSelection}
           handlePageChange={handlePageChange}
-          personEntitySetId={personEntitySetId} />
+          personEntitySetId={personEntitySetId}
+          isInReview={isInReview} />
     );
   }
 
@@ -104,6 +108,7 @@ const SectionWrapperView = ({
           handleCheckboxChange={handleCheckboxChange}
           input={input.consumerInfo}
           consumerIsSelected={input.consumerIsSelected}
+          isInReview={isInReview}
           section='consumerInfo' />
     );
   }
@@ -113,6 +118,7 @@ const SectionWrapperView = ({
       <ComplainantInfoView
           handleTextInput={handleTextInput}
           input={input.complainantInfo}
+          isInReview={isInReview}
           section='complainantInfo' />
     );
   }
@@ -124,6 +130,7 @@ const SectionWrapperView = ({
           handleCheckboxChange={handleCheckboxChange}
           handleSingleSelection={handleSingleSelection}
           input={input.dispositionInfo}
+          isInReview={isInReview}
           section='dispositionInfo' />
     );
   }
@@ -134,7 +141,22 @@ const SectionWrapperView = ({
           handleTextInput={handleTextInput}
           handleCheckboxChange={handleCheckboxChange}
           input={input.officerInfo}
+          isInReview={isInReview}
           section='officerInfo' />
+    );
+  }
+
+  const getReviewView = () => {
+    return (
+      <ReviewView
+          handleTextInput={handleTextInput}
+          handleDateInput={handleDateInput}
+          handleTimeInput={handleTimeInput}
+          handleCheckboxChange={handleCheckboxChange}
+          handleSingleSelection={handleSingleSelection}
+          input={input}
+          isInReview={isInReview}
+          consumerIsSelected={input.consumerIsSelected} />
     );
   }
 
@@ -148,6 +170,7 @@ const SectionWrapperView = ({
         <Route path="/4" render={getComplainantInfoView} />
         <Route path="/5" render={getDispositionView} />
         <Route path="/6" render={getOfficerInfoView} />
+        <Route path="/7" render={getReviewView} />
         <Redirect to="/1" />
       </Switch>
       <NavBtnWrapper> 

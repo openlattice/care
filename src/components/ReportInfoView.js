@@ -12,18 +12,17 @@ import TimePicker from 'react-bootstrap-time-picker';
 import SectionView from './SectionView';
 import { Label, TitleLabel, InlineRadio, PaddedRow } from '../shared/Layout';
 
-const ReportInfoView = ({ section, handleTextInput, handleDateInput, handleTimeInput, handleSingleSelection, input }) => {
-
+const ReportInfoView = ({ section, handleTextInput, handleDateInput, handleTimeInput, handleSingleSelection, input, isInReview }) => {
 	return (
 		<div>
       <PaddedRow>
         <Col lg={6}>
     		  <TitleLabel>1. Primary Reason for Dispatch</TitleLabel>
-          <FormControl data-section={section} name='dispatchReason' value={input.dispatchReason} onChange={handleTextInput} />
+          <FormControl data-section={section} name='dispatchReason' value={input.dispatchReason} onChange={handleTextInput} disabled={isInReview()} />
         </Col>
         <Col lg={6}>
           <TitleLabel>2. Complaint Number</TitleLabel>
-          <FormControl data-section={section} name='complaintNumber' value={input.complaintNumber} onChange={handleTextInput} />
+          <FormControl data-section={section} name='complaintNumber' value={input.complaintNumber} onChange={handleTextInput} disabled={isInReview()} />
         </Col>
       </PaddedRow>
 
@@ -36,43 +35,45 @@ const ReportInfoView = ({ section, handleTextInput, handleDateInput, handleTimeI
               name='companionOffenseReport'
               value={true}
               checked={input.companionOffenseReport === 'true'}
-              onChange={handleSingleSelection}>Yes</InlineRadio>
+              onChange={handleSingleSelection}
+              disabled={isInReview()} >Yes</InlineRadio>
           <InlineRadio
               inline
               data-section={section}
               name ='companionOffenseReport'
               value={false}
               checked={input.companionOffenseReport === 'false'}
-              onChange={handleSingleSelection}>No</InlineRadio>
+              onChange={handleSingleSelection}
+              disabled={isInReview()} >No</InlineRadio>
         </Col>
         <Col lg={6}>
           <TitleLabel>4. Crime / Incident</TitleLabel>
-          <FormControl data-section={section} name='incident' value={input.incident} onChange={handleTextInput} />
+          <FormControl data-section={section} name='incident' value={input.incident} onChange={handleTextInput} disabled={isInReview()} />
         </Col>
       </PaddedRow>
 
       <PaddedRow>
         <Col lg={12}>
           <TitleLabel>5. Location of Offense / Incident</TitleLabel>
-          <FormControl data-section={section} name='locationOfIncident' value={input.locationOfIncident} onChange={handleTextInput} />
+          <FormControl data-section={section} name='locationOfIncident' value={input.locationOfIncident} onChange={handleTextInput} disabled={isInReview()} />
         </Col>
       </PaddedRow>
 
       <PaddedRow>
         <Col lg={6}>
           <TitleLabel>6. Unit</TitleLabel>
-          <FormControl data-section={section} name='unit' value={input.unit} onChange={handleTextInput} />
+          <FormControl data-section={section} name='unit' value={input.unit} onChange={handleTextInput} disabled={isInReview()} />
         </Col>
         <Col lg={6}>
           <TitleLabel>7. Post of Occurrence</TitleLabel>
-          <FormControl data-section={section} name='postOfOccurrence' value={input.postOfOccurrence} onChange={handleTextInput} />
+          <FormControl data-section={section} name='postOfOccurrence' value={input.postOfOccurrence} onChange={handleTextInput} disabled={isInReview()} />
         </Col>
       </PaddedRow>
 
       <PaddedRow>
         <Col lg={6}>
           <TitleLabel>8. CAD Number</TitleLabel>
-          <FormControl data-section={section} name='cadNumber' value={input.cadNumber} onChange={handleTextInput} />
+          <FormControl data-section={section} name='cadNumber' value={input.cadNumber} onChange={handleTextInput} disabled={isInReview()} />
         </Col>
         <Col lg={6}>
           <TitleLabel>9. On View</TitleLabel>
@@ -82,36 +83,38 @@ const ReportInfoView = ({ section, handleTextInput, handleDateInput, handleTimeI
               name='onView'
               value={true}
               checked={input.onView === 'true'}
-              onChange={handleSingleSelection}>Yes</InlineRadio>
+              onChange={handleSingleSelection}
+              disabled={isInReview()}>Yes</InlineRadio>
           <InlineRadio
               inline
               data-section={section}
               name ='onView'
               value={false}
               checked={input.onView === 'false'}
-              onChange={handleSingleSelection}>No</InlineRadio>
+              onChange={handleSingleSelection}
+              disabled={isInReview()}>No</InlineRadio>
         </Col>
       </PaddedRow>
 
       <PaddedRow>
         <Col lg={6}>
           <TitleLabel>10. Date Occurred</TitleLabel>
-          <DatePicker value={input.dateOccurred} onChange={(e) => {handleDateInput(e, section, 'dateOccurred')}} />
+          <DatePicker value={input.dateOccurred} onChange={(e) => {handleDateInput(e, section, 'dateOccurred')}} disabled={isInReview()} />
         </Col>
         <Col lg={6}>
           <TitleLabel>Time Occurred</TitleLabel>
-          <TimePicker value={input.timeOccurred} onChange={(e) => {handleTimeInput(e, section, 'timeOccurred')}} />
+          <TimePicker value={input.timeOccurred} onChange={(e) => {handleTimeInput(e, section, 'timeOccurred')}} disabled={isInReview()} />
         </Col>
       </PaddedRow>
 
       <PaddedRow>
         <Col lg={6}>
           <TitleLabel>11. Date Reported</TitleLabel>
-          <DatePicker value={input.dateReported} onChange={(e) => {handleDateInput(e, section, 'dateReported')}} />
+          <DatePicker value={input.dateReported} onChange={(e) => {handleDateInput(e, section, 'dateReported')}} disabled={isInReview()} />
         </Col>
         <Col lg={6}>
           <TitleLabel>Time Reported</TitleLabel>
-          <TimePicker value={input.timeReported} onChange={(e) => {handleTimeInput(e, section, 'timeReported')}} />
+          <TimePicker value={input.timeReported} onChange={(e) => {handleTimeInput(e, section, 'timeReported')}} disabled={isInReview()} />
         </Col>
       </PaddedRow>
 		</div>

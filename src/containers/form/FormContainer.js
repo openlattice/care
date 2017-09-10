@@ -447,6 +447,7 @@ class Form extends React.Component {
   }
 
   isInReview = () => {
+    console.log('this state page:', this.state.page);
     if (this.state.page && this.state.page == this.state.maxPage) return true;
     return false; 
   }
