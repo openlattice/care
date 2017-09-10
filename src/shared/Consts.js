@@ -35,3 +35,13 @@ export const RACE = {
   white: 'White',
   other: 'Other'
 }
+
+export const FORM_PATHS = {
+  REPORT: '/1',
+  CONSUMER_SEARCH: '/2',
+  CONSUMER: '/3',
+  COMPLAINANT:'/4',
+  DISPOSITION: '/5',
+  OFFICER: '/6',
+  REVIEW: '/7'
+}
