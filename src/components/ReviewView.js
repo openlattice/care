@@ -13,16 +13,9 @@ import ConsumerInfoView from './ConsumerInfoView';
 import ComplainantInfoView from './ComplainantInfoView';
 import DispositionView from './DispositionView';
 import OfficerInfoView from './OfficerInfoView';
-import { PaddedRow, Label, InlineCheckbox, InlineRadio, TitleLabel, OtherWrapper } from '../shared/Layout';
-
-const Header = styled.div`
-  font-size: 32px;
-  margin-bottom: 40px;
-  color: #37454A;
-  font-weight: bold;
-  width: 100%;
-  text-align: center;
-`;
+import FormNav from './FormNav';
+import { PaddedRow, Label, InlineCheckbox, InlineRadio, TitleLabel, OtherWrapper, SectionHeader } from '../shared/Layout';
+import { FORM_PATHS } from '../shared/Consts';
 
 const SectionHeaderWrapper = styled.div`
   position: relative;
@@ -44,13 +37,15 @@ const Section = styled.div`
   margin-bottom: 60px;
 `;
 
+
 const ReviewView = ({ input, handleTextInput, handleDateInput, handleTimeInput, handleCheckboxChange, handleSingleSelection, isInReview, consumerIsSelected }) => {
 
   return (
     <div>
       <div>
+        <SectionHeader>Review</SectionHeader>
+
         <Section>
-          <Header>Review</Header>
           <SectionHeaderWrapper>
             <SectionTitle>Report Info</SectionTitle>
             <EditLink to="/1">edit</EditLink>
@@ -115,6 +110,8 @@ const ReviewView = ({ input, handleTextInput, handleDateInput, handleTimeInput, 
               isInReview={isInReview}
               section='officerInfo' />
         </Section>
+
+        <FormNav submit />
       </div>
 
     </div>

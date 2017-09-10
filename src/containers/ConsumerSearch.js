@@ -9,6 +9,9 @@ import styled from 'styled-components';
 
 import SearchBar from '../components/SearchBar';
 import SearchResults from '../components/SearchResults';
+import FormNav from '../components/FormNav';
+import { SectionHeader } from '../shared/Layout';
+import { FORM_PATHS } from '../shared/Consts';
 
 const MAX_HITS = 10;
 
@@ -61,7 +64,8 @@ class ConsumerSearch extends React.Component {
   render () {
     return (
       <div>
-        <StyledButton onClick={() => this.props.handlePageChange('next')} block>Create New Consumer Entry</StyledButton>
+        <SectionHeader>Select Consumer</SectionHeader>
+        <StyledButton onClick={() => this.props.handlePageChange(FORM_PATHS.CONSUMER)} block>Create New Consumer Entry</StyledButton>
         <DividerStatement>—OR—</DividerStatement>
         <SearchBar handleInput={this.handleInput} query={this.state.query} onSearchSubmit={this.onSearchSubmit} />
         <SearchResults results={this.state.results} handlePersonSelection={this.props.handlePersonSelection} didSearch={this.state.didSearch} />

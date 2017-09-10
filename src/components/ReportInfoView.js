@@ -10,11 +10,16 @@ import DatePicker from 'react-bootstrap-date-picker';
 import TimePicker from 'react-bootstrap-time-picker';
 
 import SectionView from './SectionView';
-import { Label, TitleLabel, InlineRadio, PaddedRow } from '../shared/Layout';
+import FormNav from './FormNav';
+import { Label, TitleLabel, InlineRadio, PaddedRow, SectionHeader } from '../shared/Layout';
+import { FORM_PATHS } from '../shared/Consts';
 
-const ReportInfoView = ({ section, handleTextInput, handleDateInput, handleTimeInput, handleSingleSelection, input, isInReview }) => {
+const ReportInfoView = ({ section, handleTextInput, handleDateInput, handleTimeInput, handleSingleSelection, input, isInReview, maxPage, handlePageChange }) => {
+  const page = window.location.hash.substr(2);
+
 	return (
 		<div>
+      { !isInReview() ? <SectionHeader>Report Info</SectionHeader> : null}
       <PaddedRow>
         <Col lg={6}>
     		  <TitleLabel>1. Primary Reason for Dispatch</TitleLabel>
@@ -117,6 +122,8 @@ const ReportInfoView = ({ section, handleTextInput, handleDateInput, handleTimeI
           <TimePicker value={input.timeReported} onChange={(e) => {handleTimeInput(e, section, 'timeReported')}} disabled={isInReview()} />
         </Col>
       </PaddedRow>
+
+      <FormNav nextPath={FORM_PATHS.CONSUMER_SEARCH} handlePageChange={handlePageChange} />
 		</div>
 
 	);

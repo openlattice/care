@@ -8,12 +8,16 @@ import { FormGroup, FormControl, Col } from 'react-bootstrap';
 import DatePicker from 'react-bootstrap-date-picker';
 
 import SectionView from './SectionView';
-import { PaddedRow, Label, InlineCheckbox, InlineRadio, TitleLabel, OtherWrapper } from '../shared/Layout';
+import FormNav from './FormNav';
+import { PaddedRow, Label, InlineCheckbox, InlineRadio, TitleLabel, OtherWrapper, SectionHeader } from '../shared/Layout';
+import { FORM_PATHS } from '../shared/Consts';
 
-const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSingleSelection, handleCheckboxChange, input, consumerIsSelected, isInReview }) => {
+const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSingleSelection, handleCheckboxChange, input, consumerIsSelected, isInReview, handlePageChange }) => {
 
   return (
     <div>
+      { !isInReview() ? <SectionHeader>Consumer</SectionHeader> : null}
+
       <PaddedRow>
         <Col lg={6}>
           <TitleLabel>12. Last Name</TitleLabel>
@@ -778,6 +782,8 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
           </FormGroup>
         </Col>
       </PaddedRow>
+
+      <FormNav prevPath={FORM_PATHS.CONSUMER_SEARCH} nextPath={FORM_PATHS.COMPLAINANT} handlePageChange={handlePageChange} />
     </div>
   );
 }
@@ -791,4 +797,3 @@ ConsumerInfoView.propTypes = {
 }
 
 export default ConsumerInfoView;
-// TODO: IF 15 is yes -> send copy of report to Homelessoutreach@BaltimorePolice.org

@@ -85,3 +85,24 @@ export const SubmitButton = styled(Button).attrs({
 })`
 
 `;
+
+export const SectionHeader = styled.div`
+  font-size: 32px;
+  margin-bottom: 40px;
+  color: #37454A;
+  font-weight: bold;
+  width: 100%;
+  text-align: center;
+`;
+
+export const NavBtnWrapper = styled.div`
+  position: absolute;
+  width: 300px;
+  left: 50%;
+  margin-left: -150px;
+  text-align: center;
+`;
+
+export const StyledButton = styled(Button)`
+  margin: 0 10px;
+`;

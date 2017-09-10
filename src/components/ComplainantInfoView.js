@@ -7,11 +7,15 @@ import PropTypes from 'prop-types';
 import { FormControl, Col } from 'react-bootstrap';
 
 import SectionView from './SectionView';
-import { PaddedRow, TitleLabel } from '../shared/Layout';
+import FormNav from './FormNav';
+import { PaddedRow, TitleLabel, SectionHeader } from '../shared/Layout';
+import { FORM_PATHS } from '../shared/Consts';
 
-const ComplainantInfoView = ({ section, handleTextInput, input, isInReview }) => {
+const ComplainantInfoView = ({ section, handleTextInput, input, isInReview, handlePageChange }) => {
   return(
     <div>
+      { !isInReview() ? <SectionHeader>Complainant</SectionHeader> : null}
+
       <PaddedRow>
         <Col lg={6}>
           <TitleLabel>28. Last Name</TitleLabel>
@@ -64,6 +68,8 @@ const ComplainantInfoView = ({ section, handleTextInput, input, isInReview }) =>
           <FormControl data-section={section} name='complainantPhone' value={input.complainantPhone} onChange={handleTextInput} disabled={isInReview()} />
         </Col>
       </PaddedRow>
+
+      <FormNav prevPath={FORM_PATHS.CONSUMER} nextPath={FORM_PATHS.DISPOSITION} handlePageChange={handlePageChange} />
     </div>
   );
 }

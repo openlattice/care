@@ -7,12 +7,16 @@ import PropTypes from 'prop-types';
 import { FormGroup, FormControl, Col } from 'react-bootstrap';
 
 import SectionView from './SectionView';
-import { PaddedRow, Label, TitleLabel, OtherWrapper, InlineCheckbox, InlineRadio } from '../shared/Layout';
+import FormNav from './FormNav';
+import { PaddedRow, Label, TitleLabel, OtherWrapper, InlineCheckbox, InlineRadio, SectionHeader } from '../shared/Layout';
+import { FORM_PATHS } from '../shared/Consts';
 
 
-const DispositionView = ({ section, handleTextInput, handleCheckboxChange, handleSingleSelection, input, isInReview }) => {
+const DispositionView = ({ section, handleTextInput, handleCheckboxChange, handleSingleSelection, input, isInReview, handlePageChange }) => {
   return(
     <div>
+    { !isInReview() ? <SectionHeader>Disposition</SectionHeader> : null}
+
       <PaddedRow>
         <Col lg={12}>
           <TitleLabel>29. Disposition</TitleLabel>
@@ -258,6 +262,8 @@ const DispositionView = ({ section, handleTextInput, handleCheckboxChange, handl
           <FormControl data-section={section} name='incidentNarrative' componentClass='textarea' value={input.incidentNarrative} onChange={handleTextInput} disabled={isInReview()} />
         </Col>
       </PaddedRow>
+
+      <FormNav prevPath={FORM_PATHS.COMPLAINANT} nextPath={FORM_PATHS.OFFICER} handlePageChange={handlePageChange} />
     </div>
   );
 }

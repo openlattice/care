@@ -275,17 +275,8 @@ class Form extends React.Component {
     this.setState({ [sectionKey]: sectionState });
   }
 
-  handlePageChange = (direction) => {
-    let currentPage = window.location.hash.substr(2);
-    if (direction === 'prev') {
-      const prev = --currentPage;
-      this.props.history.push(`/${prev}`);
-      this.setState({ page: prev });
-    } else if (direction === 'next') {
-      const next = ++currentPage;
-      this.props.history.push(`/${next}`);
-      this.setState({ page: next });
-    }
+  handlePageChange = (path) => {
+    this.props.history.push(path);
   }
 
   handlePersonSelection = (person) => {
@@ -447,8 +438,8 @@ class Form extends React.Component {
   }
 
   isInReview = () => {
-    console.log('this state page:', this.state.page);
-    if (this.state.page && this.state.page == this.state.maxPage) return true;
+    const page = window.location.hash.substr(2);
+    if (page && page == this.state.maxPage) return true;
     return false; 
   }
 

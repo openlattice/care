@@ -7,12 +7,16 @@ import PropTypes from 'prop-types';
 import { FormControl, Col, FormGroup } from 'react-bootstrap';
 
 import SectionView from './SectionView';
-import { PaddedRow, Label, TitleLabel, InlineCheckbox } from '../shared/Layout';
+import FormNav from './FormNav';
+import { PaddedRow, Label, TitleLabel, InlineCheckbox, SectionHeader } from '../shared/Layout';
+import { FORM_PATHS } from '../shared/Consts';
 
 
-const OfficerInfoView = ({ section, handleTextInput, handleCheckboxChange, input, isInReview }) => {
+const OfficerInfoView = ({ section, handleTextInput, handleCheckboxChange, input, isInReview, handlePageChange }) => {
   return(
     <div>
+      { !isInReview() ? <SectionHeader>Officer</SectionHeader> : null }
+
       <PaddedRow>
         <Col lg={6}>
           <TitleLabel>33. Last Name</TitleLabel>
@@ -74,6 +78,8 @@ const OfficerInfoView = ({ section, handleTextInput, handleCheckboxChange, input
           </FormGroup>
         </Col>
       </PaddedRow>
+
+      <FormNav prevPath={FORM_PATHS.DISPOSITION} nextPath={FORM_PATHS.REVIEW} handlePageChange={handlePageChange} />
     </div>
   );
 }

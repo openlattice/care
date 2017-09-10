@@ -57,8 +57,10 @@ const SectionWrapperView = ({
   ...props
 }) => {
 
-  const renderHeader = (page) => {
-    switch(page) {
+  const renderHeader = () => {
+    const location = window.location.hash.substr(2);
+    console.log('location:', location);
+    switch(location) {
       case 1:
         return <Header>Report Information</Header>;
       case 2:
@@ -162,7 +164,7 @@ const SectionWrapperView = ({
 
   return (
     <div>
-      { renderHeader(page) }
+      { renderHeader() }
       <Switch>
         <Route path="/1" render={getReportInfoView} />
         <Route path="/2" render={getConsumerSearchView} />
