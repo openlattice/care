@@ -5,13 +5,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { FormControl, Col } from 'react-bootstrap';
+import { FormGroup, FormControl, Col } from 'react-bootstrap';
 import DatePicker from 'react-bootstrap-date-picker';
 import TimePicker from 'react-bootstrap-time-picker';
 
 import FormNav from './FormNav';
 import { TitleLabel, InlineRadio, PaddedRow, SectionHeader } from '../shared/Layout';
 import { FORM_PATHS } from '../shared/Consts';
+import { getRequiredValidation, getNumberValidation, getDateValidation } from '../shared/Validation';
 
 const ReportInfoView = ({
   section,
@@ -31,12 +32,14 @@ const ReportInfoView = ({
       { !isInReview() ? <SectionHeader>Report Info</SectionHeader> : null}
       <PaddedRow>
         <Col lg={6}>
-    		  <TitleLabel>1. Primary Reason for Dispatch</TitleLabel>
-          <FormControl data-section={section} name='dispatchReason' value={input.dispatchReason} onChange={handleTextInput} disabled={isInReview()} />
+    		    <TitleLabel>1. Primary Reason for Dispatch</TitleLabel>
+            <FormControl data-section={section} name='dispatchReason' value={input.dispatchReason} onChange={handleTextInput} disabled={isInReview()} />
         </Col>
         <Col lg={6}>
-          <TitleLabel>2. Complaint Number</TitleLabel>
-          <FormControl data-section={section} name='complaintNumber' value={input.complaintNumber} onChange={handleTextInput} disabled={isInReview()} />
+          <FormGroup validationState={getNumberValidation(input.complaintNumber)}>
+            <TitleLabel>2. Complaint Number</TitleLabel>
+            <FormControl data-section={section} name='complaintNumber' value={input.complaintNumber} onChange={handleTextInput} disabled={isInReview()} />
+          </FormGroup>
         </Col>
       </PaddedRow>
 
@@ -86,8 +89,10 @@ const ReportInfoView = ({
 
       <PaddedRow>
         <Col lg={6}>
-          <TitleLabel>8. CAD Number</TitleLabel>
-          <FormControl data-section={section} name='cadNumber' value={input.cadNumber} onChange={handleTextInput} disabled={isInReview()} />
+          <FormGroup validationState={getNumberValidation(input.cadNumber)}>
+            <TitleLabel>8. CAD Number</TitleLabel>
+            <FormControl data-section={section} name='cadNumber' value={input.cadNumber} onChange={handleTextInput} disabled={isInReview()} />
+          </FormGroup>
         </Col>
         <Col lg={6}>
           <TitleLabel>9. On View</TitleLabel>
@@ -112,8 +117,10 @@ const ReportInfoView = ({
 
       <PaddedRow>
         <Col lg={6}>
-          <TitleLabel>10. Date Occurred</TitleLabel>
-          <DatePicker value={input.dateOccurred} onChange={(e) => {handleDateInput(e, section, 'dateOccurred')}} disabled={isInReview()} />
+          <FormGroup validationState={getDateValidation(input.dateOccurred)}>
+            <TitleLabel>10. Date Occurred</TitleLabel>
+            <DatePicker value={input.dateOccurred} onChange={(e) => {handleDateInput(e, section, 'dateOccurred')}} disabled={isInReview()} />
+          </FormGroup>
         </Col>
         <Col lg={6}>
           <TitleLabel>Time Occurred</TitleLabel>
@@ -131,7 +138,7 @@ const ReportInfoView = ({
           <TimePicker value={input.timeReported} onChange={(e) => {handleTimeInput(e, section, 'timeReported')}} disabled={isInReview()} />
         </Col>
       </PaddedRow>
-      
+
       { !isInReview() ? <FormNav nextPath={FORM_PATHS.CONSUMER_SEARCH} handlePageChange={handlePageChange} /> : null}
 		</div>
 

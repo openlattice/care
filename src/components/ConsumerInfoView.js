@@ -11,6 +11,7 @@ import DatePicker from 'react-bootstrap-date-picker';
 import FormNav from './FormNav';
 import { PaddedRow, InlineCheckbox, InlineRadio, TitleLabel, OtherWrapper, SectionHeader } from '../shared/Layout';
 import { FORM_PATHS } from '../shared/Consts';
+import { getNumberValidation } from '../shared/Validation';
 
 const ConsumerInfoView = ({
   section,
@@ -155,8 +156,10 @@ const ConsumerInfoView = ({
 
       <PaddedRow>
         <Col lg={6}>
-          <TitleLabel>Age</TitleLabel>
-          <FormControl data-section={section} name='age' value={input.age} onChange={handleTextInput} disabled={isInReview()} />
+          <FormGroup validationState={getNumberValidation(input.age)}>
+            <TitleLabel>Age</TitleLabel>
+            <FormControl data-section={section} name='age' value={input.age} onChange={handleTextInput} disabled={isInReview()} />
+          </FormGroup>
         </Col>
         <Col lg={6}>
           <TitleLabel>DOB</TitleLabel>
@@ -677,7 +680,7 @@ const ConsumerInfoView = ({
                   checked={input.injuries.indexOf('other') !== -1}
                   onChange={handleCheckboxChange}
                   disabled={isInReview()}>Other:</InlineCheckbox>
-              <FormControl data-section={section} name='injuriesOther' value={input.injuriesOther} onChange={handleTextInput} />
+              <FormControl data-section={section} name='injuriesOther' value={input.injuriesOther} onChange={handleTextInput} disabled={isInReview()} />
             </OtherWrapper>
           </FormGroup>
         </Col>
