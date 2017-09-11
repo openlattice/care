@@ -36,7 +36,20 @@ const Section = styled.div`
 `;
 
 
-const ReviewView = ({ input, handleTextInput, handleDateInput, handleTimeInput, handleCheckboxChange, handleSingleSelection, isInReview, consumerIsSelected }) => {
+const ReviewView = ({
+  reportInfo,
+  consumerInfo,
+  complainantInfo,
+  dispositionInfo,
+  officerInfo,
+  handleTextInput,
+  handleDateInput,
+  handleTimeInput,
+  handleCheckboxChange,
+  handleSingleSelection,
+  isInReview,
+  consumerIsSelected
+}) => {
 
   return (
     <div>
@@ -53,7 +66,7 @@ const ReviewView = ({ input, handleTextInput, handleDateInput, handleTimeInput, 
               handleDateInput={handleDateInput}
               handleTimeInput={handleTimeInput}
               handleSingleSelection={handleSingleSelection}
-              input={input.reportInfo}
+              input={reportInfo}
               section='reportInfo'
               isInReview={isInReview} />
         </Section>
@@ -67,8 +80,8 @@ const ReviewView = ({ input, handleTextInput, handleDateInput, handleTimeInput, 
               handleDateInput={handleDateInput}
               handleSingleSelection={handleSingleSelection}
               handleCheckboxChange={handleCheckboxChange}
-              input={input.consumerInfo}
-              consumerIsSelected={input.consumerIsSelected}
+              input={consumerInfo}
+              consumerIsSelected={consumerIsSelected}
               isInReview={isInReview}
               section='consumerInfo' />
         </Section>
@@ -79,7 +92,7 @@ const ReviewView = ({ input, handleTextInput, handleDateInput, handleTimeInput, 
           </SectionHeaderWrapper>
           <ComplainantInfoView
               handleTextInput={handleTextInput}
-              input={input.complainantInfo}
+              input={complainantInfo}
               isInReview={isInReview}
               section='complainantInfo' />
         </Section>
@@ -92,7 +105,7 @@ const ReviewView = ({ input, handleTextInput, handleDateInput, handleTimeInput, 
               handleTextInput={handleTextInput}
               handleCheckboxChange={handleCheckboxChange}
               handleSingleSelection={handleSingleSelection}
-              input={input.dispositionInfo}
+              input={dispositionInfo}
               isInReview={isInReview}
               section='dispositionInfo' />
         </Section>
@@ -104,7 +117,7 @@ const ReviewView = ({ input, handleTextInput, handleDateInput, handleTimeInput, 
           <OfficerInfoView
               handleTextInput={handleTextInput}
               handleCheckboxChange={handleCheckboxChange}
-              input={input.officerInfo}
+              input={officerInfo}
               isInReview={isInReview}
               section='officerInfo' />
         </Section>

@@ -29,20 +29,24 @@ const StyledProgressBar = styled(ProgressBar)`
 `;
 
 
-function FormView({ 
+function FormView({
+  maxPage,
+  handleSubmit,
   handleTextInput,
   handleDateInput,
   handleTimeInput,
   handleSingleSelection,
   handleCheckboxChange,
+  reportInfo,
+  consumerInfo,
+  complainantInfo,
+  dispositionInfo,
+  officerInfo,
+  isInReview,
+  handlePageChange,
   handlePersonSelection,
   personEntitySetId,
-  handleSubmit,
-  maxPage,
-  handlePageChange,
-  getPage,
-  input,
-  isInReview
+  consumerIsSelected
 }) {
 
 	const getProgress = () => {
@@ -62,7 +66,7 @@ function FormView({
           handleDateInput={handleDateInput}
           handleTimeInput={handleTimeInput}
           handleSingleSelection={handleSingleSelection}
-          input={input.reportInfo}
+          input={reportInfo}
           isInReview={isInReview}
           maxPage={maxPage}
           handlePageChange={handlePageChange}
@@ -88,8 +92,8 @@ function FormView({
           handleDateInput={handleDateInput}
           handleSingleSelection={handleSingleSelection}
           handleCheckboxChange={handleCheckboxChange}
-          input={input.consumerInfo}
-          consumerIsSelected={input.consumerIsSelected}
+          input={consumerInfo}
+          consumerIsSelected={consumerIsSelected}
           isInReview={isInReview}
           handlePageChange={handlePageChange}
           section='consumerInfo' />
@@ -100,7 +104,7 @@ function FormView({
     return (
       <ComplainantInfoView
           handleTextInput={handleTextInput}
-          input={input.complainantInfo}
+          input={complainantInfo}
           isInReview={isInReview}
           handlePageChange={handlePageChange}
           section='complainantInfo' />
@@ -113,7 +117,7 @@ function FormView({
           handleTextInput={handleTextInput}
           handleCheckboxChange={handleCheckboxChange}
           handleSingleSelection={handleSingleSelection}
-          input={input.dispositionInfo}
+          input={dispositionInfo}
           isInReview={isInReview}
           handlePageChange={handlePageChange}
           section='dispositionInfo' />
@@ -125,7 +129,7 @@ function FormView({
       <OfficerInfoView
           handleTextInput={handleTextInput}
           handleCheckboxChange={handleCheckboxChange}
-          input={input.officerInfo}
+          input={officerInfo}
           isInReview={isInReview}
           handlePageChange={handlePageChange}
           section='officerInfo' />
@@ -140,9 +144,13 @@ function FormView({
           handleTimeInput={handleTimeInput}
           handleCheckboxChange={handleCheckboxChange}
           handleSingleSelection={handleSingleSelection}
-          input={input}
+          reportInfo={reportInfo}
+          consumerInfo={consumerInfo}
+          complainantInfo={complainantInfo}
+          dispositionInfo={dispositionInfo}
+          officerInfo={officerInfo}
           isInReview={isInReview}
-          consumerIsSelected={input.consumerIsSelected} />
+          consumerIsSelected={consumerIsSelected} />
     );
   }
 
@@ -175,8 +183,7 @@ FormView.propTypes = {
   handleTextInput: PropTypes.func.isRequired,
   handleSingleSelection: PropTypes.func.isRequired,
   handleCheckboxChange: PropTypes.func.isRequired,
-  handleSubmit: PropTypes.func.isRequired,
-  input: PropTypes.object.isRequired
+  handleSubmit: PropTypes.func.isRequired
 }
 
 export default FormView;

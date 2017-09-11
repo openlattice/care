@@ -12,7 +12,17 @@ import FormNav from './FormNav';
 import { PaddedRow, InlineCheckbox, InlineRadio, TitleLabel, OtherWrapper, SectionHeader } from '../shared/Layout';
 import { FORM_PATHS } from '../shared/Consts';
 
-const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSingleSelection, handleCheckboxChange, input, consumerIsSelected, isInReview, handlePageChange }) => {
+const ConsumerInfoView = ({
+  section,
+  handleTextInput,
+  handleDateInput,
+  handleSingleSelection,
+  handleCheckboxChange,
+  input,
+  consumerIsSelected,
+  isInReview,
+  handlePageChange
+}) => {
 
   return (
     <div>

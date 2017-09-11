@@ -449,7 +449,11 @@ class Form extends React.Component {
             handleSingleSelection={this.handleSingleSelection}
             handleCheckboxChange={this.handleCheckboxChange}
             handleSubmit={this.handleSubmit}
-            input={this.state}
+            reportInfo={this.state.reportInfo}
+            consumerInfo={this.state.consumerInfo}
+            complainantInfo={this.state.complainantInfo}
+            dispositionInfo={this.state.dispositionInfo}
+            officerInfo={this.state.officerInfo}
             maxPage={this.state.maxPage}
             handlePageChange={this.handlePageChange}
             handlePersonSelection={this.handlePersonSelection}
