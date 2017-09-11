@@ -68,7 +68,7 @@ const ComplainantInfoView = ({ section, handleTextInput, input, isInReview, hand
         </Col>
       </PaddedRow>
 
-      <FormNav prevPath={FORM_PATHS.CONSUMER} nextPath={FORM_PATHS.DISPOSITION} handlePageChange={handlePageChange} />
+      { !isInReview() ? <FormNav prevPath={FORM_PATHS.CONSUMER} nextPath={FORM_PATHS.DISPOSITION} handlePageChange={handlePageChange} /> : null}
     </div>
   );
 }

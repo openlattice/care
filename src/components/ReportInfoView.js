@@ -131,8 +131,8 @@ const ReportInfoView = ({
           <TimePicker value={input.timeReported} onChange={(e) => {handleTimeInput(e, section, 'timeReported')}} disabled={isInReview()} />
         </Col>
       </PaddedRow>
-
-      <FormNav nextPath={FORM_PATHS.CONSUMER_SEARCH} handlePageChange={handlePageChange} />
+      
+      { !isInReview() ? <FormNav nextPath={FORM_PATHS.CONSUMER_SEARCH} handlePageChange={handlePageChange} /> : null}
 		</div>
 
 	);

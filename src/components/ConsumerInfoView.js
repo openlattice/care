@@ -793,7 +793,7 @@ const ConsumerInfoView = ({
         </Col>
       </PaddedRow>
 
-      <FormNav prevPath={FORM_PATHS.CONSUMER_SEARCH} nextPath={FORM_PATHS.COMPLAINANT} handlePageChange={handlePageChange} />
+      { !isInReview() ? <FormNav prevPath={FORM_PATHS.CONSUMER_SEARCH} nextPath={FORM_PATHS.COMPLAINANT} handlePageChange={handlePageChange} /> : null}
     </div>
   );
 }

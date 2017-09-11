@@ -270,7 +270,7 @@ const DispositionView = ({
         </Col>
       </PaddedRow>
 
-      <FormNav prevPath={FORM_PATHS.COMPLAINANT} nextPath={FORM_PATHS.OFFICER} handlePageChange={handlePageChange} />
+      { !isInReview() ? <FormNav prevPath={FORM_PATHS.COMPLAINANT} nextPath={FORM_PATHS.OFFICER} handlePageChange={handlePageChange} /> : null}
     </div>
   );
 }

@@ -78,7 +78,7 @@ const OfficerInfoView = ({ section, handleTextInput, handleCheckboxChange, input
         </Col>
       </PaddedRow>
 
-      <FormNav prevPath={FORM_PATHS.DISPOSITION} nextPath={FORM_PATHS.REVIEW} handlePageChange={handlePageChange} />
+      { !isInReview() ? <FormNav prevPath={FORM_PATHS.DISPOSITION} nextPath={FORM_PATHS.REVIEW} handlePageChange={handlePageChange} /> : null}
     </div>
   );
 }
