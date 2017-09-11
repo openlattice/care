@@ -13,7 +13,17 @@ import FormNav from './FormNav';
 import { TitleLabel, InlineRadio, PaddedRow, SectionHeader } from '../shared/Layout';
 import { FORM_PATHS } from '../shared/Consts';
 
-const ReportInfoView = ({ section, handleTextInput, handleDateInput, handleTimeInput, handleSingleSelection, input, isInReview, maxPage, handlePageChange }) => {
+const ReportInfoView = ({
+  section,
+  handleTextInput,
+  handleDateInput,
+  handleTimeInput,
+  handleSingleSelection,
+  input,
+  isInReview,
+  handlePageChange
+}) => {
+
   const page = window.location.hash.substr(2);
 
 	return (
@@ -129,9 +139,13 @@ const ReportInfoView = ({ section, handleTextInput, handleDateInput, handleTimeI
 }
 
 ReportInfoView.propTypes = {
-  handleTextInput: PropTypes.func.isRequired,
-  handleSingleSelection: PropTypes.func.isRequired,
   input: PropTypes.object.isRequired,
+  handleTextInput: PropTypes.func.isRequired,
+  handleDateInput: PropTypes.func.isRequired,
+  handleTimeInput: PropTypes.func.isRequired,
+  handleSingleSelection: PropTypes.func.isRequired,
+  isInReview: PropTypes.func.isRequired,
+  handlePageChange: PropTypes.func.isRequired,
   section: PropTypes.string.isRequired
 }
 

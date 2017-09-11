@@ -3,6 +3,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Button, FormGroup, InputGroup, FormControl } from 'react-bootstrap';
 import styled from 'styled-components';
 
@@ -27,6 +28,12 @@ const SearchBar = ({ handleInput, query, onSearchSubmit }) => {
       </SearchWrapper>
     </div>
   );
+}
+
+SearchBar.propTypes = {
+  handleInput: PropTypes.func.isRequired,
+  query: PropTypes.string.isRequired,
+  onSearchSubmit: PropTypes.func.isRequired
 }
 
 export default SearchBar;

@@ -150,7 +150,8 @@ function FormView({
           dispositionInfo={dispositionInfo}
           officerInfo={officerInfo}
           isInReview={isInReview}
-          consumerIsSelected={consumerIsSelected} />
+          consumerIsSelected={consumerIsSelected}
+          handlePageChange={handlePageChange} />
     );
   }
 
@@ -181,9 +182,22 @@ function FormView({
 
 FormView.propTypes = {
   handleTextInput: PropTypes.func.isRequired,
+  handleDateInput: PropTypes.func.isRequired,
+  handleTimeInput: PropTypes.func.isRequired,
   handleSingleSelection: PropTypes.func.isRequired,
   handleCheckboxChange: PropTypes.func.isRequired,
-  handleSubmit: PropTypes.func.isRequired
+  handleSubmit: PropTypes.func.isRequired,
+  maxPage: PropTypes.number.isRequired,
+  reportInfo: PropTypes.object.isRequired,
+  consumerInfo: PropTypes.object.isRequired,
+  complainantInfo: PropTypes.object.isRequired,
+  dispositionInfo: PropTypes.object.isRequired,
+  officerInfo: PropTypes.object.isRequired,
+  isInReview: PropTypes.func.isRequired,
+  handlePageChange: PropTypes.func.isRequired,
+  handlePersonSelection: PropTypes.func.isRequired,
+  personEntitySetId: PropTypes.string.isRequired,
+  consumerIsSelected: PropTypes.bool.isRequired
 }
 
 export default FormView;

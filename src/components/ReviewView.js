@@ -48,7 +48,8 @@ const ReviewView = ({
   handleCheckboxChange,
   handleSingleSelection,
   isInReview,
-  consumerIsSelected
+  consumerIsSelected,
+  handlePageChange
 }) => {
 
   return (
@@ -68,7 +69,8 @@ const ReviewView = ({
               handleSingleSelection={handleSingleSelection}
               input={reportInfo}
               section='reportInfo'
-              isInReview={isInReview} />
+              isInReview={isInReview}
+              handlePageChange={handlePageChange} />
         </Section>
         <Section>
           <SectionHeaderWrapper>
@@ -83,6 +85,7 @@ const ReviewView = ({
               input={consumerInfo}
               consumerIsSelected={consumerIsSelected}
               isInReview={isInReview}
+              handlePageChange={handlePageChange}
               section='consumerInfo' />
         </Section>
         <Section>
@@ -94,6 +97,7 @@ const ReviewView = ({
               handleTextInput={handleTextInput}
               input={complainantInfo}
               isInReview={isInReview}
+              handlePageChange={handlePageChange}
               section='complainantInfo' />
         </Section>
         <Section>
@@ -107,6 +111,7 @@ const ReviewView = ({
               handleSingleSelection={handleSingleSelection}
               input={dispositionInfo}
               isInReview={isInReview}
+              handlePageChange={handlePageChange}
               section='dispositionInfo' />
         </Section>
         <Section>
@@ -119,6 +124,7 @@ const ReviewView = ({
               handleCheckboxChange={handleCheckboxChange}
               input={officerInfo}
               isInReview={isInReview}
+              handlePageChange={handlePageChange}
               section='officerInfo' />
         </Section>
 
@@ -127,6 +133,21 @@ const ReviewView = ({
 
     </div>
   );
+};
+
+ReviewView.propTypes = {
+  reportInfo: PropTypes.object.isRequired,
+  consumerInfo: PropTypes.object.isRequired,
+  complainantInfo: PropTypes.object.isRequired,
+  dispositionInfo: PropTypes.object.isRequired,
+  officerInfo: PropTypes.object.isRequired,
+  handleTextInput: PropTypes.func.isRequired,
+  handleDateInput: PropTypes.func.isRequired,
+  handleTimeInput: PropTypes.func.isRequired,
+  handleCheckboxChange: PropTypes.func.isRequired,
+  handleSingleSelection: PropTypes.func.isRequired,
+  isInReview: PropTypes.func.isRequired,
+  consumerIsSelected: PropTypes.bool.isRequired
 };
 
 export default ReviewView;

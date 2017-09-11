@@ -3,6 +3,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Grid, Row, Col } from 'react-bootstrap';
 import FontAwesome from 'react-fontawesome';
@@ -72,6 +73,11 @@ const PersonRow = ({ person, handlePersonSelection }) => {
       </Grid>
     </PersonWrapper>
   );
+}
+
+PersonRow.propTypes = {
+  person: PropTypes.object.isRequired,
+  handlePersonSelection: PropTypes.func.isRequired
 }
 
 export default PersonRow;

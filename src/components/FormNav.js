@@ -34,4 +34,11 @@ const FormNav = ({prevPath, nextPath, submit, handlePageChange}) => {
   );
 };
 
+FormNav.propTypes = {
+  prevPath: PropTypes.string,
+  nextPath: PropTypes.string,
+  submit: PropTypes.bool,
+  handlePageChange: PropTypes.func
+};
+
 export default FormNav;

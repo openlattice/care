@@ -802,6 +802,10 @@ ConsumerInfoView.propTypes = {
   handleTextInput: PropTypes.func.isRequired,
   handleSingleSelection: PropTypes.func.isRequired,
   handleCheckboxChange: PropTypes.func.isRequired,
+  handleDateInput: PropTypes.func.isRequired,
+  consumerIsSelected: PropTypes.bool.isRequired,
+  isInReview: PropTypes.func.isRequired,
+  handlePageChange: PropTypes.func.isRequired,
   input: PropTypes.object.isRequired,
   section: PropTypes.string.isRequired
 }

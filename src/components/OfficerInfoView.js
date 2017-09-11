@@ -87,7 +87,9 @@ OfficerInfoView.propTypes = {
   handleTextInput: PropTypes.func.isRequired,
   handleCheckboxChange: PropTypes.func.isRequired,
   input: PropTypes.object.isRequired,
-  section: PropTypes.string.isRequired
+  section: PropTypes.string.isRequired,
+  isInReview: PropTypes.func.isRequired,
+  handlePageChange: PropTypes.func.isRequired
 }
 
 export default OfficerInfoView;

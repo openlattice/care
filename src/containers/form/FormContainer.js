@@ -458,7 +458,8 @@ class Form extends React.Component {
             handlePageChange={this.handlePageChange}
             handlePersonSelection={this.handlePersonSelection}
             personEntitySetId={this.state.personEntitySetId}
-            isInReview={this.isInReview} />
+            isInReview={this.isInReview}
+            consumerIsSelected={this.state.consumerIsSelected} />
         {
           this.state.submitSuccess
             ? <ConfirmationModal

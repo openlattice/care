@@ -6,6 +6,7 @@ import React from 'react';
 import { SearchApi } from 'lattice';
 import { Button } from 'react-bootstrap';
 import styled from 'styled-components';
+import PropTypes from 'prop-types';
 
 import SearchBar from '../components/SearchBar';
 import SearchResults from '../components/SearchResults';
@@ -34,6 +35,12 @@ class ConsumerSearch extends React.Component {
       resultsPage: 1,
       didSearch: false
     }
+  }
+
+  static propTypes = {
+    personEntitySetId: PropTypes.string.isRequired,
+    handlePageChange: PropTypes.func.isRequired,
+    handlePersonSelection: PropTypes.func.isRequired
   }
 
   handleInput = (e) => {

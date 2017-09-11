@@ -3,6 +3,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 import PersonRow from './PersonRow';
@@ -41,5 +42,11 @@ const SearchResults = ({ results, handlePersonSelection, didSearch }) => {
     </ResultsWrapper>
   );
 }
+
+SearchResults.propTypes = {
+  results: PropTypes.array.isRequired,
+  handlePersonSelection: PropTypes.func.isRequired,
+  didSearch: PropTypes.bool.isRequired
+};
 
 export default SearchResults;
