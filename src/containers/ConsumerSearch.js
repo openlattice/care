@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 
 import SearchBar from '../components/SearchBar';
 import SearchResults from '../components/SearchResults';
+import FormNav from '../components/FormNav';
 import { SectionHeader } from '../shared/Layout';
 import { FORM_PATHS } from '../shared/Consts';
 
@@ -75,6 +76,7 @@ class ConsumerSearch extends React.Component {
         <DividerStatement>—OR—</DividerStatement>
         <SearchBar handleInput={this.handleInput} query={this.state.query} onSearchSubmit={this.onSearchSubmit} />
         <SearchResults results={this.state.results} handlePersonSelection={this.props.handlePersonSelection} didSearch={this.state.didSearch} />
+        <FormNav prevPath={FORM_PATHS.REPORT} nextPath={FORM_PATHS.CONSUMER} handlePageChange={this.props.handlePageChange} />
       </div>
     );
   }

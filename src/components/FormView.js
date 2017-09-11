@@ -105,7 +105,6 @@ function FormView({
       <ComplainantInfoView
           handleTextInput={handleTextInput}
           input={complainantInfo}
-          isInReview={isInReview}
           handlePageChange={handlePageChange}
           section='complainantInfo' />
     );
