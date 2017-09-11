@@ -9,9 +9,6 @@ import { EntityDataModelApi, DataApi, SearchApi } from 'lattice';
 
 import FormView from '../../components/FormView';
 import ConfirmationModal from '../../components/ConfirmationModalView';
-import LogoutButton from '../app/LogoutButton';
-import * as RoutePaths from '../../core/router/RoutePaths';
-import { Page } from '../../shared/Layout';
 import { ENTITY_SET_NAMES, PERSON, CONSUMER_STATE, STRING_ID_FQN } from '../../shared/Consts';
 
 class Form extends React.Component {
@@ -99,7 +96,6 @@ class Form extends React.Component {
       officerInfo: {
         officerLastName: '',
         officerFirstName: '',
-
         officerSeqID: '',
         officerInjuries: '',
         officerCertification: []
@@ -118,7 +114,6 @@ class Form extends React.Component {
       appearsInPropertyTypes: [],
       submitSuccess: null,
       submitFailure: null,
-      page: window.location.hash.substr(2),
       maxPage: 7,
       consumerIsSelected: false
     };
@@ -459,7 +454,6 @@ class Form extends React.Component {
             handlePageChange={this.handlePageChange}
             handlePersonSelection={this.handlePersonSelection}
             personEntitySetId={this.state.personEntitySetId}
-            page={this.state.page}
             isInReview={this.isInReview} />
         {
           this.state.submitSuccess

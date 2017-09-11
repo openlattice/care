@@ -6,7 +6,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { FormControl, Col } from 'react-bootstrap';
 
-import SectionView from './SectionView';
 import FormNav from './FormNav';
 import { PaddedRow, TitleLabel, SectionHeader } from '../shared/Layout';
 import { FORM_PATHS } from '../shared/Consts';

@@ -6,9 +6,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { FormControl, Col, FormGroup } from 'react-bootstrap';
 
-import SectionView from './SectionView';
 import FormNav from './FormNav';
-import { PaddedRow, Label, TitleLabel, InlineCheckbox, SectionHeader } from '../shared/Layout';
+import { PaddedRow, TitleLabel, InlineCheckbox, SectionHeader } from '../shared/Layout';
 import { FORM_PATHS } from '../shared/Consts';
 
 

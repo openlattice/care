@@ -20,12 +20,6 @@ const PersonWrapper = styled.div`
   }
 `;
 
-const FakeAvatar = styled.img`
-  height: 100px;
-  width: 100px;
-  background: white;
-`;
-
 const Label = styled.span`
   font-weight: bold;
   padding-right: 6px;

@@ -3,7 +3,6 @@
  */
 
 import React from 'react';
-import { FormGroup, FormControl, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
@@ -14,8 +13,7 @@ import ComplainantInfoView from './ComplainantInfoView';
 import DispositionView from './DispositionView';
 import OfficerInfoView from './OfficerInfoView';
 import FormNav from './FormNav';
-import { PaddedRow, Label, InlineCheckbox, InlineRadio, TitleLabel, OtherWrapper, SectionHeader } from '../shared/Layout';
-import { FORM_PATHS } from '../shared/Consts';
+import { SectionHeader } from '../shared/Layout';
 
 const SectionHeaderWrapper = styled.div`
   position: relative;

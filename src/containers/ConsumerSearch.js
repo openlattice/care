@@ -9,7 +9,6 @@ import styled from 'styled-components';
 
 import SearchBar from '../components/SearchBar';
 import SearchResults from '../components/SearchResults';
-import FormNav from '../components/FormNav';
 import { SectionHeader } from '../shared/Layout';
 import { FORM_PATHS } from '../shared/Consts';
 

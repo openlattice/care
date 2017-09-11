@@ -1,4 +1,5 @@
 /*
+
  * @flow
  */
 
@@ -7,9 +8,8 @@ import PropTypes from 'prop-types';
 import { FormGroup, FormControl, Col } from 'react-bootstrap';
 import DatePicker from 'react-bootstrap-date-picker';
 
-import SectionView from './SectionView';
 import FormNav from './FormNav';
-import { PaddedRow, Label, InlineCheckbox, InlineRadio, TitleLabel, OtherWrapper, SectionHeader } from '../shared/Layout';
+import { PaddedRow, InlineCheckbox, InlineRadio, TitleLabel, OtherWrapper, SectionHeader } from '../shared/Layout';
 import { FORM_PATHS } from '../shared/Consts';
 
 const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSingleSelection, handleCheckboxChange, input, consumerIsSelected, isInReview, handlePageChange }) => {
@@ -400,7 +400,7 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
 
       <PaddedRow>
         <Col lg={6}>
-          <Label>If Yes, Weapon Type</Label>
+          <TitleLabel>If Yes, Weapon Type</TitleLabel>
           <FormControl data-section={section} name='armedWeaponType' value={input.armedWeaponType} onChange={handleTextInput} disabled={isInReview()} />
         </Col>
       </PaddedRow>
@@ -429,7 +429,7 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
 
       <PaddedRow>
         <Col lg={6}>
-          <Label>If Yes, Weapon Type</Label>
+          <TitleLabel>If Yes, Weapon Type</TitleLabel>
           <FormControl data-section={section} name='accessibleWeaponType' value={input.accessibleWeaponType} onChange={handleTextInput} disabled={isInReview()} />
         </Col>
       </PaddedRow>

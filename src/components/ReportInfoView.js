@@ -4,14 +4,13 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import styled, { injectGlobal } from 'styled-components';
-import { FormGroup, FormControl, Grid, Col } from 'react-bootstrap';
+import styled from 'styled-components';
+import { FormControl, Col } from 'react-bootstrap';
 import DatePicker from 'react-bootstrap-date-picker';
 import TimePicker from 'react-bootstrap-time-picker';
 
-import SectionView from './SectionView';
 import FormNav from './FormNav';
-import { Label, TitleLabel, InlineRadio, PaddedRow, SectionHeader } from '../shared/Layout';
+import { TitleLabel, InlineRadio, PaddedRow, SectionHeader } from '../shared/Layout';
 import { FORM_PATHS } from '../shared/Consts';
 
 const ReportInfoView = ({ section, handleTextInput, handleDateInput, handleTimeInput, handleSingleSelection, input, isInReview, maxPage, handlePageChange }) => {
