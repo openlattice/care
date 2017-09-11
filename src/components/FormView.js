@@ -80,8 +80,7 @@ function FormView({
           handlePersonSelection={handlePersonSelection}
           handlePageChange={handlePageChange}
           personEntitySetId={personEntitySetId}
-          handlePageChange={handlePageChange}
-          isInReview={isInReview} />
+          handlePageChange={handlePageChange} />
     );
   }
 
@@ -105,7 +104,9 @@ function FormView({
       <ComplainantInfoView
           handleTextInput={handleTextInput}
           input={complainantInfo}
+          isInReview={isInReview}
           handlePageChange={handlePageChange}
+          handleSingleSelection={handleSingleSelection}
           section='complainantInfo' />
     );
   }

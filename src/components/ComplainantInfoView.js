@@ -8,9 +8,9 @@ import { FormControl, Col } from 'react-bootstrap';
 
 import FormNav from './FormNav';
 import { PaddedRow, TitleLabel, SectionHeader } from '../shared/Layout';
-import { FORM_PATHS } from '../shared/Consts';
+import { FORM_PATHS, STATES } from '../shared/Consts';
 
-const ComplainantInfoView = ({ section, handleTextInput, input, isInReview, handlePageChange }) => {
+const ComplainantInfoView = ({ section, handleTextInput, input, isInReview, handlePageChange, handleSingleSelection }) => {
   return(
     <div>
       { !isInReview() ? <SectionHeader>Complainant</SectionHeader> : null}
@@ -44,7 +44,17 @@ const ComplainantInfoView = ({ section, handleTextInput, input, isInReview, hand
         </Col>
         <Col lg={6}>
           <TitleLabel>State</TitleLabel>
-          <FormControl data-section={section} name='complainantState' value={input.complainantState} onChange={handleTextInput} disabled={isInReview()} />
+          <FormControl
+              componentClass='select'
+              placeholder='select'
+              data-section={section}
+              name='complainantState'
+              value={input.complainantState}
+              onChange={handleSingleSelection}
+              disabled={isInReview()}>
+            <option value=''>Select</option>
+            { STATES.map((state) => (<option key={state} value={state}>{state}</option>)) }
+          </FormControl>
         </Col>
       </PaddedRow>
       <PaddedRow>

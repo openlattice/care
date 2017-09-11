@@ -10,7 +10,7 @@ import DatePicker from 'react-bootstrap-date-picker';
 
 import FormNav from './FormNav';
 import { PaddedRow, InlineCheckbox, InlineRadio, TitleLabel, OtherWrapper, SectionHeader } from '../shared/Layout';
-import { FORM_PATHS } from '../shared/Consts';
+import { FORM_PATHS, STATES } from '../shared/Consts';
 import { getNumberValidation } from '../shared/Validation';
 
 const ConsumerInfoView = ({
@@ -65,7 +65,17 @@ const ConsumerInfoView = ({
         </Col>
         <Col lg={6}>
           <TitleLabel>State</TitleLabel>
-          <FormControl data-section={section} name='state' value={input.state} onChange={handleTextInput} disabled={isInReview()} />
+          <FormControl
+              componentClass='select'
+              placeholder='select'
+              data-section={section}
+              name='state'
+              value={input.state}
+              onChange={handleSingleSelection}
+              disabled={isInReview()}>
+            <option value=''>Select</option>
+            { STATES.map((state) => (<option key={state} value={state}>{state}</option>)) }
+          </FormControl>
         </Col>
       </PaddedRow>
       <PaddedRow>
