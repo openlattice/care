@@ -10,7 +10,7 @@ import {
 
 export const AUTH0_CLIENT_ID :string =
   isProd
-    ? 'KvwsETaUxuXVjW2cmz2LbdqXQBdYs6wH'
-    : 'PTmyExdBckHAiyOjh4w2MqSIUGWWEdf8';
+    ? 'o8Y2U2zb5Iwo01jdxMN1W2aiN8PxwVjh'
+    : '5zQu7w1czaGaRE41pojbiuVqro65BXcx';
 
-export const AUTH0_DOMAIN :string = 'loom.auth0.com';
+export const AUTH0_DOMAIN :string = 'openlattice.auth0.com';
