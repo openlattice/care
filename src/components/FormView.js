@@ -49,7 +49,7 @@ function FormView({
   consumerIsSelected
 }) {
 
-	const getProgress = () => {
+  const getProgress = () => {
     const page = window.location.hash.substr(2);
     const num = Math.ceil((page - 1) / (maxPage - 1) * 100);
     const percentage = num.toString() + '%';
@@ -158,7 +158,7 @@ function FormView({
   return (
     <Page>
       <PageHeader>
-    		<Title>Behavioral Health Report</Title>
+        <Title>Behavioral Health Report</Title>
         <LogoutButton />
       </PageHeader>
       <StyledProgressBar now={getProgress().num} label={getProgress().percentage} />
@@ -177,7 +177,7 @@ function FormView({
         </form>
       </FormWrapper>
     </Page>
-	);
+  );
 }
 
 FormView.propTypes = {

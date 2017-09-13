@@ -1,11 +1,8 @@
-/*
- * @flow
- */
-
 import React from 'react';
-import {withRouter} from "react-router-dom";
+
 import Promise from 'bluebird';
 import { EntityDataModelApi, DataApi, SearchApi, SyncApi } from 'lattice';
+import { withRouter } from 'react-router-dom';
 
 import FormView from '../../components/FormView';
 import ConfirmationModal from '../../components/ConfirmationModalView';
@@ -140,18 +137,25 @@ class Form extends React.Component {
           });
       });
 
-      const start = 0;
-      const maxHits = 50;
-      const searchTerm = '*';
-      const searchOptions = {
-        start,
-        maxHits,
-        searchTerm
-      };
-      SearchApi.searchEntitySetData("5e004de9-ac2a-47f0-96a4-cfe060e1f916", searchOptions)
-        .then((res) => {
-          console.log('search res:', res);
-        });
+    const start = 0;
+    const maxHits = 50;
+    const searchTerm = '*';
+    const searchOptions = {
+      start,
+      maxHits,
+      searchTerm
+    };
+    SearchApi.searchEntitySetData('5e004de9-ac2a-47f0-96a4-cfe060e1f916', searchOptions)
+      .then((res) => {
+        console.log('search res:', res);
+      });
+  }
+
+  componentDidUpdate(prevProps) {
+
+    if (this.props.location !== prevProps.location) {
+      window.scrollTo(0, 0);
+    }
   }
 
   getPersonEntitySet = () => {
@@ -220,25 +224,25 @@ class Form extends React.Component {
     let ss = seconds;
 
     while (ss >= 60) {
-      mm++;
-      ss = ss - 60;
+      mm += 1;
+      ss -= 60;
     }
 
     while (mm >= 60) {
-      hh++;
-      mm = mm - 60;
+      hh += 1;
+      mm -= 60;
     }
 
     let hhStr = hh.toString();
-    hhStr = hhStr.length === 1 ? '0' + hhStr : hhStr;
+    hhStr = hhStr.length === 1 ? `0${hhStr}` : hhStr;
 
     let mmStr = mm.toString();
-    mmStr = mmStr.length === 1 ? '0' + mmStr : mmStr;
+    mmStr = mmStr.length === 1 ? `0${mmStr}` : mmStr;
 
     let ssStr = ss.toString();
-    ssStr = ssStr.length === 1 ? '0' + ssStr : ssStr;
+    ssStr = ssStr.length === 1 ? `0${ssStr}` : ssStr;
 
-    const res = hhStr + ':' + mmStr + ':' + ssStr;
+    const res = `${hhStr}:${mmStr}:${ssStr}`;
     return res;
   }
 
@@ -275,14 +279,14 @@ class Form extends React.Component {
   }
 
   handlePersonSelection = (person) => {
-    let consumerState = Object.assign({}, this.state.consumerInfo);
+    const consumerState = Object.assign({}, this.state.consumerInfo);
     Object.keys(PERSON).forEach((key) => {
       const consumerKey = CONSUMER_STATE[key];
       const personKey = PERSON[key];
       const personVal = person[personKey][0];
       consumerState[consumerKey] = personVal;
     });
-    this.setState({ 
+    this.setState({
       consumerInfo: consumerState,
       consumerIsSelected: true
     }, () => {
@@ -413,18 +417,18 @@ class Form extends React.Component {
       console.log('bulk data:', bulkData);
       DataApi.createEntityAndAssociationData(bulkData).then(() => {
         console.log('success!');
-        this.setState({ 
+        this.setState({
           submitSuccess: true,
           submitFailure: false
         });
       })
-      .catch((err) => {
-        console.log('err: ', err);
-        this.setState({
-          submitSuccess: false,
-          submitFailure: true
+        .catch((err) => {
+          console.log('err: ', err);
+          this.setState({
+            submitSuccess: false,
+            submitFailure: true
+          });
         });
-      })
     });
   }
 
@@ -434,8 +438,8 @@ class Form extends React.Component {
 
   isInReview = () => {
     const page = window.location.hash.substr(2);
-    if (page && page == this.state.maxPage) return true;
-    return false; 
+    if (page && page === this.state.maxPage) return true;
+    return false;
   }
 
   render() {
@@ -463,9 +467,9 @@ class Form extends React.Component {
         {
           this.state.submitSuccess
             ? <ConfirmationModal
-                  submitSuccess={this.state.submitSuccess}
-                  submitFailure={this.state.submitFailure}
-                  handleModalButtonClick={this.handleModalButtonClick} />
+                submitSuccess={this.state.submitSuccess}
+                submitFailure={this.state.submitFailure}
+                handleModalButtonClick={this.handleModalButtonClick} />
             : null
         }
       </div>
