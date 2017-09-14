@@ -11,7 +11,7 @@ import * as AuthUtils from './AuthUtils';
  * INITIAL_STATE depends on localStorage. if localStorage holds the Auth0 id token, and it has not yet expired,
  * then the user is considered to be authenticated.
  */
-const INITIAL_STATE :Map<> = Immutable.Map().withMutations((map :Map<>) => {
+const INITIAL_STATE :Map<*, *> = Immutable.Map().withMutations((map :Map<*, *>) => {
 
   const expiration :number = AuthUtils.getAuthTokenExpiration();
 
@@ -23,7 +23,7 @@ const INITIAL_STATE :Map<> = Immutable.Map().withMutations((map :Map<>) => {
   }
 });
 
-function authReducer(state :Map<> = INITIAL_STATE, action :Object) {
+function authReducer(state :Map<*, *> = INITIAL_STATE, action :Object) {
 
   switch (action.type) {
 

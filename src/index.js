@@ -39,14 +39,6 @@ injectGlobal`
 `;
 /* eslint-enable */
 
-/*
- * // !!! MUST HAPPEN FIRST !!!
- */
-Auth0.initialize();
-/*
- * // !!! MUST HAPPEN FIRST !!!
- */
-
 const routerHistory = initializeRouterHistory();
 const reduxStore = initializeReduxStore(routerHistory);
 
