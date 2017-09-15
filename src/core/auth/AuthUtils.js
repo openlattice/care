@@ -5,17 +5,23 @@
 import decode from 'jwt-decode';
 import moment from 'moment';
 
-const AUTH0_ID_TOKEN :string = 'AUTH0_ID_TOKEN';
+/*
+ * https://auth0.com/docs/jwt
+ * https://auth0.com/docs/tokens/id-token
+ */
+
+const AUTH0_ID_TOKEN :string = 'id_token';
+const AUTH0_ID_TOKEN_EXP :string = 'id_token_exp';
 
 export function getAuthToken() :?string {
 
   const idToken :?string = localStorage.getItem(AUTH0_ID_TOKEN);
 
-  if (!idToken || !idToken.length) {
-    return null;
+  if (typeof idToken === 'string' && idToken.length) {
+    return idToken;
   }
 
-  return idToken;
+  return null;
 }
 
 export function storeAuthToken(idToken :?string) :void {
@@ -31,23 +37,53 @@ export function storeAuthToken(idToken :?string) :void {
 export function clearAuthToken() :void {
 
   localStorage.removeItem(AUTH0_ID_TOKEN);
+  localStorage.removeItem(AUTH0_ID_TOKEN_EXP);
 }
 
-export function isAuthTokenExpired(idToken :?string) :boolean {
+
+export function getAuthTokenExpiration(maybeIdToken :?string) :number {
+
+  let idToken :?string = maybeIdToken;
 
   if (!idToken) {
+    idToken = getAuthToken();
+  }
+
+  if (!idToken) {
+    return -1;
+  }
+
+  try {
+    // it looks like Auth0 JWT tokens set the expiration date as seconds since the Unix Epoch
+    // https://auth0.com/docs/tokens/id-token#id-token-payload
+    const idTokenDecoded :Object = decode(idToken);
+    return moment.unix(idTokenDecoded.exp).valueOf();
+  }
+  catch (e) {
+    return -1;
+  }
+}
+
+export function hasAuthTokenExpired(idTokenOrExpiration :string | number) :boolean {
+
+  if (!idTokenOrExpiration || idTokenOrExpiration === -1) {
     return true;
   }
 
-  const idTokenDecoded = decode(idToken);
-
-  // it looks like Auth0 JWT tokens store the expiration date as seconds since the Unix Epoch
-  // https://auth0.com/docs/tokens/id-token#id-token-payload
-  const expiration = moment.unix(idTokenDecoded.exp);
-  return moment().isAfter(expiration);
-}
-
-export function isLoggedIn() :boolean {
-
-  return !isAuthTokenExpired(getAuthToken());
+  try {
+    if (typeof idTokenOrExpiration === 'number' && isFinite(idTokenOrExpiration)) {
+      // idTokenOrExpiration is the expiration
+      return moment().isAfter(idTokenOrExpiration);
+    }
+    else if (typeof idTokenOrExpiration === 'string' && idTokenOrExpiration.length) {
+      // idTokenOrExpiration is the id token
+      const idTokenDecoded = decode(idTokenOrExpiration);
+      const expiration = moment.unix(idTokenDecoded.exp);
+      return moment().isAfter(expiration);
+    }
+    return true;
+  }
+  catch (e) {
+    return true;
+  }
 }

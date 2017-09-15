@@ -2,31 +2,37 @@
  * @flow
  */
 
-/* eslint-disable react/prefer-stateless-function */
-
 import React from 'react';
 
 import PropTypes from 'prop-types';
-
 import { connect } from 'react-redux';
-import { Redirect, Route, withRouter } from 'react-router-dom';
+import { Redirect, Route, Switch, withRouter } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 
-import RoutePaths from '../../core/router/RoutePaths';
+import * as RoutePaths from '../../core/router/RoutePaths';
 
-import { configureLattice } from './AuthActionFactory';
+import * as Auth0 from './Auth0';
+import * as AuthActionFactory from './AuthActionFactory';
+import * as AuthUtils from './AuthUtils';
 
-function mapStateToProps(state :Map<>) {
+function mapStateToProps(state :Map<>) :Object {
+
+  let authTokenExpiration :number = state.getIn(['auth', 'authTokenExpiration'], -1);
+  if (AuthUtils.hasAuthTokenExpired(authTokenExpiration)) {
+    authTokenExpiration = -1;
+  }
 
   return {
-    isLoggedIn: state.getIn(['auth', 'isLoggedIn'], false)
+    authTokenExpiration
   };
 }
 
-function mapDispatchToProps(dispatch :Function) {
+function mapDispatchToProps(dispatch :Function) :Object {
 
   const actions = {
-    configureLattice
+    authAttempt: AuthActionFactory.authAttempt,
+    authSuccess: AuthActionFactory.authSuccess,
+    authExpired: AuthActionFactory.authExpired
   };
 
   return {
@@ -38,41 +44,69 @@ class AuthRoute extends React.Component {
 
   static propTypes = {
     actions: PropTypes.shape({
-      configureLattice: PropTypes.func.isRequired
+      authAttempt: PropTypes.func.isRequired,
+      authExpired: PropTypes.func.isRequired,
+      authSuccess: PropTypes.func.isRequired
     }).isRequired,
+    authTokenExpiration: PropTypes.number.isRequired,
     component: PropTypes.func.isRequired,
-    isLoggedIn: PropTypes.bool.isRequired
+    location: PropTypes.shape({
+      pathname: PropTypes.string.isRequired,
+      search: PropTypes.string
+    }).isRequired
   }
 
   componentWillMount() {
 
-    // TODO: this is awkward. there must be another way to configure lattice when we're already logged in
-    if (this.props.isLoggedIn) {
-      this.props.actions.configureLattice();
+    if (!AuthUtils.hasAuthTokenExpired(this.props.authTokenExpiration)) {
+      this.props.actions.authSuccess(AuthUtils.getAuthToken());
+    }
+    else {
+      this.props.actions.authAttempt();
+    }
+  }
+
+  componentWillUnmount() {
+
+    // TODO: minor edge case: lock.hide() only needs to be invoked if the lock is already showing
+    // TODO: extreme edge case: lock.show() will not actually show the lock if invoked immediately after lock.hide()
+    // TODO: https://github.com/auth0/lock/issues/1089
+    Auth0.getAuth0LockInstance().hide();
+  }
+
+  componentWillReceiveProps(nextProps :Object) {
+
+    if (AuthUtils.hasAuthTokenExpired(nextProps.authTokenExpiration)) {
+      // if nextProps.authTokenExpiration === -1, we've already dispatched AUTH_EXPIRED
+      if (nextProps.authTokenExpiration !== -1) {
+        this.props.actions.authExpired();
+      }
+      Auth0.getAuth0LockInstance().show();
+    }
+    else {
+      Auth0.getAuth0LockInstance().hide();
     }
   }
 
   render() {
 
     const {
-      component: Component,
-      isLoggedIn,
-      ...rest
+      component: WrappedComponent,
+      ...wrappedComponentProps
     } = this.props;
 
+    if (!AuthUtils.hasAuthTokenExpired(this.props.authTokenExpiration)) {
+      return (
+        <WrappedComponent {...wrappedComponentProps} />
+      );
+    }
+
+    // TODO: perhpas render something at "/login" instead of an empty page
     return (
-      <Route
-          {...rest}
-          render={(props) => {
-            if (isLoggedIn) {
-              return (
-                <Component {...props} />
-              );
-            }
-            return (
-              <Redirect to={{ pathname: 'auth' }} />
-            );
-          }} />
+      <Switch>
+        <Route exact strict path={RoutePaths.LOGIN} />
+        <Redirect to={RoutePaths.LOGIN} />
+      </Switch>
     );
   }
 }

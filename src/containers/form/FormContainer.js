@@ -1,10 +1,12 @@
 import React from 'react';
-import { EntityDataModelApi, DataApi, SyncApi } from 'lattice';
 import Promise from 'bluebird';
+import { EntityDataModelApi, DataApi, SyncApi } from 'lattice';
 
-import FormView from '../components/FormView';
-import ConfirmationModal from '../components/ConfirmationModalView';
-import LogoutButton from './LogoutButton';
+import FormView from '../../components/FormView';
+import ConfirmationModal from '../../components/ConfirmationModalView';
+import LogoutButton from '../app/LogoutButton';
+
+import * as RoutePaths from '../../core/router/RoutePaths';
 
 const FORM_ENTITY_SET_NAME = 'baltimoreHealthReportForm';
 const PEOPLE_ENTITY_SET_NAME = 'baltimoreHealthReportPeople';
@@ -414,6 +416,7 @@ class Form extends React.Component {
   }
 
   render() {
+
     return (
       <div>
         <LogoutButton />
@@ -426,12 +429,12 @@ class Form extends React.Component {
             handleSubmit={this.handleSubmit}
             input={this.state} />
         {
-          this.state.submitSuccess ?
-          <ConfirmationModal
-              submitSuccess={this.state.submitSuccess}
-              submitFailure={this.state.submitFailure}
-              handleModalButtonClick={this.handleModalButtonClick} /> :
-          null
+          this.state.submitSuccess
+            ? <ConfirmationModal
+                  submitSuccess={this.state.submitSuccess}
+                  submitFailure={this.state.submitFailure}
+                  handleModalButtonClick={this.handleModalButtonClick} />
+            : null
         }
       </div>
     );

@@ -8,20 +8,17 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { normalize } from 'polished';
-import { Provider } from 'react-redux'
-import { Redirect, Route, Switch } from 'react-router-dom'
+import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'react-router-redux';
 import { injectGlobal } from 'styled-components';
 
-import AuthContainer from './core/auth/AuthContainer';
 import AuthRoute from './core/auth/AuthRoute';
-import RoutePaths from './core/router/RoutePaths';
-
-import initializeAuth0Lock from './core/auth/Auth0';
 import initializeReduxStore from './core/redux/ReduxStore';
 import initializeRouterHistory from './core/router/RouterHistory';
+import * as Auth0 from './core/auth/Auth0';
+import * as RoutePaths from './core/router/RoutePaths';
 
-import Form from './containers/Form';
+import AppContainer from './containers/app/AppContainer';
 
 /* eslint-disable */
 injectGlobal`${normalize()}`;
@@ -42,22 +39,21 @@ injectGlobal`
 `;
 /* eslint-enable */
 
+/*
+ * // !!! MUST HAPPEN FIRST !!!
+ */
+Auth0.initialize();
+/*
+ * // !!! MUST HAPPEN FIRST !!!
+ */
+
 const routerHistory = initializeRouterHistory();
 const reduxStore = initializeReduxStore(routerHistory);
-initializeAuth0Lock(reduxStore);
 
-// TODO: reimplement this routing
-// TODO: I'm so confused now... how is this even working?!
 ReactDOM.render(
   <Provider store={reduxStore}>
     <ConnectedRouter history={routerHistory}>
-      <div>
-        <Switch>
-          <AuthRoute exact path="/" component={Form} />
-          <Route component={AuthContainer} />
-          <Redirect to="/" />
-        </Switch>
-      </div>
+      <AuthRoute path={RoutePaths.ROOT} component={AppContainer} />
     </ConnectedRouter>
   </Provider>,
   document.getElementById('app')
