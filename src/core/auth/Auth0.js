@@ -22,7 +22,7 @@ const auth0Lock :Auth0Lock = new Auth0Lock(__AUTH0_CLIENT_ID__, __AUTH0_DOMAIN__
   auth: {
     autoParseHash: false,
     params: {
-      scope: 'openid email user_id'
+      scope: 'openid email user_id user_metadata app_metadata nickname roles'
     },
     responseType: 'token'
   },
@@ -75,7 +75,7 @@ export function initialize() {
   auth0HashPath = parseHashPath();
 }
 
-export function authenticate() :Promise<> {
+export function authenticate() :Promise<*> {
 
   if (!auth0HashPath) {
     return Promise.reject('Auth0Lock authenticate() - cannot authenticate');

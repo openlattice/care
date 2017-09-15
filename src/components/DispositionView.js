@@ -6,17 +6,27 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { FormGroup, FormControl, Col } from 'react-bootstrap';
 
-import SectionView from './SectionView';
-import { PaddedRow, Label, TitleLabel, CheckboxLabel, OtherWrapper, InlineCheckbox, InlineRadio, InputWrapper } from '../shared/Layout';
-import { FLEX } from '../shared/Consts';
+import FormNav from './FormNav';
+import { PaddedRow, TitleLabel, OtherWrapper, InlineCheckbox, InlineRadio, SectionHeader } from '../shared/Layout';
+import { FORM_PATHS } from '../shared/Consts';
 
 
-const DispositionView = ({ section, handleTextInput, handleCheckboxChange, handleSingleSelection, input }) => {
+const DispositionView = ({
+  section,
+  handleTextInput,
+  handleCheckboxChange,
+  handleSingleSelection,
+  input,
+  isInReview,
+  handlePageChange
+}) => {
   return(
-    <SectionView header="Disposition">
+    <div>
+    { !isInReview() ? <SectionHeader>Disposition</SectionHeader> : null}
+
       <PaddedRow>
-        <Col lg={5}>
-          <TitleLabel>28. Disposition</TitleLabel>
+        <Col lg={12}>
+          <TitleLabel>29. Disposition</TitleLabel>
           <FormGroup>
             <InlineCheckbox
                 inline
@@ -24,67 +34,78 @@ const DispositionView = ({ section, handleTextInput, handleCheckboxChange, handl
                 name='disposition'
                 value='arrest'
                 checked={input.disposition.indexOf('arrest') !== -1}
-                onChange={handleCheckboxChange}>Arrest</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Arrest</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
                 name='disposition'
                 value='ep'
                 checked={input.disposition.indexOf('ep') !== -1}
-                onChange={handleCheckboxChange}>EP</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>EP</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
                 name='disposition'
                 value='voluntaryER'
                 checked={input.disposition.indexOf('voluntaryER') !== -1}
-                onChange={handleCheckboxChange}>Voluntary ER Intake</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Voluntary ER Intake</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
                 name='disposition'
                 value='bcri'
                 checked={input.disposition.indexOf('bcri') !== -1}
-                onChange={handleCheckboxChange}>BCRI</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>BCRI</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
                 name='disposition'
                 value='infoAndReferral'
                 checked={input.disposition.indexOf('infoAndReferral') !== -1}
-                onChange={handleCheckboxChange}>Information and Referral</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Information and Referral</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
                 name='disposition'
                 value='lead'
                 checked={input.disposition.indexOf('lead') !== -1}
-                onChange={handleCheckboxChange}>LEAD</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>LEAD</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
                 name='disposition'
                 value='contactedTreatementProvider'
                 checked={input.disposition.indexOf('contactedTreatementProvider') !== -1}
-                onChange={handleCheckboxChange}>Contacted or Referred to Current Treatment Provider</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Contacted or Referred to Current Treatment Provider</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
                 name='disposition'
                 value='criminalCitation'
                 checked={input.disposition.indexOf('criminalCitation') !== -1}
-                onChange={handleCheckboxChange}>Criminal Citation</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Criminal Citation</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
                 name='disposition'
                 value='civilCitation'
                 checked={input.disposition.indexOf('civilCitation') !== -1}
-                onChange={handleCheckboxChange}>Civil Citation</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Civil Citation</InlineCheckbox>
           </FormGroup>
         </Col>
+      </PaddedRow>
 
-        <Col lg={2}>
+      <PaddedRow>
+        <Col lg={6}>
           <TitleLabel>Transported to Hospital</TitleLabel>
           <InlineRadio
               inline
@@ -92,24 +113,29 @@ const DispositionView = ({ section, handleTextInput, handleCheckboxChange, handl
               name='hospitalTransport'
               value={true}
               checked={input.hospitalTransport === 'true'}
-              onChange={handleSingleSelection}>Yes</InlineRadio>
+              onChange={handleSingleSelection}
+              disabled={isInReview()}>Yes</InlineRadio>
           <InlineRadio
               inline
               data-section={section}
-              name='hospitalTransport'  
+              name='hospitalTransport'
               value={false}
               checked={input.hospitalTransport === 'false'}
-              onChange={handleSingleSelection}>No</InlineRadio>
+              onChange={handleSingleSelection}
+              disabled={isInReview()}>No</InlineRadio>
         </Col>
-        <Col lg={5}>
+      </PaddedRow>
+
+      <PaddedRow>
+        <Col lg={6}>
           <TitleLabel>Hospital Name</TitleLabel>
-          <FormControl data-section={section} name='hospital' value={input.hospital} onChange={handleTextInput} />
+          <FormControl data-section={section} name='hospital' value={input.hospital} onChange={handleTextInput} disabled={isInReview()} />
         </Col>
       </PaddedRow>
 
       <PaddedRow>
         <Col lg={12}>
-          <TitleLabel>29. De-escalation Techniques/Equipment Used</TitleLabel>
+          <TitleLabel>30. De-escalation Techniques/Equipment Used</TitleLabel>
           <FormGroup>
             <InlineCheckbox
                 data-section={section}
@@ -117,21 +143,24 @@ const DispositionView = ({ section, handleTextInput, handleCheckboxChange, handl
                 name='deescalationTechniques'
                 value='verbalization'
                 checked={input.deescalationTechniques.indexOf('verbalization') !== -1}
-                onChange={handleCheckboxChange}>Verbalization</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Verbalization</InlineCheckbox>
             <InlineCheckbox
                 data-section={section}
                 inline
                 name='deescalationTechniques'
                 value='handcuffs'
                 checked={input.deescalationTechniques.indexOf('handcuffs') !== -1}
-                onChange={handleCheckboxChange}>Handcuffs</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Handcuffs</InlineCheckbox>
             <InlineCheckbox
                 data-section={section}
                 inline
                 name='deescalationTechniques'
                 value='legRestraints'
                 checked={input.deescalationTechniques.indexOf('legRestraints') !== -1}
-                onChange={handleCheckboxChange}>Leg Restraints</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Leg Restraints</InlineCheckbox>
             <InlineCheckbox
                 data-section={section}
                 inline
@@ -145,14 +174,16 @@ const DispositionView = ({ section, handleTextInput, handleCheckboxChange, handl
                 name='deescalationTechniques'
                 value='arrestControl'
                 checked={input.deescalationTechniques.indexOf('arrestControl') !== -1}
-                onChange={handleCheckboxChange}>Arrest Control (Hands / Feet)</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Arrest Control (Hands / Feet)</InlineCheckbox>
             <InlineCheckbox
                 data-section={section}
                 inline
                 name='deescalationTechniques'
                 value='n/a'
                 checked={input.deescalationTechniques.indexOf('n/a') !== -1}
-                onChange={handleCheckboxChange}>N/A</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>N/A</InlineCheckbox>
             <OtherWrapper>
               <InlineCheckbox
                   data-section={section}
@@ -160,8 +191,9 @@ const DispositionView = ({ section, handleTextInput, handleCheckboxChange, handl
                   name='deescalationTechniques'
                   value='other'
                   checked={input['deescalationTechniques'].indexOf('other') !== -1}
-                  onChange={handleCheckboxChange}>Other:</InlineCheckbox>
-              <FormControl data-section={section} name='deescalationTechniquesOther' value={input.deescalationTechniquesOther} onChange={handleTextInput} />
+                  onChange={handleCheckboxChange}
+                  disabled={isInReview()}>Other:</InlineCheckbox>
+              <FormControl data-section={section} name='deescalationTechniquesOther' value={input.deescalationTechniquesOther} onChange={handleTextInput} disabled={isInReview()} />
             </OtherWrapper>
           </FormGroup>
         </Col>
@@ -169,7 +201,7 @@ const DispositionView = ({ section, handleTextInput, handleCheckboxChange, handl
 
       <PaddedRow>
         <Col lg={12}>
-          <TitleLabel>30. Called for Specialized Resources</TitleLabel>
+          <TitleLabel>31. Called for Specialized Resources</TitleLabel>
           <FormGroup>
             <InlineCheckbox
                 data-section={section}
@@ -177,60 +209,69 @@ const DispositionView = ({ section, handleTextInput, handleCheckboxChange, handl
                 name='specializedResourcesCalled'
                 value='bcri'
                 checked={input.specializedResourcesCalled.indexOf('bcri') !== -1}
-                onChange={handleCheckboxChange}>BCRI / Mobile Crisis Response Team</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>BCRI / Mobile Crisis Response Team</InlineCheckbox>
             <InlineCheckbox
                 data-section={section}
                 inline
                 name='specializedResourcesCalled'
                 value='citOfficer'
                 checked={input.specializedResourcesCalled.indexOf('citOfficer') !== -1}
-                onChange={handleCheckboxChange}>CIT Officer</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>CIT Officer</InlineCheckbox>
             <InlineCheckbox
                 data-section={section}
                 inline
                 name='specializedResourcesCalled'
                 value='crtUnit'
                 checked={input.specializedResourcesCalled.indexOf('crtUnit') !== -1}
-                onChange={handleCheckboxChange}>CRT Unit</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>CRT Unit</InlineCheckbox>
             <InlineCheckbox
                 data-section={section}
                 inline
                 name='specializedResourcesCalled'
                 value='esu'
                 checked={input.specializedResourcesCalled.indexOf('esu') !== -1}
-                onChange={handleCheckboxChange}>ESU</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>ESU</InlineCheckbox>
             <InlineCheckbox
                 data-section={section}
                 inline
                 name='specializedResourcesCalled'
                 value='swat'
                 checked={input.specializedResourcesCalled.indexOf('swat') !== -1}
-                onChange={handleCheckboxChange}>SWAT</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>SWAT</InlineCheckbox>
             <InlineCheckbox
                 data-section={section}
                 inline
                 name='specializedResourcesCalled'
                 value='negotiationTeam'
                 checked={input.specializedResourcesCalled.indexOf('negotiationTeam') !== -1}
-                onChange={handleCheckboxChange}>Negotiation Team</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Negotiation Team</InlineCheckbox>
             <InlineCheckbox
                 data-section={section}
                 inline
                 name='specializedResourcesCalled'
                 value='homelessOutreach'
                 checked={input.specializedResourcesCalled.indexOf('homelessOutreach') !== -1}
-                onChange={handleCheckboxChange}>Homeless Outreach</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Homeless Outreach</InlineCheckbox>
           </FormGroup>
         </Col>
       </PaddedRow>
 
       <PaddedRow>
         <Col lg={12}>
-          <TitleLabel>31. Narrative of Incident, to include: Results of investigation, basis for actions taken, emotional states, additional witnesses. Property listing.</TitleLabel>
-          <FormControl data-section={section} name='incidentNarrative' componentClass='textarea' value={input.incidentNarrative} onChange={handleTextInput} />
+          <TitleLabel>32. Narrative of Incident, to include: Results of investigation, basis for actions taken, emotional states, additional witnesses. Property listing.</TitleLabel>
+          <FormControl data-section={section} name='incidentNarrative' componentClass='textarea' value={input.incidentNarrative} onChange={handleTextInput} disabled={isInReview()} />
         </Col>
       </PaddedRow>
-    </SectionView>
+
+      { !isInReview() ? <FormNav prevPath={FORM_PATHS.COMPLAINANT} nextPath={FORM_PATHS.OFFICER} handlePageChange={handlePageChange} /> : null}
+    </div>
   );
 }
 
@@ -239,7 +280,9 @@ DispositionView.propTypes = {
   handleSingleSelection: PropTypes.func.isRequired,
   handleCheckboxChange: PropTypes.func.isRequired,
   input: PropTypes.object.isRequired,
-  section: PropTypes.string.isRequired
+  section: PropTypes.string.isRequired,
+  isInReview: PropTypes.func.isRequired,
+  handlePageChange: PropTypes.func.isRequired
 }
 
 export default DispositionView;

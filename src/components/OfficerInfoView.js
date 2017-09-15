@@ -6,28 +6,40 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { FormControl, Col, FormGroup } from 'react-bootstrap';
 
-import SectionView from './SectionView';
-import { PaddedRow, Label, TitleLabel, CheckboxLabel, InlineCheckbox, InputWrapper } from '../shared/Layout';
-import { FLEX } from '../shared/Consts';
+import FormNav from './FormNav';
+import { PaddedRow, TitleLabel, InlineCheckbox, SectionHeader } from '../shared/Layout';
+import { FORM_PATHS } from '../shared/Consts';
 
 
-const OfficerInfoView = ({ section, handleTextInput, handleCheckboxChange, input }) => {
+const OfficerInfoView = ({ section, handleTextInput, handleCheckboxChange, input, isInReview, handlePageChange }) => {
   return(
-    <SectionView header="Officer Information">
+    <div>
+      { !isInReview() ? <SectionHeader>Officer</SectionHeader> : null }
+
       <PaddedRow>
-        <Col lg={3}>
-          <TitleLabel>32. Officer Name</TitleLabel>
-          <FormControl data-section={section} name='officerName' value={input.officerName} onChange={handleTextInput} />
+        <Col lg={6}>
+          <TitleLabel>33. Last Name</TitleLabel>
+          <FormControl data-section={section} name='officerLastName' value={input.officerLastName} onChange={handleTextInput} disabled={isInReview()} />
         </Col>
-        <Col lg={3}>
+        <Col lg={6}>
+          <TitleLabel>First Name</TitleLabel>
+          <FormControl data-section={section} name='officerFirstName' value={input.officerFirstName} onChange={handleTextInput} disabled={isInReview()} />
+        </Col>
+      </PaddedRow>
+
+      <PaddedRow>
+        <Col lg={6}>
           <TitleLabel>34. Seq ID</TitleLabel>
-          <FormControl data-section={section} name='officerSeqID' value={input.officerSeqID} onChange={handleTextInput} />
+          <FormControl data-section={section} name='officerSeqID' value={input.officerSeqID} onChange={handleTextInput} disabled={isInReview()} />
         </Col>
-        <Col lg={3}>
+        <Col lg={6}>
           <TitleLabel>35. Officer Injuries</TitleLabel>
-          <FormControl data-section={section} name='officerInjuries' value={input.officerInjuries} onChange={handleTextInput} />
+          <FormControl data-section={section} name='officerInjuries' value={input.officerInjuries} onChange={handleTextInput} disabled={isInReview()} />
         </Col>
-        <Col lg={3}>
+      </PaddedRow>
+
+      <PaddedRow>
+        <Col lg={6}>
           <TitleLabel>36. Officer Certification</TitleLabel>
           <FormGroup>
             <InlineCheckbox
@@ -36,32 +48,38 @@ const OfficerInfoView = ({ section, handleTextInput, handleCheckboxChange, input
                 name='officerCertification'
                 value='crtUnit'
                 checked={input.officerCertification.indexOf('crtUnit') !== -1}
-                onChange={handleCheckboxChange}>CRT Unit</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>CRT Unit</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
                 name='officerCertification'
                 value='best'
                 checked={input.officerCertification.indexOf('best') !== -1}
-                onChange={handleCheckboxChange}>BEST</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>BEST</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
                 name='officerCertification'
                 value='cit'
                 checked={input.officerCertification.indexOf('cit') !== -1}
-                onChange={handleCheckboxChange}>CIT</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>CIT</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
                 name='officerCertification'
                 value='n/a'
                 checked={input.officerCertification.indexOf('n/a') !== -1}
-                onChange={handleCheckboxChange}>N/A</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>N/A</InlineCheckbox>
           </FormGroup>
         </Col>
       </PaddedRow>
-    </SectionView>
+
+      { !isInReview() ? <FormNav prevPath={FORM_PATHS.DISPOSITION} nextPath={FORM_PATHS.REVIEW} handlePageChange={handlePageChange} /> : null}
+    </div>
   );
 }
 
@@ -69,7 +87,9 @@ OfficerInfoView.propTypes = {
   handleTextInput: PropTypes.func.isRequired,
   handleCheckboxChange: PropTypes.func.isRequired,
   input: PropTypes.object.isRequired,
-  section: PropTypes.string.isRequired
+  section: PropTypes.string.isRequired,
+  isInReview: PropTypes.func.isRequired,
+  handlePageChange: PropTypes.func.isRequired
 }
 
 export default OfficerInfoView;

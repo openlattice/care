@@ -3,6 +3,7 @@
  */
 
 import { push } from 'react-router-redux';
+import { delay } from 'redux-saga';
 import { call, put, take } from 'redux-saga/effects';
 
 import * as RoutePaths from '../router/RoutePaths';
@@ -13,17 +14,24 @@ import * as AuthActionFactory from './AuthActionFactory';
 import * as AuthActionTypes from './AuthActionTypes';
 import * as AuthUtils from './AuthUtils';
 
+const AUTH_SUCCESS_DELAY :number = 2000; // 2 seconds
+
+/*
+ * An interesting discussion around authentication flow with redux-saga:
+ * https://github.com/redux-saga/redux-saga/issues/14#issuecomment-167038759
+ */
+
 export function* watchAuthAttempt() :Generator<> {
 
   while (true) {
     yield take(AuthActionTypes.AUTH_ATTEMPT);
     try {
+      const authToken :string = yield call(Auth0.authenticate);
       /*
        * our attempt to authenticate has succeeded. now, we need to store the Auth0 id token and configure lattice
        * before dispatching AUTH_SUCCESS in order to guarantee that AuthRoute will receive the correct props in the
        * next pass through its lifecycle.
        */
-      const authToken :string = yield call(Auth0.authenticate);
       yield call(AuthUtils.storeAuthToken, authToken);
       yield call(Utils.configureLattice, authToken);
       yield put(AuthActionFactory.authSuccess());

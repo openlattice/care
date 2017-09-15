@@ -2,9 +2,8 @@
  * @flow
  */
 
-import React from 'react';
+import * as React from 'react';
 
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Redirect, Route, Switch, withRouter } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
@@ -15,7 +14,7 @@ import * as Auth0 from './Auth0';
 import * as AuthActionFactory from './AuthActionFactory';
 import * as AuthUtils from './AuthUtils';
 
-function mapStateToProps(state :Map<>) :Object {
+function mapStateToProps(state :Map<*, *>) :Object {
 
   let authTokenExpiration :number = state.getIn(['auth', 'authTokenExpiration'], -1);
   if (AuthUtils.hasAuthTokenExpired(authTokenExpiration)) {
@@ -29,32 +28,30 @@ function mapStateToProps(state :Map<>) :Object {
 
 function mapDispatchToProps(dispatch :Function) :Object {
 
-  const actions = {
-    authAttempt: AuthActionFactory.authAttempt,
-    authSuccess: AuthActionFactory.authSuccess,
-    authExpired: AuthActionFactory.authExpired
-  };
+  const actions :{ [string] :Function } = {};
+
+  Object.keys(AuthActionFactory).forEach((action :string) => {
+    actions[action] = AuthActionFactory[action];
+  });
 
   return {
     actions: bindActionCreators(actions, dispatch)
   };
 }
 
-class AuthRoute extends React.Component {
+type Props = {
+  actions :{
+    authAttempt :Function,
+    authExpired :Function,
+    authSuccess :Function,
+    hideLock :Function,
+    showLock :Function
+  },
+  authTokenExpiration :number,
+  component :Function
+};
 
-  static propTypes = {
-    actions: PropTypes.shape({
-      authAttempt: PropTypes.func.isRequired,
-      authExpired: PropTypes.func.isRequired,
-      authSuccess: PropTypes.func.isRequired
-    }).isRequired,
-    authTokenExpiration: PropTypes.number.isRequired,
-    component: PropTypes.func.isRequired,
-    location: PropTypes.shape({
-      pathname: PropTypes.string.isRequired,
-      search: PropTypes.string
-    }).isRequired
-  }
+class AuthRoute extends React.Component<Props> {
 
   componentWillMount() {
 

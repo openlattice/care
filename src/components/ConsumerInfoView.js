@@ -1,4 +1,5 @@
 /*
+
  * @flow
  */
 
@@ -7,191 +8,278 @@ import PropTypes from 'prop-types';
 import { FormGroup, FormControl, Col } from 'react-bootstrap';
 import DatePicker from 'react-bootstrap-date-picker';
 
-import SectionView from './SectionView';
-import { PaddedRow, InputWrapper, Label, InlineCheckbox, InlineRadio, TitleLabel, OtherWrapper } from '../shared/Layout';
-import { FLEX } from '../shared/Consts'
+import FormNav from './FormNav';
+import { PaddedRow, InlineCheckbox, InlineRadio, TitleLabel, OtherWrapper, SectionHeader } from '../shared/Layout';
+import { FORM_PATHS, STATES } from '../shared/Consts';
+import { getNumberValidation } from '../shared/Validation';
 
-const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSingleSelection, handleCheckboxChange, input }) => {
+const ConsumerInfoView = ({
+  section,
+  handleTextInput,
+  handleDateInput,
+  handleSingleSelection,
+  handleCheckboxChange,
+  input,
+  consumerIsSelected,
+  isInReview,
+  handlePageChange
+}) => {
 
   return (
-    <SectionView header='Consumer Information'>
+    <div>
+      { !isInReview() ? <SectionHeader>Consumer</SectionHeader> : null}
+
       <PaddedRow>
-        <Col lg={4}>
-          <TitleLabel>13. Consumer Name (Last, First, MI)</TitleLabel>
-          <FormControl data-section={section} name='name' value={input.name} onChange={handleTextInput} />
+        <Col lg={6}>
+          <TitleLabel>12. Last Name</TitleLabel>
+          <FormControl data-section={section} name='lastName' value={input.lastName} onChange={handleTextInput} disabled={consumerIsSelected || isInReview()} />
         </Col>
-        <Col lg={4}>
-          <TitleLabel>Residence / Address (Apt Number, City, County, State, Zip)</TitleLabel>
-          <FormControl data-section={section} name='address' value={input.address} onChange={handleTextInput} />
-        </Col>
-        <Col lg={4}>
-          <TitleLabel>Consumer Phone Number</TitleLabel>
-          <FormControl data-section={section} name='phone' value={input.phone} onChange={handleTextInput} />
+        <Col lg={6}>
+          <TitleLabel>First Name</TitleLabel>
+          <FormControl data-section={section} name='firstName' value={input.firstName} onChange={handleTextInput} disabled={consumerIsSelected || isInReview()} />
         </Col>
       </PaddedRow>
 
       <PaddedRow>
-        <Col lg={4}>
-          <TitleLabel>14. Military Status</TitleLabel>
+        <Col lg={6}>
+          <TitleLabel>Middle Name</TitleLabel>
+          <FormControl data-section={section} name='middleName' value={input.middleName} onChange={handleTextInput} disabled={consumerIsSelected || isInReview()} />
+        </Col>
+        <Col lg={6}>
+          <TitleLabel>13. Consumer Identification</TitleLabel>
+          <FormControl data-section={section} name='identification' value={input.identification} onChange={handleTextInput} disabled={consumerIsSelected || isInReview()} />
+        </Col>
+      </PaddedRow>
+
+      <PaddedRow>
+        <Col lg={12}>
+          <TitleLabel>14. Address</TitleLabel>
+          <FormControl data-section={section} name='street' value={input.street} onChange={handleTextInput} disabled={isInReview()} />
+        </Col>
+      </PaddedRow>
+
+      <PaddedRow>
+        <Col lg={6}>
+          <TitleLabel>City</TitleLabel>
+          <FormControl data-section={section} name='city' value={input.city} onChange={handleTextInput} disabled={isInReview()} />
+        </Col>
+        <Col lg={6}>
+          <TitleLabel>State</TitleLabel>
+          <FormControl
+              componentClass='select'
+              placeholder='select'
+              data-section={section}
+              name='state'
+              value={input.state}
+              onChange={handleSingleSelection}
+              disabled={isInReview()}>
+            <option value=''>Select</option>
+            { STATES.map((state) => (<option key={state} value={state}>{state}</option>)) }
+          </FormControl>
+        </Col>
+      </PaddedRow>
+      <PaddedRow>
+        <Col lg={6}>
+          <TitleLabel>County</TitleLabel>
+          <FormControl data-section={section} name='county' value={input.county} onChange={handleTextInput} disabled={isInReview()} />
+        </Col>
+        <Col lg={6}>
+          <TitleLabel>Zip</TitleLabel>
+          <FormControl data-section={section} name='zip' value={input.zip} onChange={handleTextInput} disabled={isInReview()} />
+        </Col>
+      </PaddedRow>
+
+      <PaddedRow>
+        <Col lg={6}>
+          <TitleLabel>Consumer Phone Number</TitleLabel>
+          <FormControl data-section={section} name='phone' value={input.phone} onChange={handleTextInput} disabled={isInReview()} />
+        </Col>
+      </PaddedRow>
+
+      <PaddedRow>
+        <Col lg={3}>
+          <TitleLabel>15. Military Status</TitleLabel>
             <InlineRadio
                 inline
                 data-section={section}
                 name='militaryStatus'
                 value='active'
                 checked={input.militaryStatus === 'active'}
-                onChange={handleSingleSelection}>Active</InlineRadio>
+                onChange={handleSingleSelection}
+                disabled={isInReview()}>Active</InlineRadio>
             <InlineRadio
                 inline
                 data-section={section}
-                name ='militaryStatus' 
+                name ='militaryStatus'
                 value='veteran'
                 checked={input.militaryStatus === 'veteran'}
-                onChange={handleSingleSelection}>Veteran</InlineRadio>
+                onChange={handleSingleSelection}
+                disabled={isInReview()}>Veteran</InlineRadio>
             <InlineRadio
                 inline
                 data-section={section}
                 name ='militaryStatus'
                 value='n/a'
                 checked={input.militaryStatus === 'n/a'}
-                onChange={handleSingleSelection}>N/A</InlineRadio>
-          </Col>
-
-          <Col lg={2}>
-            <TitleLabel>Gender</TitleLabel>
-            <FormControl
-                componentClass='select'
-                placeholder='select'
-                data-section={section}
-                name='gender'
-                value={input.gender}
-                onChange={handleSingleSelection}>
-              <option value=''>Select</option>
-              <option value='female'>Female</option>
-              <option value='male'>Male</option>
-              <option value='nonbinary'>Non-binary</option>
-            </FormControl>
-          </Col>
-
-          <Col lg={2}>
-            <TitleLabel>Race</TitleLabel>
-            <FormControl
-                componentClass='select'
-                placeholder='select'
-                data-section={section}
-                name='race'
-                value={input.race}
-                onChange={handleSingleSelection}>
-              <option value=''>Select</option>
-              <option value='americanIndian'>American Indian or Alaska Native</option>
-              <option value='asian'>Asian</option>
-              <option value='black'>Black or African American</option>
-              <option value='hispanic'>Hispanic or Latino</option>
-              <option value='nativeHawaiian'>Native Hawaiian or Other Pacific Islander</option>
-              <option value='white'>White</option>
-              <option value='other'>Other</option>
-            </FormControl>
-          </Col>
-
-        <Col lg={2}>
-          <TitleLabel>Age</TitleLabel>
-          <FormControl data-section={section} name='age' value={input.age} onChange={handleTextInput} />
+                onChange={handleSingleSelection}
+                disabled={isInReview()}>N/A</InlineRadio>
         </Col>
 
-        <Col lg={2}>
-          <TitleLabel>DOB</TitleLabel>
-          <DatePicker value={input.dob} onChange={(e) => {handleDateInput(e, section, 'dob')}} />
+        <Col lg={3}>
+          <TitleLabel>Gender</TitleLabel>
+          <FormControl
+              componentClass='select'
+              placeholder='select'
+              data-section={section}
+              name='gender'
+              value={input.gender}
+              onChange={handleSingleSelection}
+              disabled={consumerIsSelected || isInReview()}>
+            <option value=''>Select</option>
+            <option value='female'>Female</option>
+            <option value='male'>Male</option>
+            <option value='nonbinary'>Non-binary</option>
+          </FormControl>
+        </Col>
+
+        <Col lg={6}>
+          <TitleLabel>Race</TitleLabel>
+          <FormControl
+              componentClass='select'
+              placeholder='select'
+              data-section={section}
+              name='race'
+              value={input.race}
+              onChange={handleSingleSelection}
+              disabled={consumerIsSelected || isInReview()}>
+            <option value=''>Select</option>
+            <option value='americanIndian'>American Indian or Alaska Native</option>
+            <option value='asian'>Asian</option>
+            <option value='black'>Black or African American</option>
+            <option value='hispanic'>Hispanic or Latino</option>
+            <option value='nativeHawaiian'>Native Hawaiian or Other Pacific Islander</option>
+            <option value='white'>White</option>
+            <option value='other'>Other</option>
+          </FormControl>
         </Col>
       </PaddedRow>
 
       <PaddedRow>
-        <Col lg={3}>
-          <TitleLabel>15. Homeless</TitleLabel>
+        <Col lg={6}>
+          <FormGroup validationState={getNumberValidation(input.age)}>
+            <TitleLabel>Age</TitleLabel>
+            <FormControl data-section={section} name='age' value={input.age} onChange={handleTextInput} disabled={isInReview()} />
+          </FormGroup>
+        </Col>
+        <Col lg={6}>
+          <TitleLabel>DOB</TitleLabel>
+          <DatePicker value={input.dob} onChange={(e) => {handleDateInput(e, section, 'dob')}} disabled={consumerIsSelected || isInReview()} />
+        </Col>
+      </PaddedRow>
+
+      <PaddedRow>
+        <Col lg={6}>
+          <TitleLabel>16. Homeless</TitleLabel>
           <InlineRadio
               inline
               data-section={section}
               name='homeless'
               value={true}
               checked={input.homeless === 'true'}
-              onChange={handleSingleSelection}>Yes</InlineRadio>
+              onChange={handleSingleSelection}
+              disabled={isInReview()}>Yes</InlineRadio>
           <InlineRadio
               inline
               data-section={section}
-              name ='homeless' 
+              name ='homeless'
               value={false}
               checked={input.homeless === 'false'}
-              onChange={handleSingleSelection}>No</InlineRadio>
-        </Col>
-        <Col lg={9}>
-          <TitleLabel>If Yes, Where Do They Usually Sleep / Frequent?</TitleLabel>
-          <FormControl data-section={section} name='homelessLocation' value={input.homelessLocation} onChange={handleTextInput} />
+              onChange={handleSingleSelection}
+              disabled={isInReview()}>No</InlineRadio>
         </Col>
       </PaddedRow>
 
       <PaddedRow>
-        <Col lg={3}>
-          <TitleLabel>16. Consumer Using Drugs, Alcohol</TitleLabel>
+        <Col lg={12}>
+          <TitleLabel>If Yes, Where Do They Usually Sleep / Frequent?</TitleLabel>
+          <FormControl data-section={section} name='homelessLocation' value={input.homelessLocation} onChange={handleTextInput} disabled={isInReview()} />
+        </Col>
+      </PaddedRow>
+
+      <PaddedRow>
+        <Col lg={6}>
+          <TitleLabel>17. Consumer Using Drugs, Alcohol</TitleLabel>
           <InlineRadio
               inline
               data-section={section}
               name='drugsAlcohol'
               value='drugs'
               checked={input.drugsAlcohol === 'drugs'}
-              onChange={handleSingleSelection}>Drugs</InlineRadio>
+              onChange={handleSingleSelection}
+              disabled={isInReview()}>Drugs</InlineRadio>
           <InlineRadio
               inline
               data-section={section}
-              name ='drugsAlcohol' 
+              name ='drugsAlcohol'
               value='alcohol'
               checked={input.drugsAlcohol === 'alcohol'}
-              onChange={handleSingleSelection}>Alcohol</InlineRadio>
+              onChange={handleSingleSelection}
+              disabled={isInReview()}>Alcohol</InlineRadio>
           <InlineRadio
               inline
               data-section={section}
-              name ='drugsAlcohol' 
+              name ='drugsAlcohol'
               value='both'
               checked={input.drugsAlcohol === 'both'}
-              onChange={handleSingleSelection}>Both</InlineRadio>
+              onChange={handleSingleSelection}
+              disabled={isInReview()}>Both</InlineRadio>
           <InlineRadio
               inline
               data-section={section}
-              name ='drugsAlcohol' 
+              name ='drugsAlcohol'
               value='n/a'
               checked={input.drugsAlcohol === 'n/a'}
-              onChange={handleSingleSelection}>N/A</InlineRadio>
-        </Col>
-
-        <Col lg={9}>
-          <TitleLabel>Drug type</TitleLabel>
-          <FormControl data-section={section} name='drugType' value={input.drugType} onChange={handleTextInput} />
+              onChange={handleSingleSelection}
+              disabled={isInReview()}>N/A</InlineRadio>
         </Col>
       </PaddedRow>
 
       <PaddedRow>
-        <Col lg={3}>
-          <TitleLabel>17. Prescribed Medication</TitleLabel>
+        <Col lg={12}>
+          <TitleLabel>Drug type</TitleLabel>
+          <FormControl data-section={section} name='drugType' value={input.drugType} onChange={handleTextInput} disabled={isInReview()} />
+        </Col>
+      </PaddedRow>
+
+      <PaddedRow>
+        <Col lg={6}>
+          <TitleLabel>18. Prescribed Medication</TitleLabel>
           <InlineRadio
               inline
               data-section={section}
               name='prescribedMedication'
               value='yes'
               checked={input.prescribedMedication === 'yes'}
-              onChange={handleSingleSelection}>Yes</InlineRadio>
+              onChange={handleSingleSelection}
+              disabled={isInReview()}>Yes</InlineRadio>
           <InlineRadio
               inline
               data-section={section}
               name='prescribedMedication'
               value='no'
               checked={input.prescribedMedication === 'no'}
-              onChange={handleSingleSelection}>No</InlineRadio>
+              onChange={handleSingleSelection}
+              disabled={isInReview()}>No</InlineRadio>
           <InlineRadio
               inline
               data-section={section}
-              name='prescribedMedication' 
+              name='prescribedMedication'
               value='unknown'
               checked={input.prescribedMedication === 'unknown'}
-              onChange={handleSingleSelection}>Unknown</InlineRadio>
+              onChange={handleSingleSelection}
+              disabled={isInReview()}>Unknown</InlineRadio>
         </Col>
-        <Col lg={3}>
+        <Col lg={6}>
           <TitleLabel>If yes, is Consumer Taking Medication?</TitleLabel>
           <InlineRadio
               inline
@@ -199,24 +287,30 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
               name='takingMedication'
               value='yes'
               checked={input.takingMedication === 'yes'}
-              onChange={handleSingleSelection}>Yes</InlineRadio>
+              onChange={handleSingleSelection}
+              disabled={isInReview()}>Yes</InlineRadio>
           <InlineRadio
               inline
               data-section={section}
-              name='takingMedication' 
+              name='takingMedication'
               value='no'
               checked={input.takingMedication === 'no'}
-              onChange={handleSingleSelection}>No</InlineRadio>
+              onChange={handleSingleSelection}
+              disabled={isInReview()}>No</InlineRadio>
           <InlineRadio
               inline
               data-section={section}
-              name='takingMedication' 
+              name='takingMedication'
               value='unknown'
               checked={input.takingMedication === 'unknown'}
-              onChange={handleSingleSelection}>Unknown</InlineRadio>
+              onChange={handleSingleSelection}
+              disabled={isInReview()}>Unknown</InlineRadio>
         </Col>
-        <Col lg={6}>
-          <TitleLabel>18. Does Consumer Have Previous Psychiatric Hospital Admission?</TitleLabel>
+      </PaddedRow>
+
+      <PaddedRow>
+        <Col lg={12}>
+          <TitleLabel>19. Does Consumer Have Previous Psychiatric Hospital Admission?</TitleLabel>
           <InlineRadio
               inline
               type='radio'
@@ -224,7 +318,8 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
               name='prevPsychAdmission'
               value='yes'
               checked={input.prevPsychAdmission === 'yes'}
-              onChange={handleSingleSelection}>Yes</InlineRadio>
+              onChange={handleSingleSelection}
+              disabled={isInReview()}>Yes</InlineRadio>
           <InlineRadio
               inline
               type='radio'
@@ -232,7 +327,8 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
               name='prevPsychAdmission'
               value='no'
               checked={input.prevPsychAdmission === 'no'}
-              onChange={handleSingleSelection}>No</InlineRadio>
+              onChange={handleSingleSelection}
+              disabled={isInReview()}>No</InlineRadio>
           <InlineRadio
               inline
               type='radio'
@@ -240,7 +336,8 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
               name='prevPsychAdmission'
               value='unknown'
               checked={input.prevPsychAdmission === 'unknown'}
-              onChange={handleSingleSelection}>Unknown</InlineRadio>
+              onChange={handleSingleSelection}
+              disabled={isInReview()}>Unknown</InlineRadio>
         </Col>
       </PaddedRow>
 
@@ -254,50 +351,56 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
                   name='selfDiagnosis'
                   value='bipolar'
                   checked={input.selfDiagnosis.indexOf('bipolar') !== -1}
-                  onChange={handleCheckboxChange}>Bipolar</InlineCheckbox>
+                  onChange={handleCheckboxChange}
+                  disabled={isInReview()}>Bipolar</InlineCheckbox>
               <InlineCheckbox
                   inline
                   data-section={section}
                   name='selfDiagnosis'
                   value='depression'
                   checked={input.selfDiagnosis.indexOf('depression') !== -1}
-                  onChange={handleCheckboxChange}>Depression</InlineCheckbox>
+                  onChange={handleCheckboxChange}
+                  disabled={isInReview()}>Depression</InlineCheckbox>
               <InlineCheckbox
                   inline
                   data-section={section}
-                  name='selfDiagnosis' 
+                  name='selfDiagnosis'
                   value='ptsd'
                   checked={input.selfDiagnosis.indexOf('ptsd') !== -1}
-                  onChange={handleCheckboxChange}>PTSD</InlineCheckbox>
+                  onChange={handleCheckboxChange}
+                  disabled={isInReview()}>PTSD</InlineCheckbox>
               <InlineCheckbox
                   inline
                   data-section={section}
                   name='selfDiagnosis'
                   value='schizophrenia'
                   checked={input.selfDiagnosis.indexOf('schizophrenia') !== -1}
-                  onChange={handleCheckboxChange}>Schizophrenia</InlineCheckbox>
+                  onChange={handleCheckboxChange}
+                  disabled={isInReview()}>Schizophrenia</InlineCheckbox>
               <InlineCheckbox
                   inline
                   data-section={section}
                   name='selfDiagnosis'
                   value='dementia'
                   checked={input.selfDiagnosis.indexOf('dementia') !== -1}
-                  onChange={handleCheckboxChange}>Dementia</InlineCheckbox>
+                  onChange={handleCheckboxChange}
+                  disabled={isInReview()}>Dementia</InlineCheckbox>
             <OtherWrapper>
               <InlineCheckbox
                   data-section={section}
-                  name='selfDiagnosis' 
+                  name='selfDiagnosis'
                   value='other'
                   checked={input.selfDiagnosis.indexOf('other') !== -1}
-                  onChange={handleCheckboxChange}>Other:</InlineCheckbox>
-              <FormControl data-section={section} name='selfDiagnosisOther' value={input['selfDiagnosisOther']} onChange={handleTextInput} />
+                  onChange={handleCheckboxChange}
+                  disabled={isInReview()}>Other:</InlineCheckbox>
+              <FormControl data-section={section} name='selfDiagnosisOther' value={input['selfDiagnosisOther']} onChange={handleTextInput} disabled={isInReview()} />
             </OtherWrapper>
           </FormGroup>
         </Col>
       </PaddedRow>
 
       <PaddedRow>
-        <Col lg={2}>
+        <Col lg={6}>
           <TitleLabel>20. Armed with Weapon?</TitleLabel>
           <InlineRadio
               inline
@@ -305,20 +408,28 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
               name='armedWithWeapon'
               value={true}
               checked={input.armedWithWeapon === 'true'}
-              onChange={handleSingleSelection}>Yes</InlineRadio>
+              onChange={handleSingleSelection}
+              disabled={isInReview()}>Yes</InlineRadio>
           <InlineRadio
               inline
               data-section={section}
               name='armedWithWeapon'
               value={false}
               checked={input.armedWithWeapon === 'false'}
-              onChange={handleSingleSelection}>No</InlineRadio>
+              onChange={handleSingleSelection}
+              disabled={isInReview()}>No</InlineRadio>
         </Col>
-        <Col lg={4}>
-          <Label>If Yes, Weapon Type</Label>
-          <FormControl data-section={section} name='armedWeaponType' value={input.armedWeaponType} onChange={handleTextInput} />
+      </PaddedRow>
+
+      <PaddedRow>
+        <Col lg={6}>
+          <TitleLabel>If Yes, Weapon Type</TitleLabel>
+          <FormControl data-section={section} name='armedWeaponType' value={input.armedWeaponType} onChange={handleTextInput} disabled={isInReview()} />
         </Col>
-        <Col lg={2}>
+      </PaddedRow>
+
+      <PaddedRow>
+        <Col lg={6}>
           <TitleLabel>21. Have Access to Weapons?</TitleLabel>
           <InlineRadio
               inline
@@ -326,18 +437,23 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
               name='accessToWeapons'
               value={true}
               checked={input.accessToWeapons === 'true'}
-              onChange={handleSingleSelection}>Yes</InlineRadio>
+              onChange={handleSingleSelection}
+              disabled={isInReview()}>Yes</InlineRadio>
           <InlineRadio
               inline
               data-section={section}
               name='accessToWeapons'
               value={false}
               checked={input.accessToWeapons === 'false'}
-              onChange={handleSingleSelection}>No</InlineRadio>
+              onChange={handleSingleSelection}
+              disabled={isInReview()}>No</InlineRadio>
         </Col>
-        <Col lg={4}>
-          <Label>If Yes, Weapon Type</Label>
-          <FormControl data-section={section} name='accessibleWeaponType' value={input.accessibleWeaponType} onChange={handleTextInput} />
+      </PaddedRow>
+
+      <PaddedRow>
+        <Col lg={6}>
+          <TitleLabel>If Yes, Weapon Type</TitleLabel>
+          <FormControl data-section={section} name='accessibleWeaponType' value={input.accessibleWeaponType} onChange={handleTextInput} disabled={isInReview()} />
         </Col>
       </PaddedRow>
 
@@ -351,64 +467,73 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
                 name='observedBehaviors'
                 value='disorientation'
                 checked={input.observedBehaviors.indexOf('disorientation') !== -1}
-                onChange={handleCheckboxChange}>Disorientation / Confusion</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Disorientation / Confusion</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
                 name='observedBehaviors'
                 value='abnormalBehavior'
                 checked={input.observedBehaviors.indexOf('abnormalBehavior') !== -1}
-                onChange={handleCheckboxChange}>Abnormal Behavior / Appearance (neglect self-care)</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Abnormal Behavior / Appearance (neglect self-care)</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='observedBehaviors' 
+                name='observedBehaviors'
                 value='hearingVoices'
                 checked={input.observedBehaviors.indexOf('hearingVoices') !== -1}
-                onChange={handleCheckboxChange}>Hearing Voices / Hallucinating</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Hearing Voices / Hallucinating</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
                 name='observedBehaviors'
                 value='anxious'
                 checked={input.observedBehaviors.indexOf('anxious') !== -1}
-                onChange={handleCheckboxChange}>Anxious / Excited / Agitated</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Anxious / Excited / Agitated</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
                 name='observedBehaviors'
                 value='depressed'
                 checked={input.observedBehaviors.indexOf('depressed') !== -1}
-                onChange={handleCheckboxChange}>Depressed Mood</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Depressed Mood</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
                 name='observedBehaviors'
                 value='paranoid'
                 checked={input.observedBehaviors.indexOf('paranoid') !== -1}
-                onChange={handleCheckboxChange}>Paranoid or Suspicious</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Paranoid or Suspicious</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
                 name='observedBehaviors'
                 value='self-mutilation'
                 checked={input.observedBehaviors.indexOf('self-mutilation') !== -1}
-                onChange={handleCheckboxChange}>Self-mutilation</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Self-mutilation</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='observedBehaviors' 
+                name='observedBehaviors'
                 value='threatening'
                 checked={input.observedBehaviors.indexOf('threatening') !== -1}
-                onChange={handleCheckboxChange}>Threatening / Violent Towards Others</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Threatening / Violent Towards Others</InlineCheckbox>
             <OtherWrapper>
               <InlineCheckbox
                   data-section={section}
                   name='observedBehaviors'
                   value='other'
                   checked={input.observedBehaviors.indexOf('other') !== -1}
-                  onChange={handleCheckboxChange}>Other:</InlineCheckbox>
-              <FormControl data-section={section} name='observedBehaviorsOther' value={input.observedBehaviorsOther} onChange={handleTextInput} />
+                  onChange={handleCheckboxChange}
+                  disabled={isInReview()}>Other:</InlineCheckbox>
+              <FormControl data-section={section} name='observedBehaviorsOther' value={input.observedBehaviorsOther} onChange={handleTextInput} disabled={isInReview()} />
             </OtherWrapper>
           </FormGroup>
         </Col>
@@ -416,7 +541,7 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
 
       <PaddedRow>
         <Col lg={12}>
-          <TitleLabel>Emotional State (Check all that apply)</TitleLabel>
+          <TitleLabel>23. Emotional State (Check all that apply)</TitleLabel>
           <FormGroup>
             <InlineCheckbox
                 inline
@@ -424,49 +549,56 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
                 name='emotionalState'
                 value='angry'
                 checked={input.emotionalState.indexOf('angry') !== -1}
-                onChange={handleCheckboxChange}>Angry</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Angry</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
                 name='emotionalState'
                 value='afraid'
                 checked={input.emotionalState.indexOf('afraid') !== -1}
-                onChange={handleCheckboxChange}>Afraid</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Afraid</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='emotionalState' 
+                name='emotionalState'
                 value='apologetic'
                 checked={input.emotionalState.indexOf('apologetic') !== -1}
-                onChange={handleCheckboxChange}>Apologetic</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Apologetic</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
                 name='emotionalState'
                 value='calm'
                 checked={input.emotionalState.indexOf('calm') !== -1}
-                onChange={handleCheckboxChange}>Calm</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Calm</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
                 name='emotionalState'
                 value='crying'
                 checked={input.emotionalState.indexOf('crying') !== -1}
-                onChange={handleCheckboxChange}>Crying</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Crying</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='emotionalState' 
+                name='emotionalState'
                 value='fearful'
                 checked={input.emotionalState.indexOf('fearful') !== -1}
-                onChange={handleCheckboxChange}>Fearful</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Fearful</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='emotionalState' 
+                name='emotionalState'
                 value='nervous'
                 checked={input.emotionalState.indexOf('nervous') !== -1}
-                onChange={handleCheckboxChange}>Nervous</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Nervous</InlineCheckbox>
             <OtherWrapper>
               <InlineCheckbox
                   inline
@@ -474,8 +606,9 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
                   name='emotionalState'
                   value='other'
                   checked={input.emotionalState.indexOf('other') !== -1}
-                  onChange={handleCheckboxChange}>Other:</InlineCheckbox>
-              <FormControl data-section={section} name='emotionalStateOther' value={input.emotionalStateOther} onChange={handleTextInput} />
+                  onChange={handleCheckboxChange}
+                  disabled={isInReview()}>Other:</InlineCheckbox>
+              <FormControl data-section={section} name='emotionalStateOther' value={input.emotionalStateOther} onChange={handleTextInput} disabled={isInReview()} />
             </OtherWrapper>
           </FormGroup>
         </Col>
@@ -483,98 +616,110 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
 
       <PaddedRow>
         <Col lg={12}>
-          <TitleLabel>23. Photos Taken Of:</TitleLabel>
+          <TitleLabel>24. Photos Taken Of:</TitleLabel>
           <FormGroup>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='photosTakenOf' 
+                name='photosTakenOf'
                 value='injuries'
                 checked={input.photosTakenOf.indexOf('injuries') !== -1}
-                onChange={handleCheckboxChange}>Injuries</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Injuries</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='photosTakenOf' 
+                name='photosTakenOf'
                 value='propertyDamage'
                 checked={input.photosTakenOf.indexOf('propertyDamage') !== -1}
-                onChange={handleCheckboxChange}>Damage / Crime Scene</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Damage / Crime Scene</InlineCheckbox>
           </FormGroup>
         </Col>
       </PaddedRow>
 
       <PaddedRow>
         <Col lg={12}>
-          <TitleLabel>24. Consumer Injuries</TitleLabel>
+          <TitleLabel>25. Consumer Injuries</TitleLabel>
           <FormGroup>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='injuries' 
+                name='injuries'
                 value='abrasions'
                 checked={input.injuries.indexOf('abrasions') !== -1}
-                onChange={handleCheckboxChange}>Abrasions</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Abrasions</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='injuries' 
+                name='injuries'
                 value='bruises'
                 checked={input.injuries.indexOf('bruises') !== -1}
-                onChange={handleCheckboxChange}>Bruises</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Bruises</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='injuries' 
+                name='injuries'
                 value='complaintsOfPain'
                 checked={input.injuries.indexOf('complaintsOfPain') !== -1}
-                onChange={handleCheckboxChange}>Complaints of Pain</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Complaints of Pain</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='injuries' 
+                name='injuries'
                 value='concussion'
                 checked={input.injuries.indexOf('concussion') !== -1}
-                onChange={handleCheckboxChange}>Concussion</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Concussion</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
-                name='injuries' 
+                name='injuries'
                 value='fractures'
                 checked={input.injuries.indexOf('fractures') !== -1}
-                onChange={handleCheckboxChange}>Fractures</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Fractures</InlineCheckbox>
             <OtherWrapper>
               <InlineCheckbox
                   data-section={section}
-                  name='injuries' 
+                  name='injuries'
                   value='other'
                   checked={input.injuries.indexOf('other') !== -1}
-                  onChange={handleCheckboxChange}>Other:</InlineCheckbox>
-              <FormControl data-section={section} name='injuriesOther' value={input.injuriesOther} onChange={handleTextInput} />
+                  onChange={handleCheckboxChange}
+                  disabled={isInReview()}>Other:</InlineCheckbox>
+              <FormControl data-section={section} name='injuriesOther' value={input.injuriesOther} onChange={handleTextInput} disabled={isInReview()} />
             </OtherWrapper>
           </FormGroup>
         </Col>
       </PaddedRow>
 
       <PaddedRow>
-        <Col lg={1}>
-          <TitleLabel>25. Suicidal</TitleLabel>
+        <Col lg={6}>
+          <TitleLabel>26. Suicidal</TitleLabel>
           <InlineRadio
               inline
               data-section={section}
               name='suicidal'
               value={true}
               checked={input.suicidal === 'true'}
-              onChange={handleSingleSelection}>Yes</InlineRadio>
+              onChange={handleSingleSelection}
+              disabled={isInReview()}>Yes</InlineRadio>
           <InlineRadio
               inline
               data-section={section}
               name='suicidal'
               value={false}
               checked={input.suicidal === 'false'}
-              onChange={handleSingleSelection}>No</InlineRadio>
+              onChange={handleSingleSelection}
+              disabled={isInReview()}>No</InlineRadio>
         </Col>
+      </PaddedRow>
 
-        <Col lg={11}>
+      <PaddedRow>
+        <Col lg={12}>
           <TitleLabel>If Suicidal:</TitleLabel>
           <InlineCheckbox
               inline
@@ -582,34 +727,38 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
               name='suicidalActions'
               value='thoughts'
               checked={input.suicidalActions.indexOf('thoughts') !== -1}
-              onChange={handleCheckboxChange}>Thoughts</InlineCheckbox>
+              onChange={handleCheckboxChange}
+              disabled={isInReview()}>Thoughts</InlineCheckbox>
           <InlineCheckbox
               inline
               data-section={section}
               name='suicidalActions'
               value='threat'
               checked={input.suicidalActions.indexOf('threat') !== -1}
-              onChange={handleCheckboxChange}>Threat</InlineCheckbox>
+              onChange={handleCheckboxChange}
+              disabled={isInReview()}>Threat</InlineCheckbox>
           <InlineCheckbox
               inline
               data-section={section}
               name='suicidalActions'
               value='attempt'
               checked={input.suicidalActions.indexOf('attempt') !== -1}
-              onChange={handleCheckboxChange}>Attempt</InlineCheckbox>
+              onChange={handleCheckboxChange}
+              disabled={isInReview()}>Attempt</InlineCheckbox>
           <InlineCheckbox
               inline
               data-section={section}
               name='suicidalActions'
               value='completed'
               checked={input.suicidalActions.indexOf('completed') !== -1}
-              onChange={handleCheckboxChange}>Completed</InlineCheckbox>
+              onChange={handleCheckboxChange}
+              disabled={isInReview()}>Completed</InlineCheckbox>
         </Col>
       </PaddedRow>
 
       <PaddedRow>
         <Col lg={12}>
-          <TitleLabel>26. Method Used to Attempt, Threaten, or Complete Suicide</TitleLabel>
+          <TitleLabel>27. Method Used to Attempt, Threaten, or Complete Suicide</TitleLabel>
           <FormGroup>
             <InlineCheckbox
                 inline
@@ -617,41 +766,48 @@ const ConsumerInfoView = ({ section, handleTextInput, handleDateInput, handleSin
                 name='suicideAttemptMethod'
                 value='narcotics'
                 checked={input.suicideAttemptMethod.indexOf('narcotics') !== -1}
-                onChange={handleCheckboxChange}>Narcotics (Prescription or Illicit)</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Narcotics (Prescription or Illicit)</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
                 name='suicideAttemptMethod'
                 value='alcohol'
                 checked={input.suicideAttemptMethod.indexOf('alcohol') !== -1}
-                onChange={handleCheckboxChange}>Alcohol</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Alcohol</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
                 name='suicideAttemptMethod'
                 value='knife'
                 checked={input.suicideAttemptMethod.indexOf('knife') !== -1}
-                onChange={handleCheckboxChange}>Knife / Cutting Tool</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Knife / Cutting Tool</InlineCheckbox>
             <InlineCheckbox
                 inline
                 data-section={section}
                 name='suicideAttemptMethod'
                 value='firearm'
                 checked={input.suicideAttemptMethod.indexOf('firearm') !== -1}
-                onChange={handleCheckboxChange}>Firearm</InlineCheckbox>
+                onChange={handleCheckboxChange}
+                disabled={isInReview()}>Firearm</InlineCheckbox>
             <OtherWrapper>
               <InlineCheckbox
                   data-section={section}
                   name='suicideAttemptMethod'
                   value='other'
                   checked={input.suicideAttemptMethod.indexOf('other') !== -1}
-                  onChange={handleCheckboxChange}>Other:</InlineCheckbox>
-              <FormControl data-section={section} name='suicideAttemptMethodOther' value={input.suicideAttemptMethodOther} onChange={handleTextInput} />
+                  onChange={handleCheckboxChange}
+                  disabled={isInReview()}>Other:</InlineCheckbox>
+              <FormControl data-section={section} name='suicideAttemptMethodOther' value={input.suicideAttemptMethodOther} onChange={handleTextInput} disabled={isInReview()} />
             </OtherWrapper>
           </FormGroup>
         </Col>
       </PaddedRow>
-    </SectionView>
+
+      { !isInReview() ? <FormNav prevPath={FORM_PATHS.CONSUMER_SEARCH} nextPath={FORM_PATHS.COMPLAINANT} handlePageChange={handlePageChange} /> : null}
+    </div>
   );
 }
 
@@ -659,9 +815,12 @@ ConsumerInfoView.propTypes = {
   handleTextInput: PropTypes.func.isRequired,
   handleSingleSelection: PropTypes.func.isRequired,
   handleCheckboxChange: PropTypes.func.isRequired,
+  handleDateInput: PropTypes.func.isRequired,
+  consumerIsSelected: PropTypes.bool.isRequired,
+  isInReview: PropTypes.func.isRequired,
+  handlePageChange: PropTypes.func.isRequired,
   input: PropTypes.object.isRequired,
   section: PropTypes.string.isRequired
 }
 
 export default ConsumerInfoView;
-// TODO: IF 15 is yes -> send copy of report to Homelessoutreach@BaltimorePolice.org

@@ -90,4 +90,4 @@ export default function baseWebpackConfig(env :Object) {
       net: 'empty'
     }
   };
-};
+}
