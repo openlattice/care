@@ -78,7 +78,7 @@ class AuthRoute extends React.Component<Props> {
       if (nextProps.authTokenExpiration !== -1) {
         this.props.actions.authExpired();
       }
-      this.props.actions.authAttempt();
+      Auth0.getAuth0LockInstance().show();
     }
     else {
       Auth0.getAuth0LockInstance().hide();

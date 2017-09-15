@@ -34,7 +34,6 @@ export function* watchAuthAttempt() :Generator<> {
        */
       yield call(AuthUtils.storeAuthToken, authToken);
       yield call(Utils.configureLattice, authToken);
-      yield call(delay, AUTH_SUCCESS_DELAY); // wait for the Auth0 Lock animation to complete
       yield put(AuthActionFactory.authSuccess());
     }
     catch (error) {
