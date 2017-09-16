@@ -4,22 +4,40 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import styled, { injectGlobal } from 'styled-components';
-import { normalize } from 'polished';
 
-import { Page, PageHeader, Title, Description, FormWrapper, SubmitButton, SubmitButtonWrapper } from '../shared/Layout';
 import ReportInfoView from '../components/ReportInfoView';
 import ConsumerInfoView from '../components/ConsumerInfoView';
 import ComplaintInfoView from '../components/ComplaintInfoView';
 import DispositionView from '../components/DispositionView';
 import OfficerInfoView from '../components/OfficerInfoView';
 
-function FormView({ handleTextInput, handleDateInput, handleTimeInput, handleSingleSelection, handleCheckboxChange, handleSubmit, input }) {
-	return (
+import {
+  Page,
+  PageHeader,
+  Title,
+  FormWrapper,
+  SubmitButton,
+  SubmitButtonWrapper,
+  Warning
+} from '../shared/Layout';
+
+function FormView({
+  handleTextInput,
+  handleDateInput,
+  handleTimeInput,
+  handleSingleSelection,
+  handleCheckboxChange,
+  handleSubmit,
+  input
+}) {
+  return (
     <Page>
       <PageHeader>
-    		<Title>Behavioral Health Report</Title>
-    		<Description>Baltimore Police Department</Description>
+        <Title>Behavioral Health Report Public Demo</Title>
+        <Warning>
+          <p>This is a public demo of the Behavioral Health Report form. All data submitted is publicly available.</p>
+          <p>Please do not submit any sensitive information.</p>
+        </Warning>
       </PageHeader>
       <FormWrapper>
         <form onSubmit={handleSubmit}>
@@ -58,7 +76,7 @@ function FormView({ handleTextInput, handleDateInput, handleTimeInput, handleSin
         </form>
       </FormWrapper>
     </Page>
-	);
+  );
 }
 
 FormView.propTypes = {

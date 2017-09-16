@@ -25,6 +25,12 @@ export const Description = styled.div`
   color: #37454A;
 `;
 
+export const Warning = styled.div`
+  text-align: center;
+  font-size: 20px;
+  color: #F44336;
+`;
+
 export const FormWrapper = styled.div`
   margin: 0 60px 0 60px;
   padding-bottom: 100px;
@@ -77,7 +83,6 @@ export const ButtonWrapper = styled.div`
 
 export const SubmitButtonWrapper = ButtonWrapper.extend`
   padding-top: 80px;
-  width: 1520px;
 `;
 
 export const SubmitButton = styled(Button).attrs({
