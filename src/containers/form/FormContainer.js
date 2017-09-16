@@ -6,9 +6,9 @@ import FormView from '../../components/FormView';
 import ConfirmationModal from '../../components/ConfirmationModalView';
 import LogoutButton from '../app/LogoutButton';
 
-const FORM_ENTITY_SET_NAME = 'baltimoreHealthReportPublicDemoForm';
-const PEOPLE_ENTITY_SET_NAME = 'baltimoreHealthReportPublicDemoPeople';
-const APPEARS_IN_ENTITY_SET_NAME = 'baltimoreHealthReportPublicDemoAppearsIn';
+const FORM_ENTITY_SET_NAME = 'behavioralHealthReportPublicDemoForm';
+const PEOPLE_ENTITY_SET_NAME = 'behavioralHealthReportPublicDemoPeople';
+const APPEARS_IN_ENTITY_SET_NAME = 'behavioralHealthReportPublicDemoAppearsIn';
 
 const ID_FQN = 'nc.SubjectIdentification';
 const FIRST_NAME_FQN = 'nc.PersonGivenName';
