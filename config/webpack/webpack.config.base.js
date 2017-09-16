@@ -2,7 +2,7 @@
  * @flow
  */
 
-/* eslint-disable no-underscore-dangle, import/no-extraneous-dependencies, import/extensions */
+/* eslint-disable no-underscore-dangle, no-unused-vars, import/no-extraneous-dependencies, import/extensions */
 
 import webpack from 'webpack';
 
@@ -20,7 +20,7 @@ export default function baseWebpackConfig(env :Object) {
    * constants
    */
 
-  const BASE_PATH :string = `/${env.basePath || 'bhr'}/`;
+  const BASE_PATH :string = '/bhr-demo/';
 
   /*
    * loaders
@@ -90,4 +90,4 @@ export default function baseWebpackConfig(env :Object) {
       net: 'empty'
     }
   };
-};
+}
