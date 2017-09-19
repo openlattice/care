@@ -111,3 +111,7 @@ export const NavBtnWrapper = styled.div`
 export const StyledButton = styled(Button)`
   margin: 0 10px;
 `;
+
+export const ErrorMessage = styled.div`
+  color: red;
+`;

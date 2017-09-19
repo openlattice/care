@@ -47,8 +47,8 @@ export const FORM_PATHS = {
 }
 
 export const FORM_ERRORS = {
-  SHOULD_BE_A_NUMBER: 'A number is required',
-  IS_REQUIRED: 'This is a required field'
+  INVALID_FORMAT: 'Some formats are invalid',
+  IS_REQUIRED: 'Some required fields are empty'
 }
 
 export const STATES = [

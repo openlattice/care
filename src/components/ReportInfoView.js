@@ -10,7 +10,7 @@ import DatePicker from 'react-bootstrap-date-picker';
 import TimePicker from 'react-bootstrap-time-picker';
 
 import FormNav from './FormNav';
-import { TitleLabel, LabelDescription, InlineRadio, PaddedRow, SectionHeader } from '../shared/Layout';
+import { TitleLabel, LabelDescription, InlineRadio, PaddedRow, SectionHeader, ErrorMessage } from '../shared/Layout';
 import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
 import { getNumberValidation, getDateValidation } from '../shared/Validation';
 
@@ -24,7 +24,7 @@ class ReportInfoView extends React.Component {
       complaintNumberValid: true,
       cadNumberValid: true,
       dateOccurredValid: true,
-      sectionValid: true,
+      sectionValid: false,
       didClickNav: false
     }
   }
@@ -40,6 +40,13 @@ class ReportInfoView extends React.Component {
     section: PropTypes.string.isRequired
   }
 
+  componentDidMount() {
+    // const requiredInputNames = ['complaintNumber'];
+    // requiredInputNames.forEach((name) => {
+    //   this.validateRequired(this.props.input[name], name);
+    // });
+  }
+
   bootstrapValidation = (name, required) => {
     const inputValid = this.state[`${name}Valid`];
     const input = this.props.input[name];
@@ -49,6 +56,37 @@ class ReportInfoView extends React.Component {
     if (input && input.length && !inputValid) return 'error';
   }
 
+// TODO: finish extracting validateRequired fn to use @ componentDidMount
+  // validateRequired = (input, name) => {
+  //   const validStateKey = `${name}Valid`;
+  //   let inputValid = this.state[validStateKey];
+  //   let sectionErrors = this.state.sectionErrors.slice();
+
+  //   const idx = sectionErrors.indexOf(FORM_ERRORS.IS_REQUIRED);
+  //   if (!input) {
+  //     if (idx === -1) {
+  //       sectionErrors.push(FORM_ERRORS.IS_REQUIRED);
+  //     }
+  //     inputValid = false;
+  //   } else {
+  //     if (idx !== -1) {
+  //       sectionErrors.splice(idx);
+  //     }
+  //   }
+
+  //   this.setState({
+  //     sectionErrors,
+  //     [validStateKey]: inputValid
+  //   }, () => {
+  //     // Check that all required fields are valid and set sectionValid accordingly
+  //     if (this.state.complaintNumberValid) {
+  //       this.setState({ sectionValid: true });
+  //     } else {
+  //       this.setState({ sectionValid: false });
+  //     }
+  //   });
+  // }
+
   validateOnInput = (input, name, fieldType, required) => {
     const validStateKey = `${name}Valid`;
     let inputValid = this.state[validStateKey];
@@ -56,12 +94,12 @@ class ReportInfoView extends React.Component {
 
     switch(fieldType) {
       case 'number':
-        const idx = sectionErrors.indexOf(FORM_ERRORS.SHOULD_BE_A_NUMBER);
+        const idx = sectionErrors.indexOf(FORM_ERRORS.INVALID_FORMAT);
         console.log('idx:', idx);
         if (input && isNaN(input)) {
           inputValid = false;
           if (idx === -1) {
-            sectionErrors.push(FORM_ERRORS.SHOULD_BE_A_NUMBER);
+            sectionErrors.push(FORM_ERRORS.INVALID_FORMAT);
           }
         } else {
           inputValid = true;
@@ -251,7 +289,7 @@ class ReportInfoView extends React.Component {
         </PaddedRow>
 
         { !isInReview() ? <FormNav nextPath={FORM_PATHS.CONSUMER_SEARCH} handlePageChange={this.handlePageChange} sectionValid={this.state.sectionValid} setDidClickNav={this.setDidClickNav} /> : null}
-        <ul>{this.state.sectionErrors.map((error) => <li>{error}</li>)}</ul>
+        {this.state.sectionErrors.map((error) => <ErrorMessage key={error}>{error}</ErrorMessage>)}
       </div>
     );
   }
