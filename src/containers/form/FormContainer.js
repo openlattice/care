@@ -5,7 +5,7 @@
 import React from 'react';
 import {withRouter} from "react-router-dom";
 import Promise from 'bluebird';
-import { EntityDataModelApi, DataApi, SearchApi } from 'lattice';
+import { EntityDataModelApi, DataApi, SearchApi, SyncApi } from 'lattice';
 
 import FormView from '../../components/FormView';
 import ConfirmationModal from '../../components/ConfirmationModalView';
