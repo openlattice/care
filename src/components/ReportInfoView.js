@@ -22,6 +22,8 @@ class ReportInfoView extends React.Component {
     this.state = {
       sectionErrors: [],
       complaintNumberValid: true,
+      cadNumberValid: true,
+      dateOccurredValid: true,
       sectionValid: true,
       didClickNav: false
     }
@@ -62,7 +64,7 @@ class ReportInfoView extends React.Component {
         }
         break;
       default:
-        return;
+        break;
     }
 
     if (required) {
@@ -74,7 +76,7 @@ class ReportInfoView extends React.Component {
 
     this.setState({
       // sectionErrors,
-      complaintNumberValid: inputValid
+      [validStateKey]: inputValid
     }, () => {
       // todo: remove hardcoded value
       if (this.state.complaintNumberValid) {
@@ -85,10 +87,11 @@ class ReportInfoView extends React.Component {
     });
   }
 
-  handleTextInput = (e) => {
+  handleTextInput = (e, name, fieldType, required) => {
     const {input} = this.props;
+    const isRequired = required || false;
     this.props.handleTextInput(e);
-    this.validateOnInput(input.complaintNumber, 'complaintNumber', 'number', true);
+    this.validateOnInput(input[name], name, fieldType, isRequired);
   } 
 
   setDidClickNav = () => {
@@ -127,12 +130,12 @@ class ReportInfoView extends React.Component {
         <PaddedRow>
           <Col lg={6}>
               <TitleLabel>1. Primary Reason for Dispatch</TitleLabel>
-              <FormControl data-section={section} name='dispatchReason' value={input.dispatchReason} onChange={this.handleTextInput} disabled={isInReview()} />
+              <FormControl data-section={section} name='dispatchReason' value={input.dispatchReason} onChange={(e) => this.handleTextInput(e, 'dispatchReason', 'string')} disabled={isInReview()} />
           </Col>
           <Col lg={6}>
             <FormGroup validationState={this.bootstrapValidation('complaintNumber', true)}>
               <TitleLabel>2. Complaint Number*</TitleLabel>
-              <FormControl data-section={section} name='complaintNumber' value={input.complaintNumber} onChange={this.handleTextInput} disabled={isInReview()} />
+              <FormControl data-section={section} name='complaintNumber' value={input.complaintNumber} onChange={(e) => this.handleTextInput(e, 'complaintNumber', 'number', true)} disabled={isInReview()} />
             </FormGroup>
           </Col>
         </PaddedRow>
@@ -159,33 +162,33 @@ class ReportInfoView extends React.Component {
           </Col>
           <Col lg={6}>
             <TitleLabel>4. Crime / Incident</TitleLabel>
-            <FormControl data-section={section} name='incident' value={input.incident} onChange={handleTextInput} disabled={isInReview()} />
+            <FormControl data-section={section} name='incident' value={input.incident} onChange={(e) => this.handleTextInput(e, 'incident', 'string')} disabled={isInReview()} />
           </Col>
         </PaddedRow>
 
         <PaddedRow>
           <Col lg={12}>
             <TitleLabel>5. Location of Offense / Incident</TitleLabel>
-            <FormControl data-section={section} name='locationOfIncident' value={input.locationOfIncident} onChange={handleTextInput} disabled={isInReview()} />
+            <FormControl data-section={section} name='locationOfIncident' value={input.locationOfIncident} onChange={(e) => this.handleTextInput(e, 'locationOfIncident', 'string')} disabled={isInReview()} />
           </Col>
         </PaddedRow>
 
         <PaddedRow>
           <Col lg={6}>
             <TitleLabel>6. Unit</TitleLabel>
-            <FormControl data-section={section} name='unit' value={input.unit} onChange={handleTextInput} disabled={isInReview()} />
+            <FormControl data-section={section} name='unit' value={input.unit} onChange={(e) => this.handleTextInput(e, 'unit', 'string')} disabled={isInReview()} />
           </Col>
           <Col lg={6}>
             <TitleLabel>7. Post of Occurrence</TitleLabel>
-            <FormControl data-section={section} name='postOfOccurrence' value={input.postOfOccurrence} onChange={handleTextInput} disabled={isInReview()} />
+            <FormControl data-section={section} name='postOfOccurrence' value={input.postOfOccurrence} onChange={(e) => this.handleTextInput(e, 'postOfOccurrence', 'string')} disabled={isInReview()} />
           </Col>
         </PaddedRow>
 
         <PaddedRow>
           <Col lg={6}>
-            <FormGroup validationState={getNumberValidation(input.cadNumber)}>
+            <FormGroup validationState={this.bootstrapValidation('cadNumber')}>
               <TitleLabel>8. CAD Number</TitleLabel>
-              <FormControl data-section={section} name='cadNumber' value={input.cadNumber} onChange={handleTextInput} disabled={isInReview()} />
+              <FormControl data-section={section} name='cadNumber' value={input.cadNumber} onChange={(e) => this.handleTextInput(e, 'cadNumber', 'number')} disabled={isInReview()} />
             </FormGroup>
           </Col>
           <Col lg={6}>
@@ -211,7 +214,7 @@ class ReportInfoView extends React.Component {
 
         <PaddedRow>
           <Col lg={6}>
-            <FormGroup validationState={getDateValidation(input.dateOccurred)}>
+            <FormGroup validationState={this.bootstrapValidation('dateOccurred')}>
               <TitleLabel>10. Date Occurred</TitleLabel>
               <DatePicker value={input.dateOccurred} onChange={(e) => {handleDateInput(e, section, 'dateOccurred')}} disabled={isInReview()} />
             </FormGroup>
