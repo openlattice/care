@@ -11,7 +11,7 @@ import TimePicker from 'react-bootstrap-time-picker';
 
 import FormNav from './FormNav';
 import { TitleLabel, LabelDescription, InlineRadio, PaddedRow, SectionHeader } from '../shared/Layout';
-import { FORM_PATHS } from '../shared/Consts';
+import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
 import { getNumberValidation, getDateValidation } from '../shared/Validation';
 
 
@@ -52,15 +52,22 @@ class ReportInfoView extends React.Component {
   validateOnInput = (input, name, fieldType, required) => {
     const validStateKey = `${name}Valid`;
     let inputValid = this.state[validStateKey];
-    let sectionErrors = this.state.sectionErrors;
+    let sectionErrors = this.state.sectionErrors.slice();
 
     switch(fieldType) {
       case 'number':
+        const idx = sectionErrors.indexOf(FORM_ERRORS.SHOULD_BE_A_NUMBER);
+        console.log('idx:', idx);
         if (input && isNaN(input)) {
           inputValid = false;
-          // sectionErrors.push('Input must be a number');
+          if (idx === -1) {
+            sectionErrors.push(FORM_ERRORS.SHOULD_BE_A_NUMBER);
+          }
         } else {
           inputValid = true;
+          if (idx !== -1) {
+            sectionErrors.splice(idx);
+          }
         }
         break;
       default:
@@ -68,17 +75,24 @@ class ReportInfoView extends React.Component {
     }
 
     if (required) {
+      const idx = sectionErrors.indexOf(FORM_ERRORS.IS_REQUIRED);
       if (!input) {
-        // sectionErrors.push('Input is required');
+        if (idx === -1) {
+          sectionErrors.push(FORM_ERRORS.IS_REQUIRED);
+        }
         inputValid = false;
+      } else {
+        if (idx !== -1) {
+          sectionErrors.splice(idx);
+        }
       }
     }
 
     this.setState({
-      // sectionErrors,
+      sectionErrors,
       [validStateKey]: inputValid
     }, () => {
-      // todo: remove hardcoded value
+      // Check that all required fields are valid and set sectionValid accordingly
       if (this.state.complaintNumberValid) {
         this.setState({ sectionValid: true });
       } else {
@@ -237,6 +251,7 @@ class ReportInfoView extends React.Component {
         </PaddedRow>
 
         { !isInReview() ? <FormNav nextPath={FORM_PATHS.CONSUMER_SEARCH} handlePageChange={this.handlePageChange} sectionValid={this.state.sectionValid} setDidClickNav={this.setDidClickNav} /> : null}
+        <ul>{this.state.sectionErrors.map((error) => <li>{error}</li>)}</ul>
       </div>
     );
   }

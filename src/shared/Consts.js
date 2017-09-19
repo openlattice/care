@@ -46,6 +46,11 @@ export const FORM_PATHS = {
   REVIEW: '/7'
 }
 
+export const FORM_ERRORS = {
+  SHOULD_BE_A_NUMBER: 'A number is required',
+  IS_REQUIRED: 'This is a required field'
+}
+
 export const STATES = [
   'AL',
   'AK',
