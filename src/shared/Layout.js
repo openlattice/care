@@ -53,6 +53,11 @@ export const TitleLabel = Label.extend`
   line-height: 1.5;
 `;
 
+export const LabelDescription = Label.extend`
+  color: light-gray;
+  font-size: 12px;
+`;
+
 export const OtherWrapper = styled.span`
   display: flex;
   align-items: center;

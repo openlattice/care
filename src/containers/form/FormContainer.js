@@ -198,7 +198,8 @@ class Form extends React.Component {
   }
 
   // For text input
-  handleTextInput = (e) => {
+  handleTextInput = (e, validateFn) => {
+    console.log('handletextinput:', e.target.value);
     const sectionKey = e.target.dataset.section;
     const name = e.target.name;
     const input = e.target.value;
@@ -435,7 +436,7 @@ class Form extends React.Component {
   isInReview = () => {
     const page = window.location.hash.substr(2);
     if (page && page == this.state.maxPage) return true;
-    return false; 
+    return false;
   }
 
   render() {

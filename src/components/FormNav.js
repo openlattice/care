@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import { NavBtnWrapper, StyledButton, SubmitButton } from '../shared/Layout';
 
 
-const FormNav = ({prevPath, nextPath, submit, handlePageChange}) => {
+const FormNav = ({ prevPath, nextPath, submit, handlePageChange }) => {
 
   const renderNav = () => {
     return (
