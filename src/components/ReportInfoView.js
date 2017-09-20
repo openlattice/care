@@ -15,12 +15,15 @@ import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
 import { getNumberValidation, getDateValidation } from '../shared/Validation';
 
 
+const REQUIRED_VALIDITIES = ['complaintNumberValid'];
+
 class ReportInfoView extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      sectionErrors: [],
+      sectionFormatErrors: [],
+      sectionRequiredErrors: [FORM_ERRORS.IS_REQUIRED],
       complaintNumberValid: true,
       cadNumberValid: true,
       dateOccurredValid: true,
@@ -40,71 +43,34 @@ class ReportInfoView extends React.Component {
     section: PropTypes.string.isRequired
   }
 
-  componentDidMount() {
-    // const requiredInputNames = ['complaintNumber'];
-    // requiredInputNames.forEach((name) => {
-    //   this.validateRequired(this.props.input[name], name);
-    // });
-  }
-
   bootstrapValidation = (name, required) => {
     const inputValid = this.state[`${name}Valid`];
     const input = this.props.input[name];
     // If required, show error for invalid input only if user has tried to navigate to next/prev section
-    if (!inputValid && this.state.didClickNav) return 'error';
+    if (!inputValid && this.state.didClickNav || required && input.length < 1 && this.state.didClickNav) return 'error';
     // Show error if there is input and it is invalid 
     if (input && input.length && !inputValid) return 'error';
   }
 
-// TODO: finish extracting validateRequired fn to use @ componentDidMount
-  // validateRequired = (input, name) => {
-  //   const validStateKey = `${name}Valid`;
-  //   let inputValid = this.state[validStateKey];
-  //   let sectionErrors = this.state.sectionErrors.slice();
-
-  //   const idx = sectionErrors.indexOf(FORM_ERRORS.IS_REQUIRED);
-  //   if (!input) {
-  //     if (idx === -1) {
-  //       sectionErrors.push(FORM_ERRORS.IS_REQUIRED);
-  //     }
-  //     inputValid = false;
-  //   } else {
-  //     if (idx !== -1) {
-  //       sectionErrors.splice(idx);
-  //     }
-  //   }
-
-  //   this.setState({
-  //     sectionErrors,
-  //     [validStateKey]: inputValid
-  //   }, () => {
-  //     // Check that all required fields are valid and set sectionValid accordingly
-  //     if (this.state.complaintNumberValid) {
-  //       this.setState({ sectionValid: true });
-  //     } else {
-  //       this.setState({ sectionValid: false });
-  //     }
-  //   });
-  // }
-
   validateOnInput = (input, name, fieldType, required) => {
     const validStateKey = `${name}Valid`;
     let inputValid = this.state[validStateKey];
-    let sectionErrors = this.state.sectionErrors.slice();
+    let sectionFormatErrors = this.state.sectionFormatErrors.slice();
+    let sectionRequiredErrors = this.state.sectionRequiredErrors.slice();
 
     switch(fieldType) {
       case 'number':
-        const idx = sectionErrors.indexOf(FORM_ERRORS.INVALID_FORMAT);
+        const idx = sectionFormatErrors.indexOf(FORM_ERRORS.INVALID_FORMAT);
         console.log('idx:', idx);
         if (input && isNaN(input)) {
           inputValid = false;
           if (idx === -1) {
-            sectionErrors.push(FORM_ERRORS.INVALID_FORMAT);
+            sectionFormatErrors.push(FORM_ERRORS.INVALID_FORMAT);
           }
         } else {
           inputValid = true;
           if (idx !== -1) {
-            sectionErrors.splice(idx);
+            sectionFormatErrors.splice(idx);
           }
         }
         break;
@@ -113,24 +79,31 @@ class ReportInfoView extends React.Component {
     }
 
     if (required) {
-      const idx = sectionErrors.indexOf(FORM_ERRORS.IS_REQUIRED);
+      const idx = sectionRequiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED);
       if (!input) {
         if (idx === -1) {
-          sectionErrors.push(FORM_ERRORS.IS_REQUIRED);
+          sectionRequiredErrors.push(FORM_ERRORS.IS_REQUIRED);
         }
         inputValid = false;
       } else {
-        if (idx !== -1) {
-          sectionErrors.splice(idx);
+        let allRequiredFieldsAreValid = true;
+        REQUIRED_VALIDITIES.forEach((validity) => {
+          if (!validity) {
+            allRequiredFieldsAreValid = false;
+            return;
+          };
+        });
+        if (allRequiredFieldsAreValid) {
+          sectionRequiredErrors.splice(idx);
         }
       }
     }
 
     this.setState({
-      sectionErrors,
+      sectionFormatErrors,
+      sectionRequiredErrors,
       [validStateKey]: inputValid
     }, () => {
-      // Check that all required fields are valid and set sectionValid accordingly
       if (this.state.complaintNumberValid) {
         this.setState({ sectionValid: true });
       } else {
@@ -158,6 +131,22 @@ class ReportInfoView extends React.Component {
     } else {
       this.props.handlePageChange(path);
     }
+  }
+
+  renderErrors = () => {
+    console.log('state required errors:', this.state.sectionRequiredErrors);
+    const formatErrors = this.state.sectionFormatErrors.map((error) => <ErrorMessage key={error}>{error}</ErrorMessage>);
+    let requiredErrors = [];
+    if (this.state.didClickNav) {
+      requiredErrors = this.state.sectionRequiredErrors.map((error) => <ErrorMessage key={error}>{error}</ErrorMessage>);
+    };
+
+    return (
+      <div>
+        {formatErrors}
+        {requiredErrors}
+      </div>
+    );
   }
 
   render() {
@@ -289,7 +278,7 @@ class ReportInfoView extends React.Component {
         </PaddedRow>
 
         { !isInReview() ? <FormNav nextPath={FORM_PATHS.CONSUMER_SEARCH} handlePageChange={this.handlePageChange} sectionValid={this.state.sectionValid} setDidClickNav={this.setDidClickNav} /> : null}
-        {this.state.sectionErrors.map((error) => <ErrorMessage key={error}>{error}</ErrorMessage>)}
+        { this.renderErrors() }
       </div>
     );
   }
