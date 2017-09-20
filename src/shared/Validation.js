@@ -1,18 +1,73 @@
+import { FORM_ERRORS } from './Consts';
 
-export const getRequiredValidation = (value) => {
-  // if (arguments.length > 1) {
-  //   const extraValidations = arguments.slice(1);
-  //   extraValidations
-  // }
-  if (value && value.length > 0) return 'success';
-  else return 'error';
+
+const REQUIRED_VALIDITIES = ['complaintNumberValid'];
+
+export const bootstrapValidation = (component, name, required) => {
+  const inputValid = component.state[`${name}Valid`];
+  const input = component.props.input[name];
+  // If required, show error for invalid input only if user has tried to navigate to next/prev section
+  if (!inputValid && component.state.didClickNav || required && input.length < 1 && component.state.didClickNav) return 'error';
+  // Show error if there is input and it is invalid 
+  if (input && input.length && !inputValid) return 'error';
 }
 
-export const getNumberValidation = (value) => {
-  if (value && isNaN(value)) return 'error';
-}
+export const validateOnInput = (component, input, name, fieldType, required) => {
+  const validStateKey = `${name}Valid`;
+  let inputValid = component.state[validStateKey];
+  let sectionFormatErrors = component.state.sectionFormatErrors.slice();
+  let sectionRequiredErrors = component.state.sectionRequiredErrors.slice();
 
-// TODO: make sure date isn't in the future
-export const getDateValidation = (value) => {
+  switch(fieldType) {
+    case 'number':
+      const idx = sectionFormatErrors.indexOf(FORM_ERRORS.INVALID_FORMAT);
+      console.log('idx:', idx);
+      if (input && isNaN(input)) {
+        inputValid = false;
+        if (idx === -1) {
+          sectionFormatErrors.push(FORM_ERRORS.INVALID_FORMAT);
+        }
+      } else {
+        inputValid = true;
+        if (idx !== -1) {
+          sectionFormatErrors.splice(idx);
+        }
+      }
+      break;
+    default:
+      break;
+  }
 
+  if (required) {
+    const idx = sectionRequiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED);
+    if (!input) {
+      if (idx === -1) {
+        sectionRequiredErrors.push(FORM_ERRORS.IS_REQUIRED);
+      }
+      inputValid = false;
+    } else {
+      let allRequiredFieldsAreValid = true;
+      REQUIRED_VALIDITIES.forEach((validity) => {
+        if (!validity) {
+          allRequiredFieldsAreValid = false;
+          return;
+        };
+      });
+      if (allRequiredFieldsAreValid) {
+        sectionRequiredErrors.splice(idx);
+      }
+    }
+  }
+
+  component.setState({
+    sectionFormatErrors,
+    sectionRequiredErrors,
+    [validStateKey]: inputValid
+  }, () => {
+    if (component.state.complaintNumberValid) {
+      component.setState({ sectionValid: true });
+    } else {
+      component.setState({ sectionValid: false });
+    }
+  });
 }

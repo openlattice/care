@@ -12,10 +12,8 @@ import TimePicker from 'react-bootstrap-time-picker';
 import FormNav from './FormNav';
 import { TitleLabel, LabelDescription, InlineRadio, PaddedRow, SectionHeader, ErrorMessage } from '../shared/Layout';
 import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
-import { getNumberValidation, getDateValidation } from '../shared/Validation';
+import { bootstrapValidation, validateOnInput } from '../shared/Validation';
 
-
-const REQUIRED_VALIDITIES = ['complaintNumberValid'];
 
 class ReportInfoView extends React.Component {
   constructor(props) {
@@ -43,80 +41,11 @@ class ReportInfoView extends React.Component {
     section: PropTypes.string.isRequired
   }
 
-  bootstrapValidation = (name, required) => {
-    const inputValid = this.state[`${name}Valid`];
-    const input = this.props.input[name];
-    // If required, show error for invalid input only if user has tried to navigate to next/prev section
-    if (!inputValid && this.state.didClickNav || required && input.length < 1 && this.state.didClickNav) return 'error';
-    // Show error if there is input and it is invalid 
-    if (input && input.length && !inputValid) return 'error';
-  }
-
-  validateOnInput = (input, name, fieldType, required) => {
-    const validStateKey = `${name}Valid`;
-    let inputValid = this.state[validStateKey];
-    let sectionFormatErrors = this.state.sectionFormatErrors.slice();
-    let sectionRequiredErrors = this.state.sectionRequiredErrors.slice();
-
-    switch(fieldType) {
-      case 'number':
-        const idx = sectionFormatErrors.indexOf(FORM_ERRORS.INVALID_FORMAT);
-        console.log('idx:', idx);
-        if (input && isNaN(input)) {
-          inputValid = false;
-          if (idx === -1) {
-            sectionFormatErrors.push(FORM_ERRORS.INVALID_FORMAT);
-          }
-        } else {
-          inputValid = true;
-          if (idx !== -1) {
-            sectionFormatErrors.splice(idx);
-          }
-        }
-        break;
-      default:
-        break;
-    }
-
-    if (required) {
-      const idx = sectionRequiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED);
-      if (!input) {
-        if (idx === -1) {
-          sectionRequiredErrors.push(FORM_ERRORS.IS_REQUIRED);
-        }
-        inputValid = false;
-      } else {
-        let allRequiredFieldsAreValid = true;
-        REQUIRED_VALIDITIES.forEach((validity) => {
-          if (!validity) {
-            allRequiredFieldsAreValid = false;
-            return;
-          };
-        });
-        if (allRequiredFieldsAreValid) {
-          sectionRequiredErrors.splice(idx);
-        }
-      }
-    }
-
-    this.setState({
-      sectionFormatErrors,
-      sectionRequiredErrors,
-      [validStateKey]: inputValid
-    }, () => {
-      if (this.state.complaintNumberValid) {
-        this.setState({ sectionValid: true });
-      } else {
-        this.setState({ sectionValid: false });
-      }
-    });
-  }
-
   handleTextInput = (e, name, fieldType, required) => {
     const {input} = this.props;
     const isRequired = required || false;
     this.props.handleTextInput(e);
-    this.validateOnInput(input[name], name, fieldType, isRequired);
+    validateOnInput(this, input[name], name, fieldType, isRequired);
   } 
 
   setDidClickNav = () => {
@@ -174,7 +103,7 @@ class ReportInfoView extends React.Component {
               <FormControl data-section={section} name='dispatchReason' value={input.dispatchReason} onChange={(e) => this.handleTextInput(e, 'dispatchReason', 'string')} disabled={isInReview()} />
           </Col>
           <Col lg={6}>
-            <FormGroup validationState={this.bootstrapValidation('complaintNumber', true)}>
+            <FormGroup validationState={bootstrapValidation(this, 'complaintNumber', true)}>
               <TitleLabel>2. Complaint Number*</TitleLabel>
               <FormControl data-section={section} name='complaintNumber' value={input.complaintNumber} onChange={(e) => this.handleTextInput(e, 'complaintNumber', 'number', true)} disabled={isInReview()} />
             </FormGroup>
@@ -227,7 +156,7 @@ class ReportInfoView extends React.Component {
 
         <PaddedRow>
           <Col lg={6}>
-            <FormGroup validationState={this.bootstrapValidation('cadNumber')}>
+            <FormGroup validationState={bootstrapValidation(this, 'cadNumber')}>
               <TitleLabel>8. CAD Number</TitleLabel>
               <FormControl data-section={section} name='cadNumber' value={input.cadNumber} onChange={(e) => this.handleTextInput(e, 'cadNumber', 'number')} disabled={isInReview()} />
             </FormGroup>
@@ -255,7 +184,7 @@ class ReportInfoView extends React.Component {
 
         <PaddedRow>
           <Col lg={6}>
-            <FormGroup validationState={this.bootstrapValidation('dateOccurred')}>
+            <FormGroup validationState={bootstrapValidation(this, 'dateOccurred')}>
               <TitleLabel>10. Date Occurred</TitleLabel>
               <DatePicker value={input.dateOccurred} onChange={(e) => {handleDateInput(e, section, 'dateOccurred')}} disabled={isInReview()} />
             </FormGroup>
