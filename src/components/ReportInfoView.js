@@ -43,12 +43,6 @@ class ReportInfoView extends React.Component {
     section: PropTypes.string.isRequired
   }
 
-  handleTextInput = (e, name, fieldType, requiredFields) => {
-    const {input} = this.props;
-    this.props.handleTextInput(e);
-    validateOnInput(this, input[name], name, fieldType, requiredFields);
-  } 
-
   setDidClickNav = () => {
     this.setState({ didClickNav: true });
   }
@@ -101,12 +95,12 @@ class ReportInfoView extends React.Component {
         <PaddedRow>
           <Col lg={6}>
               <TitleLabel>1. Primary Reason for Dispatch</TitleLabel>
-              <FormControl data-section={section} name='dispatchReason' value={input.dispatchReason} onChange={(e) => this.handleTextInput(e, 'dispatchReason', 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
+              <FormControl data-section={section} name='dispatchReason' value={input.dispatchReason} onChange={(e) => handleTextInput(e, this, 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
           </Col>
           <Col lg={6}>
             <FormGroup validationState={bootstrapValidation(this, 'complaintNumber', true)}>
               <TitleLabel>2. Complaint Number*</TitleLabel>
-              <FormControl data-section={section} name='complaintNumber' value={input.complaintNumber} onChange={(e) => this.handleTextInput(e, 'complaintNumber', 'number', REQUIRED_FIELDS)} disabled={isInReview()} />
+              <FormControl data-section={section} name='complaintNumber' value={input.complaintNumber} onChange={(e) => handleTextInput(e, this, 'number', REQUIRED_FIELDS)} disabled={isInReview()} />
             </FormGroup>
           </Col>
         </PaddedRow>
@@ -133,25 +127,25 @@ class ReportInfoView extends React.Component {
           </Col>
           <Col lg={6}>
             <TitleLabel>4. Crime / Incident</TitleLabel>
-            <FormControl data-section={section} name='incident' value={input.incident} onChange={(e) => this.handleTextInput(e, 'incident', 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
+            <FormControl data-section={section} name='incident' value={input.incident} onChange={(e) => handleTextInput(e, this, 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
           </Col>
         </PaddedRow>
 
         <PaddedRow>
           <Col lg={12}>
             <TitleLabel>5. Location of Offense / Incident</TitleLabel>
-            <FormControl data-section={section} name='locationOfIncident' value={input.locationOfIncident} onChange={(e) => this.handleTextInput(e, 'locationOfIncident', 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
+            <FormControl data-section={section} name='locationOfIncident' value={input.locationOfIncident} onChange={(e) => handleTextInput(e, this, 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
           </Col>
         </PaddedRow>
 
         <PaddedRow>
           <Col lg={6}>
             <TitleLabel>6. Unit</TitleLabel>
-            <FormControl data-section={section} name='unit' value={input.unit} onChange={(e) => this.handleTextInput(e, 'unit', 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
+            <FormControl data-section={section} name='unit' value={input.unit} onChange={(e) => handleTextInput(e, this, 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
           </Col>
           <Col lg={6}>
             <TitleLabel>7. Post of Occurrence</TitleLabel>
-            <FormControl data-section={section} name='postOfOccurrence' value={input.postOfOccurrence} onChange={(e) => this.handleTextInput(e, 'postOfOccurrence', 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
+            <FormControl data-section={section} name='postOfOccurrence' value={input.postOfOccurrence} onChange={(e) => handleTextInput(e, this, 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
           </Col>
         </PaddedRow>
 
@@ -159,7 +153,7 @@ class ReportInfoView extends React.Component {
           <Col lg={6}>
             <FormGroup validationState={bootstrapValidation(this, 'cadNumber')}>
               <TitleLabel>8. CAD Number</TitleLabel>
-              <FormControl data-section={section} name='cadNumber' value={input.cadNumber} onChange={(e) => this.handleTextInput(e, 'cadNumber', 'number', REQUIRED_FIELDS)} disabled={isInReview()} />
+              <FormControl data-section={section} name='cadNumber' value={input.cadNumber} onChange={(e) => handleTextInput(e, this, 'number', REQUIRED_FIELDS)} disabled={isInReview()} />
             </FormGroup>
           </Col>
           <Col lg={6}>

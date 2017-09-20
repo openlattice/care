@@ -10,6 +10,8 @@ import { EntityDataModelApi, DataApi, SearchApi, SyncApi } from 'lattice';
 import FormView from '../../components/FormView';
 import ConfirmationModal from '../../components/ConfirmationModalView';
 import { ENTITY_SET_NAMES, PERSON, CONSUMER_STATE, STRING_ID_FQN } from '../../shared/Consts';
+import { bootstrapValidation, validateOnInput } from '../../shared/Validation';
+
 
 class Form extends React.Component {
   constructor(props) {
@@ -198,15 +200,22 @@ class Form extends React.Component {
   }
 
   // For text input
-  handleTextInput = (e, validateFn) => {
-    console.log('handletextinput:', e.target.value);
+  handleTextInput = (e, component, fieldType, requiredFields) => {
+    // const { input } = component.props;
     const sectionKey = e.target.dataset.section;
     const name = e.target.name;
     const input = e.target.value;
     const sectionState = this.state[sectionKey];
     sectionState[name] = input;
     this.setState({ [sectionKey]: sectionState });
+    validateOnInput(component, input, name, fieldType, requiredFields);
   }
+
+  // handleTextInput = (e, name, fieldType, requiredFields) => {
+  //   const {input} = this.props;
+  //   this.props.handleTextInput(e);
+  //   validateOnInput(this, input[name], name, fieldType, requiredFields);
+  // } 
 
   handleDateInput = (e, section, name) => {
     const input = e;

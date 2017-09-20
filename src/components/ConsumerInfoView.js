@@ -11,7 +11,7 @@ import DatePicker from 'react-bootstrap-date-picker';
 import FormNav from './FormNav';
 import { PaddedRow, InlineCheckbox, InlineRadio, TitleLabel, OtherWrapper, SectionHeader } from '../shared/Layout';
 import { FORM_PATHS, STATES } from '../shared/Consts';
-import { getNumberValidation } from '../shared/Validation';
+import { bootstrapValidation, validateOnInput } from '../shared/Validation';
 
 const ConsumerInfoView = ({
   section,
