@@ -1,8 +1,6 @@
 import { FORM_ERRORS } from './Consts';
 
 
-const REQUIRED_VALIDITIES = ['complaintNumberValid'];
-
 export const bootstrapValidation = (component, name, required) => {
   const inputValid = component.state[`${name}Valid`];
   const input = component.props.input[name];
@@ -12,7 +10,7 @@ export const bootstrapValidation = (component, name, required) => {
   if (input && input.length && !inputValid) return 'error';
 }
 
-export const validateOnInput = (component, input, name, fieldType, required) => {
+export const validateOnInput = (component, input, name, fieldType, requiredFields) => {
   const validStateKey = `${name}Valid`;
   let inputValid = component.state[validStateKey];
   let sectionFormatErrors = component.state.sectionFormatErrors.slice();
@@ -38,7 +36,8 @@ export const validateOnInput = (component, input, name, fieldType, required) => 
       break;
   }
 
-  if (required) {
+  let allRequiredFieldsAreValid = true;
+  if (requiredFields.indexOf(name) !== -1) {
     const idx = sectionRequiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED);
     if (!input) {
       if (idx === -1) {
@@ -46,9 +45,9 @@ export const validateOnInput = (component, input, name, fieldType, required) => 
       }
       inputValid = false;
     } else {
-      let allRequiredFieldsAreValid = true;
-      REQUIRED_VALIDITIES.forEach((validity) => {
-        if (!validity) {
+      requiredFields.forEach((name) => {
+        const valid = component.state[`${name}Valid`];
+        if (!valid) {
           allRequiredFieldsAreValid = false;
           return;
         };
@@ -64,7 +63,7 @@ export const validateOnInput = (component, input, name, fieldType, required) => 
     sectionRequiredErrors,
     [validStateKey]: inputValid
   }, () => {
-    if (component.state.complaintNumberValid) {
+    if (allRequiredFieldsAreValid && !component.state.sectionFormatErrors.length) {
       component.setState({ sectionValid: true });
     } else {
       component.setState({ sectionValid: false });
