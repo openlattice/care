@@ -63,7 +63,7 @@ export const validateOnInput = (component, input, name, fieldType, requiredField
     sectionRequiredErrors,
     [validStateKey]: inputValid
   }, () => {
-    if (allRequiredFieldsAreValid && !component.state.sectionFormatErrors.length) {
+    if (allRequiredFieldsAreValid && !component.state.sectionFormatErrors.length && !component.state.sectionRequiredErrors.length) {
       component.setState({ sectionValid: true });
     } else {
       component.setState({ sectionValid: false });

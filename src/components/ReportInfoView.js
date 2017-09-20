@@ -64,7 +64,7 @@ class ReportInfoView extends React.Component {
   }
 
   renderErrors = () => {
-    console.log('state required errors:', this.state.sectionRequiredErrors);
+    console.log('section errors:', this.state.sectionRequiredErrors, this.state.sectionFormatErrors);
     const formatErrors = this.state.sectionFormatErrors.map((error) => <ErrorMessage key={error}>{error}</ErrorMessage>);
     let requiredErrors = [];
     if (this.state.didClickNav) {
