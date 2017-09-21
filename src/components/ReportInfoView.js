@@ -85,10 +85,6 @@ class ReportInfoView extends React.Component {
       handlePageChange
     } = this.props;
 
-    const requiredFieldStates = {
-      complaintNumber: this.state.complaintNoIsValid
-    }
-
     return (
       <div>
         { !isInReview() ? <SectionHeader>Report Info</SectionHeader> : null}
