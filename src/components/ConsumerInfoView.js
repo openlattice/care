@@ -874,7 +874,7 @@ class ConsumerInfoView extends React.Component {
           </Col>
         </PaddedRow>
 
-        { !isInReview() ? <FormNav prevPath={FORM_PATHS.CONSUMER_SEARCH} nextPath={FORM_PATHS.COMPLAINANT} handlePageChange={this.handlePageChange} setDidClickNav={this.setState} /> : null}
+        { !isInReview() ? <FormNav prevPath={FORM_PATHS.CONSUMER_SEARCH} nextPath={FORM_PATHS.COMPLAINANT} handlePageChange={this.handlePageChange} setDidClickNav={this.setDidClickNav} /> : null}
         { this.renderErrors() }
       </div>
     );
