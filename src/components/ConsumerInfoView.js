@@ -234,10 +234,8 @@ class ConsumerInfoView extends React.Component {
 
         <PaddedRow>
           <Col lg={6}>
-            <FormGroup validationState={bootstrapValidation(this, 'age')}>
-              <TitleLabel>Age</TitleLabel>
-              <FormControl data-section={section} name='age' value={input.age} onChange={(e) => handleTextInput(e, this, 'number', REQUIRED_FIELDS)} disabled={isInReview()} />
-            </FormGroup>
+            <TitleLabel>Age</TitleLabel>
+            <FormControl data-section={section} name='age' value={input.age} onChange={(e) => handleTextInput(e, this, 'number', REQUIRED_FIELDS)} disabled={isInReview()} />
           </Col>
           <Col lg={6}>
             <TitleLabel>DOB</TitleLabel>
