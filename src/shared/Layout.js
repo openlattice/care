@@ -113,5 +113,5 @@ export const StyledButton = styled(Button)`
 `;
 
 export const ErrorMessage = styled.div`
-  color: red;
+  color: rgb(169, 68, 66);
 `;
