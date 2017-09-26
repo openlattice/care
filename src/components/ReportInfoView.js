@@ -12,7 +12,7 @@ import TimePicker from 'react-bootstrap-time-picker';
 import FormNav from './FormNav';
 import { TitleLabel, LabelDescription, InlineRadio, PaddedRow, SectionHeader, ErrorMessage } from '../shared/Layout';
 import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
-import { bootstrapValidation, validateOnInput } from '../shared/Validation';
+import { bootstrapValidation, validateOnInput, validateRequiredInput } from '../shared/Validation';
 
 
 const REQUIRED_FIELDS = ['complaintNumber'];
@@ -49,6 +49,7 @@ class ReportInfoView extends React.Component {
 
   handlePageChange = (path) => {
     this.setState({ didClickNav: true });
+    validateRequiredInput(this, REQUIRED_FIELDS);
     if (!this.state.sectionValid) {
       console.log('section not valid!');
       // show errors

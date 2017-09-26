@@ -10,7 +10,7 @@ import DatePicker from 'react-bootstrap-date-picker';
 import FormNav from './FormNav';
 import { PaddedRow, InlineCheckbox, InlineRadio, TitleLabel, OtherWrapper, SectionHeader, ErrorMessage } from '../shared/Layout';
 import { FORM_PATHS, STATES, FORM_ERRORS } from '../shared/Consts';
-import { bootstrapValidation, validateOnInput } from '../shared/Validation';
+import { bootstrapValidation, validateOnInput, validateRequiredInput } from '../shared/Validation';
 
 
 const REQUIRED_FIELDS = ['firstName', 'lastName', 'identification'];
@@ -21,7 +21,7 @@ class ConsumerInfoView extends React.Component {
 
     this.state = {
       sectionFormatErrors: [],
-      sectionRequiredErrors: [FORM_ERRORS.IS_REQUIRED],
+      sectionRequiredErrors: [],
       firstNameValid: true,
       lastNameValid: true,
       identificationValid: true,
@@ -42,15 +42,15 @@ class ConsumerInfoView extends React.Component {
     section: PropTypes.string.isRequired
   }
 
-  // MOVE THESE TO EXTERNAL FILE OR PARENT
   setDidClickNav = () => {
     this.setState({ didClickNav: true });
   }
 
   handlePageChange = (path) => {
     this.setState({ didClickNav: true });
+    validateRequiredInput(this, REQUIRED_FIELDS);
     if (!this.state.sectionValid) {
-      console.log('section not valid!');
+      console.log('section not valid, do not pass GO!');
       // show errors
     } else {
       this.props.handlePageChange(path);

@@ -9,7 +9,7 @@ import { FormGroup, FormControl, Col } from 'react-bootstrap';
 import FormNav from './FormNav';
 import { PaddedRow, TitleLabel, OtherWrapper, InlineCheckbox, InlineRadio, SectionHeader, ErrorMessage } from '../shared/Layout';
 import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
-import { bootstrapValidation, validateOnInput } from '../shared/Validation';
+import { bootstrapValidation, validateOnInput, validateRequiredInput } from '../shared/Validation';
 
 const REQUIRED_FIELDS = ['disposition', 'incidentNarrative'];
 
@@ -42,8 +42,10 @@ class DispositionView extends React.Component {
     this.setState({ didClickNav: true });
   }
 
+// TODO: TRIM CONDITIONAL
   handlePageChange = (path) => {
     this.setState({ didClickNav: true });
+    validateRequiredInput(this, REQUIRED_FIELDS);
     if (!this.state.sectionValid) {
       console.log('section not valid!');
       // show errors

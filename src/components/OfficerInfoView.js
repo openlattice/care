@@ -9,7 +9,7 @@ import { FormControl, Col, FormGroup } from 'react-bootstrap';
 import FormNav from './FormNav';
 import { PaddedRow, TitleLabel, InlineCheckbox, SectionHeader, ErrorMessage } from '../shared/Layout';
 import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
-import { bootstrapValidation, validateOnInput } from '../shared/Validation';
+import { bootstrapValidation, validateOnInput, validateRequiredInput } from '../shared/Validation';
 
 const REQUIRED_FIELDS = ['officerLastName', 'officerFirstName'];
 
@@ -43,6 +43,7 @@ class OfficerInfoView extends React.Component {
 
   handlePageChange = (path) => {
     this.setState({ didClickNav: true });
+    validateRequiredInput(this, REQUIRED_FIELDS);
     if (!this.state.sectionValid) {
       console.log('section not valid!');
       // show errors
