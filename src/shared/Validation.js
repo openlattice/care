@@ -46,7 +46,7 @@ export const validateOnInput = (component, input, name, fieldType, requiredField
   });
 }
 
-export const validateRequiredInput = (component, requiredFields) => {
+export const validateRequiredInput = (component, requiredFields, cb) => {
   let sectionRequiredErrors = component.state.sectionRequiredErrors.slice();
   let sectionValid = component.state.sectionValid;
 
@@ -71,5 +71,7 @@ export const validateRequiredInput = (component, requiredFields) => {
   component.setState({
     sectionValid,
     sectionRequiredErrors
+  }, () => {
+    cb();
   });
 }

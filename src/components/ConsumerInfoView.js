@@ -48,13 +48,11 @@ class ConsumerInfoView extends React.Component {
 
   handlePageChange = (path) => {
     this.setState({ didClickNav: true });
-    validateRequiredInput(this, REQUIRED_FIELDS);
-    if (!this.state.sectionValid) {
-      console.log('section not valid, do not pass GO!');
-      // show errors
-    } else {
-      this.props.handlePageChange(path);
-    }
+    validateRequiredInput(this, REQUIRED_FIELDS, () => {
+      if (this.state.sectionValid) {
+        this.props.handlePageChange(path);
+      }
+    });
   }
 
   renderErrors = () => {

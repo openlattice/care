@@ -44,10 +44,7 @@ class OfficerInfoView extends React.Component {
   handlePageChange = (path) => {
     this.setState({ didClickNav: true });
     validateRequiredInput(this, REQUIRED_FIELDS);
-    if (!this.state.sectionValid) {
-      console.log('section not valid!');
-      // show errors
-    } else {
+    if (this.state.sectionValid) {
       this.props.handlePageChange(path);
     }
   }
