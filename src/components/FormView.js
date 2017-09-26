@@ -53,10 +53,7 @@ function FormView({
     const page = window.location.hash.substr(2);
     const num = Math.ceil((page - 1) / (maxPage - 1) * 100);
     const percentage = num.toString() + '%';
-    return {
-      num,
-      percentage
-    }
+    return num === 0 ? { num: 5, percentage } : { num, percentage };
   }
 
   const getReportInfoView = () => {
@@ -161,7 +158,7 @@ function FormView({
     		<Title>Behavioral Health Report</Title>
         <LogoutButton />
       </PageHeader>
-      <StyledProgressBar now={getProgress().num} label={getProgress().percentage} />
+      <StyledProgressBar bsStyle="info" now={getProgress().num} label={getProgress().percentage} />
       <FormWrapper>
         <form onSubmit={handleSubmit}>
           <Switch>
