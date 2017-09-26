@@ -163,7 +163,7 @@ class ConsumerInfoView extends React.Component {
         </PaddedRow>
 
         <PaddedRow>
-          <Col lg={3}>
+          <Col lg={6}>
             <TitleLabel>15. Military Status</TitleLabel>
               <InlineRadio
                   inline
@@ -190,8 +190,10 @@ class ConsumerInfoView extends React.Component {
                   onChange={handleSingleSelection}
                   disabled={isInReview()}>N/A</InlineRadio>
           </Col>
+        </PaddedRow>
 
-          <Col lg={3}>
+        <PaddedRow>
+          <Col lg={6}>
             <TitleLabel>Gender</TitleLabel>
             <FormControl
                 componentClass='select'
