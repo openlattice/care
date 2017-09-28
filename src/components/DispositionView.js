@@ -16,7 +16,7 @@ const DispositionView = ({ section, handleTextInput, handleCheckboxChange, handl
     <SectionView header="Disposition">
       <PaddedRow>
         <Col lg={5}>
-          <TitleLabel>28. Disposition</TitleLabel>
+          <TitleLabel>29. Disposition</TitleLabel>
           <FormGroup>
             <InlineCheckbox
                 inline
@@ -96,7 +96,7 @@ const DispositionView = ({ section, handleTextInput, handleCheckboxChange, handl
           <InlineRadio
               inline
               data-section={section}
-              name='hospitalTransport'  
+              name='hospitalTransport'
               value={false}
               checked={input.hospitalTransport === 'false'}
               onChange={handleSingleSelection}>No</InlineRadio>
@@ -109,7 +109,7 @@ const DispositionView = ({ section, handleTextInput, handleCheckboxChange, handl
 
       <PaddedRow>
         <Col lg={12}>
-          <TitleLabel>29. De-escalation Techniques/Equipment Used</TitleLabel>
+          <TitleLabel>30. De-escalation Techniques/Equipment Used</TitleLabel>
           <FormGroup>
             <InlineCheckbox
                 data-section={section}
@@ -169,7 +169,7 @@ const DispositionView = ({ section, handleTextInput, handleCheckboxChange, handl
 
       <PaddedRow>
         <Col lg={12}>
-          <TitleLabel>30. Called for Specialized Resources</TitleLabel>
+          <TitleLabel>31. Called for Specialized Resources</TitleLabel>
           <FormGroup>
             <InlineCheckbox
                 data-section={section}
@@ -226,7 +226,7 @@ const DispositionView = ({ section, handleTextInput, handleCheckboxChange, handl
 
       <PaddedRow>
         <Col lg={12}>
-          <TitleLabel>31. Narrative of Incident, to include: Results of investigation, basis for actions taken, emotional states, additional witnesses. Property listing.</TitleLabel>
+          <TitleLabel>32. Narrative of Incident, to include: Results of investigation, basis for actions taken, emotional states, additional witnesses. Property listing.</TitleLabel>
           <FormControl data-section={section} name='incidentNarrative' componentClass='textarea' value={input.incidentNarrative} onChange={handleTextInput} />
         </Col>
       </PaddedRow>

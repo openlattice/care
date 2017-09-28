@@ -16,7 +16,7 @@ const OfficerInfoView = ({ section, handleTextInput, handleCheckboxChange, input
     <SectionView header="Officer Information">
       <PaddedRow>
         <Col lg={3}>
-          <TitleLabel>32. Officer Name</TitleLabel>
+          <TitleLabel>33. Officer Name</TitleLabel>
           <FormControl data-section={section} name='officerName' value={input.officerName} onChange={handleTextInput} />
         </Col>
         <Col lg={3}>
