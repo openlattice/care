@@ -8,7 +8,7 @@ import { FormGroup, FormControl, Col } from 'react-bootstrap';
 
 import FormNav from './FormNav';
 import { PaddedRow, TitleLabel, SectionHeader, ErrorMessage } from '../shared/Layout';
-import { FORM_PATHS, STATES, FORM_ERRORS } from '../shared/Consts';
+import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
 import { bootstrapValidation, validateOnInput, validateRequiredInput } from '../shared/Validation';
 
 const REQUIRED_FIELDS = ['complainantName'];
@@ -23,7 +23,7 @@ class ComplainantInfoView extends React.Component {
       complainantNameValid: true,
       sectionValid: false,
       didClickNav: false
-    }
+    };
   }
 
   static propTypes = {
@@ -48,12 +48,15 @@ class ComplainantInfoView extends React.Component {
   }
 
   renderErrors = () => {
-    console.log('section errors:', this.state.sectionRequiredErrors, this.state.sectionFormatErrors);
-    const formatErrors = this.state.sectionFormatErrors.map((error) => <ErrorMessage key={error}>{error}</ErrorMessage>);
+    const formatErrors = this.state.sectionFormatErrors.map((error) => {
+      return <ErrorMessage key={error}>{error}</ErrorMessage>;
+    });
     let requiredErrors = [];
     if (this.state.didClickNav) {
-      requiredErrors = this.state.sectionRequiredErrors.map((error) => <ErrorMessage key={error}>{error}</ErrorMessage>);
-    };
+      requiredErrors = this.state.sectionRequiredErrors.map((error) => {
+        return <ErrorMessage key={error}>{error}</ErrorMessage>;
+      });
+    }
 
     return (
       <div>
@@ -68,12 +71,10 @@ class ComplainantInfoView extends React.Component {
       section,
       handleTextInput,
       input,
-      isInReview,
-      handlePageChange,
-      handleSingleSelection
+      isInReview
     } = this.props;
 
-    return(
+    return (
       <div>
         { !isInReview() ? <SectionHeader>Complainant</SectionHeader> : null}
 
@@ -81,28 +82,64 @@ class ComplainantInfoView extends React.Component {
           <Col lg={12}>
             <FormGroup validationState={bootstrapValidation(this, 'complainantName', true)}>
               <TitleLabel>28. Complainant Name (Last, First, MI)*</TitleLabel>
-              <FormControl data-section={section} name='complainantName' value={input.complainantName} onChange={(e) => handleTextInput(e, this, 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
+              <FormControl
+                  data-section={section}
+                  name="complainantName"
+                  value={input.complainantName}
+                  onChange={(e) => {
+                    handleTextInput(e, this, 'string', REQUIRED_FIELDS);
+                  }}
+                  disabled={isInReview()} />
             </FormGroup>
           </Col>
         </PaddedRow>
         <PaddedRow>
           <Col lg={12}>
             <TitleLabel>Residence / Address (Street, Apt Number, City, County, State, Zip)</TitleLabel>
-            <FormControl data-section={section} name='complainantAddress' value={input.complainantAddress} onChange={(e) => handleTextInput(e, this, 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
+            <FormControl
+                data-section={section}
+                name="complainantAddress"
+                value={input.complainantAddress}
+                onChange={(e) => {
+                  handleTextInput(e, this, 'string', REQUIRED_FIELDS);
+                }}
+                disabled={isInReview()} />
           </Col>
         </PaddedRow>
         <PaddedRow>
           <Col lg={6}>
             <TitleLabel>Relationship to Consumer</TitleLabel>
-            <FormControl data-section={section} name='complainantConsumerRelationship' value={input.complainantConsumerRelationship} onChange={(e) => handleTextInput(e, this, 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
+            <FormControl
+                data-section={section}
+                name="complainantConsumerRelationship"
+                value={input.complainantConsumerRelationship}
+                onChange={(e) => {
+                  handleTextInput(e, this, 'string', REQUIRED_FIELDS);
+                }}
+                disabled={isInReview()} />
           </Col>
           <Col lg={6}>
             <TitleLabel>Phone Number</TitleLabel>
-            <FormControl data-section={section} name='complainantPhone' value={input.complainantPhone} onChange={(e) => handleTextInput(e, this, 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
+            <FormControl
+                data-section={section}
+                name="complainantPhone"
+                value={input.complainantPhone}
+                onChange={(e) => {
+                  handleTextInput(e, this, 'string', REQUIRED_FIELDS);
+                }}
+                disabled={isInReview()} />
           </Col>
         </PaddedRow>
 
-        { !isInReview() ? <FormNav prevPath={FORM_PATHS.CONSUMER} nextPath={FORM_PATHS.DISPOSITION} handlePageChange={this.handlePageChange} setDidClickNav={this.setDidClickNav} /> : null}
+        {
+          !isInReview()
+            ? <FormNav
+                prevPath={FORM_PATHS.CONSUMER}
+                nextPath={FORM_PATHS.DISPOSITION}
+                handlePageChange={this.handlePageChange}
+                setDidClickNav={this.setDidClickNav} />
+            : null
+        }
         { this.renderErrors() }
       </div>
     );

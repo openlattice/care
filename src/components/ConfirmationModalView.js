@@ -11,7 +11,8 @@ import { ButtonWrapper } from '../shared/Layout';
 function getTitle(submitSuccess, submitFailure) {
   if (submitSuccess) {
     return 'Success!';
-  } else if (submitFailure) {
+  }
+  else if (submitFailure) {
     return 'Error Submitting Report';
   }
 }
@@ -19,8 +20,10 @@ function getTitle(submitSuccess, submitFailure) {
 function getBody(submitSuccess, submitFailure) {
   if (submitSuccess) {
     return 'Your health report has been submitted.';
-  } else if (submitFailure) {
-    return 'There was an error submitting your report. Please try again. If there continues to be an issue, contact help@openlattice.com.'
+  }
+  else if (submitFailure) {
+    return `There was an error submitting your report. Please try again. 
+    If there continues to be an issue, contact help@openlattice.com.`;
   }
 }
 
@@ -38,7 +41,7 @@ function ConfirmationModal({ submitSuccess, submitFailure, handleModalButtonClic
         </Modal.Body>
         <Modal.Footer>
           <ButtonWrapper>
-            <Button bsStyle='primary' onClick={handleModalButtonClick}>OK</Button>
+            <Button bsStyle="primary" onClick={handleModalButtonClick}>OK</Button>
           </ButtonWrapper>
         </Modal.Footer>
       </Modal.Dialog>
@@ -50,6 +53,6 @@ ConfirmationModal.propTypes = {
   submitSuccess: PropTypes.bool.isRequired,
   submitFailure: PropTypes.bool.isRequired,
   handleModalButtonClick: PropTypes.func.isRequired
-}
+};
 
 export default ConfirmationModal;
