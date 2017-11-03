@@ -170,7 +170,7 @@ class DispositionView extends React.Component {
                 data-section={section}
                 name='hospitalTransport'
                 value={true}
-                checked={input.hospitalTransport === 'true'}
+                checked={input.hospitalTransport}
                 onChange={handleSingleSelection}
                 disabled={isInReview()}>Yes</InlineRadio>
             <InlineRadio
@@ -178,7 +178,7 @@ class DispositionView extends React.Component {
                 data-section={section}
                 name='hospitalTransport'
                 value={false}
-                checked={input.hospitalTransport === 'false'}
+                checked={!input.hospitalTransport}
                 onChange={handleSingleSelection}
                 disabled={isInReview()}>No</InlineRadio>
           </Col>

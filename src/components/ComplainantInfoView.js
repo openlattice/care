@@ -11,7 +11,7 @@ import { PaddedRow, TitleLabel, SectionHeader, ErrorMessage } from '../shared/La
 import { FORM_PATHS, STATES, FORM_ERRORS } from '../shared/Consts';
 import { bootstrapValidation, validateOnInput, validateRequiredInput } from '../shared/Validation';
 
-const REQUIRED_FIELDS = ['complainantLastName', 'complainantFirstName'];
+const REQUIRED_FIELDS = ['complainantName'];
 
 class ComplainantInfoView extends React.Component {
   constructor(props) {
@@ -20,8 +20,7 @@ class ComplainantInfoView extends React.Component {
     this.state = {
       sectionFormatErrors: [],
       sectionRequiredErrors: [FORM_ERRORS.IS_REQUIRED],
-      complainantFirstNameValid: true,
-      complainantLastNameValid: true,
+      complainantNameValid: true,
       sectionValid: false,
       didClickNav: false
     }
@@ -79,59 +78,17 @@ class ComplainantInfoView extends React.Component {
         { !isInReview() ? <SectionHeader>Complainant</SectionHeader> : null}
 
         <PaddedRow>
-          <Col lg={6}>
-            <FormGroup validationState={bootstrapValidation(this, 'complainantLastName', true)}>
-              <TitleLabel>28. Last Name*</TitleLabel>
-              <FormControl data-section={section} name='complainantLastName' value={input.complainantLastName} onChange={(e) => handleTextInput(e, this, 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
+          <Col lg={12}>
+            <FormGroup validationState={bootstrapValidation(this, 'complainantName', true)}>
+              <TitleLabel>28. Complainant Name (Last, First, MI)*</TitleLabel>
+              <FormControl data-section={section} name='complainantName' value={input.complainantName} onChange={(e) => handleTextInput(e, this, 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
             </FormGroup>
-          </Col>
-          <Col lg={6}>
-            <FormGroup validationState={bootstrapValidation(this, 'complainantFirstName', true)}>
-              <TitleLabel>First Name*</TitleLabel>
-              <FormControl data-section={section} name='complainantFirstName' value={input.complainantFirstName} onChange={(e) => handleTextInput(e, this, 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
-            </FormGroup>
-          </Col>
-        </PaddedRow>
-        <PaddedRow>
-          <Col lg={6}>
-            <TitleLabel>Middle Name</TitleLabel>
-            <FormControl data-section={section} name='complainantMiddleName' value={input.complainantMiddleName} onChange={(e) => handleTextInput(e, this, 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
           </Col>
         </PaddedRow>
         <PaddedRow>
           <Col lg={12}>
-            <TitleLabel>Address</TitleLabel>
-            <FormControl data-section={section} name='complainantStreet' value={input.complainantStreet} onChange={(e) => handleTextInput(e, this, 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
-          </Col>
-        </PaddedRow>
-        <PaddedRow>
-          <Col lg={6}>
-            <TitleLabel>City</TitleLabel>
-            <FormControl data-section={section} name='complainantCity' value={input.complainantCity} onChange={(e) => handleTextInput(e, this, 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
-          </Col>
-          <Col lg={6}>
-            <TitleLabel>State</TitleLabel>
-            <FormControl
-                componentClass='select'
-                placeholder='select'
-                data-section={section}
-                name='complainantState'
-                value={input.complainantState}
-                onChange={handleSingleSelection}
-                disabled={isInReview()}>
-              <option value=''>Select</option>
-              { STATES.map((state) => (<option key={state} value={state}>{state}</option>)) }
-            </FormControl>
-          </Col>
-        </PaddedRow>
-        <PaddedRow>
-          <Col lg={6}>
-            <TitleLabel>County</TitleLabel>
-            <FormControl data-section={section} name='complainantCounty' value={input.complainantCounty} onChange={(e) => handleTextInput(e, this, 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
-          </Col>
-          <Col lg={6}>
-            <TitleLabel>Zip</TitleLabel>
-            <FormControl data-section={section} name='complainantZip' value={input.complainantZip} onChange={(e) => handleTextInput(e, this, 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
+            <TitleLabel>Residence / Address (Street, Apt Number, City, County, State, Zip)</TitleLabel>
+            <FormControl data-section={section} name='complainantAddress' value={input.complainantAddress} onChange={(e) => handleTextInput(e, this, 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
           </Col>
         </PaddedRow>
         <PaddedRow>

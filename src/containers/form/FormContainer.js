@@ -21,46 +21,43 @@ class Form extends React.Component {
       reportInfo: {
         dispatchReason: '',
         complaintNumber: '',
-        companionOffenseReport: null,
+        companionOffenseReport: false,
         incident: '',
         locationOfIncident: '',
         unit: '',
         postOfOccurrence: '',
         cadNumber: '',
-        onView: null,
+        onView: false,
         dateOccurred: '',
         timeOccurred: '',
         dateReported: '',
-        timeReported: ''
+        timeReported: '',
+        // WHAT IS NAME USED FOR?
+        name: ''
       },
       consumerInfo: {
         firstName: '',
         lastName: '',
         middleName: '',
-        street: '',
-        city: '',
-        state: '',
-        county: '',
-        zip: '',
-        phone: '',
+        address: '',
         identification: '',
-        militaryStatus: null,
+        militaryStatus: '',
         gender: '',
         race: '',
         age: '',
         dob: '',
-        homeless: null,
+        homeless: false,
         homelessLocation: '',
-        drugsAlcohol: null,
+        drugsAlcohol: '',
         drugType: '',
-        prescribedMedication: null,
-        takingMedication: null,
-        prevPsychAdmission: null,
+        prescribedMedication: '',
+        takingMedication: '',
+        prevPsychAdmission: '',
         selfDiagnosis: [],
         selfDiagnosisOther: '',
-        armedWithWeapon: null,
+        armedWithWeapon: false,
         armedWeaponType: '',
-        accessToWeapons: null,
+        accessToWeapons: false,
         accessibleWeaponType: '',
         observedBehaviors: [],
         observedBehaviorsOther: '',
@@ -69,26 +66,20 @@ class Form extends React.Component {
         photosTakenOf: [],
         injuries: [],
         injuriesOther: '',
-        suicidal: null,
+        suicidal: false,
         suicidalActions: [],
         suicideAttemptMethod: [],
         suicideAttemptMethodOther: ''
       },
       complainantInfo: {
-        complainantLastName: '',
-        complainantFirstName: '',
-        complainantMiddleName: '',
-        complainantStreet: '',
-        complainantCity: '',
-        complainantState: '',
-        complainantZip: '',
-        complainantCounty: '',
+        complainantName: '',
+        complainantAddress: '',
         complainantConsumerRelationship: '',
         complainantPhone: ''
       },
       dispositionInfo: {
         disposition: [],
-        hospitalTransport: [],
+        hospitalTransport: false,
         hospital: '',
         deescalationTechniques: [],
         deescalationTechniquesOther: '',
@@ -96,8 +87,7 @@ class Form extends React.Component {
         incidentNarrative: ''
       },
       officerInfo: {
-        officerLastName: '',
-        officerFirstName: '',
+        officerName: '',
         officerSeqID: '',
         officerInjuries: '',
         officerCertification: []
@@ -124,6 +114,7 @@ class Form extends React.Component {
   componentDidMount() {
     EntityDataModelApi.getEntitySetId(ENTITY_SET_NAMES.FORM)
       .then((id) => {
+        console.log('get ES id:', id);
         this.setState({ entitySetId: id });
         EntityDataModelApi.getEntitySet(id)
           .then((entitySet) => {
@@ -150,7 +141,8 @@ class Form extends React.Component {
         maxHits,
         searchTerm
       };
-      SearchApi.searchEntitySetData("5e004de9-ac2a-47f0-96a4-cfe060e1f916", searchOptions)
+      // TODO: wait to execute until getPersonEntitySet is complete
+      SearchApi.searchEntitySetData(this.state.personEntitySetId, searchOptions)
         .then((res) => {
           console.log('search res:', res);
         });
@@ -159,6 +151,7 @@ class Form extends React.Component {
   getPersonEntitySet = () => {
     EntityDataModelApi.getEntitySetId(ENTITY_SET_NAMES.PEOPLE)
       .then((personEntitySetId) => {
+        console.log('get person entity set id:', personEntitySetId);
         this.setState({ personEntitySetId });
         EntityDataModelApi.getEntitySet(personEntitySetId)
           .then((personEntitySet) => {
@@ -181,6 +174,7 @@ class Form extends React.Component {
   getAppearsInEntitySet = () => {
     EntityDataModelApi.getEntitySetId(ENTITY_SET_NAMES.APPEARS_IN)
       .then((appearsInEntitySetId) => {
+        console.log('get appears in entity set id:', appearsInEntitySetId);
         this.setState({ appearsInEntitySetId });
         EntityDataModelApi.getEntitySet(appearsInEntitySetId)
           .then((appearsInEntitySet) => {
@@ -192,6 +186,7 @@ class Form extends React.Component {
                   return EntityDataModelApi.getPropertyType(propertyId);
                 })
                   .then((appearsInPropertyTypes) => {
+                    console.log('appears in property types:', appearsInPropertyTypes);
                     this.setState({ appearsInPropertyTypes });
                   });
               });
@@ -302,6 +297,7 @@ class Form extends React.Component {
     };
 
     const stringIdPropId = this.state.appearsInPropertyTypes.filter((propertyType) => {
+      console.log('appears in property type:', propertyType);
       const fqn = `${propertyType.type.namespace}.${propertyType.type.name}`;
       return (fqn === STRING_ID_FQN);
     })[0].id;

@@ -11,7 +11,7 @@ import { PaddedRow, TitleLabel, InlineCheckbox, SectionHeader, ErrorMessage } fr
 import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
 import { bootstrapValidation, validateOnInput, validateRequiredInput } from '../shared/Validation';
 
-const REQUIRED_FIELDS = ['officerLastName', 'officerFirstName'];
+const REQUIRED_FIELDS = ['officerName'];
 
 
 class OfficerInfoView extends React.Component {
@@ -21,8 +21,7 @@ class OfficerInfoView extends React.Component {
     this.state = {
       sectionFormatErrors: [],
       sectionRequiredErrors: [FORM_ERRORS.IS_REQUIRED],
-      officerLastNameValid: true,
-      officerFirstNameValid: true,
+      officerNameValid: true,
       sectionValid: false,
       didClickNav: false
     }
@@ -80,16 +79,10 @@ class OfficerInfoView extends React.Component {
         { !isInReview() ? <SectionHeader>Officer</SectionHeader> : null }
 
         <PaddedRow>
-          <Col lg={6}>
-            <FormGroup validationState={bootstrapValidation(this, 'officerLastName', true)}>
-              <TitleLabel>33. Last Name*</TitleLabel>
-              <FormControl data-section={section} name='officerLastName' value={input.officerLastName} onChange={(e) => handleTextInput(e, this, 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
-            </FormGroup>
-          </Col>
-          <Col lg={6}>
-            <FormGroup validationState={bootstrapValidation(this, 'officerFirstName', true)}>
-              <TitleLabel>First Name*</TitleLabel>
-              <FormControl data-section={section} name='officerFirstName' value={input.officerFirstName} onChange={(e) => handleTextInput(e, this, 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
+          <Col lg={12}>
+            <FormGroup validationState={bootstrapValidation(this, 'officerName', true)}>
+              <TitleLabel>33. Officer Name*</TitleLabel>
+              <FormControl data-section={section} name='officerName' value={input.officerName} onChange={(e) => handleTextInput(e, this, 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
             </FormGroup>
           </Col>
         </PaddedRow>

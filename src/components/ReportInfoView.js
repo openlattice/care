@@ -108,7 +108,7 @@ class ReportInfoView extends React.Component {
                 data-section={section}
                 name='companionOffenseReport'
                 value={true}
-                checked={input.companionOffenseReport === 'true'}
+                checked={input.companionOffenseReport}
                 onChange={handleSingleSelection}
                 disabled={isInReview()} >Yes</InlineRadio>
             <InlineRadio
@@ -116,7 +116,7 @@ class ReportInfoView extends React.Component {
                 data-section={section}
                 name ='companionOffenseReport'
                 value={false}
-                checked={input.companionOffenseReport === 'false'}
+                checked={!input.companionOffenseReport}
                 onChange={handleSingleSelection}
                 disabled={isInReview()} >No</InlineRadio>
           </Col>
@@ -158,7 +158,7 @@ class ReportInfoView extends React.Component {
                 data-section={section}
                 name='onView'
                 value={true}
-                checked={input.onView === 'true'}
+                checked={input.onView}
                 onChange={handleSingleSelection}
                 disabled={isInReview()}>Yes</InlineRadio>
             <InlineRadio
@@ -166,7 +166,7 @@ class ReportInfoView extends React.Component {
                 data-section={section}
                 name ='onView'
                 value={false}
-                checked={input.onView === 'false'}
+                checked={!input.onView}
                 onChange={handleSingleSelection}
                 disabled={isInReview()}>No</InlineRadio>
           </Col>

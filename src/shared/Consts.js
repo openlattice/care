@@ -1,7 +1,7 @@
 export const ENTITY_SET_NAMES = {
-  FORM: 'baltimoreHealthReportForm2',
-  PEOPLE: 'baltimoreHealthReportPeople',
-  APPEARS_IN: 'baltimoreHealthReportAppearsIn'
+  FORM: 'BaltimoreBehavioralHealthReports',
+  PEOPLE: 'BaltimoreBehavioralHealthPersons',
+  APPEARS_IN: 'BaltimoreBehavioralHealthAppearsIn'
 }
 
 export const PERSON = {

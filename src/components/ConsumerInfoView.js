@@ -119,39 +119,8 @@ class ConsumerInfoView extends React.Component {
 
         <PaddedRow>
           <Col lg={12}>
-            <TitleLabel>14. Address</TitleLabel>
-            <FormControl data-section={section} name='street' value={input.street} onChange={(e) => handleTextInput(e, this, 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
-          </Col>
-        </PaddedRow>
-
-        <PaddedRow>
-          <Col lg={6}>
-            <TitleLabel>City</TitleLabel>
-            <FormControl data-section={section} name='city' value={input.city} onChange={(e) => handleTextInput(e, this, 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
-          </Col>
-          <Col lg={6}>
-            <TitleLabel>State</TitleLabel>
-            <FormControl
-                componentClass='select'
-                placeholder='select'
-                data-section={section}
-                name='state'
-                value={input.state}
-                onChange={handleSingleSelection}
-                disabled={isInReview()}>
-              <option value=''>Select</option>
-              { STATES.map((state) => (<option key={state} value={state}>{state}</option>)) }
-            </FormControl>
-          </Col>
-        </PaddedRow>
-        <PaddedRow>
-          <Col lg={6}>
-            <TitleLabel>County</TitleLabel>
-            <FormControl data-section={section} name='county' value={input.county} onChange={(e) => handleTextInput(e, this, 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
-          </Col>
-          <Col lg={6}>
-            <TitleLabel>Zip</TitleLabel>
-            <FormControl data-section={section} name='zip' value={input.zip} onChange={(e) => handleTextInput(e, this, 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
+            <TitleLabel>14. Residence / Address (Street, Apt Number, City, County, State, Zip)</TitleLabel>
+            <FormControl data-section={section} name='address' value={input.address} onChange={(e) => handleTextInput(e, this, 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
           </Col>
         </PaddedRow>
 
@@ -251,7 +220,7 @@ class ConsumerInfoView extends React.Component {
                 data-section={section}
                 name='homeless'
                 value={true}
-                checked={input.homeless === 'true'}
+                checked={input.homeless}
                 onChange={handleSingleSelection}
                 disabled={isInReview()}>Yes</InlineRadio>
             <InlineRadio
@@ -259,7 +228,7 @@ class ConsumerInfoView extends React.Component {
                 data-section={section}
                 name ='homeless'
                 value={false}
-                checked={input.homeless === 'false'}
+                checked={!input.homeless}
                 onChange={handleSingleSelection}
                 disabled={isInReview()}>No</InlineRadio>
           </Col>
@@ -473,7 +442,7 @@ class ConsumerInfoView extends React.Component {
                 data-section={section}
                 name='armedWithWeapon'
                 value={true}
-                checked={input.armedWithWeapon === 'true'}
+                checked={input.armedWithWeapon}
                 onChange={handleSingleSelection}
                 disabled={isInReview()}>Yes</InlineRadio>
             <InlineRadio
@@ -481,7 +450,7 @@ class ConsumerInfoView extends React.Component {
                 data-section={section}
                 name='armedWithWeapon'
                 value={false}
-                checked={input.armedWithWeapon === 'false'}
+                checked={!input.armedWithWeapon}
                 onChange={handleSingleSelection}
                 disabled={isInReview()}>No</InlineRadio>
           </Col>
@@ -502,7 +471,7 @@ class ConsumerInfoView extends React.Component {
                 data-section={section}
                 name='accessToWeapons'
                 value={true}
-                checked={input.accessToWeapons === 'true'}
+                checked={input.accessToWeapons}
                 onChange={handleSingleSelection}
                 disabled={isInReview()}>Yes</InlineRadio>
             <InlineRadio
@@ -510,7 +479,7 @@ class ConsumerInfoView extends React.Component {
                 data-section={section}
                 name='accessToWeapons'
                 value={false}
-                checked={input.accessToWeapons === 'false'}
+                checked={!input.accessToWeapons}
                 onChange={handleSingleSelection}
                 disabled={isInReview()}>No</InlineRadio>
           </Col>
@@ -770,7 +739,7 @@ class ConsumerInfoView extends React.Component {
                 data-section={section}
                 name='suicidal'
                 value={true}
-                checked={input.suicidal === 'true'}
+                checked={input.suicidal}
                 onChange={handleSingleSelection}
                 disabled={isInReview()}>Yes</InlineRadio>
             <InlineRadio
@@ -778,7 +747,7 @@ class ConsumerInfoView extends React.Component {
                 data-section={section}
                 name='suicidal'
                 value={false}
-                checked={input.suicidal === 'false'}
+                checked={!input.suicidal}
                 onChange={handleSingleSelection}
                 disabled={isInReview()}>No</InlineRadio>
           </Col>

@@ -22,7 +22,7 @@ export const validateOnInput = (component, input, name, fieldType, requiredField
   switch(fieldType) {
     case 'number':
       const idx = sectionFormatErrors.indexOf(FORM_ERRORS.INVALID_FORMAT);
-      console.log('idx:', idx);
+      // console.log('idx:', idx);
       if (input && isNaN(input)) {
         inputValid = false;
         if (idx === -1) {
