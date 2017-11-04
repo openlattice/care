@@ -28,12 +28,12 @@ const SearchBar = ({ handleInput, query, onSearchSubmit }) => {
       </SearchWrapper>
     </div>
   );
-}
+};
 
 SearchBar.propTypes = {
   handleInput: PropTypes.func.isRequired,
   query: PropTypes.string.isRequired,
   onSearchSubmit: PropTypes.func.isRequired
-}
+};
 
 export default SearchBar;

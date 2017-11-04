@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 import { ControlLabel, Checkbox, Radio, Button, Row } from 'react-bootstrap';
 

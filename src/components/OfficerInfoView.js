@@ -24,7 +24,7 @@ class OfficerInfoView extends React.Component {
       officerNameValid: true,
       sectionValid: false,
       didClickNav: false
-    }
+    };
   }
 
   static propTypes = {
@@ -49,12 +49,15 @@ class OfficerInfoView extends React.Component {
   }
 
   renderErrors = () => {
-    console.log('section errors:', this.state.sectionRequiredErrors, this.state.sectionFormatErrors);
-    const formatErrors = this.state.sectionFormatErrors.map((error) => <ErrorMessage key={error}>{error}</ErrorMessage>);
+    const formatErrors = this.state.sectionFormatErrors.map((error) => {
+      <ErrorMessage key={error}>{error}</ErrorMessage>;
+    });
     let requiredErrors = [];
     if (this.state.didClickNav) {
-      requiredErrors = this.state.sectionRequiredErrors.map((error) => <ErrorMessage key={error}>{error}</ErrorMessage>);
-    };
+      requiredErrors = this.state.sectionRequiredErrors.map((error) => {
+        <ErrorMessage key={error}>{error}</ErrorMessage>;
+      });
+    }
 
     return (
       <div>
@@ -74,7 +77,7 @@ class OfficerInfoView extends React.Component {
       handlePageChange
     } = this.props;
 
-    return(
+    return (
       <div>
         { !isInReview() ? <SectionHeader>Officer</SectionHeader> : null }
 
@@ -82,7 +85,14 @@ class OfficerInfoView extends React.Component {
           <Col lg={12}>
             <FormGroup validationState={bootstrapValidation(this, 'officerName', true)}>
               <TitleLabel>33. Officer Name*</TitleLabel>
-              <FormControl data-section={section} name='officerName' value={input.officerName} onChange={(e) => handleTextInput(e, this, 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
+              <FormControl
+                  data-section={section}
+                  name="officerName"
+                  value={input.officerName}
+                  onChange={(e) => {
+                    handleTextInput(e, this, 'string', REQUIRED_FIELDS);
+                  }}
+                  disabled={isInReview()} />
             </FormGroup>
           </Col>
         </PaddedRow>
@@ -90,11 +100,25 @@ class OfficerInfoView extends React.Component {
         <PaddedRow>
           <Col lg={6}>
             <TitleLabel>34. Seq ID</TitleLabel>
-            <FormControl data-section={section} name='officerSeqID' value={input.officerSeqID} onChange={(e) => handleTextInput(e, this, 'number', REQUIRED_FIELDS)} disabled={isInReview()} />
+            <FormControl
+                data-section={section}
+                name="officerSeqID"
+                value={input.officerSeqID}
+                onChange={(e) => {
+                  handleTextInput(e, this, 'number', REQUIRED_FIELDS);
+                }}
+                disabled={isInReview()} />
           </Col>
           <Col lg={6}>
             <TitleLabel>35. Officer Injuries</TitleLabel>
-            <FormControl data-section={section} name='officerInjuries' value={input.officerInjuries} onChange={(e) => handleTextInput(e, this, 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
+            <FormControl
+                data-section={section}
+                name="officerInjuries"
+                value={input.officerInjuries}
+                onChange={(e) => {
+                  handleTextInput(e, this, 'string', REQUIRED_FIELDS);
+                }}
+                disabled={isInReview()} />
           </Col>
         </PaddedRow>
 
@@ -105,32 +129,32 @@ class OfficerInfoView extends React.Component {
               <InlineCheckbox
                   inline
                   data-section={section}
-                  name='officerCertification'
-                  value='crtUnit'
+                  name="officerCertification"
+                  value="crtUnit"
                   checked={input.officerCertification.indexOf('crtUnit') !== -1}
                   onChange={handleCheckboxChange}
                   disabled={isInReview()}>CRT Unit</InlineCheckbox>
               <InlineCheckbox
                   inline
                   data-section={section}
-                  name='officerCertification'
-                  value='best'
+                  name="officerCertification"
+                  value="best"
                   checked={input.officerCertification.indexOf('best') !== -1}
                   onChange={handleCheckboxChange}
                   disabled={isInReview()}>BEST</InlineCheckbox>
               <InlineCheckbox
                   inline
                   data-section={section}
-                  name='officerCertification'
-                  value='cit'
+                  name="officerCertification"
+                  value="cit"
                   checked={input.officerCertification.indexOf('cit') !== -1}
                   onChange={handleCheckboxChange}
                   disabled={isInReview()}>CIT</InlineCheckbox>
               <InlineCheckbox
                   inline
                   data-section={section}
-                  name='officerCertification'
-                  value='n/a'
+                  name="officerCertification"
+                  value="n/a"
                   checked={input.officerCertification.indexOf('n/a') !== -1}
                   onChange={handleCheckboxChange}
                   disabled={isInReview()}>N/A</InlineCheckbox>
@@ -138,7 +162,15 @@ class OfficerInfoView extends React.Component {
           </Col>
         </PaddedRow>
 
-        { !isInReview() ? <FormNav prevPath={FORM_PATHS.DISPOSITION} nextPath={FORM_PATHS.REVIEW} handlePageChange={this.handlePageChange} setDidClickNav={this.setDidClickNav} /> : null}
+        {
+          !isInReview()
+            ? <FormNav
+                prevPath={FORM_PATHS.DISPOSITION}
+                nextPath={FORM_PATHS.REVIEW}
+                handlePageChange={this.handlePageChange}
+                setDidClickNav={this.setDidClickNav} />
+            : null
+        }
         { this.renderErrors() }
       </div>
     );

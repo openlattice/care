@@ -35,7 +35,7 @@ class ConsumerSearch extends React.Component {
       results: [],
       resultsPage: 1,
       didSearch: false
-    }
+    };
   }
 
   static propTypes = {
@@ -59,8 +59,7 @@ class ConsumerSearch extends React.Component {
     if (this.props.personEntitySetId.length > 0) {
       SearchApi.searchEntitySetData(this.props.personEntitySetId, searchRequest)
       .then((results) => {
-        console.log('got search results!:', results);
-        this.setState({ 
+        this.setState({
           results: results.hits,
           didSearch: true
         });
@@ -68,15 +67,30 @@ class ConsumerSearch extends React.Component {
     }
   }
 
-  render () {
+  render() {
     return (
       <div>
         <SectionHeader>Select Consumer</SectionHeader>
-        <StyledButton onClick={() => this.props.handlePageChange(FORM_PATHS.CONSUMER)} block>Create New Consumer Entry</StyledButton>
+        <StyledButton
+            onClick={() => {
+              this.props.handlePageChange(FORM_PATHS.CONSUMER);
+            }}
+            block>
+          Create New Consumer Entry
+        </StyledButton>
         <DividerStatement>—OR—</DividerStatement>
-        <SearchBar handleInput={this.handleInput} query={this.state.query} onSearchSubmit={this.onSearchSubmit} />
-        <SearchResults results={this.state.results} handlePersonSelection={this.props.handlePersonSelection} didSearch={this.state.didSearch} />
-        <FormNav prevPath={FORM_PATHS.REPORT} nextPath={FORM_PATHS.CONSUMER} handlePageChange={this.props.handlePageChange} />
+        <SearchBar
+            handleInput={this.handleInput}
+            query={this.state.query}
+            onSearchSubmit={this.onSearchSubmit} />
+        <SearchResults
+            results={this.state.results}
+            handlePersonSelection={this.props.handlePersonSelection}
+            didSearch={this.state.didSearch} />
+        <FormNav
+            prevPath={FORM_PATHS.REPORT}
+            nextPath={FORM_PATHS.CONSUMER}
+            handlePageChange={this.props.handlePageChange} />
       </div>
     );
   }

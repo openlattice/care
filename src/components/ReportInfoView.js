@@ -4,13 +4,12 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
 import { FormGroup, FormControl, Col } from 'react-bootstrap';
 import DatePicker from 'react-bootstrap-date-picker';
 import TimePicker from 'react-bootstrap-time-picker';
 
 import FormNav from './FormNav';
-import { TitleLabel, LabelDescription, InlineRadio, PaddedRow, SectionHeader, ErrorMessage } from '../shared/Layout';
+import { TitleLabel, InlineRadio, PaddedRow, SectionHeader, ErrorMessage } from '../shared/Layout';
 import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
 import { bootstrapValidation, validateOnInput, validateRequiredInput } from '../shared/Validation';
 
@@ -29,9 +28,9 @@ class ReportInfoView extends React.Component {
       dateOccurredValid: true,
       sectionValid: false,
       didClickNav: false
-    }
+    };
   }
-  
+
   static propTypes = {
     input: PropTypes.object.isRequired,
     handleTextInput: PropTypes.func.isRequired,
@@ -41,11 +40,11 @@ class ReportInfoView extends React.Component {
     isInReview: PropTypes.func.isRequired,
     handlePageChange: PropTypes.func.isRequired,
     section: PropTypes.string.isRequired
-  }
+  };
 
   setDidClickNav = () => {
     this.setState({ didClickNav: true });
-  }
+  };
 
   handlePageChange = (path) => {
     this.setState({ didClickNav: true });
@@ -54,15 +53,18 @@ class ReportInfoView extends React.Component {
         this.props.handlePageChange(path);
       }
     });
-  }
+  };
 
   renderErrors = () => {
-    console.log('section errors:', this.state.sectionRequiredErrors, this.state.sectionFormatErrors);
-    const formatErrors = this.state.sectionFormatErrors.map((error) => <ErrorMessage key={error}>{error}</ErrorMessage>);
+    const formatErrors = this.state.sectionFormatErrors.map((error) => {
+      <ErrorMessage key={error}>{error}</ErrorMessage>;
+    });
     let requiredErrors = [];
     if (this.state.didClickNav) {
-      requiredErrors = this.state.sectionRequiredErrors.map((error) => <ErrorMessage key={error}>{error}</ErrorMessage>);
-    };
+      requiredErrors = this.state.sectionRequiredErrors.map((error) => {
+        <ErrorMessage key={error}>{error}</ErrorMessage>;
+      });
+    }
 
     return (
       <div>
@@ -70,7 +72,7 @@ class ReportInfoView extends React.Component {
         {requiredErrors}
       </div>
     );
-  }
+  };
 
   render() {
     const {
@@ -89,58 +91,102 @@ class ReportInfoView extends React.Component {
         { !isInReview() ? <SectionHeader>Report Info</SectionHeader> : null}
         <PaddedRow>
           <Col lg={6}>
-              <TitleLabel>1. Primary Reason for Dispatch</TitleLabel>
-              <FormControl data-section={section} name='dispatchReason' value={input.dispatchReason} onChange={(e) => handleTextInput(e, this, 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
+            <TitleLabel>1. Primary Reason for Dispatch</TitleLabel>
+            <FormControl
+                data-section={section}
+                name="dispatchReason"
+                value={input.dispatchReason}
+                onChange={(e) => {
+                  handleTextInput(e, this, 'string', REQUIRED_FIELDS);
+                }}
+                disabled={isInReview()} />
           </Col>
           <Col lg={6}>
             <FormGroup validationState={bootstrapValidation(this, 'complaintNumber', true)}>
               <TitleLabel>2. Complaint Number*</TitleLabel>
-              <FormControl data-section={section} name='complaintNumber' value={input.complaintNumber} onChange={(e) => handleTextInput(e, this, 'number', REQUIRED_FIELDS)} disabled={isInReview()} />
+              <FormControl
+                  data-section={section}
+                  name="complaintNumber"
+                  value={input.complaintNumber}
+                  onChange={(e) => {
+                    handleTextInput(e, this, 'number', REQUIRED_FIELDS);
+                  }}
+                  disabled={isInReview()} />
             </FormGroup>
           </Col>
         </PaddedRow>
 
-         <PaddedRow>
-           <Col lg={6}>
-             <TitleLabel>3. Companion Offense Report Prepared</TitleLabel>
-             <InlineRadio
-                inline
-                data-section={section}
-                name='companionOffenseReport'
-                value={true}
-                checked={input.companionOffenseReport}
-                onChange={handleSingleSelection}
-                disabled={isInReview()} >Yes</InlineRadio>
+        <PaddedRow>
+          <Col lg={6}>
+            <TitleLabel>3. Companion Offense Report Prepared</TitleLabel>
             <InlineRadio
                 inline
                 data-section={section}
-                name ='companionOffenseReport'
+                name="companionOffenseReport"
+                value
+                checked={input.companionOffenseReport}
+                onChange={handleSingleSelection}
+                disabled={isInReview()}>Yes
+            </InlineRadio>
+            <InlineRadio
+                inline
+                data-section={section}
+                name="companionOffenseReport"
                 value={false}
                 checked={!input.companionOffenseReport}
                 onChange={handleSingleSelection}
-                disabled={isInReview()} >No</InlineRadio>
+                disabled={isInReview()}>No
+            </InlineRadio>
           </Col>
           <Col lg={6}>
             <TitleLabel>4. Crime / Incident</TitleLabel>
-            <FormControl data-section={section} name='incident' value={input.incident} onChange={(e) => handleTextInput(e, this, 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
+            <FormControl
+                data-section={section}
+                name="incident"
+                value={input.incident}
+                onChange={(e) => {
+                handleTextInput(e, this, 'string', REQUIRED_FIELDS);
+                }}
+                disabled={isInReview()} />
           </Col>
         </PaddedRow>
 
         <PaddedRow>
           <Col lg={12}>
             <TitleLabel>5. Location of Offense / Incident</TitleLabel>
-            <FormControl data-section={section} name='locationOfIncident' value={input.locationOfIncident} onChange={(e) => handleTextInput(e, this, 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
+            <FormControl
+                data-section={section}
+                name="locationOfIncident"
+                value={input.locationOfIncident}
+                onChange={(e) => {
+                  handleTextInput(e, this, 'string', REQUIRED_FIELDS);
+                }}
+                disabled={isInReview()} />
           </Col>
         </PaddedRow>
 
         <PaddedRow>
           <Col lg={6}>
             <TitleLabel>6. Unit</TitleLabel>
-            <FormControl data-section={section} name='unit' value={input.unit} onChange={(e) => handleTextInput(e, this, 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
+            <FormControl
+                data-section={section}
+                name="unit"
+                value={input.unit}
+                onChange={(e) => {
+                  handleTextInput(e, this, 'string', REQUIRED_FIELDS);
+                }}
+                disabled={isInReview()} />
           </Col>
           <Col lg={6}>
             <TitleLabel>7. Post of Occurrence</TitleLabel>
-            <FormControl data-section={section} name='postOfOccurrence' value={input.postOfOccurrence} onChange={(e) => handleTextInput(e, this, 'string', REQUIRED_FIELDS)} disabled={isInReview()} />
+            <FormControl
+                data-section={section}
+                name="postOfOccurrence"
+                value={input.postOfOccurrence}
+                onChange={(e) => {
+                  handleTextInput(e, this, 'string', REQUIRED_FIELDS);
+                }}
+                disabled={isInReview()} />
           </Col>
         </PaddedRow>
 
@@ -148,7 +194,14 @@ class ReportInfoView extends React.Component {
           <Col lg={6}>
             <FormGroup validationState={bootstrapValidation(this, 'cadNumber')}>
               <TitleLabel>8. CAD Number</TitleLabel>
-              <FormControl data-section={section} name='cadNumber' value={input.cadNumber} onChange={(e) => handleTextInput(e, this, 'number', REQUIRED_FIELDS)} disabled={isInReview()} />
+              <FormControl
+                  data-section={section}
+                  name="cadNumber"
+                  value={input.cadNumber}
+                  onChange={(e) => {
+                    handleTextInput(e, this, 'number', REQUIRED_FIELDS);
+                  }}
+                  disabled={isInReview()} />
             </FormGroup>
           </Col>
           <Col lg={6}>
@@ -156,19 +209,21 @@ class ReportInfoView extends React.Component {
             <InlineRadio
                 inline
                 data-section={section}
-                name='onView'
-                value={true}
+                name="onView"
+                value
                 checked={input.onView}
                 onChange={handleSingleSelection}
-                disabled={isInReview()}>Yes</InlineRadio>
+                disabled={isInReview()}>Yes
+            </InlineRadio>
             <InlineRadio
                 inline
                 data-section={section}
-                name ='onView'
+                name="onView"
                 value={false}
                 checked={!input.onView}
                 onChange={handleSingleSelection}
-                disabled={isInReview()}>No</InlineRadio>
+                disabled={isInReview()}>No
+            </InlineRadio>
           </Col>
         </PaddedRow>
 
@@ -176,27 +231,55 @@ class ReportInfoView extends React.Component {
           <Col lg={6}>
             <FormGroup validationState={bootstrapValidation(this, 'dateOccurred')}>
               <TitleLabel>10. Date Occurred</TitleLabel>
-              <DatePicker value={input.dateOccurred} onChange={(e) => {handleDateInput(e, section, 'dateOccurred')}} disabled={isInReview()} />
+              <DatePicker
+                  value={input.dateOccurred}
+                  onChange={(e) => {
+                    handleDateInput(e, section, 'dateOccurred');
+                  }}
+                  disabled={isInReview()} />
             </FormGroup>
           </Col>
           <Col lg={6}>
             <TitleLabel>Time Occurred</TitleLabel>
-            <TimePicker value={input.timeOccurred} onChange={(e) => {handleTimeInput(e, section, 'timeOccurred')}} disabled={isInReview()} />
+            <TimePicker
+                value={input.timeOccurred}
+                onChange={(e) => {
+                  handleTimeInput(e, section, 'timeOccurred');
+                }}
+                disabled={isInReview()} />
           </Col>
         </PaddedRow>
 
         <PaddedRow>
           <Col lg={6}>
             <TitleLabel>11. Date Reported</TitleLabel>
-            <DatePicker value={input.dateReported} onChange={(e) => {handleDateInput(e, section, 'dateReported')}} disabled={isInReview()} />
+            <DatePicker
+                value={input.dateReported}
+                onChange={(e) => {
+                  handleDateInput(e, section, 'dateReported');
+                }}
+                disabled={isInReview()} />
           </Col>
           <Col lg={6}>
             <TitleLabel>Time Reported</TitleLabel>
-            <TimePicker value={input.timeReported} onChange={(e) => {handleTimeInput(e, section, 'timeReported')}} disabled={isInReview()} />
+            <TimePicker
+                value={input.timeReported}
+                onChange={(e) => {
+                  handleTimeInput(e, section, 'timeReported');
+                }}
+                disabled={isInReview()} />
           </Col>
         </PaddedRow>
 
-        { !isInReview() ? <FormNav nextPath={FORM_PATHS.CONSUMER_SEARCH} handlePageChange={this.handlePageChange} sectionValid={this.state.sectionValid} setDidClickNav={this.setDidClickNav} /> : null}
+        {
+          !isInReview()
+            ? <FormNav
+                nextPath={FORM_PATHS.CONSUMER_SEARCH}
+                handlePageChange={this.handlePageChange}
+                sectionValid={this.state.sectionValid}
+                setDidClickNav={this.setDidClickNav} />
+            : null
+        }
         { this.renderErrors() }
       </div>
     );

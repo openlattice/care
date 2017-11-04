@@ -87,7 +87,6 @@ class ConsumerInfoView extends React.Component {
       section,
       handleTextInput,
       handleDateInput,
-      handleTimeInput,
       handleSingleSelection,
       handleCheckboxChange,
       input,
@@ -187,33 +186,33 @@ class ConsumerInfoView extends React.Component {
         <PaddedRow>
           <Col lg={6}>
             <TitleLabel>15. Military Status</TitleLabel>
-              <InlineRadio
-                  inline
-                  data-section={section}
-                  name="militaryStatus"
-                  value="active"
-                  checked={input.militaryStatus === 'active'}
-                  onChange={handleSingleSelection}
-                  disabled={isInReview()}>Active
-              </InlineRadio>
-              <InlineRadio
-                  inline
-                  data-section={section}
-                  name="militaryStatus"
-                  value="veteran"
-                  checked={input.militaryStatus === 'veteran'}
-                  onChange={handleSingleSelection}
-                  disabled={isInReview()}>Veteran
-              </InlineRadio>
-              <InlineRadio
-                  inline
-                  data-section={section}
-                  name="militaryStatus"
-                  value="n/a"
-                  checked={input.militaryStatus === 'n/a'}
-                  onChange={handleSingleSelection}
-                  disabled={isInReview()}>N/A
-              </InlineRadio>
+            <InlineRadio
+                inline
+                data-section={section}
+                name="militaryStatus"
+                value="active"
+                checked={input.militaryStatus === 'active'}
+                onChange={handleSingleSelection}
+                disabled={isInReview()}>Active
+            </InlineRadio>
+            <InlineRadio
+                inline
+                data-section={section}
+                name="militaryStatus"
+                value="veteran"
+                checked={input.militaryStatus === 'veteran'}
+                onChange={handleSingleSelection}
+                disabled={isInReview()}>Veteran
+            </InlineRadio>
+            <InlineRadio
+                inline
+                data-section={section}
+                name="militaryStatus"
+                value="n/a"
+                checked={input.militaryStatus === 'n/a'}
+                onChange={handleSingleSelection}
+                disabled={isInReview()}>N/A
+            </InlineRadio>
           </Col>
         </PaddedRow>
 
@@ -476,52 +475,52 @@ class ConsumerInfoView extends React.Component {
         <PaddedRow>
           <Col lg={12}>
             <TitleLabel>19. Self Diagnosis</TitleLabel>
-              <FormGroup>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="selfDiagnosis"
-                    value="bipolar"
-                    checked={input.selfDiagnosis.indexOf('bipolar') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isInReview()}>Bipolar
-                </InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="selfDiagnosis"
-                    value="depression"
-                    checked={input.selfDiagnosis.indexOf('depression') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isInReview()}>Depression
-                </InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="selfDiagnosis"
-                    value="ptsd"
-                    checked={input.selfDiagnosis.indexOf('ptsd') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isInReview()}>PTSD
-                </InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="selfDiagnosis"
-                    value="schizophrenia"
-                    checked={input.selfDiagnosis.indexOf('schizophrenia') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isInReview()}>Schizophrenia
-                </InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="selfDiagnosis"
-                    value="dementia"
-                    checked={input.selfDiagnosis.indexOf('dementia') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isInReview()}>Dementia
-                </InlineCheckbox>
+            <FormGroup>
+              <InlineCheckbox
+                  inline
+                  data-section={section}
+                  name="selfDiagnosis"
+                  value="bipolar"
+                  checked={input.selfDiagnosis.indexOf('bipolar') !== -1}
+                  onChange={handleCheckboxChange}
+                  disabled={isInReview()}>Bipolar
+              </InlineCheckbox>
+              <InlineCheckbox
+                  inline
+                  data-section={section}
+                  name="selfDiagnosis"
+                  value="depression"
+                  checked={input.selfDiagnosis.indexOf('depression') !== -1}
+                  onChange={handleCheckboxChange}
+                  disabled={isInReview()}>Depression
+              </InlineCheckbox>
+              <InlineCheckbox
+                  inline
+                  data-section={section}
+                  name="selfDiagnosis"
+                  value="ptsd"
+                  checked={input.selfDiagnosis.indexOf('ptsd') !== -1}
+                  onChange={handleCheckboxChange}
+                  disabled={isInReview()}>PTSD
+              </InlineCheckbox>
+              <InlineCheckbox
+                  inline
+                  data-section={section}
+                  name="selfDiagnosis"
+                  value="schizophrenia"
+                  checked={input.selfDiagnosis.indexOf('schizophrenia') !== -1}
+                  onChange={handleCheckboxChange}
+                  disabled={isInReview()}>Schizophrenia
+              </InlineCheckbox>
+              <InlineCheckbox
+                  inline
+                  data-section={section}
+                  name="selfDiagnosis"
+                  value="dementia"
+                  checked={input.selfDiagnosis.indexOf('dementia') !== -1}
+                  onChange={handleCheckboxChange}
+                  disabled={isInReview()}>Dementia
+              </InlineCheckbox>
               <OtherWrapper>
                 <InlineCheckbox
                     data-section={section}
@@ -1036,10 +1035,10 @@ class ConsumerInfoView extends React.Component {
         {
           !isInReview()
           ? <FormNav
-                prevPath={FORM_PATHS.CONSUMER_SEARCH}
-                nextPath={FORM_PATHS.COMPLAINANT}
-                handlePageChange={this.handlePageChange}
-                setDidClickNav={this.setDidClickNav} />
+              prevPath={FORM_PATHS.CONSUMER_SEARCH}
+              nextPath={FORM_PATHS.COMPLAINANT}
+              handlePageChange={this.handlePageChange}
+              setDidClickNav={this.setDidClickNav} />
           : null
         }
         { this.renderErrors() }

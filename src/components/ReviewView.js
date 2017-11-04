@@ -68,7 +68,7 @@ const ReviewView = ({
               handleTimeInput={handleTimeInput}
               handleSingleSelection={handleSingleSelection}
               input={reportInfo}
-              section='reportInfo'
+              section="reportInfo"
               isInReview={isInReview}
               handlePageChange={handlePageChange} />
         </Section>
@@ -86,7 +86,7 @@ const ReviewView = ({
               consumerIsSelected={consumerIsSelected}
               isInReview={isInReview}
               handlePageChange={handlePageChange}
-              section='consumerInfo' />
+              section="consumerInfo" />
         </Section>
         <Section>
           <SectionHeaderWrapper>
@@ -98,7 +98,7 @@ const ReviewView = ({
               input={complainantInfo}
               isInReview={isInReview}
               handlePageChange={handlePageChange}
-              section='complainantInfo' />
+              section="complainantInfo" />
         </Section>
         <Section>
           <SectionHeaderWrapper>
@@ -112,7 +112,7 @@ const ReviewView = ({
               input={dispositionInfo}
               isInReview={isInReview}
               handlePageChange={handlePageChange}
-              section='dispositionInfo' />
+              section="dispositionInfo" />
         </Section>
         <Section>
           <SectionHeaderWrapper>
@@ -125,7 +125,7 @@ const ReviewView = ({
               input={officerInfo}
               isInReview={isInReview}
               handlePageChange={handlePageChange}
-              section='officerInfo' />
+              section="officerInfo" />
         </Section>
 
         <FormNav submit />

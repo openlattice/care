@@ -6,12 +6,12 @@ export const bootstrapValidation = (component, name, required) => {
   const input = component.props.input[name];
   // If input is required, show error ONLY after user has tried to navigate to next/prev section
   if (required && input.length < 1 && component.state.didClickNav) return 'error';
-  // Show error if there is input and it is invalid 
+  // Show error if there is input and it is invalid
   if (input && input.length && !inputValid) return 'error';
   // TODO: CHECK THAT THIS IS REQUIRED conditional
   // If input format is invalid, show error
   if (!inputValid && component.state.didClickNav) return 'error';
-}
+};
 
 export const validateOnInput = (component, input, name, fieldType, requiredFields) => {
   const validStateKey = `${name}Valid`;
@@ -44,7 +44,7 @@ export const validateOnInput = (component, input, name, fieldType, requiredField
     sectionRequiredErrors,
     [validStateKey]: inputValid
   });
-}
+};
 
 export const validateRequiredInput = (component, requiredFields, cb) => {
   let sectionRequiredErrors = component.state.sectionRequiredErrors.slice();
@@ -74,4 +74,4 @@ export const validateRequiredInput = (component, requiredFields, cb) => {
   }, () => {
     cb();
   });
-}
+};

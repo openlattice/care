@@ -4,12 +4,16 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import styled, { injectGlobal } from 'styled-components';
-import { normalize } from 'polished';
-import { ProgressBar, Button } from 'react-bootstrap';
+import styled from 'styled-components';
+import { ProgressBar } from 'react-bootstrap';
 import { Redirect, Route, Switch } from 'react-router-dom';
 
-import { Page, InnerPageWrapper, PageHeader, Title, Description, FormWrapper, SubmitButton, SubmitButtonWrapper } from '../shared/Layout';
+import {
+  Page,
+  PageHeader,
+  Title,
+  FormWrapper
+} from '../shared/Layout';
 import LogoutButton from '../containers/app/LogoutButton';
 import ReportInfoView from '../components/ReportInfoView';
 import ConsumerSearch from '../containers/ConsumerSearch';
@@ -49,12 +53,13 @@ function FormView({
   consumerIsSelected
 }) {
 
-	const getProgress = () => {
+  const getProgress = () => {
     const page = window.location.hash.substr(2);
     const num = Math.ceil((page - 1) / (maxPage - 1) * 100);
     const percentage = num.toString() + '%';
+
     return num === 0 ? { num: 5, percentage } : { num, percentage };
-  }
+  };
 
   const getReportInfoView = () => {
     return (
@@ -69,7 +74,7 @@ function FormView({
           handlePageChange={handlePageChange}
           section='reportInfo' />
     );
-  }
+  };
 
   const getConsumerSearchView = () => {
     return (
@@ -79,7 +84,7 @@ function FormView({
           personEntitySetId={personEntitySetId}
           handlePageChange={handlePageChange} />
     );
-  }
+  };
 
   const getConsumerInfoView = () => {
     return (
@@ -94,7 +99,7 @@ function FormView({
           handlePageChange={handlePageChange}
           section='consumerInfo' />
     );
-  }
+  };
 
   const getComplainantInfoView = () => {
     return (
@@ -106,7 +111,7 @@ function FormView({
           handleSingleSelection={handleSingleSelection}
           section='complainantInfo' />
     );
-  }
+  };
 
   const getDispositionView = () => {
     return (
@@ -119,7 +124,7 @@ function FormView({
           handlePageChange={handlePageChange}
           section='dispositionInfo' />
     );
-  }
+  };
 
   const getOfficerInfoView = () => {
     return (
@@ -131,7 +136,7 @@ function FormView({
           handlePageChange={handlePageChange}
           section='officerInfo' />
     );
-  }
+  };
 
   const getReviewView = () => {
     return (
@@ -150,12 +155,12 @@ function FormView({
           consumerIsSelected={consumerIsSelected}
           handlePageChange={handlePageChange} />
     );
-  }
+  };
 
   return (
     <Page>
       <PageHeader>
-    		<Title>Behavioral Health Report</Title>
+        <Title>Behavioral Health Report</Title>
         <LogoutButton />
       </PageHeader>
       <StyledProgressBar bsStyle="info" now={getProgress().num} label={getProgress().percentage} />
@@ -174,7 +179,7 @@ function FormView({
         </form>
       </FormWrapper>
     </Page>
-	);
+  );
 }
 
 FormView.propTypes = {
@@ -195,6 +200,6 @@ FormView.propTypes = {
   handlePersonSelection: PropTypes.func.isRequired,
   personEntitySetId: PropTypes.string.isRequired,
   consumerIsSelected: PropTypes.bool.isRequired
-}
+};
 
 export default FormView;

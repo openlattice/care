@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import {withRouter} from "react-router-dom";
+import { withRouter } from 'react-router-dom';
 import Promise from 'bluebird';
 import { EntityDataModelApi, DataApi, SearchApi, SyncApi } from 'lattice';
 
@@ -133,19 +133,19 @@ class Form extends React.Component {
           });
       });
 
-      const start = 0;
-      const maxHits = 50;
-      const searchTerm = '*';
-      const searchOptions = {
-        start,
-        maxHits,
-        searchTerm
-      };
-      // TODO: wait to execute until getPersonEntitySet is complete
-      SearchApi.searchEntitySetData(this.state.personEntitySetId, searchOptions)
-        .then((res) => {
-          console.log('search res:', res);
-        });
+    const start = 0;
+    const maxHits = 50;
+    const searchTerm = '*';
+    const searchOptions = {
+      start,
+      maxHits,
+      searchTerm
+    };
+    // TODO: wait to execute until getPersonEntitySet is complete
+    SearchApi.searchEntitySetData(this.state.personEntitySetId, searchOptions)
+      .then((res) => {
+        console.log('search res:', res);
+      });
   }
 
   getPersonEntitySet = () => {
@@ -280,7 +280,7 @@ class Form extends React.Component {
       const personVal = person[personKey][0];
       consumerState[consumerKey] = personVal;
     });
-    this.setState({ 
+    this.setState({
       consumerInfo: consumerState,
       consumerIsSelected: true
     }, () => {
@@ -412,7 +412,7 @@ class Form extends React.Component {
       console.log('bulk data:', bulkData);
       DataApi.createEntityAndAssociationData(bulkData).then(() => {
         console.log('success!');
-        this.setState({ 
+        this.setState({
           submitSuccess: true,
           submitFailure: false
         });
@@ -423,7 +423,7 @@ class Form extends React.Component {
           submitSuccess: false,
           submitFailure: true
         });
-      })
+      });
     });
   }
 
@@ -433,7 +433,7 @@ class Form extends React.Component {
 
   isInReview = () => {
     const page = window.location.hash.substr(2);
-    if (page && page == this.state.maxPage) return true;
+    if (page && page === this.state.maxPage) return true;
     return false;
   }
 
@@ -462,9 +462,9 @@ class Form extends React.Component {
         {
           this.state.submitSuccess
             ? <ConfirmationModal
-                  submitSuccess={this.state.submitSuccess}
-                  submitFailure={this.state.submitFailure}
-                  handleModalButtonClick={this.handleModalButtonClick} />
+                submitSuccess={this.state.submitSuccess}
+                submitFailure={this.state.submitFailure}
+                handleModalButtonClick={this.handleModalButtonClick} />
             : null
         }
       </div>
