@@ -1,16 +1,19 @@
 import React from 'react';
 import Promise from 'bluebird';
-import { EntityDataModelApi, DataApi, SyncApi } from 'lattice';
+import { AppApi, EntityDataModelApi, DataApi, SyncApi } from 'lattice';
 
 import FormView from '../../components/FormView';
 import ConfirmationModal from '../../components/ConfirmationModalView';
 import LogoutButton from '../app/LogoutButton';
+import OrganizationButton from '../app/OrganizationButton';
 
 import * as RoutePaths from '../../core/router/RoutePaths';
 
-const FORM_ENTITY_SET_NAME = 'baltimoreHealthReportForm';
-const PEOPLE_ENTITY_SET_NAME = 'baltimoreHealthReportPeople';
-const APPEARS_IN_ENTITY_SET_NAME = 'baltimoreHealthReportAppearsIn';
+const APP_ID = 'b2f90999-6f1f-44d1-9e75-8dc2c9bf6e8d';
+
+const FORM_CONFIG_TYPE = 'app.bhr';
+const PERSON_CONFIG_TYPE = 'app.people';
+const APPEARS_IN_CONFIG_TYPE = 'app.appearsin';
 
 
 const ID_FQN = 'nc.SubjectIdentification';
@@ -101,9 +104,6 @@ class Form extends React.Component {
         officerInjuries: '',
         officerCertification: []
       },
-      entitySetId: '',
-      personEntitySetId: '',
-      appearsInEntitySetId: '',
       entitySet: {},
       personEntitySet: {},
       appearsInEntitySet: {},
@@ -114,70 +114,73 @@ class Form extends React.Component {
       personPropertyTypes: [],
       appearsInPropertyTypes: [],
       submitSuccess: null,
-      submitFailure: null
+      submitFailure: null,
+      configurations: {},
+      selectedOrganizationId: ''
     };
   }
 
   componentDidMount() {
-    EntityDataModelApi.getEntitySetId(FORM_ENTITY_SET_NAME)
-      .then((id) => {
-        this.setState({ entitySetId: id });
-        EntityDataModelApi.getEntitySet(id)
-          .then((entitySet) => {
-            this.setState({ entitySet });
-            EntityDataModelApi.getEntityType(entitySet.entityTypeId)
-              .then((entityType) => {
-                this.setState({ entityType });
-                Promise.map(entityType.properties, (propertyId) => {
-                  return EntityDataModelApi.getPropertyType(propertyId);
-                })
-                  .then((propertyTypes) => {
-                    this.setState({ propertyTypes });
-                    this.getPersonEntitySet();
-                  });
+    this.getConfigurations();
+  }
+
+  getConfigurations = () => {
+    AppApi.getConfigurations(APP_ID).then((configurations) => {
+      const defaultConfig = configurations[0];
+      const selectedOrganizationId = (configurations.length) ? defaultConfig.organization.id : '';
+      this.setState({ configurations, selectedOrganizationId });
+      this.getBhrEntitySet(defaultConfig.config)
+    });
+  }
+
+  getBhrEntitySet = (config) => {
+    EntityDataModelApi.getEntitySet(config[FORM_CONFIG_TYPE])
+      .then((entitySet) => {
+        this.setState({ entitySet });
+        EntityDataModelApi.getEntityType(entitySet.entityTypeId)
+          .then((entityType) => {
+            this.setState({ entityType });
+            Promise.map(entityType.properties, (propertyId) => {
+              return EntityDataModelApi.getPropertyType(propertyId);
+            })
+              .then((propertyTypes) => {
+                this.setState({ propertyTypes });
+                this.getPersonEntitySet(config);
               });
           });
       });
   }
 
-  getPersonEntitySet = () => {
-    EntityDataModelApi.getEntitySetId(PEOPLE_ENTITY_SET_NAME)
-      .then((personEntitySetId) => {
-        this.setState({ personEntitySetId });
-        EntityDataModelApi.getEntitySet(personEntitySetId)
-          .then((personEntitySet) => {
-            this.setState({ personEntitySet });
-            EntityDataModelApi.getEntityType(personEntitySet.entityTypeId)
-              .then((personEntityType) => {
-                this.setState({ personEntityType });
-                Promise.map(personEntityType.properties, (propertyId) => {
-                  return EntityDataModelApi.getPropertyType(propertyId);
-                })
-                  .then((personPropertyTypes) => {
-                    this.setState({ personPropertyTypes });
-                    this.getAppearsInEntitySet();
-                  });
+  getPersonEntitySet = (config) => {
+    EntityDataModelApi.getEntitySet(config[PERSON_CONFIG_TYPE])
+      .then((personEntitySet) => {
+        this.setState({ personEntitySet });
+        EntityDataModelApi.getEntityType(personEntitySet.entityTypeId)
+          .then((personEntityType) => {
+            this.setState({ personEntityType });
+            Promise.map(personEntityType.properties, (propertyId) => {
+              return EntityDataModelApi.getPropertyType(propertyId);
+            })
+              .then((personPropertyTypes) => {
+                this.setState({ personPropertyTypes });
+                this.getAppearsInEntitySet(config);
               });
           });
       });
   }
 
-  getAppearsInEntitySet = () => {
-    EntityDataModelApi.getEntitySetId(APPEARS_IN_ENTITY_SET_NAME)
-      .then((appearsInEntitySetId) => {
-        this.setState({ appearsInEntitySetId });
-        EntityDataModelApi.getEntitySet(appearsInEntitySetId)
-          .then((appearsInEntitySet) => {
-            this.setState({ appearsInEntitySet });
-            EntityDataModelApi.getEntityType(appearsInEntitySet.entityTypeId)
-              .then((appearsInEntityType) => {
-                this.setState({ appearsInEntityType });
-                Promise.map(appearsInEntityType.properties, (propertyId) => {
-                  return EntityDataModelApi.getPropertyType(propertyId);
-                })
-                  .then((appearsInPropertyTypes) => {
-                    this.setState({ appearsInPropertyTypes });
-                  });
+  getAppearsInEntitySet = (config) => {
+    EntityDataModelApi.getEntitySet(config[APPEARS_IN_CONFIG_TYPE])
+      .then((appearsInEntitySet) => {
+        this.setState({ appearsInEntitySet });
+        EntityDataModelApi.getEntityType(appearsInEntitySet.entityTypeId)
+          .then((appearsInEntityType) => {
+            this.setState({ appearsInEntityType });
+            Promise.map(appearsInEntityType.properties, (propertyId) => {
+              return EntityDataModelApi.getPropertyType(propertyId);
+            })
+              .then((appearsInPropertyTypes) => {
+                this.setState({ appearsInPropertyTypes });
               });
           });
       });
@@ -288,13 +291,9 @@ class Form extends React.Component {
     return entities;
   }
 
-  getAppearsInEntity = (syncId) => {
+  getAppearsInEntity = (entitySetId, syncId) => {
     const entityId = btoa(this.state.consumerInfo.identification);
-    const key = {
-      entitySetId: this.state.appearsInEntitySetId,
-      entityId,
-      syncId
-    };
+    const key = { entitySetId, entityId, syncId };
 
     const stringIdPropId = this.state.appearsInPropertyTypes.filter((propertyType) => {
       const fqn = `${propertyType.type.namespace}.${propertyType.type.name}`;
@@ -308,14 +307,10 @@ class Form extends React.Component {
     return { key, details };
   }
 
-  getPersonEntity = (syncId) => {
+  getPersonEntity = (entitySetId, syncId) => {
     const { identification, firstName, lastName, middleName, dob, gender, race } = this.state.consumerInfo;
     const entityId = btoa(identification);
-    const key = {
-      entitySetId: this.state.personEntitySetId,
-      entityId,
-      syncId
-    };
+    const key = { entitySetId, entityId, syncId };
 
     const props = {};
     this.state.personPropertyTypes.forEach((propertyType) => {
@@ -335,7 +330,7 @@ class Form extends React.Component {
     return { key, details };
   }
 
-  getFormEntity = (syncId) => {
+  getFormEntity = (entitySetId, syncId) => {
     const formInputs = Object.assign(
       {},
       this.state.reportInfo,
@@ -349,10 +344,12 @@ class Form extends React.Component {
     this.state.propertyTypes.forEach((propertyType) => {
       const value = formInputs[propertyType.type.name];
       let formattedValue;
-      formattedValue = Array.isArray(value) ? value : [value];
-      formattedValue = (formattedValue.length > 0 && (formattedValue[0] === '' || formattedValue[0] === null))
-        ? [] : formattedValue;
-      details[propertyType.id] = formattedValue;
+      if (value !== null && value !== undefined) {
+        formattedValue = Array.isArray(value) ? value : [value];
+        formattedValue = (formattedValue.length > 0 && (formattedValue[0] === '' || formattedValue[0] === null))
+          ? [] : formattedValue;
+        details[propertyType.id] = formattedValue;
+      }
     });
 
     const primaryKeys = this.state.entityType.key;
@@ -362,26 +359,31 @@ class Form extends React.Component {
       return btoa(utf8Val);
     }).join(',');
 
-    const key = {
-      entitySetId: this.state.entitySetId,
-      entityId,
-      syncId
-    };
+    const key = { entitySetId, entityId, syncId };
 
     return { key, details };
   }
 
   getBulkData = () => {
-    const { entitySetId, personEntitySetId, appearsInEntitySetId } = this.state;
+    const { configurations, selectedOrganizationId } = this.state;
+    if (!configurations.length || !selectedOrganizationId.length) return {};
+    const selectedConfiguration = configurations.filter((configuration) => {
+      return selectedOrganizationId === configuration.organization.id;
+    })[0].config;
+
+    const entitySetId = selectedConfiguration[FORM_CONFIG_TYPE];
+    const personEntitySetId = selectedConfiguration[PERSON_CONFIG_TYPE];
+    const appearsInEntitySetId = selectedConfiguration[APPEARS_IN_CONFIG_TYPE];
+
     return SyncApi.getCurrentSyncId(entitySetId)
       .then((formSyncId) => {
-        const formEntity = this.getFormEntity(formSyncId);
+        const formEntity = this.getFormEntity(entitySetId, formSyncId);
         return SyncApi.getCurrentSyncId(personEntitySetId)
           .then((personSyncId) => {
-            const personEntity = this.getPersonEntity(personSyncId);
+            const personEntity = this.getPersonEntity(personEntitySetId, personSyncId);
             return SyncApi.getCurrentSyncId(appearsInEntitySetId)
               .then((appearsInSyncId) => {
-                const appearsInEntity = this.getAppearsInEntity(appearsInSyncId);
+                const appearsInEntity = this.getAppearsInEntity(appearsInEntitySetId, appearsInSyncId);
                 appearsInEntity.src = personEntity.key;
                 appearsInEntity.dst = formEntity.key;
 
@@ -415,10 +417,27 @@ class Form extends React.Component {
     window.location.reload();
   }
 
+  renderOrganizationButton = () => {
+    const { configurations, selectedOrganizationId } = this.state;
+    if (!configurations.length || !selectedOrganizationId.length) return null;
+    const organizations = configurations.map((configuration) => {
+      return configuration.organization;
+    });
+    return (
+      <OrganizationButton
+          organizations={organizations}
+          selectedOrganization={selectedOrganizationId}
+          selectOrganization={(id) => {
+            this.setState({ selectedOrganizationId: id });
+          }} />
+    );
+  }
+
   render() {
 
     return (
       <div>
+        {this.renderOrganizationButton()}
         <LogoutButton />
         <FormView
             handleTextInput={this.handleTextInput}
