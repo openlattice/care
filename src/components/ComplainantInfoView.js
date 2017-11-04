@@ -28,10 +28,15 @@ class ComplainantInfoView extends React.Component {
 
   static propTypes = {
     handleTextInput: PropTypes.func.isRequired,
-    input: PropTypes.object.isRequired,
     section: PropTypes.string.isRequired,
     isInReview: PropTypes.func.isRequired,
-    handlePageChange: PropTypes.func.isRequired
+    handlePageChange: PropTypes.func.isRequired,
+    input: PropTypes.shape({
+      complainantName: PropTypes.string.isRequired,
+      complainantAddress: PropTypes.string.isRequired,
+      complainantConsumerRelationship: PropTypes.string.isRequired,
+      complainantPhone: PropTypes.string.isRequired
+    }).isRequired
   }
 
   setDidClickNav = () => {

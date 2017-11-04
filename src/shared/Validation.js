@@ -11,6 +11,7 @@ export const bootstrapValidation = (component, name, required) => {
   // TODO: CHECK THAT THIS IS REQUIRED conditional
   // If input format is invalid, show error
   if (!inputValid && component.state.didClickNav) return 'error';
+  return null;
 };
 
 export const validateOnInput = (component, input, name, fieldType, requiredFields) => {
@@ -28,7 +29,8 @@ export const validateOnInput = (component, input, name, fieldType, requiredField
         if (idx === -1) {
           sectionFormatErrors.push(FORM_ERRORS.INVALID_FORMAT);
         }
-      } else {
+      }
+      else {
         inputValid = true;
         if (idx !== -1) {
           sectionFormatErrors.splice(idx);
@@ -60,7 +62,8 @@ export const validateRequiredInput = (component, requiredFields, cb) => {
         sectionRequiredErrors.push(FORM_ERRORS.IS_REQUIRED);
       }
       break;
-    } else {
+    }
+    else {
       sectionValid = true;
       if (requiredErrorIdx !== -1) {
         sectionRequiredErrors.splice(requiredErrorIdx);

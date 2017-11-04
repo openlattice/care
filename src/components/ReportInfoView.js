@@ -32,14 +32,29 @@ class ReportInfoView extends React.Component {
   }
 
   static propTypes = {
-    input: PropTypes.object.isRequired,
     handleTextInput: PropTypes.func.isRequired,
     handleDateInput: PropTypes.func.isRequired,
     handleTimeInput: PropTypes.func.isRequired,
     handleSingleSelection: PropTypes.func.isRequired,
     isInReview: PropTypes.func.isRequired,
     handlePageChange: PropTypes.func.isRequired,
-    section: PropTypes.string.isRequired
+    section: PropTypes.string.isRequired,
+    input: PropTypes.shape({
+      dispatchReason: PropTypes.string.isRequired,
+      complaintNumber: PropTypes.string.isRequired,
+      companionOffenseReport: PropTypes.bool.isRequired,
+      incident: PropTypes.string.isRequired,
+      locationOfIncident: PropTypes.string.isRequired,
+      unit: PropTypes.string.isRequired,
+      postOfOccurrence: PropTypes.string.isRequired,
+      cadNumber: PropTypes.string.isRequired,
+      onView: PropTypes.bool.isRequired,
+      dateOccurred: PropTypes.string.isRequired,
+      timeOccurred: PropTypes.string.isRequired,
+      dateReported: PropTypes.string.isRequired,
+      timeReported: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired
+    }).isRequired
   };
 
   setDidClickNav = () => {
@@ -57,12 +72,12 @@ class ReportInfoView extends React.Component {
 
   renderErrors = () => {
     const formatErrors = this.state.sectionFormatErrors.map((error) => {
-      <ErrorMessage key={error}>{error}</ErrorMessage>;
+      return <ErrorMessage key={error}>{error}</ErrorMessage>;
     });
     let requiredErrors = [];
     if (this.state.didClickNav) {
       requiredErrors = this.state.sectionRequiredErrors.map((error) => {
-        <ErrorMessage key={error}>{error}</ErrorMessage>;
+        return <ErrorMessage key={error}>{error}</ErrorMessage>;
       });
     }
 

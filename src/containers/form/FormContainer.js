@@ -218,25 +218,25 @@ class Form extends React.Component {
     let ss = seconds;
 
     while (ss >= 60) {
-      mm++;
+      mm += 1;
       ss = ss - 60;
     }
 
     while (mm >= 60) {
-      hh++;
+      hh += 1;
       mm = mm - 60;
     }
 
     let hhStr = hh.toString();
-    hhStr = hhStr.length === 1 ? '0' + hhStr : hhStr;
+    hhStr = hhStr.length === 1 ? `0${hhStr}` : hhStr;
 
     let mmStr = mm.toString();
-    mmStr = mmStr.length === 1 ? '0' + mmStr : mmStr;
+    mmStr = mmStr.length === 1 ? `0${mmStr}` : mmStr;
 
     let ssStr = ss.toString();
-    ssStr = ssStr.length === 1 ? '0' + ssStr : ssStr;
+    ssStr = ssStr.length === 1 ? `0${ssStr}` : ssStr;
 
-    const res = hhStr + ':' + mmStr + ':' + ssStr;
+    const res = `${hhStr}:${mmStr}:${ssStr}`;
     return res;
   }
 
@@ -273,7 +273,7 @@ class Form extends React.Component {
   }
 
   handlePersonSelection = (person) => {
-    let consumerState = Object.assign({}, this.state.consumerInfo);
+    const consumerState = Object.assign({}, this.state.consumerInfo);
     Object.keys(PERSON).forEach((key) => {
       const consumerKey = CONSUMER_STATE[key];
       const personKey = PERSON[key];

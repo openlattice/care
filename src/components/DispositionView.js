@@ -40,10 +40,18 @@ class DispositionView extends React.Component {
     handleTextInput: PropTypes.func.isRequired,
     handleSingleSelection: PropTypes.func.isRequired,
     handleCheckboxChange: PropTypes.func.isRequired,
-    input: PropTypes.object.isRequired,
     section: PropTypes.string.isRequired,
     isInReview: PropTypes.func.isRequired,
-    handlePageChange: PropTypes.func.isRequired
+    handlePageChange: PropTypes.func.isRequired,
+    input: PropTypes.shape({
+      disposition: PropTypes.array.isRequired,
+      hospitalTransport: PropTypes.bool.isRequired,
+      hospital: PropTypes.string.isRequired,
+      deescalationTechniques: PropTypes.array.isRequired,
+      deescalationTechniquesOther: PropTypes.string.isRequired,
+      specializedResourcesCalled: PropTypes.array.isRequired,
+      incidentNarrative: PropTypes.string.isRequired
+    }).isRequired
   }
 
   setDidClickNav = () => {
@@ -61,12 +69,13 @@ class DispositionView extends React.Component {
 
   renderErrors = () => {
     const formatErrors = this.state.sectionFormatErrors.map((error) => {
-      <ErrorMessage key={error}>{error}</ErrorMessage>;
+      return <ErrorMessage key={error}>{error}</ErrorMessage>;
     });
+
     let requiredErrors = [];
     if (this.state.didClickNav) {
       requiredErrors = this.state.sectionRequiredErrors.map((error) => {
-        <ErrorMessage key={error}>{error}</ErrorMessage>;
+        return <ErrorMessage key={error}>{error}</ErrorMessage>;
       });
     }
 

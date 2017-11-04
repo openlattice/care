@@ -48,9 +48,11 @@ const PersonRow = ({ person, handlePersonSelection }) => {
   };
 
   return (
-    <PersonWrapper onClick={() => {
-      handlePersonSelection(person)
-    }}>
+    <PersonWrapper
+      onClick={() => {
+        handlePersonSelection(person);
+      }
+    }>
       <Grid>
         <Row>
           <Col lg={2}>

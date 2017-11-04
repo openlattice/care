@@ -15,6 +15,7 @@ function getTitle(submitSuccess, submitFailure) {
   else if (submitFailure) {
     return 'Error Submitting Report';
   }
+  return null;
 }
 
 function getBody(submitSuccess, submitFailure) {
@@ -25,6 +26,7 @@ function getBody(submitSuccess, submitFailure) {
     return `There was an error submitting your report. Please try again. 
     If there continues to be an issue, contact help@openlattice.com.`;
   }
+  return null;
 }
 
 function ConfirmationModal({ submitSuccess, submitFailure, handleModalButtonClick }) {

@@ -55,8 +55,8 @@ function FormView({
 
   const getProgress = () => {
     const page = window.location.hash.substr(2);
-    const num = Math.ceil((page - 1) / (maxPage - 1) * 100);
-    const percentage = num.toString() + '%';
+    const num = Math.ceil((page - 1) / ((maxPage - 1) * 100));
+    const percentage = `${num.toString()}%`;
 
     return num === 0 ? { num: 5, percentage } : { num, percentage };
   };
@@ -72,7 +72,7 @@ function FormView({
           isInReview={isInReview}
           maxPage={maxPage}
           handlePageChange={handlePageChange}
-          section='reportInfo' />
+          section="reportInfo" />
     );
   };
 
@@ -97,7 +97,7 @@ function FormView({
           consumerIsSelected={consumerIsSelected}
           isInReview={isInReview}
           handlePageChange={handlePageChange}
-          section='consumerInfo' />
+          section="consumerInfo" />
     );
   };
 
@@ -109,7 +109,7 @@ function FormView({
           isInReview={isInReview}
           handlePageChange={handlePageChange}
           handleSingleSelection={handleSingleSelection}
-          section='complainantInfo' />
+          section="complainantInfo" />
     );
   };
 
@@ -122,7 +122,7 @@ function FormView({
           input={dispositionInfo}
           isInReview={isInReview}
           handlePageChange={handlePageChange}
-          section='dispositionInfo' />
+          section="dispositionInfo" />
     );
   };
 
@@ -134,7 +134,7 @@ function FormView({
           input={officerInfo}
           isInReview={isInReview}
           handlePageChange={handlePageChange}
-          section='officerInfo' />
+          section="officerInfo" />
     );
   };
 
@@ -190,16 +190,84 @@ FormView.propTypes = {
   handleCheckboxChange: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   maxPage: PropTypes.number.isRequired,
-  reportInfo: PropTypes.object.isRequired,
-  consumerInfo: PropTypes.object.isRequired,
-  complainantInfo: PropTypes.object.isRequired,
-  dispositionInfo: PropTypes.object.isRequired,
-  officerInfo: PropTypes.object.isRequired,
   isInReview: PropTypes.func.isRequired,
   handlePageChange: PropTypes.func.isRequired,
   handlePersonSelection: PropTypes.func.isRequired,
   personEntitySetId: PropTypes.string.isRequired,
-  consumerIsSelected: PropTypes.bool.isRequired
+  consumerIsSelected: PropTypes.bool.isRequired,
+  reportInfo: PropTypes.shape({
+    dispatchReason: PropTypes.string.isRequired,
+    complaintNumber: PropTypes.string.isRequired,
+    companionOffenseReport: PropTypes.bool.isRequired,
+    incident: PropTypes.string.isRequired,
+    locationOfIncident: PropTypes.string.isRequired,
+    unit: PropTypes.string.isRequired,
+    postOfOccurrence: PropTypes.string.isRequired,
+    cadNumber: PropTypes.string.isRequired,
+    onView: PropTypes.bool.isRequired,
+    dateOccurred: PropTypes.string.isRequired,
+    timeOccurred: PropTypes.string.isRequired,
+    dateReported: PropTypes.string.isRequired,
+    timeReported: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired
+  }).isRequired,
+  consumerInfo: PropTypes.shape({
+    firstName: PropTypes.string.isRequired,
+    lastName: PropTypes.string.isRequired,
+    middleName: PropTypes.string.isRequired,
+    address: PropTypes.string.isRequired,
+    identification: PropTypes.string.isRequired,
+    militaryStatus: PropTypes.string.isRequired,
+    gender: PropTypes.string.isRequired,
+    race: PropTypes.string.isRequired,
+    age: PropTypes.string.isRequired,
+    dob: PropTypes.string.isRequired,
+    homeless: PropTypes.bool.isRequired,
+    homelessLocation: PropTypes.string.isRequired,
+    drugsAlcohol: PropTypes.string.isRequired,
+    drugType: PropTypes.string.isRequired,
+    prescribedMedication: PropTypes.string.isRequired,
+    takingMedication: PropTypes.string.isRequired,
+    prevPsychAdmission: PropTypes.string.isRequired,
+    selfDiagnosis: PropTypes.array.isRequired,
+    selfDiagnosisOther: PropTypes.string.isRequired,
+    armedWithWeapon: PropTypes.bool.isRequired,
+    armedWeaponType: PropTypes.string.isRequired,
+    accessToWeapons: PropTypes.bool.isRequired,
+    accessibleWeaponType: PropTypes.string.isRequired,
+    observedBehaviors: PropTypes.array.isRequired,
+    observedBehaviorsOther: PropTypes.string.isRequired,
+    emotionalState: PropTypes.array.isRequired,
+    emotionalStateOther: PropTypes.string.isRequired,
+    photosTakenOf: PropTypes.array.isRequired,
+    injuries: PropTypes.array.isRequired,
+    injuriesOther: PropTypes.string.isRequired,
+    suicidal: PropTypes.bool.isRequired,
+    suicidalActions: PropTypes.array.isRequired,
+    suicideAttemptMethod: PropTypes.array.isRequired,
+    suicideAttemptMethodOther: PropTypes.string.isRequired
+  }).isRequired,
+  complainantInfo: PropTypes.shape({
+    complainantName: PropTypes.string.isRequired,
+    complainantAddress: PropTypes.string.isRequired,
+    complainantConsumerRelationship: PropTypes.string.isRequired,
+    complainantPhone: PropTypes.string.isRequired
+  }).isRequired,
+  dispositionInfo: PropTypes.shape({
+    disposition: PropTypes.array.isRequired,
+    hospitalTransport: PropTypes.bool.isRequired,
+    hospital: PropTypes.string.isRequired,
+    deescalationTechniques: PropTypes.array.isRequired,
+    deescalationTechniquesOther: PropTypes.string.isRequired,
+    specializedResourcesCalled: PropTypes.array.isRequired,
+    incidentNarrative: PropTypes.string.isRequired
+  }).isRequired,
+  officerInfo: PropTypes.shape({
+    officerName: PropTypes.string.isRequired,
+    officerSeqID: PropTypes.string.isRequired,
+    officerInjuries: PropTypes.string.isRequired,
+    officerCertification: PropTypes.array.isRequired
+  }).isRequired
 };
 
 export default FormView;
