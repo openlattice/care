@@ -104,13 +104,7 @@ class Form extends React.Component {
         officerInjuries: '',
         officerCertification: []
       },
-      entitySet: {},
-      personEntitySet: {},
-      appearsInEntitySet: {},
-      entityType: {},
-      personEntityType: {},
-      appearsInEntityType: {},
-      propertyTypes: [],
+      bhrPropertyTypes: [],
       personPropertyTypes: [],
       appearsInPropertyTypes: [],
       submitSuccess: null,
@@ -122,6 +116,7 @@ class Form extends React.Component {
 
   componentDidMount() {
     this.getConfigurations();
+    this.getApp();
   }
 
   getConfigurations = () => {
@@ -129,60 +124,45 @@ class Form extends React.Component {
       const defaultConfig = configurations[0];
       const selectedOrganizationId = (configurations.length) ? defaultConfig.organization.id : '';
       this.setState({ configurations, selectedOrganizationId });
-      this.getBhrEntitySet(defaultConfig.config)
     });
   }
 
-  getBhrEntitySet = (config) => {
-    EntityDataModelApi.getEntitySet(config[FORM_CONFIG_TYPE])
-      .then((entitySet) => {
-        this.setState({ entitySet });
-        EntityDataModelApi.getEntityType(entitySet.entityTypeId)
-          .then((entityType) => {
-            this.setState({ entityType });
-            Promise.map(entityType.properties, (propertyId) => {
-              return EntityDataModelApi.getPropertyType(propertyId);
-            })
-              .then((propertyTypes) => {
-                this.setState({ propertyTypes });
-                this.getPersonEntitySet(config);
-              });
+  getApp = () => {
+    AppApi.getApp(APP_ID).then((app) => {
+      AppApi.getAppTypeIds(app.appTypeIds).then((appTypes) => {
+        Object.values(appTypes).forEach((appType) => {
+          const { type, entityTypeId } = appType;
+          const appTypeFqn = `${type.namespace}.${type.name}`;
+          this.getPropertyTypes(entityTypeId).then((propertyTypes) => {
+            switch (appTypeFqn) {
+              case FORM_CONFIG_TYPE:
+                this.setState({ bhrPropertyTypes: propertyTypes });
+                break;
+              case PERSON_CONFIG_TYPE:
+                this.setState({ personPropertyTypes: propertyTypes });
+                break;
+              case APPEARS_IN_CONFIG_TYPE:
+                this.setState({ appearsInPropertyTypes: propertyTypes });
+                break;
+              default:
+                console.error(`Unexpected app type: ${appTypeFqn}`);
+                break;
+            }
           });
+        });
       });
+    });
   }
 
-  getPersonEntitySet = (config) => {
-    EntityDataModelApi.getEntitySet(config[PERSON_CONFIG_TYPE])
-      .then((personEntitySet) => {
-        this.setState({ personEntitySet });
-        EntityDataModelApi.getEntityType(personEntitySet.entityTypeId)
-          .then((personEntityType) => {
-            this.setState({ personEntityType });
-            Promise.map(personEntityType.properties, (propertyId) => {
-              return EntityDataModelApi.getPropertyType(propertyId);
-            })
-              .then((personPropertyTypes) => {
-                this.setState({ personPropertyTypes });
-                this.getAppearsInEntitySet(config);
-              });
-          });
-      });
-  }
-
-  getAppearsInEntitySet = (config) => {
-    EntityDataModelApi.getEntitySet(config[APPEARS_IN_CONFIG_TYPE])
-      .then((appearsInEntitySet) => {
-        this.setState({ appearsInEntitySet });
-        EntityDataModelApi.getEntityType(appearsInEntitySet.entityTypeId)
-          .then((appearsInEntityType) => {
-            this.setState({ appearsInEntityType });
-            Promise.map(appearsInEntityType.properties, (propertyId) => {
-              return EntityDataModelApi.getPropertyType(propertyId);
-            })
-              .then((appearsInPropertyTypes) => {
-                this.setState({ appearsInPropertyTypes });
-              });
-          });
+  getPropertyTypes = (entityTypeId) => {
+    return EntityDataModelApi.getEntityType(entityTypeId)
+      .then((entityType) => {
+        this.setState({ entityType });
+        return Promise.map(entityType.properties, (propertyId) => {
+          return EntityDataModelApi.getPropertyType(propertyId);
+        }).then((propertyTypes) => {
+          return propertyTypes;
+        });
       });
   }
 
@@ -270,7 +250,7 @@ class Form extends React.Component {
     );
 
     const formattedValues = {};
-    this.state.propertyTypes.forEach((propertyType) => {
+    this.state.bhrPropertyTypes.forEach((propertyType) => {
       const value = formInputs[propertyType.type.name];
       let formattedValue;
       formattedValue = Array.isArray(value) ? value : [value];
@@ -341,7 +321,7 @@ class Form extends React.Component {
     );
 
     const details = {};
-    this.state.propertyTypes.forEach((propertyType) => {
+    this.state.bhrPropertyTypes.forEach((propertyType) => {
       const value = formInputs[propertyType.type.name];
       let formattedValue;
       if (value !== null && value !== undefined) {
