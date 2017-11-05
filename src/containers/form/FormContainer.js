@@ -432,7 +432,8 @@ class Form extends React.Component {
   }
 
   isInReview = () => {
-    const page = window.location.hash.substr(2);
+    const page = parseInt(window.location.hash.substr(2));
+    console.log('isinreview page, maxpage:', page, this.state.maxPage);
     if (page && page === this.state.maxPage) return true;
     return false;
   }

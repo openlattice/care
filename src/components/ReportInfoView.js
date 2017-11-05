@@ -285,7 +285,6 @@ class ReportInfoView extends React.Component {
                 disabled={isInReview()} />
           </Col>
         </PaddedRow>
-
         {
           !isInReview()
             ? <FormNav
