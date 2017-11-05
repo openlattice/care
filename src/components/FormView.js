@@ -55,9 +55,11 @@ function FormView({
 
   const getProgress = () => {
     const page = window.location.hash.substr(2);
-    const num = Math.ceil((page - 1) / ((maxPage - 1) * 100));
-    const percentage = `${num.toString()}%`;
+    console.log('page:', page);
 
+    const num = Math.ceil(((page - 1) / (maxPage - 1)) * 100);
+    const percentage = `${num.toString()}%`;
+    console.log('num:', num);
     return num === 0 ? { num: 5, percentage } : { num, percentage };
   };
 
