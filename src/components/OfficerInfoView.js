@@ -9,7 +9,7 @@ import { FormControl, Col, FormGroup } from 'react-bootstrap';
 import FormNav from './FormNav';
 import { PaddedRow, TitleLabel, InlineCheckbox, SectionHeader, ErrorMessage } from '../shared/Layout';
 import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
-import { bootstrapValidation, validateOnInput, validateRequiredInput } from '../shared/Validation';
+import { bootstrapValidation, validateRequiredInput } from '../shared/Validation';
 
 const REQUIRED_FIELDS = ['officerName'];
 

@@ -11,7 +11,7 @@ import TimePicker from 'react-bootstrap-time-picker';
 import FormNav from './FormNav';
 import { TitleLabel, InlineRadio, PaddedRow, SectionHeader, ErrorMessage } from '../shared/Layout';
 import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
-import { bootstrapValidation, validateOnInput, validateRequiredInput } from '../shared/Validation';
+import { bootstrapValidation, validateRequiredInput } from '../shared/Validation';
 
 
 const REQUIRED_FIELDS = ['complaintNumber'];
