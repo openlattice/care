@@ -104,15 +104,17 @@ class OfficerInfoView extends React.Component {
 
         <PaddedRow>
           <Col lg={6}>
-            <TitleLabel>34. Seq ID</TitleLabel>
-            <FormControl
-                data-section={section}
-                name="officerSeqID"
-                value={input.officerSeqID}
-                onChange={(e) => {
-                  handleTextInput(e, this, 'number', REQUIRED_FIELDS);
-                }}
-                disabled={isInReview()} />
+            <FormGroup validationState={bootstrapValidation(this, 'officerSeqID')}>
+              <TitleLabel>34. Seq ID</TitleLabel>
+              <FormControl
+                  data-section={section}
+                  name="officerSeqID"
+                  value={input.officerSeqID}
+                  onChange={(e) => {
+                    handleTextInput(e, this, 'number', REQUIRED_FIELDS);
+                  }}
+                  disabled={isInReview()} />
+            </FormGroup>
           </Col>
           <Col lg={6}>
             <TitleLabel>35. Officer Injuries</TitleLabel>
