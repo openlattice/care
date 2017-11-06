@@ -17,7 +17,7 @@ export default function devWebpackConfig(env :Object) {
 
   const baseConfig :Object = baseWebpackConfig(env);
 
-  const DEV_SERVER_PORT = 9100;
+  const DEV_SERVER_PORT = 9000;
 
   const entry = [
     APP_PATHS.ABS.APP_ENTRY
