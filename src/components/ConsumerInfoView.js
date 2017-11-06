@@ -33,6 +33,7 @@ class ConsumerInfoView extends React.Component {
       firstNameValid: true,
       lastNameValid: true,
       identificationValid: true,
+      ageValid: true,
       sectionValid: false,
       didClickNav: false
     };

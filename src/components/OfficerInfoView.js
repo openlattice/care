@@ -22,6 +22,7 @@ class OfficerInfoView extends React.Component {
       sectionFormatErrors: [],
       sectionRequiredErrors: [FORM_ERRORS.IS_REQUIRED],
       officerNameValid: true,
+      officerSeqIDValid: true,
       sectionValid: false,
       didClickNav: false
     };
