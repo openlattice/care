@@ -9,7 +9,7 @@ import OrganizationButton from '../app/OrganizationButton';
 
 import * as RoutePaths from '../../core/router/RoutePaths';
 
-const APP_ID = 'b2f90999-6f1f-44d1-9e75-8dc2c9bf6e8d';
+const APP_NAME = 'bhr';
 
 const FORM_CONFIG_TYPE = 'app.bhr';
 const PERSON_CONFIG_TYPE = 'app.people';
@@ -115,12 +115,11 @@ class Form extends React.Component {
   }
 
   componentDidMount() {
-    this.getConfigurations();
     this.getApp();
   }
 
-  getConfigurations = () => {
-    AppApi.getConfigurations(APP_ID).then((configurations) => {
+  getConfigurations = (appId) => {
+    AppApi.getConfigurations(appId).then((configurations) => {
       const defaultConfig = configurations[0];
       const selectedOrganizationId = (configurations.length) ? defaultConfig.organization.id : '';
       this.setState({ configurations, selectedOrganizationId });
@@ -128,7 +127,8 @@ class Form extends React.Component {
   }
 
   getApp = () => {
-    AppApi.getApp(APP_ID).then((app) => {
+    AppApi.getAppByName(APP_NAME).then((app) => {
+      this.getConfigurations(app.id);
       AppApi.getAppTypeIds(app.appTypeIds).then((appTypes) => {
         Object.values(appTypes).forEach((appType) => {
           const { type, entityTypeId } = appType;
