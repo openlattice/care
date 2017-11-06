@@ -79,13 +79,24 @@ class ComplainantInfoView extends React.Component {
       isInReview
     } = this.props;
 
+    const {
+      complainantNameValid,
+      didClickNav
+    } = this.state;
+
     return (
       <div>
         { !isInReview() ? <SectionHeader>Complainant</SectionHeader> : null}
 
         <PaddedRow>
           <Col lg={12}>
-            <FormGroup validationState={bootstrapValidation(this, 'complainantName', true)}>
+            <FormGroup
+                validationState={bootstrapValidation(
+                  input.complainantName,
+                  complainantNameValid,
+                  true,
+                  didClickNav
+                  )}>
               <TitleLabel>28. Complainant Name (Last, First, MI)*</TitleLabel>
               <FormControl
                   data-section={section}

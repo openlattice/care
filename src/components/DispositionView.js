@@ -98,6 +98,12 @@ class DispositionView extends React.Component {
       handlePageChange
     } = this.props;
 
+    const {
+      dispositionValid,
+      incidentNarrativeValid,
+      didClickNav
+    } = this.state;
+
     return (
       <div>
         { !isInReview() ? <SectionHeader>Disposition</SectionHeader> : null}
@@ -105,7 +111,13 @@ class DispositionView extends React.Component {
         <PaddedRow>
           <Col lg={12}>
             <TitleLabel>29. Disposition*</TitleLabel>
-            <FormGroup validationState={bootstrapValidation(this, 'disposition', true)}>
+            <FormGroup
+                validationState={bootstrapValidation(
+                  input.disposition,
+                  dispositionValid,
+                  true,
+                  didClickNav
+                  )}>
               <InlineCheckbox
                   inline
                   data-section={section}
@@ -357,7 +369,13 @@ class DispositionView extends React.Component {
 
         <PaddedRow>
           <Col lg={12}>
-            <FormGroup validationState={bootstrapValidation(this, 'incidentNarrative', true)}>
+            <FormGroup
+                validationState={bootstrapValidation(
+                  input.incidentNarrative,
+                  incidentNarrativeValid,
+                  true,
+                  didClickNav
+                  )}>
               <TitleLabel>
                 {
                   `32. Narrative of Incident, to include: Results of investigation, basis for 

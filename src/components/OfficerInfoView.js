@@ -84,13 +84,25 @@ class OfficerInfoView extends React.Component {
       handlePageChange
     } = this.props;
 
+    const {
+      officerNameValid,
+      officerSeqIDValid,
+      didClickNav
+    } = this.state;
+
     return (
       <div>
         { !isInReview() ? <SectionHeader>Officer</SectionHeader> : null }
 
         <PaddedRow>
           <Col lg={12}>
-            <FormGroup validationState={bootstrapValidation(this, 'officerName', true)}>
+            <FormGroup
+                validationState={bootstrapValidation(
+                  input.officerName,
+                  officerNameValid,
+                  true,
+                  didClickNav
+                  )}>
               <TitleLabel>33. Officer Name*</TitleLabel>
               <FormControl
                   data-section={section}
@@ -106,7 +118,12 @@ class OfficerInfoView extends React.Component {
 
         <PaddedRow>
           <Col lg={6}>
-            <FormGroup validationState={bootstrapValidation(this, 'officerSeqID')}>
+            <FormGroup
+                validationState={bootstrapValidation(
+                  input.officerSeqID,
+                  officerSeqIDValid,
+                  false,
+                  didClickNav)}>
               <TitleLabel>34. Seq ID</TitleLabel>
               <FormControl
                   data-section={section}

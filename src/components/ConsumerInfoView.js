@@ -131,13 +131,26 @@ class ConsumerInfoView extends React.Component {
       consumerIsSelected
     } = this.props;
 
+    const {
+      didClickNav,
+      firstNameValid,
+      lastNameValid,
+      identificationValid,
+      ageValid,
+    } = this.state;
+
     return (
       <div>
         { !isInReview() ? <SectionHeader>Consumer</SectionHeader> : null}
 
         <PaddedRow>
           <Col lg={6}>
-            <FormGroup validationState={bootstrapValidation(this, 'lastName', true)}>
+            <FormGroup
+                validationState={bootstrapValidation(
+                  input.lastName,
+                  lastNameValid,
+                  true,
+                  didClickNav)}>
               <TitleLabel>12. Last Name*</TitleLabel>
               <FormControl
                   data-section={section}
@@ -150,7 +163,12 @@ class ConsumerInfoView extends React.Component {
             </FormGroup>
           </Col>
           <Col lg={6}>
-            <FormGroup validationState={bootstrapValidation(this, 'firstName', true)}>
+            <FormGroup
+                validationState={bootstrapValidation(
+                  input.firstName,
+                  firstNameValid,
+                  true,
+                  didClickNav)}>
               <TitleLabel>First Name*</TitleLabel>
               <FormControl
                   data-section={section}
@@ -177,7 +195,13 @@ class ConsumerInfoView extends React.Component {
                 disabled={consumerIsSelected || isInReview()} />
           </Col>
           <Col lg={6}>
-            <FormGroup validationState={bootstrapValidation(this, 'identification', true)}>
+            <FormGroup
+                validationState={bootstrapValidation(
+                  input.identification,
+                  identificationValid,
+                  true,
+                  didClickNav
+                  )}>
               <TitleLabel>13. Consumer Identification*</TitleLabel>
               <FormControl
                   data-section={section}
@@ -294,7 +318,7 @@ class ConsumerInfoView extends React.Component {
 
         <PaddedRow>
           <Col lg={6}>
-            <FormGroup validationState={bootstrapValidation(this, 'age')}>
+            <FormGroup validationState={bootstrapValidation(input.age, ageValid, false, didClickNav)}>
               <TitleLabel>Age</TitleLabel>
               <FormControl
                   data-section={section}

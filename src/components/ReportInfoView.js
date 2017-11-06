@@ -101,6 +101,11 @@ class ReportInfoView extends React.Component {
       handlePageChange
     } = this.props;
 
+    const {
+      complaintNumberValid,
+      didClickNav
+    } = this.state;
+
     return (
       <div>
         { !isInReview() ? <SectionHeader>Report Info</SectionHeader> : null}
@@ -117,7 +122,13 @@ class ReportInfoView extends React.Component {
                 disabled={isInReview()} />
           </Col>
           <Col lg={6}>
-            <FormGroup validationState={bootstrapValidation(this, 'complaintNumber', true)}>
+            <FormGroup
+                validationState={bootstrapValidation(
+                  input.complaintNumber,
+                  complaintNumberValid,
+                  true,
+                  didClickNav
+                  )}>
               <TitleLabel>2. Complaint Number*</TitleLabel>
               <FormControl
                   data-section={section}
@@ -160,7 +171,7 @@ class ReportInfoView extends React.Component {
                 name="incident"
                 value={input.incident}
                 onChange={(e) => {
-                handleTextInput(e, this, 'string', REQUIRED_FIELDS);
+                  handleTextInput(e, this, 'string', REQUIRED_FIELDS);
                 }}
                 disabled={isInReview()} />
           </Col>

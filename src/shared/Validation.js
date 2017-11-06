@@ -1,20 +1,17 @@
 import { FORM_ERRORS } from './Consts';
 
-// Will be used for bootstrap input components. If error, input will show in red.
-export const bootstrapValidation = (component, name, required) => {
-  const inputValid = component.state[`${name}Valid`];
-  const input = component.props.input[name];
-
+// Used for bootstrap input components. If error, input will show in red.
+export const bootstrapValidation = (input, valid, required, didClickNav) => {
   // If input is required, show error ONLY after user has tried to navigate to next/prev section
-  if (required && input.length < 1 && component.state.didClickNav) return 'error';
+  if (required && input.length < 1 && didClickNav) return 'error';
 
   // Show error if there is input and it is invalid
-  if (input && input.length && !inputValid) return 'error';
+  if (input && input.length && !valid) return 'error';
 
   return null;
 };
 
-// Will be called in handleTextInput fn
+// Called in handleTextInput fn
 export const validateOnInput = (component, input, name, fieldType, requiredFields) => {
   const validStateKey = `${name}Valid`;
   let inputValid = component.state[validStateKey];
@@ -49,7 +46,7 @@ export const validateOnInput = (component, input, name, fieldType, requiredField
   });
 };
 
-// Will be called in handlePageChange fn
+// Called in handlePageChange fn
 export const validateRequiredInput = (component, requiredFields, cb) => {
   let sectionRequiredErrors = component.state.sectionRequiredErrors.slice();
   let sectionValid = component.state.sectionValid;
