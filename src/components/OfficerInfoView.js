@@ -47,12 +47,31 @@ class OfficerInfoView extends React.Component {
   }
 
   handlePageChange = (path) => {
-    this.setState({ didClickNav: true });
-    validateRequiredInput(this, REQUIRED_FIELDS, () => {
-      if (this.state.sectionValid) {
-        this.props.handlePageChange(path);
+    let requiredErrors = this.state.sectionRequiredErrors.slice();
+    const areRequiredInputsValid = validateRequiredInput(
+      this.props.input,
+      REQUIRED_FIELDS
+    );
+
+    if (areRequiredInputsValid) {
+      if (requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED) !== -1) {
+        requiredErrors.splice(requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED));
       }
+    }
+    else {
+      if (requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED) === -1) {
+        requiredErrors.push(FORM_ERRORS.IS_REQUIRED);
+      }
+    }
+
+    this.setState({
+      didClickNav: true,
+      sectionRequiredErrors: requiredErrors
     });
+
+    if (requiredErrors.length < 1 && this.state.sectionFormatErrors.length < 1) {
+      this.props.handlePageChange(path);        
+    }
   }
 
   setInputErrors = (name, inputValid, sectionFormatErrors) => {

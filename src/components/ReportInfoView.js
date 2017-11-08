@@ -63,7 +63,6 @@ class ReportInfoView extends React.Component {
     this.setState({ didClickNav: true });
   }
 
-// if no format or section errors, navigate.
   handlePageChange = (path) => {
     let requiredErrors = this.state.sectionRequiredErrors.slice();
     const areRequiredInputsValid = validateRequiredInput(
