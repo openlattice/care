@@ -10,7 +10,7 @@ import { EntityDataModelApi, DataApi, SearchApi, SyncApi } from 'lattice';
 import FormView from '../../components/FormView';
 import ConfirmationModal from '../../components/ConfirmationModalView';
 import { ENTITY_SET_NAMES, PERSON, CONSUMER_STATE, STRING_ID_FQN } from '../../shared/Consts';
-import { bootstrapValidation, validateOnInput } from '../../shared/Validation';
+import { validateOnInput } from '../../shared/Validation';
 
 
 class Form extends React.Component {
@@ -115,7 +115,6 @@ class Form extends React.Component {
   componentDidMount() {
     EntityDataModelApi.getEntitySetId(ENTITY_SET_NAMES.FORM)
       .then((id) => {
-        console.log('get ES id:', id);
         this.setState({ entitySetId: id });
         EntityDataModelApi.getEntitySet(id)
           .then((entitySet) => {
@@ -143,16 +142,12 @@ class Form extends React.Component {
       searchTerm
     };
     // TODO: wait to execute until getPersonEntitySet is complete
-    SearchApi.searchEntitySetData(this.state.personEntitySetId, searchOptions)
-      .then((res) => {
-        console.log('search res:', res);
-      });
+    SearchApi.searchEntitySetData(this.state.personEntitySetId, searchOptions);
   }
 
   getPersonEntitySet = () => {
     EntityDataModelApi.getEntitySetId(ENTITY_SET_NAMES.PEOPLE)
       .then((personEntitySetId) => {
-        console.log('get person entity set id:', personEntitySetId);
         this.setState({ personEntitySetId });
         EntityDataModelApi.getEntitySet(personEntitySetId)
           .then((personEntitySet) => {
@@ -175,7 +170,6 @@ class Form extends React.Component {
   getAppearsInEntitySet = () => {
     EntityDataModelApi.getEntitySetId(ENTITY_SET_NAMES.APPEARS_IN)
       .then((appearsInEntitySetId) => {
-        console.log('get appears in entity set id:', appearsInEntitySetId);
         this.setState({ appearsInEntitySetId });
         EntityDataModelApi.getEntitySet(appearsInEntitySetId)
           .then((appearsInEntitySet) => {
@@ -187,7 +181,6 @@ class Form extends React.Component {
                   return EntityDataModelApi.getPropertyType(propertyId);
                 })
                   .then((appearsInPropertyTypes) => {
-                    console.log('appears in property types:', appearsInPropertyTypes);
                     this.setState({ appearsInPropertyTypes });
                   });
               });
@@ -298,7 +291,6 @@ class Form extends React.Component {
     };
 
     const stringIdPropId = this.state.appearsInPropertyTypes.filter((propertyType) => {
-      console.log('appears in property type:', propertyType);
       const fqn = `${propertyType.type.namespace}.${propertyType.type.name}`;
       return (fqn === STRING_ID_FQN);
     })[0].id;
@@ -375,7 +367,6 @@ class Form extends React.Component {
 
   getBulkData = () => {
     const { entitySetId, personEntitySetId, appearsInEntitySetId } = this.state;
-    console.log('entity set id:', entitySetId);
     return SyncApi.getCurrentSyncId(entitySetId)
       .then((formSyncId) => {
         const formEntity = this.getFormEntity(formSyncId);
@@ -410,16 +401,13 @@ class Form extends React.Component {
   handleSubmit = (e) => {
     e.preventDefault();
     this.getBulkData().then((bulkData) => {
-      console.log('bulk data:', bulkData);
       DataApi.createEntityAndAssociationData(bulkData).then(() => {
-        console.log('success!');
         this.setState({
           submitSuccess: true,
           submitFailure: false
         });
       })
-      .catch((err) => {
-        console.log('err: ', err);
+      .catch(() => {
         this.setState({
           submitSuccess: false,
           submitFailure: true
@@ -433,7 +421,7 @@ class Form extends React.Component {
   }
 
   isInReview = () => {
-    const page = parseInt(window.location.hash.substr(2));
+    const page = parseInt(window.location.hash.substr(2, 10));
     if (page && page === this.state.maxPage) return true;
     return false;
   }

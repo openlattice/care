@@ -92,7 +92,7 @@ class ConsumerInfoView extends React.Component {
   }
 
   handlePageChange = (path) => {
-    let requiredErrors = this.state.sectionRequiredErrors.slice();
+    const requiredErrors = this.state.sectionRequiredErrors.slice();
     const areRequiredInputsValid = validateRequiredInput(
       this.props.input,
       REQUIRED_FIELDS
@@ -103,10 +103,8 @@ class ConsumerInfoView extends React.Component {
         requiredErrors.splice(requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED));
       }
     }
-    else {
-      if (requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED) === -1) {
-        requiredErrors.push(FORM_ERRORS.IS_REQUIRED);
-      }
+    else if (requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED) === -1) {
+      requiredErrors.push(FORM_ERRORS.IS_REQUIRED);
     }
 
     this.setState({
@@ -115,7 +113,7 @@ class ConsumerInfoView extends React.Component {
     });
 
     if (requiredErrors.length < 1 && this.state.sectionFormatErrors.length < 1) {
-      this.props.handlePageChange(path);        
+      this.props.handlePageChange(path);
     }
   }
 
@@ -123,7 +121,7 @@ class ConsumerInfoView extends React.Component {
     this.setState({
       [`${name}Valid`]: inputValid,
       sectionFormatErrors
-    })
+    });
   }
 
   renderErrors = () => {
@@ -154,7 +152,6 @@ class ConsumerInfoView extends React.Component {
       handleCheckboxChange,
       input,
       isInReview,
-      handlePageChange,
       consumerIsSelected
     } = this.props;
 
@@ -165,8 +162,7 @@ class ConsumerInfoView extends React.Component {
       identificationValid,
       ageValid,
       phoneValid,
-      sectionFormatErrors,
-      sectionRequiredErrors
+      sectionFormatErrors
     } = this.state;
 
     return (
@@ -188,7 +184,7 @@ class ConsumerInfoView extends React.Component {
                   name="lastName"
                   value={input.lastName}
                   onChange={(e) => {
-                      handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
+                    handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                   }}
                   disabled={consumerIsSelected || isInReview()} />
             </FormGroup>
@@ -206,7 +202,7 @@ class ConsumerInfoView extends React.Component {
                   name="firstName"
                   value={input.firstName}
                   onChange={(e) => {
-                      handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
+                    handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                   }}
                   disabled={consumerIsSelected || isInReview()} />
             </FormGroup>
@@ -221,7 +217,7 @@ class ConsumerInfoView extends React.Component {
                 name="middleName"
                 value={input.middleName}
                 onChange={(e) => {
-                      handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
+                  handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                 }}
                 disabled={consumerIsSelected || isInReview()} />
           </Col>
@@ -254,7 +250,7 @@ class ConsumerInfoView extends React.Component {
                 name="address"
                 value={input.address}
                 onChange={(e) => {
-                      handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
+                  handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                 }}
                 disabled={isInReview()} />
           </Col>
@@ -262,7 +258,8 @@ class ConsumerInfoView extends React.Component {
 
         <PaddedRow>
           <Col lg={6}>
-            <FormGroup validationState={bootstrapValidation(
+            <FormGroup
+                validationState={bootstrapValidation(
                   input.phone,
                   phoneValid,
                   false,

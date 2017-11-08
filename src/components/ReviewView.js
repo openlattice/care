@@ -143,6 +143,7 @@ ReviewView.propTypes = {
   handleSingleSelection: PropTypes.func.isRequired,
   isInReview: PropTypes.func.isRequired,
   consumerIsSelected: PropTypes.bool.isRequired,
+  handlePageChange: PropTypes.func.isRequired,
   reportInfo: PropTypes.shape({
     dispatchReason: PropTypes.string.isRequired,
     complaintNumber: PropTypes.string.isRequired,

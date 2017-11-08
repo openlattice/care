@@ -22,10 +22,10 @@ export const validateOnInput = (
   setErrorsFn
 ) => {
   let inputValid = true;
-  let formatErrors = sectionFormatErrors.slice();
+  const formatErrors = sectionFormatErrors.slice();
 
-  switch(fieldType) {
-    case 'number':
+  switch (fieldType) {
+    case 'number': {
       const idx = formatErrors.indexOf(FORM_ERRORS.INVALID_FORMAT);
       if (input && !validator.isInt(input)) {
         inputValid = false;
@@ -40,6 +40,7 @@ export const validateOnInput = (
         }
       }
       break;
+    }
     default:
       break;
   }
@@ -49,13 +50,15 @@ export const validateOnInput = (
 
 // Called in handlePageChange fn
 export const validateRequiredInput = (input, requiredFields) => {
-  for (var i in requiredFields) {
-    const field = requiredFields[i];
-    let value = input[field];
-    if (value.length < 1) {
+  let i;
+  for (i in requiredFields) {
+    // const field = requiredFields[i];
+    // let value = input[field];
+    // if (value.length < 1) {
+    if (input[requiredFields[i]].length < 1) {
       return false;
       break;
     }
   }
   return true;
-}
+};

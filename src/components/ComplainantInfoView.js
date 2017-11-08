@@ -44,7 +44,7 @@ class ComplainantInfoView extends React.Component {
   }
 
   handlePageChange = (path) => {
-    let requiredErrors = this.state.sectionRequiredErrors.slice();
+    const requiredErrors = this.state.sectionRequiredErrors.slice();
     const areRequiredInputsValid = validateRequiredInput(
       this.props.input,
       REQUIRED_FIELDS
@@ -55,10 +55,8 @@ class ComplainantInfoView extends React.Component {
         requiredErrors.splice(requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED));
       }
     }
-    else {
-      if (requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED) === -1) {
-        requiredErrors.push(FORM_ERRORS.IS_REQUIRED);
-      }
+    else if (requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED) === -1) {
+      requiredErrors.push(FORM_ERRORS.IS_REQUIRED);
     }
 
     this.setState({
@@ -67,7 +65,7 @@ class ComplainantInfoView extends React.Component {
     });
 
     if (requiredErrors.length < 1 && this.state.sectionFormatErrors.length < 1) {
-      this.props.handlePageChange(path);        
+      this.props.handlePageChange(path);
     }
   }
 
@@ -75,7 +73,7 @@ class ComplainantInfoView extends React.Component {
     this.setState({
       [`${name}Valid`]: inputValid,
       sectionFormatErrors
-    })
+    });
   }
 
   renderErrors = () => {
@@ -108,8 +106,7 @@ class ComplainantInfoView extends React.Component {
     const {
       complainantNameValid,
       didClickNav,
-      sectionFormatErrors,
-      sectionRequiredErrors
+      sectionFormatErrors
     } = this.state;
 
     return (
