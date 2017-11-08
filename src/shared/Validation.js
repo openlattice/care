@@ -2,7 +2,7 @@ import { FORM_ERRORS } from './Consts';
 
 // Used for bootstrap input components. If error, input will show in red.
 export const bootstrapValidation = (input, valid, required, didClickNav) => {
-  // If input is required, show error ONLY after user has tried to navigate to next/prev section
+  // If input is required, show error ONLY after user has tried to change page
   if (required && input.length < 1 && didClickNav) return 'error';
 
   // Show error if there is input and it is invalid
@@ -12,7 +12,13 @@ export const bootstrapValidation = (input, valid, required, didClickNav) => {
 };
 
 // Called in handleTextInput fn
-export const validateOnInput = (name, input, fieldType, sectionFormatErrors, setErrorsFn) => {
+export const validateOnInput = (
+  name,
+  input,
+  fieldType,
+  sectionFormatErrors,
+  setErrorsFn
+) => {
   let inputValid = true;
   let formatErrors = sectionFormatErrors.slice();
 
@@ -40,31 +46,14 @@ export const validateOnInput = (name, input, fieldType, sectionFormatErrors, set
 };
 
 // Called in handlePageChange fn
-export const validateRequiredInput = (input, requiredFields, sectionRequiredErrors, setErrorsFn, path) => {
-  let requiredErrors = sectionRequiredErrors.slice();
-  let sectionValid = true;
-
+export const validateRequiredInput = (input, requiredFields) => {
   for (var i in requiredFields) {
-    const requiredErrorIdx = requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED);
     const field = requiredFields[i];
     let value = input[field];
-    console.log('value:', value);
     if (value.length < 1) {
-      console.log('no length');
-      sectionValid = false;
-      if (requiredErrorIdx === -1) {
-        requiredErrors.push(FORM_ERRORS.IS_REQUIRED);
-      }
+      return false;
       break;
     }
-    else {
-      console.log('there is length');
-      sectionValid = true;
-      if (requiredErrorIdx !== -1) {
-        requiredErrors.splice(requiredErrorIdx);
-      }
-    }
   }
-
-  setErrorsFn(requiredErrors, sectionValid, path);
-};
+  return true;
+}

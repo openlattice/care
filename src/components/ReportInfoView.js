@@ -24,6 +24,7 @@ class ReportInfoView extends React.Component {
     this.state = {
       sectionFormatErrors: [],
       sectionRequiredErrors: [FORM_ERRORS.IS_REQUIRED],
+      sectionErrors: [],
       complaintNumberValid: true,
       cadNumberValid: true,
       dateOccurredValid: true,
@@ -62,9 +63,33 @@ class ReportInfoView extends React.Component {
     this.setState({ didClickNav: true });
   }
 
+// if no format or section errors, navigate.
   handlePageChange = (path) => {
-    this.setState({ didClickNav: true });
-    validateRequiredInput(this.props.input, REQUIRED_FIELDS, this.state.sectionRequiredErrors, this.setRequiredErrors, path);
+    let requiredErrors = this.state.sectionRequiredErrors.slice();
+    const areRequiredInputsValid = validateRequiredInput(
+      this.props.input,
+      REQUIRED_FIELDS
+    );
+
+    if (areRequiredInputsValid) {
+      if (requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED) !== -1) {
+        requiredErrors.splice(requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED));
+      }
+    }
+    else {
+      if (requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED) === -1) {
+        requiredErrors.push(FORM_ERRORS.IS_REQUIRED);
+      }
+    }
+
+    this.setState({
+      didClickNav: true,
+      sectionRequiredErrors: requiredErrors
+    });
+
+    if (requiredErrors.length < 1 && this.state.sectionFormatErrors.length < 1) {
+      this.props.handlePageChange(path);        
+    }
   }
 
   setInputErrors = (name, inputValid, sectionFormatErrors) => {
@@ -72,18 +97,6 @@ class ReportInfoView extends React.Component {
       [`${name}Valid`]: inputValid,
       sectionFormatErrors
     })
-  }
-
-  setRequiredErrors = (sectionRequiredErrors, sectionValid, path) => {
-    this.setState({
-      sectionRequiredErrors,
-      sectionValid
-    }, () => {
-     if (this.state.sectionValid) {
-       console.log('section is valiiiid');
-       this.props.handlePageChange(path);
-     }
-    });
   }
 
   renderErrors = () => {
