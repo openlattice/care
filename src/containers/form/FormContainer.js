@@ -129,7 +129,7 @@ class Form extends React.Component {
   getApp = () => {
     AppApi.getAppByName(APP_NAME).then((app) => {
       this.getConfigurations(app.id);
-      AppApi.getAppTypeIds(app.appTypeIds).then((appTypes) => {
+      AppApi.getAppTypesForAppTypeIds(app.appTypeIds).then((appTypes) => {
         Object.values(appTypes).forEach((appType) => {
           const { type, entityTypeId } = appType;
           const appTypeFqn = `${type.namespace}.${type.name}`;
