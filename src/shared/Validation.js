@@ -12,16 +12,13 @@ export const bootstrapValidation = (input, valid, required, didClickNav) => {
 };
 
 // Called in handleTextInput fn
-export const validateOnInput = (component, input, name, fieldType, requiredFields) => {
-  const validStateKey = `${name}Valid`;
-  let inputValid = component.state[validStateKey];
-  let sectionFormatErrors = component.state.sectionFormatErrors.slice();
-  let sectionRequiredErrors = component.state.sectionRequiredErrors.slice();
-
+export const validateOnInput = (name, input, fieldType, sectionFormatErrors, setErrorsFn) => {
+  let inputValid = true;
+  sectionFormatErrors = sectionFormatErrors.slice();
+  
   switch(fieldType) {
     case 'number':
       const idx = sectionFormatErrors.indexOf(FORM_ERRORS.INVALID_FORMAT);
-      // console.log('idx:', idx);
       if (input && isNaN(input)) {
         inputValid = false;
         if (idx === -1) {
@@ -39,11 +36,7 @@ export const validateOnInput = (component, input, name, fieldType, requiredField
       break;
   }
 
-  component.setState({
-    sectionFormatErrors,
-    sectionRequiredErrors,
-    [validStateKey]: inputValid
-  });
+  setErrorsFn(name, inputValid, sectionFormatErrors);
 };
 
 // Called in handlePageChange fn
