@@ -55,7 +55,7 @@ class OfficerInfoView extends React.Component {
     });
   }
 
-  setErrors = (name, inputValid, sectionFormatErrors) => {
+  setInputErrors = (name, inputValid, sectionFormatErrors) => {
     this.setState({
       [`${name}Valid`]: inputValid,
       sectionFormatErrors
@@ -118,7 +118,7 @@ class OfficerInfoView extends React.Component {
                   name="officerName"
                   value={input.officerName}
                   onChange={(e) => {
-                    handleTextInput(e, 'string', sectionFormatErrors, this.setErrors);
+                    handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                   }}
                   disabled={isInReview()} />
             </FormGroup>
@@ -139,7 +139,7 @@ class OfficerInfoView extends React.Component {
                   name="officerSeqID"
                   value={input.officerSeqID}
                   onChange={(e) => {
-                    handleTextInput(e, 'number', sectionFormatErrors, this.setErrors);
+                    handleTextInput(e, 'number', sectionFormatErrors, this.setInputErrors);
                   }}
                   disabled={isInReview()} />
             </FormGroup>
@@ -151,7 +151,7 @@ class OfficerInfoView extends React.Component {
                 name="officerInjuries"
                 value={input.officerInjuries}
                 onChange={(e) => {
-                  handleTextInput(e, 'string', sectionFormatErrors, this.setErrors);
+                  handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                 }}
                 disabled={isInReview()} />
           </Col>

@@ -67,7 +67,7 @@ class DispositionView extends React.Component {
     });
   }
 
-  setErrors = (name, inputValid, sectionFormatErrors) => {
+  setInputErrors = (name, inputValid, sectionFormatErrors) => {
     this.setState({
       [`${name}Valid`]: inputValid,
       sectionFormatErrors
@@ -233,7 +233,7 @@ class DispositionView extends React.Component {
                 name="hospital"
                 value={input.hospital}
                 onChange={(e) => {
-                  handleTextInput(e, 'string', sectionFormatErrors, this.setErrors);
+                  handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                 }}
                 disabled={isInReview()} />
           </Col>
@@ -304,7 +304,7 @@ class DispositionView extends React.Component {
                     name="deescalationTechniquesOther"
                     value={input.deescalationTechniquesOther}
                     onChange={(e) => {
-                      handleTextInput(e, 'string', sectionFormatErrors, this.setErrors);
+                      handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                     }}
                     disabled={isInReview()} />
               </OtherWrapper>
@@ -397,7 +397,7 @@ class DispositionView extends React.Component {
                   componentClass="textarea"
                   value={input.incidentNarrative}
                   onChange={(e) => {
-                    handleTextInput(e, 'string', sectionFormatErrors, this.setErrors);
+                    handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                   }}
                   disabled={isInReview()} />
             </FormGroup>

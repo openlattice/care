@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import { FormGroup, FormControl, Col } from 'react-bootstrap';
 import DatePicker from 'react-bootstrap-date-picker';
 import TimePicker from 'react-bootstrap-time-picker';
+import Promise from 'bluebird';
 
 import FormNav from './FormNav';
 import { TitleLabel, InlineRadio, PaddedRow, SectionHeader, ErrorMessage } from '../shared/Layout';
@@ -55,27 +56,35 @@ class ReportInfoView extends React.Component {
       timeReported: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired
     }).isRequired
-  };
+  }
 
   setDidClickNav = () => {
     this.setState({ didClickNav: true });
-  };
+  }
 
   handlePageChange = (path) => {
     this.setState({ didClickNav: true });
-    validateRequiredInput(this, REQUIRED_FIELDS, () => {
-      if (this.state.sectionValid) {
-        this.props.handlePageChange(path);
-      }
-    });
-  };
+    validateRequiredInput(this.props.input, REQUIRED_FIELDS, this.state.sectionRequiredErrors, this.setRequiredErrors, path);
+  }
 
-  setErrors = (name, inputValid, sectionFormatErrors) => {
+  setInputErrors = (name, inputValid, sectionFormatErrors) => {
     this.setState({
       [`${name}Valid`]: inputValid,
       sectionFormatErrors
     })
-  };
+  }
+
+  setRequiredErrors = (sectionRequiredErrors, sectionValid, path) => {
+    this.setState({
+      sectionRequiredErrors,
+      sectionValid
+    }, () => {
+     if (this.state.sectionValid) {
+       console.log('section is valiiiid');
+       this.props.handlePageChange(path);
+     }
+    });
+  }
 
   renderErrors = () => {
     const formatErrors = this.state.sectionFormatErrors.map((error) => {
@@ -94,7 +103,7 @@ class ReportInfoView extends React.Component {
         {requiredErrors}
       </div>
     );
-  };
+  }
 
   render() {
     const {
@@ -127,7 +136,7 @@ class ReportInfoView extends React.Component {
                 name="dispatchReason"
                 value={input.dispatchReason}
                 onChange={(e) => {
-                  handleTextInput(e, 'string', sectionFormatErrors, this.setErrors);
+                  handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                 }}
                 disabled={isInReview()} />
           </Col>
@@ -145,7 +154,7 @@ class ReportInfoView extends React.Component {
                   name="complaintNumber"
                   value={input.complaintNumber}
                   onChange={(e) => {
-                    handleTextInput(e, 'number', sectionFormatErrors, this.setErrors);
+                    handleTextInput(e, 'number', sectionFormatErrors, this.setInputErrors);
                   }}
                   disabled={isInReview()} />
             </FormGroup>
@@ -181,7 +190,7 @@ class ReportInfoView extends React.Component {
                 name="incident"
                 value={input.incident}
                 onChange={(e) => {
-                  handleTextInput(e, 'string', sectionFormatErrors, this.setErrors);
+                  handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                 }}
                 disabled={isInReview()} />
           </Col>
@@ -195,7 +204,7 @@ class ReportInfoView extends React.Component {
                 name="locationOfIncident"
                 value={input.locationOfIncident}
                 onChange={(e) => {
-                  handleTextInput(e, 'string', sectionFormatErrors, this.setErrors);
+                  handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                 }}
                 disabled={isInReview()} />
           </Col>
@@ -209,7 +218,7 @@ class ReportInfoView extends React.Component {
                 name="unit"
                 value={input.unit}
                 onChange={(e) => {
-                  handleTextInput(e, 'string', sectionFormatErrors, this.setErrors);
+                  handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                 }}
                 disabled={isInReview()} />
           </Col>
@@ -220,7 +229,7 @@ class ReportInfoView extends React.Component {
                 name="postOfOccurrence"
                 value={input.postOfOccurrence}
                 onChange={(e) => {
-                  handleTextInput(e, 'string', sectionFormatErrors, this.setErrors);
+                  handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                 }}
                 disabled={isInReview()} />
           </Col>
@@ -235,7 +244,7 @@ class ReportInfoView extends React.Component {
                   name="cadNumber"
                   value={input.cadNumber}
                   onChange={(e) => {
-                    handleTextInput(e, 'number', sectionFormatErrors, this.setErrors);
+                    handleTextInput(e, 'number', sectionFormatErrors, this.setInputErrors);
                   }}
                   disabled={isInReview()} />
             </FormGroup>

@@ -52,7 +52,7 @@ class ComplainantInfoView extends React.Component {
     });
   }
 
-  setErrors = (name, inputValid, sectionFormatErrors) => {
+  setInputErrors = (name, inputValid, sectionFormatErrors) => {
     this.setState({
       [`${name}Valid`]: inputValid,
       sectionFormatErrors
@@ -112,7 +112,7 @@ class ComplainantInfoView extends React.Component {
                   name="complainantName"
                   value={input.complainantName}
                   onChange={(e) => {
-                    handleTextInput(e, 'string', sectionFormatErrors, this.setErrors);
+                    handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                   }}
                   disabled={isInReview()} />
             </FormGroup>
@@ -126,7 +126,7 @@ class ComplainantInfoView extends React.Component {
                 name="complainantAddress"
                 value={input.complainantAddress}
                 onChange={(e) => {
-                  handleTextInput(e, 'string', sectionFormatErrors, this.setErrors);
+                  handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                 }}
                 disabled={isInReview()} />
           </Col>
@@ -139,7 +139,7 @@ class ComplainantInfoView extends React.Component {
                 name="complainantConsumerRelationship"
                 value={input.complainantConsumerRelationship}
                 onChange={(e) => {
-                  handleTextInput(e, 'string', sectionFormatErrors, this.setErrors);
+                  handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                 }}
                 disabled={isInReview()} />
           </Col>
@@ -150,7 +150,7 @@ class ComplainantInfoView extends React.Component {
                 name="complainantPhone"
                 value={input.complainantPhone}
                 onChange={(e) => {
-                  handleTextInput(e, 'string', sectionFormatErrors, this.setErrors);
+                  handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                 }}
                 disabled={isInReview()} />
           </Col>

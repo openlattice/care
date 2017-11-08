@@ -99,7 +99,7 @@ class ConsumerInfoView extends React.Component {
     });
   }
 
-  setErrors = (name, inputValid, sectionFormatErrors) => {
+  setInputErrors = (name, inputValid, sectionFormatErrors) => {
     this.setState({
       [`${name}Valid`]: inputValid,
       sectionFormatErrors
@@ -167,7 +167,7 @@ class ConsumerInfoView extends React.Component {
                   name="lastName"
                   value={input.lastName}
                   onChange={(e) => {
-                      handleTextInput(e, 'string', sectionFormatErrors, this.setErrors);
+                      handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                   }}
                   disabled={consumerIsSelected || isInReview()} />
             </FormGroup>
@@ -185,7 +185,7 @@ class ConsumerInfoView extends React.Component {
                   name="firstName"
                   value={input.firstName}
                   onChange={(e) => {
-                      handleTextInput(e, 'string', sectionFormatErrors, this.setErrors);
+                      handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                   }}
                   disabled={consumerIsSelected || isInReview()} />
             </FormGroup>
@@ -200,7 +200,7 @@ class ConsumerInfoView extends React.Component {
                 name="middleName"
                 value={input.middleName}
                 onChange={(e) => {
-                      handleTextInput(e, 'string', sectionFormatErrors, this.setErrors);
+                      handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                 }}
                 disabled={consumerIsSelected || isInReview()} />
           </Col>
@@ -218,7 +218,7 @@ class ConsumerInfoView extends React.Component {
                   name="identification"
                   value={input.identification}
                   onChange={(e) => {
-                    handleTextInput(e, 'number', sectionFormatErrors, this.setErrors);
+                    handleTextInput(e, 'number', sectionFormatErrors, this.setInputErrors);
                   }}
                   disabled={consumerIsSelected || isInReview()} />
             </FormGroup>
@@ -233,7 +233,7 @@ class ConsumerInfoView extends React.Component {
                 name="address"
                 value={input.address}
                 onChange={(e) => {
-                      handleTextInput(e, 'string', sectionFormatErrors, this.setErrors);
+                      handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                 }}
                 disabled={isInReview()} />
           </Col>
@@ -247,7 +247,7 @@ class ConsumerInfoView extends React.Component {
                 name="phone"
                 value={input.phone}
                 onChange={(e) => {
-                      handleTextInput(e, 'string', sectionFormatErrors, this.setErrors);
+                      handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                 }}
                 disabled={isInReview()} />
           </Col>
@@ -335,7 +335,7 @@ class ConsumerInfoView extends React.Component {
                   name="age"
                   value={input.age}
                   onChange={(e) => {
-                    handleTextInput(e, 'number', sectionFormatErrors, this.setErrors);
+                    handleTextInput(e, 'number', sectionFormatErrors, this.setInputErrors);
                   }}
                   disabled={isInReview()} />
             </FormGroup>
@@ -383,7 +383,7 @@ class ConsumerInfoView extends React.Component {
                 name="homelessLocation"
                 value={input.homelessLocation}
                 onChange={(e) => {
-                  handleTextInput(e, 'string', sectionFormatErrors, this.setErrors);
+                  handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                 }}
                 disabled={isInReview()} />
           </Col>
@@ -439,7 +439,7 @@ class ConsumerInfoView extends React.Component {
                 name="drugType"
                 value={input.drugType}
                 onChange={(e) => {
-                  handleTextInput(e, 'string', sectionFormatErrors, this.setErrors);
+                  handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                 }}
                 disabled={isInReview()} />
           </Col>
@@ -607,7 +607,7 @@ class ConsumerInfoView extends React.Component {
                     name="selfDiagnosisOther"
                     value={input.selfDiagnosisOther}
                     onChange={(e) => {
-                      handleTextInput(e, 'string', sectionFormatErrors, this.setErrors);
+                      handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                     }}
                     disabled={isInReview()} />
               </OtherWrapper>
@@ -647,7 +647,7 @@ class ConsumerInfoView extends React.Component {
                 name="armedWeaponType"
                 value={input.armedWeaponType}
                 onChange={(e) => {
-                  handleTextInput(e, 'string', sectionFormatErrors, this.setErrors);
+                  handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                 }}
                 disabled={isInReview()} />
           </Col>
@@ -685,7 +685,7 @@ class ConsumerInfoView extends React.Component {
                 name="accessibleWeaponType"
                 value={input.accessibleWeaponType}
                 onChange={(e) => {
-                  handleTextInput(e, 'string', sectionFormatErrors, this.setErrors);
+                  handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                 }}
                 disabled={isInReview()} />
           </Col>
@@ -781,7 +781,7 @@ class ConsumerInfoView extends React.Component {
                     name="observedBehaviorsOther"
                     value={input.observedBehaviorsOther}
                     onChange={(e) => {
-                      handleTextInput(e, 'string', sectionFormatErrors, this.setErrors);
+                      handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                     }}
                     disabled={isInReview()} />
               </OtherWrapper>
@@ -871,7 +871,7 @@ class ConsumerInfoView extends React.Component {
                     name="emotionalStateOther"
                     value={input.emotionalStateOther}
                     onChange={(e) => {
-                      handleTextInput(e, 'string', sectionFormatErrors, this.setErrors);
+                      handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                     }}
                     disabled={isInReview()} />
               </OtherWrapper>
@@ -968,7 +968,7 @@ class ConsumerInfoView extends React.Component {
                     name="injuriesOther"
                     value={input.injuriesOther}
                     onChange={(e) => {
-                      handleTextInput(e, 'string', sectionFormatErrors, this.setErrors);
+                      handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                     }}
                     disabled={isInReview()} />
               </OtherWrapper>
@@ -1096,7 +1096,7 @@ class ConsumerInfoView extends React.Component {
                     name="suicideAttemptMethodOther"
                     value={input.suicideAttemptMethodOther}
                     onChange={(e) => {
-                      handleTextInput(e, 'string', sectionFormatErrors, this.setErrors);
+                      handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                     }}
                     disabled={isInReview()} />
               </OtherWrapper>

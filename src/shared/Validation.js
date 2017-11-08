@@ -14,21 +14,21 @@ export const bootstrapValidation = (input, valid, required, didClickNav) => {
 // Called in handleTextInput fn
 export const validateOnInput = (name, input, fieldType, sectionFormatErrors, setErrorsFn) => {
   let inputValid = true;
-  sectionFormatErrors = sectionFormatErrors.slice();
-  
+  let formatErrors = sectionFormatErrors.slice();
+
   switch(fieldType) {
     case 'number':
-      const idx = sectionFormatErrors.indexOf(FORM_ERRORS.INVALID_FORMAT);
+      const idx = formatErrors.indexOf(FORM_ERRORS.INVALID_FORMAT);
       if (input && isNaN(input)) {
         inputValid = false;
         if (idx === -1) {
-          sectionFormatErrors.push(FORM_ERRORS.INVALID_FORMAT);
+          formatErrors.push(FORM_ERRORS.INVALID_FORMAT);
         }
       }
       else {
         inputValid = true;
         if (idx !== -1) {
-          sectionFormatErrors.splice(idx);
+          formatErrors.splice(idx);
         }
       }
       break;
@@ -36,37 +36,35 @@ export const validateOnInput = (name, input, fieldType, sectionFormatErrors, set
       break;
   }
 
-  setErrorsFn(name, inputValid, sectionFormatErrors);
+  setErrorsFn(name, inputValid, formatErrors);
 };
 
 // Called in handlePageChange fn
-export const validateRequiredInput = (component, requiredFields, cb) => {
-  let sectionRequiredErrors = component.state.sectionRequiredErrors.slice();
-  let sectionValid = component.state.sectionValid;
+export const validateRequiredInput = (input, requiredFields, sectionRequiredErrors, setErrorsFn, path) => {
+  let requiredErrors = sectionRequiredErrors.slice();
+  let sectionValid = true;
 
   for (var i in requiredFields) {
-    const requiredErrorIdx = sectionRequiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED);
+    const requiredErrorIdx = requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED);
     const field = requiredFields[i];
-    let value = component.props.input[field];
+    let value = input[field];
+    console.log('value:', value);
     if (value.length < 1) {
+      console.log('no length');
       sectionValid = false;
       if (requiredErrorIdx === -1) {
-        sectionRequiredErrors.push(FORM_ERRORS.IS_REQUIRED);
+        requiredErrors.push(FORM_ERRORS.IS_REQUIRED);
       }
       break;
     }
     else {
+      console.log('there is length');
       sectionValid = true;
       if (requiredErrorIdx !== -1) {
-        sectionRequiredErrors.splice(requiredErrorIdx);
+        requiredErrors.splice(requiredErrorIdx);
       }
     }
   }
 
-  component.setState({
-    sectionValid,
-    sectionRequiredErrors
-  }, () => {
-    cb();
-  });
+  setErrorsFn(requiredErrors, sectionValid, path);
 };
