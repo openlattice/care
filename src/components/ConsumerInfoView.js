@@ -34,6 +34,7 @@ class ConsumerInfoView extends React.Component {
       lastNameValid: true,
       identificationValid: true,
       ageValid: true,
+      phoneValid: true,
       sectionValid: false,
       didClickNav: false
     };
@@ -163,6 +164,7 @@ class ConsumerInfoView extends React.Component {
       lastNameValid,
       identificationValid,
       ageValid,
+      phoneValid,
       sectionFormatErrors,
       sectionRequiredErrors
     } = this.state;
@@ -260,15 +262,22 @@ class ConsumerInfoView extends React.Component {
 
         <PaddedRow>
           <Col lg={6}>
-            <TitleLabel>Consumer Phone Number</TitleLabel>
-            <FormControl
-                data-section={section}
-                name="phone"
-                value={input.phone}
-                onChange={(e) => {
-                      handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
-                }}
-                disabled={isInReview()} />
+            <FormGroup validationState={bootstrapValidation(
+                  input.phone,
+                  phoneValid,
+                  false,
+                  didClickNav
+                  )}>
+              <TitleLabel>Consumer Phone Number</TitleLabel>
+              <FormControl
+                  data-section={section}
+                  name="phone"
+                  value={input.phone}
+                  onChange={(e) => {
+                    handleTextInput(e, 'phone', sectionFormatErrors, this.setInputErrors);
+                  }}
+                  disabled={isInReview()} />
+            </FormGroup>
           </Col>
         </PaddedRow>
 

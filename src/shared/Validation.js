@@ -1,3 +1,5 @@
+import validator from 'validator';
+
 import { FORM_ERRORS } from './Consts';
 
 // Used for bootstrap input components. If error, input will show in red.
@@ -25,7 +27,7 @@ export const validateOnInput = (
   switch(fieldType) {
     case 'number':
       const idx = formatErrors.indexOf(FORM_ERRORS.INVALID_FORMAT);
-      if (input && isNaN(input)) {
+      if (input && !validator.isInt(input)) {
         inputValid = false;
         if (idx === -1) {
           formatErrors.push(FORM_ERRORS.INVALID_FORMAT);

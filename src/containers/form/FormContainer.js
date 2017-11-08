@@ -40,6 +40,7 @@ class Form extends React.Component {
         lastName: '',
         middleName: '',
         address: '',
+        phone: '',
         identification: '',
         militaryStatus: '',
         gender: '',
