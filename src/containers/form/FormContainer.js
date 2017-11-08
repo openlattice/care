@@ -195,14 +195,14 @@ class Form extends React.Component {
   }
 
   // For text input
-  handleTextInput = (e, component, fieldType, requiredFields) => {
+  handleTextInput = (e, fieldType, formatErrors, setErrorsFn) => {
     const sectionKey = e.target.dataset.section;
     const name = e.target.name;
     const input = e.target.value;
     const sectionState = this.state[sectionKey];
     sectionState[name] = input;
     this.setState({ [sectionKey]: sectionState });
-    validateOnInput(component, input, name, fieldType, requiredFields);
+    validateOnInput(name, input, fieldType, formatErrors, setErrorsFn);
   }
 
   handleDateInput = (e, section, name) => {

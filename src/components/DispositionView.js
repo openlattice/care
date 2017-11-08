@@ -67,6 +67,13 @@ class DispositionView extends React.Component {
     });
   }
 
+  setErrors = (name, inputValid, sectionFormatErrors) => {
+    this.setState({
+      [`${name}Valid`]: inputValid,
+      sectionFormatErrors
+    })
+  }
+
   renderErrors = () => {
     const formatErrors = this.state.sectionFormatErrors.map((error) => {
       return <ErrorMessage key={error}>{error}</ErrorMessage>;
@@ -101,7 +108,9 @@ class DispositionView extends React.Component {
     const {
       dispositionValid,
       incidentNarrativeValid,
-      didClickNav
+      didClickNav,
+      sectionFormatErrors,
+      sectionRequiredErrors
     } = this.state;
 
     return (
@@ -224,7 +233,7 @@ class DispositionView extends React.Component {
                 name="hospital"
                 value={input.hospital}
                 onChange={(e) => {
-                  handleTextInput(e, this, 'string', REQUIRED_FIELDS);
+                  handleTextInput(e, 'string', sectionFormatErrors, this.setErrors);
                 }}
                 disabled={isInReview()} />
           </Col>
@@ -295,7 +304,7 @@ class DispositionView extends React.Component {
                     name="deescalationTechniquesOther"
                     value={input.deescalationTechniquesOther}
                     onChange={(e) => {
-                      handleTextInput(e, this, 'string', REQUIRED_FIELDS);
+                      handleTextInput(e, 'string', sectionFormatErrors, this.setErrors);
                     }}
                     disabled={isInReview()} />
               </OtherWrapper>
@@ -388,7 +397,7 @@ class DispositionView extends React.Component {
                   componentClass="textarea"
                   value={input.incidentNarrative}
                   onChange={(e) => {
-                    handleTextInput(e, this, 'string', REQUIRED_FIELDS);
+                    handleTextInput(e, 'string', sectionFormatErrors, this.setErrors);
                   }}
                   disabled={isInReview()} />
             </FormGroup>

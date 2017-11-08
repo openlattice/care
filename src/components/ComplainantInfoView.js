@@ -52,6 +52,13 @@ class ComplainantInfoView extends React.Component {
     });
   }
 
+  setErrors = (name, inputValid, sectionFormatErrors) => {
+    this.setState({
+      [`${name}Valid`]: inputValid,
+      sectionFormatErrors
+    })
+  }
+
   renderErrors = () => {
     const formatErrors = this.state.sectionFormatErrors.map((error) => {
       return <ErrorMessage key={error}>{error}</ErrorMessage>;
@@ -81,7 +88,9 @@ class ComplainantInfoView extends React.Component {
 
     const {
       complainantNameValid,
-      didClickNav
+      didClickNav,
+      sectionFormatErrors,
+      sectionRequiredErrors
     } = this.state;
 
     return (
@@ -103,7 +112,7 @@ class ComplainantInfoView extends React.Component {
                   name="complainantName"
                   value={input.complainantName}
                   onChange={(e) => {
-                    handleTextInput(e, this, 'string', REQUIRED_FIELDS);
+                    handleTextInput(e, 'string', sectionFormatErrors, this.setErrors);
                   }}
                   disabled={isInReview()} />
             </FormGroup>
@@ -117,7 +126,7 @@ class ComplainantInfoView extends React.Component {
                 name="complainantAddress"
                 value={input.complainantAddress}
                 onChange={(e) => {
-                  handleTextInput(e, this, 'string', REQUIRED_FIELDS);
+                  handleTextInput(e, 'string', sectionFormatErrors, this.setErrors);
                 }}
                 disabled={isInReview()} />
           </Col>
@@ -130,7 +139,7 @@ class ComplainantInfoView extends React.Component {
                 name="complainantConsumerRelationship"
                 value={input.complainantConsumerRelationship}
                 onChange={(e) => {
-                  handleTextInput(e, this, 'string', REQUIRED_FIELDS);
+                  handleTextInput(e, 'string', sectionFormatErrors, this.setErrors);
                 }}
                 disabled={isInReview()} />
           </Col>
@@ -141,7 +150,7 @@ class ComplainantInfoView extends React.Component {
                 name="complainantPhone"
                 value={input.complainantPhone}
                 onChange={(e) => {
-                  handleTextInput(e, this, 'string', REQUIRED_FIELDS);
+                  handleTextInput(e, 'string', sectionFormatErrors, this.setErrors);
                 }}
                 disabled={isInReview()} />
           </Col>
