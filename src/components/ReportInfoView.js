@@ -33,7 +33,7 @@ class ReportInfoView extends React.Component {
       didClickNav: this.props.location.state
           ? this.props.location.state.didClickNav
           : false,
-      currentPage: location.hash.substr(2, 10)
+      currentPage: parseInt(location.hash.substr(2, 10))
     };
   }
 
@@ -45,6 +45,7 @@ class ReportInfoView extends React.Component {
     isInReview: PropTypes.func.isRequired,
     handlePageChange: PropTypes.func.isRequired,
     section: PropTypes.string.isRequired,
+    maxPage: PropTypes.number.isRequired,
     history: ReactRouterPropTypes.history.isRequired,
     location: ReactRouterPropTypes.location.isRequired,
     input: PropTypes.shape({
@@ -132,8 +133,11 @@ class ReportInfoView extends React.Component {
       this.props.input,
       REQUIRED_FIELDS
     );
-
-    if (!areRequiredInputsValid) {
+    if (
+      !areRequiredInputsValid
+      && this.props.maxPage
+      && this.state.currentPage !== this.props.maxPage
+    ) {
       this.props.history.push({
         pathname: `/${this.state.currentPage}`,
         state: { didClickNav: true }

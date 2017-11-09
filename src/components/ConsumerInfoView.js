@@ -160,8 +160,11 @@ class ConsumerInfoView extends React.Component {
       this.props.input,
       REQUIRED_FIELDS
     );
-
-    if (!areRequiredInputsValid) {
+    if (
+      !areRequiredInputsValid
+      && this.props.maxPage
+      && this.state.currentPage !== this.props.maxPage
+    ) {
       this.props.history.push({
         pathname: `/${this.state.currentPage}`,
         state: { didClickNav: true }

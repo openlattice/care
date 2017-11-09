@@ -81,6 +81,7 @@ function FormView({
           handlePersonSelection={handlePersonSelection}
           handlePageChange={handlePageChange}
           personEntitySetId={personEntitySetId}
+          maxPage={maxPage}
           handlePageChange={handlePageChange} />
     );
   };
@@ -96,6 +97,7 @@ function FormView({
           consumerIsSelected={consumerIsSelected}
           isInReview={isInReview}
           handlePageChange={handlePageChange}
+          maxPage={maxPage}
           section="consumerInfo" />
     );
   };
@@ -108,6 +110,7 @@ function FormView({
           isInReview={isInReview}
           handlePageChange={handlePageChange}
           handleSingleSelection={handleSingleSelection}
+          maxPage={maxPage}
           section="complainantInfo" />
     );
   };
@@ -121,6 +124,7 @@ function FormView({
           input={dispositionInfo}
           isInReview={isInReview}
           handlePageChange={handlePageChange}
+          maxPage={maxPage}
           section="dispositionInfo" />
     );
   };
@@ -133,6 +137,7 @@ function FormView({
           input={officerInfo}
           isInReview={isInReview}
           handlePageChange={handlePageChange}
+          maxPage={maxPage}
           section="officerInfo" />
     );
   };
