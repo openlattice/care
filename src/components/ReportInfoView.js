@@ -69,15 +69,18 @@ class ReportInfoView extends React.Component {
     this.setState({ didClickNav: true });
   }
 
-  checkRequiredValidation = () => {
+  setRequiredErrors = () => {
     const requiredErrors = this.state.sectionRequiredErrors.slice();
     const areRequiredInputsValid = validateRequiredInput(
       this.props.input,
       REQUIRED_FIELDS
     );
+    console.log('areRequiredInputsValid', areRequiredInputsValid);
+    console.log('states required errors before anythign happens:', this.state.sectionRequiredErrors);
 
     if (areRequiredInputsValid) {
       if (requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED) !== -1) {
+        console.log('should be splicin');
         requiredErrors.splice(requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED));
       }
     }
@@ -85,15 +88,17 @@ class ReportInfoView extends React.Component {
       requiredErrors.push(FORM_ERRORS.IS_REQUIRED);
     }
 
+    console.log('und now requiredErrors :', requiredErrors);
+
     this.setState({
       sectionRequiredErrors: requiredErrors
-    });
+    }, () => {console.log('states requirederrors after setting:', this.state.sectionRequiredErrors)});
   }
 
   handlePageChange = (path) => {
     this.setDidClickNav();
 
-    Promise.resolve(this.checkRequiredValidation())
+    Promise.resolve(this.setRequiredErrors())
     .then(() => {
       if (this.state.sectionRequiredErrors.length < 1 && this.state.sectionFormatErrors.length < 1) {
         this.props.handlePageChange(path);
@@ -128,15 +133,17 @@ class ReportInfoView extends React.Component {
   }
 
   componentWillUnmount() {
-    Promise.resolve(this.checkRequiredValidation())
-    .then(() => {
-      if (this.state.sectionRequiredErrors.length >= 1 || this.state.sectionFormatErrors.length >= 1) {
-        this.props.history.push({
-          pathname: `/${this.state.currentPage}`,
-          state: { didClickNav: true }
-        });
-      }
-    });
+    const areRequiredInputsValid = validateRequiredInput(
+      this.props.input,
+      REQUIRED_FIELDS
+    );
+
+    if (!areRequiredInputsValid) {
+      this.props.history.push({
+        pathname: `/${this.state.currentPage}`,
+        state: { didClickNav: true }
+      });
+    }
   }
 
   render() {
