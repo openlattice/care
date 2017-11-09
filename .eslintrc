@@ -2,8 +2,7 @@
   "extends": "airbnb",
   "parser": "babel-eslint",
   "env": {
-    "browser": true,
-    "node": true
+    "browser": true
   },
   "plugins": [
     "flowtype",
@@ -30,9 +29,10 @@
       {
         "FunctionDeclaration": {
           "body": 1,
-          "parameters": 2
+          "parameters": 1
         },
-        "SwitchCase": 1
+        "SwitchCase": 1,
+        "ignoredNodes": ["JSXAttribute"]
       }
     ],
     "max-len": [
@@ -71,7 +71,11 @@
         "groups": ["builtin", "external", "internal", ["sibling", "parent"], "index"]
       }
     ],
+    "import/prefer-default-export": "warn",
 
+    "jsx-a11y/href-no-hash": "off",
+
+    "react/forbid-prop-types": "warn",
     "react/jsx-closing-bracket-location": [
       "error",
       {

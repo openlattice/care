@@ -16,7 +16,9 @@ import AuthRoute from './core/auth/AuthRoute';
 import initializeReduxStore from './core/redux/ReduxStore';
 import initializeRouterHistory from './core/router/RouterHistory';
 import * as Auth0 from './core/auth/Auth0';
-import * as RoutePaths from './core/router/RoutePaths';
+import * as AuthUtils from './core/auth/AuthUtils';
+import * as Routes from './core/router/Routes';
+import * as Utils from './utils/Utils';
 
 import AppContainer from './containers/app/AppContainer';
 import ScrollToTop from './containers/app/ScrollToTop';
@@ -27,13 +29,13 @@ injectGlobal`${normalize()}`;
 injectGlobal`
 
   * {
-        margin: 0;
-        padding: 0;
-        border: 0;
-        outline: 0;
-        font-size: 100%;
-        vertical-align: baseline;
-        background: transparent;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font-size: 100%;
+    vertical-align: baseline;
+    background: transparent;
     }
 
   html,
@@ -54,6 +56,7 @@ injectGlobal`
  * // !!! MUST HAPPEN FIRST !!!
  */
 Auth0.initialize();
+Utils.configureLattice(AuthUtils.getAuthToken());
 /*
  * // !!! MUST HAPPEN FIRST !!!
  */
@@ -65,7 +68,7 @@ ReactDOM.render(
   <Provider store={reduxStore}>
     <ConnectedRouter history={routerHistory}>
       <ScrollToTop>
-        <AuthRoute path={RoutePaths.ROOT} component={AppContainer} />
+        <AuthRoute path={Routes.ROOT} component={AppContainer} />
       </ScrollToTop>
     </ConnectedRouter>
   </Provider>,
