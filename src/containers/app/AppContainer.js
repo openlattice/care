@@ -4,18 +4,17 @@
 
 import React from 'react';
 
-import PropTypes from 'prop-types';
 import { Redirect, Route, Switch } from 'react-router-dom';
 
 import FormContainer from '../form/FormContainer';
-import * as RoutePaths from '../../core/router/RoutePaths';
+import * as Routes from '../../core/router/Routes';
 
 const AppContainer = () => {
 
   return (
     <Switch>
-      <Route exact strict path={RoutePaths.ROOT} component={FormContainer} />
-      <Redirect to={RoutePaths.ROOT} />
+      <Route exact strict path={Routes.FORM_PAGE} component={FormContainer} />
+      <Redirect to={Routes.FORM} />
     </Switch>
   );
 };

@@ -10,8 +10,16 @@ import moment from 'moment';
  * https://auth0.com/docs/tokens/id-token
  */
 
-const AUTH0_ID_TOKEN :string = 'id_token';
-const AUTH0_ID_TOKEN_EXP :string = 'id_token_exp';
+const ADMIN_ROLE :'admin' = 'admin';
+const AUTH0_ID_TOKEN :'auth0_id_token' = 'auth0_id_token';
+const AUTH0_USER_INFO :'auth0_user_info' = 'auth0_user_info';
+
+type UserInfo = {
+  id :string;
+  email :string;
+  picture :string;
+  roles :string[];
+};
 
 export function getAuthToken() :?string {
 
@@ -24,22 +32,34 @@ export function getAuthToken() :?string {
   return null;
 }
 
-export function storeAuthToken(idToken :?string) :void {
+export function storeAuthInfo(authInfo :?Object) :void {
 
-  if (!idToken) {
+  if (!authInfo || !authInfo.idToken) {
     return;
   }
 
-  // TODO: validation?
-  localStorage.setItem(AUTH0_ID_TOKEN, idToken);
+  // TODO: id token validation
+  localStorage.setItem(AUTH0_ID_TOKEN, authInfo.idToken);
+
+  if (!authInfo.idTokenPayload) {
+    return;
+  }
+
+  const userInfo :UserInfo = {
+    id: authInfo.idTokenPayload.user_id,
+    email: authInfo.idTokenPayload.email,
+    picture: authInfo.idTokenPayload.picture,
+    roles: authInfo.idTokenPayload.roles
+  };
+
+  localStorage.setItem(AUTH0_USER_INFO, JSON.stringify(userInfo));
 }
 
-export function clearAuthToken() :void {
+export function clearAuthInfo() :void {
 
   localStorage.removeItem(AUTH0_ID_TOKEN);
-  localStorage.removeItem(AUTH0_ID_TOKEN_EXP);
+  localStorage.removeItem(AUTH0_USER_INFO);
 }
-
 
 export function getAuthTokenExpiration(maybeIdToken :?string) :number {
 
@@ -64,7 +84,7 @@ export function getAuthTokenExpiration(maybeIdToken :?string) :number {
   }
 }
 
-export function hasAuthTokenExpired(idTokenOrExpiration :string | number) :boolean {
+export function hasAuthTokenExpired(idTokenOrExpiration :?string | number) :boolean {
 
   if (!idTokenOrExpiration || idTokenOrExpiration === -1) {
     return true;
@@ -86,4 +106,31 @@ export function hasAuthTokenExpired(idTokenOrExpiration :string | number) :boole
   catch (e) {
     return true;
   }
+}
+
+export function isAuthenticated() :boolean {
+
+  return !hasAuthTokenExpired(getAuthTokenExpiration());
+}
+
+export function isAdmin() :boolean {
+
+  const userInfoStr :?string = localStorage.getItem(AUTH0_USER_INFO);
+
+  if (typeof userInfoStr !== 'string' || userInfoStr.length <= 0) {
+    return false;
+  }
+
+  let hasAdminRole :boolean = false;
+
+  const userInfo :UserInfo = JSON.parse(userInfoStr);
+  if (userInfo && userInfo.roles && userInfo.roles.length > 0) {
+    userInfo.roles.forEach((role :string) => {
+      if (role === ADMIN_ROLE) {
+        hasAdminRole = true;
+      }
+    });
+  }
+
+  return hasAdminRole;
 }

@@ -1,33 +1,41 @@
-import React from 'react';
 import styled from 'styled-components';
-import { FormGroup, ControlLabel, Checkbox, Radio, Button, Row } from 'react-bootstrap';
-import { FLEX } from './Consts';
+import { ControlLabel, Checkbox, Radio, Button, Row } from 'react-bootstrap';
+
 
 export const Page = styled.div`
-  background: #F4F4F4;
+  background: #393F46;
+  overflow: auto;
+  min-height: 56.5vw;
 `;
 
 export const PageHeader = styled.div`
-  padding: 60px;
+  position: relative;
+  width: 100%;
+  height: 50px;
   background: white;
   border-bottom: 1px solid darkgray;
+  display: flex;
+  align-items: center;
 `;
 
 export const Title = styled.h1`
-  text-align: center;
   color: #37454A;
-  font-size: 40px;
-`;
+  font-size: 20px;
+  margin: 0 0 0 60px;
+  font-weight: bold;
 
-export const Description = styled.div`
-  text-align: center;
-  font-size: 24px;
-  color: #37454A;
 `;
 
 export const FormWrapper = styled.div`
-  margin: 0 60px 0 60px;
-  padding-bottom: 100px;
+  position: relative;
+  display: block;
+  padding: 60px;
+  top: 160px;
+  left: 50%;
+  width: 900px;
+  margin-left: -450px;
+  margin-bottom: 200px;
+  background: #F4F4F4;
 `;
 
 export const PaddedRow = styled(Row)`
@@ -44,15 +52,9 @@ export const TitleLabel = Label.extend`
   line-height: 1.5;
 `;
 
-export const InputWrapper = styled(({ flex, children, ...rest }) => {
-  return (
-    <FormGroup {...rest}>{children}</FormGroup>
-  );
-})`
-  padding-right: 30px;
-  flex: ${(props) => {
-    return props.flex || FLEX.COL_1_3;
-  }};
+export const LabelDescription = Label.extend`
+  color: light-gray;
+  font-size: 12px;
 `;
 
 export const OtherWrapper = styled.span`
@@ -86,4 +88,29 @@ export const SubmitButton = styled(Button).attrs({
   }
 })`
 
+`;
+
+export const SectionHeader = styled.div`
+  font-size: 32px;
+  margin-bottom: 40px;
+  color: #37454A;
+  font-weight: bold;
+  width: 100%;
+  text-align: center;
+`;
+
+export const NavBtnWrapper = styled.div`
+  position: absolute;
+  width: 300px;
+  left: 50%;
+  margin-left: -150px;
+  text-align: center;
+`;
+
+export const StyledButton = styled(Button)`
+  margin: 0 10px;
+`;
+
+export const ErrorMessage = styled.div`
+  color: rgb(169, 68, 66);
 `;

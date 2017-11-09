@@ -1,27 +1,14 @@
 import React from 'react';
+
 import Promise from 'bluebird';
-import { EntityDataModelApi, DataApi, SyncApi } from 'lattice';
+import { EntityDataModelApi, DataApi, SearchApi, SyncApi } from 'lattice';
+import { withRouter } from 'react-router';
 
 import FormView from '../../components/FormView';
 import ConfirmationModal from '../../components/ConfirmationModalView';
-import LogoutButton from '../app/LogoutButton';
+import { ENTITY_SET_NAMES, PERSON, CONSUMER_STATE, STRING_ID_FQN } from '../../shared/Consts';
+import { validateOnInput } from '../../shared/Validation';
 
-import * as RoutePaths from '../../core/router/RoutePaths';
-
-const FORM_ENTITY_SET_NAME = 'baltimoreHealthReportForm';
-const PEOPLE_ENTITY_SET_NAME = 'baltimoreHealthReportPeople';
-const APPEARS_IN_ENTITY_SET_NAME = 'baltimoreHealthReportAppearsIn';
-
-
-const ID_FQN = 'nc.SubjectIdentification';
-const FIRST_NAME_FQN = 'nc.PersonGivenName';
-const LAST_NAME_FQN = 'nc.PersonSurName';
-const MIDDLE_NAME_FQN = 'nc.PersonMiddleName';
-const SEX_FQN = 'nc.PersonSex';
-const RACE_FQN = 'nc.PersonRace';
-const DOB_FQN = 'nc.PersonBirthDate';
-
-const STRING_ID_FQN = 'general.stringid';
 
 class Form extends React.Component {
   constructor(props) {
@@ -31,17 +18,19 @@ class Form extends React.Component {
       reportInfo: {
         dispatchReason: '',
         complaintNumber: '',
-        companionOffenseReport: null,
+        companionOffenseReport: false,
         incident: '',
         locationOfIncident: '',
         unit: '',
         postOfOccurrence: '',
         cadNumber: '',
-        onView: null,
+        onView: false,
         dateOccurred: '',
         timeOccurred: '',
         dateReported: '',
-        timeReported: ''
+        timeReported: '',
+        // WHAT IS NAME USED FOR?
+        name: ''
       },
       consumerInfo: {
         firstName: '',
@@ -50,23 +39,23 @@ class Form extends React.Component {
         address: '',
         phone: '',
         identification: '',
-        militaryStatus: null,
+        militaryStatus: '',
         gender: '',
         race: '',
         age: '',
         dob: '',
-        homeless: null,
+        homeless: false,
         homelessLocation: '',
-        drugsAlcohol: null,
+        drugsAlcohol: '',
         drugType: '',
-        prescribedMedication: null,
-        takingMedication: null,
-        prevPsychAdmission: null,
+        prescribedMedication: '',
+        takingMedication: '',
+        prevPsychAdmission: '',
         selfDiagnosis: [],
         selfDiagnosisOther: '',
-        armedWithWeapon: null,
+        armedWithWeapon: false,
         armedWeaponType: '',
-        accessToWeapons: null,
+        accessToWeapons: false,
         accessibleWeaponType: '',
         observedBehaviors: [],
         observedBehaviorsOther: '',
@@ -75,7 +64,7 @@ class Form extends React.Component {
         photosTakenOf: [],
         injuries: [],
         injuriesOther: '',
-        suicidal: null,
+        suicidal: false,
         suicidalActions: [],
         suicideAttemptMethod: [],
         suicideAttemptMethodOther: ''
@@ -88,7 +77,7 @@ class Form extends React.Component {
       },
       dispositionInfo: {
         disposition: [],
-        hospitalTransport: [],
+        hospitalTransport: false,
         hospital: '',
         deescalationTechniques: [],
         deescalationTechniquesOther: '',
@@ -114,12 +103,14 @@ class Form extends React.Component {
       personPropertyTypes: [],
       appearsInPropertyTypes: [],
       submitSuccess: null,
-      submitFailure: null
+      submitFailure: null,
+      maxPage: 7,
+      consumerIsSelected: false
     };
   }
 
   componentDidMount() {
-    EntityDataModelApi.getEntitySetId(FORM_ENTITY_SET_NAME)
+    EntityDataModelApi.getEntitySetId(ENTITY_SET_NAMES.FORM)
       .then((id) => {
         this.setState({ entitySetId: id });
         EntityDataModelApi.getEntitySet(id)
@@ -138,10 +129,21 @@ class Form extends React.Component {
               });
           });
       });
+
+    const start = 0;
+    const maxHits = 50;
+    const searchTerm = '*';
+    const searchOptions = {
+      start,
+      maxHits,
+      searchTerm
+    };
+    // TODO: wait to execute until getPersonEntitySet is complete
+    SearchApi.searchEntitySetData(this.state.personEntitySetId, searchOptions);
   }
 
   getPersonEntitySet = () => {
-    EntityDataModelApi.getEntitySetId(PEOPLE_ENTITY_SET_NAME)
+    EntityDataModelApi.getEntitySetId(ENTITY_SET_NAMES.PEOPLE)
       .then((personEntitySetId) => {
         this.setState({ personEntitySetId });
         EntityDataModelApi.getEntitySet(personEntitySetId)
@@ -163,7 +165,7 @@ class Form extends React.Component {
   }
 
   getAppearsInEntitySet = () => {
-    EntityDataModelApi.getEntitySetId(APPEARS_IN_ENTITY_SET_NAME)
+    EntityDataModelApi.getEntitySetId(ENTITY_SET_NAMES.APPEARS_IN)
       .then((appearsInEntitySetId) => {
         this.setState({ appearsInEntitySetId });
         EntityDataModelApi.getEntitySet(appearsInEntitySetId)
@@ -184,13 +186,14 @@ class Form extends React.Component {
   }
 
   // For text input
-  handleTextInput = (e) => {
+  handleTextInput = (e, fieldType, formatErrors, setErrorsFn) => {
     const sectionKey = e.target.dataset.section;
     const name = e.target.name;
     const input = e.target.value;
     const sectionState = this.state[sectionKey];
     sectionState[name] = input;
     this.setState({ [sectionKey]: sectionState });
+    validateOnInput(name, input, fieldType, formatErrors, setErrorsFn);
   }
 
   handleDateInput = (e, section, name) => {
@@ -206,25 +209,25 @@ class Form extends React.Component {
     let ss = seconds;
 
     while (ss >= 60) {
-      mm++;
+      mm += 1;
       ss = ss - 60;
     }
 
     while (mm >= 60) {
-      hh++;
+      hh += 1;
       mm = mm - 60;
     }
 
     let hhStr = hh.toString();
-    hhStr = hhStr.length === 1 ? '0' + hhStr : hhStr;
+    hhStr = hhStr.length === 1 ? `0${hhStr}` : hhStr;
 
     let mmStr = mm.toString();
-    mmStr = mmStr.length === 1 ? '0' + mmStr : mmStr;
+    mmStr = mmStr.length === 1 ? `0${mmStr}` : mmStr;
 
     let ssStr = ss.toString();
-    ssStr = ssStr.length === 1 ? '0' + ssStr : ssStr;
+    ssStr = ssStr.length === 1 ? `0${ssStr}` : ssStr;
 
-    const res = hhStr + ':' + mmStr + ':' + ssStr;
+    const res = `${hhStr}:${mmStr}:${ssStr}`;
     return res;
   }
 
@@ -256,36 +259,24 @@ class Form extends React.Component {
     this.setState({ [sectionKey]: sectionState });
   }
 
-  getEntities = () => {
-    const formInputs = Object.assign(
-      {},
-      this.state.reportInfo,
-      this.state.consumerInfo,
-      this.state.complainantInfo,
-      this.state.dispositionInfo,
-      this.state.officerInfo
-    );
+  handlePageChange = (path) => {
+    this.props.history.push(path);
+  }
 
-    const formattedValues = {};
-    this.state.propertyTypes.forEach((propertyType) => {
-      const value = formInputs[propertyType.type.name];
-      let formattedValue;
-      formattedValue = Array.isArray(value) ? value : [value];
-      formattedValue = (formattedValue.length > 0 && (formattedValue[0] === "" || formattedValue[0] === null)) ? [] : formattedValue;
-      formattedValues[propertyType.id] = formattedValue;
+  handlePersonSelection = (person) => {
+    const consumerState = Object.assign({}, this.state.consumerInfo);
+    Object.keys(PERSON).forEach((key) => {
+      const consumerKey = CONSUMER_STATE[key];
+      const personKey = PERSON[key];
+      const personVal = person[personKey][0];
+      consumerState[consumerKey] = personVal;
     });
-
-    const primaryKeys = this.state.entityType.key;
-    const entityKey = primaryKeys.map((keyId) => {
-      const utf8Val = (formattedValues[keyId].length > 0) ? encodeURI(formattedValues[keyId][0]) : '';
-      return btoa(utf8Val);
-    }).join(',');
-
-    const entities = {
-      [entityKey]: formattedValues
-    };
-
-    return entities;
+    this.setState({
+      consumerInfo: consumerState,
+      consumerIsSelected: true
+    }, () => {
+      this.handlePageChange('next');
+    });
   }
 
   getAppearsInEntity = (syncId) => {
@@ -324,13 +315,13 @@ class Form extends React.Component {
     });
 
     const details = {};
-    details[props[ID_FQN]] = [identification];
-    details[props[LAST_NAME_FQN]] = (lastName && lastName.length) ? [lastName] : [];
-    details[props[FIRST_NAME_FQN]] = (firstName && firstName.length) ? [firstName] : [];
-    details[props[MIDDLE_NAME_FQN]] = (middleName && middleName.length) ? [middleName] : [];
-    details[props[DOB_FQN]] = (dob && dob.length) ? [dob] : [];
-    details[props[SEX_FQN]] = (gender && gender.length) ? [gender] : [];
-    details[props[RACE_FQN]] = (race && race.length) ? [race] : [];
+    details[props[PERSON.ID_FQN]] = [identification];
+    details[props[PERSON.LAST_NAME_FQN]] = (lastName && lastName.length) ? [lastName] : [];
+    details[props[PERSON.FIRST_NAME_FQN]] = (firstName && firstName.length) ? [firstName] : [];
+    details[props[PERSON.MIDDLE_NAME_FQN]] = (middleName && middleName.length) ? [middleName] : [];
+    details[props[PERSON.DOB_FQN]] = (dob && dob.length) ? [dob] : [];
+    details[props[PERSON.SEX_FQN]] = (gender && gender.length) ? [gender] : [];
+    details[props[PERSON.RACE_FQN]] = (race && race.length) ? [race] : [];
 
     return { key, details };
   }
@@ -407,7 +398,19 @@ class Form extends React.Component {
   handleSubmit = (e) => {
     e.preventDefault();
     this.getBulkData().then((bulkData) => {
-      DataApi.createEntityAndAssociationData(bulkData);
+      DataApi.createEntityAndAssociationData(bulkData)
+        .then(() => {
+          this.setState({
+            submitSuccess: true,
+            submitFailure: false
+          });
+        })
+        .catch(() => {
+          this.setState({
+            submitSuccess: false,
+            submitFailure: true
+          });
+        });
     });
   }
 
@@ -415,11 +418,16 @@ class Form extends React.Component {
     window.location.reload();
   }
 
+  isInReview = () => {
+    const page = parseInt(window.location.hash.substr(2, 10));
+    if (page && page === this.state.maxPage) return true;
+    return false;
+  }
+
   render() {
 
     return (
       <div>
-        <LogoutButton />
         <FormView
             handleTextInput={this.handleTextInput}
             handleDateInput={this.handleDateInput}
@@ -427,13 +435,23 @@ class Form extends React.Component {
             handleSingleSelection={this.handleSingleSelection}
             handleCheckboxChange={this.handleCheckboxChange}
             handleSubmit={this.handleSubmit}
-            input={this.state} />
+            reportInfo={this.state.reportInfo}
+            consumerInfo={this.state.consumerInfo}
+            complainantInfo={this.state.complainantInfo}
+            dispositionInfo={this.state.dispositionInfo}
+            officerInfo={this.state.officerInfo}
+            maxPage={this.state.maxPage}
+            handlePageChange={this.handlePageChange}
+            handlePersonSelection={this.handlePersonSelection}
+            personEntitySetId={this.state.personEntitySetId}
+            isInReview={this.isInReview}
+            consumerIsSelected={this.state.consumerIsSelected} />
         {
           this.state.submitSuccess
             ? <ConfirmationModal
-                  submitSuccess={this.state.submitSuccess}
-                  submitFailure={this.state.submitFailure}
-                  handleModalButtonClick={this.handleModalButtonClick} />
+                submitSuccess={this.state.submitSuccess}
+                submitFailure={this.state.submitFailure}
+                handleModalButtonClick={this.handleModalButtonClick} />
             : null
         }
       </div>
@@ -441,4 +459,4 @@ class Form extends React.Component {
   }
 }
 
-export default Form;
+export default withRouter(Form);
