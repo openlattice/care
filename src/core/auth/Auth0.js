@@ -122,7 +122,7 @@ export function authenticate() :Promise<*> {
       }
       else {
         auth0HashPath = null;
-        resolve(authInfo.idToken);
+        resolve(authInfo);
       }
     });
 
