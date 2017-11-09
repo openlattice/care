@@ -5,6 +5,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FormGroup, FormControl, Col } from 'react-bootstrap';
+import { withRouter } from 'react-router';
+import ReactRouterPropTypes from 'react-router-prop-types';
 
 import FormNav from './FormNav';
 import {
@@ -32,7 +34,10 @@ class DispositionView extends React.Component {
       dispositionValid: true,
       incidentNarrativeValid: true,
       sectionValid: false,
-      didClickNav: false
+      didClickNav: this.props.location.state
+          ? this.props.location.state.didClickNav
+          : false,
+      currentPage: location.hash.substr(2, 10)
     };
   }
 
@@ -43,6 +48,8 @@ class DispositionView extends React.Component {
     section: PropTypes.string.isRequired,
     isInReview: PropTypes.func.isRequired,
     handlePageChange: PropTypes.func.isRequired,
+    history: ReactRouterPropTypes.history.isRequired,
+    location: ReactRouterPropTypes.location.isRequired,
     input: PropTypes.shape({
       disposition: PropTypes.array.isRequired,
       hospitalTransport: PropTypes.bool.isRequired,
@@ -58,30 +65,36 @@ class DispositionView extends React.Component {
     this.setState({ didClickNav: true });
   }
 
-  handlePageChange = (path) => {
-    const requiredErrors = this.state.sectionRequiredErrors.slice();
-    const areRequiredInputsValid = validateRequiredInput(
-      this.props.input,
-      REQUIRED_FIELDS
-    );
+  setRequiredErrors = () => {
+      const requiredErrors = this.state.sectionRequiredErrors.slice();
+      const areRequiredInputsValid = validateRequiredInput(
+        this.props.input,
+        REQUIRED_FIELDS
+      );
 
-    if (areRequiredInputsValid) {
-      if (requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED) !== -1) {
-        requiredErrors.splice(requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED));
+      if (areRequiredInputsValid) {
+        if (requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED) !== -1) {
+          requiredErrors.splice(requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED));
+        }
       }
-    }
-    else if (requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED) === -1) {
-      requiredErrors.push(FORM_ERRORS.IS_REQUIRED);
+      else if (requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED) === -1) {
+        requiredErrors.push(FORM_ERRORS.IS_REQUIRED);
+      }
+
+      this.setState({
+        sectionRequiredErrors: requiredErrors
+      });
     }
 
-    this.setState({
-      didClickNav: true,
-      sectionRequiredErrors: requiredErrors
+  handlePageChange = (path) => {
+    this.setDidClickNav();
+
+    Promise.resolve(this.setRequiredErrors())
+    .then(() => {
+      if (this.state.sectionRequiredErrors.length < 1 && this.state.sectionFormatErrors.length < 1) {
+        this.props.handlePageChange(path);
+      }
     });
-
-    if (requiredErrors.length < 1 && this.state.sectionFormatErrors.length < 1) {
-      this.props.handlePageChange(path);
-    }
   }
 
   setInputErrors = (name, inputValid, sectionFormatErrors) => {
@@ -109,6 +122,20 @@ class DispositionView extends React.Component {
         {requiredErrors}
       </div>
     );
+  }
+
+  componentWillUnmount() {
+    const areRequiredInputsValid = validateRequiredInput(
+      this.props.input,
+      REQUIRED_FIELDS
+    );
+
+    if (!areRequiredInputsValid) {
+      this.props.history.push({
+        pathname: `/${this.state.currentPage}`,
+        state: { didClickNav: true }
+      });
+    }
   }
 
   render() {
@@ -434,4 +461,4 @@ class DispositionView extends React.Component {
   }
 }
 
-export default DispositionView;
+export default withRouter(DispositionView);

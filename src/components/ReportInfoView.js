@@ -75,12 +75,9 @@ class ReportInfoView extends React.Component {
       this.props.input,
       REQUIRED_FIELDS
     );
-    console.log('areRequiredInputsValid', areRequiredInputsValid);
-    console.log('states required errors before anythign happens:', this.state.sectionRequiredErrors);
 
     if (areRequiredInputsValid) {
       if (requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED) !== -1) {
-        console.log('should be splicin');
         requiredErrors.splice(requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED));
       }
     }
@@ -88,11 +85,9 @@ class ReportInfoView extends React.Component {
       requiredErrors.push(FORM_ERRORS.IS_REQUIRED);
     }
 
-    console.log('und now requiredErrors :', requiredErrors);
-
     this.setState({
       sectionRequiredErrors: requiredErrors
-    }, () => {console.log('states requirederrors after setting:', this.state.sectionRequiredErrors)});
+    });
   }
 
   handlePageChange = (path) => {
