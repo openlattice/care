@@ -5,8 +5,9 @@
 import React from 'react';
 
 import { connect } from 'react-redux';
-import { Redirect, Route, Switch, withRouter } from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
+import { withRouter } from 'react-router';
 
 import * as Auth0 from './Auth0';
 import * as AuthUtils from './AuthUtils';
