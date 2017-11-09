@@ -16,7 +16,9 @@ import AuthRoute from './core/auth/AuthRoute';
 import initializeReduxStore from './core/redux/ReduxStore';
 import initializeRouterHistory from './core/router/RouterHistory';
 import * as Auth0 from './core/auth/Auth0';
-import * as RoutePaths from './core/router/RoutePaths';
+import * as AuthUtils from './core/auth/AuthUtils';
+import * as Routes from './core/router/Routes';
+import * as Utils from './utils/Utils';
 
 import AppContainer from './containers/app/AppContainer';
 
@@ -43,6 +45,7 @@ injectGlobal`
  * // !!! MUST HAPPEN FIRST !!!
  */
 Auth0.initialize();
+Utils.configureLattice(AuthUtils.getAuthToken());
 /*
  * // !!! MUST HAPPEN FIRST !!!
  */
@@ -53,7 +56,7 @@ const reduxStore = initializeReduxStore(routerHistory);
 ReactDOM.render(
   <Provider store={reduxStore}>
     <ConnectedRouter history={routerHistory}>
-      <AuthRoute path={RoutePaths.ROOT} component={AppContainer} />
+      <AuthRoute path={Routes.ROOT} component={AppContainer} />
     </ConnectedRouter>
   </Provider>,
   document.getElementById('app')

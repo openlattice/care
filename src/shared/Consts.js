@@ -1,8 +1,8 @@
 export const ENTITY_SET_NAMES = {
-  FORM: 'baltimoreHealthReportForm2',
-  PEOPLE: 'baltimoreHealthReportPeople',
-  APPEARS_IN: 'baltimoreHealthReportAppearsIn'
-}
+  FORM: 'BaltimoreBehavioralHealthReports',
+  PEOPLE: 'BaltimoreBehavioralHealthPersons',
+  APPEARS_IN: 'BaltimoreBehavioralHealthAppearsIn'
+};
 
 export const PERSON = {
   LAST_NAME_FQN: 'nc.PersonSurName',
@@ -12,7 +12,7 @@ export const PERSON = {
   SEX_FQN: 'nc.PersonSex',
   DOB_FQN: 'nc.PersonBirthDate',
   ID_FQN: 'nc.SubjectIdentification'
-}
+};
 
 export const CONSUMER_STATE = {
   LAST_NAME_FQN: 'lastName',
@@ -22,7 +22,7 @@ export const CONSUMER_STATE = {
   SEX_FQN: 'gender',
   DOB_FQN: 'dob',
   ID_FQN: 'identification'
-}
+};
 
 export const STRING_ID_FQN = 'general.stringid';
 
@@ -34,17 +34,22 @@ export const RACE = {
   nativeHawaiian: 'Native Hawaiian or Other Pacific Islander',
   white: 'White',
   other: 'Other'
-}
+};
 
 export const FORM_PATHS = {
   REPORT: '/1',
   CONSUMER_SEARCH: '/2',
   CONSUMER: '/3',
-  COMPLAINANT:'/4',
+  COMPLAINANT: '/4',
   DISPOSITION: '/5',
   OFFICER: '/6',
   REVIEW: '/7'
-}
+};
+
+export const FORM_ERRORS = {
+  INVALID_FORMAT: 'Some formats are invalid',
+  IS_REQUIRED: 'Some required fields are empty'
+};
 
 export const STATES = [
   'AL',
@@ -97,4 +102,4 @@ export const STATES = [
   'WV',
   'WI',
   'WY'
-]
+];

@@ -3,7 +3,4 @@
 .*/node_modules/.*
 
 [libs]
-node_modules/immutable/dist/immutable.js.flow
-
-[options]
-esproposal.class_static_fields=enable
+./node_modules/immutable/dist/immutable.js.flow

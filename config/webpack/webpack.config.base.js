@@ -36,6 +36,17 @@ export default function baseWebpackConfig(env :Object) {
     use: ['babel-loader']
   };
 
+  const FILE_LOADER_ASSETS_IMAGES = {
+    test: /\.(gif|ico|jpg|jpeg|png|svg|webp)(\?.*)?$/,
+    exclude: /node_modules/,
+    use: [{
+      loader: 'file-loader',
+      options: {
+        name: `${APP_PATHS.REL.STATIC_ASSETS_IMAGES}/[name].[hash:8].[ext]`
+      }
+    }]
+  };
+
   /*
    * plugins
    */
@@ -72,7 +83,8 @@ export default function baseWebpackConfig(env :Object) {
     },
     module: {
       rules: [
-        BABEL_LOADER
+        BABEL_LOADER,
+        FILE_LOADER_ASSETS_IMAGES
       ]
     },
     plugins: [

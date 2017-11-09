@@ -4,91 +4,217 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormControl, Col } from 'react-bootstrap';
+import { FormGroup, FormControl, Col } from 'react-bootstrap';
+import { withRouter } from 'react-router';
+import ReactRouterPropTypes from 'react-router-prop-types';
 
 import FormNav from './FormNav';
-import { PaddedRow, TitleLabel, SectionHeader } from '../shared/Layout';
-import { FORM_PATHS, STATES } from '../shared/Consts';
+import { PaddedRow, TitleLabel, SectionHeader, ErrorMessage } from '../shared/Layout';
+import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
+import { bootstrapValidation, validateRequiredInput } from '../shared/Validation';
 
-const ComplainantInfoView = ({ section, handleTextInput, input, isInReview, handlePageChange, handleSingleSelection }) => {
-  return(
-    <div>
-      { !isInReview() ? <SectionHeader>Complainant</SectionHeader> : null}
+const REQUIRED_FIELDS = ['complainantName'];
 
-      <PaddedRow>
-        <Col lg={6}>
-          <TitleLabel>28. Last Name</TitleLabel>
-          <FormControl data-section={section} name='complainantLastName' value={input.complainantLastName} onChange={handleTextInput} disabled={isInReview()} />
-        </Col>
-        <Col lg={6}>
-          <TitleLabel>First Name</TitleLabel>
-          <FormControl data-section={section} name='complainantFirstName' value={input.complainantFirstName} onChange={handleTextInput} disabled={isInReview()} />
-        </Col>
-      </PaddedRow>
-      <PaddedRow>
-        <Col lg={6}>
-          <TitleLabel>Middle Name</TitleLabel>
-          <FormControl data-section={section} name='complainantMiddleName' value={input.complainantMiddleName} onChange={handleTextInput} disabled={isInReview()} />
-        </Col>
-      </PaddedRow>
-      <PaddedRow>
-        <Col lg={12}>
-          <TitleLabel>Address</TitleLabel>
-          <FormControl data-section={section} name='complainantStreet' value={input.complainantStreet} onChange={handleTextInput} disabled={isInReview()} />
-        </Col>
-      </PaddedRow>
-      <PaddedRow>
-        <Col lg={6}>
-          <TitleLabel>City</TitleLabel>
-          <FormControl data-section={section} name='complainantCity' value={input.complainantCity} onChange={handleTextInput} disabled={isInReview()} />
-        </Col>
-        <Col lg={6}>
-          <TitleLabel>State</TitleLabel>
-          <FormControl
-              componentClass='select'
-              placeholder='select'
-              data-section={section}
-              name='complainantState'
-              value={input.complainantState}
-              onChange={handleSingleSelection}
-              disabled={isInReview()}>
-            <option value=''>Select</option>
-            { STATES.map((state) => (<option key={state} value={state}>{state}</option>)) }
-          </FormControl>
-        </Col>
-      </PaddedRow>
-      <PaddedRow>
-        <Col lg={6}>
-          <TitleLabel>County</TitleLabel>
-          <FormControl data-section={section} name='complainantCounty' value={input.complainantCounty} onChange={handleTextInput} disabled={isInReview()} />
-        </Col>
-        <Col lg={6}>
-          <TitleLabel>Zip</TitleLabel>
-          <FormControl data-section={section} name='complainantZip' value={input.complainantZip} onChange={handleTextInput} disabled={isInReview()} />
-        </Col>
-      </PaddedRow>
-      <PaddedRow>
-        <Col lg={6}>
-          <TitleLabel>Relationship to Consumer</TitleLabel>
-          <FormControl data-section={section} name='complainantConsumerRelationship' value={input.complainantConsumerRelationship} onChange={handleTextInput} disabled={isInReview()} />
-        </Col>
-        <Col lg={6}>
-          <TitleLabel>Phone Number</TitleLabel>
-          <FormControl data-section={section} name='complainantPhone' value={input.complainantPhone} onChange={handleTextInput} disabled={isInReview()} />
-        </Col>
-      </PaddedRow>
+class ComplainantInfoView extends React.Component {
+  constructor(props) {
+    super(props);
 
-      { !isInReview() ? <FormNav prevPath={FORM_PATHS.CONSUMER} nextPath={FORM_PATHS.DISPOSITION} handlePageChange={handlePageChange} /> : null}
-    </div>
-  );
+    this.state = {
+      sectionFormatErrors: [],
+      sectionRequiredErrors: [FORM_ERRORS.IS_REQUIRED],
+      complainantNameValid: true,
+      sectionValid: false,
+      didClickNav: this.props.location.state
+          ? this.props.location.state.didClickNav
+          : false,
+      currentPage: location.hash.substr(2, 10)
+    };
+  }
+
+  static propTypes = {
+    handleTextInput: PropTypes.func.isRequired,
+    section: PropTypes.string.isRequired,
+    isInReview: PropTypes.func.isRequired,
+    handlePageChange: PropTypes.func.isRequired,
+    history: ReactRouterPropTypes.history.isRequired,
+    location: ReactRouterPropTypes.location.isRequired,
+    input: PropTypes.shape({
+      complainantName: PropTypes.string.isRequired,
+      complainantAddress: PropTypes.string.isRequired,
+      complainantConsumerRelationship: PropTypes.string.isRequired,
+      complainantPhone: PropTypes.string.isRequired
+    }).isRequired
+  }
+
+  setDidClickNav = () => {
+    this.setState({ didClickNav: true });
+  }
+
+  setRequiredErrors = () => {
+    const requiredErrors = this.state.sectionRequiredErrors.slice();
+    const areRequiredInputsValid = validateRequiredInput(
+      this.props.input,
+      REQUIRED_FIELDS
+    );
+
+    if (areRequiredInputsValid) {
+      if (requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED) !== -1) {
+        requiredErrors.splice(requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED));
+      }
+    }
+    else if (requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED) === -1) {
+      requiredErrors.push(FORM_ERRORS.IS_REQUIRED);
+    }
+
+    this.setState({
+      sectionRequiredErrors: requiredErrors
+    });
+  }
+
+  handlePageChange = (path) => {
+    this.setDidClickNav();
+
+    Promise.resolve(this.setRequiredErrors())
+    .then(() => {
+      if (this.state.sectionRequiredErrors.length < 1 && this.state.sectionFormatErrors.length < 1) {
+        this.props.handlePageChange(path);
+      }
+    });
+  }
+
+  setInputErrors = (name, inputValid, sectionFormatErrors) => {
+    this.setState({
+      [`${name}Valid`]: inputValid,
+      sectionFormatErrors
+    });
+  }
+
+  renderErrors = () => {
+    const formatErrors = this.state.sectionFormatErrors.map((error) => {
+      return <ErrorMessage key={error}>{error}</ErrorMessage>;
+    });
+    let requiredErrors = [];
+    if (this.state.didClickNav) {
+      requiredErrors = this.state.sectionRequiredErrors.map((error) => {
+        return <ErrorMessage key={error}>{error}</ErrorMessage>;
+      });
+    }
+
+    return (
+      <div>
+        {formatErrors}
+        {requiredErrors}
+      </div>
+    );
+  }
+
+  componentWillUnmount() {
+    const areRequiredInputsValid = validateRequiredInput(
+      this.props.input,
+      REQUIRED_FIELDS
+    );
+    if (
+      !areRequiredInputsValid
+      && this.props.maxPage
+      && this.state.currentPage !== this.props.maxPage
+    ) {
+      this.props.history.push({
+        pathname: `/${this.state.currentPage}`,
+        state: { didClickNav: true }
+      });
+    }
+  }
+
+  render() {
+    const {
+      section,
+      handleTextInput,
+      input,
+      isInReview
+    } = this.props;
+
+    const {
+      complainantNameValid,
+      didClickNav,
+      sectionFormatErrors
+    } = this.state;
+
+    return (
+      <div>
+        { !isInReview() ? <SectionHeader>Complainant</SectionHeader> : null}
+
+        <PaddedRow>
+          <Col lg={12}>
+            <FormGroup
+                validationState={bootstrapValidation(
+                  input.complainantName,
+                  complainantNameValid,
+                  true,
+                  didClickNav
+                  )}>
+              <TitleLabel>28. Complainant Name (Last, First, MI)*</TitleLabel>
+              <FormControl
+                  data-section={section}
+                  name="complainantName"
+                  value={input.complainantName}
+                  onChange={(e) => {
+                    handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
+                  }}
+                  disabled={isInReview()} />
+            </FormGroup>
+          </Col>
+        </PaddedRow>
+        <PaddedRow>
+          <Col lg={12}>
+            <TitleLabel>Residence / Address (Street, Apt Number, City, County, State, Zip)</TitleLabel>
+            <FormControl
+                data-section={section}
+                name="complainantAddress"
+                value={input.complainantAddress}
+                onChange={(e) => {
+                  handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
+                }}
+                disabled={isInReview()} />
+          </Col>
+        </PaddedRow>
+        <PaddedRow>
+          <Col lg={6}>
+            <TitleLabel>Relationship to Consumer</TitleLabel>
+            <FormControl
+                data-section={section}
+                name="complainantConsumerRelationship"
+                value={input.complainantConsumerRelationship}
+                onChange={(e) => {
+                  handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
+                }}
+                disabled={isInReview()} />
+          </Col>
+          <Col lg={6}>
+            <TitleLabel>Phone Number</TitleLabel>
+            <FormControl
+                data-section={section}
+                name="complainantPhone"
+                value={input.complainantPhone}
+                onChange={(e) => {
+                  handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
+                }}
+                disabled={isInReview()} />
+          </Col>
+        </PaddedRow>
+
+        {
+          !isInReview()
+            ? <FormNav
+                prevPath={FORM_PATHS.CONSUMER}
+                nextPath={FORM_PATHS.DISPOSITION}
+                handlePageChange={this.handlePageChange}
+                setDidClickNav={this.setDidClickNav} />
+            : null
+        }
+        { this.renderErrors() }
+      </div>
+    );
+  }
 }
 
-ComplainantInfoView.propTypes = {
-  handleTextInput: PropTypes.func.isRequired,
-  input: PropTypes.object.isRequired,
-  section: PropTypes.string.isRequired,
-  isInReview: PropTypes.func.isRequired,
-  handlePageChange: PropTypes.func.isRequired
-};
-
-export default ComplainantInfoView;
+export default withRouter(ComplainantInfoView);

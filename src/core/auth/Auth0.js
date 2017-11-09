@@ -4,14 +4,28 @@
 
 import Auth0Lock from 'auth0-lock';
 
-import * as RoutePaths from '../router/RoutePaths';
+import * as Routes from '../router/Routes';
 import * as AuthUtils from './AuthUtils';
+
+import OpenLatticeLogo from '../../assets/images/logo.png';
 
 // injected by Webpack.DefinePlugin
 declare var __AUTH0_CLIENT_ID__;
 declare var __AUTH0_DOMAIN__;
+declare var __DEV__;
 
 let auth0HashPath :?string;
+
+// TODO: this doesn't belong here
+const allowedConnections :string[] = [
+  'BaltimorePD'
+];
+
+if (__DEV__) {
+  allowedConnections.push(
+    'Username-Password-Authentication'
+  );
+}
 
 /*
  * https://auth0.com/docs/libraries/lock/v10
@@ -19,6 +33,7 @@ let auth0HashPath :?string;
  * https://auth0.com/docs/libraries/lock/v10/customization
  */
 const auth0Lock :Auth0Lock = new Auth0Lock(__AUTH0_CLIENT_ID__, __AUTH0_DOMAIN__, {
+  allowedConnections,
   auth: {
     autoParseHash: false,
     params: {
@@ -30,6 +45,9 @@ const auth0Lock :Auth0Lock = new Auth0Lock(__AUTH0_CLIENT_ID__, __AUTH0_DOMAIN__
   hashCleanup: false,
   languageDictionary: {
     title: 'Behavioral Health Report'
+  },
+  theme: {
+    logo: OpenLatticeLogo
   }
 });
 
@@ -53,7 +71,7 @@ export function getAuth0LockInstance() :Auth0Lock {
  * Here, we grab the Auth0 response from the URL and redirect to "#/login", which avoids the need for hash history
  * to invoke window.location.replace().
  */
-export function parseHashPath() {
+export function parseHashPath() :?string {
 
   const href :string = window.location.href;
   const hashIndex :number = href.indexOf('#');
@@ -63,16 +81,20 @@ export function parseHashPath() {
   if (hashPath.indexOf('access_token') !== -1 && hashPath.indexOf('id_token') !== -1) {
 
     const urlBeforeHash :string = href.slice(0, hashIndex >= 0 ? hashIndex : 0);
-    window.location.replace(`${urlBeforeHash}#${RoutePaths.LOGIN}`);
+    window.location.replace(`${urlBeforeHash}#${Routes.LOGIN}`);
     return hashPath;
   }
 
-  return '';
+  return null;
 }
 
-export function initialize() {
+export function initialize() :void {
 
   auth0HashPath = parseHashPath();
+
+  if (AuthUtils.hasAuthTokenExpired(AuthUtils.getAuthToken())) {
+    AuthUtils.clearAuthInfo();
+  }
 }
 
 export function authenticate() :Promise<*> {
@@ -100,7 +122,7 @@ export function authenticate() :Promise<*> {
       }
       else {
         auth0HashPath = null;
-        resolve(authInfo.idToken);
+        resolve(authInfo);
       }
     });
 

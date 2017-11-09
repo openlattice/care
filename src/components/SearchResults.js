@@ -26,7 +26,12 @@ const SearchResults = ({ results, handlePersonSelection, didSearch }) => {
 
     const resultRows = [];
     results.forEach((result) => {
-      if (result[PERSON.FIRST_NAME_FQN] && result[PERSON.FIRST_NAME_FQN][0].length > 1 && result[PERSON.LAST_NAME_FQN] && result[PERSON.LAST_NAME_FQN][0].length > 1) {
+      if (
+        result[PERSON.FIRST_NAME_FQN]
+          && result[PERSON.FIRST_NAME_FQN][0].length > 1
+          && result[PERSON.LAST_NAME_FQN]
+          && result[PERSON.LAST_NAME_FQN][0].length > 1
+      ) {
         resultRows.push(
           <PersonRow person={result} handlePersonSelection={handlePersonSelection} key={result[PERSON.ID_FQN]} />
         );
@@ -34,14 +39,14 @@ const SearchResults = ({ results, handlePersonSelection, didSearch }) => {
     });
 
     return resultRows;
-  }
+  };
 
   return (
     <ResultsWrapper>
       { renderResults() }
     </ResultsWrapper>
   );
-}
+};
 
 SearchResults.propTypes = {
   results: PropTypes.array.isRequired,

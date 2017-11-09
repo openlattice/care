@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 import { ControlLabel, Checkbox, Radio, Button, Row } from 'react-bootstrap';
 
@@ -53,6 +52,11 @@ export const TitleLabel = Label.extend`
   line-height: 1.5;
 `;
 
+export const LabelDescription = Label.extend`
+  color: light-gray;
+  font-size: 12px;
+`;
+
 export const OtherWrapper = styled.span`
   display: flex;
   align-items: center;
@@ -105,4 +109,8 @@ export const NavBtnWrapper = styled.div`
 
 export const StyledButton = styled(Button)`
   margin: 0 10px;
+`;
+
+export const ErrorMessage = styled.div`
+  color: rgb(169, 68, 66);
 `;

@@ -2,11 +2,13 @@ import React from 'react';
 
 import Promise from 'bluebird';
 import { EntityDataModelApi, DataApi, SearchApi, SyncApi } from 'lattice';
-import { withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router';
 
 import FormView from '../../components/FormView';
 import ConfirmationModal from '../../components/ConfirmationModalView';
 import { ENTITY_SET_NAMES, PERSON, CONSUMER_STATE, STRING_ID_FQN } from '../../shared/Consts';
+import { validateOnInput } from '../../shared/Validation';
+
 
 class Form extends React.Component {
   constructor(props) {
@@ -16,46 +18,44 @@ class Form extends React.Component {
       reportInfo: {
         dispatchReason: '',
         complaintNumber: '',
-        companionOffenseReport: null,
+        companionOffenseReport: false,
         incident: '',
         locationOfIncident: '',
         unit: '',
         postOfOccurrence: '',
         cadNumber: '',
-        onView: null,
+        onView: false,
         dateOccurred: '',
         timeOccurred: '',
         dateReported: '',
-        timeReported: ''
+        timeReported: '',
+        // WHAT IS NAME USED FOR?
+        name: ''
       },
       consumerInfo: {
         firstName: '',
         lastName: '',
         middleName: '',
-        street: '',
-        city: '',
-        state: '',
-        county: '',
-        zip: '',
+        address: '',
         phone: '',
         identification: '',
-        militaryStatus: null,
+        militaryStatus: '',
         gender: '',
         race: '',
         age: '',
         dob: '',
-        homeless: null,
+        homeless: false,
         homelessLocation: '',
-        drugsAlcohol: null,
+        drugsAlcohol: '',
         drugType: '',
-        prescribedMedication: null,
-        takingMedication: null,
-        prevPsychAdmission: null,
+        prescribedMedication: '',
+        takingMedication: '',
+        prevPsychAdmission: '',
         selfDiagnosis: [],
         selfDiagnosisOther: '',
-        armedWithWeapon: null,
+        armedWithWeapon: false,
         armedWeaponType: '',
-        accessToWeapons: null,
+        accessToWeapons: false,
         accessibleWeaponType: '',
         observedBehaviors: [],
         observedBehaviorsOther: '',
@@ -64,26 +64,20 @@ class Form extends React.Component {
         photosTakenOf: [],
         injuries: [],
         injuriesOther: '',
-        suicidal: null,
+        suicidal: false,
         suicidalActions: [],
         suicideAttemptMethod: [],
         suicideAttemptMethodOther: ''
       },
       complainantInfo: {
-        complainantLastName: '',
-        complainantFirstName: '',
-        complainantMiddleName: '',
-        complainantStreet: '',
-        complainantCity: '',
-        complainantState: '',
-        complainantZip: '',
-        complainantCounty: '',
+        complainantName: '',
+        complainantAddress: '',
         complainantConsumerRelationship: '',
         complainantPhone: ''
       },
       dispositionInfo: {
         disposition: [],
-        hospitalTransport: [],
+        hospitalTransport: false,
         hospital: '',
         deescalationTechniques: [],
         deescalationTechniquesOther: '',
@@ -91,8 +85,7 @@ class Form extends React.Component {
         incidentNarrative: ''
       },
       officerInfo: {
-        officerLastName: '',
-        officerFirstName: '',
+        officerName: '',
         officerSeqID: '',
         officerInjuries: '',
         officerCertification: []
@@ -145,17 +138,8 @@ class Form extends React.Component {
       maxHits,
       searchTerm
     };
-    SearchApi.searchEntitySetData('5e004de9-ac2a-47f0-96a4-cfe060e1f916', searchOptions)
-      .then((res) => {
-        console.log('search res:', res);
-      });
-  }
-
-  componentDidUpdate(prevProps) {
-
-    if (this.props.location !== prevProps.location) {
-      window.scrollTo(0, 0);
-    }
+    // TODO: wait to execute until getPersonEntitySet is complete
+    SearchApi.searchEntitySetData(this.state.personEntitySetId, searchOptions);
   }
 
   getPersonEntitySet = () => {
@@ -202,13 +186,14 @@ class Form extends React.Component {
   }
 
   // For text input
-  handleTextInput = (e) => {
+  handleTextInput = (e, fieldType, formatErrors, setErrorsFn) => {
     const sectionKey = e.target.dataset.section;
     const name = e.target.name;
     const input = e.target.value;
     const sectionState = this.state[sectionKey];
     sectionState[name] = input;
     this.setState({ [sectionKey]: sectionState });
+    validateOnInput(name, input, fieldType, formatErrors, setErrorsFn);
   }
 
   handleDateInput = (e, section, name) => {
@@ -225,12 +210,12 @@ class Form extends React.Component {
 
     while (ss >= 60) {
       mm += 1;
-      ss -= 60;
+      ss = ss - 60;
     }
 
     while (mm >= 60) {
       hh += 1;
-      mm -= 60;
+      mm = mm - 60;
     }
 
     let hhStr = hh.toString();
@@ -379,7 +364,6 @@ class Form extends React.Component {
 
   getBulkData = () => {
     const { entitySetId, personEntitySetId, appearsInEntitySetId } = this.state;
-    console.log('entity set id:', entitySetId);
     return SyncApi.getCurrentSyncId(entitySetId)
       .then((formSyncId) => {
         const formEntity = this.getFormEntity(formSyncId);
@@ -414,16 +398,14 @@ class Form extends React.Component {
   handleSubmit = (e) => {
     e.preventDefault();
     this.getBulkData().then((bulkData) => {
-      console.log('bulk data:', bulkData);
-      DataApi.createEntityAndAssociationData(bulkData).then(() => {
-        console.log('success!');
-        this.setState({
-          submitSuccess: true,
-          submitFailure: false
-        });
-      })
-        .catch((err) => {
-          console.log('err: ', err);
+      DataApi.createEntityAndAssociationData(bulkData)
+        .then(() => {
+          this.setState({
+            submitSuccess: true,
+            submitFailure: false
+          });
+        })
+        .catch(() => {
           this.setState({
             submitSuccess: false,
             submitFailure: true
@@ -437,7 +419,7 @@ class Form extends React.Component {
   }
 
   isInReview = () => {
-    const page = window.location.hash.substr(2);
+    const page = parseInt(window.location.hash.substr(2, 10));
     if (page && page === this.state.maxPage) return true;
     return false;
   }

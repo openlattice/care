@@ -45,14 +45,10 @@ const PersonRow = ({ person, handlePersonSelection }) => {
     return moment(person[PERSON.DOB_FQN][0], 'M/D/YYYY');
   };
 
-  const firstName = person[PERSON.FIRST_NAME_FQN][0];
-  const lastName = person[PERSON.LAST_NAME_FQN][0];
-  const midName = person[PERSON.MIDDLE_NAME_FQN][0];
-
   return (
     <PersonWrapper
         onClick={() => {
-          return handlePersonSelection(person);
+          handlePersonSelection(person);
         }}>
       <Grid>
         <Row>
@@ -62,7 +58,11 @@ const PersonRow = ({ person, handlePersonSelection }) => {
           <Col lg={10}>
             <StyledRow>
               <NameLabel>
-                { `${lastName}, ${firstName}, ${midName}` }
+                {
+                  `${person[PERSON.LAST_NAME_FQN][0]},
+                  ${person[PERSON.FIRST_NAME_FQN][0]},
+                  ${person[PERSON.MIDDLE_NAME_FQN][0]}`
+                }
               </NameLabel>
             </StyledRow>
             <StyledRow>
