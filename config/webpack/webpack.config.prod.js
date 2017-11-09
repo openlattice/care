@@ -7,6 +7,7 @@
 import webpack from 'webpack';
 
 import HtmlWebpackPlugin from 'html-webpack-plugin';
+import UglifyJsPlugin from 'uglifyjs-webpack-plugin';
 
 import APP_CONFIG from '../app/app.config.js';
 import APP_PATHS from '../app/paths.config.js';
@@ -31,11 +32,11 @@ export default function prodWebpackConfig(env :Object) {
     }),
     new webpack.optimize.OccurrenceOrderPlugin(),
     new HtmlWebpackPlugin({
+      favicon: `${APP_PATHS.ABS.SOURCE_ASSETS_IMAGES}/favicon.png`,
       inject: true,
       template: `${APP_PATHS.ABS.SOURCE}/${APP_CONFIG.APP_INDEX_HTML}`
-      // favicon: `${APP_PATHS.ABS.SOURCE}/images/favicon.png`
     }),
-    new webpack.optimize.UglifyJsPlugin(),
+    new UglifyJsPlugin(),
     ...baseConfig.plugins
   ];
 
@@ -44,4 +45,4 @@ export default function prodWebpackConfig(env :Object) {
     plugins,
     devtool: false
   });
-};
+}
