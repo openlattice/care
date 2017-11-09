@@ -2,41 +2,72 @@
  * @flow
  */
 
-import * as AuthActionTypes from './AuthActionTypes';
+const AUTH_ATTEMPT :'AUTH_ATTEMPT' = 'AUTH_ATTEMPT';
+const AUTH_SUCCESS :'AUTH_SUCCESS' = 'AUTH_SUCCESS';
+const AUTH_FAILURE :'AUTH_FAILURE' = 'AUTH_FAILURE';
+const AUTH_EXPIRED :'AUTH_EXPIRED' = 'AUTH_EXPIRED';
 
-export function authAttempt() :Object {
+function authAttempt() :Object {
 
   return {
-    type: AuthActionTypes.AUTH_ATTEMPT
+    type: AUTH_ATTEMPT
   };
 }
 
-export function authSuccess(authToken :?string) :Object {
+function authExpired() :Object {
 
   return {
-    type: AuthActionTypes.AUTH_SUCCESS,
-    authToken
+    type: AUTH_EXPIRED
   };
 }
 
-export function authFailure(error :any) :Object {
+function authFailure(error :any) :Object {
 
   return {
-    type: AuthActionTypes.AUTH_FAILURE,
-    error
+    error,
+    type: AUTH_FAILURE
   };
 }
 
-export function authExpired() :Object {
+function authSuccess(authToken :?string) :Object {
 
   return {
-    type: AuthActionTypes.AUTH_EXPIRED
+    authToken,
+    type: AUTH_SUCCESS
   };
 }
 
-export function logout() :Object {
+const LOGIN :'LOGIN' = 'LOGIN';
+const LOGOUT :'LOGOUT' = 'LOGOUT';
+
+function login() :Object {
 
   return {
-    type: AuthActionTypes.LOGOUT
+    type: LOGIN
   };
 }
+
+function logout() :Object {
+
+  return {
+    type: LOGOUT
+  };
+}
+
+export {
+  AUTH_ATTEMPT,
+  AUTH_EXPIRED,
+  AUTH_FAILURE,
+  AUTH_SUCCESS,
+  LOGIN,
+  LOGOUT
+};
+
+export {
+  authAttempt,
+  authExpired,
+  authFailure,
+  authSuccess,
+  login,
+  logout
+};
