@@ -1,11 +1,8 @@
-/*
- * @flow
- */
-
 import React from 'react';
-import { withRouter } from 'react-router-dom';
+
 import Promise from 'bluebird';
 import { EntityDataModelApi, DataApi, SearchApi, SyncApi } from 'lattice';
+import { withRouter } from 'react-router';
 
 import FormView from '../../components/FormView';
 import ConfirmationModal from '../../components/ConfirmationModalView';
@@ -401,18 +398,19 @@ class Form extends React.Component {
   handleSubmit = (e) => {
     e.preventDefault();
     this.getBulkData().then((bulkData) => {
-      DataApi.createEntityAndAssociationData(bulkData).then(() => {
-        this.setState({
-          submitSuccess: true,
-          submitFailure: false
+      DataApi.createEntityAndAssociationData(bulkData)
+        .then(() => {
+          this.setState({
+            submitSuccess: true,
+            submitFailure: false
+          });
+        })
+        .catch(() => {
+          this.setState({
+            submitSuccess: false,
+            submitFailure: true
+          });
         });
-      })
-      .catch(() => {
-        this.setState({
-          submitSuccess: false,
-          submitFailure: true
-        });
-      });
     });
   }
 

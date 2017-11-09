@@ -1,13 +1,10 @@
-/*
- * @flow
- */
-
 import React from 'react';
+
 import PropTypes from 'prop-types';
+import FontAwesome from 'react-fontawesome';
+import moment from 'moment';
 import styled from 'styled-components';
 import { Grid, Row, Col } from 'react-bootstrap';
-import FontAwesome from 'react-fontawesome';
-import dateformat from 'dateformat';
 
 import { PERSON, RACE } from '../shared/Consts';
 
@@ -17,7 +14,7 @@ const PersonWrapper = styled.div`
   padding: 20px 5px;
   &:hover {
     background: white;
-    cursor: pointer; 
+    cursor: pointer;
   }
 `;
 
@@ -39,20 +36,20 @@ const StyledCol = styled(Col)`
 `;
 
 const PersonRow = ({ person, handlePersonSelection }) => {
+
   const getRace = () => {
     return RACE[person[PERSON.RACE_FQN][0]];
   };
 
   const getFormattedDOB = () => {
-    return dateformat(person[PERSON.DOB_FQN][0], 'm/d/yyyy');
+    return moment(person[PERSON.DOB_FQN][0], 'M/D/YYYY');
   };
 
   return (
     <PersonWrapper
         onClick={() => {
           handlePersonSelection(person);
-        }
-        }>
+        }}>
       <Grid>
         <Row>
           <Col lg={2}>
@@ -62,8 +59,8 @@ const PersonRow = ({ person, handlePersonSelection }) => {
             <StyledRow>
               <NameLabel>
                 {
-                  `${person[PERSON.LAST_NAME_FQN][0]}, 
-                  ${person[PERSON.FIRST_NAME_FQN][0]}, 
+                  `${person[PERSON.LAST_NAME_FQN][0]},
+                  ${person[PERSON.FIRST_NAME_FQN][0]},
                   ${person[PERSON.MIDDLE_NAME_FQN][0]}`
                 }
               </NameLabel>

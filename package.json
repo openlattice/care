@@ -22,10 +22,9 @@
   "license": "GPLv3",
   "main": "index.js",
   "dependencies": {
-    "auth0-lock": "^10.19.0",
+    "auth0-lock": "^10.20.0",
     "babel-polyfill": "^6.26.0",
     "bluebird": "^3.5.0",
-    "dateformat": "^2.0.0",
     "history": "^4.6.3",
     "immutable": "4.0.0-rc.9",
     "jwt-decode": "^2.2.0",

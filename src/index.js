@@ -21,22 +21,11 @@ import * as Routes from './core/router/Routes';
 import * as Utils from './utils/Utils';
 
 import AppContainer from './containers/app/AppContainer';
-import ScrollToTop from './containers/app/ScrollToTop';
 
 /* eslint-disable */
 injectGlobal`${normalize()}`;
 
 injectGlobal`
-
-  * {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    outline: 0;
-    font-size: 100%;
-    vertical-align: baseline;
-    background: transparent;
-    }
 
   html,
   body {
@@ -67,9 +56,7 @@ const reduxStore = initializeReduxStore(routerHistory);
 ReactDOM.render(
   <Provider store={reduxStore}>
     <ConnectedRouter history={routerHistory}>
-      <ScrollToTop>
-        <AuthRoute path={Routes.ROOT} component={AppContainer} />
-      </ScrollToTop>
+      <AuthRoute path={Routes.ROOT} component={AppContainer} />
     </ConnectedRouter>
   </Provider>,
   document.getElementById('app')
