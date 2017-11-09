@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import { FormGroup, FormControl, Col } from 'react-bootstrap';
 import DatePicker from 'react-bootstrap-date-picker';
 import TimePicker from 'react-bootstrap-time-picker';
+import { withRouter } from 'react-router';
 
 import FormNav from './FormNav';
 import { TitleLabel, InlineRadio, PaddedRow, SectionHeader, ErrorMessage } from '../shared/Layout';
@@ -28,7 +29,10 @@ class ReportInfoView extends React.Component {
       cadNumberValid: true,
       dateOccurredValid: true,
       sectionValid: false,
-      didClickNav: false
+      didClickNav: this.props.location.state
+          ? this.props.location.state.didClickNav
+          : false,
+      currentPage: location.hash.substr(2, 10)
     };
   }
 
@@ -62,7 +66,7 @@ class ReportInfoView extends React.Component {
     this.setState({ didClickNav: true });
   }
 
-  handlePageChange = (path) => {
+  checkRequiredValidation = () => {
     const requiredErrors = this.state.sectionRequiredErrors.slice();
     const areRequiredInputsValid = validateRequiredInput(
       this.props.input,
@@ -79,13 +83,19 @@ class ReportInfoView extends React.Component {
     }
 
     this.setState({
-      didClickNav: true,
       sectionRequiredErrors: requiredErrors
     });
+  }
 
-    if (requiredErrors.length < 1 && this.state.sectionFormatErrors.length < 1) {
-      this.props.handlePageChange(path);
-    }
+  handlePageChange = (path) => {
+    this.setDidClickNav();
+
+    Promise.resolve(this.checkRequiredValidation())
+    .then(() => {
+      if (this.state.sectionRequiredErrors.length < 1 && this.state.sectionFormatErrors.length < 1) {
+        this.props.handlePageChange(path);
+      }
+    });
   }
 
   setInputErrors = (name, inputValid, sectionFormatErrors) => {
@@ -112,6 +122,18 @@ class ReportInfoView extends React.Component {
         {requiredErrors}
       </div>
     );
+  }
+
+  componentWillUnmount() {
+    Promise.resolve(this.checkRequiredValidation())
+    .then(() => {
+      if (this.state.sectionRequiredErrors.length >= 1 || this.state.sectionFormatErrors.length >= 1) {
+        this.props.history.push({
+          pathname: `/${this.state.currentPage}`,
+          state: { didClickNav: true }
+        });
+      }
+    });
   }
 
   render() {
@@ -337,4 +359,4 @@ class ReportInfoView extends React.Component {
   }
 }
 
-export default ReportInfoView;
+export default withRouter(ReportInfoView);
