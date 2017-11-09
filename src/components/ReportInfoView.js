@@ -8,6 +8,7 @@ import { FormGroup, FormControl, Col } from 'react-bootstrap';
 import DatePicker from 'react-bootstrap-date-picker';
 import TimePicker from 'react-bootstrap-time-picker';
 import { withRouter } from 'react-router';
+import ReactRouterPropTypes from 'react-router-prop-types';
 
 import FormNav from './FormNav';
 import { TitleLabel, InlineRadio, PaddedRow, SectionHeader, ErrorMessage } from '../shared/Layout';
@@ -44,6 +45,8 @@ class ReportInfoView extends React.Component {
     isInReview: PropTypes.func.isRequired,
     handlePageChange: PropTypes.func.isRequired,
     section: PropTypes.string.isRequired,
+    history: ReactRouterPropTypes.history.isRequired,
+    location: ReactRouterPropTypes.location.isRequired,
     input: PropTypes.shape({
       dispatchReason: PropTypes.string.isRequired,
       complaintNumber: PropTypes.string.isRequired,
