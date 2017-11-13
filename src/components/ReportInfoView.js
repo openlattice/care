@@ -33,7 +33,7 @@ class ReportInfoView extends React.Component {
       didClickNav: this.props.location.state
           ? this.props.location.state.didClickNav
           : false,
-      currentPage: parseInt(location.hash.substr(2, 10))
+      currentPage: parseInt(location.hash.substr(2), 10)
     };
   }
 

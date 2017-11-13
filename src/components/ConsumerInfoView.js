@@ -40,7 +40,7 @@ class ConsumerInfoView extends React.Component {
       didClickNav: this.props.location.state
           ? this.props.location.state.didClickNav
           : false,
-      currentPage: location.hash.substr(2, 10)
+      currentPage: parseInt(location.hash.substr(2), 10)
     };
   }
 
@@ -55,6 +55,7 @@ class ConsumerInfoView extends React.Component {
     section: PropTypes.string.isRequired,
     history: ReactRouterPropTypes.history.isRequired,
     location: ReactRouterPropTypes.location.isRequired,
+    maxPage: PropTypes.number.isRequired,
     input: PropTypes.shape({
       firstName: PropTypes.string.isRequired,
       lastName: PropTypes.string.isRequired,
@@ -160,6 +161,7 @@ class ConsumerInfoView extends React.Component {
       this.props.input,
       REQUIRED_FIELDS
     );
+
     if (
       !areRequiredInputsValid
       && this.props.maxPage
