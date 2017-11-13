@@ -35,8 +35,8 @@ class DispositionView extends React.Component {
       incidentNarrativeValid: true,
       sectionValid: false,
       didClickNav: this.props.location.state
-          ? this.props.location.state.didClickNav
-          : false,
+        ? this.props.location.state.didClickNav
+        : false,
       currentPage: parseInt(location.hash.substr(2), 10)
     };
   }
@@ -67,35 +67,35 @@ class DispositionView extends React.Component {
   }
 
   setRequiredErrors = () => {
-      const requiredErrors = this.state.sectionRequiredErrors.slice();
-      const areRequiredInputsValid = validateRequiredInput(
-        this.props.input,
-        REQUIRED_FIELDS
-      );
+    const requiredErrors = this.state.sectionRequiredErrors.slice();
+    const areRequiredInputsValid = validateRequiredInput(
+      this.props.input,
+      REQUIRED_FIELDS
+    );
 
-      if (areRequiredInputsValid) {
-        if (requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED) !== -1) {
-          requiredErrors.splice(requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED));
-        }
+    if (areRequiredInputsValid) {
+      if (requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED) !== -1) {
+        requiredErrors.splice(requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED));
       }
-      else if (requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED) === -1) {
-        requiredErrors.push(FORM_ERRORS.IS_REQUIRED);
-      }
-
-      this.setState({
-        sectionRequiredErrors: requiredErrors
-      });
     }
+    else if (requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED) === -1) {
+      requiredErrors.push(FORM_ERRORS.IS_REQUIRED);
+    }
+
+    this.setState({
+      sectionRequiredErrors: requiredErrors
+    });
+  }
 
   handlePageChange = (path) => {
     this.setDidClickNav();
 
     Promise.resolve(this.setRequiredErrors())
-    .then(() => {
-      if (this.state.sectionRequiredErrors.length < 1 && this.state.sectionFormatErrors.length < 1) {
-        this.props.handlePageChange(path);
-      }
-    });
+      .then(() => {
+        if (this.state.sectionRequiredErrors.length < 1 && this.state.sectionFormatErrors.length < 1) {
+          this.props.handlePageChange(path);
+        }
+      });
   }
 
   setInputErrors = (name, inputValid, sectionFormatErrors) => {
@@ -172,7 +172,7 @@ class DispositionView extends React.Component {
                   dispositionValid,
                   true,
                   didClickNav
-                  )}>
+                )}>
               <InlineCheckbox
                   inline
                   data-section={section}
@@ -430,7 +430,7 @@ class DispositionView extends React.Component {
                   incidentNarrativeValid,
                   true,
                   didClickNav
-                  )}>
+                )}>
               <TitleLabel>
                 {
                   `32. Narrative of Incident, to include: Results of investigation, basis for 
@@ -452,12 +452,12 @@ class DispositionView extends React.Component {
 
         {
           !isInReview()
-          ? <FormNav
-              prevPath={FORM_PATHS.COMPLAINANT}
-              nextPath={FORM_PATHS.OFFICER}
-              handlePageChange={this.handlePageChange}
-              setDidClickNav={this.setDidClickNav} />
-          : null
+            ? <FormNav
+                prevPath={FORM_PATHS.COMPLAINANT}
+                nextPath={FORM_PATHS.OFFICER}
+                handlePageChange={this.handlePageChange}
+                setDidClickNav={this.setDidClickNav} />
+            : null
         }
         { this.renderErrors() }
       </div>

@@ -27,8 +27,8 @@ class OfficerInfoView extends React.Component {
       officerSeqIDValid: true,
       sectionValid: false,
       didClickNav: this.props.location.state
-          ? this.props.location.state.didClickNav
-          : false,
+        ? this.props.location.state.didClickNav
+        : false,
       currentPage: parseInt(location.hash.substr(2), 10)
     };
   }
@@ -79,11 +79,11 @@ class OfficerInfoView extends React.Component {
     this.setDidClickNav();
 
     Promise.resolve(this.setRequiredErrors())
-    .then(() => {
-      if (this.state.sectionRequiredErrors.length < 1 && this.state.sectionFormatErrors.length < 1) {
-        this.props.handlePageChange(path);
-      }
-    });
+      .then(() => {
+        if (this.state.sectionRequiredErrors.length < 1 && this.state.sectionFormatErrors.length < 1) {
+          this.props.handlePageChange(path);
+        }
+      });
   }
 
   setInputErrors = (name, inputValid, sectionFormatErrors) => {
@@ -157,7 +157,7 @@ class OfficerInfoView extends React.Component {
                   officerNameValid,
                   true,
                   didClickNav
-                  )}>
+                )}>
               <TitleLabel>33. Officer Name*</TitleLabel>
               <FormControl
                   data-section={section}

@@ -16,23 +16,25 @@ const FormNav = ({ prevPath, nextPath, submit, handlePageChange }) => {
         {
           prevPath && prevPath.length
             ? <StyledButton
-                onClick={() => {
-                  handlePageChange(prevPath);
-                }
-              }>
+                onClick={
+                  () => {
+                    handlePageChange(prevPath);
+                  }
+                }>
                 Prev
-              </StyledButton>
+            </StyledButton>
             : null
         }
         {
           nextPath && nextPath.length
             ? <StyledButton
-                onClick={() => {
-                  handlePageChange(nextPath);
-                }
-              }>
+                onClick={
+                  () => {
+                    handlePageChange(nextPath);
+                  }
+                }>
                 Next
-              </StyledButton>
+            </StyledButton>
             : null
         }
       </NavBtnWrapper>

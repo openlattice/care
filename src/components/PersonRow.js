@@ -36,13 +36,12 @@ const StyledCol = styled(Col)`
 `;
 
 const PersonRow = ({ person, handlePersonSelection }) => {
-
   const getRace = () => {
     return RACE[person[PERSON.RACE_FQN][0]];
   };
 
   const getFormattedDOB = () => {
-    return moment(person[PERSON.DOB_FQN][0], 'M/D/YYYY');
+    return moment(person[PERSON.DOB_FQN][0]).format('MM/DD/YYYY');
   };
 
   return (
@@ -81,7 +80,16 @@ const PersonRow = ({ person, handlePersonSelection }) => {
 };
 
 PersonRow.propTypes = {
-  person: PropTypes.object.isRequired,
+  person: PropTypes.shape({
+    id: PropTypes.array.isRequired,
+    'nc.PersonBirthDate': PropTypes.array.isRequired,
+    'nc.PersonGivenName': PropTypes.array.isRequired,
+    'nc.PersonMiddleName': PropTypes.array.isRequired,
+    'nc.PersonRace': PropTypes.array.isRequired,
+    'nc.PersonSex': PropTypes.array.isRequired,
+    'nc.PersonSurName': PropTypes.array.isRequired,
+    'nc.SubjectIdentification': PropTypes.array.isRequired
+  }).isRequired,
   handlePersonSelection: PropTypes.func.isRequired
 };
 

@@ -49,7 +49,16 @@ const SearchResults = ({ results, handlePersonSelection, didSearch }) => {
 };
 
 SearchResults.propTypes = {
-  results: PropTypes.array.isRequired,
+  results: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.array.isRequired,
+    'nc.PersonBirthDate': PropTypes.array.isRequired,
+    'nc.PersonGivenName': PropTypes.array.isRequired,
+    'nc.PersonMiddleName': PropTypes.array.isRequired,
+    'nc.PersonRace': PropTypes.array.isRequired,
+    'nc.PersonSex': PropTypes.array.isRequired,
+    'nc.PersonSurName': PropTypes.array.isRequired,
+    'nc.SubjectIdentification': PropTypes.array.isRequired
+  })).isRequired,
   handlePersonSelection: PropTypes.func.isRequired,
   didSearch: PropTypes.bool.isRequired
 };

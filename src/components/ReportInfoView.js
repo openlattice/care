@@ -31,8 +31,8 @@ class ReportInfoView extends React.Component {
       dateOccurredValid: true,
       sectionValid: false,
       didClickNav: this.props.location.state
-          ? this.props.location.state.didClickNav
-          : false,
+        ? this.props.location.state.didClickNav
+        : false,
       currentPage: parseInt(location.hash.substr(2), 10)
     };
   }
@@ -95,11 +95,11 @@ class ReportInfoView extends React.Component {
     this.setDidClickNav();
 
     Promise.resolve(this.setRequiredErrors())
-    .then(() => {
-      if (this.state.sectionRequiredErrors.length < 1 && this.state.sectionFormatErrors.length < 1) {
-        this.props.handlePageChange(path);
-      }
-    });
+      .then(() => {
+        if (this.state.sectionRequiredErrors.length < 1 && this.state.sectionFormatErrors.length < 1) {
+          this.props.handlePageChange(path);
+        }
+      });
   }
 
   setInputErrors = (name, inputValid, sectionFormatErrors) => {
@@ -185,7 +185,7 @@ class ReportInfoView extends React.Component {
                   complaintNumberValid,
                   true,
                   didClickNav
-                  )}>
+                )}>
               <TitleLabel>2. Complaint Number*</TitleLabel>
               <FormControl
                   data-section={section}

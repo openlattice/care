@@ -3,6 +3,7 @@ import React from 'react';
 import Promise from 'bluebird';
 import { EntityDataModelApi, DataApi, SearchApi, SyncApi } from 'lattice';
 import { withRouter } from 'react-router';
+import ReactRouterPropTypes from 'react-router-prop-types';
 
 import FormView from '../../components/FormView';
 import ConfirmationModal from '../../components/ConfirmationModalView';
@@ -34,7 +35,6 @@ class Form extends React.Component {
         timeOccurred: '',
         dateReported: '',
         timeReported: '',
-        // WHAT IS NAME USED FOR?
         name: ''
       },
       consumerInfo: {
@@ -112,6 +112,10 @@ class Form extends React.Component {
       maxPage: 7,
       consumerIsSelected: false
     };
+  }
+
+  static propTypes = {
+    history: ReactRouterPropTypes.history.isRequired
   }
 
   componentDidMount() {
@@ -213,12 +217,12 @@ class Form extends React.Component {
 
     while (ss >= 60) {
       mm += 1;
-      ss = ss - 60;
+      ss -= 60;
     }
 
     while (mm >= 60) {
       hh += 1;
-      mm = mm - 60;
+      mm -= 60;
     }
 
     let hhStr = hh.toString();

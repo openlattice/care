@@ -58,12 +58,12 @@ class ConsumerSearch extends React.Component {
 
     if (this.props.personEntitySetId.length > 0) {
       SearchApi.searchEntitySetData(this.props.personEntitySetId, searchRequest)
-      .then((results) => {
-        this.setState({
-          results: results.hits,
-          didSearch: true
+        .then((results) => {
+          this.setState({
+            results: results.hits,
+            didSearch: true
+          });
         });
-      });
     }
   }
 

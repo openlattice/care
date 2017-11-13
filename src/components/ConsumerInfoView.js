@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import { withRouter } from 'react-router'; 
+import { withRouter } from 'react-router';
 import PropTypes from 'prop-types';
 import { FormGroup, FormControl, Col } from 'react-bootstrap';
 import DatePicker from 'react-bootstrap-date-picker';
@@ -38,8 +38,8 @@ class ConsumerInfoView extends React.Component {
       ageValid: true,
       sectionValid: false,
       didClickNav: this.props.location.state
-          ? this.props.location.state.didClickNav
-          : false,
+        ? this.props.location.state.didClickNav
+        : false,
       currentPage: parseInt(location.hash.substr(2), 10)
     };
   }
@@ -123,11 +123,11 @@ class ConsumerInfoView extends React.Component {
     this.setDidClickNav();
 
     Promise.resolve(this.setRequiredErrors())
-    .then(() => {
-      if (this.state.sectionRequiredErrors.length < 1 && this.state.sectionFormatErrors.length < 1) {
-        this.props.handlePageChange(path);
-      }
-    });
+      .then(() => {
+        if (this.state.sectionRequiredErrors.length < 1 && this.state.sectionFormatErrors.length < 1) {
+          this.props.handlePageChange(path);
+        }
+      });
   }
 
   setInputErrors = (name, inputValid, sectionFormatErrors) => {
@@ -207,7 +207,7 @@ class ConsumerInfoView extends React.Component {
                   lastNameValid,
                   true,
                   didClickNav
-                  )}>
+                )}>
               <TitleLabel>12. Last Name*</TitleLabel>
               <FormControl
                   data-section={section}
@@ -258,7 +258,7 @@ class ConsumerInfoView extends React.Component {
                   identificationValid,
                   true,
                   didClickNav
-                  )}>
+                )}>
               <TitleLabel>13. Consumer Identification*</TitleLabel>
               <FormControl
                   data-section={section}
@@ -1153,12 +1153,12 @@ class ConsumerInfoView extends React.Component {
 
         {
           !isInReview()
-          ? <FormNav
-              prevPath={FORM_PATHS.CONSUMER_SEARCH}
-              nextPath={FORM_PATHS.COMPLAINANT}
-              handlePageChange={this.handlePageChange}
-              setDidClickNav={this.setDidClickNav} />
-          : null
+            ? <FormNav
+                prevPath={FORM_PATHS.CONSUMER_SEARCH}
+                nextPath={FORM_PATHS.COMPLAINANT}
+                handlePageChange={this.handlePageChange}
+                setDidClickNav={this.setDidClickNav} />
+            : null
         }
         { this.renderErrors() }
       </div>
