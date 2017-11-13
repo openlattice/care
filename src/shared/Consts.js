@@ -11,7 +11,8 @@ export const PERSON = {
   RACE_FQN: 'nc.PersonRace',
   SEX_FQN: 'nc.PersonSex',
   DOB_FQN: 'nc.PersonBirthDate',
-  ID_FQN: 'nc.SubjectIdentification'
+  ID_FQN: 'nc.SubjectIdentification',
+  AGE_FQN: 'person.age'
 };
 
 export const CONSUMER_STATE = {

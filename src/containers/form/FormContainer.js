@@ -307,7 +307,7 @@ class Form extends React.Component {
   }
 
   getPersonEntity = (syncId) => {
-    const { identification, firstName, lastName, middleName, dob, gender, race } = this.state.consumerInfo;
+    const { identification, firstName, lastName, middleName, dob, gender, race, age } = this.state.consumerInfo;
     const entityId = btoa(identification);
     const key = {
       entitySetId: this.state.personEntitySetId,
@@ -329,6 +329,7 @@ class Form extends React.Component {
     details[props[PERSON.DOB_FQN]] = (dob && dob.length) ? [dob] : [];
     details[props[PERSON.SEX_FQN]] = (gender && gender.length) ? [gender] : [];
     details[props[PERSON.RACE_FQN]] = (race && race.length) ? [race] : [];
+    details[props[PERSON.AGE_FQN]] = (age && age.length) ? [age] : [];
 
     return { key, details };
   }

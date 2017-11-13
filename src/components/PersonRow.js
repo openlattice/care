@@ -88,7 +88,8 @@ PersonRow.propTypes = {
     'nc.PersonRace': PropTypes.array.isRequired,
     'nc.PersonSex': PropTypes.array.isRequired,
     'nc.PersonSurName': PropTypes.array.isRequired,
-    'nc.SubjectIdentification': PropTypes.array.isRequired
+    'nc.SubjectIdentification': PropTypes.array.isRequired,
+    'person.age': PropTypes.array.isRequired
   }).isRequired,
   handlePersonSelection: PropTypes.func.isRequired
 };
