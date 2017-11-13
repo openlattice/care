@@ -6,7 +6,12 @@ import { withRouter } from 'react-router';
 
 import FormView from '../../components/FormView';
 import ConfirmationModal from '../../components/ConfirmationModalView';
-import { ENTITY_SET_NAMES, PERSON, CONSUMER_STATE, STRING_ID_FQN } from '../../shared/Consts';
+import {
+  ENTITY_SET_NAMES,
+  PERSON,
+  CONSUMER_STATE,
+  STRING_ID_FQN
+} from '../../shared/Consts';
 import { validateOnInput } from '../../shared/Validation';
 
 
@@ -129,7 +134,9 @@ class Form extends React.Component {
               });
           });
       });
+  }
 
+  getPersonEntitySet = () => {
     const start = 0;
     const maxHits = 50;
     const searchTerm = '*';
@@ -138,13 +145,9 @@ class Form extends React.Component {
       maxHits,
       searchTerm
     };
-    // TODO: wait to execute until getPersonEntitySet is complete
-    SearchApi.searchEntitySetData(this.state.personEntitySetId, searchOptions);
-  }
-
-  getPersonEntitySet = () => {
     EntityDataModelApi.getEntitySetId(ENTITY_SET_NAMES.PEOPLE)
       .then((personEntitySetId) => {
+        SearchApi.searchEntitySetData(personEntitySetId, searchOptions);
         this.setState({ personEntitySetId });
         EntityDataModelApi.getEntitySet(personEntitySetId)
           .then((personEntitySet) => {
@@ -341,8 +344,11 @@ class Form extends React.Component {
       const value = formInputs[propertyType.type.name];
       let formattedValue;
       formattedValue = Array.isArray(value) ? value : [value];
-      formattedValue = (formattedValue.length > 0 && (formattedValue[0] === '' || formattedValue[0] === null))
-        ? [] : formattedValue;
+      formattedValue = (
+        formattedValue.length > 0
+          && (formattedValue[0] === ''
+          || formattedValue[0] === null)
+      ) ? [] : formattedValue;
       details[propertyType.id] = formattedValue;
     });
 
