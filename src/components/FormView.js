@@ -156,6 +156,7 @@ function FormView({
           officerInfo={officerInfo}
           isInReview={isInReview}
           consumerIsSelected={consumerIsSelected}
+          maxPage={maxPage}
           handlePageChange={handlePageChange} />
     );
   };

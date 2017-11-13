@@ -49,7 +49,8 @@ const ReviewView = ({
   handleSingleSelection,
   isInReview,
   consumerIsSelected,
-  handlePageChange
+  handlePageChange,
+  maxPage
 }) => {
 
   return (
@@ -70,6 +71,7 @@ const ReviewView = ({
               input={reportInfo}
               section="reportInfo"
               isInReview={isInReview}
+              maxPage={maxPage}
               handlePageChange={handlePageChange} />
         </Section>
         <Section>
@@ -86,6 +88,7 @@ const ReviewView = ({
               consumerIsSelected={consumerIsSelected}
               isInReview={isInReview}
               handlePageChange={handlePageChange}
+              maxPage={maxPage}
               section="consumerInfo" />
         </Section>
         <Section>
@@ -98,6 +101,7 @@ const ReviewView = ({
               input={complainantInfo}
               isInReview={isInReview}
               handlePageChange={handlePageChange}
+              maxPage={maxPage}
               section="complainantInfo" />
         </Section>
         <Section>
@@ -112,6 +116,7 @@ const ReviewView = ({
               input={dispositionInfo}
               isInReview={isInReview}
               handlePageChange={handlePageChange}
+              maxPage={maxPage}
               section="dispositionInfo" />
         </Section>
         <Section>
@@ -125,6 +130,7 @@ const ReviewView = ({
               input={officerInfo}
               isInReview={isInReview}
               handlePageChange={handlePageChange}
+              maxPage={maxPage}
               section="officerInfo" />
         </Section>
 
