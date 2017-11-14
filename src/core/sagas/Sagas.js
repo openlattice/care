@@ -27,7 +27,7 @@ export default function* sagas() :Generator<*, *, *> {
     fork(LatticeSagas.fetchEntityTypeWatcher),
     fork(LatticeSagas.fetchPropertyTypeWatcher),
     fork(LatticeSagas.fetchPropertyTypesWatcher),
-    fork(LatticeSagas.getCurrentSyncIdWorker),
+    fork(LatticeSagas.getCurrentSyncIdWatcher),
 
     // FormSagas
     fork(EntitySetsSagas.loadDataModelWatcher)
