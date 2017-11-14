@@ -11,6 +11,7 @@ import ReactRouterPropTypes from 'react-router-prop-types';
 import FormNav from './FormNav';
 import { PaddedRow, TitleLabel, InlineCheckbox, SectionHeader, ErrorMessage } from '../shared/Layout';
 import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
+import { setDidClickNav } from '../shared/Helpers';
 import { bootstrapValidation, validateRequiredInput } from '../shared/Validation';
 
 const REQUIRED_FIELDS = ['officerName'];
@@ -50,10 +51,6 @@ class OfficerInfoView extends React.Component {
     }).isRequired
   }
 
-  setDidClickNav = () => {
-    this.setState({ didClickNav: true });
-  }
-
   setRequiredErrors = () => {
     const requiredErrors = this.state.sectionRequiredErrors.slice();
     const areRequiredInputsValid = validateRequiredInput(
@@ -76,7 +73,7 @@ class OfficerInfoView extends React.Component {
   }
 
   handlePageChange = (path) => {
-    this.setDidClickNav();
+    this.setState(setDidClickNav);
 
     Promise.resolve(this.setRequiredErrors())
       .then(() => {
@@ -248,8 +245,7 @@ class OfficerInfoView extends React.Component {
             ? <FormNav
                 prevPath={FORM_PATHS.DISPOSITION}
                 nextPath={FORM_PATHS.REVIEW}
-                handlePageChange={this.handlePageChange}
-                setDidClickNav={this.setDidClickNav} />
+                handlePageChange={this.handlePageChange} />
             : null
         }
         { this.renderErrors() }

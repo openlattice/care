@@ -13,6 +13,7 @@ import ReactRouterPropTypes from 'react-router-prop-types';
 import FormNav from './FormNav';
 import { TitleLabel, InlineRadio, PaddedRow, SectionHeader, ErrorMessage } from '../shared/Layout';
 import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
+import { setDidClickNav } from '../shared/Helpers';
 import { bootstrapValidation, validateRequiredInput } from '../shared/Validation';
 
 
@@ -66,10 +67,6 @@ class ReportInfoView extends React.Component {
     }).isRequired
   }
 
-  setDidClickNav = () => {
-    this.setState({ didClickNav: true });
-  }
-
   setRequiredErrors = () => {
     const requiredErrors = this.state.sectionRequiredErrors.slice();
     const areRequiredInputsValid = validateRequiredInput(
@@ -92,7 +89,7 @@ class ReportInfoView extends React.Component {
   }
 
   handlePageChange = (path) => {
-    this.setDidClickNav();
+    this.setState(setDidClickNav);
 
     Promise.resolve(this.setRequiredErrors())
       .then(() => {
@@ -358,8 +355,7 @@ class ReportInfoView extends React.Component {
             ? <FormNav
                 nextPath={FORM_PATHS.CONSUMER_SEARCH}
                 handlePageChange={this.handlePageChange}
-                sectionValid={this.state.sectionValid}
-                setDidClickNav={this.setDidClickNav} />
+                sectionValid={this.state.sectionValid} />
             : null
         }
         { this.renderErrors() }

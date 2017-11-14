@@ -11,6 +11,7 @@ import ReactRouterPropTypes from 'react-router-prop-types';
 import FormNav from './FormNav';
 import { PaddedRow, TitleLabel, SectionHeader, ErrorMessage } from '../shared/Layout';
 import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
+import { setDidClickNav } from '../shared/Helpers';
 import { bootstrapValidation, validateRequiredInput } from '../shared/Validation';
 
 const REQUIRED_FIELDS = ['complainantName'];
@@ -47,10 +48,6 @@ class ComplainantInfoView extends React.Component {
     }).isRequired
   }
 
-  setDidClickNav = () => {
-    this.setState({ didClickNav: true });
-  }
-
   setRequiredErrors = () => {
     const requiredErrors = this.state.sectionRequiredErrors.slice();
     const areRequiredInputsValid = validateRequiredInput(
@@ -73,7 +70,7 @@ class ComplainantInfoView extends React.Component {
   }
 
   handlePageChange = (path) => {
-    this.setDidClickNav();
+    this.setstate(setDidClickNav);
 
     Promise.resolve(this.setRequiredErrors())
       .then(() => {
@@ -208,8 +205,7 @@ class ComplainantInfoView extends React.Component {
             ? <FormNav
                 prevPath={FORM_PATHS.CONSUMER}
                 nextPath={FORM_PATHS.DISPOSITION}
-                handlePageChange={this.handlePageChange}
-                setDidClickNav={this.setDidClickNav} />
+                handlePageChange={this.handlePageChange} />
             : null
         }
         { this.renderErrors() }

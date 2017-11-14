@@ -19,6 +19,7 @@ import {
   ErrorMessage
 } from '../shared/Layout';
 import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
+import { setDidClickNav } from '../shared/Helpers';
 import { bootstrapValidation, validateRequiredInput } from '../shared/Validation';
 
 const REQUIRED_FIELDS = ['disposition', 'incidentNarrative'];
@@ -62,10 +63,6 @@ class DispositionView extends React.Component {
     }).isRequired
   }
 
-  setDidClickNav = () => {
-    this.setState({ didClickNav: true });
-  }
-
   setRequiredErrors = () => {
     const requiredErrors = this.state.sectionRequiredErrors.slice();
     const areRequiredInputsValid = validateRequiredInput(
@@ -88,7 +85,7 @@ class DispositionView extends React.Component {
   }
 
   handlePageChange = (path) => {
-    this.setDidClickNav();
+    this.setState(setDidClickNav);
 
     Promise.resolve(this.setRequiredErrors())
       .then(() => {
@@ -455,8 +452,7 @@ class DispositionView extends React.Component {
             ? <FormNav
                 prevPath={FORM_PATHS.COMPLAINANT}
                 nextPath={FORM_PATHS.OFFICER}
-                handlePageChange={this.handlePageChange}
-                setDidClickNav={this.setDidClickNav} />
+                handlePageChange={this.handlePageChange} />
             : null
         }
         { this.renderErrors() }
