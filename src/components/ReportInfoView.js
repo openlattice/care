@@ -19,7 +19,7 @@ import {
   renderErrors,
   validateSectionNavigation
 } from '../shared/Helpers';
-import { bootstrapValidation, validateRequiredInput } from '../shared/Validation';
+import { bootstrapValidation } from '../shared/Validation';
 
 
 class ReportInfoView extends React.Component {
@@ -50,7 +50,6 @@ class ReportInfoView extends React.Component {
     isInReview: PropTypes.func.isRequired,
     handlePageChange: PropTypes.func.isRequired,
     section: PropTypes.string.isRequired,
-    maxPage: PropTypes.number.isRequired,
     history: ReactRouterPropTypes.history.isRequired,
     location: ReactRouterPropTypes.location.isRequired,
     input: PropTypes.shape({

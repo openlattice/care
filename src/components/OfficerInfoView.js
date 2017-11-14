@@ -17,7 +17,7 @@ import {
   renderErrors,
   validateSectionNavigation
 } from '../shared/Helpers';
-import { bootstrapValidation, validateRequiredInput } from '../shared/Validation';
+import { bootstrapValidation } from '../shared/Validation';
 
 
 class OfficerInfoView extends React.Component {
@@ -46,7 +46,6 @@ class OfficerInfoView extends React.Component {
     handlePageChange: PropTypes.func.isRequired,
     history: ReactRouterPropTypes.history.isRequired,
     location: ReactRouterPropTypes.location.isRequired,
-    maxPage: PropTypes.number.isRequired,
     input: PropTypes.shape({
       officerName: PropTypes.string.isRequired,
       officerSeqID: PropTypes.string.isRequired,
@@ -93,7 +92,7 @@ class OfficerInfoView extends React.Component {
       officerNameValid,
       officerSeqIDValid,
       didClickNav,
-      sectionFormatErrors, 
+      sectionFormatErrors,
       sectionRequiredErrors
     } = this.state;
 

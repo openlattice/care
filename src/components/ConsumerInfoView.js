@@ -18,14 +18,14 @@ import {
   OtherWrapper,
   SectionHeader
 } from '../shared/Layout';
-import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
+import { FORM_PATHS } from '../shared/Consts';
 import {
   setDidClickNav,
   setRequiredErrors,
   renderErrors,
   validateSectionNavigation
 } from '../shared/Helpers';
-import { bootstrapValidation, validateRequiredInput } from '../shared/Validation';
+import { bootstrapValidation } from '../shared/Validation';
 
 
 class ConsumerInfoView extends React.Component {
@@ -59,7 +59,6 @@ class ConsumerInfoView extends React.Component {
     section: PropTypes.string.isRequired,
     history: ReactRouterPropTypes.history.isRequired,
     location: ReactRouterPropTypes.location.isRequired,
-    maxPage: PropTypes.number.isRequired,
     input: PropTypes.shape({
       firstName: PropTypes.string.isRequired,
       lastName: PropTypes.string.isRequired,
@@ -141,7 +140,7 @@ class ConsumerInfoView extends React.Component {
       lastNameValid,
       identificationValid,
       ageValid,
-      sectionFormatErrors, 
+      sectionFormatErrors,
       sectionRequiredErrors
     } = this.state;
 

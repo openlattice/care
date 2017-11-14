@@ -24,7 +24,7 @@ import {
   renderErrors,
   validateSectionNavigation
 } from '../shared/Helpers';
-import { bootstrapValidation, validateRequiredInput } from '../shared/Validation';
+import { bootstrapValidation } from '../shared/Validation';
 
 
 class DispositionView extends React.Component {
@@ -54,7 +54,6 @@ class DispositionView extends React.Component {
     handlePageChange: PropTypes.func.isRequired,
     history: ReactRouterPropTypes.history.isRequired,
     location: ReactRouterPropTypes.location.isRequired,
-    maxPage: PropTypes.number.isRequired,
     input: PropTypes.shape({
       disposition: PropTypes.array.isRequired,
       hospitalTransport: PropTypes.bool.isRequired,

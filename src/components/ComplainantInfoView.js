@@ -17,7 +17,7 @@ import {
   renderErrors,
   validateSectionNavigation
 } from '../shared/Helpers';
-import { bootstrapValidation, validateRequiredInput } from '../shared/Validation';
+import { bootstrapValidation } from '../shared/Validation';
 
 
 class ComplainantInfoView extends React.Component {
@@ -44,7 +44,6 @@ class ComplainantInfoView extends React.Component {
     handlePageChange: PropTypes.func.isRequired,
     history: ReactRouterPropTypes.history.isRequired,
     location: ReactRouterPropTypes.location.isRequired,
-    maxPage: PropTypes.number.isRequired,
     input: PropTypes.shape({
       complainantName: PropTypes.string.isRequired,
       complainantAddress: PropTypes.string.isRequired,
@@ -89,7 +88,7 @@ class ComplainantInfoView extends React.Component {
     const {
       complainantNameValid,
       didClickNav,
-      sectionFormatErrors, 
+      sectionFormatErrors,
       sectionRequiredErrors
     } = this.state;
 
