@@ -1,7 +1,14 @@
+/*
+ * @flow
+ */
+
 import React from 'react';
 
+import Immutable from 'immutable';
 import Promise from 'bluebird';
 import { EntityDataModelApi, DataApi, SearchApi, SyncApi } from 'lattice';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 
 import FormView from '../../components/FormView';
@@ -9,183 +16,71 @@ import ConfirmationModal from '../../components/ConfirmationModalView';
 import { ENTITY_SET_NAMES, PERSON, CONSUMER_STATE, STRING_ID_FQN } from '../../shared/Consts';
 import { validateOnInput } from '../../shared/Validation';
 
+import { loadDataModel } from './EntitySetsActionFactory';
 
-class Form extends React.Component {
+import {
+  COMPLAINANT_INFO_INITIAL_STATE,
+  CONSUMER_INFO_INITIAL_STATE,
+  REPORT_INFO_INITIAL_STATE,
+  DISPOSITION_INFO_INITIAL_STATE,
+  OFFICER_INFO_INITIAL_STATE
+} from './DataModelDefinitions';
+
+import type {
+  ComplainantInfo,
+  ConsumerInfo,
+  DispositionInfo,
+  OfficerInfo,
+  ReportInfo
+} from './DataModelDefinitions';
+
+/*
+ * constants
+ */
+
+const MAX_PAGE :number = 7;
+
+/*
+ * types
+ */
+
+type Props = {
+  actions :{
+    loadDataModel :() => void
+  },
+  entitySets :Map<*, *>,
+  isConsumerSelected :boolean
+};
+
+type State = {
+  consumerInfo :ConsumerInfo,
+  complainantInfo :ComplainantInfo,
+  dispositionInfo :DispositionInfo,
+  officerInfo :OfficerInfo,
+  reportInfo :ReportInfo
+};
+
+class Form extends React.Component<Props, State> {
+
   constructor(props) {
+
     super(props);
 
     this.state = {
-      reportInfo: {
-        dispatchReason: '',
-        complaintNumber: '',
-        companionOffenseReport: false,
-        incident: '',
-        locationOfIncident: '',
-        unit: '',
-        postOfOccurrence: '',
-        cadNumber: '',
-        onView: false,
-        dateOccurred: '',
-        timeOccurred: '',
-        dateReported: '',
-        timeReported: '',
-        // WHAT IS NAME USED FOR?
-        name: ''
-      },
-      consumerInfo: {
-        firstName: '',
-        lastName: '',
-        middleName: '',
-        address: '',
-        phone: '',
-        identification: '',
-        militaryStatus: '',
-        gender: '',
-        race: '',
-        age: '',
-        dob: '',
-        homeless: false,
-        homelessLocation: '',
-        drugsAlcohol: '',
-        drugType: '',
-        prescribedMedication: '',
-        takingMedication: '',
-        prevPsychAdmission: '',
-        selfDiagnosis: [],
-        selfDiagnosisOther: '',
-        armedWithWeapon: false,
-        armedWeaponType: '',
-        accessToWeapons: false,
-        accessibleWeaponType: '',
-        observedBehaviors: [],
-        observedBehaviorsOther: '',
-        emotionalState: [],
-        emotionalStateOther: '',
-        photosTakenOf: [],
-        injuries: [],
-        injuriesOther: '',
-        suicidal: false,
-        suicidalActions: [],
-        suicideAttemptMethod: [],
-        suicideAttemptMethodOther: ''
-      },
-      complainantInfo: {
-        complainantName: '',
-        complainantAddress: '',
-        complainantConsumerRelationship: '',
-        complainantPhone: ''
-      },
-      dispositionInfo: {
-        disposition: [],
-        hospitalTransport: false,
-        hospital: '',
-        deescalationTechniques: [],
-        deescalationTechniquesOther: '',
-        specializedResourcesCalled: [],
-        incidentNarrative: ''
-      },
-      officerInfo: {
-        officerName: '',
-        officerSeqID: '',
-        officerInjuries: '',
-        officerCertification: []
-      },
-      entitySetId: '',
-      personEntitySetId: '',
-      appearsInEntitySetId: '',
-      entitySet: {},
-      personEntitySet: {},
-      appearsInEntitySet: {},
-      entityType: {},
-      personEntityType: {},
-      appearsInEntityType: {},
-      propertyTypes: [],
-      personPropertyTypes: [],
-      appearsInPropertyTypes: [],
-      submitSuccess: null,
-      submitFailure: null,
-      maxPage: 7,
-      consumerIsSelected: false
+      complainantInfo: COMPLAINANT_INFO_INITIAL_STATE,
+      consumerInfo: CONSUMER_INFO_INITIAL_STATE,
+      reportInfo: REPORT_INFO_INITIAL_STATE,
+      dispositionInfo: DISPOSITION_INFO_INITIAL_STATE,
+      officerInfo: OFFICER_INFO_INITIAL_STATE,
+      isConsumerSelected: false
     };
   }
 
   componentDidMount() {
-    EntityDataModelApi.getEntitySetId(ENTITY_SET_NAMES.FORM)
-      .then((id) => {
-        this.setState({ entitySetId: id });
-        EntityDataModelApi.getEntitySet(id)
-          .then((entitySet) => {
-            this.setState({ entitySet });
-            EntityDataModelApi.getEntityType(entitySet.entityTypeId)
-              .then((entityType) => {
-                this.setState({ entityType });
-                Promise.map(entityType.properties, (propertyId) => {
-                  return EntityDataModelApi.getPropertyType(propertyId);
-                })
-                  .then((propertyTypes) => {
-                    this.setState({ propertyTypes });
-                    this.getPersonEntitySet();
-                  });
-              });
-          });
-      });
 
-    const start = 0;
-    const maxHits = 50;
-    const searchTerm = '*';
-    const searchOptions = {
-      start,
-      maxHits,
-      searchTerm
-    };
-    // TODO: wait to execute until getPersonEntitySet is complete
-    SearchApi.searchEntitySetData(this.state.personEntitySetId, searchOptions);
+    this.props.actions.loadDataModel();
   }
 
-  getPersonEntitySet = () => {
-    EntityDataModelApi.getEntitySetId(ENTITY_SET_NAMES.PEOPLE)
-      .then((personEntitySetId) => {
-        this.setState({ personEntitySetId });
-        EntityDataModelApi.getEntitySet(personEntitySetId)
-          .then((personEntitySet) => {
-            this.setState({ personEntitySet });
-            EntityDataModelApi.getEntityType(personEntitySet.entityTypeId)
-              .then((personEntityType) => {
-                this.setState({ personEntityType });
-                Promise.map(personEntityType.properties, (propertyId) => {
-                  return EntityDataModelApi.getPropertyType(propertyId);
-                })
-                  .then((personPropertyTypes) => {
-                    this.setState({ personPropertyTypes });
-                    this.getAppearsInEntitySet();
-                  });
-              });
-          });
-      });
-  }
-
-  getAppearsInEntitySet = () => {
-    EntityDataModelApi.getEntitySetId(ENTITY_SET_NAMES.APPEARS_IN)
-      .then((appearsInEntitySetId) => {
-        this.setState({ appearsInEntitySetId });
-        EntityDataModelApi.getEntitySet(appearsInEntitySetId)
-          .then((appearsInEntitySet) => {
-            this.setState({ appearsInEntitySet });
-            EntityDataModelApi.getEntityType(appearsInEntitySet.entityTypeId)
-              .then((appearsInEntityType) => {
-                this.setState({ appearsInEntityType });
-                Promise.map(appearsInEntityType.properties, (propertyId) => {
-                  return EntityDataModelApi.getPropertyType(propertyId);
-                })
-                  .then((appearsInPropertyTypes) => {
-                    this.setState({ appearsInPropertyTypes });
-                  });
-              });
-          });
-      });
-  }
-
-  // For text input
   handleTextInput = (e, fieldType, formatErrors, setErrorsFn) => {
     const sectionKey = e.target.dataset.section;
     const name = e.target.name;
@@ -459,4 +354,22 @@ class Form extends React.Component {
   }
 }
 
-export default withRouter(Form);
+function mapStateToProps(state :Map<*, *>) :Object {
+
+  return {
+    entitySets: state.get('entitySets', Immutable.Map())
+  };
+}
+
+function mapDispatchToProps(dispatch :Function) :Object {
+
+  const actions = {
+    loadDataModel
+  };
+
+  return {
+    actions: bindActionCreators(actions, dispatch)
+  };
+}
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Form));

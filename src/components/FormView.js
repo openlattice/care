@@ -1,19 +1,9 @@
-/*
- * @flow
- */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { ProgressBar } from 'react-bootstrap';
 import { Redirect, Route, Switch } from 'react-router-dom';
 
-import {
-  Page,
-  PageHeader,
-  Title,
-  FormWrapper
-} from '../shared/Layout';
 import LogoutButton from '../containers/app/LogoutButton';
 import ReportInfoView from '../components/ReportInfoView';
 import ConsumerSearch from '../containers/ConsumerSearch';
@@ -22,7 +12,13 @@ import ComplainantInfoView from '../components/ComplainantInfoView';
 import DispositionView from '../components/DispositionView';
 import OfficerInfoView from '../components/OfficerInfoView';
 import ReviewView from '../components/ReviewView';
-
+import OpenLatticeLogo from '../assets/images/logo_and_name.png';
+import {
+  Page,
+  PageHeader,
+  Title,
+  FormWrapper
+} from '../shared/Layout';
 
 const StyledProgressBar = styled(ProgressBar)`
   position: relative;
@@ -32,6 +28,10 @@ const StyledProgressBar = styled(ProgressBar)`
   margin-left: -450px;
 `;
 
+const Logo = styled.img`
+  position: absolute;
+  left: 50px;
+`;
 
 function FormView({
   maxPage,
@@ -164,6 +164,7 @@ function FormView({
   return (
     <Page>
       <PageHeader>
+        <Logo src={OpenLatticeLogo} height="50" />
         <Title>Behavioral Health Report</Title>
         <LogoutButton />
       </PageHeader>

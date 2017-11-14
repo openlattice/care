@@ -9,21 +9,21 @@ export const Page = styled.div`
 `;
 
 export const PageHeader = styled.div`
-  position: relative;
-  width: 100%;
-  height: 50px;
+  align-items: center;
   background: white;
   border-bottom: 1px solid darkgray;
   display: flex;
-  align-items: center;
+  height: 100px;
+  justify-content: center;
+  position: relative;
+  width: 100%;
 `;
 
 export const Title = styled.h1`
   color: #37454A;
   font-size: 20px;
-  margin: 0 0 0 60px;
   font-weight: bold;
-
+  margin: 0 0 0 60px;
 `;
 
 export const FormWrapper = styled.div`
@@ -86,9 +86,7 @@ export const SubmitButton = styled(Button).attrs({
   type: (props) => {
     return props.type || 'submit';
   }
-})`
-
-`;
+})``;
 
 export const SectionHeader = styled.div`
   font-size: 32px;
