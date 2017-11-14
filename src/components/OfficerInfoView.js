@@ -11,10 +11,8 @@ import ReactRouterPropTypes from 'react-router-prop-types';
 import FormNav from './FormNav';
 import { PaddedRow, TitleLabel, InlineCheckbox, SectionHeader, ErrorMessage } from '../shared/Layout';
 import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
-import { setDidClickNav } from '../shared/Helpers';
+import { setDidClickNav, setRequiredErrors } from '../shared/Helpers';
 import { bootstrapValidation, validateRequiredInput } from '../shared/Validation';
-
-const REQUIRED_FIELDS = ['officerName'];
 
 
 class OfficerInfoView extends React.Component {
@@ -22,6 +20,7 @@ class OfficerInfoView extends React.Component {
     super(props);
 
     this.state = {
+      requiredFields: ['officerName'],
       sectionFormatErrors: [],
       sectionRequiredErrors: [FORM_ERRORS.IS_REQUIRED],
       officerNameValid: true,
@@ -51,36 +50,13 @@ class OfficerInfoView extends React.Component {
     }).isRequired
   }
 
-  setRequiredErrors = () => {
-    const requiredErrors = this.state.sectionRequiredErrors.slice();
-    const areRequiredInputsValid = validateRequiredInput(
-      this.props.input,
-      REQUIRED_FIELDS
-    );
-
-    if (areRequiredInputsValid) {
-      if (requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED) !== -1) {
-        requiredErrors.splice(requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED));
-      }
-    }
-    else if (requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED) === -1) {
-      requiredErrors.push(FORM_ERRORS.IS_REQUIRED);
-    }
-
-    this.setState({
-      sectionRequiredErrors: requiredErrors
-    });
-  }
-
   handlePageChange = (path) => {
     this.setState(setDidClickNav);
-
-    Promise.resolve(this.setRequiredErrors())
-      .then(() => {
-        if (this.state.sectionRequiredErrors.length < 1 && this.state.sectionFormatErrors.length < 1) {
-          this.props.handlePageChange(path);
-        }
-      });
+    this.setState(setRequiredErrors, () => {
+      if (this.state.sectionRequiredErrors.length < 1 && this.state.sectionFormatErrors.length < 1) {
+        this.props.handlePageChange(path);
+      }
+    });
   }
 
   setInputErrors = (name, inputValid, sectionFormatErrors) => {
@@ -112,7 +88,7 @@ class OfficerInfoView extends React.Component {
   componentWillUnmount() {
     const areRequiredInputsValid = validateRequiredInput(
       this.props.input,
-      REQUIRED_FIELDS
+      this.state.requiredFields
     );
     if (
       !areRequiredInputsValid
