@@ -23,6 +23,9 @@ const fetchPropertyType :RequestSequence = newRequestSequence(FETCH_PROPERTY_TYP
 const FETCH_PROPERTY_TYPES :'FETCH_PROPERTY_TYPES' = 'FETCH_PROPERTY_TYPES';
 const fetchPropertyTypes :RequestSequence = newRequestSequence(FETCH_PROPERTY_TYPES);
 
+const GET_CURRENT_SYNC_ID :'GET_CURRENT_SYNC_ID' = 'GET_CURRENT_SYNC_ID';
+const getCurrentSyncId :RequestSequence = newRequestSequence(GET_CURRENT_SYNC_ID);
+
 export {
   FETCH_EDM_PROJECTION,
   FETCH_ENTITY_SET,
@@ -30,10 +33,12 @@ export {
   FETCH_ENTITY_TYPE,
   FETCH_PROPERTY_TYPE,
   FETCH_PROPERTY_TYPES,
+  GET_CURRENT_SYNC_ID,
   fetchEntityDataModelProjection,
   fetchEntitySet,
   fetchEntitySetId,
   fetchEntityType,
   fetchPropertyType,
-  fetchPropertyTypes
+  fetchPropertyTypes,
+  getCurrentSyncId
 };

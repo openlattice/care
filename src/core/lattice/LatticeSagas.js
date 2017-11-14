@@ -2,7 +2,7 @@
  * @flow
  */
 
-import { EntityDataModelApi } from 'lattice';
+import { EntityDataModelApi, SyncApi } from 'lattice';
 import { all, call, put, takeEvery } from 'redux-saga/effects';
 
 import {
@@ -12,12 +12,14 @@ import {
   FETCH_ENTITY_TYPE,
   FETCH_PROPERTY_TYPE,
   FETCH_PROPERTY_TYPES,
+  GET_CURRENT_SYNC_ID,
   fetchEntityDataModelProjection,
   fetchEntitySet,
   fetchEntitySetId,
   fetchEntityType,
   fetchPropertyType,
-  fetchPropertyTypes
+  fetchPropertyTypes,
+  getCurrentSyncId
 } from './LatticeActionFactory';
 
 import type { SequenceAction } from '../redux/RequestSequence';
@@ -173,4 +175,28 @@ export function* fetchPropertyTypesWorker(action :SequenceAction) :Generator<*, 
 export function* fetchPropertyTypesWatcher() :Generator<*, *, *> {
 
   yield takeEvery(FETCH_PROPERTY_TYPES, fetchPropertyTypesWorker);
+}
+
+export function* getCurrentSyncIdWorker(action :SequenceAction) :Generator<*, *, *> {
+
+  let response :Object = {};
+
+  try {
+    yield put(getCurrentSyncId.request());
+    response = yield call(SyncApi.getCurrentSyncId, action.data.entitySetId);
+    yield put(getCurrentSyncId.success({ syncId: response }));
+  }
+  catch (error) {
+    yield put(getCurrentSyncId.failure({ error, entitySetId: action.data.propertyTypeId }));
+  }
+  finally {
+    yield put(getCurrentSyncId.finally());
+  }
+
+  return response;
+}
+
+export function* getCurrentSyncIdWatcher() :Generator<*, *, *> {
+
+  yield takeEvery(GET_CURRENT_SYNC_ID, getCurrentSyncIdWorker);
 }
