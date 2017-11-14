@@ -6,16 +6,18 @@ import React from 'react';
 
 import Immutable from 'immutable';
 import Promise from 'bluebird';
-import { EntityDataModelApi, DataApi, SearchApi, SyncApi } from 'lattice';
+import { Models, DataApi, SyncApi } from 'lattice';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
+
+import type { Match, RouterHistory } from 'react-router';
 
 import FormView from '../../components/FormView';
 import ConfirmationModal from '../../components/ConfirmationModalView';
 import { ENTITY_SET_NAMES, PERSON, CONSUMER_STATE, STRING_ID_FQN } from '../../shared/Consts';
 import { validateOnInput } from '../../shared/Validation';
-
+import { formatTimePickerSeconds } from '../../utils/Utils';
 import { loadDataModel } from './EntitySetsActionFactory';
 
 import {
@@ -34,6 +36,8 @@ import type {
   ReportInfo
 } from './DataModelDefinitions';
 
+const { FullyQualifiedName } = Models;
+
 /*
  * constants
  */
@@ -49,20 +53,22 @@ type Props = {
     loadDataModel :() => void
   },
   entitySets :Map<*, *>,
-  isConsumerSelected :boolean
+  history :RouterHistory,
+  match :Match
 };
 
 type State = {
   consumerInfo :ConsumerInfo,
   complainantInfo :ComplainantInfo,
   dispositionInfo :DispositionInfo,
+  isConsumerSelected :boolean,
   officerInfo :OfficerInfo,
   reportInfo :ReportInfo
 };
 
 class Form extends React.Component<Props, State> {
 
-  constructor(props) {
+  constructor(props :Props) {
 
     super(props);
 
@@ -98,36 +104,8 @@ class Form extends React.Component<Props, State> {
     this.setState({ [section]: sectionState });
   }
 
-  formatTime = (seconds) => {
-    let hh = 0;
-    let mm = 0;
-    let ss = seconds;
-
-    while (ss >= 60) {
-      mm += 1;
-      ss = ss - 60;
-    }
-
-    while (mm >= 60) {
-      hh += 1;
-      mm = mm - 60;
-    }
-
-    let hhStr = hh.toString();
-    hhStr = hhStr.length === 1 ? `0${hhStr}` : hhStr;
-
-    let mmStr = mm.toString();
-    mmStr = mmStr.length === 1 ? `0${mmStr}` : mmStr;
-
-    let ssStr = ss.toString();
-    ssStr = ssStr.length === 1 ? `0${ssStr}` : ssStr;
-
-    const res = `${hhStr}:${mmStr}:${ssStr}`;
-    return res;
-  }
-
   handleTimeInput = (e, section, name) => {
-    const input = this.formatTime(e);
+    const input = formatTimePickerSeconds(e);
     const sectionState = this.state[section];
     sectionState[name] = input;
     this.setState({ [section]: sectionState });
@@ -168,45 +146,56 @@ class Form extends React.Component<Props, State> {
     });
     this.setState({
       consumerInfo: consumerState,
-      consumerIsSelected: true
+      isConsumerSelected: true
     }, () => {
       this.handlePageChange('next');
     });
   }
 
   getAppearsInEntity = (syncId) => {
+
+    const { entitySets } = this.props;
+    const { APPEARS_IN } = ENTITY_SET_NAMES;
+
     const entityId = btoa(this.state.consumerInfo.identification);
+    const entitySetId :string = entitySets.getIn([APPEARS_IN, 'entitySet', 'id'], '');
     const key = {
-      entitySetId: this.state.appearsInEntitySetId,
       entityId,
+      entitySetId,
       syncId
     };
 
-    const stringIdPropId = this.state.appearsInPropertyTypes.filter((propertyType) => {
-      const fqn = `${propertyType.type.namespace}.${propertyType.type.name}`;
-      return (fqn === STRING_ID_FQN);
-    })[0].id;
+    const propertyTypes :List<Map<*, *>> = entitySets.getIn([APPEARS_IN, 'propertyTypes'], Immutable.List());
+    const idPropertyType :Map<*, *> = propertyTypes.find((propertyType :Map<*, *>) => {
+      return FullyQualifiedName.toString(propertyType.get('type', {})) === STRING_ID_FQN;
+    });
 
     const details = {
-      [stringIdPropId]: [this.state.consumerInfo.identification]
+      [idPropertyType.get('id', '')]: [this.state.consumerInfo.identification]
     };
 
     return { key, details };
   }
 
   getPersonEntity = (syncId) => {
+
+    const { entitySets } = this.props;
     const { identification, firstName, lastName, middleName, dob, gender, race } = this.state.consumerInfo;
+    const { PEOPLE } = ENTITY_SET_NAMES;
+
     const entityId = btoa(identification);
+    const entitySetId :string = entitySets.getIn([PEOPLE, 'entitySet', 'id'], '');
     const key = {
-      entitySetId: this.state.personEntitySetId,
       entityId,
+      entitySetId,
       syncId
     };
 
     const props = {};
-    this.state.personPropertyTypes.forEach((propertyType) => {
-      const fqn = `${propertyType.type.namespace}.${propertyType.type.name}`;
-      props[fqn] = propertyType.id;
+    const propertyTypes :List<Map<*, *>> = entitySets.getIn([PEOPLE, 'propertyTypes'], Immutable.List());
+    propertyTypes.forEach((propertyType :Map<*, *>) => {
+      const fqn :string = FullyQualifiedName.toString(propertyType.get('type', {}));
+      props[fqn] = propertyType.get('id', '');
     });
 
     const details = {};
@@ -222,6 +211,11 @@ class Form extends React.Component<Props, State> {
   }
 
   getFormEntity = (syncId) => {
+
+    const { entitySets } = this.props;
+    const { FORM } = ENTITY_SET_NAMES;
+    const entitySetId :string = this.props.entitySets.getIn([FORM, 'entitySet', 'id'], '');
+
     const formInputs = Object.assign(
       {},
       this.state.reportInfo,
@@ -232,16 +226,20 @@ class Form extends React.Component<Props, State> {
     );
 
     const details = {};
-    this.state.propertyTypes.forEach((propertyType) => {
-      const value = formInputs[propertyType.type.name];
+    const propertyTypes :List<Map<*, *>> = entitySets.getIn([FORM, 'propertyTypes'], Immutable.List());
+    propertyTypes.forEach((propertyType :Map<*, *>) => {
+      const id :string = propertyType.get('id', '');
+      const fqn :FullyQualifiedName = new FullyQualifiedName(propertyType.get('type', {}));
+      const value = formInputs[fqn.getName()];
       let formattedValue;
       formattedValue = Array.isArray(value) ? value : [value];
       formattedValue = (formattedValue.length > 0 && (formattedValue[0] === '' || formattedValue[0] === null))
         ? [] : formattedValue;
-      details[propertyType.id] = formattedValue;
+      details[id] = formattedValue;
     });
 
-    const primaryKeys = this.state.entityType.key;
+    const entityType :Map<*, *> = entitySets.getIn([FORM, 'entityType'], Immutable.Map());
+    const primaryKeys :List<string> = entityType.get('key', Immutable.List());
     const entityId = primaryKeys.map((keyId) => {
       const val = (details[keyId] && details[keyId][0]) ? details[keyId][0] : '';
       const utf8Val = (details[keyId].length > 0) ? encodeURI(val) : '';
@@ -249,8 +247,8 @@ class Form extends React.Component<Props, State> {
     }).join(',');
 
     const key = {
-      entitySetId: this.state.entitySetId,
       entityId,
+      entitySetId,
       syncId
     };
 
@@ -258,14 +256,21 @@ class Form extends React.Component<Props, State> {
   }
 
   getBulkData = () => {
-    const { entitySetId, personEntitySetId, appearsInEntitySetId } = this.state;
-    return SyncApi.getCurrentSyncId(entitySetId)
+
+    const { entitySets } = this.props;
+    const { FORM, PEOPLE, APPEARS_IN } = ENTITY_SET_NAMES;
+
+    const reportEntitySetId :string = entitySets.getIn([FORM, 'entitySet', 'id'], '');
+    const peopleEntitySetId :string = entitySets.getIn([PEOPLE, 'entitySet', 'id'], '');
+    const appearsEntitySetId :string = entitySets.getIn([APPEARS_IN, 'entitySet', 'id'], '');
+
+    return SyncApi.getCurrentSyncId(reportEntitySetId)
       .then((formSyncId) => {
         const formEntity = this.getFormEntity(formSyncId);
-        return SyncApi.getCurrentSyncId(personEntitySetId)
+        return SyncApi.getCurrentSyncId(peopleEntitySetId)
           .then((personSyncId) => {
             const personEntity = this.getPersonEntity(personSyncId);
-            return SyncApi.getCurrentSyncId(appearsInEntitySetId)
+            return SyncApi.getCurrentSyncId(appearsEntitySetId)
               .then((appearsInSyncId) => {
                 const appearsInEntity = this.getAppearsInEntity(appearsInSyncId);
                 appearsInEntity.src = personEntity.key;
@@ -275,9 +280,9 @@ class Form extends React.Component<Props, State> {
                 const associations = [appearsInEntity];
 
                 const esIdsAndSyncIds = [
-                  [entitySetId, formSyncId],
-                  [personEntitySetId, personSyncId],
-                  [appearsInEntitySetId, appearsInSyncId]
+                  [reportEntitySetId, formSyncId],
+                  [peopleEntitySetId, personSyncId],
+                  [appearsEntitySetId, appearsInSyncId]
                 ];
 
                 return Promise.map(esIdsAndSyncIds, (pair) => {
@@ -295,16 +300,16 @@ class Form extends React.Component<Props, State> {
     this.getBulkData().then((bulkData) => {
       DataApi.createEntityAndAssociationData(bulkData)
         .then(() => {
-          this.setState({
-            submitSuccess: true,
-            submitFailure: false
-          });
+          // this.setState({
+          //   submitSuccess: true,
+          //   submitFailure: false
+          // });
         })
         .catch(() => {
-          this.setState({
-            submitSuccess: false,
-            submitFailure: true
-          });
+          // this.setState({
+          //   submitSuccess: false,
+          //   submitFailure: true
+          // });
         });
     });
   }
@@ -314,12 +319,14 @@ class Form extends React.Component<Props, State> {
   }
 
   isInReview = () => {
-    const page = parseInt(window.location.hash.substr(2, 10));
-    if (page && page === this.state.maxPage) return true;
-    return false;
+    const page :number = parseInt(this.props.match.params.page, 10);
+    return page === MAX_PAGE;
   }
 
   render() {
+
+    const { PEOPLE } = ENTITY_SET_NAMES;
+    const peopleEntitySetId :string = this.props.entitySets.getIn([PEOPLE, 'entitySet', 'id'], '');
 
     return (
       <div>
@@ -335,17 +342,17 @@ class Form extends React.Component<Props, State> {
             complainantInfo={this.state.complainantInfo}
             dispositionInfo={this.state.dispositionInfo}
             officerInfo={this.state.officerInfo}
-            maxPage={this.state.maxPage}
+            maxPage={MAX_PAGE}
             handlePageChange={this.handlePageChange}
             handlePersonSelection={this.handlePersonSelection}
-            personEntitySetId={this.state.personEntitySetId}
+            personEntitySetId={peopleEntitySetId}
             isInReview={this.isInReview}
-            consumerIsSelected={this.state.consumerIsSelected} />
+            consumerIsSelected={this.state.isConsumerSelected} />
         {
           this.state.submitSuccess
             ? <ConfirmationModal
-                submitSuccess={this.state.submitSuccess}
-                submitFailure={this.state.submitFailure}
+                submitSuccess={null}
+                submitFailure={null}
                 handleModalButtonClick={this.handleModalButtonClick} />
             : null
         }
@@ -372,4 +379,6 @@ function mapDispatchToProps(dispatch :Function) :Object {
   };
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Form));
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(Form)
+);
