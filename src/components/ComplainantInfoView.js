@@ -9,9 +9,9 @@ import { withRouter } from 'react-router';
 import ReactRouterPropTypes from 'react-router-prop-types';
 
 import FormNav from './FormNav';
-import { PaddedRow, TitleLabel, SectionHeader, ErrorMessage } from '../shared/Layout';
+import { PaddedRow, TitleLabel, SectionHeader } from '../shared/Layout';
 import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
-import { setDidClickNav, setRequiredErrors } from '../shared/Helpers';
+import { setDidClickNav, setRequiredErrors, renderErrors } from '../shared/Helpers';
 import { bootstrapValidation, validateRequiredInput } from '../shared/Validation';
 
 
@@ -64,25 +64,6 @@ class ComplainantInfoView extends React.Component {
     });
   }
 
-  renderErrors = () => {
-    const formatErrors = this.state.sectionFormatErrors.map((error) => {
-      return <ErrorMessage key={error}>{error}</ErrorMessage>;
-    });
-    let requiredErrors = [];
-    if (this.state.didClickNav) {
-      requiredErrors = this.state.sectionRequiredErrors.map((error) => {
-        return <ErrorMessage key={error}>{error}</ErrorMessage>;
-      });
-    }
-
-    return (
-      <div>
-        {formatErrors}
-        {requiredErrors}
-      </div>
-    );
-  }
-
   componentWillUnmount() {
     const areRequiredInputsValid = validateRequiredInput(
       this.props.input,
@@ -111,7 +92,8 @@ class ComplainantInfoView extends React.Component {
     const {
       complainantNameValid,
       didClickNav,
-      sectionFormatErrors
+      sectionFormatErrors, 
+      sectionRequiredErrors
     } = this.state;
 
     return (
@@ -185,7 +167,7 @@ class ComplainantInfoView extends React.Component {
                 handlePageChange={this.handlePageChange} />
             : null
         }
-        { this.renderErrors() }
+        { renderErrors(sectionFormatErrors, sectionRequiredErrors, didClickNav) }
       </div>
     );
   }

@@ -11,9 +11,9 @@ import { withRouter } from 'react-router';
 import ReactRouterPropTypes from 'react-router-prop-types';
 
 import FormNav from './FormNav';
-import { TitleLabel, InlineRadio, PaddedRow, SectionHeader, ErrorMessage } from '../shared/Layout';
+import { TitleLabel, InlineRadio, PaddedRow, SectionHeader } from '../shared/Layout';
 import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
-import { setDidClickNav, setRequiredErrors } from '../shared/Helpers';
+import { setDidClickNav, setRequiredErrors, renderErrors } from '../shared/Helpers';
 import { bootstrapValidation, validateRequiredInput } from '../shared/Validation';
 
 
@@ -82,25 +82,6 @@ class ReportInfoView extends React.Component {
     });
   }
 
-  renderErrors = () => {
-    const formatErrors = this.state.sectionFormatErrors.map((error) => {
-      return <ErrorMessage key={error}>{error}</ErrorMessage>;
-    });
-    let requiredErrors = [];
-    if (this.state.didClickNav) {
-      requiredErrors = this.state.sectionRequiredErrors.map((error) => {
-        return <ErrorMessage key={error}>{error}</ErrorMessage>;
-      });
-    }
-
-    return (
-      <div>
-        {formatErrors}
-        {requiredErrors}
-      </div>
-    );
-  }
-
   componentWillUnmount() {
     const areRequiredInputsValid = validateRequiredInput(
       this.props.input,
@@ -133,7 +114,8 @@ class ReportInfoView extends React.Component {
       complaintNumberValid,
       cadNumberValid,
       didClickNav,
-      sectionFormatErrors
+      sectionFormatErrors,
+      sectionRequiredErrors
     } = this.state;
 
     return (
@@ -334,7 +316,7 @@ class ReportInfoView extends React.Component {
                 sectionValid={this.state.sectionValid} />
             : null
         }
-        { this.renderErrors() }
+        { renderErrors(sectionFormatErrors, sectionRequiredErrors, didClickNav) }
       </div>
     );
   }

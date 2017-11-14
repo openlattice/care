@@ -1,3 +1,5 @@
+import React from 'react';
+import { ErrorMessage } from '../shared/Layout';
 import { bootstrapValidation, validateRequiredInput } from '../shared/Validation';
 import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
 
@@ -27,3 +29,22 @@ export const setRequiredErrors = (state, props) => {
     sectionRequiredErrors: requiredErrors
   };
 }
+
+export const renderErrors = (sectionFormatErrors, sectionRequiredErrors, didClickNav) => {
+    const formatErrors = sectionFormatErrors.map((error) => {
+      return <ErrorMessage key={error}>{error}</ErrorMessage>;
+    });
+    let requiredErrors = [];
+    if (didClickNav) {
+      requiredErrors = sectionRequiredErrors.map((error) => {
+        return <ErrorMessage key={error}>{error}</ErrorMessage>;
+      });
+    }
+
+    return (
+      <div>
+        {formatErrors}
+        {requiredErrors}
+      </div>
+    );
+  }
