@@ -104,3 +104,5 @@ export const STATES = [
   'WI',
   'WY'
 ];
+
+export const MAX_PAGE = 7;

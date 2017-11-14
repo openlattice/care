@@ -11,7 +11,12 @@ import ReactRouterPropTypes from 'react-router-prop-types';
 import FormNav from './FormNav';
 import { PaddedRow, TitleLabel, InlineCheckbox, SectionHeader } from '../shared/Layout';
 import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
-import { setDidClickNav, setRequiredErrors, renderErrors } from '../shared/Helpers';
+import {
+  setDidClickNav,
+  setRequiredErrors,
+  renderErrors,
+  validateSectionNavigation
+} from '../shared/Helpers';
 import { bootstrapValidation, validateRequiredInput } from '../shared/Validation';
 
 
@@ -67,20 +72,12 @@ class OfficerInfoView extends React.Component {
   }
 
   componentWillUnmount() {
-    const areRequiredInputsValid = validateRequiredInput(
+    validateSectionNavigation(
       this.props.input,
-      this.state.requiredFields
+      this.state.requiredFields,
+      this.state.currentPage,
+      this.props.history
     );
-    if (
-      !areRequiredInputsValid
-      && this.props.maxPage
-      && this.state.currentPage !== this.props.maxPage
-    ) {
-      this.props.history.push({
-        pathname: `/${this.state.currentPage}`,
-        state: { didClickNav: true }
-      });
-    }
   }
 
   render() {
