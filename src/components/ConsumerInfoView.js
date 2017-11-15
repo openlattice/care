@@ -17,20 +17,24 @@ import {
   InlineRadio,
   TitleLabel,
   OtherWrapper,
-  SectionHeader,
-  ErrorMessage
+  SectionHeader
 } from '../shared/Layout';
-import { FORM_PATHS, FORM_ERRORS, MAX_PAGE } from '../shared/Consts';
-import { bootstrapValidation, validateRequiredInput } from '../shared/Validation';
+import { FORM_PATHS } from '../shared/Consts';
+import {
+  setDidClickNav,
+  setRequiredErrors,
+  renderErrors,
+  validateSectionNavigation
+} from '../shared/Helpers';
+import { bootstrapValidation } from '../shared/Validation';
 
-
-const REQUIRED_FIELDS = ['firstName', 'lastName', 'identification'];
 
 class ConsumerInfoView extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      requiredFields: ['firstName', 'lastName', 'identification'],
       sectionFormatErrors: [],
       sectionRequiredErrors: [],
       firstNameValid: true,
@@ -39,9 +43,9 @@ class ConsumerInfoView extends React.Component {
       ageValid: true,
       sectionValid: false,
       didClickNav: this.props.location.state
-          ? this.props.location.state.didClickNav
-          : false,
-      currentPage: location.hash.substr(2, 10)
+        ? this.props.location.state.didClickNav
+        : false,
+      currentPage: parseInt(location.hash.substr(2), 10)
     };
   }
 
@@ -94,36 +98,9 @@ class ConsumerInfoView extends React.Component {
     }).isRequired
   }
 
-  setDidClickNav = () => {
-    this.setState({ didClickNav: true });
-  }
-
-  setRequiredErrors = () => {
-    const requiredErrors = this.state.sectionRequiredErrors.slice();
-    const areRequiredInputsValid = validateRequiredInput(
-      this.props.input,
-      REQUIRED_FIELDS
-    );
-
-    if (areRequiredInputsValid) {
-      if (requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED) !== -1) {
-        requiredErrors.splice(requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED));
-      }
-    }
-    else if (requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED) === -1) {
-      requiredErrors.push(FORM_ERRORS.IS_REQUIRED);
-    }
-
-    this.setState({
-      sectionRequiredErrors: requiredErrors
-    });
-  }
-
   handlePageChange = (path) => {
-    this.setDidClickNav();
-
-    Promise.resolve(this.setRequiredErrors())
-    .then(() => {
+    this.setState(setDidClickNav);
+    this.setState(setRequiredErrors, () => {
       if (this.state.sectionRequiredErrors.length < 1 && this.state.sectionFormatErrors.length < 1) {
         this.props.handlePageChange(path);
       }
@@ -137,39 +114,13 @@ class ConsumerInfoView extends React.Component {
     });
   }
 
-  renderErrors = () => {
-    const formatErrors = this.state.sectionFormatErrors.map((error) => {
-      return <ErrorMessage key={error}>{error}</ErrorMessage>;
-    });
-    let requiredErrors = [];
-    if (this.state.didClickNav) {
-      requiredErrors = this.state.sectionRequiredErrors.map((error) => {
-        return <ErrorMessage key={error}>{error}</ErrorMessage>;
-      });
-    }
-
-    return (
-      <div>
-        {formatErrors}
-        {requiredErrors}
-      </div>
-    );
-  }
-
   componentWillUnmount() {
-    const areRequiredInputsValid = validateRequiredInput(
+    validateSectionNavigation(
       this.props.input,
-      REQUIRED_FIELDS
+      this.state.requiredFields,
+      this.state.currentPage,
+      this.props.history
     );
-    if (
-      !areRequiredInputsValid
-      && this.state.currentPage !== MAX_PAGE
-    ) {
-      this.props.history.push({
-        pathname: `/${this.state.currentPage}`,
-        state: { didClickNav: true }
-      });
-    }
   }
 
   render() {
@@ -190,7 +141,8 @@ class ConsumerInfoView extends React.Component {
       lastNameValid,
       identificationValid,
       ageValid,
-      sectionFormatErrors
+      sectionFormatErrors,
+      sectionRequiredErrors
     } = this.state;
 
     return (
@@ -205,7 +157,7 @@ class ConsumerInfoView extends React.Component {
                   lastNameValid,
                   true,
                   didClickNav
-                  )}>
+                )}>
               <TitleLabel>12. Last Name*</TitleLabel>
               <FormControl
                   data-section={section}
@@ -256,7 +208,7 @@ class ConsumerInfoView extends React.Component {
                   identificationValid,
                   true,
                   didClickNav
-                  )}>
+                )}>
               <TitleLabel>13. Consumer Identification*</TitleLabel>
               <FormControl
                   data-section={section}
@@ -1151,14 +1103,15 @@ class ConsumerInfoView extends React.Component {
 
         {
           !isInReview()
-          ? <FormNav
-              prevPath={FORM_PATHS.CONSUMER_SEARCH}
-              nextPath={FORM_PATHS.COMPLAINANT}
-              handlePageChange={this.handlePageChange}
-              setDidClickNav={this.setDidClickNav} />
-          : null
+            ? (
+              <FormNav
+                  prevPath={FORM_PATHS.CONSUMER_SEARCH}
+                  nextPath={FORM_PATHS.COMPLAINANT}
+                  handlePageChange={this.handlePageChange} />
+            )
+            : null
         }
-        { this.renderErrors() }
+        { renderErrors(sectionFormatErrors, sectionRequiredErrors, didClickNav) }
       </div>
     );
   }

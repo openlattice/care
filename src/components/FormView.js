@@ -79,7 +79,6 @@ function FormView({
     return (
       <ConsumerSearch
           handlePersonSelection={handlePersonSelection}
-          handlePageChange={handlePageChange}
           personEntitySetId={personEntitySetId}
           handlePageChange={handlePageChange} />
     );

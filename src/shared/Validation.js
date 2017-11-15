@@ -50,15 +50,7 @@ export const validateOnInput = (
 
 // Called in handlePageChange fn
 export const validateRequiredInput = (input, requiredFields) => {
-  let i;
-  for (i in requiredFields) {
-    // const field = requiredFields[i];
-    // let value = input[field];
-    // if (value.length < 1) {
-    if (input[requiredFields[i]].length < 1) {
-      return false;
-      break;
-    }
-  }
-  return true;
+  return requiredFields.every((element) => {
+    return input[element].length >= 1;
+  });
 };

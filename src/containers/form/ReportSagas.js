@@ -87,6 +87,7 @@ function prepReportEntityData(syncId :string, entitySet :Map<*, *>, allInfo :Obj
 function prepPeopleEntityData(syncId :string, entitySet :Map<*, *>, consumerInfo :Object) :Object {
 
   const {
+    age,
     dob,
     firstName,
     gender,
@@ -115,6 +116,7 @@ function prepPeopleEntityData(syncId :string, entitySet :Map<*, *>, consumerInfo
   details[props[PERSON.DOB_FQN]] = (dob && dob.length) ? [dob] : [];
   details[props[PERSON.SEX_FQN]] = (gender && gender.length) ? [gender] : [];
   details[props[PERSON.RACE_FQN]] = (race && race.length) ? [race] : [];
+  details[props[PERSON.AGE_FQN]] = (age && age.length) ? [age] : [];
 
   /*
    * key

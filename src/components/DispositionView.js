@@ -15,13 +15,16 @@ import {
   OtherWrapper,
   InlineCheckbox,
   InlineRadio,
-  SectionHeader,
-  ErrorMessage
+  SectionHeader
 } from '../shared/Layout';
-import { FORM_PATHS, FORM_ERRORS, MAX_PAGE } from '../shared/Consts';
-import { bootstrapValidation, validateRequiredInput } from '../shared/Validation';
-
-const REQUIRED_FIELDS = ['disposition', 'incidentNarrative'];
+import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
+import {
+  setDidClickNav,
+  setRequiredErrors,
+  renderErrors,
+  validateSectionNavigation
+} from '../shared/Helpers';
+import { bootstrapValidation } from '../shared/Validation';
 
 
 class DispositionView extends React.Component {
@@ -29,15 +32,16 @@ class DispositionView extends React.Component {
     super(props);
 
     this.state = {
+      requiredFields: ['disposition', 'incidentNarrative'],
       sectionFormatErrors: [],
       sectionRequiredErrors: [FORM_ERRORS.IS_REQUIRED],
       dispositionValid: true,
       incidentNarrativeValid: true,
       sectionValid: false,
       didClickNav: this.props.location.state
-          ? this.props.location.state.didClickNav
-          : false,
-      currentPage: location.hash.substr(2, 10)
+        ? this.props.location.state.didClickNav
+        : false,
+      currentPage: parseInt(location.hash.substr(2), 10)
     };
   }
 
@@ -61,36 +65,9 @@ class DispositionView extends React.Component {
     }).isRequired
   }
 
-  setDidClickNav = () => {
-    this.setState({ didClickNav: true });
-  }
-
-  setRequiredErrors = () => {
-      const requiredErrors = this.state.sectionRequiredErrors.slice();
-      const areRequiredInputsValid = validateRequiredInput(
-        this.props.input,
-        REQUIRED_FIELDS
-      );
-
-      if (areRequiredInputsValid) {
-        if (requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED) !== -1) {
-          requiredErrors.splice(requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED));
-        }
-      }
-      else if (requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED) === -1) {
-        requiredErrors.push(FORM_ERRORS.IS_REQUIRED);
-      }
-
-      this.setState({
-        sectionRequiredErrors: requiredErrors
-      });
-    }
-
   handlePageChange = (path) => {
-    this.setDidClickNav();
-
-    Promise.resolve(this.setRequiredErrors())
-    .then(() => {
+    this.setState(setDidClickNav);
+    this.setState(setRequiredErrors, () => {
       if (this.state.sectionRequiredErrors.length < 1 && this.state.sectionFormatErrors.length < 1) {
         this.props.handlePageChange(path);
       }
@@ -104,40 +81,13 @@ class DispositionView extends React.Component {
     });
   }
 
-  renderErrors = () => {
-    const formatErrors = this.state.sectionFormatErrors.map((error) => {
-      return <ErrorMessage key={error}>{error}</ErrorMessage>;
-    });
-
-    let requiredErrors = [];
-    if (this.state.didClickNav) {
-      requiredErrors = this.state.sectionRequiredErrors.map((error) => {
-        return <ErrorMessage key={error}>{error}</ErrorMessage>;
-      });
-    }
-
-    return (
-      <div>
-        {formatErrors}
-        {requiredErrors}
-      </div>
-    );
-  }
-
   componentWillUnmount() {
-    const areRequiredInputsValid = validateRequiredInput(
+    validateSectionNavigation(
       this.props.input,
-      REQUIRED_FIELDS
+      this.state.requiredFields,
+      this.state.currentPage,
+      this.props.history
     );
-    if (
-      !areRequiredInputsValid
-      && this.state.currentPage !== MAX_PAGE
-    ) {
-      this.props.history.push({
-        pathname: `/${this.state.currentPage}`,
-        state: { didClickNav: true }
-      });
-    }
   }
 
   render() {
@@ -154,7 +104,8 @@ class DispositionView extends React.Component {
       dispositionValid,
       incidentNarrativeValid,
       didClickNav,
-      sectionFormatErrors
+      sectionFormatErrors,
+      sectionRequiredErrors
     } = this.state;
 
     return (
@@ -170,7 +121,7 @@ class DispositionView extends React.Component {
                   dispositionValid,
                   true,
                   didClickNav
-                  )}>
+                )}>
               <InlineCheckbox
                   inline
                   data-section={section}
@@ -428,7 +379,7 @@ class DispositionView extends React.Component {
                   incidentNarrativeValid,
                   true,
                   didClickNav
-                  )}>
+                )}>
               <TitleLabel>
                 {
                   `32. Narrative of Incident, to include: Results of investigation, basis for
@@ -450,14 +401,15 @@ class DispositionView extends React.Component {
 
         {
           !isInReview()
-          ? <FormNav
-              prevPath={FORM_PATHS.COMPLAINANT}
-              nextPath={FORM_PATHS.OFFICER}
-              handlePageChange={this.handlePageChange}
-              setDidClickNav={this.setDidClickNav} />
-          : null
+            ? (
+              <FormNav
+                  prevPath={FORM_PATHS.COMPLAINANT}
+                  nextPath={FORM_PATHS.OFFICER}
+                  handlePageChange={this.handlePageChange} />
+            )
+            : null
         }
-        { this.renderErrors() }
+        { renderErrors(sectionFormatErrors, sectionRequiredErrors, didClickNav) }
       </div>
     );
   }
