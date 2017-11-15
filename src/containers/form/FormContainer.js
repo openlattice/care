@@ -347,13 +347,25 @@ class Form extends React.Component {
     const details = {};
     this.state.propertyTypes.forEach((propertyType) => {
       const value = formInputs[propertyType.type.name];
+
       let formattedValue;
-      formattedValue = Array.isArray(value) ? value : [value];
-      formattedValue = (
+      if (Array.isArray(value)) {
+        formattedValue = value;
+      }
+      else {
+        formattedValue = [value];
+      }
+
+      if (
         formattedValue.length > 0
-          && (formattedValue[0] === ''
-          || formattedValue[0] === null)
-      ) ? [] : formattedValue;
+          && (
+            formattedValue[0] === ''
+              || formattedValue[0] === null
+          )
+      ) {
+        formattedValue = [];
+      }
+
       details[propertyType.id] = formattedValue;
     });
 
