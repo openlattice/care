@@ -452,11 +452,13 @@ class DispositionView extends React.Component {
 
         {
           !isInReview()
-            ? <FormNav
-                prevPath={FORM_PATHS.COMPLAINANT}
-                nextPath={FORM_PATHS.OFFICER}
-                handlePageChange={this.handlePageChange}
-                setDidClickNav={this.setDidClickNav} />
+            ? (
+              <FormNav
+                  prevPath={FORM_PATHS.COMPLAINANT}
+                  nextPath={FORM_PATHS.OFFICER}
+                  handlePageChange={this.handlePageChange}
+                  setDidClickNav={this.setDidClickNav} />
+            )
             : null
         }
         { this.renderErrors() }

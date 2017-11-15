@@ -66,10 +66,6 @@ class ReportInfoView extends React.Component {
     }).isRequired
   }
 
-  componentDidMount() {
-    console.log('history', this.props.history);
-  }
-
   setDidClickNav = () => {
     this.setState({ didClickNav: true });
   }
@@ -359,11 +355,13 @@ class ReportInfoView extends React.Component {
         </PaddedRow>
         {
           !isInReview()
-            ? <FormNav
-                nextPath={FORM_PATHS.CONSUMER_SEARCH}
-                handlePageChange={this.handlePageChange}
-                sectionValid={this.state.sectionValid}
-                setDidClickNav={this.setDidClickNav} />
+            ? (
+              <FormNav
+                  nextPath={FORM_PATHS.CONSUMER_SEARCH}
+                  handlePageChange={this.handlePageChange}
+                  sectionValid={this.state.sectionValid}
+                  setDidClickNav={this.setDidClickNav} />
+            )
             : null
         }
         { this.renderErrors() }
