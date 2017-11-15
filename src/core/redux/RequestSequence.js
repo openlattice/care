@@ -13,11 +13,11 @@ type SequenceActionType =
   | typeof FAILURE
   | typeof FINALLY;
 
-type SequenceAction = { data :Object, id :string, type :string }
-type SequenceActionCreator = (...args :any[]) => SequenceAction
+type SequenceAction = { data :Object, id :string, type :string };
+type SequenceActionCreator = (...args :any[]) => SequenceAction;
 
 function getActionCreator(id :string, type :string) :SequenceActionCreator {
-  return (data :any) => {
+  return (data :any) :SequenceAction => {
     return {
       id,
       type,
@@ -35,9 +35,11 @@ function randomId() :string {
   return Math.random().toString(36).slice(2);
 }
 
-function getMatchingSwitchCase(baseType :string, actionCreator :SequenceActionCreator) :Function {
+type SwitchCaseMatcher = (type :string) => string;
 
-  return (switchType :string) => {
+function getSwitchCaseMatcher(baseType :string, actionCreator :SequenceActionCreator) :SwitchCaseMatcher {
+
+  return (switchType :string) :string => {
 
     let parsedStage :string = '';
     const slashIndex :number = switchType.lastIndexOf('/');
@@ -126,30 +128,68 @@ type RequestSequence = {
 
 function newRequestSequence(baseType :string) :RequestSequence {
 
-  /*
-   * !!! BUG !!!
-   *
-   * sequenceId will be unique for different types, but it will be the same each time the same type is triggered.
-   * for example, "FETCH_ID" will have a different sequenceId than "STORE_DATA", but "FETCH_ID" will have the same
-   * sequenceId each time it is dispatched, which is NOT what we want.
-   *
-   * TODO: generate a unique sequenceId per sequence type AND per sequence lifecycle
-  */
-  const sequenceId :string = randomId();
-  const actionCreator :SequenceActionCreator = getActionCreator(sequenceId, baseType);
+  const requestSequenceActionType :string = `${baseType}/${REQUEST}`.toUpperCase();
+  const successSequenceActionType :string = `${baseType}/${SUCCESS}`.toUpperCase();
+  const failureSequenceActionType :string = `${baseType}/${FAILURE}`.toUpperCase();
+  const finallySequenceActionType :string = `${baseType}/${FINALLY}`.toUpperCase();
 
-  [REQUEST, SUCCESS, FAILURE, FINALLY].forEach((seqAction :SequenceActionType) => {
-    const seqActionType :string = `${baseType}/${seqAction}`;
-    actionCreator[seqAction.toUpperCase()] = seqActionType.toUpperCase();
-    actionCreator[seqAction.toLowerCase()] = getActionCreator(sequenceId, seqActionType);
-  });
+  let triggerCallCount :number = 0;
+  let requestCallCount :number = 0;
+  let successCallCount :number = 0;
+  let failureCallCount :number = 0;
+  let finallyCallCount :number = 0;
 
-  actionCreator.case = getMatchingSwitchCase(baseType, actionCreator);
-  actionCreator.reducer = getReducer(baseType);
+  const sequenceIds :{[key :number] :string} = {
+    [triggerCallCount]: randomId()
+  };
+
+  const triggerActionCreator :SequenceActionCreator = (data :any) :SequenceAction => {
+    const action :SequenceAction = getActionCreator(sequenceIds[triggerCallCount], baseType)(data);
+    triggerCallCount += 1;
+    sequenceIds[triggerCallCount] = randomId();
+    return action;
+  };
+
+  const requestActionCreator :SequenceActionCreator = (data :any) :SequenceAction => {
+    const action :SequenceAction = getActionCreator(sequenceIds[requestCallCount], requestSequenceActionType)(data);
+    requestCallCount += 1;
+    return action;
+  };
+
+  const successActionCreator :SequenceActionCreator = (data :any) :SequenceAction => {
+    const action :SequenceAction = getActionCreator(sequenceIds[successCallCount], successSequenceActionType)(data);
+    successCallCount += 1;
+    return action;
+  };
+
+  const failureActionCreator :SequenceActionCreator = (data :any) :SequenceAction => {
+    const action :SequenceAction = getActionCreator(sequenceIds[failureCallCount], failureSequenceActionType)(data);
+    failureCallCount += 1;
+    return action;
+  };
+
+  const finallyActionCreator :SequenceActionCreator = (data :any) :SequenceAction => {
+    const action :SequenceAction = getActionCreator(sequenceIds[finallyCallCount], finallySequenceActionType)(data);
+    finallyCallCount += 1;
+    return action;
+  };
+
+  triggerActionCreator.REQUEST = requestSequenceActionType;
+  triggerActionCreator.SUCCESS = successSequenceActionType;
+  triggerActionCreator.FAILURE = failureSequenceActionType;
+  triggerActionCreator.FINALLY = finallySequenceActionType;
+
+  triggerActionCreator.request = requestActionCreator;
+  triggerActionCreator.success = successActionCreator;
+  triggerActionCreator.failure = failureActionCreator;
+  triggerActionCreator.finally = finallyActionCreator;
+
+  triggerActionCreator.case = getSwitchCaseMatcher(baseType, triggerActionCreator);
+  triggerActionCreator.reducer = getReducer(baseType);
 
   // as of v0.57, FLow doesn't support this use case: https://github.com/facebook/flow/issues/5224
   // workaround: typecast to less the specific "any" type
-  return (actionCreator :any);
+  return (triggerActionCreator :any);
 }
 
 export {
