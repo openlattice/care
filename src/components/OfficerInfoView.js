@@ -12,9 +12,10 @@ import FormNav from './FormNav';
 import { PaddedRow, TitleLabel, InlineCheckbox, SectionHeader, ErrorMessage } from '../shared/Layout';
 import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
 import { bootstrapValidation, validateRequiredInput } from '../shared/Validation';
+import { getCurrentPage } from '../shared/Helpers';
+
 
 const REQUIRED_FIELDS = ['officerName'];
-
 
 class OfficerInfoView extends React.Component {
   constructor(props) {
@@ -27,9 +28,8 @@ class OfficerInfoView extends React.Component {
       officerSeqIDValid: true,
       sectionValid: false,
       didClickNav: this.props.location.state
-          ? this.props.location.state.didClickNav
-          : false,
-      currentPage: location.hash.substr(2, 10)
+        ? this.props.location.state.didClickNav
+        : false
     };
   }
 
@@ -41,6 +41,7 @@ class OfficerInfoView extends React.Component {
     handlePageChange: PropTypes.func.isRequired,
     history: ReactRouterPropTypes.history.isRequired,
     location: ReactRouterPropTypes.location.isRequired,
+    maxPage: PropTypes.number.isRequired,
     input: PropTypes.shape({
       officerName: PropTypes.string.isRequired,
       officerSeqID: PropTypes.string.isRequired,
@@ -78,11 +79,11 @@ class OfficerInfoView extends React.Component {
     this.setDidClickNav();
 
     Promise.resolve(this.setRequiredErrors())
-    .then(() => {
-      if (this.state.sectionRequiredErrors.length < 1 && this.state.sectionFormatErrors.length < 1) {
-        this.props.handlePageChange(path);
-      }
-    });
+      .then(() => {
+        if (this.state.sectionRequiredErrors.length < 1 && this.state.sectionFormatErrors.length < 1) {
+          this.props.handlePageChange(path);
+        }
+      });
   }
 
   setInputErrors = (name, inputValid, sectionFormatErrors) => {
@@ -119,10 +120,10 @@ class OfficerInfoView extends React.Component {
     if (
       !areRequiredInputsValid
       && this.props.maxPage
-      && this.state.currentPage !== this.props.maxPage
+      && getCurrentPage(this.props.history.pathname) !== this.props.maxPage
     ) {
       this.props.history.push({
-        pathname: `/${this.state.currentPage}`,
+        pathname: `/${getCurrentPage(this.props.history.pathname)}`,
         state: { didClickNav: true }
       });
     }
@@ -156,7 +157,7 @@ class OfficerInfoView extends React.Component {
                   officerNameValid,
                   true,
                   didClickNav
-                  )}>
+                )}>
               <TitleLabel>33. Officer Name*</TitleLabel>
               <FormControl
                   data-section={section}
@@ -244,11 +245,13 @@ class OfficerInfoView extends React.Component {
 
         {
           !isInReview()
-            ? <FormNav
-                prevPath={FORM_PATHS.DISPOSITION}
-                nextPath={FORM_PATHS.REVIEW}
-                handlePageChange={this.handlePageChange}
-                setDidClickNav={this.setDidClickNav} />
+            ? (
+              <FormNav
+                  prevPath={FORM_PATHS.DISPOSITION}
+                  nextPath={FORM_PATHS.REVIEW}
+                  handlePageChange={this.handlePageChange}
+                  setDidClickNav={this.setDidClickNav} />
+            )
             : null
         }
         { this.renderErrors() }

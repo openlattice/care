@@ -12,6 +12,8 @@ import FormNav from './FormNav';
 import { PaddedRow, TitleLabel, SectionHeader, ErrorMessage } from '../shared/Layout';
 import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
 import { bootstrapValidation, validateRequiredInput } from '../shared/Validation';
+import { getCurrentPage } from '../shared/Helpers';
+
 
 const REQUIRED_FIELDS = ['complainantName'];
 
@@ -25,9 +27,8 @@ class ComplainantInfoView extends React.Component {
       complainantNameValid: true,
       sectionValid: false,
       didClickNav: this.props.location.state
-          ? this.props.location.state.didClickNav
-          : false,
-      currentPage: location.hash.substr(2, 10)
+        ? this.props.location.state.didClickNav
+        : false
     };
   }
 
@@ -38,6 +39,7 @@ class ComplainantInfoView extends React.Component {
     handlePageChange: PropTypes.func.isRequired,
     history: ReactRouterPropTypes.history.isRequired,
     location: ReactRouterPropTypes.location.isRequired,
+    maxPage: PropTypes.number.isRequired,
     input: PropTypes.shape({
       complainantName: PropTypes.string.isRequired,
       complainantAddress: PropTypes.string.isRequired,
@@ -75,11 +77,11 @@ class ComplainantInfoView extends React.Component {
     this.setDidClickNav();
 
     Promise.resolve(this.setRequiredErrors())
-    .then(() => {
-      if (this.state.sectionRequiredErrors.length < 1 && this.state.sectionFormatErrors.length < 1) {
-        this.props.handlePageChange(path);
-      }
-    });
+      .then(() => {
+        if (this.state.sectionRequiredErrors.length < 1 && this.state.sectionFormatErrors.length < 1) {
+          this.props.handlePageChange(path);
+        }
+      });
   }
 
   setInputErrors = (name, inputValid, sectionFormatErrors) => {
@@ -116,10 +118,10 @@ class ComplainantInfoView extends React.Component {
     if (
       !areRequiredInputsValid
       && this.props.maxPage
-      && this.state.currentPage !== this.props.maxPage
+      && getCurrentPage(this.props.history.pathname) !== this.props.maxPage
     ) {
       this.props.history.push({
-        pathname: `/${this.state.currentPage}`,
+        pathname: `/${getCurrentPage(this.props.history.pathname)}`,
         state: { didClickNav: true }
       });
     }
@@ -151,7 +153,7 @@ class ComplainantInfoView extends React.Component {
                   complainantNameValid,
                   true,
                   didClickNav
-                  )}>
+                )}>
               <TitleLabel>28. Complainant Name (Last, First, MI)*</TitleLabel>
               <FormControl
                   data-section={section}
@@ -204,11 +206,13 @@ class ComplainantInfoView extends React.Component {
 
         {
           !isInReview()
-            ? <FormNav
-                prevPath={FORM_PATHS.CONSUMER}
-                nextPath={FORM_PATHS.DISPOSITION}
-                handlePageChange={this.handlePageChange}
-                setDidClickNav={this.setDidClickNav} />
+            ? (
+              <FormNav
+                  prevPath={FORM_PATHS.CONSUMER}
+                  nextPath={FORM_PATHS.DISPOSITION}
+                  handlePageChange={this.handlePageChange}
+                  setDidClickNav={this.setDidClickNav} />
+            )
             : null
         }
         { this.renderErrors() }

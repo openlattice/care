@@ -79,7 +79,6 @@ function FormView({
     return (
       <ConsumerSearch
           handlePersonSelection={handlePersonSelection}
-          handlePageChange={handlePageChange}
           personEntitySetId={personEntitySetId}
           maxPage={maxPage}
           handlePageChange={handlePageChange} />
@@ -157,6 +156,7 @@ function FormView({
           officerInfo={officerInfo}
           isInReview={isInReview}
           consumerIsSelected={consumerIsSelected}
+          maxPage={maxPage}
           handlePageChange={handlePageChange} />
     );
   };

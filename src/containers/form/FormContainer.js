@@ -3,10 +3,16 @@ import React from 'react';
 import Promise from 'bluebird';
 import { EntityDataModelApi, DataApi, SearchApi, SyncApi } from 'lattice';
 import { withRouter } from 'react-router';
+import ReactRouterPropTypes from 'react-router-prop-types';
 
 import FormView from '../../components/FormView';
 import ConfirmationModal from '../../components/ConfirmationModalView';
-import { ENTITY_SET_NAMES, PERSON, CONSUMER_STATE, STRING_ID_FQN } from '../../shared/Consts';
+import {
+  ENTITY_SET_NAMES,
+  PERSON,
+  CONSUMER_STATE,
+  STRING_ID_FQN
+} from '../../shared/Consts';
 import { validateOnInput } from '../../shared/Validation';
 
 
@@ -29,7 +35,6 @@ class Form extends React.Component {
         timeOccurred: '',
         dateReported: '',
         timeReported: '',
-        // WHAT IS NAME USED FOR?
         name: ''
       },
       consumerInfo: {
@@ -109,6 +114,10 @@ class Form extends React.Component {
     };
   }
 
+  static propTypes = {
+    history: ReactRouterPropTypes.history.isRequired
+  }
+
   componentDidMount() {
     EntityDataModelApi.getEntitySetId(ENTITY_SET_NAMES.FORM)
       .then((id) => {
@@ -129,7 +138,9 @@ class Form extends React.Component {
               });
           });
       });
+  }
 
+  getPersonEntitySet = () => {
     const start = 0;
     const maxHits = 50;
     const searchTerm = '*';
@@ -138,13 +149,9 @@ class Form extends React.Component {
       maxHits,
       searchTerm
     };
-    // TODO: wait to execute until getPersonEntitySet is complete
-    SearchApi.searchEntitySetData(this.state.personEntitySetId, searchOptions);
-  }
-
-  getPersonEntitySet = () => {
     EntityDataModelApi.getEntitySetId(ENTITY_SET_NAMES.PEOPLE)
       .then((personEntitySetId) => {
+        SearchApi.searchEntitySetData(personEntitySetId, searchOptions);
         this.setState({ personEntitySetId });
         EntityDataModelApi.getEntitySet(personEntitySetId)
           .then((personEntitySet) => {
@@ -210,12 +217,12 @@ class Form extends React.Component {
 
     while (ss >= 60) {
       mm += 1;
-      ss = ss - 60;
+      ss -= 60;
     }
 
     while (mm >= 60) {
       hh += 1;
-      mm = mm - 60;
+      mm -= 60;
     }
 
     let hhStr = hh.toString();
@@ -300,7 +307,7 @@ class Form extends React.Component {
   }
 
   getPersonEntity = (syncId) => {
-    const { identification, firstName, lastName, middleName, dob, gender, race } = this.state.consumerInfo;
+    const { identification, firstName, lastName, middleName, dob, gender, race, age } = this.state.consumerInfo;
     const entityId = btoa(identification);
     const key = {
       entitySetId: this.state.personEntitySetId,
@@ -322,6 +329,7 @@ class Form extends React.Component {
     details[props[PERSON.DOB_FQN]] = (dob && dob.length) ? [dob] : [];
     details[props[PERSON.SEX_FQN]] = (gender && gender.length) ? [gender] : [];
     details[props[PERSON.RACE_FQN]] = (race && race.length) ? [race] : [];
+    details[props[PERSON.AGE_FQN]] = (age && age.length) ? [age] : [];
 
     return { key, details };
   }
@@ -339,10 +347,25 @@ class Form extends React.Component {
     const details = {};
     this.state.propertyTypes.forEach((propertyType) => {
       const value = formInputs[propertyType.type.name];
+
       let formattedValue;
-      formattedValue = Array.isArray(value) ? value : [value];
-      formattedValue = (formattedValue.length > 0 && (formattedValue[0] === '' || formattedValue[0] === null))
-        ? [] : formattedValue;
+      if (Array.isArray(value)) {
+        formattedValue = value;
+      }
+      else {
+        formattedValue = [value];
+      }
+
+      if (
+        formattedValue.length > 0
+          && (
+            formattedValue[0] === ''
+              || formattedValue[0] === null
+          )
+      ) {
+        formattedValue = [];
+      }
+
       details[propertyType.id] = formattedValue;
     });
 
@@ -419,7 +442,7 @@ class Form extends React.Component {
   }
 
   isInReview = () => {
-    const page = parseInt(window.location.hash.substr(2, 10));
+    const page = parseInt(window.location.hash.substr(2), 10);
     if (page && page === this.state.maxPage) return true;
     return false;
   }

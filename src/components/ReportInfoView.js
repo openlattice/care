@@ -14,6 +14,7 @@ import FormNav from './FormNav';
 import { TitleLabel, InlineRadio, PaddedRow, SectionHeader, ErrorMessage } from '../shared/Layout';
 import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
 import { bootstrapValidation, validateRequiredInput } from '../shared/Validation';
+import { getCurrentPage } from '../shared/Helpers';
 
 
 const REQUIRED_FIELDS = ['complaintNumber'];
@@ -31,9 +32,8 @@ class ReportInfoView extends React.Component {
       dateOccurredValid: true,
       sectionValid: false,
       didClickNav: this.props.location.state
-          ? this.props.location.state.didClickNav
-          : false,
-      currentPage: parseInt(location.hash.substr(2, 10))
+        ? this.props.location.state.didClickNav
+        : false
     };
   }
 
@@ -95,11 +95,11 @@ class ReportInfoView extends React.Component {
     this.setDidClickNav();
 
     Promise.resolve(this.setRequiredErrors())
-    .then(() => {
-      if (this.state.sectionRequiredErrors.length < 1 && this.state.sectionFormatErrors.length < 1) {
-        this.props.handlePageChange(path);
-      }
-    });
+      .then(() => {
+        if (this.state.sectionRequiredErrors.length < 1 && this.state.sectionFormatErrors.length < 1) {
+          this.props.handlePageChange(path);
+        }
+      });
   }
 
   setInputErrors = (name, inputValid, sectionFormatErrors) => {
@@ -136,10 +136,10 @@ class ReportInfoView extends React.Component {
     if (
       !areRequiredInputsValid
       && this.props.maxPage
-      && this.state.currentPage !== this.props.maxPage
+      && getCurrentPage(this.props.history.pathname) !== this.props.maxPage
     ) {
       this.props.history.push({
-        pathname: `/${this.state.currentPage}`,
+        pathname: `/${getCurrentPage(this.props.history.pathname)}`,
         state: { didClickNav: true }
       });
     }
@@ -185,7 +185,7 @@ class ReportInfoView extends React.Component {
                   complaintNumberValid,
                   true,
                   didClickNav
-                  )}>
+                )}>
               <TitleLabel>2. Complaint Number*</TitleLabel>
               <FormControl
                   data-section={section}
@@ -355,11 +355,13 @@ class ReportInfoView extends React.Component {
         </PaddedRow>
         {
           !isInReview()
-            ? <FormNav
-                nextPath={FORM_PATHS.CONSUMER_SEARCH}
-                handlePageChange={this.handlePageChange}
-                sectionValid={this.state.sectionValid}
-                setDidClickNav={this.setDidClickNav} />
+            ? (
+              <FormNav
+                  nextPath={FORM_PATHS.CONSUMER_SEARCH}
+                  handlePageChange={this.handlePageChange}
+                  sectionValid={this.state.sectionValid}
+                  setDidClickNav={this.setDidClickNav} />
+            )
             : null
         }
         { this.renderErrors() }
