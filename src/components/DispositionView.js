@@ -20,9 +20,10 @@ import {
 } from '../shared/Layout';
 import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
 import { bootstrapValidation, validateRequiredInput } from '../shared/Validation';
+import { getCurrentPage } from '../shared/Helpers';
+
 
 const REQUIRED_FIELDS = ['disposition', 'incidentNarrative'];
-
 
 class DispositionView extends React.Component {
   constructor(props) {
@@ -36,8 +37,7 @@ class DispositionView extends React.Component {
       sectionValid: false,
       didClickNav: this.props.location.state
         ? this.props.location.state.didClickNav
-        : false,
-      currentPage: parseInt(location.hash.substr(2), 10)
+        : false
     };
   }
 
@@ -133,10 +133,10 @@ class DispositionView extends React.Component {
     if (
       !areRequiredInputsValid
       && this.props.maxPage
-      && this.state.currentPage !== this.props.maxPage
+      && getCurrentPage(this.props.history.pathname) !== this.props.maxPage
     ) {
       this.props.history.push({
-        pathname: `/${this.state.currentPage}`,
+        pathname: `/${getCurrentPage(this.props.history.pathname)}`,
         state: { didClickNav: true }
       });
     }
