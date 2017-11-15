@@ -15,10 +15,18 @@ import type { Match, RouterHistory } from 'react-router';
 
 import FormView from '../../components/FormView';
 import ConfirmationModal from '../../components/ConfirmationModalView';
-import { ENTITY_SET_NAMES, PERSON, CONSUMER_STATE, STRING_ID_FQN } from '../../shared/Consts';
 import { validateOnInput } from '../../shared/Validation';
 import { formatTimePickerSeconds } from '../../utils/Utils';
 import { loadDataModel } from './EntitySetsActionFactory';
+import { submitReport } from './ReportActionFactory';
+
+import {
+  CONSUMER_STATE,
+  ENTITY_SET_NAMES,
+  MAX_PAGE,
+  PERSON,
+  STRING_ID_FQN
+} from '../../shared/Consts';
 
 import {
   COMPLAINANT_INFO_INITIAL_STATE,
@@ -39,31 +47,28 @@ import type {
 const { FullyQualifiedName } = Models;
 
 /*
- * constants
- */
-
-const MAX_PAGE :number = 7;
-
-/*
  * types
  */
 
 type Props = {
   actions :{
-    loadDataModel :() => void
-  },
-  entitySets :Map<*, *>,
-  history :RouterHistory,
-  match :Match
+    loadDataModel :() => void,
+    submitReport :(args :Object) => void
+  };
+  entitySets :Map<*, *>;
+  isSubmittingReport :boolean;
+  history :RouterHistory;
+  match :Match;
+  submissionSuccess :boolean;
 };
 
 type State = {
-  consumerInfo :ConsumerInfo,
-  complainantInfo :ComplainantInfo,
-  dispositionInfo :DispositionInfo,
-  isConsumerSelected :boolean,
-  officerInfo :OfficerInfo,
-  reportInfo :ReportInfo
+  consumerInfo :ConsumerInfo;
+  complainantInfo :ComplainantInfo;
+  dispositionInfo :DispositionInfo;
+  isConsumerSelected :boolean;
+  officerInfo :OfficerInfo;
+  reportInfo :ReportInfo;
 };
 
 class Form extends React.Component<Props, State> {
@@ -85,6 +90,19 @@ class Form extends React.Component<Props, State> {
   componentDidMount() {
 
     this.props.actions.loadDataModel();
+  }
+
+  componentWillReceiveProps(nextProps) {
+
+    // going from (isSubmittingReport === true) to (isSubmittingReport === false)
+    if (this.props.isSubmittingReport !== nextProps.isSubmittingReport
+      && this.props.isSubmittingReport === true
+      && nextProps.isSubmittingReport === false
+    ) {
+      this.setState({
+
+      });
+    }
   }
 
   handleTextInput = (e, fieldType, formatErrors, setErrorsFn) => {
@@ -214,7 +232,7 @@ class Form extends React.Component<Props, State> {
 
     const { entitySets } = this.props;
     const { FORM } = ENTITY_SET_NAMES;
-    const entitySetId :string = this.props.entitySets.getIn([FORM, 'entitySet', 'id'], '');
+    const entitySetId :string = entitySets.getIn([FORM, 'entitySet', 'id'], '');
 
     const formInputs = Object.assign(
       {},
@@ -295,22 +313,15 @@ class Form extends React.Component<Props, State> {
       });
   }
 
-  handleSubmit = (e) => {
-    e.preventDefault();
-    this.getBulkData().then((bulkData) => {
-      DataApi.createEntityAndAssociationData(bulkData)
-        .then(() => {
-          // this.setState({
-          //   submitSuccess: true,
-          //   submitFailure: false
-          // });
-        })
-        .catch(() => {
-          // this.setState({
-          //   submitSuccess: false,
-          //   submitFailure: true
-          // });
-        });
+  handleSubmit = () => {
+
+    this.props.actions.submitReport({
+      complainantInfo: this.state.complainantInfo,
+      consumerInfo: this.state.consumerInfo,
+      dispositionInfo: this.state.dispositionInfo,
+      entitySets: this.props.entitySets,
+      officerInfo: this.state.officerInfo,
+      reportInfo: this.state.reportInfo
     });
   }
 
@@ -342,7 +353,6 @@ class Form extends React.Component<Props, State> {
             complainantInfo={this.state.complainantInfo}
             dispositionInfo={this.state.dispositionInfo}
             officerInfo={this.state.officerInfo}
-            maxPage={MAX_PAGE}
             handlePageChange={this.handlePageChange}
             handlePersonSelection={this.handlePersonSelection}
             personEntitySetId={peopleEntitySetId}
@@ -351,8 +361,7 @@ class Form extends React.Component<Props, State> {
         {
           this.state.submitSuccess
             ? <ConfirmationModal
-                submitSuccess={null}
-                submitFailure={null}
+                submissionSuccess={this.props.submissionSuccess}
                 handleModalButtonClick={this.handleModalButtonClick} />
             : null
         }
@@ -364,14 +373,17 @@ class Form extends React.Component<Props, State> {
 function mapStateToProps(state :Map<*, *>) :Object {
 
   return {
-    entitySets: state.get('entitySets', Immutable.Map())
+    entitySets: state.get('entitySets', Immutable.Map()),
+    isSubmittingReport: state.getIn(['report', 'isSubmittingReport'], false),
+    submissionSuccess: state.getIn(['report', 'submissionSuccess'], false)
   };
 }
 
 function mapDispatchToProps(dispatch :Function) :Object {
 
   const actions = {
-    loadDataModel
+    loadDataModel,
+    submitReport
   };
 
   return {

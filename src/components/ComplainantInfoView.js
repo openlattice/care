@@ -10,7 +10,7 @@ import ReactRouterPropTypes from 'react-router-prop-types';
 
 import FormNav from './FormNav';
 import { PaddedRow, TitleLabel, SectionHeader, ErrorMessage } from '../shared/Layout';
-import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
+import { FORM_PATHS, FORM_ERRORS, MAX_PAGE } from '../shared/Consts';
 import { bootstrapValidation, validateRequiredInput } from '../shared/Validation';
 
 const REQUIRED_FIELDS = ['complainantName'];
@@ -115,8 +115,7 @@ class ComplainantInfoView extends React.Component {
     );
     if (
       !areRequiredInputsValid
-      && this.props.maxPage
-      && this.state.currentPage !== this.props.maxPage
+      && this.state.currentPage !== MAX_PAGE
     ) {
       this.props.history.push({
         pathname: `/${this.state.currentPage}`,

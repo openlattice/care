@@ -25,6 +25,7 @@ export const CONSUMER_STATE = {
 };
 
 export const STRING_ID_FQN = 'general.stringid';
+export const NC_SUBJ_ID_FQN = 'nc.SubjectIdentification';
 
 export const RACE = {
   americanIndian: 'American Indian or Alaska Native',
@@ -103,3 +104,5 @@ export const STATES = [
   'WI',
   'WY'
 ];
+
+export const MAX_PAGE :number = 7;

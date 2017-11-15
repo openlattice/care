@@ -40,14 +40,15 @@ function matchFetchProjectionSuccess(fetchProjectionAction :SequenceAction) {
 
 export function* loadDataModelWorker() :Generator<*, *, *> {
 
-  const entitySetNames :string[] = [
-    ENTITY_SET_NAMES.FORM,
-    ENTITY_SET_NAMES.PEOPLE,
-    ENTITY_SET_NAMES.APPEARS_IN
-  ];
-
   try {
+
     yield put(loadDataModel.request());
+
+    const entitySetNames :string[] = [
+      ENTITY_SET_NAMES.FORM,
+      ENTITY_SET_NAMES.PEOPLE,
+      ENTITY_SET_NAMES.APPEARS_IN
+    ];
 
     // 1. get all EntitySet ids
     const fetchEntitySetIdActions :SequenceAction[] = entitySetNames.map((entitySetName :string) => {

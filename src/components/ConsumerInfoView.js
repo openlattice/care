@@ -3,11 +3,12 @@
  */
 
 import React from 'react';
-import { withRouter } from 'react-router'; 
-import PropTypes from 'prop-types';
-import { FormGroup, FormControl, Col } from 'react-bootstrap';
+
 import DatePicker from 'react-bootstrap-date-picker';
+import PropTypes from 'prop-types';
 import ReactRouterPropTypes from 'react-router-prop-types';
+import { FormGroup, FormControl, Col } from 'react-bootstrap';
+import { withRouter } from 'react-router';
 
 import FormNav from './FormNav';
 import {
@@ -19,7 +20,7 @@ import {
   SectionHeader,
   ErrorMessage
 } from '../shared/Layout';
-import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
+import { FORM_PATHS, FORM_ERRORS, MAX_PAGE } from '../shared/Consts';
 import { bootstrapValidation, validateRequiredInput } from '../shared/Validation';
 
 
@@ -162,8 +163,7 @@ class ConsumerInfoView extends React.Component {
     );
     if (
       !areRequiredInputsValid
-      && this.props.maxPage
-      && this.state.currentPage !== this.props.maxPage
+      && this.state.currentPage !== MAX_PAGE
     ) {
       this.props.history.push({
         pathname: `/${this.state.currentPage}`,

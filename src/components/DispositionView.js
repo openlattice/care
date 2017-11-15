@@ -18,7 +18,7 @@ import {
   SectionHeader,
   ErrorMessage
 } from '../shared/Layout';
-import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
+import { FORM_PATHS, FORM_ERRORS, MAX_PAGE } from '../shared/Consts';
 import { bootstrapValidation, validateRequiredInput } from '../shared/Validation';
 
 const REQUIRED_FIELDS = ['disposition', 'incidentNarrative'];
@@ -131,8 +131,7 @@ class DispositionView extends React.Component {
     );
     if (
       !areRequiredInputsValid
-      && this.props.maxPage
-      && this.state.currentPage !== this.props.maxPage
+      && this.state.currentPage !== MAX_PAGE
     ) {
       this.props.history.push({
         pathname: `/${this.state.currentPage}`,
@@ -432,7 +431,7 @@ class DispositionView extends React.Component {
                   )}>
               <TitleLabel>
                 {
-                  `32. Narrative of Incident, to include: Results of investigation, basis for 
+                  `32. Narrative of Incident, to include: Results of investigation, basis for
                   actions taken, emotional states, additional witnesses. Property listing.*`
                 }
               </TitleLabel>

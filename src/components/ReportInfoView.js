@@ -12,7 +12,7 @@ import ReactRouterPropTypes from 'react-router-prop-types';
 
 import FormNav from './FormNav';
 import { TitleLabel, InlineRadio, PaddedRow, SectionHeader, ErrorMessage } from '../shared/Layout';
-import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
+import { FORM_PATHS, FORM_ERRORS, MAX_PAGE } from '../shared/Consts';
 import { bootstrapValidation, validateRequiredInput } from '../shared/Validation';
 
 
@@ -45,7 +45,6 @@ class ReportInfoView extends React.Component {
     isInReview: PropTypes.func.isRequired,
     handlePageChange: PropTypes.func.isRequired,
     section: PropTypes.string.isRequired,
-    maxPage: PropTypes.number.isRequired,
     history: ReactRouterPropTypes.history.isRequired,
     location: ReactRouterPropTypes.location.isRequired,
     input: PropTypes.shape({
@@ -135,8 +134,7 @@ class ReportInfoView extends React.Component {
     );
     if (
       !areRequiredInputsValid
-      && this.props.maxPage
-      && this.state.currentPage !== this.props.maxPage
+      && this.state.currentPage !== MAX_PAGE
     ) {
       this.props.history.push({
         pathname: `/${this.state.currentPage}`,

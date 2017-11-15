@@ -2,6 +2,8 @@
  * @flow
  */
 
+import randomUUID from 'uuid/v4';
+
 /*
  * Complainant Information Section
  */
@@ -40,7 +42,7 @@ const CONSUMER_INFO_INITIAL_STATE :Object = {
   gender: '',
   homeless: false,
   homelessLocation: '',
-  identification: '',
+  identification: randomUUID(),
   injuries: [],
   injuriesOther: '',
   lastName: '',
