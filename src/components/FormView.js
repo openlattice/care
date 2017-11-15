@@ -22,6 +22,7 @@ import ComplainantInfoView from '../components/ComplainantInfoView';
 import DispositionView from '../components/DispositionView';
 import OfficerInfoView from '../components/OfficerInfoView';
 import ReviewView from '../components/ReviewView';
+import { MAX_PAGE } from '../shared/Consts';
 
 
 const StyledProgressBar = styled(ProgressBar)`
@@ -34,7 +35,6 @@ const StyledProgressBar = styled(ProgressBar)`
 
 
 function FormView({
-  maxPage,
   handleSubmit,
   handleTextInput,
   handleDateInput,
@@ -55,7 +55,7 @@ function FormView({
 
   const getProgress = () => {
     const page = window.location.hash.substr(2);
-    const num = Math.ceil(((page - 1) / (maxPage - 1)) * 100);
+    const num = Math.ceil(((page - 1) / (MAX_PAGE - 1)) * 100);
     const percentage = `${num.toString()}%`;
     return num === 0 ? { num: 5, percentage } : { num, percentage };
   };
@@ -69,7 +69,6 @@ function FormView({
           handleSingleSelection={handleSingleSelection}
           input={reportInfo}
           isInReview={isInReview}
-          maxPage={maxPage}
           handlePageChange={handlePageChange}
           section="reportInfo" />
     );
@@ -80,7 +79,6 @@ function FormView({
       <ConsumerSearch
           handlePersonSelection={handlePersonSelection}
           personEntitySetId={personEntitySetId}
-          maxPage={maxPage}
           handlePageChange={handlePageChange} />
     );
   };
@@ -96,7 +94,6 @@ function FormView({
           consumerIsSelected={consumerIsSelected}
           isInReview={isInReview}
           handlePageChange={handlePageChange}
-          maxPage={maxPage}
           section="consumerInfo" />
     );
   };
@@ -109,7 +106,6 @@ function FormView({
           isInReview={isInReview}
           handlePageChange={handlePageChange}
           handleSingleSelection={handleSingleSelection}
-          maxPage={maxPage}
           section="complainantInfo" />
     );
   };
@@ -123,7 +119,6 @@ function FormView({
           input={dispositionInfo}
           isInReview={isInReview}
           handlePageChange={handlePageChange}
-          maxPage={maxPage}
           section="dispositionInfo" />
     );
   };
@@ -136,7 +131,6 @@ function FormView({
           input={officerInfo}
           isInReview={isInReview}
           handlePageChange={handlePageChange}
-          maxPage={maxPage}
           section="officerInfo" />
     );
   };
@@ -156,7 +150,6 @@ function FormView({
           officerInfo={officerInfo}
           isInReview={isInReview}
           consumerIsSelected={consumerIsSelected}
-          maxPage={maxPage}
           handlePageChange={handlePageChange} />
     );
   };
@@ -193,7 +186,6 @@ FormView.propTypes = {
   handleSingleSelection: PropTypes.func.isRequired,
   handleCheckboxChange: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
-  maxPage: PropTypes.number.isRequired,
   isInReview: PropTypes.func.isRequired,
   handlePageChange: PropTypes.func.isRequired,
   handlePersonSelection: PropTypes.func.isRequired,

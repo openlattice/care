@@ -9,26 +9,31 @@ import { withRouter } from 'react-router';
 import ReactRouterPropTypes from 'react-router-prop-types';
 
 import FormNav from './FormNav';
-import { PaddedRow, TitleLabel, SectionHeader, ErrorMessage } from '../shared/Layout';
+import { PaddedRow, TitleLabel, SectionHeader } from '../shared/Layout';
 import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
-import { bootstrapValidation, validateRequiredInput } from '../shared/Validation';
-import { getCurrentPage } from '../shared/Helpers';
+import {
+  setDidClickNav,
+  setRequiredErrors,
+  renderErrors,
+  validateSectionNavigation
+} from '../shared/Helpers';
+import { bootstrapValidation } from '../shared/Validation';
 
-
-const REQUIRED_FIELDS = ['complainantName'];
 
 class ComplainantInfoView extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      requiredFields: ['complainantName'],
       sectionFormatErrors: [],
       sectionRequiredErrors: [FORM_ERRORS.IS_REQUIRED],
       complainantNameValid: true,
       sectionValid: false,
       didClickNav: this.props.location.state
         ? this.props.location.state.didClickNav
-        : false
+        : false,
+      currentPage: parseInt(location.hash.substr(2), 10)
     };
   }
 
@@ -39,7 +44,6 @@ class ComplainantInfoView extends React.Component {
     handlePageChange: PropTypes.func.isRequired,
     history: ReactRouterPropTypes.history.isRequired,
     location: ReactRouterPropTypes.location.isRequired,
-    maxPage: PropTypes.number.isRequired,
     input: PropTypes.shape({
       complainantName: PropTypes.string.isRequired,
       complainantAddress: PropTypes.string.isRequired,
@@ -48,40 +52,13 @@ class ComplainantInfoView extends React.Component {
     }).isRequired
   }
 
-  setDidClickNav = () => {
-    this.setState({ didClickNav: true });
-  }
-
-  setRequiredErrors = () => {
-    const requiredErrors = this.state.sectionRequiredErrors.slice();
-    const areRequiredInputsValid = validateRequiredInput(
-      this.props.input,
-      REQUIRED_FIELDS
-    );
-
-    if (areRequiredInputsValid) {
-      if (requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED) !== -1) {
-        requiredErrors.splice(requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED));
-      }
-    }
-    else if (requiredErrors.indexOf(FORM_ERRORS.IS_REQUIRED) === -1) {
-      requiredErrors.push(FORM_ERRORS.IS_REQUIRED);
-    }
-
-    this.setState({
-      sectionRequiredErrors: requiredErrors
-    });
-  }
-
   handlePageChange = (path) => {
-    this.setDidClickNav();
-
-    Promise.resolve(this.setRequiredErrors())
-      .then(() => {
-        if (this.state.sectionRequiredErrors.length < 1 && this.state.sectionFormatErrors.length < 1) {
-          this.props.handlePageChange(path);
-        }
-      });
+    this.setState(setDidClickNav);
+    this.setState(setRequiredErrors, () => {
+      if (this.state.sectionRequiredErrors.length < 1 && this.state.sectionFormatErrors.length < 1) {
+        this.props.handlePageChange(path);
+      }
+    });
   }
 
   setInputErrors = (name, inputValid, sectionFormatErrors) => {
@@ -91,40 +68,13 @@ class ComplainantInfoView extends React.Component {
     });
   }
 
-  renderErrors = () => {
-    const formatErrors = this.state.sectionFormatErrors.map((error) => {
-      return <ErrorMessage key={error}>{error}</ErrorMessage>;
-    });
-    let requiredErrors = [];
-    if (this.state.didClickNav) {
-      requiredErrors = this.state.sectionRequiredErrors.map((error) => {
-        return <ErrorMessage key={error}>{error}</ErrorMessage>;
-      });
-    }
-
-    return (
-      <div>
-        {formatErrors}
-        {requiredErrors}
-      </div>
-    );
-  }
-
   componentWillUnmount() {
-    const areRequiredInputsValid = validateRequiredInput(
+    validateSectionNavigation(
       this.props.input,
-      REQUIRED_FIELDS
+      this.state.requiredFields,
+      this.state.currentPage,
+      this.props.history
     );
-    if (
-      !areRequiredInputsValid
-      && this.props.maxPage
-      && getCurrentPage(this.props.history.pathname) !== this.props.maxPage
-    ) {
-      this.props.history.push({
-        pathname: `/${getCurrentPage(this.props.history.pathname)}`,
-        state: { didClickNav: true }
-      });
-    }
   }
 
   render() {
@@ -138,7 +88,8 @@ class ComplainantInfoView extends React.Component {
     const {
       complainantNameValid,
       didClickNav,
-      sectionFormatErrors
+      sectionFormatErrors,
+      sectionRequiredErrors
     } = this.state;
 
     return (
@@ -210,12 +161,11 @@ class ComplainantInfoView extends React.Component {
               <FormNav
                   prevPath={FORM_PATHS.CONSUMER}
                   nextPath={FORM_PATHS.DISPOSITION}
-                  handlePageChange={this.handlePageChange}
-                  setDidClickNav={this.setDidClickNav} />
+                  handlePageChange={this.handlePageChange} />
             )
             : null
         }
-        { this.renderErrors() }
+        { renderErrors(sectionFormatErrors, sectionRequiredErrors, didClickNav) }
       </div>
     );
   }
