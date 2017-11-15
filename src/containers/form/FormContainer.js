@@ -11,7 +11,8 @@ import {
   ENTITY_SET_NAMES,
   PERSON,
   CONSUMER_STATE,
-  STRING_ID_FQN
+  STRING_ID_FQN,
+  MAX_PAGE
 } from '../../shared/Consts';
 import { validateOnInput } from '../../shared/Validation';
 
@@ -109,7 +110,6 @@ class Form extends React.Component {
       appearsInPropertyTypes: [],
       submitSuccess: null,
       submitFailure: null,
-      maxPage: 7,
       consumerIsSelected: false
     };
   }
@@ -431,7 +431,7 @@ class Form extends React.Component {
 
   isInReview = () => {
     const page = parseInt(window.location.hash.substr(2), 10);
-    if (page && page === this.state.maxPage) return true;
+    if (page && page === MAX_PAGE) return true;
     return false;
   }
 
@@ -451,7 +451,6 @@ class Form extends React.Component {
             complainantInfo={this.state.complainantInfo}
             dispositionInfo={this.state.dispositionInfo}
             officerInfo={this.state.officerInfo}
-            maxPage={this.state.maxPage}
             handlePageChange={this.handlePageChange}
             handlePersonSelection={this.handlePersonSelection}
             personEntitySetId={this.state.personEntitySetId}
