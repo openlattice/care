@@ -10,29 +10,27 @@ import { NavBtnWrapper, StyledButton, SubmitButton } from '../shared/Layout';
 
 const FormNav = ({ prevPath, nextPath, submit, handlePageChange }) => {
 
+  const onClickPrev = () => {
+    handlePageChange(prevPath);
+  };
+
+  const onClickNext = () => {
+    handlePageChange(nextPath);
+  };
+
   const renderNav = () => {
     return (
       <NavBtnWrapper>
         {
           prevPath && prevPath.length
-            ? <StyledButton
-                onClick={
-                  () => {
-                    handlePageChange(prevPath);
-                  }
-                }>
+            ? <StyledButton onClick={onClickPrev}>
                 Prev
             </StyledButton>
             : null
         }
         {
           nextPath && nextPath.length
-            ? <StyledButton
-                onClick={
-                  () => {
-                    handlePageChange(nextPath);
-                  }
-                }>
+            ? <StyledButton onClick={onClickNext}>
                 Next
             </StyledButton>
             : null
