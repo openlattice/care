@@ -126,6 +126,15 @@ type RequestSequence = {
 
 function newRequestSequence(baseType :string) :RequestSequence {
 
+  /*
+   * !!! BUG !!!
+   *
+   * sequenceId will be unique for different types, but it will be the same each time the same type is triggered.
+   * for example, "FETCH_ID" will have a different sequenceId than "STORE_DATA", but "FETCH_ID" will have the same
+   * sequenceId each time it is dispatched, which is NOT what we want.
+   *
+   * TODO: generate a unique sequenceId per sequence type AND per sequence lifecycle
+  */
   const sequenceId :string = randomId();
   const actionCreator :SequenceActionCreator = getActionCreator(sequenceId, baseType);
 
