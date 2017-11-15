@@ -196,10 +196,12 @@ class OfficerInfoView extends React.Component {
 
         {
           !isInReview()
-            ? <FormNav
-                prevPath={FORM_PATHS.DISPOSITION}
-                nextPath={FORM_PATHS.REVIEW}
-                handlePageChange={this.handlePageChange} />
+            ? (
+              <FormNav
+                  prevPath={FORM_PATHS.DISPOSITION}
+                  nextPath={FORM_PATHS.REVIEW}
+                  handlePageChange={this.handlePageChange} />
+            )
             : null
         }
         { renderErrors(sectionFormatErrors, sectionRequiredErrors, didClickNav) }

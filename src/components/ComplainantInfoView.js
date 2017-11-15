@@ -157,10 +157,12 @@ class ComplainantInfoView extends React.Component {
 
         {
           !isInReview()
-            ? <FormNav
-                prevPath={FORM_PATHS.CONSUMER}
-                nextPath={FORM_PATHS.DISPOSITION}
-                handlePageChange={this.handlePageChange} />
+            ? (
+              <FormNav
+                  prevPath={FORM_PATHS.CONSUMER}
+                  nextPath={FORM_PATHS.DISPOSITION}
+                  handlePageChange={this.handlePageChange} />
+            )
             : null
         }
         { renderErrors(sectionFormatErrors, sectionRequiredErrors, didClickNav) }

@@ -306,10 +306,12 @@ class ReportInfoView extends React.Component {
         </PaddedRow>
         {
           !isInReview()
-            ? <FormNav
-                nextPath={FORM_PATHS.CONSUMER_SEARCH}
-                handlePageChange={this.handlePageChange}
-                sectionValid={this.state.sectionValid} />
+            ? (
+              <FormNav
+                  nextPath={FORM_PATHS.CONSUMER_SEARCH}
+                  handlePageChange={this.handlePageChange}
+                  sectionValid={this.state.sectionValid} />
+            )
             : null
         }
         { renderErrors(sectionFormatErrors, sectionRequiredErrors, didClickNav) }

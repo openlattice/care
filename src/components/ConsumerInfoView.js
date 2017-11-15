@@ -1102,10 +1102,12 @@ class ConsumerInfoView extends React.Component {
 
         {
           !isInReview()
-            ? <FormNav
-                prevPath={FORM_PATHS.CONSUMER_SEARCH}
-                nextPath={FORM_PATHS.COMPLAINANT}
-                handlePageChange={this.handlePageChange} />
+            ? (
+              <FormNav
+                  prevPath={FORM_PATHS.CONSUMER_SEARCH}
+                  nextPath={FORM_PATHS.COMPLAINANT}
+                  handlePageChange={this.handlePageChange} />
+            )
             : null
         }
         { renderErrors(sectionFormatErrors, sectionRequiredErrors, didClickNav) }

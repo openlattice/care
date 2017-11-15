@@ -382,7 +382,7 @@ class DispositionView extends React.Component {
                 )}>
               <TitleLabel>
                 {
-                  `32. Narrative of Incident, to include: Results of investigation, basis for 
+                  `32. Narrative of Incident, to include: Results of investigation, basis for
                   actions taken, emotional states, additional witnesses. Property listing.*`
                 }
               </TitleLabel>
@@ -401,10 +401,12 @@ class DispositionView extends React.Component {
 
         {
           !isInReview()
-            ? <FormNav
-                prevPath={FORM_PATHS.COMPLAINANT}
-                nextPath={FORM_PATHS.OFFICER}
-                handlePageChange={this.handlePageChange} />
+            ? (
+              <FormNav
+                  prevPath={FORM_PATHS.COMPLAINANT}
+                  nextPath={FORM_PATHS.OFFICER}
+                  handlePageChange={this.handlePageChange} />
+            )
             : null
         }
         { renderErrors(sectionFormatErrors, sectionRequiredErrors, didClickNav) }
