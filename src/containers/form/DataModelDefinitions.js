@@ -2,6 +2,7 @@
  * @flow
  */
 
+import Immutable from 'immutable';
 import randomUUID from 'uuid/v4';
 
 /*
@@ -15,12 +16,12 @@ type ComplainantInfo = {
   complainantPhone :string
 };
 
-const COMPLAINANT_INFO_INITIAL_STATE :ComplainantInfo = {
+const COMPLAINANT_INFO_INITIAL_STATE :Map<string, *> = Immutable.fromJS({
   complainantAddress: '',
   complainantConsumerRelationship: '',
   complainantName: '',
   complainantPhone: ''
-};
+});
 
 /*
  * Consumer Information Section
@@ -64,7 +65,7 @@ type ConsumerInfo = {
   takingMedication :string
 };
 
-const CONSUMER_INFO_INITIAL_STATE :ConsumerInfo = {
+const CONSUMER_INFO_INITIAL_STATE :Map<string, *> = Immutable.fromJS({
   address: '',
   age: '',
   armedWeaponType: '',
@@ -100,7 +101,7 @@ const CONSUMER_INFO_INITIAL_STATE :ConsumerInfo = {
   suicideAttemptMethod: [],
   suicideAttemptMethodOther: '',
   takingMedication: ''
-};
+});
 
 /*
  * Disposition Information Section
@@ -116,7 +117,7 @@ type DispositionInfo = {
   specializedResourcesCalled :string[],
 };
 
-const DISPOSITION_INFO_INITIAL_STATE :DispositionInfo = {
+const DISPOSITION_INFO_INITIAL_STATE :Map<string, *> = Immutable.fromJS({
   deescalationTechniques: [],
   deescalationTechniquesOther: '',
   disposition: [],
@@ -124,7 +125,7 @@ const DISPOSITION_INFO_INITIAL_STATE :DispositionInfo = {
   hospital: '',
   incidentNarrative: '',
   specializedResourcesCalled: []
-};
+});
 
 /*
  * Officer Information Section
@@ -137,12 +138,12 @@ type OfficerInfo = {
   officerSeqID :string
 };
 
-const OFFICER_INFO_INITIAL_STATE :OfficerInfo = {
+const OFFICER_INFO_INITIAL_STATE :Map<string, *> = Immutable.fromJS({
   officerCertification: [],
   officerInjuries: '',
   officerName: '',
   officerSeqID: ''
-};
+});
 
 /*
  * Report Information Section
@@ -165,7 +166,7 @@ type ReportInfo = {
   timeReported :string
 };
 
-const REPORT_INFO_INITIAL_STATE :ReportInfo = {
+const REPORT_INFO_INITIAL_STATE :Map<string, *> = Immutable.fromJS({
   cadNumber: '',
   companionOffenseReport: false,
   complaintNumber: '',
@@ -180,7 +181,7 @@ const REPORT_INFO_INITIAL_STATE :ReportInfo = {
   postOfOccurrence: '',
   timeOccurred: '',
   timeReported: ''
-};
+});
 
 export {
   COMPLAINANT_INFO_INITIAL_STATE,

@@ -23,6 +23,7 @@ import { SUBMISSION_STATES } from './ReportReducer';
 import {
   CONSUMER_STATE,
   ENTITY_SET_NAMES,
+  FORM_PATHS,
   MAX_PAGE,
   PERSON
 } from '../../shared/Consts';
@@ -74,12 +75,13 @@ class Form extends React.Component<Props, State> {
 
     super(props);
 
+    // TODO: fix Flow errors
     this.state = {
-      complainantInfo: COMPLAINANT_INFO_INITIAL_STATE,
-      consumerInfo: CONSUMER_INFO_INITIAL_STATE,
-      reportInfo: REPORT_INFO_INITIAL_STATE,
-      dispositionInfo: DISPOSITION_INFO_INITIAL_STATE,
-      officerInfo: OFFICER_INFO_INITIAL_STATE,
+      complainantInfo: COMPLAINANT_INFO_INITIAL_STATE.toJS(),
+      consumerInfo: CONSUMER_INFO_INITIAL_STATE.toJS(),
+      reportInfo: REPORT_INFO_INITIAL_STATE.toJS(),
+      dispositionInfo: DISPOSITION_INFO_INITIAL_STATE.toJS(),
+      officerInfo: OFFICER_INFO_INITIAL_STATE.toJS(),
       isConsumerSelected: false
     };
   }
@@ -139,19 +141,22 @@ class Form extends React.Component<Props, State> {
   }
 
   handlePersonSelection = (person) => {
-    const consumerState = Object.assign({}, this.state.consumerInfo);
-    Object.keys(PERSON).forEach((key) => {
-      const consumerKey = CONSUMER_STATE[key];
-      const personKey = PERSON[key];
-      if (person[personKey] && person[personKey].length > 0) {
-        consumerState[consumerKey] = person[personKey][0];
-      }
-    });
+
+    const consumerState = CONSUMER_INFO_INITIAL_STATE.toJS();
+    if (person) {
+      Object.keys(PERSON).forEach((key) => {
+        const consumerKey = CONSUMER_STATE[key];
+        const personKey = PERSON[key];
+        if (person[personKey] && person[personKey].length > 0) {
+          consumerState[consumerKey] = person[personKey][0];
+        }
+      });
+    }
     this.setState({
       consumerInfo: consumerState,
-      isConsumerSelected: true
+      isConsumerSelected: !!person
     }, () => {
-      this.handlePageChange('next');
+      this.handlePageChange(FORM_PATHS.CONSUMER);
     });
   }
 
