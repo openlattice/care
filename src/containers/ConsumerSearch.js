@@ -88,7 +88,6 @@ class ConsumerSearch extends React.Component {
             handlePersonSelection={this.props.handlePersonSelection}
             didSearch={this.state.didSearch} />
         <FormNav
-            prevPath={FORM_PATHS.REPORT}
             nextPath={FORM_PATHS.CONSUMER}
             handlePageChange={this.props.handlePageChange} />
       </div>

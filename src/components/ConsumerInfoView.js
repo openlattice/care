@@ -1106,7 +1106,7 @@ class ConsumerInfoView extends React.Component {
             ? (
               <FormNav
                   prevPath={FORM_PATHS.CONSUMER_SEARCH}
-                  nextPath={FORM_PATHS.COMPLAINANT}
+                  nextPath={FORM_PATHS.REPORT}
                   handlePageChange={this.handlePageChange} />
             )
             : null

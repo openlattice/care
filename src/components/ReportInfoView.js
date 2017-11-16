@@ -308,7 +308,8 @@ class ReportInfoView extends React.Component {
           !isInReview()
             ? (
               <FormNav
-                  nextPath={FORM_PATHS.CONSUMER_SEARCH}
+                  prevPath={FORM_PATHS.CONSUMER}
+                  nextPath={FORM_PATHS.COMPLAINANT}
                   handlePageChange={this.handlePageChange}
                   sectionValid={this.state.sectionValid} />
             )

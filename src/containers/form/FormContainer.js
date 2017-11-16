@@ -51,7 +51,6 @@ type Props = {
     submitReport :(args :Object) => void
   };
   entitySets :Map<*, *>;
-  isSubmittingReport :boolean;
   history :RouterHistory;
   match :Match;
   submissionSuccess :boolean;
@@ -141,8 +140,9 @@ class Form extends React.Component<Props, State> {
     Object.keys(PERSON).forEach((key) => {
       const consumerKey = CONSUMER_STATE[key];
       const personKey = PERSON[key];
-      const personVal = person[personKey][0];
-      consumerState[consumerKey] = personVal;
+      if (person[personKey] && person[personKey].length > 0) {
+        consumerState[consumerKey] = person[personKey][0];
+      }
     });
     this.setState({
       consumerInfo: consumerState,

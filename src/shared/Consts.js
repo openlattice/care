@@ -39,9 +39,9 @@ export const RACE = {
 };
 
 export const FORM_PATHS = {
-  REPORT: '/1',
-  CONSUMER_SEARCH: '/2',
-  CONSUMER: '/3',
+  CONSUMER_SEARCH: '/1',
+  CONSUMER: '/2',
+  REPORT: '/3',
   COMPLAINANT: '/4',
   DISPOSITION: '/5',
   OFFICER: '/6',

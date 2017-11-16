@@ -166,9 +166,9 @@ function FormView({
       <FormWrapper>
         <form onSubmit={handleSubmit}>
           <Switch>
-            <Route path="/1" render={getReportInfoView} />
-            <Route path="/2" render={getConsumerSearchView} />
-            <Route path="/3" render={getConsumerInfoView} />
+            <Route path="/1" render={getConsumerSearchView} />
+            <Route path="/2" render={getConsumerInfoView} />
+            <Route path="/3" render={getReportInfoView} />
             <Route path="/4" render={getComplainantInfoView} />
             <Route path="/5" render={getDispositionView} />
             <Route path="/6" render={getOfficerInfoView} />

@@ -8,13 +8,6 @@ import randomUUID from 'uuid/v4';
  * Complainant Information Section
  */
 
-const COMPLAINANT_INFO_INITIAL_STATE :Object = {
-  complainantAddress: '',
-  complainantConsumerRelationship: '',
-  complainantName: '',
-  complainantPhone: ''
-};
-
 type ComplainantInfo = {
   complainantAddress :string,
   complainantConsumerRelationship :string,
@@ -22,47 +15,16 @@ type ComplainantInfo = {
   complainantPhone :string
 };
 
+const COMPLAINANT_INFO_INITIAL_STATE :ComplainantInfo = {
+  complainantAddress: '',
+  complainantConsumerRelationship: '',
+  complainantName: '',
+  complainantPhone: ''
+};
+
 /*
  * Consumer Information Section
  */
-
-const CONSUMER_INFO_INITIAL_STATE :Object = {
-  address: '',
-  age: '',
-  armedWeaponType: '',
-  armedWithWeapon: false,
-  accessibleWeaponType: '',
-  accessToWeapons: false,
-  dob: '',
-  drugsAlcohol: '',
-  drugType: '',
-  emotionalState: [],
-  emotionalStateOther: '',
-  firstName: '',
-  gender: '',
-  homeless: false,
-  homelessLocation: '',
-  identification: randomUUID(),
-  injuries: [],
-  injuriesOther: '',
-  lastName: '',
-  middleName: '',
-  militaryStatus: '',
-  observedBehaviors: [],
-  observedBehaviorsOther: '',
-  phone: '',
-  photosTakenOf: [],
-  prescribedMedication: '',
-  prevPsychAdmission: '',
-  race: '',
-  selfDiagnosis: [],
-  selfDiagnosisOther: '',
-  suicidal: false,
-  suicidalActions: [],
-  suicideAttemptMethod: [],
-  suicideAttemptMethodOther: '',
-  takingMedication: ''
-};
 
 type ConsumerInfo = {
   address :string,
@@ -102,19 +64,47 @@ type ConsumerInfo = {
   takingMedication :string
 };
 
+const CONSUMER_INFO_INITIAL_STATE :ConsumerInfo = {
+  address: '',
+  age: '',
+  armedWeaponType: '',
+  armedWithWeapon: false,
+  accessibleWeaponType: '',
+  accessToWeapons: false,
+  dob: '',
+  drugsAlcohol: '',
+  drugType: '',
+  emotionalState: [],
+  emotionalStateOther: '',
+  firstName: '',
+  gender: '',
+  homeless: false,
+  homelessLocation: '',
+  identification: randomUUID(),
+  injuries: [],
+  injuriesOther: '',
+  lastName: '',
+  middleName: '',
+  militaryStatus: '',
+  observedBehaviors: [],
+  observedBehaviorsOther: '',
+  phone: '',
+  photosTakenOf: [],
+  prescribedMedication: '',
+  prevPsychAdmission: '',
+  race: '',
+  selfDiagnosis: [],
+  selfDiagnosisOther: '',
+  suicidal: false,
+  suicidalActions: [],
+  suicideAttemptMethod: [],
+  suicideAttemptMethodOther: '',
+  takingMedication: ''
+};
+
 /*
  * Disposition Information Section
  */
-
-const DISPOSITION_INFO_INITIAL_STATE :Object = {
-  deescalationTechniques: [],
-  deescalationTechniquesOther: '',
-  disposition: [],
-  hospitalTransport: false,
-  hospital: '',
-  incidentNarrative: '',
-  specializedResourcesCalled: []
-};
 
 type DispositionInfo = {
   deescalationTechniques :string[],
@@ -126,16 +116,19 @@ type DispositionInfo = {
   specializedResourcesCalled :string[],
 };
 
+const DISPOSITION_INFO_INITIAL_STATE :DispositionInfo = {
+  deescalationTechniques: [],
+  deescalationTechniquesOther: '',
+  disposition: [],
+  hospitalTransport: false,
+  hospital: '',
+  incidentNarrative: '',
+  specializedResourcesCalled: []
+};
+
 /*
  * Officer Information Section
  */
-
-const OFFICER_INFO_INITIAL_STATE :Object = {
-  officerCertification: [],
-  officerInjuries: '',
-  officerName: '',
-  officerSeqID: ''
-};
 
 type OfficerInfo = {
   officerCertification :string[],
@@ -144,26 +137,16 @@ type OfficerInfo = {
   officerSeqID :string
 };
 
+const OFFICER_INFO_INITIAL_STATE :OfficerInfo = {
+  officerCertification: [],
+  officerInjuries: '',
+  officerName: '',
+  officerSeqID: ''
+};
+
 /*
  * Report Information Section
  */
-
-const REPORT_INFO_INITIAL_STATE :Object = {
-  cadNumber: '',
-  companionOffenseReport: false,
-  complaintNumber: '',
-  dateOccurred: '',
-  dateReported: '',
-  dispatchReason: '',
-  incident: '',
-  locationOfIncident: '',
-  name: '', // WHAT IS NAME USED FOR?
-  unit: '',
-  onView: false,
-  postOfOccurrence: '',
-  timeOccurred: '',
-  timeReported: ''
-};
 
 type ReportInfo = {
   cadNumber :string,
@@ -180,6 +163,23 @@ type ReportInfo = {
   postOfOccurrence :string,
   timeOccurred :string,
   timeReported :string
+};
+
+const REPORT_INFO_INITIAL_STATE :ReportInfo = {
+  cadNumber: '',
+  companionOffenseReport: false,
+  complaintNumber: '',
+  dateOccurred: '',
+  dateReported: '',
+  dispatchReason: '',
+  incident: '',
+  locationOfIncident: '',
+  name: '', // WHAT IS NAME USED FOR?
+  unit: '',
+  onView: false,
+  postOfOccurrence: '',
+  timeOccurred: '',
+  timeReported: ''
 };
 
 export {
