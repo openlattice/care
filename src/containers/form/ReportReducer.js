@@ -6,9 +6,19 @@ import Immutable from 'immutable';
 
 import { submitReport } from './ReportActionFactory';
 
+/*
+ * TODO: use an actual state machine - https://github.com/davestewart/javascript-state-machine
+ */
+
+export const SUBMISSION_STATES = {
+  PRE_SUBMIT: 0,
+  IS_SUBMITTING: 1,
+  SUBMIT_SUCCESS: 2,
+  SUBMIT_FAILURE: 3
+};
+
 const INITIAL_STATE :Map<*, *> = Immutable.fromJS({
-  isSubmittingReport: false,
-  submissionSuccess: false
+  submissionState: SUBMISSION_STATES.PRE_SUBMIT
 });
 
 export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :Object) {
@@ -18,16 +28,13 @@ export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :
     case submitReport.case(action.type): {
       return submitReport.reducer(state, action, {
         REQUEST: () => {
-          return state.set('isSubmittingReport', true);
+          return state.set('submissionState', SUBMISSION_STATES.IS_SUBMITTING);
         },
         SUCCESS: () => {
-          return state.set('submissionSuccess', true);
+          return state.set('submissionState', SUBMISSION_STATES.SUBMIT_SUCCESS);
         },
         FAILURE: () => {
-          return state.set('submissionSuccess', false);
-        },
-        FINALLY: () => {
-          return state.set('isSubmittingReport', false);
+          return state.set('submissionState', SUBMISSION_STATES.SUBMIT_FAILURE);
         }
       });
     }

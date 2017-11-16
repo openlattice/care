@@ -13,10 +13,12 @@ import type { Match, RouterHistory } from 'react-router';
 
 import FormView from '../../components/FormView';
 import ConfirmationModal from '../../components/ConfirmationModalView';
+
 import { validateOnInput } from '../../shared/Validation';
 import { formatTimePickerSeconds } from '../../utils/Utils';
 import { loadDataModel } from './EntitySetsActionFactory';
-import { submitReport } from './ReportActionFactory';
+import { hardRestart, submitReport } from './ReportActionFactory';
+import { SUBMISSION_STATES } from './ReportReducer';
 
 import {
   CONSUMER_STATE,
@@ -47,13 +49,14 @@ import type {
 
 type Props = {
   actions :{
-    loadDataModel :() => void,
-    submitReport :(args :Object) => void
+    hardRestart :() => void;
+    loadDataModel :() => void;
+    submitReport :(args :Object) => void;
   };
   entitySets :Map<*, *>;
   history :RouterHistory;
   match :Match;
-  submissionSuccess :boolean;
+  submissionState :number;
 };
 
 type State = {
@@ -166,13 +169,25 @@ class Form extends React.Component<Props, State> {
     });
   }
 
-  handleModalButtonClick = () => {
-    window.location.reload();
-  }
-
   isInReview = () => {
     const page :number = parseInt(this.props.match.params.page, 10);
     return page === MAX_PAGE;
+  }
+
+  renderModal = () => {
+
+    const { submissionState } = this.props;
+    const { PRE_SUBMIT, IS_SUBMITTING } = SUBMISSION_STATES;
+
+    if (submissionState === PRE_SUBMIT || submissionState === IS_SUBMITTING) {
+      return null;
+    }
+
+    return (
+      <ConfirmationModal
+          submissionState={this.props.submissionState}
+          handleModalButtonClick={this.props.actions.hardRestart} />
+    );
   }
 
   render() {
@@ -199,13 +214,7 @@ class Form extends React.Component<Props, State> {
             personEntitySetId={peopleEntitySetId}
             isInReview={this.isInReview}
             consumerIsSelected={this.state.isConsumerSelected} />
-        {
-          this.state.submitSuccess
-            ? <ConfirmationModal
-                submissionSuccess={this.props.submissionSuccess}
-                handleModalButtonClick={this.handleModalButtonClick} />
-            : null
-        }
+        { this.renderModal() }
       </div>
     );
   }
@@ -215,14 +224,14 @@ function mapStateToProps(state :Map<*, *>) :Object {
 
   return {
     entitySets: state.get('entitySets', Immutable.Map()),
-    isSubmittingReport: state.getIn(['report', 'isSubmittingReport'], false),
-    submissionSuccess: state.getIn(['report', 'submissionSuccess'], false)
+    submissionState: state.getIn(['report', 'submissionState'])
   };
 }
 
 function mapDispatchToProps(dispatch :Function) :Object {
 
   const actions = {
+    hardRestart,
     loadDataModel,
     submitReport
   };

@@ -4,8 +4,10 @@
 
 import Immutable from 'immutable';
 import { Models } from 'lattice';
-import { all, call, put, take, takeEvery } from 'redux-saga/effects';
+import { push } from 'react-router-redux';
+import { all, call, put, takeEvery } from 'redux-saga/effects';
 
+import * as Routes from '../../core/router/Routes';
 import { ENTITY_SET_NAMES, NC_SUBJ_ID_FQN, PERSON, STRING_ID_FQN } from '../../shared/Consts';
 
 import {
@@ -21,6 +23,7 @@ import {
 } from '../../core/lattice/LatticeSagas';
 
 import {
+  HARD_RESTART,
   SUBMIT_REPORT,
   submitReport
 } from './ReportActionFactory';
@@ -268,4 +271,17 @@ export function* submitReportWorker(action :SequenceAction) :Generator<*, *, *> 
 export function* submitReportWatcher() :Generator<*, *, *> {
 
   yield takeEvery(SUBMIT_REPORT, submitReportWorker);
+}
+
+export function* hardRestartWorker() :Generator<*, *, *> {
+
+  // this is hacky, we can do better
+  yield call(() => {
+    window.location.href = `${window.location.origin}${window.location.pathname}`;
+  });
+}
+
+export function* hardRestartWatcher() :Generator<*, *, *> {
+
+  yield takeEvery(HARD_RESTART, hardRestartWorker);
 }

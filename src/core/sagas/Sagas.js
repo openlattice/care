@@ -34,6 +34,7 @@ export default function* sagas() :Generator<*, *, *> {
 
     // Report Sagas
     fork(EntitySetsSagas.loadDataModelWatcher),
+    fork(ReportSagas.hardRestartWatcher),
     fork(ReportSagas.submitReportWatcher)
   ];
 }

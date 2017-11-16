@@ -8,32 +8,34 @@ import { Modal, Button } from 'react-bootstrap';
 
 import { ButtonWrapper } from '../shared/Layout';
 
-function getTitle(submissionSuccess) {
-  if (submissionSuccess) {
+import { SUBMISSION_STATES } from '../containers/form/ReportReducer';
+
+function getTitle(submissionState) {
+  if (submissionState === SUBMISSION_STATES.SUBMIT_SUCCESS) {
     return 'Success!';
   }
   return 'Error Submitting Report';
 }
 
-function getBody(submissionSuccess) {
-  if (submissionSuccess) {
+function getBody(submissionState) {
+  if (submissionState === SUBMISSION_STATES.SUBMIT_SUCCESS) {
     return 'Your health report has been submitted.';
   }
   return `There was an error submitting your report. Please try again.
   If there continues to be an issue, contact help@openlattice.com.`;
 }
 
-function ConfirmationModal({ submissionSuccess, handleModalButtonClick }) {
+function ConfirmationModal({ submissionState, handleModalButtonClick }) {
   return (
     <div className="static-modal">
       <Modal.Dialog>
         <Modal.Header>
           <Modal.Title>
-            { getTitle(submissionSuccess) }
+            { getTitle(submissionState) }
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          { getBody(submissionSuccess) }
+          { getBody(submissionState) }
         </Modal.Body>
         <Modal.Footer>
           <ButtonWrapper>
@@ -46,7 +48,7 @@ function ConfirmationModal({ submissionSuccess, handleModalButtonClick }) {
 }
 
 ConfirmationModal.propTypes = {
-  submissionSuccess: PropTypes.bool.isRequired,
+  submissionState: PropTypes.number.isRequired,
   handleModalButtonClick: PropTypes.func.isRequired
 };
 
