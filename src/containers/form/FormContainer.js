@@ -29,11 +29,11 @@ import {
 } from '../../shared/Consts';
 
 import {
-  COMPLAINANT_INFO_INITIAL_STATE,
-  CONSUMER_INFO_INITIAL_STATE,
-  REPORT_INFO_INITIAL_STATE,
-  DISPOSITION_INFO_INITIAL_STATE,
-  OFFICER_INFO_INITIAL_STATE
+  getComplainantInfoInitialState,
+  getConsumerInfoInitialState,
+  getDispositionInfoInitialState,
+  getOfficerInfoInitialState,
+  getReportInfoInitialState
 } from './DataModelDefinitions';
 
 import type {
@@ -77,11 +77,11 @@ class Form extends React.Component<Props, State> {
 
     // TODO: fix Flow errors
     this.state = {
-      complainantInfo: COMPLAINANT_INFO_INITIAL_STATE.toJS(),
-      consumerInfo: CONSUMER_INFO_INITIAL_STATE.toJS(),
-      reportInfo: REPORT_INFO_INITIAL_STATE.toJS(),
-      dispositionInfo: DISPOSITION_INFO_INITIAL_STATE.toJS(),
-      officerInfo: OFFICER_INFO_INITIAL_STATE.toJS(),
+      complainantInfo: getComplainantInfoInitialState(),
+      consumerInfo: getConsumerInfoInitialState(),
+      dispositionInfo: getDispositionInfoInitialState(),
+      officerInfo: getOfficerInfoInitialState(),
+      reportInfo: getReportInfoInitialState(),
       isConsumerSelected: false
     };
   }
@@ -142,7 +142,7 @@ class Form extends React.Component<Props, State> {
 
   handlePersonSelection = (person) => {
 
-    const consumerState = CONSUMER_INFO_INITIAL_STATE.toJS();
+    const consumerState = getConsumerInfoInitialState();
     if (person) {
       Object.keys(PERSON).forEach((key) => {
         const consumerKey = CONSUMER_STATE[key];

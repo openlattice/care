@@ -23,6 +23,10 @@ const COMPLAINANT_INFO_INITIAL_STATE :Map<string, *> = Immutable.fromJS({
   complainantPhone: ''
 });
 
+function getComplainantInfoInitialState() :ComplainantInfo {
+  return (COMPLAINANT_INFO_INITIAL_STATE.toJS() :any);
+}
+
 /*
  * Consumer Information Section
  */
@@ -103,6 +107,13 @@ const CONSUMER_INFO_INITIAL_STATE :Map<string, *> = Immutable.fromJS({
   takingMedication: ''
 });
 
+function getConsumerInfoInitialState() :ConsumerInfo {
+
+  const info = CONSUMER_INFO_INITIAL_STATE.toJS();
+  info.identification = randomUUID();
+  return (info :any);
+}
+
 /*
  * Disposition Information Section
  */
@@ -127,6 +138,10 @@ const DISPOSITION_INFO_INITIAL_STATE :Map<string, *> = Immutable.fromJS({
   specializedResourcesCalled: []
 });
 
+function getDispositionInfoInitialState() :DispositionInfo {
+  return (DISPOSITION_INFO_INITIAL_STATE.toJS() :any);
+}
+
 /*
  * Officer Information Section
  */
@@ -144,6 +159,10 @@ const OFFICER_INFO_INITIAL_STATE :Map<string, *> = Immutable.fromJS({
   officerName: '',
   officerSeqID: ''
 });
+
+function getOfficerInfoInitialState() :OfficerInfo {
+  return (OFFICER_INFO_INITIAL_STATE.toJS() :any);
+}
 
 /*
  * Report Information Section
@@ -183,12 +202,16 @@ const REPORT_INFO_INITIAL_STATE :Map<string, *> = Immutable.fromJS({
   timeReported: ''
 });
 
+function getReportInfoInitialState() :ReportInfo {
+  return (REPORT_INFO_INITIAL_STATE.toJS() :any);
+}
+
 export {
-  COMPLAINANT_INFO_INITIAL_STATE,
-  CONSUMER_INFO_INITIAL_STATE,
-  REPORT_INFO_INITIAL_STATE,
-  DISPOSITION_INFO_INITIAL_STATE,
-  OFFICER_INFO_INITIAL_STATE
+  getComplainantInfoInitialState,
+  getConsumerInfoInitialState,
+  getDispositionInfoInitialState,
+  getOfficerInfoInitialState,
+  getReportInfoInitialState
 };
 
 export type {
