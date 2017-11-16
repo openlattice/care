@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import React from 'react';
 
 import DatePicker from 'react-bootstrap-date-picker';

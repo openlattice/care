@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, FormGroup, InputGroup, FormControl } from 'react-bootstrap';

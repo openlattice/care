@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import React from 'react';
 import { SearchApi } from 'lattice';
 import { Button } from 'react-bootstrap';

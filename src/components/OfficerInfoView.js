@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FormControl, Col, FormGroup } from 'react-bootstrap';
