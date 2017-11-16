@@ -24,8 +24,7 @@ import {
   CONSUMER_STATE,
   ENTITY_SET_NAMES,
   MAX_PAGE,
-  PERSON,
-  STRING_ID_FQN
+  PERSON
 } from '../../shared/Consts';
 
 import {
@@ -43,8 +42,6 @@ import type {
   OfficerInfo,
   ReportInfo
 } from './DataModelDefinitions';
-
-const { FullyQualifiedName } = Models;
 
 /*
  * types
@@ -157,7 +154,9 @@ class Form extends React.Component<Props, State> {
     });
   }
 
-  handleSubmit = () => {
+  handleSubmit = (event :SyntheticEvent<*>) => {
+
+    event.preventDefault();
 
     this.props.actions.submitReport({
       complainantInfo: this.state.complainantInfo,
