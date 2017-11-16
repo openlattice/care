@@ -351,9 +351,9 @@ class Form extends React.Component {
       return selectedOrganizationId === configuration.organization.id;
     })[0].config;
 
-    const entitySetId = selectedConfiguration[FORM_CONFIG_TYPE];
-    const personEntitySetId = selectedConfiguration[PERSON_CONFIG_TYPE];
-    const appearsInEntitySetId = selectedConfiguration[APPEARS_IN_CONFIG_TYPE];
+    const entitySetId = selectedConfiguration[FORM_CONFIG_TYPE].entitySetId;
+    const personEntitySetId = selectedConfiguration[PERSON_CONFIG_TYPE].entitySetId;
+    const appearsInEntitySetId = selectedConfiguration[APPEARS_IN_CONFIG_TYPE].entitySetId;
 
     return SyncApi.getCurrentSyncId(entitySetId)
       .then((formSyncId) => {
