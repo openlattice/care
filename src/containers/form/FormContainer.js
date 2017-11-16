@@ -5,8 +5,6 @@
 import React from 'react';
 
 import Immutable from 'immutable';
-import Promise from 'bluebird';
-import { Models, DataApi, SyncApi } from 'lattice';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
