@@ -1,11 +1,11 @@
 import React from 'react';
 
 import PropTypes from 'prop-types';
-import FontAwesome from 'react-fontawesome';
 import moment from 'moment';
 import styled from 'styled-components';
 import { Grid, Row, Col } from 'react-bootstrap';
 
+import { DATA_URL_PREFIX } from './SelfieWebCam';
 import { PERSON, RACE } from '../shared/Consts';
 
 const PersonWrapper = styled.div`
@@ -33,6 +33,10 @@ const StyledRow = styled(Row)`
 
 const StyledCol = styled(Col)`
   padding: 0;
+`;
+
+const ConsumerPicture = styled.img`
+  max-height: 150px;
 `;
 
 const PersonRow = ({ person, handlePersonSelection }) => {
@@ -73,12 +77,30 @@ const PersonRow = ({ person, handlePersonSelection }) => {
     return '';
   };
 
+  let pictureDataUrl = null;
+  if (person[PERSON.PICTURE_FQN] && person[PERSON.PICTURE_FQN].length > 0) {
+    pictureDataUrl = `${DATA_URL_PREFIX}${person[PERSON.PICTURE_FQN][0]}`;
+  }
+
   return (
     <PersonWrapper
         onClick={() => {
           handlePersonSelection(person);
         }}>
       <Grid>
+        {
+          pictureDataUrl !== null
+            ? (
+              <StyledRow>
+                <Col lg={12}>
+                  <ConsumerPicture
+                      alt="Consumer Picture"
+                      src={pictureDataUrl} />
+                </Col>
+              </StyledRow>
+            )
+            : null
+        }
         <Row>
           <Col lg={10}>
             <StyledRow>

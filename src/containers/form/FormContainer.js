@@ -108,6 +108,12 @@ class Form extends React.Component<Props, State> {
     this.setState({ [section]: sectionState });
   }
 
+  handlePicture = (sectionKey, sectionPropertyName, value) => {
+    const sectionState = this.state[sectionKey];
+    sectionState[sectionPropertyName] = value;
+    this.setState({ [sectionKey]: sectionState });
+  }
+
   handleTimeInput = (e, section, name) => {
     const input = formatTimePickerSeconds(e);
     const sectionState = this.state[section];
@@ -203,6 +209,7 @@ class Form extends React.Component<Props, State> {
     return (
       <div>
         <FormView
+            handlePicture={this.handlePicture}
             handleTextInput={this.handleTextInput}
             handleDateInput={this.handleDateInput}
             handleTimeInput={this.handleTimeInput}

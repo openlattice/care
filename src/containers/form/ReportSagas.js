@@ -97,6 +97,7 @@ function prepPeopleEntityData(syncId :string, entitySet :Map<*, *>, consumerInfo
     identification,
     lastName,
     middleName,
+    picture,
     race
   } = consumerInfo;
 
@@ -120,6 +121,7 @@ function prepPeopleEntityData(syncId :string, entitySet :Map<*, *>, consumerInfo
   details[props[PERSON.SEX_FQN]] = (gender && gender.length) ? [gender] : [];
   details[props[PERSON.RACE_FQN]] = (race && race.length) ? [race] : [];
   details[props[PERSON.AGE_FQN]] = (age && age.length) ? [age] : [];
+  details[props[PERSON.PICTURE_FQN]] = (picture && picture.length) ? [picture] : [];
 
   /*
    * key

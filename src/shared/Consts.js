@@ -12,7 +12,8 @@ export const PERSON = {
   SEX_FQN: 'nc.PersonSex',
   DOB_FQN: 'nc.PersonBirthDate',
   ID_FQN: 'nc.SubjectIdentification',
-  AGE_FQN: 'person.age'
+  AGE_FQN: 'person.age',
+  PICTURE_FQN: 'person.picture'
 };
 
 export const CONSUMER_STATE = {
@@ -22,7 +23,8 @@ export const CONSUMER_STATE = {
   RACE_FQN: 'race',
   SEX_FQN: 'gender',
   DOB_FQN: 'dob',
-  ID_FQN: 'identification'
+  ID_FQN: 'identification',
+  PICTURE_FQN: 'picture'
 };
 
 export const STRING_ID_FQN = 'general.stringid';

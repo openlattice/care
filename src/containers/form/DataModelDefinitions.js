@@ -10,10 +10,10 @@ import randomUUID from 'uuid/v4';
  */
 
 type ComplainantInfo = {
-  complainantAddress :string,
-  complainantConsumerRelationship :string,
-  complainantName :string,
-  complainantPhone :string
+  complainantAddress :string;
+  complainantConsumerRelationship :string;
+  complainantName :string;
+  complainantPhone :string;
 };
 
 const COMPLAINANT_INFO_INITIAL_STATE :Map<string, *> = Immutable.fromJS({
@@ -32,41 +32,42 @@ function getComplainantInfoInitialState() :ComplainantInfo {
  */
 
 type ConsumerInfo = {
-  address :string,
-  age :string,
-  armedWeaponType :string,
-  armedWithWeapon :boolean,
-  accessibleWeaponType :string,
-  accessToWeapons :boolean,
-  dob :string,
-  drugsAlcohol :string,
-  drugType :string,
-  emotionalState :string[],
-  emotionalStateOther :string,
-  firstName :string,
-  gender :string,
-  homeless :boolean,
-  homelessLocation :string,
-  identification :string,
-  injuries :string[],
-  injuriesOther :string,
-  lastName :string,
-  middleName :string,
-  militaryStatus :string,
-  observedBehaviors :string[],
-  observedBehaviorsOther :string,
-  phone :string,
-  photosTakenOf :string[],
-  prescribedMedication :string,
-  prevPsychAdmission :string,
-  race :string,
-  selfDiagnosis :string[],
-  selfDiagnosisOther :string,
-  suicidal :boolean,
-  suicidalActions :string[],
-  suicideAttemptMethod :string[],
-  suicideAttemptMethodOther :string,
-  takingMedication :string
+  address :string;
+  age :string;
+  armedWeaponType :string;
+  armedWithWeapon :boolean;
+  accessibleWeaponType :string;
+  accessToWeapons :boolean;
+  dob :string;
+  drugsAlcohol :string;
+  drugType :string;
+  emotionalState :string[];
+  emotionalStateOther :string;
+  firstName :string;
+  gender :string;
+  homeless :boolean;
+  homelessLocation :string;
+  identification :string;
+  injuries :string[];
+  injuriesOther :string;
+  lastName :string;
+  middleName :string;
+  militaryStatus :string;
+  observedBehaviors :string[];
+  observedBehaviorsOther :string;
+  phone :string;
+  photosTakenOf :string[];
+  picture :string;
+  prescribedMedication :string;
+  prevPsychAdmission :string;
+  race :string;
+  selfDiagnosis :string[];
+  selfDiagnosisOther :string;
+  suicidal :boolean;
+  suicidalActions :string[];
+  suicideAttemptMethod :string[];
+  suicideAttemptMethodOther :string;
+  takingMedication :string;
 };
 
 const CONSUMER_INFO_INITIAL_STATE :Map<string, *> = Immutable.fromJS({
@@ -95,6 +96,7 @@ const CONSUMER_INFO_INITIAL_STATE :Map<string, *> = Immutable.fromJS({
   observedBehaviorsOther: '',
   phone: '',
   photosTakenOf: [],
+  picture: '',
   prescribedMedication: '',
   prevPsychAdmission: '',
   race: '',
@@ -119,13 +121,13 @@ function getConsumerInfoInitialState() :ConsumerInfo {
  */
 
 type DispositionInfo = {
-  deescalationTechniques :string[],
-  deescalationTechniquesOther :string,
-  disposition :string[],
-  hospitalTransport :boolean,
-  hospital :string,
-  incidentNarrative :string,
-  specializedResourcesCalled :string[],
+  deescalationTechniques :string[];
+  deescalationTechniquesOther :string;
+  disposition :string[];
+  hospitalTransport :boolean;
+  hospital :string;
+  incidentNarrative :string;
+  specializedResourcesCalled :string[];
 };
 
 const DISPOSITION_INFO_INITIAL_STATE :Map<string, *> = Immutable.fromJS({
@@ -147,10 +149,10 @@ function getDispositionInfoInitialState() :DispositionInfo {
  */
 
 type OfficerInfo = {
-  officerCertification :string[],
-  officerInjuries :string,
-  officerName :string,
-  officerSeqID :string
+  officerCertification :string[];
+  officerInjuries :string;
+  officerName :string;
+  officerSeqID :string;
 };
 
 const OFFICER_INFO_INITIAL_STATE :Map<string, *> = Immutable.fromJS({
@@ -169,20 +171,20 @@ function getOfficerInfoInitialState() :OfficerInfo {
  */
 
 type ReportInfo = {
-  cadNumber :string,
-  companionOffenseReport :boolean,
-  complaintNumber :string,
-  dateOccurred :string,
-  dateReported :string,
-  dispatchReason :string,
-  incident :string,
-  locationOfIncident :string,
-  name :string,
-  unit :string,
-  onView :boolean,
-  postOfOccurrence :string,
-  timeOccurred :string,
-  timeReported :string
+  cadNumber :string;
+  companionOffenseReport :boolean;
+  complaintNumber :string;
+  dateOccurred :string;
+  dateReported :string;
+  dispatchReason :string;
+  incident :string;
+  locationOfIncident :string;
+  name :string;
+  unit :string;
+  onView :boolean;
+  postOfOccurrence :string;
+  timeOccurred :string;
+  timeReported :string;
 };
 
 const REPORT_INFO_INITIAL_STATE :Map<string, *> = Immutable.fromJS({

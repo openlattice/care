@@ -3,10 +3,13 @@ import React from 'react';
 import DatePicker from 'react-bootstrap-date-picker';
 import PropTypes from 'prop-types';
 import ReactRouterPropTypes from 'react-router-prop-types';
+import styled from 'styled-components';
 import { FormGroup, FormControl, Col } from 'react-bootstrap';
 import { withRouter } from 'react-router';
 
 import FormNav from './FormNav';
+import SelfieWebCam, { DATA_URL_PREFIX } from './SelfieWebCam';
+
 import {
   PaddedRow,
   InlineCheckbox,
@@ -24,9 +27,14 @@ import {
 } from '../shared/Helpers';
 import { bootstrapValidation } from '../shared/Validation';
 
+const StyledImageElement = styled.img``;
 
 class ConsumerInfoView extends React.Component {
+
+  selfieWebCam;
+
   constructor(props) {
+
     super(props);
 
     this.state = {
@@ -41,11 +49,17 @@ class ConsumerInfoView extends React.Component {
       didClickNav: this.props.location.state
         ? this.props.location.state.didClickNav
         : false,
-      currentPage: parseInt(location.hash.substr(2), 10)
+      currentPage: parseInt(location.hash.substr(2), 10),
+      showSelfieWebCam: false
     };
   }
 
+  static defaultProps = {
+    handlePicture: () => {}
+  }
+
   static propTypes = {
+    handlePicture: PropTypes.func,
     handleTextInput: PropTypes.func.isRequired,
     handleSingleSelection: PropTypes.func.isRequired,
     handleCheckboxChange: PropTypes.func.isRequired,
@@ -94,7 +108,28 @@ class ConsumerInfoView extends React.Component {
     }).isRequired
   }
 
+  handleOnChangeTakePicture = (event) => {
+
+    this.setState({
+      showSelfieWebCam: event.target.checked || false
+    });
+
+    if (this.selfieWebCam) {
+      this.selfieWebCam.closeMediaStream();
+    }
+  }
+
+  handleOnSelfieCapture = (selfieDataAsBase64 :?string) => {
+
+    this.props.handlePicture(this.props.section, 'picture', (selfieDataAsBase64 || ''));
+  }
+
   handlePageChange = (path) => {
+
+    if (this.selfieWebCam) {
+      this.selfieWebCam.closeMediaStream();
+    }
+
     this.setState(setDidClickNav);
     this.setState(setRequiredErrors, () => {
       if (this.state.sectionRequiredErrors.length < 1 && this.state.sectionFormatErrors.length < 1) {
@@ -116,6 +151,53 @@ class ConsumerInfoView extends React.Component {
       this.state.requiredFields,
       this.state.currentPage,
       this.props.history
+    );
+  }
+
+  renderConsumerPicture = (input) => {
+
+    if (!input.picture) {
+      return null;
+    }
+
+    const pictureDataUrl = `${DATA_URL_PREFIX}${input.picture}`;
+
+    return (
+      <PaddedRow>
+        <Col lg={12}>
+          <TitleLabel>Consumer Picture</TitleLabel>
+          <StyledImageElement
+              alt="Consumer Picture"
+              src={pictureDataUrl} />
+        </Col>
+      </PaddedRow>
+    );
+  }
+
+  renderSelfieWebCam = () => {
+
+    return (
+      <PaddedRow>
+        <Col lg={12}>
+          <TitleLabel>Consumer Picture</TitleLabel>
+          <InlineCheckbox
+              checked={this.state.showSelfieWebCam}
+              onChange={this.handleOnChangeTakePicture}>
+            Take a picture with your webcam
+          </InlineCheckbox>
+          {
+            !this.state.showSelfieWebCam
+              ? null
+              : (
+                <SelfieWebCam
+                    onSelfieCapture={this.handleOnSelfieCapture}
+                    ref={(element) => {
+                      this.selfieWebCam = element;
+                    }} />
+              )
+          }
+        </Col>
+      </PaddedRow>
     );
   }
 
@@ -245,6 +327,12 @@ class ConsumerInfoView extends React.Component {
                 disabled={isInReview()} />
           </Col>
         </PaddedRow>
+
+        {
+          isInReview() || consumerIsSelected
+            ? this.renderConsumerPicture(input)
+            : this.renderSelfieWebCam()
+        }
 
         <PaddedRow>
           <Col lg={6}>

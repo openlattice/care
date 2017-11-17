@@ -37,6 +37,7 @@ const Logo = styled.img`
 
 function FormView({
   handleSubmit,
+  handlePicture,
   handleTextInput,
   handleDateInput,
   handleTimeInput,
@@ -87,6 +88,7 @@ function FormView({
   const getConsumerInfoView = () => {
     return (
       <ConsumerInfoView
+          handlePicture={handlePicture}
           handleTextInput={handleTextInput}
           handleDateInput={handleDateInput}
           handleSingleSelection={handleSingleSelection}
@@ -182,6 +184,7 @@ function FormView({
 }
 
 FormView.propTypes = {
+  handlePicture: PropTypes.func.isRequired,
   handleTextInput: PropTypes.func.isRequired,
   handleDateInput: PropTypes.func.isRequired,
   handleTimeInput: PropTypes.func.isRequired,
