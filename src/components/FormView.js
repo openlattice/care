@@ -1,19 +1,9 @@
-/*
- * @flow
- */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { ProgressBar } from 'react-bootstrap';
 import { Redirect, Route, Switch } from 'react-router-dom';
 
-import {
-  Page,
-  PageHeader,
-  Title,
-  FormWrapper
-} from '../shared/Layout';
 import LogoutButton from '../containers/app/LogoutButton';
 import ReportInfoView from '../components/ReportInfoView';
 import ConsumerSearch from '../containers/ConsumerSearch';
@@ -22,8 +12,15 @@ import ComplainantInfoView from '../components/ComplainantInfoView';
 import DispositionView from '../components/DispositionView';
 import OfficerInfoView from '../components/OfficerInfoView';
 import ReviewView from '../components/ReviewView';
-import { MAX_PAGE } from '../shared/Consts';
+import OpenLatticeLogo from '../assets/images/logo_and_name.png';
 
+import { MAX_PAGE } from '../shared/Consts';
+import {
+  Page,
+  PageHeader,
+  Title,
+  FormWrapper
+} from '../shared/Layout';
 
 const StyledProgressBar = styled(ProgressBar)`
   position: relative;
@@ -33,9 +30,14 @@ const StyledProgressBar = styled(ProgressBar)`
   margin-left: -450px;
 `;
 
+const Logo = styled.img`
+  position: absolute;
+  left: 50px;
+`;
 
 function FormView({
   handleSubmit,
+  handlePicture,
   handleTextInput,
   handleDateInput,
   handleTimeInput,
@@ -86,6 +88,7 @@ function FormView({
   const getConsumerInfoView = () => {
     return (
       <ConsumerInfoView
+          handlePicture={handlePicture}
           handleTextInput={handleTextInput}
           handleDateInput={handleDateInput}
           handleSingleSelection={handleSingleSelection}
@@ -157,6 +160,7 @@ function FormView({
   return (
     <Page>
       <PageHeader>
+        <Logo src={OpenLatticeLogo} height="50" />
         <Title>Behavioral Health Report</Title>
         <LogoutButton />
       </PageHeader>
@@ -164,9 +168,9 @@ function FormView({
       <FormWrapper>
         <form onSubmit={handleSubmit}>
           <Switch>
-            <Route path="/1" render={getReportInfoView} />
-            <Route path="/2" render={getConsumerSearchView} />
-            <Route path="/3" render={getConsumerInfoView} />
+            <Route path="/1" render={getConsumerSearchView} />
+            <Route path="/2" render={getConsumerInfoView} />
+            <Route path="/3" render={getReportInfoView} />
             <Route path="/4" render={getComplainantInfoView} />
             <Route path="/5" render={getDispositionView} />
             <Route path="/6" render={getOfficerInfoView} />
@@ -180,6 +184,7 @@ function FormView({
 }
 
 FormView.propTypes = {
+  handlePicture: PropTypes.func.isRequired,
   handleTextInput: PropTypes.func.isRequired,
   handleDateInput: PropTypes.func.isRequired,
   handleTimeInput: PropTypes.func.isRequired,

@@ -1,45 +1,37 @@
-/*
- * @flow
- */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Modal, Button } from 'react-bootstrap';
 
 import { ButtonWrapper } from '../shared/Layout';
 
-function getTitle(submitSuccess, submitFailure) {
-  if (submitSuccess) {
+import { SUBMISSION_STATES } from '../containers/form/ReportReducer';
+
+function getTitle(submissionState) {
+  if (submissionState === SUBMISSION_STATES.SUBMIT_SUCCESS) {
     return 'Success!';
   }
-  else if (submitFailure) {
-    return 'Error Submitting Report';
-  }
-  return null;
+  return 'Error Submitting Report';
 }
 
-function getBody(submitSuccess, submitFailure) {
-  if (submitSuccess) {
+function getBody(submissionState) {
+  if (submissionState === SUBMISSION_STATES.SUBMIT_SUCCESS) {
     return 'Your health report has been submitted.';
   }
-  else if (submitFailure) {
-    return `There was an error submitting your report. Please try again. 
-    If there continues to be an issue, contact help@openlattice.com.`;
-  }
-  return null;
+  return `There was an error submitting your report. Please try again.
+  If there continues to be an issue, contact help@openlattice.com.`;
 }
 
-function ConfirmationModal({ submitSuccess, submitFailure, handleModalButtonClick }) {
+function ConfirmationModal({ submissionState, handleModalButtonClick }) {
   return (
     <div className="static-modal">
       <Modal.Dialog>
         <Modal.Header>
           <Modal.Title>
-            { getTitle(submitSuccess, submitFailure) }
+            { getTitle(submissionState) }
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          { getBody(submitSuccess, submitFailure) }
+          { getBody(submissionState) }
         </Modal.Body>
         <Modal.Footer>
           <ButtonWrapper>
@@ -52,8 +44,7 @@ function ConfirmationModal({ submitSuccess, submitFailure, handleModalButtonClic
 }
 
 ConfirmationModal.propTypes = {
-  submitSuccess: PropTypes.bool.isRequired,
-  submitFailure: PropTypes.bool.isRequired,
+  submissionState: PropTypes.number.isRequired,
   handleModalButtonClick: PropTypes.func.isRequired
 };
 

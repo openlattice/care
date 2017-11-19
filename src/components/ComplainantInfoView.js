@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FormGroup, FormControl, Col } from 'react-bootstrap';
@@ -159,7 +155,7 @@ class ComplainantInfoView extends React.Component {
           !isInReview()
             ? (
               <FormNav
-                  prevPath={FORM_PATHS.CONSUMER}
+                  prevPath={FORM_PATHS.REPORT}
                   nextPath={FORM_PATHS.DISPOSITION}
                   handlePageChange={this.handlePageChange} />
             )

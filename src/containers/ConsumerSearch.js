@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import React from 'react';
 import { SearchApi } from 'lattice';
 import { Button } from 'react-bootstrap';
@@ -10,7 +6,6 @@ import PropTypes from 'prop-types';
 
 import SearchBar from '../components/SearchBar';
 import SearchResults from '../components/SearchResults';
-import FormNav from '../components/FormNav';
 import { SectionHeader } from '../shared/Layout';
 import { FORM_PATHS } from '../shared/Consts';
 
@@ -73,7 +68,8 @@ class ConsumerSearch extends React.Component {
         <SectionHeader>Select Consumer</SectionHeader>
         <StyledButton
             onClick={() => {
-              this.props.handlePageChange(FORM_PATHS.CONSUMER);
+              // this is hacky and terrible
+              this.props.handlePersonSelection(null);
             }}
             block>
           Create New Consumer Entry
@@ -87,10 +83,6 @@ class ConsumerSearch extends React.Component {
             results={this.state.results}
             handlePersonSelection={this.props.handlePersonSelection}
             didSearch={this.state.didSearch} />
-        <FormNav
-            prevPath={FORM_PATHS.REPORT}
-            nextPath={FORM_PATHS.CONSUMER}
-            handlePageChange={this.props.handlePageChange} />
       </div>
     );
   }

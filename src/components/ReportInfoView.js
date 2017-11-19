@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FormGroup, FormControl, Col } from 'react-bootstrap';
@@ -308,7 +304,8 @@ class ReportInfoView extends React.Component {
           !isInReview()
             ? (
               <FormNav
-                  nextPath={FORM_PATHS.CONSUMER_SEARCH}
+                  prevPath={FORM_PATHS.CONSUMER}
+                  nextPath={FORM_PATHS.COMPLAINANT}
                   handlePageChange={this.handlePageChange}
                   sectionValid={this.state.sectionValid} />
             )

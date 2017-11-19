@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
@@ -14,6 +10,7 @@ import DispositionView from './DispositionView';
 import OfficerInfoView from './OfficerInfoView';
 import FormNav from './FormNav';
 import { SectionHeader } from '../shared/Layout';
+import { FORM_PATHS } from '../shared/Consts';
 
 const SectionHeaderWrapper = styled.div`
   position: relative;
@@ -60,7 +57,7 @@ const ReviewView = ({
         <Section>
           <SectionHeaderWrapper>
             <SectionTitle>Report Info</SectionTitle>
-            <EditLink to="/1">edit</EditLink>
+            <EditLink to={FORM_PATHS.REPORT}>edit</EditLink>
           </SectionHeaderWrapper>
           <ReportInfoView
               handleTextInput={handleTextInput}
@@ -75,7 +72,7 @@ const ReviewView = ({
         <Section>
           <SectionHeaderWrapper>
             <SectionTitle>Consumer</SectionTitle>
-            <EditLink to="/3">edit</EditLink>
+            <EditLink to={FORM_PATHS.CONSUMER}>edit</EditLink>
           </SectionHeaderWrapper>
           <ConsumerInfoView
               handleTextInput={handleTextInput}
@@ -91,7 +88,7 @@ const ReviewView = ({
         <Section>
           <SectionHeaderWrapper>
             <SectionTitle>Complainant</SectionTitle>
-            <EditLink to="/4">edit</EditLink>
+            <EditLink to={FORM_PATHS.COMPLAINANT}>edit</EditLink>
           </SectionHeaderWrapper>
           <ComplainantInfoView
               handleTextInput={handleTextInput}
@@ -103,7 +100,7 @@ const ReviewView = ({
         <Section>
           <SectionHeaderWrapper>
             <SectionTitle>Disposition</SectionTitle>
-            <EditLink to="/5">edit</EditLink>
+            <EditLink to={FORM_PATHS.DISPOSITION}>edit</EditLink>
           </SectionHeaderWrapper>
           <DispositionView
               handleTextInput={handleTextInput}
@@ -117,7 +114,7 @@ const ReviewView = ({
         <Section>
           <SectionHeaderWrapper>
             <SectionTitle>Officer</SectionTitle>
-            <EditLink to="/6">edit</EditLink>
+            <EditLink to={FORM_PATHS.OFFICER}>edit</EditLink>
           </SectionHeaderWrapper>
           <OfficerInfoView
               handleTextInput={handleTextInput}
