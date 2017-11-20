@@ -141,7 +141,7 @@ class ReportInfoView extends React.Component {
                   name="complaintNumber"
                   value={input.complaintNumber}
                   onChange={(e) => {
-                    handleTextInput(e, 'number', sectionFormatErrors, this.setInputErrors);
+                    handleTextInput(e, 'Int64', sectionFormatErrors, this.setInputErrors);
                   }}
                   disabled={isInReview()} />
             </FormGroup>
@@ -223,7 +223,7 @@ class ReportInfoView extends React.Component {
                   name="postOfOccurrence"
                   value={input.postOfOccurrence}
                   onChange={(e) => {
-                    handleTextInput(e, 'number', sectionFormatErrors, this.setInputErrors);
+                    handleTextInput(e, 'Int16', sectionFormatErrors, this.setInputErrors);
                   }}
                   disabled={isInReview()} />
             </FormGroup>
@@ -239,7 +239,7 @@ class ReportInfoView extends React.Component {
                   name="cadNumber"
                   value={input.cadNumber}
                   onChange={(e) => {
-                    handleTextInput(e, 'number', sectionFormatErrors, this.setInputErrors);
+                    handleTextInput(e, 'Int16', sectionFormatErrors, this.setInputErrors);
                   }}
                   disabled={isInReview()} />
             </FormGroup>

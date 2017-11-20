@@ -25,9 +25,42 @@ export const validateOnInput = (
   const formatErrors = sectionFormatErrors.slice();
 
   switch (fieldType) {
-    case 'number': {
+    case 'Int16': {
       const idx = formatErrors.indexOf(FORM_ERRORS.INVALID_FORMAT);
-      if (input && !validator.isInt(input)) {
+      const validInt = validator.isInt(input);
+
+      let validIntType = true;
+      if ( parseInt(input, 10) < -32768 || parseInt(input, 10) > 32767) {
+        validIntType = false;
+      }
+
+      if (input && !validInt || input && !validIntType) {
+        inputValid = false;
+        if (idx === -1) {
+          formatErrors.push(FORM_ERRORS.INVALID_FORMAT);
+        }
+      }
+      else {
+        inputValid = true;
+        if (idx !== -1) {
+          formatErrors.splice(idx);
+        }
+      }
+      break;
+    }
+    case 'Int64': {
+      const idx = formatErrors.indexOf(FORM_ERRORS.INVALID_FORMAT);
+      const validInt = validator.isInt(input);
+
+      let validIntType = true;
+      if (
+        parseInt(input, 10) < -9223372036854775808
+          || parseInt(input, 10) > 9223372036854775807
+      ) {
+        validIntType = false;
+      }
+
+      if (input && !validInt || input && !validIntType) {
         inputValid = false;
         if (idx === -1) {
           formatErrors.push(FORM_ERRORS.INVALID_FORMAT);
