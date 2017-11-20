@@ -25,7 +25,6 @@ class OfficerInfoView extends React.Component {
       sectionFormatErrors: [],
       sectionRequiredErrors: [FORM_ERRORS.IS_REQUIRED],
       officerNameValid: true,
-      officerSeqIDValid: true,
       sectionValid: false,
       didClickNav: this.props.location.state
         ? this.props.location.state.didClickNav
@@ -86,7 +85,6 @@ class OfficerInfoView extends React.Component {
 
     const {
       officerNameValid,
-      officerSeqIDValid,
       didClickNav,
       sectionFormatErrors,
       sectionRequiredErrors
@@ -120,22 +118,15 @@ class OfficerInfoView extends React.Component {
 
         <PaddedRow>
           <Col lg={6}>
-            <FormGroup
-                validationState={bootstrapValidation(
-                  input.officerSeqID,
-                  officerSeqIDValid,
-                  false,
-                  didClickNav)}>
-              <TitleLabel>34. Seq ID</TitleLabel>
-              <FormControl
-                  data-section={section}
-                  name="officerSeqID"
-                  value={input.officerSeqID}
-                  onChange={(e) => {
-                    handleTextInput(e, 'number', sectionFormatErrors, this.setInputErrors);
-                  }}
-                  disabled={isInReview()} />
-            </FormGroup>
+            <TitleLabel>34. Seq ID</TitleLabel>
+            <FormControl
+                data-section={section}
+                name="officerSeqID"
+                value={input.officerSeqID}
+                onChange={(e) => {
+                  handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
+                }}
+                disabled={isInReview()} />
           </Col>
           <Col lg={6}>
             <TitleLabel>35. Officer Injuries</TitleLabel>
