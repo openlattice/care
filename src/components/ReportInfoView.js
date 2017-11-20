@@ -27,6 +27,7 @@ class ReportInfoView extends React.Component {
       sectionFormatErrors: [],
       sectionRequiredErrors: [FORM_ERRORS.IS_REQUIRED],
       sectionErrors: [],
+      postOfOccurrenceValid: true,
       complaintNumberValid: true,
       cadNumberValid: true,
       dateOccurredValid: true,
@@ -103,6 +104,7 @@ class ReportInfoView extends React.Component {
     } = this.props;
 
     const {
+      postOfOccurrenceValid,
       complaintNumberValid,
       cadNumberValid,
       didClickNav,
@@ -208,15 +210,23 @@ class ReportInfoView extends React.Component {
                 disabled={isInReview()} />
           </Col>
           <Col lg={6}>
-            <TitleLabel>7. Post of Occurrence</TitleLabel>
-            <FormControl
-                data-section={section}
-                name="postOfOccurrence"
-                value={input.postOfOccurrence}
-                onChange={(e) => {
-                  handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
-                }}
-                disabled={isInReview()} />
+            <FormGroup
+                validationState={bootstrapValidation(
+                  input.postOfOccurrence,
+                  postOfOccurrenceValid,
+                  true,
+                  didClickNav
+                )}>
+              <TitleLabel>7. Post of Occurrence</TitleLabel>
+              <FormControl
+                  data-section={section}
+                  name="postOfOccurrence"
+                  value={input.postOfOccurrence}
+                  onChange={(e) => {
+                    handleTextInput(e, 'number', sectionFormatErrors, this.setInputErrors);
+                  }}
+                  disabled={isInReview()} />
+            </FormGroup>
           </Col>
         </PaddedRow>
 
