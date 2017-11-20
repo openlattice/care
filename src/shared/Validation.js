@@ -30,11 +30,11 @@ export const validateOnInput = (
       const validInt = validator.isInt(input);
 
       let validIntType = true;
-      if ( parseInt(input, 10) < -32768 || parseInt(input, 10) > 32767) {
+      if (parseInt(input, 10) < -32768 || parseInt(input, 10) > 32767) {
         validIntType = false;
       }
 
-      if (input && !validInt || input && !validIntType) {
+      if ((input && !validInt) || (input && !validIntType)) {
         inputValid = false;
         if (idx === -1) {
           formatErrors.push(FORM_ERRORS.INVALID_FORMAT);
@@ -60,7 +60,7 @@ export const validateOnInput = (
         validIntType = false;
       }
 
-      if (input && !validInt || input && !validIntType) {
+      if ((input && !validInt) || (input && !validIntType)) {
         inputValid = false;
         if (idx === -1) {
           formatErrors.push(FORM_ERRORS.INVALID_FORMAT);
