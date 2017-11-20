@@ -55,7 +55,8 @@ function FormView({
   handlePageChange,
   handlePersonSelection,
   personEntitySetId,
-  consumerIsSelected
+  consumerIsSelected,
+  renderModal
 }) {
 
   const getProgress = () => {
@@ -186,6 +187,7 @@ function FormView({
           </Switch>
         </form>
       </FormWrapper>
+      { renderModal() }
     </Page>
   );
 }

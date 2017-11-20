@@ -226,7 +226,8 @@ class Form extends React.Component<Props, State> {
           handlePersonSelection={this.handlePersonSelection}
           personEntitySetId={peopleEntitySetId}
           isInReview={this.isInReview}
-          consumerIsSelected={this.state.isConsumerSelected} />
+          consumerIsSelected={this.state.isConsumerSelected}
+          renderModal={this.renderModal} />
     );
   }
 }
