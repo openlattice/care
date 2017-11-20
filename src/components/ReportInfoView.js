@@ -31,6 +31,7 @@ class ReportInfoView extends React.Component {
       complaintNumberValid: true,
       cadNumberValid: true,
       dateOccurredValid: true,
+      dateReportedValid: true,
       sectionValid: false,
       didClickNav: this.props.location.state
         ? this.props.location.state.didClickNav
@@ -107,6 +108,8 @@ class ReportInfoView extends React.Component {
       postOfOccurrenceValid,
       complaintNumberValid,
       cadNumberValid,
+      dateOccurredValid,
+      dateReportedValid,
       didClickNav,
       sectionFormatErrors,
       sectionRequiredErrors
@@ -269,12 +272,12 @@ class ReportInfoView extends React.Component {
 
         <PaddedRow>
           <Col lg={6}>
-            <FormGroup validationState={bootstrapValidation(this, 'dateOccurred')}>
+            <FormGroup validationState={bootstrapValidation(input.dateOccurred, dateOccurredValid, false, didClickNav)}>
               <TitleLabel>10. Date Occurred</TitleLabel>
               <DatePicker
                   value={input.dateOccurred}
                   onChange={(e) => {
-                    handleDateInput(e, section, 'dateOccurred');
+                    handleDateInput(e, section, 'dateOccurred', sectionFormatErrors, this.setInputErrors);
                   }}
                   disabled={isInReview()} />
             </FormGroup>
@@ -292,13 +295,15 @@ class ReportInfoView extends React.Component {
 
         <PaddedRow>
           <Col lg={6}>
-            <TitleLabel>11. Date Reported</TitleLabel>
-            <DatePicker
-                value={input.dateReported}
-                onChange={(e) => {
-                  handleDateInput(e, section, 'dateReported');
-                }}
-                disabled={isInReview()} />
+            <FormGroup validationState={bootstrapValidation(input.dateReported, dateReportedValid, false, didClickNav)}>
+              <TitleLabel>11. Date Reported</TitleLabel>
+              <DatePicker
+                  value={input.dateReported}
+                  onChange={(e) => {
+                    handleDateInput(e, section, 'dateReported', sectionFormatErrors, this.setInputErrors);
+                  }}
+                  disabled={isInReview()} />
+            </FormGroup>
           </Col>
           <Col lg={6}>
             <TitleLabel>Time Reported</TitleLabel>

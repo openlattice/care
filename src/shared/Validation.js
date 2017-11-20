@@ -74,6 +74,25 @@ export const validateOnInput = (
       }
       break;
     }
+    case 'date': {
+      const idx = formatErrors.indexOf(FORM_ERRORS.INVALID_FORMAT);
+      const currentDate = (new Date()).toISOString();
+      const validDate = validator.isISO8601(input) && validator.isBefore(input, currentDate);
+
+      if (input && !validDate) {
+        inputValid = false;
+        if (idx === -1) {
+          formatErrors.push(FORM_ERRORS.INVALID_FORMAT);
+        }
+      }
+      else {
+        inputValid = true;
+        if (idx !== -1) {
+          formatErrors.splice(idx);
+        }
+      }
+      break;
+    }
     default:
       break;
   }

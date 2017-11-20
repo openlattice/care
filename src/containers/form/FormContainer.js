@@ -101,12 +101,13 @@ class Form extends React.Component<Props, State> {
     validateOnInput(name, input, fieldType, formatErrors, setErrorsFn);
   }
 
-  handleDateInput = (e, section, name) => {
+  handleDateInput = (e, section, name, formatErrors, setErrorsFn) => {
     let input = e;
     input = input.replace(/T(.*)$/g,"T00:00:00.000Z");
     const sectionState = this.state[section];
     sectionState[name] = input;
     this.setState({ [section]: sectionState });
+    validateOnInput(name, input, 'date', formatErrors, setErrorsFn);
   }
 
   handlePicture = (sectionKey, sectionPropertyName, value) => {
