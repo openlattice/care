@@ -102,7 +102,8 @@ class Form extends React.Component<Props, State> {
   }
 
   handleDateInput = (e, section, name) => {
-    const input = e;
+    let input = e;
+    input = input.replace(/T(.*)$/g,"T00:00:00.000Z");
     const sectionState = this.state[section];
     sectionState[name] = input;
     this.setState({ [section]: sectionState });
