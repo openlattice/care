@@ -32,6 +32,7 @@ class ReportInfoView extends React.Component {
       cadNumberValid: true,
       dateOccurredValid: true,
       dateReportedValid: true,
+      unitValid: true,
       sectionValid: false,
       didClickNav: this.props.location.state
         ? this.props.location.state.didClickNav
@@ -111,6 +112,7 @@ class ReportInfoView extends React.Component {
       cadNumberValid,
       dateOccurredValid,
       dateReportedValid,
+      unitValid,
       didClickNav,
       sectionFormatErrors,
       sectionRequiredErrors
@@ -223,20 +225,28 @@ class ReportInfoView extends React.Component {
 
         <PaddedRow>
           <Col lg={6}>
-            <TitleLabel>6. Unit</TitleLabel>
-            <FormControl
-                data-section={section}
-                name="unit"
-                value={input.unit}
-                onChange={(e) => {
-                  handleTextInput(
-                    e,
-                    'string',
-                    sectionFormatErrors,
-                    this.setInputErrors
-                  );
-                }}
-                disabled={isInReview()} />
+            <FormGroup
+                validationState={bootstrapValidation(
+                  input.unit,
+                  unitValid,
+                  true,
+                  didClickNav
+                )}>
+              <TitleLabel>6. Unit</TitleLabel>
+              <FormControl
+                  data-section={section}
+                  name="unit"
+                  value={input.unit}
+                  onChange={(e) => {
+                    handleTextInput(
+                      e,
+                      'alphanumeric',
+                      sectionFormatErrors,
+                      this.setInputErrors
+                    );
+                  }}
+                  disabled={isInReview()} />
+            </FormGroup>
           </Col>
           <Col lg={6}>
             <FormGroup

@@ -74,6 +74,24 @@ export const validateOnInput = (
       }
       break;
     }
+    case 'alphanumeric': {
+      const idx = formatErrors.indexOf(FORM_ERRORS.INVALID_FORMAT);
+      const valid = validator.isAlphanumeric(input);
+
+      if (input && !valid) {
+        inputValid = false;
+        if (idx === -1) {
+          formatErrors.push(FORM_ERRORS.INVALID_FORMAT);
+        }
+      }
+      else {
+        inputValid = true;
+        if (idx !== -1) {
+          formatErrors.splice(idx);
+        }
+      }
+      break;
+    }
     case 'date': {
       const idx = formatErrors.indexOf(FORM_ERRORS.INVALID_FORMAT);
       const currentDate = (new Date()).toISOString();
