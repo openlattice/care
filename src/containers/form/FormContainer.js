@@ -209,27 +209,24 @@ class Form extends React.Component<Props, State> {
     const peopleEntitySetId :string = this.props.entitySets.getIn([PEOPLE, 'entitySet', 'id'], '');
 
     return (
-      <div>
-        <FormView
-            handlePicture={this.handlePicture}
-            handleTextInput={this.handleTextInput}
-            handleDateInput={this.handleDateInput}
-            handleTimeInput={this.handleTimeInput}
-            handleSingleSelection={this.handleSingleSelection}
-            handleCheckboxChange={this.handleCheckboxChange}
-            handleSubmit={this.handleSubmit}
-            reportInfo={this.state.reportInfo}
-            consumerInfo={this.state.consumerInfo}
-            complainantInfo={this.state.complainantInfo}
-            dispositionInfo={this.state.dispositionInfo}
-            officerInfo={this.state.officerInfo}
-            handlePageChange={this.handlePageChange}
-            handlePersonSelection={this.handlePersonSelection}
-            personEntitySetId={peopleEntitySetId}
-            isInReview={this.isInReview}
-            consumerIsSelected={this.state.isConsumerSelected} />
-        { this.renderModal() }
-      </div>
+      <FormView
+          handlePicture={this.handlePicture}
+          handleTextInput={this.handleTextInput}
+          handleDateInput={this.handleDateInput}
+          handleTimeInput={this.handleTimeInput}
+          handleSingleSelection={this.handleSingleSelection}
+          handleCheckboxChange={this.handleCheckboxChange}
+          handleSubmit={this.handleSubmit}
+          reportInfo={this.state.reportInfo}
+          consumerInfo={this.state.consumerInfo}
+          complainantInfo={this.state.complainantInfo}
+          dispositionInfo={this.state.dispositionInfo}
+          officerInfo={this.state.officerInfo}
+          handlePageChange={this.handlePageChange}
+          handlePersonSelection={this.handlePersonSelection}
+          personEntitySetId={peopleEntitySetId}
+          isInReview={this.isInReview}
+          consumerIsSelected={this.state.isConsumerSelected} />
     );
   }
 }

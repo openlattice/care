@@ -4,8 +4,11 @@ import { ControlLabel, Checkbox, Radio, Button, Row } from 'react-bootstrap';
 
 export const Page = styled.div`
   background: #393F46;
-  overflow: auto;
-  min-height: 56.5vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100%;
+  width: 100%;
 `;
 
 export const PageHeader = styled.div`
@@ -13,28 +16,31 @@ export const PageHeader = styled.div`
   background: white;
   border-bottom: 1px solid darkgray;
   display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   height: 100px;
-  justify-content: center;
-  position: relative;
+  margin-bottom: 100px;
+  padding: 20px 55px;
   width: 100%;
+`;
+
+export const TitleWrapper = styled.span`
+  align-items: center;
+  display: flex;
+  flex: 1;
+  justify-content: center;
 `;
 
 export const Title = styled.h1`
   color: #37454A;
   font-size: 20px;
   font-weight: bold;
-  margin: 0 0 0 60px;
 `;
 
 export const FormWrapper = styled.div`
-  position: relative;
-  display: block;
   padding: 60px;
-  top: 160px;
-  left: 50%;
   width: 900px;
-  margin-left: -450px;
-  margin-bottom: 200px;
+  margin-bottom: 100px;
   background: #F4F4F4;
 `;
 
