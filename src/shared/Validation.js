@@ -77,7 +77,8 @@ export const validateOnInput = (
     case 'date': {
       const idx = formatErrors.indexOf(FORM_ERRORS.INVALID_FORMAT);
       const currentDate = (new Date()).toISOString();
-      const validDate = validator.isISO8601(input) && validator.isBefore(input, currentDate);
+      const validDate = validator.isISO8601(input)
+        && validator.isBefore(input, currentDate);
 
       if (input && !validDate) {
         inputValid = false;

@@ -71,7 +71,8 @@ class ReportInfoView extends React.Component {
   handlePageChange = (path) => {
     this.setState(setDidClickNav);
     this.setState(setRequiredErrors, () => {
-      if (this.state.sectionRequiredErrors.length < 1 && this.state.sectionFormatErrors.length < 1) {
+      if (this.state.sectionRequiredErrors.length < 1
+        && this.state.sectionFormatErrors.length < 1) {
         this.props.handlePageChange(path);
       }
     });
@@ -126,7 +127,12 @@ class ReportInfoView extends React.Component {
                 name="dispatchReason"
                 value={input.dispatchReason}
                 onChange={(e) => {
-                  handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
+                  handleTextInput(
+                    e,
+                    'string',
+                    sectionFormatErrors,
+                    this.setInputErrors
+                  );
                 }}
                 disabled={isInReview()} />
           </Col>
@@ -144,7 +150,12 @@ class ReportInfoView extends React.Component {
                   name="complaintNumber"
                   value={input.complaintNumber}
                   onChange={(e) => {
-                    handleTextInput(e, 'Int64', sectionFormatErrors, this.setInputErrors);
+                    handleTextInput(
+                      e,
+                      'Int64',
+                      sectionFormatErrors,
+                      this.setInputErrors
+                    );
                   }}
                   disabled={isInReview()} />
             </FormGroup>
@@ -180,7 +191,12 @@ class ReportInfoView extends React.Component {
                 name="incident"
                 value={input.incident}
                 onChange={(e) => {
-                  handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
+                  handleTextInput(
+                    e,
+                    'string',
+                    sectionFormatErrors,
+                    this.setInputErrors
+                  );
                 }}
                 disabled={isInReview()} />
           </Col>
@@ -194,7 +210,12 @@ class ReportInfoView extends React.Component {
                 name="locationOfIncident"
                 value={input.locationOfIncident}
                 onChange={(e) => {
-                  handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
+                  handleTextInput(
+                    e,
+                    'string',
+                    sectionFormatErrors,
+                    this.setInputErrors
+                  );
                 }}
                 disabled={isInReview()} />
           </Col>
@@ -208,7 +229,12 @@ class ReportInfoView extends React.Component {
                 name="unit"
                 value={input.unit}
                 onChange={(e) => {
-                  handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
+                  handleTextInput(
+                    e,
+                    'string',
+                    sectionFormatErrors,
+                    this.setInputErrors
+                  );
                 }}
                 disabled={isInReview()} />
           </Col>
@@ -226,7 +252,12 @@ class ReportInfoView extends React.Component {
                   name="postOfOccurrence"
                   value={input.postOfOccurrence}
                   onChange={(e) => {
-                    handleTextInput(e, 'Int16', sectionFormatErrors, this.setInputErrors);
+                    handleTextInput(
+                      e,
+                      'Int16',
+                      sectionFormatErrors,
+                      this.setInputErrors
+                    );
                   }}
                   disabled={isInReview()} />
             </FormGroup>
@@ -235,14 +266,25 @@ class ReportInfoView extends React.Component {
 
         <PaddedRow>
           <Col lg={6}>
-            <FormGroup validationState={bootstrapValidation(input.cadNumber, cadNumberValid, false, didClickNav)}>
+            <FormGroup
+                validationState={bootstrapValidation(
+                  input.cadNumber,
+                  cadNumberValid,
+                  false,
+                  didClickNav
+                )}>
               <TitleLabel>8. CAD Number</TitleLabel>
               <FormControl
                   data-section={section}
                   name="cadNumber"
                   value={input.cadNumber}
                   onChange={(e) => {
-                    handleTextInput(e, 'Int16', sectionFormatErrors, this.setInputErrors);
+                    handleTextInput(
+                      e,
+                      'Int16',
+                      sectionFormatErrors,
+                      this.setInputErrors
+                    );
                   }}
                   disabled={isInReview()} />
             </FormGroup>
@@ -272,12 +314,24 @@ class ReportInfoView extends React.Component {
 
         <PaddedRow>
           <Col lg={6}>
-            <FormGroup validationState={bootstrapValidation(input.dateOccurred, dateOccurredValid, false, didClickNav)}>
+            <FormGroup
+                validationState={bootstrapValidation(
+                  input.dateOccurred,
+                  dateOccurredValid,
+                  false,
+                  didClickNav
+                )}>
               <TitleLabel>10. Date Occurred</TitleLabel>
               <DatePicker
                   value={input.dateOccurred}
                   onChange={(e) => {
-                    handleDateInput(e, section, 'dateOccurred', sectionFormatErrors, this.setInputErrors);
+                    handleDateInput(
+                      e,
+                      section,
+                      'dateOccurred',
+                      sectionFormatErrors,
+                      this.setInputErrors
+                    );
                   }}
                   disabled={isInReview()} />
             </FormGroup>
@@ -295,12 +349,23 @@ class ReportInfoView extends React.Component {
 
         <PaddedRow>
           <Col lg={6}>
-            <FormGroup validationState={bootstrapValidation(input.dateReported, dateReportedValid, false, didClickNav)}>
+            <FormGroup
+                validationState={bootstrapValidation(
+                  input.dateReported,
+                  dateReportedValid,
+                  false,
+                  didClickNav
+                )}>
               <TitleLabel>11. Date Reported</TitleLabel>
               <DatePicker
                   value={input.dateReported}
                   onChange={(e) => {
-                    handleDateInput(e, section, 'dateReported', sectionFormatErrors, this.setInputErrors);
+                    handleDateInput(
+                      e,
+                      section,
+                      'dateReported',
+                      sectionFormatErrors,
+                      this.setInputErrors);
                   }}
                   disabled={isInReview()} />
             </FormGroup>
