@@ -25,7 +25,7 @@ export const validateOnInput = (
   const formatErrors = sectionFormatErrors.slice();
 
   switch (fieldType) {
-    case 'Int16': {
+    case 'int16': {
       const idx = formatErrors.indexOf(FORM_ERRORS.INVALID_FORMAT);
       const validInt = validator.isInt(input);
 
@@ -48,7 +48,7 @@ export const validateOnInput = (
       }
       break;
     }
-    case 'Int64': {
+    case 'int64': {
       const idx = formatErrors.indexOf(FORM_ERRORS.INVALID_FORMAT);
       const validInt = validator.isInt(input);
 

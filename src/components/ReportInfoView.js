@@ -154,7 +154,7 @@ class ReportInfoView extends React.Component {
                   onChange={(e) => {
                     handleTextInput(
                       e,
-                      'Int64',
+                      'int64',
                       sectionFormatErrors,
                       this.setInputErrors
                     );
@@ -264,7 +264,7 @@ class ReportInfoView extends React.Component {
                   onChange={(e) => {
                     handleTextInput(
                       e,
-                      'Int16',
+                      'int16',
                       sectionFormatErrors,
                       this.setInputErrors
                     );
@@ -291,7 +291,7 @@ class ReportInfoView extends React.Component {
                   onChange={(e) => {
                     handleTextInput(
                       e,
-                      'Int16',
+                      'int16',
                       sectionFormatErrors,
                       this.setInputErrors
                     );

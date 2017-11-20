@@ -416,7 +416,7 @@ class ConsumerInfoView extends React.Component {
                   name="age"
                   value={input.age}
                   onChange={(e) => {
-                    handleTextInput(e, 'Int16', sectionFormatErrors, this.setInputErrors);
+                    handleTextInput(e, 'int16', sectionFormatErrors, this.setInputErrors);
                   }}
                   disabled={isInReview()} />
             </FormGroup>
