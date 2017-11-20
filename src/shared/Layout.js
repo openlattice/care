@@ -94,6 +94,16 @@ export const SubmitButton = styled(Button).attrs({
   }
 })``;
 
+export const SectionWrapper = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+`;
+
+export const ContentWrapper = styled.div`
+  width: 100%;
+`;
+
 export const SectionHeader = styled.div`
   font-size: 32px;
   margin-bottom: 40px;
@@ -104,10 +114,11 @@ export const SectionHeader = styled.div`
 `;
 
 export const NavBtnWrapper = styled.div`
-  position: absolute;
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
   width: 300px;
-  left: 50%;
-  margin-left: -150px;
   text-align: center;
 `;
 

@@ -5,7 +5,14 @@ import { withRouter } from 'react-router';
 import ReactRouterPropTypes from 'react-router-prop-types';
 
 import FormNav from './FormNav';
-import { PaddedRow, TitleLabel, InlineCheckbox, SectionHeader } from '../shared/Layout';
+import {
+  PaddedRow,
+  TitleLabel,
+  InlineCheckbox,
+  SectionHeader,
+  SectionWrapper,
+  ContentWrapper
+} from '../shared/Layout';
 import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
 import {
   setDidClickNav,
@@ -93,103 +100,105 @@ class OfficerInfoView extends React.Component {
     } = this.state;
 
     return (
-      <div>
+      <SectionWrapper>
         { !isInReview() ? <SectionHeader>Officer</SectionHeader> : null }
 
-        <PaddedRow>
-          <Col lg={12}>
-            <FormGroup
-                validationState={bootstrapValidation(
-                  input.officerName,
-                  officerNameValid,
-                  true,
-                  didClickNav
-                )}>
-              <TitleLabel>33. Officer Name*</TitleLabel>
+        <ContentWrapper>
+          <PaddedRow>
+            <Col lg={12}>
+              <FormGroup
+                  validationState={bootstrapValidation(
+                    input.officerName,
+                    officerNameValid,
+                    true,
+                    didClickNav
+                  )}>
+                <TitleLabel>33. Officer Name*</TitleLabel>
+                <FormControl
+                    data-section={section}
+                    name="officerName"
+                    value={input.officerName}
+                    onChange={(e) => {
+                      handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
+                    }}
+                    disabled={isInReview()} />
+              </FormGroup>
+            </Col>
+          </PaddedRow>
+
+          <PaddedRow>
+            <Col lg={6}>
+              <FormGroup
+                  validationState={bootstrapValidation(
+                    input.officerSeqID,
+                    officerSeqIDValid,
+                    true,
+                    didClickNav
+                  )}>
+                <TitleLabel>34. Seq ID</TitleLabel>
+                <FormControl
+                    data-section={section}
+                    name="officerSeqID"
+                    value={input.officerSeqID}
+                    onChange={(e) => {
+                      handleTextInput(e, 'alphanumeric', sectionFormatErrors, this.setInputErrors);
+                    }}
+                    disabled={isInReview()} />
+              </FormGroup>
+            </Col>
+            <Col lg={6}>
+              <TitleLabel>35. Officer Injuries</TitleLabel>
               <FormControl
                   data-section={section}
-                  name="officerName"
-                  value={input.officerName}
+                  name="officerInjuries"
+                  value={input.officerInjuries}
                   onChange={(e) => {
                     handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                   }}
                   disabled={isInReview()} />
-            </FormGroup>
-          </Col>
-        </PaddedRow>
+            </Col>
+          </PaddedRow>
 
-        <PaddedRow>
-          <Col lg={6}>
-            <FormGroup
-                validationState={bootstrapValidation(
-                  input.officerSeqID,
-                  officerSeqIDValid,
-                  true,
-                  didClickNav
-                )}>
-              <TitleLabel>34. Seq ID</TitleLabel>
-              <FormControl
-                  data-section={section}
-                  name="officerSeqID"
-                  value={input.officerSeqID}
-                  onChange={(e) => {
-                    handleTextInput(e, 'alphanumeric', sectionFormatErrors, this.setInputErrors);
-                  }}
-                  disabled={isInReview()} />
-            </FormGroup>
-          </Col>
-          <Col lg={6}>
-            <TitleLabel>35. Officer Injuries</TitleLabel>
-            <FormControl
-                data-section={section}
-                name="officerInjuries"
-                value={input.officerInjuries}
-                onChange={(e) => {
-                  handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
-                }}
-                disabled={isInReview()} />
-          </Col>
-        </PaddedRow>
-
-        <PaddedRow>
-          <Col lg={6}>
-            <TitleLabel>36. Officer Certification</TitleLabel>
-            <FormGroup>
-              <InlineCheckbox
-                  inline
-                  data-section={section}
-                  name="officerCertification"
-                  value="crtUnit"
-                  checked={input.officerCertification.indexOf('crtUnit') !== -1}
-                  onChange={handleCheckboxChange}
-                  disabled={isInReview()}>CRT Unit</InlineCheckbox>
-              <InlineCheckbox
-                  inline
-                  data-section={section}
-                  name="officerCertification"
-                  value="best"
-                  checked={input.officerCertification.indexOf('best') !== -1}
-                  onChange={handleCheckboxChange}
-                  disabled={isInReview()}>BEST</InlineCheckbox>
-              <InlineCheckbox
-                  inline
-                  data-section={section}
-                  name="officerCertification"
-                  value="cit"
-                  checked={input.officerCertification.indexOf('cit') !== -1}
-                  onChange={handleCheckboxChange}
-                  disabled={isInReview()}>CIT</InlineCheckbox>
-              <InlineCheckbox
-                  inline
-                  data-section={section}
-                  name="officerCertification"
-                  value="n/a"
-                  checked={input.officerCertification.indexOf('n/a') !== -1}
-                  onChange={handleCheckboxChange}
-                  disabled={isInReview()}>N/A</InlineCheckbox>
-            </FormGroup>
-          </Col>
-        </PaddedRow>
+          <PaddedRow>
+            <Col lg={6}>
+              <TitleLabel>36. Officer Certification</TitleLabel>
+              <FormGroup>
+                <InlineCheckbox
+                    inline
+                    data-section={section}
+                    name="officerCertification"
+                    value="crtUnit"
+                    checked={input.officerCertification.indexOf('crtUnit') !== -1}
+                    onChange={handleCheckboxChange}
+                    disabled={isInReview()}>CRT Unit</InlineCheckbox>
+                <InlineCheckbox
+                    inline
+                    data-section={section}
+                    name="officerCertification"
+                    value="best"
+                    checked={input.officerCertification.indexOf('best') !== -1}
+                    onChange={handleCheckboxChange}
+                    disabled={isInReview()}>BEST</InlineCheckbox>
+                <InlineCheckbox
+                    inline
+                    data-section={section}
+                    name="officerCertification"
+                    value="cit"
+                    checked={input.officerCertification.indexOf('cit') !== -1}
+                    onChange={handleCheckboxChange}
+                    disabled={isInReview()}>CIT</InlineCheckbox>
+                <InlineCheckbox
+                    inline
+                    data-section={section}
+                    name="officerCertification"
+                    value="n/a"
+                    checked={input.officerCertification.indexOf('n/a') !== -1}
+                    onChange={handleCheckboxChange}
+                    disabled={isInReview()}>N/A</InlineCheckbox>
+              </FormGroup>
+            </Col>
+          </PaddedRow>
+        </ContentWrapper>
 
         {
           !isInReview()
@@ -202,7 +211,7 @@ class OfficerInfoView extends React.Component {
             : null
         }
         { renderErrors(sectionFormatErrors, sectionRequiredErrors, didClickNav) }
-      </div>
+      </SectionWrapper>
     );
   }
 }

@@ -5,7 +5,7 @@ import { withRouter } from 'react-router';
 import ReactRouterPropTypes from 'react-router-prop-types';
 
 import FormNav from './FormNav';
-import { PaddedRow, TitleLabel, SectionHeader } from '../shared/Layout';
+import { PaddedRow, TitleLabel, SectionHeader, SectionWrapper, ContentWrapper } from '../shared/Layout';
 import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
 import {
   setDidClickNav,
@@ -89,67 +89,68 @@ class ComplainantInfoView extends React.Component {
     } = this.state;
 
     return (
-      <div>
+      <SectionWrapper>
         { !isInReview() ? <SectionHeader>Complainant</SectionHeader> : null}
-
-        <PaddedRow>
-          <Col lg={12}>
-            <FormGroup
-                validationState={bootstrapValidation(
-                  input.complainantName,
-                  complainantNameValid,
-                  true,
-                  didClickNav
-                )}>
-              <TitleLabel>28. Complainant Name (Last, First, MI)*</TitleLabel>
+        <ContentWrapper>
+          <PaddedRow>
+            <Col lg={12}>
+              <FormGroup
+                  validationState={bootstrapValidation(
+                    input.complainantName,
+                    complainantNameValid,
+                    true,
+                    didClickNav
+                  )}>
+                <TitleLabel>28. Complainant Name (Last, First, MI)*</TitleLabel>
+                <FormControl
+                    data-section={section}
+                    name="complainantName"
+                    value={input.complainantName}
+                    onChange={(e) => {
+                      handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
+                    }}
+                    disabled={isInReview()} />
+              </FormGroup>
+            </Col>
+          </PaddedRow>
+          <PaddedRow>
+            <Col lg={12}>
+              <TitleLabel>Residence / Address (Street, Apt Number, City, County, State, Zip)</TitleLabel>
               <FormControl
                   data-section={section}
-                  name="complainantName"
-                  value={input.complainantName}
+                  name="complainantAddress"
+                  value={input.complainantAddress}
                   onChange={(e) => {
                     handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                   }}
                   disabled={isInReview()} />
-            </FormGroup>
-          </Col>
-        </PaddedRow>
-        <PaddedRow>
-          <Col lg={12}>
-            <TitleLabel>Residence / Address (Street, Apt Number, City, County, State, Zip)</TitleLabel>
-            <FormControl
-                data-section={section}
-                name="complainantAddress"
-                value={input.complainantAddress}
-                onChange={(e) => {
-                  handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
-                }}
-                disabled={isInReview()} />
-          </Col>
-        </PaddedRow>
-        <PaddedRow>
-          <Col lg={6}>
-            <TitleLabel>Relationship to Consumer</TitleLabel>
-            <FormControl
-                data-section={section}
-                name="complainantConsumerRelationship"
-                value={input.complainantConsumerRelationship}
-                onChange={(e) => {
-                  handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
-                }}
-                disabled={isInReview()} />
-          </Col>
-          <Col lg={6}>
-            <TitleLabel>Phone Number</TitleLabel>
-            <FormControl
-                data-section={section}
-                name="complainantPhone"
-                value={input.complainantPhone}
-                onChange={(e) => {
-                  handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
-                }}
-                disabled={isInReview()} />
-          </Col>
-        </PaddedRow>
+            </Col>
+          </PaddedRow>
+          <PaddedRow>
+            <Col lg={6}>
+              <TitleLabel>Relationship to Consumer</TitleLabel>
+              <FormControl
+                  data-section={section}
+                  name="complainantConsumerRelationship"
+                  value={input.complainantConsumerRelationship}
+                  onChange={(e) => {
+                    handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
+                  }}
+                  disabled={isInReview()} />
+            </Col>
+            <Col lg={6}>
+              <TitleLabel>Phone Number</TitleLabel>
+              <FormControl
+                  data-section={section}
+                  name="complainantPhone"
+                  value={input.complainantPhone}
+                  onChange={(e) => {
+                    handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
+                  }}
+                  disabled={isInReview()} />
+            </Col>
+          </PaddedRow>
+        </ContentWrapper>
 
         {
           !isInReview()
@@ -162,7 +163,7 @@ class ComplainantInfoView extends React.Component {
             : null
         }
         { renderErrors(sectionFormatErrors, sectionRequiredErrors, didClickNav) }
-      </div>
+      </SectionWrapper>
     );
   }
 }
