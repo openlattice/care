@@ -12,20 +12,24 @@ import OpenLatticeLogo from '../../assets/images/logo.png';
 // injected by Webpack.DefinePlugin
 declare var __AUTH0_CLIENT_ID__;
 declare var __AUTH0_DOMAIN__;
-declare var __DEV__;
+// declare var __DEV__;
 
 let auth0HashPath :?string;
 
 // TODO: this doesn't belong here
 const allowedConnections :string[] = [
-  'BaltimorePD'
+  'BaltimorePD',
+  'Username-Password-Authentication',
+  'google-oauth2'
 ];
 
+/*
 if (__DEV__) {
   allowedConnections.push(
     'Username-Password-Authentication'
   );
 }
+*/
 
 /*
  * https://auth0.com/docs/libraries/lock/v10
