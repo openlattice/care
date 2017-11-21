@@ -40,11 +40,9 @@ class ConsumerInfoView extends React.Component {
     super(props);
 
     this.state = {
-      requiredFields: ['firstName', 'lastName', 'identification'],
+      requiredFields: ['identification'],
       sectionFormatErrors: [],
       sectionRequiredErrors: [],
-      firstNameValid: true,
-      lastNameValid: true,
       identificationValid: true,
       ageValid: true,
       dobValid: true,
@@ -218,8 +216,6 @@ class ConsumerInfoView extends React.Component {
 
     const {
       didClickNav,
-      firstNameValid,
-      lastNameValid,
       identificationValid,
       ageValid,
       dobValid,
@@ -233,41 +229,26 @@ class ConsumerInfoView extends React.Component {
         <ContentWrapper>
           <PaddedRow>
             <Col lg={6}>
-              <FormGroup
-                  validationState={bootstrapValidation(
-                    input.lastName,
-                    lastNameValid,
-                    true,
-                    didClickNav
-                  )}>
-                <TitleLabel>12. Last Name*</TitleLabel>
-                <FormControl
-                    data-section={section}
-                    name="lastName"
-                    value={input.lastName}
-                    onChange={(e) => {
-                      handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
-                    }}
-                    disabled={consumerIsSelected || isInReview()} />
-              </FormGroup>
+              <TitleLabel>12. Last Name</TitleLabel>
+              <FormControl
+                  data-section={section}
+                  name="lastName"
+                  value={input.lastName}
+                  onChange={(e) => {
+                    handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
+                  }}
+                  disabled={consumerIsSelected || isInReview()} />
             </Col>
             <Col lg={6}>
-              <FormGroup
-                  validationState={bootstrapValidation(
-                    input.firstName,
-                    firstNameValid,
-                    true,
-                    didClickNav)}>
-                <TitleLabel>First Name*</TitleLabel>
-                <FormControl
-                    data-section={section}
-                    name="firstName"
-                    value={input.firstName}
-                    onChange={(e) => {
-                      handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
-                    }}
-                    disabled={consumerIsSelected || isInReview()} />
-              </FormGroup>
+              <TitleLabel>First Name</TitleLabel>
+              <FormControl
+                  data-section={section}
+                  name="firstName"
+                  value={input.firstName}
+                  onChange={(e) => {
+                    handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
+                  }}
+                  disabled={consumerIsSelected || isInReview()} />
             </Col>
           </PaddedRow>
 

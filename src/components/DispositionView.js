@@ -30,11 +30,9 @@ class DispositionView extends React.Component {
     super(props);
 
     this.state = {
-      requiredFields: ['disposition', 'incidentNarrative'],
+      requiredFields: [],
       sectionFormatErrors: [],
       sectionRequiredErrors: [FORM_ERRORS.IS_REQUIRED],
-      dispositionValid: true,
-      incidentNarrativeValid: true,
       sectionValid: false,
       didClickNav: this.props.location.state
         ? this.props.location.state.didClickNav
@@ -99,8 +97,6 @@ class DispositionView extends React.Component {
     } = this.props;
 
     const {
-      dispositionValid,
-      incidentNarrativeValid,
       didClickNav,
       sectionFormatErrors,
       sectionRequiredErrors
@@ -112,87 +108,79 @@ class DispositionView extends React.Component {
         <ContentWrapper>
           <PaddedRow>
             <Col lg={12}>
-              <TitleLabel>29. Disposition*</TitleLabel>
-              <FormGroup
-                  validationState={bootstrapValidation(
-                    input.disposition,
-                    dispositionValid,
-                    true,
-                    didClickNav
-                  )}>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="disposition"
-                    value="arrest"
-                    checked={input.disposition.indexOf('arrest') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isInReview()}>Arrest</InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="disposition"
-                    value="ep"
-                    checked={input.disposition.indexOf('ep') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isInReview()}>EP</InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="disposition"
-                    value="voluntaryER"
-                    checked={input.disposition.indexOf('voluntaryER') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isInReview()}>Voluntary ER Intake</InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="disposition"
-                    value="bcri"
-                    checked={input.disposition.indexOf('bcri') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isInReview()}>BCRI</InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="disposition"
-                    value="infoAndReferral"
-                    checked={input.disposition.indexOf('infoAndReferral') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isInReview()}>Information and Referral</InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="disposition"
-                    value="lead"
-                    checked={input.disposition.indexOf('lead') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isInReview()}>LEAD</InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="disposition"
-                    value="contactedTreatementProvider"
-                    checked={input.disposition.indexOf('contactedTreatementProvider') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isInReview()}>Contacted or Referred to Current Treatment Provider</InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="disposition"
-                    value="criminalCitation"
-                    checked={input.disposition.indexOf('criminalCitation') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isInReview()}>Criminal Citation</InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="disposition"
-                    value="civilCitation"
-                    checked={input.disposition.indexOf('civilCitation') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isInReview()}>Civil Citation</InlineCheckbox>
-              </FormGroup>
+              <TitleLabel>29. Disposition</TitleLabel>
+              <InlineCheckbox
+                  inline
+                  data-section={section}
+                  name="disposition"
+                  value="arrest"
+                  checked={input.disposition.indexOf('arrest') !== -1}
+                  onChange={handleCheckboxChange}
+                  disabled={isInReview()}>Arrest</InlineCheckbox>
+              <InlineCheckbox
+                  inline
+                  data-section={section}
+                  name="disposition"
+                  value="ep"
+                  checked={input.disposition.indexOf('ep') !== -1}
+                  onChange={handleCheckboxChange}
+                  disabled={isInReview()}>EP</InlineCheckbox>
+              <InlineCheckbox
+                  inline
+                  data-section={section}
+                  name="disposition"
+                  value="voluntaryER"
+                  checked={input.disposition.indexOf('voluntaryER') !== -1}
+                  onChange={handleCheckboxChange}
+                  disabled={isInReview()}>Voluntary ER Intake</InlineCheckbox>
+              <InlineCheckbox
+                  inline
+                  data-section={section}
+                  name="disposition"
+                  value="bcri"
+                  checked={input.disposition.indexOf('bcri') !== -1}
+                  onChange={handleCheckboxChange}
+                  disabled={isInReview()}>BCRI</InlineCheckbox>
+              <InlineCheckbox
+                  inline
+                  data-section={section}
+                  name="disposition"
+                  value="infoAndReferral"
+                  checked={input.disposition.indexOf('infoAndReferral') !== -1}
+                  onChange={handleCheckboxChange}
+                  disabled={isInReview()}>Information and Referral</InlineCheckbox>
+              <InlineCheckbox
+                  inline
+                  data-section={section}
+                  name="disposition"
+                  value="lead"
+                  checked={input.disposition.indexOf('lead') !== -1}
+                  onChange={handleCheckboxChange}
+                  disabled={isInReview()}>LEAD</InlineCheckbox>
+              <InlineCheckbox
+                  inline
+                  data-section={section}
+                  name="disposition"
+                  value="contactedTreatementProvider"
+                  checked={input.disposition.indexOf('contactedTreatementProvider') !== -1}
+                  onChange={handleCheckboxChange}
+                  disabled={isInReview()}>Contacted or Referred to Current Treatment Provider</InlineCheckbox>
+              <InlineCheckbox
+                  inline
+                  data-section={section}
+                  name="disposition"
+                  value="criminalCitation"
+                  checked={input.disposition.indexOf('criminalCitation') !== -1}
+                  onChange={handleCheckboxChange}
+                  disabled={isInReview()}>Criminal Citation</InlineCheckbox>
+              <InlineCheckbox
+                  inline
+                  data-section={section}
+                  name="disposition"
+                  value="civilCitation"
+                  checked={input.disposition.indexOf('civilCitation') !== -1}
+                  onChange={handleCheckboxChange}
+                  disabled={isInReview()}>Civil Citation</InlineCheckbox>
             </Col>
           </PaddedRow>
 
@@ -371,29 +359,21 @@ class DispositionView extends React.Component {
 
           <PaddedRow>
             <Col lg={12}>
-              <FormGroup
-                  validationState={bootstrapValidation(
-                    input.incidentNarrative,
-                    incidentNarrativeValid,
-                    true,
-                    didClickNav
-                  )}>
-                <TitleLabel>
-                  {
-                    `32. Narrative of Incident, to include: Results of investigation, basis for
-                    actions taken, emotional states, additional witnesses. Property listing.*`
-                  }
-                </TitleLabel>
-                <FormControl
-                    data-section={section}
-                    name="incidentNarrative"
-                    componentClass="textarea"
-                    value={input.incidentNarrative}
-                    onChange={(e) => {
-                      handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
-                    }}
-                    disabled={isInReview()} />
-              </FormGroup>
+              <TitleLabel>
+                {
+                  `32. Narrative of Incident, to include: Results of investigation, basis for
+                  actions taken, emotional states, additional witnesses. Property listing.`
+                }
+              </TitleLabel>
+              <FormControl
+                  data-section={section}
+                  name="incidentNarrative"
+                  componentClass="textarea"
+                  value={input.incidentNarrative}
+                  onChange={(e) => {
+                    handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
+                  }}
+                  disabled={isInReview()} />
             </Col>
           </PaddedRow>
         </ContentWrapper>

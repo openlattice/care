@@ -28,10 +28,9 @@ class OfficerInfoView extends React.Component {
     super(props);
 
     this.state = {
-      requiredFields: ['officerName'],
+      requiredFields: [],
       sectionFormatErrors: [],
       sectionRequiredErrors: [FORM_ERRORS.IS_REQUIRED],
-      officerNameValid: true,
       officerSeqIDValid: true,
       sectionValid: false,
       didClickNav: this.props.location.state
@@ -106,23 +105,15 @@ class OfficerInfoView extends React.Component {
         <ContentWrapper>
           <PaddedRow>
             <Col lg={12}>
-              <FormGroup
-                  validationState={bootstrapValidation(
-                    input.officerName,
-                    officerNameValid,
-                    true,
-                    didClickNav
-                  )}>
-                <TitleLabel>33. Officer Name*</TitleLabel>
-                <FormControl
-                    data-section={section}
-                    name="officerName"
-                    value={input.officerName}
-                    onChange={(e) => {
-                      handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
-                    }}
-                    disabled={isInReview()} />
-              </FormGroup>
+              <TitleLabel>33. Officer Name</TitleLabel>
+              <FormControl
+                  data-section={section}
+                  name="officerName"
+                  value={input.officerName}
+                  onChange={(e) => {
+                    handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
+                  }}
+                  disabled={isInReview()} />
             </Col>
           </PaddedRow>
 
