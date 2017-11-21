@@ -3,9 +3,7 @@ import validator from 'validator';
 import {
   FORM_ERRORS,
   INT_16_MAX_VALUE,
-  INT_16_MIN_VALUE,
-  INT_64_MAX_VALUE,
-  INT_64_MIN_VALUE
+  INT_16_MIN_VALUE
 } from './Consts';
 
 // Used for bootstrap input components. If error, input will show in red.
@@ -33,12 +31,13 @@ export const validateOnInput = (
   switch (fieldType) {
     case 'int16': {
       const idx = formatErrors.indexOf(FORM_ERRORS.INVALID_FORMAT);
-      const isValid = validator.isInt(input, {
-        max: INT_16_MAX_VALUE,
-        min: INT_16_MIN_VALUE
-      });
 
       try {
+        const isValid = validator.isInt(input, {
+          max: INT_16_MAX_VALUE,
+          min: INT_16_MIN_VALUE
+        });
+
         if (!isValid) {
           inputValid = false;
           if (idx === -1) {
@@ -60,12 +59,13 @@ export const validateOnInput = (
 
     case 'int64': {
       const idx = formatErrors.indexOf(FORM_ERRORS.INVALID_FORMAT);
-      const isValid = validator.isInt(input, {
-        max: Number.MAX_SAFE_INTEGER,
-        min: Number.MIN_SAFE_INTEGER
-      });
 
       try {
+        const isValid = validator.isInt(input, {
+          max: Number.MAX_SAFE_INTEGER,
+          min: Number.MIN_SAFE_INTEGER
+        });
+
         if (!isValid) {
           inputValid = false;
           if (idx === -1) {
@@ -87,9 +87,10 @@ export const validateOnInput = (
 
     case 'alphanumeric': {
       const idx = formatErrors.indexOf(FORM_ERRORS.INVALID_FORMAT);
-      const isValid = validator.isAlphanumeric(input);
 
       try {
+        const isValid = validator.isAlphanumeric(input);
+
         if (!isValid) {
           inputValid = false;
           if (idx === -1) {
@@ -112,12 +113,13 @@ export const validateOnInput = (
     case 'date': {
       const idx = formatErrors.indexOf(FORM_ERRORS.INVALID_FORMAT);
       const currentDate = (new Date()).toISOString();
-      const isValid = (
-        validator.isISO8601(input)
-          && validator.isBefore(input, currentDate)
-        ) || input === '';
 
       try {
+        const isValid = (
+          validator.isISO8601(input)
+            && validator.isBefore(input, currentDate)
+          ) || input === '';
+
         if (!isValid) {
           inputValid = false;
           if (idx === -1) {
