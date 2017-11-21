@@ -61,8 +61,8 @@ export const validateOnInput = (
     case 'int64': {
       const idx = formatErrors.indexOf(FORM_ERRORS.INVALID_FORMAT);
       const isValid = validator.isInt(input, {
-        max: INT_64_MAX_VALUE,
-        min: INT_64_MIN_VALUE
+        max: Number.MAX_SAFE_INTEGER,
+        min: Number.MIN_SAFE_INTEGER
       });
 
       try {

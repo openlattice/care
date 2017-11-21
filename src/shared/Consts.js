@@ -112,6 +112,3 @@ export const MAX_PAGE = 7;
 
 export const INT_16_MAX_VALUE = 32767;
 export const INT_16_MIN_VALUE =  -32768;
-
-export const INT_64_MAX_VALUE = 9223372036854775807;
-export const INT_64_MIN_VALUE = -9223372036854775808;
