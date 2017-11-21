@@ -38,20 +38,26 @@ export const validateOnInput = (
         min: INT_16_MIN_VALUE
       });
 
-      if (input && !isValid) {
-        inputValid = false;
-        if (idx === -1) {
-          formatErrors.push(FORM_ERRORS.INVALID_FORMAT);
+      try {
+        if (!isValid) {
+          inputValid = false;
+          if (idx === -1) {
+            formatErrors.push(FORM_ERRORS.INVALID_FORMAT);
+          }
+        }
+        else {
+          inputValid = true;
+          if (idx !== -1) {
+            formatErrors.splice(idx);
+          }
         }
       }
-      else {
-        inputValid = true;
-        if (idx !== -1) {
-          formatErrors.splice(idx);
-        }
+      catch(err) {
+        // do something
       }
       break;
     }
+
     case 'int64': {
       const idx = formatErrors.indexOf(FORM_ERRORS.INVALID_FORMAT);
       const isValid = validator.isInt(input, {
@@ -59,58 +65,76 @@ export const validateOnInput = (
         min: INT_64_MIN_VALUE
       });
 
-      if (input && !isValid) {
-        inputValid = false;
-        if (idx === -1) {
-          formatErrors.push(FORM_ERRORS.INVALID_FORMAT);
+      try {
+        if (!isValid) {
+          inputValid = false;
+          if (idx === -1) {
+            formatErrors.push(FORM_ERRORS.INVALID_FORMAT);
+          }
+        }
+        else {
+          inputValid = true;
+          if (idx !== -1) {
+            formatErrors.splice(idx);
+          }
         }
       }
-      else {
-        inputValid = true;
-        if (idx !== -1) {
-          formatErrors.splice(idx);
-        }
+      catch(err) {
+        // do something
       }
       break;
     }
+
     case 'alphanumeric': {
       const idx = formatErrors.indexOf(FORM_ERRORS.INVALID_FORMAT);
-      const valid = validator.isAlphanumeric(input);
+      const isValid = validator.isAlphanumeric(input);
 
-      if (input && !valid) {
-        inputValid = false;
-        if (idx === -1) {
-          formatErrors.push(FORM_ERRORS.INVALID_FORMAT);
+      try {
+        if (!isValid) {
+          inputValid = false;
+          if (idx === -1) {
+            formatErrors.push(FORM_ERRORS.INVALID_FORMAT);
+          }
+        }
+        else {
+          inputValid = true;
+          if (idx !== -1) {
+            formatErrors.splice(idx);
+          }
         }
       }
-      else {
-        inputValid = true;
-        if (idx !== -1) {
-          formatErrors.splice(idx);
-        }
+      catch(err) {
+        // do something
       }
       break;
     }
+
     case 'date': {
       const idx = formatErrors.indexOf(FORM_ERRORS.INVALID_FORMAT);
       const currentDate = (new Date()).toISOString();
-      const validDate = validator.isISO8601(input)
+      const isValid = validator.isISO8601(input)
         && validator.isBefore(input, currentDate);
 
-      if (input && !validDate) {
-        inputValid = false;
-        if (idx === -1) {
-          formatErrors.push(FORM_ERRORS.INVALID_FORMAT);
+      try {
+        if (!isValid) {
+          inputValid = false;
+          if (idx === -1) {
+            formatErrors.push(FORM_ERRORS.INVALID_FORMAT);
+          }
+        }
+        else {
+          inputValid = true;
+          if (idx !== -1) {
+            formatErrors.splice(idx);
+          }
         }
       }
-      else {
-        inputValid = true;
-        if (idx !== -1) {
-          formatErrors.splice(idx);
-        }
+      catch(err) {
+        // do something
       }
       break;
     }
+
     default:
       break;
   }
