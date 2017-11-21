@@ -123,7 +123,7 @@ class OfficerInfoView extends React.Component {
                   validationState={bootstrapValidation(
                     input.officerSeqID,
                     officerSeqIDValid,
-                    true,
+                    false,
                     didClickNav
                   )}>
                 <TitleLabel>34. Seq ID</TitleLabel>
