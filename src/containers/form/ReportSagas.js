@@ -3,6 +3,7 @@
  */
 
 import Immutable from 'immutable';
+import isError from 'lodash/isError';
 import { Models } from 'lattice';
 import { push } from 'react-router-redux';
 import { all, call, put, takeEvery } from 'redux-saga/effects';
@@ -188,6 +189,7 @@ export function* submitReportWorker(action :SequenceAction) :Generator<*, *, *> 
   try {
     yield put(submitReport.request());
 
+    let anyErrors :boolean = false;
     const { FORM, PEOPLE, APPEARS_IN } = ENTITY_SET_NAMES;
     const {
       complainantInfo,
@@ -223,8 +225,19 @@ export function* submitReportWorker(action :SequenceAction) :Generator<*, *, *> 
       [appearsInESId]: call(fetchCurrentSyncIdWorker, fetchCurrentSyncId({ entitySetId: appearsInESId }))
     });
 
+    // !!! HACK !!! - quick fix
+    Object.keys(syncIds).forEach((entitySetId :string) => {
+      if (isError(syncIds[entitySetId])) {
+        anyErrors = true;
+      }
+    });
+
+    if (anyErrors) {
+      throw new Error();
+    }
+
     // 2. acquire sync tickets
-    const ticketIds :Object = yield all([
+    const ticketIds :string[] = yield all([
       call(
         acquireSyncTicketWorker,
         acquireSyncTicket({ entitySetId: reportESId, syncId: syncIds[reportESId] })
@@ -239,6 +252,17 @@ export function* submitReportWorker(action :SequenceAction) :Generator<*, *, *> 
       )
     ]);
 
+    // !!! HACK !!! - quick fix
+    ticketIds.forEach((ticketId) => {
+      if (isError(ticketId)) {
+        anyErrors = true;
+      }
+    });
+
+    if (anyErrors) {
+      throw new Error();
+    }
+
     // 3. prepare entity data for submission
     const reportData :Object = prepReportEntityData(syncIds[reportESId], reportES, allInfo);
     const peopleData :Object = prepPeopleEntityData(syncIds[peopleESId], peopleES, consumerInfo);
@@ -251,7 +275,7 @@ export function* submitReportWorker(action :SequenceAction) :Generator<*, *, *> 
     );
 
     // 4. write entity data
-    yield call(
+    const response = yield call(
       createEntityAndAssociationDataWorker,
       createEntityAndAssociationData({
         associations: [appearsInData],
@@ -259,6 +283,11 @@ export function* submitReportWorker(action :SequenceAction) :Generator<*, *, *> 
         syncTickets: ticketIds
       })
     );
+
+    // !!! HACK !!! - quick fix
+    if (isError(response)) {
+      throw new Error();
+    }
 
     yield put(submitReport.success());
   }

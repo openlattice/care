@@ -23,15 +23,6 @@ const fetchEntitySet :RequestSequence = newRequestSequence(FETCH_ENTITY_SET);
 const FETCH_ENTITY_SET_ID :'FETCH_ENTITY_SET_ID' = 'FETCH_ENTITY_SET_ID';
 const fetchEntitySetId :RequestSequence = newRequestSequence(FETCH_ENTITY_SET_ID);
 
-const FETCH_ENTITY_TYPE :'FETCH_ENTITY_TYPE' = 'FETCH_ENTITY_TYPE';
-const fetchEntityType :RequestSequence = newRequestSequence(FETCH_ENTITY_TYPE);
-
-const FETCH_PROPERTY_TYPE :'FETCH_PROPERTY_TYPE' = 'FETCH_PROPERTY_TYPE';
-const fetchPropertyType :RequestSequence = newRequestSequence(FETCH_PROPERTY_TYPE);
-
-const FETCH_PROPERTY_TYPES :'FETCH_PROPERTY_TYPES' = 'FETCH_PROPERTY_TYPES';
-const fetchPropertyTypes :RequestSequence = newRequestSequence(FETCH_PROPERTY_TYPES);
-
 export {
   ACQUIRE_SYNC_TICKET,
   CREATE_ENTITY_AND_ASSOCIATION_DATA,
@@ -39,16 +30,10 @@ export {
   FETCH_EDM_PROJECTION,
   FETCH_ENTITY_SET,
   FETCH_ENTITY_SET_ID,
-  FETCH_ENTITY_TYPE,
-  FETCH_PROPERTY_TYPE,
-  FETCH_PROPERTY_TYPES,
   acquireSyncTicket,
   createEntityAndAssociationData,
   fetchCurrentSyncId,
   fetchEntityDataModelProjection,
   fetchEntitySet,
-  fetchEntitySetId,
-  fetchEntityType,
-  fetchPropertyType,
-  fetchPropertyTypes
+  fetchEntitySetId
 };
