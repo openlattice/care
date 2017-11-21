@@ -18,21 +18,24 @@ import { MAX_PAGE } from '../shared/Consts';
 import {
   Page,
   PageHeader,
+  TitleWrapper,
   Title,
   FormWrapper
 } from '../shared/Layout';
 
 const StyledProgressBar = styled(ProgressBar)`
-  position: relative;
-  top: 90px;
-  left: 50%;
   width: 900px;
-  margin-left: -450px;
+  margin-bottom: 50px;
+`;
+
+const LogoWrapper = styled.span`
+  align-items: center;
+  display: flex;
+  flex: 1;
+  justify-content: flex-start;
 `;
 
 const Logo = styled.img`
-  position: absolute;
-  left: 50px;
 `;
 
 function FormView({
@@ -52,7 +55,8 @@ function FormView({
   handlePageChange,
   handlePersonSelection,
   personEntitySetId,
-  consumerIsSelected
+  consumerIsSelected,
+  renderModal
 }) {
 
   const getProgress = () => {
@@ -160,8 +164,12 @@ function FormView({
   return (
     <Page>
       <PageHeader>
-        <Logo src={OpenLatticeLogo} height="50" />
-        <Title>Behavioral Health Report</Title>
+        <LogoWrapper>
+          <Logo src={OpenLatticeLogo} height="50" />
+        </LogoWrapper>
+        <TitleWrapper>
+          <Title>Behavioral Health Report</Title>
+        </TitleWrapper>
         <LogoutButton />
       </PageHeader>
       <StyledProgressBar bsStyle="info" now={getProgress().num} label={getProgress().percentage} />
@@ -179,6 +187,7 @@ function FormView({
           </Switch>
         </form>
       </FormWrapper>
+      { renderModal() }
     </Page>
   );
 }

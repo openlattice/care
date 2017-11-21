@@ -9,7 +9,7 @@ import ComplainantInfoView from './ComplainantInfoView';
 import DispositionView from './DispositionView';
 import OfficerInfoView from './OfficerInfoView';
 import FormNav from './FormNav';
-import { SectionHeader } from '../shared/Layout';
+import { SectionWrapper, ContentWrapper, SectionHeader } from '../shared/Layout';
 import { FORM_PATHS } from '../shared/Consts';
 
 const SectionHeaderWrapper = styled.div`
@@ -50,10 +50,10 @@ const ReviewView = ({
 }) => {
 
   return (
-    <div>
-      <div>
-        <SectionHeader>Review</SectionHeader>
+    <SectionWrapper>
+      <SectionHeader>Review</SectionHeader>
 
+      <ContentWrapper>
         <Section>
           <SectionHeaderWrapper>
             <SectionTitle>Report Info</SectionTitle>
@@ -124,11 +124,11 @@ const ReviewView = ({
               handlePageChange={handlePageChange}
               section="officerInfo" />
         </Section>
+      </ContentWrapper>
 
-        <FormNav submit handlePageChange={handlePageChange} />
-      </div>
+      <FormNav submit handlePageChange={handlePageChange} />
 
-    </div>
+    </SectionWrapper>
   );
 };
 

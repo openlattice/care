@@ -7,7 +7,14 @@ import { withRouter } from 'react-router';
 import ReactRouterPropTypes from 'react-router-prop-types';
 
 import FormNav from './FormNav';
-import { TitleLabel, InlineRadio, PaddedRow, SectionHeader } from '../shared/Layout';
+import {
+  TitleLabel,
+  InlineRadio,
+  PaddedRow,
+  SectionWrapper,
+  ContentWrapper,
+  SectionHeader
+} from '../shared/Layout';
 import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
 import {
   setDidClickNav,
@@ -119,277 +126,279 @@ class ReportInfoView extends React.Component {
     } = this.state;
 
     return (
-      <div>
+      <SectionWrapper>
         { !isInReview() ? <SectionHeader>Report Info</SectionHeader> : null}
-        <PaddedRow>
-          <Col lg={6}>
-            <TitleLabel>1. Primary Reason for Dispatch</TitleLabel>
-            <FormControl
-                data-section={section}
-                name="dispatchReason"
-                value={input.dispatchReason}
-                onChange={(e) => {
-                  handleTextInput(
-                    e,
-                    'string',
-                    sectionFormatErrors,
-                    this.setInputErrors
-                  );
-                }}
-                disabled={isInReview()} />
-          </Col>
-          <Col lg={6}>
-            <FormGroup
-                validationState={bootstrapValidation(
-                  input.complaintNumber,
-                  complaintNumberValid,
-                  true,
-                  didClickNav
-                )}>
-              <TitleLabel>2. Complaint Number*</TitleLabel>
+        <ContentWrapper>
+          <PaddedRow>
+            <Col lg={6}>
+              <TitleLabel>1. Primary Reason for Dispatch</TitleLabel>
               <FormControl
                   data-section={section}
-                  name="complaintNumber"
-                  value={input.complaintNumber}
+                  name="dispatchReason"
+                  value={input.dispatchReason}
                   onChange={(e) => {
                     handleTextInput(
                       e,
-                      'int64',
+                      'string',
                       sectionFormatErrors,
                       this.setInputErrors
                     );
                   }}
                   disabled={isInReview()} />
-            </FormGroup>
-          </Col>
-        </PaddedRow>
+            </Col>
+            <Col lg={6}>
+              <FormGroup
+                  validationState={bootstrapValidation(
+                    input.complaintNumber,
+                    complaintNumberValid,
+                    true,
+                    didClickNav
+                  )}>
+                <TitleLabel>2. Complaint Number*</TitleLabel>
+                <FormControl
+                    data-section={section}
+                    name="complaintNumber"
+                    value={input.complaintNumber}
+                    onChange={(e) => {
+                      handleTextInput(
+                        e,
+                        'int64',
+                        sectionFormatErrors,
+                        this.setInputErrors
+                      );
+                    }}
+                    disabled={isInReview()} />
+              </FormGroup>
+            </Col>
+          </PaddedRow>
 
-        <PaddedRow>
-          <Col lg={6}>
-            <TitleLabel>3. Companion Offense Report Prepared</TitleLabel>
-            <InlineRadio
-                inline
-                data-section={section}
-                name="companionOffenseReport"
-                value
-                checked={input.companionOffenseReport}
-                onChange={handleSingleSelection}
-                disabled={isInReview()}>Yes
-            </InlineRadio>
-            <InlineRadio
-                inline
-                data-section={section}
-                name="companionOffenseReport"
-                value={false}
-                checked={!input.companionOffenseReport}
-                onChange={handleSingleSelection}
-                disabled={isInReview()}>No
-            </InlineRadio>
-          </Col>
-          <Col lg={6}>
-            <TitleLabel>4. Crime / Incident</TitleLabel>
-            <FormControl
-                data-section={section}
-                name="incident"
-                value={input.incident}
-                onChange={(e) => {
-                  handleTextInput(
-                    e,
-                    'string',
-                    sectionFormatErrors,
-                    this.setInputErrors
-                  );
-                }}
-                disabled={isInReview()} />
-          </Col>
-        </PaddedRow>
-
-        <PaddedRow>
-          <Col lg={12}>
-            <TitleLabel>5. Location of Offense / Incident</TitleLabel>
-            <FormControl
-                data-section={section}
-                name="locationOfIncident"
-                value={input.locationOfIncident}
-                onChange={(e) => {
-                  handleTextInput(
-                    e,
-                    'string',
-                    sectionFormatErrors,
-                    this.setInputErrors
-                  );
-                }}
-                disabled={isInReview()} />
-          </Col>
-        </PaddedRow>
-
-        <PaddedRow>
-          <Col lg={6}>
-            <FormGroup
-                validationState={bootstrapValidation(
-                  input.unit,
-                  unitValid,
-                  true,
-                  didClickNav
-                )}>
-              <TitleLabel>6. Unit</TitleLabel>
+          <PaddedRow>
+            <Col lg={6}>
+              <TitleLabel>3. Companion Offense Report Prepared</TitleLabel>
+              <InlineRadio
+                  inline
+                  data-section={section}
+                  name="companionOffenseReport"
+                  value
+                  checked={input.companionOffenseReport}
+                  onChange={handleSingleSelection}
+                  disabled={isInReview()}>Yes
+              </InlineRadio>
+              <InlineRadio
+                  inline
+                  data-section={section}
+                  name="companionOffenseReport"
+                  value={false}
+                  checked={!input.companionOffenseReport}
+                  onChange={handleSingleSelection}
+                  disabled={isInReview()}>No
+              </InlineRadio>
+            </Col>
+            <Col lg={6}>
+              <TitleLabel>4. Crime / Incident</TitleLabel>
               <FormControl
                   data-section={section}
-                  name="unit"
-                  value={input.unit}
+                  name="incident"
+                  value={input.incident}
                   onChange={(e) => {
                     handleTextInput(
                       e,
-                      'alphanumeric',
+                      'string',
                       sectionFormatErrors,
                       this.setInputErrors
                     );
                   }}
                   disabled={isInReview()} />
-            </FormGroup>
-          </Col>
-          <Col lg={6}>
-            <FormGroup
-                validationState={bootstrapValidation(
-                  input.postOfOccurrence,
-                  postOfOccurrenceValid,
-                  true,
-                  didClickNav
-                )}>
-              <TitleLabel>7. Post of Occurrence</TitleLabel>
+            </Col>
+          </PaddedRow>
+
+          <PaddedRow>
+            <Col lg={12}>
+              <TitleLabel>5. Location of Offense / Incident</TitleLabel>
               <FormControl
                   data-section={section}
-                  name="postOfOccurrence"
-                  value={input.postOfOccurrence}
+                  name="locationOfIncident"
+                  value={input.locationOfIncident}
                   onChange={(e) => {
                     handleTextInput(
                       e,
-                      'int16',
+                      'string',
                       sectionFormatErrors,
                       this.setInputErrors
                     );
                   }}
                   disabled={isInReview()} />
-            </FormGroup>
-          </Col>
-        </PaddedRow>
+            </Col>
+          </PaddedRow>
 
-        <PaddedRow>
-          <Col lg={6}>
-            <FormGroup
-                validationState={bootstrapValidation(
-                  input.cadNumber,
-                  cadNumberValid,
-                  false,
-                  didClickNav
-                )}>
-              <TitleLabel>8. CAD Number</TitleLabel>
-              <FormControl
+          <PaddedRow>
+            <Col lg={6}>
+              <FormGroup
+                  validationState={bootstrapValidation(
+                    input.unit,
+                    unitValid,
+                    true,
+                    didClickNav
+                  )}>
+                <TitleLabel>6. Unit</TitleLabel>
+                <FormControl
+                    data-section={section}
+                    name="unit"
+                    value={input.unit}
+                    onChange={(e) => {
+                      handleTextInput(
+                        e,
+                        'alphanumeric',
+                        sectionFormatErrors,
+                        this.setInputErrors
+                      );
+                    }}
+                    disabled={isInReview()} />
+              </FormGroup>
+            </Col>
+            <Col lg={6}>
+              <FormGroup
+                  validationState={bootstrapValidation(
+                    input.postOfOccurrence,
+                    postOfOccurrenceValid,
+                    true,
+                    didClickNav
+                  )}>
+                <TitleLabel>7. Post of Occurrence</TitleLabel>
+                <FormControl
+                    data-section={section}
+                    name="postOfOccurrence"
+                    value={input.postOfOccurrence}
+                    onChange={(e) => {
+                      handleTextInput(
+                        e,
+                        'int16',
+                        sectionFormatErrors,
+                        this.setInputErrors
+                      );
+                    }}
+                    disabled={isInReview()} />
+              </FormGroup>
+            </Col>
+          </PaddedRow>
+
+          <PaddedRow>
+            <Col lg={6}>
+              <FormGroup
+                  validationState={bootstrapValidation(
+                    input.cadNumber,
+                    cadNumberValid,
+                    false,
+                    didClickNav
+                  )}>
+                <TitleLabel>8. CAD Number</TitleLabel>
+                <FormControl
+                    data-section={section}
+                    name="cadNumber"
+                    value={input.cadNumber}
+                    onChange={(e) => {
+                      handleTextInput(
+                        e,
+                        'int16',
+                        sectionFormatErrors,
+                        this.setInputErrors
+                      );
+                    }}
+                    disabled={isInReview()} />
+              </FormGroup>
+            </Col>
+            <Col lg={6}>
+              <TitleLabel>9. On View</TitleLabel>
+              <InlineRadio
+                  inline
                   data-section={section}
-                  name="cadNumber"
-                  value={input.cadNumber}
-                  onChange={(e) => {
-                    handleTextInput(
-                      e,
-                      'int16',
-                      sectionFormatErrors,
-                      this.setInputErrors
-                    );
-                  }}
-                  disabled={isInReview()} />
-            </FormGroup>
-          </Col>
-          <Col lg={6}>
-            <TitleLabel>9. On View</TitleLabel>
-            <InlineRadio
-                inline
-                data-section={section}
-                name="onView"
-                value
-                checked={input.onView}
-                onChange={handleSingleSelection}
-                disabled={isInReview()}>Yes
-            </InlineRadio>
-            <InlineRadio
-                inline
-                data-section={section}
-                name="onView"
-                value={false}
-                checked={!input.onView}
-                onChange={handleSingleSelection}
-                disabled={isInReview()}>No
-            </InlineRadio>
-          </Col>
-        </PaddedRow>
+                  name="onView"
+                  value
+                  checked={input.onView}
+                  onChange={handleSingleSelection}
+                  disabled={isInReview()}>Yes
+              </InlineRadio>
+              <InlineRadio
+                  inline
+                  data-section={section}
+                  name="onView"
+                  value={false}
+                  checked={!input.onView}
+                  onChange={handleSingleSelection}
+                  disabled={isInReview()}>No
+              </InlineRadio>
+            </Col>
+          </PaddedRow>
 
-        <PaddedRow>
-          <Col lg={6}>
-            <FormGroup
-                validationState={bootstrapValidation(
-                  input.dateOccurred,
-                  dateOccurredValid,
-                  false,
-                  didClickNav
-                )}>
-              <TitleLabel>10. Date Occurred</TitleLabel>
-              <DatePicker
-                  value={input.dateOccurred}
+          <PaddedRow>
+            <Col lg={6}>
+              <FormGroup
+                  validationState={bootstrapValidation(
+                    input.dateOccurred,
+                    dateOccurredValid,
+                    false,
+                    didClickNav
+                  )}>
+                <TitleLabel>10. Date Occurred</TitleLabel>
+                <DatePicker
+                    value={input.dateOccurred}
+                    onChange={(e) => {
+                      handleDateInput(
+                        e,
+                        section,
+                        'dateOccurred',
+                        sectionFormatErrors,
+                        this.setInputErrors
+                      );
+                    }}
+                    disabled={isInReview()} />
+              </FormGroup>
+            </Col>
+            <Col lg={6}>
+              <TitleLabel>Time Occurred</TitleLabel>
+              <TimePicker
+                  value={input.timeOccurred}
                   onChange={(e) => {
-                    handleDateInput(
-                      e,
-                      section,
-                      'dateOccurred',
-                      sectionFormatErrors,
-                      this.setInputErrors
-                    );
+                    handleTimeInput(e, section, 'timeOccurred');
                   }}
                   disabled={isInReview()} />
-            </FormGroup>
-          </Col>
-          <Col lg={6}>
-            <TitleLabel>Time Occurred</TitleLabel>
-            <TimePicker
-                value={input.timeOccurred}
-                onChange={(e) => {
-                  handleTimeInput(e, section, 'timeOccurred');
-                }}
-                disabled={isInReview()} />
-          </Col>
-        </PaddedRow>
+            </Col>
+          </PaddedRow>
 
-        <PaddedRow>
-          <Col lg={6}>
-            <FormGroup
-                validationState={bootstrapValidation(
-                  input.dateReported,
-                  dateReportedValid,
-                  false,
-                  didClickNav
-                )}>
-              <TitleLabel>11. Date Reported</TitleLabel>
-              <DatePicker
-                  value={input.dateReported}
+          <PaddedRow>
+            <Col lg={6}>
+              <FormGroup
+                  validationState={bootstrapValidation(
+                    input.dateReported,
+                    dateReportedValid,
+                    false,
+                    didClickNav
+                  )}>
+                <TitleLabel>11. Date Reported</TitleLabel>
+                <DatePicker
+                    value={input.dateReported}
+                    onChange={(e) => {
+                      handleDateInput(
+                        e,
+                        section,
+                        'dateReported',
+                        sectionFormatErrors,
+                        this.setInputErrors);
+                    }}
+                    disabled={isInReview()} />
+              </FormGroup>
+            </Col>
+            <Col lg={6}>
+              <TitleLabel>Time Reported</TitleLabel>
+              <TimePicker
+                  value={input.timeReported}
                   onChange={(e) => {
-                    handleDateInput(
-                      e,
-                      section,
-                      'dateReported',
-                      sectionFormatErrors,
-                      this.setInputErrors);
+                    handleTimeInput(e, section, 'timeReported');
                   }}
                   disabled={isInReview()} />
-            </FormGroup>
-          </Col>
-          <Col lg={6}>
-            <TitleLabel>Time Reported</TitleLabel>
-            <TimePicker
-                value={input.timeReported}
-                onChange={(e) => {
-                  handleTimeInput(e, section, 'timeReported');
-                }}
-                disabled={isInReview()} />
-          </Col>
-        </PaddedRow>
+            </Col>
+          </PaddedRow>
+        </ContentWrapper>
         {
           !isInReview()
             ? (
@@ -402,7 +411,7 @@ class ReportInfoView extends React.Component {
             : null
         }
         { renderErrors(sectionFormatErrors, sectionRequiredErrors, didClickNav) }
-      </div>
+      </SectionWrapper>
     );
   }
 }
