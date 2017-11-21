@@ -13,10 +13,14 @@ import { bindActionCreators } from 'redux';
 
 import { logout } from '../../core/auth/AuthActionFactory';
 
+const StyledLogoutButtonWrapper = styled.span`
+  align-items: center;
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
+`;
+
 const StyledLogoutButton = styled(Button)`
-  position: absolute;
-  top: 30px;
-  right: 60px;
 `;
 
 function mapDispatchToProps(dispatch :Function) {
@@ -32,7 +36,9 @@ function mapDispatchToProps(dispatch :Function) {
 
 const LogoutButton = ({ actions }) => {
   return (
-    <StyledLogoutButton onClick={actions.logout}>Logout</StyledLogoutButton>
+    <StyledLogoutButtonWrapper>
+      <StyledLogoutButton onClick={actions.logout}>Logout</StyledLogoutButton>
+    </StyledLogoutButtonWrapper>
   );
 };
 

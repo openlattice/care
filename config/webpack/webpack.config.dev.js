@@ -17,7 +17,7 @@ export default function devWebpackConfig(env :Object) {
 
   const baseConfig :Object = baseWebpackConfig(env);
 
-  const DEV_SERVER_PORT = 9000;
+  const DEV_SERVER_PORT = 9001;
 
   const entry = [
     APP_PATHS.ABS.APP_ENTRY
@@ -31,6 +31,7 @@ export default function devWebpackConfig(env :Object) {
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NamedModulesPlugin(),
     new HtmlWebpackPlugin({
+      favicon: `${APP_PATHS.ABS.SOURCE_ASSETS_IMAGES}/favicon.png`,
       inject: true,
       template: `${APP_PATHS.ABS.SOURCE}/${APP_CONFIG.APP_INDEX_HTML}`
     }),

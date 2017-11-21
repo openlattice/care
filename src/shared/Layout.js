@@ -1,33 +1,47 @@
-import React from 'react';
 import styled from 'styled-components';
-import { FormGroup, ControlLabel, Checkbox, Radio, Button, Row } from 'react-bootstrap';
-import { FLEX } from './Consts';
+import { ControlLabel, Checkbox, Radio, Button, Row } from 'react-bootstrap';
+
 
 export const Page = styled.div`
-  background: #F4F4F4;
+  background: #393F46;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100%;
+  width: 100%;
 `;
 
 export const PageHeader = styled.div`
-  padding: 60px;
+  align-items: center;
   background: white;
   border-bottom: 1px solid darkgray;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  height: 100px;
+  margin-bottom: 100px;
+  padding: 20px 55px;
+  width: 100%;
+`;
+
+export const TitleWrapper = styled.span`
+  align-items: center;
+  display: flex;
+  flex: 1;
+  justify-content: center;
 `;
 
 export const Title = styled.h1`
-  text-align: center;
   color: #37454A;
-  font-size: 40px;
-`;
-
-export const Description = styled.div`
-  text-align: center;
-  font-size: 24px;
-  color: #37454A;
+  font-size: 20px;
+  font-weight: bold;
 `;
 
 export const FormWrapper = styled.div`
-  margin: 0 60px 0 60px;
-  padding-bottom: 100px;
+  padding: 60px;
+  width: 900px;
+  margin-bottom: 100px;
+  background: #F4F4F4;
 `;
 
 export const PaddedRow = styled(Row)`
@@ -44,15 +58,9 @@ export const TitleLabel = Label.extend`
   line-height: 1.5;
 `;
 
-export const InputWrapper = styled(({ flex, children, ...rest }) => {
-  return (
-    <FormGroup {...rest}>{children}</FormGroup>
-  );
-})`
-  padding-right: 30px;
-  flex: ${(props) => {
-    return props.flex || FLEX.COL_1_3;
-  }};
+export const LabelDescription = Label.extend`
+  color: light-gray;
+  font-size: 12px;
 `;
 
 export const OtherWrapper = styled.span`
@@ -84,6 +92,40 @@ export const SubmitButton = styled(Button).attrs({
   type: (props) => {
     return props.type || 'submit';
   }
-})`
+})``;
 
+export const SectionWrapper = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+`;
+
+export const ContentWrapper = styled.div`
+  width: 100%;
+`;
+
+export const SectionHeader = styled.div`
+  font-size: 32px;
+  margin-bottom: 40px;
+  color: #37454A;
+  font-weight: bold;
+  width: 100%;
+  text-align: center;
+`;
+
+export const NavBtnWrapper = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 300px;
+  text-align: center;
+`;
+
+export const StyledButton = styled(Button)`
+  margin: 0 10px;
+`;
+
+export const ErrorMessage = styled.div`
+  color: rgb(169, 68, 66);
 `;
