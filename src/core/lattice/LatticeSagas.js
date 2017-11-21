@@ -25,6 +25,7 @@ import type { SequenceAction } from '../redux/RequestSequence';
 /*
  * TODO: how do we define more specific types for these actions?
  * TODO: "import type" for lattice-js
+ * TODO: need a better pattern for errors. perhaps the response object should contain "data" or "error"?
  */
 
 /*
