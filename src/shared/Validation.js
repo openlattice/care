@@ -53,7 +53,7 @@ export const validateOnInput = (
         }
       }
       catch(err) {
-        // do something
+        inputValid = false;
       }
       break;
     }
@@ -80,7 +80,7 @@ export const validateOnInput = (
         }
       }
       catch(err) {
-        // do something
+        inputValid = false;
       }
       break;
     }
@@ -104,7 +104,7 @@ export const validateOnInput = (
         }
       }
       catch(err) {
-        // do something
+        inputValid = false;
       }
       break;
     }
@@ -130,7 +130,7 @@ export const validateOnInput = (
         }
       }
       catch(err) {
-        // do something
+        inputValid = false;
       }
       break;
     }
