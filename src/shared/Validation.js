@@ -1,6 +1,12 @@
 import validator from 'validator';
 
-import { FORM_ERRORS } from './Consts';
+import {
+  FORM_ERRORS,
+  INT_16_MAX_VALUE,
+  INT_16_MIN_VALUE,
+  INT_64_MAX_VALUE,
+  INT_64_MIN_VALUE
+} from './Consts';
 
 // Used for bootstrap input components. If error, input will show in red.
 export const bootstrapValidation = (input, valid, required, didClickNav) => {
@@ -27,14 +33,12 @@ export const validateOnInput = (
   switch (fieldType) {
     case 'int16': {
       const idx = formatErrors.indexOf(FORM_ERRORS.INVALID_FORMAT);
-      const validInt = validator.isInt(input);
+      const isValid = validator.isInt(input, {
+        max: INT_16_MAX_VALUE,
+        min: INT_16_MIN_VALUE
+      });
 
-      let validIntType = true;
-      if (parseInt(input, 10) < -32768 || parseInt(input, 10) > 32767) {
-        validIntType = false;
-      }
-
-      if ((input && !validInt) || (input && !validIntType)) {
+      if (input && !isValid) {
         inputValid = false;
         if (idx === -1) {
           formatErrors.push(FORM_ERRORS.INVALID_FORMAT);
@@ -50,17 +54,12 @@ export const validateOnInput = (
     }
     case 'int64': {
       const idx = formatErrors.indexOf(FORM_ERRORS.INVALID_FORMAT);
-      const validInt = validator.isInt(input);
+      const isValid = validator.isInt(input, {
+        max: INT_64_MAX_VALUE,
+        min: INT_64_MIN_VALUE
+      });
 
-      let validIntType = true;
-      if (
-        parseInt(input, 10) < -9223372036854775808
-          || parseInt(input, 10) > 9223372036854775807
-      ) {
-        validIntType = false;
-      }
-
-      if ((input && !validInt) || (input && !validIntType)) {
+      if (input && !isValid) {
         inputValid = false;
         if (idx === -1) {
           formatErrors.push(FORM_ERRORS.INVALID_FORMAT);
