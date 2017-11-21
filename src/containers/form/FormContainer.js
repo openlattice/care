@@ -126,7 +126,15 @@ class Form extends React.Component<Props, State> {
   handleSingleSelection = (e) => {
     const sectionKey = e.target.dataset.section;
     const sectionState = this.state[sectionKey];
-    sectionState[e.target.name] = e.target.value;
+    if (e.target.value === 'true') {
+      sectionState[e.target.name] = true;
+    }
+    else if (e.target.value === 'false') {
+      sectionState[e.target.name] = false;
+    }
+    else {
+      sectionState[e.target.name] = e.target.value;
+    }
     this.setState({ [sectionKey]: sectionState });
   }
 
