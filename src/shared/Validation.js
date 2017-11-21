@@ -1,6 +1,10 @@
 import validator from 'validator';
 
-import { FORM_ERRORS } from './Consts';
+import {
+  FORM_ERRORS,
+  INT_16_MAX_VALUE,
+  INT_16_MIN_VALUE
+} from './Consts';
 
 // Used for bootstrap input components. If error, input will show in red.
 export const bootstrapValidation = (input, valid, required, didClickNav) => {
@@ -27,91 +31,114 @@ export const validateOnInput = (
   switch (fieldType) {
     case 'int16': {
       const idx = formatErrors.indexOf(FORM_ERRORS.INVALID_FORMAT);
-      const validInt = validator.isInt(input);
 
-      let validIntType = true;
-      if (parseInt(input, 10) < -32768 || parseInt(input, 10) > 32767) {
-        validIntType = false;
+      try {
+        const isValid = validator.isInt(input, {
+          max: INT_16_MAX_VALUE,
+          min: INT_16_MIN_VALUE
+        });
+
+        if (!isValid) {
+          inputValid = false;
+          if (idx === -1) {
+            formatErrors.push(FORM_ERRORS.INVALID_FORMAT);
+          }
+        }
+        else {
+          inputValid = true;
+          if (idx !== -1) {
+            formatErrors.splice(idx);
+          }
+        }
       }
-
-      if ((input && !validInt) || (input && !validIntType)) {
+      catch(err) {
         inputValid = false;
-        if (idx === -1) {
-          formatErrors.push(FORM_ERRORS.INVALID_FORMAT);
-        }
-      }
-      else {
-        inputValid = true;
-        if (idx !== -1) {
-          formatErrors.splice(idx);
-        }
       }
       break;
     }
+
     case 'int64': {
       const idx = formatErrors.indexOf(FORM_ERRORS.INVALID_FORMAT);
-      const validInt = validator.isInt(input);
 
-      let validIntType = true;
-      if (
-        parseInt(input, 10) < -9223372036854775808
-          || parseInt(input, 10) > 9223372036854775807
-      ) {
-        validIntType = false;
+      try {
+        const isValid = validator.isInt(input, {
+          max: Number.MAX_SAFE_INTEGER,
+          min: Number.MIN_SAFE_INTEGER
+        });
+
+        if (!isValid) {
+          inputValid = false;
+          if (idx === -1) {
+            formatErrors.push(FORM_ERRORS.INVALID_FORMAT);
+          }
+        }
+        else {
+          inputValid = true;
+          if (idx !== -1) {
+            formatErrors.splice(idx);
+          }
+        }
       }
-
-      if ((input && !validInt) || (input && !validIntType)) {
+      catch(err) {
         inputValid = false;
-        if (idx === -1) {
-          formatErrors.push(FORM_ERRORS.INVALID_FORMAT);
-        }
-      }
-      else {
-        inputValid = true;
-        if (idx !== -1) {
-          formatErrors.splice(idx);
-        }
       }
       break;
     }
+
     case 'alphanumeric': {
       const idx = formatErrors.indexOf(FORM_ERRORS.INVALID_FORMAT);
-      const valid = validator.isAlphanumeric(input);
 
-      if (input && !valid) {
-        inputValid = false;
-        if (idx === -1) {
-          formatErrors.push(FORM_ERRORS.INVALID_FORMAT);
+      try {
+        const isValid = validator.isAlphanumeric(input);
+
+        if (!isValid) {
+          inputValid = false;
+          if (idx === -1) {
+            formatErrors.push(FORM_ERRORS.INVALID_FORMAT);
+          }
+        }
+        else {
+          inputValid = true;
+          if (idx !== -1) {
+            formatErrors.splice(idx);
+          }
         }
       }
-      else {
-        inputValid = true;
-        if (idx !== -1) {
-          formatErrors.splice(idx);
-        }
+      catch(err) {
+        inputValid = false;
       }
       break;
     }
+
     case 'date': {
       const idx = formatErrors.indexOf(FORM_ERRORS.INVALID_FORMAT);
       const currentDate = (new Date()).toISOString();
-      const validDate = validator.isISO8601(input)
-        && validator.isBefore(input, currentDate);
 
-      if (input && !validDate) {
-        inputValid = false;
-        if (idx === -1) {
-          formatErrors.push(FORM_ERRORS.INVALID_FORMAT);
+      try {
+        const isValid = (
+          validator.isISO8601(input)
+            && validator.isBefore(input, currentDate)
+          ) || input === '';
+
+        if (!isValid) {
+          inputValid = false;
+          if (idx === -1) {
+            formatErrors.push(FORM_ERRORS.INVALID_FORMAT);
+          }
+        }
+        else {
+          inputValid = true;
+          if (idx !== -1) {
+            formatErrors.splice(idx);
+          }
         }
       }
-      else {
-        inputValid = true;
-        if (idx !== -1) {
-          formatErrors.splice(idx);
-        }
+      catch(err) {
+        inputValid = false;
       }
       break;
     }
+
     default:
       break;
   }

@@ -47,6 +47,7 @@ class ConsumerInfoView extends React.Component {
       lastNameValid: true,
       identificationValid: true,
       ageValid: true,
+      dobValid: true,
       sectionValid: false,
       didClickNav: this.props.location.state
         ? this.props.location.state.didClickNav
@@ -221,6 +222,7 @@ class ConsumerInfoView extends React.Component {
       lastNameValid,
       identificationValid,
       ageValid,
+      dobValid,
       sectionFormatErrors,
       sectionRequiredErrors
     } = this.state;
@@ -424,13 +426,27 @@ class ConsumerInfoView extends React.Component {
               </FormGroup>
             </Col>
             <Col lg={6}>
-              <TitleLabel>DOB</TitleLabel>
-              <DatePicker
-                  value={input.dob}
-                  onChange={(e) => {
-                    handleDateInput(e, section, 'dob');
-                  }}
-                  disabled={consumerIsSelected || isInReview()} />
+              <FormGroup
+                  validationState={bootstrapValidation(
+                    input.dob,
+                    dobValid,
+                    false,
+                    didClickNav
+                  )}>
+                <TitleLabel>DOB</TitleLabel>
+                <DatePicker
+                    value={input.dob}
+                    onChange={(e) => {
+                      handleDateInput(
+                        e,
+                        section,
+                        'dob',
+                        sectionFormatErrors,
+                        this.setInputErrors
+                      );
+                    }}
+                    disabled={consumerIsSelected || isInReview()} />
+              </FormGroup>
             </Col>
           </PaddedRow>
 

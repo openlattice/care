@@ -87,7 +87,6 @@ class Form extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-
     this.props.actions.loadDataModel();
   }
 
@@ -102,8 +101,8 @@ class Form extends React.Component<Props, State> {
   }
 
   handleDateInput = (e, section, name, formatErrors, setErrorsFn) => {
-    let input = e;
-    input = input.replace(/T(.*)$/g, 'T00:00:00.000Z');
+    let input = e || '';
+    input = input.slice(0, 10);
     const sectionState = this.state[section];
     sectionState[name] = input;
     this.setState({ [section]: sectionState });

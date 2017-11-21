@@ -109,3 +109,6 @@ export const STATES = [
 ];
 
 export const MAX_PAGE = 7;
+
+export const INT_16_MAX_VALUE = 32767;
+export const INT_16_MIN_VALUE =  -32768;
