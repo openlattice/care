@@ -23,6 +23,9 @@ const fetchEntitySet :RequestSequence = newRequestSequence(FETCH_ENTITY_SET);
 const FETCH_ENTITY_SET_ID :'FETCH_ENTITY_SET_ID' = 'FETCH_ENTITY_SET_ID';
 const fetchEntitySetId :RequestSequence = newRequestSequence(FETCH_ENTITY_SET_ID);
 
+const NO_OP :'NO_OP' = 'NO_OP';
+const noop :RequestSequence = newRequestSequence(NO_OP);
+
 export {
   ACQUIRE_SYNC_TICKET,
   CREATE_ENTITY_AND_ASSOCIATION_DATA,
@@ -30,10 +33,12 @@ export {
   FETCH_EDM_PROJECTION,
   FETCH_ENTITY_SET,
   FETCH_ENTITY_SET_ID,
+  NO_OP,
   acquireSyncTicket,
   createEntityAndAssociationData,
   fetchCurrentSyncId,
   fetchEntityDataModelProjection,
   fetchEntitySet,
-  fetchEntitySetId
+  fetchEntitySetId,
+  noop
 };
