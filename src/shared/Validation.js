@@ -38,7 +38,7 @@ export const validateOnInput = (
           min: INT_16_MIN_VALUE
         });
 
-        if (!isValid) {
+        if (input && !isValid) {
           inputValid = false;
           if (idx === -1) {
             formatErrors.push(FORM_ERRORS.INVALID_FORMAT);
@@ -66,7 +66,7 @@ export const validateOnInput = (
           min: Number.MIN_SAFE_INTEGER
         });
 
-        if (!isValid) {
+        if (input && !isValid) {
           inputValid = false;
           if (idx === -1) {
             formatErrors.push(FORM_ERRORS.INVALID_FORMAT);
@@ -91,7 +91,7 @@ export const validateOnInput = (
       try {
         const isValid = validator.isAlphanumeric(input);
 
-        if (!isValid) {
+        if (input && !isValid) {
           inputValid = false;
           if (idx === -1) {
             formatErrors.push(FORM_ERRORS.INVALID_FORMAT);
@@ -120,7 +120,7 @@ export const validateOnInput = (
             && validator.isBefore(input, currentDate)
           ) || input === '';
 
-        if (!isValid) {
+        if (input && !isValid) {
           inputValid = false;
           if (idx === -1) {
             formatErrors.push(FORM_ERRORS.INVALID_FORMAT);
