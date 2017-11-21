@@ -124,15 +124,16 @@ class OfficerInfoView extends React.Component {
                 validationState={bootstrapValidation(
                   input.officerSeqID,
                   officerSeqIDValid,
-                  false,
-                  didClickNav)}>
+                  true,
+                  didClickNav
+                )}>
               <TitleLabel>34. Seq ID</TitleLabel>
               <FormControl
                   data-section={section}
                   name="officerSeqID"
                   value={input.officerSeqID}
                   onChange={(e) => {
-                    handleTextInput(e, 'number', sectionFormatErrors, this.setInputErrors);
+                    handleTextInput(e, 'alphanumeric', sectionFormatErrors, this.setInputErrors);
                   }}
                   disabled={isInReview()} />
             </FormGroup>

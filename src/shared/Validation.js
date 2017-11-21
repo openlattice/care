@@ -1,6 +1,10 @@
 import validator from 'validator';
 
-import { FORM_ERRORS } from './Consts';
+import {
+  FORM_ERRORS,
+  INT_16_MAX_VALUE,
+  INT_16_MIN_VALUE
+} from './Consts';
 
 // Used for bootstrap input components. If error, input will show in red.
 export const bootstrapValidation = (input, valid, required, didClickNav) => {
@@ -25,22 +29,116 @@ export const validateOnInput = (
   const formatErrors = sectionFormatErrors.slice();
 
   switch (fieldType) {
-    case 'number': {
+    case 'int16': {
       const idx = formatErrors.indexOf(FORM_ERRORS.INVALID_FORMAT);
-      if (input && !validator.isInt(input)) {
-        inputValid = false;
-        if (idx === -1) {
-          formatErrors.push(FORM_ERRORS.INVALID_FORMAT);
+
+      try {
+        const isValid = validator.isInt(input, {
+          max: INT_16_MAX_VALUE,
+          min: INT_16_MIN_VALUE
+        });
+
+        if (!isValid) {
+          inputValid = false;
+          if (idx === -1) {
+            formatErrors.push(FORM_ERRORS.INVALID_FORMAT);
+          }
+        }
+        else {
+          inputValid = true;
+          if (idx !== -1) {
+            formatErrors.splice(idx);
+          }
         }
       }
-      else {
-        inputValid = true;
-        if (idx !== -1) {
-          formatErrors.splice(idx);
-        }
+      catch(err) {
+        inputValid = false;
       }
       break;
     }
+
+    case 'int64': {
+      const idx = formatErrors.indexOf(FORM_ERRORS.INVALID_FORMAT);
+
+      try {
+        const isValid = validator.isInt(input, {
+          max: Number.MAX_SAFE_INTEGER,
+          min: Number.MIN_SAFE_INTEGER
+        });
+
+        if (!isValid) {
+          inputValid = false;
+          if (idx === -1) {
+            formatErrors.push(FORM_ERRORS.INVALID_FORMAT);
+          }
+        }
+        else {
+          inputValid = true;
+          if (idx !== -1) {
+            formatErrors.splice(idx);
+          }
+        }
+      }
+      catch(err) {
+        inputValid = false;
+      }
+      break;
+    }
+
+    case 'alphanumeric': {
+      const idx = formatErrors.indexOf(FORM_ERRORS.INVALID_FORMAT);
+
+      try {
+        const isValid = validator.isAlphanumeric(input);
+
+        if (!isValid) {
+          inputValid = false;
+          if (idx === -1) {
+            formatErrors.push(FORM_ERRORS.INVALID_FORMAT);
+          }
+        }
+        else {
+          inputValid = true;
+          if (idx !== -1) {
+            formatErrors.splice(idx);
+          }
+        }
+      }
+      catch(err) {
+        inputValid = false;
+      }
+      break;
+    }
+
+    case 'date': {
+      const idx = formatErrors.indexOf(FORM_ERRORS.INVALID_FORMAT);
+      const currentDate = (new Date()).toISOString();
+
+      try {
+        const isValid = (
+          validator.isISO8601(input)
+            && validator.isBefore(input, currentDate)
+          ) || input === '';
+
+        if (!isValid) {
+          inputValid = false;
+          if (idx === -1) {
+            formatErrors.push(FORM_ERRORS.INVALID_FORMAT);
+          }
+        }
+        else {
+          inputValid = true;
+          if (idx !== -1) {
+            formatErrors.splice(idx);
+          }
+        }
+      }
+      catch(err) {
+        inputValid = false;
+      }
+      break;
+    }
+
     default:
       break;
   }
