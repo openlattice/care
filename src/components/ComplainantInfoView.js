@@ -21,10 +21,9 @@ class ComplainantInfoView extends React.Component {
     super(props);
 
     this.state = {
-      requiredFields: ['complainantName'],
+      requiredFields: [],
       sectionFormatErrors: [],
       sectionRequiredErrors: [FORM_ERRORS.IS_REQUIRED],
-      complainantNameValid: true,
       sectionValid: false,
       didClickNav: this.props.location.state
         ? this.props.location.state.didClickNav
@@ -94,23 +93,15 @@ class ComplainantInfoView extends React.Component {
         <ContentWrapper>
           <PaddedRow>
             <Col lg={12}>
-              <FormGroup
-                  validationState={bootstrapValidation(
-                    input.complainantName,
-                    complainantNameValid,
-                    true,
-                    didClickNav
-                  )}>
-                <TitleLabel>28. Complainant Name (Last, First, MI)*</TitleLabel>
-                <FormControl
-                    data-section={section}
-                    name="complainantName"
-                    value={input.complainantName}
-                    onChange={(e) => {
-                      handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
-                    }}
-                    disabled={isInReview()} />
-              </FormGroup>
+              <TitleLabel>28. Complainant Name (Last, First, MI)</TitleLabel>
+              <FormControl
+                  data-section={section}
+                  name="complainantName"
+                  value={input.complainantName}
+                  onChange={(e) => {
+                    handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
+                  }}
+                  disabled={isInReview()} />
             </Col>
           </PaddedRow>
           <PaddedRow>

@@ -30,12 +30,13 @@ class ReportInfoView extends React.Component {
     super(props);
 
     this.state = {
-      requiredFields: ['complaintNumber'],
+      requiredFields: ['dateOccurred', 'dateReported', 'complaintNumber', 'incident'],
       sectionFormatErrors: [],
       sectionRequiredErrors: [FORM_ERRORS.IS_REQUIRED],
       sectionErrors: [],
       postOfOccurrenceValid: true,
       complaintNumberValid: true,
+      incidentValid: true,
       cadNumberValid: true,
       dateOccurredValid: true,
       dateReportedValid: true,
@@ -116,6 +117,7 @@ class ReportInfoView extends React.Component {
     const {
       postOfOccurrenceValid,
       complaintNumberValid,
+      incidentValid,
       cadNumberValid,
       dateOccurredValid,
       dateReportedValid,
@@ -195,20 +197,28 @@ class ReportInfoView extends React.Component {
               </InlineRadio>
             </Col>
             <Col lg={6}>
-              <TitleLabel>4. Crime / Incident</TitleLabel>
-              <FormControl
-                  data-section={section}
-                  name="incident"
-                  value={input.incident}
-                  onChange={(e) => {
-                    handleTextInput(
-                      e,
-                      'string',
-                      sectionFormatErrors,
-                      this.setInputErrors
-                    );
-                  }}
-                  disabled={isInReview()} />
+              <FormGroup
+                  validationState={bootstrapValidation(
+                    input.incident,
+                    incidentValid,
+                    true,
+                    didClickNav
+                  )}>
+                <TitleLabel>4. Crime / Incident*</TitleLabel>
+                <FormControl
+                    data-section={section}
+                    name="incident"
+                    value={input.incident}
+                    onChange={(e) => {
+                      handleTextInput(
+                        e,
+                        'string',
+                        sectionFormatErrors,
+                        this.setInputErrors
+                      );
+                    }}
+                    disabled={isInReview()} />
+              </FormGroup>
             </Col>
           </PaddedRow>
 
@@ -237,7 +247,7 @@ class ReportInfoView extends React.Component {
                   validationState={bootstrapValidation(
                     input.unit,
                     unitValid,
-                    true,
+                    false,
                     didClickNav
                   )}>
                 <TitleLabel>6. Unit</TitleLabel>
@@ -261,7 +271,7 @@ class ReportInfoView extends React.Component {
                   validationState={bootstrapValidation(
                     input.postOfOccurrence,
                     postOfOccurrenceValid,
-                    true,
+                    false,
                     didClickNav
                   )}>
                 <TitleLabel>7. Post of Occurrence</TitleLabel>
@@ -336,10 +346,10 @@ class ReportInfoView extends React.Component {
                   validationState={bootstrapValidation(
                     input.dateOccurred,
                     dateOccurredValid,
-                    false,
+                    true,
                     didClickNav
                   )}>
-                <TitleLabel>10. Date Occurred</TitleLabel>
+                <TitleLabel>10. Date Occurred*</TitleLabel>
                 <DatePicker
                     value={input.dateOccurred}
                     onChange={(e) => {
@@ -371,10 +381,10 @@ class ReportInfoView extends React.Component {
                   validationState={bootstrapValidation(
                     input.dateReported,
                     dateReportedValid,
-                    false,
+                    true,
                     didClickNav
                   )}>
-                <TitleLabel>11. Date Reported</TitleLabel>
+                <TitleLabel>11. Date Reported*</TitleLabel>
                 <DatePicker
                     value={input.dateReported}
                     onChange={(e) => {
