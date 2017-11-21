@@ -22,15 +22,17 @@ import type { SequenceAction } from '../../core/redux/RequestSequence';
  * helper functions
  */
 
-function matchFetchEntitySetIdSuccess(fetchEntitySetIdAction :SequenceAction) {
+function matchFetchEntitySetIdResponse(fetchEntitySetIdAction :SequenceAction) {
   return (anAction :Object) => {
-    return anAction.type === fetchEntitySetId.SUCCESS && anAction.id === fetchEntitySetIdAction.id;
+    return (anAction.type === fetchEntitySetId.SUCCESS && anAction.id === fetchEntitySetIdAction.id)
+      || (anAction.type === fetchEntitySetId.FAILURE && anAction.id === fetchEntitySetIdAction.id);
   };
 }
 
-function matchFetchProjectionSuccess(fetchProjectionAction :SequenceAction) {
+function matchFetchProjectionResponse(fetchProjectionAction :SequenceAction) {
   return (anAction :Object) => {
-    return anAction.type === fetchEntityDataModelProjection.SUCCESS && anAction.id === fetchProjectionAction.id;
+    return (anAction.type === fetchEntityDataModelProjection.SUCCESS && anAction.id === fetchProjectionAction.id)
+      || (anAction.type === fetchEntityDataModelProjection.FAILURE && anAction.id === fetchProjectionAction.id);
   };
 }
 
@@ -44,6 +46,7 @@ export function* loadDataModelWorker() :Generator<*, *, *> {
 
     yield put(loadDataModel.request());
 
+    let anyErrors :boolean = false;
     const entitySetNames :string[] = [
       ENTITY_SET_NAMES.FORM,
       ENTITY_SET_NAMES.PEOPLE,
@@ -64,16 +67,21 @@ export function* loadDataModelWorker() :Generator<*, *, *> {
 
     // 1.2 collect EntitySet ids
     // TODO: error handling: what if any of these requests fail?
-    const fetchEntitySetIdSuccessActions :SequenceAction[] = yield all(
+    const fetchEntitySetIdResponseActions :SequenceAction[] = yield all(
       fetchEntitySetIdActions.map((fetchEntitySetIdAction :SequenceAction) => {
-        return take(matchFetchEntitySetIdSuccess(fetchEntitySetIdAction));
+        return take(matchFetchEntitySetIdResponse(fetchEntitySetIdAction));
       })
     );
 
     // 1.3 construct EDM projections
-    const projections :Object[][] = fetchEntitySetIdSuccessActions.map((successAction :SequenceAction) => {
+    const projections :Object[][] = fetchEntitySetIdResponseActions.map((responseAction :SequenceAction) => {
+      // !!! HACK !!! - quick fix
+      if (responseAction.data.error !== null && responseAction.data.error !== undefined) {
+        anyErrors = true;
+        return [];
+      }
       return [{
-        id: successAction.data.entitySetId,
+        id: responseAction.data.entitySetId,
         include: [
           'EntitySet',
           'EntityType',
@@ -82,6 +90,11 @@ export function* loadDataModelWorker() :Generator<*, *, *> {
         type: 'EntitySet'
       }];
     });
+
+    // !!! HACK !!! - quick fix
+    if (anyErrors) {
+      throw new Error();
+    }
 
     // 2. get all EntitySet data models
     const fetchProjectionActions :SequenceAction[] = projections.map((projection :Object[]) => {
@@ -97,20 +110,29 @@ export function* loadDataModelWorker() :Generator<*, *, *> {
 
     // 2.2 collect EntitySet data models
     // TODO: error handling: what if any of these requests fail?
-    const fetchProjectionSuccessActions :SequenceAction[] = yield all(
+    const fetchProjectionResponseActions :SequenceAction[] = yield all(
       fetchProjectionActions.map((fetchProjectionAction :SequenceAction) => {
-        return take(matchFetchProjectionSuccess(fetchProjectionAction));
+        return take(matchFetchProjectionResponse(fetchProjectionAction));
       })
     );
 
     // TODO: consider adding checks for the expected structure of the response projection objects... should have
     // "propertyTypes", "entityTypes", and "entitySets" properties, and "entitySets" should contain exactly one
     // property (the EntitySet id corresponding to that projection)
-    const dataModels :Object[] = fetchProjectionSuccessActions.map((successAction :SequenceAction) => {
+    const dataModels :Object[] = fetchProjectionResponseActions.map((responseAction :SequenceAction) => {
+      // !!! HACK !!! - quick fix
+      if (responseAction.data.error !== null && responseAction.data.error !== undefined) {
+        anyErrors = true;
+        return {};
+      }
       return {
-        ...successAction.data.edm
+        ...responseAction.data.edm
       };
     });
+
+    if (anyErrors) {
+      throw new Error();
+    }
 
     yield put(loadDataModel.success({ dataModels }));
   }

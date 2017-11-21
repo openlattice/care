@@ -3,7 +3,7 @@
  */
 
 import { DataApi, EntityDataModelApi, SyncApi } from 'lattice';
-import { all, call, put, takeEvery } from 'redux-saga/effects';
+import { call, put, takeEvery } from 'redux-saga/effects';
 
 import {
   ACQUIRE_SYNC_TICKET,
@@ -12,18 +12,12 @@ import {
   FETCH_EDM_PROJECTION,
   FETCH_ENTITY_SET,
   FETCH_ENTITY_SET_ID,
-  FETCH_ENTITY_TYPE,
-  FETCH_PROPERTY_TYPE,
-  FETCH_PROPERTY_TYPES,
   acquireSyncTicket,
   createEntityAndAssociationData,
   fetchCurrentSyncId,
   fetchEntityDataModelProjection,
   fetchEntitySet,
-  fetchEntitySetId,
-  fetchEntityType,
-  fetchPropertyType,
-  fetchPropertyTypes
+  fetchEntitySetId
 } from './LatticeActionFactory';
 
 import type { SequenceAction } from '../redux/RequestSequence';
@@ -47,6 +41,7 @@ export function* acquireSyncTicketWorker(action :SequenceAction) :Generator<*, *
     yield put(acquireSyncTicket.success({ ticketId: response }));
   }
   catch (error) {
+    response = new Error(); // !!! HACK !!! - quick fix
     yield put(acquireSyncTicket.failure({ error }));
   }
   finally {
@@ -71,6 +66,7 @@ export function* createEntityAndAssociationDataWorker(action :SequenceAction) :G
     yield put(createEntityAndAssociationData.success());
   }
   catch (error) {
+    response = new Error(); // !!! HACK !!! - quick fix
     yield put(createEntityAndAssociationData.failure({ error }));
   }
   finally {
@@ -95,6 +91,7 @@ export function* fetchCurrentSyncIdWorker(action :SequenceAction) :Generator<*, 
     yield put(fetchCurrentSyncId.success({ syncId: response }));
   }
   catch (error) {
+    response = new Error(); // !!! HACK !!! - quick fix
     yield put(fetchCurrentSyncId.failure({ error, entitySetId: action.data.propertyTypeId }));
   }
   finally {
@@ -123,6 +120,7 @@ export function* fetchEntityDataModelProjectionWorker(action :SequenceAction) :G
     yield put(fetchEntityDataModelProjection.success({ edm: response }));
   }
   catch (error) {
+    response = new Error(); // !!! HACK !!! - quick fix
     yield put(fetchEntityDataModelProjection.failure({ error, entitySetId: action.data.entitySetId }));
   }
   finally {
@@ -147,6 +145,7 @@ export function* fetchEntitySetWorker(action :SequenceAction) :Generator<*, *, *
     yield put(fetchEntitySet.success({ entitySet: response }));
   }
   catch (error) {
+    response = new Error();
     yield put(fetchEntitySet.failure({ error, entitySetId: action.data.entitySetId }));
   }
   finally {
@@ -171,6 +170,7 @@ export function* fetchEntitySetIdWorker(action :SequenceAction) :Generator<*, *,
     yield put(fetchEntitySetId.success({ entitySetId: response }));
   }
   catch (error) {
+    response = new Error();
     yield put(fetchEntitySetId.failure({ error, entitySetName: action.data.entitySetName }));
   }
   finally {
@@ -183,80 +183,4 @@ export function* fetchEntitySetIdWorker(action :SequenceAction) :Generator<*, *,
 export function* fetchEntitySetIdWatcher() :Generator<*, *, *> {
 
   yield takeEvery(FETCH_ENTITY_SET_ID, fetchEntitySetIdWorker);
-}
-
-export function* fetchEntityTypeWorker(action :SequenceAction) :Generator<*, *, *> {
-
-  let response :Object = {};
-
-  try {
-    yield put(fetchEntityType.request());
-    response = yield call(EntityDataModelApi.getEntityType, action.data.entityTypeId);
-    yield put(fetchEntityType.success({ entityType: response }));
-  }
-  catch (error) {
-    yield put(fetchEntityType.failure({ error, entityTypeId: action.data.entityTypeId }));
-  }
-  finally {
-    yield put(fetchEntityType.finally());
-  }
-
-  return response;
-}
-
-export function* fetchEntityTypeWatcher() :Generator<*, *, *> {
-
-  yield takeEvery(FETCH_ENTITY_TYPE, fetchEntityTypeWorker);
-}
-
-export function* fetchPropertyTypeWorker(action :SequenceAction) :Generator<*, *, *> {
-
-  let response :Object = {};
-
-  try {
-    yield put(fetchPropertyType.request());
-    response = yield call(EntityDataModelApi.getPropertyType, action.data.propertyTypeId);
-    yield put(fetchPropertyType.success({ propertyType: response }));
-  }
-  catch (error) {
-    yield put(fetchPropertyType.failure({ error, propertyTypeId: action.data.propertyTypeId }));
-  }
-  finally {
-    yield put(fetchPropertyType.finally());
-  }
-
-  return response;
-}
-
-export function* fetchPropertyTypeWatcher() :Generator<*, *, *> {
-
-  yield takeEvery(FETCH_PROPERTY_TYPE, fetchPropertyTypeWorker);
-}
-
-export function* fetchPropertyTypesWorker(action :SequenceAction) :Generator<*, *, *> {
-
-  try {
-    yield put(fetchPropertyTypes.request());
-    const propertyTypeIds :string[] = action.data.propertyTypeIds;
-    const response = yield all(
-      propertyTypeIds.reduce((calls :Object, propertyTypeId :string) => {
-        // TODO: is Object.assign() the right thing to use?
-        return Object.assign(calls, {
-          [propertyTypeId]: call(fetchPropertyTypeWorker, fetchPropertyType({ propertyTypeId }))
-        });
-      }, {})
-    );
-    yield put(fetchPropertyTypes.success({ propertyTypes: response }));
-  }
-  catch (error) {
-    yield put(fetchPropertyTypes.failure({ error, propertyTypeId: action.data.propertyTypeId }));
-  }
-  finally {
-    yield put(fetchPropertyTypes.finally());
-  }
-}
-
-export function* fetchPropertyTypesWatcher() :Generator<*, *, *> {
-
-  yield takeEvery(FETCH_PROPERTY_TYPES, fetchPropertyTypesWorker);
 }

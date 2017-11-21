@@ -28,9 +28,6 @@ export default function* sagas() :Generator<*, *, *> {
     fork(LatticeSagas.fetchEntityDataModelProjectionWatcher),
     fork(LatticeSagas.fetchEntitySetWatcher),
     fork(LatticeSagas.fetchEntitySetIdWatcher),
-    fork(LatticeSagas.fetchEntityTypeWatcher),
-    fork(LatticeSagas.fetchPropertyTypeWatcher),
-    fork(LatticeSagas.fetchPropertyTypesWatcher),
 
     // Report Sagas
     fork(EntitySetsSagas.loadDataModelWatcher),
