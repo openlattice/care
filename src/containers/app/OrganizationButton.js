@@ -3,8 +3,8 @@
  */
 
 import React from 'react';
-
 import PropTypes from 'prop-types';
+import Immutable from 'immutable';
 import styled from 'styled-components';
 
 import { Button, DropdownButton, MenuItem } from 'react-bootstrap';
@@ -16,21 +16,21 @@ const StyledOrganizationButton = styled.div`
 `;
 
 const OrganizationButton = ({ selectedOrganization, organizations, selectOrganization }) => {
-  const organizationOptions = organizations.map((organization) => {
+  const organizationOptions = organizations.valueSeq().map((organization) => {
+    const orgId = organization.get('id');
+    const orgTitle = organization.get('title');
     return (
       <MenuItem
-          key={organization.id}
-          eventKey={organization.id}
+          key={orgId}
+          eventKey={orgId}
           onClick={() => {
-            selectOrganization(organization.id);
+            selectOrganization(orgId);
           }}>
-        {organization.title}
+        {orgTitle}
       </MenuItem>
     );
   });
-  const selectedOrgTitle = organizations.filter((organization) => {
-    return organization.id === selectedOrganization;
-  })[0].title;
+  const selectedOrgTitle = organizations.getIn([selectedOrganization, 'title'], '');
   return (
     <StyledOrganizationButton>
       <DropdownButton
@@ -44,7 +44,7 @@ const OrganizationButton = ({ selectedOrganization, organizations, selectOrganiz
 
 OrganizationButton.propTypes = {
   selectedOrganization: PropTypes.string,
-  organizations: PropTypes.array.isRequired,
+  organizations: PropTypes.instanceOf(Immutable.Map).isRequired,
   selectOrganization: PropTypes.func.isRequired
 };
 

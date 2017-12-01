@@ -1,13 +1,49 @@
+/*
+ * @flow
+ */
+
 import React from 'react';
-import Promise from 'bluebird';
-import { AppApi, EntityDataModelApi, DataApi, SyncApi } from 'lattice';
+
+import Immutable from 'immutable';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router';
+
+import type { Match, RouterHistory } from 'react-router';
 
 import FormView from '../../components/FormView';
 import ConfirmationModal from '../../components/ConfirmationModalView';
-import LogoutButton from '../app/LogoutButton';
-import OrganizationButton from '../app/OrganizationButton';
 
-import * as RoutePaths from '../../core/router/RoutePaths';
+import { validateOnInput } from '../../shared/Validation';
+import { formatTimePickerSeconds } from '../../utils/Utils';
+import { loadApp, selectOrganization } from './AppActionFactory';
+import { hardRestart, submitReport } from './ReportActionFactory';
+import { SUBMISSION_STATES } from './ReportReducer';
+
+import {
+  APP_NAMES,
+  CONSUMER_STATE,
+  ENTITY_SET_NAMES,
+  FORM_PATHS,
+  MAX_PAGE,
+  PERSON
+} from '../../shared/Consts';
+
+import {
+  getComplainantInfoInitialState,
+  getConsumerInfoInitialState,
+  getDispositionInfoInitialState,
+  getOfficerInfoInitialState,
+  getReportInfoInitialState
+} from './DataModelDefinitions';
+
+import type {
+  ComplainantInfo,
+  ConsumerInfo,
+  DispositionInfo,
+  OfficerInfo,
+  ReportInfo
+} from './DataModelDefinitions';
 
 const APP_NAME = 'bhr';
 
@@ -15,204 +51,81 @@ const FORM_CONFIG_TYPE = 'app.bhr';
 const PERSON_CONFIG_TYPE = 'app.people';
 const APPEARS_IN_CONFIG_TYPE = 'app.appearsin';
 
+/*
+ * types
+ */
 
-const ID_FQN = 'nc.SubjectIdentification';
-const FIRST_NAME_FQN = 'nc.PersonGivenName';
-const LAST_NAME_FQN = 'nc.PersonSurName';
-const MIDDLE_NAME_FQN = 'nc.PersonMiddleName';
-const SEX_FQN = 'nc.PersonSex';
-const RACE_FQN = 'nc.PersonRace';
-const DOB_FQN = 'nc.PersonBirthDate';
+type Props = {
+  actions :{
+    hardRestart :() => void;
+    submitReport :(args :Object) => void;
+    loadApp :() => void;
+    selectOrganization :(args :string) => void;
+  };
+  app :Map<*, *>;
+  history :RouterHistory;
+  match :Match;
+  submissionState :number;
+};
 
-const STRING_ID_FQN = 'general.stringid';
+type State = {
+  consumerInfo :ConsumerInfo;
+  complainantInfo :ComplainantInfo;
+  dispositionInfo :DispositionInfo;
+  isConsumerSelected :boolean;
+  officerInfo :OfficerInfo;
+  reportInfo :ReportInfo;
+};
 
-class Form extends React.Component {
-  constructor(props) {
+class Form extends React.Component<Props, State> {
+
+  constructor(props :Props) {
+
     super(props);
 
+    // TODO: fix Flow errors
     this.state = {
-      reportInfo: {
-        dispatchReason: '',
-        complaintNumber: '',
-        companionOffenseReport: null,
-        incident: '',
-        locationOfIncident: '',
-        unit: '',
-        postOfOccurrence: '',
-        cadNumber: '',
-        onView: null,
-        dateOccurred: '',
-        timeOccurred: '',
-        dateReported: '',
-        timeReported: ''
-      },
-      consumerInfo: {
-        firstName: '',
-        lastName: '',
-        middleName: '',
-        address: '',
-        phone: '',
-        identification: '',
-        militaryStatus: null,
-        gender: '',
-        race: '',
-        age: '',
-        dob: '',
-        homeless: null,
-        homelessLocation: '',
-        drugsAlcohol: null,
-        drugType: '',
-        prescribedMedication: null,
-        takingMedication: null,
-        prevPsychAdmission: null,
-        selfDiagnosis: [],
-        selfDiagnosisOther: '',
-        armedWithWeapon: null,
-        armedWeaponType: '',
-        accessToWeapons: null,
-        accessibleWeaponType: '',
-        observedBehaviors: [],
-        observedBehaviorsOther: '',
-        emotionalState: [],
-        emotionalStateOther: '',
-        photosTakenOf: [],
-        injuries: [],
-        injuriesOther: '',
-        suicidal: null,
-        suicidalActions: [],
-        suicideAttemptMethod: [],
-        suicideAttemptMethodOther: ''
-      },
-      complainantInfo: {
-        complainantName: '',
-        complainantAddress: '',
-        complainantConsumerRelationship: '',
-        complainantPhone: ''
-      },
-      dispositionInfo: {
-        disposition: [],
-        hospitalTransport: [],
-        hospital: '',
-        deescalationTechniques: [],
-        deescalationTechniquesOther: '',
-        specializedResourcesCalled: [],
-        incidentNarrative: ''
-      },
-      officerInfo: {
-        officerName: '',
-        officerSeqID: '',
-        officerInjuries: '',
-        officerCertification: []
-      },
-      bhrPropertyTypes: [],
-      personPropertyTypes: [],
-      appearsInPropertyTypes: [],
-      submitSuccess: null,
-      submitFailure: null,
-      configurations: {},
-      selectedOrganizationId: ''
+      complainantInfo: getComplainantInfoInitialState(),
+      consumerInfo: getConsumerInfoInitialState(),
+      dispositionInfo: getDispositionInfoInitialState(),
+      officerInfo: getOfficerInfoInitialState(),
+      reportInfo: getReportInfoInitialState(),
+      isConsumerSelected: false
     };
   }
 
   componentDidMount() {
-    this.getApp();
+    this.props.actions.loadApp();
   }
 
-  getConfigurations = (appId) => {
-    AppApi.getConfigurations(appId).then((configurations) => {
-      const defaultConfig = configurations[0];
-      const selectedOrganizationId = (configurations.length) ? defaultConfig.organization.id : '';
-      this.setState({ configurations, selectedOrganizationId });
-    });
-  }
+  handleTextInput = (e, fieldType, formatErrors, setErrorsFn) => {
 
-  getApp = () => {
-    AppApi.getAppByName(APP_NAME).then((app) => {
-      this.getConfigurations(app.id);
-      AppApi.getAppTypesForAppTypeIds(app.appTypeIds).then((appTypes) => {
-        Object.values(appTypes).forEach((appType) => {
-          const { type, entityTypeId } = appType;
-          const appTypeFqn = `${type.namespace}.${type.name}`;
-          this.getPropertyTypes(entityTypeId).then((propertyTypes) => {
-            switch (appTypeFqn) {
-              case FORM_CONFIG_TYPE:
-                this.setState({ bhrPropertyTypes: propertyTypes });
-                break;
-              case PERSON_CONFIG_TYPE:
-                this.setState({ personPropertyTypes: propertyTypes });
-                break;
-              case APPEARS_IN_CONFIG_TYPE:
-                this.setState({ appearsInPropertyTypes: propertyTypes });
-                break;
-              default:
-                console.error(`Unexpected app type: ${appTypeFqn}`);
-                break;
-            }
-          });
-        });
-      });
-    });
-  }
-
-  getPropertyTypes = (entityTypeId) => {
-    return EntityDataModelApi.getEntityType(entityTypeId)
-      .then((entityType) => {
-        this.setState({ entityType });
-        return Promise.map(entityType.properties, (propertyId) => {
-          return EntityDataModelApi.getPropertyType(propertyId);
-        }).then((propertyTypes) => {
-          return propertyTypes;
-        });
-      });
-  }
-
-  // For text input
-  handleTextInput = (e) => {
     const sectionKey = e.target.dataset.section;
     const name = e.target.name;
     const input = e.target.value;
     const sectionState = this.state[sectionKey];
     sectionState[name] = input;
     this.setState({ [sectionKey]: sectionState });
+    validateOnInput(name, input, fieldType, formatErrors, setErrorsFn);
   }
 
-  handleDateInput = (e, section, name) => {
-    const input = e;
+  handleDateInput = (e, section, name, formatErrors, setErrorsFn) => {
+    let input = e || '';
+    input = input.slice(0, 10);
     const sectionState = this.state[section];
     sectionState[name] = input;
     this.setState({ [section]: sectionState });
+    validateOnInput(name, input, 'date', formatErrors, setErrorsFn);
   }
 
-  formatTime = (seconds) => {
-    let hh = 0;
-    let mm = 0;
-    let ss = seconds;
-
-    while (ss >= 60) {
-      mm++;
-      ss = ss - 60;
-    }
-
-    while (mm >= 60) {
-      hh++;
-      mm = mm - 60;
-    }
-
-    let hhStr = hh.toString();
-    hhStr = hhStr.length === 1 ? '0' + hhStr : hhStr;
-
-    let mmStr = mm.toString();
-    mmStr = mmStr.length === 1 ? '0' + mmStr : mmStr;
-
-    let ssStr = ss.toString();
-    ssStr = ssStr.length === 1 ? '0' + ssStr : ssStr;
-
-    const res = hhStr + ':' + mmStr + ':' + ssStr;
-    return res;
+  handlePicture = (sectionKey, sectionPropertyName, value) => {
+    const sectionState = this.state[sectionKey];
+    sectionState[sectionPropertyName] = value;
+    this.setState({ [sectionKey]: sectionState });
   }
 
   handleTimeInput = (e, section, name) => {
-    const input = this.formatTime(e);
+    const input = formatTimePickerSeconds(e);
     const sectionState = this.state[section];
     sectionState[name] = input;
     this.setState({ [section]: sectionState });
@@ -222,7 +135,15 @@ class Form extends React.Component {
   handleSingleSelection = (e) => {
     const sectionKey = e.target.dataset.section;
     const sectionState = this.state[sectionKey];
-    sectionState[e.target.name] = e.target.value;
+    if (e.target.value === 'true') {
+      sectionState[e.target.name] = true;
+    }
+    else if (e.target.value === 'false') {
+      sectionState[e.target.name] = false;
+    }
+    else {
+      sectionState[e.target.name] = e.target.value;
+    }
     this.setState({ [sectionKey]: sectionState });
   }
 
@@ -239,205 +160,125 @@ class Form extends React.Component {
     this.setState({ [sectionKey]: sectionState });
   }
 
-  getEntities = () => {
-    const formInputs = Object.assign(
-      {},
-      this.state.reportInfo,
-      this.state.consumerInfo,
-      this.state.complainantInfo,
-      this.state.dispositionInfo,
-      this.state.officerInfo
-    );
-
-    const formattedValues = {};
-    this.state.bhrPropertyTypes.forEach((propertyType) => {
-      const value = formInputs[propertyType.type.name];
-      let formattedValue;
-      formattedValue = Array.isArray(value) ? value : [value];
-      formattedValue = (formattedValue.length > 0 && (formattedValue[0] === "" || formattedValue[0] === null)) ? [] : formattedValue;
-      formattedValues[propertyType.id] = formattedValue;
-    });
-
-    const primaryKeys = this.state.entityType.key;
-    const entityKey = primaryKeys.map((keyId) => {
-      const utf8Val = (formattedValues[keyId].length > 0) ? encodeURI(formattedValues[keyId][0]) : '';
-      return btoa(utf8Val);
-    }).join(',');
-
-    const entities = {
-      [entityKey]: formattedValues
-    };
-
-    return entities;
+  handlePageChange = (path) => {
+    this.props.history.push(path);
   }
 
-  getAppearsInEntity = (entitySetId, syncId) => {
-    const entityId = btoa(this.state.consumerInfo.identification);
-    const key = { entitySetId, entityId, syncId };
+  handlePersonSelection = (person) => {
 
-    const stringIdPropId = this.state.appearsInPropertyTypes.filter((propertyType) => {
-      const fqn = `${propertyType.type.namespace}.${propertyType.type.name}`;
-      return (fqn === STRING_ID_FQN);
-    })[0].id;
-
-    const details = {
-      [stringIdPropId]: [this.state.consumerInfo.identification]
-    };
-
-    return { key, details };
-  }
-
-  getPersonEntity = (entitySetId, syncId) => {
-    const { identification, firstName, lastName, middleName, dob, gender, race } = this.state.consumerInfo;
-    const entityId = btoa(identification);
-    const key = { entitySetId, entityId, syncId };
-
-    const props = {};
-    this.state.personPropertyTypes.forEach((propertyType) => {
-      const fqn = `${propertyType.type.namespace}.${propertyType.type.name}`;
-      props[fqn] = propertyType.id;
-    });
-
-    const details = {};
-    details[props[ID_FQN]] = [identification];
-    details[props[LAST_NAME_FQN]] = (lastName && lastName.length) ? [lastName] : [];
-    details[props[FIRST_NAME_FQN]] = (firstName && firstName.length) ? [firstName] : [];
-    details[props[MIDDLE_NAME_FQN]] = (middleName && middleName.length) ? [middleName] : [];
-    details[props[DOB_FQN]] = (dob && dob.length) ? [dob] : [];
-    details[props[SEX_FQN]] = (gender && gender.length) ? [gender] : [];
-    details[props[RACE_FQN]] = (race && race.length) ? [race] : [];
-
-    return { key, details };
-  }
-
-  getFormEntity = (entitySetId, syncId) => {
-    const formInputs = Object.assign(
-      {},
-      this.state.reportInfo,
-      this.state.consumerInfo,
-      this.state.complainantInfo,
-      this.state.dispositionInfo,
-      this.state.officerInfo
-    );
-
-    const details = {};
-    this.state.bhrPropertyTypes.forEach((propertyType) => {
-      const value = formInputs[propertyType.type.name];
-      let formattedValue;
-      if (value !== null && value !== undefined) {
-        formattedValue = Array.isArray(value) ? value : [value];
-        formattedValue = (formattedValue.length > 0 && (formattedValue[0] === '' || formattedValue[0] === null))
-          ? [] : formattedValue;
-        details[propertyType.id] = formattedValue;
-      }
-    });
-
-    const primaryKeys = this.state.entityType.key;
-    const entityId = primaryKeys.map((keyId) => {
-      const val = (details[keyId] && details[keyId][0]) ? details[keyId][0] : '';
-      const utf8Val = (details[keyId].length > 0) ? encodeURI(val) : '';
-      return btoa(utf8Val);
-    }).join(',');
-
-    const key = { entitySetId, entityId, syncId };
-
-    return { key, details };
-  }
-
-  getBulkData = () => {
-    const { configurations, selectedOrganizationId } = this.state;
-    if (!configurations.length || !selectedOrganizationId.length) return {};
-    const selectedConfiguration = configurations.filter((configuration) => {
-      return selectedOrganizationId === configuration.organization.id;
-    })[0].config;
-
-    const entitySetId = selectedConfiguration[FORM_CONFIG_TYPE].entitySetId;
-    const personEntitySetId = selectedConfiguration[PERSON_CONFIG_TYPE].entitySetId;
-    const appearsInEntitySetId = selectedConfiguration[APPEARS_IN_CONFIG_TYPE].entitySetId;
-
-    return SyncApi.getCurrentSyncId(entitySetId)
-      .then((formSyncId) => {
-        const formEntity = this.getFormEntity(entitySetId, formSyncId);
-        return SyncApi.getCurrentSyncId(personEntitySetId)
-          .then((personSyncId) => {
-            const personEntity = this.getPersonEntity(personEntitySetId, personSyncId);
-            return SyncApi.getCurrentSyncId(appearsInEntitySetId)
-              .then((appearsInSyncId) => {
-                const appearsInEntity = this.getAppearsInEntity(appearsInEntitySetId, appearsInSyncId);
-                appearsInEntity.src = personEntity.key;
-                appearsInEntity.dst = formEntity.key;
-
-                const entities = [formEntity, personEntity];
-                const associations = [appearsInEntity];
-
-                const esIdsAndSyncIds = [
-                  [entitySetId, formSyncId],
-                  [personEntitySetId, personSyncId],
-                  [appearsInEntitySetId, appearsInSyncId]
-                ];
-
-                return Promise.map(esIdsAndSyncIds, (pair) => {
-                  return DataApi.acquireSyncTicket(pair[0], pair[1]);
-                }).then((syncTickets) => {
-                  return { syncTickets, entities, associations };
-                });
-              });
-          });
+    const consumerState = getConsumerInfoInitialState();
+    if (person) {
+      Object.keys(PERSON).forEach((key) => {
+        const consumerKey = CONSUMER_STATE[key];
+        const personKey = PERSON[key];
+        if (person[personKey] && person[personKey].length > 0) {
+          consumerState[consumerKey] = person[personKey][0];
+        }
       });
-  }
-
-  handleSubmit = (e) => {
-    e.preventDefault();
-    this.getBulkData().then((bulkData) => {
-      DataApi.createEntityAndAssociationData(bulkData);
+    }
+    this.setState({
+      consumerInfo: consumerState,
+      isConsumerSelected: !!person
+    }, () => {
+      this.handlePageChange(FORM_PATHS.CONSUMER);
     });
   }
 
-  handleModalButtonClick = () => {
-    window.location.reload();
+  handleOrganizationSelection = (organizationId) => {
+    this.props.actions.selectOrganization({ organizationId })
   }
 
-  renderOrganizationButton = () => {
-    const { configurations, selectedOrganizationId } = this.state;
-    if (!configurations.length || !selectedOrganizationId.length) return null;
-    const organizations = configurations.map((configuration) => {
-      return configuration.organization;
+  handleSubmit = (event :SyntheticEvent<*>) => {
+
+    event.preventDefault();
+
+    this.props.actions.submitReport({
+      complainantInfo: this.state.complainantInfo,
+      consumerInfo: this.state.consumerInfo,
+      dispositionInfo: this.state.dispositionInfo,
+      officerInfo: this.state.officerInfo,
+      reportInfo: this.state.reportInfo,
+      app: this.props.app
     });
+  }
+
+  isInReview = () => {
+    const page :number = parseInt(this.props.match.params.page, 10);
+    return page === MAX_PAGE;
+  }
+
+  renderModal = () => {
+
+    const { submissionState } = this.props;
+    const { PRE_SUBMIT, IS_SUBMITTING } = SUBMISSION_STATES;
+
+    if (submissionState === PRE_SUBMIT || submissionState === IS_SUBMITTING) {
+      return null;
+    }
+
     return (
-      <OrganizationButton
-          organizations={organizations}
-          selectedOrganization={selectedOrganizationId}
-          selectOrganization={(id) => {
-            this.setState({ selectedOrganizationId: id });
-          }} />
+      <ConfirmationModal
+          submissionState={this.props.submissionState}
+          handleModalButtonClick={this.props.actions.hardRestart} />
     );
   }
 
   render() {
 
+    const { PEOPLE } = APP_NAMES;
+    const selectedOrganizationId :string = this.props.app.get('selectedOrganization');
+    const peopleEntitySetId :string = this.props.app.getIn([PEOPLE, 'entitySetsByOrganization', selectedOrganizationId], '');
+    const organizations = this.props.app.get('organizations');
+
     return (
-      <div>
-        {this.renderOrganizationButton()}
-        <LogoutButton />
-        <FormView
-            handleTextInput={this.handleTextInput}
-            handleDateInput={this.handleDateInput}
-            handleTimeInput={this.handleTimeInput}
-            handleSingleSelection={this.handleSingleSelection}
-            handleCheckboxChange={this.handleCheckboxChange}
-            handleSubmit={this.handleSubmit}
-            input={this.state} />
-        {
-          this.state.submitSuccess
-            ? <ConfirmationModal
-                  submitSuccess={this.state.submitSuccess}
-                  submitFailure={this.state.submitFailure}
-                  handleModalButtonClick={this.handleModalButtonClick} />
-            : null
-        }
-      </div>
+      <FormView
+          handlePicture={this.handlePicture}
+          handleTextInput={this.handleTextInput}
+          handleDateInput={this.handleDateInput}
+          handleTimeInput={this.handleTimeInput}
+          handleSingleSelection={this.handleSingleSelection}
+          handleCheckboxChange={this.handleCheckboxChange}
+          handleSubmit={this.handleSubmit}
+          reportInfo={this.state.reportInfo}
+          consumerInfo={this.state.consumerInfo}
+          complainantInfo={this.state.complainantInfo}
+          dispositionInfo={this.state.dispositionInfo}
+          officerInfo={this.state.officerInfo}
+          handlePageChange={this.handlePageChange}
+          handlePersonSelection={this.handlePersonSelection}
+          personEntitySetId={peopleEntitySetId}
+          isInReview={this.isInReview}
+          consumerIsSelected={this.state.isConsumerSelected}
+          renderModal={this.renderModal}
+          organizations={organizations}
+          selectedOrganizationId={selectedOrganizationId}
+          handleOrganizationSelection={this.handleOrganizationSelection} />
     );
   }
 }
 
-export default Form;
+function mapStateToProps(state :Map<*, *>) :Object {
+
+  return {
+    app: state.get('app', Immutable.Map()),
+    submissionState: state.getIn(['report', 'submissionState'])
+  };
+}
+
+function mapDispatchToProps(dispatch :Function) :Object {
+
+  const actions = {
+    hardRestart,
+    submitReport,
+    loadApp,
+    selectOrganization: selectOrganization.request
+  };
+
+  return {
+    actions: bindActionCreators(actions, dispatch)
+  };
+}
+
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(Form)
+);
