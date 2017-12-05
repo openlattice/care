@@ -2,16 +2,16 @@
  * @flow
  */
 
+import { SequenceAction } from 'redux-reqseq';
+
+import {
+  AppApiActionFactory,
+  EntityDataModelApiActionFactory
+} from 'lattice-sagas';
+
 import { put, take, takeEvery } from 'redux-saga/effects';
 
 import { APP_NAMES } from '../../shared/Consts';
-
-import {
-  fetchApp,
-  fetchAppConfigs,
-  fetchAppTypes,
-  fetchEntityDataModelProjection
-} from '../../core/lattice/LatticeActionFactory';
 
 import {
   LOAD_APP,
@@ -20,37 +20,43 @@ import {
   loadConfigurations
 } from './AppActionFactory';
 
-import type { SequenceAction } from '../../core/redux/RequestSequence';
+const {
+  getApp,
+  getAppConfigs,
+  getAppTypes
+} = AppApiActionFactory;
+
+const { getEntityDataModelProjection } = EntityDataModelApiActionFactory;
 
 /*
  * helper functions
  */
 
-function matchFetchProjectionResponse(fetchProjectionAction :SequenceAction) {
+function matchGetProjectionResponse(getProjectionAction :SequenceAction) {
   return (anAction :Object) => {
-    return (anAction.type === fetchEntityDataModelProjection.SUCCESS && anAction.id === fetchProjectionAction.id)
-      || (anAction.type === fetchEntityDataModelProjection.FAILURE && anAction.id === fetchProjectionAction.id);
+    return (anAction.type === getEntityDataModelProjection.SUCCESS && anAction.id === getProjectionAction.id)
+      || (anAction.type === getEntityDataModelProjection.FAILURE && anAction.id === getProjectionAction.id);
   };
 }
 
-function matchFetchAppResponse(fetchAppAction :SequenceAction) {
+function matchGetAppResponse(getAppAction :SequenceAction) {
   return (anAction :Object) => {
-    return (anAction.type === fetchApp.SUCCESS && anAction.id === fetchAppAction.id)
-      || (anAction.type === fetchApp.FAILURE && anAction.id === fetchAppAction.id);
+    return (anAction.type === getApp.SUCCESS && anAction.id === getAppAction.id)
+      || (anAction.type === getApp.FAILURE && anAction.id === getAppAction.id);
   };
 }
 
-function matchFetchAppTypesResponse(fetchAppTypesAction :SequenceAction) {
+function matchGetAppTypesResponse(getAppTypesAction :SequenceAction) {
   return (anAction :Object) => {
-    return (anAction.type === fetchAppTypes.SUCCESS && anAction.id === fetchAppTypesAction.id)
-      || (anAction.type === fetchAppTypes.FAILURE && anAction.id === fetchAppTypesAction.id);
+    return (anAction.type === getAppTypes.SUCCESS && anAction.id === getAppTypesAction.id)
+      || (anAction.type === getAppTypes.FAILURE && anAction.id === getAppTypesAction.id);
   };
 }
 
-function matchFetchAppConfigsResponse(fetchAppConfigsAction :SequenceAction) {
+function matchGetAppConfigsResponse(getAppConfigsAction :SequenceAction) {
   return (anAction :Object) => {
-    return (anAction.type === fetchAppConfigs.SUCCESS && anAction.id === fetchAppConfigsAction.id)
-      || (anAction.type === fetchAppConfigs.FAILURE && anAction.id === fetchAppConfigsAction.id);
+    return (anAction.type === getAppConfigs.SUCCESS && anAction.id === getAppConfigsAction.id)
+      || (anAction.type === getAppConfigs.FAILURE && anAction.id === getAppConfigsAction.id);
   };
 }
 
@@ -58,83 +64,77 @@ function matchFetchAppConfigsResponse(fetchAppConfigsAction :SequenceAction) {
  * sagas
  */
 
- export function* loadAppWorker() :Generator<*, *, *> {
+export function* loadAppWorker(action :SequenceAction) :Generator<*, *, *> {
 
-   try {
+  try {
+    yield put(loadApp.request(action.id));
 
-     yield put(loadApp.request());
+    const getAppAction = getApp(APP_NAMES.APP);
+    yield put(getAppAction);
+    const getAppResponseAction = yield take(matchGetAppResponse(getAppAction));
 
-     let anyErrors :boolean = false;
+    const app = getAppResponseAction.value;
+    yield put(loadConfigurations(app.id));
 
-     const fetchAppAction = fetchApp({ appName: APP_NAMES.APP });
-     yield put(fetchAppAction);
-     const fetchAppResponseAction = yield take(matchFetchAppResponse(fetchAppAction));
+    const getAppTypesAction = getAppTypes(app.appTypeIds);
+    yield put(getAppTypesAction);
+    const appTypesResponseAction = yield take(matchGetAppTypesResponse(getAppTypesAction));
 
-     const app = fetchAppResponseAction.data.app;
-     yield put(loadConfigurations({ appId: app.id }));
+    const appTypes = Object.values(appTypesResponseAction.value);
+    const projection :Object[] = appTypes.map((appType :Object) => {
+      return {
+        id: appType.entityTypeId,
+        include: [
+          'EntityType',
+          'PropertyTypeInEntitySet'
+        ],
+        type: 'EntityType'
+      };
+    });
 
-     const fetchAppTypesAction = fetchAppTypes({ appTypeIds: app.appTypeIds });
-     yield put(fetchAppTypesAction);
-     const appTypesResponseAction = yield take(matchFetchAppTypesResponse(fetchAppTypesAction));
+    const getProjectionAction :SequenceAction = getEntityDataModelProjection(projection);
+    yield put(getProjectionAction);
+    const getProjectionResponseAction = yield take(matchGetProjectionResponse(getProjectionAction));
 
-     const appTypes = Object.values(appTypesResponseAction.data.appTypes);
-     const projection :Object[] = appTypes.map((appType :Object) => {
-       return {
-         id: appType.entityTypeId,
-         include: [
-           'EntityType',
-           'PropertyTypeInEntitySet'
-         ],
-         type: 'EntityType'
-       };
-     });
+    const edm = getProjectionResponseAction.value;
+    yield put(loadApp.success(action.id, { app, appTypes, edm }));
+  }
+  catch (error) {
+    yield put(loadApp.failure(action.id, error));
+  }
+  finally {
+    yield put(loadApp.finally(action.id));
+  }
+}
 
-     // 2. get all EntitySet data models
-     const fetchProjectionAction :SequenceAction = fetchEntityDataModelProjection({ projection });
-     yield put(fetchProjectionAction);
-     const fetchProjectionResponseAction = yield take(matchFetchProjectionResponse(fetchProjectionAction));
+export function* loadAppWatcher() :Generator<*, *, *> {
 
-     const edm = fetchProjectionResponseAction.data.edm;
-     yield put(loadApp.success({ app, appTypes, edm }));
-   }
-   catch (error) {
-     yield put(loadApp.failure({ error }));
-   }
-   finally {
-     yield put(loadApp.finally());
-   }
- }
+  yield takeEvery(LOAD_APP, loadAppWorker);
+}
 
- export function* loadAppWatcher() :Generator<*, *, *> {
+export function* loadAppConfigsWorker(action :SequenceAction) :Generator<*, *, *> {
 
-   yield takeEvery(LOAD_APP, loadAppWorker);
- }
+  try {
+    yield put(loadConfigurations.request(action.id));
 
- export function* loadAppConfigsWorker(action :SequenceAction) :Generator<*, *, *> {
+    const appId = action.value;
 
-   try {
-     yield put(loadConfigurations.request());
+    const getAppConfigsAction = getAppConfigs(appId);
+    yield put(getAppConfigsAction);
+    const getAppConfigsResponseAction = yield take(matchGetAppConfigsResponse(getAppConfigsAction));
+    const configurations = getAppConfigsResponseAction.value;
 
-     let anyErrors :boolean = false;
+    yield put(loadConfigurations.success(action.id, configurations));
+  }
+  catch (error) {
+    yield put(loadConfigurations.failure(action.id, error));
+  }
+  finally {
+    yield put(loadConfigurations.finally(action.id));
+  }
+}
 
-     const appId = action.data.appId;
+export function* loadAppConfigsWatcher() :Generator<*, *, *> {
 
-     const fetchAppConfigsAction = fetchAppConfigs({ appId });
-     yield put(fetchAppConfigsAction);
-     const fetchAppConfigsResponseAction = yield take(matchFetchAppConfigsResponse(fetchAppConfigsAction));
-     const configurations = fetchAppConfigsResponseAction.data.configurations;
-
-     yield put(loadConfigurations.success({ configurations }));
-   }
-   catch (error) {
-     yield put(loadConfigurations.failure({ error }));
-   }
-   finally {
-     yield put(loadConfigurations.finally());
-   }
- }
-
- export function* loadAppConfigsWatcher() :Generator<*, *, *> {
-
-   yield takeEvery(LOAD_CONFIGURATIONS, loadAppConfigsWorker);
- }
+  yield takeEvery(LOAD_CONFIGURATIONS, loadAppConfigsWorker);
+}

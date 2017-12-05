@@ -35,8 +35,7 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
           return state.set('isLoadingApp', true);
         },
         SUCCESS: () => {
-
-          const { app, edm, appTypes } = action.data;
+          const { app, edm, appTypes } = action.value;
 
           let newState = state.set('app', app);
 
@@ -46,7 +45,7 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
               properties[propertyTypeId] = edm.propertyTypes[propertyTypeId];
             });
             return properties;
-          }
+          };
 
           appTypes.forEach((appType) => {
             const fqn = `${appType.type.namespace}.${appType.type.name}`;
@@ -79,8 +78,7 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
           return state.set('isLoadingConfigurations', true);
         },
         SUCCESS: () => {
-
-          const { configurations } = action.data;
+          const configurations = action.value;
           let newState = state;
           const organizations = {};
 
@@ -88,13 +86,24 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
             const id = configuration.organization.id;
             organizations[id] = configuration.organization;
             newState = newState
-              .setIn([APP_NAMES.FORM, 'entitySetsByOrganization', id], configuration.config[APP_NAMES.FORM].entitySetId)
-              .setIn([APP_NAMES.PEOPLE, 'entitySetsByOrganization', id], configuration.config[APP_NAMES.PEOPLE].entitySetId)
-              .setIn([APP_NAMES.APPEARS_IN, 'entitySetsByOrganization', id], configuration.config[APP_NAMES.APPEARS_IN].entitySetId);
+              .setIn(
+                [APP_NAMES.FORM, 'entitySetsByOrganization', id],
+                configuration.config[APP_NAMES.FORM].entitySetId
+              )
+              .setIn(
+                [APP_NAMES.PEOPLE, 'entitySetsByOrganization', id],
+                configuration.config[APP_NAMES.PEOPLE].entitySetId
+              )
+              .setIn(
+                [APP_NAMES.APPEARS_IN, 'entitySetsByOrganization', id],
+                configuration.config[APP_NAMES.APPEARS_IN].entitySetId
+              );
           });
 
           let selectedOrganization = state.get('selectedOrganization');
-          if (configurations.length && !selectedOrganization.length) selectedOrganization = configurations[0].organization.id;
+          if (configurations.length && !selectedOrganization.length) {
+            selectedOrganization = configurations[0].organization.id;
+          }
 
           return newState
             .set('organizations', Immutable.fromJS(organizations))
@@ -118,7 +127,7 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
 
       return selectOrganization.reducer(state, action, {
         REQUEST: () => {
-          const { organizationId } = action.data;
+          const organizationId = action.value;
           return state.set('selectedOrganization', organizationId);
         }
       });

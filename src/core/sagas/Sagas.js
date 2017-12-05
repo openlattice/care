@@ -2,6 +2,7 @@
  * @flow
  */
 
+import { AppApiSagas, EntityDataModelApiSagas } from 'lattice-sagas';
 import { fork } from 'redux-saga/effects';
 
 import * as AuthSagas from '../auth/AuthSagas';
@@ -25,11 +26,7 @@ export default function* sagas() :Generator<*, *, *> {
     // LatticeSagas
     fork(LatticeSagas.acquireSyncTicketWatcher),
     fork(LatticeSagas.createEntityAndAssociationDataWatcher),
-    fork(LatticeSagas.fetchAppWatcher),
-    fork(LatticeSagas.fetchAppConfigsWatcher),
-    fork(LatticeSagas.fetchAppTypesWatcher),
     fork(LatticeSagas.fetchCurrentSyncIdWatcher),
-    fork(LatticeSagas.fetchEntityDataModelProjectionWatcher),
     fork(LatticeSagas.fetchEntitySetWatcher),
     fork(LatticeSagas.fetchEntitySetIdWatcher),
 
@@ -38,6 +35,14 @@ export default function* sagas() :Generator<*, *, *> {
     fork(AppSagas.loadAppConfigsWatcher),
     fork(EntitySetsSagas.loadDataModelWatcher),
     fork(ReportSagas.hardRestartWatcher),
-    fork(ReportSagas.submitReportWatcher)
+    fork(ReportSagas.submitReportWatcher),
+
+    // AppApi Sagas
+    fork(AppApiSagas.getAppWatcher),
+    fork(AppApiSagas.getAppConfigsWatcher),
+    fork(AppApiSagas.getAppTypesWatcher),
+
+    // EntityDataModelApiSagas
+    fork(EntityDataModelApiSagas.getEntityDataModelProjectionWatcher)
   ];
 }

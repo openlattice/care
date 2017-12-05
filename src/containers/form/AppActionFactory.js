@@ -2,9 +2,7 @@
  * @flow
  */
 
-import { newRequestSequence } from '../../core/redux/RequestSequence';
-import type { RequestSequence } from '../../core/redux/RequestSequence';
-
+import { newRequestSequence } from 'redux-reqseq';
 
 const LOAD_APP :'LOAD_APP' = 'LOAD_APP';
 const loadApp :RequestSequence = newRequestSequence(LOAD_APP);

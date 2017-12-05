@@ -23,7 +23,6 @@ import { SUBMISSION_STATES } from './ReportReducer';
 import {
   APP_NAMES,
   CONSUMER_STATE,
-  ENTITY_SET_NAMES,
   FORM_PATHS,
   MAX_PAGE,
   PERSON
@@ -44,12 +43,6 @@ import type {
   OfficerInfo,
   ReportInfo
 } from './DataModelDefinitions';
-
-const APP_NAME = 'bhr';
-
-const FORM_CONFIG_TYPE = 'app.bhr';
-const PERSON_CONFIG_TYPE = 'app.people';
-const APPEARS_IN_CONFIG_TYPE = 'app.appearsin';
 
 /*
  * types
@@ -185,7 +178,7 @@ class Form extends React.Component<Props, State> {
   }
 
   handleOrganizationSelection = (organizationId) => {
-    this.props.actions.selectOrganization({ organizationId })
+    this.props.actions.selectOrganization(organizationId);
   }
 
   handleSubmit = (event :SyntheticEvent<*>) => {
@@ -227,7 +220,10 @@ class Form extends React.Component<Props, State> {
 
     const { PEOPLE } = APP_NAMES;
     const selectedOrganizationId :string = this.props.app.get('selectedOrganization');
-    const peopleEntitySetId :string = this.props.app.getIn([PEOPLE, 'entitySetsByOrganization', selectedOrganizationId], '');
+    const peopleEntitySetId :string = this.props.app.getIn(
+      [PEOPLE, 'entitySetsByOrganization', selectedOrganizationId],
+      ''
+    );
     const organizations = this.props.app.get('organizations');
 
     return (
