@@ -267,7 +267,10 @@ function mapDispatchToProps(dispatch :Function) :Object {
     hardRestart,
     submitReport,
     loadApp,
-    selectOrganization: selectOrganization.request
+    selectOrganization: (organizationId) => {
+      const action = selectOrganization(organizationId);
+      return selectOrganization.request(action.id, action.value);
+    }
   };
 
   return {
