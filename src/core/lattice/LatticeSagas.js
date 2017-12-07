@@ -2,18 +2,24 @@
  * @flow
  */
 
-import { DataApi, EntityDataModelApi, SyncApi } from 'lattice';
+import { AppApi, DataApi, EntityDataModelApi, SyncApi } from 'lattice';
 import { call, put, takeEvery } from 'redux-saga/effects';
 
 import {
   ACQUIRE_SYNC_TICKET,
   CREATE_ENTITY_AND_ASSOCIATION_DATA,
+  FETCH_APP,
+  FETCH_APP_CONFIGS,
+  FETCH_APP_TYPES,
   FETCH_CURRENT_SYNC_ID,
   FETCH_EDM_PROJECTION,
   FETCH_ENTITY_SET,
   FETCH_ENTITY_SET_ID,
   acquireSyncTicket,
   createEntityAndAssociationData,
+  fetchApp,
+  fetchAppConfigs,
+  fetchAppTypes,
   fetchCurrentSyncId,
   fetchEntityDataModelProjection,
   fetchEntitySet,
@@ -80,6 +86,85 @@ export function* createEntityAndAssociationDataWatcher() :Generator<*, *, *> {
 
   yield takeEvery(CREATE_ENTITY_AND_ASSOCIATION_DATA, createEntityAndAssociationDataWorker);
 }
+
+/* AppApi */
+
+export function* fetchAppWorker(action :SequenceAction) :Generator<*, *, *> {
+
+  let response :Object = {};
+
+  try {
+    yield put(fetchApp.request());
+    response = yield call(AppApi.getAppByName, action.data.appName);
+    yield put(fetchApp.success({ app: response }));
+  }
+  catch (error) {
+    response = new Error(); // !!! HACK !!! - quick fix
+    yield put(fetchApp.failure({ error }));
+  }
+  finally {
+    yield put(fetchApp.finally());
+  }
+
+  return response;
+}
+
+export function* fetchAppWatcher() :Generator<*, *, *> {
+
+  yield takeEvery(FETCH_APP, fetchAppWorker);
+}
+
+export function* fetchAppConfigsWorker(action :SequenceAction) :Generator<*, *, *> {
+
+  let response :Object = {};
+
+  try {
+    yield put(fetchAppConfigs.request());
+    response = yield call(AppApi.getConfigurations, action.data.appId);
+    yield put(fetchAppConfigs.success({ configurations: response }));
+  }
+  catch (error) {
+    response = new Error(); // !!! HACK !!! - quick fix
+    yield put(fetchAppConfigs.failure({ error }));
+  }
+  finally {
+    yield put(fetchAppConfigs.finally());
+  }
+
+  return response;
+}
+
+export function* fetchAppConfigsWatcher() :Generator<*, *, *> {
+
+  yield takeEvery(FETCH_APP_CONFIGS, fetchAppConfigsWorker);
+}
+
+export function* fetchAppTypesWorker(action :SequenceAction) :Generator<*, *, *> {
+
+  let response :Object = {};
+
+  try {
+    yield put(fetchAppTypes.request());
+    response = yield call(AppApi.getAppTypesForAppTypeIds, action.data.appTypeIds);
+    yield put(fetchAppTypes.success({ appTypes: response }));
+  }
+  catch (error) {
+    response = new Error(); // !!! HACK !!! - quick fix
+    yield put(fetchAppTypes.failure({ error }));
+  }
+  finally {
+    yield put(fetchAppTypes.finally());
+  }
+
+  return response;
+}
+
+export function* fetchAppTypesWatcher() :Generator<*, *, *> {
+
+  yield takeEvery(FETCH_APP_TYPES, fetchAppTypesWorker);
+}
+
+/* SyncApi */
 
 export function* fetchCurrentSyncIdWorker(action :SequenceAction) :Generator<*, *, *> {
 

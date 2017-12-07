@@ -10,5 +10,5 @@ const loadDataModel :RequestSequence = newRequestSequence(LOAD_DATA_MODEL);
 
 export {
   LOAD_DATA_MODEL,
-  loadDataModel
+  loadDataModel,
 };

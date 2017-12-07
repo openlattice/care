@@ -16,13 +16,13 @@ import ConfirmationModal from '../../components/ConfirmationModalView';
 
 import { validateOnInput } from '../../shared/Validation';
 import { formatTimePickerSeconds } from '../../utils/Utils';
-import { loadDataModel } from './EntitySetsActionFactory';
+import { loadApp, selectOrganization } from './AppActionFactory';
 import { hardRestart, submitReport } from './ReportActionFactory';
 import { SUBMISSION_STATES } from './ReportReducer';
 
 import {
+  APP_NAMES,
   CONSUMER_STATE,
-  ENTITY_SET_NAMES,
   FORM_PATHS,
   MAX_PAGE,
   PERSON
@@ -51,10 +51,11 @@ import type {
 type Props = {
   actions :{
     hardRestart :() => void;
-    loadDataModel :() => void;
     submitReport :(args :Object) => void;
+    loadApp :() => void;
+    selectOrganization :(args :string) => void;
   };
-  entitySets :Map<*, *>;
+  app :Map<*, *>;
   history :RouterHistory;
   match :Match;
   submissionState :number;
@@ -87,10 +88,11 @@ class Form extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    this.props.actions.loadDataModel();
+    this.props.actions.loadApp();
   }
 
   handleTextInput = (e, fieldType, formatErrors, setErrorsFn) => {
+
     const sectionKey = e.target.dataset.section;
     const name = e.target.name;
     const input = e.target.value;
@@ -175,6 +177,10 @@ class Form extends React.Component<Props, State> {
     });
   }
 
+  handleOrganizationSelection = (organizationId) => {
+    this.props.actions.selectOrganization(organizationId);
+  }
+
   handleSubmit = (event :SyntheticEvent<*>) => {
 
     event.preventDefault();
@@ -183,9 +189,9 @@ class Form extends React.Component<Props, State> {
       complainantInfo: this.state.complainantInfo,
       consumerInfo: this.state.consumerInfo,
       dispositionInfo: this.state.dispositionInfo,
-      entitySets: this.props.entitySets,
       officerInfo: this.state.officerInfo,
-      reportInfo: this.state.reportInfo
+      reportInfo: this.state.reportInfo,
+      app: this.props.app
     });
   }
 
@@ -212,8 +218,13 @@ class Form extends React.Component<Props, State> {
 
   render() {
 
-    const { PEOPLE } = ENTITY_SET_NAMES;
-    const peopleEntitySetId :string = this.props.entitySets.getIn([PEOPLE, 'entitySet', 'id'], '');
+    const { PEOPLE } = APP_NAMES;
+    const selectedOrganizationId :string = this.props.app.get('selectedOrganization');
+    const peopleEntitySetId :string = this.props.app.getIn(
+      [PEOPLE, 'entitySetsByOrganization', selectedOrganizationId],
+      ''
+    );
+    const organizations = this.props.app.get('organizations');
 
     return (
       <FormView
@@ -234,7 +245,10 @@ class Form extends React.Component<Props, State> {
           personEntitySetId={peopleEntitySetId}
           isInReview={this.isInReview}
           consumerIsSelected={this.state.isConsumerSelected}
-          renderModal={this.renderModal} />
+          renderModal={this.renderModal}
+          organizations={organizations}
+          selectedOrganizationId={selectedOrganizationId}
+          handleOrganizationSelection={this.handleOrganizationSelection} />
     );
   }
 }
@@ -242,7 +256,7 @@ class Form extends React.Component<Props, State> {
 function mapStateToProps(state :Map<*, *>) :Object {
 
   return {
-    entitySets: state.get('entitySets', Immutable.Map()),
+    app: state.get('app', Immutable.Map()),
     submissionState: state.getIn(['report', 'submissionState'])
   };
 }
@@ -251,8 +265,12 @@ function mapDispatchToProps(dispatch :Function) :Object {
 
   const actions = {
     hardRestart,
-    loadDataModel,
-    submitReport
+    submitReport,
+    loadApp,
+    selectOrganization: (organizationId) => {
+      const action = selectOrganization(organizationId);
+      return selectOrganization.request(action.id, action.value);
+    }
   };
 
   return {

@@ -4,6 +4,13 @@ export const ENTITY_SET_NAMES = {
   APPEARS_IN: 'baltimoreBehavioralHealthReportAppearsIn'
 };
 
+export const APP_NAMES = {
+  APP: 'bhr',
+  FORM: 'app.bhr',
+  PEOPLE: 'app.people',
+  APPEARS_IN: 'app.appearsin'
+};
+
 export const PERSON = {
   LAST_NAME_FQN: 'nc.PersonSurName',
   FIRST_NAME_FQN: 'nc.PersonGivenName',
@@ -111,4 +118,4 @@ export const STATES = [
 export const MAX_PAGE = 7;
 
 export const INT_16_MAX_VALUE = 32767;
-export const INT_16_MIN_VALUE =  -32768;
+export const INT_16_MIN_VALUE = -32768;

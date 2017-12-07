@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Immutable from 'immutable';
 import styled from 'styled-components';
 import { ProgressBar } from 'react-bootstrap';
 import { Redirect, Route, Switch } from 'react-router-dom';
 
 import LogoutButton from '../containers/app/LogoutButton';
+import OrganizationButton from '../containers/app/OrganizationButton';
 import ReportInfoView from '../components/ReportInfoView';
 import ConsumerSearch from '../containers/ConsumerSearch';
 import ConsumerInfoView from '../components/ConsumerInfoView';
@@ -56,7 +58,10 @@ function FormView({
   handlePersonSelection,
   personEntitySetId,
   consumerIsSelected,
-  renderModal
+  renderModal,
+  organizations,
+  selectedOrganizationId,
+  handleOrganizationSelection
 }) {
 
   const getProgress = () => {
@@ -161,6 +166,16 @@ function FormView({
     );
   };
 
+  const getOrganizationButton = () => {
+    if (!organizations.size) return null;
+    return (
+      <OrganizationButton
+          organizations={organizations}
+          selectedOrganization={selectedOrganizationId}
+          selectOrganization={handleOrganizationSelection} />
+    );
+  }
+
   return (
     <Page>
       <PageHeader>
@@ -171,6 +186,7 @@ function FormView({
           <Title>Behavioral Health Report</Title>
         </TitleWrapper>
         <LogoutButton />
+        {getOrganizationButton()}
       </PageHeader>
       <StyledProgressBar bsStyle="info" now={getProgress().num} label={getProgress().percentage} />
       <FormWrapper>
@@ -199,10 +215,13 @@ FormView.propTypes = {
   handleTimeInput: PropTypes.func.isRequired,
   handleSingleSelection: PropTypes.func.isRequired,
   handleCheckboxChange: PropTypes.func.isRequired,
+  handleOrganizationSelection: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   isInReview: PropTypes.func.isRequired,
   handlePageChange: PropTypes.func.isRequired,
   handlePersonSelection: PropTypes.func.isRequired,
+  organizations: PropTypes.instanceOf(Immutable.Map).isRequired,
+  selectedOrganizationId: PropTypes.string.isRequired,
   personEntitySetId: PropTypes.string.isRequired,
   consumerIsSelected: PropTypes.bool.isRequired,
   reportInfo: PropTypes.shape({

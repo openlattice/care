@@ -9,7 +9,7 @@ import { push } from 'react-router-redux';
 import { all, call, put, takeEvery } from 'redux-saga/effects';
 
 import * as Routes from '../../core/router/Routes';
-import { ENTITY_SET_NAMES, NC_SUBJ_ID_FQN, PERSON, STRING_ID_FQN } from '../../shared/Consts';
+import { APP_NAMES, NC_SUBJ_ID_FQN, PERSON, STRING_ID_FQN } from '../../shared/Consts';
 
 import {
   acquireSyncTicket,
@@ -37,14 +37,13 @@ const { FullyQualifiedName } = Models;
  * helpers
  */
 
-function prepReportEntityData(syncId :string, entitySet :Map<*, *>, allInfo :Object) :Object {
+function prepReportEntityData(syncId :string, entitySetId :string, propertyTypes :List, primaryKeys :List, allInfo :Object) :Object {
 
   /*
    * details
    */
 
   const details = {};
-  const propertyTypes :List<Map<*, *>> = entitySet.get('propertyTypes', Immutable.List());
   propertyTypes.forEach((propertyType :Map<*, *>) => {
     const id :string = propertyType.get('id', '');
     const fqn :FullyQualifiedName = new FullyQualifiedName(propertyType.get('type', {}));
@@ -62,10 +61,10 @@ function prepReportEntityData(syncId :string, entitySet :Map<*, *>, allInfo :Obj
   const ncSubjectIdPropertyType :Map<*, *> = propertyTypes.find((propertyType :Map<*, *>) => {
     return FullyQualifiedName.toString(propertyType.get('type', {})) === NC_SUBJ_ID_FQN;
   });
+
   details[ncSubjectIdPropertyType.get('id', '')] = [allInfo.identification];
   // !!! HACK END !!!
 
-  const primaryKeys :List<string> = entitySet.getIn(['entityType', 'key'], Immutable.List());
   const entityId :string = primaryKeys
     .map((keyId) => {
       const val = (details[keyId] && details[keyId][0]) ? details[keyId][0] : '';
@@ -74,11 +73,11 @@ function prepReportEntityData(syncId :string, entitySet :Map<*, *>, allInfo :Obj
     })
     .join(',');
 
+
   /*
    * key
    */
 
-  const entitySetId :string = entitySet.getIn(['entitySet', 'id'], '');
   const key = {
     entityId,
     entitySetId,
@@ -88,7 +87,7 @@ function prepReportEntityData(syncId :string, entitySet :Map<*, *>, allInfo :Obj
   return { details, key };
 }
 
-function prepPeopleEntityData(syncId :string, entitySet :Map<*, *>, consumerInfo :Object) :Object {
+function prepPeopleEntityData(syncId :string, entitySetId :string, propertyTypes :List, consumerInfo :Object) :Object {
 
   const {
     age,
@@ -107,7 +106,6 @@ function prepPeopleEntityData(syncId :string, entitySet :Map<*, *>, consumerInfo
    */
 
   const props = {};
-  const propertyTypes :List<Map<*, *>> = entitySet.get('propertyTypes', Immutable.List());
   propertyTypes.forEach((propertyType :Map<*, *>) => {
     const fqn :string = FullyQualifiedName.toString(propertyType.get('type', {}));
     props[fqn] = propertyType.get('id', '');
@@ -129,7 +127,6 @@ function prepPeopleEntityData(syncId :string, entitySet :Map<*, *>, consumerInfo
    */
 
   const entityId = btoa(identification);
-  const entitySetId :string = entitySet.getIn(['entitySet', 'id'], '');
   const key = {
     entityId,
     entitySetId,
@@ -141,7 +138,8 @@ function prepPeopleEntityData(syncId :string, entitySet :Map<*, *>, consumerInfo
 
 function prepAppearsInEntityData(
   syncId :string,
-  entitySet :Map<*, *>,
+  entitySetId :string,
+  propertyTypes :List,
   consumerInfo :Object,
   reportData :Object,
   peopleData :Object
@@ -151,7 +149,6 @@ function prepAppearsInEntityData(
    * details
    */
 
-  const propertyTypes :List<Map<*, *>> = entitySet.get('propertyTypes', Immutable.List());
   const idPropertyType :Map<*, *> = propertyTypes.find((propertyType :Map<*, *>) => {
     return FullyQualifiedName.toString(propertyType.get('type', {})) === STRING_ID_FQN;
   });
@@ -165,7 +162,6 @@ function prepAppearsInEntityData(
    */
 
   const entityId = btoa(consumerInfo.identification);
-  const entitySetId :string = entitySet.getIn(['entitySet', 'id'], '');
   const key = {
     entityId,
     entitySetId,
@@ -190,14 +186,14 @@ export function* submitReportWorker(action :SequenceAction) :Generator<*, *, *> 
     yield put(submitReport.request());
 
     let anyErrors :boolean = false;
-    const { FORM, PEOPLE, APPEARS_IN } = ENTITY_SET_NAMES;
+    const { FORM, PEOPLE, APPEARS_IN } = APP_NAMES;
     const {
       complainantInfo,
       consumerInfo,
       dispositionInfo,
-      entitySets,
       officerInfo,
-      reportInfo
+      reportInfo,
+      app
     } = action.data;
 
     const allInfo = Object.assign(
@@ -209,13 +205,16 @@ export function* submitReportWorker(action :SequenceAction) :Generator<*, *, *> 
       reportInfo
     );
 
-    const reportES :Map<*, *> = entitySets.get(FORM, Immutable.Map());
-    const peopleES :Map<*, *> = entitySets.get(PEOPLE, Immutable.Map());
-    const appearsInES :Map<*, *> = entitySets.get(APPEARS_IN, Immutable.Map());
+    const selectedOrganizationId = app.get('selectedOrganization');
+    const reportESId :string = app.getIn([FORM, 'entitySetsByOrganization', selectedOrganizationId], '');
+    const peopleESId :string = app.getIn([PEOPLE, 'entitySetsByOrganization', selectedOrganizationId], '');
+    const appearsInESId :string = app.getIn([APPEARS_IN, 'entitySetsByOrganization', selectedOrganizationId], '');
 
-    const reportESId :string = reportES.getIn(['entitySet', 'id'], '');
-    const peopleESId :string = peopleES.getIn(['entitySet', 'id'], '');
-    const appearsInESId :string = appearsInES.getIn(['entitySet', 'id'], '');
+    const reportPropertyTypes :List = app.getIn([FORM, 'propertyTypes'], Immutable.Map()).valueSeq();
+    const peoplePropertyTypes :List = app.getIn([PEOPLE, 'propertyTypes'], Immutable.Map()).valueSeq();
+    const appearsInPropertyTypes :List = app.getIn([APPEARS_IN, 'propertyTypes'], Immutable.Map()).valueSeq();
+
+    const reportPrimaryKeys :List = app.getIn([FORM, 'primaryKeys'], Immutable.Map()).valueSeq();
 
     // 1. get sync ids for each EntitySet
     // TODO: it's not terrible to invoke the worker sagas, but it's not ideal
@@ -264,11 +263,12 @@ export function* submitReportWorker(action :SequenceAction) :Generator<*, *, *> 
     }
 
     // 3. prepare entity data for submission
-    const reportData :Object = prepReportEntityData(syncIds[reportESId], reportES, allInfo);
-    const peopleData :Object = prepPeopleEntityData(syncIds[peopleESId], peopleES, consumerInfo);
+    const reportData :Object = prepReportEntityData(syncIds[reportESId], reportESId, reportPropertyTypes, reportPrimaryKeys, allInfo);
+    const peopleData :Object = prepPeopleEntityData(syncIds[peopleESId], peopleESId, peoplePropertyTypes, consumerInfo);
     const appearsInData :Object = prepAppearsInEntityData(
       syncIds[appearsInESId],
-      appearsInES,
+      appearsInESId,
+      appearsInPropertyTypes,
       consumerInfo,
       reportData,
       peopleData
