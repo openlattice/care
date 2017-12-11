@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import { ProgressBar } from 'react-bootstrap';
 import { Redirect, Route, Switch } from 'react-router-dom';
 
-import LogoutButton from '../containers/app/LogoutButton';
 import OrganizationButton from '../containers/app/OrganizationButton';
 import ReportInfoView from '../components/ReportInfoView';
 import ConsumerSearch from '../containers/ConsumerSearch';
@@ -14,30 +13,14 @@ import ComplainantInfoView from '../components/ComplainantInfoView';
 import DispositionView from '../components/DispositionView';
 import OfficerInfoView from '../components/OfficerInfoView';
 import ReviewView from '../components/ReviewView';
-import OpenLatticeLogo from '../assets/images/logo_and_name.png';
 
 import { MAX_PAGE } from '../shared/Consts';
-import {
-  Page,
-  PageHeader,
-  TitleWrapper,
-  Title,
-  FormWrapper
-} from '../shared/Layout';
+import { FormWrapper, Page } from '../shared/Layout';
 
 const StyledProgressBar = styled(ProgressBar)`
   width: 900px;
   margin-bottom: 50px;
-`;
-
-const LogoWrapper = styled.span`
-  align-items: center;
-  display: flex;
-  flex: 1;
-  justify-content: flex-start;
-`;
-
-const Logo = styled.img`
+  margin-top: 50px;
 `;
 
 function FormView({
@@ -174,32 +157,22 @@ function FormView({
           selectedOrganization={selectedOrganizationId}
           selectOrganization={handleOrganizationSelection} />
     );
-  }
+  };
 
   return (
     <Page>
-      <PageHeader>
-        <LogoWrapper>
-          <Logo src={OpenLatticeLogo} height="50" />
-        </LogoWrapper>
-        <TitleWrapper>
-          <Title>Behavioral Health Report</Title>
-        </TitleWrapper>
-        <LogoutButton />
-        {getOrganizationButton()}
-      </PageHeader>
       <StyledProgressBar bsStyle="info" now={getProgress().num} label={getProgress().percentage} />
       <FormWrapper>
         <form onSubmit={handleSubmit}>
           <Switch>
-            <Route path="/1" render={getConsumerSearchView} />
-            <Route path="/2" render={getConsumerInfoView} />
-            <Route path="/3" render={getReportInfoView} />
-            <Route path="/4" render={getComplainantInfoView} />
-            <Route path="/5" render={getDispositionView} />
-            <Route path="/6" render={getOfficerInfoView} />
-            <Route path="/7" render={getReviewView} />
-            <Redirect to="/1" />
+            <Route path="/bhr/1" render={getConsumerSearchView} />
+            <Route path="/bhr/2" render={getConsumerInfoView} />
+            <Route path="/bhr/3" render={getReportInfoView} />
+            <Route path="/bhr/4" render={getComplainantInfoView} />
+            <Route path="/bhr/5" render={getDispositionView} />
+            <Route path="/bhr/6" render={getOfficerInfoView} />
+            <Route path="/bhr/7" render={getReviewView} />
+            <Redirect to="/bhr/1" />
           </Switch>
         </form>
       </FormWrapper>

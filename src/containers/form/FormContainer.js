@@ -88,7 +88,7 @@ class Form extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    this.props.actions.loadApp();
+    // this.props.actions.loadApp();
   }
 
   handleTextInput = (e, fieldType, formatErrors, setErrorsFn) => {

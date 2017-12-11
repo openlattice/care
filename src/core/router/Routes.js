@@ -6,6 +6,9 @@
 declare var __BASE_PATH__;
 
 export const ROOT :string = '/';
-export const FORM :string = '/1';
-export const FORM_PAGE :string = '/:page';
+export const HOME :string = '/home';
 export const LOGIN :string = '/login';
+
+export const BHR :string = '/bhr';
+export const BHR_PAGE :string = '/:page';
+export const FOLLOW_UP :string = '/followup';

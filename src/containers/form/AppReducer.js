@@ -5,7 +5,11 @@
 import Immutable from 'immutable';
 
 import { APP_NAMES } from '../../shared/Consts';
-import { loadApp, loadConfigurations, selectOrganization } from './AppActionFactory';
+import {
+  SELECT_ORGANIZATION,
+  loadApp,
+  loadConfigurations
+} from './AppActionFactory';
 
 const APP_CONFIG :Map<*, *> = Immutable.fromJS({
   propertyTypes: Immutable.Map(),
@@ -123,15 +127,8 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
       });
     }
 
-    case selectOrganization.case(action.type): {
-
-      return selectOrganization.reducer(state, action, {
-        REQUEST: () => {
-          const organizationId = action.value;
-          return state.set('selectedOrganization', organizationId);
-        }
-      });
-    }
+    case SELECT_ORGANIZATION:
+      return state.set('selectedOrganization', action.orgId);
 
     default:
       return state;

@@ -48,13 +48,13 @@ export const RACE = {
 };
 
 export const FORM_PATHS = {
-  CONSUMER_SEARCH: '/1',
-  CONSUMER: '/2',
-  REPORT: '/3',
-  COMPLAINANT: '/4',
-  DISPOSITION: '/5',
-  OFFICER: '/6',
-  REVIEW: '/7'
+  CONSUMER_SEARCH: '/bhr/1',
+  CONSUMER: '/bhr/2',
+  REPORT: '/bhr/3',
+  COMPLAINANT: '/bhr/4',
+  DISPOSITION: '/bhr/5',
+  OFFICER: '/bhr/6',
+  REVIEW: '/bhr/7'
 };
 
 export const FORM_ERRORS = {

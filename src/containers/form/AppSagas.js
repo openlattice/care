@@ -2,8 +2,6 @@
  * @flow
  */
 
-import { SequenceAction } from 'redux-reqseq';
-
 import {
   AppApiActionFactory,
   EntityDataModelApiActionFactory
