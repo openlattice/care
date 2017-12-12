@@ -11,6 +11,7 @@ import TimePicker from 'react-bootstrap-time-picker';
 import isString from 'lodash/isString';
 import moment from 'moment';
 import styled from 'styled-components';
+import validator from 'validator';
 import { faUserAlt } from '@fortawesome/fontawesome-pro-light';
 import { FormGroup, FormControl, Col } from 'react-bootstrap';
 import { connect } from 'react-redux';
@@ -19,7 +20,6 @@ import { bindActionCreators } from 'redux';
 
 import Loading from '../../components/Loading';
 import SearchBar from '../../components/SearchBar';
-import SearchResults from '../../components/SearchResults';
 import StyledButton from '../../components/buttons/StyledButton';
 import StyledCard from '../../components/cards/StyledCard';
 import { DATA_URL_PREFIX } from '../../components/SelfieWebCam';
@@ -32,6 +32,15 @@ import { clearConsumerSearchResults, searchConsumers } from '../search/SearchAct
  */
 
 const DATE_FORMAT :string = 'YYYY-MM-DD';
+
+const CLINICIAN_NAME_VAL :'clinicianNameValue' = 'clinicianNameValue';
+const COMPLAINT_NUMBER_VAL :'complaintNumberValue' = 'complaintNumberValue';
+const DATE_VAL :'dateValue' = 'dateValue';
+const OFFICER_NAME_VAL :'officerNameValue' = 'officerNameValue';
+const OFFICER_SEQ_ID_VAL :'officerSeqIdValue' = 'officerSeqIdValue';
+const REASON_VAL :'reasonValue' = 'reasonValue';
+const SUMMARY_VAL :'summaryValue' = 'summaryValue';
+const TIME_VAL :'timeValue' = 'timeValue';
 
 /*
  * styled components
@@ -101,7 +110,7 @@ const PersonDetailsRow = styled.div`
   flex: 1 0 auto;
   margin: 10px 0;
   &:hover {
-    cursor: pointer;
+    cursor: ${props => (props.viewOnly ? 'default' : 'pointer')};
   }
 `;
 
@@ -153,17 +162,19 @@ type Props = {
   };
   isSearching :boolean;
   peopleEntitySetId :string;
-  searchResults :Immutable.List;
+  searchResults :List;
 };
 
 type State = {
+  clinicianNameValue :?string;
+  complaintNumberValue :?string;
   consumerSearchQuery :string;
   dateValue :?string;
   officerNameValue :?string;
   officerSeqIdValue :?string;
   reasonValue :?string;
   searchAttempt :boolean;
-  selectedConsumer :Immutable.Map;
+  selectedConsumer :Map;
   summaryValue :?string;
   timeValue :?string;
 };
@@ -175,15 +186,17 @@ class FollowUpReportContainer extends React.Component<Props, State> {
     super(props);
 
     this.state = {
+      [CLINICIAN_NAME_VAL]: null,
+      [COMPLAINT_NUMBER_VAL]: null,
+      [DATE_VAL]: null,
+      [OFFICER_NAME_VAL]: null,
+      [OFFICER_SEQ_ID_VAL]: null,
+      [REASON_VAL]: null,
+      [SUMMARY_VAL]: null,
+      [TIME_VAL]: formatTimePickerSeconds(0), // 12:00 am
       consumerSearchQuery: '',
-      dateValue: null,
-      officerNameValue: null,
-      officerSeqIdValue: null,
-      reasonValue: null,
       searchAttempt: false,
-      selectedConsumer: Immutable.Map(),
-      summaryValue: null,
-      timeValue: formatTimePickerSeconds(0) // 12:00 am
+      selectedConsumer: Immutable.Map()
     };
   }
 
@@ -193,12 +206,21 @@ class FollowUpReportContainer extends React.Component<Props, State> {
 
   isReadyToSubmit = () :boolean => {
 
-    return !!this.state.dateValue
-      && !!this.state.officerNameValue
-      && !!this.state.officerSeqIdValue
-      && !!this.state.reasonValue
-      && !!this.state.summaryValue
-      && !!this.state.timeValue;
+    return !!this.state[DATE_VAL]
+      && !!this.state[CLINICIAN_NAME_VAL]
+      && !!this.state[COMPLAINT_NUMBER_VAL]
+      && !!this.state[OFFICER_NAME_VAL]
+      && !!this.state[OFFICER_SEQ_ID_VAL]
+      && !!this.state[REASON_VAL]
+      && !!this.state[SUMMARY_VAL]
+      && !!this.state[TIME_VAL];
+  }
+
+  handleOnChangeInputString = (event) => {
+
+    this.setState({
+      [event.target.name]: event.target.value || ''
+    });
   }
 
   handleOnChangeDate = (value :?string, formattedValue :?string) => {
@@ -206,34 +228,6 @@ class FollowUpReportContainer extends React.Component<Props, State> {
     const dateValue :string = formattedValue || '';
     this.setState({
       dateValue
-    });
-  }
-
-  handleOnChangeOfficerName = (event :SyntheticInputEvent<*>) => {
-
-    this.setState({
-      officerNameValue: event.target.value || ''
-    });
-  }
-
-  handleOnChangeOfficerSeqId = (event :SyntheticInputEvent<*>) => {
-
-    this.setState({
-      officerSeqIdValue: event.target.value || ''
-    });
-  }
-
-  handleOnChangeReason = (event :SyntheticInputEvent<*>) => {
-
-    this.setState({
-      reasonValue: event.target.value || ''
-    });
-  }
-
-  handleOnChangeSummary = (event :SyntheticInputEvent<*>) => {
-
-    this.setState({
-      summaryValue: event.target.value || ''
     });
   }
 
@@ -266,6 +260,16 @@ class FollowUpReportContainer extends React.Component<Props, State> {
   handleOnCancel = () => {
 
     this.setState({
+      [CLINICIAN_NAME_VAL]: null,
+      [COMPLAINT_NUMBER_VAL]: null,
+      [DATE_VAL]: null,
+      [OFFICER_NAME_VAL]: null,
+      [OFFICER_SEQ_ID_VAL]: null,
+      [REASON_VAL]: null,
+      [SUMMARY_VAL]: null,
+      [TIME_VAL]: formatTimePickerSeconds(0), // 12:00 am
+      consumerSearchQuery: '',
+      searchAttempt: false,
       selectedConsumer: Immutable.Map()
     });
   }
@@ -290,6 +294,16 @@ class FollowUpReportContainer extends React.Component<Props, State> {
     }
 
     switch (type) {
+      case 'int64': {
+        const isValid = validator.isInt(value.toString(), {
+          max: Number.MAX_SAFE_INTEGER,
+          min: Number.MIN_SAFE_INTEGER
+        });
+        if (isValid) {
+          validationState = null;
+        }
+        break;
+      }
       default:
         if (isString(value) && value.length > 0) {
           validationState = null;
@@ -329,7 +343,7 @@ class FollowUpReportContainer extends React.Component<Props, State> {
               onClick={() => {
                 this.handleOnSelectSearchResult(result);
               }}>
-            { this.renderConsumerDetails(result) }
+            { this.renderConsumerDetails(result, false) }
           </SearchResult>
         );
       });
@@ -351,7 +365,7 @@ class FollowUpReportContainer extends React.Component<Props, State> {
     );
   }
 
-  renderConsumerDetails = (consumer :Map<*, *>) => {
+  renderConsumerDetails = (consumer :Map<*, *>, viewOnly :boolean) => {
 
     if (!consumer || consumer.isEmpty()) {
       return null;
@@ -374,7 +388,7 @@ class FollowUpReportContainer extends React.Component<Props, State> {
     }
 
     return (
-      <PersonDetailsRow>
+      <PersonDetailsRow viewOnly={viewOnly}>
         <PersonPictureWrapper>
           {
             (!pictureStr || pictureStr.length <= 0)
@@ -437,7 +451,7 @@ class FollowUpReportContainer extends React.Component<Props, State> {
     return (
       <SectionWrapper>
         <SectionHeader>Consumer Details</SectionHeader>
-        { this.renderConsumerDetails(this.state.selectedConsumer) }
+        { this.renderConsumerDetails(this.state.selectedConsumer, true) }
       </SectionWrapper>
     );
   }
@@ -449,60 +463,85 @@ class FollowUpReportContainer extends React.Component<Props, State> {
         <SectionHeader>Report Details</SectionHeader>
         <PaddedRow>
           <Col lg={6}>
-            <FormGroup validationState={this.checkValidationState('date', this.state.dateValue)}>
+            <FormGroup validationState={this.checkValidationState('date', this.state[DATE_VAL])}>
               <TitleLabel>Date*</TitleLabel>
               <DatePicker
                   dateFormat={DATE_FORMAT}
                   showTodayButton
-                  value={this.state.dateValue}
+                  value={this.state[DATE_VAL]}
                   onChange={this.handleOnChangeDate} />
             </FormGroup>
           </Col>
           <Col lg={6}>
-            <FormGroup validationState={this.checkValidationState('date', this.state.timeValue)}>
+            <FormGroup validationState={this.checkValidationState('date', this.state[TIME_VAL])}>
               <TitleLabel>Time*</TitleLabel>
-              <TimePicker value={this.state.timeValue} onChange={this.handleOnChangeTime} />
+              <TimePicker value={this.state[TIME_VAL]} onChange={this.handleOnChangeTime} />
             </FormGroup>
           </Col>
         </PaddedRow>
         <PaddedRow>
           <Col lg={6}>
-            <FormGroup validationState={this.checkValidationState('string', this.state.officerNameValue)}>
+            <FormGroup validationState={this.checkValidationState('string', this.state[CLINICIAN_NAME_VAL])}>
+              <TitleLabel>Clinician Name*</TitleLabel>
+              <FormControl
+                  name={CLINICIAN_NAME_VAL}
+                  value={this.state[CLINICIAN_NAME_VAL] === null ? '' : this.state[CLINICIAN_NAME_VAL]}
+                  onChange={this.handleOnChangeInputString} />
+            </FormGroup>
+          </Col>
+        </PaddedRow>
+        <PaddedRow>
+          <Col lg={6}>
+            <FormGroup validationState={this.checkValidationState('int64', this.state[COMPLAINT_NUMBER_VAL])}>
+              <TitleLabel>Complaint Number*</TitleLabel>
+              <FormControl
+                  name={COMPLAINT_NUMBER_VAL}
+                  value={this.state[COMPLAINT_NUMBER_VAL] === null ? '' : this.state[COMPLAINT_NUMBER_VAL]}
+                  onChange={this.handleOnChangeInputString} />
+            </FormGroup>
+          </Col>
+        </PaddedRow>
+        <PaddedRow>
+          <Col lg={6}>
+            <FormGroup validationState={this.checkValidationState('string', this.state[OFFICER_NAME_VAL])}>
               <TitleLabel>Officer Name*</TitleLabel>
               <FormControl
-                  value={this.state.officerNameValue === null ? '' : this.state.officerNameValue}
-                  onChange={this.handleOnChangeOfficerName} />
+                  name={OFFICER_NAME_VAL}
+                  value={this.state[OFFICER_NAME_VAL] === null ? '' : this.state[OFFICER_NAME_VAL]}
+                  onChange={this.handleOnChangeInputString} />
             </FormGroup>
           </Col>
           <Col lg={6}>
-            <FormGroup validationState={this.checkValidationState('string', this.state.officerSeqIdValue)}>
+            <FormGroup validationState={this.checkValidationState('string', this.state[OFFICER_SEQ_ID_VAL])}>
               <TitleLabel>Officer Seq ID*</TitleLabel>
               <FormControl
-                  value={this.state.officerSeqIdValue === null ? '' : this.state.officerSeqIdValue}
-                  onChange={this.handleOnChangeOfficerSeqId} />
+                  name={OFFICER_SEQ_ID_VAL}
+                  value={this.state[OFFICER_SEQ_ID_VAL] === null ? '' : this.state[OFFICER_SEQ_ID_VAL]}
+                  onChange={this.handleOnChangeInputString} />
             </FormGroup>
           </Col>
         </PaddedRow>
         <PaddedRow>
           <Col lg={12}>
-            <FormGroup validationState={this.checkValidationState('string', this.state.reasonValue)}>
+            <FormGroup validationState={this.checkValidationState('string', this.state[REASON_VAL])}>
               <TitleLabel>Reason for Follow-Up*</TitleLabel>
               <FormControl
                   componentClass="textarea"
-                  value={this.state.reasonValue === null ? '' : this.state.reasonValue}
-                  onChange={this.handleOnChangeReason} />
+                  name={REASON_VAL}
+                  value={this.state[REASON_VAL] === null ? '' : this.state[REASON_VAL]}
+                  onChange={this.handleOnChangeInputString} />
             </FormGroup>
           </Col>
         </PaddedRow>
-
         <PaddedRow>
           <Col lg={12}>
-            <FormGroup validationState={this.checkValidationState('string', this.state.summaryValue)}>
+            <FormGroup validationState={this.checkValidationState('string', this.state[SUMMARY_VAL])}>
               <TitleLabel>Summary / Notes*</TitleLabel>
               <FormControl
                   componentClass="textarea"
-                  value={this.state.summaryValue === null ? '' : this.state.summaryValue}
-                  onChange={this.handleOnChangeSummary} />
+                  name={SUMMARY_VAL}
+                  value={this.state[SUMMARY_VAL] === null ? '' : this.state[SUMMARY_VAL]}
+                  onChange={this.handleOnChangeInputString} />
             </FormGroup>
           </Col>
         </PaddedRow>

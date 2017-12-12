@@ -23,7 +23,9 @@ export default function searchReducer(state :Map<*, *> = INITIAL_STATE, action :
     case searchConsumers.case(action.type): {
       return searchConsumers.reducer(state, action, {
         REQUEST: () => {
-          return state.setIn(['consumers', 'isSearching'], true);
+          return state
+            .setIn(['consumers', 'isSearching'], true)
+            .setIn(['consumers', 'searchResults'], Immutable.List());
         },
         SUCCESS: () => {
           return state.setIn(['consumers', 'searchResults'], Immutable.fromJS(action.value.hits));
