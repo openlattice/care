@@ -13,14 +13,32 @@ import ComplainantInfoView from '../components/ComplainantInfoView';
 import DispositionView from '../components/DispositionView';
 import OfficerInfoView from '../components/OfficerInfoView';
 import ReviewView from '../components/ReviewView';
+import StyledCard from '../components/cards/StyledCard';
+
+import * as Routes from '../core/router/Routes';
 
 import { MAX_PAGE } from '../shared/Consts';
-import { FormWrapper, Page } from '../shared/Layout';
 
-const StyledProgressBar = styled(ProgressBar)`
-  width: 900px;
+const ContainerOuterWrapper = styled.div`
+  align-items: flex-start;
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: row;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+`;
+
+const ContainerInnerWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
   margin-bottom: 50px;
   margin-top: 50px;
+  width: 900px;
+`;
+
+const StyledProgressBar = styled(ProgressBar)`
+  margin: 20px 20px 50px 20px;
 `;
 
 function FormView({
@@ -41,14 +59,12 @@ function FormView({
   handlePersonSelection,
   personEntitySetId,
   consumerIsSelected,
-  renderModal,
-  organizations,
-  selectedOrganizationId,
-  handleOrganizationSelection
+  renderModal
 }) {
 
   const getProgress = () => {
-    const page = window.location.hash.substr(2);
+    const slashIndex :number = window.location.hash.lastIndexOf('/');
+    const page = window.location.hash.substring(slashIndex + 1);
     const num = Math.ceil(((page - 1) / (MAX_PAGE - 1)) * 100);
     const percentage = `${num.toString()}%`;
     return num === 0 ? { num: 5, percentage } : { num, percentage };
@@ -149,35 +165,27 @@ function FormView({
     );
   };
 
-  const getOrganizationButton = () => {
-    if (!organizations.size) return null;
-    return (
-      <OrganizationButton
-          organizations={organizations}
-          selectedOrganization={selectedOrganizationId}
-          selectOrganization={handleOrganizationSelection} />
-    );
-  };
-
   return (
-    <Page>
-      <StyledProgressBar bsStyle="info" now={getProgress().num} label={getProgress().percentage} />
-      <FormWrapper>
-        <form onSubmit={handleSubmit}>
-          <Switch>
-            <Route path="/bhr/1" render={getConsumerSearchView} />
-            <Route path="/bhr/2" render={getConsumerInfoView} />
-            <Route path="/bhr/3" render={getReportInfoView} />
-            <Route path="/bhr/4" render={getComplainantInfoView} />
-            <Route path="/bhr/5" render={getDispositionView} />
-            <Route path="/bhr/6" render={getOfficerInfoView} />
-            <Route path="/bhr/7" render={getReviewView} />
-            <Redirect to="/bhr/1" />
-          </Switch>
-        </form>
-      </FormWrapper>
-      { renderModal() }
-    </Page>
+    <ContainerOuterWrapper>
+      <ContainerInnerWrapper>
+        <StyledCard>
+          <StyledProgressBar bsStyle="info" now={getProgress().num} label={getProgress().percentage} />
+          <form onSubmit={handleSubmit}>
+            <Switch>
+              <Route path={`${Routes.BHR}/1`} render={getConsumerSearchView} />
+              <Route path={`${Routes.BHR}/2`} render={getConsumerInfoView} />
+              <Route path={`${Routes.BHR}/3`} render={getReportInfoView} />
+              <Route path={`${Routes.BHR}/4`} render={getComplainantInfoView} />
+              <Route path={`${Routes.BHR}/5`} render={getDispositionView} />
+              <Route path={`${Routes.BHR}/6`} render={getOfficerInfoView} />
+              <Route path={`${Routes.BHR}/7`} render={getReviewView} />
+              <Redirect to={`${Routes.BHR}/1`} />
+            </Switch>
+          </form>
+          { renderModal() }
+        </StyledCard>
+      </ContainerInnerWrapper>
+    </ContainerOuterWrapper>
   );
 }
 
@@ -188,15 +196,13 @@ FormView.propTypes = {
   handleTimeInput: PropTypes.func.isRequired,
   handleSingleSelection: PropTypes.func.isRequired,
   handleCheckboxChange: PropTypes.func.isRequired,
-  handleOrganizationSelection: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   isInReview: PropTypes.func.isRequired,
   handlePageChange: PropTypes.func.isRequired,
   handlePersonSelection: PropTypes.func.isRequired,
-  organizations: PropTypes.instanceOf(Immutable.Map).isRequired,
-  selectedOrganizationId: PropTypes.string.isRequired,
   personEntitySetId: PropTypes.string.isRequired,
   consumerIsSelected: PropTypes.bool.isRequired,
+  renderModal: PropTypes.func.isRequired,
   reportInfo: PropTypes.shape({
     dispatchReason: PropTypes.string.isRequired,
     complaintNumber: PropTypes.string.isRequired,

@@ -60,10 +60,14 @@ const SearchBar = ({
   );
 };
 
+SearchBar.defaultProps = {
+  title: ''
+};
+
 SearchBar.propTypes = {
   handleInput: PropTypes.func.isRequired,
   query: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
+  title: PropTypes.string,
   onSearchSubmit: PropTypes.func.isRequired
 };
 

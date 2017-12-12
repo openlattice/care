@@ -196,8 +196,9 @@ class Form extends React.Component<Props, State> {
   }
 
   isInReview = () => {
-    const page :number = parseInt(this.props.match.params.page, 10);
-    return page === MAX_PAGE;
+    const slashIndex :number = window.location.hash.lastIndexOf('/');
+    const page = window.location.hash.substring(slashIndex + 1);
+    return Number.parseInt(page, 10) === MAX_PAGE;
   }
 
   renderModal = () => {

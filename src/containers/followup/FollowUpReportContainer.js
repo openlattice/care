@@ -23,9 +23,20 @@ import SearchBar from '../../components/SearchBar';
 import StyledButton from '../../components/buttons/StyledButton';
 import StyledCard from '../../components/cards/StyledCard';
 import { DATA_URL_PREFIX } from '../../components/SelfieWebCam';
+import { PERSON } from '../../shared/Consts';
 import { PaddedRow, TitleLabel } from '../../shared/Layout';
 import { formatTimePickerSeconds } from '../../utils/Utils';
 import { clearConsumerSearchResults, searchConsumers } from '../search/SearchActionFactory';
+
+const {
+  DOB_FQN,
+  FIRST_NAME_FQN,
+  ID_FQN,
+  LAST_NAME_FQN,
+  PICTURE_FQN,
+  RACE_FQN,
+  SEX_FQN
+} = PERSON;
 
 /*
  * constants
@@ -372,15 +383,15 @@ class FollowUpReportContainer extends React.Component<Props, State> {
     }
 
     // TODO: how do we avoid having to hardcode FQNs???
-    const pictureStr = consumer.getIn(['person.picture', 0]);
+    const pictureStr = consumer.getIn([PICTURE_FQN, 0]);
     const pictureImgSrc = `${DATA_URL_PREFIX}${pictureStr}`;
 
-    const id = consumer.getIn(['nc.SubjectIdentification', 0]);
-    const firstName = consumer.getIn(['nc.PersonGivenName', 0]);
-    const lastName = consumer.getIn(['nc.PersonSurName', 0]);
-    const sex = consumer.getIn(['nc.PersonSex', 0], '');
-    const race = consumer.getIn(['nc.PersonRace', 0], '');
-    const dob = consumer.getIn(['nc.PersonBirthDate', 0], '');
+    const id = consumer.getIn([ID_FQN, 0]);
+    const firstName = consumer.getIn([FIRST_NAME_FQN, 0]);
+    const lastName = consumer.getIn([LAST_NAME_FQN, 0]);
+    const sex = consumer.getIn([SEX_FQN, 0], '');
+    const race = consumer.getIn([RACE_FQN, 0], '');
+    const dob = consumer.getIn([DOB_FQN, 0], '');
 
     let dobFormatted = dob;
     if (dob) {
