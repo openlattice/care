@@ -1,9 +1,3 @@
-export const ENTITY_SET_NAMES = {
-  FORM: 'baltimoreBehavioralHealthReportForm',
-  PEOPLE: 'baltimoreBehavioralHealthReportPeople',
-  APPEARS_IN: 'baltimoreBehavioralHealthReportAppearsIn'
-};
-
 export const APP_NAMES = {
   APP: 'bhr',
   FORM: 'app.bhr',
