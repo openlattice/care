@@ -2,18 +2,20 @@
  * @flow
  */
 
-import { fork } from 'redux-saga/effects';
-
 import {
   AppApiSagas,
+  DataApiSagas,
   EntityDataModelApiSagas,
-  SearchApiSagas
+  SearchApiSagas,
+  SyncApiSagas
 } from 'lattice-sagas';
 
+import { fork } from 'redux-saga/effects';
+
 import * as AuthSagas from '../auth/AuthSagas';
-import * as LatticeSagas from '../lattice/LatticeSagas';
 
 import * as AppSagas from '../../containers/form/AppSagas';
+import * as FollowUpReportSagas from '../../containers/followup/FollowUpReportSagas';
 import * as ReportSagas from '../../containers/form/ReportSagas';
 import * as SearchSagas from '../../containers/search/SearchSagas';
 
@@ -32,13 +34,15 @@ export default function* sagas() :Generator<*, *, *> {
     fork(AppApiSagas.getAppWatcher),
     fork(AppApiSagas.getAppConfigsWatcher),
     fork(AppApiSagas.getAppTypesWatcher),
+    fork(DataApiSagas.acquireSyncTicketWatcher),
+    fork(DataApiSagas.createEntityAndAssociationDataWatcher),
     fork(EntityDataModelApiSagas.getEntityDataModelProjectionWatcher),
-    fork(LatticeSagas.acquireSyncTicketWatcher),
-    fork(LatticeSagas.createEntityAndAssociationDataWatcher),
-    fork(LatticeSagas.fetchCurrentSyncIdWatcher),
-    fork(LatticeSagas.fetchEntitySetWatcher),
-    fork(LatticeSagas.fetchEntitySetIdWatcher),
+    fork(SearchApiSagas.searchEntityNeighborsWatcher),
     fork(SearchApiSagas.searchEntitySetDataWatcher),
+    fork(SyncApiSagas.getCurrentSyncIdWatcher),
+
+    // Follow-Up Report Sagas
+    fork(FollowUpReportSagas.submitFollowUpReportWatcher),
 
     // Report Sagas
     fork(AppSagas.loadAppWatcher),
@@ -47,6 +51,7 @@ export default function* sagas() :Generator<*, *, *> {
     fork(ReportSagas.submitReportWatcher),
 
     // SearchSagas
+    fork(SearchSagas.searchConsumerNeighborsWatcher),
     fork(SearchSagas.searchConsumersWatcher)
   ];
 }

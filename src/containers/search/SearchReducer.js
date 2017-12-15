@@ -5,11 +5,17 @@
 import Immutable from 'immutable';
 
 import {
+  CLEAR_CONSUMER_NEIGHBORS_SEARCH_RESULTS,
   CLEAR_CONSUMER_SEARCH_RESULTS,
+  searchConsumerNeighbors,
   searchConsumers
 } from './SearchActionFactory';
 
 const INITIAL_STATE :Map<*, *> = Immutable.fromJS({
+  consumerNeighbors: {
+    isSearching: false,
+    searchResults: Immutable.List()
+  },
   consumers: {
     isSearching: false,
     searchResults: Immutable.List()
@@ -19,6 +25,25 @@ const INITIAL_STATE :Map<*, *> = Immutable.fromJS({
 export default function searchReducer(state :Map<*, *> = INITIAL_STATE, action :Object) {
 
   switch (action.type) {
+
+    case searchConsumerNeighbors.case(action.type): {
+      return searchConsumerNeighbors.reducer(state, action, {
+        REQUEST: () => {
+          return state
+            .setIn(['consumerNeighbors', 'isSearching'], true)
+            .setIn(['consumerNeighbors', 'searchResults'], Immutable.List());
+        },
+        SUCCESS: () => {
+          return state.setIn(['consumerNeighbors', 'searchResults'], Immutable.fromJS(action.value));
+        },
+        FAILURE: () => {
+          return state.setIn(['consumerNeighbors', 'searchResults'], Immutable.List());
+        },
+        FINALLY: () => {
+          return state.setIn(['consumerNeighbors', 'isSearching'], false);
+        }
+      });
+    }
 
     case searchConsumers.case(action.type): {
       return searchConsumers.reducer(state, action, {
@@ -37,6 +62,10 @@ export default function searchReducer(state :Map<*, *> = INITIAL_STATE, action :
           return state.setIn(['consumers', 'isSearching'], false);
         }
       });
+    }
+
+    case CLEAR_CONSUMER_NEIGHBORS_SEARCH_RESULTS: {
+      return state.setIn(['consumerNeighbors', 'searchResults'], Immutable.List());
     }
 
     case CLEAR_CONSUMER_SEARCH_RESULTS: {

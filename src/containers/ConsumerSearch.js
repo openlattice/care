@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 
 import SearchBar from '../components/SearchBar';
+import SearchInput from '../components/SearchInput';
 import SearchResults from '../components/SearchResults';
 import { SectionHeader } from '../shared/Layout';
 import { FORM_PATHS } from '../shared/Consts';
@@ -19,6 +20,11 @@ const DividerStatement = styled.div`
   text-align: center;
   font-size: 20px;
   margin-bottom: 20px;
+`;
+
+const FullWidthSearchInput = styled(SearchInput)`
+  margin: 20px 0;
+  width: 100%;
 `;
 
 class ConsumerSearch extends React.Component {
@@ -39,12 +45,12 @@ class ConsumerSearch extends React.Component {
     handlePersonSelection: PropTypes.func.isRequired
   }
 
-  handleInput = (e) => {
-    this.setState({ query: e.target.value });
+  handleInput = (value) => {
+    this.setState({ query: value });
   }
 
-  onSearchSubmit = (e) => {
-    e.preventDefault();
+  onSearchSubmit = () => {
+
     const searchRequest = {
       searchTerm: this.state.query,
       start: ((this.state.resultsPage - 1) * MAX_HITS),
@@ -75,10 +81,10 @@ class ConsumerSearch extends React.Component {
           Create New Consumer Entry
         </StyledButton>
         <DividerStatement>—OR—</DividerStatement>
-        <SearchBar
-            handleInput={this.handleInput}
-            query={this.state.query}
-            onSearchSubmit={this.onSearchSubmit} />
+        <FullWidthSearchInput
+            placeholder="Search for consumer..."
+            onChange={this.handleInput}
+            onSubmit={this.onSearchSubmit} />
         <SearchResults
             results={this.state.results}
             handlePersonSelection={this.props.handlePersonSelection}

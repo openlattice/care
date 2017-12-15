@@ -21,7 +21,7 @@ import { hardRestart, submitReport } from './ReportActionFactory';
 import { SUBMISSION_STATES } from './ReportReducer';
 
 import {
-  APP_NAMES,
+  APP_TYPES_FQNS,
   CONSUMER_STATE,
   FORM_PATHS,
   MAX_PAGE,
@@ -219,12 +219,13 @@ class Form extends React.Component<Props, State> {
 
   render() {
 
-    const { PEOPLE } = APP_NAMES;
+    const { PEOPLE_FQN } = APP_TYPES_FQNS;
     const selectedOrganizationId :string = this.props.app.get('selectedOrganization');
-    const peopleEntitySetId :string = this.props.app.getIn(
-      [PEOPLE, 'entitySetsByOrganization', selectedOrganizationId],
-      ''
-    );
+    const peopleEntitySetId :string = this.props.app.getIn([
+      PEOPLE_FQN.getFullyQualifiedName(),
+      'entitySetsByOrganization',
+      selectedOrganizationId
+    ]);
     const organizations = this.props.app.get('organizations');
 
     return (

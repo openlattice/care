@@ -2,8 +2,7 @@
  * @flow
  */
 
-import { newRequestSequence } from '../../core/redux/RequestSequence';
-import type { RequestSequence } from '../../core/redux/RequestSequence';
+import { newRequestSequence } from 'redux-reqseq';
 
 const HARD_RESTART :'HARD_RESTART' = 'HARD_RESTART';
 

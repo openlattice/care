@@ -11,7 +11,7 @@ import { Redirect, Route, Switch } from 'react-router';
 import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 
-import FollowUpReportContainer from '../followup/FollowUpReportContainer';
+import FollowUpReportManager from '../followup/FollowUpReportManager';
 import FormContainer from '../form/FormContainer';
 import HomeContainer from '../home/HomeContainer';
 import Loading from '../../components/Loading';
@@ -97,7 +97,7 @@ class AppContainer extends React.Component<Props> {
       <Switch>
         <Route exact strict path={Routes.HOME} component={HomeContainer} />
         <Route path={Routes.BHR} component={FormContainer} />
-        <Route path={Routes.FOLLOW_UP} component={FollowUpReportContainer} />
+        <Route path={Routes.FOLLOW_UP_PATH} component={FollowUpReportManager} />
         <Redirect to={Routes.HOME} />
       </Switch>
     );

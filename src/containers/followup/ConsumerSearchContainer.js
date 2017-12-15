@@ -1,0 +1,185 @@
+/*
+ * @flow
+ */
+
+import React from 'react';
+
+import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import Immutable from 'immutable';
+import styled from 'styled-components';
+import { faAngleRight } from '@fortawesome/fontawesome-pro-light';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router';
+import { bindActionCreators } from 'redux';
+
+import Loading from '../../components/Loading';
+import SearchInput from '../../components/SearchInput';
+import StyledCard from '../../components/cards/StyledCard';
+import { ContainerInnerWrapper, ContainerOuterWrapper } from '../../shared/Layout';
+import { randomId } from '../../utils/Utils';
+
+import PersonDetailsSearchResult from '../search/PersonDetailsSearchResult';
+import { SearchResult, SearchResultsWrapper } from '../search/SearchResultsStyledComponents';
+
+import {
+  clearConsumerSearchResults,
+  searchConsumers
+} from '../search/SearchActionFactory';
+
+/*
+ * styled components
+ */
+
+const Title = styled.span`
+  font-size: 22px;
+  font-weight: normal;
+  padding: 0;
+  margin: 0;
+`;
+
+const FullWidthSearchInput = styled(SearchInput)`
+  margin: 20px 0;
+  width: 100%;
+`;
+
+const NoSearchResults = styled.div`
+  font-weight: bold;
+  text-align: center;
+`;
+
+/*
+ * types
+ */
+
+type Props = {
+  actions :{
+    clearConsumerSearchResults :Function;
+    searchConsumers :RequestSequence;
+  };
+  isSearching :boolean;
+  peopleEntitySetId :string;
+  searchResults :List<*>;
+  onSelectSearchResult :Function;
+};
+
+type State = {
+  searchAttempt :boolean;
+  searchQuery :string;
+};
+
+class ConsumerSearchContainer extends React.Component<Props, State> {
+
+  constructor(props :Props) {
+
+    super(props);
+
+    this.state = {
+      searchAttempt: false,
+      searchQuery: ''
+    };
+  }
+
+  componentWillUnmount() {
+
+    this.props.actions.clearConsumerSearchResults();
+  }
+
+  handleOnChangeConsumerSearchQuery = (value :string) => {
+
+    this.setState({
+      searchQuery: value
+    });
+  }
+
+  handleOnSubmitConsumerSearch = () => {
+
+    this.setState({
+      searchAttempt: true
+    });
+
+    this.props.actions.searchConsumers({
+      entitySetId: this.props.peopleEntitySetId,
+      query: this.state.searchQuery
+    });
+  }
+
+  renderSearchResults = () => {
+
+    if (!this.state.searchAttempt) {
+      return null;
+    }
+
+    const searchResults = [];
+    if (this.props.searchResults.size > 0) {
+      const showDivider :boolean = this.props.searchResults.size > 1;
+      this.props.searchResults.forEach((searchResult :Map<*, *>) => {
+        searchResults.push(
+          <SearchResult
+              key={randomId()}
+              showDivider={showDivider}
+              onClick={() => this.props.onSelectSearchResult(searchResult)}>
+            <PersonDetailsSearchResult personDetails={searchResult} />
+            <FontAwesomeIcon icon={faAngleRight} size="2x" />
+          </SearchResult>
+        );
+      });
+    }
+
+    return (
+      <SearchResultsWrapper>
+        {
+          (this.props.isSearching)
+            ? <Loading />
+            : null
+        }
+        {
+          (!this.props.isSearching && searchResults.length === 0)
+            ? <NoSearchResults>No results</NoSearchResults>
+            : searchResults
+        }
+      </SearchResultsWrapper>
+    );
+  }
+
+  render() {
+
+    return (
+      <ContainerOuterWrapper>
+        <ContainerInnerWrapper>
+          <StyledCard>
+            <Title>Search for existing consumers</Title>
+            <FullWidthSearchInput
+                placeholder="Search..."
+                onChange={this.handleOnChangeConsumerSearchQuery}
+                onSubmit={this.handleOnSubmitConsumerSearch} />
+            { this.renderSearchResults() }
+          </StyledCard>
+        </ContainerInnerWrapper>
+      </ContainerOuterWrapper>
+    );
+  }
+}
+
+function mapStateToProps(state :Map<*, *>) :Object {
+
+  return {
+    isSearching: state.getIn(['search', 'consumers', 'isSearching'], false),
+    searchResults: state.getIn(['search', 'consumers', 'searchResults'], Immutable.List())
+  };
+}
+
+function mapDispatchToProps(dispatch :Function) :Object {
+
+  const actions = {
+    clearConsumerSearchResults,
+    searchConsumers
+  };
+
+  return {
+    actions: bindActionCreators(actions, dispatch)
+  };
+}
+
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(ConsumerSearchContainer)
+);

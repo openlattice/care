@@ -76,7 +76,7 @@ const HomeContainer = () => {
             <FontAwesomeIcon icon={faAngleRight} size="2x" />
           </StyledNavCard>
         </StyledNavLink>
-        <StyledNavLink to={Routes.FOLLOW_UP} style={{ marginTop: '25px' }}>
+        <StyledNavLink to={Routes.FOLLOW_UP_PATH} style={{ marginTop: '25px' }}>
           <StyledNavCard>
             <LinkTextWrapper>
               <FontAwesomeIcon icon={faFileAlt} size="2x" />

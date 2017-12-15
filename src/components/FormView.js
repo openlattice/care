@@ -1,11 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Immutable from 'immutable';
 import styled from 'styled-components';
 import { ProgressBar } from 'react-bootstrap';
 import { Redirect, Route, Switch } from 'react-router-dom';
 
-import OrganizationButton from '../containers/app/OrganizationButton';
 import ReportInfoView from '../components/ReportInfoView';
 import ConsumerSearch from '../containers/ConsumerSearch';
 import ConsumerInfoView from '../components/ConsumerInfoView';

@@ -9,7 +9,7 @@ import {
 
 import { put, take, takeEvery } from 'redux-saga/effects';
 
-import { APP_NAMES } from '../../shared/Consts';
+import { APP_NAME } from '../../shared/Consts';
 
 import {
   LOAD_APP,
@@ -67,7 +67,7 @@ export function* loadAppWorker(action :SequenceAction) :Generator<*, *, *> {
   try {
     yield put(loadApp.request(action.id));
 
-    const getAppAction = getApp(APP_NAMES.APP);
+    const getAppAction = getApp(APP_NAME);
     yield put(getAppAction);
     const getAppResponseAction = yield take(matchGetAppResponse(getAppAction));
 

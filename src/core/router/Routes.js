@@ -10,5 +10,4 @@ export const HOME :string = '/home';
 export const LOGIN :string = '/login';
 
 export const BHR :string = '/bhr';
-export const BHR_PAGE :string = '/:page';
-export const FOLLOW_UP :string = '/followup';
+export const FOLLOW_UP_PATH :string = '/followup';
