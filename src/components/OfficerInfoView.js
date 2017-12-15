@@ -91,16 +91,17 @@ class OfficerInfoView extends React.Component {
     } = this.props;
 
     const {
-      officerNameValid,
       officerSeqIDValid,
       didClickNav,
       sectionFormatErrors,
       sectionRequiredErrors
     } = this.state;
 
+    const isReviewPage = isInReview();
+
     return (
       <SectionWrapper>
-        { !isInReview() ? <SectionHeader>Officer</SectionHeader> : null }
+        { !isReviewPage ? <SectionHeader>Officer</SectionHeader> : null }
 
         <ContentWrapper>
           <PaddedRow>
@@ -113,7 +114,7 @@ class OfficerInfoView extends React.Component {
                   onChange={(e) => {
                     handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                   }}
-                  disabled={isInReview()} />
+                  disabled={isReviewPage} />
             </Col>
           </PaddedRow>
 
@@ -134,7 +135,7 @@ class OfficerInfoView extends React.Component {
                     onChange={(e) => {
                       handleTextInput(e, 'alphanumeric', sectionFormatErrors, this.setInputErrors);
                     }}
-                    disabled={isInReview()} />
+                    disabled={isReviewPage} />
               </FormGroup>
             </Col>
             <Col lg={6}>
@@ -146,7 +147,7 @@ class OfficerInfoView extends React.Component {
                   onChange={(e) => {
                     handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                   }}
-                  disabled={isInReview()} />
+                  disabled={isReviewPage} />
             </Col>
           </PaddedRow>
 
@@ -161,7 +162,7 @@ class OfficerInfoView extends React.Component {
                     value="crtUnit"
                     checked={input.officerCertification.indexOf('crtUnit') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isInReview()}>CRT Unit</InlineCheckbox>
+                    disabled={isReviewPage}>CRT Unit</InlineCheckbox>
                 <InlineCheckbox
                     inline
                     data-section={section}
@@ -169,7 +170,7 @@ class OfficerInfoView extends React.Component {
                     value="best"
                     checked={input.officerCertification.indexOf('best') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isInReview()}>BEST</InlineCheckbox>
+                    disabled={isReviewPage}>BEST</InlineCheckbox>
                 <InlineCheckbox
                     inline
                     data-section={section}
@@ -177,7 +178,7 @@ class OfficerInfoView extends React.Component {
                     value="cit"
                     checked={input.officerCertification.indexOf('cit') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isInReview()}>CIT</InlineCheckbox>
+                    disabled={isReviewPage}>CIT</InlineCheckbox>
                 <InlineCheckbox
                     inline
                     data-section={section}
@@ -185,14 +186,14 @@ class OfficerInfoView extends React.Component {
                     value="n/a"
                     checked={input.officerCertification.indexOf('n/a') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isInReview()}>N/A</InlineCheckbox>
+                    disabled={isReviewPage}>N/A</InlineCheckbox>
               </FormGroup>
             </Col>
           </PaddedRow>
         </ContentWrapper>
 
         {
-          !isInReview()
+          !isReviewPage
             ? (
               <FormNav
                   prevPath={FORM_PATHS.DISPOSITION}

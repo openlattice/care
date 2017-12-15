@@ -21,7 +21,7 @@ import { hardRestart, submitReport } from './ReportActionFactory';
 import { SUBMISSION_STATES } from './ReportReducer';
 
 import {
-  APP_NAMES,
+  APP_TYPES_FQNS,
   CONSUMER_STATE,
   FORM_PATHS,
   MAX_PAGE,
@@ -88,7 +88,7 @@ class Form extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    this.props.actions.loadApp();
+    // this.props.actions.loadApp();
   }
 
   handleTextInput = (e, fieldType, formatErrors, setErrorsFn) => {
@@ -196,8 +196,9 @@ class Form extends React.Component<Props, State> {
   }
 
   isInReview = () => {
-    const page :number = parseInt(this.props.match.params.page, 10);
-    return page === MAX_PAGE;
+    const slashIndex :number = window.location.hash.lastIndexOf('/');
+    const page = window.location.hash.substring(slashIndex + 1);
+    return Number.parseInt(page, 10) === MAX_PAGE;
   }
 
   renderModal = () => {
@@ -218,12 +219,13 @@ class Form extends React.Component<Props, State> {
 
   render() {
 
-    const { PEOPLE } = APP_NAMES;
+    const { PEOPLE_FQN } = APP_TYPES_FQNS;
     const selectedOrganizationId :string = this.props.app.get('selectedOrganization');
-    const peopleEntitySetId :string = this.props.app.getIn(
-      [PEOPLE, 'entitySetsByOrganization', selectedOrganizationId],
-      ''
-    );
+    const peopleEntitySetId :string = this.props.app.getIn([
+      PEOPLE_FQN.getFullyQualifiedName(),
+      'entitySetsByOrganization',
+      selectedOrganizationId
+    ]);
     const organizations = this.props.app.get('organizations');
 
     return (

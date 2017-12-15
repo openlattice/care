@@ -81,15 +81,16 @@ class ComplainantInfoView extends React.Component {
     } = this.props;
 
     const {
-      complainantNameValid,
       didClickNav,
       sectionFormatErrors,
       sectionRequiredErrors
     } = this.state;
 
+    const isReviewPage = isInReview();
+
     return (
       <SectionWrapper>
-        { !isInReview() ? <SectionHeader>Complainant</SectionHeader> : null}
+        { !isReviewPage ? <SectionHeader>Complainant</SectionHeader> : null}
         <ContentWrapper>
           <PaddedRow>
             <Col lg={12}>
@@ -101,7 +102,7 @@ class ComplainantInfoView extends React.Component {
                   onChange={(e) => {
                     handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                   }}
-                  disabled={isInReview()} />
+                  disabled={isReviewPage} />
             </Col>
           </PaddedRow>
           <PaddedRow>
@@ -114,7 +115,7 @@ class ComplainantInfoView extends React.Component {
                   onChange={(e) => {
                     handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                   }}
-                  disabled={isInReview()} />
+                  disabled={isReviewPage} />
             </Col>
           </PaddedRow>
           <PaddedRow>
@@ -127,7 +128,7 @@ class ComplainantInfoView extends React.Component {
                   onChange={(e) => {
                     handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                   }}
-                  disabled={isInReview()} />
+                  disabled={isReviewPage} />
             </Col>
             <Col lg={6}>
               <TitleLabel>Phone Number</TitleLabel>
@@ -138,13 +139,13 @@ class ComplainantInfoView extends React.Component {
                   onChange={(e) => {
                     handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                   }}
-                  disabled={isInReview()} />
+                  disabled={isReviewPage} />
             </Col>
           </PaddedRow>
         </ContentWrapper>
 
         {
-          !isInReview()
+          !isReviewPage
             ? (
               <FormNav
                   prevPath={FORM_PATHS.REPORT}
