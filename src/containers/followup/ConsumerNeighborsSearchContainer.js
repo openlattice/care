@@ -9,7 +9,7 @@ import Immutable from 'immutable';
 import styled, { css } from 'styled-components';
 import { faAngleRight } from '@fortawesome/fontawesome-pro-light';
 import { connect } from 'react-redux';
-import { Redirect, withRouter } from 'react-router';
+import { withRouter } from 'react-router';
 import { bindActionCreators } from 'redux';
 
 import Loading from '../../components/Loading';
@@ -24,8 +24,6 @@ import {
   clearConsumerNeighborsSearchResults,
   searchConsumerNeighbors
 } from '../search/SearchActionFactory';
-
-import { PAGE_1 } from './FollowUpReportConstants';
 
 const {
   BEHAVIORAL_HEALTH_REPORT_FQN

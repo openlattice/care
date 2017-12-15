@@ -9,10 +9,12 @@ import { connect } from 'react-redux';
 import { Redirect, Route, Switch, withRouter } from 'react-router';
 import { bindActionCreators } from 'redux';
 
+import StyledCard from '../../components/cards/StyledCard';
 import ConsumerSearchContainer from './ConsumerSearchContainer';
 import ConsumerNeighborsSearchContainer from './ConsumerNeighborsSearchContainer';
 import FollowUpReportContainer from './FollowUpReportContainer';
 
+import { ContainerInnerWrapper, ContainerOuterWrapper } from '../../shared/Layout';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { submitFollowUpReport } from './FollowUpReportActionFactory';
 import { SUBMISSION_STATES } from './FollowUpReportReducer';
@@ -129,10 +131,17 @@ class FollowUpReportManager extends React.Component<Props, State> {
 
   renderConsumerSearchContainer = () => {
 
+    // using the wrappers here is not the right thing to do
     return (
-      <ConsumerSearchContainer
-          peopleEntitySetId={this.props.entitySetIds[PEOPLE_FQN.getFullyQualifiedName()]}
-          onSelectSearchResult={this.handleOnSelectConsumerSearchResult} />
+      <ContainerOuterWrapper>
+        <ContainerInnerWrapper>
+          <StyledCard>
+            <ConsumerSearchContainer
+                peopleEntitySetId={this.props.entitySetIds[PEOPLE_FQN.getFullyQualifiedName()]}
+                onSelectSearchResult={this.handleOnSelectConsumerSearchResult} />
+          </StyledCard>
+        </ContainerInnerWrapper>
+      </ContainerOuterWrapper>
     );
   }
 

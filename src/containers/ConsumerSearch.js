@@ -1,16 +1,10 @@
 import React from 'react';
-import { SearchApi } from 'lattice';
-import { Button } from 'react-bootstrap';
-import styled from 'styled-components';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import { Button } from 'react-bootstrap';
 
-import SearchBar from '../components/SearchBar';
-import SearchInput from '../components/SearchInput';
-import SearchResults from '../components/SearchResults';
+import ConsumerSearchContainer from './followup/ConsumerSearchContainer';
 import { SectionHeader } from '../shared/Layout';
-import { FORM_PATHS } from '../shared/Consts';
-
-const MAX_HITS = 10;
 
 const StyledButton = styled(Button)`
   margin-bottom: 20px;
@@ -22,50 +16,20 @@ const DividerStatement = styled.div`
   margin-bottom: 20px;
 `;
 
-const FullWidthSearchInput = styled(SearchInput)`
-  margin: 20px 0;
-  width: 100%;
-`;
+/*
+ * TODO: this file needs to go away
+ */
 
 class ConsumerSearch extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      query: '',
-      results: [],
-      resultsPage: 1,
-      didSearch: false
-    };
-  }
 
   static propTypes = {
     personEntitySetId: PropTypes.string.isRequired,
-    handlePageChange: PropTypes.func.isRequired,
     handlePersonSelection: PropTypes.func.isRequired
   }
 
-  handleInput = (value) => {
-    this.setState({ query: value });
-  }
+  handleOnSelectConsumerSearchResult = (searchResult) => {
 
-  onSearchSubmit = () => {
-
-    const searchRequest = {
-      searchTerm: this.state.query,
-      start: ((this.state.resultsPage - 1) * MAX_HITS),
-      maxHits: MAX_HITS
-    };
-
-    if (this.props.personEntitySetId.length > 0) {
-      SearchApi.searchEntitySetData(this.props.personEntitySetId, searchRequest)
-        .then((results) => {
-          this.setState({
-            results: results.hits,
-            didSearch: true
-          });
-        });
-    }
+    this.props.handlePersonSelection(searchResult.toJS());
   }
 
   render() {
@@ -81,14 +45,10 @@ class ConsumerSearch extends React.Component {
           Create New Consumer Entry
         </StyledButton>
         <DividerStatement>—OR—</DividerStatement>
-        <FullWidthSearchInput
-            placeholder="Search for consumer..."
-            onChange={this.handleInput}
-            onSubmit={this.onSearchSubmit} />
-        <SearchResults
-            results={this.state.results}
-            handlePersonSelection={this.props.handlePersonSelection}
-            didSearch={this.state.didSearch} />
+        <ConsumerSearchContainer
+            peopleEntitySetId={this.props.personEntitySetId}
+            showTitle={false}
+            onSelectSearchResult={this.handleOnSelectConsumerSearchResult} />
       </div>
     );
   }

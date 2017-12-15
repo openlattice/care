@@ -14,8 +14,6 @@ import { bindActionCreators } from 'redux';
 
 import Loading from '../../components/Loading';
 import SearchInput from '../../components/SearchInput';
-import StyledCard from '../../components/cards/StyledCard';
-import { ContainerInnerWrapper, ContainerOuterWrapper } from '../../shared/Layout';
 import { randomId } from '../../utils/Utils';
 
 import PersonDetailsSearchResult from '../search/PersonDetailsSearchResult';
@@ -29,6 +27,13 @@ import {
 /*
  * styled components
  */
+
+// HACK
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  position: relative;
+`;
 
 const Title = styled.span`
   font-size: 22px;
@@ -59,6 +64,7 @@ type Props = {
   isSearching :boolean;
   peopleEntitySetId :string;
   searchResults :List<*>;
+  showTitle :boolean;
   onSelectSearchResult :Function;
 };
 
@@ -68,6 +74,10 @@ type State = {
 };
 
 class ConsumerSearchContainer extends React.Component<Props, State> {
+
+  static defaultProps = {
+    showTitle: true
+  };
 
   constructor(props :Props) {
 
@@ -144,18 +154,18 @@ class ConsumerSearchContainer extends React.Component<Props, State> {
   render() {
 
     return (
-      <ContainerOuterWrapper>
-        <ContainerInnerWrapper>
-          <StyledCard>
-            <Title>Search for existing consumers</Title>
-            <FullWidthSearchInput
-                placeholder="Search..."
-                onChange={this.handleOnChangeConsumerSearchQuery}
-                onSubmit={this.handleOnSubmitConsumerSearch} />
-            { this.renderSearchResults() }
-          </StyledCard>
-        </ContainerInnerWrapper>
-      </ContainerOuterWrapper>
+      <Wrapper>
+        {
+          this.props.showTitle
+            ? <Title>Search for existing consumers</Title>
+            : null
+        }
+        <FullWidthSearchInput
+            placeholder="Search..."
+            onChange={this.handleOnChangeConsumerSearchQuery}
+            onSubmit={this.handleOnSubmitConsumerSearch} />
+        { this.renderSearchResults() }
+      </Wrapper>
     );
   }
 }
