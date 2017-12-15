@@ -13,24 +13,20 @@ import ConsumerSearchContainer from './ConsumerSearchContainer';
 import ConsumerNeighborsSearchContainer from './ConsumerNeighborsSearchContainer';
 import FollowUpReportContainer from './FollowUpReportContainer';
 
-import * as Routes from '../../core/router/Routes';
-
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { submitFollowUpReport } from './FollowUpReportActionFactory';
+import { SUBMISSION_STATES } from './FollowUpReportReducer';
+import {
+  PAGE_1,
+  PAGE_2,
+  PAGE_3
+} from './FollowUpReportConstants';
 
 const {
   APPEARS_IN_FQN,
   FOLLOW_UP_REPORT_FQN,
   PEOPLE_FQN
 } = APP_TYPES_FQNS;
-
-/*
- * constants
- */
-
-const PAGE_1 :string = `${Routes.FOLLOW_UP_PATH}/1`;
-const PAGE_2 :string = `${Routes.FOLLOW_UP_PATH}/2`;
-const PAGE_3 :string = `${Routes.FOLLOW_UP_PATH}/3`;
 
 /*
  * types
@@ -44,6 +40,7 @@ type Props = {
   entitySetIds :{[key :string] :string};
   history :RouterHistory;
   selectedOrganizationId :string;
+  submissionState :number;
 };
 
 type State = {
@@ -61,6 +58,30 @@ class FollowUpReportManager extends React.Component<Props, State> {
       selectedConsumer: Immutable.Map(),
       selectedConsumerNeighbor: Immutable.Map()
     };
+  }
+
+  componentWillReceiveProps(nextProps :Props) {
+
+    if (this.props.submissionState === SUBMISSION_STATES.PRE_SUBMIT
+        && nextProps.submissionState === SUBMISSION_STATES.IS_SUBMITTING
+    ) {
+      this.setState({
+        selectedConsumer: Immutable.Map(),
+        selectedConsumerNeighbor: Immutable.Map()
+      });
+    }
+  }
+
+  shouldComponentUpdate(nextProps :Props) {
+
+    // only thing that *should* have changed is "submissionState", which means we don't want to rerender
+    // this will probably cause bugs...
+    if (this.props.submissionState === SUBMISSION_STATES.PRE_SUBMIT
+        && nextProps.submissionState === SUBMISSION_STATES.IS_SUBMITTING) {
+      return false;
+    }
+
+    return true;
   }
 
   handleOnCancel = () => {
@@ -119,7 +140,10 @@ class FollowUpReportManager extends React.Component<Props, State> {
 
     const { selectedConsumer } = this.state;
 
-    if (!selectedConsumer || selectedConsumer.isEmpty()) {
+    if (
+      (!selectedConsumer || selectedConsumer.isEmpty())
+      && this.props.submissionState === SUBMISSION_STATES.PRE_SUBMIT
+    ) {
       // TODO: routing between pages needs more thought
       return (
         <Redirect to={PAGE_1} />
@@ -139,10 +163,13 @@ class FollowUpReportManager extends React.Component<Props, State> {
     const { selectedConsumer, selectedConsumerNeighbor } = this.state;
 
     if (
-      !selectedConsumer
-      || selectedConsumer.isEmpty()
-      || !selectedConsumerNeighbor
-      || selectedConsumerNeighbor.isEmpty()
+      (
+        !selectedConsumer
+        || selectedConsumer.isEmpty()
+        || !selectedConsumerNeighbor
+        || selectedConsumerNeighbor.isEmpty()
+      )
+      && this.props.submissionState === SUBMISSION_STATES.PRE_SUBMIT
     ) {
       // TODO: routing between pages needs more thought
       return (
@@ -166,7 +193,7 @@ class FollowUpReportManager extends React.Component<Props, State> {
       <Switch>
         <Route path={PAGE_1} render={this.renderConsumerSearchContainer} />
         <Route path={PAGE_2} render={this.renderConsumerNeighborsSearchContainer} />
-        <Route path={PAGE_3} component={this.renderFollowUpReportContainer} />
+        <Route path={PAGE_3} render={this.renderFollowUpReportContainer} />
         <Redirect to={PAGE_1} />
       </Switch>
     );
@@ -205,7 +232,8 @@ function mapStateToProps(state :Map<*, *>) :Object {
       [APPEARS_IN_FQN.getFullyQualifiedName()]: appearsInEntitySetId,
       [PEOPLE_FQN.getFullyQualifiedName()]: peopleEntitySetId,
       [FOLLOW_UP_REPORT_FQN.getFullyQualifiedName()]: reportEntitySetId
-    }
+    },
+    submissionState: state.getIn(['followUpReport', 'submissionState'])
   };
 }
 

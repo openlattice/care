@@ -7,7 +7,7 @@
 import Immutable from 'immutable';
 import { Models } from 'lattice';
 import { DataApiActionFactory, SyncApiActionFactory } from 'lattice-sagas';
-import { all, call, put, take, takeEvery } from 'redux-saga/effects';
+import { all, put, take, takeEvery } from 'redux-saga/effects';
 
 import {
   APP_TYPES_FQNS,

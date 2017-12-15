@@ -13,8 +13,9 @@ const StyledCard = styled.div`
   flex-direction: column;
   font-size: 14px;
   font-weight: normal;
-  padding: 30px;
   margin: 0 20px;
+  padding: 30px;
+  position: relative;
   h1 {
     font-size: 22px;
     font-weight: 600;

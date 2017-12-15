@@ -9,7 +9,7 @@ import Immutable from 'immutable';
 import styled, { css } from 'styled-components';
 import { faAngleRight } from '@fortawesome/fontawesome-pro-light';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router';
+import { Redirect, withRouter } from 'react-router';
 import { bindActionCreators } from 'redux';
 
 import Loading from '../../components/Loading';
@@ -24,6 +24,8 @@ import {
   clearConsumerNeighborsSearchResults,
   searchConsumerNeighbors
 } from '../search/SearchActionFactory';
+
+import { PAGE_1 } from './FollowUpReportConstants';
 
 const {
   BEHAVIORAL_HEALTH_REPORT_FQN
@@ -108,7 +110,7 @@ class ConsumerNeighborsSearchContainer extends React.Component<Props, State> {
     if (!this.props.searchResults || this.props.searchResults.isEmpty()) {
       return (
         <SearchResultsWrapper>
-          <div>unexpected state... go back</div>
+          <div>No Behavioral Health Reports were found for the selected consumer. Please try again.</div>
         </SearchResultsWrapper>
       );
     }

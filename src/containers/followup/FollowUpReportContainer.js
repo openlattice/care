@@ -12,10 +12,13 @@ import validator from 'validator';
 import { FormGroup, FormControl, Col } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
+import { NavLink } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 
+import Loading from '../../components/Loading';
 import StyledButton from '../../components/buttons/StyledButton';
 import StyledCard from '../../components/cards/StyledCard';
+import * as Routes from '../../core/router/Routes';
 import { formatTimePickerSeconds } from '../../utils/Utils';
 import {
   ContainerInnerWrapper,
@@ -25,8 +28,9 @@ import {
 } from '../../shared/Layout';
 
 import PersonDetailsSearchResult from '../search/PersonDetailsSearchResult';
-
+import { SUBMISSION_STATES } from './FollowUpReportReducer';
 import {
+  PAGE_1,
   CLINICIAN_NAME_VAL,
   DATE_VAL,
   OFFICER_NAME_VAL,
@@ -72,6 +76,25 @@ const SectionWrapper = styled.div`
   margin-bottom: 30px;
 `;
 
+// color: #5bcc75;
+const Success = styled.div`
+  text-align: center;
+  p {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+  a {
+    text-decoration: none;
+  }
+`;
+
+const Failure = styled.div`
+  text-align: center;
+  a {
+    text-decoration: none;
+  }
+`;
+
 /*
  * types
  */
@@ -80,6 +103,7 @@ type Props = {
   consumer :Map<*, *>;
   consumerNeighbor :Map<*, *>;
   peopleEntitySetId :string;
+  submissionState :number;
   onCancel :Function;
   onSubmit :Function;
 };
@@ -277,7 +301,7 @@ class FollowUpReportContainer extends React.Component<Props, State> {
         <PaddedRow>
           <ActionButtons>
             {
-              (this.isReadyToSubmit())
+              (this.isReadyToSubmit() && this.props.submissionState === SUBMISSION_STATES.PRE_SUBMIT)
                 ? <StyledButton onClick={this.handleOnSubmit}>Submit</StyledButton>
                 : <StyledButton disabled>Submit</StyledButton>
             }
@@ -288,15 +312,44 @@ class FollowUpReportContainer extends React.Component<Props, State> {
     );
   }
 
+  renderContent = () => {
+
+    if (this.props.submissionState === SUBMISSION_STATES.SUBMIT_SUCCESS) {
+      return (
+        <Success>
+          <p>Success!</p>
+          <NavLink to={Routes.ROOT}>Home</NavLink>
+        </Success>
+      );
+    }
+    else if (this.props.submissionState === SUBMISSION_STATES.SUBMIT_FAILURE) {
+      return (
+        <Failure>
+          <NavLink to={PAGE_1}>Failed to submit. Please try again.</NavLink>
+        </Failure>
+      );
+    }
+
+    return (
+      <div>
+        <FormHeader>Follow-Up Report</FormHeader>
+        { this.renderConsumerDetailsSection() }
+        { this.renderReportDetailsSection() }
+      </div>
+    );
+  }
+
   render() {
+
+    if (this.props.submissionState === SUBMISSION_STATES.IS_SUBMITTING) {
+      return <Loading />;
+    }
 
     return (
       <ContainerOuterWrapper>
         <ContainerInnerWrapper>
           <StyledCard>
-            <FormHeader>Follow-Up Report</FormHeader>
-            { this.renderConsumerDetailsSection() }
-            { this.renderReportDetailsSection() }
+            { this.renderContent() }
           </StyledCard>
         </ContainerInnerWrapper>
       </ContainerOuterWrapper>
@@ -306,7 +359,9 @@ class FollowUpReportContainer extends React.Component<Props, State> {
 
 function mapStateToProps(state :Map<*, *>) :Object {
 
-  return {};
+  return {
+    submissionState: state.getIn(['followUpReport', 'submissionState'])
+  };
 }
 
 function mapDispatchToProps(dispatch :Function) :Object {
