@@ -3,4 +3,4 @@
 .*/node_modules/.*
 
 [libs]
-./node_modules/immutable/dist/immutable.js.flow
+./node_modules/redux-reqseq/config/flow/types.js

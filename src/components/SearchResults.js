@@ -5,9 +5,7 @@ import styled from 'styled-components';
 import PersonRow from './PersonRow';
 import { PERSON } from '../shared/Consts';
 
-const ResultsWrapper = styled.div`
-  margin-bottom: 50px;
-`;
+const ResultsWrapper = styled.div``;
 
 const NoResults = styled.div`
   text-align: center;
@@ -47,14 +45,14 @@ const SearchResults = ({ results, handlePersonSelection, didSearch }) => {
 SearchResults.propTypes = {
   results: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.array.isRequired,
-    'nc.PersonBirthDate': PropTypes.array.isRequired,
-    'nc.PersonGivenName': PropTypes.array.isRequired,
-    'nc.PersonMiddleName': PropTypes.array.isRequired,
-    'nc.PersonRace': PropTypes.array.isRequired,
-    'nc.PersonSex': PropTypes.array.isRequired,
-    'nc.PersonSurName': PropTypes.array.isRequired,
+    'nc.PersonBirthDate': PropTypes.array,
+    'nc.PersonGivenName': PropTypes.array,
+    'nc.PersonMiddleName': PropTypes.array,
+    'nc.PersonRace': PropTypes.array,
+    'nc.PersonSex': PropTypes.array,
+    'nc.PersonSurName': PropTypes.array,
     'nc.SubjectIdentification': PropTypes.array.isRequired,
-    'person.age': PropTypes.array.isRequired
+    'person.age': PropTypes.array
   })).isRequired,
   handlePersonSelection: PropTypes.func.isRequired,
   didSearch: PropTypes.bool.isRequired

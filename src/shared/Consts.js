@@ -1,14 +1,14 @@
-export const ENTITY_SET_NAMES = {
-  FORM: 'baltimoreBehavioralHealthReportForm',
-  PEOPLE: 'baltimoreBehavioralHealthReportPeople',
-  APPEARS_IN: 'baltimoreBehavioralHealthReportAppearsIn'
-};
+import { Models } from 'lattice';
 
-export const APP_NAMES = {
-  APP: 'bhr',
-  FORM: 'app.bhr',
-  PEOPLE: 'app.people',
-  APPEARS_IN: 'app.appearsin'
+const { FullyQualifiedName } = Models;
+
+export const APP_NAME = 'BehavioralHealthReport';
+
+export const APP_TYPES_FQNS = {
+  BEHAVIORAL_HEALTH_REPORT_FQN: new FullyQualifiedName('app.bhr'),
+  FOLLOW_UP_REPORT_FQN: new FullyQualifiedName('app.followup'),
+  PEOPLE_FQN: new FullyQualifiedName('app.people'),
+  APPEARS_IN_FQN: new FullyQualifiedName('app.appearsin')
 };
 
 export const PERSON = {
@@ -48,13 +48,13 @@ export const RACE = {
 };
 
 export const FORM_PATHS = {
-  CONSUMER_SEARCH: '/1',
-  CONSUMER: '/2',
-  REPORT: '/3',
-  COMPLAINANT: '/4',
-  DISPOSITION: '/5',
-  OFFICER: '/6',
-  REVIEW: '/7'
+  CONSUMER_SEARCH: '/bhr/1',
+  CONSUMER: '/bhr/2',
+  REPORT: '/bhr/3',
+  COMPLAINANT: '/bhr/4',
+  DISPOSITION: '/bhr/5',
+  OFFICER: '/bhr/6',
+  REVIEW: '/bhr/7'
 };
 
 export const FORM_ERRORS = {
@@ -119,3 +119,5 @@ export const MAX_PAGE = 7;
 
 export const INT_16_MAX_VALUE = 32767;
 export const INT_16_MIN_VALUE = -32768;
+
+export const DATA_URL_PREFIX = 'data:image/png;base64,';

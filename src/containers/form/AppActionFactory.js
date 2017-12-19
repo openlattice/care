@@ -11,7 +11,14 @@ const LOAD_CONFIGURATIONS :'LOAD_CONFIGURATIONS' = 'LOAD_CONFIGURATIONS';
 const loadConfigurations :RequestSequence = newRequestSequence(LOAD_CONFIGURATIONS);
 
 const SELECT_ORGANIZATION :'SELECT_ORGANIZATION' = 'SELECT_ORGANIZATION';
-const selectOrganization :RequestSequence = newRequestSequence(SELECT_ORGANIZATION);
+
+function selectOrganization(orgId :string) :Object {
+
+  return {
+    orgId,
+    type: SELECT_ORGANIZATION
+  };
+}
 
 export {
   LOAD_APP,

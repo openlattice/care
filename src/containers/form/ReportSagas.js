@@ -3,25 +3,16 @@
  */
 
 import Immutable from 'immutable';
-import isError from 'lodash/isError';
 import { Models } from 'lattice';
-import { push } from 'react-router-redux';
-import { all, call, put, takeEvery } from 'redux-saga/effects';
-
-import * as Routes from '../../core/router/Routes';
-import { APP_NAMES, NC_SUBJ_ID_FQN, PERSON, STRING_ID_FQN } from '../../shared/Consts';
+import { DataApiActionFactory, SyncApiActionFactory } from 'lattice-sagas';
+import { all, call, put, take, takeEvery } from 'redux-saga/effects';
 
 import {
-  acquireSyncTicket,
-  createEntityAndAssociationData,
-  fetchCurrentSyncId
-} from '../../core/lattice/LatticeActionFactory';
-
-import {
-  acquireSyncTicketWorker,
-  createEntityAndAssociationDataWorker,
-  fetchCurrentSyncIdWorker
-} from '../../core/lattice/LatticeSagas';
+  APP_TYPES_FQNS,
+  NC_SUBJ_ID_FQN,
+  PERSON,
+  STRING_ID_FQN
+} from '../../shared/Consts';
 
 import {
   HARD_RESTART,
@@ -29,15 +20,36 @@ import {
   submitReport
 } from './ReportActionFactory';
 
-import type { SequenceAction } from '../../core/redux/RequestSequence';
+const {
+  FullyQualifiedName
+} = Models;
 
-const { FullyQualifiedName } = Models;
+const {
+  acquireSyncTicket,
+  createEntityAndAssociationData
+} = DataApiActionFactory;
+
+const {
+  getCurrentSyncId
+} = SyncApiActionFactory;
+
+const {
+  APPEARS_IN_FQN,
+  BEHAVIORAL_HEALTH_REPORT_FQN,
+  PEOPLE_FQN
+} = APP_TYPES_FQNS;
 
 /*
  * helpers
  */
 
-function prepReportEntityData(syncId :string, entitySetId :string, propertyTypes :List, primaryKeys :List, allInfo :Object) :Object {
+function prepReportEntityData(
+  syncId :string,
+  entitySetId :string,
+  propertyTypes :List,
+  primaryKeys :List,
+  allInfo :Object
+) :Object {
 
   /*
    * details
@@ -87,7 +99,12 @@ function prepReportEntityData(syncId :string, entitySetId :string, propertyTypes
   return { details, key };
 }
 
-function prepPeopleEntityData(syncId :string, entitySetId :string, propertyTypes :List, consumerInfo :Object) :Object {
+function prepPeopleEntityData(
+  syncId :string,
+  entitySetId :string,
+  propertyTypes :List,
+  consumerInfo :Object
+) :Object {
 
   const {
     age,
@@ -176,6 +193,15 @@ function prepAppearsInEntityData(
   };
 }
 
+function takeReqSeqSuccessFailure(reqseq :RequestSequence, seqAction :SequenceAction) {
+  return take(
+    (anAction :Object) => {
+      return (anAction.type === reqseq.SUCCESS && anAction.id === seqAction.id)
+        || (anAction.type === reqseq.FAILURE && anAction.id === seqAction.id);
+    }
+  );
+}
+
 /*
  * sagas
  */
@@ -183,10 +209,11 @@ function prepAppearsInEntityData(
 export function* submitReportWorker(action :SequenceAction) :Generator<*, *, *> {
 
   try {
-    yield put(submitReport.request());
+    yield put(submitReport.request(action.id));
 
     let anyErrors :boolean = false;
-    const { FORM, PEOPLE, APPEARS_IN } = APP_NAMES;
+    let errorValue :any;
+
     const {
       complainantInfo,
       consumerInfo,
@@ -194,7 +221,7 @@ export function* submitReportWorker(action :SequenceAction) :Generator<*, *, *> 
       officerInfo,
       reportInfo,
       app
-    } = action.data;
+    } = action.value;
 
     const allInfo = Object.assign(
       {},
@@ -206,65 +233,146 @@ export function* submitReportWorker(action :SequenceAction) :Generator<*, *, *> 
     );
 
     const selectedOrganizationId = app.get('selectedOrganization');
-    const reportESId :string = app.getIn([FORM, 'entitySetsByOrganization', selectedOrganizationId], '');
-    const peopleESId :string = app.getIn([PEOPLE, 'entitySetsByOrganization', selectedOrganizationId], '');
-    const appearsInESId :string = app.getIn([APPEARS_IN, 'entitySetsByOrganization', selectedOrganizationId], '');
 
-    const reportPropertyTypes :List = app.getIn([FORM, 'propertyTypes'], Immutable.Map()).valueSeq();
-    const peoplePropertyTypes :List = app.getIn([PEOPLE, 'propertyTypes'], Immutable.Map()).valueSeq();
-    const appearsInPropertyTypes :List = app.getIn([APPEARS_IN, 'propertyTypes'], Immutable.Map()).valueSeq();
-
-    const reportPrimaryKeys :List = app.getIn([FORM, 'primaryKeys'], Immutable.Map()).valueSeq();
-
-    // 1. get sync ids for each EntitySet
-    // TODO: it's not terrible to invoke the worker sagas, but it's not ideal
-    const syncIds :Object = yield all({
-      [reportESId]: call(fetchCurrentSyncIdWorker, fetchCurrentSyncId({ entitySetId: reportESId })),
-      [peopleESId]: call(fetchCurrentSyncIdWorker, fetchCurrentSyncId({ entitySetId: peopleESId })),
-      [appearsInESId]: call(fetchCurrentSyncIdWorker, fetchCurrentSyncId({ entitySetId: appearsInESId }))
-    });
-
-    // !!! HACK !!! - quick fix
-    Object.keys(syncIds).forEach((entitySetId :string) => {
-      if (isError(syncIds[entitySetId])) {
-        anyErrors = true;
-      }
-    });
-
-    if (anyErrors) {
-      throw new Error();
-    }
-
-    // 2. acquire sync tickets
-    const ticketIds :string[] = yield all([
-      call(
-        acquireSyncTicketWorker,
-        acquireSyncTicket({ entitySetId: reportESId, syncId: syncIds[reportESId] })
-      ),
-      call(
-        acquireSyncTicketWorker,
-        acquireSyncTicket({ entitySetId: peopleESId, syncId: syncIds[peopleESId] })
-      ),
-      call(
-        acquireSyncTicketWorker,
-        acquireSyncTicket({ entitySetId: appearsInESId, syncId: syncIds[appearsInESId] })
-      )
+    const appearsInESId :string = app.getIn([
+      APPEARS_IN_FQN.getFullyQualifiedName(),
+      'entitySetsByOrganization',
+      selectedOrganizationId
     ]);
 
-    // !!! HACK !!! - quick fix
-    ticketIds.forEach((ticketId) => {
-      if (isError(ticketId)) {
+    const appearsInPropertyTypes :Map<*, *> = app.getIn(
+      [APPEARS_IN_FQN.getFullyQualifiedName(), 'propertyTypes'],
+      Immutable.Map()
+    ).valueSeq();
+
+    const peopleESId :string = app.getIn([
+      PEOPLE_FQN.getFullyQualifiedName(),
+      'entitySetsByOrganization',
+      selectedOrganizationId
+    ]);
+
+    const peoplePropertyTypes :Map<*, *> = app.getIn(
+      [PEOPLE_FQN.getFullyQualifiedName(), 'propertyTypes'],
+      Immutable.Map()
+    ).valueSeq();
+
+    const reportESId :string = app.getIn([
+      BEHAVIORAL_HEALTH_REPORT_FQN.getFullyQualifiedName(),
+      'entitySetsByOrganization',
+      selectedOrganizationId
+    ]);
+
+    const reportPrimaryKeys :List<string> = app.getIn(
+      [BEHAVIORAL_HEALTH_REPORT_FQN.getFullyQualifiedName(), 'primaryKeys'],
+      Immutable.List()
+    ).valueSeq();
+
+    const reportPropertyTypes :Map<*, *> = app.getIn(
+      [BEHAVIORAL_HEALTH_REPORT_FQN.getFullyQualifiedName(), 'propertyTypes'],
+      Immutable.Map()
+    ).valueSeq();
+
+    /*
+     * 1. get sync ids for each EntitySet
+     */
+
+    const appearsInSyncIdAction :SequenceAction = getCurrentSyncId(appearsInESId);
+    const peopleSyncIdAction :SequenceAction = getCurrentSyncId(peopleESId);
+    const reportSyncIdAction :SequenceAction = getCurrentSyncId(reportESId);
+
+    yield all([
+      put(appearsInSyncIdAction),
+      put(peopleSyncIdAction),
+      put(reportSyncIdAction)
+    ]);
+
+    const syncIdResponseActions :{[key :string] :SequenceAction} = yield all({
+      [appearsInESId]: takeReqSeqSuccessFailure(getCurrentSyncId, appearsInSyncIdAction),
+      [peopleESId]: takeReqSeqSuccessFailure(getCurrentSyncId, peopleSyncIdAction),
+      [reportESId]: takeReqSeqSuccessFailure(getCurrentSyncId, reportSyncIdAction)
+    });
+
+    const syncIds :{[key :string] :string} = {};
+    Object.keys(syncIdResponseActions).forEach((entitySetId :string) => {
+      const syncIdResponseAction :SequenceAction = syncIdResponseActions[entitySetId];
+      if (syncIdResponseAction.type === getCurrentSyncId.SUCCESS && syncIdResponseAction.value) {
+        syncIds[entitySetId] = syncIdResponseAction.value;
+      }
+      else {
         anyErrors = true;
+        errorValue = syncIdResponseAction.value;
       }
     });
 
     if (anyErrors) {
-      throw new Error();
+      throw new Error(errorValue);
     }
 
-    // 3. prepare entity data for submission
-    const reportData :Object = prepReportEntityData(syncIds[reportESId], reportESId, reportPropertyTypes, reportPrimaryKeys, allInfo);
-    const peopleData :Object = prepPeopleEntityData(syncIds[peopleESId], peopleESId, peoplePropertyTypes, consumerInfo);
+    /*
+     * 2. acquire sync tickets
+     */
+
+    const appearsInSyncTicketAction :SequenceAction = acquireSyncTicket({
+      entitySetId: appearsInESId,
+      syncId: syncIds[appearsInESId]
+    });
+
+    const peopleSyncTicketAction :SequenceAction = acquireSyncTicket({
+      entitySetId: peopleESId,
+      syncId: syncIds[peopleESId]
+    });
+
+    const reportSyncTicketAction :SequenceAction = acquireSyncTicket({
+      entitySetId: reportESId,
+      syncId: syncIds[reportESId]
+    });
+
+    yield all([
+      put(appearsInSyncTicketAction),
+      put(peopleSyncTicketAction),
+      put(reportSyncTicketAction)
+    ]);
+
+    const syncTicketResponseActions :SequenceAction[] = yield all([
+      takeReqSeqSuccessFailure(acquireSyncTicket, appearsInSyncTicketAction),
+      takeReqSeqSuccessFailure(acquireSyncTicket, peopleSyncTicketAction),
+      takeReqSeqSuccessFailure(acquireSyncTicket, reportSyncTicketAction)
+    ]);
+
+    const ticketIds :string[] = [];
+    syncTicketResponseActions.forEach((syncTicketResponseAction :SequenceAction) => {
+      if (syncTicketResponseAction.type === acquireSyncTicket.SUCCESS && syncTicketResponseAction.value) {
+        ticketIds.push(syncTicketResponseAction.value);
+      }
+      else {
+        anyErrors = true;
+        errorValue = syncTicketResponseAction.value;
+      }
+    });
+
+    if (anyErrors) {
+      throw new Error(errorValue);
+    }
+
+    /*
+     * 3. prepare entity data for submission
+     */
+
+    const reportData :Object = prepReportEntityData(
+      syncIds[reportESId],
+      reportESId,
+      reportPropertyTypes,
+      reportPrimaryKeys,
+      allInfo
+    );
+
+    const peopleData :Object = prepPeopleEntityData(
+      syncIds[peopleESId],
+      peopleESId,
+      peoplePropertyTypes,
+      consumerInfo
+    );
+
     const appearsInData :Object = prepAppearsInEntityData(
       syncIds[appearsInESId],
       appearsInESId,
@@ -274,28 +382,34 @@ export function* submitReportWorker(action :SequenceAction) :Generator<*, *, *> 
       peopleData
     );
 
-    // 4. write entity data
-    const response = yield call(
-      createEntityAndAssociationDataWorker,
-      createEntityAndAssociationData({
-        associations: [appearsInData],
-        entities: [reportData, peopleData],
-        syncTickets: ticketIds
-      })
+    /*
+     * 4. write entity data
+     */
+
+    const createAction :SequenceAction = createEntityAndAssociationData({
+      associations: [appearsInData],
+      entities: [reportData, peopleData],
+      syncTickets: ticketIds
+    });
+
+    yield put(createAction);
+    const createResponseAction :SequenceAction = yield takeReqSeqSuccessFailure(
+      createEntityAndAssociationData,
+      createAction
     );
 
-    // !!! HACK !!! - quick fix
-    if (isError(response)) {
-      throw new Error();
+    if (createResponseAction.type === createEntityAndAssociationData.SUCCESS) {
+      yield put(submitReport.success(action.id));
     }
-
-    yield put(submitReport.success());
+    else {
+      throw new Error(createResponseAction.value);
+    }
   }
   catch (error) {
-    yield put(submitReport.failure({ error }));
+    yield put(submitReport.failure(action.id, error));
   }
   finally {
-    yield put(submitReport.finally());
+    yield put(submitReport.finally(action.id));
   }
 }
 

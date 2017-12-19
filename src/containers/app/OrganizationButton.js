@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Immutable from 'immutable';
 import styled from 'styled-components';
 
-import { Button, DropdownButton, MenuItem } from 'react-bootstrap';
+import { DropdownButton, MenuItem } from 'react-bootstrap';
 
 const StyledOrganizationButton = styled.div`
   position: absolute;
@@ -39,7 +39,7 @@ const OrganizationButton = ({ selectedOrganization, organizations, selectOrganiz
 };
 
 OrganizationButton.propTypes = {
-  selectedOrganization: PropTypes.string,
+  selectedOrganization: PropTypes.string.isRequired,
   organizations: PropTypes.instanceOf(Immutable.Map).isRequired,
   selectOrganization: PropTypes.func.isRequired
 };

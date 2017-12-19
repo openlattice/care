@@ -30,11 +30,11 @@ export function randomId() :string {
 }
 
 // TODO: get rid of react-bootstrap-time-picker
-export function formatTimePickerSeconds(seconds :number) :string {
+export function formatTimePickerSeconds(seconds :?number) :string {
 
   let hh = 0;
   let mm = 0;
-  let ss = seconds;
+  let ss = seconds || 0;
 
   while (ss >= 60) {
     mm += 1;
