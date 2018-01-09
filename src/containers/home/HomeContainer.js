@@ -62,33 +62,30 @@ const LinkText = styled.span`
   margin-left: 20px;
 `;
 
-const HomeContainer = () => {
-
-  return (
-    <ContainerWrapper>
-      <Content>
-        <StyledNavLink to={Routes.BHR}>
-          <StyledNavCard>
-            <LinkTextWrapper>
-              <FontAwesomeIcon icon={faFileAlt} size="2x" />
-              <LinkText>Behavioral Health Report</LinkText>
-            </LinkTextWrapper>
-            <FontAwesomeIcon icon={faAngleRight} size="2x" />
-          </StyledNavCard>
-        </StyledNavLink>
-        <StyledNavLink to={Routes.FOLLOW_UP_PATH} style={{ marginTop: '25px' }}>
-          <StyledNavCard>
-            <LinkTextWrapper>
-              <FontAwesomeIcon icon={faFileAlt} size="2x" />
-              <LinkText>Follow-Up Report</LinkText>
-            </LinkTextWrapper>
-            <FontAwesomeIcon icon={faAngleRight} size="2x" />
-          </StyledNavCard>
-        </StyledNavLink>
-      </Content>
-    </ContainerWrapper>
-  );
-};
+const HomeContainer = () => (
+  <ContainerWrapper>
+    <Content>
+      <StyledNavLink to={Routes.BHR}>
+        <StyledNavCard>
+          <LinkTextWrapper>
+            <FontAwesomeIcon icon={faFileAlt} size="2x" />
+            <LinkText>Behavioral Health Report</LinkText>
+          </LinkTextWrapper>
+          <FontAwesomeIcon icon={faAngleRight} size="2x" />
+        </StyledNavCard>
+      </StyledNavLink>
+      <StyledNavLink to={Routes.FOLLOW_UP_PATH} style={{ marginTop: '25px' }}>
+        <StyledNavCard>
+          <LinkTextWrapper>
+            <FontAwesomeIcon icon={faFileAlt} size="2x" />
+            <LinkText>Follow-Up Report</LinkText>
+          </LinkTextWrapper>
+          <FontAwesomeIcon icon={faAngleRight} size="2x" />
+        </StyledNavCard>
+      </StyledNavLink>
+    </Content>
+  </ContainerWrapper>
+);
 
 export default withRouter(
   connect()(HomeContainer)

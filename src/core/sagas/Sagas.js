@@ -2,6 +2,7 @@
  * @flow
  */
 
+import { AuthSagas } from 'lattice-auth';
 import {
   AppApiSagas,
   DataApiSagas,
@@ -9,10 +10,7 @@ import {
   SearchApiSagas,
   SyncApiSagas
 } from 'lattice-sagas';
-
 import { fork } from 'redux-saga/effects';
-
-import * as AuthSagas from '../auth/AuthSagas';
 
 import * as AppSagas from '../../containers/form/AppSagas';
 import * as FollowUpReportSagas from '../../containers/followup/FollowUpReportSagas';
@@ -27,7 +25,6 @@ export default function* sagas() :Generator<*, *, *> {
     fork(AuthSagas.watchAuthSuccess),
     fork(AuthSagas.watchAuthFailure),
     fork(AuthSagas.watchAuthExpired),
-    fork(AuthSagas.watchLogin),
     fork(AuthSagas.watchLogout),
 
     // LatticeSagas

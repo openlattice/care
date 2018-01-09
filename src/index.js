@@ -7,20 +7,28 @@ import 'babel-polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import LatticeAuth from 'lattice-auth';
 import { normalize } from 'polished';
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'react-router-redux';
 import { injectGlobal } from 'styled-components';
 
-import AuthRoute from './core/auth/AuthRoute';
+import OpenLatticeLogo from './assets/images/logo.png';
+import AppContainer from './containers/app/AppContainer';
 import initializeReduxStore from './core/redux/ReduxStore';
 import initializeRouterHistory from './core/router/RouterHistory';
-import * as Auth0 from './core/auth/Auth0';
-import * as AuthUtils from './core/auth/AuthUtils';
 import * as Routes from './core/router/Routes';
-import * as Utils from './utils/Utils';
 
-import AppContainer from './containers/app/AppContainer';
+// injected by Webpack.DefinePlugin
+declare var __AUTH0_CLIENT_ID__ :string;
+declare var __AUTH0_DOMAIN__ :string;
+declare var __ENV_DEV__ :boolean;
+
+const {
+  AuthRoute,
+  AuthUtils,
+  LoginContainer
+} = LatticeAuth;
 
 /* eslint-disable */
 injectGlobal`${normalize()}`;
@@ -60,8 +68,18 @@ injectGlobal`
 /*
  * // !!! MUST HAPPEN FIRST !!!
  */
-Auth0.initialize();
-Utils.configureLattice(AuthUtils.getAuthToken());
+
+LatticeAuth.configure({
+  auth0ClientId: __AUTH0_CLIENT_ID__,
+  auth0Domain: __AUTH0_DOMAIN__,
+  auth0Lock: {
+    logo: OpenLatticeLogo,
+    title: 'OpenLattice'
+  },
+  authToken: AuthUtils.getAuthToken(),
+  baseUrl: (__ENV_DEV__) ? 'localhost' : 'production'
+});
+
 /*
  * // !!! MUST HAPPEN FIRST !!!
  */
@@ -72,7 +90,7 @@ const reduxStore = initializeReduxStore(routerHistory);
 ReactDOM.render(
   <Provider store={reduxStore}>
     <ConnectedRouter history={routerHistory}>
-      <AuthRoute path={Routes.ROOT} component={AppContainer} />
+      <AuthRoute path={Routes.ROOT} component={AppContainer} loginComponent={LoginContainer} attemptAuth={false} />
     </ConnectedRouter>
   </Provider>,
   document.getElementById('app')
