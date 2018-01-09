@@ -1,18 +1,22 @@
 {
-  "extends": "airbnb",
   "parser": "babel-eslint",
-  "env": {
-    "browser": true
-  },
+  "extends": [
+    "airbnb",
+    "plugin:flowtype/recommended"
+  ],
   "plugins": [
     "flowtype",
+    "jest",
     "react"
   ],
+  "env": {
+    "browser": true,
+    "jest": true
+  },
   "settings": {
     "flowtype": {
       "onlyFilesWithFlowAnnotation": true
     },
-    "import/extensions": [".js", ".jsx"],
     "import/resolver": {
       "webpack": {
         "config": "config/webpack/webpack.config.babel.js"
@@ -20,7 +24,7 @@
     }
   },
   "rules": {
-    "arrow-body-style": ["error", "always"],
+    "arrow-body-style": ["error", "as-needed"],
     "brace-style": ["error", "stroustrup"],
     "comma-dangle": ["error", "never"],
     "function-paren-newline": ["error", "consistent"],
@@ -29,6 +33,10 @@
       2,
       {
         "FunctionDeclaration": {
+          "body": 1,
+          "parameters": 1
+        },
+        "FunctionExpression": {
           "body": 1,
           "parameters": 1
         },
@@ -60,19 +68,36 @@
       }
     ],
     "padded-blocks": "off",
+    "prefer-destructuring": "warn",
     "space-before-function-paren": ["error", "never"],
 
     "flowtype/define-flow-type": "error",
     "flowtype/space-after-type-colon": ["error", "never"],
     "flowtype/space-before-type-colon": ["error", "always"],
+    "flowtype/no-types-missing-file-annotation": "warn",
 
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": [
+          "config/**",
+          "**/*.test.js"
+        ]
+      }
+    ],
     "import/order": [
       "warn",
       {
-        "groups": ["builtin", "external", "internal", ["sibling", "parent"], "index"]
+        "groups": ["builtin", "external", "internal", ["parent", "sibling"], "index"]
       }
     ],
     "import/prefer-default-export": "warn",
+
+    "jest/no-disabled-tests": "error",
+    "jest/no-focused-tests": "error",
+    "jest/no-identical-title": "error",
+    "jest/prefer-to-have-length": "warn",
+    "jest/valid-expect": "error",
 
     "jsx-a11y/href-no-hash": "off",
 

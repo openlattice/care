@@ -1,23 +1,18 @@
-/*
- * @flow
- */
-
 /* eslint-disable import/no-extraneous-dependencies, import/extensions */
 
-import webpack from 'webpack';
-
 import HtmlWebpackPlugin from 'html-webpack-plugin';
+import Webpack from 'webpack';
 
 import APP_CONFIG from '../app/app.config.js';
 import APP_PATHS from '../app/paths.config.js';
 
 import baseWebpackConfig from './webpack.config.base.js';
 
-export default function devWebpackConfig(env :Object) {
+export default function devWebpackConfig(env) {
 
-  const baseConfig :Object = baseWebpackConfig(env);
+  const baseConfig = baseWebpackConfig(env);
 
-  const DEV_SERVER_PORT = 9001;
+  const DEV_SERVER_PORT = 9000;
 
   const entry = [
     APP_PATHS.ABS.APP_ENTRY
@@ -28,8 +23,8 @@ export default function devWebpackConfig(env :Object) {
   });
 
   const plugins = [
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NamedModulesPlugin(),
+    new Webpack.HotModuleReplacementPlugin(),
+    new Webpack.NamedModulesPlugin(),
     new HtmlWebpackPlugin({
       favicon: `${APP_PATHS.ABS.SOURCE_ASSETS_IMAGES}/favicon.png`,
       inject: true,

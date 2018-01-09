@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 /* eslint-disable import/extensions */
 
 import devWebpackConfig from './webpack.config.dev.js';
@@ -9,10 +5,10 @@ import prodWebpackConfig from './webpack.config.prod.js';
 
 import { isDev, isProd } from '../app/env.config.js';
 
-module.exports = (env :Object) => {
+module.exports = (env) => {
 
-  const appWebpackConfig :Object = {};
-  const webpackEnvironment :Object = env || {};
+  const appWebpackConfig = {};
+  const webpackEnvironment = env || {};
 
   if (isProd) {
     Object.assign(appWebpackConfig, prodWebpackConfig(webpackEnvironment));
