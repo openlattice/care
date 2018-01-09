@@ -106,6 +106,7 @@ class AppContainer extends React.Component<Props> {
   render() {
 
     const isLoadingApp :boolean = this.props.app.get('isLoadingApp', false);
+    const isLoadingConfigurations :boolean = this.props.app.get('isLoadingConfigurations', false);
 
     return (
       <AppWrapper>
@@ -131,7 +132,7 @@ class AppContainer extends React.Component<Props> {
           </AppHeaderInnerWrapper>
         </AppHeaderOuterWrapper>
         {
-          isLoadingApp
+          isLoadingApp || isLoadingConfigurations
             ? <Loading />
             : this.renderApp()
         }
