@@ -26,8 +26,7 @@ declare var __ENV_DEV__ :boolean;
 
 const {
   AuthRoute,
-  AuthUtils,
-  LoginContainer
+  AuthUtils
 } = LatticeAuth;
 
 /* eslint-disable */
@@ -90,7 +89,7 @@ const reduxStore = initializeReduxStore(routerHistory);
 ReactDOM.render(
   <Provider store={reduxStore}>
     <ConnectedRouter history={routerHistory}>
-      <AuthRoute path={Routes.ROOT} component={AppContainer} loginComponent={LoginContainer} attemptAuth={false} />
+      <AuthRoute path={Routes.ROOT} component={AppContainer} redirectToLogin />
     </ConnectedRouter>
   </Provider>,
   document.getElementById('app')
