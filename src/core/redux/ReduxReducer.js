@@ -2,17 +2,21 @@
  * @flow
  */
 
+import { AuthReducer } from 'lattice-auth';
 import { combineReducers } from 'redux-immutable';
 
-import authReducer from '../auth/AuthReducer';
-import entitySetsReducer from '../../containers/form/EntitySetsReducer';
-import reportReducer from '../../containers/form/ReportReducer';
+import appReducer from '../../containers/form/AppReducer';
+import bhrReducer from '../../containers/form/ReportReducer';
+import followupReducer from '../../containers/followup/FollowUpReportReducer';
+import searchReducer from '../../containers/search/SearchReducer';
 
 export default function reduxReducer() {
 
   return combineReducers({
-    auth: authReducer,
-    entitySets: entitySetsReducer,
-    report: reportReducer
+    app: appReducer,
+    auth: AuthReducer,
+    report: bhrReducer,
+    followUpReport: followupReducer,
+    search: searchReducer
   });
 }

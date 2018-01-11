@@ -127,9 +127,11 @@ class ReportInfoView extends React.Component {
       sectionRequiredErrors
     } = this.state;
 
+    const isReviewPage = isInReview();
+
     return (
       <SectionWrapper>
-        { !isInReview() ? <SectionHeader>Report Info</SectionHeader> : null}
+        { !isReviewPage ? <SectionHeader>Report Info</SectionHeader> : null}
         <ContentWrapper>
           <PaddedRow>
             <Col lg={6}>
@@ -146,7 +148,7 @@ class ReportInfoView extends React.Component {
                       this.setInputErrors
                     );
                   }}
-                  disabled={isInReview()} />
+                  disabled={isReviewPage} />
             </Col>
             <Col lg={6}>
               <FormGroup
@@ -169,7 +171,7 @@ class ReportInfoView extends React.Component {
                         this.setInputErrors
                       );
                     }}
-                    disabled={isInReview()} />
+                    disabled={isReviewPage} />
               </FormGroup>
             </Col>
           </PaddedRow>
@@ -184,7 +186,7 @@ class ReportInfoView extends React.Component {
                   value
                   checked={input.companionOffenseReport}
                   onChange={handleSingleSelection}
-                  disabled={isInReview()}>Yes
+                  disabled={isReviewPage}>Yes
               </InlineRadio>
               <InlineRadio
                   inline
@@ -193,7 +195,7 @@ class ReportInfoView extends React.Component {
                   value={false}
                   checked={!input.companionOffenseReport}
                   onChange={handleSingleSelection}
-                  disabled={isInReview()}>No
+                  disabled={isReviewPage}>No
               </InlineRadio>
             </Col>
             <Col lg={6}>
@@ -217,7 +219,7 @@ class ReportInfoView extends React.Component {
                         this.setInputErrors
                       );
                     }}
-                    disabled={isInReview()} />
+                    disabled={isReviewPage} />
               </FormGroup>
             </Col>
           </PaddedRow>
@@ -237,7 +239,7 @@ class ReportInfoView extends React.Component {
                       this.setInputErrors
                     );
                   }}
-                  disabled={isInReview()} />
+                  disabled={isReviewPage} />
             </Col>
           </PaddedRow>
 
@@ -263,7 +265,7 @@ class ReportInfoView extends React.Component {
                         this.setInputErrors
                       );
                     }}
-                    disabled={isInReview()} />
+                    disabled={isReviewPage} />
               </FormGroup>
             </Col>
             <Col lg={6}>
@@ -287,7 +289,7 @@ class ReportInfoView extends React.Component {
                         this.setInputErrors
                       );
                     }}
-                    disabled={isInReview()} />
+                    disabled={isReviewPage} />
               </FormGroup>
             </Col>
           </PaddedRow>
@@ -314,7 +316,7 @@ class ReportInfoView extends React.Component {
                         this.setInputErrors
                       );
                     }}
-                    disabled={isInReview()} />
+                    disabled={isReviewPage} />
               </FormGroup>
             </Col>
             <Col lg={6}>
@@ -326,7 +328,7 @@ class ReportInfoView extends React.Component {
                   value
                   checked={input.onView}
                   onChange={handleSingleSelection}
-                  disabled={isInReview()}>Yes
+                  disabled={isReviewPage}>Yes
               </InlineRadio>
               <InlineRadio
                   inline
@@ -335,7 +337,7 @@ class ReportInfoView extends React.Component {
                   value={false}
                   checked={!input.onView}
                   onChange={handleSingleSelection}
-                  disabled={isInReview()}>No
+                  disabled={isReviewPage}>No
               </InlineRadio>
             </Col>
           </PaddedRow>
@@ -361,7 +363,7 @@ class ReportInfoView extends React.Component {
                         this.setInputErrors
                       );
                     }}
-                    disabled={isInReview()} />
+                    disabled={isReviewPage} />
               </FormGroup>
             </Col>
             <Col lg={6}>
@@ -371,7 +373,7 @@ class ReportInfoView extends React.Component {
                   onChange={(e) => {
                     handleTimeInput(e, section, 'timeOccurred');
                   }}
-                  disabled={isInReview()} />
+                  disabled={isReviewPage} />
             </Col>
           </PaddedRow>
 
@@ -395,7 +397,7 @@ class ReportInfoView extends React.Component {
                         sectionFormatErrors,
                         this.setInputErrors);
                     }}
-                    disabled={isInReview()} />
+                    disabled={isReviewPage} />
               </FormGroup>
             </Col>
             <Col lg={6}>
@@ -405,12 +407,12 @@ class ReportInfoView extends React.Component {
                   onChange={(e) => {
                     handleTimeInput(e, section, 'timeReported');
                   }}
-                  disabled={isInReview()} />
+                  disabled={isReviewPage} />
             </Col>
           </PaddedRow>
         </ContentWrapper>
         {
-          !isInReview()
+          !isReviewPage
             ? (
               <FormNav
                   prevPath={FORM_PATHS.CONSUMER}

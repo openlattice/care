@@ -102,9 +102,11 @@ class DispositionView extends React.Component {
       sectionRequiredErrors
     } = this.state;
 
+    const isReviewPage = isInReview();
+
     return (
       <SectionWrapper>
-        { !isInReview() ? <SectionHeader>Disposition</SectionHeader> : null}
+        { !isReviewPage ? <SectionHeader>Disposition</SectionHeader> : null}
         <ContentWrapper>
           <PaddedRow>
             <Col lg={12}>
@@ -116,7 +118,7 @@ class DispositionView extends React.Component {
                   value="arrest"
                   checked={input.disposition.indexOf('arrest') !== -1}
                   onChange={handleCheckboxChange}
-                  disabled={isInReview()}>Arrest</InlineCheckbox>
+                  disabled={isReviewPage}>Arrest</InlineCheckbox>
               <InlineCheckbox
                   inline
                   data-section={section}
@@ -124,7 +126,7 @@ class DispositionView extends React.Component {
                   value="ep"
                   checked={input.disposition.indexOf('ep') !== -1}
                   onChange={handleCheckboxChange}
-                  disabled={isInReview()}>EP</InlineCheckbox>
+                  disabled={isReviewPage}>EP</InlineCheckbox>
               <InlineCheckbox
                   inline
                   data-section={section}
@@ -132,7 +134,7 @@ class DispositionView extends React.Component {
                   value="voluntaryER"
                   checked={input.disposition.indexOf('voluntaryER') !== -1}
                   onChange={handleCheckboxChange}
-                  disabled={isInReview()}>Voluntary ER Intake</InlineCheckbox>
+                  disabled={isReviewPage}>Voluntary ER Intake</InlineCheckbox>
               <InlineCheckbox
                   inline
                   data-section={section}
@@ -140,7 +142,7 @@ class DispositionView extends React.Component {
                   value="bcri"
                   checked={input.disposition.indexOf('bcri') !== -1}
                   onChange={handleCheckboxChange}
-                  disabled={isInReview()}>BCRI</InlineCheckbox>
+                  disabled={isReviewPage}>BCRI</InlineCheckbox>
               <InlineCheckbox
                   inline
                   data-section={section}
@@ -148,7 +150,7 @@ class DispositionView extends React.Component {
                   value="infoAndReferral"
                   checked={input.disposition.indexOf('infoAndReferral') !== -1}
                   onChange={handleCheckboxChange}
-                  disabled={isInReview()}>Information and Referral</InlineCheckbox>
+                  disabled={isReviewPage}>Information and Referral</InlineCheckbox>
               <InlineCheckbox
                   inline
                   data-section={section}
@@ -156,7 +158,7 @@ class DispositionView extends React.Component {
                   value="lead"
                   checked={input.disposition.indexOf('lead') !== -1}
                   onChange={handleCheckboxChange}
-                  disabled={isInReview()}>LEAD</InlineCheckbox>
+                  disabled={isReviewPage}>LEAD</InlineCheckbox>
               <InlineCheckbox
                   inline
                   data-section={section}
@@ -164,7 +166,7 @@ class DispositionView extends React.Component {
                   value="contactedTreatementProvider"
                   checked={input.disposition.indexOf('contactedTreatementProvider') !== -1}
                   onChange={handleCheckboxChange}
-                  disabled={isInReview()}>Contacted or Referred to Current Treatment Provider</InlineCheckbox>
+                  disabled={isReviewPage}>Contacted or Referred to Current Treatment Provider</InlineCheckbox>
               <InlineCheckbox
                   inline
                   data-section={section}
@@ -172,7 +174,7 @@ class DispositionView extends React.Component {
                   value="criminalCitation"
                   checked={input.disposition.indexOf('criminalCitation') !== -1}
                   onChange={handleCheckboxChange}
-                  disabled={isInReview()}>Criminal Citation</InlineCheckbox>
+                  disabled={isReviewPage}>Criminal Citation</InlineCheckbox>
               <InlineCheckbox
                   inline
                   data-section={section}
@@ -180,7 +182,7 @@ class DispositionView extends React.Component {
                   value="civilCitation"
                   checked={input.disposition.indexOf('civilCitation') !== -1}
                   onChange={handleCheckboxChange}
-                  disabled={isInReview()}>Civil Citation</InlineCheckbox>
+                  disabled={isReviewPage}>Civil Citation</InlineCheckbox>
             </Col>
           </PaddedRow>
 
@@ -194,7 +196,7 @@ class DispositionView extends React.Component {
                   value
                   checked={input.hospitalTransport}
                   onChange={handleSingleSelection}
-                  disabled={isInReview()}>Yes</InlineRadio>
+                  disabled={isReviewPage}>Yes</InlineRadio>
               <InlineRadio
                   inline
                   data-section={section}
@@ -202,7 +204,7 @@ class DispositionView extends React.Component {
                   value={false}
                   checked={!input.hospitalTransport}
                   onChange={handleSingleSelection}
-                  disabled={isInReview()}>No</InlineRadio>
+                  disabled={isReviewPage}>No</InlineRadio>
             </Col>
           </PaddedRow>
 
@@ -216,7 +218,7 @@ class DispositionView extends React.Component {
                   onChange={(e) => {
                     handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                   }}
-                  disabled={isInReview()} />
+                  disabled={isReviewPage} />
             </Col>
           </PaddedRow>
 
@@ -231,7 +233,7 @@ class DispositionView extends React.Component {
                     value="verbalization"
                     checked={input.deescalationTechniques.indexOf('verbalization') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isInReview()}>Verbalization</InlineCheckbox>
+                    disabled={isReviewPage}>Verbalization</InlineCheckbox>
                 <InlineCheckbox
                     data-section={section}
                     inline
@@ -239,7 +241,7 @@ class DispositionView extends React.Component {
                     value="handcuffs"
                     checked={input.deescalationTechniques.indexOf('handcuffs') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isInReview()}>Handcuffs</InlineCheckbox>
+                    disabled={isReviewPage}>Handcuffs</InlineCheckbox>
                 <InlineCheckbox
                     data-section={section}
                     inline
@@ -247,7 +249,7 @@ class DispositionView extends React.Component {
                     value="legRestraints"
                     checked={input.deescalationTechniques.indexOf('legRestraints') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isInReview()}>Leg Restraints</InlineCheckbox>
+                    disabled={isReviewPage}>Leg Restraints</InlineCheckbox>
                 <InlineCheckbox
                     data-section={section}
                     inline
@@ -262,7 +264,7 @@ class DispositionView extends React.Component {
                     value="arrestControl"
                     checked={input.deescalationTechniques.indexOf('arrestControl') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isInReview()}>Arrest Control (Hands / Feet)</InlineCheckbox>
+                    disabled={isReviewPage}>Arrest Control (Hands / Feet)</InlineCheckbox>
                 <InlineCheckbox
                     data-section={section}
                     inline
@@ -270,7 +272,7 @@ class DispositionView extends React.Component {
                     value="n/a"
                     checked={input.deescalationTechniques.indexOf('n/a') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isInReview()}>N/A</InlineCheckbox>
+                    disabled={isReviewPage}>N/A</InlineCheckbox>
                 <OtherWrapper>
                   <InlineCheckbox
                       data-section={section}
@@ -279,7 +281,7 @@ class DispositionView extends React.Component {
                       value="other"
                       checked={input.deescalationTechniques.indexOf('other') !== -1}
                       onChange={handleCheckboxChange}
-                      disabled={isInReview()}>Other:</InlineCheckbox>
+                      disabled={isReviewPage}>Other:</InlineCheckbox>
                   <FormControl
                       data-section={section}
                       name="deescalationTechniquesOther"
@@ -287,7 +289,7 @@ class DispositionView extends React.Component {
                       onChange={(e) => {
                         handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                       }}
-                      disabled={isInReview()} />
+                      disabled={isReviewPage} />
                 </OtherWrapper>
               </FormGroup>
             </Col>
@@ -304,7 +306,7 @@ class DispositionView extends React.Component {
                     value="bcri"
                     checked={input.specializedResourcesCalled.indexOf('bcri') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isInReview()}>BCRI / Mobile Crisis Response Team</InlineCheckbox>
+                    disabled={isReviewPage}>BCRI / Mobile Crisis Response Team</InlineCheckbox>
                 <InlineCheckbox
                     data-section={section}
                     inline
@@ -312,7 +314,7 @@ class DispositionView extends React.Component {
                     value="citOfficer"
                     checked={input.specializedResourcesCalled.indexOf('citOfficer') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isInReview()}>CIT Officer</InlineCheckbox>
+                    disabled={isReviewPage}>CIT Officer</InlineCheckbox>
                 <InlineCheckbox
                     data-section={section}
                     inline
@@ -320,7 +322,7 @@ class DispositionView extends React.Component {
                     value="crtUnit"
                     checked={input.specializedResourcesCalled.indexOf('crtUnit') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isInReview()}>CRT Unit</InlineCheckbox>
+                    disabled={isReviewPage}>CRT Unit</InlineCheckbox>
                 <InlineCheckbox
                     data-section={section}
                     inline
@@ -328,7 +330,7 @@ class DispositionView extends React.Component {
                     value="esu"
                     checked={input.specializedResourcesCalled.indexOf('esu') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isInReview()}>ESU</InlineCheckbox>
+                    disabled={isReviewPage}>ESU</InlineCheckbox>
                 <InlineCheckbox
                     data-section={section}
                     inline
@@ -336,7 +338,7 @@ class DispositionView extends React.Component {
                     value="swat"
                     checked={input.specializedResourcesCalled.indexOf('swat') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isInReview()}>SWAT</InlineCheckbox>
+                    disabled={isReviewPage}>SWAT</InlineCheckbox>
                 <InlineCheckbox
                     data-section={section}
                     inline
@@ -344,7 +346,7 @@ class DispositionView extends React.Component {
                     value="negotiationTeam"
                     checked={input.specializedResourcesCalled.indexOf('negotiationTeam') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isInReview()}>Negotiation Team</InlineCheckbox>
+                    disabled={isReviewPage}>Negotiation Team</InlineCheckbox>
                 <InlineCheckbox
                     data-section={section}
                     inline
@@ -352,7 +354,7 @@ class DispositionView extends React.Component {
                     value="homelessOutreach"
                     checked={input.specializedResourcesCalled.indexOf('homelessOutreach') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isInReview()}>Homeless Outreach</InlineCheckbox>
+                    disabled={isReviewPage}>Homeless Outreach</InlineCheckbox>
               </FormGroup>
             </Col>
           </PaddedRow>
@@ -373,13 +375,13 @@ class DispositionView extends React.Component {
                   onChange={(e) => {
                     handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                   }}
-                  disabled={isInReview()} />
+                  disabled={isReviewPage} />
             </Col>
           </PaddedRow>
         </ContentWrapper>
 
         {
-          !isInReview()
+          !isReviewPage
             ? (
               <FormNav
                   prevPath={FORM_PATHS.COMPLAINANT}

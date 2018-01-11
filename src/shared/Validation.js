@@ -51,7 +51,7 @@ export const validateOnInput = (
           }
         }
       }
-      catch(err) {
+      catch (err) {
         inputValid = false;
       }
       break;
@@ -79,7 +79,7 @@ export const validateOnInput = (
           }
         }
       }
-      catch(err) {
+      catch (err) {
         inputValid = false;
       }
       break;
@@ -104,7 +104,7 @@ export const validateOnInput = (
           }
         }
       }
-      catch(err) {
+      catch (err) {
         inputValid = false;
       }
       break;
@@ -118,7 +118,7 @@ export const validateOnInput = (
         const isValid = (
           validator.isISO8601(input)
             && validator.isBefore(input, currentDate)
-          ) || input === '';
+        ) || input === '';
 
         if (input && !isValid) {
           inputValid = false;
@@ -133,7 +133,7 @@ export const validateOnInput = (
           }
         }
       }
-      catch(err) {
+      catch (err) {
         inputValid = false;
       }
       break;
