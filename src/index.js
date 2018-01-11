@@ -13,7 +13,6 @@ import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'react-router-redux';
 import { injectGlobal } from 'styled-components';
 
-import OpenLatticeLogo from './assets/images/logo.png';
 import AppContainer from './containers/app/AppContainer';
 import initializeReduxStore from './core/redux/ReduxStore';
 import initializeRouterHistory from './core/router/RouterHistory';
