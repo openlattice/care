@@ -54,13 +54,14 @@ export default function baseWebpackConfig(env) {
   });
 
   const DEFINE_PLUGIN = new Webpack.DefinePlugin({
+    __AUTH0_CLIENT_ID__: JSON.stringify(AUTH0_CLIENT_ID),
+    __AUTH0_DOMAIN__: JSON.stringify(AUTH0_DOMAIN),
+    __BASE_PATH__: JSON.stringify(BASE_PATH),
     __ENV_DEV__: JSON.stringify(isDev),
     __ENV_PROD__: JSON.stringify(isProd),
     __ENV_TEST__: JSON.stringify(isTest),
-    __VERSION__: JSON.stringify(`v${PACKAGE.version}`),
-    __AUTH0_CLIENT_ID__: JSON.stringify(AUTH0_CLIENT_ID),
-    __AUTH0_DOMAIN__: JSON.stringify(AUTH0_DOMAIN),
-    __BASE_PATH__: JSON.stringify(BASE_PATH)
+    __PACKAGE__: JSON.stringify(PACKAGE.name),
+    __VERSION__: JSON.stringify(`v${PACKAGE.version}`)
   });
 
   /*
