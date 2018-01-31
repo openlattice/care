@@ -107,7 +107,6 @@ function prepPeopleEntityData(
 ) :Object {
 
   const {
-    age,
     dob,
     firstName,
     gender,
@@ -136,7 +135,6 @@ function prepPeopleEntityData(
   details[props[PERSON.DOB_FQN]] = (dob && dob.length) ? [dob] : [];
   details[props[PERSON.SEX_FQN]] = (gender && gender.length) ? [gender] : [];
   details[props[PERSON.RACE_FQN]] = (race && race.length) ? [race] : [];
-  details[props[PERSON.AGE_FQN]] = (age && age.length) ? [age] : [];
   details[props[PERSON.PICTURE_FQN]] = (picture && picture.length) ? [picture] : [];
 
   /*
