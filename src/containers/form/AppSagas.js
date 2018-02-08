@@ -14,6 +14,7 @@ import {
 import { put, take, takeEvery } from 'redux-saga/effects';
 
 import { APP_NAME } from '../../shared/Consts';
+import { isValidUuid } from '../../utils/Utils';
 
 import {
   LOAD_APP,
@@ -179,6 +180,9 @@ function* loadHospitalsWorker(action :SequenceAction) :Generator<*, *, *> {
     yield put(loadHospitals.request(action.id));
 
     const entitySetId :string = (action.value :any);
+    if (!entitySetId || !isValidUuid(entitySetId)) {
+      throw new Error(`hospitals EntitySet id is not a valid UUID: ${entitySetId}`);
+    }
 
     /*
      * 1. get sync id for the hospitals EntitySet for the selected organization
