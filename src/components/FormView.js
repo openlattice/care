@@ -61,7 +61,7 @@ function FormView({
 }) {
 
   const getProgress = () => {
-    const slashIndex :number = window.location.hash.lastIndexOf('/');
+    const slashIndex = window.location.hash.lastIndexOf('/');
     const page = window.location.hash.substring(slashIndex + 1);
     const num = Math.ceil(((page - 1) / (MAX_PAGE - 1)) * 100);
     const percentage = `${num.toString()}%`;

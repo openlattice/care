@@ -20,11 +20,11 @@ import Loading from '../../components/Loading';
 import OrganizationButton from './OrganizationButton';
 import StyledButton from '../../components/buttons/StyledButton';
 import * as Routes from '../../core/router/Routes';
-import { loadApp, selectOrganization } from '../form/AppActionFactory';
+import { loadApp, loadHospitals, selectOrganization } from '../form/AppActionFactory';
+import { APP_TYPES_FQNS } from '../../shared/Consts';
 
-const {
-  logout
-} = AuthActionFactory;
+const { HOSPITALS_FQN } = APP_TYPES_FQNS;
+const { logout } = AuthActionFactory;
 
 /*
  * styled components
@@ -89,6 +89,7 @@ const MissingOrgsWrapper = styled.div`
 type Props = {
   actions :{
     loadApp :RequestSequence;
+    loadHospitals :RequestSequence;
     logout :() => void;
     selectOrganization :() => void;
   };
@@ -99,6 +100,18 @@ class AppContainer extends React.Component<Props> {
 
   componentDidMount() {
     this.props.actions.loadApp();
+  }
+
+  componentWillReceiveProps(nextProps) {
+
+    // check if the selected organization has changed
+    if (this.props.app.get('selectedOrganization') !== nextProps.app.get('selectedOrganization')) {
+      const selectedOrg :string = nextProps.app.get('selectedOrganization');
+      const hospitalsEntitySetId = nextProps.app.getIn(
+        [HOSPITALS_FQN.getFullyQualifiedName(), 'entitySetsByOrganization', selectedOrg]
+      );
+      this.props.actions.loadHospitals(hospitalsEntitySetId);
+    }
   }
 
   renderMissingOrgs = () => (
@@ -189,6 +202,7 @@ function mapDispatchToProps(dispatch :Function) :Object {
 
   const actions = {
     loadApp,
+    loadHospitals,
     logout,
     selectOrganization
   };
