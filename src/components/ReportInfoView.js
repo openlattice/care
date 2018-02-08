@@ -395,7 +395,8 @@ class ReportInfoView extends React.Component {
                         section,
                         'dateReported',
                         sectionFormatErrors,
-                        this.setInputErrors);
+                        this.setInputErrors
+                      );
                     }}
                     disabled={isReviewPage} />
               </FormGroup>

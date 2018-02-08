@@ -2,9 +2,13 @@
  * @flow
  */
 
+/* eslint-disable no-use-before-define */
+
 import {
   AppApiActionFactory,
-  EntityDataModelApiActionFactory
+  DataApiActionFactory,
+  EntityDataModelApiActionFactory,
+  SyncApiActionFactory
 } from 'lattice-sagas';
 
 import { put, take, takeEvery } from 'redux-saga/effects';
@@ -14,10 +18,14 @@ import { APP_NAME } from '../../shared/Consts';
 import {
   LOAD_APP,
   LOAD_CONFIGURATIONS,
+  LOAD_HOSPITALS,
   loadApp,
-  loadConfigurations
+  loadConfigurations,
+  loadHospitals
 } from './AppActionFactory';
 
+const { getEntitySetData } = DataApiActionFactory;
+const { getCurrentSyncId } = SyncApiActionFactory;
 const {
   getApp,
   getAppConfigs,
@@ -58,11 +66,31 @@ function matchGetAppConfigsResponse(getAppConfigsAction :SequenceAction) {
   };
 }
 
+function takeReqSeqSuccessFailure(reqseq :RequestSequence, seqAction :SequenceAction) {
+  return take(
+    (anAction :Object) => {
+      return (anAction.type === reqseq.SUCCESS && anAction.id === seqAction.id)
+        || (anAction.type === reqseq.FAILURE && anAction.id === seqAction.id);
+    }
+  );
+}
+
 /*
+ *
  * sagas
+ *
  */
 
-export function* loadAppWorker(action :SequenceAction) :Generator<*, *, *> {
+/*
+ * loadApp()
+ */
+
+function* loadAppWatcher() :Generator<*, *, *> {
+
+  yield takeEvery(LOAD_APP, loadAppWorker);
+}
+
+function* loadAppWorker(action :SequenceAction) :Generator<*, *, *> {
 
   try {
     yield put(loadApp.request(action.id));
@@ -79,7 +107,7 @@ export function* loadAppWorker(action :SequenceAction) :Generator<*, *, *> {
     const appTypesResponseAction = yield take(matchGetAppTypesResponse(getAppTypesAction));
 
     const appTypes = Object.values(appTypesResponseAction.value);
-    const projection :Object[] = appTypes.map((appType :Object) => {
+    const projection = appTypes.map((appType) => {
       return {
         id: appType.entityTypeId,
         include: [
@@ -105,12 +133,16 @@ export function* loadAppWorker(action :SequenceAction) :Generator<*, *, *> {
   }
 }
 
-export function* loadAppWatcher() :Generator<*, *, *> {
+/*
+ * loadConfigurations()
+ */
 
-  yield takeEvery(LOAD_APP, loadAppWorker);
+function* loadAppConfigsWatcher() :Generator<*, *, *> {
+
+  yield takeEvery(LOAD_CONFIGURATIONS, loadAppConfigsWorker);
 }
 
-export function* loadAppConfigsWorker(action :SequenceAction) :Generator<*, *, *> {
+function* loadAppConfigsWorker(action :SequenceAction) :Generator<*, *, *> {
 
   try {
     yield put(loadConfigurations.request(action.id));
@@ -132,7 +164,70 @@ export function* loadAppConfigsWorker(action :SequenceAction) :Generator<*, *, *
   }
 }
 
-export function* loadAppConfigsWatcher() :Generator<*, *, *> {
+/*
+ * loadHospitals()
+ */
 
-  yield takeEvery(LOAD_CONFIGURATIONS, loadAppConfigsWorker);
+function* loadHospitalsWatcher() :Generator<*, *, *> {
+
+  yield takeEvery(LOAD_HOSPITALS, loadHospitalsWorker);
 }
+
+function* loadHospitalsWorker(action :SequenceAction) :Generator<*, *, *> {
+
+  try {
+    yield put(loadHospitals.request(action.id));
+
+    const entitySetId :string = (action.value :any);
+
+    /*
+     * 1. get sync id for the hospitals EntitySet for the selected organization
+     */
+
+    let syncId :string = '';
+    const getSyncIdAction :SequenceAction = getCurrentSyncId(entitySetId);
+    yield put(getSyncIdAction);
+    const getSyncIdResponseAction = yield takeReqSeqSuccessFailure(getCurrentSyncId, getSyncIdAction);
+    if (getSyncIdResponseAction.type === getCurrentSyncId.SUCCESS && getSyncIdResponseAction.value) {
+      syncId = getSyncIdResponseAction.value;
+    }
+    else {
+      throw new Error(getSyncIdResponseAction.value);
+    }
+
+    /*
+     * 2. get the actual data in the hospitals EntitySet
+     */
+
+    let data :Object[];
+    const getDataAction :SequenceAction = getEntitySetData({ entitySetId, syncId });
+    yield put(getDataAction);
+    const getDataResponseAction = yield takeReqSeqSuccessFailure(getEntitySetData, getDataAction);
+    if (getDataResponseAction.type === getEntitySetData.SUCCESS && getDataResponseAction.value) {
+      data = getDataResponseAction.value;
+    }
+    else {
+      throw new Error(getDataResponseAction.value);
+    }
+
+    yield put(loadHospitals.success(action.id, data));
+  }
+  catch (error) {
+    yield put(loadHospitals.failure(action.id, error));
+  }
+  finally {
+    yield put(loadHospitals.finally(action.id));
+  }
+}
+
+/*
+ *
+ * exports
+ *
+ */
+
+export {
+  loadAppWatcher,
+  loadAppConfigsWatcher,
+  loadHospitalsWatcher
+};

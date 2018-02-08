@@ -8,14 +8,16 @@ import { APP_TYPES_FQNS } from '../../shared/Consts';
 import {
   SELECT_ORGANIZATION,
   loadApp,
-  loadConfigurations
+  loadConfigurations,
+  loadHospitals
 } from './AppActionFactory';
 
 const {
+  APPEARS_IN_FQN,
   BEHAVIORAL_HEALTH_REPORT_FQN,
   FOLLOW_UP_REPORT_FQN,
-  PEOPLE_FQN,
-  APPEARS_IN_FQN
+  HOSPITALS_FQN,
+  PEOPLE_FQN
 } = APP_TYPES_FQNS;
 
 const APP_CONFIG_INITIAL_STATE :Map<*, *> = Immutable.fromJS({
@@ -25,10 +27,11 @@ const APP_CONFIG_INITIAL_STATE :Map<*, *> = Immutable.fromJS({
 });
 
 const INITIAL_STATE :Map<*, *> = Immutable.fromJS({
+  [APPEARS_IN_FQN.getFullyQualifiedName()]: APP_CONFIG_INITIAL_STATE,
   [BEHAVIORAL_HEALTH_REPORT_FQN.getFullyQualifiedName()]: APP_CONFIG_INITIAL_STATE,
   [FOLLOW_UP_REPORT_FQN.getFullyQualifiedName()]: APP_CONFIG_INITIAL_STATE,
+  [HOSPITALS_FQN.getFullyQualifiedName()]: APP_CONFIG_INITIAL_STATE,
   [PEOPLE_FQN.getFullyQualifiedName()]: APP_CONFIG_INITIAL_STATE,
-  [APPEARS_IN_FQN.getFullyQualifiedName()]: APP_CONFIG_INITIAL_STATE,
   isLoadingApp: false,
   isLoadingConfigurations: false,
   app: Immutable.Map(),
@@ -71,14 +74,16 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
         },
         FAILURE: () => {
           return state
+            .setIn([APPEARS_IN_FQN.getFullyQualifiedName(), 'propertyTypes'], Immutable.Map())
+            .setIn([APPEARS_IN_FQN.getFullyQualifiedName(), 'primaryKeys'], Immutable.List())
             .setIn([BEHAVIORAL_HEALTH_REPORT_FQN.getFullyQualifiedName(), 'propertyTypes'], Immutable.Map())
             .setIn([BEHAVIORAL_HEALTH_REPORT_FQN.getFullyQualifiedName(), 'primaryKeys'], Immutable.List())
             .setIn([FOLLOW_UP_REPORT_FQN.getFullyQualifiedName(), 'propertyTypes'], Immutable.Map())
             .setIn([FOLLOW_UP_REPORT_FQN.getFullyQualifiedName(), 'primaryKeys'], Immutable.List())
+            .setIn([HOSPITALS_FQN.getFullyQualifiedName(), 'propertyTypes'], Immutable.Map())
+            .setIn([HOSPITALS_FQN.getFullyQualifiedName(), 'primaryKeys'], Immutable.List())
             .setIn([PEOPLE_FQN.getFullyQualifiedName(), 'propertyTypes'], Immutable.Map())
-            .setIn([PEOPLE_FQN.getFullyQualifiedName(), 'primaryKeys'], Immutable.List())
-            .setIn([APPEARS_IN_FQN.getFullyQualifiedName(), 'propertyTypes'], Immutable.Map())
-            .setIn([APPEARS_IN_FQN.getFullyQualifiedName(), 'primaryKeys'], Immutable.List());
+            .setIn([PEOPLE_FQN.getFullyQualifiedName(), 'primaryKeys'], Immutable.List());
         },
         FINALLY: () => {
           return state.set('isLoadingApp', false);
@@ -101,6 +106,10 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
             organizations[id] = configuration.organization;
             newState = newState
               .setIn(
+                [APPEARS_IN_FQN.getFullyQualifiedName(), 'entitySetsByOrganization', id],
+                configuration.config[APPEARS_IN_FQN.getFullyQualifiedName()].entitySetId
+              )
+              .setIn(
                 [BEHAVIORAL_HEALTH_REPORT_FQN.getFullyQualifiedName(), 'entitySetsByOrganization', id],
                 configuration.config[BEHAVIORAL_HEALTH_REPORT_FQN.getFullyQualifiedName()].entitySetId
               )
@@ -109,12 +118,12 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
                 configuration.config[FOLLOW_UP_REPORT_FQN.getFullyQualifiedName()].entitySetId
               )
               .setIn(
-                [PEOPLE_FQN.getFullyQualifiedName(), 'entitySetsByOrganization', id],
-                configuration.config[PEOPLE_FQN.getFullyQualifiedName()].entitySetId
+                [HOSPITALS_FQN.getFullyQualifiedName(), 'entitySetsByOrganization', id],
+                configuration.config[HOSPITALS_FQN.getFullyQualifiedName()].entitySetId
               )
               .setIn(
-                [APPEARS_IN_FQN.getFullyQualifiedName(), 'entitySetsByOrganization', id],
-                configuration.config[APPEARS_IN_FQN.getFullyQualifiedName()].entitySetId
+                [PEOPLE_FQN.getFullyQualifiedName(), 'entitySetsByOrganization', id],
+                configuration.config[PEOPLE_FQN.getFullyQualifiedName()].entitySetId
               );
           });
 
@@ -129,10 +138,11 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
         },
         FAILURE: () => {
           return state
+            .setIn([APPEARS_IN_FQN.getFullyQualifiedName(), 'entitySetsByOrganization'], Immutable.Map())
             .setIn([BEHAVIORAL_HEALTH_REPORT_FQN.getFullyQualifiedName(), 'entitySetsByOrganization'], Immutable.Map())
             .setIn([FOLLOW_UP_REPORT_FQN.getFullyQualifiedName(), 'entitySetsByOrganization'], Immutable.Map())
+            .setIn([HOSPITALS_FQN.getFullyQualifiedName(), 'entitySetsByOrganization'], Immutable.Map())
             .setIn([PEOPLE_FQN.getFullyQualifiedName(), 'entitySetsByOrganization'], Immutable.Map())
-            .setIn([APPEARS_IN_FQN.getFullyQualifiedName(), 'entitySetsByOrganization'], Immutable.Map())
             .set('organizations', Immutable.Map())
             .set('selectedOrganization', '');
         },
