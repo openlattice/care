@@ -20,19 +20,20 @@ import * as SearchSagas from '../../containers/search/SearchSagas';
 export default function* sagas() :Generator<*, *, *> {
 
   yield [
-    // AuthSagas
+    // "lattice-auth" sagas
     fork(AuthSagas.watchAuthAttempt),
     fork(AuthSagas.watchAuthSuccess),
     fork(AuthSagas.watchAuthFailure),
     fork(AuthSagas.watchAuthExpired),
     fork(AuthSagas.watchLogout),
 
-    // LatticeSagas
+    // "lattice-sagas" sagas
     fork(AppApiSagas.getAppWatcher),
     fork(AppApiSagas.getAppConfigsWatcher),
     fork(AppApiSagas.getAppTypesWatcher),
     fork(DataApiSagas.acquireSyncTicketWatcher),
     fork(DataApiSagas.createEntityAndAssociationDataWatcher),
+    fork(DataApiSagas.getEntitySetDataWatcher),
     fork(EntityDataModelApiSagas.getEntityDataModelProjectionWatcher),
     fork(SearchApiSagas.searchEntityNeighborsWatcher),
     fork(SearchApiSagas.searchEntitySetDataWatcher),
@@ -44,6 +45,7 @@ export default function* sagas() :Generator<*, *, *> {
     // Report Sagas
     fork(AppSagas.loadAppWatcher),
     fork(AppSagas.loadAppConfigsWatcher),
+    fork(AppSagas.loadHospitalsWatcher),
     fork(ReportSagas.hardRestartWatcher),
     fork(ReportSagas.submitReportWatcher),
 

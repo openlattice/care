@@ -5,10 +5,11 @@ const { FullyQualifiedName } = Models;
 export const APP_NAME = 'BehavioralHealthReport';
 
 export const APP_TYPES_FQNS = {
+  APPEARS_IN_FQN: new FullyQualifiedName('app.appearsin'),
   BEHAVIORAL_HEALTH_REPORT_FQN: new FullyQualifiedName('app.bhr'),
   FOLLOW_UP_REPORT_FQN: new FullyQualifiedName('app.followup'),
-  PEOPLE_FQN: new FullyQualifiedName('app.people'),
-  APPEARS_IN_FQN: new FullyQualifiedName('app.appearsin')
+  HOSPITALS_FQN: new FullyQualifiedName('app.hospitals'),
+  PEOPLE_FQN: new FullyQualifiedName('app.people')
 };
 
 export const PERSON = {
