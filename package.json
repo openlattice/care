@@ -37,7 +37,7 @@
     "immutable": "4.0.0-rc.9",
     "jwt-decode": "^2.2.0",
     "lattice": "^0.32.2",
-    "lattice-auth": "^0.4.2",
+    "lattice-auth": "^0.5.0",
     "lattice-sagas": "^0.0.19",
     "lodash": "^4.17.4",
     "loglevel": "^1.6.0",
