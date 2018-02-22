@@ -115,14 +115,14 @@ const StyledImageElement = styled.img`
  */
 
 type Props = {
-  onSelfieCapture :Function
-}
+  onSelfieCapture :(selfieDataAsBase64 :?string) => void;
+};
 
 type State = {
-  hasMedia :boolean,
-  selfieSource :?string,
-  videoSource :?URL
-}
+  hasMedia :boolean;
+  selfieSource :?string;
+  videoSource :?URL;
+};
 
 class SelfieWebCam extends React.Component<Props, State> {
 
