@@ -1,7 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies, import/extensions */
 
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import UglifyJsPlugin from 'uglifyjs-webpack-plugin';
 import Webpack from 'webpack';
 
 import APP_CONFIG from '../app/app.config.js';
@@ -31,7 +30,6 @@ export default function prodWebpackConfig(env) {
       inject: true,
       template: `${APP_PATHS.ABS.SOURCE}/${APP_CONFIG.APP_INDEX_HTML}`
     }),
-    new UglifyJsPlugin(),
     ...baseConfig.plugins
   ];
 
