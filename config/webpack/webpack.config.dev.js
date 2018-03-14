@@ -38,12 +38,12 @@ export default function devWebpackConfig(env) {
     output,
     plugins,
     devServer: {
-      hot: true,
+      contentBase: APP_PATHS.ABS.BUILD,
       historyApiFallback: {
         index: baseConfig.output.publicPath
       },
+      hot: true,
       port: DEV_SERVER_PORT,
-      contentBase: APP_PATHS.ABS.BUILD,
       publicPath: baseConfig.output.publicPath
     },
     devtool: false
