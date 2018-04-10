@@ -111,6 +111,7 @@ class AppContainer extends React.Component<Props> {
         [HOSPITALS_FQN.getFullyQualifiedName(), 'entitySetsByOrganization', selectedOrg]
       );
       this.props.actions.loadHospitals(hospitalsEntitySetId);
+      this.props.actions.loadApp(); // this is not entirely necessary
     }
   }
 

@@ -46,6 +46,7 @@ export default function* sagas() :Generator<*, *, *> {
     fork(AppSagas.loadAppWatcher),
     fork(AppSagas.loadAppConfigsWatcher),
     fork(AppSagas.loadHospitalsWatcher),
+    fork(AppSagas.selectOrganizationWatcher),
     fork(ReportSagas.hardRestartWatcher),
     fork(ReportSagas.submitReportWatcher),
 

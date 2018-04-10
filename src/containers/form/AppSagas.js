@@ -11,15 +11,18 @@ import {
   SyncApiActionFactory
 } from 'lattice-sagas';
 
+import { push } from 'react-router-redux';
 import { put, take, takeEvery } from 'redux-saga/effects';
 
 import { APP_NAME } from '../../shared/Consts';
 import { isValidUuid } from '../../utils/Utils';
+import * as Routes from '../../core/router/Routes';
 
 import {
   LOAD_APP,
   LOAD_CONFIGURATIONS,
   LOAD_HOSPITALS,
+  SELECT_ORGANIZATION,
   loadApp,
   loadConfigurations,
   loadHospitals
@@ -225,6 +228,21 @@ function* loadHospitalsWorker(action :SequenceAction) :Generator<*, *, *> {
 }
 
 /*
+ * selectOrganization()
+ */
+
+function* selectOrganizationWatcher() :Generator<*, *, *> {
+
+  yield takeEvery(SELECT_ORGANIZATION, selectOrganizationWorker);
+}
+
+function* selectOrganizationWorker() :Generator<*, *, *> {
+
+  // not ideal since it resets clears form inputs, but none of that is being stored in redux at the moment anyway...
+  yield put(push(Routes.HOME));
+}
+
+/*
  *
  * exports
  *
@@ -233,5 +251,6 @@ function* loadHospitalsWorker(action :SequenceAction) :Generator<*, *, *> {
 export {
   loadAppWatcher,
   loadAppConfigsWatcher,
-  loadHospitalsWatcher
+  loadHospitalsWatcher,
+  selectOrganizationWatcher
 };
