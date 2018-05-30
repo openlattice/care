@@ -4,11 +4,13 @@ import DatePicker from 'react-bootstrap-date-picker';
 import PropTypes from 'prop-types';
 import ReactRouterPropTypes from 'react-router-prop-types';
 import styled from 'styled-components';
+import { AuthUtils } from 'lattice-auth';
 import { FormGroup, FormControl, Col } from 'react-bootstrap';
 import { withRouter } from 'react-router';
 
 import FormNav from './FormNav';
 import SelfieWebCam, { DATA_URL_PREFIX } from './SelfieWebCam';
+import { PORTLAND_WL } from '../utils/Whitelist';
 
 import {
   SectionWrapper,
@@ -32,32 +34,6 @@ import { bootstrapValidation } from '../shared/Validation';
 const StyledImageElement = styled.img``;
 
 class ConsumerInfoView extends React.Component {
-
-  selfieWebCam;
-
-  constructor(props) {
-
-    super(props);
-
-    this.state = {
-      requiredFields: ['identification'],
-      sectionFormatErrors: [],
-      sectionRequiredErrors: [],
-      identificationValid: true,
-      ageValid: true,
-      dobValid: true,
-      sectionValid: false,
-      didClickNav: this.props.location.state
-        ? this.props.location.state.didClickNav
-        : false,
-      currentPage: parseInt(location.hash.substr(2), 10),
-      showSelfieWebCam: false
-    };
-  }
-
-  static defaultProps = {
-    handlePicture: () => {}
-  }
 
   static propTypes = {
     handlePicture: PropTypes.func,
@@ -108,6 +84,46 @@ class ConsumerInfoView extends React.Component {
       suicideAttemptMethodOther: PropTypes.string.isRequired
     }).isRequired
   }
+
+  static defaultProps = {
+    handlePicture: () => {}
+  }
+
+  selfieWebCam;
+
+  constructor(props) {
+
+    super(props);
+
+    this.state = {
+      requiredFields: ['identification'],
+      sectionFormatErrors: [],
+      sectionRequiredErrors: [],
+      identificationValid: true,
+      ageValid: true,
+      dobValid: true,
+      sectionValid: false,
+      didClickNav: this.props.location.state
+        ? this.props.location.state.didClickNav
+        : false,
+      currentPage: parseInt(location.hash.substr(2), 10),
+      showSelfieWebCam: false
+    };
+  }
+
+  /*
+   * !!! HACK !!!
+   */
+
+  ifPortlandUser = () => {
+
+    const { email } = AuthUtils.getUserInfo();
+    return PORTLAND_WL.reduce((matchFound, domain) => matchFound || (!!email && email.endsWith(domain)), false);
+  }
+
+  /*
+   * !!! HACK !!!
+   */
 
   handleOnChangeTakePicture = (event) => {
 
@@ -675,6 +691,20 @@ class ConsumerInfoView extends React.Component {
                     onChange={handleCheckboxChange}
                     disabled={isReviewPage}>Dementia
                 </InlineCheckbox>
+                {
+                  this.ifPortlandUser() && (
+                    <InlineCheckbox
+                        inline
+                        data-section={section}
+                        name="selfDiagnosis"
+                        value="DevelopmentalDisabilities/Autism"
+                        checked={input.selfDiagnosis.indexOf('DevelopmentalDisabilities/Autism') !== -1}
+                        onChange={handleCheckboxChange}
+                        disabled={isReviewPage}>
+                      Developmental Disabilities / Autism
+                    </InlineCheckbox>
+                  )
+                }
                 <OtherWrapper>
                   <InlineCheckbox
                       data-section={section}
