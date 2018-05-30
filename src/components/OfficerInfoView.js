@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { AuthUtils } from 'lattice-auth';
 import { FormControl, Col, FormGroup } from 'react-bootstrap';
 import { withRouter } from 'react-router';
 import ReactRouterPropTypes from 'react-router-prop-types';
@@ -21,24 +22,10 @@ import {
   validateSectionNavigation
 } from '../shared/Helpers';
 import { bootstrapValidation } from '../shared/Validation';
+import { PORTLAND_WL } from '../utils/Whitelist';
 
 
 class OfficerInfoView extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      requiredFields: [],
-      sectionFormatErrors: [],
-      sectionRequiredErrors: [FORM_ERRORS.IS_REQUIRED],
-      officerSeqIDValid: true,
-      sectionValid: false,
-      didClickNav: this.props.location.state
-        ? this.props.location.state.didClickNav
-        : false,
-      currentPage: parseInt(location.hash.substr(2), 10)
-    };
-  }
 
   static propTypes = {
     handleTextInput: PropTypes.func.isRequired,
@@ -55,6 +42,36 @@ class OfficerInfoView extends React.Component {
       officerCertification: PropTypes.array.isRequired
     }).isRequired
   }
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      requiredFields: [],
+      sectionFormatErrors: [],
+      sectionRequiredErrors: [FORM_ERRORS.IS_REQUIRED],
+      officerSeqIDValid: true,
+      sectionValid: false,
+      didClickNav: this.props.location.state
+        ? this.props.location.state.didClickNav
+        : false,
+      currentPage: parseInt(location.hash.substr(2), 10)
+    };
+  }
+
+  /*
+   * !!! HACK !!!
+   */
+
+  ifPortlandUser = () => {
+
+    const { email } = AuthUtils.getUserInfo();
+    return PORTLAND_WL.reduce((matchFound, domain) => matchFound || (!!email && email.endsWith(domain)), false);
+  }
+
+  /*
+   * !!! HACK !!!
+   */
 
   handlePageChange = (path) => {
     this.setState(setDidClickNav);
@@ -81,11 +98,104 @@ class OfficerInfoView extends React.Component {
     );
   }
 
+  renderOfficerCertification = () => {
+
+    const {
+      section,
+      handleCheckboxChange,
+      input,
+      isInReview
+    } = this.props;
+
+    const isReviewPage = isInReview();
+
+    return (
+      <PaddedRow>
+        <Col lg={6}>
+          <TitleLabel>36. Officer Certification</TitleLabel>
+          <FormGroup>
+            <InlineCheckbox
+                inline
+                data-section={section}
+                name="officerCertification"
+                value="crtUnit"
+                checked={input.officerCertification.indexOf('crtUnit') !== -1}
+                onChange={handleCheckboxChange}
+                disabled={isReviewPage}>
+              CRT Unit
+            </InlineCheckbox>
+            <InlineCheckbox
+                inline
+                data-section={section}
+                name="officerCertification"
+                value="best"
+                checked={input.officerCertification.indexOf('best') !== -1}
+                onChange={handleCheckboxChange}
+                disabled={isReviewPage}>
+              BEST
+            </InlineCheckbox>
+            <InlineCheckbox
+                inline
+                data-section={section}
+                name="officerCertification"
+                value="cit"
+                checked={input.officerCertification.indexOf('cit') !== -1}
+                onChange={handleCheckboxChange}
+                disabled={isReviewPage}>
+              CIT
+            </InlineCheckbox>
+            <InlineCheckbox
+                inline
+                data-section={section}
+                name="officerCertification"
+                value="n/a"
+                checked={input.officerCertification.indexOf('n/a') !== -1}
+                onChange={handleCheckboxChange}
+                disabled={isReviewPage}>
+              N/A
+            </InlineCheckbox>
+          </FormGroup>
+        </Col>
+      </PaddedRow>
+    );
+  }
+
+  renderOfficerCertificationPortland = () => {
+
+    const {
+      section,
+      handleCheckboxChange,
+      input,
+      isInReview
+    } = this.props;
+
+    const isReviewPage = isInReview();
+
+    return (
+      <PaddedRow>
+        <Col lg={6}>
+          <TitleLabel>36. Officer Certification</TitleLabel>
+          <FormGroup>
+            <InlineCheckbox
+                inline
+                data-section={section}
+                name="officerCertification"
+                value="cit"
+                checked={input.officerCertification.indexOf('cit') !== -1}
+                onChange={handleCheckboxChange}
+                disabled={isReviewPage}>
+              CIT
+            </InlineCheckbox>
+          </FormGroup>
+        </Col>
+      </PaddedRow>
+    );
+  }
+
   render() {
     const {
       section,
       handleTextInput,
-      handleCheckboxChange,
       input,
       isInReview
     } = this.props;
@@ -151,45 +261,12 @@ class OfficerInfoView extends React.Component {
             </Col>
           </PaddedRow>
 
-          <PaddedRow>
-            <Col lg={6}>
-              <TitleLabel>36. Officer Certification</TitleLabel>
-              <FormGroup>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="officerCertification"
-                    value="crtUnit"
-                    checked={input.officerCertification.indexOf('crtUnit') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>CRT Unit</InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="officerCertification"
-                    value="best"
-                    checked={input.officerCertification.indexOf('best') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>BEST</InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="officerCertification"
-                    value="cit"
-                    checked={input.officerCertification.indexOf('cit') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>CIT</InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="officerCertification"
-                    value="n/a"
-                    checked={input.officerCertification.indexOf('n/a') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>N/A</InlineCheckbox>
-              </FormGroup>
-            </Col>
-          </PaddedRow>
+          {
+            !this.ifPortlandUser()
+              ? this.renderOfficerCertificationPortland()
+              : this.renderOfficerCertification()
+          }
+
         </ContentWrapper>
 
         {
