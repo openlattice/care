@@ -865,10 +865,10 @@ class ConsumerInfoView extends React.Component {
                     inline
                     data-section={section}
                     name="observedBehaviors"
-                    value="self-mutilation"
-                    checked={input.observedBehaviors.indexOf('self-mutilation') !== -1}
+                    value="self-harm"
+                    checked={input.observedBehaviors.indexOf('self-harm') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>Self-mutilation
+                    disabled={isReviewPage}>Self-harm
                 </InlineCheckbox>
                 <InlineCheckbox
                     inline
