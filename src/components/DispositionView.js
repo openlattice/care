@@ -2,6 +2,7 @@ import React from 'react';
 
 import Immutable from 'immutable';
 import PropTypes from 'prop-types';
+import { AuthUtils } from 'lattice-auth';
 import { FormGroup, FormControl, Col } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
@@ -25,22 +26,9 @@ import {
   renderErrors,
   validateSectionNavigation
 } from '../shared/Helpers';
-
+import { PORTLAND_WL } from '../utils/Whitelist';
 
 class DispositionView extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      requiredFields: [],
-      sectionFormatErrors: [],
-      sectionRequiredErrors: [FORM_ERRORS.IS_REQUIRED],
-      didClickNav: this.props.location.state
-        ? this.props.location.state.didClickNav
-        : false,
-      currentPage: parseInt(location.hash.substr(2), 10)
-    };
-  }
 
   static propTypes = {
     handleTextInput: PropTypes.func.isRequired,
@@ -62,6 +50,34 @@ class DispositionView extends React.Component {
       incidentNarrative: PropTypes.string.isRequired
     }).isRequired
   }
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      requiredFields: [],
+      sectionFormatErrors: [],
+      sectionRequiredErrors: [FORM_ERRORS.IS_REQUIRED],
+      didClickNav: this.props.location.state
+        ? this.props.location.state.didClickNav
+        : false,
+      currentPage: parseInt(location.hash.substr(2), 10)
+    };
+  }
+
+  /*
+   * !!! HACK !!!
+   */
+
+  ifPortlandUser = () => {
+
+    const { email } = AuthUtils.getUserInfo();
+    return PORTLAND_WL.reduce((matchFound, domain) => matchFound || (!!email && email.endsWith(domain)), false);
+  }
+
+  /*
+   * !!! HACK !!!
+   */
 
   handlePageChange = (path) => {
     this.setState(setDidClickNav);
@@ -139,7 +155,142 @@ class DispositionView extends React.Component {
     );
   }
 
+  renderSpecializedResources = () => {
+
+    const {
+      section,
+      handleCheckboxChange,
+      input,
+      isInReview
+    } = this.props;
+
+    const isReviewPage = isInReview();
+
+    return (
+      <PaddedRow>
+        <Col lg={12}>
+          <TitleLabel>31. Called for Specialized Resources</TitleLabel>
+          <FormGroup>
+            <InlineCheckbox
+                data-section={section}
+                inline
+                name="specializedResourcesCalled"
+                value="bcri"
+                checked={input.specializedResourcesCalled.indexOf('bcri') !== -1}
+                onChange={handleCheckboxChange}
+                disabled={isReviewPage}>
+              BCRI / Mobile Crisis Response Team
+            </InlineCheckbox>
+            <InlineCheckbox
+                data-section={section}
+                inline
+                name="specializedResourcesCalled"
+                value="citOfficer"
+                checked={input.specializedResourcesCalled.indexOf('citOfficer') !== -1}
+                onChange={handleCheckboxChange}
+                disabled={isReviewPage}>
+              CIT Officer
+            </InlineCheckbox>
+            <InlineCheckbox
+                data-section={section}
+                inline
+                name="specializedResourcesCalled"
+                value="crtUnit"
+                checked={input.specializedResourcesCalled.indexOf('crtUnit') !== -1}
+                onChange={handleCheckboxChange}
+                disabled={isReviewPage}>
+              CRT Unit
+            </InlineCheckbox>
+            <InlineCheckbox
+                data-section={section}
+                inline
+                name="specializedResourcesCalled"
+                value="esu"
+                checked={input.specializedResourcesCalled.indexOf('esu') !== -1}
+                onChange={handleCheckboxChange}
+                disabled={isReviewPage}>
+              ESU
+            </InlineCheckbox>
+            <InlineCheckbox
+                data-section={section}
+                inline
+                name="specializedResourcesCalled"
+                value="swat"
+                checked={input.specializedResourcesCalled.indexOf('swat') !== -1}
+                onChange={handleCheckboxChange}
+                disabled={isReviewPage}>
+              SWAT
+            </InlineCheckbox>
+            <InlineCheckbox
+                data-section={section}
+                inline
+                name="specializedResourcesCalled"
+                value="negotiationTeam"
+                checked={input.specializedResourcesCalled.indexOf('negotiationTeam') !== -1}
+                onChange={handleCheckboxChange}
+                disabled={isReviewPage}>
+              Negotiation Team
+            </InlineCheckbox>
+            <InlineCheckbox
+                data-section={section}
+                inline
+                name="specializedResourcesCalled"
+                value="homelessOutreach"
+                checked={input.specializedResourcesCalled.indexOf('homelessOutreach') !== -1}
+                onChange={handleCheckboxChange}
+                disabled={isReviewPage}>
+              Homeless Outreach
+            </InlineCheckbox>
+          </FormGroup>
+        </Col>
+      </PaddedRow>
+    );
+  }
+
+  renderSpecializedResourcesPortland = () => {
+
+    const {
+      section,
+      handleCheckboxChange,
+      input,
+      isInReview
+    } = this.props;
+
+    const isReviewPage = isInReview();
+
+    return (
+      <PaddedRow>
+        <Col lg={12}>
+          <TitleLabel>31. Called for Specialized Resources</TitleLabel>
+          <FormGroup>
+            <InlineCheckbox
+                data-section={section}
+                inline
+                name="specializedResourcesCalled"
+                value="BehavioralHealthUnit"
+                checked={input.specializedResourcesCalled.indexOf('BehavioralHealthUnit') !== -1}
+                onChange={handleCheckboxChange}
+                disabled={isReviewPage}>
+              Behavioral Health Unit (BHU)
+            </InlineCheckbox>
+            <InlineCheckbox
+                data-section={section}
+                inline
+                name="specializedResourcesCalled"
+                value="CrisisTeam"
+                checked={input.specializedResourcesCalled.indexOf('CrisisTeam') !== -1}
+                onChange={handleCheckboxChange}
+                disabled={isReviewPage}>
+              Crisis Team
+            </InlineCheckbox>
+          </FormGroup>
+        </Col>
+      </PaddedRow>
+    );
+  }
+
   render() {
+
     const {
       section,
       handleTextInput,
@@ -377,83 +528,11 @@ class DispositionView extends React.Component {
             </Col>
           </PaddedRow>
 
-          <PaddedRow>
-            <Col lg={12}>
-              <TitleLabel>31. Called for Specialized Resources</TitleLabel>
-              <FormGroup>
-                <InlineCheckbox
-                    data-section={section}
-                    inline
-                    name="specializedResourcesCalled"
-                    value="bcri"
-                    checked={input.specializedResourcesCalled.indexOf('bcri') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  BCRI / Mobile Crisis Response Team
-                </InlineCheckbox>
-                <InlineCheckbox
-                    data-section={section}
-                    inline
-                    name="specializedResourcesCalled"
-                    value="citOfficer"
-                    checked={input.specializedResourcesCalled.indexOf('citOfficer') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  CIT Officer
-                </InlineCheckbox>
-                <InlineCheckbox
-                    data-section={section}
-                    inline
-                    name="specializedResourcesCalled"
-                    value="crtUnit"
-                    checked={input.specializedResourcesCalled.indexOf('crtUnit') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  CRT Unit
-                </InlineCheckbox>
-                <InlineCheckbox
-                    data-section={section}
-                    inline
-                    name="specializedResourcesCalled"
-                    value="esu"
-                    checked={input.specializedResourcesCalled.indexOf('esu') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  ESU
-                </InlineCheckbox>
-                <InlineCheckbox
-                    data-section={section}
-                    inline
-                    name="specializedResourcesCalled"
-                    value="swat"
-                    checked={input.specializedResourcesCalled.indexOf('swat') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  SWAT
-                </InlineCheckbox>
-                <InlineCheckbox
-                    data-section={section}
-                    inline
-                    name="specializedResourcesCalled"
-                    value="negotiationTeam"
-                    checked={input.specializedResourcesCalled.indexOf('negotiationTeam') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  Negotiation Team
-                </InlineCheckbox>
-                <InlineCheckbox
-                    data-section={section}
-                    inline
-                    name="specializedResourcesCalled"
-                    value="homelessOutreach"
-                    checked={input.specializedResourcesCalled.indexOf('homelessOutreach') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  Homeless Outreach
-                </InlineCheckbox>
-              </FormGroup>
-            </Col>
-          </PaddedRow>
+          {
+            this.ifPortlandUser()
+              ? this.renderSpecializedResourcesPortland()
+              : this.renderSpecializedResources()
+          }
 
           <PaddedRow>
             <Col lg={12}>

@@ -262,7 +262,7 @@ class OfficerInfoView extends React.Component {
           </PaddedRow>
 
           {
-            !this.ifPortlandUser()
+            this.ifPortlandUser()
               ? this.renderOfficerCertificationPortland()
               : this.renderOfficerCertification()
           }
