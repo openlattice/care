@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { AuthUtils } from 'lattice-auth';
 import { FormControl, Col, FormGroup } from 'react-bootstrap';
 import { withRouter } from 'react-router';
 import ReactRouterPropTypes from 'react-router-prop-types';
@@ -22,7 +21,7 @@ import {
   validateSectionNavigation
 } from '../shared/Helpers';
 import { bootstrapValidation } from '../shared/Validation';
-import { PORTLAND_WL } from '../utils/Whitelist';
+import { isPortlandUser } from '../utils/Whitelist';
 
 
 class OfficerInfoView extends React.Component {
@@ -58,20 +57,6 @@ class OfficerInfoView extends React.Component {
       currentPage: parseInt(location.hash.substr(2), 10)
     };
   }
-
-  /*
-   * !!! HACK !!!
-   */
-
-  ifPortlandUser = () => {
-
-    const { email } = AuthUtils.getUserInfo();
-    return PORTLAND_WL.reduce((matchFound, domain) => matchFound || (!!email && email.endsWith(domain)), false);
-  }
-
-  /*
-   * !!! HACK !!!
-   */
 
   handlePageChange = (path) => {
     this.setState(setDidClickNav);
@@ -262,7 +247,7 @@ class OfficerInfoView extends React.Component {
           </PaddedRow>
 
           {
-            this.ifPortlandUser()
+            isPortlandUser()
               ? this.renderOfficerCertificationPortland()
               : this.renderOfficerCertification()
           }

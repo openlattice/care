@@ -4,13 +4,11 @@ import DatePicker from 'react-bootstrap-date-picker';
 import PropTypes from 'prop-types';
 import ReactRouterPropTypes from 'react-router-prop-types';
 import styled from 'styled-components';
-import { AuthUtils } from 'lattice-auth';
 import { FormGroup, FormControl, Col } from 'react-bootstrap';
 import { withRouter } from 'react-router';
 
 import FormNav from './FormNav';
 import SelfieWebCam, { DATA_URL_PREFIX } from './SelfieWebCam';
-import { PORTLAND_WL } from '../utils/Whitelist';
 
 import {
   SectionWrapper,
@@ -30,6 +28,7 @@ import {
   validateSectionNavigation
 } from '../shared/Helpers';
 import { bootstrapValidation } from '../shared/Validation';
+import { isPortlandUser } from '../utils/Whitelist';
 
 const StyledImageElement = styled.img``;
 
@@ -110,20 +109,6 @@ class ConsumerInfoView extends React.Component {
       showSelfieWebCam: false
     };
   }
-
-  /*
-   * !!! HACK !!!
-   */
-
-  ifPortlandUser = () => {
-
-    const { email } = AuthUtils.getUserInfo();
-    return PORTLAND_WL.reduce((matchFound, domain) => matchFound || (!!email && email.endsWith(domain)), false);
-  }
-
-  /*
-   * !!! HACK !!!
-   */
 
   handleOnChangeTakePicture = (event) => {
 
@@ -692,7 +677,7 @@ class ConsumerInfoView extends React.Component {
                     disabled={isReviewPage}>Dementia
                 </InlineCheckbox>
                 {
-                  this.ifPortlandUser() && (
+                  isPortlandUser() && (
                     <InlineCheckbox
                         inline
                         data-section={section}

@@ -2,7 +2,6 @@ import React from 'react';
 
 import Immutable from 'immutable';
 import PropTypes from 'prop-types';
-import { AuthUtils } from 'lattice-auth';
 import { FormGroup, FormControl, Col } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
@@ -26,7 +25,7 @@ import {
   renderErrors,
   validateSectionNavigation
 } from '../shared/Helpers';
-import { PORTLAND_WL } from '../utils/Whitelist';
+import { isPortlandUser } from '../utils/Whitelist';
 
 class DispositionView extends React.Component {
 
@@ -64,20 +63,6 @@ class DispositionView extends React.Component {
       currentPage: parseInt(location.hash.substr(2), 10)
     };
   }
-
-  /*
-   * !!! HACK !!!
-   */
-
-  ifPortlandUser = () => {
-
-    const { email } = AuthUtils.getUserInfo();
-    return PORTLAND_WL.reduce((matchFound, domain) => matchFound || (!!email && email.endsWith(domain)), false);
-  }
-
-  /*
-   * !!! HACK !!!
-   */
 
   handlePageChange = (path) => {
     this.setState(setDidClickNav);
@@ -529,7 +514,7 @@ class DispositionView extends React.Component {
           </PaddedRow>
 
           {
-            this.ifPortlandUser()
+            isPortlandUser()
               ? this.renderSpecializedResourcesPortland()
               : this.renderSpecializedResources()
           }
