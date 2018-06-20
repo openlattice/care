@@ -140,6 +140,236 @@ class DispositionView extends React.Component {
     );
   }
 
+  renderDisposition = () => {
+
+    const {
+      section,
+      handleCheckboxChange,
+      input,
+      isInReview
+    } = this.props;
+
+    const isReviewPage = isInReview();
+
+    return (
+      <PaddedRow>
+        <Col lg={12}>
+          <TitleLabel>30. Disposition</TitleLabel>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name="disposition"
+              value="arrest"
+              checked={input.disposition.indexOf('arrest') !== -1}
+              onChange={handleCheckboxChange}
+              disabled={isReviewPage}>
+            Arrest
+          </InlineCheckbox>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name="disposition"
+              value="ep"
+              checked={input.disposition.indexOf('ep') !== -1}
+              onChange={handleCheckboxChange}
+              disabled={isReviewPage}>
+            EP
+          </InlineCheckbox>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name="disposition"
+              value="voluntaryER"
+              checked={input.disposition.indexOf('voluntaryER') !== -1}
+              onChange={handleCheckboxChange}
+              disabled={isReviewPage}>
+            Voluntary ER Intake
+          </InlineCheckbox>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name="disposition"
+              value="bcri"
+              checked={input.disposition.indexOf('bcri') !== -1}
+              onChange={handleCheckboxChange}
+              disabled={isReviewPage}>
+            BCRI
+          </InlineCheckbox>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name="disposition"
+              value="infoAndReferral"
+              checked={input.disposition.indexOf('infoAndReferral') !== -1}
+              onChange={handleCheckboxChange}
+              disabled={isReviewPage}>
+            Information and Referral
+          </InlineCheckbox>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name="disposition"
+              value="lead"
+              checked={input.disposition.indexOf('lead') !== -1}
+              onChange={handleCheckboxChange}
+              disabled={isReviewPage}>
+            LEAD
+          </InlineCheckbox>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name="disposition"
+              value="contactedTreatementProvider"
+              checked={input.disposition.indexOf('contactedTreatementProvider') !== -1}
+              onChange={handleCheckboxChange}
+              disabled={isReviewPage}>
+            Contacted or Referred to Current Treatment Provider
+          </InlineCheckbox>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name="disposition"
+              value="criminalCitation"
+              checked={input.disposition.indexOf('criminalCitation') !== -1}
+              onChange={handleCheckboxChange}
+              disabled={isReviewPage}>
+            Criminal Citation
+          </InlineCheckbox>
+          <InlineCheckbox
+              inline
+              data-section={section}
+              name="disposition"
+              value="civilCitation"
+              checked={input.disposition.indexOf('civilCitation') !== -1}
+              onChange={handleCheckboxChange}
+              disabled={isReviewPage}>
+            Civil Citation
+          </InlineCheckbox>
+        </Col>
+      </PaddedRow>
+    );
+  }
+
+  renderDispositionPortland = () => {
+
+    const {
+      section,
+      handleCheckboxChange,
+      input,
+      isInReview
+    } = this.props;
+
+    const isReviewPage = isInReview();
+
+    return (
+      <PaddedRow>
+        <Col lg={12}>
+          <TitleLabel>30. Disposition</TitleLabel>
+          <InlineCheckbox
+              inline={false}
+              data-section={section}
+              name="disposition"
+              value="referredToBHU"
+              checked={input.disposition.indexOf('referredToBHU') !== -1}
+              onChange={handleCheckboxChange}
+              disabled={isReviewPage}>
+            Referred to BHU
+          </InlineCheckbox>
+          <InlineCheckbox
+              inline={false}
+              data-section={section}
+              name="disposition"
+              value="referredToCrisis"
+              checked={input.disposition.indexOf('referredToCrisis') !== -1}
+              onChange={handleCheckboxChange}
+              disabled={isReviewPage}>
+            Referred to Crisis
+          </InlineCheckbox>
+          <InlineCheckbox
+              inline={false}
+              data-section={section}
+              name="disposition"
+              value="arrest"
+              checked={input.disposition.indexOf('arrest') !== -1}
+              onChange={handleCheckboxChange}
+              disabled={isReviewPage}>
+            Arrest
+          </InlineCheckbox>
+          <InlineCheckbox
+              inline={false}
+              data-section={section}
+              name="disposition"
+              value="divertedFromArrest"
+              checked={input.disposition.indexOf('divertedFromArrest') !== -1}
+              onChange={handleCheckboxChange}
+              disabled={isReviewPage}>
+            Diverted from Arrest
+          </InlineCheckbox>
+          <InlineCheckbox
+              inline={false}
+              data-section={section}
+              name="disposition"
+              value="voluntarilyTransportedToHospitalByPolice"
+              checked={input.disposition.indexOf('voluntarilyTransportedToHospitalByPolice') !== -1}
+              onChange={handleCheckboxChange}
+              disabled={isReviewPage}>
+            Voluntarily Transported to Hospital by Police
+          </InlineCheckbox>
+          <InlineCheckbox
+              inline={false}
+              data-section={section}
+              name="disposition"
+              value="involuntarilyTransportedToHospitalByPolice"
+              checked={input.disposition.indexOf('involuntarilyTransportedToHospitalByPolice') !== -1}
+              onChange={handleCheckboxChange}
+              disabled={isReviewPage}>
+            Involuntarily Transported to Hospital by Police
+          </InlineCheckbox>
+          <InlineCheckbox
+              inline={false}
+              data-section={section}
+              name="disposition"
+              value="voluntarilyTransportedToHospitalByMedcu"
+              checked={input.disposition.indexOf('voluntarilyTransportedToHospitalByMedcu') !== -1}
+              onChange={handleCheckboxChange}
+              disabled={isReviewPage}>
+            Voluntarily Transported to Hospital by Medcu
+          </InlineCheckbox>
+          <InlineCheckbox
+              inline={false}
+              data-section={section}
+              name="disposition"
+              value="involuntarilyTransportedToHospitalByMedcu"
+              checked={input.disposition.indexOf('involuntarilyTransportedToHospitalByMedcu') !== -1}
+              onChange={handleCheckboxChange}
+              disabled={isReviewPage}>
+            Involuntarily Transported to Hospital by Medcu
+          </InlineCheckbox>
+          <InlineCheckbox
+              inline={false}
+              data-section={section}
+              name="disposition"
+              value="stabilizedOnSceneWithFollowUpReferral"
+              checked={input.disposition.indexOf('stabilizedOnSceneWithFollowUpReferral') !== -1}
+              onChange={handleCheckboxChange}
+              disabled={isReviewPage}>
+            Stabilized on scene with Follow-Up Referral
+          </InlineCheckbox>
+          <InlineCheckbox
+              inline={false}
+              data-section={section}
+              name="disposition"
+              value="resistedOrRefusedSupports"
+              checked={input.disposition.indexOf('resistedOrRefusedSupports') !== -1}
+              onChange={handleCheckboxChange}
+              disabled={isReviewPage}>
+            Resisted or Refused Supports
+          </InlineCheckbox>
+        </Col>
+      </PaddedRow>
+    );
+  }
+
   renderSpecializedResources = () => {
 
     const {
@@ -154,7 +384,7 @@ class DispositionView extends React.Component {
     return (
       <PaddedRow>
         <Col lg={12}>
-          <TitleLabel>31. Called for Specialized Resources</TitleLabel>
+          <TitleLabel>32. Called for Specialized Resources</TitleLabel>
           <FormGroup>
             <InlineCheckbox
                 data-section={section}
@@ -246,7 +476,7 @@ class DispositionView extends React.Component {
     return (
       <PaddedRow>
         <Col lg={12}>
-          <TitleLabel>31. Called for Specialized Resources</TitleLabel>
+          <TitleLabel>32. Called for Specialized Resources</TitleLabel>
           <FormGroup>
             <InlineCheckbox
                 data-section={section}
@@ -268,7 +498,79 @@ class DispositionView extends React.Component {
                 disabled={isReviewPage}>
               Crisis Team
             </InlineCheckbox>
+            <InlineCheckbox
+                data-section={section}
+                inline
+                name="specializedResourcesCalled"
+                value="voluntaryTransport"
+                checked={input.specializedResourcesCalled.indexOf('voluntaryTransport') !== -1}
+                onChange={handleCheckboxChange}
+                disabled={isReviewPage}>
+              Voluntary Transport
+            </InlineCheckbox>
+            <InlineCheckbox
+                data-section={section}
+                inline
+                name="specializedResourcesCalled"
+                value="involuntaryTransport"
+                checked={input.specializedResourcesCalled.indexOf('involuntaryTransport') !== -1}
+                onChange={handleCheckboxChange}
+                disabled={isReviewPage}>
+              Involuntary Transport
+            </InlineCheckbox>
           </FormGroup>
+        </Col>
+      </PaddedRow>
+    );
+  }
+
+  renderTransportedToHospital = () => {
+
+    const {
+      section,
+      handleSingleSelection,
+      input,
+      isInReview
+    } = this.props;
+
+    const isReviewPage = isInReview();
+
+    return (
+      <PaddedRow>
+        <Col lg={6}>
+          <TitleLabel>Transported to Hospital</TitleLabel>
+          <InlineRadio
+              inline
+              data-section={section}
+              name="hospitalTransport"
+              value
+              checked={input.hospitalTransport}
+              onChange={handleSingleSelection}
+              disabled={isReviewPage}>
+            Yes
+          </InlineRadio>
+          <InlineRadio
+              inline
+              data-section={section}
+              name="hospitalTransport"
+              value={false}
+              checked={!input.hospitalTransport}
+              onChange={handleSingleSelection}
+              disabled={isReviewPage}>
+            No
+          </InlineRadio>
+        </Col>
+      </PaddedRow>
+    );
+  }
+
+  renderHospitalName = () => {
+
+    return (
+      <PaddedRow>
+        <Col lg={6}>
+          <TitleLabel>Hospital Name</TitleLabel>
+          { this.renderHospitalsSelect() }
         </Col>
       </PaddedRow>
     );
@@ -280,7 +582,6 @@ class DispositionView extends React.Component {
       section,
       handleTextInput,
       handleCheckboxChange,
-      handleSingleSelection,
       input,
       isInReview
     } = this.props;
@@ -297,138 +598,22 @@ class DispositionView extends React.Component {
       <SectionWrapper>
         { !isReviewPage ? <SectionHeader>Disposition</SectionHeader> : null}
         <ContentWrapper>
-          <PaddedRow>
-            <Col lg={12}>
-              <TitleLabel>29. Disposition</TitleLabel>
-              <InlineCheckbox
-                  inline
-                  data-section={section}
-                  name="disposition"
-                  value="arrest"
-                  checked={input.disposition.indexOf('arrest') !== -1}
-                  onChange={handleCheckboxChange}
-                  disabled={isReviewPage}>
-                Arrest
-              </InlineCheckbox>
-              <InlineCheckbox
-                  inline
-                  data-section={section}
-                  name="disposition"
-                  value="ep"
-                  checked={input.disposition.indexOf('ep') !== -1}
-                  onChange={handleCheckboxChange}
-                  disabled={isReviewPage}>
-                EP
-              </InlineCheckbox>
-              <InlineCheckbox
-                  inline
-                  data-section={section}
-                  name="disposition"
-                  value="voluntaryER"
-                  checked={input.disposition.indexOf('voluntaryER') !== -1}
-                  onChange={handleCheckboxChange}
-                  disabled={isReviewPage}>
-                Voluntary ER Intake
-              </InlineCheckbox>
-              <InlineCheckbox
-                  inline
-                  data-section={section}
-                  name="disposition"
-                  value="bcri"
-                  checked={input.disposition.indexOf('bcri') !== -1}
-                  onChange={handleCheckboxChange}
-                  disabled={isReviewPage}>
-                BCRI
-              </InlineCheckbox>
-              <InlineCheckbox
-                  inline
-                  data-section={section}
-                  name="disposition"
-                  value="infoAndReferral"
-                  checked={input.disposition.indexOf('infoAndReferral') !== -1}
-                  onChange={handleCheckboxChange}
-                  disabled={isReviewPage}>
-                Information and Referral
-              </InlineCheckbox>
-              <InlineCheckbox
-                  inline
-                  data-section={section}
-                  name="disposition"
-                  value="lead"
-                  checked={input.disposition.indexOf('lead') !== -1}
-                  onChange={handleCheckboxChange}
-                  disabled={isReviewPage}>
-                LEAD
-              </InlineCheckbox>
-              <InlineCheckbox
-                  inline
-                  data-section={section}
-                  name="disposition"
-                  value="contactedTreatementProvider"
-                  checked={input.disposition.indexOf('contactedTreatementProvider') !== -1}
-                  onChange={handleCheckboxChange}
-                  disabled={isReviewPage}>
-                Contacted or Referred to Current Treatment Provider
-              </InlineCheckbox>
-              <InlineCheckbox
-                  inline
-                  data-section={section}
-                  name="disposition"
-                  value="criminalCitation"
-                  checked={input.disposition.indexOf('criminalCitation') !== -1}
-                  onChange={handleCheckboxChange}
-                  disabled={isReviewPage}>
-                Criminal Citation
-              </InlineCheckbox>
-              <InlineCheckbox
-                  inline
-                  data-section={section}
-                  name="disposition"
-                  value="civilCitation"
-                  checked={input.disposition.indexOf('civilCitation') !== -1}
-                  onChange={handleCheckboxChange}
-                  disabled={isReviewPage}>
-                Civil Citation
-              </InlineCheckbox>
-            </Col>
-          </PaddedRow>
 
-          <PaddedRow>
-            <Col lg={6}>
-              <TitleLabel>Transported to Hospital</TitleLabel>
-              <InlineRadio
-                  inline
-                  data-section={section}
-                  name="hospitalTransport"
-                  value
-                  checked={input.hospitalTransport}
-                  onChange={handleSingleSelection}
-                  disabled={isReviewPage}>
-                Yes
-              </InlineRadio>
-              <InlineRadio
-                  inline
-                  data-section={section}
-                  name="hospitalTransport"
-                  value={false}
-                  checked={!input.hospitalTransport}
-                  onChange={handleSingleSelection}
-                  disabled={isReviewPage}>
-                No
-              </InlineRadio>
-            </Col>
-          </PaddedRow>
+          {
+            isPortlandUser()
+              ? this.renderDispositionPortland()
+              : this.renderDisposition()
+          }
 
-          <PaddedRow>
-            <Col lg={6}>
-              <TitleLabel>Hospital Name</TitleLabel>
-              { this.renderHospitalsSelect() }
-            </Col>
-          </PaddedRow>
+          {
+            isPortlandUser()
+              ? null
+              : this.renderTransportedToHospital() && this.renderHospitalName()
+          }
 
           <PaddedRow>
             <Col lg={12}>
-              <TitleLabel>30. De-escalation Techniques/Equipment Used</TitleLabel>
+              <TitleLabel>31. De-escalation Techniques/Equipment Used</TitleLabel>
               <FormGroup>
                 <InlineCheckbox
                     data-section={section}
@@ -523,7 +708,7 @@ class DispositionView extends React.Component {
             <Col lg={12}>
               <TitleLabel>
                 {
-                  `32. Narrative of Incident, to include: Results of investigation, basis for
+                  `33. Narrative of Incident, to include: Results of investigation, basis for
                   actions taken, emotional states, additional witnesses. Property listing.`
                 }
               </TitleLabel>

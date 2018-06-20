@@ -629,7 +629,7 @@ class ConsumerInfoView extends React.Component {
 
           <PaddedRow>
             <Col lg={12}>
-              <TitleLabel>19. Self Diagnosis</TitleLabel>
+              <TitleLabel>20. Self Diagnosis</TitleLabel>
               <FormGroup>
                 <InlineCheckbox
                     inline
@@ -714,7 +714,7 @@ class ConsumerInfoView extends React.Component {
 
           <PaddedRow>
             <Col lg={6}>
-              <TitleLabel>20. Armed with Weapon?</TitleLabel>
+              <TitleLabel>21. Armed with Weapon?</TitleLabel>
               <InlineRadio
                   inline
                   data-section={section}
@@ -752,7 +752,7 @@ class ConsumerInfoView extends React.Component {
 
           <PaddedRow>
             <Col lg={6}>
-              <TitleLabel>21. Have Access to Weapons?</TitleLabel>
+              <TitleLabel>22. Have Access to Weapons?</TitleLabel>
               <InlineRadio
                   inline
                   data-section={section}
@@ -790,7 +790,7 @@ class ConsumerInfoView extends React.Component {
 
           <PaddedRow>
             <Col lg={12}>
-              <TitleLabel>22. Observed Behaviors (Check all that apply)</TitleLabel>
+              <TitleLabel>23. Observed Behaviors (Check all that apply)</TitleLabel>
               <FormGroup>
                 <InlineCheckbox
                     inline
@@ -888,7 +888,7 @@ class ConsumerInfoView extends React.Component {
 
           <PaddedRow>
             <Col lg={12}>
-              <TitleLabel>23. Emotional State (Check all that apply)</TitleLabel>
+              <TitleLabel>24. Emotional State (Check all that apply)</TitleLabel>
               <FormGroup>
                 <InlineCheckbox
                     inline
@@ -978,7 +978,7 @@ class ConsumerInfoView extends React.Component {
 
           <PaddedRow>
             <Col lg={12}>
-              <TitleLabel>24. Photos Taken Of:</TitleLabel>
+              <TitleLabel>25. Photos Taken Of:</TitleLabel>
               <FormGroup>
                 <InlineCheckbox
                     inline
@@ -1004,7 +1004,7 @@ class ConsumerInfoView extends React.Component {
 
           <PaddedRow>
             <Col lg={12}>
-              <TitleLabel>25. Consumer Injuries</TitleLabel>
+              <TitleLabel>26. Consumer Injuries</TitleLabel>
               <FormGroup>
                 <InlineCheckbox
                     inline
@@ -1075,7 +1075,7 @@ class ConsumerInfoView extends React.Component {
 
           <PaddedRow>
             <Col lg={6}>
-              <TitleLabel>26. Suicidal</TitleLabel>
+              <TitleLabel>27. Suicidal</TitleLabel>
               <InlineRadio
                   inline
                   data-section={section}
@@ -1141,7 +1141,7 @@ class ConsumerInfoView extends React.Component {
 
           <PaddedRow>
             <Col lg={12}>
-              <TitleLabel>27. Method Used to Attempt, Threaten, or Complete Suicide</TitleLabel>
+              <TitleLabel>28. Method Used to Attempt, Threaten, or Complete Suicide</TitleLabel>
               <FormGroup>
                 <InlineCheckbox
                     inline

@@ -94,7 +94,7 @@ class ComplainantInfoView extends React.Component {
         <ContentWrapper>
           <PaddedRow>
             <Col lg={12}>
-              <TitleLabel>28. Complainant Name (Last, First, MI)</TitleLabel>
+              <TitleLabel>29. Complainant Name (Last, First, MI)</TitleLabel>
               <FormControl
                   data-section={section}
                   name="complainantName"

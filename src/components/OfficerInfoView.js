@@ -97,7 +97,7 @@ class OfficerInfoView extends React.Component {
     return (
       <PaddedRow>
         <Col lg={6}>
-          <TitleLabel>36. Officer Certification</TitleLabel>
+          <TitleLabel>37. Officer Certification</TitleLabel>
           <FormGroup>
             <InlineCheckbox
                 inline
@@ -159,7 +159,7 @@ class OfficerInfoView extends React.Component {
     return (
       <PaddedRow>
         <Col lg={6}>
-          <TitleLabel>36. Officer Certification</TitleLabel>
+          <TitleLabel>37. Officer Certification</TitleLabel>
           <FormGroup>
             <InlineCheckbox
                 inline
@@ -201,7 +201,7 @@ class OfficerInfoView extends React.Component {
         <ContentWrapper>
           <PaddedRow>
             <Col lg={12}>
-              <TitleLabel>33. Officer Name</TitleLabel>
+              <TitleLabel>34. Officer Name</TitleLabel>
               <FormControl
                   data-section={section}
                   name="officerName"
@@ -222,7 +222,7 @@ class OfficerInfoView extends React.Component {
                     false,
                     didClickNav
                   )}>
-                <TitleLabel>34. Seq ID</TitleLabel>
+                <TitleLabel>35. Seq ID</TitleLabel>
                 <FormControl
                     data-section={section}
                     name="officerSeqID"
@@ -234,7 +234,7 @@ class OfficerInfoView extends React.Component {
               </FormGroup>
             </Col>
             <Col lg={6}>
-              <TitleLabel>35. Officer Injuries</TitleLabel>
+              <TitleLabel>36. Officer Injuries</TitleLabel>
               <FormControl
                   data-section={section}
                   name="officerInjuries"
