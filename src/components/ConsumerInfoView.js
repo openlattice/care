@@ -203,6 +203,206 @@ class ConsumerInfoView extends React.Component {
     );
   }
 
+  renderViolenceScale = () => {
+
+    const {
+      section,
+      handleSingleSelection,
+      input,
+      isInReview
+    } = this.props;
+
+    const isReviewPage = isInReview();
+
+    const scaleRadios = [];
+    for (let i = 1; i <= 10; i += 1) {
+      scaleRadios.push(
+        <InlineRadio
+            inline
+            data-section={section}
+            name="violenceAtIncidentScale"
+            value={i}
+            checked={input.violenceAtIncidentScale === i.toString(10)}
+            onChange={handleSingleSelection}
+            disabled={isReviewPage}>
+          { i }
+        </InlineRadio>
+      );
+    }
+
+    return scaleRadios;
+  }
+
+  renderViolencePortland = () => {
+
+    const {
+      handleCheckboxChange,
+      handleSingleSelection,
+      handleTextInput,
+      input,
+      isInReview,
+      section
+    } = this.props;
+
+    const { sectionFormatErrors } = this.state;
+
+    const isReviewPage = isInReview();
+
+    return (
+      <div>
+        <PaddedRow>
+          <Col lg={12}>
+            <TitleLabel>Violence at this incident</TitleLabel>
+            <h5>1 = Not at all violent , 10 = Extreme violence</h5>
+            { this.renderViolenceScale() }
+          </Col>
+        </PaddedRow>
+
+        <PaddedRow>
+          <Col lg={12}>
+            <TitleLabel>Violent behavior during this incident was directed towards:</TitleLabel>
+            <FormGroup>
+              <InlineCheckbox
+                  inline={false}
+                  data-section={section}
+                  name="violenceAtIncidentDirectedTowards"
+                  value="police"
+                  checked={input.violenceAtIncidentDirectedTowards.indexOf('police') !== -1}
+                  onChange={handleCheckboxChange}
+                  disabled={isReviewPage}>
+                Police
+              </InlineCheckbox>
+              <InlineCheckbox
+                  inline={false}
+                  data-section={section}
+                  name="violenceAtIncidentDirectedTowards"
+                  value="family"
+                  checked={input.violenceAtIncidentDirectedTowards.indexOf('family') !== -1}
+                  onChange={handleCheckboxChange}
+                  disabled={isReviewPage}>
+                Family
+              </InlineCheckbox>
+              <InlineCheckbox
+                  inline={false}
+                  data-section={section}
+                  name="violenceAtIncidentDirectedTowards"
+                  value="significantOther"
+                  checked={input.violenceAtIncidentDirectedTowards.indexOf('significantOther') !== -1}
+                  onChange={handleCheckboxChange}
+                  disabled={isReviewPage}>
+                Significant other
+              </InlineCheckbox>
+              <OtherWrapper>
+                <InlineCheckbox
+                    inline
+                    data-section={section}
+                    name="violenceAtIncidentDirectedTowards"
+                    value="other"
+                    checked={input.violenceAtIncidentDirectedTowards.indexOf('other') !== -1}
+                    onChange={handleCheckboxChange}
+                    disabled={isReviewPage}>
+                  Other:
+                </InlineCheckbox>
+                <FormControl
+                    data-section={section}
+                    name="violenceAtIncidentDirectedTowardsOther"
+                    value={input.violenceAtIncidentDirectedTowardsOther}
+                    onChange={(e) => {
+                      handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
+                    }}
+                    disabled={isReviewPage} />
+              </OtherWrapper>
+            </FormGroup>
+          </Col>
+        </PaddedRow>
+
+        <PaddedRow>
+          <Col lg={6}>
+            <TitleLabel>History of Violent Behavior</TitleLabel>
+            <InlineRadio
+                inline
+                data-section={section}
+                name="historyOfViolentBehavior"
+                value
+                checked={input.historyOfViolentBehavior}
+                onChange={handleSingleSelection}
+                disabled={isReviewPage}>
+              Yes
+            </InlineRadio>
+            <InlineRadio
+                inline
+                data-section={section}
+                name="historyOfViolentBehavior"
+                value={false}
+                checked={!input.historyOfViolentBehavior}
+                onChange={handleSingleSelection}
+                disabled={isReviewPage}>
+              No
+            </InlineRadio>
+          </Col>
+        </PaddedRow>
+
+        <PaddedRow>
+          <Col lg={12}>
+            <TitleLabel>Violent behavior was directed towards:</TitleLabel>
+            <FormGroup>
+              <InlineCheckbox
+                  inline={false}
+                  data-section={section}
+                  name="historicViolenceDirectedTowards"
+                  value="police"
+                  checked={input.historicViolenceDirectedTowards.indexOf('police') !== -1}
+                  onChange={handleCheckboxChange}
+                  disabled={isReviewPage}>
+                Police
+              </InlineCheckbox>
+              <InlineCheckbox
+                  inline={false}
+                  data-section={section}
+                  name="historicViolenceDirectedTowards"
+                  value="family"
+                  checked={input.historicViolenceDirectedTowards.indexOf('family') !== -1}
+                  onChange={handleCheckboxChange}
+                  disabled={isReviewPage}>
+                Family
+              </InlineCheckbox>
+              <InlineCheckbox
+                  inline={false}
+                  data-section={section}
+                  name="historicViolenceDirectedTowards"
+                  value="significantOther"
+                  checked={input.historicViolenceDirectedTowards.indexOf('significantOther') !== -1}
+                  onChange={handleCheckboxChange}
+                  disabled={isReviewPage}>
+                Significant other
+              </InlineCheckbox>
+              <OtherWrapper>
+                <InlineCheckbox
+                    inline
+                    data-section={section}
+                    name="historicViolenceDirectedTowards"
+                    value="other"
+                    checked={input.historicViolenceDirectedTowards.indexOf('other') !== -1}
+                    onChange={handleCheckboxChange}
+                    disabled={isReviewPage}>
+                  Other:
+                </InlineCheckbox>
+                <FormControl
+                    data-section={section}
+                    name="historicViolenceDirectedTowardsOther"
+                    value={input.historicViolenceDirectedTowardsOther}
+                    onChange={(e) => {
+                      handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
+                    }}
+                    disabled={isReviewPage} />
+              </OtherWrapper>
+            </FormGroup>
+          </Col>
+        </PaddedRow>
+      </div>
+    );
+  }
+
   render() {
     const {
       section,
@@ -885,6 +1085,12 @@ class ConsumerInfoView extends React.Component {
               </FormGroup>
             </Col>
           </PaddedRow>
+
+          {
+            isPortlandUser()
+              ? this.renderViolencePortland()
+              : null
+          }
 
           <PaddedRow>
             <Col lg={12}>

@@ -84,6 +84,9 @@ const CONSUMER_INFO_INITIAL_STATE :Map<string, *> = Immutable.fromJS({
   emotionalStateOther: '',
   firstName: '',
   gender: '',
+  historicViolenceDirectedTowards: [],
+  historicViolenceDirectedTowardsOther: '',
+  historyOfViolentBehavior: false,
   homeless: false,
   homelessLocation: '',
   identification: randomUUID(),
@@ -106,7 +109,10 @@ const CONSUMER_INFO_INITIAL_STATE :Map<string, *> = Immutable.fromJS({
   suicidalActions: [],
   suicideAttemptMethod: [],
   suicideAttemptMethodOther: '',
-  takingMedication: ''
+  takingMedication: '',
+  violenceAtIncidentDirectedTowards: [],
+  violenceAtIncidentDirectedTowardsOther: '',
+  violenceAtIncidentScale: '1'
 });
 
 function getConsumerInfoInitialState() :ConsumerInfo {
