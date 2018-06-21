@@ -135,7 +135,7 @@ class ReportInfoView extends React.Component {
         <ContentWrapper>
           <PaddedRow>
             <Col lg={6}>
-              <TitleLabel>1. Primary Reason for Dispatch</TitleLabel>
+              <TitleLabel>Primary Reason for Dispatch</TitleLabel>
               <FormControl
                   data-section={section}
                   name="dispatchReason"
@@ -158,7 +158,7 @@ class ReportInfoView extends React.Component {
                     true,
                     didClickNav
                   )}>
-                <TitleLabel>2. Complaint Number*</TitleLabel>
+                <TitleLabel>Complaint Number*</TitleLabel>
                 <FormControl
                     data-section={section}
                     name="complaintNumber"
@@ -178,7 +178,7 @@ class ReportInfoView extends React.Component {
 
           <PaddedRow>
             <Col lg={6}>
-              <TitleLabel>3. Companion Offense Report Prepared</TitleLabel>
+              <TitleLabel>Companion Offense Report Prepared</TitleLabel>
               <InlineRadio
                   inline
                   data-section={section}
@@ -206,7 +206,7 @@ class ReportInfoView extends React.Component {
                     true,
                     didClickNav
                   )}>
-                <TitleLabel>4. Crime / Incident*</TitleLabel>
+                <TitleLabel>Crime / Incident*</TitleLabel>
                 <FormControl
                     data-section={section}
                     name="incident"
@@ -226,7 +226,7 @@ class ReportInfoView extends React.Component {
 
           <PaddedRow>
             <Col lg={12}>
-              <TitleLabel>5. Location of Offense / Incident</TitleLabel>
+              <TitleLabel>Location of Offense / Incident</TitleLabel>
               <FormControl
                   data-section={section}
                   name="locationOfIncident"
@@ -252,7 +252,7 @@ class ReportInfoView extends React.Component {
                     false,
                     didClickNav
                   )}>
-                <TitleLabel>6. Unit</TitleLabel>
+                <TitleLabel>Unit</TitleLabel>
                 <FormControl
                     data-section={section}
                     name="unit"
@@ -276,7 +276,7 @@ class ReportInfoView extends React.Component {
                     false,
                     didClickNav
                   )}>
-                <TitleLabel>7. Post of Occurrence</TitleLabel>
+                <TitleLabel>Post of Occurrence</TitleLabel>
                 <FormControl
                     data-section={section}
                     name="postOfOccurrence"
@@ -303,7 +303,7 @@ class ReportInfoView extends React.Component {
                     false,
                     didClickNav
                   )}>
-                <TitleLabel>8. CAD Number</TitleLabel>
+                <TitleLabel>CAD Number</TitleLabel>
                 <FormControl
                     data-section={section}
                     name="cadNumber"
@@ -320,7 +320,7 @@ class ReportInfoView extends React.Component {
               </FormGroup>
             </Col>
             <Col lg={6}>
-              <TitleLabel>9. On View</TitleLabel>
+              <TitleLabel>On View</TitleLabel>
               <InlineRadio
                   inline
                   data-section={section}
@@ -351,7 +351,7 @@ class ReportInfoView extends React.Component {
                     true,
                     didClickNav
                   )}>
-                <TitleLabel>10. Date Occurred*</TitleLabel>
+                <TitleLabel>Date Occurred*</TitleLabel>
                 <DatePicker
                     value={input.dateOccurred}
                     onChange={(e) => {
@@ -386,7 +386,7 @@ class ReportInfoView extends React.Component {
                     true,
                     didClickNav
                   )}>
-                <TitleLabel>11. Date Reported*</TitleLabel>
+                <TitleLabel>Date Reported*</TitleLabel>
                 <DatePicker
                     value={input.dateReported}
                     onChange={(e) => {

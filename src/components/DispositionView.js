@@ -154,7 +154,7 @@ class DispositionView extends React.Component {
     return (
       <PaddedRow>
         <Col lg={12}>
-          <TitleLabel>30. Disposition</TitleLabel>
+          <TitleLabel>Disposition</TitleLabel>
           <InlineCheckbox
               inline
               data-section={section}
@@ -264,7 +264,7 @@ class DispositionView extends React.Component {
     return (
       <PaddedRow>
         <Col lg={12}>
-          <TitleLabel>30. Disposition</TitleLabel>
+          <TitleLabel>Disposition</TitleLabel>
           <InlineCheckbox
               inline={false}
               data-section={section}
@@ -384,7 +384,7 @@ class DispositionView extends React.Component {
     return (
       <PaddedRow>
         <Col lg={12}>
-          <TitleLabel>32. Called for Specialized Resources</TitleLabel>
+          <TitleLabel>Called for Specialized Resources</TitleLabel>
           <FormGroup>
             <InlineCheckbox
                 data-section={section}
@@ -476,7 +476,7 @@ class DispositionView extends React.Component {
     return (
       <PaddedRow>
         <Col lg={12}>
-          <TitleLabel>32. Called for Specialized Resources</TitleLabel>
+          <TitleLabel>Called for Specialized Resources</TitleLabel>
           <FormGroup>
             <InlineCheckbox
                 data-section={section}
@@ -608,12 +608,18 @@ class DispositionView extends React.Component {
           {
             isPortlandUser()
               ? null
-              : this.renderTransportedToHospital() && this.renderHospitalName()
+              : this.renderTransportedToHospital()
+          }
+
+          {
+            isPortlandUser()
+              ? null
+              : this.renderHospitalName()
           }
 
           <PaddedRow>
             <Col lg={12}>
-              <TitleLabel>31. De-escalation Techniques/Equipment Used</TitleLabel>
+              <TitleLabel>De-escalation Techniques/Equipment Used</TitleLabel>
               <FormGroup>
                 <InlineCheckbox
                     data-section={section}
@@ -708,7 +714,7 @@ class DispositionView extends React.Component {
             <Col lg={12}>
               <TitleLabel>
                 {
-                  `33. Narrative of Incident, to include: Results of investigation, basis for
+                  `Narrative of Incident, to include: Results of investigation, basis for
                   actions taken, emotional states, additional witnesses. Property listing.`
                 }
               </TitleLabel>
