@@ -38,6 +38,8 @@ type ConsumerInfo = {
   armedWithWeapon :boolean;
   accessibleWeaponType :string;
   accessToWeapons :boolean;
+  directedagainst :string[];
+  directedagainstother :string;
   dob :string;
   drugsAlcohol :string;
   drugType :string;
@@ -45,6 +47,10 @@ type ConsumerInfo = {
   emotionalStateOther :string;
   firstName :string;
   gender :string;
+  historicaldirectedagainst :string[];
+  historicaldirectedagainstother :string;
+  historyofviolence :boolean;
+  historyofviolencetext :string;
   homeless :boolean;
   homelessLocation :string;
   identification :string;
@@ -61,6 +67,7 @@ type ConsumerInfo = {
   prescribedMedication :string;
   prevPsychAdmission :string;
   race :string;
+  scale1to10 :number;
   selfDiagnosis :string[];
   selfDiagnosisOther :string;
   suicidal :boolean;
@@ -77,6 +84,8 @@ const CONSUMER_INFO_INITIAL_STATE :Map<string, *> = Immutable.fromJS({
   armedWithWeapon: false,
   accessibleWeaponType: '',
   accessToWeapons: false,
+  directedagainst: [],
+  directedagainstother: '',
   dob: '',
   drugsAlcohol: '',
   drugType: '',
@@ -84,9 +93,10 @@ const CONSUMER_INFO_INITIAL_STATE :Map<string, *> = Immutable.fromJS({
   emotionalStateOther: '',
   firstName: '',
   gender: '',
-  historicViolenceDirectedTowards: [],
-  historicViolenceDirectedTowardsOther: '',
-  historyOfViolentBehavior: false,
+  historicaldirectedagainst: [],
+  historicaldirectedagainstother: '',
+  historyofviolence: false,
+  historyofviolencetext: '',
   homeless: false,
   homelessLocation: '',
   identification: randomUUID(),
@@ -103,16 +113,14 @@ const CONSUMER_INFO_INITIAL_STATE :Map<string, *> = Immutable.fromJS({
   prescribedMedication: '',
   prevPsychAdmission: '',
   race: '',
+  scale1to10: 1,
   selfDiagnosis: [],
   selfDiagnosisOther: '',
   suicidal: false,
   suicidalActions: [],
   suicideAttemptMethod: [],
   suicideAttemptMethodOther: '',
-  takingMedication: '',
-  violenceAtIncidentDirectedTowards: [],
-  violenceAtIncidentDirectedTowardsOther: '',
-  violenceAtIncidentScale: '1'
+  takingMedication: ''
 });
 
 function getConsumerInfoInitialState() :ConsumerInfo {

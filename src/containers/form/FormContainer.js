@@ -5,6 +5,8 @@
 import React from 'react';
 
 import Immutable from 'immutable';
+import isInteger from 'lodash/isInteger';
+import parseInt from 'lodash/parseInt';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
@@ -153,6 +155,23 @@ class Form extends React.Component<Props, State> {
     this.setState({ [sectionKey]: sectionState });
   }
 
+  handleScaleSelection = (e) => {
+
+    const sectionKey = e.target.dataset.section;
+    const sectionState = this.state[sectionKey];
+
+    const value = e.target.value;
+    const valueAsInt = parseInt(value);
+    if (isInteger(valueAsInt) && `${valueAsInt}` === value) {
+      sectionState[e.target.name] = valueAsInt;
+    }
+    else {
+      sectionState[e.target.name] = value;
+    }
+
+    this.setState({ [sectionKey]: sectionState });
+  }
+
   handlePageChange = (path) => {
     this.props.history.push(path);
   }
@@ -236,6 +255,7 @@ class Form extends React.Component<Props, State> {
           handleTimeInput={this.handleTimeInput}
           handleSingleSelection={this.handleSingleSelection}
           handleCheckboxChange={this.handleCheckboxChange}
+          handleScaleSelection={this.handleScaleSelection}
           handleSubmit={this.handleSubmit}
           reportInfo={this.state.reportInfo}
           consumerInfo={this.state.consumerInfo}

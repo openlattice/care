@@ -47,6 +47,7 @@ function FormView({
   handleTimeInput,
   handleSingleSelection,
   handleCheckboxChange,
+  handleScaleSelection,
   reportInfo,
   consumerInfo,
   complainantInfo,
@@ -99,6 +100,7 @@ function FormView({
           handleDateInput={handleDateInput}
           handleSingleSelection={handleSingleSelection}
           handleCheckboxChange={handleCheckboxChange}
+          handleScaleSelection={handleScaleSelection}
           input={consumerInfo}
           consumerIsSelected={consumerIsSelected}
           isInReview={isInReview}
@@ -194,6 +196,7 @@ FormView.propTypes = {
   handleTimeInput: PropTypes.func.isRequired,
   handleSingleSelection: PropTypes.func.isRequired,
   handleCheckboxChange: PropTypes.func.isRequired,
+  handleScaleSelection: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   isInReview: PropTypes.func.isRequired,
   handlePageChange: PropTypes.func.isRequired,

@@ -39,6 +39,7 @@ class ConsumerInfoView extends React.Component {
     handleTextInput: PropTypes.func.isRequired,
     handleSingleSelection: PropTypes.func.isRequired,
     handleCheckboxChange: PropTypes.func.isRequired,
+    handleScaleSelection: PropTypes.func.isRequired,
     handleDateInput: PropTypes.func.isRequired,
     consumerIsSelected: PropTypes.bool.isRequired,
     isInReview: PropTypes.func.isRequired,
@@ -206,10 +207,10 @@ class ConsumerInfoView extends React.Component {
   renderViolenceScale = () => {
 
     const {
-      section,
-      handleSingleSelection,
+      handleScaleSelection,
       input,
-      isInReview
+      isInReview,
+      section
     } = this.props;
 
     const isReviewPage = isInReview();
@@ -218,12 +219,13 @@ class ConsumerInfoView extends React.Component {
     for (let i = 1; i <= 10; i += 1) {
       scaleRadios.push(
         <InlineRadio
+            key={`scale1to10-${i}`}
             inline
             data-section={section}
-            name="violenceAtIncidentScale"
+            name="scale1to10"
             value={i}
-            checked={input.violenceAtIncidentScale === i.toString(10)}
-            onChange={handleSingleSelection}
+            checked={input.scale1to10 === i}
+            onChange={handleScaleSelection}
             disabled={isReviewPage}>
           { i }
         </InlineRadio>
@@ -265,9 +267,9 @@ class ConsumerInfoView extends React.Component {
               <InlineCheckbox
                   inline={false}
                   data-section={section}
-                  name="violenceAtIncidentDirectedTowards"
+                  name="directedagainst"
                   value="police"
-                  checked={input.violenceAtIncidentDirectedTowards.indexOf('police') !== -1}
+                  checked={input.directedagainst.indexOf('police') !== -1}
                   onChange={handleCheckboxChange}
                   disabled={isReviewPage}>
                 Police
@@ -275,9 +277,9 @@ class ConsumerInfoView extends React.Component {
               <InlineCheckbox
                   inline={false}
                   data-section={section}
-                  name="violenceAtIncidentDirectedTowards"
+                  name="directedagainst"
                   value="family"
-                  checked={input.violenceAtIncidentDirectedTowards.indexOf('family') !== -1}
+                  checked={input.directedagainst.indexOf('family') !== -1}
                   onChange={handleCheckboxChange}
                   disabled={isReviewPage}>
                 Family
@@ -285,9 +287,9 @@ class ConsumerInfoView extends React.Component {
               <InlineCheckbox
                   inline={false}
                   data-section={section}
-                  name="violenceAtIncidentDirectedTowards"
+                  name="directedagainst"
                   value="significantOther"
-                  checked={input.violenceAtIncidentDirectedTowards.indexOf('significantOther') !== -1}
+                  checked={input.directedagainst.indexOf('significantOther') !== -1}
                   onChange={handleCheckboxChange}
                   disabled={isReviewPage}>
                 Significant other
@@ -296,17 +298,17 @@ class ConsumerInfoView extends React.Component {
                 <InlineCheckbox
                     inline
                     data-section={section}
-                    name="violenceAtIncidentDirectedTowards"
+                    name="directedagainst"
                     value="other"
-                    checked={input.violenceAtIncidentDirectedTowards.indexOf('other') !== -1}
+                    checked={input.directedagainst.indexOf('other') !== -1}
                     onChange={handleCheckboxChange}
                     disabled={isReviewPage}>
                   Other:
                 </InlineCheckbox>
                 <FormControl
                     data-section={section}
-                    name="violenceAtIncidentDirectedTowardsOther"
-                    value={input.violenceAtIncidentDirectedTowardsOther}
+                    name="directedagainstother"
+                    value={input.directedagainstother}
                     onChange={(e) => {
                       handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                     }}
@@ -322,9 +324,9 @@ class ConsumerInfoView extends React.Component {
             <InlineRadio
                 inline
                 data-section={section}
-                name="historyOfViolentBehavior"
+                name="historyofviolence"
                 value
-                checked={input.historyOfViolentBehavior}
+                checked={input.historyofviolence}
                 onChange={handleSingleSelection}
                 disabled={isReviewPage}>
               Yes
@@ -332,9 +334,9 @@ class ConsumerInfoView extends React.Component {
             <InlineRadio
                 inline
                 data-section={section}
-                name="historyOfViolentBehavior"
+                name="historyofviolence"
                 value={false}
-                checked={!input.historyOfViolentBehavior}
+                checked={!input.historyofviolence}
                 onChange={handleSingleSelection}
                 disabled={isReviewPage}>
               No
@@ -349,9 +351,9 @@ class ConsumerInfoView extends React.Component {
               <InlineCheckbox
                   inline={false}
                   data-section={section}
-                  name="historicViolenceDirectedTowards"
+                  name="historicaldirectedagainst"
                   value="police"
-                  checked={input.historicViolenceDirectedTowards.indexOf('police') !== -1}
+                  checked={input.historicaldirectedagainst.indexOf('police') !== -1}
                   onChange={handleCheckboxChange}
                   disabled={isReviewPage}>
                 Police
@@ -359,9 +361,9 @@ class ConsumerInfoView extends React.Component {
               <InlineCheckbox
                   inline={false}
                   data-section={section}
-                  name="historicViolenceDirectedTowards"
+                  name="historicaldirectedagainst"
                   value="family"
-                  checked={input.historicViolenceDirectedTowards.indexOf('family') !== -1}
+                  checked={input.historicaldirectedagainst.indexOf('family') !== -1}
                   onChange={handleCheckboxChange}
                   disabled={isReviewPage}>
                 Family
@@ -369,9 +371,9 @@ class ConsumerInfoView extends React.Component {
               <InlineCheckbox
                   inline={false}
                   data-section={section}
-                  name="historicViolenceDirectedTowards"
+                  name="historicaldirectedagainst"
                   value="significantOther"
-                  checked={input.historicViolenceDirectedTowards.indexOf('significantOther') !== -1}
+                  checked={input.historicaldirectedagainst.indexOf('significantOther') !== -1}
                   onChange={handleCheckboxChange}
                   disabled={isReviewPage}>
                 Significant other
@@ -380,23 +382,38 @@ class ConsumerInfoView extends React.Component {
                 <InlineCheckbox
                     inline
                     data-section={section}
-                    name="historicViolenceDirectedTowards"
+                    name="historicaldirectedagainst"
                     value="other"
-                    checked={input.historicViolenceDirectedTowards.indexOf('other') !== -1}
+                    checked={input.historicaldirectedagainst.indexOf('other') !== -1}
                     onChange={handleCheckboxChange}
                     disabled={isReviewPage}>
                   Other:
                 </InlineCheckbox>
                 <FormControl
                     data-section={section}
-                    name="historicViolenceDirectedTowardsOther"
-                    value={input.historicViolenceDirectedTowardsOther}
+                    name="historicaldirectedagainstother"
+                    value={input.historicaldirectedagainstother}
                     onChange={(e) => {
                       handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                     }}
                     disabled={isReviewPage} />
               </OtherWrapper>
             </FormGroup>
+          </Col>
+        </PaddedRow>
+
+        <PaddedRow>
+          <Col lg={12}>
+            <TitleLabel>Description of historical incidents involving violent behavior</TitleLabel>
+            <FormControl
+                data-section={section}
+                name="historyofviolencetext"
+                componentClass="textarea"
+                value={input.historyofviolencetext}
+                onChange={(e) => {
+                  handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
+                }}
+                disabled={isReviewPage} />
           </Col>
         </PaddedRow>
       </div>
