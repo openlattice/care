@@ -21,7 +21,7 @@ import {
   validateSectionNavigation
 } from '../shared/Helpers';
 import { bootstrapValidation } from '../shared/Validation';
-import { isPortlandUser } from '../utils/Whitelist';
+import { isPortlandOrg } from '../utils/Whitelist';
 
 
 class OfficerInfoView extends React.Component {
@@ -39,7 +39,8 @@ class OfficerInfoView extends React.Component {
       officerSeqID: PropTypes.string.isRequired,
       officerInjuries: PropTypes.string.isRequired,
       officerCertification: PropTypes.array.isRequired
-    }).isRequired
+    }).isRequired,
+    selectedOrganizationId: PropTypes.string.isRequired
   }
 
   constructor(props) {
@@ -182,7 +183,8 @@ class OfficerInfoView extends React.Component {
       section,
       handleTextInput,
       input,
-      isInReview
+      isInReview,
+      selectedOrganizationId
     } = this.props;
 
     const {
@@ -247,7 +249,7 @@ class OfficerInfoView extends React.Component {
           </PaddedRow>
 
           {
-            isPortlandUser()
+            isPortlandOrg(selectedOrganizationId)
               ? this.renderOfficerCertificationPortland()
               : this.renderOfficerCertification()
           }

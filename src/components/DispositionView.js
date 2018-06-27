@@ -25,7 +25,7 @@ import {
   renderErrors,
   validateSectionNavigation
 } from '../shared/Helpers';
-import { isPortlandUser } from '../utils/Whitelist';
+import { isPortlandOrg } from '../utils/Whitelist';
 
 class DispositionView extends React.Component {
 
@@ -47,7 +47,8 @@ class DispositionView extends React.Component {
       deescalationTechniquesOther: PropTypes.string.isRequired,
       specializedResourcesCalled: PropTypes.array.isRequired,
       incidentNarrative: PropTypes.string.isRequired
-    }).isRequired
+    }).isRequired,
+    selectedOrganizationId: PropTypes.string.isRequired
   }
 
   constructor(props) {
@@ -583,7 +584,8 @@ class DispositionView extends React.Component {
       handleTextInput,
       handleCheckboxChange,
       input,
-      isInReview
+      isInReview,
+      selectedOrganizationId
     } = this.props;
 
     const {
@@ -600,19 +602,19 @@ class DispositionView extends React.Component {
         <ContentWrapper>
 
           {
-            isPortlandUser()
+            isPortlandOrg(selectedOrganizationId)
               ? this.renderDispositionPortland()
               : this.renderDisposition()
           }
 
           {
-            isPortlandUser()
+            isPortlandOrg(selectedOrganizationId)
               ? null
               : this.renderTransportedToHospital()
           }
 
           {
-            isPortlandUser()
+            isPortlandOrg(selectedOrganizationId)
               ? null
               : this.renderHospitalName()
           }
@@ -705,7 +707,7 @@ class DispositionView extends React.Component {
           </PaddedRow>
 
           {
-            isPortlandUser()
+            isPortlandOrg(selectedOrganizationId)
               ? this.renderSpecializedResourcesPortland()
               : this.renderSpecializedResources()
           }

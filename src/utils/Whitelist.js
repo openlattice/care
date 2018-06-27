@@ -2,28 +2,37 @@
  * @flow
  */
 
-import { AuthUtils } from 'lattice-auth';
+// import { AuthUtils } from 'lattice-auth';
 
 /*
  * !!! HACK !!!
  */
 
-const BALTIMORE_WL = [
-  '@baltimorepolice.org'
+// const BALTIMORE_EMAILS_WL :string[] = [
+//   '@baltimorepolice.org'
+// ];
+
+// const BALTIMORE_ORGS_WL :string[] = [];
+
+// const PORTLAND_EMAILS_WL :string[] = [
+//   '@portlandmaine.gov'
+// ];
+
+const PORTLAND_ORGS_WL :string[] = [
+  '4d42d3b7-ecbe-4365-9746-eedf93239b3b'
 ];
 
-const PORTLAND_WL = [
-  '@portlandmaine.gov'
-];
+const isPortlandOrg = (orgId :string) => (
+  PORTLAND_ORGS_WL.reduce((matchFound, id) => matchFound || (orgId === id), false)
+);
 
-const isPortlandUser = () => {
-
-  const { email } = AuthUtils.getUserInfo();
-  return PORTLAND_WL.reduce((matchFound, domain) => matchFound || (!!email && email.endsWith(domain)), false);
-};
+// const isPortlandUser = () => {
+//
+//   const { email } = AuthUtils.getUserInfo();
+//   return PORTLAND_EMAILS_WL.reduce((matchFound, domain) => matchFound || (!!email && email.endsWith(domain)), false);
+// };
 
 export {
-  BALTIMORE_WL,
-  PORTLAND_WL,
-  isPortlandUser
+  PORTLAND_ORGS_WL,
+  isPortlandOrg
 };

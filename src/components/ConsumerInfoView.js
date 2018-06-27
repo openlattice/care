@@ -28,7 +28,7 @@ import {
   validateSectionNavigation
 } from '../shared/Helpers';
 import { bootstrapValidation } from '../shared/Validation';
-import { isPortlandUser } from '../utils/Whitelist';
+import { isPortlandOrg } from '../utils/Whitelist';
 
 const StyledImageElement = styled.img``;
 
@@ -82,7 +82,8 @@ class ConsumerInfoView extends React.Component {
       suicidalActions: PropTypes.array.isRequired,
       suicideAttemptMethod: PropTypes.array.isRequired,
       suicideAttemptMethodOther: PropTypes.string.isRequired
-    }).isRequired
+    }).isRequired,
+    selectedOrganizationId: PropTypes.string.isRequired
   }
 
   static defaultProps = {
@@ -429,7 +430,8 @@ class ConsumerInfoView extends React.Component {
       handleCheckboxChange,
       input,
       isInReview,
-      consumerIsSelected
+      consumerIsSelected,
+      selectedOrganizationId
     } = this.props;
 
     const {
@@ -915,7 +917,7 @@ class ConsumerInfoView extends React.Component {
                   Dementia
                 </InlineCheckbox>
                 {
-                  isPortlandUser() && (
+                  isPortlandOrg(selectedOrganizationId) && (
                     <InlineCheckbox
                         inline
                         data-section={section}
@@ -1139,7 +1141,7 @@ class ConsumerInfoView extends React.Component {
           </PaddedRow>
 
           {
-            isPortlandUser()
+            isPortlandOrg(selectedOrganizationId)
               ? this.renderViolencePortland()
               : null
           }
