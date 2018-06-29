@@ -40,6 +40,7 @@ const StyledProgressBar = styled(ProgressBar)`
 `;
 
 function FormView({
+  handleMultiUpdate,
   handleSubmit,
   handlePicture,
   handleTextInput,
@@ -129,9 +130,11 @@ function FormView({
   const getDispositionView = () => {
     return (
       <DispositionView
-          handleTextInput={handleTextInput}
           handleCheckboxChange={handleCheckboxChange}
+          handleMultiUpdate={handleMultiUpdate}
+          handleScaleSelection={handleScaleSelection}
           handleSingleSelection={handleSingleSelection}
+          handleTextInput={handleTextInput}
           input={dispositionInfo}
           isInReview={isInReview}
           handlePageChange={handlePageChange}
@@ -198,6 +201,7 @@ function FormView({
 }
 
 FormView.propTypes = {
+  handleMultiUpdate: PropTypes.func.isRequired,
   handlePicture: PropTypes.func.isRequired,
   handleTextInput: PropTypes.func.isRequired,
   handleDateInput: PropTypes.func.isRequired,

@@ -135,23 +135,39 @@ function getConsumerInfoInitialState() :ConsumerInfo {
  */
 
 type DispositionInfo = {
+  deescalationscale :number;
   deescalationTechniques :string[];
   deescalationTechniquesOther :string;
   disposition :string[];
+  hospitaltransportindicator :boolean;
   hospitalTransport :boolean;
   hospital :string;
+  hospitalname :string;
   incidentNarrative :string;
+  referraldestination :string;
+  referralprovidedindicator :boolean;
   specializedResourcesCalled :string[];
+  stabilizedindicator :boolean;
+  transportingagency :string;
+  voluntaryactionindicator ? :boolean;
 };
 
 const DISPOSITION_INFO_INITIAL_STATE :Map<string, *> = Immutable.fromJS({
+  deescalationscale: 1,
   deescalationTechniques: [],
   deescalationTechniquesOther: '',
   disposition: [],
+  hospitaltransportindicator: false,
   hospitalTransport: false,
   hospital: '',
+  hospitalname: '',
   incidentNarrative: '',
-  specializedResourcesCalled: []
+  referraldestination: '',
+  referralprovidedindicator: false,
+  specializedResourcesCalled: [],
+  stabilizedindicator: false,
+  transportingagency: '',
+  voluntaryactionindicator: null
 });
 
 function getDispositionInfoInitialState() :DispositionInfo {

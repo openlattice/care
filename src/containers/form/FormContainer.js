@@ -142,6 +142,15 @@ class Form extends React.Component<Props, State> {
     this.setState({ [sectionKey]: sectionState });
   }
 
+  handleMultiUpdate = (sectionKey, values) => {
+
+    const sectionState = this.state[sectionKey];
+    Object.keys(values).forEach((key) => {
+      sectionState[key] = values[key];
+    });
+    this.setState({ [sectionKey]: sectionState });
+  }
+
   handleCheckboxChange = (e) => {
     const sectionKey = e.target.dataset.section;
     const sectionState = this.state[sectionKey];
@@ -249,6 +258,7 @@ class Form extends React.Component<Props, State> {
 
     return (
       <FormView
+          handleMultiUpdate={this.handleMultiUpdate}
           handlePicture={this.handlePicture}
           handleTextInput={this.handleTextInput}
           handleDateInput={this.handleDateInput}
