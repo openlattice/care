@@ -617,7 +617,7 @@ class DispositionView extends React.Component {
                   hospitaltransportindicator: true,
                   // set default values
                   hospitalname: '',
-                  transportingagency: 'police',
+                  TransportingAgency: 'police',
                   voluntaryactionindicator: true
                 });
               }}
@@ -635,7 +635,7 @@ class DispositionView extends React.Component {
                   hospitaltransportindicator: false,
                   // clear values
                   hospitalname: '',
-                  transportingagency: '',
+                  TransportingAgency: '',
                   voluntaryactionindicator: null
                 });
               }}
@@ -675,9 +675,9 @@ class DispositionView extends React.Component {
               <InlineRadio
                   inline
                   data-section={section}
-                  name="transportingagency"
+                  name="TransportingAgency"
                   value="police"
-                  checked={input.transportingagency === 'police'}
+                  checked={input.TransportingAgency === 'police'}
                   onChange={handleSingleSelection}
                   disabled={isReviewPage}>
                 Police
@@ -685,9 +685,9 @@ class DispositionView extends React.Component {
               <InlineRadio
                   inline
                   data-section={section}
-                  name="transportingagency"
+                  name="TransportingAgency"
                   value="medcu"
-                  checked={input.transportingagency === 'medcu'}
+                  checked={input.TransportingAgency === 'medcu'}
                   onChange={handleSingleSelection}
                   disabled={isReviewPage}>
                 Medcu

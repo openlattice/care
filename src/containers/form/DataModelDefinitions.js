@@ -148,7 +148,7 @@ type DispositionInfo = {
   referralprovidedindicator :boolean;
   specializedResourcesCalled :string[];
   stabilizedindicator :boolean;
-  transportingagency :string;
+  TransportingAgency :string;
   voluntaryactionindicator ? :boolean;
 };
 
@@ -166,7 +166,7 @@ const DISPOSITION_INFO_INITIAL_STATE :Map<string, *> = Immutable.fromJS({
   referralprovidedindicator: false,
   specializedResourcesCalled: [],
   stabilizedindicator: false,
-  transportingagency: '',
+  TransportingAgency: '',
   voluntaryactionindicator: null
 });
 
