@@ -1246,7 +1246,7 @@ class ConsumerInfoView extends React.Component {
 
           <PaddedRow>
             <Col lg={12}>
-              <TitleLabel>hotos Taken Of:</TitleLabel>
+              <TitleLabel>Photos Taken Of:</TitleLabel>
               <FormGroup>
                 <InlineCheckbox
                     inline
