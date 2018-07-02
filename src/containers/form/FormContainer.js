@@ -5,6 +5,8 @@
 import React from 'react';
 
 import Immutable from 'immutable';
+import isInteger from 'lodash/isInteger';
+import parseInt from 'lodash/parseInt';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
@@ -140,6 +142,15 @@ class Form extends React.Component<Props, State> {
     this.setState({ [sectionKey]: sectionState });
   }
 
+  handleMultiUpdate = (sectionKey, values) => {
+
+    const sectionState = this.state[sectionKey];
+    Object.keys(values).forEach((key) => {
+      sectionState[key] = values[key];
+    });
+    this.setState({ [sectionKey]: sectionState });
+  }
+
   handleCheckboxChange = (e) => {
     const sectionKey = e.target.dataset.section;
     const sectionState = this.state[sectionKey];
@@ -150,6 +161,23 @@ class Form extends React.Component<Props, State> {
     else {
       sectionState[e.target.name].splice(idx, 1);
     }
+    this.setState({ [sectionKey]: sectionState });
+  }
+
+  handleScaleSelection = (e) => {
+
+    const sectionKey = e.target.dataset.section;
+    const sectionState = this.state[sectionKey];
+
+    const value = e.target.value;
+    const valueAsInt = parseInt(value);
+    if (isInteger(valueAsInt) && `${valueAsInt}` === value) {
+      sectionState[e.target.name] = valueAsInt;
+    }
+    else {
+      sectionState[e.target.name] = value;
+    }
+
     this.setState({ [sectionKey]: sectionState });
   }
 
@@ -230,12 +258,14 @@ class Form extends React.Component<Props, State> {
 
     return (
       <FormView
+          handleMultiUpdate={this.handleMultiUpdate}
           handlePicture={this.handlePicture}
           handleTextInput={this.handleTextInput}
           handleDateInput={this.handleDateInput}
           handleTimeInput={this.handleTimeInput}
           handleSingleSelection={this.handleSingleSelection}
           handleCheckboxChange={this.handleCheckboxChange}
+          handleScaleSelection={this.handleScaleSelection}
           handleSubmit={this.handleSubmit}
           reportInfo={this.state.reportInfo}
           consumerInfo={this.state.consumerInfo}

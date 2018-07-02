@@ -40,6 +40,7 @@ const StyledProgressBar = styled(ProgressBar)`
 `;
 
 function FormView({
+  handleMultiUpdate,
   handleSubmit,
   handlePicture,
   handleTextInput,
@@ -47,6 +48,7 @@ function FormView({
   handleTimeInput,
   handleSingleSelection,
   handleCheckboxChange,
+  handleScaleSelection,
   reportInfo,
   consumerInfo,
   complainantInfo,
@@ -57,7 +59,8 @@ function FormView({
   handlePersonSelection,
   personEntitySetId,
   consumerIsSelected,
-  renderModal
+  renderModal,
+  selectedOrganizationId
 }) {
 
   const getProgress = () => {
@@ -78,7 +81,8 @@ function FormView({
           input={reportInfo}
           isInReview={isInReview}
           handlePageChange={handlePageChange}
-          section="reportInfo" />
+          section="reportInfo"
+          selectedOrganizationId={selectedOrganizationId} />
     );
   };
 
@@ -87,7 +91,8 @@ function FormView({
       <ConsumerSearch
           handlePersonSelection={handlePersonSelection}
           personEntitySetId={personEntitySetId}
-          handlePageChange={handlePageChange} />
+          handlePageChange={handlePageChange}
+          selectedOrganizationId={selectedOrganizationId} />
     );
   };
 
@@ -99,11 +104,13 @@ function FormView({
           handleDateInput={handleDateInput}
           handleSingleSelection={handleSingleSelection}
           handleCheckboxChange={handleCheckboxChange}
+          handleScaleSelection={handleScaleSelection}
           input={consumerInfo}
           consumerIsSelected={consumerIsSelected}
           isInReview={isInReview}
           handlePageChange={handlePageChange}
-          section="consumerInfo" />
+          section="consumerInfo"
+          selectedOrganizationId={selectedOrganizationId} />
     );
   };
 
@@ -115,20 +122,24 @@ function FormView({
           isInReview={isInReview}
           handlePageChange={handlePageChange}
           handleSingleSelection={handleSingleSelection}
-          section="complainantInfo" />
+          section="complainantInfo"
+          selectedOrganizationId={selectedOrganizationId} />
     );
   };
 
   const getDispositionView = () => {
     return (
       <DispositionView
-          handleTextInput={handleTextInput}
           handleCheckboxChange={handleCheckboxChange}
+          handleMultiUpdate={handleMultiUpdate}
+          handleScaleSelection={handleScaleSelection}
           handleSingleSelection={handleSingleSelection}
+          handleTextInput={handleTextInput}
           input={dispositionInfo}
           isInReview={isInReview}
           handlePageChange={handlePageChange}
-          section="dispositionInfo" />
+          section="dispositionInfo"
+          selectedOrganizationId={selectedOrganizationId} />
     );
   };
 
@@ -140,7 +151,8 @@ function FormView({
           input={officerInfo}
           isInReview={isInReview}
           handlePageChange={handlePageChange}
-          section="officerInfo" />
+          section="officerInfo"
+          selectedOrganizationId={selectedOrganizationId} />
     );
   };
 
@@ -159,7 +171,8 @@ function FormView({
           officerInfo={officerInfo}
           isInReview={isInReview}
           consumerIsSelected={consumerIsSelected}
-          handlePageChange={handlePageChange} />
+          handlePageChange={handlePageChange}
+          selectedOrganizationId={selectedOrganizationId} />
     );
   };
 
@@ -188,12 +201,14 @@ function FormView({
 }
 
 FormView.propTypes = {
+  handleMultiUpdate: PropTypes.func.isRequired,
   handlePicture: PropTypes.func.isRequired,
   handleTextInput: PropTypes.func.isRequired,
   handleDateInput: PropTypes.func.isRequired,
   handleTimeInput: PropTypes.func.isRequired,
   handleSingleSelection: PropTypes.func.isRequired,
   handleCheckboxChange: PropTypes.func.isRequired,
+  handleScaleSelection: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   isInReview: PropTypes.func.isRequired,
   handlePageChange: PropTypes.func.isRequired,
@@ -201,6 +216,7 @@ FormView.propTypes = {
   personEntitySetId: PropTypes.string.isRequired,
   consumerIsSelected: PropTypes.bool.isRequired,
   renderModal: PropTypes.func.isRequired,
+  selectedOrganizationId: PropTypes.string.isRequired,
   reportInfo: PropTypes.shape({
     dispatchReason: PropTypes.string.isRequired,
     complaintNumber: PropTypes.string.isRequired,
