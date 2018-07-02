@@ -3,6 +3,7 @@
  */
 
 import isUUID from 'validator/lib/isUUID';
+import parseInt from 'lodash/parseInt';
 
 // injected by Webpack.DefinePlugin
 declare var __DEV__;
@@ -46,4 +47,11 @@ export function formatTimePickerSeconds(seconds :?number) :string {
   ssStr = ssStr.length === 1 ? `0${ssStr}` : ssStr;
 
   return `${hhStr}:${mmStr}:${ssStr}`;
+}
+
+export function getCurrentPage() :number {
+
+  const slashIndex :number = window.location.hash.lastIndexOf('/');
+  const page = window.location.hash.substring(slashIndex + 1);
+  return parseInt(page, 10);
 }

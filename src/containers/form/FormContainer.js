@@ -17,7 +17,7 @@ import FormView from '../../components/FormView';
 import ConfirmationModal from '../../components/ConfirmationModalView';
 
 import { validateOnInput } from '../../shared/Validation';
-import { formatTimePickerSeconds } from '../../utils/Utils';
+import { formatTimePickerSeconds, getCurrentPage } from '../../utils/Utils';
 import { loadApp, selectOrganization } from './AppActionFactory';
 import { hardRestart, submitReport } from './ReportActionFactory';
 import { SUBMISSION_STATES } from './ReportReducer';
@@ -223,11 +223,9 @@ class Form extends React.Component<Props, State> {
     });
   }
 
-  isInReview = () => {
-    const slashIndex :number = window.location.hash.lastIndexOf('/');
-    const page = window.location.hash.substring(slashIndex + 1);
-    return Number.parseInt(page, 10) === MAX_PAGE;
-  }
+  isInReview = () => (
+    getCurrentPage() === MAX_PAGE
+  )
 
   renderModal = () => {
 

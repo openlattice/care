@@ -28,6 +28,7 @@ import {
   validateSectionNavigation
 } from '../shared/Helpers';
 import { bootstrapValidation } from '../shared/Validation';
+import { getCurrentPage } from '../utils/Utils';
 import { isPortlandOrg } from '../utils/Whitelist';
 
 const StyledImageElement = styled.img``;
@@ -107,7 +108,7 @@ class ConsumerInfoView extends React.Component {
       didClickNav: this.props.location.state
         ? this.props.location.state.didClickNav
         : false,
-      currentPage: parseInt(location.hash.substr(2), 10),
+      currentPage: getCurrentPage(),
       showSelfieWebCam: false
     };
   }

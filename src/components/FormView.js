@@ -16,6 +16,7 @@ import StyledCard from '../components/cards/StyledCard';
 import * as Routes from '../core/router/Routes';
 
 import { MAX_PAGE } from '../shared/Consts';
+import { getCurrentPage } from '../utils/Utils';
 
 const ContainerOuterWrapper = styled.div`
   align-items: flex-start;
@@ -64,8 +65,7 @@ function FormView({
 }) {
 
   const getProgress = () => {
-    const slashIndex = window.location.hash.lastIndexOf('/');
-    const page = window.location.hash.substring(slashIndex + 1);
+    const page = getCurrentPage();
     const num = Math.ceil(((page - 1) / (MAX_PAGE - 1)) * 100);
     const percentage = `${num.toString()}%`;
     return num === 0 ? { num: 5, percentage } : { num, percentage };
@@ -163,6 +163,8 @@ function FormView({
           handleDateInput={handleDateInput}
           handleTimeInput={handleTimeInput}
           handleCheckboxChange={handleCheckboxChange}
+          handleMultiUpdate={handleMultiUpdate}
+          handleScaleSelection={handleScaleSelection}
           handleSingleSelection={handleSingleSelection}
           reportInfo={reportInfo}
           consumerInfo={consumerInfo}
