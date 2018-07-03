@@ -41,26 +41,27 @@ const StyledProgressBar = styled(ProgressBar)`
 `;
 
 function FormView({
-  handleMultiUpdate,
-  handleSubmit,
-  handlePicture,
-  handleTextInput,
-  handleDateInput,
-  handleTimeInput,
-  handleSingleSelection,
-  handleCheckboxChange,
-  handleScaleSelection,
-  reportInfo,
-  consumerInfo,
   complainantInfo,
+  consumerInfo,
+  consumerIsSelected,
   dispositionInfo,
-  officerInfo,
-  isInReview,
+  handleCheckboxChange,
+  handleDateInput,
+  handleDatePickerDateTimeOffset,
+  handleMultiUpdate,
   handlePageChange,
   handlePersonSelection,
+  handlePicture,
+  handleScaleSelection,
+  handleSingleSelection,
+  handleSubmit,
+  handleTextInput,
+  handleTimeInput,
+  isInReview,
+  officerInfo,
   personEntitySetId,
-  consumerIsSelected,
   renderModal,
+  reportInfo,
   selectedOrganizationId
 }) {
 
@@ -74,13 +75,13 @@ function FormView({
   const getReportInfoView = () => {
     return (
       <ReportInfoView
+          handleDatePickerDateTimeOffset={handleDatePickerDateTimeOffset}
+          handlePageChange={handlePageChange}
           handleTextInput={handleTextInput}
-          handleDateInput={handleDateInput}
           handleTimeInput={handleTimeInput}
           handleSingleSelection={handleSingleSelection}
           input={reportInfo}
           isInReview={isInReview}
-          handlePageChange={handlePageChange}
           section="reportInfo"
           selectedOrganizationId={selectedOrganizationId} />
     );
@@ -159,13 +160,15 @@ function FormView({
   const getReviewView = () => {
     return (
       <ReviewView
-          handleTextInput={handleTextInput}
-          handleDateInput={handleDateInput}
-          handleTimeInput={handleTimeInput}
           handleCheckboxChange={handleCheckboxChange}
+          handleDateInput={handleDateInput}
+          handleDatePickerDateTimeOffset={handleDatePickerDateTimeOffset}
           handleMultiUpdate={handleMultiUpdate}
+          handlePageChange={handlePageChange}
           handleScaleSelection={handleScaleSelection}
           handleSingleSelection={handleSingleSelection}
+          handleTextInput={handleTextInput}
+          handleTimeInput={handleTimeInput}
           reportInfo={reportInfo}
           consumerInfo={consumerInfo}
           complainantInfo={complainantInfo}
@@ -173,7 +176,6 @@ function FormView({
           officerInfo={officerInfo}
           isInReview={isInReview}
           consumerIsSelected={consumerIsSelected}
-          handlePageChange={handlePageChange}
           selectedOrganizationId={selectedOrganizationId} />
     );
   };
@@ -203,6 +205,7 @@ function FormView({
 }
 
 FormView.propTypes = {
+  handleDatePickerDateTimeOffset: PropTypes.func.isRequired,
   handleMultiUpdate: PropTypes.func.isRequired,
   handlePicture: PropTypes.func.isRequired,
   handleTextInput: PropTypes.func.isRequired,

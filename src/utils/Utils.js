@@ -4,6 +4,7 @@
 
 import isUUID from 'validator/lib/isUUID';
 import parseInt from 'lodash/parseInt';
+import validator from 'validator';
 
 // injected by Webpack.DefinePlugin
 declare var __DEV__;
@@ -47,6 +48,16 @@ export function formatTimePickerSeconds(seconds :?number) :string {
   ssStr = ssStr.length === 1 ? `0${ssStr}` : ssStr;
 
   return `${hhStr}:${mmStr}:${ssStr}`;
+}
+
+// TODO: get rid of react-bootstrap-date-picker
+export function fixDatePickerIsoDateTime(value :?string) :string {
+
+  if (value && validator.isISO8601(value)) {
+    // DatePicker has weird behavior with timezones, so we have to fix the ISO date
+    return value.replace(/T(.*)$/g, 'T00:00:00.000Z');
+  }
+  return '';
 }
 
 export function getCurrentPage() :number {
