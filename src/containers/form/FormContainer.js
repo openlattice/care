@@ -17,7 +17,7 @@ import FormView from '../../components/FormView';
 import ConfirmationModal from '../../components/ConfirmationModalView';
 
 import { validateOnInput } from '../../shared/Validation';
-import { formatTimePickerSeconds, getCurrentPage } from '../../utils/Utils';
+import { fixDatePickerIsoDateTime, formatTimePickerSeconds, getCurrentPage } from '../../utils/Utils';
 import { loadApp, selectOrganization } from './AppActionFactory';
 import { hardRestart, submitReport } from './ReportActionFactory';
 import { SUBMISSION_STATES } from './ReportReducer';
@@ -111,6 +111,13 @@ class Form extends React.Component<Props, State> {
     sectionState[name] = input;
     this.setState({ [section]: sectionState });
     validateOnInput(name, input, 'date', formatErrors, setErrorsFn);
+  }
+
+  handleDatePickerDateTimeOffset = (value, section, name) => {
+
+    const sectionState = this.state[section];
+    sectionState[name] = fixDatePickerIsoDateTime(value);
+    this.setState({ [section]: sectionState });
   }
 
   handlePicture = (sectionKey, sectionPropertyName, value) => {
@@ -256,29 +263,30 @@ class Form extends React.Component<Props, State> {
 
     return (
       <FormView
-          handleMultiUpdate={this.handleMultiUpdate}
-          handlePicture={this.handlePicture}
-          handleTextInput={this.handleTextInput}
-          handleDateInput={this.handleDateInput}
-          handleTimeInput={this.handleTimeInput}
-          handleSingleSelection={this.handleSingleSelection}
-          handleCheckboxChange={this.handleCheckboxChange}
-          handleScaleSelection={this.handleScaleSelection}
-          handleSubmit={this.handleSubmit}
-          reportInfo={this.state.reportInfo}
-          consumerInfo={this.state.consumerInfo}
           complainantInfo={this.state.complainantInfo}
+          consumerInfo={this.state.consumerInfo}
+          consumerIsSelected={this.state.isConsumerSelected}
           dispositionInfo={this.state.dispositionInfo}
-          officerInfo={this.state.officerInfo}
+          isInReview={this.isInReview}
+          handleCheckboxChange={this.handleCheckboxChange}
+          handleDateInput={this.handleDateInput}
+          handleDatePickerDateTimeOffset={this.handleDatePickerDateTimeOffset}
+          handleMultiUpdate={this.handleMultiUpdate}
+          handleOrganizationSelection={this.handleOrganizationSelection}
           handlePageChange={this.handlePageChange}
           handlePersonSelection={this.handlePersonSelection}
-          personEntitySetId={peopleEntitySetId}
-          isInReview={this.isInReview}
-          consumerIsSelected={this.state.isConsumerSelected}
-          renderModal={this.renderModal}
+          handlePicture={this.handlePicture}
+          handleScaleSelection={this.handleScaleSelection}
+          handleSingleSelection={this.handleSingleSelection}
+          handleSubmit={this.handleSubmit}
+          handleTextInput={this.handleTextInput}
+          handleTimeInput={this.handleTimeInput}
+          officerInfo={this.state.officerInfo}
           organizations={organizations}
-          selectedOrganizationId={selectedOrganizationId}
-          handleOrganizationSelection={this.handleOrganizationSelection} />
+          personEntitySetId={peopleEntitySetId}
+          renderModal={this.renderModal}
+          reportInfo={this.state.reportInfo}
+          selectedOrganizationId={selectedOrganizationId} />
     );
   }
 }

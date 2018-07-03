@@ -34,21 +34,22 @@ const Section = styled.div`
 
 
 const ReviewView = ({
-  reportInfo,
-  consumerInfo,
   complainantInfo,
-  dispositionInfo,
-  officerInfo,
-  handleTextInput,
-  handleDateInput,
-  handleTimeInput,
-  handleCheckboxChange,
-  handleSingleSelection,
-  isInReview,
+  consumerInfo,
   consumerIsSelected,
+  dispositionInfo,
+  handleCheckboxChange,
+  handleDateInput,
+  handleDatePickerDateTimeOffset,
   handleMultiUpdate,
   handlePageChange,
   handleScaleSelection,
+  handleSingleSelection,
+  handleTextInput,
+  handleTimeInput,
+  isInReview,
+  officerInfo,
+  reportInfo,
   selectedOrganizationId
 }) => {
 
@@ -63,14 +64,14 @@ const ReviewView = ({
             <EditLink to={FORM_PATHS.REPORT}>edit</EditLink>
           </SectionHeaderWrapper>
           <ReportInfoView
-              handleTextInput={handleTextInput}
-              handleDateInput={handleDateInput}
-              handleTimeInput={handleTimeInput}
-              handleSingleSelection={handleSingleSelection}
-              input={reportInfo}
-              section="reportInfo"
-              isInReview={isInReview}
+              handleDatePickerDateTimeOffset={handleDatePickerDateTimeOffset}
               handlePageChange={handlePageChange}
+              handleSingleSelection={handleSingleSelection}
+              handleTextInput={handleTextInput}
+              handleTimeInput={handleTimeInput}
+              input={reportInfo}
+              isInReview={isInReview}
+              section="reportInfo"
               selectedOrganizationId={selectedOrganizationId} />
         </Section>
         <Section>
@@ -146,6 +147,7 @@ const ReviewView = ({
 ReviewView.propTypes = {
   handleTextInput: PropTypes.func.isRequired,
   handleDateInput: PropTypes.func.isRequired,
+  handleDatePickerDateTimeOffset: PropTypes.func.isRequired,
   handleTimeInput: PropTypes.func.isRequired,
   handleCheckboxChange: PropTypes.func.isRequired,
   handleMultiUpdate: PropTypes.func.isRequired,

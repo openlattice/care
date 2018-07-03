@@ -51,8 +51,8 @@ class ReportInfoView extends React.Component {
   }
 
   static propTypes = {
+    handleDatePickerDateTimeOffset: PropTypes.func.isRequired,
     handleTextInput: PropTypes.func.isRequired,
-    handleDateInput: PropTypes.func.isRequired,
     handleTimeInput: PropTypes.func.isRequired,
     handleSingleSelection: PropTypes.func.isRequired,
     isInReview: PropTypes.func.isRequired,
@@ -106,13 +106,13 @@ class ReportInfoView extends React.Component {
 
   render() {
     const {
-      section,
+      handleDatePickerDateTimeOffset,
       handleTextInput,
-      handleDateInput,
       handleTimeInput,
       handleSingleSelection,
       input,
-      isInReview
+      isInReview,
+      section
     } = this.props;
 
     const {
@@ -354,17 +354,11 @@ class ReportInfoView extends React.Component {
                   )}>
                 <TitleLabel>Date Occurred*</TitleLabel>
                 <DatePicker
-                    value={input.dateOccurred}
-                    onChange={(e) => {
-                      handleDateInput(
-                        e,
-                        section,
-                        'dateOccurred',
-                        sectionFormatErrors,
-                        this.setInputErrors
-                      );
+                    disabled={isReviewPage}
+                    onChange={(value) => {
+                      handleDatePickerDateTimeOffset(value, section, 'dateOccurred');
                     }}
-                    disabled={isReviewPage} />
+                    value={input.dateOccurred} />
               </FormGroup>
             </Col>
             <Col lg={6}>
@@ -390,14 +384,8 @@ class ReportInfoView extends React.Component {
                 <TitleLabel>Date Reported*</TitleLabel>
                 <DatePicker
                     value={input.dateReported}
-                    onChange={(e) => {
-                      handleDateInput(
-                        e,
-                        section,
-                        'dateReported',
-                        sectionFormatErrors,
-                        this.setInputErrors
-                      );
+                    onChange={(value) => {
+                      handleDatePickerDateTimeOffset(value, section, 'dateReported');
                     }}
                     disabled={isReviewPage} />
               </FormGroup>
@@ -405,11 +393,11 @@ class ReportInfoView extends React.Component {
             <Col lg={6}>
               <TitleLabel>Time Reported</TitleLabel>
               <TimePicker
-                  value={input.timeReported}
+                  disabled={isReviewPage}
                   onChange={(e) => {
                     handleTimeInput(e, section, 'timeReported');
                   }}
-                  disabled={isReviewPage} />
+                  value={input.timeReported} />
             </Col>
           </PaddedRow>
         </ContentWrapper>
