@@ -25,6 +25,7 @@ import {
   renderErrors,
   validateSectionNavigation
 } from '../shared/Helpers';
+import { getCurrentPage } from '../utils/Utils';
 import { isPortlandOrg } from '../utils/Whitelist';
 
 class DispositionView extends React.Component {
@@ -63,7 +64,7 @@ class DispositionView extends React.Component {
       didClickNav: this.props.location.state
         ? this.props.location.state.didClickNav
         : false,
-      currentPage: parseInt(location.hash.substr(2), 10)
+      currentPage: getCurrentPage()
     };
   }
 
