@@ -14,8 +14,6 @@ import { withRouter } from 'react-router';
 import type { Match, RouterHistory } from 'react-router';
 
 import FormView from '../../components/FormView';
-import ConfirmationModal from '../../components/ConfirmationModalView';
-
 import { validateOnInput } from '../../shared/Validation';
 import { fixDatePickerIsoDateTime, formatTimePickerSeconds, getCurrentPage } from '../../utils/Utils';
 import { loadApp, selectOrganization } from './AppActionFactory';
@@ -234,22 +232,6 @@ class Form extends React.Component<Props, State> {
     getCurrentPage() === MAX_PAGE
   )
 
-  renderModal = () => {
-
-    const { submissionState } = this.props;
-    const { PRE_SUBMIT, IS_SUBMITTING } = SUBMISSION_STATES;
-
-    if (submissionState === PRE_SUBMIT || submissionState === IS_SUBMITTING) {
-      return null;
-    }
-
-    return (
-      <ConfirmationModal
-          submissionState={this.props.submissionState}
-          handleModalButtonClick={this.props.actions.hardRestart} />
-    );
-  }
-
   render() {
 
     const { PEOPLE_FQN } = APP_TYPES_FQNS;
@@ -284,9 +266,9 @@ class Form extends React.Component<Props, State> {
           officerInfo={this.state.officerInfo}
           organizations={organizations}
           personEntitySetId={peopleEntitySetId}
-          renderModal={this.renderModal}
           reportInfo={this.state.reportInfo}
-          selectedOrganizationId={selectedOrganizationId} />
+          selectedOrganizationId={selectedOrganizationId}
+          submissionState={this.props.submissionState} />
     );
   }
 }
