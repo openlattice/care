@@ -6,19 +6,19 @@ import React from 'react';
 
 import Immutable from 'immutable';
 import isInteger from 'lodash/isInteger';
+import moment from 'moment';
 import parseInt from 'lodash/parseInt';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 
-import type { Match, RouterHistory } from 'react-router';
+import type { RouterHistory } from 'react-router';
 
 import FormView from '../../components/FormView';
 import { validateOnInput } from '../../shared/Validation';
 import { fixDatePickerIsoDateTime, formatTimePickerSeconds, getCurrentPage } from '../../utils/Utils';
 import { loadApp, selectOrganization } from './AppActionFactory';
 import { hardRestart, submitReport } from './ReportActionFactory';
-import { SUBMISSION_STATES } from './ReportReducer';
 
 import {
   APP_TYPES_FQNS,
@@ -57,7 +57,6 @@ type Props = {
   };
   app :Map<*, *>;
   history :RouterHistory;
-  match :Match;
   submissionState :number;
 };
 
@@ -201,6 +200,12 @@ class Form extends React.Component<Props, State> {
           consumerState[consumerKey] = person[personKey][0];
         }
       });
+      const dob = person[PERSON.DOB_FQN];
+      if (dob && dob.length > 0) {
+        if (moment(dob[0]).isValid()) {
+          consumerState[CONSUMER_STATE.AGE] = `${moment().diff(moment(dob[0]), 'years')}`;
+        }
+      }
     }
     this.setState({
       consumerInfo: consumerState,

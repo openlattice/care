@@ -3,6 +3,7 @@ import React from 'react';
 import DatePicker from 'react-bootstrap-date-picker';
 import PropTypes from 'prop-types';
 import ReactRouterPropTypes from 'react-router-prop-types';
+import moment from 'moment';
 import styled from 'styled-components';
 import { FormGroup, FormControl, Col } from 'react-bootstrap';
 import { withRouter } from 'react-router';
@@ -36,6 +37,7 @@ const StyledImageElement = styled.img``;
 class ConsumerInfoView extends React.Component {
 
   static propTypes = {
+    handleMultiUpdate: PropTypes.func.isRequired,
     handlePicture: PropTypes.func,
     handleTextInput: PropTypes.func.isRequired,
     handleSingleSelection: PropTypes.func.isRequired,
@@ -424,14 +426,15 @@ class ConsumerInfoView extends React.Component {
 
   render() {
     const {
-      section,
-      handleTextInput,
-      handleDateInput,
-      handleSingleSelection,
+      consumerIsSelected,
       handleCheckboxChange,
+      handleDateInput,
+      handleMultiUpdate,
+      handleSingleSelection,
+      handleTextInput,
       input,
       isInReview,
-      consumerIsSelected,
+      section,
       selectedOrganizationId
     } = this.props;
 
@@ -620,19 +623,6 @@ class ConsumerInfoView extends React.Component {
 
           <PaddedRow>
             <Col lg={6}>
-              <FormGroup validationState={bootstrapValidation(input.age, ageValid, false, didClickNav)}>
-                <TitleLabel>Age</TitleLabel>
-                <FormControl
-                    data-section={section}
-                    name="age"
-                    value={input.age}
-                    onChange={(e) => {
-                      handleTextInput(e, 'int16', sectionFormatErrors, this.setInputErrors);
-                    }}
-                    disabled={isReviewPage} />
-              </FormGroup>
-            </Col>
-            <Col lg={6}>
               <FormGroup
                   validationState={bootstrapValidation(
                     input.dob,
@@ -651,8 +641,24 @@ class ConsumerInfoView extends React.Component {
                         sectionFormatErrors,
                         this.setInputErrors
                       );
+                      handleMultiUpdate(section, {
+                        age: `${moment().diff(moment(e), 'years')}`
+                      });
                     }}
                     disabled={consumerIsSelected || isReviewPage} />
+              </FormGroup>
+            </Col>
+            <Col lg={6}>
+              <FormGroup validationState={bootstrapValidation(input.age, ageValid, false, didClickNav)}>
+                <TitleLabel>Age</TitleLabel>
+                <FormControl
+                    data-section={section}
+                    name="age"
+                    value={input.age}
+                    onChange={(e) => {
+                      handleTextInput(e, 'int16', sectionFormatErrors, this.setInputErrors);
+                    }}
+                    disabled={isReviewPage} />
               </FormGroup>
             </Col>
           </PaddedRow>

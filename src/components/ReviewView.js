@@ -80,15 +80,16 @@ const ReviewView = ({
             <EditLink to={FORM_PATHS.CONSUMER}>edit</EditLink>
           </SectionHeaderWrapper>
           <ConsumerInfoView
-              handleTextInput={handleTextInput}
+              consumerIsSelected={consumerIsSelected}
+              handleCheckboxChange={handleCheckboxChange}
               handleDateInput={handleDateInput}
+              handleMultiUpdate={handleMultiUpdate}
+              handlePageChange={handlePageChange}
               handleScaleSelection={handleScaleSelection}
               handleSingleSelection={handleSingleSelection}
-              handleCheckboxChange={handleCheckboxChange}
+              handleTextInput={handleTextInput}
               input={consumerInfo}
-              consumerIsSelected={consumerIsSelected}
               isInReview={isInReview}
-              handlePageChange={handlePageChange}
               section="consumerInfo"
               selectedOrganizationId={selectedOrganizationId} />
         </Section>
