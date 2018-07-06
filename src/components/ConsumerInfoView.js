@@ -501,12 +501,9 @@ class ConsumerInfoView extends React.Component {
                 <TitleLabel>Consumer Identification*</TitleLabel>
                 <FormControl
                     data-section={section}
+                    disabled
                     name="identification"
-                    value={input.identification}
-                    onChange={(e) => {
-                      handleTextInput(e, 'number', sectionFormatErrors, this.setInputErrors);
-                    }}
-                    disabled={consumerIsSelected || isReviewPage} />
+                    value={input.identification} />
               </FormGroup>
             </Col>
           </PaddedRow>
