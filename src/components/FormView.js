@@ -120,16 +120,17 @@ function FormView({
   const getConsumerInfoView = () => {
     return (
       <ConsumerInfoView
-          handlePicture={handlePicture}
-          handleTextInput={handleTextInput}
-          handleDateInput={handleDateInput}
-          handleSingleSelection={handleSingleSelection}
-          handleCheckboxChange={handleCheckboxChange}
-          handleScaleSelection={handleScaleSelection}
-          input={consumerInfo}
           consumerIsSelected={consumerIsSelected}
-          isInReview={isInReview}
+          handleCheckboxChange={handleCheckboxChange}
+          handleDateInput={handleDateInput}
+          handleMultiUpdate={handleMultiUpdate}
           handlePageChange={handlePageChange}
+          handlePicture={handlePicture}
+          handleScaleSelection={handleScaleSelection}
+          handleSingleSelection={handleSingleSelection}
+          handleTextInput={handleTextInput}
+          input={consumerInfo}
+          isInReview={isInReview}
           section="consumerInfo"
           selectedOrganizationId={selectedOrganizationId} />
     );

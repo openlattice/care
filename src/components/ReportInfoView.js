@@ -1,10 +1,12 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { FormGroup, FormControl, Col } from 'react-bootstrap';
+
 import DatePicker from 'react-bootstrap-date-picker';
-import TimePicker from 'react-bootstrap-time-picker';
-import { withRouter } from 'react-router';
+import PropTypes from 'prop-types';
 import ReactRouterPropTypes from 'react-router-prop-types';
+import TimePicker from 'react-bootstrap-time-picker';
+import moment from 'moment';
+import { FormGroup, FormControl, Col } from 'react-bootstrap';
+import { withRouter } from 'react-router';
 
 import FormNav from './FormNav';
 import {
@@ -22,9 +24,8 @@ import {
   renderErrors,
   validateSectionNavigation
 } from '../shared/Helpers';
-import { getCurrentPage } from '../utils/Utils';
+import { fixDatePickerIsoDateTime, getCurrentPage } from '../utils/Utils';
 import { bootstrapValidation } from '../shared/Validation';
-
 
 class ReportInfoView extends React.Component {
   constructor(props) {
@@ -42,7 +43,6 @@ class ReportInfoView extends React.Component {
       dateOccurredValid: true,
       dateReportedValid: true,
       unitValid: true,
-      sectionValid: false,
       didClickNav: this.props.location.state
         ? this.props.location.state.didClickNav
         : false,
@@ -78,11 +78,16 @@ class ReportInfoView extends React.Component {
     }).isRequired
   }
 
+  areRequiredFieldsValid = () => (
+    this.state.requiredFields.every(fieldName => this.state[`${fieldName}Valid`])
+  )
+
   handlePageChange = (path) => {
     this.setState(setDidClickNav);
     this.setState(setRequiredErrors, () => {
-      if (this.state.sectionRequiredErrors.length < 1
-        && this.state.sectionFormatErrors.length < 1) {
+      if (this.areRequiredFieldsValid()
+          && this.state.sectionRequiredErrors.length < 1
+          && this.state.sectionFormatErrors.length < 1) {
         this.props.handlePageChange(path);
       }
     });
@@ -355,8 +360,17 @@ class ReportInfoView extends React.Component {
                 <TitleLabel>Date Occurred*</TitleLabel>
                 <DatePicker
                     disabled={isReviewPage}
-                    onChange={(value) => {
-                      handleDatePickerDateTimeOffset(value, section, 'dateOccurred');
+                    onChange={(brokenDTO) => {
+                      const fixedDTO = fixDatePickerIsoDateTime(brokenDTO);
+                      const chosenDate = moment(fixedDTO);
+                      this.setState(
+                        {
+                          dateOccurredValid: chosenDate.isSameOrBefore(moment())
+                        },
+                        () => {
+                          handleDatePickerDateTimeOffset(fixedDTO, section, 'dateOccurred');
+                        }
+                      );
                     }}
                     value={input.dateOccurred} />
               </FormGroup>
@@ -384,8 +398,19 @@ class ReportInfoView extends React.Component {
                 <TitleLabel>Date Reported*</TitleLabel>
                 <DatePicker
                     value={input.dateReported}
-                    onChange={(value) => {
-                      handleDatePickerDateTimeOffset(value, section, 'dateReported');
+                    onChange={(brokenDTO) => {
+                      const fixedDTO = fixDatePickerIsoDateTime(brokenDTO);
+                      const chosenDate = moment(fixedDTO);
+                      this.setState(
+                        {
+                          dateReportedValid: (
+                            chosenDate.isSameOrBefore(moment()) && chosenDate.isSameOrAfter(moment(input.dateOccurred))
+                          )
+                        },
+                        () => {
+                          handleDatePickerDateTimeOffset(fixedDTO, section, 'dateReported');
+                        }
+                      );
                     }}
                     disabled={isReviewPage} />
               </FormGroup>
@@ -407,8 +432,7 @@ class ReportInfoView extends React.Component {
               <FormNav
                   prevPath={FORM_PATHS.CONSUMER}
                   nextPath={FORM_PATHS.COMPLAINANT}
-                  handlePageChange={this.handlePageChange}
-                  sectionValid={this.state.sectionValid} />
+                  handlePageChange={this.handlePageChange} />
             )
             : null
         }
