@@ -3,6 +3,7 @@ import React from 'react';
 import DatePicker from 'react-bootstrap-date-picker';
 import PropTypes from 'prop-types';
 import ReactRouterPropTypes from 'react-router-prop-types';
+import moment from 'moment';
 import styled from 'styled-components';
 import { FormGroup, FormControl, Col } from 'react-bootstrap';
 import { withRouter } from 'react-router';
@@ -28,42 +29,20 @@ import {
   validateSectionNavigation
 } from '../shared/Helpers';
 import { bootstrapValidation } from '../shared/Validation';
+import { getCurrentPage } from '../utils/Utils';
+import { isPortlandOrg } from '../utils/Whitelist';
 
 const StyledImageElement = styled.img``;
 
 class ConsumerInfoView extends React.Component {
 
-  selfieWebCam;
-
-  constructor(props) {
-
-    super(props);
-
-    this.state = {
-      requiredFields: ['identification'],
-      sectionFormatErrors: [],
-      sectionRequiredErrors: [],
-      identificationValid: true,
-      ageValid: true,
-      dobValid: true,
-      sectionValid: false,
-      didClickNav: this.props.location.state
-        ? this.props.location.state.didClickNav
-        : false,
-      currentPage: parseInt(location.hash.substr(2), 10),
-      showSelfieWebCam: false
-    };
-  }
-
-  static defaultProps = {
-    handlePicture: () => {}
-  }
-
   static propTypes = {
+    handleMultiUpdate: PropTypes.func.isRequired,
     handlePicture: PropTypes.func,
     handleTextInput: PropTypes.func.isRequired,
     handleSingleSelection: PropTypes.func.isRequired,
     handleCheckboxChange: PropTypes.func.isRequired,
+    handleScaleSelection: PropTypes.func.isRequired,
     handleDateInput: PropTypes.func.isRequired,
     consumerIsSelected: PropTypes.bool.isRequired,
     isInReview: PropTypes.func.isRequired,
@@ -106,7 +85,34 @@ class ConsumerInfoView extends React.Component {
       suicidalActions: PropTypes.array.isRequired,
       suicideAttemptMethod: PropTypes.array.isRequired,
       suicideAttemptMethodOther: PropTypes.string.isRequired
-    }).isRequired
+    }).isRequired,
+    selectedOrganizationId: PropTypes.string.isRequired
+  }
+
+  static defaultProps = {
+    handlePicture: () => {}
+  }
+
+  selfieWebCam;
+
+  constructor(props) {
+
+    super(props);
+
+    this.state = {
+      requiredFields: ['identification'],
+      sectionFormatErrors: [],
+      sectionRequiredErrors: [],
+      identificationValid: true,
+      ageValid: true,
+      dobValid: true,
+      sectionValid: false,
+      didClickNav: this.props.location.state
+        ? this.props.location.state.didClickNav
+        : false,
+      currentPage: getCurrentPage(),
+      showSelfieWebCam: false
+    };
   }
 
   handleOnChangeTakePicture = (event) => {
@@ -202,16 +208,234 @@ class ConsumerInfoView extends React.Component {
     );
   }
 
-  render() {
+  renderViolenceScale = () => {
+
     const {
-      section,
-      handleTextInput,
-      handleDateInput,
-      handleSingleSelection,
-      handleCheckboxChange,
+      handleScaleSelection,
       input,
       isInReview,
-      consumerIsSelected
+      section
+    } = this.props;
+
+    const isReviewPage = isInReview();
+
+    const scaleRadios = [];
+    for (let i = 1; i <= 10; i += 1) {
+      scaleRadios.push(
+        <InlineRadio
+            key={`scale1to10-${i}`}
+            inline
+            data-section={section}
+            name="scale1to10"
+            value={i}
+            checked={input.scale1to10 === i}
+            onChange={handleScaleSelection}
+            disabled={isReviewPage}>
+          { i }
+        </InlineRadio>
+      );
+    }
+
+    return scaleRadios;
+  }
+
+  renderViolencePortland = () => {
+
+    const {
+      handleCheckboxChange,
+      handleSingleSelection,
+      handleTextInput,
+      input,
+      isInReview,
+      section
+    } = this.props;
+
+    const { sectionFormatErrors } = this.state;
+
+    const isReviewPage = isInReview();
+
+    return (
+      <div>
+        <PaddedRow>
+          <Col lg={12}>
+            <TitleLabel>Violence at this incident</TitleLabel>
+            <h5>1 = Not at all violent , 10 = Extreme violence</h5>
+            { this.renderViolenceScale() }
+          </Col>
+        </PaddedRow>
+
+        <PaddedRow>
+          <Col lg={12}>
+            <TitleLabel>Violent behavior during this incident was directed towards:</TitleLabel>
+            <FormGroup>
+              <InlineCheckbox
+                  inline={false}
+                  data-section={section}
+                  name="directedagainst"
+                  value="police"
+                  checked={input.directedagainst.indexOf('police') !== -1}
+                  onChange={handleCheckboxChange}
+                  disabled={isReviewPage}>
+                Police
+              </InlineCheckbox>
+              <InlineCheckbox
+                  inline={false}
+                  data-section={section}
+                  name="directedagainst"
+                  value="family"
+                  checked={input.directedagainst.indexOf('family') !== -1}
+                  onChange={handleCheckboxChange}
+                  disabled={isReviewPage}>
+                Family
+              </InlineCheckbox>
+              <InlineCheckbox
+                  inline={false}
+                  data-section={section}
+                  name="directedagainst"
+                  value="significantOther"
+                  checked={input.directedagainst.indexOf('significantOther') !== -1}
+                  onChange={handleCheckboxChange}
+                  disabled={isReviewPage}>
+                Significant other
+              </InlineCheckbox>
+              <OtherWrapper>
+                <InlineCheckbox
+                    inline
+                    data-section={section}
+                    name="directedagainst"
+                    value="other"
+                    checked={input.directedagainst.indexOf('other') !== -1}
+                    onChange={handleCheckboxChange}
+                    disabled={isReviewPage}>
+                  Other:
+                </InlineCheckbox>
+                <FormControl
+                    data-section={section}
+                    name="directedagainstother"
+                    value={input.directedagainstother}
+                    onChange={(e) => {
+                      handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
+                    }}
+                    disabled={isReviewPage} />
+              </OtherWrapper>
+            </FormGroup>
+          </Col>
+        </PaddedRow>
+
+        <PaddedRow>
+          <Col lg={6}>
+            <TitleLabel>History of Violent Behavior</TitleLabel>
+            <InlineRadio
+                inline
+                data-section={section}
+                name="historyofviolence"
+                value
+                checked={input.historyofviolence}
+                onChange={handleSingleSelection}
+                disabled={isReviewPage}>
+              Yes
+            </InlineRadio>
+            <InlineRadio
+                inline
+                data-section={section}
+                name="historyofviolence"
+                value={false}
+                checked={!input.historyofviolence}
+                onChange={handleSingleSelection}
+                disabled={isReviewPage}>
+              No
+            </InlineRadio>
+          </Col>
+        </PaddedRow>
+
+        <PaddedRow>
+          <Col lg={12}>
+            <TitleLabel>Violent behavior was directed towards:</TitleLabel>
+            <FormGroup>
+              <InlineCheckbox
+                  inline={false}
+                  data-section={section}
+                  name="historicaldirectedagainst"
+                  value="police"
+                  checked={input.historicaldirectedagainst.indexOf('police') !== -1}
+                  onChange={handleCheckboxChange}
+                  disabled={isReviewPage}>
+                Police
+              </InlineCheckbox>
+              <InlineCheckbox
+                  inline={false}
+                  data-section={section}
+                  name="historicaldirectedagainst"
+                  value="family"
+                  checked={input.historicaldirectedagainst.indexOf('family') !== -1}
+                  onChange={handleCheckboxChange}
+                  disabled={isReviewPage}>
+                Family
+              </InlineCheckbox>
+              <InlineCheckbox
+                  inline={false}
+                  data-section={section}
+                  name="historicaldirectedagainst"
+                  value="significantOther"
+                  checked={input.historicaldirectedagainst.indexOf('significantOther') !== -1}
+                  onChange={handleCheckboxChange}
+                  disabled={isReviewPage}>
+                Significant other
+              </InlineCheckbox>
+              <OtherWrapper>
+                <InlineCheckbox
+                    inline
+                    data-section={section}
+                    name="historicaldirectedagainst"
+                    value="other"
+                    checked={input.historicaldirectedagainst.indexOf('other') !== -1}
+                    onChange={handleCheckboxChange}
+                    disabled={isReviewPage}>
+                  Other:
+                </InlineCheckbox>
+                <FormControl
+                    data-section={section}
+                    name="historicaldirectedagainstother"
+                    value={input.historicaldirectedagainstother}
+                    onChange={(e) => {
+                      handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
+                    }}
+                    disabled={isReviewPage} />
+              </OtherWrapper>
+            </FormGroup>
+          </Col>
+        </PaddedRow>
+
+        <PaddedRow>
+          <Col lg={12}>
+            <TitleLabel>Description of historical incidents involving violent behavior</TitleLabel>
+            <FormControl
+                data-section={section}
+                name="historyofviolencetext"
+                componentClass="textarea"
+                value={input.historyofviolencetext}
+                onChange={(e) => {
+                  handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
+                }}
+                disabled={isReviewPage} />
+          </Col>
+        </PaddedRow>
+      </div>
+    );
+  }
+
+  render() {
+    const {
+      consumerIsSelected,
+      handleCheckboxChange,
+      handleDateInput,
+      handleMultiUpdate,
+      handleSingleSelection,
+      handleTextInput,
+      input,
+      isInReview,
+      section,
+      selectedOrganizationId
     } = this.props;
 
     const {
@@ -231,7 +455,7 @@ class ConsumerInfoView extends React.Component {
         <ContentWrapper>
           <PaddedRow>
             <Col lg={6}>
-              <TitleLabel>12. Last Name</TitleLabel>
+              <TitleLabel>Last Name</TitleLabel>
               <FormControl
                   data-section={section}
                   name="lastName"
@@ -274,22 +498,19 @@ class ConsumerInfoView extends React.Component {
                     true,
                     didClickNav
                   )}>
-                <TitleLabel>13. Consumer Identification*</TitleLabel>
+                <TitleLabel>Consumer Identification*</TitleLabel>
                 <FormControl
                     data-section={section}
+                    disabled
                     name="identification"
-                    value={input.identification}
-                    onChange={(e) => {
-                      handleTextInput(e, 'number', sectionFormatErrors, this.setInputErrors);
-                    }}
-                    disabled={consumerIsSelected || isReviewPage} />
+                    value={input.identification} />
               </FormGroup>
             </Col>
           </PaddedRow>
 
           <PaddedRow>
             <Col lg={12}>
-              <TitleLabel>14. Residence / Address (Street, Apt Number, City, County, State, Zip)</TitleLabel>
+              <TitleLabel>Residence / Address (Street, Apt Number, City, County, State, Zip)</TitleLabel>
               <FormControl
                   data-section={section}
                   name="address"
@@ -323,7 +544,7 @@ class ConsumerInfoView extends React.Component {
 
           <PaddedRow>
             <Col lg={6}>
-              <TitleLabel>15. Military Status</TitleLabel>
+              <TitleLabel>Military Status</TitleLabel>
               <InlineRadio
                   inline
                   data-section={section}
@@ -331,7 +552,8 @@ class ConsumerInfoView extends React.Component {
                   value="active"
                   checked={input.militaryStatus === 'active'}
                   onChange={handleSingleSelection}
-                  disabled={isReviewPage}>Active
+                  disabled={isReviewPage}>
+                Active
               </InlineRadio>
               <InlineRadio
                   inline
@@ -340,7 +562,8 @@ class ConsumerInfoView extends React.Component {
                   value="veteran"
                   checked={input.militaryStatus === 'veteran'}
                   onChange={handleSingleSelection}
-                  disabled={isReviewPage}>Veteran
+                  disabled={isReviewPage}>
+                Veteran
               </InlineRadio>
               <InlineRadio
                   inline
@@ -349,7 +572,8 @@ class ConsumerInfoView extends React.Component {
                   value="n/a"
                   checked={input.militaryStatus === 'n/a'}
                   onChange={handleSingleSelection}
-                  disabled={isReviewPage}>N/A
+                  disabled={isReviewPage}>
+                N/A
               </InlineRadio>
             </Col>
           </PaddedRow>
@@ -396,19 +620,6 @@ class ConsumerInfoView extends React.Component {
 
           <PaddedRow>
             <Col lg={6}>
-              <FormGroup validationState={bootstrapValidation(input.age, ageValid, false, didClickNav)}>
-                <TitleLabel>Age</TitleLabel>
-                <FormControl
-                    data-section={section}
-                    name="age"
-                    value={input.age}
-                    onChange={(e) => {
-                      handleTextInput(e, 'int16', sectionFormatErrors, this.setInputErrors);
-                    }}
-                    disabled={isReviewPage} />
-              </FormGroup>
-            </Col>
-            <Col lg={6}>
               <FormGroup
                   validationState={bootstrapValidation(
                     input.dob,
@@ -427,15 +638,31 @@ class ConsumerInfoView extends React.Component {
                         sectionFormatErrors,
                         this.setInputErrors
                       );
+                      handleMultiUpdate(section, {
+                        age: `${moment().diff(moment(e), 'years')}`
+                      });
                     }}
                     disabled={consumerIsSelected || isReviewPage} />
+              </FormGroup>
+            </Col>
+            <Col lg={6}>
+              <FormGroup validationState={bootstrapValidation(input.age, ageValid, false, didClickNav)}>
+                <TitleLabel>Age</TitleLabel>
+                <FormControl
+                    data-section={section}
+                    name="age"
+                    value={input.age}
+                    onChange={(e) => {
+                      handleTextInput(e, 'int16', sectionFormatErrors, this.setInputErrors);
+                    }}
+                    disabled={isReviewPage} />
               </FormGroup>
             </Col>
           </PaddedRow>
 
           <PaddedRow>
             <Col lg={6}>
-              <TitleLabel>16. Homeless</TitleLabel>
+              <TitleLabel>Homeless</TitleLabel>
               <InlineRadio
                   inline
                   data-section={section}
@@ -473,7 +700,7 @@ class ConsumerInfoView extends React.Component {
 
           <PaddedRow>
             <Col lg={6}>
-              <TitleLabel>17. Consumer Using Drugs, Alcohol</TitleLabel>
+              <TitleLabel>Consumer Using Drugs, Alcohol</TitleLabel>
               <InlineRadio
                   inline
                   data-section={section}
@@ -481,7 +708,8 @@ class ConsumerInfoView extends React.Component {
                   value="drugs"
                   checked={input.drugsAlcohol === 'drugs'}
                   onChange={handleSingleSelection}
-                  disabled={isReviewPage}>Drugs
+                  disabled={isReviewPage}>
+                Drugs
               </InlineRadio>
               <InlineRadio
                   inline
@@ -490,7 +718,8 @@ class ConsumerInfoView extends React.Component {
                   value="alcohol"
                   checked={input.drugsAlcohol === 'alcohol'}
                   onChange={handleSingleSelection}
-                  disabled={isReviewPage}>Alcohol
+                  disabled={isReviewPage}>
+                Alcohol
               </InlineRadio>
               <InlineRadio
                   inline
@@ -499,7 +728,8 @@ class ConsumerInfoView extends React.Component {
                   value="both"
                   checked={input.drugsAlcohol === 'both'}
                   onChange={handleSingleSelection}
-                  disabled={isReviewPage}>Both
+                  disabled={isReviewPage}>
+                Both
               </InlineRadio>
               <InlineRadio
                   inline
@@ -508,7 +738,8 @@ class ConsumerInfoView extends React.Component {
                   value="n/a"
                   checked={input.drugsAlcohol === 'n/a'}
                   onChange={handleSingleSelection}
-                  disabled={isReviewPage}>N/A
+                  disabled={isReviewPage}>
+                N/A
               </InlineRadio>
             </Col>
           </PaddedRow>
@@ -529,7 +760,7 @@ class ConsumerInfoView extends React.Component {
 
           <PaddedRow>
             <Col lg={6}>
-              <TitleLabel>18. Prescribed Medication</TitleLabel>
+              <TitleLabel>Prescribed Medication</TitleLabel>
               <InlineRadio
                   inline
                   data-section={section}
@@ -537,7 +768,8 @@ class ConsumerInfoView extends React.Component {
                   value="yes"
                   checked={input.prescribedMedication === 'yes'}
                   onChange={handleSingleSelection}
-                  disabled={isReviewPage}>Yes
+                  disabled={isReviewPage}>
+                Yes
               </InlineRadio>
               <InlineRadio
                   inline
@@ -546,7 +778,8 @@ class ConsumerInfoView extends React.Component {
                   value="no"
                   checked={input.prescribedMedication === 'no'}
                   onChange={handleSingleSelection}
-                  disabled={isReviewPage}>No
+                  disabled={isReviewPage}>
+                No
               </InlineRadio>
               <InlineRadio
                   inline
@@ -555,7 +788,8 @@ class ConsumerInfoView extends React.Component {
                   value="unknown"
                   checked={input.prescribedMedication === 'unknown'}
                   onChange={handleSingleSelection}
-                  disabled={isReviewPage}>Unknown
+                  disabled={isReviewPage}>
+                Unknown
               </InlineRadio>
             </Col>
             <Col lg={6}>
@@ -567,7 +801,8 @@ class ConsumerInfoView extends React.Component {
                   value="yes"
                   checked={input.takingMedication === 'yes'}
                   onChange={handleSingleSelection}
-                  disabled={isReviewPage}>Yes
+                  disabled={isReviewPage}>
+                Yes
               </InlineRadio>
               <InlineRadio
                   inline
@@ -576,7 +811,8 @@ class ConsumerInfoView extends React.Component {
                   value="no"
                   checked={input.takingMedication === 'no'}
                   onChange={handleSingleSelection}
-                  disabled={isReviewPage}>No
+                  disabled={isReviewPage}>
+                No
               </InlineRadio>
               <InlineRadio
                   inline
@@ -585,14 +821,15 @@ class ConsumerInfoView extends React.Component {
                   value="unknown"
                   checked={input.takingMedication === 'unknown'}
                   onChange={handleSingleSelection}
-                  disabled={isReviewPage}>Unknown
+                  disabled={isReviewPage}>
+                Unknown
               </InlineRadio>
             </Col>
           </PaddedRow>
 
           <PaddedRow>
             <Col lg={12}>
-              <TitleLabel>19. Does Consumer Have Previous Psychiatric Hospital Admission?</TitleLabel>
+              <TitleLabel>Does Consumer Have Previous Psychiatric Hospital Admission?</TitleLabel>
               <InlineRadio
                   inline
                   type="radio"
@@ -601,7 +838,8 @@ class ConsumerInfoView extends React.Component {
                   value="yes"
                   checked={input.prevPsychAdmission === 'yes'}
                   onChange={handleSingleSelection}
-                  disabled={isReviewPage}>Yes
+                  disabled={isReviewPage}>
+                Yes
               </InlineRadio>
               <InlineRadio
                   inline
@@ -611,7 +849,8 @@ class ConsumerInfoView extends React.Component {
                   value="no"
                   checked={input.prevPsychAdmission === 'no'}
                   onChange={handleSingleSelection}
-                  disabled={isReviewPage}>No
+                  disabled={isReviewPage}>
+                No
               </InlineRadio>
               <InlineRadio
                   inline
@@ -621,14 +860,15 @@ class ConsumerInfoView extends React.Component {
                   value="unknown"
                   checked={input.prevPsychAdmission === 'unknown'}
                   onChange={handleSingleSelection}
-                  disabled={isReviewPage}>Unknown
+                  disabled={isReviewPage}>
+                Unknown
               </InlineRadio>
             </Col>
           </PaddedRow>
 
           <PaddedRow>
             <Col lg={12}>
-              <TitleLabel>19. Self Diagnosis</TitleLabel>
+              <TitleLabel>Self Diagnosis</TitleLabel>
               <FormGroup>
                 <InlineCheckbox
                     inline
@@ -637,7 +877,8 @@ class ConsumerInfoView extends React.Component {
                     value="bipolar"
                     checked={input.selfDiagnosis.indexOf('bipolar') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>Bipolar
+                    disabled={isReviewPage}>
+                  Bipolar
                 </InlineCheckbox>
                 <InlineCheckbox
                     inline
@@ -646,7 +887,8 @@ class ConsumerInfoView extends React.Component {
                     value="depression"
                     checked={input.selfDiagnosis.indexOf('depression') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>Depression
+                    disabled={isReviewPage}>
+                  Depression
                 </InlineCheckbox>
                 <InlineCheckbox
                     inline
@@ -655,7 +897,8 @@ class ConsumerInfoView extends React.Component {
                     value="ptsd"
                     checked={input.selfDiagnosis.indexOf('ptsd') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>PTSD
+                    disabled={isReviewPage}>
+                  PTSD
                 </InlineCheckbox>
                 <InlineCheckbox
                     inline
@@ -664,7 +907,8 @@ class ConsumerInfoView extends React.Component {
                     value="schizophrenia"
                     checked={input.selfDiagnosis.indexOf('schizophrenia') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>Schizophrenia
+                    disabled={isReviewPage}>
+                  Schizophrenia
                 </InlineCheckbox>
                 <InlineCheckbox
                     inline
@@ -673,8 +917,23 @@ class ConsumerInfoView extends React.Component {
                     value="dementia"
                     checked={input.selfDiagnosis.indexOf('dementia') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>Dementia
+                    disabled={isReviewPage}>
+                  Dementia
                 </InlineCheckbox>
+                {
+                  isPortlandOrg(selectedOrganizationId) && (
+                    <InlineCheckbox
+                        inline
+                        data-section={section}
+                        name="selfDiagnosis"
+                        value="DevelopmentalDisabilities/Autism"
+                        checked={input.selfDiagnosis.indexOf('DevelopmentalDisabilities/Autism') !== -1}
+                        onChange={handleCheckboxChange}
+                        disabled={isReviewPage}>
+                      Developmental Disabilities / Autism
+                    </InlineCheckbox>
+                  )
+                }
                 <OtherWrapper>
                   <InlineCheckbox
                       data-section={section}
@@ -682,7 +941,8 @@ class ConsumerInfoView extends React.Component {
                       value="other"
                       checked={input.selfDiagnosis.indexOf('other') !== -1}
                       onChange={handleCheckboxChange}
-                      disabled={isReviewPage}>Other:
+                      disabled={isReviewPage}>
+                    Other:
                   </InlineCheckbox>
                   <FormControl
                       data-section={section}
@@ -699,7 +959,7 @@ class ConsumerInfoView extends React.Component {
 
           <PaddedRow>
             <Col lg={6}>
-              <TitleLabel>20. Armed with Weapon?</TitleLabel>
+              <TitleLabel>Armed with Weapon?</TitleLabel>
               <InlineRadio
                   inline
                   data-section={section}
@@ -707,7 +967,8 @@ class ConsumerInfoView extends React.Component {
                   value
                   checked={input.armedWithWeapon}
                   onChange={handleSingleSelection}
-                  disabled={isReviewPage}>Yes
+                  disabled={isReviewPage}>
+                Yes
               </InlineRadio>
               <InlineRadio
                   inline
@@ -716,7 +977,8 @@ class ConsumerInfoView extends React.Component {
                   value={false}
                   checked={!input.armedWithWeapon}
                   onChange={handleSingleSelection}
-                  disabled={isReviewPage}>No
+                  disabled={isReviewPage}>
+                No
               </InlineRadio>
             </Col>
           </PaddedRow>
@@ -737,7 +999,7 @@ class ConsumerInfoView extends React.Component {
 
           <PaddedRow>
             <Col lg={6}>
-              <TitleLabel>21. Have Access to Weapons?</TitleLabel>
+              <TitleLabel>Have Access to Weapons?</TitleLabel>
               <InlineRadio
                   inline
                   data-section={section}
@@ -745,7 +1007,8 @@ class ConsumerInfoView extends React.Component {
                   value
                   checked={input.accessToWeapons}
                   onChange={handleSingleSelection}
-                  disabled={isReviewPage}>Yes
+                  disabled={isReviewPage}>
+                Yes
               </InlineRadio>
               <InlineRadio
                   inline
@@ -754,7 +1017,8 @@ class ConsumerInfoView extends React.Component {
                   value={false}
                   checked={!input.accessToWeapons}
                   onChange={handleSingleSelection}
-                  disabled={isReviewPage}>No
+                  disabled={isReviewPage}>
+                No
               </InlineRadio>
             </Col>
           </PaddedRow>
@@ -775,7 +1039,7 @@ class ConsumerInfoView extends React.Component {
 
           <PaddedRow>
             <Col lg={12}>
-              <TitleLabel>22. Observed Behaviors (Check all that apply)</TitleLabel>
+              <TitleLabel>Observed Behaviors (Check all that apply)</TitleLabel>
               <FormGroup>
                 <InlineCheckbox
                     inline
@@ -784,7 +1048,8 @@ class ConsumerInfoView extends React.Component {
                     value="disorientation"
                     checked={input.observedBehaviors.indexOf('disorientation') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>Disorientation / Confusion
+                    disabled={isReviewPage}>
+                  Disorientation / Confusion
                 </InlineCheckbox>
                 <InlineCheckbox
                     inline
@@ -793,7 +1058,8 @@ class ConsumerInfoView extends React.Component {
                     value="abnormalBehavior"
                     checked={input.observedBehaviors.indexOf('abnormalBehavior') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>Abnormal Behavior / Appearance (neglect self-care)
+                    disabled={isReviewPage}>
+                  Abnormal Behavior / Appearance (neglect self-care)
                 </InlineCheckbox>
                 <InlineCheckbox
                     inline
@@ -802,7 +1068,8 @@ class ConsumerInfoView extends React.Component {
                     value="hearingVoices"
                     checked={input.observedBehaviors.indexOf('hearingVoices') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>Hearing Voices / Hallucinating
+                    disabled={isReviewPage}>
+                  Hearing Voices / Hallucinating
                 </InlineCheckbox>
                 <InlineCheckbox
                     inline
@@ -811,7 +1078,8 @@ class ConsumerInfoView extends React.Component {
                     value="anxious"
                     checked={input.observedBehaviors.indexOf('anxious') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>Anxious / Excited / Agitated
+                    disabled={isReviewPage}>
+                  Anxious / Excited / Agitated
                 </InlineCheckbox>
                 <InlineCheckbox
                     inline
@@ -820,7 +1088,8 @@ class ConsumerInfoView extends React.Component {
                     value="depressed"
                     checked={input.observedBehaviors.indexOf('depressed') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>Depressed Mood
+                    disabled={isReviewPage}>
+                  Depressed Mood
                 </InlineCheckbox>
                 <InlineCheckbox
                     inline
@@ -829,16 +1098,18 @@ class ConsumerInfoView extends React.Component {
                     value="paranoid"
                     checked={input.observedBehaviors.indexOf('paranoid') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>Paranoid or Suspicious
+                    disabled={isReviewPage}>
+                  Paranoid or Suspicious
                 </InlineCheckbox>
                 <InlineCheckbox
                     inline
                     data-section={section}
                     name="observedBehaviors"
-                    value="self-mutilation"
-                    checked={input.observedBehaviors.indexOf('self-mutilation') !== -1}
+                    value="self-harm"
+                    checked={input.observedBehaviors.indexOf('self-harm') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>Self-mutilation
+                    disabled={isReviewPage}>
+                  Self-harm
                 </InlineCheckbox>
                 <InlineCheckbox
                     inline
@@ -847,7 +1118,8 @@ class ConsumerInfoView extends React.Component {
                     value="threatening"
                     checked={input.observedBehaviors.indexOf('threatening') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>Threatening / Violent Towards Others
+                    disabled={isReviewPage}>
+                  Threatening / Violent Towards Others
                 </InlineCheckbox>
                 <OtherWrapper>
                   <InlineCheckbox
@@ -856,7 +1128,8 @@ class ConsumerInfoView extends React.Component {
                       value="other"
                       checked={input.observedBehaviors.indexOf('other') !== -1}
                       onChange={handleCheckboxChange}
-                      disabled={isReviewPage}>Other:
+                      disabled={isReviewPage}>
+                    Other:
                   </InlineCheckbox>
                   <FormControl
                       data-section={section}
@@ -871,9 +1144,15 @@ class ConsumerInfoView extends React.Component {
             </Col>
           </PaddedRow>
 
+          {
+            isPortlandOrg(selectedOrganizationId)
+              ? this.renderViolencePortland()
+              : null
+          }
+
           <PaddedRow>
             <Col lg={12}>
-              <TitleLabel>23. Emotional State (Check all that apply)</TitleLabel>
+              <TitleLabel>Emotional State (Check all that apply)</TitleLabel>
               <FormGroup>
                 <InlineCheckbox
                     inline
@@ -882,7 +1161,8 @@ class ConsumerInfoView extends React.Component {
                     value="angry"
                     checked={input.emotionalState.indexOf('angry') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>Angry
+                    disabled={isReviewPage}>
+                  Angry
                 </InlineCheckbox>
                 <InlineCheckbox
                     inline
@@ -891,7 +1171,8 @@ class ConsumerInfoView extends React.Component {
                     value="afraid"
                     checked={input.emotionalState.indexOf('afraid') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>Afraid
+                    disabled={isReviewPage}>
+                  Afraid
                 </InlineCheckbox>
                 <InlineCheckbox
                     inline
@@ -900,7 +1181,8 @@ class ConsumerInfoView extends React.Component {
                     value="apologetic"
                     checked={input.emotionalState.indexOf('apologetic') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>Apologetic
+                    disabled={isReviewPage}>
+                  Apologetic
                 </InlineCheckbox>
                 <InlineCheckbox
                     inline
@@ -909,7 +1191,8 @@ class ConsumerInfoView extends React.Component {
                     value="calm"
                     checked={input.emotionalState.indexOf('calm') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>Calm
+                    disabled={isReviewPage}>
+                  Calm
                 </InlineCheckbox>
                 <InlineCheckbox
                     inline
@@ -918,7 +1201,8 @@ class ConsumerInfoView extends React.Component {
                     value="crying"
                     checked={input.emotionalState.indexOf('crying') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>Crying
+                    disabled={isReviewPage}>
+                  Crying
                 </InlineCheckbox>
                 <InlineCheckbox
                     inline
@@ -927,7 +1211,8 @@ class ConsumerInfoView extends React.Component {
                     value="fearful"
                     checked={input.emotionalState.indexOf('fearful') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>Fearful
+                    disabled={isReviewPage}>
+                  Fearful
                 </InlineCheckbox>
                 <InlineCheckbox
                     inline
@@ -936,7 +1221,8 @@ class ConsumerInfoView extends React.Component {
                     value="nervous"
                     checked={input.emotionalState.indexOf('nervous') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>Nervous
+                    disabled={isReviewPage}>
+                  Nervous
                 </InlineCheckbox>
                 <OtherWrapper>
                   <InlineCheckbox
@@ -946,7 +1232,8 @@ class ConsumerInfoView extends React.Component {
                       value="other"
                       checked={input.emotionalState.indexOf('other') !== -1}
                       onChange={handleCheckboxChange}
-                      disabled={isReviewPage}>Other:
+                      disabled={isReviewPage}>
+                    Other:
                   </InlineCheckbox>
                   <FormControl
                       data-section={section}
@@ -963,7 +1250,7 @@ class ConsumerInfoView extends React.Component {
 
           <PaddedRow>
             <Col lg={12}>
-              <TitleLabel>24. Photos Taken Of:</TitleLabel>
+              <TitleLabel>Photos Taken Of:</TitleLabel>
               <FormGroup>
                 <InlineCheckbox
                     inline
@@ -972,7 +1259,8 @@ class ConsumerInfoView extends React.Component {
                     value="injuries"
                     checked={input.photosTakenOf.indexOf('injuries') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>Injuries
+                    disabled={isReviewPage}>
+                  Injuries
                 </InlineCheckbox>
                 <InlineCheckbox
                     inline
@@ -981,7 +1269,8 @@ class ConsumerInfoView extends React.Component {
                     value="propertyDamage"
                     checked={input.photosTakenOf.indexOf('propertyDamage') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>Damage / Crime Scene
+                    disabled={isReviewPage}>
+                  Damage / Crime Scene
                 </InlineCheckbox>
               </FormGroup>
             </Col>
@@ -989,7 +1278,7 @@ class ConsumerInfoView extends React.Component {
 
           <PaddedRow>
             <Col lg={12}>
-              <TitleLabel>25. Consumer Injuries</TitleLabel>
+              <TitleLabel>Consumer Injuries</TitleLabel>
               <FormGroup>
                 <InlineCheckbox
                     inline
@@ -998,7 +1287,8 @@ class ConsumerInfoView extends React.Component {
                     value="abrasions"
                     checked={input.injuries.indexOf('abrasions') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>Abrasions
+                    disabled={isReviewPage}>
+                  Abrasions
                 </InlineCheckbox>
                 <InlineCheckbox
                     inline
@@ -1007,7 +1297,8 @@ class ConsumerInfoView extends React.Component {
                     value="bruises"
                     checked={input.injuries.indexOf('bruises') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>Bruises
+                    disabled={isReviewPage}>
+                  Bruises
                 </InlineCheckbox>
                 <InlineCheckbox
                     inline
@@ -1016,7 +1307,8 @@ class ConsumerInfoView extends React.Component {
                     value="complaintsOfPain"
                     checked={input.injuries.indexOf('complaintsOfPain') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>Complaints of Pain
+                    disabled={isReviewPage}>
+                  Complaints of Pain
                 </InlineCheckbox>
                 <InlineCheckbox
                     inline
@@ -1025,7 +1317,8 @@ class ConsumerInfoView extends React.Component {
                     value="concussion"
                     checked={input.injuries.indexOf('concussion') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>Concussion
+                    disabled={isReviewPage}>
+                  Concussion
                 </InlineCheckbox>
                 <InlineCheckbox
                     inline
@@ -1034,7 +1327,8 @@ class ConsumerInfoView extends React.Component {
                     value="fractures"
                     checked={input.injuries.indexOf('fractures') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>Fractures
+                    disabled={isReviewPage}>
+                  Fractures
                 </InlineCheckbox>
                 <OtherWrapper>
                   <InlineCheckbox
@@ -1043,7 +1337,8 @@ class ConsumerInfoView extends React.Component {
                       value="other"
                       checked={input.injuries.indexOf('other') !== -1}
                       onChange={handleCheckboxChange}
-                      disabled={isReviewPage}>Other:
+                      disabled={isReviewPage}>
+                    Other:
                   </InlineCheckbox>
                   <FormControl
                       data-section={section}
@@ -1060,7 +1355,7 @@ class ConsumerInfoView extends React.Component {
 
           <PaddedRow>
             <Col lg={6}>
-              <TitleLabel>26. Suicidal</TitleLabel>
+              <TitleLabel>Suicidal</TitleLabel>
               <InlineRadio
                   inline
                   data-section={section}
@@ -1068,7 +1363,8 @@ class ConsumerInfoView extends React.Component {
                   value
                   checked={input.suicidal}
                   onChange={handleSingleSelection}
-                  disabled={isReviewPage}>Yes
+                  disabled={isReviewPage}>
+                Yes
               </InlineRadio>
               <InlineRadio
                   inline
@@ -1077,7 +1373,8 @@ class ConsumerInfoView extends React.Component {
                   value={false}
                   checked={!input.suicidal}
                   onChange={handleSingleSelection}
-                  disabled={isReviewPage}>No
+                  disabled={isReviewPage}>
+                No
               </InlineRadio>
             </Col>
           </PaddedRow>
@@ -1092,7 +1389,8 @@ class ConsumerInfoView extends React.Component {
                   value="thoughts"
                   checked={input.suicidalActions.indexOf('thoughts') !== -1}
                   onChange={handleCheckboxChange}
-                  disabled={isReviewPage}>Thoughts
+                  disabled={isReviewPage}>
+                Thoughts
               </InlineCheckbox>
               <InlineCheckbox
                   inline
@@ -1101,7 +1399,8 @@ class ConsumerInfoView extends React.Component {
                   value="threat"
                   checked={input.suicidalActions.indexOf('threat') !== -1}
                   onChange={handleCheckboxChange}
-                  disabled={isReviewPage}>Threat
+                  disabled={isReviewPage}>
+                Threat
               </InlineCheckbox>
               <InlineCheckbox
                   inline
@@ -1110,7 +1409,8 @@ class ConsumerInfoView extends React.Component {
                   value="attempt"
                   checked={input.suicidalActions.indexOf('attempt') !== -1}
                   onChange={handleCheckboxChange}
-                  disabled={isReviewPage}>Attempt
+                  disabled={isReviewPage}>
+                Attempt
               </InlineCheckbox>
               <InlineCheckbox
                   inline
@@ -1119,14 +1419,15 @@ class ConsumerInfoView extends React.Component {
                   value="completed"
                   checked={input.suicidalActions.indexOf('completed') !== -1}
                   onChange={handleCheckboxChange}
-                  disabled={isReviewPage}>Completed
+                  disabled={isReviewPage}>
+                Completed
               </InlineCheckbox>
             </Col>
           </PaddedRow>
 
           <PaddedRow>
             <Col lg={12}>
-              <TitleLabel>27. Method Used to Attempt, Threaten, or Complete Suicide</TitleLabel>
+              <TitleLabel>Method Used to Attempt, Threaten, or Complete Suicide</TitleLabel>
               <FormGroup>
                 <InlineCheckbox
                     inline
@@ -1135,7 +1436,8 @@ class ConsumerInfoView extends React.Component {
                     value="narcotics"
                     checked={input.suicideAttemptMethod.indexOf('narcotics') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>Narcotics (Prescription or Illicit)
+                    disabled={isReviewPage}>
+                  Narcotics (Prescription or Illicit)
                 </InlineCheckbox>
                 <InlineCheckbox
                     inline
@@ -1144,7 +1446,8 @@ class ConsumerInfoView extends React.Component {
                     value="alcohol"
                     checked={input.suicideAttemptMethod.indexOf('alcohol') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>Alcohol
+                    disabled={isReviewPage}>
+                  Alcohol
                 </InlineCheckbox>
                 <InlineCheckbox
                     inline
@@ -1153,7 +1456,8 @@ class ConsumerInfoView extends React.Component {
                     value="knife"
                     checked={input.suicideAttemptMethod.indexOf('knife') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>Knife / Cutting Tool
+                    disabled={isReviewPage}>
+                  Knife / Cutting Tool
                 </InlineCheckbox>
                 <InlineCheckbox
                     inline
@@ -1162,7 +1466,8 @@ class ConsumerInfoView extends React.Component {
                     value="firearm"
                     checked={input.suicideAttemptMethod.indexOf('firearm') !== -1}
                     onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>Firearm
+                    disabled={isReviewPage}>
+                  Firearm
                 </InlineCheckbox>
                 <OtherWrapper>
                   <InlineCheckbox
@@ -1171,7 +1476,8 @@ class ConsumerInfoView extends React.Component {
                       value="other"
                       checked={input.suicideAttemptMethod.indexOf('other') !== -1}
                       onChange={handleCheckboxChange}
-                      disabled={isReviewPage}>Other:
+                      disabled={isReviewPage}>
+                    Other:
                   </InlineCheckbox>
                   <FormControl
                       data-section={section}

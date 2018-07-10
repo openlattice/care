@@ -19,7 +19,7 @@ import Loading from '../../components/Loading';
 import StyledButton from '../../components/buttons/StyledButton';
 import StyledCard from '../../components/cards/StyledCard';
 import * as Routes from '../../core/router/Routes';
-import { formatTimePickerSeconds } from '../../utils/Utils';
+import { fixDatePickerIsoDateTime, formatTimePickerSeconds } from '../../utils/Utils';
 import {
   ContainerInnerWrapper,
   ContainerOuterWrapper,
@@ -153,11 +153,10 @@ class FollowUpReportContainer extends React.Component<Props, State> {
     });
   }
 
-  handleOnChangeDate = (value :?string, formattedValue :?string) => {
+  handleOnChangeDate = (value :?string) => {
 
-    const dateValue :string = formattedValue || '';
     this.setState({
-      dateValue
+      dateValue: fixDatePickerIsoDateTime(value)
     });
   }
 

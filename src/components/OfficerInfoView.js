@@ -21,24 +21,11 @@ import {
   validateSectionNavigation
 } from '../shared/Helpers';
 import { bootstrapValidation } from '../shared/Validation';
+import { getCurrentPage } from '../utils/Utils';
+import { isPortlandOrg } from '../utils/Whitelist';
 
 
 class OfficerInfoView extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      requiredFields: [],
-      sectionFormatErrors: [],
-      sectionRequiredErrors: [FORM_ERRORS.IS_REQUIRED],
-      officerSeqIDValid: true,
-      sectionValid: false,
-      didClickNav: this.props.location.state
-        ? this.props.location.state.didClickNav
-        : false,
-      currentPage: parseInt(location.hash.substr(2), 10)
-    };
-  }
 
   static propTypes = {
     handleTextInput: PropTypes.func.isRequired,
@@ -53,7 +40,24 @@ class OfficerInfoView extends React.Component {
       officerSeqID: PropTypes.string.isRequired,
       officerInjuries: PropTypes.string.isRequired,
       officerCertification: PropTypes.array.isRequired
-    }).isRequired
+    }).isRequired,
+    selectedOrganizationId: PropTypes.string.isRequired
+  }
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      requiredFields: [],
+      sectionFormatErrors: [],
+      sectionRequiredErrors: [FORM_ERRORS.IS_REQUIRED],
+      officerSeqIDValid: true,
+      sectionValid: false,
+      didClickNav: this.props.location.state
+        ? this.props.location.state.didClickNav
+        : false,
+      currentPage: getCurrentPage()
+    };
   }
 
   handlePageChange = (path) => {
@@ -81,13 +85,107 @@ class OfficerInfoView extends React.Component {
     );
   }
 
+  renderOfficerCertification = () => {
+
+    const {
+      section,
+      handleCheckboxChange,
+      input,
+      isInReview
+    } = this.props;
+
+    const isReviewPage = isInReview();
+
+    return (
+      <PaddedRow>
+        <Col lg={6}>
+          <TitleLabel>Officer Certification</TitleLabel>
+          <FormGroup>
+            <InlineCheckbox
+                inline
+                data-section={section}
+                name="officerCertification"
+                value="crtUnit"
+                checked={input.officerCertification.indexOf('crtUnit') !== -1}
+                onChange={handleCheckboxChange}
+                disabled={isReviewPage}>
+              CRT Unit
+            </InlineCheckbox>
+            <InlineCheckbox
+                inline
+                data-section={section}
+                name="officerCertification"
+                value="best"
+                checked={input.officerCertification.indexOf('best') !== -1}
+                onChange={handleCheckboxChange}
+                disabled={isReviewPage}>
+              BEST
+            </InlineCheckbox>
+            <InlineCheckbox
+                inline
+                data-section={section}
+                name="officerCertification"
+                value="cit"
+                checked={input.officerCertification.indexOf('cit') !== -1}
+                onChange={handleCheckboxChange}
+                disabled={isReviewPage}>
+              CIT
+            </InlineCheckbox>
+            <InlineCheckbox
+                inline
+                data-section={section}
+                name="officerCertification"
+                value="n/a"
+                checked={input.officerCertification.indexOf('n/a') !== -1}
+                onChange={handleCheckboxChange}
+                disabled={isReviewPage}>
+              N/A
+            </InlineCheckbox>
+          </FormGroup>
+        </Col>
+      </PaddedRow>
+    );
+  }
+
+  renderOfficerCertificationPortland = () => {
+
+    const {
+      section,
+      handleCheckboxChange,
+      input,
+      isInReview
+    } = this.props;
+
+    const isReviewPage = isInReview();
+
+    return (
+      <PaddedRow>
+        <Col lg={6}>
+          <TitleLabel>Officer Certification</TitleLabel>
+          <FormGroup>
+            <InlineCheckbox
+                inline
+                data-section={section}
+                name="officerCertification"
+                value="cit"
+                checked={input.officerCertification.indexOf('cit') !== -1}
+                onChange={handleCheckboxChange}
+                disabled={isReviewPage}>
+              CIT
+            </InlineCheckbox>
+          </FormGroup>
+        </Col>
+      </PaddedRow>
+    );
+  }
+
   render() {
     const {
       section,
       handleTextInput,
-      handleCheckboxChange,
       input,
-      isInReview
+      isInReview,
+      selectedOrganizationId
     } = this.props;
 
     const {
@@ -106,7 +204,7 @@ class OfficerInfoView extends React.Component {
         <ContentWrapper>
           <PaddedRow>
             <Col lg={12}>
-              <TitleLabel>33. Officer Name</TitleLabel>
+              <TitleLabel>Officer Name</TitleLabel>
               <FormControl
                   data-section={section}
                   name="officerName"
@@ -127,7 +225,7 @@ class OfficerInfoView extends React.Component {
                     false,
                     didClickNav
                   )}>
-                <TitleLabel>34. Seq ID</TitleLabel>
+                <TitleLabel>Seq ID</TitleLabel>
                 <FormControl
                     data-section={section}
                     name="officerSeqID"
@@ -139,7 +237,7 @@ class OfficerInfoView extends React.Component {
               </FormGroup>
             </Col>
             <Col lg={6}>
-              <TitleLabel>35. Officer Injuries</TitleLabel>
+              <TitleLabel>Officer Injuries</TitleLabel>
               <FormControl
                   data-section={section}
                   name="officerInjuries"
@@ -151,45 +249,12 @@ class OfficerInfoView extends React.Component {
             </Col>
           </PaddedRow>
 
-          <PaddedRow>
-            <Col lg={6}>
-              <TitleLabel>36. Officer Certification</TitleLabel>
-              <FormGroup>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="officerCertification"
-                    value="crtUnit"
-                    checked={input.officerCertification.indexOf('crtUnit') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>CRT Unit</InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="officerCertification"
-                    value="best"
-                    checked={input.officerCertification.indexOf('best') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>BEST</InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="officerCertification"
-                    value="cit"
-                    checked={input.officerCertification.indexOf('cit') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>CIT</InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="officerCertification"
-                    value="n/a"
-                    checked={input.officerCertification.indexOf('n/a') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>N/A</InlineCheckbox>
-              </FormGroup>
-            </Col>
-          </PaddedRow>
+          {
+            isPortlandOrg(selectedOrganizationId)
+              ? this.renderOfficerCertificationPortland()
+              : this.renderOfficerCertification()
+          }
+
         </ContentWrapper>
 
         {

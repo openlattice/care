@@ -34,19 +34,23 @@ const Section = styled.div`
 
 
 const ReviewView = ({
-  reportInfo,
-  consumerInfo,
   complainantInfo,
-  dispositionInfo,
-  officerInfo,
-  handleTextInput,
-  handleDateInput,
-  handleTimeInput,
-  handleCheckboxChange,
-  handleSingleSelection,
-  isInReview,
+  consumerInfo,
   consumerIsSelected,
-  handlePageChange
+  dispositionInfo,
+  handleCheckboxChange,
+  handleDateInput,
+  handleDatePickerDateTimeOffset,
+  handleMultiUpdate,
+  handlePageChange,
+  handleScaleSelection,
+  handleSingleSelection,
+  handleTextInput,
+  handleTimeInput,
+  isInReview,
+  officerInfo,
+  reportInfo,
+  selectedOrganizationId
 }) => {
 
   return (
@@ -60,14 +64,15 @@ const ReviewView = ({
             <EditLink to={FORM_PATHS.REPORT}>edit</EditLink>
           </SectionHeaderWrapper>
           <ReportInfoView
-              handleTextInput={handleTextInput}
-              handleDateInput={handleDateInput}
-              handleTimeInput={handleTimeInput}
+              handleDatePickerDateTimeOffset={handleDatePickerDateTimeOffset}
+              handlePageChange={handlePageChange}
               handleSingleSelection={handleSingleSelection}
+              handleTextInput={handleTextInput}
+              handleTimeInput={handleTimeInput}
               input={reportInfo}
-              section="reportInfo"
               isInReview={isInReview}
-              handlePageChange={handlePageChange} />
+              section="reportInfo"
+              selectedOrganizationId={selectedOrganizationId} />
         </Section>
         <Section>
           <SectionHeaderWrapper>
@@ -75,15 +80,18 @@ const ReviewView = ({
             <EditLink to={FORM_PATHS.CONSUMER}>edit</EditLink>
           </SectionHeaderWrapper>
           <ConsumerInfoView
-              handleTextInput={handleTextInput}
-              handleDateInput={handleDateInput}
-              handleSingleSelection={handleSingleSelection}
-              handleCheckboxChange={handleCheckboxChange}
-              input={consumerInfo}
               consumerIsSelected={consumerIsSelected}
-              isInReview={isInReview}
+              handleCheckboxChange={handleCheckboxChange}
+              handleDateInput={handleDateInput}
+              handleMultiUpdate={handleMultiUpdate}
               handlePageChange={handlePageChange}
-              section="consumerInfo" />
+              handleScaleSelection={handleScaleSelection}
+              handleSingleSelection={handleSingleSelection}
+              handleTextInput={handleTextInput}
+              input={consumerInfo}
+              isInReview={isInReview}
+              section="consumerInfo"
+              selectedOrganizationId={selectedOrganizationId} />
         </Section>
         <Section>
           <SectionHeaderWrapper>
@@ -95,7 +103,8 @@ const ReviewView = ({
               input={complainantInfo}
               isInReview={isInReview}
               handlePageChange={handlePageChange}
-              section="complainantInfo" />
+              section="complainantInfo"
+              selectedOrganizationId={selectedOrganizationId} />
         </Section>
         <Section>
           <SectionHeaderWrapper>
@@ -103,13 +112,16 @@ const ReviewView = ({
             <EditLink to={FORM_PATHS.DISPOSITION}>edit</EditLink>
           </SectionHeaderWrapper>
           <DispositionView
-              handleTextInput={handleTextInput}
               handleCheckboxChange={handleCheckboxChange}
+              handleMultiUpdate={handleMultiUpdate}
+              handlePageChange={handlePageChange}
+              handleScaleSelection={handleScaleSelection}
               handleSingleSelection={handleSingleSelection}
+              handleTextInput={handleTextInput}
               input={dispositionInfo}
               isInReview={isInReview}
-              handlePageChange={handlePageChange}
-              section="dispositionInfo" />
+              section="dispositionInfo"
+              selectedOrganizationId={selectedOrganizationId} />
         </Section>
         <Section>
           <SectionHeaderWrapper>
@@ -122,7 +134,8 @@ const ReviewView = ({
               input={officerInfo}
               isInReview={isInReview}
               handlePageChange={handlePageChange}
-              section="officerInfo" />
+              section="officerInfo"
+              selectedOrganizationId={selectedOrganizationId} />
         </Section>
       </ContentWrapper>
 
@@ -135,8 +148,11 @@ const ReviewView = ({
 ReviewView.propTypes = {
   handleTextInput: PropTypes.func.isRequired,
   handleDateInput: PropTypes.func.isRequired,
+  handleDatePickerDateTimeOffset: PropTypes.func.isRequired,
   handleTimeInput: PropTypes.func.isRequired,
   handleCheckboxChange: PropTypes.func.isRequired,
+  handleMultiUpdate: PropTypes.func.isRequired,
+  handleScaleSelection: PropTypes.func.isRequired,
   handleSingleSelection: PropTypes.func.isRequired,
   isInReview: PropTypes.func.isRequired,
   consumerIsSelected: PropTypes.bool.isRequired,
@@ -213,7 +229,8 @@ ReviewView.propTypes = {
     officerSeqID: PropTypes.string.isRequired,
     officerInjuries: PropTypes.string.isRequired,
     officerCertification: PropTypes.array.isRequired
-  }).isRequired
+  }).isRequired,
+  selectedOrganizationId: PropTypes.string.isRequired
 };
 
 export default ReviewView;

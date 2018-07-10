@@ -5,20 +5,20 @@
 import React from 'react';
 
 import Immutable from 'immutable';
+import isInteger from 'lodash/isInteger';
+import moment from 'moment';
+import parseInt from 'lodash/parseInt';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 
-import type { Match, RouterHistory } from 'react-router';
+import type { RouterHistory } from 'react-router';
 
 import FormView from '../../components/FormView';
-import ConfirmationModal from '../../components/ConfirmationModalView';
-
 import { validateOnInput } from '../../shared/Validation';
-import { formatTimePickerSeconds } from '../../utils/Utils';
+import { fixDatePickerIsoDateTime, formatTimePickerSeconds, getCurrentPage } from '../../utils/Utils';
 import { loadApp, selectOrganization } from './AppActionFactory';
 import { hardRestart, submitReport } from './ReportActionFactory';
-import { SUBMISSION_STATES } from './ReportReducer';
 
 import {
   APP_TYPES_FQNS,
@@ -57,7 +57,6 @@ type Props = {
   };
   app :Map<*, *>;
   history :RouterHistory;
-  match :Match;
   submissionState :number;
 };
 
@@ -111,6 +110,13 @@ class Form extends React.Component<Props, State> {
     validateOnInput(name, input, 'date', formatErrors, setErrorsFn);
   }
 
+  handleDatePickerDateTimeOffset = (value, section, name) => {
+
+    const sectionState = this.state[section];
+    sectionState[name] = fixDatePickerIsoDateTime(value);
+    this.setState({ [section]: sectionState });
+  }
+
   handlePicture = (sectionKey, sectionPropertyName, value) => {
     const sectionState = this.state[sectionKey];
     sectionState[sectionPropertyName] = value;
@@ -140,6 +146,15 @@ class Form extends React.Component<Props, State> {
     this.setState({ [sectionKey]: sectionState });
   }
 
+  handleMultiUpdate = (sectionKey, values) => {
+
+    const sectionState = this.state[sectionKey];
+    Object.keys(values).forEach((key) => {
+      sectionState[key] = values[key];
+    });
+    this.setState({ [sectionKey]: sectionState });
+  }
+
   handleCheckboxChange = (e) => {
     const sectionKey = e.target.dataset.section;
     const sectionState = this.state[sectionKey];
@@ -150,6 +165,23 @@ class Form extends React.Component<Props, State> {
     else {
       sectionState[e.target.name].splice(idx, 1);
     }
+    this.setState({ [sectionKey]: sectionState });
+  }
+
+  handleScaleSelection = (e) => {
+
+    const sectionKey = e.target.dataset.section;
+    const sectionState = this.state[sectionKey];
+
+    const value = e.target.value;
+    const valueAsInt = parseInt(value);
+    if (isInteger(valueAsInt) && `${valueAsInt}` === value) {
+      sectionState[e.target.name] = valueAsInt;
+    }
+    else {
+      sectionState[e.target.name] = value;
+    }
+
     this.setState({ [sectionKey]: sectionState });
   }
 
@@ -168,6 +200,12 @@ class Form extends React.Component<Props, State> {
           consumerState[consumerKey] = person[personKey][0];
         }
       });
+      const dob = person[PERSON.DOB_FQN];
+      if (dob && dob.length > 0) {
+        if (moment(dob[0]).isValid()) {
+          consumerState[CONSUMER_STATE.AGE] = `${moment().diff(moment(dob[0]), 'years')}`;
+        }
+      }
     }
     this.setState({
       consumerInfo: consumerState,
@@ -195,27 +233,9 @@ class Form extends React.Component<Props, State> {
     });
   }
 
-  isInReview = () => {
-    const slashIndex :number = window.location.hash.lastIndexOf('/');
-    const page = window.location.hash.substring(slashIndex + 1);
-    return Number.parseInt(page, 10) === MAX_PAGE;
-  }
-
-  renderModal = () => {
-
-    const { submissionState } = this.props;
-    const { PRE_SUBMIT, IS_SUBMITTING } = SUBMISSION_STATES;
-
-    if (submissionState === PRE_SUBMIT || submissionState === IS_SUBMITTING) {
-      return null;
-    }
-
-    return (
-      <ConfirmationModal
-          submissionState={this.props.submissionState}
-          handleModalButtonClick={this.props.actions.hardRestart} />
-    );
-  }
+  isInReview = () => (
+    getCurrentPage() === MAX_PAGE
+  )
 
   render() {
 
@@ -230,27 +250,30 @@ class Form extends React.Component<Props, State> {
 
     return (
       <FormView
-          handlePicture={this.handlePicture}
-          handleTextInput={this.handleTextInput}
-          handleDateInput={this.handleDateInput}
-          handleTimeInput={this.handleTimeInput}
-          handleSingleSelection={this.handleSingleSelection}
-          handleCheckboxChange={this.handleCheckboxChange}
-          handleSubmit={this.handleSubmit}
-          reportInfo={this.state.reportInfo}
-          consumerInfo={this.state.consumerInfo}
           complainantInfo={this.state.complainantInfo}
+          consumerInfo={this.state.consumerInfo}
+          consumerIsSelected={this.state.isConsumerSelected}
           dispositionInfo={this.state.dispositionInfo}
-          officerInfo={this.state.officerInfo}
+          isInReview={this.isInReview}
+          handleCheckboxChange={this.handleCheckboxChange}
+          handleDateInput={this.handleDateInput}
+          handleDatePickerDateTimeOffset={this.handleDatePickerDateTimeOffset}
+          handleMultiUpdate={this.handleMultiUpdate}
+          handleOrganizationSelection={this.handleOrganizationSelection}
           handlePageChange={this.handlePageChange}
           handlePersonSelection={this.handlePersonSelection}
-          personEntitySetId={peopleEntitySetId}
-          isInReview={this.isInReview}
-          consumerIsSelected={this.state.isConsumerSelected}
-          renderModal={this.renderModal}
+          handlePicture={this.handlePicture}
+          handleScaleSelection={this.handleScaleSelection}
+          handleSingleSelection={this.handleSingleSelection}
+          handleSubmit={this.handleSubmit}
+          handleTextInput={this.handleTextInput}
+          handleTimeInput={this.handleTimeInput}
+          officerInfo={this.state.officerInfo}
           organizations={organizations}
+          personEntitySetId={peopleEntitySetId}
+          reportInfo={this.state.reportInfo}
           selectedOrganizationId={selectedOrganizationId}
-          handleOrganizationSelection={this.handleOrganizationSelection} />
+          submissionState={this.props.submissionState} />
     );
   }
 }

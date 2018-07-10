@@ -2,8 +2,10 @@
  * @flow
  */
 
-import Immutable from 'immutable';
+import { Map, fromJS } from 'immutable';
+import { LOCATION_CHANGE } from 'react-router-redux';
 
+import * as Routes from '../../core/router/Routes';
 import { submitReport } from './ReportActionFactory';
 
 /*
@@ -17,7 +19,7 @@ export const SUBMISSION_STATES = {
   SUBMIT_FAILURE: 3
 };
 
-const INITIAL_STATE :Map<*, *> = Immutable.fromJS({
+const INITIAL_STATE :Map<*, *> = fromJS({
   submissionState: SUBMISSION_STATES.PRE_SUBMIT
 });
 
@@ -37,6 +39,21 @@ export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :
           return state.set('submissionState', SUBMISSION_STATES.SUBMIT_FAILURE);
         }
       });
+    }
+
+    // TODO: this feels hacky
+    case LOCATION_CHANGE: {
+
+      const { payload } = action;
+      const submissionState = state.get('submissionState');
+      const { PRE_SUBMIT, SUBMIT_SUCCESS } = SUBMISSION_STATES;
+
+      // we need to reset submissionState after successful submission and routing to /home
+      if (payload.pathname === Routes.HOME && submissionState === SUBMIT_SUCCESS) {
+        return state.set('submissionState', PRE_SUBMIT);
+      }
+
+      return state;
     }
 
     default:

@@ -25,6 +25,7 @@ export const PERSON = {
 };
 
 export const CONSUMER_STATE = {
+  AGE: 'age',
   LAST_NAME_FQN: 'lastName',
   FIRST_NAME_FQN: 'firstName',
   MIDDLE_NAME_FQN: 'middleName',

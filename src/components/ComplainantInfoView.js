@@ -1,19 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormGroup, FormControl, Col } from 'react-bootstrap';
+import { FormControl, Col } from 'react-bootstrap';
 import { withRouter } from 'react-router';
 import ReactRouterPropTypes from 'react-router-prop-types';
 
 import FormNav from './FormNav';
 import { PaddedRow, TitleLabel, SectionHeader, SectionWrapper, ContentWrapper } from '../shared/Layout';
 import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
+import { getCurrentPage } from '../utils/Utils';
 import {
   setDidClickNav,
   setRequiredErrors,
   renderErrors,
   validateSectionNavigation
 } from '../shared/Helpers';
-import { bootstrapValidation } from '../shared/Validation';
 
 
 class ComplainantInfoView extends React.Component {
@@ -28,7 +28,7 @@ class ComplainantInfoView extends React.Component {
       didClickNav: this.props.location.state
         ? this.props.location.state.didClickNav
         : false,
-      currentPage: parseInt(location.hash.substr(2), 10)
+      currentPage: getCurrentPage()
     };
   }
 
@@ -94,7 +94,7 @@ class ComplainantInfoView extends React.Component {
         <ContentWrapper>
           <PaddedRow>
             <Col lg={12}>
-              <TitleLabel>28. Complainant Name (Last, First, MI)</TitleLabel>
+              <TitleLabel>Complainant Name (Last, First, MI)</TitleLabel>
               <FormControl
                   data-section={section}
                   name="complainantName"

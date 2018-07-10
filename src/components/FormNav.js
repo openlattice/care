@@ -4,7 +4,12 @@ import PropTypes from 'prop-types';
 import { NavBtnWrapper, StyledButton, SubmitButton } from '../shared/Layout';
 
 
-const FormNav = ({ prevPath, nextPath, submit, handlePageChange }) => {
+const FormNav = ({
+  handlePageChange,
+  nextPath,
+  prevPath,
+  submit
+}) => {
 
   const onClickPrev = () => {
     handlePageChange(prevPath);
@@ -14,35 +19,36 @@ const FormNav = ({ prevPath, nextPath, submit, handlePageChange }) => {
     handlePageChange(nextPath);
   };
 
-  const renderNav = () => {
-    return (
-      <NavBtnWrapper>
-        {
-          prevPath && prevPath.length
-            ? <StyledButton onClick={onClickPrev}>
-                Prev
+  const renderNav = () => (
+    <NavBtnWrapper>
+      {
+        prevPath && prevPath.length
+          ? (
+            <StyledButton onClick={onClickPrev}>
+              Prev
             </StyledButton>
-            : null
-        }
-        {
-          nextPath && nextPath.length
-            ? <StyledButton onClick={onClickNext}>
-                Next
+          )
+          : null
+      }
+      {
+        nextPath && nextPath.length
+          ? (
+            <StyledButton onClick={onClickNext}>
+              Next
             </StyledButton>
-            : null
-        }
-      </NavBtnWrapper>
-    );
-  };
+          )
+          : null
+      }
+    </NavBtnWrapper>
+  );
 
-  const renderSubmit = () => {
-    return (
-      <NavBtnWrapper>
-        <SubmitButton>Submit
-        </SubmitButton>
-      </NavBtnWrapper>
-    );
-  };
+  const renderSubmit = () => (
+    <NavBtnWrapper>
+      <SubmitButton>
+        Submit
+      </SubmitButton>
+    </NavBtnWrapper>
+  );
 
   return (
     <NavBtnWrapper>

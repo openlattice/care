@@ -1,10 +1,12 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { FormGroup, FormControl, Col } from 'react-bootstrap';
+
 import DatePicker from 'react-bootstrap-date-picker';
-import TimePicker from 'react-bootstrap-time-picker';
-import { withRouter } from 'react-router';
+import PropTypes from 'prop-types';
 import ReactRouterPropTypes from 'react-router-prop-types';
+import TimePicker from 'react-bootstrap-time-picker';
+import moment from 'moment';
+import { FormGroup, FormControl, Col } from 'react-bootstrap';
+import { withRouter } from 'react-router';
 
 import FormNav from './FormNav';
 import {
@@ -22,8 +24,8 @@ import {
   renderErrors,
   validateSectionNavigation
 } from '../shared/Helpers';
+import { fixDatePickerIsoDateTime, getCurrentPage } from '../utils/Utils';
 import { bootstrapValidation } from '../shared/Validation';
-
 
 class ReportInfoView extends React.Component {
   constructor(props) {
@@ -41,17 +43,16 @@ class ReportInfoView extends React.Component {
       dateOccurredValid: true,
       dateReportedValid: true,
       unitValid: true,
-      sectionValid: false,
       didClickNav: this.props.location.state
         ? this.props.location.state.didClickNav
         : false,
-      currentPage: parseInt(location.hash.substr(2), 10)
+      currentPage: getCurrentPage()
     };
   }
 
   static propTypes = {
+    handleDatePickerDateTimeOffset: PropTypes.func.isRequired,
     handleTextInput: PropTypes.func.isRequired,
-    handleDateInput: PropTypes.func.isRequired,
     handleTimeInput: PropTypes.func.isRequired,
     handleSingleSelection: PropTypes.func.isRequired,
     isInReview: PropTypes.func.isRequired,
@@ -77,11 +78,16 @@ class ReportInfoView extends React.Component {
     }).isRequired
   }
 
+  areRequiredFieldsValid = () => (
+    this.state.requiredFields.every(fieldName => this.state[`${fieldName}Valid`])
+  )
+
   handlePageChange = (path) => {
     this.setState(setDidClickNav);
     this.setState(setRequiredErrors, () => {
-      if (this.state.sectionRequiredErrors.length < 1
-        && this.state.sectionFormatErrors.length < 1) {
+      if (this.areRequiredFieldsValid()
+          && this.state.sectionRequiredErrors.length < 1
+          && this.state.sectionFormatErrors.length < 1) {
         this.props.handlePageChange(path);
       }
     });
@@ -105,13 +111,13 @@ class ReportInfoView extends React.Component {
 
   render() {
     const {
-      section,
+      handleDatePickerDateTimeOffset,
       handleTextInput,
-      handleDateInput,
       handleTimeInput,
       handleSingleSelection,
       input,
-      isInReview
+      isInReview,
+      section
     } = this.props;
 
     const {
@@ -135,7 +141,7 @@ class ReportInfoView extends React.Component {
         <ContentWrapper>
           <PaddedRow>
             <Col lg={6}>
-              <TitleLabel>1. Primary Reason for Dispatch</TitleLabel>
+              <TitleLabel>Primary Reason for Dispatch</TitleLabel>
               <FormControl
                   data-section={section}
                   name="dispatchReason"
@@ -158,7 +164,7 @@ class ReportInfoView extends React.Component {
                     true,
                     didClickNav
                   )}>
-                <TitleLabel>2. Complaint Number*</TitleLabel>
+                <TitleLabel>Complaint Number*</TitleLabel>
                 <FormControl
                     data-section={section}
                     name="complaintNumber"
@@ -178,7 +184,7 @@ class ReportInfoView extends React.Component {
 
           <PaddedRow>
             <Col lg={6}>
-              <TitleLabel>3. Companion Offense Report Prepared</TitleLabel>
+              <TitleLabel>Companion Offense Report Prepared</TitleLabel>
               <InlineRadio
                   inline
                   data-section={section}
@@ -206,7 +212,7 @@ class ReportInfoView extends React.Component {
                     true,
                     didClickNav
                   )}>
-                <TitleLabel>4. Crime / Incident*</TitleLabel>
+                <TitleLabel>Crime / Incident*</TitleLabel>
                 <FormControl
                     data-section={section}
                     name="incident"
@@ -226,7 +232,7 @@ class ReportInfoView extends React.Component {
 
           <PaddedRow>
             <Col lg={12}>
-              <TitleLabel>5. Location of Offense / Incident</TitleLabel>
+              <TitleLabel>Location of Offense / Incident</TitleLabel>
               <FormControl
                   data-section={section}
                   name="locationOfIncident"
@@ -252,7 +258,7 @@ class ReportInfoView extends React.Component {
                     false,
                     didClickNav
                   )}>
-                <TitleLabel>6. Unit</TitleLabel>
+                <TitleLabel>Unit</TitleLabel>
                 <FormControl
                     data-section={section}
                     name="unit"
@@ -276,7 +282,7 @@ class ReportInfoView extends React.Component {
                     false,
                     didClickNav
                   )}>
-                <TitleLabel>7. Post of Occurrence</TitleLabel>
+                <TitleLabel>Post of Occurrence</TitleLabel>
                 <FormControl
                     data-section={section}
                     name="postOfOccurrence"
@@ -303,7 +309,7 @@ class ReportInfoView extends React.Component {
                     false,
                     didClickNav
                   )}>
-                <TitleLabel>8. CAD Number</TitleLabel>
+                <TitleLabel>CAD Number</TitleLabel>
                 <FormControl
                     data-section={section}
                     name="cadNumber"
@@ -320,7 +326,7 @@ class ReportInfoView extends React.Component {
               </FormGroup>
             </Col>
             <Col lg={6}>
-              <TitleLabel>9. On View</TitleLabel>
+              <TitleLabel>On View</TitleLabel>
               <InlineRadio
                   inline
                   data-section={section}
@@ -351,19 +357,22 @@ class ReportInfoView extends React.Component {
                     true,
                     didClickNav
                   )}>
-                <TitleLabel>10. Date Occurred*</TitleLabel>
+                <TitleLabel>Date Occurred*</TitleLabel>
                 <DatePicker
-                    value={input.dateOccurred}
-                    onChange={(e) => {
-                      handleDateInput(
-                        e,
-                        section,
-                        'dateOccurred',
-                        sectionFormatErrors,
-                        this.setInputErrors
+                    disabled={isReviewPage}
+                    onChange={(brokenDTO) => {
+                      const fixedDTO = fixDatePickerIsoDateTime(brokenDTO);
+                      const chosenDate = moment(fixedDTO);
+                      this.setState(
+                        {
+                          dateOccurredValid: chosenDate.isSameOrBefore(moment())
+                        },
+                        () => {
+                          handleDatePickerDateTimeOffset(fixedDTO, section, 'dateOccurred');
+                        }
                       );
                     }}
-                    disabled={isReviewPage} />
+                    value={input.dateOccurred} />
               </FormGroup>
             </Col>
             <Col lg={6}>
@@ -386,16 +395,21 @@ class ReportInfoView extends React.Component {
                     true,
                     didClickNav
                   )}>
-                <TitleLabel>11. Date Reported*</TitleLabel>
+                <TitleLabel>Date Reported*</TitleLabel>
                 <DatePicker
                     value={input.dateReported}
-                    onChange={(e) => {
-                      handleDateInput(
-                        e,
-                        section,
-                        'dateReported',
-                        sectionFormatErrors,
-                        this.setInputErrors
+                    onChange={(brokenDTO) => {
+                      const fixedDTO = fixDatePickerIsoDateTime(brokenDTO);
+                      const chosenDate = moment(fixedDTO);
+                      this.setState(
+                        {
+                          dateReportedValid: (
+                            chosenDate.isSameOrBefore(moment()) && chosenDate.isSameOrAfter(moment(input.dateOccurred))
+                          )
+                        },
+                        () => {
+                          handleDatePickerDateTimeOffset(fixedDTO, section, 'dateReported');
+                        }
                       );
                     }}
                     disabled={isReviewPage} />
@@ -404,11 +418,11 @@ class ReportInfoView extends React.Component {
             <Col lg={6}>
               <TitleLabel>Time Reported</TitleLabel>
               <TimePicker
-                  value={input.timeReported}
+                  disabled={isReviewPage}
                   onChange={(e) => {
                     handleTimeInput(e, section, 'timeReported');
                   }}
-                  disabled={isReviewPage} />
+                  value={input.timeReported} />
             </Col>
           </PaddedRow>
         </ContentWrapper>
@@ -418,8 +432,7 @@ class ReportInfoView extends React.Component {
               <FormNav
                   prevPath={FORM_PATHS.CONSUMER}
                   nextPath={FORM_PATHS.COMPLAINANT}
-                  handlePageChange={this.handlePageChange}
-                  sectionValid={this.state.sectionValid} />
+                  handlePageChange={this.handlePageChange} />
             )
             : null
         }
