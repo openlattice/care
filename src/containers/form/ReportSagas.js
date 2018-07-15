@@ -4,7 +4,7 @@
 
 import Immutable from 'immutable';
 import { Models } from 'lattice';
-import { DataApiActionFactory, SyncApiActionFactory } from 'lattice-sagas';
+import { DataIntegrationApiActionFactory } from 'lattice-sagas';
 import { all, call, put, take, takeEvery } from 'redux-saga/effects';
 
 import {
@@ -25,13 +25,8 @@ const {
 } = Models;
 
 const {
-  acquireSyncTicket,
   createEntityAndAssociationData
-} = DataApiActionFactory;
-
-const {
-  getCurrentSyncId
-} = SyncApiActionFactory;
+} = DataIntegrationApiActionFactory;
 
 const {
   APPEARS_IN_FQN,
@@ -44,7 +39,6 @@ const {
  */
 
 function prepReportEntityData(
-  syncId :string,
   entitySetId :string,
   propertyTypes :List,
   primaryKeys :List,
@@ -92,15 +86,13 @@ function prepReportEntityData(
 
   const key = {
     entityId,
-    entitySetId,
-    syncId
+    entitySetId
   };
 
   return { details, key };
 }
 
 function prepPeopleEntityData(
-  syncId :string,
   entitySetId :string,
   propertyTypes :List,
   consumerInfo :Object
@@ -144,15 +136,13 @@ function prepPeopleEntityData(
   const entityId = btoa(identification);
   const key = {
     entityId,
-    entitySetId,
-    syncId
+    entitySetId
   };
 
   return { details, key };
 }
 
 function prepAppearsInEntityData(
-  syncId :string,
   entitySetId :string,
   propertyTypes :List,
   consumerInfo :Object,
@@ -179,8 +169,7 @@ function prepAppearsInEntityData(
   const entityId = btoa(consumerInfo.identification);
   const key = {
     entityId,
-    entitySetId,
-    syncId
+    entitySetId
   };
 
   return {
@@ -271,93 +260,10 @@ export function* submitReportWorker(action :SequenceAction) :Generator<*, *, *> 
     ).valueSeq();
 
     /*
-     * 1. get sync ids for each EntitySet
-     */
-
-    const appearsInSyncIdAction :SequenceAction = getCurrentSyncId(appearsInESId);
-    const peopleSyncIdAction :SequenceAction = getCurrentSyncId(peopleESId);
-    const reportSyncIdAction :SequenceAction = getCurrentSyncId(reportESId);
-
-    yield all([
-      put(appearsInSyncIdAction),
-      put(peopleSyncIdAction),
-      put(reportSyncIdAction)
-    ]);
-
-    const syncIdResponseActions :{[key :string] :SequenceAction} = yield all({
-      [appearsInESId]: takeReqSeqSuccessFailure(getCurrentSyncId, appearsInSyncIdAction),
-      [peopleESId]: takeReqSeqSuccessFailure(getCurrentSyncId, peopleSyncIdAction),
-      [reportESId]: takeReqSeqSuccessFailure(getCurrentSyncId, reportSyncIdAction)
-    });
-
-    const syncIds :{[key :string] :string} = {};
-    Object.keys(syncIdResponseActions).forEach((entitySetId :string) => {
-      const syncIdResponseAction :SequenceAction = syncIdResponseActions[entitySetId];
-      if (syncIdResponseAction.type === getCurrentSyncId.SUCCESS && syncIdResponseAction.value) {
-        syncIds[entitySetId] = syncIdResponseAction.value;
-      }
-      else {
-        anyErrors = true;
-        errorValue = syncIdResponseAction.value;
-      }
-    });
-
-    if (anyErrors) {
-      throw new Error(errorValue);
-    }
-
-    /*
-     * 2. acquire sync tickets
-     */
-
-    const appearsInSyncTicketAction :SequenceAction = acquireSyncTicket({
-      entitySetId: appearsInESId,
-      syncId: syncIds[appearsInESId]
-    });
-
-    const peopleSyncTicketAction :SequenceAction = acquireSyncTicket({
-      entitySetId: peopleESId,
-      syncId: syncIds[peopleESId]
-    });
-
-    const reportSyncTicketAction :SequenceAction = acquireSyncTicket({
-      entitySetId: reportESId,
-      syncId: syncIds[reportESId]
-    });
-
-    yield all([
-      put(appearsInSyncTicketAction),
-      put(peopleSyncTicketAction),
-      put(reportSyncTicketAction)
-    ]);
-
-    const syncTicketResponseActions :SequenceAction[] = yield all([
-      takeReqSeqSuccessFailure(acquireSyncTicket, appearsInSyncTicketAction),
-      takeReqSeqSuccessFailure(acquireSyncTicket, peopleSyncTicketAction),
-      takeReqSeqSuccessFailure(acquireSyncTicket, reportSyncTicketAction)
-    ]);
-
-    const ticketIds :string[] = [];
-    syncTicketResponseActions.forEach((syncTicketResponseAction :SequenceAction) => {
-      if (syncTicketResponseAction.type === acquireSyncTicket.SUCCESS && syncTicketResponseAction.value) {
-        ticketIds.push(syncTicketResponseAction.value);
-      }
-      else {
-        anyErrors = true;
-        errorValue = syncTicketResponseAction.value;
-      }
-    });
-
-    if (anyErrors) {
-      throw new Error(errorValue);
-    }
-
-    /*
-     * 3. prepare entity data for submission
+     * 1. prepare entity data for submission
      */
 
     const reportData :Object = prepReportEntityData(
-      syncIds[reportESId],
       reportESId,
       reportPropertyTypes,
       reportPrimaryKeys,
@@ -365,14 +271,12 @@ export function* submitReportWorker(action :SequenceAction) :Generator<*, *, *> 
     );
 
     const peopleData :Object = prepPeopleEntityData(
-      syncIds[peopleESId],
       peopleESId,
       peoplePropertyTypes,
       consumerInfo
     );
 
     const appearsInData :Object = prepAppearsInEntityData(
-      syncIds[appearsInESId],
       appearsInESId,
       appearsInPropertyTypes,
       consumerInfo,
@@ -381,13 +285,12 @@ export function* submitReportWorker(action :SequenceAction) :Generator<*, *, *> 
     );
 
     /*
-     * 4. write entity data
+     * 2. write entity data
      */
 
     const createAction :SequenceAction = createEntityAndAssociationData({
       associations: [appearsInData],
-      entities: [reportData, peopleData],
-      syncTickets: ticketIds
+      entities: [reportData, peopleData]
     });
 
     yield put(createAction);
