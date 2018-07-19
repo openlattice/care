@@ -8,7 +8,6 @@ import {
   AppApiActionFactory,
   DataApiActionFactory,
   EntityDataModelApiActionFactory,
-  SyncApiActionFactory
 } from 'lattice-sagas';
 
 import { push } from 'react-router-redux';
@@ -29,7 +28,6 @@ import {
 } from './AppActionFactory';
 
 const { getEntitySetData } = DataApiActionFactory;
-const { getCurrentSyncId } = SyncApiActionFactory;
 const {
   getApp,
   getAppConfigs,
@@ -188,26 +186,11 @@ function* loadHospitalsWorker(action :SequenceAction) :Generator<*, *, *> {
     }
 
     /*
-     * 1. get sync id for the hospitals EntitySet for the selected organization
-     */
-
-    let syncId :string = '';
-    const getSyncIdAction :SequenceAction = getCurrentSyncId(entitySetId);
-    yield put(getSyncIdAction);
-    const getSyncIdResponseAction = yield takeReqSeqSuccessFailure(getCurrentSyncId, getSyncIdAction);
-    if (getSyncIdResponseAction.type === getCurrentSyncId.SUCCESS && getSyncIdResponseAction.value) {
-      syncId = getSyncIdResponseAction.value;
-    }
-    else {
-      throw new Error(getSyncIdResponseAction.value);
-    }
-
-    /*
      * 2. get the actual data in the hospitals EntitySet
      */
 
     let data :Object[];
-    const getDataAction :SequenceAction = getEntitySetData({ entitySetId, syncId });
+    const getDataAction :SequenceAction = getEntitySetData({ entitySetId });
     yield put(getDataAction);
     const getDataResponseAction = yield takeReqSeqSuccessFailure(getEntitySetData, getDataAction);
     if (getDataResponseAction.type === getEntitySetData.SUCCESS && getDataResponseAction.value) {

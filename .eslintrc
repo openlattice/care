@@ -26,7 +26,7 @@
   "rules": {
     "arrow-body-style": ["warn", "as-needed"],
     "brace-style": ["error", "stroustrup"],
-    "comma-dangle": ["error", "never"],
+    "comma-dangle": ["error", "only-multiline"],
     "function-paren-newline": ["error", "consistent"],
     "indent": [
       "error",
@@ -63,7 +63,15 @@
           "Immutable.Map",
           "Immutable.OrderedMap",
           "Immutable.Set",
-          "Immutable.OrderedSet"
+          "Immutable.OrderedSet",
+          "List",
+          "OrderedList",
+          "Map",
+          "OrderedMap",
+          "Set",
+          "OrderedSet",
+          "SortableContainer",
+          "SortableElement"
         ]
       }
     ],
