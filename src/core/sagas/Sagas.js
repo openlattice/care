@@ -6,9 +6,9 @@ import { AuthSagas } from 'lattice-auth';
 import {
   AppApiSagas,
   DataApiSagas,
+  DataIntegrationApiSagas,
   EntityDataModelApiSagas,
   SearchApiSagas,
-  SyncApiSagas
 } from 'lattice-sagas';
 import { fork } from 'redux-saga/effects';
 
@@ -31,13 +31,11 @@ export default function* sagas() :Generator<*, *, *> {
     fork(AppApiSagas.getAppWatcher),
     fork(AppApiSagas.getAppConfigsWatcher),
     fork(AppApiSagas.getAppTypesWatcher),
-    fork(DataApiSagas.acquireSyncTicketWatcher),
-    fork(DataApiSagas.createEntityAndAssociationDataWatcher),
     fork(DataApiSagas.getEntitySetDataWatcher),
+    fork(DataIntegrationApiSagas.createEntityAndAssociationDataWatcher),
     fork(EntityDataModelApiSagas.getEntityDataModelProjectionWatcher),
     fork(SearchApiSagas.searchEntityNeighborsWatcher),
     fork(SearchApiSagas.searchEntitySetDataWatcher),
-    fork(SyncApiSagas.getCurrentSyncIdWatcher),
 
     // Follow-Up Report Sagas
     fork(FollowUpReportSagas.submitFollowUpReportWatcher),
