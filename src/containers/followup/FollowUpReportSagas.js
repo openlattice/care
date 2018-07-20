@@ -6,8 +6,8 @@
 
 import { List, Map } from 'immutable';
 import { Models } from 'lattice';
-import { DataIntegrationApiActionFactory } from 'lattice-sagas';
-import { put, take, takeEvery } from 'redux-saga/effects';
+import { DataIntegrationApiActionFactory, DataIntegrationApiSagas } from 'lattice-sagas';
+import { call, put, takeEvery } from 'redux-saga/effects';
 
 import {
   APP_TYPES_FQNS,
@@ -32,9 +32,8 @@ import {
 
 const { FullyQualifiedName } = Models;
 
-const {
-  createEntityAndAssociationData
-} = DataIntegrationApiActionFactory;
+const { createEntityAndAssociationData } = DataIntegrationApiActionFactory;
+const { createEntityAndAssociationDataWorker } = DataIntegrationApiSagas;
 
 const {
   APPEARS_IN_FQN,
@@ -45,15 +44,6 @@ const {
 /*
  * helpers
  */
-
-function takeReqSeqSuccessFailure(reqseq :RequestSequence, seqAction :SequenceAction) {
-  return take(
-    (anAction :Object) => {
-      return (anAction.type === reqseq.SUCCESS && anAction.id === seqAction.id)
-        || (anAction.type === reqseq.FAILURE && anAction.id === seqAction.id);
-    }
-  );
-}
 
 function prepReportEntityData(
   reportInfo :Object,
@@ -215,7 +205,7 @@ function* submitFollowUpReportWorker(action :SequenceAction) :Generator<*, *, *>
     ).valueSeq();
 
     /*
-     * 3. prepare entity data for submission
+     * 1. prepare entity data for submission
      */
 
     const reportData :Object = prepReportEntityData(
@@ -236,26 +226,22 @@ function* submitFollowUpReportWorker(action :SequenceAction) :Generator<*, *, *>
     );
 
     /*
-     * 4. write entity data
+     * 2. write entity data
      */
 
-    const createAction :SequenceAction = createEntityAndAssociationData({
-      associations: [appearsInData],
-      entities: [reportData],
-    });
-
-    yield put(createAction);
-    const createResponseAction :SequenceAction = yield takeReqSeqSuccessFailure(
-      createEntityAndAssociationData,
-      createAction
+    const response :Response = yield call(
+      createEntityAndAssociationDataWorker,
+      createEntityAndAssociationData({
+        associations: [appearsInData],
+        entities: [reportData],
+      })
     );
 
-    if (createResponseAction.type === createEntityAndAssociationData.SUCCESS) {
-      yield put(submitFollowUpReport.success(action.id));
+    if (response.error) {
+      throw new Error(response.error);
     }
-    else {
-      throw new Error(createResponseAction.value);
-    }
+
+    yield put(submitFollowUpReport.success(action.id));
   }
   catch (error) {
     yield put(submitFollowUpReport.failure(action.id));
