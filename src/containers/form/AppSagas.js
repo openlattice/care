@@ -58,10 +58,16 @@ function* loadAppWorker(action :SequenceAction) :Generator<*, *, *> {
     yield put(loadApp.request(action.id));
 
     const getAppResponse = yield call(getAppWorker, getApp(APP_NAME));
+    if (getAppResponse.error) {
+      throw new Error(getAppResponse.error);
+    }
     const app = getAppResponse.data;
     yield put(loadConfigurations(app.id));
 
     const getAppTypesResponse = yield call(getAppTypesWorker, getAppTypes(app.appTypeIds));
+    if (getAppTypesResponse.error) {
+      throw new Error(getAppTypesResponse.error);
+    }
     const appTypes = Object.values(getAppTypesResponse.data);
     const projection = appTypes.map(appType => ({
       id: appType.entityTypeId,
@@ -76,6 +82,9 @@ function* loadAppWorker(action :SequenceAction) :Generator<*, *, *> {
       getEntityDataModelProjectionWorker,
       getEntityDataModelProjection(projection)
     );
+    if (edmResponse.error) {
+      throw new Error(edmResponse.error);
+    }
     const edm = edmResponse.data;
     yield put(loadApp.success(action.id, { app, appTypes, edm }));
   }
@@ -101,6 +110,9 @@ function* loadAppConfigsWorker(action :SequenceAction) :Generator<*, *, *> {
   try {
     yield put(loadConfigurations.request(action.id));
     const response = yield call(getAppConfigsWorker, getAppConfigs(action.value));
+    if (response.error) {
+      throw new Error(response.error);
+    }
     yield put(loadConfigurations.success(action.id, response.data));
   }
   catch (error) {
