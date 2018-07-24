@@ -4,7 +4,7 @@
 
 import React from 'react';
 
-import Immutable from 'immutable';
+import { Map } from 'immutable';
 import { connect } from 'react-redux';
 import { Redirect, Route, Switch, withRouter } from 'react-router';
 import { bindActionCreators } from 'redux';
@@ -57,8 +57,8 @@ class FollowUpReportManager extends React.Component<Props, State> {
     super(props);
 
     this.state = {
-      selectedConsumer: Immutable.Map(),
-      selectedConsumerNeighbor: Immutable.Map()
+      selectedConsumer: Map(),
+      selectedConsumerNeighbor: Map()
     };
   }
 
@@ -68,8 +68,8 @@ class FollowUpReportManager extends React.Component<Props, State> {
         && nextProps.submissionState === SUBMISSION_STATES.IS_SUBMITTING
     ) {
       this.setState({
-        selectedConsumer: Immutable.Map(),
-        selectedConsumerNeighbor: Immutable.Map()
+        selectedConsumer: Map(),
+        selectedConsumerNeighbor: Map()
       });
     }
   }
@@ -236,7 +236,7 @@ function mapStateToProps(state :Map<*, *>) :Object {
 
   return {
     selectedOrganizationId,
-    app: state.get('app', Immutable.Map()),
+    app: state.get('app', Map()),
     entitySetIds: {
       [APPEARS_IN_FQN.getFullyQualifiedName()]: appearsInEntitySetId,
       [PEOPLE_FQN.getFullyQualifiedName()]: peopleEntitySetId,

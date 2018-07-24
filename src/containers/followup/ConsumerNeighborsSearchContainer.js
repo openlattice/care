@@ -5,9 +5,9 @@
 import React from 'react';
 
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
-import Immutable from 'immutable';
 import styled, { css } from 'styled-components';
 import { faAngleRight } from '@fortawesome/fontawesome-pro-light';
+import { List, Map } from 'immutable';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { bindActionCreators } from 'redux';
@@ -195,7 +195,7 @@ function mapStateToProps(state :Map<*, *>) :Object {
   return {
     bhrEntitySetId,
     isSearching: state.getIn(['search', 'consumerNeighbors', 'isSearching'], false),
-    searchResults: state.getIn(['search', 'consumerNeighbors', 'searchResults'], Immutable.List())
+    searchResults: state.getIn(['search', 'consumerNeighbors', 'searchResults'], List())
   };
 }
 

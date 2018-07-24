@@ -4,10 +4,10 @@
 
 import React from 'react';
 
-import Immutable from 'immutable';
 import isInteger from 'lodash/isInteger';
 import moment from 'moment';
 import parseInt from 'lodash/parseInt';
+import { Map } from 'immutable';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
@@ -281,7 +281,7 @@ class Form extends React.Component<Props, State> {
 function mapStateToProps(state :Map<*, *>) :Object {
 
   return {
-    app: state.get('app', Immutable.Map()),
+    app: state.get('app', Map()),
     submissionState: state.getIn(['report', 'submissionState'])
   };
 }

@@ -1,11 +1,11 @@
 import React from 'react';
 
-import Immutable from 'immutable';
 import PropTypes from 'prop-types';
+import ReactRouterPropTypes from 'react-router-prop-types';
+import { List } from 'immutable';
 import { FormGroup, FormControl, Col } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import ReactRouterPropTypes from 'react-router-prop-types';
 
 import FormNav from './FormNav';
 import {
@@ -40,7 +40,7 @@ class DispositionView extends React.Component {
     section: PropTypes.string.isRequired,
     isInReview: PropTypes.func.isRequired,
     history: ReactRouterPropTypes.history.isRequired,
-    hospitals: PropTypes.instanceOf(Immutable.List).isRequired,
+    hospitals: PropTypes.instanceOf(List).isRequired,
     location: ReactRouterPropTypes.location.isRequired,
     input: PropTypes.shape({
       disposition: PropTypes.array.isRequired,
