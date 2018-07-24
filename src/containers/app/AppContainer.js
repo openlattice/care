@@ -4,8 +4,8 @@
 
 import React from 'react';
 
-import Immutable from 'immutable';
 import styled from 'styled-components';
+import { Map } from 'immutable';
 import { AuthActionFactory, AuthUtils } from 'lattice-auth';
 import { connect } from 'react-redux';
 import { Redirect, Route, Switch } from 'react-router';
@@ -22,6 +22,7 @@ import StyledButton from '../../components/buttons/StyledButton';
 import * as Routes from '../../core/router/Routes';
 import { loadApp, loadHospitals, selectOrganization } from '../form/AppActionFactory';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
+import { isValidUuid } from '../../utils/Utils';
 
 const { HOSPITALS_FQN } = APP_TYPES_FQNS;
 const { logout } = AuthActionFactory;
@@ -93,7 +94,7 @@ type Props = {
     logout :() => void;
     selectOrganization :() => void;
   };
-  app :Immutable.Map;
+  app :Map;
 };
 
 class AppContainer extends React.Component<Props> {
@@ -104,14 +105,26 @@ class AppContainer extends React.Component<Props> {
 
   componentWillReceiveProps(nextProps) {
 
+    const prevOrgId = this.props.app.get('selectedOrganization');
+    const nextOrgId = nextProps.app.get('selectedOrganization');
+
     // check if the selected organization has changed
-    if (this.props.app.get('selectedOrganization') !== nextProps.app.get('selectedOrganization')) {
-      const selectedOrg :string = nextProps.app.get('selectedOrganization');
+    if (prevOrgId !== nextOrgId) {
+
+      const selectedOrg :string = nextOrgId;
       const hospitalsEntitySetId = nextProps.app.getIn(
         [HOSPITALS_FQN.getFullyQualifiedName(), 'entitySetsByOrganization', selectedOrg]
       );
       this.props.actions.loadHospitals(hospitalsEntitySetId);
-      this.props.actions.loadApp(); // this is not entirely necessary
+
+      /*
+       * loadApp() is called once on page load in componentDidMount(), and then only needs to be called again when
+       * switching organizations. to avoid calling it twice on page load, we need to check if "prevOrgId" has been
+       * already set (it is initially set to the empty string in the reducer)
+       */
+      if (isValidUuid(prevOrgId)) {
+        this.props.actions.loadApp(); // this is not entirely necessary
+      }
     }
   }
 
@@ -123,7 +136,7 @@ class AppContainer extends React.Component<Props> {
 
   renderApp = () => {
 
-    const orgs :Map<*, *> = this.props.app.get('organizations', Immutable.Map());
+    const orgs :Map<*, *> = this.props.app.get('organizations', Map());
     const selectedOrg :string = this.props.app.get('selectedOrganization', '');
 
     if (orgs.isEmpty() || !selectedOrg) {
@@ -147,7 +160,7 @@ class AppContainer extends React.Component<Props> {
 
   render() {
 
-    const orgs :Map<*, *> = this.props.app.get('organizations', Immutable.Map());
+    const orgs :Map<*, *> = this.props.app.get('organizations', Map());
     const selectedOrg :string = this.props.app.get('selectedOrganization', '');
 
     const isLoadingApp :boolean = this.props.app.get('isLoadingApp', false);
@@ -174,7 +187,7 @@ class AppContainer extends React.Component<Props> {
               (!orgs.isEmpty() && selectedOrg)
                 ? (
                   <OrganizationButton
-                      organizations={this.props.app.get('organizations', Immutable.Map())}
+                      organizations={this.props.app.get('organizations', Map())}
                       selectedOrganization={this.props.app.get('selectedOrganization', '')}
                       selectOrganization={this.props.actions.selectOrganization} />
                 )
@@ -195,7 +208,7 @@ class AppContainer extends React.Component<Props> {
 function mapStateToProps(state :Map<*, *>) :Object {
 
   return {
-    app: state.get('app', Immutable.Map())
+    app: state.get('app', Map())
   };
 }
 

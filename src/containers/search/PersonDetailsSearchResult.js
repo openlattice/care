@@ -5,11 +5,11 @@
 import React from 'react';
 
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
-import Immutable from 'immutable';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import styled from 'styled-components';
 import { faUserAlt } from '@fortawesome/fontawesome-pro-light';
+import { Map } from 'immutable';
 
 import { DATA_URL_PREFIX, PERSON } from '../../shared/Consts';
 
@@ -154,11 +154,11 @@ const PersonDetailsSearchResult = (props :Props) => {
 };
 
 PersonDetailsSearchResult.defaultProps = {
-  personDetails: Immutable.Map()
+  personDetails: Map()
 };
 
 PersonDetailsSearchResult.propTypes = {
-  personDetails: PropTypes.instanceOf(Immutable.Map)
+  personDetails: PropTypes.instanceOf(Map)
 };
 
 export default PersonDetailsSearchResult;

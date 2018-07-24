@@ -6,12 +6,15 @@
 
 import {
   AppApiActionFactory,
+  AppApiSagas,
   DataApiActionFactory,
+  DataApiSagas,
   EntityDataModelApiActionFactory,
+  EntityDataModelApiSagas,
 } from 'lattice-sagas';
 
 import { push } from 'react-router-redux';
-import { put, take, takeEvery } from 'redux-saga/effects';
+import { call, put, takeEvery } from 'redux-saga/effects';
 
 import { APP_NAME } from '../../shared/Consts';
 import { isValidUuid } from '../../utils/Utils';
@@ -28,54 +31,11 @@ import {
 } from './AppActionFactory';
 
 const { getEntitySetData } = DataApiActionFactory;
-const {
-  getApp,
-  getAppConfigs,
-  getAppTypes
-} = AppApiActionFactory;
-
+const { getEntitySetDataWorker } = DataApiSagas;
 const { getEntityDataModelProjection } = EntityDataModelApiActionFactory;
-
-/*
- * helper functions
- */
-
-function matchGetProjectionResponse(getProjectionAction :SequenceAction) {
-  return (anAction :Object) => {
-    return (anAction.type === getEntityDataModelProjection.SUCCESS && anAction.id === getProjectionAction.id)
-      || (anAction.type === getEntityDataModelProjection.FAILURE && anAction.id === getProjectionAction.id);
-  };
-}
-
-function matchGetAppResponse(getAppAction :SequenceAction) {
-  return (anAction :Object) => {
-    return (anAction.type === getApp.SUCCESS && anAction.id === getAppAction.id)
-      || (anAction.type === getApp.FAILURE && anAction.id === getAppAction.id);
-  };
-}
-
-function matchGetAppTypesResponse(getAppTypesAction :SequenceAction) {
-  return (anAction :Object) => {
-    return (anAction.type === getAppTypes.SUCCESS && anAction.id === getAppTypesAction.id)
-      || (anAction.type === getAppTypes.FAILURE && anAction.id === getAppTypesAction.id);
-  };
-}
-
-function matchGetAppConfigsResponse(getAppConfigsAction :SequenceAction) {
-  return (anAction :Object) => {
-    return (anAction.type === getAppConfigs.SUCCESS && anAction.id === getAppConfigsAction.id)
-      || (anAction.type === getAppConfigs.FAILURE && anAction.id === getAppConfigsAction.id);
-  };
-}
-
-function takeReqSeqSuccessFailure(reqseq :RequestSequence, seqAction :SequenceAction) {
-  return take(
-    (anAction :Object) => {
-      return (anAction.type === reqseq.SUCCESS && anAction.id === seqAction.id)
-        || (anAction.type === reqseq.FAILURE && anAction.id === seqAction.id);
-    }
-  );
-}
+const { getEntityDataModelProjectionWorker } = EntityDataModelApiSagas;
+const { getApp, getAppConfigs, getAppTypes } = AppApiActionFactory;
+const { getAppWorker, getAppConfigsWorker, getAppTypesWorker } = AppApiSagas;
 
 /*
  *
@@ -97,34 +57,35 @@ function* loadAppWorker(action :SequenceAction) :Generator<*, *, *> {
   try {
     yield put(loadApp.request(action.id));
 
-    const getAppAction = getApp(APP_NAME);
-    yield put(getAppAction);
-    const getAppResponseAction = yield take(matchGetAppResponse(getAppAction));
-
-    const app = getAppResponseAction.value;
+    const getAppResponse = yield call(getAppWorker, getApp(APP_NAME));
+    if (getAppResponse.error) {
+      throw new Error(getAppResponse.error);
+    }
+    const app = getAppResponse.data;
     yield put(loadConfigurations(app.id));
 
-    const getAppTypesAction = getAppTypes(app.appTypeIds);
-    yield put(getAppTypesAction);
-    const appTypesResponseAction = yield take(matchGetAppTypesResponse(getAppTypesAction));
+    const getAppTypesResponse = yield call(getAppTypesWorker, getAppTypes(app.appTypeIds));
+    if (getAppTypesResponse.error) {
+      throw new Error(getAppTypesResponse.error);
+    }
+    const appTypes = Object.values(getAppTypesResponse.data);
+    const projection = appTypes.map(appType => ({
+      id: appType.entityTypeId,
+      include: [
+        'EntityType',
+        'PropertyTypeInEntitySet'
+      ],
+      type: 'EntityType'
+    }));
 
-    const appTypes = Object.values(appTypesResponseAction.value);
-    const projection = appTypes.map((appType) => {
-      return {
-        id: appType.entityTypeId,
-        include: [
-          'EntityType',
-          'PropertyTypeInEntitySet'
-        ],
-        type: 'EntityType'
-      };
-    });
-
-    const getProjectionAction :SequenceAction = getEntityDataModelProjection(projection);
-    yield put(getProjectionAction);
-    const getProjectionResponseAction = yield take(matchGetProjectionResponse(getProjectionAction));
-
-    const edm = getProjectionResponseAction.value;
+    const edmResponse = yield call(
+      getEntityDataModelProjectionWorker,
+      getEntityDataModelProjection(projection)
+    );
+    if (edmResponse.error) {
+      throw new Error(edmResponse.error);
+    }
+    const edm = edmResponse.data;
     yield put(loadApp.success(action.id, { app, appTypes, edm }));
   }
   catch (error) {
@@ -148,15 +109,11 @@ function* loadAppConfigsWorker(action :SequenceAction) :Generator<*, *, *> {
 
   try {
     yield put(loadConfigurations.request(action.id));
-
-    const appId = action.value;
-
-    const getAppConfigsAction = getAppConfigs(appId);
-    yield put(getAppConfigsAction);
-    const getAppConfigsResponseAction = yield take(matchGetAppConfigsResponse(getAppConfigsAction));
-    const configurations = getAppConfigsResponseAction.value;
-
-    yield put(loadConfigurations.success(action.id, configurations));
+    const response = yield call(getAppConfigsWorker, getAppConfigs(action.value));
+    if (response.error) {
+      throw new Error(response.error);
+    }
+    yield put(loadConfigurations.success(action.id, response.data));
   }
   catch (error) {
     yield put(loadConfigurations.failure(action.id, error));
@@ -185,22 +142,11 @@ function* loadHospitalsWorker(action :SequenceAction) :Generator<*, *, *> {
       throw new Error(`hospitals EntitySet id is not a valid UUID: ${entitySetId}`);
     }
 
-    /*
-     * 2. get the actual data in the hospitals EntitySet
-     */
-
-    let data :Object[];
-    const getDataAction :SequenceAction = getEntitySetData({ entitySetId });
-    yield put(getDataAction);
-    const getDataResponseAction = yield takeReqSeqSuccessFailure(getEntitySetData, getDataAction);
-    if (getDataResponseAction.type === getEntitySetData.SUCCESS && getDataResponseAction.value) {
-      data = getDataResponseAction.value;
+    const response = yield call(getEntitySetDataWorker, getEntitySetData({ entitySetId }));
+    if (response.error) {
+      throw new Error(response.error);
     }
-    else {
-      throw new Error(getDataResponseAction.value);
-    }
-
-    yield put(loadHospitals.success(action.id, data));
+    yield put(loadHospitals.success(action.id, response.data));
   }
   catch (error) {
     yield put(loadHospitals.failure(action.id, error));

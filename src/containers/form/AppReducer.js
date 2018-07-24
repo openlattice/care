@@ -2,7 +2,7 @@
  * @flow
  */
 
-import Immutable from 'immutable';
+import { List, Map, fromJS } from 'immutable';
 import has from 'lodash/has';
 
 import { APP_TYPES_FQNS } from '../../shared/Consts';
@@ -26,13 +26,13 @@ const followUpFqn :string = FOLLOW_UP_REPORT_FQN.getFullyQualifiedName();
 const hospitalsFqn :string = HOSPITALS_FQN.getFullyQualifiedName();
 const peopleFqn :string = PEOPLE_FQN.getFullyQualifiedName();
 
-const APP_CONFIG_INITIAL_STATE :Map<*, *> = Immutable.fromJS({
-  entitySetsByOrganization: Immutable.Map(),
-  primaryKeys: Immutable.List(),
-  propertyTypes: Immutable.Map()
+const APP_CONFIG_INITIAL_STATE :Map<*, *> = fromJS({
+  entitySetsByOrganization: Map(),
+  primaryKeys: List(),
+  propertyTypes: Map()
 });
 
-const INITIAL_STATE :Map<*, *> = Immutable.fromJS({
+const INITIAL_STATE :Map<*, *> = fromJS({
   [appearsInFqn]: APP_CONFIG_INITIAL_STATE,
   [bhrFqn]: APP_CONFIG_INITIAL_STATE,
   [followUpFqn]: APP_CONFIG_INITIAL_STATE,
@@ -40,9 +40,9 @@ const INITIAL_STATE :Map<*, *> = Immutable.fromJS({
   [peopleFqn]: APP_CONFIG_INITIAL_STATE,
   isLoadingApp: false,
   isLoadingConfigurations: false,
-  app: Immutable.Map(),
-  appTypes: Immutable.Map(),
-  organizations: Immutable.Map(),
+  app: Map(),
+  appTypes: Map(),
+  organizations: Map(),
   selectedOrganization: ''
 });
 
@@ -73,23 +73,23 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
             const properties = getProperties(appType.entityTypeId);
             const primaryKeys = edm.entityTypes[appType.entityTypeId].key;
             newState = newState
-              .setIn([fqn, 'propertyTypes'], Immutable.fromJS(properties))
-              .setIn([fqn, 'primaryKeys'], Immutable.fromJS(primaryKeys));
+              .setIn([fqn, 'propertyTypes'], fromJS(properties))
+              .setIn([fqn, 'primaryKeys'], fromJS(primaryKeys));
           });
           return newState;
         },
         FAILURE: () => {
           return state
-            .setIn([appearsInFqn, 'propertyTypes'], Immutable.Map())
-            .setIn([appearsInFqn, 'primaryKeys'], Immutable.List())
-            .setIn([bhrFqn, 'propertyTypes'], Immutable.Map())
-            .setIn([bhrFqn, 'primaryKeys'], Immutable.List())
-            .setIn([followUpFqn, 'propertyTypes'], Immutable.Map())
-            .setIn([followUpFqn, 'primaryKeys'], Immutable.List())
-            .setIn([hospitalsFqn, 'propertyTypes'], Immutable.Map())
-            .setIn([hospitalsFqn, 'primaryKeys'], Immutable.List())
-            .setIn([peopleFqn, 'propertyTypes'], Immutable.Map())
-            .setIn([peopleFqn, 'primaryKeys'], Immutable.List());
+            .setIn([appearsInFqn, 'propertyTypes'], Map())
+            .setIn([appearsInFqn, 'primaryKeys'], List())
+            .setIn([bhrFqn, 'propertyTypes'], Map())
+            .setIn([bhrFqn, 'primaryKeys'], List())
+            .setIn([followUpFqn, 'propertyTypes'], Map())
+            .setIn([followUpFqn, 'primaryKeys'], List())
+            .setIn([hospitalsFqn, 'propertyTypes'], Map())
+            .setIn([hospitalsFqn, 'primaryKeys'], List())
+            .setIn([peopleFqn, 'propertyTypes'], Map())
+            .setIn([peopleFqn, 'primaryKeys'], List());
         },
         FINALLY: () => {
           return state.set('isLoadingApp', false);
@@ -137,17 +137,17 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
           }
 
           return newState
-            .set('organizations', Immutable.fromJS(organizations))
+            .set('organizations', fromJS(organizations))
             .set('selectedOrganization', selectedOrganization);
         },
         FAILURE: () => {
           return state
-            .setIn([appearsInFqn, 'entitySetsByOrganization'], Immutable.Map())
-            .setIn([bhrFqn, 'entitySetsByOrganization'], Immutable.Map())
-            .setIn([followUpFqn, 'entitySetsByOrganization'], Immutable.Map())
-            .setIn([hospitalsFqn, 'entitySetsByOrganization'], Immutable.Map())
-            .setIn([peopleFqn, 'entitySetsByOrganization'], Immutable.Map())
-            .set('organizations', Immutable.Map())
+            .setIn([appearsInFqn, 'entitySetsByOrganization'], Map())
+            .setIn([bhrFqn, 'entitySetsByOrganization'], Map())
+            .setIn([followUpFqn, 'entitySetsByOrganization'], Map())
+            .setIn([hospitalsFqn, 'entitySetsByOrganization'], Map())
+            .setIn([peopleFqn, 'entitySetsByOrganization'], Map())
+            .set('organizations', Map())
             .set('selectedOrganization', '');
         },
         FINALLY: () => {

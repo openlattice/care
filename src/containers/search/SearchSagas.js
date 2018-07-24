@@ -4,8 +4,8 @@
 
 /* eslint-disable no-use-before-define */
 
-import { SearchApiActionFactory } from 'lattice-sagas';
-import { call, put, take, takeEvery } from 'redux-saga/effects';
+import { SearchApiActionFactory, SearchApiSagas } from 'lattice-sagas';
+import { call, put, takeEvery } from 'redux-saga/effects';
 
 import {
   SEARCH_CONSUMER_NEIGHBORS,
@@ -16,26 +16,13 @@ import {
 
 const {
   searchEntityNeighbors,
-  searchEntitySetData
+  searchEntitySetData,
 } = SearchApiActionFactory;
 
-/*
- * helper functions
- */
-
-function matchSearchEntityNeighborsResponse(action :SequenceAction) {
-  return (anAction :Object) => {
-    return (anAction.type === searchEntityNeighbors.SUCCESS && anAction.id === action.id)
-      || (anAction.type === searchEntityNeighbors.FAILURE && anAction.id === action.id);
-  };
-}
-
-function matchSearchEntitySetDataResponse(action :SequenceAction) {
-  return (anAction :Object) => {
-    return (anAction.type === searchEntitySetData.SUCCESS && anAction.id === action.id)
-      || (anAction.type === searchEntitySetData.FAILURE && anAction.id === action.id);
-  };
-}
+const {
+  searchEntityNeighborsWorker,
+  searchEntitySetDataWorker,
+} = SearchApiSagas;
 
 /*
  * searchConsumerNeighbors sagas
@@ -51,23 +38,18 @@ function* searchConsumerNeighborsWorker(action :SequenceAction) :Generator<*, *,
   try {
     yield put(searchConsumerNeighbors.request(action.id, action.value));
 
-    const searchEntityNeighborsAction :SequenceAction = searchEntityNeighbors({
-      entitySetId: action.value.entitySetId,
-      entityId: action.value.entityId
-    });
-
-    yield put(searchEntityNeighborsAction);
-
-    const searchEntityNeighborsResponseAction = yield take(
-      matchSearchEntityNeighborsResponse(searchEntityNeighborsAction)
+    const response :Response = yield call(
+      searchEntityNeighborsWorker,
+      searchEntityNeighbors({
+        entitySetId: action.value.entitySetId,
+        entityId: action.value.entityId,
+      })
     );
 
-    if (searchEntityNeighborsResponseAction.type === searchEntityNeighbors.SUCCESS) {
-      yield put(searchConsumerNeighbors.success(action.id, searchEntityNeighborsResponseAction.value));
+    if (response.error) {
+      yield put(searchConsumerNeighbors.failure(action.id, response.error));
     }
-    else {
-      yield put(searchConsumerNeighbors.failure(action.id, searchEntityNeighborsResponseAction.value));
-    }
+    yield put(searchConsumerNeighbors.success(action.id, response.data));
   }
   catch (error) {
     yield put(searchConsumerNeighbors.failure(action.id, error));
@@ -91,24 +73,22 @@ function* searchConsumersWorker(action :SequenceAction) :Generator<*, *, *> {
   try {
     yield put(searchConsumers.request(action.id, action.value));
 
-    // TODO: need paging
-    const searchEntitySetDataAction :SequenceAction = searchEntitySetData({
-      entitySetId: action.value.entitySetId,
-      searchOptions: {
-        searchTerm: action.value.query,
-        start: 0,
-        maxHits: 100
-      }
-    });
-    yield put(searchEntitySetDataAction);
+    const response :Response = yield call(
+      searchEntitySetDataWorker,
+      searchEntitySetData({
+        entitySetId: action.value.entitySetId,
+        searchOptions: {
+          searchTerm: action.value.query,
+          start: 0,
+          maxHits: 100
+        },
+      })
+    );
 
-    const searchEntitySetDataResponseAction = yield take(matchSearchEntitySetDataResponse(searchEntitySetDataAction));
-    if (searchEntitySetDataResponseAction.type === searchEntitySetData.SUCCESS) {
-      yield put(searchConsumers.success(action.id, searchEntitySetDataResponseAction.value));
+    if (response.error) {
+      yield put(searchConsumers.failure(action.id, response.error));
     }
-    else {
-      yield put(searchConsumers.failure(action.id, searchEntitySetDataResponseAction.value));
-    }
+    yield put(searchConsumers.success(action.id, response.data));
   }
   catch (error) {
     yield put(searchConsumers.failure(action.id, error));
