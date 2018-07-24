@@ -2,7 +2,7 @@
  * @flow
  */
 
-import Immutable from 'immutable';
+import { Map } from 'immutable';
 import createSagaMiddleware from 'redux-saga';
 
 import { routerMiddleware } from 'react-router-redux';
@@ -35,7 +35,7 @@ export default function initializeReduxStore(routerHistory :any) :Object {
 
   const reduxStore = createStore(
     reduxReducer(),
-    Immutable.Map(),
+    Map(),
     composeEnhancers(...reduxEnhancers)
   );
 

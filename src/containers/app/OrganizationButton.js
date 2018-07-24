@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Immutable from 'immutable';
 import styled from 'styled-components';
+import { Map } from 'immutable';
 
 import { DropdownButton, MenuItem } from 'react-bootstrap';
 
@@ -40,7 +40,7 @@ const OrganizationButton = ({ selectedOrganization, organizations, selectOrganiz
 
 OrganizationButton.propTypes = {
   selectedOrganization: PropTypes.string.isRequired,
-  organizations: PropTypes.instanceOf(Immutable.Map).isRequired,
+  organizations: PropTypes.instanceOf(Map).isRequired,
   selectOrganization: PropTypes.func.isRequired
 };
 

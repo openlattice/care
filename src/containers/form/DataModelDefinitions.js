@@ -2,8 +2,8 @@
  * @flow
  */
 
-import Immutable from 'immutable';
 import randomUUID from 'uuid/v4';
+import { fromJS } from 'immutable';
 
 /*
  * Complainant Information Section
@@ -16,7 +16,7 @@ type ComplainantInfo = {
   complainantPhone :string;
 };
 
-const COMPLAINANT_INFO_INITIAL_STATE :Map<string, *> = Immutable.fromJS({
+const COMPLAINANT_INFO_INITIAL_STATE :Map<string, *> = fromJS({
   complainantAddress: '',
   complainantConsumerRelationship: '',
   complainantName: '',
@@ -77,7 +77,7 @@ type ConsumerInfo = {
   takingMedication :string;
 };
 
-const CONSUMER_INFO_INITIAL_STATE :Map<string, *> = Immutable.fromJS({
+const CONSUMER_INFO_INITIAL_STATE :Map<string, *> = fromJS({
   address: '',
   age: '',
   armedWeaponType: '',
@@ -152,7 +152,7 @@ type DispositionInfo = {
   voluntaryactionindicator ? :boolean;
 };
 
-const DISPOSITION_INFO_INITIAL_STATE :Map<string, *> = Immutable.fromJS({
+const DISPOSITION_INFO_INITIAL_STATE :Map<string, *> = fromJS({
   deescalationscale: 1,
   deescalationTechniques: [],
   deescalationTechniquesOther: '',
@@ -185,7 +185,7 @@ type OfficerInfo = {
   officerSeqID :string;
 };
 
-const OFFICER_INFO_INITIAL_STATE :Map<string, *> = Immutable.fromJS({
+const OFFICER_INFO_INITIAL_STATE :Map<string, *> = fromJS({
   officerCertification: [],
   officerInjuries: '',
   officerName: '',
@@ -217,7 +217,7 @@ type ReportInfo = {
   timeReported :string;
 };
 
-const REPORT_INFO_INITIAL_STATE :Map<string, *> = Immutable.fromJS({
+const REPORT_INFO_INITIAL_STATE :Map<string, *> = fromJS({
   cadNumber: '',
   companionOffenseReport: false,
   complaintNumber: '',

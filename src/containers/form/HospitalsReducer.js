@@ -2,11 +2,11 @@
  * @flow
  */
 
-import Immutable from 'immutable';
+import { List, Map, fromJS } from 'immutable';
 
 import { loadHospitals } from './AppActionFactory';
 
-const INITIAL_STATE :Map<*, *> = Immutable.List();
+const INITIAL_STATE :Map<*, *> = List();
 
 export default function hospitalsReducer(state :Map<*, *> = INITIAL_STATE, action :Object) {
 
@@ -14,7 +14,7 @@ export default function hospitalsReducer(state :Map<*, *> = INITIAL_STATE, actio
 
     case loadHospitals.case(action.type): {
       return loadHospitals.reducer(state, action, {
-        SUCCESS: () => Immutable.fromJS(action.value),
+        SUCCESS: () => fromJS(action.value),
         FAILURE: () => INITIAL_STATE
       });
     }
