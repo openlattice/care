@@ -4,9 +4,9 @@
 
 import React from 'react';
 
-import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import styled from 'styled-components';
-import { faAngleRight, faFileAlt } from '@fortawesome/fontawesome-pro-light';
+import { faAngleRight, faFileAlt } from '@fortawesome/pro-light-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { NavLink } from 'react-router-dom';

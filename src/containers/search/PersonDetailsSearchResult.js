@@ -4,11 +4,11 @@
 
 import React from 'react';
 
-import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import styled from 'styled-components';
-import { faUserAlt } from '@fortawesome/fontawesome-pro-light';
+import { faUserAlt } from '@fortawesome/pro-light-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Map } from 'immutable';
 
 import { DATA_URL_PREFIX, PERSON } from '../../shared/Consts';
