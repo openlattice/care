@@ -6,10 +6,10 @@
 
 import React from 'react';
 
-import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import styled, { css } from 'styled-components';
-import { faSyncAlt } from '@fortawesome/fontawesome-pro-regular';
-import { faCamera } from '@fortawesome/fontawesome-pro-solid';
+import { faSyncAlt } from '@fortawesome/pro-regular-svg-icons';
+import { faCamera } from '@fortawesome/pro-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 /*
  * constants
