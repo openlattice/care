@@ -118,7 +118,10 @@ class AppContainer extends React.Component<Props> {
       const hospitalsEntitySetId = nextProps.app.getIn(
         [HOSPITALS_FQN.getFullyQualifiedName(), 'entitySetsByOrganization', selectedOrg]
       );
-      actions.loadHospitals(hospitalsEntitySetId);
+      actions.loadHospitals({
+        entitySetId: hospitalsEntitySetId,
+        organizationId: selectedOrg,
+      });
 
       /*
        * loadApp() is called once on page load in componentDidMount(), and then only needs to be called again when
