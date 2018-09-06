@@ -17,7 +17,8 @@ import { push } from 'react-router-redux';
 import { call, put, takeEvery } from 'redux-saga/effects';
 
 import { APP_NAME } from '../../shared/Consts';
-import { isValidUuid } from '../../utils/Utils';
+import { ERR_ACTION_VALUE_NOT_DEFINED } from '../../utils/Errors';
+import { isBaltimoreOrg } from '../../utils/Whitelist';
 import * as Routes from '../../core/router/Routes';
 
 import {
@@ -36,6 +37,8 @@ const { getEntityDataModelProjection } = EntityDataModelApiActionFactory;
 const { getEntityDataModelProjectionWorker } = EntityDataModelApiSagas;
 const { getApp, getAppConfigs, getAppTypes } = AppApiActionFactory;
 const { getAppWorker, getAppConfigsWorker, getAppTypesWorker } = AppApiSagas;
+
+const BALTIMORE_HOSPITALS_ES_ID :string = '1526c664-4868-468f-9255-307aed65a7ed';
 
 /*
  *
@@ -134,12 +137,21 @@ function* loadHospitalsWatcher() :Generator<*, *, *> {
 
 function* loadHospitalsWorker(action :SequenceAction) :Generator<*, *, *> {
 
+  const { id, value } = action;
+  if (value === null || value === undefined) {
+    yield put(loadHospitals.failure(id, ERR_ACTION_VALUE_NOT_DEFINED));
+    return;
+  }
+
+  let entitySetId :string = value.entitySetId;
+  const organizationId :string = value.organizationId;
+
   try {
     yield put(loadHospitals.request(action.id));
 
-    const entitySetId :string = (action.value :any);
-    if (!entitySetId || !isValidUuid(entitySetId)) {
-      throw new Error(`hospitals EntitySet id is not a valid UUID: ${entitySetId}`);
+    if (isBaltimoreOrg(organizationId)) {
+      // use "Baltimore Police Department Hospitals" EntitySet
+      entitySetId = BALTIMORE_HOSPITALS_ES_ID;
     }
 
     const response = yield call(getEntitySetDataWorker, getEntitySetData({ entitySetId }));
