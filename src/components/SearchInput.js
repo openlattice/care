@@ -4,10 +4,9 @@
 
 import React from 'react';
 
-import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import styled from 'styled-components';
-
-import { faSearch } from '@fortawesome/fontawesome-pro-light';
+import { faSearch } from '@fortawesome/pro-light-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const SearchInputWrapper = styled.div`
   color: #113355;
