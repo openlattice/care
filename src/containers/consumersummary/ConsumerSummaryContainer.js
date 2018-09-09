@@ -5,6 +5,7 @@ import { Map } from 'immutable';
 
 
 import ConsumerSearchContainer from '../followup/ConsumerSearchContainer';
+import ConsumerNeighborsSearchContainer from './ConsumerNeighborsSearchContainer';
 import ConsumerReportList from './ConsumerReportList';
 import ReviewView from '../../components/ReviewView';
 import {
@@ -77,8 +78,15 @@ class ConsumerSummaryContainer extends React.Component {
   renderConsumerReportList = () => {
     // pass report info
     const dummyReports = ['one', 'two', 'three'];
+    // return (
+    //   <ConsumerReportList reports={dummyReports} handleOnSelectReport={this.handleOnSelectReport} />
+    // );
+
     return (
-      <ConsumerReportList reports={dummyReports} handleOnSelectReport={this.handleOnSelectReport} />
+      <ConsumerNeighborsSearchContainer
+          consumer={this.state.selectedConsumer}
+          peopleEntitySetId={this.props.entitySetIds[PEOPLE_FQN.getFullyQualifiedName()]}
+          onSelectSearchResult={this.handleOnSelectReport} />
     );
   }
 
