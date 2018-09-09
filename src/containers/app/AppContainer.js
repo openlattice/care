@@ -16,6 +16,7 @@ import OpenLatticeLogo from '../../assets/images/logo_and_name.png';
 import FollowUpReportManager from '../followup/FollowUpReportManager';
 import FormContainer from '../form/FormContainer';
 import HomeContainer from '../home/HomeContainer';
+import ConsumerSummaryContainer from '../consumersummary/ConsumerSummaryContainer';
 import Loading from '../../components/Loading';
 import OrganizationButton from './OrganizationButton';
 import StyledButton from '../../components/buttons/StyledButton';
@@ -153,6 +154,7 @@ class AppContainer extends React.Component<Props> {
         <Route exact strict path={Routes.HOME} component={HomeContainer} />
         <Route path={Routes.BHR} component={FormContainer} />
         <Route path={Routes.FOLLOW_UP_PATH} component={FollowUpReportManager} />
+        <Route path={Routes.CONSUMER_SUMMARY} component={ConsumerSummaryContainer} />
         <Redirect to={Routes.HOME} />
       </Switch>
     );
