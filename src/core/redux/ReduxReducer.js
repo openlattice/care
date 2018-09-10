@@ -10,6 +10,7 @@ import bhrReducer from '../../containers/form/ReportReducer';
 import followupReducer from '../../containers/followup/FollowUpReportReducer';
 import hospitalsReducer from '../../containers/form/HospitalsReducer';
 import searchReducer from '../../containers/search/SearchReducer';
+import consumerSummaryReducer from '../../containers/consumersummary/ConsumerSummaryReducer';
 
 export default function reduxReducer() {
 
@@ -19,6 +20,7 @@ export default function reduxReducer() {
     followUpReport: followupReducer,
     hospitals: hospitalsReducer,
     report: bhrReducer,
-    search: searchReducer
+    search: searchReducer,
+    consumerSummary: consumerSummaryReducer
   });
 }
