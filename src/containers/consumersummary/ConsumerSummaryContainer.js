@@ -7,7 +7,7 @@ import { Map } from 'immutable';
 import ConsumerSearchContainer from '../followup/ConsumerSearchContainer';
 import ConsumerNeighborsSearchContainer from './ConsumerNeighborsSearchContainer';
 import ConsumerReportList from './ConsumerReportList';
-import ReviewView from '../../components/ReviewView';
+import BHRSummaryContainer from './BHRSummaryContainer';
 import {
   PAGE_1,
   PAGE_2,
@@ -16,19 +16,20 @@ import {
 import StyledCard from '../../components/cards/StyledCard';
 import { ContainerInnerWrapper, ContainerOuterWrapper } from '../../shared/Layout';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
+import { getBHRReport } from './ConsumerSummaryActionFactory';
+import { REQUEST_STATUSES } from './ConsumerSummaryReducer';
 
 const {
   APPEARS_IN_FQN,
-  FOLLOW_UP_REPORT_FQN,
+  BEHAVIORAL_HEALTH_REPORT_FQN,
   PEOPLE_FQN
 } = APP_TYPES_FQNS;
 
-// props needed: entitysetIds, handleOnSelectConsumerSearchResult
+
 class ConsumerSummaryContainer extends React.Component {
   constructor(props) {
     super(props);
 
-    // why maps?
     this.state = {
       selectedConsumer: Map(),
       selectedReport: Map()
@@ -36,9 +37,6 @@ class ConsumerSummaryContainer extends React.Component {
   }
 
   handleOnSelectConsumerSearchResult = (searchResult) => {
-    // first get reports for selected consumer, then set state and go to page 2
-    // ...
-
     this.setState(
       {
         selectedConsumer: searchResult
@@ -50,9 +48,6 @@ class ConsumerSummaryContainer extends React.Component {
   }
 
   handleOnSelectReport = (report) => {
-    // first get report form values, then set state and go to page 3
-    // ...
-
     this.setState(
       {
         selectedReport: report
@@ -75,33 +70,17 @@ class ConsumerSummaryContainer extends React.Component {
     </ContainerOuterWrapper>
   )
 
-  renderConsumerReportList = () => {
-    // pass report info
-    const dummyReports = ['one', 'two', 'three'];
-    // return (
-    //   <ConsumerReportList reports={dummyReports} handleOnSelectReport={this.handleOnSelectReport} />
-    // );
-
-    return (
-      <ConsumerNeighborsSearchContainer
-          consumer={this.state.selectedConsumer}
-          peopleEntitySetId={this.props.entitySetIds[PEOPLE_FQN.getFullyQualifiedName()]}
-          onSelectSearchResult={this.handleOnSelectReport} />
-    );
-  }
+  renderConsumerReportList = () => (
+    <ConsumerNeighborsSearchContainer
+        consumer={this.state.selectedConsumer}
+        peopleEntitySetId={this.props.entitySetIds[PEOPLE_FQN.getFullyQualifiedName()]}
+        onSelectSearchResult={this.handleOnSelectReport} />
+  )
 
   renderReportSummary = () => {
-    // given report values, render summary view.
 
     return (
-      <ReviewView
-          complainantInfo={report.complainantInfo}
-          consumerInfo={report.consumerInfo}
-          dispositionInfo={report.dispositionInfo}
-          officerInfo={report.officerInfo}
-          reportInfo={report.reportInfo}
-          selectedOrganizationId={this.props.selectedOrganizationId}
-          isInReview={true} />
+      <BHRSummaryContainer selectedReport={this.state.selectedReport} />
     );
   }
 
@@ -139,9 +118,19 @@ function mapStateToProps(state :Map<*, *>) :Object {
 
   const reportEntitySetId :string = state.getIn([
     'app',
-    FOLLOW_UP_REPORT_FQN.getFullyQualifiedName(),
+    BEHAVIORAL_HEALTH_REPORT_FQN.getFullyQualifiedName(),
     'entitySetsByOrganization',
     selectedOrganizationId
+  ]);
+
+  const submissionState :number = state.getIn([
+    'consumerSummary',
+    'submissionState'
+  ]);
+
+  const formData = state.getIn([
+    'consumerSummary',
+    'formData'
   ]);
 
   return {
@@ -150,7 +139,7 @@ function mapStateToProps(state :Map<*, *>) :Object {
     entitySetIds: {
       [APPEARS_IN_FQN.getFullyQualifiedName()]: appearsInEntitySetId,
       [PEOPLE_FQN.getFullyQualifiedName()]: peopleEntitySetId,
-      [FOLLOW_UP_REPORT_FQN.getFullyQualifiedName()]: reportEntitySetId
+      [BEHAVIORAL_HEALTH_REPORT_FQN.getFullyQualifiedName()]: reportEntitySetId
     }
   };
 }
