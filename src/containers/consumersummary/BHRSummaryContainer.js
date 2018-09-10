@@ -16,7 +16,7 @@ const {
 
 class bhrFormSummaryContainer extends React.Component {
   componentWillMount() {
-    console.log('selectedReport:', this.props.selectedReport);
+    console.log('selectedReport:', this.props.selectedReport.toJS());
     this.props.actions.getBHRReport({
       entitySetId: this.props.bhrEntitySetId,
       entityId: this.props.selectedReport.get('neighborId')
@@ -59,7 +59,7 @@ function mapStateToProps(state :Map<*, *>) :Object {
     'formData'
   ], new Map());
 
-  console.log('FORM DATA in mapStateToProps:', formData.toJS());
+  console.log('FORM DATA:', formData.toJS());
 
   return {
     bhrEntitySetId,

@@ -16,7 +16,7 @@ const {
 export function* getBHRReportWorker(action :SequenceAction) :Generator<*, *, *> {
   try {
     yield put(getBHRReport.request(action.id));
-    console.log('ACTION:', action);
+
     const {
       entitySetId,
       entityId
@@ -29,8 +29,6 @@ export function* getBHRReportWorker(action :SequenceAction) :Generator<*, *, *> 
         entityId
       })
     );
-
-    console.log('response:', response);
 
     if (response.error) {
       throw new Error(response.error);
@@ -47,7 +45,5 @@ export function* getBHRReportWorker(action :SequenceAction) :Generator<*, *, *> 
 }
 
 export function* getBHRReportWatcher() :Generator<*, *, *> {
-console.log('inside watcher');
   yield takeEvery(GET_BHR_REPORT, getBHRReportWorker);
-  console.log('completed watcher');
 }

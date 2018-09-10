@@ -22,14 +22,12 @@
    switch (action.type) {
 
      case getBHRReport.case(action.type): {
-    console.log('action type:', action.type);
 
        return getBHRReport.reducer(state, action, {
          REQUEST: () => {
            return state.set('submissionState', REQUEST_STATUSES.IS_REQUESTING);
          },
          SUCCESS: () => {
-            console.log('success action:', action);
            return state
               .set('submissionState', REQUEST_STATUSES.REQUEST_SUCCESS)
               .set('formData', fromJS(action.value[0]))
