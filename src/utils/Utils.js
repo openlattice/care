@@ -4,6 +4,7 @@
 
 import Lattice from 'lattice';
 import LatticeAuth from 'lattice-auth';
+import isString from 'lodash/isString';
 import isUUID from 'validator/lib/isUUID';
 import parseInt from 'lodash/parseInt';
 import validator from 'validator';
@@ -15,7 +16,7 @@ const { AuthUtils } = LatticeAuth;
 
 export function isValidUuid(value :any) :boolean {
 
-  return isUUID(value);
+  return isString(value) && isUUID(value);
 }
 
 export function randomId() :string {

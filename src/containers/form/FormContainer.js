@@ -17,7 +17,6 @@ import type { RouterHistory } from 'react-router';
 import FormView from '../../components/FormView';
 import { validateOnInput } from '../../shared/Validation';
 import { fixDatePickerIsoDateTime, formatTimePickerSeconds, getCurrentPage } from '../../utils/Utils';
-import { loadApp, selectOrganization } from './AppActionFactory';
 import { hardRestart, submitReport } from './ReportActionFactory';
 
 import {
@@ -52,8 +51,6 @@ type Props = {
   actions :{
     hardRestart :() => void;
     submitReport :(args :Object) => void;
-    loadApp :() => void;
-    selectOrganization :(args :string) => void;
   };
   app :Map<*, *>;
   history :RouterHistory;
@@ -84,10 +81,6 @@ class Form extends React.Component<Props, State> {
       reportInfo: getReportInfoInitialState(),
       isConsumerSelected: false
     };
-  }
-
-  componentDidMount() {
-    // this.props.actions.loadApp();
   }
 
   handleTextInput = (e, fieldType, formatErrors, setErrorsFn) => {
@@ -215,10 +208,6 @@ class Form extends React.Component<Props, State> {
     });
   }
 
-  handleOrganizationSelection = (organizationId) => {
-    this.props.actions.selectOrganization(organizationId);
-  }
-
   handleSubmit = (event :SyntheticEvent<*>) => {
 
     event.preventDefault();
@@ -240,7 +229,7 @@ class Form extends React.Component<Props, State> {
   render() {
 
     const { PEOPLE_FQN } = APP_TYPES_FQNS;
-    const selectedOrganizationId :string = this.props.app.get('selectedOrganization');
+    const selectedOrganizationId :string = this.props.app.get('selectedOrganizationId');
     const peopleEntitySetId :string = this.props.app.getIn([
       PEOPLE_FQN.getFullyQualifiedName(),
       'entitySetsByOrganization',
@@ -259,7 +248,6 @@ class Form extends React.Component<Props, State> {
           handleDateInput={this.handleDateInput}
           handleDatePickerDateTimeOffset={this.handleDatePickerDateTimeOffset}
           handleMultiUpdate={this.handleMultiUpdate}
-          handleOrganizationSelection={this.handleOrganizationSelection}
           handlePageChange={this.handlePageChange}
           handlePersonSelection={this.handlePersonSelection}
           handlePicture={this.handlePicture}
@@ -291,11 +279,6 @@ function mapDispatchToProps(dispatch :Function) :Object {
   const actions = {
     hardRestart,
     submitReport,
-    loadApp,
-    selectOrganization: (organizationId) => {
-      const action = selectOrganization(organizationId);
-      return selectOrganization.request(action.id, action.value);
-    }
   };
 
   return {

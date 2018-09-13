@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { ProgressBar } from 'react-bootstrap';
 import { NavLink, Redirect, Route, Switch } from 'react-router-dom';
 
-import Loading from '../components/Loading';
+import Spinner from '../components/spinner/Spinner';
 import ReportInfoView from '../components/ReportInfoView';
 import ConsumerSearch from '../containers/ConsumerSearch';
 import ConsumerInfoView from '../components/ConsumerInfoView';
@@ -202,7 +202,7 @@ function FormView({
   };
 
   if (submissionState === SUBMISSION_STATES.IS_SUBMITTING) {
-    return <Loading />;
+    return <Spinner />;
   }
 
   if (submissionState === SUBMISSION_STATES.SUBMIT_SUCCESS) {

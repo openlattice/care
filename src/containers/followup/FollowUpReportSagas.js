@@ -169,7 +169,7 @@ function* submitFollowUpReportWorker(action :SequenceAction) :Generator<*, *, *>
       reportInfo
     } = action.value;
 
-    const selectedOrganizationId = app.get('selectedOrganization');
+    const selectedOrganizationId = app.get('selectedOrganizationId');
 
     const appearsInESId :string = app.getIn([
       APPEARS_IN_FQN.getFullyQualifiedName(),

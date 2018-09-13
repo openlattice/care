@@ -2,78 +2,67 @@
  * @flow
  */
 
-import React from 'react';
+import React, { Component } from 'react';
 
 import styled from 'styled-components';
 import { Map } from 'immutable';
-import { AuthActionFactory, AuthUtils } from 'lattice-auth';
 import { connect } from 'react-redux';
-import { Redirect, Route, Switch } from 'react-router';
-import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
+import {
+  Redirect,
+  Route,
+  Switch,
+} from 'react-router-dom';
 
-import OpenLatticeLogo from '../../assets/images/logo_and_name.png';
+import AppHeaderContainer from './AppHeaderContainer';
 import FollowUpReportManager from '../followup/FollowUpReportManager';
 import FormContainer from '../form/FormContainer';
 import HomeContainer from '../home/HomeContainer';
-import Loading from '../../components/Loading';
-import OrgSelect from './OrgSelect';
-import StyledButton from '../../components/buttons/StyledButton';
+import Spinner from '../../components/spinner/Spinner';
 import * as Routes from '../../core/router/Routes';
-import { loadApp, loadHospitals, selectOrganization } from '../form/AppActionFactory';
+import { loadApp, loadHospitals, switchOrganization } from './AppActions';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { isValidUuid } from '../../utils/Utils';
+import {
+  APP_CONTAINER_MAX_WIDTH,
+  APP_CONTAINER_WIDTH,
+  APP_CONTENT_PADDING
+} from '../../core/style/Sizes';
+
+// TODO: this should come from lattice-ui-kit, maybe after the next release. current version v0.1.1
+const APP_BG :string = '#f8f8fb';
 
 const { HOSPITALS_FQN } = APP_TYPES_FQNS;
-const { logout } = AuthActionFactory;
 
 /*
  * styled components
  */
 
-const AppWrapper = styled.div`
+const AppContainerWrapper = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
-  min-width: 900px;
+  margin: 0;
+  min-width: ${APP_CONTAINER_WIDTH}px;
+  padding: 0;
 `;
 
-const AppHeaderOuterWrapper = styled.header`
+const AppContentOuterWrapper = styled.main`
+  background-color: ${APP_BG};
   display: flex;
-  flex: 0 0 auto;
-  flex-direction: row;
+  flex: 1 0 auto;
+  justify-content: center;
   position: relative;
 `;
 
-const AppHeaderInnerWrapper = styled.div`
-  align-items: center;
-  background-color: #fefefe;
-  border-bottom: 1px solid #c5d5e5;
+const AppContentInnerWrapper = styled.div`
   display: flex;
   flex: 1 0 auto;
-  flex-direction: row;
-  height: 100px;
-  justify-content: center;
-  min-width: 900px;
-`;
-
-const Title = styled.h1`
-  font-size: 28px;
-  font-weight: normal;
-  margin: 0;
-`;
-
-const StyledActionButton = StyledButton.extend`
-  display: flex;
-  position: absolute;
-  right: 50px;
-`;
-
-const LoginAnchor = StyledActionButton.withComponent('a');
-
-const LogoLink = styled(Link)`
-  position: absolute;
-  left: 50px;
+  flex-direction: column;
+  justify-content: flex-start;
+  max-width: ${APP_CONTAINER_MAX_WIDTH}px;
+  padding: ${APP_CONTENT_PADDING}px;
+  position: relative;
 `;
 
 const MissingOrgsWrapper = styled.div`
@@ -83,21 +72,16 @@ const MissingOrgsWrapper = styled.div`
   margin-top: 50px;
 `;
 
-/*
- * types
- */
-
 type Props = {
   actions :{
     loadApp :RequestSequence;
     loadHospitals :RequestSequence;
-    logout :() => void;
-    selectOrganization :() => void;
+    switchOrganization :(orgId :string) => Object;
   };
-  app :Map;
+  app :Map<*, *>;
 };
 
-class AppContainer extends React.Component<Props> {
+class AppContainer extends Component<Props> {
 
   componentDidMount() {
 
@@ -107,21 +91,25 @@ class AppContainer extends React.Component<Props> {
 
   componentWillReceiveProps(nextProps) {
 
+    // TODO: should this be moved out of AppContainer...?
+
     const { app, actions } = this.props;
-    const prevOrgId = app.get('selectedOrganization');
-    const nextOrgId = nextProps.app.get('selectedOrganization');
+    const prevOrgId = app.get('selectedOrganizationId');
+    const nextOrgId = nextProps.app.get('selectedOrganizationId');
 
     // check if the selected organization has changed
     if (prevOrgId !== nextOrgId) {
 
-      const selectedOrg :string = nextOrgId;
+      const selectedOrgId :string = nextOrgId;
       const hospitalsEntitySetId = nextProps.app.getIn(
-        [HOSPITALS_FQN.getFullyQualifiedName(), 'entitySetsByOrganization', selectedOrg]
+        [HOSPITALS_FQN.getFullyQualifiedName(), 'entitySetsByOrganization', selectedOrgId]
       );
-      actions.loadHospitals({
-        entitySetId: hospitalsEntitySetId,
-        organizationId: selectedOrg,
-      });
+      if (isValidUuid(hospitalsEntitySetId)) {
+        actions.loadHospitals({
+          entitySetId: hospitalsEntitySetId,
+          organizationId: selectedOrgId,
+        });
+      }
 
       /*
        * loadApp() is called once on page load in componentDidMount(), and then only needs to be called again when
@@ -140,31 +128,20 @@ class AppContainer extends React.Component<Props> {
     </MissingOrgsWrapper>
   )
 
-  renderOrgSelect = () => {
-
-    const { app, actions } = this.props;
-    const orgs :Map<*, *> = app.get('organizations', Map());
-    const selectedOrg :string = app.get('selectedOrganization', '');
-
-    if (orgs.isEmpty() || !selectedOrg) {
-      return null;
-    }
-
-    return (
-      <OrgSelect
-          organizations={orgs}
-          onSelect={actions.selectOrganization}
-          selectedOrganization={selectedOrg} />
-    );
-  }
-
-  renderApp = () => {
+  renderAppContent = () => {
 
     const { app } = this.props;
-    const orgs :Map<*, *> = app.get('organizations', Map());
-    const selectedOrg :string = app.get('selectedOrganization', '');
+    const isLoadingApp :boolean = app.get('isLoadingApp', false);
 
-    if (orgs.isEmpty() || !selectedOrg) {
+    if (isLoadingApp) {
+      return (
+        <Spinner />
+      );
+    }
+
+    const orgs :Map<*, *> = app.get('organizations', Map());
+    const selectedOrganizationId :string = app.get('selectedOrganizationId', '');
+    if (orgs.isEmpty() || !selectedOrganizationId) {
       return (
         <Switch>
           <Route exact strict path={Routes.HOME} render={this.renderMissingOrgs} />
@@ -185,36 +162,15 @@ class AppContainer extends React.Component<Props> {
 
   render() {
 
-    const { app, actions } = this.props;
-    const isLoadingApp :boolean = app.get('isLoadingApp', false);
-    const isLoadingConfigurations :boolean = app.get('isLoadingConfigurations', false);
-
     return (
-      <AppWrapper>
-        <AppHeaderOuterWrapper>
-          <AppHeaderInnerWrapper>
-            <LogoLink to={Routes.ROOT}>
-              <img src={OpenLatticeLogo} height="50" alt="OpenLattice Logo" />
-            </LogoLink>
-            <Title>Behavioral Health Report</Title>
-            {
-              AuthUtils.isAuthenticated()
-                ? (
-                  <StyledActionButton onClick={actions.logout}>Logout</StyledActionButton>
-                )
-                : (
-                  <LoginAnchor href={`${window.location.origin}${Routes.LOGIN}/`}>Login</LoginAnchor>
-                )
-            }
-          </AppHeaderInnerWrapper>
-        </AppHeaderOuterWrapper>
-        { this.renderOrgSelect() }
-        {
-          isLoadingApp || isLoadingConfigurations
-            ? <Loading />
-            : this.renderApp()
-        }
-      </AppWrapper>
+      <AppContainerWrapper>
+        <AppHeaderContainer />
+        <AppContentOuterWrapper>
+          <AppContentInnerWrapper>
+            { this.renderAppContent() }
+          </AppContentInnerWrapper>
+        </AppContentOuterWrapper>
+      </AppContainerWrapper>
     );
   }
 }
@@ -231,8 +187,7 @@ function mapDispatchToProps(dispatch :Function) :Object {
   const actions = {
     loadApp,
     loadHospitals,
-    logout,
-    selectOrganization
+    switchOrganization,
   };
 
   return {

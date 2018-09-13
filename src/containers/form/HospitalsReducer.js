@@ -4,7 +4,7 @@
 
 import { List, Map, fromJS } from 'immutable';
 
-import { loadHospitals } from './AppActionFactory';
+import { loadHospitals } from '../app/AppActions';
 
 const INITIAL_STATE :Map<*, *> = List();
 

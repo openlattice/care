@@ -15,7 +15,7 @@ import { withRouter } from 'react-router';
 import { NavLink } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 
-import Loading from '../../components/Loading';
+import Spinner from '../../components/spinner/Spinner';
 import StyledButton from '../../components/buttons/StyledButton';
 import StyledCard from '../../components/cards/StyledCard';
 import * as Routes from '../../core/router/Routes';
@@ -341,7 +341,7 @@ class FollowUpReportContainer extends React.Component<Props, State> {
   render() {
 
     if (this.props.submissionState === SUBMISSION_STATES.IS_SUBMITTING) {
-      return <Loading />;
+      return <Spinner />;
     }
 
     return (

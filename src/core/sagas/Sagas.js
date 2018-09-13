@@ -12,7 +12,7 @@ import {
 } from 'lattice-sagas';
 import { fork } from 'redux-saga/effects';
 
-import * as AppSagas from '../../containers/form/AppSagas';
+import * as AppSagas from '../../containers/app/AppSagas';
 import * as FollowUpReportSagas from '../../containers/followup/FollowUpReportSagas';
 import * as ReportSagas from '../../containers/form/ReportSagas';
 import * as SearchSagas from '../../containers/search/SearchSagas';
@@ -42,9 +42,8 @@ export default function* sagas() :Generator<*, *, *> {
 
     // Report Sagas
     fork(AppSagas.loadAppWatcher),
-    fork(AppSagas.loadAppConfigsWatcher),
     fork(AppSagas.loadHospitalsWatcher),
-    fork(AppSagas.selectOrganizationWatcher),
+    fork(AppSagas.switchOrganizationWatcher),
     fork(ReportSagas.hardRestartWatcher),
     fork(ReportSagas.submitReportWatcher),
 

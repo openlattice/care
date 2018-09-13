@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { bindActionCreators } from 'redux';
 
-import Loading from '../../components/Loading';
+import Spinner from '../../components/spinner/Spinner';
 import SearchInput from '../../components/SearchInput';
 import { randomId } from '../../utils/Utils';
 
@@ -139,7 +139,7 @@ class ConsumerSearchContainer extends React.Component<Props, State> {
       <SearchResultsWrapper>
         {
           (this.props.isSearching)
-            ? <Loading />
+            ? <Spinner />
             : null
         }
         {

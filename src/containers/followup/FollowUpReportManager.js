@@ -211,7 +211,7 @@ class FollowUpReportManager extends React.Component<Props, State> {
 
 function mapStateToProps(state :Map<*, *>) :Object {
 
-  const selectedOrganizationId :string = state.getIn(['app', 'selectedOrganization']);
+  const selectedOrganizationId :string = state.getIn(['app', 'selectedOrganizationId']);
 
   const appearsInEntitySetId :string = state.getIn([
     'app',
