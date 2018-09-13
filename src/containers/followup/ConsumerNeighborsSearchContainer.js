@@ -98,9 +98,11 @@ class ConsumerNeighborsSearchContainer extends React.Component<Props, State> {
         return searchResults.getIn(['neighborEntitySet', 'id']) === this.props.bhrEntitySetId;
       })
       .forEach((searchResult :Map<*, *>) => {
+        const searchResultNeighborDetails = searchResult.get('neighborDetails');
+
         searchResults.push(
           <ReportSearchResult
-              searchResult={searchResult}
+              searchResult={searchResultNeighborDetails}
               onSelectSearchResult={this.props.onSelectSearchResult}
               showDivider={showDivider}
               key={randomId()} />

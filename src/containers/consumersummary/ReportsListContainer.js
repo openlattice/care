@@ -5,7 +5,8 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { Map, List, fromJS, toJS } from 'immutable';
 
-import ReportListItem from './ReportListItem';
+// import ReportListItem from './ReportListItem';
+import ReportSearchResult from '../search/ReportSearchResult';
 import { getBHRReports } from './ConsumerSummaryActionFactory';
 import { REQUEST_STATUSES } from './ConsumerSummaryReducer';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
@@ -24,7 +25,7 @@ class ReportsListContainer extends React.Component {
     });
   }
 
-  handleOnSelectReport = (report) => {
+  onSelectSearchResult = (report) => {
     this.setState(
       {
         selectedReport: report
@@ -40,9 +41,9 @@ class ReportsListContainer extends React.Component {
 
     return reports && reports.map(
       report => (
-        <ReportListItem
-            report={report}
-            handleOnSelectReport={this.handleOnSelectReport}
+        <ReportSearchResult
+            searchResult={report}
+            onSelectSearchResult={this.onSelectSearchResult}
             key={report.getIn(['openlattice.@id', 0])} />
       )
     )
@@ -80,8 +81,6 @@ function mapStateToProps(state :Map<*, *>) :Object {
     'consumerSummary',
     'reports'
   ], List());
-
-  console.log('MSTP reports:', reports.toJS());
 
   return {
     bhrEntitySetId,

@@ -1,5 +1,6 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
+import Immutable from 'immutable';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import { faAngleRight } from '@fortawesome/fontawesome-pro-light';
 
@@ -34,31 +35,34 @@ const BHRDetailItem = styled.div`
   }
 `;
 
+// TODO: Make ConsumerNeighborsSearchContainer pass in neighborDetails search results directly
+const ReportSearchResult = ({ searchResult, onSelectSearchResult, showDivider }) => {
 
-const ReportSearchResult = ({ searchResult, onSelectSearchResult, showDivider }) => (
-  <SearchResult
-      showDivider={showDivider}
-      onClick={() => onSelectSearchResult(searchResult)}>
-    <BHRDetailsRow>
-      <BHRDetailItem scStyles={{ width: '150px' }}>
-        <strong>Date Occurred</strong>
-        <span>{ searchResult.getIn(['neighborDetails', 'bhr.dateOccurred', 0], '') }</span>
-      </BHRDetailItem>
-      <BHRDetailItem scStyles={{ width: '150px' }}>
-        <strong>Date Reported</strong>
-        <span>{ searchResult.getIn(['neighborDetails', 'bhr.dateReported', 0], '') }</span>
-      </BHRDetailItem>
-      <BHRDetailItem scStyles={{ width: '150px' }}>
-        <strong>Complaint Number</strong>
-        <span>{ searchResult.getIn(['neighborDetails', 'bhr.complaintNumber', 0], '') }</span>
-      </BHRDetailItem>
-      <BHRDetailItem>
-        <strong>Incident</strong>
-        <span>{ searchResult.getIn(['neighborDetails', 'bhr.incident', 0], '') }</span>
-      </BHRDetailItem>
-    </BHRDetailsRow>
-    <FontAwesomeIcon icon={faAngleRight} size="2x" />
-  </SearchResult>
-);
+  return (
+    <SearchResult
+        showDivider={showDivider}
+        onClick={() => onSelectSearchResult(searchResult)}>
+      <BHRDetailsRow>
+        <BHRDetailItem scStyles={{ width: '150px' }}>
+          <strong>Date Occurred</strong>
+          <span>{ searchResult.getIn(['bhr.dateOccurred', 0], '') }</span>
+        </BHRDetailItem>
+        <BHRDetailItem scStyles={{ width: '150px' }}>
+          <strong>Date Reported</strong>
+          <span>{ searchResult.getIn(['bhr.dateReported', 0], '') }</span>
+        </BHRDetailItem>
+        <BHRDetailItem scStyles={{ width: '150px' }}>
+          <strong>Complaint Number</strong>
+          <span>{ searchResult.getIn(['bhr.complaintNumber', 0], '') }</span>
+        </BHRDetailItem>
+        <BHRDetailItem>
+          <strong>Incident</strong>
+          <span>{ searchResult.getIn(['bhr.incident', 0], '') }</span>
+        </BHRDetailItem>
+      </BHRDetailsRow>
+      <FontAwesomeIcon icon={faAngleRight} size="2x" />
+    </SearchResult>
+  );
+};
 
 export default ReportSearchResult;

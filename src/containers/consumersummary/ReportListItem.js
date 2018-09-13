@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
 import styled from 'styled-components';
+import { Immutable } from 'immutable-js';
 
 
 const ListItem = styled.div`
@@ -12,10 +13,18 @@ const ListItem = styled.div`
 `;
 
 // pass info
-const ReportListItem = ({ report, handleOnSelectReport }) => (
-  <ListItem onClick={handleOnSelectReport}>
-    { report.get('bhr.dateOccurred') }
-  </ListItem>
-);
+const ReportListItem = ({ report, handleOnSelectReport }) => {
+  if (Immutable.Iterable.isIterable(report)) {
+    report = report.toJS();
+  }
+
+  console.log('report:', report);
+
+  return (
+    <ListItem onClick={handleOnSelectReport}>
+      { report.get('bhr.dateOccurred') }
+    </ListItem>
+  );
+} ;
 
 export default ReportListItem;
