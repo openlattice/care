@@ -1,9 +1,9 @@
 import { newRequestSequence } from 'redux-reqseq';
 
-const GET_BHR_REPORT = 'GET_BHR_REPORT';
-const getBHRReport = newRequestSequence(GET_BHR_REPORT);
+const GET_BHR_REPORTS = 'GET_BHR_REPORTS';
+const getBHRReports = newRequestSequence(GET_BHR_REPORTS);
 
 export {
-  GET_BHR_REPORT,
-  getBHRReport
+  GET_BHR_REPORTS,
+  getBHRReports
 };

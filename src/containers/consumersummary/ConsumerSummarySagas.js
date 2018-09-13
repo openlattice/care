@@ -1,32 +1,30 @@
 import { List, Map } from 'immutable';
-import { SearchApiActionFactory, SearchApiSagas } from 'lattice-sagas';
+import { DataApiActionFactory, DataApiSagas } from 'lattice-sagas';
 import { call, put, takeEvery } from 'redux-saga/effects';
 
-import { GET_BHR_REPORT, getBHRReport } from './ConsumerSummaryActionFactory';
+import { GET_BHR_REPORTS, getBHRReports } from './ConsumerSummaryActionFactory';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 
-const { searchEntityNeighbors } = SearchApiActionFactory;
-const { searchEntityNeighborsWorker } = SearchApiSagas;
+const { getEntitySetData } = DataApiActionFactory;
+const { getEntitySetDataWorker } = DataApiSagas;
 
 const {
   BHR_REPORT_FQN
 } = APP_TYPES_FQNS;
 
 
-export function* getBHRReportWorker(action :SequenceAction) :Generator<*, *, *> {
+export function* getBHRReportsWorker(action :SequenceAction) :Generator<*, *, *> {
   try {
-    yield put(getBHRReport.request(action.id));
+    yield put(getBHRReports.request(action.id));
 
     const {
-      entitySetId,
-      entityId
+      entitySetId
     } = action.value;
 
     const response :Response = yield call(
-      searchEntityNeighborsWorker,
-      searchEntityNeighbors({
-        entitySetId,
-        entityId
+      getEntitySetDataWorker,
+      getEntitySetData({
+        entitySetId
       })
     );
 
@@ -34,16 +32,16 @@ export function* getBHRReportWorker(action :SequenceAction) :Generator<*, *, *> 
       throw new Error(response.error);
     }
 
-    yield put(getBHRReport.success(action.id, response.data));
+    yield put(getBHRReports.success(action.id, response.data));
   }
   catch (error) {
-    yield put(getBHRReport.failure(action.id, error));
+    yield put(getBHRReports.failure(action.id, error));
   }
   finally {
-    yield put(getBHRReport.finally(action.id));
+    yield put(getBHRReports.finally(action.id));
   }
 }
 
-export function* getBHRReportWatcher() :Generator<*, *, *> {
-  yield takeEvery(GET_BHR_REPORT, getBHRReportWorker);
+export function* getBHRReportsWatcher() :Generator<*, *, *> {
+  yield takeEvery(GET_BHR_REPORTS, getBHRReportsWorker);
 }

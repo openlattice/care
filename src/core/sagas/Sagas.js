@@ -54,6 +54,6 @@ export default function* sagas() :Generator<*, *, *> {
     fork(SearchSagas.searchConsumersWatcher),
 
     // ConsumerSummarySagas
-    fork(ConsumerSummarySagas.getBHRReportWatcher)
+    fork(ConsumerSummarySagas.getBHRReportsWatcher)
   ];
 }

@@ -4,9 +4,7 @@ import { connect } from 'react-redux';
 import { Map } from 'immutable';
 
 
-import ConsumerSearchContainer from '../followup/ConsumerSearchContainer';
-import ConsumerNeighborsSearchContainer from './ConsumerNeighborsSearchContainer';
-import ConsumerReportList from './ConsumerReportList';
+import ReportsListContainer from './ReportsListContainer';
 import BHRSummaryContainer from './BHRSummaryContainer';
 import {
   PAGE_1,
@@ -16,8 +14,6 @@ import {
 import StyledCard from '../../components/cards/StyledCard';
 import { ContainerInnerWrapper, ContainerOuterWrapper } from '../../shared/Layout';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
-import { getBHRReport } from './ConsumerSummaryActionFactory';
-import { REQUEST_STATUSES } from './ConsumerSummaryReducer';
 
 const {
   APPEARS_IN_FQN,
@@ -47,36 +43,6 @@ class ConsumerSummaryContainer extends React.Component {
     );
   }
 
-  handleOnSelectReport = (report) => {
-    this.setState(
-      {
-        selectedReport: report
-      },
-      () => {
-        this.props.history.push(PAGE_3);
-      }
-    );
-  }
-
-  renderSearchContainer = () => (
-    <ContainerOuterWrapper>
-      <ContainerInnerWrapper>
-        <StyledCard>
-          <ConsumerSearchContainer
-              peopleEntitySetId={this.props.entitySetIds[PEOPLE_FQN.getFullyQualifiedName()]}
-              onSelectSearchResult={this.handleOnSelectConsumerSearchResult} />
-        </StyledCard>
-      </ContainerInnerWrapper>
-    </ContainerOuterWrapper>
-  )
-
-  renderConsumerReportList = () => (
-    <ConsumerNeighborsSearchContainer
-        consumer={this.state.selectedConsumer}
-        peopleEntitySetId={this.props.entitySetIds[PEOPLE_FQN.getFullyQualifiedName()]}
-        onSelectSearchResult={this.handleOnSelectReport} />
-  )
-
   renderReportSummary = () => {
 
     return (
@@ -87,9 +53,8 @@ class ConsumerSummaryContainer extends React.Component {
   render() {
     return (
       <Switch>
-        <Route path={PAGE_1} render={this.renderSearchContainer} />
-        <Route path={PAGE_2} render={this.renderConsumerReportList} />
-        <Route path={PAGE_3} render={this.renderReportSummary} />
+        <Route path={PAGE_1} component={ReportsListContainer} />
+        <Route path={PAGE_2} render={this.renderReportSummary} />
         <Redirect to={PAGE_1} />
       </Switch>
     );
@@ -128,9 +93,9 @@ function mapStateToProps(state :Map<*, *>) :Object {
     'submissionState'
   ]);
 
-  const formData = state.getIn([
+  const reports = state.getIn([
     'consumerSummary',
-    'formData'
+    'reports'
   ]);
 
   return {
@@ -140,7 +105,8 @@ function mapStateToProps(state :Map<*, *>) :Object {
       [APPEARS_IN_FQN.getFullyQualifiedName()]: appearsInEntitySetId,
       [PEOPLE_FQN.getFullyQualifiedName()]: peopleEntitySetId,
       [BEHAVIORAL_HEALTH_REPORT_FQN.getFullyQualifiedName()]: reportEntitySetId
-    }
+    },
+    reports
   };
 }
 

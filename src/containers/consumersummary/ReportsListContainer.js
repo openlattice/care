@@ -1,39 +1,61 @@
 import React from 'react';
+import styled from 'styled-components';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import { Map, fromJS, toJS } from 'immutable';
+import { Map, List, fromJS, toJS } from 'immutable';
 
-import ReviewView from '../../components/ReviewView';
+import ReportListItem from './ReportListItem';
 import { getBHRReports } from './ConsumerSummaryActionFactory';
 import { REQUEST_STATUSES } from './ConsumerSummaryReducer';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
+import { ContainerInnerWrapper, ContainerOuterWrapper } from '../../shared/Layout';
 
 const {
   BEHAVIORAL_HEALTH_REPORT_FQN
 } = APP_TYPES_FQNS;
 
 
-class bhrFormSummaryContainer extends React.Component {
+class ReportsListContainer extends React.Component {
   componentWillMount() {
-    console.log('selectedReport:', this.props.selectedReport.toJS());
     this.props.actions.getBHRReports({
       entitySetId: this.props.bhrEntitySetId,
-      entityId: this.props.selectedReport.get('neighborId')
+      propertyTypeIds: []
     });
   }
 
+  handleOnSelectReport = (report) => {
+    this.setState(
+      {
+        selectedReport: report
+      },
+      () => {
+        this.props.history.push(PAGE_3);
+      }
+    );
+  }
+
+  renderListItems = () => {
+    const { reports } = this.props;
+
+    return reports && reports.map(
+      report => (
+        <ReportListItem
+            report={report}
+            handleOnSelectReport={this.handleOnSelectReport}
+            key={report.getIn(['openlattice.@id', 0])} />
+      )
+    )
+  }
+
   render() {
-    const {
-      reportInfo,
-      consumerInfo,
-      complainantInfo,
-      dispositionInfo,
-      officerInfo
-    } = this.props.formData;
 
     return (
-      <div>SUMMARY VIEW</div>
+      <ContainerOuterWrapper>
+        <ContainerInnerWrapper>
+          { this.renderListItems() }
+        </ContainerInnerWrapper>
+      </ContainerOuterWrapper>
     );
   }
 };
@@ -54,17 +76,17 @@ function mapStateToProps(state :Map<*, *>) :Object {
     'submissionState'
   ]);
 
-  const formData = state.getIn([
+  const reports = state.getIn([
     'consumerSummary',
-    'formData'
-  ], new Map());
+    'reports'
+  ], List());
 
-  console.log('FORM DATA:', formData.toJS());
+  console.log('MSTP reports:', reports.toJS());
 
   return {
     bhrEntitySetId,
     submissionState,
-    formData
+    reports
   };
 }
 
@@ -76,5 +98,5 @@ function mapDispatchToProps(dispatch :Function) :Object {
 }
 
 export default withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(bhrFormSummaryContainer)
+  connect(mapStateToProps, mapDispatchToProps)(ReportsListContainer)
 );
