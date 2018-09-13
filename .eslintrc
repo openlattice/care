@@ -24,7 +24,7 @@
     }
   },
   "rules": {
-    "arrow-body-style": ["warn", "as-needed"],
+    "arrow-body-style": ["error", "as-needed"],
     "brace-style": ["error", "stroustrup"],
     "comma-dangle": ["error", "only-multiline"],
     "function-paren-newline": ["error", "consistent"],
@@ -44,6 +44,7 @@
         "ignoredNodes": ["JSXAttribute"]
       }
     ],
+    "lines-between-class-members": "off",
     "max-len": [
       "error",
       {
@@ -89,6 +90,7 @@
       {
         "devDependencies": [
           "config/**",
+          "src/utils/testing/**",
           "**/*.test.js"
         ]
       }
@@ -124,7 +126,14 @@
       }
     ],
     "react/jsx-indent-props": ["error", 4],
+    "react/jsx-one-expression-per-line": "warn",
     "react/prefer-stateless-function": "warn",
+    "react/require-default-props": [
+      "error",
+      {
+        "forbidDefaultForRequired": false,
+      }
+    ],
     "react/sort-comp": "off"
   }
 }
