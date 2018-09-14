@@ -69,11 +69,6 @@ function mapStateToProps(state :Map<*, *>) :Object {
     selectedOrganizationId
   ]);
 
-  const submissionState :number = state.getIn([
-    'consumerSummary',
-    'submissionState'
-  ]);
-
   const reports = state.getIn([
     'consumerSummary',
     'reports'
@@ -81,7 +76,6 @@ function mapStateToProps(state :Map<*, *>) :Object {
 
   return {
     bhrEntitySetId,
-    submissionState,
     reports
   };
 }
