@@ -26,20 +26,8 @@ class ConsumerSummaryContainer extends React.Component {
     super(props);
 
     this.state = {
-      selectedConsumer: Map(),
       selectedReport: Map()
     };
-  }
-
-  handleOnSelectConsumerSearchResult = (searchResult) => {
-    this.setState(
-      {
-        selectedConsumer: searchResult
-      },
-      () => {
-        this.props.history.push(PAGE_2);
-      }
-    );
   }
 
   onSelectSearchResult = (report) => {

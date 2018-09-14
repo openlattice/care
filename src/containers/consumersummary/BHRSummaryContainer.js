@@ -23,6 +23,9 @@ import {
 } from '../../shared/Consts';
 import { SectionWrapper, ContentWrapper, SectionHeader } from '../../shared/Layout';
 
+const SummarySectionHeader = SectionHeader.extend`
+  margin-top: 50px;
+`;
 
 const SectionHeaderWrapper = styled.div`
   position: relative;
@@ -133,7 +136,7 @@ class bhrFormSummaryContainer extends React.Component {
 
     return (
       <SectionWrapper>
-        <SectionHeader>Health Report Summary</SectionHeader>
+        <SummarySectionHeader>Health Report Summary</SummarySectionHeader>
         <ContentWrapper>
           <Section>
             <SectionHeaderWrapper>
