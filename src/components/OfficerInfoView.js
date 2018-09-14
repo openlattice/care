@@ -106,7 +106,7 @@ class OfficerInfoView extends React.Component {
                 data-section={section}
                 name="officerCertification"
                 value="crtUnit"
-                checked={input.officerCertification.indexOf('crtUnit') !== -1}
+                checked={input.officerCertification && input.officerCertification.indexOf('crtUnit') !== -1}
                 onChange={handleCheckboxChange}
                 disabled={isReviewPage}>
               CRT Unit
@@ -116,7 +116,7 @@ class OfficerInfoView extends React.Component {
                 data-section={section}
                 name="officerCertification"
                 value="best"
-                checked={input.officerCertification.indexOf('best') !== -1}
+                checked={input.officerCertification && input.officerCertification.indexOf('best') !== -1}
                 onChange={handleCheckboxChange}
                 disabled={isReviewPage}>
               BEST
@@ -126,7 +126,7 @@ class OfficerInfoView extends React.Component {
                 data-section={section}
                 name="officerCertification"
                 value="cit"
-                checked={input.officerCertification.indexOf('cit') !== -1}
+                checked={input.officerCertification && input.officerCertification.indexOf('cit') !== -1}
                 onChange={handleCheckboxChange}
                 disabled={isReviewPage}>
               CIT
@@ -136,7 +136,7 @@ class OfficerInfoView extends React.Component {
                 data-section={section}
                 name="officerCertification"
                 value="n/a"
-                checked={input.officerCertification.indexOf('n/a') !== -1}
+                checked={input.officerCertification && input.officerCertification.indexOf('n/a') !== -1}
                 onChange={handleCheckboxChange}
                 disabled={isReviewPage}>
               N/A
@@ -168,7 +168,7 @@ class OfficerInfoView extends React.Component {
                 data-section={section}
                 name="officerCertification"
                 value="cit"
-                checked={input.officerCertification.indexOf('cit') !== -1}
+                checked={input.officerCertification && input.officerCertification.indexOf('cit') !== -1}
                 onChange={handleCheckboxChange}
                 disabled={isReviewPage}>
               CIT

@@ -74,6 +74,7 @@ export function* getBHRReportDataWorker(action :SequenceAction) :Generator<*, *,
     yield put(getBHRReportData.success(action.id, response.data));
   }
   catch (error) {
+    console.log('error!!!:', error);
     yield put(getBHRReportData.failure(action.id, error));
   }
   finally {

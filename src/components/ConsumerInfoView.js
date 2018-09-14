@@ -273,7 +273,7 @@ class ConsumerInfoView extends React.Component {
                   data-section={section}
                   name="directedagainst"
                   value="police"
-                  checked={input.directedagainst.indexOf('police') !== -1}
+                  checked={input.directedagainst && input.directedagainst.indexOf('police') !== -1}
                   onChange={handleCheckboxChange}
                   disabled={isReviewPage}>
                 Police
@@ -283,7 +283,7 @@ class ConsumerInfoView extends React.Component {
                   data-section={section}
                   name="directedagainst"
                   value="family"
-                  checked={input.directedagainst.indexOf('family') !== -1}
+                  checked={input.directedagainst && input.directedagainst.indexOf('family') !== -1}
                   onChange={handleCheckboxChange}
                   disabled={isReviewPage}>
                 Family
@@ -293,7 +293,7 @@ class ConsumerInfoView extends React.Component {
                   data-section={section}
                   name="directedagainst"
                   value="significantOther"
-                  checked={input.directedagainst.indexOf('significantOther') !== -1}
+                  checked={input.directedagainst && input.directedagainst.indexOf('significantOther') !== -1}
                   onChange={handleCheckboxChange}
                   disabled={isReviewPage}>
                 Significant other
@@ -304,7 +304,7 @@ class ConsumerInfoView extends React.Component {
                     data-section={section}
                     name="directedagainst"
                     value="other"
-                    checked={input.directedagainst.indexOf('other') !== -1}
+                    checked={input.directedagainst && input.directedagainst.indexOf('other') !== -1}
                     onChange={handleCheckboxChange}
                     disabled={isReviewPage}>
                   Other:
@@ -357,7 +357,7 @@ class ConsumerInfoView extends React.Component {
                   data-section={section}
                   name="historicaldirectedagainst"
                   value="police"
-                  checked={input.historicaldirectedagainst.indexOf('police') !== -1}
+                  checked={input.historicaldirectedagainst && input.historicaldirectedagainst.indexOf('police') !== -1}
                   onChange={handleCheckboxChange}
                   disabled={isReviewPage}>
                 Police
@@ -367,7 +367,7 @@ class ConsumerInfoView extends React.Component {
                   data-section={section}
                   name="historicaldirectedagainst"
                   value="family"
-                  checked={input.historicaldirectedagainst.indexOf('family') !== -1}
+                  checked={input.historicaldirectedagainst && input.historicaldirectedagainst.indexOf('family') !== -1}
                   onChange={handleCheckboxChange}
                   disabled={isReviewPage}>
                 Family
@@ -377,7 +377,7 @@ class ConsumerInfoView extends React.Component {
                   data-section={section}
                   name="historicaldirectedagainst"
                   value="significantOther"
-                  checked={input.historicaldirectedagainst.indexOf('significantOther') !== -1}
+                  checked={input.historicaldirectedagainst && input.historicaldirectedagainst.indexOf('significantOther') !== -1}
                   onChange={handleCheckboxChange}
                   disabled={isReviewPage}>
                 Significant other
@@ -388,7 +388,7 @@ class ConsumerInfoView extends React.Component {
                     data-section={section}
                     name="historicaldirectedagainst"
                     value="other"
-                    checked={input.historicaldirectedagainst.indexOf('other') !== -1}
+                    checked={input.historicaldirectedagainst && input.historicaldirectedagainst.indexOf('other') !== -1}
                     onChange={handleCheckboxChange}
                     disabled={isReviewPage}>
                   Other:
@@ -667,7 +667,7 @@ class ConsumerInfoView extends React.Component {
                   inline
                   data-section={section}
                   name="homeless"
-                  value
+                  value={true}
                   checked={input.homeless}
                   onChange={handleSingleSelection}
                   disabled={isReviewPage}>Yes
@@ -875,7 +875,7 @@ class ConsumerInfoView extends React.Component {
                     data-section={section}
                     name="selfDiagnosis"
                     value="bipolar"
-                    checked={input.selfDiagnosis.indexOf('bipolar') !== -1}
+                    checked={input.selfDiagnosis && input.selfDiagnosis.indexOf('bipolar') !== -1}
                     onChange={handleCheckboxChange}
                     disabled={isReviewPage}>
                   Bipolar
@@ -885,7 +885,7 @@ class ConsumerInfoView extends React.Component {
                     data-section={section}
                     name="selfDiagnosis"
                     value="depression"
-                    checked={input.selfDiagnosis.indexOf('depression') !== -1}
+                    checked={input.selfDiagnosis && input.selfDiagnosis.indexOf('depression') !== -1}
                     onChange={handleCheckboxChange}
                     disabled={isReviewPage}>
                   Depression
@@ -895,7 +895,7 @@ class ConsumerInfoView extends React.Component {
                     data-section={section}
                     name="selfDiagnosis"
                     value="ptsd"
-                    checked={input.selfDiagnosis.indexOf('ptsd') !== -1}
+                    checked={input.selfDiagnosis && input.selfDiagnosis.indexOf('ptsd') !== -1}
                     onChange={handleCheckboxChange}
                     disabled={isReviewPage}>
                   PTSD
@@ -905,7 +905,7 @@ class ConsumerInfoView extends React.Component {
                     data-section={section}
                     name="selfDiagnosis"
                     value="schizophrenia"
-                    checked={input.selfDiagnosis.indexOf('schizophrenia') !== -1}
+                    checked={input.selfDiagnosis && input.selfDiagnosis.indexOf('schizophrenia') !== -1}
                     onChange={handleCheckboxChange}
                     disabled={isReviewPage}>
                   Schizophrenia
@@ -915,7 +915,7 @@ class ConsumerInfoView extends React.Component {
                     data-section={section}
                     name="selfDiagnosis"
                     value="dementia"
-                    checked={input.selfDiagnosis.indexOf('dementia') !== -1}
+                    checked={input.selfDiagnosis && input.selfDiagnosis.indexOf('dementia') !== -1}
                     onChange={handleCheckboxChange}
                     disabled={isReviewPage}>
                   Dementia
@@ -927,7 +927,7 @@ class ConsumerInfoView extends React.Component {
                         data-section={section}
                         name="selfDiagnosis"
                         value="DevelopmentalDisabilities/Autism"
-                        checked={input.selfDiagnosis.indexOf('DevelopmentalDisabilities/Autism') !== -1}
+                        checked={input.selfDiagnosis && input.selfDiagnosis.indexOf('DevelopmentalDisabilities/Autism') !== -1}
                         onChange={handleCheckboxChange}
                         disabled={isReviewPage}>
                       Developmental Disabilities / Autism
@@ -939,7 +939,7 @@ class ConsumerInfoView extends React.Component {
                       data-section={section}
                       name="selfDiagnosis"
                       value="other"
-                      checked={input.selfDiagnosis.indexOf('other') !== -1}
+                      checked={input.selfDiagnosis && input.selfDiagnosis.indexOf('other') !== -1}
                       onChange={handleCheckboxChange}
                       disabled={isReviewPage}>
                     Other:
@@ -1046,7 +1046,7 @@ class ConsumerInfoView extends React.Component {
                     data-section={section}
                     name="observedBehaviors"
                     value="disorientation"
-                    checked={input.observedBehaviors.indexOf('disorientation') !== -1}
+                    checked={input.observedBehaviors && input.observedBehaviors.indexOf('disorientation') !== -1}
                     onChange={handleCheckboxChange}
                     disabled={isReviewPage}>
                   Disorientation / Confusion
@@ -1056,7 +1056,7 @@ class ConsumerInfoView extends React.Component {
                     data-section={section}
                     name="observedBehaviors"
                     value="abnormalBehavior"
-                    checked={input.observedBehaviors.indexOf('abnormalBehavior') !== -1}
+                    checked={input.observedBehaviors && input.observedBehaviors.indexOf('abnormalBehavior') !== -1}
                     onChange={handleCheckboxChange}
                     disabled={isReviewPage}>
                   Abnormal Behavior / Appearance (neglect self-care)
@@ -1066,7 +1066,7 @@ class ConsumerInfoView extends React.Component {
                     data-section={section}
                     name="observedBehaviors"
                     value="hearingVoices"
-                    checked={input.observedBehaviors.indexOf('hearingVoices') !== -1}
+                    checked={input.observedBehaviors && input.observedBehaviors.indexOf('hearingVoices') !== -1}
                     onChange={handleCheckboxChange}
                     disabled={isReviewPage}>
                   Hearing Voices / Hallucinating
@@ -1076,7 +1076,7 @@ class ConsumerInfoView extends React.Component {
                     data-section={section}
                     name="observedBehaviors"
                     value="anxious"
-                    checked={input.observedBehaviors.indexOf('anxious') !== -1}
+                    checked={input.observedBehaviors && input.observedBehaviors.indexOf('anxious') !== -1}
                     onChange={handleCheckboxChange}
                     disabled={isReviewPage}>
                   Anxious / Excited / Agitated
@@ -1086,7 +1086,7 @@ class ConsumerInfoView extends React.Component {
                     data-section={section}
                     name="observedBehaviors"
                     value="depressed"
-                    checked={input.observedBehaviors.indexOf('depressed') !== -1}
+                    checked={input.observedBehaviors && input.observedBehaviors.indexOf('depressed') !== -1}
                     onChange={handleCheckboxChange}
                     disabled={isReviewPage}>
                   Depressed Mood
@@ -1096,7 +1096,7 @@ class ConsumerInfoView extends React.Component {
                     data-section={section}
                     name="observedBehaviors"
                     value="paranoid"
-                    checked={input.observedBehaviors.indexOf('paranoid') !== -1}
+                    checked={input.observedBehaviors && input.observedBehaviors.indexOf('paranoid') !== -1}
                     onChange={handleCheckboxChange}
                     disabled={isReviewPage}>
                   Paranoid or Suspicious
@@ -1106,7 +1106,7 @@ class ConsumerInfoView extends React.Component {
                     data-section={section}
                     name="observedBehaviors"
                     value="self-harm"
-                    checked={input.observedBehaviors.indexOf('self-harm') !== -1}
+                    checked={input.observedBehaviors && input.observedBehaviors.indexOf('self-harm') !== -1}
                     onChange={handleCheckboxChange}
                     disabled={isReviewPage}>
                   Self-harm
@@ -1116,7 +1116,7 @@ class ConsumerInfoView extends React.Component {
                     data-section={section}
                     name="observedBehaviors"
                     value="threatening"
-                    checked={input.observedBehaviors.indexOf('threatening') !== -1}
+                    checked={input.observedBehaviors && input.observedBehaviors.indexOf('threatening') !== -1}
                     onChange={handleCheckboxChange}
                     disabled={isReviewPage}>
                   Threatening / Violent Towards Others
@@ -1126,7 +1126,7 @@ class ConsumerInfoView extends React.Component {
                       data-section={section}
                       name="observedBehaviors"
                       value="other"
-                      checked={input.observedBehaviors.indexOf('other') !== -1}
+                      checked={input.observedBehaviors && input.observedBehaviors.indexOf('other') !== -1}
                       onChange={handleCheckboxChange}
                       disabled={isReviewPage}>
                     Other:
@@ -1134,7 +1134,7 @@ class ConsumerInfoView extends React.Component {
                   <FormControl
                       data-section={section}
                       name="observedBehaviorsOther"
-                      value={input.observedBehaviorsOther}
+                      value={input.observedBehaviors && input.observedBehaviorsOther}
                       onChange={(e) => {
                         handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                       }}
@@ -1159,7 +1159,7 @@ class ConsumerInfoView extends React.Component {
                     data-section={section}
                     name="emotionalState"
                     value="angry"
-                    checked={input.emotionalState.indexOf('angry') !== -1}
+                    checked={input.emotionalState && input.emotionalState.indexOf('angry') !== -1}
                     onChange={handleCheckboxChange}
                     disabled={isReviewPage}>
                   Angry
@@ -1169,7 +1169,7 @@ class ConsumerInfoView extends React.Component {
                     data-section={section}
                     name="emotionalState"
                     value="afraid"
-                    checked={input.emotionalState.indexOf('afraid') !== -1}
+                    checked={input.emotionalState && input.emotionalState.indexOf('afraid') !== -1}
                     onChange={handleCheckboxChange}
                     disabled={isReviewPage}>
                   Afraid
@@ -1179,7 +1179,7 @@ class ConsumerInfoView extends React.Component {
                     data-section={section}
                     name="emotionalState"
                     value="apologetic"
-                    checked={input.emotionalState.indexOf('apologetic') !== -1}
+                    checked={input.emotionalState && input.emotionalState.indexOf('apologetic') !== -1}
                     onChange={handleCheckboxChange}
                     disabled={isReviewPage}>
                   Apologetic
@@ -1189,7 +1189,7 @@ class ConsumerInfoView extends React.Component {
                     data-section={section}
                     name="emotionalState"
                     value="calm"
-                    checked={input.emotionalState.indexOf('calm') !== -1}
+                    checked={input.emotionalState && input.emotionalState.indexOf('calm') !== -1}
                     onChange={handleCheckboxChange}
                     disabled={isReviewPage}>
                   Calm
@@ -1199,7 +1199,7 @@ class ConsumerInfoView extends React.Component {
                     data-section={section}
                     name="emotionalState"
                     value="crying"
-                    checked={input.emotionalState.indexOf('crying') !== -1}
+                    checked={input.emotionalState && input.emotionalState.indexOf('crying') !== -1}
                     onChange={handleCheckboxChange}
                     disabled={isReviewPage}>
                   Crying
@@ -1209,7 +1209,7 @@ class ConsumerInfoView extends React.Component {
                     data-section={section}
                     name="emotionalState"
                     value="fearful"
-                    checked={input.emotionalState.indexOf('fearful') !== -1}
+                    checked={input.emotionalState && input.emotionalState.indexOf('fearful') !== -1}
                     onChange={handleCheckboxChange}
                     disabled={isReviewPage}>
                   Fearful
@@ -1219,7 +1219,7 @@ class ConsumerInfoView extends React.Component {
                     data-section={section}
                     name="emotionalState"
                     value="nervous"
-                    checked={input.emotionalState.indexOf('nervous') !== -1}
+                    checked={input.emotionalState && input.emotionalState.indexOf('nervous') !== -1}
                     onChange={handleCheckboxChange}
                     disabled={isReviewPage}>
                   Nervous
@@ -1230,7 +1230,7 @@ class ConsumerInfoView extends React.Component {
                       data-section={section}
                       name="emotionalState"
                       value="other"
-                      checked={input.emotionalState.indexOf('other') !== -1}
+                      checked={input.emotionalState && input.emotionalState.indexOf('other') !== -1}
                       onChange={handleCheckboxChange}
                       disabled={isReviewPage}>
                     Other:
@@ -1257,7 +1257,7 @@ class ConsumerInfoView extends React.Component {
                     data-section={section}
                     name="photosTakenOf"
                     value="injuries"
-                    checked={input.photosTakenOf.indexOf('injuries') !== -1}
+                    checked={input.photosTakenOf && input.photosTakenOf.indexOf('injuries') !== -1}
                     onChange={handleCheckboxChange}
                     disabled={isReviewPage}>
                   Injuries
@@ -1267,7 +1267,7 @@ class ConsumerInfoView extends React.Component {
                     data-section={section}
                     name="photosTakenOf"
                     value="propertyDamage"
-                    checked={input.photosTakenOf.indexOf('propertyDamage') !== -1}
+                    checked={input.photosTakenOf && input.photosTakenOf.indexOf('propertyDamage') !== -1}
                     onChange={handleCheckboxChange}
                     disabled={isReviewPage}>
                   Damage / Crime Scene
@@ -1285,7 +1285,7 @@ class ConsumerInfoView extends React.Component {
                     data-section={section}
                     name="injuries"
                     value="abrasions"
-                    checked={input.injuries.indexOf('abrasions') !== -1}
+                    checked={input.injuries && input.injuries.indexOf('abrasions') !== -1}
                     onChange={handleCheckboxChange}
                     disabled={isReviewPage}>
                   Abrasions
@@ -1295,7 +1295,7 @@ class ConsumerInfoView extends React.Component {
                     data-section={section}
                     name="injuries"
                     value="bruises"
-                    checked={input.injuries.indexOf('bruises') !== -1}
+                    checked={input.injuries && input.injuries.indexOf('bruises') !== -1}
                     onChange={handleCheckboxChange}
                     disabled={isReviewPage}>
                   Bruises
@@ -1305,7 +1305,7 @@ class ConsumerInfoView extends React.Component {
                     data-section={section}
                     name="injuries"
                     value="complaintsOfPain"
-                    checked={input.injuries.indexOf('complaintsOfPain') !== -1}
+                    checked={input.injuries && input.injuries.indexOf('complaintsOfPain') !== -1}
                     onChange={handleCheckboxChange}
                     disabled={isReviewPage}>
                   Complaints of Pain
@@ -1315,7 +1315,7 @@ class ConsumerInfoView extends React.Component {
                     data-section={section}
                     name="injuries"
                     value="concussion"
-                    checked={input.injuries.indexOf('concussion') !== -1}
+                    checked={input.injuries && input.injuries.indexOf('concussion') !== -1}
                     onChange={handleCheckboxChange}
                     disabled={isReviewPage}>
                   Concussion
@@ -1325,7 +1325,7 @@ class ConsumerInfoView extends React.Component {
                     data-section={section}
                     name="injuries"
                     value="fractures"
-                    checked={input.injuries.indexOf('fractures') !== -1}
+                    checked={input.injuries && input.injuries.indexOf('fractures') !== -1}
                     onChange={handleCheckboxChange}
                     disabled={isReviewPage}>
                   Fractures
@@ -1335,7 +1335,7 @@ class ConsumerInfoView extends React.Component {
                       data-section={section}
                       name="injuries"
                       value="other"
-                      checked={input.injuries.indexOf('other') !== -1}
+                      checked={input.injuries && input.injuries.indexOf('other') !== -1}
                       onChange={handleCheckboxChange}
                       disabled={isReviewPage}>
                     Other:
@@ -1387,7 +1387,7 @@ class ConsumerInfoView extends React.Component {
                   data-section={section}
                   name="suicidalActions"
                   value="thoughts"
-                  checked={input.suicidalActions.indexOf('thoughts') !== -1}
+                  checked={input.suicidalActions && input.suicidalActions.indexOf('thoughts') !== -1}
                   onChange={handleCheckboxChange}
                   disabled={isReviewPage}>
                 Thoughts
@@ -1397,7 +1397,7 @@ class ConsumerInfoView extends React.Component {
                   data-section={section}
                   name="suicidalActions"
                   value="threat"
-                  checked={input.suicidalActions.indexOf('threat') !== -1}
+                  checked={input.suicidalActions && input.suicidalActions.indexOf('threat') !== -1}
                   onChange={handleCheckboxChange}
                   disabled={isReviewPage}>
                 Threat
@@ -1407,7 +1407,7 @@ class ConsumerInfoView extends React.Component {
                   data-section={section}
                   name="suicidalActions"
                   value="attempt"
-                  checked={input.suicidalActions.indexOf('attempt') !== -1}
+                  checked={input.suicidalActions && input.suicidalActions.indexOf('attempt') !== -1}
                   onChange={handleCheckboxChange}
                   disabled={isReviewPage}>
                 Attempt
@@ -1417,7 +1417,7 @@ class ConsumerInfoView extends React.Component {
                   data-section={section}
                   name="suicidalActions"
                   value="completed"
-                  checked={input.suicidalActions.indexOf('completed') !== -1}
+                  checked={input.suicidalActions && input.suicidalActions.indexOf('completed') !== -1}
                   onChange={handleCheckboxChange}
                   disabled={isReviewPage}>
                 Completed
@@ -1434,7 +1434,7 @@ class ConsumerInfoView extends React.Component {
                     data-section={section}
                     name="suicideAttemptMethod"
                     value="narcotics"
-                    checked={input.suicideAttemptMethod.indexOf('narcotics') !== -1}
+                    checked={input.suicideAttemptMethod && input.suicideAttemptMethod.indexOf('narcotics') !== -1}
                     onChange={handleCheckboxChange}
                     disabled={isReviewPage}>
                   Narcotics (Prescription or Illicit)
@@ -1444,7 +1444,7 @@ class ConsumerInfoView extends React.Component {
                     data-section={section}
                     name="suicideAttemptMethod"
                     value="alcohol"
-                    checked={input.suicideAttemptMethod.indexOf('alcohol') !== -1}
+                    checked={input.suicideAttemptMethod && input.suicideAttemptMethod.indexOf('alcohol') !== -1}
                     onChange={handleCheckboxChange}
                     disabled={isReviewPage}>
                   Alcohol
@@ -1454,7 +1454,7 @@ class ConsumerInfoView extends React.Component {
                     data-section={section}
                     name="suicideAttemptMethod"
                     value="knife"
-                    checked={input.suicideAttemptMethod.indexOf('knife') !== -1}
+                    checked={input.suicideAttemptMethod && input.suicideAttemptMethod.indexOf('knife') !== -1}
                     onChange={handleCheckboxChange}
                     disabled={isReviewPage}>
                   Knife / Cutting Tool
@@ -1464,7 +1464,7 @@ class ConsumerInfoView extends React.Component {
                     data-section={section}
                     name="suicideAttemptMethod"
                     value="firearm"
-                    checked={input.suicideAttemptMethod.indexOf('firearm') !== -1}
+                    checked={input.suicideAttemptMethod && input.suicideAttemptMethod.indexOf('firearm') !== -1}
                     onChange={handleCheckboxChange}
                     disabled={isReviewPage}>
                   Firearm
@@ -1474,7 +1474,7 @@ class ConsumerInfoView extends React.Component {
                       data-section={section}
                       name="suicideAttemptMethod"
                       value="other"
-                      checked={input.suicideAttemptMethod.indexOf('other') !== -1}
+                      checked={input.suicideAttemptMethod && input.suicideAttemptMethod.indexOf('other') !== -1}
                       onChange={handleCheckboxChange}
                       disabled={isReviewPage}>
                     Other:
@@ -1482,7 +1482,7 @@ class ConsumerInfoView extends React.Component {
                   <FormControl
                       data-section={section}
                       name="suicideAttemptMethodOther"
-                      value={input.suicideAttemptMethodOther}
+                      value={input.suicideAttemptMethod && input.suicideAttemptMethodOther}
                       onChange={(e) => {
                         handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
                       }}
