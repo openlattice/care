@@ -37,19 +37,7 @@ const StyledImageElement = styled.img``;
 class ConsumerInfoView extends React.Component {
 
   static propTypes = {
-    handleMultiUpdate: PropTypes.func.isRequired,
-    handlePicture: PropTypes.func,
-    handleTextInput: PropTypes.func.isRequired,
-    handleSingleSelection: PropTypes.func.isRequired,
-    handleCheckboxChange: PropTypes.func.isRequired,
-    handleScaleSelection: PropTypes.func.isRequired,
-    handleDateInput: PropTypes.func.isRequired,
-    consumerIsSelected: PropTypes.bool.isRequired,
     isInReview: PropTypes.func.isRequired,
-    handlePageChange: PropTypes.func.isRequired,
-    section: PropTypes.string.isRequired,
-    history: ReactRouterPropTypes.history.isRequired,
-    location: ReactRouterPropTypes.location.isRequired,
     input: PropTypes.shape({
       firstName: PropTypes.string.isRequired,
       lastName: PropTypes.string.isRequired,
@@ -68,30 +56,40 @@ class ConsumerInfoView extends React.Component {
       prescribedMedication: PropTypes.string.isRequired,
       takingMedication: PropTypes.string.isRequired,
       prevPsychAdmission: PropTypes.string.isRequired,
-      selfDiagnosis: PropTypes.array.isRequired,
+      selfDiagnosis: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
       selfDiagnosisOther: PropTypes.string.isRequired,
       armedWithWeapon: PropTypes.bool.isRequired,
       armedWeaponType: PropTypes.string.isRequired,
       accessToWeapons: PropTypes.bool.isRequired,
       accessibleWeaponType: PropTypes.string.isRequired,
-      observedBehaviors: PropTypes.array.isRequired,
+      observedBehaviors: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
       observedBehaviorsOther: PropTypes.string.isRequired,
-      emotionalState: PropTypes.array.isRequired,
+      emotionalState: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
       emotionalStateOther: PropTypes.string.isRequired,
-      photosTakenOf: PropTypes.array.isRequired,
-      injuries: PropTypes.array.isRequired,
+      photosTakenOf: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
+      injuries: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
       injuriesOther: PropTypes.string.isRequired,
       suicidal: PropTypes.bool.isRequired,
-      suicidalActions: PropTypes.array.isRequired,
-      suicideAttemptMethod: PropTypes.array.isRequired,
+      suicidalActions: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
+      suicideAttemptMethod: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
       suicideAttemptMethodOther: PropTypes.string.isRequired
     }).isRequired,
-    selectedOrganizationId: PropTypes.string.isRequired
   }
 
   static defaultProps = {
-    handlePicture: () => {}
-  }
+    handlePicture: null,
+    handleMultiUpdate: null,
+    handleTextInput: null,
+    handleSingleSelection: null,
+    handleCheckboxChange: null,
+    handleScaleSelection: null,
+    handleDateInput: null,
+    consumerIsSelected: null,
+    handlePageChange: null,
+    section: null,
+    history: null,
+    location: null,
+    selectedOrganizationId: null,  }
 
   selfieWebCam;
 

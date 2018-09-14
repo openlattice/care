@@ -28,20 +28,23 @@ import { isPortlandOrg } from '../utils/Whitelist';
 class OfficerInfoView extends React.Component {
 
   static propTypes = {
-    handleTextInput: PropTypes.func.isRequired,
-    handleCheckboxChange: PropTypes.func.isRequired,
-    section: PropTypes.string.isRequired,
     isInReview: PropTypes.func.isRequired,
-    handlePageChange: PropTypes.func.isRequired,
-    history: ReactRouterPropTypes.history.isRequired,
-    location: ReactRouterPropTypes.location.isRequired,
     input: PropTypes.shape({
       officerName: PropTypes.string.isRequired,
       officerSeqID: PropTypes.string.isRequired,
       officerInjuries: PropTypes.string.isRequired,
-      officerCertification: PropTypes.array.isRequired
+      officerCertification: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired
     }).isRequired,
-    selectedOrganizationId: PropTypes.string.isRequired
+  }
+
+  static defaultProps = {
+    handleTextInput: null,
+    handleCheckboxChange: null,
+    section: null,
+    selectedOrganizationId: null,
+    handlePageChange: null,
+    history: null,
+    location: null
   }
 
   constructor(props) {

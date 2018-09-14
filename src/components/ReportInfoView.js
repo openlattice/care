@@ -51,15 +51,7 @@ class ReportInfoView extends React.Component {
   }
 
   static propTypes = {
-    handleDatePickerDateTimeOffset: PropTypes.func.isRequired,
-    handleTextInput: PropTypes.func.isRequired,
-    handleTimeInput: PropTypes.func.isRequired,
-    handleSingleSelection: PropTypes.func.isRequired,
     isInReview: PropTypes.func.isRequired,
-    handlePageChange: PropTypes.func.isRequired,
-    section: PropTypes.string.isRequired,
-    history: ReactRouterPropTypes.history.isRequired,
-    location: ReactRouterPropTypes.location.isRequired,
     input: PropTypes.shape({
       dispatchReason: PropTypes.string.isRequired,
       complaintNumber: PropTypes.string.isRequired,
@@ -68,14 +60,26 @@ class ReportInfoView extends React.Component {
       locationOfIncident: PropTypes.string.isRequired,
       unit: PropTypes.string.isRequired,
       postOfOccurrence: PropTypes.string.isRequired,
-      cadNumber: PropTypes.string.isRequired,
+      cadNumber: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
       onView: PropTypes.bool.isRequired,
       dateOccurred: PropTypes.string.isRequired,
       timeOccurred: PropTypes.string.isRequired,
       dateReported: PropTypes.string.isRequired,
       timeReported: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired
+      name: PropTypes.string
     }).isRequired
+  }
+
+  static defaultProps = {
+    handleDatePickerDateTimeOffset: null,
+    handleTextInput: null,
+    handleTimeInput: null,
+    handleSingleSelection: null,
+    handlePageChange: null,
+    section: null,
+    history: null,
+    location: null,
+    ['input.name']: null
   }
 
   areRequiredFieldsValid = () => (

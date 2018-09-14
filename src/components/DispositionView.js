@@ -31,27 +31,30 @@ import { isPortlandOrg } from '../utils/Whitelist';
 class DispositionView extends React.Component {
 
   static propTypes = {
-    handleCheckboxChange: PropTypes.func.isRequired,
-    handleMultiUpdate: PropTypes.func.isRequired,
-    handlePageChange: PropTypes.func.isRequired,
-    handleScaleSelection: PropTypes.func.isRequired,
-    handleSingleSelection: PropTypes.func.isRequired,
-    handleTextInput: PropTypes.func.isRequired,
-    section: PropTypes.string.isRequired,
     isInReview: PropTypes.func.isRequired,
-    history: ReactRouterPropTypes.history.isRequired,
-    hospitals: PropTypes.instanceOf(List).isRequired,
-    location: ReactRouterPropTypes.location.isRequired,
     input: PropTypes.shape({
-      disposition: PropTypes.array.isRequired,
+      disposition: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
       hospitalTransport: PropTypes.bool.isRequired,
       hospital: PropTypes.string.isRequired,
-      deescalationTechniques: PropTypes.array.isRequired,
+      deescalationTechniques: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
       deescalationTechniquesOther: PropTypes.string.isRequired,
-      specializedResourcesCalled: PropTypes.array.isRequired,
+      specializedResourcesCalled: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
       incidentNarrative: PropTypes.string.isRequired
-    }).isRequired,
-    selectedOrganizationId: PropTypes.string.isRequired
+    }).isRequired
+  }
+
+  static defaultProps = {
+    handleCheckboxChange: null,
+    handleMultiUpdate: null,
+    handlePageChange: null,
+    handleScaleSelection: null,
+    handleSingleSelection: null,
+    handleTextInput: null,
+    section: null,
+    history: null,
+    hospitals: null,
+    location: null,
+    selectedOrganizationId: null
   }
 
   constructor(props) {
