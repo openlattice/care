@@ -27,6 +27,7 @@ class ReportsListContainer extends React.Component {
 
   renderListItems = () => {
     const { reports } = this.props;
+    const showDivider = reports.size > 1;
 
     return reports && reports
       .sort((a,b) => {
@@ -39,6 +40,7 @@ class ReportsListContainer extends React.Component {
           <ReportSearchResult
               searchResult={report}
               onSelectSearchResult={this.props.onSelectSearchResult}
+              showDivider={showDivider}
               key={report.getIn(['openlattice.@id', 0])} />
       )
     )
