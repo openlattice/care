@@ -87,39 +87,39 @@ class bhrFormSummaryContainer extends React.Component {
       prescribedMedication: selectedReport.getIn([CONSUMER_INFO.PRESCRIBED_MEDICATION_FQN, 0]),
       takingMedication: selectedReport.getIn([CONSUMER_INFO.TAKING_MEDICATION_FQN, 0]),
       prevPsychAdmission: selectedReport.getIn([CONSUMER_INFO.PREV_PSYCH_ADMISSION_FQN, 0]),
-      selfDiagnosis: selectedReport.getIn([CONSUMER_INFO.SELF_DIAGNOSIS_FQN, 0]),
+      selfDiagnosis: selectedReport.get(CONSUMER_INFO.SELF_DIAGNOSIS_FQN),
       selfDiagnosisOther: selectedReport.getIn([CONSUMER_INFO.SELF_DIAGNOSIS_FQN, 0]),
       armedWithWeapon: selectedReport.getIn([CONSUMER_INFO.ARMED_WITH_WEAPON_FQN, 0]),
       armedWeaponType: selectedReport.getIn([CONSUMER_INFO.ARMED_WEAPON_TYPE_FQN, 0]),
       accessToWeapons: selectedReport.getIn([CONSUMER_INFO.ACCESS_TO_WEAPONS_FQN, 0]),
-      accessibleWeaponType: selectedReport.getIn([CONSUMER_INFO.ACCSSIBLE_WEAPON_TYPE_FQN, 0]),
-      observedBehaviors: selectedReport.getIn([CONSUMER_INFO.OBSERVED_BEHAVIORS_FQN, 0]),
+      accessibleWeaponType: selectedReport.getIn([CONSUMER_INFO.ACCESSIBLE_WEAPON_TYPE_FQN, 0]),
+      observedBehaviors: selectedReport.get(CONSUMER_INFO.OBSERVED_BEHAVIORS_FQN),
       observedBehaviorsOther: selectedReport.getIn([CONSUMER_INFO.OBVSERVED_BEHAVIORS_OTHER_FQN, 0]),
-      emotionalState: selectedReport.getIn([CONSUMER_INFO.EMOTIONAL_STATE_FQN, 0]),
+      emotionalState: selectedReport.get(CONSUMER_INFO.EMOTIONAL_STATE_FQN),
       emotionalStateOther: selectedReport.getIn([CONSUMER_INFO.EMOTIONAL_STATE_OTHER_FQN, 0]),
       photosTakenOf: selectedReport.getIn([CONSUMER_INFO.PHOTOS_TAKEN_OF_FQN, 0]),
-      injuries: selectedReport.getIn([CONSUMER_INFO.INJURIES_FQN, 0]),
+      injuries: selectedReport.get(CONSUMER_INFO.INJURIES_FQN),
       injuriesOther: selectedReport.getIn([CONSUMER_INFO.INJURIES_OTHER_FQN, 0]),
       suicidal: selectedReport.getIn([CONSUMER_INFO.SUICIDAL_FQN, 0]),
       suicidalActions: selectedReport.getIn([CONSUMER_INFO.SUICIDAL_ACTIONS_FQN, 0]),
-      suicideAttemptMethod: selectedReport.getIn([CONSUMER_INFO.SUICIDE_ATTEMPT_METHOD, 0]),
-      suicideAttemptMethodOther: selectedReport.getIn([CONSUMER_INFO.SUICIDE_ATTEMPT_METHOD_OTHER, 0])
+      suicideAttemptMethod: selectedReport.get(CONSUMER_INFO.SUICIDE_ATTEMPT_METHOD_FQN),
+      suicideAttemptMethodOther: selectedReport.getIn([CONSUMER_INFO.SUICIDE_ATTEMPT_METHOD_OTHER_FQN, 0])
     };
 
     const complainantInfo = {
-      complainantName: selectedReport.getIn([COMPLAINANT_INFO.FIRST_NAME_FQN, 0]),
-      complainantAddress: selectedReport.getIn([COMPLAINANT_INFO.FIRST_NAME_FQN, 0]),
-      complainantConsumerRelationship: selectedReport.getIn([COMPLAINANT_INFO.FIRST_NAME_FQN, 0]),
-      complainantPhone: selectedReport.getIn([COMPLAINANT_INFO.FIRST_NAME_FQN, 0])
+      complainantName: selectedReport.getIn([COMPLAINANT_INFO.COMPLAINANT_NAME_FQN, 0]),
+      complainantAddress: selectedReport.getIn([COMPLAINANT_INFO.COMPLAINANT_ADDRESS_FQN, 0]),
+      complainantConsumerRelationship: selectedReport.getIn([COMPLAINANT_INFO.COMPLAINANT_CONSUMER_RELATIONSHIP_FQN, 0]),
+      complainantPhone: selectedReport.getIn([COMPLAINANT_INFO.COMPLAINANT_PHONE_FQN, 0])
     };
 
     const dispositionInfo = {
-      disposition: selectedReport.getIn([DISPOSITION_INFO.DISPOSITION_FQN, 0]),
+      disposition: selectedReport.get(DISPOSITION_INFO.DISPOSITION_FQN),
       hospitalTransport: selectedReport.getIn([DISPOSITION_INFO.HOSPITAL_TRANSPORT_FQN, 0]),
       hospital: selectedReport.getIn([DISPOSITION_INFO.HOSPITAL_FQN, 0]),
-      deescalationTechniques: selectedReport.getIn([DISPOSITION_INFO.DEESCALATION_TECHNIQUES_FQN, 0]),
+      deescalationTechniques: selectedReport.get(DISPOSITION_INFO.DEESCALATION_TECHNIQUES_FQN),
       deescalationTechniquesOther: selectedReport.getIn([DISPOSITION_INFO.DEESCALATION_TECHNIQUES_OTHER_FQN, 0]),
-      specializedResourcesCalled: selectedReport.getIn([DISPOSITION_INFO.SPECIALIZED_RESOURCES_CALLED_FQN, 0]),
+      specializedResourcesCalled: selectedReport.get(DISPOSITION_INFO.SPECIALIZED_RESOURCES_CALLED_FQN),
       incidentNarrative: selectedReport.getIn([DISPOSITION_INFO.INCIDENT_NARRATIVE_FQN, 0])
     };
 
@@ -127,7 +127,7 @@ class bhrFormSummaryContainer extends React.Component {
       officerName: selectedReport.getIn([OFFICER_INFO.OFFICER_NAME_FQN, 0]),
       officerSeqID: selectedReport.getIn([OFFICER_INFO.OFFICER_SEQ_ID_FQN, 0]),
       officerInjuries: selectedReport.getIn([OFFICER_INFO.OFFICER_INJURIES_FQN, 0]),
-      officerCertification: selectedReport.getIn([OFFICER_INFO.OFFICER_CERTIFICATION_FQN, 0])
+      officerCertification: selectedReport.get(OFFICER_INFO.OFFICER_CERTIFICATION_FQN)
     };
 
 

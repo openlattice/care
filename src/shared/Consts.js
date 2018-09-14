@@ -90,7 +90,7 @@ export const COMPLAINANT_INFO = {
   COMPLAINANT_NAME_FQN: 'bhr.complainantName',
   COMPLAINANT_ADDRESS_FQN: 'bhr.complainantAddress',
   COMPLAINANT_CONSUMER_RELATIONSHIP_FQN: 'bhr.complainantConsumerRelationship',
-  COMPLAINANT_PHONE: 'bhr.complainantPhone'
+  COMPLAINANT_PHONE_FQN: 'bhr.complainantPhone'
 };
 
 export const DISPOSITION_INFO = {
@@ -105,7 +105,7 @@ export const DISPOSITION_INFO = {
 
 export const OFFICER_INFO = {
   OFFICER_NAME_FQN: 'bhr.officerName',
-  OFFICER_SEQ_ID_FQN: 'bhr.officerSeqId',
+  OFFICER_SEQ_ID_FQN: 'bhr.officerSeqID',
   OFFICER_INJURIES_FQN: 'bhr.officerInjuries',
   OFFICER_CERTIFICATION_FQN: 'bhr.officerCertification'
 };
