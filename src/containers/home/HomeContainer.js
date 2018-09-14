@@ -103,7 +103,7 @@ const TabBar = () => (
       Create Report
     </TabLink>
     <TabLink to={Routes.CONSUMER_SUMMARY_PATH}>
-      Find Consumer
+      View Reports
     </TabLink>
   </TabBarContainer>
 );

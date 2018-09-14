@@ -8,8 +8,7 @@ import ReportsListContainer from './ReportsListContainer';
 import BHRSummaryContainer from './BHRSummaryContainer';
 import {
   PAGE_1,
-  PAGE_2,
-  PAGE_3
+  PAGE_2
 } from './ConsumerSummaryConstants';
 import StyledCard from '../../components/cards/StyledCard';
 import { ContainerInnerWrapper, ContainerOuterWrapper } from '../../shared/Layout';
@@ -43,17 +42,29 @@ class ConsumerSummaryContainer extends React.Component {
     );
   }
 
-  renderReportSummary = () => {
-
-    return (
-      <BHRSummaryContainer selectedReport={this.state.selectedReport} />
+  onSelectSearchResult = (report) => {
+    this.setState(
+      {
+        selectedReport: report
+      },
+      () => {
+        this.props.history.push(PAGE_2);
+      }
     );
   }
+
+  renderReportsList = () => (
+    <ReportsListContainer onSelectSearchResult={this.onSelectSearchResult} />
+  )
+
+  renderReportSummary = () => (
+    <BHRSummaryContainer selectedReport={this.state.selectedReport} />
+  )
 
   render() {
     return (
       <Switch>
-        <Route path={PAGE_1} component={ReportsListContainer} />
+        <Route path={PAGE_1} render={this.renderReportsList} />
         <Route path={PAGE_2} render={this.renderReportSummary} />
         <Redirect to={PAGE_1} />
       </Switch>

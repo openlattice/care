@@ -5,7 +5,7 @@ import { withRouter } from 'react-router';
 import { Map, fromJS, toJS } from 'immutable';
 
 import ReviewView from '../../components/ReviewView';
-import { getBHRReports } from './ConsumerSummaryActionFactory';
+import { getBHRReportData } from './ConsumerSummaryActionFactory';
 import { REQUEST_STATUSES } from './ConsumerSummaryReducer';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 
@@ -16,21 +16,15 @@ const {
 
 class bhrFormSummaryContainer extends React.Component {
   componentWillMount() {
-    console.log('selectedReport:', this.props.selectedReport.toJS());
-    this.props.actions.getBHRReports({
+    console.log('selectedreport props:', this.props.selectedReport.toJS());
+    this.props.actions.getBHRReportData({
       entitySetId: this.props.bhrEntitySetId,
-      entityId: this.props.selectedReport.get('neighborId')
+      entityId: this.props.selectedReport.getIn(['openlattice.@id', 0])
     });
   }
 
   render() {
-    const {
-      reportInfo,
-      consumerInfo,
-      complainantInfo,
-      dispositionInfo,
-      officerInfo
-    } = this.props.formData;
+    console.log('render reportData:', this.props.reportData.toJS())
 
     return (
       <div>SUMMARY VIEW</div>
@@ -54,24 +48,24 @@ function mapStateToProps(state :Map<*, *>) :Object {
     'submissionState'
   ]);
 
-  const formData = state.getIn([
+  const reportData = state.getIn([
     'consumerSummary',
-    'formData'
+    'reportData'
   ], new Map());
 
-  console.log('FORM DATA:', formData.toJS());
+  console.log('FORM DATA:', reportData.toJS());
 
   return {
     bhrEntitySetId,
     submissionState,
-    formData
+    reportData
   };
 }
 
 function mapDispatchToProps(dispatch :Function) :Object {
 
   return {
-    actions: bindActionCreators({ getBHRReports }, dispatch)
+    actions: bindActionCreators({ getBHRReportData }, dispatch)
   };
 }
 

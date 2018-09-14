@@ -5,12 +5,12 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { Map, List, fromJS, toJS } from 'immutable';
 
-// import ReportListItem from './ReportListItem';
 import ReportSearchResult from '../search/ReportSearchResult';
 import { getBHRReports } from './ConsumerSummaryActionFactory';
 import { REQUEST_STATUSES } from './ConsumerSummaryReducer';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { ContainerInnerWrapper, ContainerOuterWrapper } from '../../shared/Layout';
+import { PAGE_2 } from './ConsumerSummaryConstants';
 
 const {
   BEHAVIORAL_HEALTH_REPORT_FQN
@@ -25,17 +25,6 @@ class ReportsListContainer extends React.Component {
     });
   }
 
-  onSelectSearchResult = (report) => {
-    this.setState(
-      {
-        selectedReport: report
-      },
-      () => {
-        this.props.history.push(PAGE_3);
-      }
-    );
-  }
-
   renderListItems = () => {
     const { reports } = this.props;
 
@@ -43,7 +32,7 @@ class ReportsListContainer extends React.Component {
       report => (
         <ReportSearchResult
             searchResult={report}
-            onSelectSearchResult={this.onSelectSearchResult}
+            onSelectSearchResult={this.props.onSelectSearchResult}
             key={report.getIn(['openlattice.@id', 0])} />
       )
     )
