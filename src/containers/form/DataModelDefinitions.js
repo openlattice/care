@@ -3,7 +3,7 @@
  */
 
 import randomUUID from 'uuid/v4';
-import { fromJS } from 'immutable';
+import { Map, fromJS } from 'immutable';
 
 /*
  * Complainant Information Section

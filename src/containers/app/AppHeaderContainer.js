@@ -16,7 +16,6 @@ import { Link } from 'react-router-dom';
 
 import AppNavigationContainer from './AppNavigationContainer';
 import OpenLatticeLogo from '../../assets/images/logo_v2.png';
-import Spinner from '../../components/spinner/Spinner';
 import * as Routes from '../../core/router/Routes';
 import { switchOrganization } from './AppActions';
 import {
@@ -28,10 +27,7 @@ import {
 const { logout } = AuthActionFactory;
 const { NEUTRALS, PURPLES } = Colors;
 
-/*
- * TODO: these will come from lattice-ui-kit after the next release. current version v0.1.1
- */
-
+// TODO: this should come from lattice-ui-kit, maybe after the next release. current version v0.1.1
 const APP_HEADER_BORDER :string = '#e6e6eb';
 
 const AppHeaderOuterWrapper = styled.header`
@@ -44,7 +40,7 @@ const AppHeaderOuterWrapper = styled.header`
 const AppHeaderInnerWrapper = styled.div`
   align-items: center;
   display: flex;
-  flex: 0 0 auto;
+  flex: 1 0 auto;
   justify-content: space-between;
   max-width: ${APP_CONTAINER_MAX_WIDTH}px;
   min-width: ${APP_CONTAINER_WIDTH}px;

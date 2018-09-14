@@ -10,7 +10,7 @@ import {
   EntityDataModelApiSagas,
   SearchApiSagas,
 } from 'lattice-sagas';
-import { fork } from 'redux-saga/effects';
+import { all, fork } from 'redux-saga/effects';
 
 import * as AppSagas from '../../containers/app/AppSagas';
 import * as FollowUpReportSagas from '../../containers/followup/FollowUpReportSagas';
@@ -19,7 +19,7 @@ import * as SearchSagas from '../../containers/search/SearchSagas';
 
 export default function* sagas() :Generator<*, *, *> {
 
-  yield [
+  yield all([
     // "lattice-auth" sagas
     fork(AuthSagas.watchAuthAttempt),
     fork(AuthSagas.watchAuthSuccess),
@@ -50,5 +50,5 @@ export default function* sagas() :Generator<*, *, *> {
     // SearchSagas
     fork(SearchSagas.searchConsumerNeighborsWatcher),
     fork(SearchSagas.searchConsumersWatcher)
-  ];
+  ]);
 }

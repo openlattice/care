@@ -6,8 +6,14 @@ import React from 'react';
 
 import { Map } from 'immutable';
 import { connect } from 'react-redux';
-import { Redirect, Route, Switch, withRouter } from 'react-router';
+import {
+  Redirect,
+  Route,
+  Switch,
+  withRouter
+} from 'react-router';
 import { bindActionCreators } from 'redux';
+import type { RouterHistory } from 'react-router';
 
 import StyledCard from '../../components/cards/StyledCard';
 import ConsumerSearchContainer from './ConsumerSearchContainer';
@@ -21,13 +27,13 @@ import { SUBMISSION_STATES } from './FollowUpReportReducer';
 import {
   PAGE_1,
   PAGE_2,
-  PAGE_3
+  PAGE_3,
 } from './FollowUpReportConstants';
 
 const {
   APPEARS_IN_FQN,
   FOLLOW_UP_REPORT_FQN,
-  PEOPLE_FQN
+  PEOPLE_FQN,
 } = APP_TYPES_FQNS;
 
 /*
@@ -41,7 +47,6 @@ type Props = {
   app :Map<*, *>;
   entitySetIds :{[key :string] :string};
   history :RouterHistory;
-  selectedOrganizationId :string;
   submissionState :number;
 };
 
@@ -64,7 +69,8 @@ class FollowUpReportManager extends React.Component<Props, State> {
 
   componentWillReceiveProps(nextProps :Props) {
 
-    if (this.props.submissionState === SUBMISSION_STATES.PRE_SUBMIT
+    const { submissionState } = this.props;
+    if (submissionState === SUBMISSION_STATES.PRE_SUBMIT
         && nextProps.submissionState === SUBMISSION_STATES.IS_SUBMITTING
     ) {
       this.setState({
@@ -78,7 +84,8 @@ class FollowUpReportManager extends React.Component<Props, State> {
 
     // only thing that *should* have changed is "submissionState", which means we don't want to rerender
     // this will probably cause bugs...
-    if (this.props.submissionState === SUBMISSION_STATES.PRE_SUBMIT
+    const { submissionState } = this.props;
+    if (submissionState === SUBMISSION_STATES.PRE_SUBMIT
         && nextProps.submissionState === SUBMISSION_STATES.IS_SUBMITTING) {
       return false;
     }
@@ -88,18 +95,20 @@ class FollowUpReportManager extends React.Component<Props, State> {
 
   handleOnCancel = () => {
 
-    this.props.history.push(PAGE_1);
+    const { history } = this.props;
+    history.push(PAGE_1);
   }
 
   handleOnSelectConsumerSearchResult = (searchResult :Map<*, *>) => {
 
+    const { history } = this.props;
     // TODO: routing between pages needs more thought
     this.setState(
       {
         selectedConsumer: searchResult
       },
       () => {
-        this.props.history.push(PAGE_2);
+        history.push(PAGE_2);
       }
     );
   }
@@ -107,12 +116,13 @@ class FollowUpReportManager extends React.Component<Props, State> {
   handleOnSelectConsumerNeighborSearchResult = (searchResult :Map<*, *>) => {
 
     // TODO: routing between pages needs more thought
+    const { history } = this.props;
     this.setState(
       {
         selectedConsumerNeighbor: searchResult
       },
       () => {
-        this.props.history.push(PAGE_3);
+        history.push(PAGE_3);
       }
     );
   }
@@ -121,23 +131,26 @@ class FollowUpReportManager extends React.Component<Props, State> {
 
     // TODO: error handling
 
-    this.props.actions.submitFollowUpReport({
-      app: this.props.app,
-      consumer: this.state.selectedConsumer,
-      neighbor: this.state.selectedConsumerNeighbor,
+    const { actions, app } = this.props;
+    const { selectedConsumer, selectedConsumerNeighbor } = this.state;
+    actions.submitFollowUpReport({
+      app,
+      consumer: selectedConsumer,
+      neighbor: selectedConsumerNeighbor,
       reportInfo: reportValues
     });
   }
 
   renderConsumerSearchContainer = () => {
 
+    const { entitySetIds } = this.props;
     // using the wrappers here is not the right thing to do
     return (
       <ContainerOuterWrapper>
         <ContainerInnerWrapper>
           <StyledCard>
             <ConsumerSearchContainer
-                peopleEntitySetId={this.props.entitySetIds[PEOPLE_FQN.getFullyQualifiedName()]}
+                peopleEntitySetId={entitySetIds[PEOPLE_FQN.toString()]}
                 onSelectSearchResult={this.handleOnSelectConsumerSearchResult} />
           </StyledCard>
         </ContainerInnerWrapper>
@@ -147,11 +160,12 @@ class FollowUpReportManager extends React.Component<Props, State> {
 
   renderConsumerNeighborsSearchContainer = () => {
 
+    const { entitySetIds, submissionState } = this.props;
     const { selectedConsumer } = this.state;
 
     if (
       (!selectedConsumer || selectedConsumer.isEmpty())
-      && this.props.submissionState === SUBMISSION_STATES.PRE_SUBMIT
+      && submissionState === SUBMISSION_STATES.PRE_SUBMIT
     ) {
       // TODO: routing between pages needs more thought
       return (
@@ -161,14 +175,15 @@ class FollowUpReportManager extends React.Component<Props, State> {
 
     return (
       <ConsumerNeighborsSearchContainer
-          consumer={this.state.selectedConsumer}
-          peopleEntitySetId={this.props.entitySetIds[PEOPLE_FQN.getFullyQualifiedName()]}
+          consumer={selectedConsumer}
+          peopleEntitySetId={entitySetIds[PEOPLE_FQN.toString()]}
           onSelectSearchResult={this.handleOnSelectConsumerNeighborSearchResult} />
     );
   }
 
   renderFollowUpReportContainer = () => {
 
+    const { entitySetIds, submissionState } = this.props;
     const { selectedConsumer, selectedConsumerNeighbor } = this.state;
 
     if (
@@ -178,7 +193,7 @@ class FollowUpReportManager extends React.Component<Props, State> {
         || !selectedConsumerNeighbor
         || selectedConsumerNeighbor.isEmpty()
       )
-      && this.props.submissionState === SUBMISSION_STATES.PRE_SUBMIT
+      && submissionState === SUBMISSION_STATES.PRE_SUBMIT
     ) {
       // TODO: routing between pages needs more thought
       return (
@@ -188,9 +203,9 @@ class FollowUpReportManager extends React.Component<Props, State> {
 
     return (
       <FollowUpReportContainer
-          consumer={this.state.selectedConsumer}
-          consumerNeighbor={this.state.selectedConsumerNeighbor}
-          peopleEntitySetId={this.props.entitySetIds[PEOPLE_FQN.getFullyQualifiedName()]}
+          consumer={selectedConsumer}
+          consumerNeighbor={selectedConsumerNeighbor}
+          peopleEntitySetId={entitySetIds[PEOPLE_FQN.toString()]}
           onCancel={this.handleOnCancel}
           onSubmit={this.handleOnSubmit} />
     );
@@ -215,32 +230,31 @@ function mapStateToProps(state :Map<*, *>) :Object {
 
   const appearsInEntitySetId :string = state.getIn([
     'app',
-    APPEARS_IN_FQN.getFullyQualifiedName(),
+    APPEARS_IN_FQN.toString(),
     'entitySetsByOrganization',
     selectedOrganizationId
   ]);
 
   const peopleEntitySetId :string = state.getIn([
     'app',
-    PEOPLE_FQN.getFullyQualifiedName(),
+    PEOPLE_FQN.toString(),
     'entitySetsByOrganization',
     selectedOrganizationId
   ]);
 
   const reportEntitySetId :string = state.getIn([
     'app',
-    FOLLOW_UP_REPORT_FQN.getFullyQualifiedName(),
+    FOLLOW_UP_REPORT_FQN.toString(),
     'entitySetsByOrganization',
     selectedOrganizationId
   ]);
 
   return {
-    selectedOrganizationId,
     app: state.get('app', Map()),
     entitySetIds: {
-      [APPEARS_IN_FQN.getFullyQualifiedName()]: appearsInEntitySetId,
-      [PEOPLE_FQN.getFullyQualifiedName()]: peopleEntitySetId,
-      [FOLLOW_UP_REPORT_FQN.getFullyQualifiedName()]: reportEntitySetId
+      [APPEARS_IN_FQN.toString()]: appearsInEntitySetId,
+      [PEOPLE_FQN.toString()]: peopleEntitySetId,
+      [FOLLOW_UP_REPORT_FQN.toString()]: reportEntitySetId
     },
     submissionState: state.getIn(['followUpReport', 'submissionState'])
   };
