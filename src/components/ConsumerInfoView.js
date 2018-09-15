@@ -3,8 +3,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ReactRouterPropTypes from 'react-router-prop-types';
 import moment from 'moment';
-import styled from 'styled-components';
-import { FormGroup, FormControl, Col } from 'react-bootstrap';
 import { withRouter } from 'react-router';
 
 import FormNav from './FormNav';
@@ -122,9 +120,10 @@ class ConsumerInfoView extends React.Component {
     }
   }
 
-  handleOnSelfieCapture = (selfieDataAsBase64 :?string) => {
+  handleOnSelfieCapture = (selfieDataAsBase64) => {
 
-    this.props.handlePicture(this.props.section, 'picture', (selfieDataAsBase64 || ''));
+    const { handlePicture, section } = this.props;
+    handlePicture(section, 'picture', (selfieDataAsBase64 || ''));
   }
 
   handlePageChange = (path) => {
@@ -133,10 +132,12 @@ class ConsumerInfoView extends React.Component {
       this.selfieWebCam.closeMediaStream();
     }
 
+    const { handlePageChange } = this.props;
+    const { sectionFormatErrors, sectionRequiredErrors } = this.state;
     this.setState(setDidClickNav);
     this.setState(setRequiredErrors, () => {
-      if (this.state.sectionRequiredErrors.length < 1 && this.state.sectionFormatErrors.length < 1) {
-        this.props.handlePageChange(path);
+      if (sectionRequiredErrors.length < 1 && sectionFormatErrors.length < 1) {
+        handlePageChange(path);
       }
     });
   }
@@ -150,12 +151,9 @@ class ConsumerInfoView extends React.Component {
   }
 
   componentWillUnmount() {
-    validateSectionNavigation(
-      this.props.input,
-      this.state.requiredFields,
-      this.state.currentPage,
-      this.props.history
-    );
+    const { history, input } = this.props;
+    const { currentPage, requiredFields } = this.state;
+    validateSectionNavigation(input, requiredFields, currentPage, history);
   }
 
   renderConsumerPicture = (input) => {
@@ -165,7 +163,6 @@ class ConsumerInfoView extends React.Component {
     }
 
     const pictureDataUrl = `${DATA_URL_PREFIX}${input.picture}`;
-
     return (
       <FullWidthItem>
         <FieldHeader>
@@ -280,10 +277,10 @@ class ConsumerInfoView extends React.Component {
         </HalfWidthItem>
         <HalfWidthItem>
           <TextField
-            disabled={isReviewPage}
-            header="If other, specify others"
-            name="directedagainstother"
-            onChange={this.handleOnChangeNew} />
+              disabled={isReviewPage}
+              header="If other, specify others"
+              name="directedagainstother"
+              onChange={this.handleOnChangeNew} />
         </HalfWidthItem>
         <FullWidthItem>
           <FieldHeader>History of Violent Behavior</FieldHeader>
@@ -297,32 +294,28 @@ class ConsumerInfoView extends React.Component {
           <FlexyWrapper>
             {
               this.renderTempCheckbox('Police', 'historicaldirectedagainst', 'police',
-                input.historicaldirectedagainst.indexOf('police') !== -1
-              )
+                input.historicaldirectedagainst.indexOf('police') !== -1)
             }
             {
               this.renderTempCheckbox('Family', 'historicaldirectedagainst', 'family',
-                input.historicaldirectedagainst.indexOf('family') !== -1
-              )
+                input.historicaldirectedagainst.indexOf('family') !== -1)
             }
             {
               this.renderTempCheckbox('Significant other', 'historicaldirectedagainst', 'significantOther',
-                input.historicaldirectedagainst.indexOf('significantOther') !== -1
-              )
+                input.historicaldirectedagainst.indexOf('significantOther') !== -1)
             }
             {
               this.renderTempCheckbox('Other', 'historicaldirectedagainst', 'other',
-                input.historicaldirectedagainst.indexOf('other') !== -1
-              )
+                input.historicaldirectedagainst.indexOf('other') !== -1)
             }
           </FlexyWrapper>
         </HalfWidthItem>
         <HalfWidthItem>
           <TextField
-            disabled={isReviewPage}
-            header="If other, specify others"
-            name="historicaldirectedagainstother"
-            onChange={this.handleOnChangeNew} />
+              disabled={isReviewPage}
+              header="If other, specify others"
+              name="historicaldirectedagainstother"
+              onChange={this.handleOnChangeNew} />
         </HalfWidthItem>
         <FullWidthItem>
           <TextAreaField
@@ -516,7 +509,7 @@ class ConsumerInfoView extends React.Component {
                       sectionFormatErrors,
                       this.setInputErrors
                     );
-                    const age = `${moment().diff(moment(e.target.value), 'years')}`;
+                    const age = moment().diff(moment(e.target.value), 'years').toString();
                     handleMultiUpdate(section, { age });
                   }}
                   type="date"
@@ -565,8 +558,7 @@ class ConsumerInfoView extends React.Component {
               { this.renderTempRadio('No', 'prescribedMedication', 'no', input.prescribedMedication === 'no') }
               {
                 this.renderTempRadio('Unknown', 'prescribedMedication', 'unknown',
-                  input.prescribedMedication === 'unknown'
-                )
+                  input.prescribedMedication === 'unknown')
               }
             </FlexyWrapper>
           </HalfWidthItem>
@@ -589,28 +581,23 @@ class ConsumerInfoView extends React.Component {
             <FlexyWrapper>
               {
                 this.renderTempCheckbox('Bipolar', 'selfDiagnosis', 'bipolar',
-                  input.selfDiagnosis.indexOf('bipolar') !== -1
-                )
+                  input.selfDiagnosis.indexOf('bipolar') !== -1)
               }
               {
                 this.renderTempCheckbox('Depression', 'selfDiagnosis', 'depression',
-                  input.selfDiagnosis.indexOf('depression') !== -1
-                )
+                  input.selfDiagnosis.indexOf('depression') !== -1)
               }
               {
                 this.renderTempCheckbox('PTSD', 'selfDiagnosis', 'ptsd',
-                  input.selfDiagnosis.indexOf('ptsd') !== -1
-                )
+                  input.selfDiagnosis.indexOf('ptsd') !== -1)
               }
               {
                 this.renderTempCheckbox('Schizophrenia', 'selfDiagnosis', 'schizophrenia',
-                  input.selfDiagnosis.indexOf('schizophrenia') !== -1
-                )
+                  input.selfDiagnosis.indexOf('schizophrenia') !== -1)
               }
               {
                 this.renderTempCheckbox('Dementia', 'selfDiagnosis', 'dementia',
-                  input.selfDiagnosis.indexOf('dementia') !== -1
-                )
+                  input.selfDiagnosis.indexOf('dementia') !== -1)
               }
               {
                 isPortlandOrg(selectedOrganizationId) && this.renderTempCheckbox(
@@ -622,17 +609,16 @@ class ConsumerInfoView extends React.Component {
               }
               {
                 this.renderTempCheckbox('Other', 'selfDiagnosis', 'other',
-                  input.selfDiagnosis.indexOf('other') !== -1
-                )
+                  input.selfDiagnosis.indexOf('other') !== -1)
               }
             </FlexyWrapper>
           </HalfWidthItem>
           <HalfWidthItem>
             <TextField
-              disabled={isReviewPage}
-              header="If other, specify other diagnoses"
-              name="selfDiagnosisOther"
-              onChange={this.handleOnChangeNew} />
+                disabled={isReviewPage}
+                header="If other, specify other diagnoses"
+                name="selfDiagnosisOther"
+                onChange={this.handleOnChangeNew} />
           </HalfWidthItem>
           <HalfWidthItem>
             <FieldHeader>Armed with Weapon?</FieldHeader>
@@ -657,10 +643,10 @@ class ConsumerInfoView extends React.Component {
           </HalfWidthItem>
           <HalfWidthItem>
             <TextField
-              disabled={isReviewPage}
-              header="If Yes, specify weapon type"
-              name="accessibleWeaponType"
-              onChange={this.handleOnChangeNew} />
+                disabled={isReviewPage}
+                header="If Yes, specify weapon type"
+                name="accessibleWeaponType"
+                onChange={this.handleOnChangeNew} />
           </HalfWidthItem>
           <HalfWidthItem>
             <FieldHeader>Observed Behaviors (check all that apply)</FieldHeader>
@@ -741,10 +727,10 @@ class ConsumerInfoView extends React.Component {
           </HalfWidthItem>
           <HalfWidthItem>
             <TextField
-              disabled={isReviewPage}
-              header="If other, specify other observed behaviors"
-              name="observedBehaviorsOther"
-              onChange={this.handleOnChangeNew} />
+                disabled={isReviewPage}
+                header="If other, specify other observed behaviors"
+                name="observedBehaviorsOther"
+                onChange={this.handleOnChangeNew} />
           </HalfWidthItem>
           {
             isPortlandOrg(selectedOrganizationId)
@@ -756,94 +742,80 @@ class ConsumerInfoView extends React.Component {
             <FlexyWrapper>
               {
                 this.renderTempCheckbox('Angry', 'emotionalState', 'angry',
-                  input.emotionalState.indexOf('angry') !== -1
-                )
+                  input.emotionalState.indexOf('angry') !== -1)
               }
               {
                 this.renderTempCheckbox('Afraid', 'emotionalState', 'afraid',
-                  input.emotionalState.indexOf('afraid') !== -1
-                )
+                  input.emotionalState.indexOf('afraid') !== -1)
               }
               {
                 this.renderTempCheckbox('Apologetic', 'emotionalState', 'apologetic',
-                  input.emotionalState.indexOf('apologetic') !== -1
-                )
+                  input.emotionalState.indexOf('apologetic') !== -1)
               }
               {
                 this.renderTempCheckbox('Calm', 'emotionalState', 'calm',
-                  input.emotionalState.indexOf('calm') !== -1
-                )
+                  input.emotionalState.indexOf('calm') !== -1)
               }
               {
                 this.renderTempCheckbox('Crying', 'emotionalState', 'crying',
-                  input.emotionalState.indexOf('crying') !== -1
-                )
+                  input.emotionalState.indexOf('crying') !== -1)
               }
               {
                 this.renderTempCheckbox('Fearful', 'emotionalState', 'fearful',
-                  input.emotionalState.indexOf('fearful') !== -1
-                )
+                  input.emotionalState.indexOf('fearful') !== -1)
               }
               {
                 this.renderTempCheckbox('Nervous', 'emotionalState', 'nervous',
-                  input.emotionalState.indexOf('nervous') !== -1
-                )
+                  input.emotionalState.indexOf('nervous') !== -1)
               }
               {
                 this.renderTempCheckbox('Other', 'emotionalState', 'other',
-                  input.emotionalState.indexOf('other') !== -1
-                )
+                  input.emotionalState.indexOf('other') !== -1)
               }
             </FlexyWrapper>
           </HalfWidthItem>
           <HalfWidthItem>
             <TextField
-              disabled={isReviewPage}
-              header="If other, specify other states"
-              name="emotionalStateOther"
-              onChange={this.handleOnChangeNew} />
+                disabled={isReviewPage}
+                header="If other, specify other states"
+                name="emotionalStateOther"
+                onChange={this.handleOnChangeNew} />
           </HalfWidthItem>
           <HalfWidthItem>
             <FieldHeader>Consumer Injuries (check all that apply)</FieldHeader>
             <FlexyWrapper>
               {
                 this.renderTempCheckbox('Abrasions', 'injuries', 'abrasions',
-                  input.injuries.indexOf('abrasions') !== -1
-                )
+                  input.injuries.indexOf('abrasions') !== -1)
               }
               {
                 this.renderTempCheckbox('Bruises', 'injuries', 'bruises',
-                  input.injuries.indexOf('bruises') !== -1
-                )
+                  input.injuries.indexOf('bruises') !== -1)
               }
               {
                 this.renderTempCheckbox('Complaints of Pain', 'injuries', 'complaintsOfPain',
-                  input.injuries.indexOf('complaintsOfPain') !== -1
-                )
+                  input.injuries.indexOf('complaintsOfPain') !== -1)
               }
               {
                 this.renderTempCheckbox('Concussion', 'injuries', 'concussion',
-                  input.injuries.indexOf('concussion') !== -1
-                )
+                  input.injuries.indexOf('concussion') !== -1)
               }
               {
                 this.renderTempCheckbox('Fractures', 'injuries', 'fractures',
-                  input.injuries.indexOf('fractures') !== -1
-                )
+                  input.injuries.indexOf('fractures') !== -1)
               }
               {
                 this.renderTempCheckbox('Other', 'injuries', 'other',
-                  input.injuries.indexOf('other') !== -1
-                )
+                  input.injuries.indexOf('other') !== -1)
               }
             </FlexyWrapper>
           </HalfWidthItem>
           <HalfWidthItem>
             <TextField
-              disabled={isReviewPage}
-              header="If other, specify other injuries"
-              name="injuriesOther"
-              onChange={this.handleOnChangeNew} />
+                disabled={isReviewPage}
+                header="If other, specify other injuries"
+                name="injuriesOther"
+                onChange={this.handleOnChangeNew} />
           </HalfWidthItem>
           <HalfWidthItem>
             <FieldHeader>Suicidal</FieldHeader>
@@ -857,23 +829,19 @@ class ConsumerInfoView extends React.Component {
             <FlexyWrapper>
               {
                 this.renderTempCheckbox('Thoughts', 'suicidalActions', 'thoughts',
-                  input.suicidalActions.indexOf('thoughts') !== -1
-                )
+                  input.suicidalActions.indexOf('thoughts') !== -1)
               }
               {
                 this.renderTempCheckbox('Threat', 'suicidalActions', 'threat',
-                  input.suicidalActions.indexOf('threat') !== -1
-                )
+                  input.suicidalActions.indexOf('threat') !== -1)
               }
               {
                 this.renderTempCheckbox('Attempt', 'suicidalActions', 'attempt',
-                  input.suicidalActions.indexOf('attempt') !== -1
-                )
+                  input.suicidalActions.indexOf('attempt') !== -1)
               }
               {
                 this.renderTempCheckbox('Completed', 'suicidalActions', 'completed',
-                  input.suicidalActions.indexOf('completed') !== -1
-                )
+                  input.suicidalActions.indexOf('completed') !== -1)
               }
             </FlexyWrapper>
           </HalfWidthItem>
@@ -882,55 +850,47 @@ class ConsumerInfoView extends React.Component {
             <FlexyWrapper>
               {
                 this.renderTempCheckbox('Alcohol', 'suicideAttemptMethod', 'alcohol',
-                  input.suicideAttemptMethod.indexOf('alcohol') !== -1
-                )
+                  input.suicideAttemptMethod.indexOf('alcohol') !== -1)
               }
               {
                 this.renderTempCheckbox('Knife / Cutting Tool', 'suicideAttemptMethod', 'knife',
-                  input.suicideAttemptMethod.indexOf('knife') !== -1
-                )
+                  input.suicideAttemptMethod.indexOf('knife') !== -1)
               }
               {
                 this.renderTempCheckbox('Firearm', 'suicideAttemptMethod', 'firearm',
-                  input.suicideAttemptMethod.indexOf('firearm') !== -1
-                )
+                  input.suicideAttemptMethod.indexOf('firearm') !== -1)
               }
               {
                 this.renderTempCheckbox('Narcotics (Prescription or Illicit)', 'suicideAttemptMethod', 'narcotics',
-                  input.suicideAttemptMethod.indexOf('narcotics') !== -1
-                )
+                  input.suicideAttemptMethod.indexOf('narcotics') !== -1)
               }
               {
                 this.renderTempCheckbox('Other', 'suicideAttemptMethod', 'other',
-                  input.suicideAttemptMethod.indexOf('other') !== -1
-                )
+                  input.suicideAttemptMethod.indexOf('other') !== -1)
               }
             </FlexyWrapper>
           </HalfWidthItem>
           <HalfWidthItem>
             <TextField
-              disabled={isReviewPage}
-              header="If other, specify other methods"
-              name="suicideAttemptMethodOther"
-              onChange={this.handleOnChangeNew} />
+                disabled={isReviewPage}
+                header="If other, specify other methods"
+                name="suicideAttemptMethodOther"
+                onChange={this.handleOnChangeNew} />
           </HalfWidthItem>
           <FullWidthItem>
             <FieldHeader>Photos Taken Of (check all that apply)</FieldHeader>
             <FlexyWrapper inline>
               {
                 this.renderTempCheckbox('Injuries', 'photosTakenOf', 'injuries',
-                  input.photosTakenOf.indexOf('injuries') !== -1
-                )
+                  input.photosTakenOf.indexOf('injuries') !== -1)
               }
               {
                 this.renderTempCheckbox('Damage / Crime Scene', 'photosTakenOf', 'propertyDamage',
-                  input.photosTakenOf.indexOf('propertyDamage') !== -1
-                )
+                  input.photosTakenOf.indexOf('propertyDamage') !== -1)
               }
             </FlexyWrapper>
           </FullWidthItem>
         </FormGridWrapper>
-
         {
           !isReviewPage
             ? (

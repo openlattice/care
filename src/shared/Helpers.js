@@ -49,15 +49,8 @@ export const renderErrors = (sectionFormatErrors, sectionRequiredErrors, didClic
 };
 
 export const validateSectionNavigation = (input, requiredFields, currentPage, history) => {
-  const areRequiredInputsValid = validateRequiredInput(
-    input,
-    requiredFields
-  );
-  if (
-    !areRequiredInputsValid
-    && MAX_PAGE
-    && currentPage !== MAX_PAGE
-  ) {
+  const areRequiredInputsValid = validateRequiredInput(input, requiredFields);
+  if (!areRequiredInputsValid && MAX_PAGE && currentPage !== MAX_PAGE) {
     const pathname = `/${currentPage}`;
     history.push({
       pathname,

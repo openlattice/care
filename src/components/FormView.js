@@ -1,17 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { NavLink, Redirect, Route, Switch } from 'react-router-dom';
+import {
+  NavLink,
+  Redirect,
+  Route,
+  Switch
+} from 'react-router-dom';
 
-import Spinner from '../components/spinner/Spinner';
-import ReportInfoView from '../components/ReportInfoView';
+import Spinner from './spinner/Spinner';
+import ReportInfoView from './ReportInfoView';
 import ConsumerSearch from '../containers/ConsumerSearch';
-import ConsumerInfoView from '../components/ConsumerInfoView';
-import ComplainantInfoView from '../components/ComplainantInfoView';
-import DispositionView from '../components/DispositionView';
-import OfficerInfoView from '../components/OfficerInfoView';
-import ReviewView from '../components/ReviewView';
-import StyledCard from '../components/cards/StyledCard';
+import ConsumerInfoView from './ConsumerInfoView';
+import ComplainantInfoView from './ComplainantInfoView';
+import DispositionView from './DispositionView';
+import OfficerInfoView from './OfficerInfoView';
+import ReviewView from './ReviewView';
+import StyledCard from './cards/StyledCard';
 
 import * as Routes from '../core/router/Routes';
 

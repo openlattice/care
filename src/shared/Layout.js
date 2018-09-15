@@ -1,6 +1,11 @@
 import styled from 'styled-components';
-import { ControlLabel, Checkbox, Radio, Button, Row } from 'react-bootstrap';
-
+import {
+  ControlLabel,
+  Checkbox,
+  Radio,
+  Button,
+  Row
+} from 'react-bootstrap';
 
 export const Page = styled.div`
   background: #393F46;
@@ -89,10 +94,8 @@ export const SubmitButtonWrapper = ButtonWrapper.extend`
 `;
 
 export const SubmitButton = styled(Button).attrs({
-  type: (props) => {
-    return props.type || 'submit';
-  }
-})``;
+  type: props => (props.type || 'submit')
+});
 
 export const SectionWrapper = styled.div`
   align-items: center;
