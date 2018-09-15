@@ -7,6 +7,9 @@ import { Colors } from 'lattice-ui-kit';
 
 const { NEUTRALS, WHITE } = Colors;
 
+/**
+ * @deprecated
+ */
 const StyledCard = styled.div`
   background-color: ${WHITE};
   border: 1px solid ${NEUTRALS[4]};
@@ -46,6 +49,12 @@ const StyledCard = styled.div`
     flex-direction: column;
     margin-left: 10px;
     margin-top: 10px;
+  }
+  label {
+    margin-right: 20px;
+  }
+  label input {
+    margin-right: 5px;
   }
 `;
 

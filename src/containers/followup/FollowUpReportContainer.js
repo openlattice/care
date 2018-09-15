@@ -205,23 +205,23 @@ class FollowUpReportContainer extends React.Component<Props, State> {
           </label>
         </div>
         <TextField
-            label="Clinician Name*"
+            header="Clinician Name*"
             name={CLINICIAN_NAME_VAL}
             onChange={this.handleOnChangeInputString} />
         <TextField
-            label="Officer Name*"
+            header="Officer Name*"
             name={OFFICER_NAME_VAL}
             onChange={this.handleOnChangeInputString} />
         <TextField
-            label="Officer Seq Id*"
+            header="Officer Seq Id*"
             name={OFFICER_SEQ_ID_VAL}
             onChange={this.handleOnChangeInputString} />
         <TextAreaField
-            label="Reason for Follow-Up*"
+            header="Reason for Follow-Up*"
             name={REASON_VAL}
             onChange={this.handleOnChangeInputString} />
         <TextAreaField
-            label="Summary / Notes*"
+            header="Summary / Notes*"
             name={SUMMARY_VAL}
             onChange={this.handleOnChangeInputString} />
         <ActionButtons>

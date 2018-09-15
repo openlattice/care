@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { ProgressBar } from 'react-bootstrap';
 import { NavLink, Redirect, Route, Switch } from 'react-router-dom';
 
 import Spinner from '../components/spinner/Spinner';
@@ -36,10 +35,6 @@ const ContainerInnerWrapper = styled.div`
   margin-bottom: 50px;
   margin-top: 50px;
   width: 900px;
-`;
-
-const StyledProgressBar = styled(ProgressBar)`
-  margin: 20px 20px 50px 20px;
 `;
 
 const Success = styled.div`
@@ -240,7 +235,6 @@ function FormView({
     <ContainerOuterWrapper>
       <ContainerInnerWrapper>
         <StyledCard>
-          <StyledProgressBar bsStyle="info" now={getProgress().num} label={getProgress().percentage} />
           <form onSubmit={handleSubmit}>
             <Switch>
               <Route path={`${Routes.BHR}/1`} render={getConsumerSearchView} />

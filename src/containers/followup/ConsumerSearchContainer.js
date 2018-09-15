@@ -43,7 +43,6 @@ const Title = styled.span`
 `;
 
 const FullWidthSearchInput = styled(SearchInput)`
-  margin: 20px 0;
   width: 100%;
 `;
 

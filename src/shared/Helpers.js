@@ -1,13 +1,12 @@
 import React from 'react';
-import { ErrorMessage } from '../shared/Layout';
-import { validateRequiredInput } from '../shared/Validation';
-import { FORM_ERRORS, MAX_PAGE } from '../shared/Consts';
 
-export const setDidClickNav = () => {
-  return {
-    didClickNav: true
-  };
-};
+import { ErrorMessage } from './Layout';
+import { validateRequiredInput } from './Validation';
+import { FORM_ERRORS, MAX_PAGE } from './Consts';
+
+export const setDidClickNav = () => ({
+  didClickNav: true
+});
 
 export const setRequiredErrors = (state, props) => {
   const requiredErrors = state.sectionRequiredErrors.slice();
@@ -59,8 +58,9 @@ export const validateSectionNavigation = (input, requiredFields, currentPage, hi
     && MAX_PAGE
     && currentPage !== MAX_PAGE
   ) {
+    const pathname = `/${currentPage}`;
     history.push({
-      pathname: `/${currentPage}`,
+      pathname,
       state: { didClickNav: true }
     });
   }

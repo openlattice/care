@@ -8,10 +8,10 @@ import isFunction from 'lodash/isFunction';
 import styled from 'styled-components';
 import { Colors } from 'lattice-ui-kit';
 
+import FieldHeader from './styled/FieldHeader';
 import { isNonEmptyString } from '../../utils/LangUtils';
-import { randomStringId } from '../../utils/Utils';
 
-const { NEUTRALS, PURPLES } = Colors;
+const { NEUTRALS, PURPLES, WHITE } = Colors;
 
 const FieldWrapper = styled.div`
   display: flex;
@@ -30,7 +30,15 @@ const StyledInput = styled.input`
   line-height: normal;
   outline: none;
   padding: 10px 20px;
+  &:hover {
+    background-color: ${NEUTRALS[6]};
+  }
+  &:disabled {
+    background-color: ${NEUTRALS[8]};
+    cursor: not-allowed;
+  }
   &:focus {
+    background-color: ${WHITE};
     border-color: ${PURPLES[1]};
   }
   &::placeholder {
@@ -38,43 +46,24 @@ const StyledInput = styled.input`
   }
 `;
 
-const StyledLabel = styled.label`
-  color: ${NEUTRALS[0]};
-  font-size: 14px;
-  font-weight: normal;
-  margin: 0 0 10px 0;
-`;
-
 type Props = {
   className ? :string;
-  label ? :string;
+  disabled ? :boolean;
+  header ? :string;
   name ? :string;
   placeholder ? :string;
   onChange :Function;
 };
 
-type State = {
-  randomId :string;
-};
-
-class TextField extends Component<Props, State> {
+class TextField extends Component<Props> {
 
   static defaultProps = {
     className: '',
-    label: undefined,
+    disabled: false,
+    header: undefined,
     name: undefined,
     placeholder: undefined,
   };
-
-  constructor(props :Props) {
-
-    super(props);
-
-    // TODO: is this a good pattern to follow for <input>'s id and <label>'s htmlFor?
-    this.state = {
-      randomId: randomStringId(),
-    };
-  }
 
   handleOnChange = (event :SyntheticInputEvent<*>) => {
 
@@ -88,23 +77,22 @@ class TextField extends Component<Props, State> {
 
     const {
       className,
-      label,
+      disabled,
+      header,
       name,
       placeholder
     } = this.props;
-    const { randomId } = this.state;
 
-    // TODO: should the <label> tag be wrapping the <textarea>
     return (
       <FieldWrapper>
         {
-          isNonEmptyString(label)
-            ? <StyledLabel htmlFor={randomId}>{ label }</StyledLabel>
+          isNonEmptyString(header)
+            ? <FieldHeader>{ header }</FieldHeader>
             : null
         }
         <StyledInput
             className={className}
-            id={randomId}
+            disabled={disabled}
             name={name}
             onChange={this.handleOnChange}
             placeholder={placeholder}
