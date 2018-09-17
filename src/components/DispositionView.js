@@ -25,7 +25,6 @@ class DispositionView extends React.Component {
 
   constructor(props) {
     super(props);
-
     this.state = {
       section: 'dispositionInfo',
     };

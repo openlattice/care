@@ -162,13 +162,13 @@ function FormView({
   const getOfficerInfoView = () => {
     return (
       <OfficerInfoView
-          handleTextInput={handleTextInput}
           handleCheckboxChange={handleCheckboxChange}
-          input={officerInfo}
-          isInReview={isInReview}
           handlePageChange={handlePageChange}
-          section="officerInfo"
-          selectedOrganizationId={selectedOrganizationId} />
+          input={officerInfo}
+          isInReview={false}
+          selectedOrganizationId={selectedOrganizationId}
+          updateStateValue={updateStateValue}
+          updateStateValues={updateStateValues} />
     );
   };
 
