@@ -1,122 +1,122 @@
 import React from 'react';
 
-import PropTypes from 'prop-types';
-import ReactRouterPropTypes from 'react-router-prop-types';
-import { List } from 'immutable';
-import { FormGroup, FormControl, Col } from 'react-bootstrap';
+import isInteger from 'lodash/isInteger';
+import parseInt from 'lodash/parseInt';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 
 import FormNav from './FormNav';
+import FieldHeader from './text/styled/FieldHeader';
+import TextAreaField from './text/TextAreaField';
+import TextField from './text/TextField';
 import {
-  SectionWrapper,
-  ContentWrapper,
-  PaddedRow,
-  TitleLabel,
-  OtherWrapper,
-  InlineCheckbox,
-  InlineRadio,
-  SectionHeader
-} from '../shared/Layout';
-import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
-import {
-  setDidClickNav,
-  setRequiredErrors,
-  renderErrors,
-  validateSectionNavigation
-} from '../shared/Helpers';
-import { getCurrentPage } from '../utils/Utils';
+  FlexyWrapper,
+  FormGridWrapper,
+  FullWidthItem,
+  HalfWidthItem,
+} from './form/StyledFormComponents';
+import { FORM_PATHS } from '../shared/Consts';
 import { isPortlandOrg } from '../utils/Whitelist';
 
-class DispositionView extends React.Component {
+const incidentNarrativeTitle = `Narrative of Incident, to include: Results of investigation, basis for actions taken,
+emotional states, additional witnesses. Property listing.`;
 
-  static propTypes = {
-    handleCheckboxChange: PropTypes.func.isRequired,
-    handleMultiUpdate: PropTypes.func.isRequired,
-    handlePageChange: PropTypes.func.isRequired,
-    handleScaleSelection: PropTypes.func.isRequired,
-    handleSingleSelection: PropTypes.func.isRequired,
-    handleTextInput: PropTypes.func.isRequired,
-    section: PropTypes.string.isRequired,
-    isInReview: PropTypes.func.isRequired,
-    history: ReactRouterPropTypes.history.isRequired,
-    hospitals: PropTypes.instanceOf(List).isRequired,
-    location: ReactRouterPropTypes.location.isRequired,
-    input: PropTypes.shape({
-      disposition: PropTypes.array.isRequired,
-      hospitalTransport: PropTypes.bool.isRequired,
-      hospital: PropTypes.string.isRequired,
-      deescalationTechniques: PropTypes.array.isRequired,
-      deescalationTechniquesOther: PropTypes.string.isRequired,
-      specializedResourcesCalled: PropTypes.array.isRequired,
-      incidentNarrative: PropTypes.string.isRequired
-    }).isRequired,
-    selectedOrganizationId: PropTypes.string.isRequired
-  }
+class DispositionView extends React.Component {
 
   constructor(props) {
     super(props);
 
     this.state = {
-      requiredFields: [],
-      sectionFormatErrors: [],
-      sectionRequiredErrors: [FORM_ERRORS.IS_REQUIRED],
-      didClickNav: this.props.location.state
-        ? this.props.location.state.didClickNav
-        : false,
-      currentPage: getCurrentPage()
+      section: 'dispositionInfo',
     };
   }
 
   handlePageChange = (path) => {
-    this.setState(setDidClickNav);
-    this.setState(setRequiredErrors, () => {
-      if (this.state.sectionRequiredErrors.length < 1 && this.state.sectionFormatErrors.length < 1) {
-        this.props.handlePageChange(path);
-      }
-    });
+
+    // TODO: validation
+    const { handlePageChange } = this.props;
+    handlePageChange(path);
   }
 
-  setInputErrors = (name, inputValid, sectionFormatErrors) => {
-    this.setState({
-      [`${name}Valid`]: inputValid,
-      sectionFormatErrors
-    });
+  handleOnChange = (event) => {
+
+    // TODO: validation
+    const { updateStateValue } = this.props;
+    const { section } = this.state;
+    const { name, value } = event.target;
+    updateStateValue(section, name, value);
   }
 
-  componentWillUnmount() {
-    validateSectionNavigation(
-      this.props.input,
-      this.state.requiredFields,
-      this.state.currentPage,
-      this.props.history
+  handleOnChangeScaleSelection = (event) => {
+
+    const { updateStateValue } = this.props;
+    const { section } = this.state;
+    const { name, value } = event.target;
+
+    const valueAsInt = parseInt(value);
+    if (isInteger(valueAsInt) && `${valueAsInt}` === value) {
+      updateStateValue(section, name, valueAsInt);
+    }
+    else {
+      updateStateValue(section, name, value);
+    }
+  }
+
+  // TODO: replace this with real components from lattice-ui-kit
+  renderTempCheckbox = (label, name, value, isChecked) => {
+
+    const { handleCheckboxChange, isInReview } = this.props;
+    const { section } = this.state;
+    const id = `${name}-${value}`;
+    return (
+      <label htmlFor={id}>
+        <input
+            checked={isChecked}
+            data-section={section}
+            disabled={isInReview}
+            id={id}
+            name={name}
+            onChange={handleCheckboxChange}
+            type="checkbox"
+            value={value} />
+        { label }
+      </label>
+    );
+  }
+
+  // TODO: replace this with real components from lattice-ui-kit
+  renderTempRadio = (label, name, value, isChecked, onChange) => {
+
+    const { isInReview } = this.props;
+    const { section } = this.state;
+    const id = `${name}-${value}`;
+    return (
+      <label htmlFor={id}>
+        <input
+            checked={isChecked}
+            data-section={section}
+            disabled={isInReview}
+            id={id}
+            name={name}
+            onChange={onChange || this.handleOnChange}
+            type="radio"
+            value={value} />
+        { label }
+      </label>
     );
   }
 
   renderHospitalsSelect = () => {
 
-    const {
-      section,
-      handleSingleSelection,
-      handleTextInput,
-      hospitals,
-      input,
-      isInReview
-    } = this.props;
-
-    const { sectionFormatErrors } = this.state;
-    const isReviewPage = isInReview();
+    const { hospitals, input, isInReview } = this.props;
+    const { section } = this.state;
 
     if (hospitals.isEmpty()) {
       return (
-        <FormControl
-            data-section={section}
+        <TextField
+            disabled={isInReview}
             name="hospital"
-            value={input.hospital}
-            onChange={(e) => {
-              handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
-            }}
-            disabled={isReviewPage} />
+            onChange={this.handleOnChange} />
       );
     }
 
@@ -130,490 +130,258 @@ class DispositionView extends React.Component {
     });
 
     return (
-      <FormControl
-          componentClass="select"
-          placeholder="select"
+      <select
           data-section={section}
+          disabled={isInReview}
           name="hospital"
-          value={input.hospital}
-          onChange={handleSingleSelection}
-          disabled={isReviewPage}>
+          onChange={this.handleOnChange}
+          value={input.hospital}>
         <option value="">Select</option>
         { hospitalOptions }
-      </FormControl>
+      </select>
     );
   }
 
   renderDeescalationScalePortland = () => {
 
-    const {
-      handleScaleSelection,
-      input,
-      isInReview,
-      section
-    } = this.props;
-
-    const isReviewPage = isInReview();
+    const { input, isInReview } = this.props;
+    const { section } = this.state;
 
     const scaleRadios = [];
     for (let i = 1; i <= 10; i += 1) {
+      const inputKey = `input-deescalationscale-${i}`;
+      const labelKey = `label-deescalationscale-${i}`;
       scaleRadios.push(
-        <InlineRadio
-            key={`deescalationscale-${i}`}
-            inline
-            data-section={section}
-            name="deescalationscale"
-            value={i}
-            checked={input.deescalationscale === i}
-            onChange={handleScaleSelection}
-            disabled={isReviewPage}>
+        <label key={labelKey} htmlFor={inputKey}>
+          <input
+              checked={input.deescalationscale === i}
+              data-section={section}
+              disabled={isInReview}
+              id={inputKey}
+              key={inputKey}
+              name="deescalationscale"
+              onChange={this.handleOnChangeScaleSelection}
+              type="radio"
+              value={i} />
           { i }
-        </InlineRadio>
+        </label>
       );
     }
 
     return (
-      <PaddedRow>
-        <Col lg={12}>
-          <TitleLabel>Incident De-escalation Scale (1-10)</TitleLabel>
-          <h5>1 = Calm , 10 = Still escalated</h5>
+      <FullWidthItem>
+        <FieldHeader>Incident De-escalation Scale (1-10)</FieldHeader>
+        <FieldHeader>1 = Calm , 10 = Still escalated</FieldHeader>
+        <FlexyWrapper inline>
           { scaleRadios }
-        </Col>
-      </PaddedRow>
+        </FlexyWrapper>
+      </FullWidthItem>
     );
   }
 
   renderDisposition = () => {
 
-    const {
-      section,
-      handleCheckboxChange,
-      input,
-      isInReview
-    } = this.props;
-
-    const isReviewPage = isInReview();
-
+    const { input } = this.props;
     return (
-      <PaddedRow>
-        <Col lg={12}>
-          <TitleLabel>Disposition</TitleLabel>
-          <InlineCheckbox
-              inline
-              data-section={section}
-              name="disposition"
-              value="arrest"
-              checked={input.disposition.indexOf('arrest') !== -1}
-              onChange={handleCheckboxChange}
-              disabled={isReviewPage}>
-            Arrest
-          </InlineCheckbox>
-          <InlineCheckbox
-              inline
-              data-section={section}
-              name="disposition"
-              value="ep"
-              checked={input.disposition.indexOf('ep') !== -1}
-              onChange={handleCheckboxChange}
-              disabled={isReviewPage}>
-            EP
-          </InlineCheckbox>
-          <InlineCheckbox
-              inline
-              data-section={section}
-              name="disposition"
-              value="voluntaryER"
-              checked={input.disposition.indexOf('voluntaryER') !== -1}
-              onChange={handleCheckboxChange}
-              disabled={isReviewPage}>
-            Voluntary ER Intake
-          </InlineCheckbox>
-          <InlineCheckbox
-              inline
-              data-section={section}
-              name="disposition"
-              value="bcri"
-              checked={input.disposition.indexOf('bcri') !== -1}
-              onChange={handleCheckboxChange}
-              disabled={isReviewPage}>
-            BCRI
-          </InlineCheckbox>
-          <InlineCheckbox
-              inline
-              data-section={section}
-              name="disposition"
-              value="infoAndReferral"
-              checked={input.disposition.indexOf('infoAndReferral') !== -1}
-              onChange={handleCheckboxChange}
-              disabled={isReviewPage}>
-            Information and Referral
-          </InlineCheckbox>
-          <InlineCheckbox
-              inline
-              data-section={section}
-              name="disposition"
-              value="lead"
-              checked={input.disposition.indexOf('lead') !== -1}
-              onChange={handleCheckboxChange}
-              disabled={isReviewPage}>
-            LEAD
-          </InlineCheckbox>
-          <InlineCheckbox
-              inline
-              data-section={section}
-              name="disposition"
-              value="contactedTreatementProvider"
-              checked={input.disposition.indexOf('contactedTreatementProvider') !== -1}
-              onChange={handleCheckboxChange}
-              disabled={isReviewPage}>
-            Contacted or Referred to Current Treatment Provider
-          </InlineCheckbox>
-          <InlineCheckbox
-              inline
-              data-section={section}
-              name="disposition"
-              value="criminalCitation"
-              checked={input.disposition.indexOf('criminalCitation') !== -1}
-              onChange={handleCheckboxChange}
-              disabled={isReviewPage}>
-            Criminal Citation
-          </InlineCheckbox>
-          <InlineCheckbox
-              inline
-              data-section={section}
-              name="disposition"
-              value="civilCitation"
-              checked={input.disposition.indexOf('civilCitation') !== -1}
-              onChange={handleCheckboxChange}
-              disabled={isReviewPage}>
-            Civil Citation
-          </InlineCheckbox>
-        </Col>
-      </PaddedRow>
+      <FullWidthItem>
+        <FieldHeader>Disposition</FieldHeader>
+        <FlexyWrapper>
+          { this.renderTempCheckbox('Arrest', 'disposition', 'arrest', input.disposition.indexOf('arrest') !== -1) }
+          { this.renderTempCheckbox('EP', 'disposition', 'ep', input.disposition.indexOf('ep') !== -1) }
+          { this.renderTempCheckbox('Voluntary ER Intake', 'disposition', 'voluntaryER',
+              input.disposition.indexOf('voluntaryER') !== -1)
+          }
+          { this.renderTempCheckbox('BCRI', 'disposition', 'bcri', input.disposition.indexOf('bcri') !== -1) }
+          { this.renderTempCheckbox('Information and Referral', 'disposition', 'infoAndReferral',
+              input.disposition.indexOf('infoAndReferral') !== -1)
+          }
+          { this.renderTempCheckbox('LEAD', 'disposition', 'lead', input.disposition.indexOf('lead') !== -1) }
+          {
+            this.renderTempCheckbox(
+              'Contacted or Referred to Current Treatment Provider',
+              'disposition',
+              'contactedTreatementProvider',
+              input.disposition.indexOf('contactedTreatementProvider') !== -1
+            )
+          }
+          { this.renderTempCheckbox('Criminal Citation', 'disposition', 'criminalCitation',
+            input.disposition.indexOf('criminalCitation') !== -1)
+          }
+          { this.renderTempCheckbox('Civil Citation', 'disposition', 'civilCitation',
+            input.disposition.indexOf('civilCitation') !== -1)
+          }
+        </FlexyWrapper>
+      </FullWidthItem>
     );
   }
 
   renderDispositionPortland = () => {
 
-    const {
-      section,
-      handleCheckboxChange,
-      input,
-      isInReview
-    } = this.props;
-
-    const isReviewPage = isInReview();
-
+    const { input } = this.props;
     return (
-      <PaddedRow>
-        <Col lg={12}>
-          <TitleLabel>Disposition</TitleLabel>
-          <InlineCheckbox
-              inline={false}
-              data-section={section}
-              name="disposition"
-              value="referredToBHU"
-              checked={input.disposition.indexOf('referredToBHU') !== -1}
-              onChange={handleCheckboxChange}
-              disabled={isReviewPage}>
-            Referred to BHU
-          </InlineCheckbox>
-          <InlineCheckbox
-              inline={false}
-              data-section={section}
-              name="disposition"
-              value="referredToCrisis"
-              checked={input.disposition.indexOf('referredToCrisis') !== -1}
-              onChange={handleCheckboxChange}
-              disabled={isReviewPage}>
-            Referred to Crisis
-          </InlineCheckbox>
-          <InlineCheckbox
-              inline={false}
-              data-section={section}
-              name="disposition"
-              value="arrest"
-              checked={input.disposition.indexOf('arrest') !== -1}
-              onChange={handleCheckboxChange}
-              disabled={isReviewPage}>
-            Arrest
-          </InlineCheckbox>
-          <InlineCheckbox
-              inline={false}
-              data-section={section}
-              name="disposition"
-              value="divertedFromArrest"
-              checked={input.disposition.indexOf('divertedFromArrest') !== -1}
-              onChange={handleCheckboxChange}
-              disabled={isReviewPage}>
-            Diverted from Arrest
-          </InlineCheckbox>
-          <InlineCheckbox
-              inline={false}
-              data-section={section}
-              name="disposition"
-              value="resistedOrRefusedSupports"
-              checked={input.disposition.indexOf('resistedOrRefusedSupports') !== -1}
-              onChange={handleCheckboxChange}
-              disabled={isReviewPage}>
-            Resisted or Refused Supports
-          </InlineCheckbox>
-        </Col>
-      </PaddedRow>
+      <FullWidthItem>
+        <FieldHeader>Disposition</FieldHeader>
+        <FlexyWrapper>
+          { this.renderTempCheckbox('Referred to BHU', 'disposition', 'referredToBHU',
+              input.disposition.indexOf('referredToBHU') !== -1)
+          }
+          { this.renderTempCheckbox('Referred to Crisis', 'disposition', 'referredToCrisis',
+              input.disposition.indexOf('referredToCrisis') !== -1)
+          }
+          { this.renderTempCheckbox('Arrest', 'disposition', 'arrest', input.disposition.indexOf('arrest') !== -1) }
+          { this.renderTempCheckbox('Diverted from Arrest', 'disposition', 'divertedFromArrest',
+              input.disposition.indexOf('divertedFromArrest') !== -1)
+          }
+          { this.renderTempCheckbox('Resisted or Refused Supports', 'disposition', 'resistedOrRefusedSupports',
+              input.disposition.indexOf('resistedOrRefusedSupports') !== -1)
+          }
+        </FlexyWrapper>
+      </FullWidthItem>
     );
   }
 
   renderStabilizedOnScene = () => {
 
-    const {
-      handleMultiUpdate,
-      handleTextInput,
-      input,
-      isInReview,
-      section
-    } = this.props;
-
-    const { sectionFormatErrors } = this.state;
-
-    const isReviewPage = isInReview();
-
+    const { input, isInReview, updateStateValues } = this.props;
+    const { section } = this.state;
     return (
-      <PaddedRow>
-        <Col lg={12}>
-          <TitleLabel>Stabilized on scene with Follow-Up Referral</TitleLabel>
-          <InlineRadio
-              inline
-              data-section={section}
-              name="stabilizedindicator"
-              checked={input.stabilizedindicator}
-              onChange={() => {
-                handleMultiUpdate(section, {
-                  // set to true
-                  stabilizedindicator: true,
-                  // set default values
-                  referraldestination: '',
-                  referralprovidedindicator: true
-                });
-              }}
-              disabled={isReviewPage}>
-            Yes
-          </InlineRadio>
-          <InlineRadio
-              inline
-              data-section={section}
-              name="stabilizedindicator"
-              checked={!input.stabilizedindicator}
-              onChange={() => {
-                handleMultiUpdate(section, {
-                  // set to false
-                  stabilizedindicator: false,
-                  // clear values
-                  referraldestination: '',
-                  referralprovidedindicator: false
-                });
-              }}
-              disabled={isReviewPage}>
-            No
-          </InlineRadio>
-        </Col>
-        {
-          input.stabilizedindicator && (
-            <Col lg={12}>
-              <TitleLabel>Referral information</TitleLabel>
-              <FormControl
-                  data-section={section}
-                  name="referraldestination"
-                  value={input.referraldestination}
-                  onChange={(e) => {
-                    handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
-                  }}
-                  disabled={isReviewPage} />
-            </Col>
-          )
-        }
-      </PaddedRow>
+      <>
+        <HalfWidthItem>
+          <FieldHeader>Stabilized on scene with Follow-Up Referral</FieldHeader>
+          <FlexyWrapper inline>
+            {
+              this.renderTempRadio(
+                'Yes',
+                'stabilizedindicator',
+                true,
+                input.stabilizedindicator === true,
+                () => {
+                  updateStateValues(section, {
+                    // set to true
+                    stabilizedindicator: true,
+                    // set default values
+                    referraldestination: '',
+                    referralprovidedindicator: true
+                  });
+                }
+              )
+            }
+            {
+              this.renderTempRadio(
+                'No',
+                'stabilizedindicator',
+                false,
+                input.stabilizedindicator === false,
+                () => {
+                  updateStateValues(section, {
+                    // set to false
+                    stabilizedindicator: false,
+                    // clear values
+                    referraldestination: '',
+                    referralprovidedindicator: false
+                  });
+                }
+              )
+            }
+          </FlexyWrapper>
+        </HalfWidthItem>
+        <HalfWidthItem>
+          <TextField
+              disabled={isInReview}
+              header="If Yes, specify referral information"
+              name="referraldestination"
+              onChange={this.handleOnChange} />
+        </HalfWidthItem>
+      </>
     );
   }
 
   renderSpecializedResources = () => {
 
-    const {
-      section,
-      handleCheckboxChange,
-      input,
-      isInReview
-    } = this.props;
-
-    const isReviewPage = isInReview();
-
+    const { input } = this.props;
     return (
-      <PaddedRow>
-        <Col lg={12}>
-          <TitleLabel>Called for Specialized Resources</TitleLabel>
-          <FormGroup>
-            <InlineCheckbox
-                data-section={section}
-                inline
-                name="specializedResourcesCalled"
-                value="bcri"
-                checked={input.specializedResourcesCalled.indexOf('bcri') !== -1}
-                onChange={handleCheckboxChange}
-                disabled={isReviewPage}>
-              BCRI / Mobile Crisis Response Team
-            </InlineCheckbox>
-            <InlineCheckbox
-                data-section={section}
-                inline
-                name="specializedResourcesCalled"
-                value="citOfficer"
-                checked={input.specializedResourcesCalled.indexOf('citOfficer') !== -1}
-                onChange={handleCheckboxChange}
-                disabled={isReviewPage}>
-              CIT Officer
-            </InlineCheckbox>
-            <InlineCheckbox
-                data-section={section}
-                inline
-                name="specializedResourcesCalled"
-                value="crtUnit"
-                checked={input.specializedResourcesCalled.indexOf('crtUnit') !== -1}
-                onChange={handleCheckboxChange}
-                disabled={isReviewPage}>
-              CRT Unit
-            </InlineCheckbox>
-            <InlineCheckbox
-                data-section={section}
-                inline
-                name="specializedResourcesCalled"
-                value="esu"
-                checked={input.specializedResourcesCalled.indexOf('esu') !== -1}
-                onChange={handleCheckboxChange}
-                disabled={isReviewPage}>
-              ESU
-            </InlineCheckbox>
-            <InlineCheckbox
-                data-section={section}
-                inline
-                name="specializedResourcesCalled"
-                value="swat"
-                checked={input.specializedResourcesCalled.indexOf('swat') !== -1}
-                onChange={handleCheckboxChange}
-                disabled={isReviewPage}>
-              SWAT
-            </InlineCheckbox>
-            <InlineCheckbox
-                data-section={section}
-                inline
-                name="specializedResourcesCalled"
-                value="negotiationTeam"
-                checked={input.specializedResourcesCalled.indexOf('negotiationTeam') !== -1}
-                onChange={handleCheckboxChange}
-                disabled={isReviewPage}>
-              Negotiation Team
-            </InlineCheckbox>
-            <InlineCheckbox
-                data-section={section}
-                inline
-                name="specializedResourcesCalled"
-                value="homelessOutreach"
-                checked={input.specializedResourcesCalled.indexOf('homelessOutreach') !== -1}
-                onChange={handleCheckboxChange}
-                disabled={isReviewPage}>
-              Homeless Outreach
-            </InlineCheckbox>
-          </FormGroup>
-        </Col>
-      </PaddedRow>
+      <FullWidthItem>
+        <FieldHeader>Called for Specialized Resources</FieldHeader>
+        <FlexyWrapper>
+          { this.renderTempCheckbox('BCRI / Mobile Crisis Response Team', 'specializedResourcesCalled', 'bcri',
+              input.specializedResourcesCalled.indexOf('bcri') !== -1)
+          }
+          { this.renderTempCheckbox('CIT Officer', 'specializedResourcesCalled', 'citOfficer',
+              input.specializedResourcesCalled.indexOf('citOfficer') !== -1)
+          }
+          { this.renderTempCheckbox('CRT Unit', 'specializedResourcesCalled', 'crtUnit',
+              input.specializedResourcesCalled.indexOf('crtUnit') !== -1)
+          }
+          { this.renderTempCheckbox('ESU', 'specializedResourcesCalled', 'esu',
+              input.specializedResourcesCalled.indexOf('esu') !== -1)
+          }
+          { this.renderTempCheckbox('SWAT', 'specializedResourcesCalled', 'swat',
+              input.specializedResourcesCalled.indexOf('swat') !== -1)
+          }
+          { this.renderTempCheckbox('Negotiation Team', 'specializedResourcesCalled', 'negotiationTeam',
+              input.specializedResourcesCalled.indexOf('negotiationTeam') !== -1)
+          }
+          { this.renderTempCheckbox('Homeless Outreach', 'specializedResourcesCalled', 'homelessOutreach',
+              input.specializedResourcesCalled.indexOf('homelessOutreach') !== -1)
+          }
+        </FlexyWrapper>
+      </FullWidthItem>
     );
   }
 
   renderSpecializedResourcesPortland = () => {
 
-    const {
-      section,
-      handleCheckboxChange,
-      input,
-      isInReview
-    } = this.props;
-
-    const isReviewPage = isInReview();
-
+    const { input } = this.props;
     return (
-      <PaddedRow>
-        <Col lg={12}>
-          <TitleLabel>Called for Specialized Resources</TitleLabel>
-          <FormGroup>
-            <InlineCheckbox
-                data-section={section}
-                inline
-                name="specializedResourcesCalled"
-                value="BehavioralHealthUnit"
-                checked={input.specializedResourcesCalled.indexOf('BehavioralHealthUnit') !== -1}
-                onChange={handleCheckboxChange}
-                disabled={isReviewPage}>
-              Behavioral Health Unit (BHU)
-            </InlineCheckbox>
-            <InlineCheckbox
-                data-section={section}
-                inline
-                name="specializedResourcesCalled"
-                value="CrisisTeam"
-                checked={input.specializedResourcesCalled.indexOf('CrisisTeam') !== -1}
-                onChange={handleCheckboxChange}
-                disabled={isReviewPage}>
-              Crisis Team
-            </InlineCheckbox>
-            <InlineCheckbox
-                data-section={section}
-                inline
-                name="specializedResourcesCalled"
-                value="voluntaryTransport"
-                checked={input.specializedResourcesCalled.indexOf('voluntaryTransport') !== -1}
-                onChange={handleCheckboxChange}
-                disabled={isReviewPage}>
-              Voluntary Transport
-            </InlineCheckbox>
-            <InlineCheckbox
-                data-section={section}
-                inline
-                name="specializedResourcesCalled"
-                value="involuntaryTransport"
-                checked={input.specializedResourcesCalled.indexOf('involuntaryTransport') !== -1}
-                onChange={handleCheckboxChange}
-                disabled={isReviewPage}>
-              Involuntary Transport
-            </InlineCheckbox>
-          </FormGroup>
-        </Col>
-      </PaddedRow>
+      <FullWidthItem>
+        <FieldHeader>Called for Specialized Resources</FieldHeader>
+        <FlexyWrapper>
+          {
+            this.renderTempCheckbox(
+              'Behavioral Health Unit (BHU)',
+              'specializedResourcesCalled',
+              'BehavioralHealthUnit',
+              input.specializedResourcesCalled.indexOf('BehavioralHealthUnit') !== -1
+            )
+          }
+          {
+            this.renderTempCheckbox('Crisis Team', 'specializedResourcesCalled', 'CrisisTeam',
+              input.specializedResourcesCalled.indexOf('CrisisTeam') !== -1)
+          }
+          {
+            this.renderTempCheckbox('Voluntary Transport', 'specializedResourcesCalled', 'voluntaryTransport',
+              input.specializedResourcesCalled.indexOf('voluntaryTransport') !== -1)
+          }
+          {
+            this.renderTempCheckbox('Involuntary Transport', 'specializedResourcesCalled', 'involuntaryTransport',
+              input.specializedResourcesCalled.indexOf('involuntaryTransport') !== -1)
+          }
+        </FlexyWrapper>
+      </FullWidthItem>
     );
   }
 
   renderTransportedToHospitalPortland = () => {
 
     const {
-      handleMultiUpdate,
-      handleSingleSelection,
-      handleTextInput,
       input,
       isInReview,
-      section
+      updateStateValue,
+      updateStateValues
     } = this.props;
-    const { sectionFormatErrors } = this.state;
-
-    const isReviewPage = isInReview();
-
+    const { section } = this.state;
     return (
-      <PaddedRow>
-        <Col lg={12}>
-          <TitleLabel>Transported to Hospital</TitleLabel>
-          <InlineRadio
-              inline
-              data-section={section}
-              name="hospitaltransportindicator"
-              checked={input.hospitaltransportindicator}
-              onChange={() => {
-                handleMultiUpdate(section, {
+      <>
+        <FullWidthItem>
+          <FieldHeader>Transported to Hospital</FieldHeader>
+          {
+            this.renderTempRadio(
+              'Yes',
+              'hospitaltransportindicator',
+              true,
+              input.hospitaltransportindicator === true,
+              () => {
+                updateStateValues(section, {
                   // set to true
                   hospitaltransportindicator: true,
                   // set default values
@@ -621,17 +389,17 @@ class DispositionView extends React.Component {
                   TransportingAgency: 'police',
                   voluntaryactionindicator: true
                 });
-              }}
-              disabled={isReviewPage}>
-            Yes
-          </InlineRadio>
-          <InlineRadio
-              inline
-              data-section={section}
-              name="hospitaltransportindicator"
-              checked={!input.hospitaltransportindicator}
-              onChange={() => {
-                handleMultiUpdate(section, {
+              }
+            )
+          }
+          {
+            this.renderTempRadio(
+              'No',
+              'hospitaltransportindicator',
+              false,
+              input.hospitaltransportindicator === false,
+              () => {
+                updateStateValues(section, {
                   // set to true
                   hospitaltransportindicator: false,
                   // clear values
@@ -639,327 +407,187 @@ class DispositionView extends React.Component {
                   TransportingAgency: '',
                   voluntaryactionindicator: null
                 });
-              }}
-              disabled={isReviewPage}>
-            No
-          </InlineRadio>
-        </Col>
+              }
+            )
+          }
+        </FullWidthItem>
         {
           input.hospitaltransportindicator && (
-            <Col lg={12}>
-              <InlineRadio
-                  inline
-                  data-section={section}
-                  name="voluntaryactionindicator"
-                  value
-                  checked={input.voluntaryactionindicator}
-                  onChange={handleSingleSelection}
-                  disabled={isReviewPage}>
-                Voluntary
-              </InlineRadio>
-              <InlineRadio
-                  inline
-                  data-section={section}
-                  name="voluntaryactionindicator"
-                  value={false}
-                  checked={!input.voluntaryactionindicator}
-                  onChange={handleSingleSelection}
-                  disabled={isReviewPage}>
-                Involuntary
-              </InlineRadio>
-            </Col>
+            <>
+              <HalfWidthItem>
+                <FlexyWrapper inline>
+                  {
+                    this.renderTempRadio(
+                      'Voluntary',
+                      'voluntaryactionindicator',
+                      true,
+                      input.voluntaryactionindicator === true,
+                      () => updateStateValues(section, { voluntaryactionindicator: true })
+                    )
+                  }
+                  {
+                    this.renderTempRadio(
+                      'Involuntary',
+                      'voluntaryactionindicator',
+                      false,
+                      input.voluntaryactionindicator === false,
+                      () => updateStateValues(section, { voluntaryactionindicator: false })
+                    )
+                  }
+                </FlexyWrapper>
+              </HalfWidthItem>
+              <HalfWidthItem>
+                <FlexyWrapper inline>
+                  { this.renderTempRadio('Police', 'TransportingAgency', 'police',
+                      input.TransportingAgency === 'police')
+                  }
+                  { this.renderTempRadio('Medcu', 'TransportingAgency', 'medcu',
+                      input.TransportingAgency === 'medcu')
+                  }
+                </FlexyWrapper>
+              </HalfWidthItem>
+              <FullWidthItem>
+                <TextField
+                    disabled={isInReview}
+                    header="Hospital name"
+                    name="hospitalname"
+                    onChange={this.handleOnChange} />
+              </FullWidthItem>
+            </>
           )
         }
-        {
-          input.hospitaltransportindicator && (
-            <Col lg={12}>
-              <InlineRadio
-                  inline
-                  data-section={section}
-                  name="TransportingAgency"
-                  value="police"
-                  checked={input.TransportingAgency === 'police'}
-                  onChange={handleSingleSelection}
-                  disabled={isReviewPage}>
-                Police
-              </InlineRadio>
-              <InlineRadio
-                  inline
-                  data-section={section}
-                  name="TransportingAgency"
-                  value="medcu"
-                  checked={input.TransportingAgency === 'medcu'}
-                  onChange={handleSingleSelection}
-                  disabled={isReviewPage}>
-                Medcu
-              </InlineRadio>
-            </Col>
-          )
-        }
-        {
-          input.hospitaltransportindicator && (
-            <Col lg={12}>
-              <TitleLabel>Hospital name</TitleLabel>
-              <FormControl
-                  data-section={section}
-                  name="hospitalname"
-                  value={input.hospitalname}
-                  onChange={(e) => {
-                    handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
-                  }}
-                  disabled={isReviewPage} />
-            </Col>
-          )
-        }
-      </PaddedRow>
+      </>
     );
   }
 
   renderTransportedToHospital = () => {
 
-    const {
-      section,
-      handleSingleSelection,
-      input,
-      isInReview
-    } = this.props;
-
-    const isReviewPage = isInReview();
-
+    const { input, isInReview, selectedOrganizationId } = this.props;
     return (
-      <PaddedRow>
-        <Col lg={6}>
-          <TitleLabel>Transported to Hospital</TitleLabel>
-          <InlineRadio
-              inline
-              data-section={section}
-              name="hospitalTransport"
-              value
-              checked={input.hospitalTransport}
-              onChange={handleSingleSelection}
-              disabled={isReviewPage}>
-            Yes
-          </InlineRadio>
-          <InlineRadio
-              inline
-              data-section={section}
-              name="hospitalTransport"
-              value={false}
-              checked={!input.hospitalTransport}
-              onChange={handleSingleSelection}
-              disabled={isReviewPage}>
-            No
-          </InlineRadio>
-        </Col>
-      </PaddedRow>
-    );
-  }
-
-  renderHospitalName = () => {
-
-    return (
-      <PaddedRow>
-        <Col lg={6}>
-          <TitleLabel>Hospital name</TitleLabel>
-          { this.renderHospitalsSelect() }
-        </Col>
-      </PaddedRow>
+      <>
+        <HalfWidthItem>
+          <FieldHeader>Transported to Hospital</FieldHeader>
+          <FlexyWrapper inline>
+            { this.renderTempRadio('Yes', 'hospitaltransportindicator', true,
+                input.hospitaltransportindicator === true)
+            }
+            { this.renderTempRadio('No', 'hospitaltransportindicator', false,
+                input.hospitaltransportindicator === false)
+            }
+          </FlexyWrapper>
+        </HalfWidthItem>
+        <HalfWidthItem>
+          <FieldHeader>Hospital name</FieldHeader>
+          {
+            isPortlandOrg(selectedOrganizationId)
+              ? (
+                <TextField
+                    disabled={isInReview}
+                    name="hospital"
+                    onChange={this.handleOnChange} />
+              )
+              : this.renderHospitalsSelect()
+          }
+        </HalfWidthItem>
+      </>
     );
   }
 
   renderDeescalationTechniques = () => {
 
-    const {
-      section,
-      handleTextInput,
-      handleCheckboxChange,
-      input,
-      isInReview,
-      selectedOrganizationId
-    } = this.props;
-    const { sectionFormatErrors } = this.state;
-    const isReviewPage = isInReview();
-
+    const { input, isInReview, selectedOrganizationId } = this.props;
     const titleValue = isPortlandOrg(selectedOrganizationId)
       ? 'Use of Force / Equipment Used'
       : 'De-escalation Techniques / Equipment Used';
 
     return (
-      <PaddedRow>
-        <Col lg={12}>
-          <TitleLabel>{ titleValue }</TitleLabel>
-          <FormGroup>
-            <InlineCheckbox
-                data-section={section}
-                inline={false}
-                name="deescalationTechniques"
-                value="verbalization"
-                checked={input.deescalationTechniques.indexOf('verbalization') !== -1}
-                onChange={handleCheckboxChange}
-                disabled={isReviewPage}>
-              Verbalization
-            </InlineCheckbox>
-            <InlineCheckbox
-                data-section={section}
-                inline={false}
-                name="deescalationTechniques"
-                value="handcuffs"
-                checked={input.deescalationTechniques.indexOf('handcuffs') !== -1}
-                onChange={handleCheckboxChange}
-                disabled={isReviewPage}>
-              Handcuffs
-            </InlineCheckbox>
-            <InlineCheckbox
-                data-section={section}
-                inline={false}
-                name="deescalationTechniques"
-                value="legRestraints"
-                checked={input.deescalationTechniques.indexOf('legRestraints') !== -1}
-                onChange={handleCheckboxChange}
-                disabled={isReviewPage}>
-              Leg Restraints
-            </InlineCheckbox>
-            <InlineCheckbox
-                data-section={section}
-                inline={false}
-                name="deescalationTechniques"
-                value="taser"
-                checked={input.deescalationTechniques.indexOf('taser') !== -1}
-                onChange={handleCheckboxChange}>
-              Taser
-            </InlineCheckbox>
-            <InlineCheckbox
-                data-section={section}
-                inline={false}
-                name="deescalationTechniques"
-                value="arrestControl"
-                checked={input.deescalationTechniques.indexOf('arrestControl') !== -1}
-                onChange={handleCheckboxChange}
-                disabled={isReviewPage}>
-              Arrest Control (Hands / Feet)
-            </InlineCheckbox>
-            <InlineCheckbox
-                data-section={section}
-                inline={false}
-                name="deescalationTechniques"
-                value="n/a"
-                checked={input.deescalationTechniques.indexOf('n/a') !== -1}
-                onChange={handleCheckboxChange}
-                disabled={isReviewPage}>
-              N/A
-            </InlineCheckbox>
-            <OtherWrapper>
-              <InlineCheckbox
-                  data-section={section}
-                  inline={false}
-                  name="deescalationTechniques"
-                  value="other"
-                  checked={input.deescalationTechniques.indexOf('other') !== -1}
-                  onChange={handleCheckboxChange}
-                  disabled={isReviewPage}>
-                Other:
-              </InlineCheckbox>
-              <FormControl
-                  data-section={section}
-                  name="deescalationTechniquesOther"
-                  value={input.deescalationTechniquesOther}
-                  onChange={(e) => {
-                    handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
-                  }}
-                  disabled={isReviewPage} />
-            </OtherWrapper>
-          </FormGroup>
-        </Col>
-      </PaddedRow>
+      <>
+        <HalfWidthItem>
+          <FieldHeader>{ titleValue }</FieldHeader>
+          <FlexyWrapper>
+            { this.renderTempCheckbox('Verbalization', 'deescalationTechniques', 'verbalization',
+                input.deescalationTechniques.indexOf('verbalization') !== -1)
+            }
+            { this.renderTempCheckbox('Handcuffs', 'deescalationTechniques', 'handcuffs',
+                input.deescalationTechniques.indexOf('handcuffs') !== -1)
+            }
+            { this.renderTempCheckbox('Leg Restraints', 'deescalationTechniques', 'legRestraints',
+                input.deescalationTechniques.indexOf('legRestraints') !== -1)
+            }
+            { this.renderTempCheckbox('Taser', 'deescalationTechniques', 'taser',
+                input.deescalationTechniques.indexOf('taser') !== -1)
+            }
+            { this.renderTempCheckbox('Arrest Control (Hands / Feet)', 'deescalationTechniques', 'arrestControl',
+                input.deescalationTechniques.indexOf('arrestControl') !== -1)
+            }
+            { this.renderTempCheckbox('N/A', 'deescalationTechniques', 'n/a',
+                input.deescalationTechniques.indexOf('n/a') !== -1)
+            }
+            { this.renderTempCheckbox('Other', 'deescalationTechniques', 'other',
+                input.deescalationTechniques.indexOf('other') !== -1)
+            }
+          </FlexyWrapper>
+        </HalfWidthItem>
+        <HalfWidthItem>
+          <TextField
+              disabled={isInReview}
+              header="If other, specify other techniques"
+              name="deescalationTechniquesOther"
+              onChange={this.handleOnChange} />
+        </HalfWidthItem>
+      </>
     );
   }
 
   render() {
 
-    const {
-      section,
-      handleTextInput,
-      input,
-      isInReview,
-      selectedOrganizationId
-    } = this.props;
-
-    const {
-      didClickNav,
-      sectionFormatErrors,
-      sectionRequiredErrors
-    } = this.state;
-
-    const isReviewPage = isInReview();
-
+    const { isInReview, selectedOrganizationId } = this.props;
     return (
-      <SectionWrapper>
-        { !isReviewPage ? <SectionHeader>Disposition</SectionHeader> : null}
-        <ContentWrapper>
-
+      <>
+        <FormGridWrapper>
+          <FullWidthItem>
+            { !isInReview && (
+              <h1>Disposition</h1>
+            )}
+          </FullWidthItem>
           {
             isPortlandOrg(selectedOrganizationId)
               ? this.renderDispositionPortland()
               : this.renderDisposition()
           }
-
           {
             isPortlandOrg(selectedOrganizationId)
               ? this.renderStabilizedOnScene()
               : null
           }
-
           {
             isPortlandOrg(selectedOrganizationId)
               ? this.renderTransportedToHospitalPortland()
               : this.renderTransportedToHospital()
           }
-
-          {
-            isPortlandOrg(selectedOrganizationId)
-              ? null
-              : this.renderHospitalName()
-          }
-
           {
             isPortlandOrg(selectedOrganizationId)
               ? this.renderDeescalationScalePortland()
               : null
           }
-
           {
             this.renderDeescalationTechniques()
           }
-
           {
             isPortlandOrg(selectedOrganizationId)
               ? this.renderSpecializedResourcesPortland()
               : this.renderSpecializedResources()
           }
-
-          <PaddedRow>
-            <Col lg={12}>
-              <TitleLabel>
-                {
-                  `Narrative of Incident, to include: Results of investigation, basis for
-                  actions taken, emotional states, additional witnesses. Property listing.`
-                }
-              </TitleLabel>
-              <FormControl
-                  data-section={section}
-                  name="incidentNarrative"
-                  componentClass="textarea"
-                  value={input.incidentNarrative}
-                  onChange={(e) => {
-                    handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
-                  }}
-                  disabled={isReviewPage} />
-            </Col>
-          </PaddedRow>
-        </ContentWrapper>
-
+          <FullWidthItem>
+            <TextAreaField
+                disabled={isInReview}
+                header={incidentNarrativeTitle}
+                name="incidentNarrative"
+                onChange={this.handleOnChange} />
+          </FullWidthItem>
+        </FormGridWrapper>
         {
-          !isReviewPage
+          !isInReview
             ? (
               <FormNav
                   prevPath={FORM_PATHS.COMPLAINANT}
@@ -968,8 +596,7 @@ class DispositionView extends React.Component {
             )
             : null
         }
-        { renderErrors(sectionFormatErrors, sectionRequiredErrors, didClickNav) }
-      </SectionWrapper>
+      </>
     );
   }
 }

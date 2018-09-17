@@ -21,6 +21,7 @@ class ReportInfoView extends React.Component {
     this.state = {
       currentPage: getCurrentPage(),
       requiredFields: ['dateOccurred', 'dateReported', 'complaintNumber', 'incident'],
+      section: 'reportInfo',
     };
   }
 
@@ -37,28 +38,28 @@ class ReportInfoView extends React.Component {
     handlePageChange(path);
   }
 
-  handleOnChangeTextInput = (event) => {
+  handleOnChange = (event) => {
 
     // TODO: validation
-    const { handleMultiUpdate, section } = this.props;
+    const { updateStateValue } = this.props;
+    const { section } = this.state;
     const { name, value } = event.target;
-    handleMultiUpdate(section, { [name]: value });
+    updateStateValue(section, name, value);
   }
 
   // TODO: replace this with real components from lattice-ui-kit
   renderTempRadio = (label, name, value, isChecked) => {
 
-    const { handleSingleSelection, isInReview, section } = this.props;
+    const { isInReview } = this.props;
     const id = `${name}-${value}`;
     return (
       <label htmlFor={id}>
         <input
             checked={isChecked}
-            data-section={section}
-            disabled={isInReview()}
+            disabled={isInReview}
             id={id}
             name={name}
-            onChange={handleSingleSelection}
+            onChange={this.handleOnChange}
             type="radio"
             value={value} />
         { label }
@@ -74,30 +75,24 @@ class ReportInfoView extends React.Component {
       isInReview,
       section,
     } = this.props;
-    const isReviewPage = isInReview();
-
     return (
       <>
         <FormGridWrapper>
           <FullWidthItem>
-            {
-              isReviewPage
-                ? null
-                : (
-                  <h1>Report Info</h1>
-                )
-            }
+            { !isInReview && (
+              <h1>Report Info</h1>
+            )}
           </FullWidthItem>
           <TextField
-              disabled={isReviewPage}
+              disabled={isInReview}
               header="Primary Reason for Dispatch"
               name="dispatchReason"
-              onChange={this.handleOnChangeTextInput} />
+              onChange={this.handleOnChange} />
           <TextField
-              disabled={isReviewPage}
+              disabled={isInReview}
               header="Complaint Number*"
               name="complaintNumber"
-              onChange={this.handleOnChangeTextInput} />
+              onChange={this.handleOnChange} />
           <HalfWidthItem>
             <FieldHeader>Companion Offense Report Prepared</FieldHeader>
             <FlexyWrapper inline>
@@ -106,32 +101,32 @@ class ReportInfoView extends React.Component {
             </FlexyWrapper>
           </HalfWidthItem>
           <TextField
-              disabled={isReviewPage}
+              disabled={isInReview}
               header="Crime / Incident*"
               name="incident"
-              onChange={this.handleOnChangeTextInput} />
+              onChange={this.handleOnChange} />
           <FullWidthItem>
             <TextField
-                disabled={isReviewPage}
+                disabled={isInReview}
                 header="Location of Offense / Incident"
                 name="locationOfIncident"
-                onChange={this.handleOnChangeTextInput} />
+                onChange={this.handleOnChange} />
           </FullWidthItem>
           <TextField
-              disabled={isReviewPage}
+              disabled={isInReview}
               header="Unit"
               name="unit"
-              onChange={this.handleOnChangeTextInput} />
+              onChange={this.handleOnChange} />
           <TextField
-              disabled={isReviewPage}
+              disabled={isInReview}
               header="Post of Occurrence"
               name="postOfOccurrence"
-              onChange={this.handleOnChangeTextInput} />
+              onChange={this.handleOnChange} />
           <TextField
-              disabled={isReviewPage}
+              disabled={isInReview}
               header="CAD Number"
               name="cadNumber"
-              onChange={this.handleOnChangeTextInput} />
+              onChange={this.handleOnChange} />
           <HalfWidthItem>
             <FieldHeader>On View</FieldHeader>
             <FlexyWrapper inline>
@@ -143,7 +138,7 @@ class ReportInfoView extends React.Component {
             <label htmlFor="date-occurred">
               <FieldHeader>Date Occurred*</FieldHeader>
               <input
-                  disabled={isReviewPage}
+                  disabled={isInReview}
                   id="date-occurred"
                   onChange={(e) => {
                     const chosenDate = e.target.value;
@@ -164,7 +159,7 @@ class ReportInfoView extends React.Component {
             <label htmlFor="time-occurred">
               <FieldHeader>Time Occurred</FieldHeader>
               <input
-                  disabled={isReviewPage}
+                  disabled={isInReview}
                   id="time-reported"
                   onChange={(e) => {
                     handleTimeInput(e, section, 'timeOccurred');
@@ -177,7 +172,7 @@ class ReportInfoView extends React.Component {
             <label htmlFor="date-reported">
               <FieldHeader>Date Reported*</FieldHeader>
               <input
-                  disabled={isReviewPage}
+                  disabled={isInReview}
                   id="date-reported"
                   onChange={(e) => {
                     const chosenDate = e.target.value;
@@ -200,7 +195,7 @@ class ReportInfoView extends React.Component {
             <label htmlFor="time-reported">
               <FieldHeader>Time Reported</FieldHeader>
               <input
-                  disabled={isReviewPage}
+                  disabled={isInReview}
                   id="time-reported"
                   onChange={(e) => {
                     handleTimeInput(e, section, 'timeReported');
@@ -211,7 +206,7 @@ class ReportInfoView extends React.Component {
           </HalfWidthItem>
         </FormGridWrapper>
         {
-          !isReviewPage
+          !isInReview
             ? (
               <FormNav
                   prevPath={FORM_PATHS.CONSUMER}

@@ -83,6 +83,24 @@ class Form extends React.Component<Props, State> {
     };
   }
 
+  updateStateValue = (section, key, value) => {
+
+    // TODO: validation
+    const { [section]: sectionState } = this.state;
+    sectionState[key] = value;
+    this.setState({ [section]: sectionState });
+  }
+
+  updateStateValues = (section, values) => {
+
+    // TODO: validation
+    const { [section]: sectionState } = this.state;
+    Object.keys(values).forEach((key) => {
+      sectionState[key] = values[key];
+    });
+    this.setState({ [section]: sectionState });
+  }
+
   handleTextInput = (e, fieldType, formatErrors, setErrorsFn) => {
 
     const sectionKey = e.target.dataset.section;
@@ -268,7 +286,9 @@ class Form extends React.Component<Props, State> {
           personEntitySetId={peopleEntitySetId}
           reportInfo={this.state.reportInfo}
           selectedOrganizationId={selectedOrganizationId}
-          submissionState={this.props.submissionState} />
+          submissionState={this.props.submissionState}
+          updateStateValue={this.updateStateValue}
+          updateStateValues={this.updateStateValues} />
     );
   }
 }

@@ -82,7 +82,9 @@ function FormView({
   personEntitySetId,
   reportInfo,
   selectedOrganizationId,
-  submissionState
+  submissionState,
+  updateStateValue,
+  updateStateValues,
 }) {
 
   // const getProgress = () => {
@@ -97,13 +99,11 @@ function FormView({
       <ReportInfoView
           handleDatePickerDateTimeOffset={handleDatePickerDateTimeOffset}
           handlePageChange={handlePageChange}
-          handleTextInput={handleTextInput}
           handleTimeInput={handleTimeInput}
-          handleSingleSelection={handleSingleSelection}
           input={reportInfo}
-          isInReview={isInReview}
-          section="reportInfo"
-          selectedOrganizationId={selectedOrganizationId} />
+          isInReview={false}
+          updateStateValue={updateStateValue}
+          updateStateValues={updateStateValues} />
     );
   };
 
@@ -139,13 +139,10 @@ function FormView({
   const getComplainantInfoView = () => {
     return (
       <ComplainantInfoView
-          handleTextInput={handleTextInput}
-          input={complainantInfo}
-          isInReview={isInReview}
           handlePageChange={handlePageChange}
-          handleSingleSelection={handleSingleSelection}
-          section="complainantInfo"
-          selectedOrganizationId={selectedOrganizationId} />
+          isInReview={false}
+          updateStateValue={updateStateValue}
+          updateStateValues={updateStateValues} />
     );
   };
 
@@ -153,15 +150,12 @@ function FormView({
     return (
       <DispositionView
           handleCheckboxChange={handleCheckboxChange}
-          handleMultiUpdate={handleMultiUpdate}
-          handleScaleSelection={handleScaleSelection}
-          handleSingleSelection={handleSingleSelection}
-          handleTextInput={handleTextInput}
-          input={dispositionInfo}
-          isInReview={isInReview}
           handlePageChange={handlePageChange}
-          section="dispositionInfo"
-          selectedOrganizationId={selectedOrganizationId} />
+          input={dispositionInfo}
+          isInReview={false}
+          selectedOrganizationId={selectedOrganizationId}
+          updateStateValue={updateStateValue}
+          updateStateValues={updateStateValues} />
     );
   };
 
@@ -255,98 +249,5 @@ function FormView({
     </ContainerOuterWrapper>
   );
 }
-
-FormView.propTypes = {
-  handleDatePickerDateTimeOffset: PropTypes.func.isRequired,
-  handleMultiUpdate: PropTypes.func.isRequired,
-  handlePicture: PropTypes.func.isRequired,
-  handleTextInput: PropTypes.func.isRequired,
-  handleDateInput: PropTypes.func.isRequired,
-  handleTimeInput: PropTypes.func.isRequired,
-  handleSingleSelection: PropTypes.func.isRequired,
-  handleCheckboxChange: PropTypes.func.isRequired,
-  handleScaleSelection: PropTypes.func.isRequired,
-  handleSubmit: PropTypes.func.isRequired,
-  isInReview: PropTypes.func.isRequired,
-  handlePageChange: PropTypes.func.isRequired,
-  handlePersonSelection: PropTypes.func.isRequired,
-  personEntitySetId: PropTypes.string.isRequired,
-  consumerIsSelected: PropTypes.bool.isRequired,
-  selectedOrganizationId: PropTypes.string.isRequired,
-  submissionState: PropTypes.number.isRequired,
-  reportInfo: PropTypes.shape({
-    dispatchReason: PropTypes.string.isRequired,
-    complaintNumber: PropTypes.string.isRequired,
-    companionOffenseReport: PropTypes.bool.isRequired,
-    incident: PropTypes.string.isRequired,
-    locationOfIncident: PropTypes.string.isRequired,
-    unit: PropTypes.string.isRequired,
-    postOfOccurrence: PropTypes.string.isRequired,
-    cadNumber: PropTypes.string.isRequired,
-    onView: PropTypes.bool.isRequired,
-    dateOccurred: PropTypes.string.isRequired,
-    timeOccurred: PropTypes.string.isRequired,
-    dateReported: PropTypes.string.isRequired,
-    timeReported: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired
-  }).isRequired,
-  consumerInfo: PropTypes.shape({
-    firstName: PropTypes.string.isRequired,
-    lastName: PropTypes.string.isRequired,
-    middleName: PropTypes.string.isRequired,
-    address: PropTypes.string.isRequired,
-    identification: PropTypes.string.isRequired,
-    militaryStatus: PropTypes.string.isRequired,
-    gender: PropTypes.string.isRequired,
-    race: PropTypes.string.isRequired,
-    age: PropTypes.string.isRequired,
-    dob: PropTypes.string.isRequired,
-    homeless: PropTypes.bool.isRequired,
-    homelessLocation: PropTypes.string.isRequired,
-    drugsAlcohol: PropTypes.string.isRequired,
-    drugType: PropTypes.string.isRequired,
-    prescribedMedication: PropTypes.string.isRequired,
-    takingMedication: PropTypes.string.isRequired,
-    prevPsychAdmission: PropTypes.string.isRequired,
-    selfDiagnosis: PropTypes.array.isRequired,
-    selfDiagnosisOther: PropTypes.string.isRequired,
-    armedWithWeapon: PropTypes.bool.isRequired,
-    armedWeaponType: PropTypes.string.isRequired,
-    accessToWeapons: PropTypes.bool.isRequired,
-    accessibleWeaponType: PropTypes.string.isRequired,
-    observedBehaviors: PropTypes.array.isRequired,
-    observedBehaviorsOther: PropTypes.string.isRequired,
-    emotionalState: PropTypes.array.isRequired,
-    emotionalStateOther: PropTypes.string.isRequired,
-    photosTakenOf: PropTypes.array.isRequired,
-    injuries: PropTypes.array.isRequired,
-    injuriesOther: PropTypes.string.isRequired,
-    suicidal: PropTypes.bool.isRequired,
-    suicidalActions: PropTypes.array.isRequired,
-    suicideAttemptMethod: PropTypes.array.isRequired,
-    suicideAttemptMethodOther: PropTypes.string.isRequired
-  }).isRequired,
-  complainantInfo: PropTypes.shape({
-    complainantName: PropTypes.string.isRequired,
-    complainantAddress: PropTypes.string.isRequired,
-    complainantConsumerRelationship: PropTypes.string.isRequired,
-    complainantPhone: PropTypes.string.isRequired
-  }).isRequired,
-  dispositionInfo: PropTypes.shape({
-    disposition: PropTypes.array.isRequired,
-    hospitalTransport: PropTypes.bool.isRequired,
-    hospital: PropTypes.string.isRequired,
-    deescalationTechniques: PropTypes.array.isRequired,
-    deescalationTechniquesOther: PropTypes.string.isRequired,
-    specializedResourcesCalled: PropTypes.array.isRequired,
-    incidentNarrative: PropTypes.string.isRequired
-  }).isRequired,
-  officerInfo: PropTypes.shape({
-    officerName: PropTypes.string.isRequired,
-    officerSeqID: PropTypes.string.isRequired,
-    officerInjuries: PropTypes.string.isRequired,
-    officerCertification: PropTypes.array.isRequired
-  }).isRequired
-};
 
 export default FormView;
