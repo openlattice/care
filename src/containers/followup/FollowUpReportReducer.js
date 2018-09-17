@@ -2,8 +2,8 @@
  * @flow
  */
 
- import { Map, fromJS } from 'immutable';
- import { LOCATION_CHANGE } from 'react-router-redux';
+import { Map, fromJS } from 'immutable';
+import { LOCATION_CHANGE } from 'react-router-redux';
 
 import * as Routes from '../../core/router/Routes';
 import { submitFollowUpReport } from './FollowUpReportActionFactory';

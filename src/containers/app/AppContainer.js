@@ -18,7 +18,7 @@ import FormContainer from '../form/FormContainer';
 import HomeContainer from '../home/HomeContainer';
 import ConsumerSummaryContainer from '../consumersummary/ConsumerSummaryContainer';
 import Loading from '../../components/Loading';
-import OrganizationButton from './OrganizationButton';
+import OrgSelect from './OrgSelect';
 import StyledButton from '../../components/buttons/StyledButton';
 import * as Routes from '../../core/router/Routes';
 import { loadApp, loadHospitals, selectOrganization } from '../form/AppActionFactory';
@@ -101,12 +101,15 @@ type Props = {
 class AppContainer extends React.Component<Props> {
 
   componentDidMount() {
-    this.props.actions.loadApp();
+
+    const { actions } = this.props;
+    actions.loadApp();
   }
 
   componentWillReceiveProps(nextProps) {
 
-    const prevOrgId = this.props.app.get('selectedOrganization');
+    const { app, actions } = this.props;
+    const prevOrgId = app.get('selectedOrganization');
     const nextOrgId = nextProps.app.get('selectedOrganization');
 
     // check if the selected organization has changed
@@ -116,7 +119,10 @@ class AppContainer extends React.Component<Props> {
       const hospitalsEntitySetId = nextProps.app.getIn(
         [HOSPITALS_FQN.getFullyQualifiedName(), 'entitySetsByOrganization', selectedOrg]
       );
-      this.props.actions.loadHospitals(hospitalsEntitySetId);
+      actions.loadHospitals({
+        entitySetId: hospitalsEntitySetId,
+        organizationId: selectedOrg,
+      });
 
       /*
        * loadApp() is called once on page load in componentDidMount(), and then only needs to be called again when
@@ -124,7 +130,7 @@ class AppContainer extends React.Component<Props> {
        * already set (it is initially set to the empty string in the reducer)
        */
       if (isValidUuid(prevOrgId)) {
-        this.props.actions.loadApp(); // this is not entirely necessary
+        actions.loadApp(); // this is not entirely necessary
       }
     }
   }
@@ -135,10 +141,29 @@ class AppContainer extends React.Component<Props> {
     </MissingOrgsWrapper>
   )
 
+  renderOrgSelect = () => {
+
+    const { app, actions } = this.props;
+    const orgs :Map<*, *> = app.get('organizations', Map());
+    const selectedOrg :string = app.get('selectedOrganization', '');
+
+    if (orgs.isEmpty() || !selectedOrg) {
+      return null;
+    }
+
+    return (
+      <OrgSelect
+          organizations={orgs}
+          onSelect={actions.selectOrganization}
+          selectedOrganization={selectedOrg} />
+    );
+  }
+
   renderApp = () => {
 
-    const orgs :Map<*, *> = this.props.app.get('organizations', Map());
-    const selectedOrg :string = this.props.app.get('selectedOrganization', '');
+    const { app } = this.props;
+    const orgs :Map<*, *> = app.get('organizations', Map());
+    const selectedOrg :string = app.get('selectedOrganization', '');
 
     if (orgs.isEmpty() || !selectedOrg) {
       return (
@@ -161,11 +186,9 @@ class AppContainer extends React.Component<Props> {
 
   render() {
 
-    const orgs :Map<*, *> = this.props.app.get('organizations', Map());
-    const selectedOrg :string = this.props.app.get('selectedOrganization', '');
-
-    const isLoadingApp :boolean = this.props.app.get('isLoadingApp', false);
-    const isLoadingConfigurations :boolean = this.props.app.get('isLoadingConfigurations', false);
+    const { app, actions } = this.props;
+    const isLoadingApp :boolean = app.get('isLoadingApp', false);
+    const isLoadingConfigurations :boolean = app.get('isLoadingConfigurations', false);
 
     return (
       <AppWrapper>
@@ -178,24 +201,15 @@ class AppContainer extends React.Component<Props> {
             {
               AuthUtils.isAuthenticated()
                 ? (
-                  <StyledActionButton onClick={this.props.actions.logout}>Logout</StyledActionButton>
+                  <StyledActionButton onClick={actions.logout}>Logout</StyledActionButton>
                 )
                 : (
                   <LoginAnchor href={`${window.location.origin}${Routes.LOGIN}/`}>Login</LoginAnchor>
                 )
             }
-            {
-              (!orgs.isEmpty() && selectedOrg)
-                ? (
-                  <OrganizationButton
-                      organizations={this.props.app.get('organizations', Map())}
-                      selectedOrganization={this.props.app.get('selectedOrganization', '')}
-                      selectOrganization={this.props.actions.selectOrganization} />
-                )
-                : null
-            }
           </AppHeaderInnerWrapper>
         </AppHeaderOuterWrapper>
+        { this.renderOrgSelect() }
         {
           isLoadingApp || isLoadingConfigurations
             ? <Loading />
