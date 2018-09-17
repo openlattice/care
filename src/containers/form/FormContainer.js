@@ -16,7 +16,7 @@ import type { RouterHistory } from 'react-router';
 
 import FormView from '../../components/FormView';
 import { validateOnInput } from '../../shared/Validation';
-import { fixDatePickerIsoDateTime, formatTimePickerSeconds, getCurrentPage } from '../../utils/Utils';
+import { fixDatePickerIsoDateTime, getCurrentPage } from '../../utils/Utils';
 import { hardRestart, submitReport } from './ReportActionFactory';
 
 import {
@@ -133,13 +133,6 @@ class Form extends React.Component<Props, State> {
     sectionState[sectionPropertyName] = value;
     this.setState({ [sectionKey]: sectionState });
   }
-
-  // handleTimeInput = (e, section, name) => {
-  //   const input = formatTimePickerSeconds(e);
-  //   const sectionState = this.state[section];
-  //   sectionState[name] = input;
-  //   this.setState({ [section]: sectionState });
-  // }
 
   handleTimeInput = (e, section, name) => {
     const sectionState = this.state[section];

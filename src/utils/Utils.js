@@ -34,35 +34,6 @@ export function randomStringId() :string {
   return Math.random().toString(36).slice(2) + (new Date()).getTime().toString(36);
 }
 
-// TODO: get rid of react-bootstrap-time-picker
-export function formatTimePickerSeconds(seconds :?number) :string {
-
-  let hh = 0;
-  let mm = 0;
-  let ss = seconds || 0;
-
-  while (ss >= 60) {
-    mm += 1;
-    ss -= 60;
-  }
-
-  while (mm >= 60) {
-    hh += 1;
-    mm -= 60;
-  }
-
-  let hhStr = hh.toString();
-  hhStr = hhStr.length === 1 ? `0${hhStr}` : hhStr;
-
-  let mmStr = mm.toString();
-  mmStr = mmStr.length === 1 ? `0${mmStr}` : mmStr;
-
-  let ssStr = ss.toString();
-  ssStr = ssStr.length === 1 ? `0${ssStr}` : ssStr;
-
-  return `${hhStr}:${mmStr}:${ssStr}`;
-}
-
 // TODO: get rid of react-bootstrap-date-picker
 export function fixDatePickerIsoDateTime(value :?string) :string {
 
