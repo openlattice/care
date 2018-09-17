@@ -11,6 +11,7 @@ const BHRDetailsRow = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
+
   &:hover {
     cursor: pointer;
   }
@@ -30,6 +31,7 @@ const BHRDetailItem = styled.div`
       flex: 1;
     `;
   }}
+
   strong {
     font-weight: bold;
   }

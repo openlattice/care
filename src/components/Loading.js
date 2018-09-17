@@ -4,6 +4,7 @@ const spin = keyframes`
   0% {
     transform: rotate(0);
   }
+
   100% {
     transform: rotate(360deg);
   }
@@ -14,7 +15,7 @@ const Loading = styled.div`
     animation: ${spin} .75s linear infinite;
     border: 1px solid #c5d5e5;
     border-radius: 50%;
-    border-top-color: #113355;
+    border-top-color: #135;
     box-sizing: border-box;
     content: '';
     top: 50%;

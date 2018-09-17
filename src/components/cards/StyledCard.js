@@ -16,28 +16,33 @@ const StyledCard = styled.div`
   margin: 0 20px;
   padding: 30px;
   position: relative;
+
   h1 {
     font-size: 22px;
     font-weight: 600;
     margin: 10px 0;
     padding: 0;
   }
+
   h2 {
     font-size: 16px;
     font-weight: 600;
     margin: 18px 0 10px 0;
     padding: 0;
   }
+
   h3 {
     font-size: 14px;
     font-weight: 600;
     margin: 16px 0 8px 0;
     padding: 0;
   }
+
   p {
     margin: 0;
     padding: 0;
   }
+
   section {
     display: flex;
     flex-direction: column;

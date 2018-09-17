@@ -32,7 +32,6 @@ import { bootstrapValidation } from '../shared/Validation';
 import { getCurrentPage } from '../utils/Utils';
 import { isPortlandOrg } from '../utils/Whitelist';
 
-const StyledImageElement = styled.img``;
 
 class ConsumerInfoView extends React.Component {
 
@@ -171,7 +170,7 @@ class ConsumerInfoView extends React.Component {
       <PaddedRow>
         <Col lg={12}>
           <TitleLabel>Consumer Picture</TitleLabel>
-          <StyledImageElement
+          <img
               alt="Consumer Picture"
               src={pictureDataUrl} />
         </Col>

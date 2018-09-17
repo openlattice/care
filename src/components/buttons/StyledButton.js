@@ -20,9 +20,11 @@ const StyledButton = styled.button`
   text-align: center;
   text-decoration: none;
   white-space: nowrap;
+
   &:hover {
     border-color: #95aabf;
   }
+
   &:disabled {
     border-color: #d9e3ec;
     color: #a3acb5;

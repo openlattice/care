@@ -12,6 +12,7 @@ const PersonWrapper = styled.div`
   display: flex;
   align-items: center;
   padding: 20px 5px;
+
   &:hover {
     background: white;
     cursor: pointer;

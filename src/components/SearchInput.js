@@ -10,7 +10,7 @@ import styled from 'styled-components';
 import { faSearch } from '@fortawesome/fontawesome-pro-light';
 
 const SearchInputWrapper = styled.div`
-  color: #113355;
+  color: #135;
   display: flex;
   height: 40px;
   min-height: 40px;
@@ -26,21 +26,23 @@ const Input = styled.input`
   flex: 1 0 auto;
   font-size: 14px;
   font-weight: 400;
-  letter-spacing: 0px;
+  letter-spacing: 0;
   line-height: 24px;
   outline: none;
   padding: 0 20px 0 40px;
+
   &:focus {
     border-color: #95aabf;
   }
+
   &::placeholder {
-    color: #687F96;
+    color: #687f96;
   }
 `;
 
 const SearchIcon = styled.div`
   align-self: center;
-  color: #687F96;
+  color: #687f96;
   position: absolute;
   margin-left: 13px;
 `;

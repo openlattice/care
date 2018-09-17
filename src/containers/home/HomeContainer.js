@@ -43,11 +43,13 @@ const NewReportsContainer = styled.div`
 `;
 
 const StyledNavLink = styled(NavLink)`
-  color: #113355;
+  color: #135;
   text-decoration: none;
+
   &:hover {
     cursor: pointer;
     text-decoration: none;
+
     > div {
       border-color: #95aabf;
     }
@@ -92,7 +94,7 @@ const TabLink = styled(NavLink)`
   }
 
   &.active {
-    background: #DEE8F2;
+    background: #dee8f2;
     text-decoration: none;
   }
 `;
