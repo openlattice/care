@@ -4,10 +4,8 @@
 
 import React from 'react';
 
-import isString from 'lodash/isString';
 import moment from 'moment';
 import styled from 'styled-components';
-import validator from 'validator';
 import { Button } from 'lattice-ui-kit';
 import { Map } from 'immutable';
 import { connect } from 'react-redux';
@@ -160,35 +158,6 @@ class FollowUpReportContainer extends React.Component<Props, State> {
     });
   }
 
-  checkValidationState = (type, value) => {
-
-    let validationState :?string = 'error';
-
-    if (value === null || value === undefined) {
-      return null;
-    }
-
-    switch (type) {
-      case 'int64': {
-        const isValid = validator.isInt(value.toString(), {
-          max: Number.MAX_SAFE_INTEGER,
-          min: Number.MIN_SAFE_INTEGER
-        });
-        if (isValid) {
-          validationState = null;
-        }
-        break;
-      }
-      default:
-        if (isString(value) && value.length > 0) {
-          validationState = null;
-        }
-        break;
-    }
-
-    return validationState;
-  }
-
   renderForm = () => {
 
     const { consumer, onCancel, submissionState } = this.props;
@@ -225,9 +194,7 @@ class FollowUpReportContainer extends React.Component<Props, State> {
             name={SUMMARY_VAL}
             onChange={this.handleOnChangeInputString} />
         <ActionButtons>
-          <Button onClick={onCancel}>
-            Cancel
-          </Button>
+          <Button onClick={onCancel}>Cancel</Button>
           {
             (this.isReadyToSubmit() && submissionState === SUBMISSION_STATES.PRE_SUBMIT)
               ? <Button mode="primary" onClick={this.handleOnSubmit}>Submit</Button>

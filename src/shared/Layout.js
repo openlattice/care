@@ -88,15 +88,6 @@ export const ButtonWrapper = styled.div`
   text-align: center;
 `;
 
-export const SubmitButtonWrapper = ButtonWrapper.extend`
-  padding-top: 80px;
-  width: 1520px;
-`;
-
-export const SubmitButton = styled(Button).attrs({
-  type: props => (props.type || 'submit')
-});
-
 export const SectionWrapper = styled.div`
   align-items: center;
   display: flex;
@@ -113,15 +104,6 @@ export const SectionHeader = styled.div`
   color: #37454A;
   font-weight: bold;
   width: 100%;
-  text-align: center;
-`;
-
-export const NavBtnWrapper = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  width: 300px;
   text-align: center;
 `;
 

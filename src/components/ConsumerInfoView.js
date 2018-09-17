@@ -374,21 +374,6 @@ class ConsumerInfoView extends React.Component {
     );
   }
 
-  renderTitle = (isReviewPage) => {
-
-    if (isReviewPage) {
-      return null;
-    }
-
-    return (
-      <FullWidthItem>
-        <h1>
-          Consumer
-        </h1>
-      </FullWidthItem>
-    );
-  }
-
   render() {
     const {
       consumerIsSelected,
@@ -419,7 +404,15 @@ class ConsumerInfoView extends React.Component {
     return (
       <>
         <FormGridWrapper>
-          { this.renderTitle(isReviewPage) }
+          <FullWidthItem>
+            {
+              isReviewPage
+                ? null
+                : (
+                  <h1>Consumer</h1>
+                )
+            }
+          </FullWidthItem>
           <TextField
               disabled={consumerIsSelected || isReviewPage}
               header="Last Name"

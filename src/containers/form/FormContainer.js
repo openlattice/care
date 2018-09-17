@@ -116,10 +116,16 @@ class Form extends React.Component<Props, State> {
     this.setState({ [sectionKey]: sectionState });
   }
 
+  // handleTimeInput = (e, section, name) => {
+  //   const input = formatTimePickerSeconds(e);
+  //   const sectionState = this.state[section];
+  //   sectionState[name] = input;
+  //   this.setState({ [section]: sectionState });
+  // }
+
   handleTimeInput = (e, section, name) => {
-    const input = formatTimePickerSeconds(e);
     const sectionState = this.state[section];
-    sectionState[name] = input;
+    sectionState[name] = `${e.target.value}:00`;
     this.setState({ [section]: sectionState });
   }
 
@@ -179,7 +185,8 @@ class Form extends React.Component<Props, State> {
   }
 
   handlePageChange = (path) => {
-    this.props.history.push(path);
+    const { history } = this.props;
+    history.push(path);
   }
 
   handlePersonSelection = (person) => {

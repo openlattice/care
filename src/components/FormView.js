@@ -85,12 +85,12 @@ function FormView({
   submissionState
 }) {
 
-  const getProgress = () => {
-    const page = getCurrentPage();
-    const num = Math.ceil(((page - 1) / (MAX_PAGE - 1)) * 100);
-    const percentage = `${num.toString()}%`;
-    return num === 0 ? { num: 5, percentage } : { num, percentage };
-  };
+  // const getProgress = () => {
+  //   const page = getCurrentPage();
+  //   const num = Math.ceil(((page - 1) / (MAX_PAGE - 1)) * 100);
+  //   const percentage = `${num.toString()}%`;
+  //   return num === 0 ? { num: 5, percentage } : { num, percentage };
+  // };
 
   const getReportInfoView = () => {
     return (
@@ -240,18 +240,16 @@ function FormView({
     <ContainerOuterWrapper>
       <ContainerInnerWrapper>
         <StyledCard>
-          <form onSubmit={handleSubmit}>
-            <Switch>
-              <Route path={`${Routes.BHR}/1`} render={getConsumerSearchView} />
-              <Route path={`${Routes.BHR}/2`} render={getConsumerInfoView} />
-              <Route path={`${Routes.BHR}/3`} render={getReportInfoView} />
-              <Route path={`${Routes.BHR}/4`} render={getComplainantInfoView} />
-              <Route path={`${Routes.BHR}/5`} render={getDispositionView} />
-              <Route path={`${Routes.BHR}/6`} render={getOfficerInfoView} />
-              <Route path={`${Routes.BHR}/7`} render={getReviewView} />
-              <Redirect to={`${Routes.BHR}/1`} />
-            </Switch>
-          </form>
+          <Switch>
+            <Route path={`${Routes.BHR}/1`} render={getConsumerSearchView} />
+            <Route path={`${Routes.BHR}/2`} render={getConsumerInfoView} />
+            <Route path={`${Routes.BHR}/3`} render={getReportInfoView} />
+            <Route path={`${Routes.BHR}/4`} render={getComplainantInfoView} />
+            <Route path={`${Routes.BHR}/5`} render={getDispositionView} />
+            <Route path={`${Routes.BHR}/6`} render={getOfficerInfoView} />
+            <Route path={`${Routes.BHR}/7`} render={getReviewView} />
+            <Redirect to={`${Routes.BHR}/1`} />
+          </Switch>
         </StyledCard>
       </ContainerInnerWrapper>
     </ContainerOuterWrapper>
