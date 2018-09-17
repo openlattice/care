@@ -187,11 +187,13 @@ class DispositionView extends React.Component {
         <FlexyWrapper>
           { this.renderTempCheckbox('Arrest', 'disposition', 'arrest', input.disposition.indexOf('arrest') !== -1) }
           { this.renderTempCheckbox('EP', 'disposition', 'ep', input.disposition.indexOf('ep') !== -1) }
-          { this.renderTempCheckbox('Voluntary ER Intake', 'disposition', 'voluntaryER',
+          {
+            this.renderTempCheckbox('Voluntary ER Intake', 'disposition', 'voluntaryER',
               input.disposition.indexOf('voluntaryER') !== -1)
           }
           { this.renderTempCheckbox('BCRI', 'disposition', 'bcri', input.disposition.indexOf('bcri') !== -1) }
-          { this.renderTempCheckbox('Information and Referral', 'disposition', 'infoAndReferral',
+          {
+            this.renderTempCheckbox('Information and Referral', 'disposition', 'infoAndReferral',
               input.disposition.indexOf('infoAndReferral') !== -1)
           }
           { this.renderTempCheckbox('LEAD', 'disposition', 'lead', input.disposition.indexOf('lead') !== -1) }
@@ -221,17 +223,21 @@ class DispositionView extends React.Component {
       <FullWidthItem>
         <FieldHeader>Disposition</FieldHeader>
         <FlexyWrapper>
-          { this.renderTempCheckbox('Referred to BHU', 'disposition', 'referredToBHU',
+          {
+            this.renderTempCheckbox('Referred to BHU', 'disposition', 'referredToBHU',
               input.disposition.indexOf('referredToBHU') !== -1)
           }
-          { this.renderTempCheckbox('Referred to Crisis', 'disposition', 'referredToCrisis',
+          {
+            this.renderTempCheckbox('Referred to Crisis', 'disposition', 'referredToCrisis',
               input.disposition.indexOf('referredToCrisis') !== -1)
           }
           { this.renderTempCheckbox('Arrest', 'disposition', 'arrest', input.disposition.indexOf('arrest') !== -1) }
-          { this.renderTempCheckbox('Diverted from Arrest', 'disposition', 'divertedFromArrest',
+          {
+            this.renderTempCheckbox('Diverted from Arrest', 'disposition', 'divertedFromArrest',
               input.disposition.indexOf('divertedFromArrest') !== -1)
           }
-          { this.renderTempCheckbox('Resisted or Refused Supports', 'disposition', 'resistedOrRefusedSupports',
+          {
+            this.renderTempCheckbox('Resisted or Refused Supports', 'disposition', 'resistedOrRefusedSupports',
               input.disposition.indexOf('resistedOrRefusedSupports') !== -1)
           }
         </FlexyWrapper>
@@ -302,25 +308,32 @@ class DispositionView extends React.Component {
       <FullWidthItem>
         <FieldHeader>Called for Specialized Resources</FieldHeader>
         <FlexyWrapper>
-          { this.renderTempCheckbox('BCRI / Mobile Crisis Response Team', 'specializedResourcesCalled', 'bcri',
+          {
+            this.renderTempCheckbox('BCRI / Mobile Crisis Response Team', 'specializedResourcesCalled', 'bcri',
               input.specializedResourcesCalled.indexOf('bcri') !== -1)
           }
-          { this.renderTempCheckbox('CIT Officer', 'specializedResourcesCalled', 'citOfficer',
+          {
+            this.renderTempCheckbox('CIT Officer', 'specializedResourcesCalled', 'citOfficer',
               input.specializedResourcesCalled.indexOf('citOfficer') !== -1)
           }
-          { this.renderTempCheckbox('CRT Unit', 'specializedResourcesCalled', 'crtUnit',
+          {
+            this.renderTempCheckbox('CRT Unit', 'specializedResourcesCalled', 'crtUnit',
               input.specializedResourcesCalled.indexOf('crtUnit') !== -1)
           }
-          { this.renderTempCheckbox('ESU', 'specializedResourcesCalled', 'esu',
+          {
+            this.renderTempCheckbox('ESU', 'specializedResourcesCalled', 'esu',
               input.specializedResourcesCalled.indexOf('esu') !== -1)
           }
-          { this.renderTempCheckbox('SWAT', 'specializedResourcesCalled', 'swat',
+          {
+            this.renderTempCheckbox('SWAT', 'specializedResourcesCalled', 'swat',
               input.specializedResourcesCalled.indexOf('swat') !== -1)
           }
-          { this.renderTempCheckbox('Negotiation Team', 'specializedResourcesCalled', 'negotiationTeam',
+          {
+            this.renderTempCheckbox('Negotiation Team', 'specializedResourcesCalled', 'negotiationTeam',
               input.specializedResourcesCalled.indexOf('negotiationTeam') !== -1)
           }
-          { this.renderTempCheckbox('Homeless Outreach', 'specializedResourcesCalled', 'homelessOutreach',
+          {
+            this.renderTempCheckbox('Homeless Outreach', 'specializedResourcesCalled', 'homelessOutreach',
               input.specializedResourcesCalled.indexOf('homelessOutreach') !== -1)
           }
         </FlexyWrapper>
@@ -421,7 +434,7 @@ class DispositionView extends React.Component {
                       'voluntaryactionindicator',
                       true,
                       input.voluntaryactionindicator === true,
-                      () => updateStateValues(section, { voluntaryactionindicator: true })
+                      () => updateStateValue(section, 'voluntaryactionindicator', true)
                     )
                   }
                   {
@@ -430,17 +443,19 @@ class DispositionView extends React.Component {
                       'voluntaryactionindicator',
                       false,
                       input.voluntaryactionindicator === false,
-                      () => updateStateValues(section, { voluntaryactionindicator: false })
+                      () => updateStateValue(section, 'voluntaryactionindicator', false)
                     )
                   }
                 </FlexyWrapper>
               </HalfWidthItem>
               <HalfWidthItem>
                 <FlexyWrapper inline>
-                  { this.renderTempRadio('Police', 'TransportingAgency', 'police',
+                  {
+                    this.renderTempRadio('Police', 'TransportingAgency', 'police',
                       input.TransportingAgency === 'police')
                   }
-                  { this.renderTempRadio('Medcu', 'TransportingAgency', 'medcu',
+                  {
+                    this.renderTempRadio('Medcu', 'TransportingAgency', 'medcu',
                       input.TransportingAgency === 'medcu')
                   }
                 </FlexyWrapper>
@@ -467,10 +482,12 @@ class DispositionView extends React.Component {
         <HalfWidthItem>
           <FieldHeader>Transported to Hospital</FieldHeader>
           <FlexyWrapper inline>
-            { this.renderTempRadio('Yes', 'hospitaltransportindicator', true,
+            {
+              this.renderTempRadio('Yes', 'hospitaltransportindicator', true,
                 input.hospitaltransportindicator === true)
             }
-            { this.renderTempRadio('No', 'hospitaltransportindicator', false,
+            {
+              this.renderTempRadio('No', 'hospitaltransportindicator', false,
                 input.hospitaltransportindicator === false)
             }
           </FlexyWrapper>
@@ -504,25 +521,32 @@ class DispositionView extends React.Component {
         <HalfWidthItem>
           <FieldHeader>{ titleValue }</FieldHeader>
           <FlexyWrapper>
-            { this.renderTempCheckbox('Verbalization', 'deescalationTechniques', 'verbalization',
+            {
+              this.renderTempCheckbox('Verbalization', 'deescalationTechniques', 'verbalization',
                 input.deescalationTechniques.indexOf('verbalization') !== -1)
             }
-            { this.renderTempCheckbox('Handcuffs', 'deescalationTechniques', 'handcuffs',
+            {
+              this.renderTempCheckbox('Handcuffs', 'deescalationTechniques', 'handcuffs',
                 input.deescalationTechniques.indexOf('handcuffs') !== -1)
             }
-            { this.renderTempCheckbox('Leg Restraints', 'deescalationTechniques', 'legRestraints',
+            {
+              this.renderTempCheckbox('Leg Restraints', 'deescalationTechniques', 'legRestraints',
                 input.deescalationTechniques.indexOf('legRestraints') !== -1)
             }
-            { this.renderTempCheckbox('Taser', 'deescalationTechniques', 'taser',
+            {
+              this.renderTempCheckbox('Taser', 'deescalationTechniques', 'taser',
                 input.deescalationTechniques.indexOf('taser') !== -1)
             }
-            { this.renderTempCheckbox('Arrest Control (Hands / Feet)', 'deescalationTechniques', 'arrestControl',
+            {
+              this.renderTempCheckbox('Arrest Control (Hands / Feet)', 'deescalationTechniques', 'arrestControl',
                 input.deescalationTechniques.indexOf('arrestControl') !== -1)
             }
-            { this.renderTempCheckbox('N/A', 'deescalationTechniques', 'n/a',
+            {
+              this.renderTempCheckbox('N/A', 'deescalationTechniques', 'n/a',
                 input.deescalationTechniques.indexOf('n/a') !== -1)
             }
-            { this.renderTempCheckbox('Other', 'deescalationTechniques', 'other',
+            {
+              this.renderTempCheckbox('Other', 'deescalationTechniques', 'other',
                 input.deescalationTechniques.indexOf('other') !== -1)
             }
           </FlexyWrapper>

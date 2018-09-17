@@ -1,7 +1,5 @@
 import React from 'react';
 
-import PropTypes from 'prop-types';
-import ReactRouterPropTypes from 'react-router-prop-types';
 import moment from 'moment';
 import { withRouter } from 'react-router';
 
@@ -29,59 +27,6 @@ import { getCurrentPage } from '../utils/Utils';
 import { isPortlandOrg } from '../utils/Whitelist';
 
 class ConsumerInfoView extends React.Component {
-
-  static propTypes = {
-    handleMultiUpdate: PropTypes.func.isRequired,
-    handlePicture: PropTypes.func,
-    handleTextInput: PropTypes.func.isRequired,
-    handleSingleSelection: PropTypes.func.isRequired,
-    handleCheckboxChange: PropTypes.func.isRequired,
-    handleScaleSelection: PropTypes.func.isRequired,
-    handleDateInput: PropTypes.func.isRequired,
-    consumerIsSelected: PropTypes.bool.isRequired,
-    isInReview: PropTypes.func.isRequired,
-    handlePageChange: PropTypes.func.isRequired,
-    section: PropTypes.string.isRequired,
-    history: ReactRouterPropTypes.history.isRequired,
-    location: ReactRouterPropTypes.location.isRequired,
-    input: PropTypes.shape({
-      firstName: PropTypes.string.isRequired,
-      lastName: PropTypes.string.isRequired,
-      middleName: PropTypes.string.isRequired,
-      address: PropTypes.string.isRequired,
-      identification: PropTypes.string.isRequired,
-      militaryStatus: PropTypes.string.isRequired,
-      gender: PropTypes.string.isRequired,
-      race: PropTypes.string.isRequired,
-      age: PropTypes.string.isRequired,
-      dob: PropTypes.string.isRequired,
-      homeless: PropTypes.bool.isRequired,
-      homelessLocation: PropTypes.string.isRequired,
-      drugsAlcohol: PropTypes.string.isRequired,
-      drugType: PropTypes.string.isRequired,
-      prescribedMedication: PropTypes.string.isRequired,
-      takingMedication: PropTypes.string.isRequired,
-      prevPsychAdmission: PropTypes.string.isRequired,
-      selfDiagnosis: PropTypes.array.isRequired,
-      selfDiagnosisOther: PropTypes.string.isRequired,
-      armedWithWeapon: PropTypes.bool.isRequired,
-      armedWeaponType: PropTypes.string.isRequired,
-      accessToWeapons: PropTypes.bool.isRequired,
-      accessibleWeaponType: PropTypes.string.isRequired,
-      observedBehaviors: PropTypes.array.isRequired,
-      observedBehaviorsOther: PropTypes.string.isRequired,
-      emotionalState: PropTypes.array.isRequired,
-      emotionalStateOther: PropTypes.string.isRequired,
-      photosTakenOf: PropTypes.array.isRequired,
-      injuries: PropTypes.array.isRequired,
-      injuriesOther: PropTypes.string.isRequired,
-      suicidal: PropTypes.bool.isRequired,
-      suicidalActions: PropTypes.array.isRequired,
-      suicideAttemptMethod: PropTypes.array.isRequired,
-      suicideAttemptMethodOther: PropTypes.string.isRequired
-    }).isRequired,
-    selectedOrganizationId: PropTypes.string.isRequired
-  }
 
   static defaultProps = {
     handlePicture: () => {}
@@ -255,23 +200,19 @@ class ConsumerInfoView extends React.Component {
           <FlexyWrapper>
             {
               this.renderTempCheckbox('Police', 'directedagainst', 'police',
-                input.directedagainst.indexOf('police') !== -1
-              )
+                input.directedagainst.indexOf('police') !== -1)
             }
             {
               this.renderTempCheckbox('Family', 'directedagainst', 'family',
-                input.directedagainst.indexOf('family') !== -1
-              )
+                input.directedagainst.indexOf('family') !== -1)
             }
             {
               this.renderTempCheckbox('Significant other', 'directedagainst', 'significantOther',
-                input.directedagainst.indexOf('significantOther') !== -1
-              )
+                input.directedagainst.indexOf('significantOther') !== -1)
             }
             {
               this.renderTempCheckbox('Other', 'directedagainst', 'other',
-                input.directedagainst.indexOf('other') !== -1
-              )
+                input.directedagainst.indexOf('other') !== -1)
             }
           </FlexyWrapper>
         </HalfWidthItem>
