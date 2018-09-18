@@ -29,15 +29,6 @@ class OfficerInfoView extends React.Component {
     handlePageChange(path);
   }
 
-  handleOnChange = (event) => {
-
-    // TODO: validation
-    const { updateStateValue } = this.props;
-    const { section } = this.state;
-    const { name, value } = event.target;
-    updateStateValue(section, name, value);
-  }
-
   // TODO: replace this with real components from lattice-ui-kit
   renderTempCheckbox = (label, name, value, isChecked) => {
 
@@ -106,7 +97,14 @@ class OfficerInfoView extends React.Component {
 
   render() {
 
-    const { isInReview, selectedOrganizationId } = this.props;
+    const {
+      input,
+      isInReview,
+      selectedOrganizationId,
+      updateStateValue,
+    } = this.props;
+    const { section } = this.state;
+
     return (
       <>
         <FormGridWrapper>
@@ -118,19 +116,19 @@ class OfficerInfoView extends React.Component {
           <TextField
               disabled={isInReview}
               header="Officer Name"
-              name="officerName"
-              onChange={this.handleOnChange} />
+              onChange={value => updateStateValue(section, 'officerName', value)}
+              value={input.officerName} />
           <TextField
               disabled={isInReview}
               header="Officer Seq Id"
-              name="officerSeqID"
-              onChange={this.handleOnChange} />
+              onChange={value => updateStateValue(section, 'officerSeqID', value)}
+              value={input.officerSeqID} />
           <FullWidthItem>
             <TextField
                 disabled={isInReview}
                 header="Officer Injuries"
-                name="officerInjuries"
-                onChange={this.handleOnChange} />
+                onChange={value => updateStateValue(section, 'officerInjuries', value)}
+                value={input.officerInjuries} />
           </FullWidthItem>
           {
             isPortlandOrg(selectedOrganizationId)

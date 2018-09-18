@@ -7,18 +7,23 @@ import LatticeAuth from 'lattice-auth';
 import isString from 'lodash/isString';
 import isUUID from 'validator/lib/isUUID';
 import parseInt from 'lodash/parseInt';
-import validator from 'validator';
 
 // injected by Webpack.DefinePlugin
 declare var __ENV_DEV__ :boolean;
 
 const { AuthUtils } = LatticeAuth;
 
+/**
+ * @deprecated - replace with "isValidUuid" from "lattice" package
+ */
 export function isValidUuid(value :any) :boolean {
 
   return isString(value) && isUUID(value);
 }
 
+/**
+ * @deprecated - use randomStringId() instead
+ */
 export function randomId() :string {
 
   // https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
@@ -32,16 +37,6 @@ export function randomStringId() :string {
   // https://stackoverflow.com/questions/6860853/generate-random-string-for-div-id
   // not meant to be a cryptographically strong random id
   return Math.random().toString(36).slice(2) + (new Date()).getTime().toString(36);
-}
-
-// TODO: get rid of react-bootstrap-date-picker
-export function fixDatePickerIsoDateTime(value :?string) :string {
-
-  if (value && validator.isISO8601(value)) {
-    // DatePicker has weird behavior with timezones, so we have to fix the ISO date
-    return value.replace(/T(.*)$/g, 'T00:00:00.000Z');
-  }
-  return '';
 }
 
 export function getCurrentPage() :number {

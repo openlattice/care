@@ -221,8 +221,8 @@ const REPORT_INFO_INITIAL_STATE :Map<string, *> = fromJS({
   cadNumber: '',
   companionOffenseReport: false,
   complaintNumber: '',
-  dateOccurred: '',
-  dateReported: '',
+  dateOccurred: '', // NOTE: this is "DateTimeOffset", but should be just "Date"
+  dateReported: '', // NOTE: this is "DateTimeOffset", but should be just "Date
   dispatchReason: '',
   incident: '',
   locationOfIncident: '',

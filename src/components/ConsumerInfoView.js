@@ -9,22 +9,14 @@ import TextAreaField from './text/TextAreaField';
 import TextField from './text/TextField';
 import SelfieWebCam, { DATA_URL_PREFIX } from './SelfieWebCam';
 
+import { FORM_PATHS } from '../shared/Consts';
+import { isPortlandOrg } from '../utils/Whitelist';
 import {
   FlexyWrapper,
   FormGridWrapper,
   FullWidthItem,
   HalfWidthItem,
 } from './form/StyledFormComponents';
-import { FORM_PATHS } from '../shared/Consts';
-import {
-  setDidClickNav,
-  setRequiredErrors,
-  renderErrors,
-  validateSectionNavigation
-} from '../shared/Helpers';
-
-import { getCurrentPage } from '../utils/Utils';
-import { isPortlandOrg } from '../utils/Whitelist';
 
 class ConsumerInfoView extends React.Component {
 
@@ -35,23 +27,18 @@ class ConsumerInfoView extends React.Component {
   selfieWebCam;
 
   constructor(props) {
-
     super(props);
-
     this.state = {
-      requiredFields: ['identification'],
-      sectionFormatErrors: [],
-      sectionRequiredErrors: [],
-      identificationValid: true,
-      ageValid: true,
-      dobValid: true,
-      sectionValid: false,
-      didClickNav: this.props.location.state
-        ? this.props.location.state.didClickNav
-        : false,
-      currentPage: getCurrentPage(),
-      showSelfieWebCam: false
+      section: 'consumerInfo',
+      showSelfieWebCam: false,
     };
+  }
+
+  handlePageChange = (path) => {
+
+    // TODO: validation
+    const { handlePageChange } = this.props;
+    handlePageChange(path);
   }
 
   handleOnChangeTakePicture = (event) => {
@@ -69,36 +56,6 @@ class ConsumerInfoView extends React.Component {
 
     const { handlePicture, section } = this.props;
     handlePicture(section, 'picture', (selfieDataAsBase64 || ''));
-  }
-
-  handlePageChange = (path) => {
-
-    if (this.selfieWebCam) {
-      this.selfieWebCam.closeMediaStream();
-    }
-
-    const { handlePageChange } = this.props;
-    const { sectionFormatErrors, sectionRequiredErrors } = this.state;
-    this.setState(setDidClickNav);
-    this.setState(setRequiredErrors, () => {
-      if (sectionRequiredErrors.length < 1 && sectionFormatErrors.length < 1) {
-        handlePageChange(path);
-      }
-    });
-  }
-
-  setInputErrors = (name, inputValid, sectionFormatErrors) => {
-    const key = `${name}Valid`;
-    this.setState({
-      [key]: inputValid,
-      sectionFormatErrors
-    });
-  }
-
-  componentWillUnmount() {
-    const { history, input } = this.props;
-    const { currentPage, requiredFields } = this.state;
-    validateSectionNavigation(input, requiredFields, currentPage, history);
   }
 
   renderConsumerPicture = (input) => {
@@ -149,12 +106,8 @@ class ConsumerInfoView extends React.Component {
 
   renderViolenceScale = () => {
 
-    const {
-      handleScaleSelection,
-      input,
-      isInReview,
-      section
-    } = this.props;
+    const { handleScaleSelection, input, isInReview } = this.props;
+    const { section } = this.state;
 
     const scaleRadios = [];
     for (let i = 1; i <= 10; i += 1) {
@@ -165,7 +118,7 @@ class ConsumerInfoView extends React.Component {
           <input
               checked={input.scale1to10 === i}
               data-section={section}
-              disabled={isInReview()}
+              disabled={isInReview}
               id={inputKey}
               key={inputKey}
               name="scale1to10"
@@ -182,9 +135,8 @@ class ConsumerInfoView extends React.Component {
 
   renderViolencePortland = () => {
 
-    const { input, isInReview, section } = this.props;
-    const { sectionFormatErrors } = this.state;
-    const isReviewPage = isInReview();
+    const { input, isInReview, updateStateValue } = this.props;
+    const { section } = this.state;
 
     return (
       <>
@@ -218,10 +170,10 @@ class ConsumerInfoView extends React.Component {
         </HalfWidthItem>
         <HalfWidthItem>
           <TextField
-              disabled={isReviewPage}
+              disabled={isInReview}
               header="If other, specify others"
-              name="directedagainstother"
-              onChange={this.handleOnChangeNew} />
+              onChange={value => updateStateValue(section, 'directedagainstother', value)}
+              value={input.directedagainstother} />
         </HalfWidthItem>
         <FullWidthItem>
           <FieldHeader>History of Violent Behavior</FieldHeader>
@@ -253,37 +205,34 @@ class ConsumerInfoView extends React.Component {
         </HalfWidthItem>
         <HalfWidthItem>
           <TextField
-              disabled={isReviewPage}
+              disabled={isInReview}
               header="If other, specify others"
-              name="historicaldirectedagainstother"
-              onChange={this.handleOnChangeNew} />
+              onChange={value => updateStateValue(section, 'historicaldirectedagainstother', value)}
+              value={input.historicaldirectedagainstother} />
         </HalfWidthItem>
         <FullWidthItem>
           <TextAreaField
-              disabled={isReviewPage}
+              disabled={isInReview}
               header="Description of historical incidents involving violent behavior"
-              name="historyofviolencetext"
-              onChange={this.handleOnChangeNew} />
+              onChange={value => updateStateValue(section, 'historyofviolencetext', value)}
+              value={input.historyofviolencetext} />
         </FullWidthItem>
       </>
     );
   }
 
-  handleOnChangeNew = () => {
-    console.log('TODO: implement onChange handler');
-  }
-
   // TODO: replace this with real components from lattice-ui-kit
   renderTempRadio = (label, name, value, isChecked) => {
 
-    const { handleSingleSelection, isInReview, section } = this.props;
+    const { handleSingleSelection, isInReview } = this.props;
+    const { section } = this.state;
     const id = `${name}-${value}`;
     return (
       <label htmlFor={id}>
         <input
             checked={isChecked}
             data-section={section}
-            disabled={isInReview()}
+            disabled={isInReview}
             id={id}
             name={name}
             onChange={handleSingleSelection}
@@ -297,14 +246,15 @@ class ConsumerInfoView extends React.Component {
   // TODO: replace this with real components from lattice-ui-kit
   renderTempCheckbox = (label, name, value, isChecked) => {
 
-    const { handleCheckboxChange, isInReview, section } = this.props;
+    const { handleCheckboxChange, isInReview } = this.props;
+    const { section } = this.state;
     const id = `${name}-${value}`;
     return (
       <label htmlFor={id}>
         <input
             checked={isChecked}
             data-section={section}
-            disabled={isInReview()}
+            disabled={isInReview}
             id={id}
             name={name}
             onChange={handleCheckboxChange}
@@ -318,36 +268,21 @@ class ConsumerInfoView extends React.Component {
   render() {
     const {
       consumerIsSelected,
-      handleCheckboxChange,
-      handleDateInput,
-      handleMultiUpdate,
       handleSingleSelection,
-      handleTextInput,
       input,
       isInReview,
-      section,
-      selectedOrganizationId
+      selectedOrganizationId,
+      updateStateValue,
+      updateStateValues,
     } = this.props;
-
-    const {
-      didClickNav,
-      identificationValid,
-      ageValid,
-      dobValid,
-      sectionFormatErrors,
-      sectionRequiredErrors
-    } = this.state;
-
-    const isReviewPage = isInReview();
-
-    // TODO: what do I do with "data-section={section}"...?
+    const { section } = this.state;
 
     return (
       <>
         <FormGridWrapper>
           <FullWidthItem>
             {
-              isReviewPage
+              isInReview
                 ? null
                 : (
                   <h1>Consumer</h1>
@@ -355,39 +290,38 @@ class ConsumerInfoView extends React.Component {
             }
           </FullWidthItem>
           <TextField
-              disabled={consumerIsSelected || isReviewPage}
+              disabled={consumerIsSelected || isInReview}
               header="Last Name"
-              name="lastName"
-              onChange={this.handleOnChangeNew} />
+              onChange={value => updateStateValue(section, 'lastName', value)}
+              value={input.lastName} />
           <TextField
-              disabled={consumerIsSelected || isReviewPage}
+              disabled={consumerIsSelected || isInReview}
               header="First Name"
-              name="firstName"
-              onChange={this.handleOnChangeNew} />
+              onChange={value => updateStateValue(section, 'firstName', value)}
+              value={input.firstName} />
           <TextField
-              disabled={consumerIsSelected || isReviewPage}
+              disabled={consumerIsSelected || isInReview}
               header="Middle Name"
-              name="middleName"
-              onChange={this.handleOnChangeNew} />
+              onChange={value => updateStateValue(section, 'middleName', value)}
+              value={input.middleName} />
           <TextField
               disabled
               header="Consumer Identification*"
-              name="identification"
-              onChange={this.handleOnChangeNew} />
+              value={input.identification} />
           <FullWidthItem>
             <TextField
-                disabled={isReviewPage}
+                disabled={isInReview}
                 header="Residence / Address (Street, Apt Number, City, County, State, Zip)"
-                name="address"
-                onChange={this.handleOnChangeNew} />
+                onChange={value => updateStateValue(section, 'address', value)}
+                value={input.address} />
           </FullWidthItem>
           <TextField
-              disabled={isReviewPage}
+              disabled={isInReview}
               header="Consumer Phone Number"
-              name="phone"
-              onChange={this.handleOnChangeNew} />
+              onChange={value => updateStateValue(section, 'phone', value)}
+              value={input.phone} />
           {
-            isReviewPage || consumerIsSelected
+            isInReview || consumerIsSelected
               ? this.renderConsumerPicture(input)
               : this.renderSelfieWebCam()
           }
@@ -401,7 +335,7 @@ class ConsumerInfoView extends React.Component {
             <FieldHeader>Gender</FieldHeader>
             <select
                 data-section={section}
-                disabled={consumerIsSelected || isReviewPage}
+                disabled={consumerIsSelected || isInReview}
                 name="gender"
                 onChange={handleSingleSelection}
                 value={input.gender}>
@@ -415,7 +349,7 @@ class ConsumerInfoView extends React.Component {
             <FieldHeader>Race</FieldHeader>
             <select
                 data-section={section}
-                disabled={consumerIsSelected || isReviewPage}
+                disabled={consumerIsSelected || isInReview}
                 name="race"
                 onChange={handleSingleSelection}
                 value={input.race}>
@@ -433,28 +367,22 @@ class ConsumerInfoView extends React.Component {
             <label htmlFor="date-of-birth">
               <FieldHeader>Date of Birth</FieldHeader>
               <input
-                  disabled={consumerIsSelected || isReviewPage}
+                  disabled={consumerIsSelected || isInReview}
                   id="date-of-birth"
                   onChange={(e) => {
-                    handleDateInput(
-                      e.target.value,
-                      section,
-                      'dob',
-                      sectionFormatErrors,
-                      this.setInputErrors
-                    );
-                    const age = moment().diff(moment(e.target.value), 'years').toString();
-                    handleMultiUpdate(section, { age });
+                    const dob = moment(e.target.value).format('YYYY-MM-DD');
+                    const age = moment().diff(dob, 'years').toString();
+                    updateStateValues(section, { age, dob });
                   }}
                   type="date"
                   value={input.dob} />
             </label>
           </HalfWidthItem>
           <TextField
-              disabled={isReviewPage}
+              disabled={isInReview}
               header="Age"
-              name="age"
-              onChange={this.handleOnChangeNew} />
+              onChange={value => updateStateValue(section, 'age', value)}
+              value={input.age} />
           <HalfWidthItem>
             <FieldHeader>Homeless</FieldHeader>
             <FlexyWrapper inline>
@@ -464,10 +392,10 @@ class ConsumerInfoView extends React.Component {
           </HalfWidthItem>
           <HalfWidthItem>
             <TextField
-                disabled={isReviewPage}
+                disabled={isInReview}
                 header="If Yes, where do they usually sleep / frequent?"
-                name="homelessLocation"
-                onChange={this.handleOnChangeNew} />
+                onChange={value => updateStateValue(section, 'homelessLocation', value)}
+                value={input.homelessLocation} />
           </HalfWidthItem>
           <HalfWidthItem>
             <FieldHeader>Consumer Using Drugs, Alcohol</FieldHeader>
@@ -480,10 +408,10 @@ class ConsumerInfoView extends React.Component {
           </HalfWidthItem>
           <HalfWidthItem>
             <TextField
-                disabled={isReviewPage}
+                disabled={isInReview}
                 header="Drug type"
-                name="drugType"
-                onChange={this.handleOnChangeNew} />
+                onChange={value => updateStateValue(section, 'drugType', value)}
+                value={input.drugType} />
           </HalfWidthItem>
           <HalfWidthItem>
             <FieldHeader>Prescribed Medication</FieldHeader>
@@ -549,10 +477,10 @@ class ConsumerInfoView extends React.Component {
           </HalfWidthItem>
           <HalfWidthItem>
             <TextField
-                disabled={isReviewPage}
+                disabled={isInReview}
                 header="If other, specify other diagnoses"
-                name="selfDiagnosisOther"
-                onChange={this.handleOnChangeNew} />
+                onChange={value => updateStateValue(section, 'selfDiagnosisOther', value)}
+                value={input.selfDiagnosisOther} />
           </HalfWidthItem>
           <HalfWidthItem>
             <FieldHeader>Armed with Weapon?</FieldHeader>
@@ -563,10 +491,10 @@ class ConsumerInfoView extends React.Component {
           </HalfWidthItem>
           <HalfWidthItem>
             <TextField
-                disabled={isReviewPage}
+                disabled={isInReview}
                 header="If Yes, specify weapon type"
-                name="armedWeaponType"
-                onChange={this.handleOnChangeNew} />
+                onChange={value => updateStateValue(section, 'armedWeaponType', value)}
+                value={input.armedWeaponType} />
           </HalfWidthItem>
           <HalfWidthItem>
             <FieldHeader>Have Access to Weapons?</FieldHeader>
@@ -577,10 +505,10 @@ class ConsumerInfoView extends React.Component {
           </HalfWidthItem>
           <HalfWidthItem>
             <TextField
-                disabled={isReviewPage}
+                disabled={isInReview}
                 header="If Yes, specify weapon type"
-                name="accessibleWeaponType"
-                onChange={this.handleOnChangeNew} />
+                onChange={value => updateStateValue(section, 'accessibleWeaponType', value)}
+                value={input.accessibleWeaponType} />
           </HalfWidthItem>
           <HalfWidthItem>
             <FieldHeader>Observed Behaviors (check all that apply)</FieldHeader>
@@ -661,10 +589,10 @@ class ConsumerInfoView extends React.Component {
           </HalfWidthItem>
           <HalfWidthItem>
             <TextField
-                disabled={isReviewPage}
+                disabled={isInReview}
                 header="If other, specify other observed behaviors"
-                name="observedBehaviorsOther"
-                onChange={this.handleOnChangeNew} />
+                onChange={value => updateStateValue(section, 'observedBehaviorsOther', value)}
+                value={input.observedBehaviorsOther} />
           </HalfWidthItem>
           {
             isPortlandOrg(selectedOrganizationId)
@@ -710,10 +638,10 @@ class ConsumerInfoView extends React.Component {
           </HalfWidthItem>
           <HalfWidthItem>
             <TextField
-                disabled={isReviewPage}
+                disabled={isInReview}
                 header="If other, specify other states"
-                name="emotionalStateOther"
-                onChange={this.handleOnChangeNew} />
+                onChange={value => updateStateValue(section, 'emotionalStateOther', value)}
+                value={input.emotionalStateOther} />
           </HalfWidthItem>
           <HalfWidthItem>
             <FieldHeader>Consumer Injuries (check all that apply)</FieldHeader>
@@ -746,10 +674,10 @@ class ConsumerInfoView extends React.Component {
           </HalfWidthItem>
           <HalfWidthItem>
             <TextField
-                disabled={isReviewPage}
+                disabled={isInReview}
                 header="If other, specify other injuries"
-                name="injuriesOther"
-                onChange={this.handleOnChangeNew} />
+                onChange={value => updateStateValue(section, 'injuriesOther', value)}
+                value={input.injuriesOther} />
           </HalfWidthItem>
           <HalfWidthItem>
             <FieldHeader>Suicidal</FieldHeader>
@@ -806,10 +734,10 @@ class ConsumerInfoView extends React.Component {
           </HalfWidthItem>
           <HalfWidthItem>
             <TextField
-                disabled={isReviewPage}
+                disabled={isInReview}
                 header="If other, specify other methods"
-                name="suicideAttemptMethodOther"
-                onChange={this.handleOnChangeNew} />
+                onChange={value => updateStateValue(section, 'suicideAttemptMethodOther', value)}
+                value={input.suicideAttemptMethodOther} />
           </HalfWidthItem>
           <FullWidthItem>
             <FieldHeader>Photos Taken Of (check all that apply)</FieldHeader>
@@ -826,7 +754,7 @@ class ConsumerInfoView extends React.Component {
           </FullWidthItem>
         </FormGridWrapper>
         {
-          !isReviewPage
+          !isInReview
             ? (
               <FormNav
                   prevPath={FORM_PATHS.CONSUMER_SEARCH}
@@ -835,7 +763,6 @@ class ConsumerInfoView extends React.Component {
             )
             : null
         }
-        { renderErrors(sectionFormatErrors, sectionRequiredErrors, didClickNav) }
       </>
     );
   }

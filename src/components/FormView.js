@@ -66,17 +66,12 @@ function FormView({
   consumerIsSelected,
   dispositionInfo,
   handleCheckboxChange,
-  handleDateInput,
-  handleDatePickerDateTimeOffset,
-  handleMultiUpdate,
   handlePageChange,
   handlePersonSelection,
   handlePicture,
   handleScaleSelection,
   handleSingleSelection,
   handleSubmit,
-  handleTextInput,
-  handleTimeInput,
   isInReview,
   officerInfo,
   personEntitySetId,
@@ -97,9 +92,7 @@ function FormView({
   const getReportInfoView = () => {
     return (
       <ReportInfoView
-          handleDatePickerDateTimeOffset={handleDatePickerDateTimeOffset}
           handlePageChange={handlePageChange}
-          handleTimeInput={handleTimeInput}
           input={reportInfo}
           isInReview={false}
           updateStateValue={updateStateValue}
@@ -122,17 +115,15 @@ function FormView({
       <ConsumerInfoView
           consumerIsSelected={consumerIsSelected}
           handleCheckboxChange={handleCheckboxChange}
-          handleDateInput={handleDateInput}
-          handleMultiUpdate={handleMultiUpdate}
           handlePageChange={handlePageChange}
           handlePicture={handlePicture}
           handleScaleSelection={handleScaleSelection}
           handleSingleSelection={handleSingleSelection}
-          handleTextInput={handleTextInput}
           input={consumerInfo}
-          isInReview={isInReview}
-          section="consumerInfo"
-          selectedOrganizationId={selectedOrganizationId} />
+          isInReview={false}
+          selectedOrganizationId={selectedOrganizationId}
+          updateStateValue={updateStateValue}
+          updateStateValues={updateStateValues} />
     );
   };
 
@@ -140,6 +131,7 @@ function FormView({
     return (
       <ComplainantInfoView
           handlePageChange={handlePageChange}
+          input={complainantInfo}
           isInReview={false}
           updateStateValue={updateStateValue}
           updateStateValues={updateStateValues} />
@@ -176,22 +168,20 @@ function FormView({
     return (
       <ReviewView
           handleCheckboxChange={handleCheckboxChange}
-          handleDateInput={handleDateInput}
-          handleDatePickerDateTimeOffset={handleDatePickerDateTimeOffset}
-          handleMultiUpdate={handleMultiUpdate}
           handlePageChange={handlePageChange}
           handleScaleSelection={handleScaleSelection}
           handleSingleSelection={handleSingleSelection}
-          handleTextInput={handleTextInput}
-          handleTimeInput={handleTimeInput}
+          handleSubmit={handleSubmit}
           reportInfo={reportInfo}
           consumerInfo={consumerInfo}
           complainantInfo={complainantInfo}
           dispositionInfo={dispositionInfo}
           officerInfo={officerInfo}
-          isInReview={isInReview}
+          isInReview
           consumerIsSelected={consumerIsSelected}
-          selectedOrganizationId={selectedOrganizationId} />
+          selectedOrganizationId={selectedOrganizationId}
+          updateStateValue={updateStateValue}
+          updateStateValues={updateStateValues} />
     );
   };
 

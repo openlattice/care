@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Button } from 'lattice-ui-kit';
 
@@ -13,7 +12,9 @@ const NavWrapper = styled.div`
 
 const SubmitButton = styled(Button).attrs({
   type: 'submit'
-});
+})`
+  margin: 0;
+`;
 
 const NavButton = styled(Button).attrs({
   type: 'button'
@@ -23,6 +24,7 @@ const NavButton = styled(Button).attrs({
 
 const FormNav = ({
   handlePageChange,
+  handleSubmit,
   nextPath,
   prevPath,
   submit
@@ -61,7 +63,7 @@ const FormNav = ({
 
   const renderSubmit = () => (
     <NavWrapper>
-      <SubmitButton mode="primary">
+      <SubmitButton mode="primary" onClick={handleSubmit}>
         Submit
       </SubmitButton>
     </NavWrapper>
@@ -72,19 +74,6 @@ const FormNav = ({
   }
 
   return renderNav();
-};
-
-FormNav.defaultProps = {
-  prevPath: '',
-  nextPath: '',
-  submit: false
-};
-
-FormNav.propTypes = {
-  prevPath: PropTypes.string,
-  nextPath: PropTypes.string,
-  submit: PropTypes.bool,
-  handlePageChange: PropTypes.func.isRequired
 };
 
 export default FormNav;

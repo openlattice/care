@@ -16,15 +16,13 @@ import type { RouterHistory } from 'react-router';
 
 import FormView from '../../components/FormView';
 import { validateOnInput } from '../../shared/Validation';
-import { fixDatePickerIsoDateTime, getCurrentPage } from '../../utils/Utils';
 import { hardRestart, submitReport } from './ReportActionFactory';
 
 import {
   APP_TYPES_FQNS,
   CONSUMER_STATE,
   FORM_PATHS,
-  MAX_PAGE,
-  PERSON
+  PERSON,
 } from '../../shared/Consts';
 
 import {
@@ -101,43 +99,10 @@ class Form extends React.Component<Props, State> {
     this.setState({ [section]: sectionState });
   }
 
-  handleTextInput = (e, fieldType, formatErrors, setErrorsFn) => {
-
-    const sectionKey = e.target.dataset.section;
-    const name = e.target.name;
-    const input = e.target.value;
-    const sectionState = this.state[sectionKey];
-    sectionState[name] = input;
-    this.setState({ [sectionKey]: sectionState });
-    validateOnInput(name, input, fieldType, formatErrors, setErrorsFn);
-  }
-
-  handleDateInput = (e, section, name, formatErrors, setErrorsFn) => {
-    let input = e || '';
-    input = input.slice(0, 10);
-    const sectionState = this.state[section];
-    sectionState[name] = input;
-    this.setState({ [section]: sectionState });
-    validateOnInput(name, input, 'date', formatErrors, setErrorsFn);
-  }
-
-  handleDatePickerDateTimeOffset = (value, section, name) => {
-
-    const sectionState = this.state[section];
-    sectionState[name] = fixDatePickerIsoDateTime(value);
-    this.setState({ [section]: sectionState });
-  }
-
   handlePicture = (sectionKey, sectionPropertyName, value) => {
     const sectionState = this.state[sectionKey];
     sectionState[sectionPropertyName] = value;
     this.setState({ [sectionKey]: sectionState });
-  }
-
-  handleTimeInput = (e, section, name) => {
-    const sectionState = this.state[section];
-    sectionState[name] = `${e.target.value}:00`;
-    this.setState({ [section]: sectionState });
   }
 
   // For radio or select input
@@ -153,15 +118,6 @@ class Form extends React.Component<Props, State> {
     else {
       sectionState[e.target.name] = e.target.value;
     }
-    this.setState({ [sectionKey]: sectionState });
-  }
-
-  handleMultiUpdate = (sectionKey, values) => {
-
-    const sectionState = this.state[sectionKey];
-    Object.keys(values).forEach((key) => {
-      sectionState[key] = values[key];
-    });
     this.setState({ [sectionKey]: sectionState });
   }
 
@@ -240,10 +196,6 @@ class Form extends React.Component<Props, State> {
     });
   }
 
-  isInReview = () => (
-    getCurrentPage() === MAX_PAGE
-  )
-
   render() {
 
     const { PEOPLE_FQN } = APP_TYPES_FQNS;
@@ -261,19 +213,13 @@ class Form extends React.Component<Props, State> {
           consumerInfo={this.state.consumerInfo}
           consumerIsSelected={this.state.isConsumerSelected}
           dispositionInfo={this.state.dispositionInfo}
-          isInReview={this.isInReview}
           handleCheckboxChange={this.handleCheckboxChange}
-          handleDateInput={this.handleDateInput}
-          handleDatePickerDateTimeOffset={this.handleDatePickerDateTimeOffset}
-          handleMultiUpdate={this.handleMultiUpdate}
           handlePageChange={this.handlePageChange}
           handlePersonSelection={this.handlePersonSelection}
           handlePicture={this.handlePicture}
           handleScaleSelection={this.handleScaleSelection}
           handleSingleSelection={this.handleSingleSelection}
           handleSubmit={this.handleSubmit}
-          handleTextInput={this.handleTextInput}
-          handleTimeInput={this.handleTimeInput}
           officerInfo={this.state.officerInfo}
           organizations={organizations}
           personEntitySetId={peopleEntitySetId}

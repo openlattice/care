@@ -19,6 +19,11 @@ const FormGridWrapper = styled.div`
   label {
     font-size: 14px;
     font-weight: normal;
+    margin-right: 20px;
+  }
+
+  label input {
+    margin-right: 5px;
   }
 `;
 

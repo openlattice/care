@@ -30,17 +30,22 @@ const StyledInput = styled.input`
   line-height: normal;
   outline: none;
   padding: 10px 20px;
+
   &:hover {
     background-color: ${NEUTRALS[6]};
   }
+
   &:disabled {
     background-color: ${NEUTRALS[8]};
+    color: ${NEUTRALS[1]};
     cursor: not-allowed;
   }
+
   &:focus {
     background-color: ${WHITE};
     border-color: ${PURPLES[1]};
   }
+
   &::placeholder {
     color: ${NEUTRALS[1]};
   }
@@ -52,24 +57,37 @@ type Props = {
   header ? :string;
   name ? :string;
   placeholder ? :string;
-  onChange :Function;
+  onChange :(value :string) => void;
+  value ? :string;
 };
 
-class TextField extends Component<Props> {
+type State = {};
+
+class TextField extends Component<Props, State> {
 
   static defaultProps = {
     className: '',
     disabled: false,
-    header: undefined,
-    name: undefined,
-    placeholder: undefined,
+    header: '',
+    name: '',
+    placeholder: '',
+    value: '',
   };
+
+  shouldComponentUpdate(nextProps :Props) {
+
+    const { value } = this.props;
+    if (nextProps.value !== value) {
+      return true;
+    }
+    return false;
+  }
 
   handleOnChange = (event :SyntheticInputEvent<*>) => {
 
     const { onChange } = this.props;
     if (isFunction(onChange)) {
-      onChange(event);
+      onChange(event.target.value);
     }
   }
 
@@ -80,7 +98,8 @@ class TextField extends Component<Props> {
       disabled,
       header,
       name,
-      placeholder
+      placeholder,
+      value,
     } = this.props;
 
     return (
@@ -96,7 +115,7 @@ class TextField extends Component<Props> {
             name={name}
             onChange={this.handleOnChange}
             placeholder={placeholder}
-            type="text" />
+            value={value} />
       </FieldWrapper>
     );
   }

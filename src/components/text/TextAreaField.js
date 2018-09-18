@@ -30,16 +30,22 @@ const StyledTextArea = styled.textarea`
   line-height: normal;
   outline: none;
   padding: 10px 20px;
-  &:disabled {
-    cursor: not-allowed;
-  }
+
   &:hover {
     background-color: ${NEUTRALS[6]};
   }
+
+  &:disabled {
+    background-color: ${NEUTRALS[8]};
+    color: ${NEUTRALS[1]};
+    cursor: not-allowed;
+  }
+
   &:focus {
     background-color: ${WHITE};
     border-color: ${PURPLES[1]};
   }
+
   &::placeholder {
     color: ${NEUTRALS[1]};
   }
@@ -47,26 +53,39 @@ const StyledTextArea = styled.textarea`
 
 type Props = {
   className ? :string;
+  disabled ? :boolean;
   header ? :string;
   name ? :string;
   placeholder ? :string;
-  onChange :Function;
+  onChange :(value :string) => void;
+  value ? :string;
 };
 
 class TextAreaField extends Component<Props> {
 
   static defaultProps = {
     className: '',
-    header: undefined,
-    name: undefined,
-    placeholder: undefined,
+    disabled: false,
+    header: '',
+    name: '',
+    placeholder: '',
+    value: '',
   };
+
+  shouldComponentUpdate(nextProps :Props) {
+
+    const { value } = this.props;
+    if (nextProps.value !== value) {
+      return true;
+    }
+    return false;
+  }
 
   handleOnChange = (event :SyntheticInputEvent<*>) => {
 
     const { onChange } = this.props;
     if (isFunction(onChange)) {
-      onChange(event);
+      onChange(event.target.value);
     }
   }
 
@@ -74,9 +93,11 @@ class TextAreaField extends Component<Props> {
 
     const {
       className,
+      disabled,
       header,
       name,
-      placeholder
+      placeholder,
+      value,
     } = this.props;
 
     return (
@@ -88,10 +109,12 @@ class TextAreaField extends Component<Props> {
         }
         <StyledTextArea
             className={className}
+            disabled={disabled}
             name={name}
             onChange={this.handleOnChange}
             placeholder={placeholder}
-            type="text" />
+            type="text"
+            value={value} />
       </FieldWrapper>
     );
   }

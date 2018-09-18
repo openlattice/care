@@ -8,6 +8,11 @@ import { DataIntegrationApiActionFactory, DataIntegrationApiSagas } from 'lattic
 import { call, put, takeEvery } from 'redux-saga/effects';
 
 import {
+  formatDateWithTZOAsZeros,
+  formatTimeWithSecondsAsZeros,
+} from '../../utils/DateUtils';
+
+import {
   APP_TYPES_FQNS,
   NC_SUBJ_ID_FQN,
   PERSON,
@@ -51,10 +56,26 @@ function prepReportEntityData(
     const fqn :FullyQualifiedName = new FullyQualifiedName(propertyType.get('type', {}));
     const value = allInfo[fqn.getName()];
     let formattedValue = Array.isArray(value) ? value : [value];
-    if (formattedValue.length > 0
-      && (formattedValue[0] === null || formattedValue[0] === undefined || formattedValue[0] === '')
-    ) {
-      formattedValue = [];
+    if (formattedValue.length > 0) {
+      if (formattedValue[0] === null || formattedValue[0] === undefined || formattedValue[0] === '') {
+        formattedValue = [];
+      }
+      // !!! HACK START !!!
+      else if (fqn.getName() === 'dateOccurred') {
+        // HACK: temp hack. "dateOccurred" is "DateTimeOffset", but should actually just be "Date".
+        formattedValue = [formatDateWithTZOAsZeros(formattedValue[0])];
+      }
+      else if (fqn.getName() === 'dateReported') {
+        // HACK: temp hack. "dateReported" is "DateTimeOffset", but should actually just be "Date".
+        formattedValue = [formatDateWithTZOAsZeros(formattedValue[0])];
+      }
+      else if (fqn.getName() === 'timeOccurred') {
+        formattedValue = [formatTimeWithSecondsAsZeros(formattedValue[0])];
+      }
+      else if (fqn.getName() === 'timeReported') {
+        formattedValue = [formatTimeWithSecondsAsZeros(formattedValue[0])];
+      }
+      // !!! HACK END !!!
     }
     details[id] = formattedValue;
   });

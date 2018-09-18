@@ -107,15 +107,20 @@ class DispositionView extends React.Component {
 
   renderHospitalsSelect = () => {
 
-    const { hospitals, input, isInReview } = this.props;
+    const {
+      hospitals,
+      input,
+      isInReview,
+      updateStateValue,
+    } = this.props;
     const { section } = this.state;
 
     if (hospitals.isEmpty()) {
       return (
         <TextField
             disabled={isInReview}
-            name="hospital"
-            onChange={this.handleOnChange} />
+            onChange={value => updateStateValue(section, 'hospital', value)}
+            value={input.hospital} />
       );
     }
 
@@ -247,8 +252,14 @@ class DispositionView extends React.Component {
 
   renderStabilizedOnScene = () => {
 
-    const { input, isInReview, updateStateValues } = this.props;
+    const {
+      input,
+      isInReview,
+      updateStateValue,
+      updateStateValues
+    } = this.props;
     const { section } = this.state;
+
     return (
       <>
         <HalfWidthItem>
@@ -294,8 +305,8 @@ class DispositionView extends React.Component {
           <TextField
               disabled={isInReview}
               header="If Yes, specify referral information"
-              name="referraldestination"
-              onChange={this.handleOnChange} />
+              onChange={value => updateStateValue(section, 'referraldestination', value)}
+              value={input.referraldestination} />
         </HalfWidthItem>
       </>
     );
@@ -379,9 +390,10 @@ class DispositionView extends React.Component {
       input,
       isInReview,
       updateStateValue,
-      updateStateValues
+      updateStateValues,
     } = this.props;
     const { section } = this.state;
+
     return (
       <>
         <FullWidthItem>
@@ -464,8 +476,8 @@ class DispositionView extends React.Component {
                 <TextField
                     disabled={isInReview}
                     header="Hospital name"
-                    name="hospitalname"
-                    onChange={this.handleOnChange} />
+                    onChange={value => updateStateValue(section, 'hospitalname', value)}
+                    value={input.hospitalname} />
               </FullWidthItem>
             </>
           )
@@ -476,7 +488,14 @@ class DispositionView extends React.Component {
 
   renderTransportedToHospital = () => {
 
-    const { input, isInReview, selectedOrganizationId } = this.props;
+    const {
+      input,
+      isInReview,
+      selectedOrganizationId,
+      updateStateValue
+    } = this.props;
+    const { section } = this.state;
+
     return (
       <>
         <HalfWidthItem>
@@ -499,8 +518,8 @@ class DispositionView extends React.Component {
               ? (
                 <TextField
                     disabled={isInReview}
-                    name="hospital"
-                    onChange={this.handleOnChange} />
+                    onChange={value => updateStateValue(section, 'hospital', value)}
+                    value={input.hospital} />
               )
               : this.renderHospitalsSelect()
           }
@@ -511,7 +530,14 @@ class DispositionView extends React.Component {
 
   renderDeescalationTechniques = () => {
 
-    const { input, isInReview, selectedOrganizationId } = this.props;
+    const {
+      input,
+      isInReview,
+      selectedOrganizationId,
+      updateStateValue,
+    } = this.props;
+    const { section } = this.state;
+
     const titleValue = isPortlandOrg(selectedOrganizationId)
       ? 'Use of Force / Equipment Used'
       : 'De-escalation Techniques / Equipment Used';
@@ -555,8 +581,8 @@ class DispositionView extends React.Component {
           <TextField
               disabled={isInReview}
               header="If other, specify other techniques"
-              name="deescalationTechniquesOther"
-              onChange={this.handleOnChange} />
+              onChange={value => updateStateValue(section, 'deescalationTechniquesOther', value)}
+              value={input.deescalationTechniquesOther} />
         </HalfWidthItem>
       </>
     );
@@ -564,7 +590,14 @@ class DispositionView extends React.Component {
 
   render() {
 
-    const { isInReview, selectedOrganizationId } = this.props;
+    const {
+      input,
+      isInReview,
+      selectedOrganizationId,
+      updateStateValue,
+    } = this.props;
+    const { section } = this.state;
+
     return (
       <>
         <FormGridWrapper>
@@ -606,7 +639,8 @@ class DispositionView extends React.Component {
                 disabled={isInReview}
                 header={incidentNarrativeTitle}
                 name="incidentNarrative"
-                onChange={this.handleOnChange} />
+                onChange={value => updateStateValue(section, 'incidentNarrative', value)}
+                value={input.incidentNarrative} />
           </FullWidthItem>
         </FormGridWrapper>
         {
