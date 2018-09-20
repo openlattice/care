@@ -3,15 +3,14 @@ import styled from 'styled-components';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import { Map, fromJS, toJS } from 'immutable';
+import { Map, List, fromJS, toJS } from 'immutable';
 
 import ReportInfoView from '../../components/ReportInfoView';
 import ConsumerInfoView from '../../components/ConsumerInfoView';
 import ComplainantInfoView from '../../components/ComplainantInfoView';
 import DispositionView from '../../components/DispositionView';
 import OfficerInfoView from '../../components/OfficerInfoView';
-import { getBHRReportData } from './ConsumerSummaryActionFactory';
-import { REQUEST_STATUSES } from './ConsumerSummaryReducer';
+import { searchConsumerNeighbors } from '../search/SearchActionFactory';
 import {
   APP_TYPES_FQNS,
   PERSON,
@@ -49,11 +48,16 @@ const {
 
 class bhrFormSummaryContainer extends React.Component {
   componentWillMount() {
-    console.log('selectedreport props:', this.props.selectedReport.toJS());
+    const ID = 'openlattice.@id';
+    const reportEntityId = this.props.selectedReport.getIn([ID, 0]);
+    this.props.actions.searchConsumerNeighbors({
+      entitySetId: this.props.bhrEntitySetId,
+      entityId: reportEntityId
+    });
   }
 
   render() {
-    const { selectedReport } = this.props;
+    const { selectedReport, consumerNeighborDetails } = this.props;
 
     const reportInfo = {
       dispatchReason: selectedReport.getIn([REPORT_INFO.DISPATCH_REASON_FQN, 0]),
@@ -72,9 +76,9 @@ class bhrFormSummaryContainer extends React.Component {
     };
 
     const consumerInfo = {
-      firstName: selectedReport.getIn([PERSON.FIRST_NAME_FQN, 0]),
-      lastName: selectedReport.getIn([PERSON.LAST_NAME_FQN, 0]),
-      middleName: selectedReport.getIn([PERSON.MIDDLE_NAME_FQN, 0]),
+      firstName: consumerNeighborDetails && consumerNeighborDetails.getIn([PERSON.FIRST_NAME_FQN, 0]),
+      lastName: consumerNeighborDetails && consumerNeighborDetails.getIn([PERSON.LAST_NAME_FQN, 0]),
+      middleName: consumerNeighborDetails && consumerNeighborDetails.getIn([PERSON.MIDDLE_NAME_FQN, 0]),
       address: selectedReport.getIn([CONSUMER_INFO.ADDRESS_FQN, 0]),
       phone: selectedReport.getIn([CONSUMER_INFO.PHONE_FQN, 0]),
       identification: selectedReport.getIn([PERSON.ID_FQN, 0]),
@@ -184,4 +188,29 @@ class bhrFormSummaryContainer extends React.Component {
   }
 };
 
-export default bhrFormSummaryContainer;
+function mapStateToProps(state :Map<*, *>) :Object {
+  const selectedOrganizationId :string = state.getIn(['app', 'selectedOrganization']);
+
+  const bhrEntitySetId :string = state.getIn([
+    'app',
+    BEHAVIORAL_HEALTH_REPORT_FQN.getFullyQualifiedName(),
+    'entitySetsByOrganization',
+    selectedOrganizationId
+  ]);
+
+  const consumerNeighborDetails = state.getIn(['search', 'consumerNeighbors', 'searchResults', 0, 'neighborDetails'], Map());
+
+  return {
+    bhrEntitySetId,
+    consumerNeighborDetails
+  };
+};
+
+function mapDispatchToProps(dispatch :Function) :Object {
+
+  return {
+    actions: bindActionCreators({ searchConsumerNeighbors }, dispatch)
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(bhrFormSummaryContainer);

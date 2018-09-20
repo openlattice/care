@@ -20,7 +20,6 @@ const {
   PEOPLE_FQN
 } = APP_TYPES_FQNS;
 
-
 class ConsumerSummaryContainer extends React.Component {
   constructor(props) {
     super(props);
