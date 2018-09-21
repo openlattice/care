@@ -46,7 +46,7 @@ const {
 } = APP_TYPES_FQNS;
 
 
-class bhrFormSummaryContainer extends React.Component {
+class HealthReportSummaryContainer extends React.Component {
   componentWillMount() {
     const ID = 'openlattice.@id';
     const reportEntityId = this.props.selectedReport.getIn([ID, 0]);
@@ -213,4 +213,4 @@ function mapDispatchToProps(dispatch :Function) :Object {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(bhrFormSummaryContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(HealthReportSummaryContainer);

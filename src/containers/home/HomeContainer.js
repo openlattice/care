@@ -13,7 +13,7 @@ import { Redirect, Route, Switch } from 'react-router';
 
 import StyledCard from '../../components/cards/StyledCard';
 import * as Routes from '../../core/router/Routes';
-import ConsumerSummaryContainer from '../consumersummary/ConsumerSummaryContainer';
+import ReportSummariesContainer from '../reportsummaries/ReportSummariesContainer';
 
 
 /*
@@ -104,7 +104,7 @@ const TabBar = () => (
     <TabLink to={Routes.CREATE_REPORT_PATH}>
       Create Report
     </TabLink>
-    <TabLink to={Routes.CONSUMER_SUMMARY_PATH}>
+    <TabLink to={Routes.REPORT_SUMMARIES_PATH}>
       View Reports
     </TabLink>
   </TabBarContainer>
@@ -139,13 +139,11 @@ const HomeContainer = () => (
       { TabBar() }
       <Switch>
         <Route exact strict path={Routes.CREATE_REPORT_PATH} component={NewReportsList} />
-        <Route path={Routes.CONSUMER_SUMMARY_PATH} component={ConsumerSummaryContainer} />
+        <Route path={Routes.REPORT_SUMMARIES_PATH} component={ReportSummariesContainer} />
         <Redirect to={Routes.CREATE_REPORT_PATH} />
       </Switch>
     </Content>
   </ContainerWrapper>
 );
 
-export default withRouter(
-  connect()(HomeContainer)
-);
+export default withRouter(HomeContainer);

@@ -4,7 +4,7 @@
 
  import { Map, List, fromJS } from 'immutable';
 
- import { getBHRReports, getBHRReportData } from './ConsumerSummaryActionFactory';
+ import { getBHRReports, getBHRReportData } from './ReportSummariesActionFactory';
 
  export const REQUEST_STATUSES = {
    PRE_REQUEST: 0,
@@ -19,7 +19,7 @@
    reportData: Map()
  });
 
- export default function consumerSummaryReducer(state :Map<*, *> = INITIAL_STATE, action :Object) {
+ export default function reportSummariesReducer(state :Map<*, *> = INITIAL_STATE, action :Object) {
 
    switch (action.type) {
 
@@ -44,17 +44,14 @@
 
        return getBHRReportData.reducer(state, action, {
          REQUEST: () => {
-            console.log('request!')
            return state.set('submissionState', REQUEST_STATUSES.IS_REQUESTING);
          },
          SUCCESS: () => {
-          console.log('report data action.value in reducer:', action.value)
            return state
               .set('submissionState', REQUEST_STATUSES.REQUEST_SUCCESS)
               .set('reportData', fromJS(action.value))
          },
          FAILURE: () => {
-          console.log('fail whale');
            return state.set('submissionState', REQUEST_STATUSES.REQUEST_FAILURE);
          }
        });

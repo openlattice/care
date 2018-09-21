@@ -6,11 +6,10 @@ import { withRouter } from 'react-router';
 import { Map, List, fromJS, toJS } from 'immutable';
 
 import ReportSearchResult from '../search/ReportSearchResult';
-import { getBHRReports } from './ConsumerSummaryActionFactory';
-import { REQUEST_STATUSES } from './ConsumerSummaryReducer';
+import { getBHRReports } from './ReportSummariesActionFactory';
+import { REQUEST_STATUSES } from './ReportSummariesReducer';
 import { APP_TYPES_FQNS, REPORT_INFO } from '../../shared/Consts';
 import { ContainerInnerWrapper, ContainerOuterWrapper } from '../../shared/Layout';
-import { PAGE_2 } from './ConsumerSummaryConstants';
 
 const {
   BEHAVIORAL_HEALTH_REPORT_FQN
@@ -70,7 +69,7 @@ function mapStateToProps(state :Map<*, *>) :Object {
   ]);
 
   const reports = state.getIn([
-    'consumerSummary',
+    'reportSummaries',
     'reports'
   ], List());
 

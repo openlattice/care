@@ -5,14 +5,12 @@ import { Map } from 'immutable';
 
 
 import ReportsListContainer from './ReportsListContainer';
-import BHRSummaryContainer from './BHRSummaryContainer';
-import {
-  PAGE_1,
-  PAGE_2
-} from './ConsumerSummaryConstants';
+import HealthReportSummaryContainer from './HealthReportSummaryContainer';
+import * as Routes from '../../core/router/Routes';
 import StyledCard from '../../components/cards/StyledCard';
 import { ContainerInnerWrapper, ContainerOuterWrapper } from '../../shared/Layout';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
+
 
 const {
   APPEARS_IN_FQN,
@@ -20,7 +18,8 @@ const {
   PEOPLE_FQN
 } = APP_TYPES_FQNS;
 
-class ConsumerSummaryContainer extends React.Component {
+
+class ReportSummariesContainer extends React.Component {
   constructor(props) {
     super(props);
 
@@ -35,7 +34,7 @@ class ConsumerSummaryContainer extends React.Component {
         selectedReport: report
       },
       () => {
-        this.props.history.push(PAGE_2);
+        this.props.history.push(Routes.PAGE_2);
       }
     );
   }
@@ -45,18 +44,18 @@ class ConsumerSummaryContainer extends React.Component {
   )
 
   renderReportSummary = () => (
-    <BHRSummaryContainer selectedReport={this.state.selectedReport} />
+    <HealthReportSummaryContainer selectedReport={this.state.selectedReport} />
   )
 
   render() {
     return (
       <Switch>
-        <Route path={PAGE_1} render={this.renderReportsList} />
-        <Route path={PAGE_2} render={this.renderReportSummary} />
-        <Redirect to={PAGE_1} />
+        <Route path={Routes.PAGE_1} render={this.renderReportsList} />
+        <Route path={Routes.PAGE_2} render={this.renderReportSummary} />
+        <Redirect to={Routes.PAGE_1} />
       </Switch>
     );
   }
 }
 
-export default ConsumerSummaryContainer;
+export default ReportSummariesContainer;

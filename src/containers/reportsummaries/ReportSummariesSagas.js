@@ -2,7 +2,7 @@ import { List, Map } from 'immutable';
 import { DataApiActionFactory, DataApiSagas } from 'lattice-sagas';
 import { call, put, takeEvery } from 'redux-saga/effects';
 
-import { GET_BHR_REPORTS, GET_BHR_REPORT_DATA, getBHRReports, getBHRReportData } from './ConsumerSummaryActionFactory';
+import { GET_BHR_REPORTS, GET_BHR_REPORT_DATA, getBHRReports, getBHRReportData } from './ReportSummariesActionFactory';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 
 const { getEntitySetData, getEntityData } = DataApiActionFactory;
@@ -52,7 +52,6 @@ export function* getBHRReportsWatcher() :Generator<*, *, *> {
 export function* getBHRReportDataWorker(action :SequenceAction) :Generator<*, *, *> {
   try {
     yield put(getBHRReportData.request(action.id));
-    console.log('action:', action);
     const {
       entitySetId,
       entityId
@@ -65,7 +64,6 @@ export function* getBHRReportDataWorker(action :SequenceAction) :Generator<*, *,
         entityId
       })
     );
-    console.log('response:', response);
 
     if (response.error) {
       throw new Error(response.error);
@@ -74,7 +72,6 @@ export function* getBHRReportDataWorker(action :SequenceAction) :Generator<*, *,
     yield put(getBHRReportData.success(action.id, response.data));
   }
   catch (error) {
-    console.log('error!!!:', error);
     yield put(getBHRReportData.failure(action.id, error));
   }
   finally {
