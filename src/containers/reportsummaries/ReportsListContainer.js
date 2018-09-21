@@ -8,7 +8,7 @@ import { Map, List, fromJS, toJS } from 'immutable';
 import ReportSearchResult from '../search/ReportSearchResult';
 import { getBHRReports } from './ReportSummariesActionFactory';
 import { REQUEST_STATUSES } from './ReportSummariesReducer';
-import { APP_TYPES_FQNS, REPORT_INFO } from '../../shared/Consts';
+import { APP_TYPES_FQNS, REPORT_INFO, ENTITY_ID } from '../../shared/Consts';
 import { ContainerInnerWrapper, ContainerOuterWrapper } from '../../shared/Layout';
 
 const {
@@ -40,7 +40,7 @@ class ReportsListContainer extends React.Component {
               searchResult={report}
               onSelectSearchResult={this.props.onSelectSearchResult}
               showDivider={showDivider}
-              key={report.getIn(['openlattice.@id', 0])} />
+              key={report.getIn([ENTITY_ID, 0])} />
       )
     )
   }

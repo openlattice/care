@@ -112,6 +112,7 @@ export const OFFICER_INFO = {
 
 export const STRING_ID_FQN = 'general.stringid';
 export const NC_SUBJ_ID_FQN = 'nc.SubjectIdentification';
+export const ENTITY_ID = 'openlattice.@id';
 
 export const RACE = {
   americanIndian: 'American Indian or Alaska Native',

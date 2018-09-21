@@ -18,7 +18,8 @@ import {
   CONSUMER_INFO,
   COMPLAINANT_INFO,
   DISPOSITION_INFO,
-  OFFICER_INFO
+  OFFICER_INFO,
+  ENTITY_ID
 } from '../../shared/Consts';
 import { SectionWrapper, ContentWrapper, SectionHeader } from '../../shared/Layout';
 
@@ -48,8 +49,7 @@ const {
 
 class HealthReportSummaryContainer extends React.Component {
   componentWillMount() {
-    const ID = 'openlattice.@id';
-    const reportEntityId = this.props.selectedReport.getIn([ID, 0]);
+    const reportEntityId = this.props.selectedReport.getIn([ENTITY_ID, 0]);
     this.props.actions.searchConsumerNeighbors({
       entitySetId: this.props.bhrEntitySetId,
       entityId: reportEntityId
