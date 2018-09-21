@@ -74,7 +74,7 @@ export const CONSUMER_INFO = {
   ACCESS_TO_WEAPONS_FQN: 'bhr.accessToWeapons',
   ACCESSIBLE_WEAPON_TYPE_FQN: 'bhr.accessibleWeaponType',
   OBSERVED_BEHAVIORS_FQN: 'bhr.observedBehaviors',
-  OBSERVED_BHEAVIORS_OTHER_FQN: 'bhr.observedBehaviorsOther',
+  OBSERVED_BEHAVIORS_OTHER_FQN: 'bhr.observedBehaviorsOther',
   EMOTIONAL_STATE_FQN: 'bhr.emotionalState',
   EMOTIONAL_STATE_OTHER_FQN: 'bhr.emotionalStateOther',
   PHOTOS_TAKEN_OF_FQN: 'bhr.photosTakenOf',
