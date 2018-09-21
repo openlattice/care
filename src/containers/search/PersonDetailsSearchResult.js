@@ -55,6 +55,7 @@ const PersonInfoHeaders = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-around;
+
   strong {
     font-weight: 600;
   }
@@ -66,6 +67,7 @@ const PersonInfoValues = styled.div`
   justify-content: space-around;
   margin: 0;
   margin-left: 10px;
+
   span {
     margin: 0;
   }

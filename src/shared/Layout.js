@@ -3,7 +3,7 @@ import { ControlLabel, Checkbox, Radio, Button, Row } from 'react-bootstrap';
 
 
 export const Page = styled.div`
-  background: #393F46;
+  background: #393f46;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -32,7 +32,7 @@ export const TitleWrapper = styled.span`
 `;
 
 export const Title = styled.h1`
-  color: #37454A;
+  color: #37454a;
   font-size: 20px;
   font-weight: bold;
 `;
@@ -41,7 +41,7 @@ export const FormWrapper = styled.div`
   padding: 60px;
   width: 900px;
   margin-bottom: 100px;
-  background: #F4F4F4;
+  background: #f4f4f4;
 `;
 
 export const PaddedRow = styled(Row)`
@@ -49,7 +49,7 @@ export const PaddedRow = styled(Row)`
 `;
 
 export const Label = styled(ControlLabel)`
-  color: #37454A;
+  color: #37454a;
   font-size: 16px;
 `;
 
@@ -72,7 +72,7 @@ export const InlineCheckbox = styled(Checkbox)`
   font-size: 16px;
   margin-right: 12px;
   margin-bottom: 10px;
-  margin-left: 0px !important;
+  margin-left: 0 !important;
 `;
 
 export const InlineRadio = styled(Radio)`
@@ -107,7 +107,7 @@ export const ContentWrapper = styled.div`
 export const SectionHeader = styled.div`
   font-size: 32px;
   margin-bottom: 40px;
-  color: #37454A;
+  color: #37454a;
   font-weight: bold;
   width: 100%;
   text-align: center;

@@ -67,6 +67,7 @@ const ActionButtons = styled.div`
   flex-direction: row;
   justify-content: center;
   margin-top: 20px;
+
   button {
     margin: 0 10px;
   }
@@ -79,10 +80,12 @@ const SectionWrapper = styled.div`
 // color: #5bcc75;
 const Success = styled.div`
   text-align: center;
+
   p {
     font-size: 20px;
     margin-bottom: 20px;
   }
+
   a {
     text-decoration: none;
   }
@@ -90,6 +93,7 @@ const Success = styled.div`
 
 const Failure = styled.div`
   text-align: center;
+
   a {
     text-decoration: none;
   }

@@ -36,8 +36,83 @@ export const CONSUMER_STATE = {
   PICTURE_FQN: 'picture'
 };
 
+export const REPORT_INFO = {
+  DISPATCH_REASON_FQN: 'bhr.dispatchReason',
+  COMPLAINT_NUMBER_FQN: 'bhr.complaintNumber',
+  COMPANION_OFFENSE_REPORT_FQN: 'bhr.companionOffenseReport',
+  INCIDENT_FQN: 'bhr.incident',
+  LOCATION_OF_INCIDENT_FQN: 'bhr.locationOfIncident',
+  UNIT_FQN: 'bhr.unit',
+  POST_OF_OCCURRENCE_FQN: 'bhr.postOfOccurrence',
+  CAD_NUMBER_FQN: 'bhr.cadNumber',
+  ON_VIEW_FQN: 'bhr.onView',
+  DATE_OCCURRED_FQN: 'bhr.dateOccurred',
+  TIME_OCCURRED_FQN: 'bhr.timeOccurred',
+  DATE_REPORTED_FQN: 'bhr.dateReported',
+  TIME_REPORTED_FQN: 'bhr.timeReported'
+};
+
+export const CONSUMER_INFO = {
+  ADDRESS_FQN: 'bhr.address',
+  PHONE_FQN: 'bhr.phone',
+  MILITARY_STATUS_FQN: 'bhr.militaryStatus',
+  GENDER_FQN: 'bhr.gender',
+  RACE_FQN: 'bhr.race',
+  AGE_FQN: 'bhr.age',
+  DOB_FQN: 'bhr.dob',
+  HOMELESS_FQN: 'bhr.homeless',
+  HOMELESS_LOCATION_FQN: 'bhr.homelessLocation',
+  DRUGS_ALCOHOL_FQN: 'bhr.drugsAlcohol',
+  DRUG_TYPE_FQN: 'bhr.drugType',
+  PRESCRIBED_MEDICATION_FQN: 'bhr.prescribedMedication',
+  TAKING_MEDICATION_FQN: 'bhr.takingMedication',
+  PREV_PSYCH_ADMISSION_FQN: 'bhr.prevPsychAdmission',
+  SELF_DIAGNOSIS_FQN: 'bhr.selfDiagnosis',
+  SELF_DIAGNOSIS_OTHER_FQN: 'bhr.selfDiagnosisOther',
+  ARMED_WITH_WEAPON_FQN: 'bhr.armedWithWeapon',
+  ARMED_WEAPON_TYPE_FQN: 'bhr.armedWeaponType',
+  ACCESS_TO_WEAPONS_FQN: 'bhr.accessToWeapons',
+  ACCESSIBLE_WEAPON_TYPE_FQN: 'bhr.accessibleWeaponType',
+  OBSERVED_BEHAVIORS_FQN: 'bhr.observedBehaviors',
+  OBSERVED_BEHAVIORS_OTHER_FQN: 'bhr.observedBehaviorsOther',
+  EMOTIONAL_STATE_FQN: 'bhr.emotionalState',
+  EMOTIONAL_STATE_OTHER_FQN: 'bhr.emotionalStateOther',
+  PHOTOS_TAKEN_OF_FQN: 'bhr.photosTakenOf',
+  INJURIES_FQN: 'bhr.injuries',
+  INJURIES_OTHER_FQN: 'bhr.injuriesOther',
+  SUICIDAL_FQN: 'bhr.suicidal',
+  SUICIDAL_ACTIONS_FQN: 'bhr.suicidalActions',
+  SUICIDE_ATTEMPT_METHOD_FQN: 'bhr.suicideAttemptMethod',
+  SUICIDE_ATTEMPT_METHOD_OTHER_FQN: 'bhr.suicideAttemptMethodOther'
+};
+
+export const COMPLAINANT_INFO = {
+  COMPLAINANT_NAME_FQN: 'bhr.complainantName',
+  COMPLAINANT_ADDRESS_FQN: 'bhr.complainantAddress',
+  COMPLAINANT_CONSUMER_RELATIONSHIP_FQN: 'bhr.complainantConsumerRelationship',
+  COMPLAINANT_PHONE_FQN: 'bhr.complainantPhone'
+};
+
+export const DISPOSITION_INFO = {
+  DISPOSITION_FQN: 'bhr.disposition',
+  HOSPITAL_TRANSPORT_FQN: 'bhr.hospitalTransport',
+  HOSPITAL_FQN: 'bhr.hospital',
+  DEESCALATION_TECHNIQUES_FQN: 'bhr.deescalationTechniques',
+  DEESCALATION_TECHNIQUES_OTHER_FQN: 'bhr.deescalationTechniquesOther',
+  SPECIALIZED_RESOURCES_CALLED_FQN: 'bhr.specializedResourcesCalled',
+  INCIDENT_NARRATIVE_FQN: 'bhr.incidentNarrative'
+};
+
+export const OFFICER_INFO = {
+  OFFICER_NAME_FQN: 'bhr.officerName',
+  OFFICER_SEQ_ID_FQN: 'bhr.officerSeqID',
+  OFFICER_INJURIES_FQN: 'bhr.officerInjuries',
+  OFFICER_CERTIFICATION_FQN: 'bhr.officerCertification'
+};
+
 export const STRING_ID_FQN = 'general.stringid';
 export const NC_SUBJ_ID_FQN = 'nc.SubjectIdentification';
+export const ENTITY_ID = 'openlattice.@id';
 
 export const RACE = {
   americanIndian: 'American Indian or Alaska Native',

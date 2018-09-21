@@ -33,18 +33,21 @@ class ComplainantInfoView extends React.Component {
   }
 
   static propTypes = {
-    handleTextInput: PropTypes.func.isRequired,
-    section: PropTypes.string.isRequired,
     isInReview: PropTypes.func.isRequired,
-    handlePageChange: PropTypes.func.isRequired,
-    history: ReactRouterPropTypes.history.isRequired,
-    location: ReactRouterPropTypes.location.isRequired,
     input: PropTypes.shape({
       complainantName: PropTypes.string.isRequired,
       complainantAddress: PropTypes.string.isRequired,
       complainantConsumerRelationship: PropTypes.string.isRequired,
       complainantPhone: PropTypes.string.isRequired
     }).isRequired
+  }
+
+  static defaultProps = {
+    handleTextInput: null,
+    section: null,
+    handlePageChange: null,
+    history: null,
+    location: null,
   }
 
   handlePageChange = (path) => {

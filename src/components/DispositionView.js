@@ -31,27 +31,30 @@ import { isPortlandOrg } from '../utils/Whitelist';
 class DispositionView extends React.Component {
 
   static propTypes = {
-    handleCheckboxChange: PropTypes.func.isRequired,
-    handleMultiUpdate: PropTypes.func.isRequired,
-    handlePageChange: PropTypes.func.isRequired,
-    handleScaleSelection: PropTypes.func.isRequired,
-    handleSingleSelection: PropTypes.func.isRequired,
-    handleTextInput: PropTypes.func.isRequired,
-    section: PropTypes.string.isRequired,
     isInReview: PropTypes.func.isRequired,
-    history: ReactRouterPropTypes.history.isRequired,
-    hospitals: PropTypes.instanceOf(List).isRequired,
-    location: ReactRouterPropTypes.location.isRequired,
     input: PropTypes.shape({
-      disposition: PropTypes.array.isRequired,
+      disposition: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
       hospitalTransport: PropTypes.bool.isRequired,
       hospital: PropTypes.string.isRequired,
-      deescalationTechniques: PropTypes.array.isRequired,
+      deescalationTechniques: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
       deescalationTechniquesOther: PropTypes.string.isRequired,
-      specializedResourcesCalled: PropTypes.array.isRequired,
+      specializedResourcesCalled: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
       incidentNarrative: PropTypes.string.isRequired
-    }).isRequired,
-    selectedOrganizationId: PropTypes.string.isRequired
+    }).isRequired
+  }
+
+  static defaultProps = {
+    handleCheckboxChange: null,
+    handleMultiUpdate: null,
+    handlePageChange: null,
+    handleScaleSelection: null,
+    handleSingleSelection: null,
+    handleTextInput: null,
+    section: null,
+    history: null,
+    hospitals: null,
+    location: null,
+    selectedOrganizationId: null
   }
 
   constructor(props) {
@@ -203,7 +206,7 @@ class DispositionView extends React.Component {
               data-section={section}
               name="disposition"
               value="arrest"
-              checked={input.disposition.indexOf('arrest') !== -1}
+              checked={input.disposition && input.disposition.indexOf('arrest') !== -1}
               onChange={handleCheckboxChange}
               disabled={isReviewPage}>
             Arrest
@@ -213,7 +216,7 @@ class DispositionView extends React.Component {
               data-section={section}
               name="disposition"
               value="ep"
-              checked={input.disposition.indexOf('ep') !== -1}
+              checked={input.disposition && input.disposition.indexOf('ep') !== -1}
               onChange={handleCheckboxChange}
               disabled={isReviewPage}>
             EP
@@ -223,7 +226,7 @@ class DispositionView extends React.Component {
               data-section={section}
               name="disposition"
               value="voluntaryER"
-              checked={input.disposition.indexOf('voluntaryER') !== -1}
+              checked={input.disposition && input.disposition.indexOf('voluntaryER') !== -1}
               onChange={handleCheckboxChange}
               disabled={isReviewPage}>
             Voluntary ER Intake
@@ -233,7 +236,7 @@ class DispositionView extends React.Component {
               data-section={section}
               name="disposition"
               value="bcri"
-              checked={input.disposition.indexOf('bcri') !== -1}
+              checked={input.disposition && input.disposition.indexOf('bcri') !== -1}
               onChange={handleCheckboxChange}
               disabled={isReviewPage}>
             BCRI
@@ -243,7 +246,7 @@ class DispositionView extends React.Component {
               data-section={section}
               name="disposition"
               value="infoAndReferral"
-              checked={input.disposition.indexOf('infoAndReferral') !== -1}
+              checked={input.disposition && input.disposition.indexOf('infoAndReferral') !== -1}
               onChange={handleCheckboxChange}
               disabled={isReviewPage}>
             Information and Referral
@@ -253,7 +256,7 @@ class DispositionView extends React.Component {
               data-section={section}
               name="disposition"
               value="lead"
-              checked={input.disposition.indexOf('lead') !== -1}
+              checked={input.disposition && input.disposition.indexOf('lead') !== -1}
               onChange={handleCheckboxChange}
               disabled={isReviewPage}>
             LEAD
@@ -263,7 +266,7 @@ class DispositionView extends React.Component {
               data-section={section}
               name="disposition"
               value="contactedTreatementProvider"
-              checked={input.disposition.indexOf('contactedTreatementProvider') !== -1}
+              checked={input.disposition && input.disposition.indexOf('contactedTreatementProvider') !== -1}
               onChange={handleCheckboxChange}
               disabled={isReviewPage}>
             Contacted or Referred to Current Treatment Provider
@@ -273,7 +276,7 @@ class DispositionView extends React.Component {
               data-section={section}
               name="disposition"
               value="criminalCitation"
-              checked={input.disposition.indexOf('criminalCitation') !== -1}
+              checked={input.disposition && input.disposition.indexOf('criminalCitation') !== -1}
               onChange={handleCheckboxChange}
               disabled={isReviewPage}>
             Criminal Citation
@@ -283,7 +286,7 @@ class DispositionView extends React.Component {
               data-section={section}
               name="disposition"
               value="civilCitation"
-              checked={input.disposition.indexOf('civilCitation') !== -1}
+              checked={input.disposition && input.disposition.indexOf('civilCitation') !== -1}
               onChange={handleCheckboxChange}
               disabled={isReviewPage}>
             Civil Citation
@@ -313,7 +316,7 @@ class DispositionView extends React.Component {
               data-section={section}
               name="disposition"
               value="referredToBHU"
-              checked={input.disposition.indexOf('referredToBHU') !== -1}
+              checked={input.disposition && input.disposition.indexOf('referredToBHU') !== -1}
               onChange={handleCheckboxChange}
               disabled={isReviewPage}>
             Referred to BHU
@@ -323,7 +326,7 @@ class DispositionView extends React.Component {
               data-section={section}
               name="disposition"
               value="referredToCrisis"
-              checked={input.disposition.indexOf('referredToCrisis') !== -1}
+              checked={input.disposition && input.disposition.indexOf('referredToCrisis') !== -1}
               onChange={handleCheckboxChange}
               disabled={isReviewPage}>
             Referred to Crisis
@@ -333,7 +336,7 @@ class DispositionView extends React.Component {
               data-section={section}
               name="disposition"
               value="arrest"
-              checked={input.disposition.indexOf('arrest') !== -1}
+              checked={input.disposition && input.disposition.indexOf('arrest') !== -1}
               onChange={handleCheckboxChange}
               disabled={isReviewPage}>
             Arrest
@@ -343,7 +346,7 @@ class DispositionView extends React.Component {
               data-section={section}
               name="disposition"
               value="divertedFromArrest"
-              checked={input.disposition.indexOf('divertedFromArrest') !== -1}
+              checked={input.disposition && input.disposition.indexOf('divertedFromArrest') !== -1}
               onChange={handleCheckboxChange}
               disabled={isReviewPage}>
             Diverted from Arrest
@@ -353,7 +356,7 @@ class DispositionView extends React.Component {
               data-section={section}
               name="disposition"
               value="resistedOrRefusedSupports"
-              checked={input.disposition.indexOf('resistedOrRefusedSupports') !== -1}
+              checked={input.disposition && input.disposition.indexOf('resistedOrRefusedSupports') !== -1}
               onChange={handleCheckboxChange}
               disabled={isReviewPage}>
             Resisted or Refused Supports
@@ -456,7 +459,7 @@ class DispositionView extends React.Component {
                 inline
                 name="specializedResourcesCalled"
                 value="bcri"
-                checked={input.specializedResourcesCalled.indexOf('bcri') !== -1}
+                checked={input.specializedResourcesCalled && input.specializedResourcesCalled.indexOf('bcri') !== -1}
                 onChange={handleCheckboxChange}
                 disabled={isReviewPage}>
               BCRI / Mobile Crisis Response Team
@@ -466,7 +469,7 @@ class DispositionView extends React.Component {
                 inline
                 name="specializedResourcesCalled"
                 value="citOfficer"
-                checked={input.specializedResourcesCalled.indexOf('citOfficer') !== -1}
+                checked={input.specializedResourcesCalled && input.specializedResourcesCalled.indexOf('citOfficer') !== -1}
                 onChange={handleCheckboxChange}
                 disabled={isReviewPage}>
               CIT Officer
@@ -476,7 +479,7 @@ class DispositionView extends React.Component {
                 inline
                 name="specializedResourcesCalled"
                 value="crtUnit"
-                checked={input.specializedResourcesCalled.indexOf('crtUnit') !== -1}
+                checked={input.specializedResourcesCalled && input.specializedResourcesCalled.indexOf('crtUnit') !== -1}
                 onChange={handleCheckboxChange}
                 disabled={isReviewPage}>
               CRT Unit
@@ -486,7 +489,7 @@ class DispositionView extends React.Component {
                 inline
                 name="specializedResourcesCalled"
                 value="esu"
-                checked={input.specializedResourcesCalled.indexOf('esu') !== -1}
+                checked={input.specializedResourcesCalled && input.specializedResourcesCalled.indexOf('esu') !== -1}
                 onChange={handleCheckboxChange}
                 disabled={isReviewPage}>
               ESU
@@ -496,7 +499,7 @@ class DispositionView extends React.Component {
                 inline
                 name="specializedResourcesCalled"
                 value="swat"
-                checked={input.specializedResourcesCalled.indexOf('swat') !== -1}
+                checked={input.specializedResourcesCalled && input.specializedResourcesCalled.indexOf('swat') !== -1}
                 onChange={handleCheckboxChange}
                 disabled={isReviewPage}>
               SWAT
@@ -506,7 +509,7 @@ class DispositionView extends React.Component {
                 inline
                 name="specializedResourcesCalled"
                 value="negotiationTeam"
-                checked={input.specializedResourcesCalled.indexOf('negotiationTeam') !== -1}
+                checked={input.specializedResourcesCalled && input.specializedResourcesCalled.indexOf('negotiationTeam') !== -1}
                 onChange={handleCheckboxChange}
                 disabled={isReviewPage}>
               Negotiation Team
@@ -516,7 +519,7 @@ class DispositionView extends React.Component {
                 inline
                 name="specializedResourcesCalled"
                 value="homelessOutreach"
-                checked={input.specializedResourcesCalled.indexOf('homelessOutreach') !== -1}
+                checked={input.specializedResourcesCalled && input.specializedResourcesCalled.indexOf('homelessOutreach') !== -1}
                 onChange={handleCheckboxChange}
                 disabled={isReviewPage}>
               Homeless Outreach
@@ -548,7 +551,7 @@ class DispositionView extends React.Component {
                 inline
                 name="specializedResourcesCalled"
                 value="BehavioralHealthUnit"
-                checked={input.specializedResourcesCalled.indexOf('BehavioralHealthUnit') !== -1}
+                checked={input.specializedResourcesCalled && input.specializedResourcesCalled.indexOf('BehavioralHealthUnit') !== -1}
                 onChange={handleCheckboxChange}
                 disabled={isReviewPage}>
               Behavioral Health Unit (BHU)
@@ -558,7 +561,7 @@ class DispositionView extends React.Component {
                 inline
                 name="specializedResourcesCalled"
                 value="CrisisTeam"
-                checked={input.specializedResourcesCalled.indexOf('CrisisTeam') !== -1}
+                checked={input.specializedResourcesCalled && input.specializedResourcesCalled.indexOf('CrisisTeam') !== -1}
                 onChange={handleCheckboxChange}
                 disabled={isReviewPage}>
               Crisis Team
@@ -568,7 +571,7 @@ class DispositionView extends React.Component {
                 inline
                 name="specializedResourcesCalled"
                 value="voluntaryTransport"
-                checked={input.specializedResourcesCalled.indexOf('voluntaryTransport') !== -1}
+                checked={input.specializedResourcesCalled && input.specializedResourcesCalled.indexOf('voluntaryTransport') !== -1}
                 onChange={handleCheckboxChange}
                 disabled={isReviewPage}>
               Voluntary Transport
@@ -578,7 +581,7 @@ class DispositionView extends React.Component {
                 inline
                 name="specializedResourcesCalled"
                 value="involuntaryTransport"
-                checked={input.specializedResourcesCalled.indexOf('involuntaryTransport') !== -1}
+                checked={input.specializedResourcesCalled && input.specializedResourcesCalled.indexOf('involuntaryTransport') !== -1}
                 onChange={handleCheckboxChange}
                 disabled={isReviewPage}>
               Involuntary Transport
@@ -794,7 +797,7 @@ class DispositionView extends React.Component {
                 inline={false}
                 name="deescalationTechniques"
                 value="verbalization"
-                checked={input.deescalationTechniques.indexOf('verbalization') !== -1}
+                checked={input.deescalationTechniques && input.deescalationTechniques.indexOf('verbalization') !== -1}
                 onChange={handleCheckboxChange}
                 disabled={isReviewPage}>
               Verbalization
@@ -804,7 +807,7 @@ class DispositionView extends React.Component {
                 inline={false}
                 name="deescalationTechniques"
                 value="handcuffs"
-                checked={input.deescalationTechniques.indexOf('handcuffs') !== -1}
+                checked={input.deescalationTechniques && input.deescalationTechniques.indexOf('handcuffs') !== -1}
                 onChange={handleCheckboxChange}
                 disabled={isReviewPage}>
               Handcuffs
@@ -814,7 +817,7 @@ class DispositionView extends React.Component {
                 inline={false}
                 name="deescalationTechniques"
                 value="legRestraints"
-                checked={input.deescalationTechniques.indexOf('legRestraints') !== -1}
+                checked={input.deescalationTechniques && input.deescalationTechniques.indexOf('legRestraints') !== -1}
                 onChange={handleCheckboxChange}
                 disabled={isReviewPage}>
               Leg Restraints
@@ -824,8 +827,9 @@ class DispositionView extends React.Component {
                 inline={false}
                 name="deescalationTechniques"
                 value="taser"
-                checked={input.deescalationTechniques.indexOf('taser') !== -1}
-                onChange={handleCheckboxChange}>
+                checked={input.deescalationTechniques && input.deescalationTechniques.indexOf('taser') !== -1}
+                onChange={handleCheckboxChange}
+                disabled={isReviewPage}>
               Taser
             </InlineCheckbox>
             <InlineCheckbox
@@ -833,7 +837,7 @@ class DispositionView extends React.Component {
                 inline={false}
                 name="deescalationTechniques"
                 value="arrestControl"
-                checked={input.deescalationTechniques.indexOf('arrestControl') !== -1}
+                checked={input.deescalationTechniques && input.deescalationTechniques.indexOf('arrestControl') !== -1}
                 onChange={handleCheckboxChange}
                 disabled={isReviewPage}>
               Arrest Control (Hands / Feet)
@@ -843,7 +847,7 @@ class DispositionView extends React.Component {
                 inline={false}
                 name="deescalationTechniques"
                 value="n/a"
-                checked={input.deescalationTechniques.indexOf('n/a') !== -1}
+                checked={input.deescalationTechniques && input.deescalationTechniques.indexOf('n/a') !== -1}
                 onChange={handleCheckboxChange}
                 disabled={isReviewPage}>
               N/A
@@ -854,7 +858,7 @@ class DispositionView extends React.Component {
                   inline={false}
                   name="deescalationTechniques"
                   value="other"
-                  checked={input.deescalationTechniques.indexOf('other') !== -1}
+                  checked={input.deescalationTechniques && input.deescalationTechniques.indexOf('other') !== -1}
                   onChange={handleCheckboxChange}
                   disabled={isReviewPage}>
                 Other:

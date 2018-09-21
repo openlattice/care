@@ -17,14 +17,17 @@ export const SearchResultsWrapper = styled.div`
 export const SearchResult = styled.div`
   align-items: center;
   display: flex;
-  justify-content:space-between;
+  justify-content: space-between;
   padding: 20px 0;
+
   &:hover {
     cursor: pointer;
   }
+
   &:first-child {
     border-top: none;
   }
+
   ${(props) => {
     if (props.showDivider === true) {
       return css`

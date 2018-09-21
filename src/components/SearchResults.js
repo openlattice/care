@@ -5,8 +5,6 @@ import styled from 'styled-components';
 import PersonRow from './PersonRow';
 import { PERSON } from '../shared/Consts';
 
-const ResultsWrapper = styled.div``;
-
 const NoResults = styled.div`
   text-align: center;
   font-weight: bold;
@@ -36,9 +34,9 @@ const SearchResults = ({ results, handlePersonSelection, didSearch }) => {
   };
 
   return (
-    <ResultsWrapper>
+    <div>
       { renderResults() }
-    </ResultsWrapper>
+    </div>
   );
 };
 

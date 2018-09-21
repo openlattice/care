@@ -175,7 +175,7 @@ class AppContainer extends React.Component<Props> {
 
     return (
       <Switch>
-        <Route exact strict path={Routes.HOME} component={HomeContainer} />
+        <Route path={Routes.HOME} component={HomeContainer} />
         <Route path={Routes.BHR} component={FormContainer} />
         <Route path={Routes.FOLLOW_UP_PATH} component={FollowUpReportManager} />
         <Redirect to={Routes.HOME} />

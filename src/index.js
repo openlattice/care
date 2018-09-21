@@ -31,11 +31,10 @@ const {
 injectGlobal`${normalize()}`;
 
 injectGlobal`
-
   html,
   body {
     background-color: #f9fcff;
-    color: #113355;
+    color: #135;
     font-family: 'Open Sans', sans-serif;
     height: 100%;
     width: 100%;

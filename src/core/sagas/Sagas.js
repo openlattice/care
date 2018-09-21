@@ -16,6 +16,7 @@ import * as AppSagas from '../../containers/form/AppSagas';
 import * as FollowUpReportSagas from '../../containers/followup/FollowUpReportSagas';
 import * as ReportSagas from '../../containers/form/ReportSagas';
 import * as SearchSagas from '../../containers/search/SearchSagas';
+import * as ReportSummariesSagas from '../../containers/reportsummaries/ReportSummariesSagas';
 
 export default function* sagas() :Generator<*, *, *> {
 
@@ -50,6 +51,10 @@ export default function* sagas() :Generator<*, *, *> {
 
     // SearchSagas
     fork(SearchSagas.searchConsumerNeighborsWatcher),
-    fork(SearchSagas.searchConsumersWatcher)
+    fork(SearchSagas.searchConsumersWatcher),
+
+    // ReportSummariesSagas
+    fork(ReportSummariesSagas.getBHRReportsWatcher),
+    fork(ReportSummariesSagas.getBHRReportDataWatcher)
   ];
 }

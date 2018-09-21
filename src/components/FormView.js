@@ -44,10 +44,12 @@ const StyledProgressBar = styled(ProgressBar)`
 
 const Success = styled.div`
   text-align: center;
+
   p {
     font-size: 20px;
     margin-bottom: 20px;
   }
+
   a {
     text-decoration: none;
   }
@@ -55,6 +57,7 @@ const Success = styled.div`
 
 const Failure = styled.div`
   text-align: center;
+
   a {
     text-decoration: none;
   }
