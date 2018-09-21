@@ -2,7 +2,6 @@ import React from 'react';
 
 import DatePicker from 'react-bootstrap-date-picker';
 import PropTypes from 'prop-types';
-import ReactRouterPropTypes from 'react-router-prop-types';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import moment from 'moment';
 import styled from 'styled-components';

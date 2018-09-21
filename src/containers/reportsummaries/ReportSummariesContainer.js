@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactRouterPropTypes from 'react-router-prop-types';
 import { Redirect, Route, Switch, withRouter } from 'react-router';
 import { connect } from 'react-redux';
 import { Map } from 'immutable';
@@ -29,12 +30,13 @@ class ReportSummariesContainer extends React.Component {
   }
 
   onSelectSearchResult = (report) => {
+    const { history } = this.props;
     this.setState(
       {
         selectedReport: report
       },
       () => {
-        this.props.history.push(Routes.PAGE_2);
+        history.push(Routes.PAGE_2);
       }
     );
   }
@@ -55,6 +57,10 @@ class ReportSummariesContainer extends React.Component {
         <Redirect to={Routes.PAGE_1} />
       </Switch>
     );
+  }
+
+  static propTypes = {
+    history: ReactRouterPropTypes.history.isRequired
   }
 }
 

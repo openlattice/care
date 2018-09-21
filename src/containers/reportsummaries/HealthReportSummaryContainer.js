@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -186,6 +187,15 @@ class HealthReportSummaryContainer extends React.Component {
       </SectionWrapper>
     );
   }
+
+  static propTypes = {
+    selectedReport: PropTypes.object.isRequired,
+    consumerNeighborDetails: PropTypes.object.isRequired,
+    bhrEntitySetId: PropTypes.string.isRequired,
+    actions: PropTypes.shape({
+      searchConsumerNeighbors: PropTypes.func.isRequired
+    })
+  };
 };
 
 function mapStateToProps(state :Map<*, *>) :Object {

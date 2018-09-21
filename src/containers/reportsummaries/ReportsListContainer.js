@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import ReactRouterPropTypes from 'react-router-prop-types';
 import styled from 'styled-components';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -25,7 +27,7 @@ class ReportsListContainer extends React.Component {
   }
 
   renderListItems = () => {
-    const { reports } = this.props;
+    const { reports, onSelectSearchResult } = this.props;
     const showDivider = reports.size > 1;
 
     return reports && reports
@@ -38,7 +40,7 @@ class ReportsListContainer extends React.Component {
         report => (
           <ReportSearchResult
               searchResult={report}
-              onSelectSearchResult={this.props.onSelectSearchResult}
+              onSelectSearchResult={onSelectSearchResult}
               showDivider={showDivider}
               key={report.getIn([ENTITY_ID, 0], '')} />
       )
@@ -55,6 +57,15 @@ class ReportsListContainer extends React.Component {
       </ContainerOuterWrapper>
     );
   }
+};
+
+ReportsListContainer.propTypes = {
+  actions: PropTypes.shape({
+    getBHRReports: PropTypes.func.isRequired
+  }).isRequired,
+  bhrEntitySetId: PropTypes.string.isRequired,
+  reports: PropTypes.object.isRequired,
+  onSelectSearchResult: PropTypes.func.isRequired
 };
 
 function mapStateToProps(state :Map<*, *>) :Object {
