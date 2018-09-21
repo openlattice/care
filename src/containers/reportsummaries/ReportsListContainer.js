@@ -30,8 +30,8 @@ class ReportsListContainer extends React.Component {
 
     return reports && reports
       .sort((a,b) => {
-        const dateA = new Date(a.getIn([REPORT_INFO.DATE_REPORTED_FQN, 0]));
-        const dateB = new Date(b.getIn([REPORT_INFO.DATE_REPORTED_FQN, 0]));
+        const dateA = new Date(a.getIn([REPORT_INFO.DATE_REPORTED_FQN, 0], null));
+        const dateB = new Date(b.getIn([REPORT_INFO.DATE_REPORTED_FQN, 0], null));
         return dateB - dateA;
       })
       .map(
@@ -40,7 +40,7 @@ class ReportsListContainer extends React.Component {
               searchResult={report}
               onSelectSearchResult={this.props.onSelectSearchResult}
               showDivider={showDivider}
-              key={report.getIn([ENTITY_ID, 0])} />
+              key={report.getIn([ENTITY_ID, 0], '')} />
       )
     )
   }
@@ -59,14 +59,14 @@ class ReportsListContainer extends React.Component {
 
 function mapStateToProps(state :Map<*, *>) :Object {
 
-  const selectedOrganizationId :string = state.getIn(['app', 'selectedOrganization']);
+  const selectedOrganizationId :string = state.getIn(['app', 'selectedOrganization'], '');
 
   const bhrEntitySetId :string = state.getIn([
     'app',
     BEHAVIORAL_HEALTH_REPORT_FQN.getFullyQualifiedName(),
     'entitySetsByOrganization',
     selectedOrganizationId
-  ]);
+  ], '');
 
   const reports = state.getIn([
     'reportSummaries',
