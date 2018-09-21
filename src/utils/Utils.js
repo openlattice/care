@@ -2,12 +2,16 @@
  * @flow
  */
 
+import Lattice from 'lattice';
+import LatticeAuth from 'lattice-auth';
 import isUUID from 'validator/lib/isUUID';
 import parseInt from 'lodash/parseInt';
 import validator from 'validator';
 
 // injected by Webpack.DefinePlugin
-declare var __DEV__;
+declare var __ENV_DEV__ :boolean;
+
+const { AuthUtils } = LatticeAuth;
 
 export function isValidUuid(value :any) :boolean {
 
@@ -65,4 +69,22 @@ export function getCurrentPage() :number {
   const slashIndex :number = window.location.hash.lastIndexOf('/');
   const page = window.location.hash.substring(slashIndex + 1);
   return parseInt(page, 10);
+}
+
+export function getLatticeConfigBaseUrl() :string {
+
+  // TODO: this probably doesn't belong here, also hardcoded strings == not great
+  let baseUrl = 'localhost';
+  if (!__ENV_DEV__) {
+    baseUrl = window.location.host.startsWith('staging') ? 'staging' : 'production';
+  }
+  return baseUrl;
+}
+
+export function resetLatticeConfig() :void {
+
+  Lattice.configure({
+    authToken: AuthUtils.getAuthToken(),
+    baseUrl: getLatticeConfigBaseUrl(),
+  });
 }
