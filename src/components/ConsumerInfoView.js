@@ -3,6 +3,7 @@ import React from 'react';
 import DatePicker from 'react-bootstrap-date-picker';
 import PropTypes from 'prop-types';
 import ReactRouterPropTypes from 'react-router-prop-types';
+import ImmutablePropTypes from 'react-immutable-proptypes';
 import moment from 'moment';
 import styled from 'styled-components';
 import { FormGroup, FormControl, Col } from 'react-bootstrap';
@@ -46,7 +47,7 @@ class ConsumerInfoView extends React.Component {
       militaryStatus: PropTypes.string.isRequired,
       gender: PropTypes.string.isRequired,
       race: PropTypes.string.isRequired,
-      age: PropTypes.string.isRequired,
+      age: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
       dob: PropTypes.string.isRequired,
       homeless: PropTypes.bool.isRequired,
       homelessLocation: PropTypes.string.isRequired,

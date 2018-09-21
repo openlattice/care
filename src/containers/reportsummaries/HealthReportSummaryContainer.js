@@ -104,11 +104,11 @@ class HealthReportSummaryContainer extends React.Component {
       observedBehaviorsOther: selectedReport.getIn([CONSUMER_INFO.OBVSERVED_BEHAVIORS_OTHER_FQN, 0], ''),
       emotionalState: selectedReport.get(CONSUMER_INFO.EMOTIONAL_STATE_FQN, List()),
       emotionalStateOther: selectedReport.getIn([CONSUMER_INFO.EMOTIONAL_STATE_OTHER_FQN, 0], ''),
-      photosTakenOf: selectedReport.getIn([CONSUMER_INFO.PHOTOS_TAKEN_OF_FQN, 0], null),
+      photosTakenOf: selectedReport.get(CONSUMER_INFO.PHOTOS_TAKEN_OF_FQN, List()),
       injuries: selectedReport.get(CONSUMER_INFO.INJURIES_FQN, List()),
       injuriesOther: selectedReport.getIn([CONSUMER_INFO.INJURIES_OTHER_FQN, 0], ''),
       suicidal: selectedReport.getIn([CONSUMER_INFO.SUICIDAL_FQN, 0], null),
-      suicidalActions: selectedReport.getIn([CONSUMER_INFO.SUICIDAL_ACTIONS_FQN, 0], ''),
+      suicidalActions: selectedReport.get(CONSUMER_INFO.SUICIDAL_ACTIONS_FQN, List()),
       suicideAttemptMethod: selectedReport.get(CONSUMER_INFO.SUICIDE_ATTEMPT_METHOD_FQN, List()),
       suicideAttemptMethodOther: selectedReport.getIn([CONSUMER_INFO.SUICIDE_ATTEMPT_METHOD_OTHER_FQN, 0], '')
     };
