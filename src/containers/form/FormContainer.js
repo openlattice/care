@@ -15,7 +15,6 @@ import { withRouter } from 'react-router';
 import type { RouterHistory } from 'react-router';
 
 import FormView from '../../components/FormView';
-import { validateOnInput } from '../../shared/Validation';
 import { hardRestart, submitReport } from './ReportActionFactory';
 
 import {

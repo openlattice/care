@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import {
   NavLink,
@@ -17,12 +16,8 @@ import DispositionView from './DispositionView';
 import OfficerInfoView from './OfficerInfoView';
 import ReviewView from './ReviewView';
 import StyledCard from './cards/StyledCard';
-
 import * as Routes from '../core/router/Routes';
-
 import { SUBMISSION_STATES } from '../containers/form/ReportReducer';
-import { MAX_PAGE } from '../shared/Consts';
-import { getCurrentPage } from '../utils/Utils';
 
 const ContainerOuterWrapper = styled.div`
   align-items: flex-start;
