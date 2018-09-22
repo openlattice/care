@@ -4,20 +4,26 @@
 
 import Lattice from 'lattice';
 import LatticeAuth from 'lattice-auth';
+import isString from 'lodash/isString';
 import isUUID from 'validator/lib/isUUID';
 import parseInt from 'lodash/parseInt';
-import validator from 'validator';
 
 // injected by Webpack.DefinePlugin
 declare var __ENV_DEV__ :boolean;
 
 const { AuthUtils } = LatticeAuth;
 
+/**
+ * @deprecated - replace with "isValidUuid" from "lattice" package
+ */
 export function isValidUuid(value :any) :boolean {
 
-  return isUUID(value);
+  return isString(value) && isUUID(value);
 }
 
+/**
+ * @deprecated - use randomStringId() instead
+ */
 export function randomId() :string {
 
   // https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
@@ -25,43 +31,12 @@ export function randomId() :string {
   return Math.random().toString(36).slice(2);
 }
 
-// TODO: get rid of react-bootstrap-time-picker
-export function formatTimePickerSeconds(seconds :?number) :string {
+export function randomStringId() :string {
 
-  let hh = 0;
-  let mm = 0;
-  let ss = seconds || 0;
-
-  while (ss >= 60) {
-    mm += 1;
-    ss -= 60;
-  }
-
-  while (mm >= 60) {
-    hh += 1;
-    mm -= 60;
-  }
-
-  let hhStr = hh.toString();
-  hhStr = hhStr.length === 1 ? `0${hhStr}` : hhStr;
-
-  let mmStr = mm.toString();
-  mmStr = mmStr.length === 1 ? `0${mmStr}` : mmStr;
-
-  let ssStr = ss.toString();
-  ssStr = ssStr.length === 1 ? `0${ssStr}` : ssStr;
-
-  return `${hhStr}:${mmStr}:${ssStr}`;
-}
-
-// TODO: get rid of react-bootstrap-date-picker
-export function fixDatePickerIsoDateTime(value :?string) :string {
-
-  if (value && validator.isISO8601(value)) {
-    // DatePicker has weird behavior with timezones, so we have to fix the ISO date
-    return value.replace(/T(.*)$/g, 'T00:00:00.000Z');
-  }
-  return '';
+  // https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
+  // https://stackoverflow.com/questions/6860853/generate-random-string-for-div-id
+  // not meant to be a cryptographically strong random id
+  return Math.random().toString(36).slice(2) + (new Date()).getTime().toString(36);
 }
 
 export function getCurrentPage() :number {

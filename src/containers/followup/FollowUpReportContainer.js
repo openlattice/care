@@ -4,27 +4,22 @@
 
 import React from 'react';
 
-import DatePicker from 'react-bootstrap-date-picker';
-import TimePicker from 'react-bootstrap-time-picker';
-import isString from 'lodash/isString';
+import moment from 'moment';
 import styled from 'styled-components';
-import validator from 'validator';
-import { FormGroup, FormControl, Col } from 'react-bootstrap';
+import { Button } from 'lattice-ui-kit';
+import { Map } from 'immutable';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { NavLink } from 'react-router-dom';
-import { bindActionCreators } from 'redux';
 
-import Loading from '../../components/Loading';
-import StyledButton from '../../components/buttons/StyledButton';
+import TextAreaField from '../../components/text/TextAreaField';
+import TextField from '../../components/text/TextField';
+import Spinner from '../../components/spinner/Spinner';
 import StyledCard from '../../components/cards/StyledCard';
 import * as Routes from '../../core/router/Routes';
-import { fixDatePickerIsoDateTime, formatTimePickerSeconds } from '../../utils/Utils';
 import {
   ContainerInnerWrapper,
   ContainerOuterWrapper,
-  PaddedRow,
-  TitleLabel
 } from '../../shared/Layout';
 
 import PersonDetailsSearchResult from '../search/PersonDetailsSearchResult';
@@ -37,43 +32,23 @@ import {
   OFFICER_SEQ_ID_VAL,
   REASON_VAL,
   SUMMARY_VAL,
-  TIME_VAL
 } from './FollowUpReportConstants';
 
-/*
- * constants
- */
-
-const DATE_FORMAT :string = 'YYYY-MM-DD';
-
-/*
- * styled components
- */
-
-const FormHeader = styled.div`
+const FormHeader = styled.h1`
   font-size: 25px;
-  margin-bottom: 30px;
+  font-weight: normal;
   text-align: center;
 `;
 
-const SectionHeader = styled.div`
-  font-size: 20px;
-  margin-bottom: 20px;
+const FormWrapper = styled.div`
+  display: grid;
+  grid-gap: 30px;
 `;
 
 const ActionButtons = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  margin-top: 20px;
-  button {
-    margin: 0 10px;
-  }
-`;
-
-const SectionWrapper = styled.div`
-  margin-bottom: 30px;
+  display: grid;
+  grid-gap: 30px;
+  grid-template-columns: auto auto;
 `;
 
 // color: #5bcc75;
@@ -95,14 +70,8 @@ const Failure = styled.div`
   }
 `;
 
-/*
- * types
- */
-
 type Props = {
   consumer :Map<*, *>;
-  consumerNeighbor :Map<*, *>;
-  peopleEntitySetId :string;
   submissionState :number;
   onCancel :Function;
   onSubmit :Function;
@@ -115,7 +84,6 @@ type State = {
   officerSeqIdValue :?string;
   reasonValue :?string;
   summaryValue :?string;
-  timeValue :?string;
 };
 
 class FollowUpReportContainer extends React.Component<Props, State> {
@@ -131,189 +99,120 @@ class FollowUpReportContainer extends React.Component<Props, State> {
       [OFFICER_SEQ_ID_VAL]: null,
       [REASON_VAL]: null,
       [SUMMARY_VAL]: null,
-      [TIME_VAL]: formatTimePickerSeconds(0) // 12:00 am
     };
   }
 
   isReadyToSubmit = () :boolean => {
 
-    return !!this.state[DATE_VAL]
-      && !!this.state[CLINICIAN_NAME_VAL]
-      && !!this.state[OFFICER_NAME_VAL]
-      && !!this.state[OFFICER_SEQ_ID_VAL]
-      && !!this.state[REASON_VAL]
-      && !!this.state[SUMMARY_VAL]
-      && !!this.state[TIME_VAL];
+    const {
+      [DATE_VAL]: dateValue,
+      [CLINICIAN_NAME_VAL]: clinicianNameValue,
+      [OFFICER_NAME_VAL]: officerNameValue,
+      [OFFICER_SEQ_ID_VAL]: officerSeqIdValue,
+      [REASON_VAL]: reasonValue,
+      [SUMMARY_VAL]: summaryValue,
+    } = this.state;
+
+    return !!clinicianNameValue
+      && !!dateValue
+      && !!officerNameValue
+      && !!officerSeqIdValue
+      && !!reasonValue
+      && !!summaryValue;
   }
 
   handleOnChangeInputString = (event) => {
 
     this.setState({
-      [event.target.name]: event.target.value || ''
+      [event.target.name]: event.target.value || '',
     });
   }
 
-  handleOnChangeDate = (value :?string) => {
+  handleOnChangeDate = (event) => {
 
+    const date :moment = moment(event.target.value);
     this.setState({
-      dateValue: fixDatePickerIsoDateTime(value)
-    });
-  }
-
-  handleOnChangeTime = (seconds :?number) => {
-
-    this.setState({
-      timeValue: formatTimePickerSeconds(seconds)
+      [DATE_VAL]: date.toISOString(true), // TODO: why is "bhr.dateReported" a DateTimeOffset datatype?
     });
   }
 
   handleOnSubmit = () => {
 
-    this.props.onSubmit({
-      [CLINICIAN_NAME_VAL]: this.state.clinicianNameValue,
-      [DATE_VAL]: this.state.dateValue,
-      [OFFICER_NAME_VAL]: this.state.officerNameValue,
-      [OFFICER_SEQ_ID_VAL]: this.state.officerSeqIdValue,
-      [REASON_VAL]: this.state.reasonValue,
-      [SUMMARY_VAL]: this.state.summaryValue,
-      [TIME_VAL]: this.state.timeValue
+    const { onSubmit } = this.props;
+    const {
+      [DATE_VAL]: dateValue,
+      [CLINICIAN_NAME_VAL]: clinicianNameValue,
+      [OFFICER_NAME_VAL]: officerNameValue,
+      [OFFICER_SEQ_ID_VAL]: officerSeqIdValue,
+      [REASON_VAL]: reasonValue,
+      [SUMMARY_VAL]: summaryValue,
+    } = this.state;
+
+    onSubmit({
+      [DATE_VAL]: dateValue,
+      [CLINICIAN_NAME_VAL]: clinicianNameValue,
+      [OFFICER_NAME_VAL]: officerNameValue,
+      [OFFICER_SEQ_ID_VAL]: officerSeqIdValue,
+      [REASON_VAL]: reasonValue,
+      [SUMMARY_VAL]: summaryValue,
     });
   }
 
-  checkValidationState = (type, value) => {
+  renderForm = () => {
 
-    let validationState :?string = 'error';
+    const { consumer, onCancel, submissionState } = this.props;
 
-    if (value === null || value === undefined) {
-      return null;
-    }
-
-    switch (type) {
-      case 'int64': {
-        const isValid = validator.isInt(value.toString(), {
-          max: Number.MAX_SAFE_INTEGER,
-          min: Number.MIN_SAFE_INTEGER
-        });
-        if (isValid) {
-          validationState = null;
-        }
-        break;
-      }
-      default:
-        if (isString(value) && value.length > 0) {
-          validationState = null;
-        }
-        break;
-    }
-
-    return validationState;
-  }
-
-  renderConsumerDetailsSection = () => {
-
+    // TODO: replace the date section with the component from lattice-ui-kit
     return (
-      <SectionWrapper>
-        <SectionHeader>Consumer Details</SectionHeader>
-        <PersonDetailsSearchResult personDetails={this.props.consumer} />
-      </SectionWrapper>
+      <FormWrapper>
+        <FormHeader>Follow-Up Report</FormHeader>
+        <PersonDetailsSearchResult personDetails={consumer} />
+        <div>
+          <label htmlFor="follow-up-date">
+            <p>Date*</p>
+            <input id="follow-up-date" type="date" onChange={this.handleOnChangeDate} />
+          </label>
+        </div>
+        <TextField
+            header="Clinician Name*"
+            name={CLINICIAN_NAME_VAL}
+            onChange={this.handleOnChangeInputString} />
+        <TextField
+            header="Officer Name*"
+            name={OFFICER_NAME_VAL}
+            onChange={this.handleOnChangeInputString} />
+        <TextField
+            header="Officer Seq Id*"
+            name={OFFICER_SEQ_ID_VAL}
+            onChange={this.handleOnChangeInputString} />
+        <TextAreaField
+            header="Reason for Follow-Up*"
+            name={REASON_VAL}
+            onChange={this.handleOnChangeInputString} />
+        <TextAreaField
+            header="Summary / Notes*"
+            name={SUMMARY_VAL}
+            onChange={this.handleOnChangeInputString} />
+        <ActionButtons>
+          <Button onClick={onCancel}>Cancel</Button>
+          {
+            (this.isReadyToSubmit() && submissionState === SUBMISSION_STATES.PRE_SUBMIT)
+              ? <Button mode="primary" onClick={this.handleOnSubmit}>Submit</Button>
+              : <Button mode="primary" disabled>Submit</Button>
+          }
+        </ActionButtons>
+      </FormWrapper>
     );
   }
 
-  renderReportDetailsSection = () => {
+  render() {
 
-    return (
-      <SectionWrapper>
-        <SectionHeader>Report Details</SectionHeader>
-        <PaddedRow>
-          <Col lg={6}>
-            <FormGroup validationState={this.checkValidationState('date', this.state[DATE_VAL])}>
-              <TitleLabel>Date*</TitleLabel>
-              <DatePicker
-                  dateFormat={DATE_FORMAT}
-                  showTodayButton
-                  value={this.state[DATE_VAL]}
-                  onChange={this.handleOnChangeDate} />
-            </FormGroup>
-          </Col>
-          <Col lg={6}>
-            <FormGroup validationState={this.checkValidationState('date', this.state[TIME_VAL])}>
-              <TitleLabel>Time*</TitleLabel>
-              <TimePicker value={this.state[TIME_VAL]} onChange={this.handleOnChangeTime} />
-            </FormGroup>
-          </Col>
-        </PaddedRow>
-        <PaddedRow>
-          <Col lg={6}>
-            <FormGroup validationState={this.checkValidationState('string', this.state[CLINICIAN_NAME_VAL])}>
-              <TitleLabel>Clinician Name*</TitleLabel>
-              <FormControl
-                  name={CLINICIAN_NAME_VAL}
-                  value={this.state[CLINICIAN_NAME_VAL] === null ? '' : this.state[CLINICIAN_NAME_VAL]}
-                  onChange={this.handleOnChangeInputString} />
-            </FormGroup>
-          </Col>
-        </PaddedRow>
-        <PaddedRow>
-          <Col lg={6}>
-            <FormGroup validationState={this.checkValidationState('string', this.state[OFFICER_NAME_VAL])}>
-              <TitleLabel>Officer Name*</TitleLabel>
-              <FormControl
-                  name={OFFICER_NAME_VAL}
-                  value={this.state[OFFICER_NAME_VAL] === null ? '' : this.state[OFFICER_NAME_VAL]}
-                  onChange={this.handleOnChangeInputString} />
-            </FormGroup>
-          </Col>
-          <Col lg={6}>
-            <FormGroup validationState={this.checkValidationState('string', this.state[OFFICER_SEQ_ID_VAL])}>
-              <TitleLabel>Officer Seq ID*</TitleLabel>
-              <FormControl
-                  name={OFFICER_SEQ_ID_VAL}
-                  value={this.state[OFFICER_SEQ_ID_VAL] === null ? '' : this.state[OFFICER_SEQ_ID_VAL]}
-                  onChange={this.handleOnChangeInputString} />
-            </FormGroup>
-          </Col>
-        </PaddedRow>
-        <PaddedRow>
-          <Col lg={12}>
-            <FormGroup validationState={this.checkValidationState('string', this.state[REASON_VAL])}>
-              <TitleLabel>Reason for Follow-Up*</TitleLabel>
-              <FormControl
-                  componentClass="textarea"
-                  name={REASON_VAL}
-                  value={this.state[REASON_VAL] === null ? '' : this.state[REASON_VAL]}
-                  onChange={this.handleOnChangeInputString} />
-            </FormGroup>
-          </Col>
-        </PaddedRow>
-        <PaddedRow>
-          <Col lg={12}>
-            <FormGroup validationState={this.checkValidationState('string', this.state[SUMMARY_VAL])}>
-              <TitleLabel>Summary / Notes*</TitleLabel>
-              <FormControl
-                  componentClass="textarea"
-                  name={SUMMARY_VAL}
-                  value={this.state[SUMMARY_VAL] === null ? '' : this.state[SUMMARY_VAL]}
-                  onChange={this.handleOnChangeInputString} />
-            </FormGroup>
-          </Col>
-        </PaddedRow>
-        <PaddedRow>
-          <ActionButtons>
-            {
-              (this.isReadyToSubmit() && this.props.submissionState === SUBMISSION_STATES.PRE_SUBMIT)
-                ? <StyledButton onClick={this.handleOnSubmit}>Submit</StyledButton>
-                : <StyledButton disabled>Submit</StyledButton>
-            }
-            <StyledButton onClick={this.props.onCancel}>Cancel</StyledButton>
-          </ActionButtons>
-        </PaddedRow>
-      </SectionWrapper>
-    );
-  }
+    const { submissionState } = this.props;
+    if (submissionState === SUBMISSION_STATES.IS_SUBMITTING) {
+      return <Spinner />;
+    }
 
-  renderContent = () => {
-
-    if (this.props.submissionState === SUBMISSION_STATES.SUBMIT_SUCCESS) {
+    if (submissionState === SUBMISSION_STATES.SUBMIT_SUCCESS) {
       return (
         <Success>
           <p>Success!</p>
@@ -321,7 +220,8 @@ class FollowUpReportContainer extends React.Component<Props, State> {
         </Success>
       );
     }
-    else if (this.props.submissionState === SUBMISSION_STATES.SUBMIT_FAILURE) {
+
+    if (submissionState === SUBMISSION_STATES.SUBMIT_FAILURE) {
       return (
         <Failure>
           <NavLink to={PAGE_1}>Failed to submit. Please try again.</NavLink>
@@ -330,25 +230,10 @@ class FollowUpReportContainer extends React.Component<Props, State> {
     }
 
     return (
-      <div>
-        <FormHeader>Follow-Up Report</FormHeader>
-        { this.renderConsumerDetailsSection() }
-        { this.renderReportDetailsSection() }
-      </div>
-    );
-  }
-
-  render() {
-
-    if (this.props.submissionState === SUBMISSION_STATES.IS_SUBMITTING) {
-      return <Loading />;
-    }
-
-    return (
       <ContainerOuterWrapper>
         <ContainerInnerWrapper>
           <StyledCard>
-            { this.renderContent() }
+            { this.renderForm() }
           </StyledCard>
         </ContainerInnerWrapper>
       </ContainerOuterWrapper>
@@ -363,15 +248,6 @@ function mapStateToProps(state :Map<*, *>) :Object {
   };
 }
 
-function mapDispatchToProps(dispatch :Function) :Object {
-
-  const actions = {};
-
-  return {
-    actions: bindActionCreators(actions, dispatch)
-  };
-}
-
 export default withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(FollowUpReportContainer)
+  connect(mapStateToProps)(FollowUpReportContainer)
 );

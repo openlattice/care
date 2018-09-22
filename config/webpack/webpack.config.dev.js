@@ -1,4 +1,4 @@
-/* eslint-disable import/no-extraneous-dependencies, import/extensions */
+/* eslint-disable import/extensions */
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const Webpack = require('webpack');
@@ -17,7 +17,7 @@ module.exports = (env) => {
 
   const plugins = [
     new HtmlWebpackPlugin({
-      favicon: `${APP_PATHS.ABS.SOURCE_ASSETS_IMAGES}/favicon.png`,
+      favicon: `${APP_PATHS.ABS.SOURCE_ASSETS_IMAGES}/favicon_v2.png`,
       inject: true,
       template: `${APP_PATHS.ABS.SOURCE}/index.html`,
     }),

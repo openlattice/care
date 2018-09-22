@@ -15,17 +15,13 @@ import { withRouter } from 'react-router';
 import type { RouterHistory } from 'react-router';
 
 import FormView from '../../components/FormView';
-import { validateOnInput } from '../../shared/Validation';
-import { fixDatePickerIsoDateTime, formatTimePickerSeconds, getCurrentPage } from '../../utils/Utils';
-import { loadApp, selectOrganization } from './AppActionFactory';
 import { hardRestart, submitReport } from './ReportActionFactory';
 
 import {
   APP_TYPES_FQNS,
   CONSUMER_STATE,
   FORM_PATHS,
-  MAX_PAGE,
-  PERSON
+  PERSON,
 } from '../../shared/Consts';
 
 import {
@@ -52,8 +48,6 @@ type Props = {
   actions :{
     hardRestart :() => void;
     submitReport :(args :Object) => void;
-    loadApp :() => void;
-    selectOrganization :(args :string) => void;
   };
   app :Map<*, *>;
   history :RouterHistory;
@@ -86,34 +80,21 @@ class Form extends React.Component<Props, State> {
     };
   }
 
-  componentDidMount() {
-    // this.props.actions.loadApp();
-  }
+  updateStateValue = (section, key, value) => {
 
-  handleTextInput = (e, fieldType, formatErrors, setErrorsFn) => {
-
-    const sectionKey = e.target.dataset.section;
-    const name = e.target.name;
-    const input = e.target.value;
-    const sectionState = this.state[sectionKey];
-    sectionState[name] = input;
-    this.setState({ [sectionKey]: sectionState });
-    validateOnInput(name, input, fieldType, formatErrors, setErrorsFn);
-  }
-
-  handleDateInput = (e, section, name, formatErrors, setErrorsFn) => {
-    let input = e || '';
-    input = input.slice(0, 10);
-    const sectionState = this.state[section];
-    sectionState[name] = input;
+    // TODO: validation
+    const { [section]: sectionState } = this.state;
+    sectionState[key] = value;
     this.setState({ [section]: sectionState });
-    validateOnInput(name, input, 'date', formatErrors, setErrorsFn);
   }
 
-  handleDatePickerDateTimeOffset = (value, section, name) => {
+  updateStateValues = (section, values) => {
 
-    const sectionState = this.state[section];
-    sectionState[name] = fixDatePickerIsoDateTime(value);
+    // TODO: validation
+    const { [section]: sectionState } = this.state;
+    Object.keys(values).forEach((key) => {
+      sectionState[key] = values[key];
+    });
     this.setState({ [section]: sectionState });
   }
 
@@ -121,13 +102,6 @@ class Form extends React.Component<Props, State> {
     const sectionState = this.state[sectionKey];
     sectionState[sectionPropertyName] = value;
     this.setState({ [sectionKey]: sectionState });
-  }
-
-  handleTimeInput = (e, section, name) => {
-    const input = formatTimePickerSeconds(e);
-    const sectionState = this.state[section];
-    sectionState[name] = input;
-    this.setState({ [section]: sectionState });
   }
 
   // For radio or select input
@@ -143,15 +117,6 @@ class Form extends React.Component<Props, State> {
     else {
       sectionState[e.target.name] = e.target.value;
     }
-    this.setState({ [sectionKey]: sectionState });
-  }
-
-  handleMultiUpdate = (sectionKey, values) => {
-
-    const sectionState = this.state[sectionKey];
-    Object.keys(values).forEach((key) => {
-      sectionState[key] = values[key];
-    });
     this.setState({ [sectionKey]: sectionState });
   }
 
@@ -186,7 +151,8 @@ class Form extends React.Component<Props, State> {
   }
 
   handlePageChange = (path) => {
-    this.props.history.push(path);
+    const { history } = this.props;
+    history.push(path);
   }
 
   handlePersonSelection = (person) => {
@@ -215,10 +181,6 @@ class Form extends React.Component<Props, State> {
     });
   }
 
-  handleOrganizationSelection = (organizationId) => {
-    this.props.actions.selectOrganization(organizationId);
-  }
-
   handleSubmit = (event :SyntheticEvent<*>) => {
 
     event.preventDefault();
@@ -233,14 +195,10 @@ class Form extends React.Component<Props, State> {
     });
   }
 
-  isInReview = () => (
-    getCurrentPage() === MAX_PAGE
-  )
-
   render() {
 
     const { PEOPLE_FQN } = APP_TYPES_FQNS;
-    const selectedOrganizationId :string = this.props.app.get('selectedOrganization');
+    const selectedOrganizationId :string = this.props.app.get('selectedOrganizationId');
     const peopleEntitySetId :string = this.props.app.getIn([
       PEOPLE_FQN.getFullyQualifiedName(),
       'entitySetsByOrganization',
@@ -254,26 +212,21 @@ class Form extends React.Component<Props, State> {
           consumerInfo={this.state.consumerInfo}
           consumerIsSelected={this.state.isConsumerSelected}
           dispositionInfo={this.state.dispositionInfo}
-          isInReview={this.isInReview}
           handleCheckboxChange={this.handleCheckboxChange}
-          handleDateInput={this.handleDateInput}
-          handleDatePickerDateTimeOffset={this.handleDatePickerDateTimeOffset}
-          handleMultiUpdate={this.handleMultiUpdate}
-          handleOrganizationSelection={this.handleOrganizationSelection}
           handlePageChange={this.handlePageChange}
           handlePersonSelection={this.handlePersonSelection}
           handlePicture={this.handlePicture}
           handleScaleSelection={this.handleScaleSelection}
           handleSingleSelection={this.handleSingleSelection}
           handleSubmit={this.handleSubmit}
-          handleTextInput={this.handleTextInput}
-          handleTimeInput={this.handleTimeInput}
           officerInfo={this.state.officerInfo}
           organizations={organizations}
           personEntitySetId={peopleEntitySetId}
           reportInfo={this.state.reportInfo}
           selectedOrganizationId={selectedOrganizationId}
-          submissionState={this.props.submissionState} />
+          submissionState={this.props.submissionState}
+          updateStateValue={this.updateStateValue}
+          updateStateValues={this.updateStateValues} />
     );
   }
 }
@@ -291,11 +244,6 @@ function mapDispatchToProps(dispatch :Function) :Object {
   const actions = {
     hardRestart,
     submitReport,
-    loadApp,
-    selectOrganization: (organizationId) => {
-      const action = selectOrganization(organizationId);
-      return selectOrganization.request(action.id, action.value);
-    }
   };
 
   return {

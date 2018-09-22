@@ -11,3 +11,4 @@ export const LOGIN :string = '/login';
 
 export const BHR :string = '/bhr';
 export const FOLLOW_UP_PATH :string = '/followup';
+export const REPORTS :string = '/reports';

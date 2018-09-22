@@ -7,12 +7,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import styled from 'styled-components';
-import { faUserAlt } from '@fortawesome/pro-light-svg-icons';
+import { Colors } from 'lattice-ui-kit';
+import { faUserCircle } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Map } from 'immutable';
 
 import { DATA_URL_PREFIX, PERSON } from '../../shared/Consts';
 
+const { NEUTRALS } = Colors;
 const {
   DOB_FQN,
   FIRST_NAME_FQN,
@@ -36,6 +38,7 @@ const PersonDetailsSearchResultWrapper = styled.div`
 
 const PersonPictureWrapper = styled.div`
   align-items: center;
+  color: ${NEUTRALS[3]};
   display: flex;
   justify-content: center;
   width: 200px;
@@ -103,7 +106,7 @@ const PersonDetailsSearchResult = (props :Props) => {
       <PersonPictureWrapper>
         {
           (!pictureStr || pictureStr.length <= 0)
-            ? <FontAwesomeIcon icon={faUserAlt} size="6x" />
+            ? <FontAwesomeIcon icon={faUserCircle} size="6x" />
             : <PersonPicture src={pictureImgSrc} role="presentation" />
         }
       </PersonPictureWrapper>

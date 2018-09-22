@@ -1,93 +1,24 @@
 import React from 'react';
 
-import DatePicker from 'react-bootstrap-date-picker';
-import PropTypes from 'prop-types';
-import ReactRouterPropTypes from 'react-router-prop-types';
 import moment from 'moment';
-import styled from 'styled-components';
-import { FormGroup, FormControl, Col } from 'react-bootstrap';
 import { withRouter } from 'react-router';
 
 import FormNav from './FormNav';
+import FieldHeader from './text/styled/FieldHeader';
+import TextAreaField from './text/TextAreaField';
+import TextField from './text/TextField';
 import SelfieWebCam, { DATA_URL_PREFIX } from './SelfieWebCam';
 
-import {
-  SectionWrapper,
-  ContentWrapper,
-  PaddedRow,
-  InlineCheckbox,
-  InlineRadio,
-  TitleLabel,
-  OtherWrapper,
-  SectionHeader
-} from '../shared/Layout';
 import { FORM_PATHS } from '../shared/Consts';
-import {
-  setDidClickNav,
-  setRequiredErrors,
-  renderErrors,
-  validateSectionNavigation
-} from '../shared/Helpers';
-import { bootstrapValidation } from '../shared/Validation';
-import { getCurrentPage } from '../utils/Utils';
 import { isPortlandOrg } from '../utils/Whitelist';
-
-const StyledImageElement = styled.img``;
+import {
+  FlexyWrapper,
+  FormGridWrapper,
+  FullWidthItem,
+  HalfWidthItem,
+} from './form/StyledFormComponents';
 
 class ConsumerInfoView extends React.Component {
-
-  static propTypes = {
-    handleMultiUpdate: PropTypes.func.isRequired,
-    handlePicture: PropTypes.func,
-    handleTextInput: PropTypes.func.isRequired,
-    handleSingleSelection: PropTypes.func.isRequired,
-    handleCheckboxChange: PropTypes.func.isRequired,
-    handleScaleSelection: PropTypes.func.isRequired,
-    handleDateInput: PropTypes.func.isRequired,
-    consumerIsSelected: PropTypes.bool.isRequired,
-    isInReview: PropTypes.func.isRequired,
-    handlePageChange: PropTypes.func.isRequired,
-    section: PropTypes.string.isRequired,
-    history: ReactRouterPropTypes.history.isRequired,
-    location: ReactRouterPropTypes.location.isRequired,
-    input: PropTypes.shape({
-      firstName: PropTypes.string.isRequired,
-      lastName: PropTypes.string.isRequired,
-      middleName: PropTypes.string.isRequired,
-      address: PropTypes.string.isRequired,
-      identification: PropTypes.string.isRequired,
-      militaryStatus: PropTypes.string.isRequired,
-      gender: PropTypes.string.isRequired,
-      race: PropTypes.string.isRequired,
-      age: PropTypes.string.isRequired,
-      dob: PropTypes.string.isRequired,
-      homeless: PropTypes.bool.isRequired,
-      homelessLocation: PropTypes.string.isRequired,
-      drugsAlcohol: PropTypes.string.isRequired,
-      drugType: PropTypes.string.isRequired,
-      prescribedMedication: PropTypes.string.isRequired,
-      takingMedication: PropTypes.string.isRequired,
-      prevPsychAdmission: PropTypes.string.isRequired,
-      selfDiagnosis: PropTypes.array.isRequired,
-      selfDiagnosisOther: PropTypes.string.isRequired,
-      armedWithWeapon: PropTypes.bool.isRequired,
-      armedWeaponType: PropTypes.string.isRequired,
-      accessToWeapons: PropTypes.bool.isRequired,
-      accessibleWeaponType: PropTypes.string.isRequired,
-      observedBehaviors: PropTypes.array.isRequired,
-      observedBehaviorsOther: PropTypes.string.isRequired,
-      emotionalState: PropTypes.array.isRequired,
-      emotionalStateOther: PropTypes.string.isRequired,
-      photosTakenOf: PropTypes.array.isRequired,
-      injuries: PropTypes.array.isRequired,
-      injuriesOther: PropTypes.string.isRequired,
-      suicidal: PropTypes.bool.isRequired,
-      suicidalActions: PropTypes.array.isRequired,
-      suicideAttemptMethod: PropTypes.array.isRequired,
-      suicideAttemptMethodOther: PropTypes.string.isRequired
-    }).isRequired,
-    selectedOrganizationId: PropTypes.string.isRequired
-  }
 
   static defaultProps = {
     handlePicture: () => {}
@@ -96,23 +27,18 @@ class ConsumerInfoView extends React.Component {
   selfieWebCam;
 
   constructor(props) {
-
     super(props);
-
     this.state = {
-      requiredFields: ['identification'],
-      sectionFormatErrors: [],
-      sectionRequiredErrors: [],
-      identificationValid: true,
-      ageValid: true,
-      dobValid: true,
-      sectionValid: false,
-      didClickNav: this.props.location.state
-        ? this.props.location.state.didClickNav
-        : false,
-      currentPage: getCurrentPage(),
-      showSelfieWebCam: false
+      section: 'consumerInfo',
+      showSelfieWebCam: false,
     };
+  }
+
+  handlePageChange = (path) => {
+
+    // TODO: validation
+    const { handlePageChange } = this.props;
+    handlePageChange(path);
   }
 
   handleOnChangeTakePicture = (event) => {
@@ -126,39 +52,10 @@ class ConsumerInfoView extends React.Component {
     }
   }
 
-  handleOnSelfieCapture = (selfieDataAsBase64 :?string) => {
+  handleOnSelfieCapture = (selfieDataAsBase64) => {
 
-    this.props.handlePicture(this.props.section, 'picture', (selfieDataAsBase64 || ''));
-  }
-
-  handlePageChange = (path) => {
-
-    if (this.selfieWebCam) {
-      this.selfieWebCam.closeMediaStream();
-    }
-
-    this.setState(setDidClickNav);
-    this.setState(setRequiredErrors, () => {
-      if (this.state.sectionRequiredErrors.length < 1 && this.state.sectionFormatErrors.length < 1) {
-        this.props.handlePageChange(path);
-      }
-    });
-  }
-
-  setInputErrors = (name, inputValid, sectionFormatErrors) => {
-    this.setState({
-      [`${name}Valid`]: inputValid,
-      sectionFormatErrors
-    });
-  }
-
-  componentWillUnmount() {
-    validateSectionNavigation(
-      this.props.input,
-      this.state.requiredFields,
-      this.state.currentPage,
-      this.props.history
-    );
+    const { handlePicture, section } = this.props;
+    handlePicture(section, 'picture', (selfieDataAsBase64 || ''));
   }
 
   renderConsumerPicture = (input) => {
@@ -168,72 +65,69 @@ class ConsumerInfoView extends React.Component {
     }
 
     const pictureDataUrl = `${DATA_URL_PREFIX}${input.picture}`;
-
     return (
-      <PaddedRow>
-        <Col lg={12}>
-          <TitleLabel>Consumer Picture</TitleLabel>
-          <StyledImageElement
-              alt="Consumer Picture"
-              src={pictureDataUrl} />
-        </Col>
-      </PaddedRow>
+      <FullWidthItem>
+        <FieldHeader>
+          Consumer Picture
+        </FieldHeader>
+        <img
+            alt="Consumer"
+            src={pictureDataUrl} />
+      </FullWidthItem>
     );
   }
 
   renderSelfieWebCam = () => {
 
+    const { showSelfieWebCam } = this.state;
     return (
-      <PaddedRow>
-        <Col lg={12}>
-          <TitleLabel>Consumer Picture</TitleLabel>
-          <InlineCheckbox
-              checked={this.state.showSelfieWebCam}
-              onChange={this.handleOnChangeTakePicture}>
-            Take a picture with your webcam
-          </InlineCheckbox>
-          {
-            !this.state.showSelfieWebCam
-              ? null
-              : (
-                <SelfieWebCam
-                    onSelfieCapture={this.handleOnSelfieCapture}
-                    ref={(element) => {
-                      this.selfieWebCam = element;
-                    }} />
-              )
-          }
-        </Col>
-      </PaddedRow>
+      <FullWidthItem>
+        <FieldHeader>
+          Consumer Picture
+        </FieldHeader>
+        <label htmlFor="consumer-picture-checkbox">
+          <input id="consumer-picture-checkbox" type="checkbox" onChange={this.handleOnChangeTakePicture} />
+          Take a picture with your webcam
+        </label>
+        {
+          !showSelfieWebCam
+            ? null
+            : (
+              <SelfieWebCam
+                  onSelfieCapture={this.handleOnSelfieCapture}
+                  ref={(element) => {
+                    this.selfieWebCam = element;
+                  }} />
+            )
+        }
+      </FullWidthItem>
     );
   }
 
   renderViolenceScale = () => {
 
-    const {
-      handleScaleSelection,
-      input,
-      isInReview,
-      section
-    } = this.props;
-
-    const isReviewPage = isInReview();
+    const { handleScaleSelection, input, isInReview } = this.props;
+    const { section } = this.state;
 
     const scaleRadios = [];
     for (let i = 1; i <= 10; i += 1) {
+      const inputKey = `input-scale1to10-${i}`;
+      const labelKey = `label-scale1to10-${i}`;
       scaleRadios.push(
-        <InlineRadio
-            key={`scale1to10-${i}`}
-            inline
-            data-section={section}
-            name="scale1to10"
-            value={i}
-            checked={input.scale1to10 === i}
-            onChange={handleScaleSelection}
-            disabled={isReviewPage}>
+        <label key={labelKey} htmlFor={inputKey}>
+          <input
+              checked={input.scale1to10 === i}
+              data-section={section}
+              disabled={isInReview}
+              id={inputKey}
+              key={inputKey}
+              name="scale1to10"
+              onChange={handleScaleSelection}
+              type="radio"
+              value={i} />
           { i }
-        </InlineRadio>
-      );
+        </label>
+      )
     }
 
     return scaleRadios;
@@ -241,1260 +135,626 @@ class ConsumerInfoView extends React.Component {
 
   renderViolencePortland = () => {
 
-    const {
-      handleCheckboxChange,
-      handleSingleSelection,
-      handleTextInput,
-      input,
-      isInReview,
-      section
-    } = this.props;
-
-    const { sectionFormatErrors } = this.state;
-
-    const isReviewPage = isInReview();
+    const { input, isInReview, updateStateValue } = this.props;
+    const { section } = this.state;
 
     return (
-      <div>
-        <PaddedRow>
-          <Col lg={12}>
-            <TitleLabel>Violence at this incident</TitleLabel>
-            <h5>1 = Not at all violent , 10 = Extreme violence</h5>
+      <>
+        <FullWidthItem>
+          <FieldHeader>Violence at this incident</FieldHeader>
+          <FieldHeader>1 = Not at all violent , 10 = Extreme violence</FieldHeader>
+          <FlexyWrapper inline>
             { this.renderViolenceScale() }
-          </Col>
-        </PaddedRow>
+          </FlexyWrapper>
+        </FullWidthItem>
+        <HalfWidthItem>
+          <FieldHeader>Violent behavior during this incident was directed towards</FieldHeader>
+          <FlexyWrapper>
+            {
+              this.renderTempCheckbox('Police', 'directedagainst', 'police',
+                input.directedagainst.indexOf('police') !== -1)
+            }
+            {
+              this.renderTempCheckbox('Family', 'directedagainst', 'family',
+                input.directedagainst.indexOf('family') !== -1)
+            }
+            {
+              this.renderTempCheckbox('Significant other', 'directedagainst', 'significantOther',
+                input.directedagainst.indexOf('significantOther') !== -1)
+            }
+            {
+              this.renderTempCheckbox('Other', 'directedagainst', 'other',
+                input.directedagainst.indexOf('other') !== -1)
+            }
+          </FlexyWrapper>
+        </HalfWidthItem>
+        <HalfWidthItem>
+          <TextField
+              disabled={isInReview}
+              header="If other, specify others"
+              onChange={value => updateStateValue(section, 'directedagainstother', value)}
+              value={input.directedagainstother} />
+        </HalfWidthItem>
+        <FullWidthItem>
+          <FieldHeader>History of Violent Behavior</FieldHeader>
+          <FlexyWrapper inline>
+            { this.renderTempRadio('Yes', 'historyofviolence', true, input.historyofviolence === true) }
+            { this.renderTempRadio('No', 'historyofviolence', false, input.historyofviolence === false) }
+          </FlexyWrapper>
+        </FullWidthItem>
+        <HalfWidthItem>
+          <FieldHeader>Violent behavior was directed towards</FieldHeader>
+          <FlexyWrapper>
+            {
+              this.renderTempCheckbox('Police', 'historicaldirectedagainst', 'police',
+                input.historicaldirectedagainst.indexOf('police') !== -1)
+            }
+            {
+              this.renderTempCheckbox('Family', 'historicaldirectedagainst', 'family',
+                input.historicaldirectedagainst.indexOf('family') !== -1)
+            }
+            {
+              this.renderTempCheckbox('Significant other', 'historicaldirectedagainst', 'significantOther',
+                input.historicaldirectedagainst.indexOf('significantOther') !== -1)
+            }
+            {
+              this.renderTempCheckbox('Other', 'historicaldirectedagainst', 'other',
+                input.historicaldirectedagainst.indexOf('other') !== -1)
+            }
+          </FlexyWrapper>
+        </HalfWidthItem>
+        <HalfWidthItem>
+          <TextField
+              disabled={isInReview}
+              header="If other, specify others"
+              onChange={value => updateStateValue(section, 'historicaldirectedagainstother', value)}
+              value={input.historicaldirectedagainstother} />
+        </HalfWidthItem>
+        <FullWidthItem>
+          <TextAreaField
+              disabled={isInReview}
+              header="Description of historical incidents involving violent behavior"
+              onChange={value => updateStateValue(section, 'historyofviolencetext', value)}
+              value={input.historyofviolencetext} />
+        </FullWidthItem>
+      </>
+    );
+  }
 
-        <PaddedRow>
-          <Col lg={12}>
-            <TitleLabel>Violent behavior during this incident was directed towards:</TitleLabel>
-            <FormGroup>
-              <InlineCheckbox
-                  inline={false}
-                  data-section={section}
-                  name="directedagainst"
-                  value="police"
-                  checked={input.directedagainst.indexOf('police') !== -1}
-                  onChange={handleCheckboxChange}
-                  disabled={isReviewPage}>
-                Police
-              </InlineCheckbox>
-              <InlineCheckbox
-                  inline={false}
-                  data-section={section}
-                  name="directedagainst"
-                  value="family"
-                  checked={input.directedagainst.indexOf('family') !== -1}
-                  onChange={handleCheckboxChange}
-                  disabled={isReviewPage}>
-                Family
-              </InlineCheckbox>
-              <InlineCheckbox
-                  inline={false}
-                  data-section={section}
-                  name="directedagainst"
-                  value="significantOther"
-                  checked={input.directedagainst.indexOf('significantOther') !== -1}
-                  onChange={handleCheckboxChange}
-                  disabled={isReviewPage}>
-                Significant other
-              </InlineCheckbox>
-              <OtherWrapper>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="directedagainst"
-                    value="other"
-                    checked={input.directedagainst.indexOf('other') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  Other:
-                </InlineCheckbox>
-                <FormControl
-                    data-section={section}
-                    name="directedagainstother"
-                    value={input.directedagainstother}
-                    onChange={(e) => {
-                      handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
-                    }}
-                    disabled={isReviewPage} />
-              </OtherWrapper>
-            </FormGroup>
-          </Col>
-        </PaddedRow>
+  // TODO: replace this with real components from lattice-ui-kit
+  renderTempRadio = (label, name, value, isChecked) => {
 
-        <PaddedRow>
-          <Col lg={6}>
-            <TitleLabel>History of Violent Behavior</TitleLabel>
-            <InlineRadio
-                inline
-                data-section={section}
-                name="historyofviolence"
-                value
-                checked={input.historyofviolence}
-                onChange={handleSingleSelection}
-                disabled={isReviewPage}>
-              Yes
-            </InlineRadio>
-            <InlineRadio
-                inline
-                data-section={section}
-                name="historyofviolence"
-                value={false}
-                checked={!input.historyofviolence}
-                onChange={handleSingleSelection}
-                disabled={isReviewPage}>
-              No
-            </InlineRadio>
-          </Col>
-        </PaddedRow>
+    const { handleSingleSelection, isInReview } = this.props;
+    const { section } = this.state;
+    const id = `${name}-${value}`;
+    return (
+      <label htmlFor={id}>
+        <input
+            checked={isChecked}
+            data-section={section}
+            disabled={isInReview}
+            id={id}
+            name={name}
+            onChange={handleSingleSelection}
+            type="radio"
+            value={value} />
+        { label }
+      </label>
+    );
+  }
 
-        <PaddedRow>
-          <Col lg={12}>
-            <TitleLabel>Violent behavior was directed towards:</TitleLabel>
-            <FormGroup>
-              <InlineCheckbox
-                  inline={false}
-                  data-section={section}
-                  name="historicaldirectedagainst"
-                  value="police"
-                  checked={input.historicaldirectedagainst.indexOf('police') !== -1}
-                  onChange={handleCheckboxChange}
-                  disabled={isReviewPage}>
-                Police
-              </InlineCheckbox>
-              <InlineCheckbox
-                  inline={false}
-                  data-section={section}
-                  name="historicaldirectedagainst"
-                  value="family"
-                  checked={input.historicaldirectedagainst.indexOf('family') !== -1}
-                  onChange={handleCheckboxChange}
-                  disabled={isReviewPage}>
-                Family
-              </InlineCheckbox>
-              <InlineCheckbox
-                  inline={false}
-                  data-section={section}
-                  name="historicaldirectedagainst"
-                  value="significantOther"
-                  checked={input.historicaldirectedagainst.indexOf('significantOther') !== -1}
-                  onChange={handleCheckboxChange}
-                  disabled={isReviewPage}>
-                Significant other
-              </InlineCheckbox>
-              <OtherWrapper>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="historicaldirectedagainst"
-                    value="other"
-                    checked={input.historicaldirectedagainst.indexOf('other') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  Other:
-                </InlineCheckbox>
-                <FormControl
-                    data-section={section}
-                    name="historicaldirectedagainstother"
-                    value={input.historicaldirectedagainstother}
-                    onChange={(e) => {
-                      handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
-                    }}
-                    disabled={isReviewPage} />
-              </OtherWrapper>
-            </FormGroup>
-          </Col>
-        </PaddedRow>
+  // TODO: replace this with real components from lattice-ui-kit
+  renderTempCheckbox = (label, name, value, isChecked) => {
 
-        <PaddedRow>
-          <Col lg={12}>
-            <TitleLabel>Description of historical incidents involving violent behavior</TitleLabel>
-            <FormControl
-                data-section={section}
-                name="historyofviolencetext"
-                componentClass="textarea"
-                value={input.historyofviolencetext}
-                onChange={(e) => {
-                  handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
-                }}
-                disabled={isReviewPage} />
-          </Col>
-        </PaddedRow>
-      </div>
+    const { handleCheckboxChange, isInReview } = this.props;
+    const { section } = this.state;
+    const id = `${name}-${value}`;
+    return (
+      <label htmlFor={id}>
+        <input
+            checked={isChecked}
+            data-section={section}
+            disabled={isInReview}
+            id={id}
+            name={name}
+            onChange={handleCheckboxChange}
+            type="checkbox"
+            value={value} />
+        { label }
+      </label>
     );
   }
 
   render() {
     const {
       consumerIsSelected,
-      handleCheckboxChange,
-      handleDateInput,
-      handleMultiUpdate,
       handleSingleSelection,
-      handleTextInput,
       input,
       isInReview,
-      section,
-      selectedOrganizationId
+      selectedOrganizationId,
+      updateStateValue,
+      updateStateValues,
     } = this.props;
-
-    const {
-      didClickNav,
-      identificationValid,
-      ageValid,
-      dobValid,
-      sectionFormatErrors,
-      sectionRequiredErrors
-    } = this.state;
-
-    const isReviewPage = isInReview();
+    const { section } = this.state;
 
     return (
-      <SectionWrapper>
-        { !isReviewPage ? <SectionHeader>Consumer</SectionHeader> : null}
-        <ContentWrapper>
-          <PaddedRow>
-            <Col lg={6}>
-              <TitleLabel>Last Name</TitleLabel>
-              <FormControl
-                  data-section={section}
-                  name="lastName"
-                  value={input.lastName}
-                  onChange={(e) => {
-                    handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
-                  }}
-                  disabled={consumerIsSelected || isReviewPage} />
-            </Col>
-            <Col lg={6}>
-              <TitleLabel>First Name</TitleLabel>
-              <FormControl
-                  data-section={section}
-                  name="firstName"
-                  value={input.firstName}
-                  onChange={(e) => {
-                    handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
-                  }}
-                  disabled={consumerIsSelected || isReviewPage} />
-            </Col>
-          </PaddedRow>
-
-          <PaddedRow>
-            <Col lg={6}>
-              <TitleLabel>Middle Name</TitleLabel>
-              <FormControl
-                  data-section={section}
-                  name="middleName"
-                  value={input.middleName}
-                  onChange={(e) => {
-                    handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
-                  }}
-                  disabled={consumerIsSelected || isReviewPage} />
-            </Col>
-            <Col lg={6}>
-              <FormGroup
-                  validationState={bootstrapValidation(
-                    input.identification,
-                    identificationValid,
-                    true,
-                    didClickNav
-                  )}>
-                <TitleLabel>Consumer Identification*</TitleLabel>
-                <FormControl
-                    data-section={section}
-                    disabled
-                    name="identification"
-                    value={input.identification} />
-              </FormGroup>
-            </Col>
-          </PaddedRow>
-
-          <PaddedRow>
-            <Col lg={12}>
-              <TitleLabel>Residence / Address (Street, Apt Number, City, County, State, Zip)</TitleLabel>
-              <FormControl
-                  data-section={section}
-                  name="address"
-                  value={input.address}
-                  onChange={(e) => {
-                    handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
-                  }}
-                  disabled={isReviewPage} />
-            </Col>
-          </PaddedRow>
-
-          <PaddedRow>
-            <Col lg={6}>
-              <TitleLabel>Consumer Phone Number</TitleLabel>
-              <FormControl
-                  data-section={section}
-                  name="phone"
-                  value={input.phone}
-                  onChange={(e) => {
-                    handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
-                  }}
-                  disabled={isReviewPage} />
-            </Col>
-          </PaddedRow>
-
+      <>
+        <FormGridWrapper>
+          <FullWidthItem>
+            {
+              isInReview
+                ? null
+                : (
+                  <h1>Consumer</h1>
+                )
+            }
+          </FullWidthItem>
+          <TextField
+              disabled={consumerIsSelected || isInReview}
+              header="Last Name"
+              onChange={value => updateStateValue(section, 'lastName', value)}
+              value={input.lastName} />
+          <TextField
+              disabled={consumerIsSelected || isInReview}
+              header="First Name"
+              onChange={value => updateStateValue(section, 'firstName', value)}
+              value={input.firstName} />
+          <TextField
+              disabled={consumerIsSelected || isInReview}
+              header="Middle Name"
+              onChange={value => updateStateValue(section, 'middleName', value)}
+              value={input.middleName} />
+          <TextField
+              disabled
+              header="Consumer Identification*"
+              value={input.identification} />
+          <FullWidthItem>
+            <TextField
+                disabled={isInReview}
+                header="Residence / Address (Street, Apt Number, City, County, State, Zip)"
+                onChange={value => updateStateValue(section, 'address', value)}
+                value={input.address} />
+          </FullWidthItem>
+          <TextField
+              disabled={isInReview}
+              header="Consumer Phone Number"
+              onChange={value => updateStateValue(section, 'phone', value)}
+              value={input.phone} />
           {
-            isReviewPage || consumerIsSelected
+            isInReview || consumerIsSelected
               ? this.renderConsumerPicture(input)
               : this.renderSelfieWebCam()
           }
-
-          <PaddedRow>
-            <Col lg={6}>
-              <TitleLabel>Military Status</TitleLabel>
-              <InlineRadio
-                  inline
-                  data-section={section}
-                  name="militaryStatus"
-                  value="active"
-                  checked={input.militaryStatus === 'active'}
-                  onChange={handleSingleSelection}
-                  disabled={isReviewPage}>
-                Active
-              </InlineRadio>
-              <InlineRadio
-                  inline
-                  data-section={section}
-                  name="militaryStatus"
-                  value="veteran"
-                  checked={input.militaryStatus === 'veteran'}
-                  onChange={handleSingleSelection}
-                  disabled={isReviewPage}>
-                Veteran
-              </InlineRadio>
-              <InlineRadio
-                  inline
-                  data-section={section}
-                  name="militaryStatus"
-                  value="n/a"
-                  checked={input.militaryStatus === 'n/a'}
-                  onChange={handleSingleSelection}
-                  disabled={isReviewPage}>
-                N/A
-              </InlineRadio>
-            </Col>
-          </PaddedRow>
-
-          <PaddedRow>
-            <Col lg={6}>
-              <TitleLabel>Gender</TitleLabel>
-              <FormControl
-                  componentClass="select"
-                  placeholder="select"
-                  data-section={section}
-                  name="gender"
-                  value={input.gender}
-                  onChange={handleSingleSelection}
-                  disabled={consumerIsSelected || isReviewPage}>
-                <option value="">Select</option>
-                <option value="female">Female</option>
-                <option value="male">Male</option>
-                <option value="nonbinary">Non-binary</option>
-              </FormControl>
-            </Col>
-
-            <Col lg={6}>
-              <TitleLabel>Race</TitleLabel>
-              <FormControl
-                  componentClass="select"
-                  placeholder="select"
-                  data-section={section}
-                  name="race"
-                  value={input.race}
-                  onChange={handleSingleSelection}
-                  disabled={consumerIsSelected || isReviewPage}>
-                <option value="">Select</option>
-                <option value="americanIndian">American Indian or Alaska Native</option>
-                <option value="asian">Asian</option>
-                <option value="black">Black or African American</option>
-                <option value="hispanic">Hispanic or Latino</option>
-                <option value="nativeHawaiian">Native Hawaiian or Other Pacific Islander</option>
-                <option value="white">White</option>
-                <option value="other">Other</option>
-              </FormControl>
-            </Col>
-          </PaddedRow>
-
-          <PaddedRow>
-            <Col lg={6}>
-              <FormGroup
-                  validationState={bootstrapValidation(
-                    input.dob,
-                    dobValid,
-                    false,
-                    didClickNav
-                  )}>
-                <TitleLabel>DOB</TitleLabel>
-                <DatePicker
-                    value={input.dob}
-                    onChange={(e) => {
-                      handleDateInput(
-                        e,
-                        section,
-                        'dob',
-                        sectionFormatErrors,
-                        this.setInputErrors
-                      );
-                      handleMultiUpdate(section, {
-                        age: `${moment().diff(moment(e), 'years')}`
-                      });
-                    }}
-                    disabled={consumerIsSelected || isReviewPage} />
-              </FormGroup>
-            </Col>
-            <Col lg={6}>
-              <FormGroup validationState={bootstrapValidation(input.age, ageValid, false, didClickNav)}>
-                <TitleLabel>Age</TitleLabel>
-                <FormControl
-                    data-section={section}
-                    name="age"
-                    value={input.age}
-                    onChange={(e) => {
-                      handleTextInput(e, 'int16', sectionFormatErrors, this.setInputErrors);
-                    }}
-                    disabled={isReviewPage} />
-              </FormGroup>
-            </Col>
-          </PaddedRow>
-
-          <PaddedRow>
-            <Col lg={6}>
-              <TitleLabel>Homeless</TitleLabel>
-              <InlineRadio
-                  inline
-                  data-section={section}
-                  name="homeless"
-                  value
-                  checked={input.homeless}
-                  onChange={handleSingleSelection}
-                  disabled={isReviewPage}>Yes
-              </InlineRadio>
-              <InlineRadio
-                  inline
-                  data-section={section}
-                  name="homeless"
-                  value={false}
-                  checked={!input.homeless}
-                  onChange={handleSingleSelection}
-                  disabled={isReviewPage}>No
-              </InlineRadio>
-            </Col>
-          </PaddedRow>
-
-          <PaddedRow>
-            <Col lg={12}>
-              <TitleLabel>If Yes, Where Do They Usually Sleep / Frequent?</TitleLabel>
-              <FormControl
-                  data-section={section}
-                  name="homelessLocation"
-                  value={input.homelessLocation}
+          <FullWidthItem>
+            <FieldHeader>Military Status</FieldHeader>
+            { this.renderTempRadio('Active', 'militaryStatus', 'active', input.militaryStatus === 'active') }
+            { this.renderTempRadio('Veteran', 'militaryStatus', 'veteran', input.militaryStatus === 'veteran') }
+            { this.renderTempRadio('N/A', 'militaryStatus', 'n/a', input.militaryStatus === 'n/a') }
+          </FullWidthItem>
+          <HalfWidthItem>
+            <FieldHeader>Gender</FieldHeader>
+            <select
+                data-section={section}
+                disabled={consumerIsSelected || isInReview}
+                name="gender"
+                onChange={handleSingleSelection}
+                value={input.gender}>
+              <option value="">Select</option>
+              <option value="female">Female</option>
+              <option value="male">Male</option>
+              <option value="nonbinary">Non-binary</option>
+            </select>
+          </HalfWidthItem>
+          <HalfWidthItem>
+            <FieldHeader>Race</FieldHeader>
+            <select
+                data-section={section}
+                disabled={consumerIsSelected || isInReview}
+                name="race"
+                onChange={handleSingleSelection}
+                value={input.race}>
+              <option value="">Select</option>
+              <option value="americanIndian">American Indian or Alaska Native</option>
+              <option value="asian">Asian</option>
+              <option value="black">Black or African American</option>
+              <option value="hispanic">Hispanic or Latino</option>
+              <option value="nativeHawaiian">Native Hawaiian or Other Pacific Islander</option>
+              <option value="white">White</option>
+              <option value="other">Other</option>
+            </select>
+          </HalfWidthItem>
+          <HalfWidthItem>
+            <label htmlFor="date-of-birth">
+              <FieldHeader>Date of Birth</FieldHeader>
+              <input
+                  disabled={consumerIsSelected || isInReview}
+                  id="date-of-birth"
                   onChange={(e) => {
-                    handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
+                    const dob = moment(e.target.value).format('YYYY-MM-DD');
+                    const age = moment().diff(dob, 'years').toString();
+                    updateStateValues(section, { age, dob });
                   }}
-                  disabled={isReviewPage} />
-            </Col>
-          </PaddedRow>
-
-          <PaddedRow>
-            <Col lg={6}>
-              <TitleLabel>Consumer Using Drugs, Alcohol</TitleLabel>
-              <InlineRadio
-                  inline
-                  data-section={section}
-                  name="drugsAlcohol"
-                  value="drugs"
-                  checked={input.drugsAlcohol === 'drugs'}
-                  onChange={handleSingleSelection}
-                  disabled={isReviewPage}>
-                Drugs
-              </InlineRadio>
-              <InlineRadio
-                  inline
-                  data-section={section}
-                  name="drugsAlcohol"
-                  value="alcohol"
-                  checked={input.drugsAlcohol === 'alcohol'}
-                  onChange={handleSingleSelection}
-                  disabled={isReviewPage}>
-                Alcohol
-              </InlineRadio>
-              <InlineRadio
-                  inline
-                  data-section={section}
-                  name="drugsAlcohol"
-                  value="both"
-                  checked={input.drugsAlcohol === 'both'}
-                  onChange={handleSingleSelection}
-                  disabled={isReviewPage}>
-                Both
-              </InlineRadio>
-              <InlineRadio
-                  inline
-                  data-section={section}
-                  name="drugsAlcohol"
-                  value="n/a"
-                  checked={input.drugsAlcohol === 'n/a'}
-                  onChange={handleSingleSelection}
-                  disabled={isReviewPage}>
-                N/A
-              </InlineRadio>
-            </Col>
-          </PaddedRow>
-
-          <PaddedRow>
-            <Col lg={12}>
-              <TitleLabel>Drug type</TitleLabel>
-              <FormControl
-                  data-section={section}
-                  name="drugType"
-                  value={input.drugType}
-                  onChange={(e) => {
-                    handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
-                  }}
-                  disabled={isReviewPage} />
-            </Col>
-          </PaddedRow>
-
-          <PaddedRow>
-            <Col lg={6}>
-              <TitleLabel>Prescribed Medication</TitleLabel>
-              <InlineRadio
-                  inline
-                  data-section={section}
-                  name="prescribedMedication"
-                  value="yes"
-                  checked={input.prescribedMedication === 'yes'}
-                  onChange={handleSingleSelection}
-                  disabled={isReviewPage}>
-                Yes
-              </InlineRadio>
-              <InlineRadio
-                  inline
-                  data-section={section}
-                  name="prescribedMedication"
-                  value="no"
-                  checked={input.prescribedMedication === 'no'}
-                  onChange={handleSingleSelection}
-                  disabled={isReviewPage}>
-                No
-              </InlineRadio>
-              <InlineRadio
-                  inline
-                  data-section={section}
-                  name="prescribedMedication"
-                  value="unknown"
-                  checked={input.prescribedMedication === 'unknown'}
-                  onChange={handleSingleSelection}
-                  disabled={isReviewPage}>
-                Unknown
-              </InlineRadio>
-            </Col>
-            <Col lg={6}>
-              <TitleLabel>If yes, is Consumer Taking Medication?</TitleLabel>
-              <InlineRadio
-                  inline
-                  data-section={section}
-                  name="takingMedication"
-                  value="yes"
-                  checked={input.takingMedication === 'yes'}
-                  onChange={handleSingleSelection}
-                  disabled={isReviewPage}>
-                Yes
-              </InlineRadio>
-              <InlineRadio
-                  inline
-                  data-section={section}
-                  name="takingMedication"
-                  value="no"
-                  checked={input.takingMedication === 'no'}
-                  onChange={handleSingleSelection}
-                  disabled={isReviewPage}>
-                No
-              </InlineRadio>
-              <InlineRadio
-                  inline
-                  data-section={section}
-                  name="takingMedication"
-                  value="unknown"
-                  checked={input.takingMedication === 'unknown'}
-                  onChange={handleSingleSelection}
-                  disabled={isReviewPage}>
-                Unknown
-              </InlineRadio>
-            </Col>
-          </PaddedRow>
-
-          <PaddedRow>
-            <Col lg={12}>
-              <TitleLabel>Does Consumer Have Previous Psychiatric Hospital Admission?</TitleLabel>
-              <InlineRadio
-                  inline
-                  type="radio"
-                  data-section={section}
-                  name="prevPsychAdmission"
-                  value="yes"
-                  checked={input.prevPsychAdmission === 'yes'}
-                  onChange={handleSingleSelection}
-                  disabled={isReviewPage}>
-                Yes
-              </InlineRadio>
-              <InlineRadio
-                  inline
-                  type="radio"
-                  data-section={section}
-                  name="prevPsychAdmission"
-                  value="no"
-                  checked={input.prevPsychAdmission === 'no'}
-                  onChange={handleSingleSelection}
-                  disabled={isReviewPage}>
-                No
-              </InlineRadio>
-              <InlineRadio
-                  inline
-                  type="radio"
-                  data-section={section}
-                  name="prevPsychAdmission"
-                  value="unknown"
-                  checked={input.prevPsychAdmission === 'unknown'}
-                  onChange={handleSingleSelection}
-                  disabled={isReviewPage}>
-                Unknown
-              </InlineRadio>
-            </Col>
-          </PaddedRow>
-
-          <PaddedRow>
-            <Col lg={12}>
-              <TitleLabel>Self Diagnosis</TitleLabel>
-              <FormGroup>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="selfDiagnosis"
-                    value="bipolar"
-                    checked={input.selfDiagnosis.indexOf('bipolar') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  Bipolar
-                </InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="selfDiagnosis"
-                    value="depression"
-                    checked={input.selfDiagnosis.indexOf('depression') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  Depression
-                </InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="selfDiagnosis"
-                    value="ptsd"
-                    checked={input.selfDiagnosis.indexOf('ptsd') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  PTSD
-                </InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="selfDiagnosis"
-                    value="schizophrenia"
-                    checked={input.selfDiagnosis.indexOf('schizophrenia') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  Schizophrenia
-                </InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="selfDiagnosis"
-                    value="dementia"
-                    checked={input.selfDiagnosis.indexOf('dementia') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  Dementia
-                </InlineCheckbox>
-                {
-                  isPortlandOrg(selectedOrganizationId) && (
-                    <InlineCheckbox
-                        inline
-                        data-section={section}
-                        name="selfDiagnosis"
-                        value="DevelopmentalDisabilities/Autism"
-                        checked={input.selfDiagnosis.indexOf('DevelopmentalDisabilities/Autism') !== -1}
-                        onChange={handleCheckboxChange}
-                        disabled={isReviewPage}>
-                      Developmental Disabilities / Autism
-                    </InlineCheckbox>
-                  )
-                }
-                <OtherWrapper>
-                  <InlineCheckbox
-                      data-section={section}
-                      name="selfDiagnosis"
-                      value="other"
-                      checked={input.selfDiagnosis.indexOf('other') !== -1}
-                      onChange={handleCheckboxChange}
-                      disabled={isReviewPage}>
-                    Other:
-                  </InlineCheckbox>
-                  <FormControl
-                      data-section={section}
-                      name="selfDiagnosisOther"
-                      value={input.selfDiagnosisOther}
-                      onChange={(e) => {
-                        handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
-                      }}
-                      disabled={isReviewPage} />
-                </OtherWrapper>
-              </FormGroup>
-            </Col>
-          </PaddedRow>
-
-          <PaddedRow>
-            <Col lg={6}>
-              <TitleLabel>Armed with Weapon?</TitleLabel>
-              <InlineRadio
-                  inline
-                  data-section={section}
-                  name="armedWithWeapon"
-                  value
-                  checked={input.armedWithWeapon}
-                  onChange={handleSingleSelection}
-                  disabled={isReviewPage}>
-                Yes
-              </InlineRadio>
-              <InlineRadio
-                  inline
-                  data-section={section}
-                  name="armedWithWeapon"
-                  value={false}
-                  checked={!input.armedWithWeapon}
-                  onChange={handleSingleSelection}
-                  disabled={isReviewPage}>
-                No
-              </InlineRadio>
-            </Col>
-          </PaddedRow>
-
-          <PaddedRow>
-            <Col lg={6}>
-              <TitleLabel>If Yes, Weapon Type</TitleLabel>
-              <FormControl
-                  data-section={section}
-                  name="armedWeaponType"
-                  value={input.armedWeaponType}
-                  onChange={(e) => {
-                    handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
-                  }}
-                  disabled={isReviewPage} />
-            </Col>
-          </PaddedRow>
-
-          <PaddedRow>
-            <Col lg={6}>
-              <TitleLabel>Have Access to Weapons?</TitleLabel>
-              <InlineRadio
-                  inline
-                  data-section={section}
-                  name="accessToWeapons"
-                  value
-                  checked={input.accessToWeapons}
-                  onChange={handleSingleSelection}
-                  disabled={isReviewPage}>
-                Yes
-              </InlineRadio>
-              <InlineRadio
-                  inline
-                  data-section={section}
-                  name="accessToWeapons"
-                  value={false}
-                  checked={!input.accessToWeapons}
-                  onChange={handleSingleSelection}
-                  disabled={isReviewPage}>
-                No
-              </InlineRadio>
-            </Col>
-          </PaddedRow>
-
-          <PaddedRow>
-            <Col lg={6}>
-              <TitleLabel>If Yes, Weapon Type</TitleLabel>
-              <FormControl
-                  data-section={section}
-                  name="accessibleWeaponType"
-                  value={input.accessibleWeaponType}
-                  onChange={(e) => {
-                    handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
-                  }}
-                  disabled={isReviewPage} />
-            </Col>
-          </PaddedRow>
-
-          <PaddedRow>
-            <Col lg={12}>
-              <TitleLabel>Observed Behaviors (Check all that apply)</TitleLabel>
-              <FormGroup>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="observedBehaviors"
-                    value="disorientation"
-                    checked={input.observedBehaviors.indexOf('disorientation') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  Disorientation / Confusion
-                </InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="observedBehaviors"
-                    value="abnormalBehavior"
-                    checked={input.observedBehaviors.indexOf('abnormalBehavior') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  Abnormal Behavior / Appearance (neglect self-care)
-                </InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="observedBehaviors"
-                    value="hearingVoices"
-                    checked={input.observedBehaviors.indexOf('hearingVoices') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  Hearing Voices / Hallucinating
-                </InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="observedBehaviors"
-                    value="anxious"
-                    checked={input.observedBehaviors.indexOf('anxious') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  Anxious / Excited / Agitated
-                </InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="observedBehaviors"
-                    value="depressed"
-                    checked={input.observedBehaviors.indexOf('depressed') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  Depressed Mood
-                </InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="observedBehaviors"
-                    value="paranoid"
-                    checked={input.observedBehaviors.indexOf('paranoid') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  Paranoid or Suspicious
-                </InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="observedBehaviors"
-                    value="self-harm"
-                    checked={input.observedBehaviors.indexOf('self-harm') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  Self-harm
-                </InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="observedBehaviors"
-                    value="threatening"
-                    checked={input.observedBehaviors.indexOf('threatening') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  Threatening / Violent Towards Others
-                </InlineCheckbox>
-                <OtherWrapper>
-                  <InlineCheckbox
-                      data-section={section}
-                      name="observedBehaviors"
-                      value="other"
-                      checked={input.observedBehaviors.indexOf('other') !== -1}
-                      onChange={handleCheckboxChange}
-                      disabled={isReviewPage}>
-                    Other:
-                  </InlineCheckbox>
-                  <FormControl
-                      data-section={section}
-                      name="observedBehaviorsOther"
-                      value={input.observedBehaviorsOther}
-                      onChange={(e) => {
-                        handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
-                      }}
-                      disabled={isReviewPage} />
-                </OtherWrapper>
-              </FormGroup>
-            </Col>
-          </PaddedRow>
-
+                  type="date"
+                  value={input.dob} />
+            </label>
+          </HalfWidthItem>
+          <TextField
+              disabled={isInReview}
+              header="Age"
+              onChange={value => updateStateValue(section, 'age', value)}
+              value={input.age} />
+          <HalfWidthItem>
+            <FieldHeader>Homeless</FieldHeader>
+            <FlexyWrapper inline>
+              { this.renderTempRadio('Yes', 'homeless', true, input.homeless === true) }
+              { this.renderTempRadio('No', 'homeless', false, input.homeless === false) }
+            </FlexyWrapper>
+          </HalfWidthItem>
+          <HalfWidthItem>
+            <TextField
+                disabled={isInReview}
+                header="If Yes, where do they usually sleep / frequent?"
+                onChange={value => updateStateValue(section, 'homelessLocation', value)}
+                value={input.homelessLocation} />
+          </HalfWidthItem>
+          <HalfWidthItem>
+            <FieldHeader>Consumer Using Drugs, Alcohol</FieldHeader>
+            <FlexyWrapper inline>
+              { this.renderTempRadio('Drugs', 'drugsAlcohol', 'drugs', input.drugsAlcohol === 'drugs') }
+              { this.renderTempRadio('Alcohol', 'drugsAlcohol', 'alcohol', input.drugsAlcohol === 'alcohol') }
+              { this.renderTempRadio('Both', 'drugsAlcohol', 'both', input.drugsAlcohol === 'both') }
+              { this.renderTempRadio('N/A', 'drugsAlcohol', 'n/a', input.drugsAlcohol === 'n/a') }
+            </FlexyWrapper>
+          </HalfWidthItem>
+          <HalfWidthItem>
+            <TextField
+                disabled={isInReview}
+                header="Drug type"
+                onChange={value => updateStateValue(section, 'drugType', value)}
+                value={input.drugType} />
+          </HalfWidthItem>
+          <HalfWidthItem>
+            <FieldHeader>Prescribed Medication</FieldHeader>
+            <FlexyWrapper inline>
+              { this.renderTempRadio('Yes', 'prescribedMedication', 'yes', input.prescribedMedication === 'yes') }
+              { this.renderTempRadio('No', 'prescribedMedication', 'no', input.prescribedMedication === 'no') }
+              {
+                this.renderTempRadio('Unknown', 'prescribedMedication', 'unknown',
+                  input.prescribedMedication === 'unknown')
+              }
+            </FlexyWrapper>
+          </HalfWidthItem>
+          <HalfWidthItem>
+            <FieldHeader>If yes, is consumer taking medication?</FieldHeader>
+            <FlexyWrapper inline>
+              { this.renderTempRadio('Yes', 'takingMedication', 'yes', input.takingMedication === 'yes') }
+              { this.renderTempRadio('No', 'takingMedication', 'no', input.takingMedication === 'no') }
+              { this.renderTempRadio('Unknown', 'takingMedication', 'unknown', input.takingMedication === 'unknown') }
+            </FlexyWrapper>
+          </HalfWidthItem>
+          <FullWidthItem>
+            <FieldHeader>Does Consumer Have Previous Psychiatric Hospital Admission?</FieldHeader>
+            { this.renderTempRadio('Yes', 'prevPsychAdmission', 'yes', input.prevPsychAdmission === 'yes') }
+            { this.renderTempRadio('No', 'prevPsychAdmission', 'no', input.prevPsychAdmission === 'no') }
+            { this.renderTempRadio('Unknown', 'prevPsychAdmission', 'unknown', input.prevPsychAdmission === 'unknown') }
+          </FullWidthItem>
+          <HalfWidthItem>
+            <FieldHeader>Self Diagnosis (check all that apply)</FieldHeader>
+            <FlexyWrapper>
+              {
+                this.renderTempCheckbox('Bipolar', 'selfDiagnosis', 'bipolar',
+                  input.selfDiagnosis.indexOf('bipolar') !== -1)
+              }
+              {
+                this.renderTempCheckbox('Depression', 'selfDiagnosis', 'depression',
+                  input.selfDiagnosis.indexOf('depression') !== -1)
+              }
+              {
+                this.renderTempCheckbox('PTSD', 'selfDiagnosis', 'ptsd',
+                  input.selfDiagnosis.indexOf('ptsd') !== -1)
+              }
+              {
+                this.renderTempCheckbox('Schizophrenia', 'selfDiagnosis', 'schizophrenia',
+                  input.selfDiagnosis.indexOf('schizophrenia') !== -1)
+              }
+              {
+                this.renderTempCheckbox('Dementia', 'selfDiagnosis', 'dementia',
+                  input.selfDiagnosis.indexOf('dementia') !== -1)
+              }
+              {
+                isPortlandOrg(selectedOrganizationId) && this.renderTempCheckbox(
+                  'Developmental Disabilities / Autism',
+                  'selfDiagnosis',
+                  'DevelopmentalDisabilities/Autism',
+                  input.selfDiagnosis.indexOf('DevelopmentalDisabilities/Autism') !== -1
+                )
+              }
+              {
+                this.renderTempCheckbox('Other', 'selfDiagnosis', 'other',
+                  input.selfDiagnosis.indexOf('other') !== -1)
+              }
+            </FlexyWrapper>
+          </HalfWidthItem>
+          <HalfWidthItem>
+            <TextField
+                disabled={isInReview}
+                header="If other, specify other diagnoses"
+                onChange={value => updateStateValue(section, 'selfDiagnosisOther', value)}
+                value={input.selfDiagnosisOther} />
+          </HalfWidthItem>
+          <HalfWidthItem>
+            <FieldHeader>Armed with Weapon?</FieldHeader>
+            <FlexyWrapper inline>
+              { this.renderTempRadio('Yes', 'armedWithWeapon', true, input.armedWithWeapon === true) }
+              { this.renderTempRadio('No', 'armedWithWeapon', false, input.armedWithWeapon === false) }
+            </FlexyWrapper>
+          </HalfWidthItem>
+          <HalfWidthItem>
+            <TextField
+                disabled={isInReview}
+                header="If Yes, specify weapon type"
+                onChange={value => updateStateValue(section, 'armedWeaponType', value)}
+                value={input.armedWeaponType} />
+          </HalfWidthItem>
+          <HalfWidthItem>
+            <FieldHeader>Have Access to Weapons?</FieldHeader>
+            <FlexyWrapper inline>
+              { this.renderTempRadio('Yes', 'accessToWeapons', true, input.accessToWeapons === true) }
+              { this.renderTempRadio('No', 'accessToWeapons', false, input.accessToWeapons === false) }
+            </FlexyWrapper>
+          </HalfWidthItem>
+          <HalfWidthItem>
+            <TextField
+                disabled={isInReview}
+                header="If Yes, specify weapon type"
+                onChange={value => updateStateValue(section, 'accessibleWeaponType', value)}
+                value={input.accessibleWeaponType} />
+          </HalfWidthItem>
+          <HalfWidthItem>
+            <FieldHeader>Observed Behaviors (check all that apply)</FieldHeader>
+            <FlexyWrapper>
+              {
+                this.renderTempCheckbox(
+                  'Disorientation / Confusion',
+                  'observedBehaviors',
+                  'disorientation',
+                  input.observedBehaviors.indexOf('disorientation') !== -1
+                )
+              }
+              {
+                this.renderTempCheckbox(
+                  'Abnormal Behavior / Appearance (neglect self-care)',
+                  'observedBehaviors',
+                  'abnormalBehavior',
+                  input.observedBehaviors.indexOf('abnormalBehavior') !== -1
+                )
+              }
+              {
+                this.renderTempCheckbox(
+                  'Hearing Voices / Hallucinating',
+                  'observedBehaviors',
+                  'hearingVoices',
+                  input.observedBehaviors.indexOf('hearingVoices') !== -1
+                )
+              }
+              {
+                this.renderTempCheckbox(
+                  'Anxious / Excited / Agitated',
+                  'observedBehaviors',
+                  'anxious',
+                  input.observedBehaviors.indexOf('anxious') !== -1
+                )
+              }
+              {
+                this.renderTempCheckbox(
+                  'Depressed Mood',
+                  'observedBehaviors',
+                  'depressed',
+                  input.observedBehaviors.indexOf('depressed') !== -1
+                )
+              }
+              {
+                this.renderTempCheckbox(
+                  'Paranoid or Suspicious',
+                  'observedBehaviors',
+                  'paranoid',
+                  input.observedBehaviors.indexOf('paranoid') !== -1
+                )
+              }
+              {
+                this.renderTempCheckbox(
+                  'Self-harm',
+                  'observedBehaviors',
+                  'self-harm',
+                  input.observedBehaviors.indexOf('self-harm') !== -1
+                )
+              }
+              {
+                this.renderTempCheckbox(
+                  'Threatening / Violent Towards Others',
+                  'observedBehaviors',
+                  'threatening',
+                  input.observedBehaviors.indexOf('threatening') !== -1
+                )
+              }
+              {
+                this.renderTempCheckbox(
+                  'Other',
+                  'observedBehaviors',
+                  'other',
+                  input.observedBehaviors.indexOf('other') !== -1
+                )
+              }
+            </FlexyWrapper>
+          </HalfWidthItem>
+          <HalfWidthItem>
+            <TextField
+                disabled={isInReview}
+                header="If other, specify other observed behaviors"
+                onChange={value => updateStateValue(section, 'observedBehaviorsOther', value)}
+                value={input.observedBehaviorsOther} />
+          </HalfWidthItem>
           {
             isPortlandOrg(selectedOrganizationId)
               ? this.renderViolencePortland()
               : null
           }
-
-          <PaddedRow>
-            <Col lg={12}>
-              <TitleLabel>Emotional State (Check all that apply)</TitleLabel>
-              <FormGroup>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="emotionalState"
-                    value="angry"
-                    checked={input.emotionalState.indexOf('angry') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  Angry
-                </InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="emotionalState"
-                    value="afraid"
-                    checked={input.emotionalState.indexOf('afraid') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  Afraid
-                </InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="emotionalState"
-                    value="apologetic"
-                    checked={input.emotionalState.indexOf('apologetic') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  Apologetic
-                </InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="emotionalState"
-                    value="calm"
-                    checked={input.emotionalState.indexOf('calm') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  Calm
-                </InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="emotionalState"
-                    value="crying"
-                    checked={input.emotionalState.indexOf('crying') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  Crying
-                </InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="emotionalState"
-                    value="fearful"
-                    checked={input.emotionalState.indexOf('fearful') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  Fearful
-                </InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="emotionalState"
-                    value="nervous"
-                    checked={input.emotionalState.indexOf('nervous') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  Nervous
-                </InlineCheckbox>
-                <OtherWrapper>
-                  <InlineCheckbox
-                      inline
-                      data-section={section}
-                      name="emotionalState"
-                      value="other"
-                      checked={input.emotionalState.indexOf('other') !== -1}
-                      onChange={handleCheckboxChange}
-                      disabled={isReviewPage}>
-                    Other:
-                  </InlineCheckbox>
-                  <FormControl
-                      data-section={section}
-                      name="emotionalStateOther"
-                      value={input.emotionalStateOther}
-                      onChange={(e) => {
-                        handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
-                      }}
-                      disabled={isReviewPage} />
-                </OtherWrapper>
-              </FormGroup>
-            </Col>
-          </PaddedRow>
-
-          <PaddedRow>
-            <Col lg={12}>
-              <TitleLabel>Photos Taken Of:</TitleLabel>
-              <FormGroup>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="photosTakenOf"
-                    value="injuries"
-                    checked={input.photosTakenOf.indexOf('injuries') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  Injuries
-                </InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="photosTakenOf"
-                    value="propertyDamage"
-                    checked={input.photosTakenOf.indexOf('propertyDamage') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  Damage / Crime Scene
-                </InlineCheckbox>
-              </FormGroup>
-            </Col>
-          </PaddedRow>
-
-          <PaddedRow>
-            <Col lg={12}>
-              <TitleLabel>Consumer Injuries</TitleLabel>
-              <FormGroup>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="injuries"
-                    value="abrasions"
-                    checked={input.injuries.indexOf('abrasions') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  Abrasions
-                </InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="injuries"
-                    value="bruises"
-                    checked={input.injuries.indexOf('bruises') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  Bruises
-                </InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="injuries"
-                    value="complaintsOfPain"
-                    checked={input.injuries.indexOf('complaintsOfPain') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  Complaints of Pain
-                </InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="injuries"
-                    value="concussion"
-                    checked={input.injuries.indexOf('concussion') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  Concussion
-                </InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="injuries"
-                    value="fractures"
-                    checked={input.injuries.indexOf('fractures') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  Fractures
-                </InlineCheckbox>
-                <OtherWrapper>
-                  <InlineCheckbox
-                      data-section={section}
-                      name="injuries"
-                      value="other"
-                      checked={input.injuries.indexOf('other') !== -1}
-                      onChange={handleCheckboxChange}
-                      disabled={isReviewPage}>
-                    Other:
-                  </InlineCheckbox>
-                  <FormControl
-                      data-section={section}
-                      name="injuriesOther"
-                      value={input.injuriesOther}
-                      onChange={(e) => {
-                        handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
-                      }}
-                      disabled={isReviewPage} />
-                </OtherWrapper>
-              </FormGroup>
-            </Col>
-          </PaddedRow>
-
-          <PaddedRow>
-            <Col lg={6}>
-              <TitleLabel>Suicidal</TitleLabel>
-              <InlineRadio
-                  inline
-                  data-section={section}
-                  name="suicidal"
-                  value
-                  checked={input.suicidal}
-                  onChange={handleSingleSelection}
-                  disabled={isReviewPage}>
-                Yes
-              </InlineRadio>
-              <InlineRadio
-                  inline
-                  data-section={section}
-                  name="suicidal"
-                  value={false}
-                  checked={!input.suicidal}
-                  onChange={handleSingleSelection}
-                  disabled={isReviewPage}>
-                No
-              </InlineRadio>
-            </Col>
-          </PaddedRow>
-
-          <PaddedRow>
-            <Col lg={12}>
-              <TitleLabel>If Suicidal:</TitleLabel>
-              <InlineCheckbox
-                  inline
-                  data-section={section}
-                  name="suicidalActions"
-                  value="thoughts"
-                  checked={input.suicidalActions.indexOf('thoughts') !== -1}
-                  onChange={handleCheckboxChange}
-                  disabled={isReviewPage}>
-                Thoughts
-              </InlineCheckbox>
-              <InlineCheckbox
-                  inline
-                  data-section={section}
-                  name="suicidalActions"
-                  value="threat"
-                  checked={input.suicidalActions.indexOf('threat') !== -1}
-                  onChange={handleCheckboxChange}
-                  disabled={isReviewPage}>
-                Threat
-              </InlineCheckbox>
-              <InlineCheckbox
-                  inline
-                  data-section={section}
-                  name="suicidalActions"
-                  value="attempt"
-                  checked={input.suicidalActions.indexOf('attempt') !== -1}
-                  onChange={handleCheckboxChange}
-                  disabled={isReviewPage}>
-                Attempt
-              </InlineCheckbox>
-              <InlineCheckbox
-                  inline
-                  data-section={section}
-                  name="suicidalActions"
-                  value="completed"
-                  checked={input.suicidalActions.indexOf('completed') !== -1}
-                  onChange={handleCheckboxChange}
-                  disabled={isReviewPage}>
-                Completed
-              </InlineCheckbox>
-            </Col>
-          </PaddedRow>
-
-          <PaddedRow>
-            <Col lg={12}>
-              <TitleLabel>Method Used to Attempt, Threaten, or Complete Suicide</TitleLabel>
-              <FormGroup>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="suicideAttemptMethod"
-                    value="narcotics"
-                    checked={input.suicideAttemptMethod.indexOf('narcotics') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  Narcotics (Prescription or Illicit)
-                </InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="suicideAttemptMethod"
-                    value="alcohol"
-                    checked={input.suicideAttemptMethod.indexOf('alcohol') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  Alcohol
-                </InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="suicideAttemptMethod"
-                    value="knife"
-                    checked={input.suicideAttemptMethod.indexOf('knife') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  Knife / Cutting Tool
-                </InlineCheckbox>
-                <InlineCheckbox
-                    inline
-                    data-section={section}
-                    name="suicideAttemptMethod"
-                    value="firearm"
-                    checked={input.suicideAttemptMethod.indexOf('firearm') !== -1}
-                    onChange={handleCheckboxChange}
-                    disabled={isReviewPage}>
-                  Firearm
-                </InlineCheckbox>
-                <OtherWrapper>
-                  <InlineCheckbox
-                      data-section={section}
-                      name="suicideAttemptMethod"
-                      value="other"
-                      checked={input.suicideAttemptMethod.indexOf('other') !== -1}
-                      onChange={handleCheckboxChange}
-                      disabled={isReviewPage}>
-                    Other:
-                  </InlineCheckbox>
-                  <FormControl
-                      data-section={section}
-                      name="suicideAttemptMethodOther"
-                      value={input.suicideAttemptMethodOther}
-                      onChange={(e) => {
-                        handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
-                      }}
-                      disabled={isReviewPage} />
-                </OtherWrapper>
-              </FormGroup>
-            </Col>
-          </PaddedRow>
-        </ContentWrapper>
-
+          <HalfWidthItem>
+            <FieldHeader>Emotional State (check all that apply)</FieldHeader>
+            <FlexyWrapper>
+              {
+                this.renderTempCheckbox('Angry', 'emotionalState', 'angry',
+                  input.emotionalState.indexOf('angry') !== -1)
+              }
+              {
+                this.renderTempCheckbox('Afraid', 'emotionalState', 'afraid',
+                  input.emotionalState.indexOf('afraid') !== -1)
+              }
+              {
+                this.renderTempCheckbox('Apologetic', 'emotionalState', 'apologetic',
+                  input.emotionalState.indexOf('apologetic') !== -1)
+              }
+              {
+                this.renderTempCheckbox('Calm', 'emotionalState', 'calm',
+                  input.emotionalState.indexOf('calm') !== -1)
+              }
+              {
+                this.renderTempCheckbox('Crying', 'emotionalState', 'crying',
+                  input.emotionalState.indexOf('crying') !== -1)
+              }
+              {
+                this.renderTempCheckbox('Fearful', 'emotionalState', 'fearful',
+                  input.emotionalState.indexOf('fearful') !== -1)
+              }
+              {
+                this.renderTempCheckbox('Nervous', 'emotionalState', 'nervous',
+                  input.emotionalState.indexOf('nervous') !== -1)
+              }
+              {
+                this.renderTempCheckbox('Other', 'emotionalState', 'other',
+                  input.emotionalState.indexOf('other') !== -1)
+              }
+            </FlexyWrapper>
+          </HalfWidthItem>
+          <HalfWidthItem>
+            <TextField
+                disabled={isInReview}
+                header="If other, specify other states"
+                onChange={value => updateStateValue(section, 'emotionalStateOther', value)}
+                value={input.emotionalStateOther} />
+          </HalfWidthItem>
+          <HalfWidthItem>
+            <FieldHeader>Consumer Injuries (check all that apply)</FieldHeader>
+            <FlexyWrapper>
+              {
+                this.renderTempCheckbox('Abrasions', 'injuries', 'abrasions',
+                  input.injuries.indexOf('abrasions') !== -1)
+              }
+              {
+                this.renderTempCheckbox('Bruises', 'injuries', 'bruises',
+                  input.injuries.indexOf('bruises') !== -1)
+              }
+              {
+                this.renderTempCheckbox('Complaints of Pain', 'injuries', 'complaintsOfPain',
+                  input.injuries.indexOf('complaintsOfPain') !== -1)
+              }
+              {
+                this.renderTempCheckbox('Concussion', 'injuries', 'concussion',
+                  input.injuries.indexOf('concussion') !== -1)
+              }
+              {
+                this.renderTempCheckbox('Fractures', 'injuries', 'fractures',
+                  input.injuries.indexOf('fractures') !== -1)
+              }
+              {
+                this.renderTempCheckbox('Other', 'injuries', 'other',
+                  input.injuries.indexOf('other') !== -1)
+              }
+            </FlexyWrapper>
+          </HalfWidthItem>
+          <HalfWidthItem>
+            <TextField
+                disabled={isInReview}
+                header="If other, specify other injuries"
+                onChange={value => updateStateValue(section, 'injuriesOther', value)}
+                value={input.injuriesOther} />
+          </HalfWidthItem>
+          <HalfWidthItem>
+            <FieldHeader>Suicidal</FieldHeader>
+            <FlexyWrapper inline>
+              { this.renderTempRadio('Yes', 'suicidal', true, input.suicidal === true) }
+              { this.renderTempRadio('No', 'suicidal', false, input.suicidal === false) }
+            </FlexyWrapper>
+          </HalfWidthItem>
+          <HalfWidthItem>
+            <FieldHeader>If Yes, check all that apply</FieldHeader>
+            <FlexyWrapper>
+              {
+                this.renderTempCheckbox('Thoughts', 'suicidalActions', 'thoughts',
+                  input.suicidalActions.indexOf('thoughts') !== -1)
+              }
+              {
+                this.renderTempCheckbox('Threat', 'suicidalActions', 'threat',
+                  input.suicidalActions.indexOf('threat') !== -1)
+              }
+              {
+                this.renderTempCheckbox('Attempt', 'suicidalActions', 'attempt',
+                  input.suicidalActions.indexOf('attempt') !== -1)
+              }
+              {
+                this.renderTempCheckbox('Completed', 'suicidalActions', 'completed',
+                  input.suicidalActions.indexOf('completed') !== -1)
+              }
+            </FlexyWrapper>
+          </HalfWidthItem>
+          <HalfWidthItem>
+            <FieldHeader>Method Used to Attempt, Threaten, or Complete Suicide</FieldHeader>
+            <FlexyWrapper>
+              {
+                this.renderTempCheckbox('Alcohol', 'suicideAttemptMethod', 'alcohol',
+                  input.suicideAttemptMethod.indexOf('alcohol') !== -1)
+              }
+              {
+                this.renderTempCheckbox('Knife / Cutting Tool', 'suicideAttemptMethod', 'knife',
+                  input.suicideAttemptMethod.indexOf('knife') !== -1)
+              }
+              {
+                this.renderTempCheckbox('Firearm', 'suicideAttemptMethod', 'firearm',
+                  input.suicideAttemptMethod.indexOf('firearm') !== -1)
+              }
+              {
+                this.renderTempCheckbox('Narcotics (Prescription or Illicit)', 'suicideAttemptMethod', 'narcotics',
+                  input.suicideAttemptMethod.indexOf('narcotics') !== -1)
+              }
+              {
+                this.renderTempCheckbox('Other', 'suicideAttemptMethod', 'other',
+                  input.suicideAttemptMethod.indexOf('other') !== -1)
+              }
+            </FlexyWrapper>
+          </HalfWidthItem>
+          <HalfWidthItem>
+            <TextField
+                disabled={isInReview}
+                header="If other, specify other methods"
+                onChange={value => updateStateValue(section, 'suicideAttemptMethodOther', value)}
+                value={input.suicideAttemptMethodOther} />
+          </HalfWidthItem>
+          <FullWidthItem>
+            <FieldHeader>Photos Taken Of (check all that apply)</FieldHeader>
+            <FlexyWrapper inline>
+              {
+                this.renderTempCheckbox('Injuries', 'photosTakenOf', 'injuries',
+                  input.photosTakenOf.indexOf('injuries') !== -1)
+              }
+              {
+                this.renderTempCheckbox('Damage / Crime Scene', 'photosTakenOf', 'propertyDamage',
+                  input.photosTakenOf.indexOf('propertyDamage') !== -1)
+              }
+            </FlexyWrapper>
+          </FullWidthItem>
+        </FormGridWrapper>
         {
-          !isReviewPage
+          !isInReview
             ? (
               <FormNav
                   prevPath={FORM_PATHS.CONSUMER_SEARCH}
@@ -1503,8 +763,7 @@ class ConsumerInfoView extends React.Component {
             )
             : null
         }
-        { renderErrors(sectionFormatErrors, sectionRequiredErrors, didClickNav) }
-      </SectionWrapper>
+      </>
     );
   }
 }

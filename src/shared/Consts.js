@@ -117,9 +117,4 @@ export const STATES = [
   'WY'
 ];
 
-export const MAX_PAGE = 7;
-
-export const INT_16_MAX_VALUE = 32767;
-export const INT_16_MIN_VALUE = -32768;
-
 export const DATA_URL_PREFIX = 'data:image/png;base64,';

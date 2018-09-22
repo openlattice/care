@@ -22,7 +22,6 @@ import {
   OFFICER_SEQ_ID_VAL,
   REASON_VAL,
   SUMMARY_VAL,
-  TIME_VAL
 } from './FollowUpReportConstants';
 
 import {
@@ -67,7 +66,8 @@ function prepReportEntityData(
     'bhr.followupreason': reportInfo[REASON_VAL],
     'bhr.officerName': reportInfo[OFFICER_NAME_VAL],
     'bhr.officerSeqID': reportInfo[OFFICER_SEQ_ID_VAL],
-    'bhr.timeReported': reportInfo[TIME_VAL],
+    // 2018-09-14 - removing "bhr.timeReported" as it is not part of the "bhr.followup" EntityType anymore
+    // 'bhr.timeReported': reportInfo[TIME_VAL],
     'event.comments': reportInfo[SUMMARY_VAL],
     'health.staff': reportInfo[CLINICIAN_NAME_VAL],
     [NC_SUBJ_ID_FQN]: consumer.getIn([NC_SUBJ_ID_FQN, 0])
@@ -169,7 +169,7 @@ function* submitFollowUpReportWorker(action :SequenceAction) :Generator<*, *, *>
       reportInfo
     } = action.value;
 
-    const selectedOrganizationId = app.get('selectedOrganization');
+    const selectedOrganizationId = app.get('selectedOrganizationId');
 
     const appearsInESId :string = app.getIn([
       APPEARS_IN_FQN.getFullyQualifiedName(),

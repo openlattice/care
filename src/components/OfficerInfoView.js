@@ -1,264 +1,143 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { FormControl, Col, FormGroup } from 'react-bootstrap';
+
 import { withRouter } from 'react-router';
-import ReactRouterPropTypes from 'react-router-prop-types';
 
 import FormNav from './FormNav';
-import {
-  PaddedRow,
-  TitleLabel,
-  InlineCheckbox,
-  SectionHeader,
-  SectionWrapper,
-  ContentWrapper
-} from '../shared/Layout';
-import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
-import {
-  setDidClickNav,
-  setRequiredErrors,
-  renderErrors,
-  validateSectionNavigation
-} from '../shared/Helpers';
-import { bootstrapValidation } from '../shared/Validation';
-import { getCurrentPage } from '../utils/Utils';
+import FieldHeader from './text/styled/FieldHeader';
+import TextField from './text/TextField';
+import { FORM_PATHS } from '../shared/Consts';
 import { isPortlandOrg } from '../utils/Whitelist';
-
+import {
+  FlexyWrapper,
+  FormGridWrapper,
+  FullWidthItem,
+} from './form/StyledFormComponents';
 
 class OfficerInfoView extends React.Component {
 
-  static propTypes = {
-    handleTextInput: PropTypes.func.isRequired,
-    handleCheckboxChange: PropTypes.func.isRequired,
-    section: PropTypes.string.isRequired,
-    isInReview: PropTypes.func.isRequired,
-    handlePageChange: PropTypes.func.isRequired,
-    history: ReactRouterPropTypes.history.isRequired,
-    location: ReactRouterPropTypes.location.isRequired,
-    input: PropTypes.shape({
-      officerName: PropTypes.string.isRequired,
-      officerSeqID: PropTypes.string.isRequired,
-      officerInjuries: PropTypes.string.isRequired,
-      officerCertification: PropTypes.array.isRequired
-    }).isRequired,
-    selectedOrganizationId: PropTypes.string.isRequired
-  }
-
   constructor(props) {
     super(props);
-
     this.state = {
-      requiredFields: [],
-      sectionFormatErrors: [],
-      sectionRequiredErrors: [FORM_ERRORS.IS_REQUIRED],
-      officerSeqIDValid: true,
-      sectionValid: false,
-      didClickNav: this.props.location.state
-        ? this.props.location.state.didClickNav
-        : false,
-      currentPage: getCurrentPage()
+      section: 'officerInfo',
     };
   }
 
   handlePageChange = (path) => {
-    this.setState(setDidClickNav);
-    this.setState(setRequiredErrors, () => {
-      if (this.state.sectionRequiredErrors.length < 1 && this.state.sectionFormatErrors.length < 1) {
-        this.props.handlePageChange(path);
-      }
-    });
+
+    // TODO: validation
+    const { handlePageChange } = this.props;
+    handlePageChange(path);
   }
 
-  setInputErrors = (name, inputValid, sectionFormatErrors) => {
-    this.setState({
-      [`${name}Valid`]: inputValid,
-      sectionFormatErrors
-    });
-  }
+  // TODO: replace this with real components from lattice-ui-kit
+  renderTempCheckbox = (label, name, value, isChecked) => {
 
-  componentWillUnmount() {
-    validateSectionNavigation(
-      this.props.input,
-      this.state.requiredFields,
-      this.state.currentPage,
-      this.props.history
+    const { handleCheckboxChange, isInReview } = this.props;
+    const { section } = this.state;
+    const id = `${name}-${value}`;
+    return (
+      <label htmlFor={id}>
+        <input
+            checked={isChecked}
+            data-section={section}
+            disabled={isInReview}
+            id={id}
+            name={name}
+            onChange={handleCheckboxChange}
+            type="checkbox"
+            value={value} />
+        { label }
+      </label>
     );
   }
 
   renderOfficerCertification = () => {
 
-    const {
-      section,
-      handleCheckboxChange,
-      input,
-      isInReview
-    } = this.props;
-
-    const isReviewPage = isInReview();
-
+    const { input } = this.props;
     return (
-      <PaddedRow>
-        <Col lg={6}>
-          <TitleLabel>Officer Certification</TitleLabel>
-          <FormGroup>
-            <InlineCheckbox
-                inline
-                data-section={section}
-                name="officerCertification"
-                value="crtUnit"
-                checked={input.officerCertification.indexOf('crtUnit') !== -1}
-                onChange={handleCheckboxChange}
-                disabled={isReviewPage}>
-              CRT Unit
-            </InlineCheckbox>
-            <InlineCheckbox
-                inline
-                data-section={section}
-                name="officerCertification"
-                value="best"
-                checked={input.officerCertification.indexOf('best') !== -1}
-                onChange={handleCheckboxChange}
-                disabled={isReviewPage}>
-              BEST
-            </InlineCheckbox>
-            <InlineCheckbox
-                inline
-                data-section={section}
-                name="officerCertification"
-                value="cit"
-                checked={input.officerCertification.indexOf('cit') !== -1}
-                onChange={handleCheckboxChange}
-                disabled={isReviewPage}>
-              CIT
-            </InlineCheckbox>
-            <InlineCheckbox
-                inline
-                data-section={section}
-                name="officerCertification"
-                value="n/a"
-                checked={input.officerCertification.indexOf('n/a') !== -1}
-                onChange={handleCheckboxChange}
-                disabled={isReviewPage}>
-              N/A
-            </InlineCheckbox>
-          </FormGroup>
-        </Col>
-      </PaddedRow>
+      <FullWidthItem>
+        <FieldHeader>Officer Certification</FieldHeader>
+        <FlexyWrapper>
+          {
+            this.renderTempCheckbox('CRT Unit', 'officerCertification', 'crtUnit',
+              input.officerCertification.indexOf('crtUnit') !== -1)
+          }
+          {
+            this.renderTempCheckbox('BEST', 'officerCertification', 'best',
+              input.officerCertification.indexOf('best') !== -1)
+          }
+          {
+            this.renderTempCheckbox('CIT', 'officerCertification', 'cit',
+              input.officerCertification.indexOf('cit') !== -1)
+          }
+          {
+            this.renderTempCheckbox('N/A', 'officerCertification', 'n/a',
+              input.officerCertification.indexOf('n/a') !== -1)
+          }
+        </FlexyWrapper>
+      </FullWidthItem>
     );
   }
 
   renderOfficerCertificationPortland = () => {
 
-    const {
-      section,
-      handleCheckboxChange,
-      input,
-      isInReview
-    } = this.props;
-
-    const isReviewPage = isInReview();
-
+    const { input } = this.props;
     return (
-      <PaddedRow>
-        <Col lg={6}>
-          <TitleLabel>Officer Certification</TitleLabel>
-          <FormGroup>
-            <InlineCheckbox
-                inline
-                data-section={section}
-                name="officerCertification"
-                value="cit"
-                checked={input.officerCertification.indexOf('cit') !== -1}
-                onChange={handleCheckboxChange}
-                disabled={isReviewPage}>
-              CIT
-            </InlineCheckbox>
-          </FormGroup>
-        </Col>
-      </PaddedRow>
+      <FullWidthItem>
+        <FieldHeader>Officer Certification</FieldHeader>
+        <FlexyWrapper>
+          {
+            this.renderTempCheckbox('CIT', 'officerCertification', 'cit',
+              input.officerCertification.indexOf('cit') !== -1)
+          }
+        </FlexyWrapper>
+      </FullWidthItem>
     );
   }
 
   render() {
+
     const {
-      section,
-      handleTextInput,
       input,
       isInReview,
-      selectedOrganizationId
+      selectedOrganizationId,
+      updateStateValue,
     } = this.props;
-
-    const {
-      officerSeqIDValid,
-      didClickNav,
-      sectionFormatErrors,
-      sectionRequiredErrors
-    } = this.state;
-
-    const isReviewPage = isInReview();
+    const { section } = this.state;
 
     return (
-      <SectionWrapper>
-        { !isReviewPage ? <SectionHeader>Officer</SectionHeader> : null }
-
-        <ContentWrapper>
-          <PaddedRow>
-            <Col lg={12}>
-              <TitleLabel>Officer Name</TitleLabel>
-              <FormControl
-                  data-section={section}
-                  name="officerName"
-                  value={input.officerName}
-                  onChange={(e) => {
-                    handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
-                  }}
-                  disabled={isReviewPage} />
-            </Col>
-          </PaddedRow>
-
-          <PaddedRow>
-            <Col lg={6}>
-              <FormGroup
-                  validationState={bootstrapValidation(
-                    input.officerSeqID,
-                    officerSeqIDValid,
-                    false,
-                    didClickNav
-                  )}>
-                <TitleLabel>Seq ID</TitleLabel>
-                <FormControl
-                    data-section={section}
-                    name="officerSeqID"
-                    value={input.officerSeqID}
-                    onChange={(e) => {
-                      handleTextInput(e, 'alphanumeric', sectionFormatErrors, this.setInputErrors);
-                    }}
-                    disabled={isReviewPage} />
-              </FormGroup>
-            </Col>
-            <Col lg={6}>
-              <TitleLabel>Officer Injuries</TitleLabel>
-              <FormControl
-                  data-section={section}
-                  name="officerInjuries"
-                  value={input.officerInjuries}
-                  onChange={(e) => {
-                    handleTextInput(e, 'string', sectionFormatErrors, this.setInputErrors);
-                  }}
-                  disabled={isReviewPage} />
-            </Col>
-          </PaddedRow>
-
+      <>
+        <FormGridWrapper>
+          <FullWidthItem>
+            { !isInReview && (
+              <h1>Officer</h1>
+            )}
+          </FullWidthItem>
+          <TextField
+              disabled={isInReview}
+              header="Officer Name"
+              onChange={value => updateStateValue(section, 'officerName', value)}
+              value={input.officerName} />
+          <TextField
+              disabled={isInReview}
+              header="Officer Seq Id"
+              onChange={value => updateStateValue(section, 'officerSeqID', value)}
+              value={input.officerSeqID} />
+          <FullWidthItem>
+            <TextField
+                disabled={isInReview}
+                header="Officer Injuries"
+                onChange={value => updateStateValue(section, 'officerInjuries', value)}
+                value={input.officerInjuries} />
+          </FullWidthItem>
           {
             isPortlandOrg(selectedOrganizationId)
               ? this.renderOfficerCertificationPortland()
               : this.renderOfficerCertification()
           }
-
-        </ContentWrapper>
-
+        </FormGridWrapper>
         {
-          !isReviewPage
+          !isInReview
             ? (
               <FormNav
                   prevPath={FORM_PATHS.DISPOSITION}
@@ -267,8 +146,7 @@ class OfficerInfoView extends React.Component {
             )
             : null
         }
-        { renderErrors(sectionFormatErrors, sectionRequiredErrors, didClickNav) }
-      </SectionWrapper>
+      </>
     );
   }
 }

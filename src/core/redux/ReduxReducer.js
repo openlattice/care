@@ -5,7 +5,7 @@
 import { AuthReducer } from 'lattice-auth';
 import { combineReducers } from 'redux-immutable';
 
-import appReducer from '../../containers/form/AppReducer';
+import appReducer from '../../containers/app/AppReducer';
 import bhrReducer from '../../containers/form/ReportReducer';
 import followupReducer from '../../containers/followup/FollowUpReportReducer';
 import hospitalsReducer from '../../containers/form/HospitalsReducer';

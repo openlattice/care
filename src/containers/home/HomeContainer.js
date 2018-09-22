@@ -46,7 +46,7 @@ const StyledNavLink = styled(NavLink)`
   }
 `;
 
-const StyledNavCard = StyledCard.extend`
+const StyledNavCard = styled(StyledCard)`
   display: flex;
   flex-direction: row;
   justify-content: space-between;

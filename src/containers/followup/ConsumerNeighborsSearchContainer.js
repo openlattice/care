@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { bindActionCreators } from 'redux';
 
-import Loading from '../../components/Loading';
+import Spinner from '../../components/spinner/Spinner';
 import StyledCard from '../../components/cards/StyledCard';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { ContainerInnerWrapper, ContainerOuterWrapper } from '../../shared/Layout';
@@ -165,7 +165,7 @@ class ConsumerNeighborsSearchContainer extends React.Component<Props, State> {
   render() {
 
     if (this.props.isSearching) {
-      return <Loading />;
+      return <Spinner />;
     }
 
     return (
@@ -183,7 +183,7 @@ class ConsumerNeighborsSearchContainer extends React.Component<Props, State> {
 
 function mapStateToProps(state :Map<*, *>) :Object {
 
-  const selectedOrganizationId :string = state.getIn(['app', 'selectedOrganization']);
+  const selectedOrganizationId :string = state.getIn(['app', 'selectedOrganizationId']);
 
   const bhrEntitySetId :string = state.getIn([
     'app',
