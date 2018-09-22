@@ -140,7 +140,6 @@ type DispositionInfo = {
   deescalationTechniquesOther :string;
   disposition :string[];
   hospitaltransportindicator :boolean;
-  hospitalTransport :boolean;
   hospital :string;
   hospitalname :string;
   incidentNarrative :string;
@@ -158,7 +157,6 @@ const DISPOSITION_INFO_INITIAL_STATE :Map<string, *> = fromJS({
   deescalationTechniquesOther: '',
   disposition: [],
   hospitaltransportindicator: false,
-  hospitalTransport: false,
   hospital: '',
   hospitalname: '',
   incidentNarrative: '',

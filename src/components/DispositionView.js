@@ -492,7 +492,7 @@ class DispositionView extends React.Component {
       input,
       isInReview,
       selectedOrganizationId,
-      updateStateValue
+      updateStateValue,
     } = this.props;
     const { section } = this.state;
 
@@ -502,12 +502,22 @@ class DispositionView extends React.Component {
           <FieldHeader>Transported to Hospital</FieldHeader>
           <FlexyWrapper inline>
             {
-              this.renderTempRadio('Yes', 'hospitaltransportindicator', true,
-                input.hospitaltransportindicator === true)
+              this.renderTempRadio(
+                'Yes',
+                'hospitaltransportindicator',
+                true,
+                input.hospitaltransportindicator === true,
+                () => updateStateValue(section, 'hospitaltransportindicator', true),
+              )
             }
             {
-              this.renderTempRadio('No', 'hospitaltransportindicator', false,
-                input.hospitaltransportindicator === false)
+              this.renderTempRadio(
+                'No',
+                'hospitaltransportindicator',
+                false,
+                input.hospitaltransportindicator === false,
+                () => updateStateValue(section, 'hospitaltransportindicator', false),
+              )
             }
           </FlexyWrapper>
         </HalfWidthItem>
