@@ -8,7 +8,7 @@ module.exports = (env) => {
   const appWebpackConfig = {};
   const webpackEnvironment = env || {};
 
-  if (env.production) {
+  if (webpackEnvironment.production) {
     Object.assign(appWebpackConfig, prodWebpackConfig(webpackEnvironment));
   }
   else {

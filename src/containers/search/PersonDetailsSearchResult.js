@@ -4,7 +4,6 @@
 
 import React from 'react';
 
-import PropTypes from 'prop-types';
 import moment from 'moment';
 import styled from 'styled-components';
 import { Colors } from 'lattice-ui-kit';
@@ -158,10 +157,6 @@ const PersonDetailsSearchResult = (props :Props) => {
 
 PersonDetailsSearchResult.defaultProps = {
   personDetails: Map()
-};
-
-PersonDetailsSearchResult.propTypes = {
-  personDetails: PropTypes.instanceOf(Map)
 };
 
 export default PersonDetailsSearchResult;
