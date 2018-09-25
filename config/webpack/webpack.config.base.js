@@ -99,8 +99,7 @@ module.exports = (env) => {
       net: 'empty',
     },
     optimization: {
-      // minimize: !!env.production,
-      minimize: false,
+      minimize: !!env.production,
     },
     output: {
       path: APP_PATHS.ABS.BUILD,
