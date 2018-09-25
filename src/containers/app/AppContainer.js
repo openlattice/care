@@ -8,21 +8,23 @@ import styled from 'styled-components';
 import { Map } from 'immutable';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import {
-  Redirect,
-  Route,
-  Switch,
-} from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router-dom';
 
 import AppHeaderContainer from './AppHeaderContainer';
 import FollowUpReportManager from '../followup/FollowUpReportManager';
 import FormContainer from '../form/FormContainer';
 import HomeContainer from '../home/HomeContainer';
 import Spinner from '../../components/spinner/Spinner';
-import * as Routes from '../../core/router/Routes';
+import ReportListContainer from '../reports/ReportListContainer';
 import { loadApp, loadHospitals, switchOrganization } from './AppActions';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { isValidUuid } from '../../utils/Utils';
+import {
+  BHR_PATH,
+  FOLLOW_UP_PATH,
+  HOME_PATH,
+  REPORTS_PATH,
+} from '../../core/router/Routes';
 import {
   APP_CONTAINER_MAX_WIDTH,
   APP_CONTAINER_WIDTH,
@@ -142,20 +144,22 @@ class AppContainer extends Component<Props> {
     const orgs :Map<*, *> = app.get('organizations', Map());
     const selectedOrganizationId :string = app.get('selectedOrganizationId', '');
     if (orgs.isEmpty() || !selectedOrganizationId) {
+      // TODO: this might be problematic
       return (
         <Switch>
-          <Route exact strict path={Routes.HOME} render={this.renderMissingOrgs} />
-          <Redirect to={Routes.HOME} />
+          <Route exact strict path={HOME_PATH} render={this.renderMissingOrgs} />
+          <Redirect to={HOME_PATH} />
         </Switch>
       );
     }
 
     return (
       <Switch>
-        <Route exact strict path={Routes.HOME} component={HomeContainer} />
-        <Route path={Routes.BHR} component={FormContainer} />
-        <Route path={Routes.FOLLOW_UP_PATH} component={FollowUpReportManager} />
-        <Redirect to={Routes.HOME} />
+        <Route exact strict path={HOME_PATH} component={HomeContainer} />
+        <Route path={BHR_PATH} component={FormContainer} />
+        <Route path={FOLLOW_UP_PATH} component={FollowUpReportManager} />
+        <Route path={REPORTS_PATH} component={ReportListContainer} />
+        <Redirect to={HOME_PATH} />
       </Switch>
     );
   }

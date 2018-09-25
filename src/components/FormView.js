@@ -205,7 +205,7 @@ function FormView({
         <ContainerInnerWrapper>
           <StyledCard>
             <Failure>
-              <NavLink to={`${Routes.BHR}/1`}>
+              <NavLink to={`${Routes.BHR_PATH}/1`}>
                 Failed to submit. Please try again. If there continues to be an issue, contact help@openlattice.com.
               </NavLink>
             </Failure>
@@ -220,14 +220,14 @@ function FormView({
       <ContainerInnerWrapper>
         <StyledCard>
           <Switch>
-            <Route path={`${Routes.BHR}/1`} render={getConsumerSearchView} />
-            <Route path={`${Routes.BHR}/2`} render={getConsumerInfoView} />
-            <Route path={`${Routes.BHR}/3`} render={getReportInfoView} />
-            <Route path={`${Routes.BHR}/4`} render={getComplainantInfoView} />
-            <Route path={`${Routes.BHR}/5`} render={getDispositionView} />
-            <Route path={`${Routes.BHR}/6`} render={getOfficerInfoView} />
-            <Route path={`${Routes.BHR}/7`} render={getReviewView} />
-            <Redirect to={`${Routes.BHR}/1`} />
+            <Route path={`${Routes.BHR_PATH}/1`} render={getConsumerSearchView} />
+            <Route path={`${Routes.BHR_PATH}/2`} render={getConsumerInfoView} />
+            <Route path={`${Routes.BHR_PATH}/3`} render={getReportInfoView} />
+            <Route path={`${Routes.BHR_PATH}/4`} render={getComplainantInfoView} />
+            <Route path={`${Routes.BHR_PATH}/5`} render={getDispositionView} />
+            <Route path={`${Routes.BHR_PATH}/6`} render={getOfficerInfoView} />
+            <Route path={`${Routes.BHR_PATH}/7`} render={getReviewView} />
+            <Redirect to={`${Routes.BHR_PATH}/1`} />
           </Switch>
         </StyledCard>
       </ContainerInnerWrapper>

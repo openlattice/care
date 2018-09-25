@@ -15,6 +15,7 @@ import { all, fork } from 'redux-saga/effects';
 import * as AppSagas from '../../containers/app/AppSagas';
 import * as FollowUpReportSagas from '../../containers/followup/FollowUpReportSagas';
 import * as ReportSagas from '../../containers/form/ReportSagas';
+import * as ReportsSagas from '../../containers/reports/ReportsSagas';
 import * as SearchSagas from '../../containers/search/SearchSagas';
 
 export default function* sagas() :Generator<*, *, *> {
@@ -49,6 +50,10 @@ export default function* sagas() :Generator<*, *, *> {
 
     // SearchSagas
     fork(SearchSagas.searchConsumerNeighborsWatcher),
-    fork(SearchSagas.searchConsumersWatcher)
+    fork(SearchSagas.searchConsumersWatcher),
+
+    // ReportsSagas
+    fork(ReportsSagas.getReportInFullWatcher),
+    fork(ReportsSagas.getReportsWatcher),
   ]);
 }

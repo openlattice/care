@@ -16,11 +16,11 @@ import TextAreaField from '../../components/text/TextAreaField';
 import TextField from '../../components/text/TextField';
 import Spinner from '../../components/spinner/Spinner';
 import StyledCard from '../../components/cards/StyledCard';
-import * as Routes from '../../core/router/Routes';
+import { ROOT } from '../../core/router/Routes';
 import {
-  ContainerInnerWrapper,
-  ContainerOuterWrapper,
-} from '../../shared/Layout';
+  ContentContainerInnerWrapper,
+  ContentContainerOuterWrapper,
+} from '../../components/layout';
 
 import PersonDetailsSearchResult from '../search/PersonDetailsSearchResult';
 import { SUBMISSION_STATES } from './FollowUpReportReducer';
@@ -216,7 +216,7 @@ class FollowUpReportContainer extends React.Component<Props, State> {
       return (
         <Success>
           <p>Success!</p>
-          <NavLink to={Routes.ROOT}>Home</NavLink>
+          <NavLink to={ROOT}>Home</NavLink>
         </Success>
       );
     }
@@ -230,13 +230,13 @@ class FollowUpReportContainer extends React.Component<Props, State> {
     }
 
     return (
-      <ContainerOuterWrapper>
-        <ContainerInnerWrapper>
+      <ContentContainerOuterWrapper>
+        <ContentContainerInnerWrapper>
           <StyledCard>
             { this.renderForm() }
           </StyledCard>
-        </ContainerInnerWrapper>
-      </ContainerOuterWrapper>
+        </ContentContainerInnerWrapper>
+      </ContentContainerOuterWrapper>
     );
   }
 }

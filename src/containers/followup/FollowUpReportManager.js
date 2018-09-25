@@ -20,7 +20,6 @@ import ConsumerSearchContainer from './ConsumerSearchContainer';
 import ConsumerNeighborsSearchContainer from './ConsumerNeighborsSearchContainer';
 import FollowUpReportContainer from './FollowUpReportContainer';
 
-import { ContainerInnerWrapper, ContainerOuterWrapper } from '../../shared/Layout';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { submitFollowUpReport } from './FollowUpReportActionFactory';
 import { SUBMISSION_STATES } from './FollowUpReportReducer';
@@ -29,6 +28,10 @@ import {
   PAGE_2,
   PAGE_3,
 } from './FollowUpReportConstants';
+import {
+  ContentContainerInnerWrapper,
+  ContentContainerOuterWrapper,
+} from '../../components/layout';
 
 const {
   APPEARS_IN_FQN,
@@ -146,15 +149,15 @@ class FollowUpReportManager extends React.Component<Props, State> {
     const { entitySetIds } = this.props;
     // using the wrappers here is not the right thing to do
     return (
-      <ContainerOuterWrapper>
-        <ContainerInnerWrapper>
+      <ContentContainerOuterWrapper>
+        <ContentContainerInnerWrapper>
           <StyledCard>
             <ConsumerSearchContainer
                 peopleEntitySetId={entitySetIds[PEOPLE_FQN.toString()]}
                 onSelectSearchResult={this.handleOnSelectConsumerSearchResult} />
           </StyledCard>
-        </ContainerInnerWrapper>
-      </ContainerOuterWrapper>
+        </ContentContainerInnerWrapper>
+      </ContentContainerOuterWrapper>
     );
   }
 

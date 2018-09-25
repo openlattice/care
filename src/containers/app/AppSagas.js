@@ -169,7 +169,7 @@ function* switchOrganizationWorker() :Generator<*, *, *> {
 
   // not ideal since it resets clears form inputs, but none of that is being stored in redux at the moment anyway...
   // TODO: check action.orgId !== selectedOrganizationId
-  yield put(push(Routes.HOME));
+  yield put(push(Routes.HOME_PATH));
 }
 
 /*
