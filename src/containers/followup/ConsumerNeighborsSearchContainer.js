@@ -15,10 +15,13 @@ import { bindActionCreators } from 'redux';
 import Spinner from '../../components/spinner/Spinner';
 import StyledCard from '../../components/cards/StyledCard';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
-import { ContainerInnerWrapper, ContainerOuterWrapper } from '../../shared/Layout';
 import { randomId } from '../../utils/Utils';
 
 import { SearchResult, SearchResultsWrapper } from '../search/SearchResultsStyledComponents';
+import {
+  ContentContainerInnerWrapper,
+  ContentContainerOuterWrapper,
+} from '../../components/layout';
 
 import {
   clearConsumerNeighborsSearchResults,
@@ -169,14 +172,14 @@ class ConsumerNeighborsSearchContainer extends React.Component<Props, State> {
     }
 
     return (
-      <ContainerOuterWrapper>
-        <ContainerInnerWrapper>
+      <ContentContainerOuterWrapper>
+        <ContentContainerInnerWrapper>
           <StyledCard>
             <Title>Choose BHR to follow up on</Title>
             { this.renderSearchResults() }
           </StyledCard>
-        </ContainerInnerWrapper>
-      </ContainerOuterWrapper>
+        </ContentContainerInnerWrapper>
+      </ContentContainerOuterWrapper>
     );
   }
 }

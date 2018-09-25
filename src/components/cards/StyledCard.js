@@ -17,7 +17,7 @@ const StyledCard = styled.div`
   box-shadow: 0 2px 8px -2px rgba(17, 51, 85, 0.15);
   display: flex;
   flex-direction: column;
-  margin: 0 20px;
+  margin: 0;
   padding: 30px;
   position: relative;
 `;

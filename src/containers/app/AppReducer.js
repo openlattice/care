@@ -47,7 +47,7 @@ const INITIAL_STATE :Map<*, *> = fromJS({
   errors: {
     loadApp: Map(),
   },
-  isLoadingApp: false,
+  isLoadingApp: true,
   organizations: Map(),
   selectedOrganizationId: '',
 });

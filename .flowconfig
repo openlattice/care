@@ -16,4 +16,4 @@
 .*/node_modules/.*
 
 [libs]
-./node_modules/redux-reqseq/config/flow
+./node_modules/redux-reqseq/config/flow/types.js
