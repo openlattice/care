@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Button } from 'lattice-ui-kit';
 
@@ -20,11 +19,6 @@ const DividerStatement = styled.div`
  */
 
 class ConsumerSearch extends React.Component {
-
-  static propTypes = {
-    personEntitySetId: PropTypes.string.isRequired,
-    handlePersonSelection: PropTypes.func.isRequired
-  }
 
   handleOnSelectConsumerSearchResult = (searchResult) => {
 
