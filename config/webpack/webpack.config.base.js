@@ -88,8 +88,7 @@ module.exports = (env) => {
       '@babel/polyfill',
       APP_PATHS.ABS.APP,
     ],
-    // mode: env.production ? ENV_PROD : ENV_DEV,
-    mode: ENV_DEV,
+    mode: env.production ? ENV_PROD : ENV_DEV,
     module: {
       rules: [
         BABEL_LOADER,
