@@ -103,6 +103,7 @@
   },
   "scripts": {
     "app": "webpack-dev-server --config config/webpack/webpack.config.app.js --env.development",
+    "build:dev": "webpack --config config/webpack/webpack.config.app.js --env.development",
     "build:prod": "webpack --config config/webpack/webpack.config.app.js --env.production",
     "clean": "rimraf build/*",
     "flow": "flow",
