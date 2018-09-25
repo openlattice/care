@@ -12,8 +12,6 @@ import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 
-import type { RouterHistory } from 'react-router';
-
 import HackyBehavioralHealthReportViewContainer from './HackyBehavioralHealthReportViewContainer';
 import Spinner from '../../components/spinner/Spinner';
 import StyledCard from '../../components/cards/StyledCard';
@@ -25,6 +23,15 @@ import {
   ContentContainerOuterWrapper,
 } from '../../components/layout';
 
+import {
+  COMPLAINT_NUMBER_FQN,
+  DATE_OCCURRED_FQN,
+  DATE_REPORTED_FQN,
+  DISPATCH_REASON_FQN,
+  INCIDENT_FQN,
+  LOCATION_OF_INCIDENT_FQN,
+} from '../../edm/DataModelFqns';
+
 const { OPENLATTICE_ID_FQN } = Constants;
 const {
   BEHAVIORAL_HEALTH_REPORT_FQN,
@@ -34,6 +41,7 @@ const ReportDetailCard = styled(StyledCard)`
   display: grid;
   grid-gap: 30px;
   grid-template-columns: 1fr 1fr 1fr;
+  margin-bottom: 30px;
 
   &:hover {
     cursor: pointer;
@@ -61,7 +69,6 @@ type Props = {
     getReports :RequestSequence;
   };
   entitySetIds :{[key :string] :string};
-  history :RouterHistory;
   isFetchingReports :boolean;
   reports :List<*>;
 };
@@ -102,8 +109,8 @@ class ReportListContainer extends Component<Props> {
 
     const reportListElements = reports.map((report :Map<*, *>) => {
 
-      const dateOccurredFormatted = moment(report.getIn(['bhr.dateOccurred', 0], '')).format('YYYY-MM-DD');
-      const dateReportedFormatted = moment(report.getIn(['bhr.dateReported', 0], '')).format('YYYY-MM-DD');
+      const dateOccurredFormatted = moment(report.getIn([DATE_OCCURRED_FQN.toString(), 0], '')).format('YYYY-MM-DD');
+      const dateReportedFormatted = moment(report.getIn([DATE_REPORTED_FQN.toString(), 0], '')).format('YYYY-MM-DD');
 
       return (
         <ReportDetailCard
@@ -119,15 +126,19 @@ class ReportListContainer extends Component<Props> {
           </DetailItem>
           <DetailItem>
             <h2>Complaint Number</h2>
-            <p>{ report.getIn(['bhr.complaintNumber', 0], '') }</p>
+            <p>{ report.getIn([COMPLAINT_NUMBER_FQN.toString(), 0], '') }</p>
+          </DetailItem>
+          <DetailItem>
+            <h2>Reason for Dispatch</h2>
+            <p>{ report.getIn([DISPATCH_REASON_FQN.toString(), 0], '') }</p>
           </DetailItem>
           <DetailItem>
             <h2>Incident Description</h2>
-            <p>{ report.getIn(['bhr.incident', 0], '') }</p>
+            <p>{ report.getIn([INCIDENT_FQN.toString(), 0], '') }</p>
           </DetailItem>
           <DetailItem>
             <h2>Incident Location</h2>
-            <p>{ report.getIn(['bhr.locationOfIncident', 0], '') }</p>
+            <p>{ report.getIn([LOCATION_OF_INCIDENT_FQN.toString(), 0], '') }</p>
           </DetailItem>
         </ReportDetailCard>
       );
