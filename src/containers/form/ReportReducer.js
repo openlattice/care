@@ -46,11 +46,13 @@ export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :
 
       const { payload } = action;
       const submissionState = state.get('submissionState');
-      const { PRE_SUBMIT, SUBMIT_SUCCESS } = SUBMISSION_STATES;
+      const { PRE_SUBMIT, SUBMIT_FAILURE, SUBMIT_SUCCESS } = SUBMISSION_STATES;
 
-      // we need to reset submissionState after successful submission and routing to /home
-      if (payload.pathname === Routes.HOME_PATH && submissionState === SUBMIT_SUCCESS) {
-        return state.set('submissionState', PRE_SUBMIT);
+      // we need to reset submissionState after successful submission and routing to /home, or a failed submission
+      if (payload.pathname === Routes.HOME_PATH) {
+        if (submissionState === SUBMIT_SUCCESS || submissionState === SUBMIT_FAILURE) {
+          return state.set('submissionState', PRE_SUBMIT);
+        }
       }
 
       return state;

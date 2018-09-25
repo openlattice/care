@@ -16,8 +16,8 @@ import DispositionView from './DispositionView';
 import OfficerInfoView from './OfficerInfoView';
 import ReviewView from './ReviewView';
 import StyledCard from './cards/StyledCard';
-import * as Routes from '../core/router/Routes';
 import { SUBMISSION_STATES } from '../containers/form/ReportReducer';
+import { BHR_PATH, HOME_PATH, ROOT } from '../core/router/Routes';
 
 const ContainerOuterWrapper = styled.div`
   align-items: flex-start;
@@ -191,7 +191,7 @@ function FormView({
           <StyledCard>
             <Success>
               <p>Success!</p>
-              <NavLink to={Routes.ROOT}>Home</NavLink>
+              <NavLink to={ROOT}>Home</NavLink>
             </Success>
           </StyledCard>
         </ContainerInnerWrapper>
@@ -205,7 +205,7 @@ function FormView({
         <ContainerInnerWrapper>
           <StyledCard>
             <Failure>
-              <NavLink to={`${Routes.BHR_PATH}/1`}>
+              <NavLink to={HOME_PATH}>
                 Failed to submit. Please try again. If there continues to be an issue, contact help@openlattice.com.
               </NavLink>
             </Failure>
@@ -220,14 +220,14 @@ function FormView({
       <ContainerInnerWrapper>
         <StyledCard>
           <Switch>
-            <Route path={`${Routes.BHR_PATH}/1`} render={getConsumerSearchView} />
-            <Route path={`${Routes.BHR_PATH}/2`} render={getConsumerInfoView} />
-            <Route path={`${Routes.BHR_PATH}/3`} render={getReportInfoView} />
-            <Route path={`${Routes.BHR_PATH}/4`} render={getComplainantInfoView} />
-            <Route path={`${Routes.BHR_PATH}/5`} render={getDispositionView} />
-            <Route path={`${Routes.BHR_PATH}/6`} render={getOfficerInfoView} />
-            <Route path={`${Routes.BHR_PATH}/7`} render={getReviewView} />
-            <Redirect to={`${Routes.BHR_PATH}/1`} />
+            <Route path={`${BHR_PATH}/1`} render={getConsumerSearchView} />
+            <Route path={`${BHR_PATH}/2`} render={getConsumerInfoView} />
+            <Route path={`${BHR_PATH}/3`} render={getReportInfoView} />
+            <Route path={`${BHR_PATH}/4`} render={getComplainantInfoView} />
+            <Route path={`${BHR_PATH}/5`} render={getDispositionView} />
+            <Route path={`${BHR_PATH}/6`} render={getOfficerInfoView} />
+            <Route path={`${BHR_PATH}/7`} render={getReviewView} />
+            <Redirect to={`${BHR_PATH}/1`} />
           </Switch>
         </StyledCard>
       </ContainerInnerWrapper>
