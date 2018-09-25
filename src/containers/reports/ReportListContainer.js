@@ -90,9 +90,13 @@ class ReportListContainer extends Component<Props> {
     const { reports } = this.props;
     if (reports.isEmpty()) {
       return (
-        <StyledCard>
-          <span>No reports were found.</span>
-        </StyledCard>
+        <ContentContainerOuterWrapper>
+          <ContentContainerInnerWrapper>
+            <StyledCard>
+              <span>No reports were found.</span>
+            </StyledCard>
+          </ContentContainerInnerWrapper>
+        </ContentContainerOuterWrapper>
       );
     }
 

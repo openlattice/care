@@ -25,7 +25,7 @@ import {
 } from '../../core/style/Sizes';
 
 const { logout } = AuthActionFactory;
-const { NEUTRALS, PURPLES } = Colors;
+const { NEUTRALS, PURPLES, WHITE } = Colors;
 
 // TODO: this should come from lattice-ui-kit, maybe after the next release. current version v0.1.1
 const APP_HEADER_BORDER :string = '#e6e6eb';
@@ -107,11 +107,12 @@ const orgSelectStyles = {
   }),
   control: (styles, { isFocused, isSelected }) => ({
     ...styles,
-    backgroundColor: NEUTRALS[8],
+    backgroundColor: (isFocused || isSelected) ? WHITE : NEUTRALS[8],
     borderColor: (isFocused || isSelected) ? PURPLES[1] : styles.borderColor,
     boxShadow: 'none',
     color: NEUTRALS[1],
     fontSize: '12px',
+    lineHeight: 'normal',
     height: '30px',
     minHeight: '30px',
     ':hover': {
@@ -121,9 +122,12 @@ const orgSelectStyles = {
   menu: styles => ({ ...styles, width: '300px' }),
   option: styles => ({
     ...styles,
-    backgroundColor: PURPLES[6],
+    backgroundColor: WHITE,
     color: NEUTRALS[0],
-    fontSize: '12px'
+    fontSize: '12px',
+    ':hover': {
+      backgroundColor: PURPLES[6],
+    },
   }),
 };
 
