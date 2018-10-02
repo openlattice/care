@@ -4,21 +4,22 @@
 
 import React, { Component } from 'react';
 
-import moment from 'moment';
 import styled from 'styled-components';
 import { Constants } from 'lattice';
 import { List, Map } from 'immutable';
 import { connect } from 'react-redux';
-import { Route, Switch } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 
-import HackyBehavioralHealthReportEditContainer from './HackyBehavioralHealthReportEditContainer';
-import HackyBehavioralHealthReportViewContainer from './HackyBehavioralHealthReportViewContainer';
 import Spinner from '../../components/spinner/Spinner';
 import StyledCard from '../../components/cards/StyledCard';
-import { getReportInFull, getReports } from './ReportsActions';
+import { getReports } from './ReportsActions';
+import { goToRoute } from '../../core/router/RoutingActions';
+import { formatAsDate } from '../../utils/DateUtils';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
-import { REPORT_EDIT_PATH, REPORT_VIEW_PATH } from '../../core/router/Routes';
+import {
+  REPORT_ID_PARAM,
+  REPORT_VIEW_PATH,
+} from '../../core/router/Routes';
 import {
   ContentContainerInnerWrapper,
   ContentContainerOuterWrapper,
@@ -66,31 +67,26 @@ const DetailItem = styled.div`
 
 type Props = {
   actions :{
-    getReportInFull :RequestSequence;
     getReports :RequestSequence;
+    goToRoute :(route :string) => void;
   };
-  entitySetIds :{[key :string] :string};
+  entitySetId :string;
   isFetchingReports :boolean;
   reports :List<*>;
 };
 
-class ReportListContainer extends Component<Props> {
+class HackyReportsContainer extends Component<Props> {
 
   componentDidMount() {
 
-    const { actions, entitySetIds } = this.props;
-    actions.getReports({
-      entitySetId: entitySetIds[BEHAVIORAL_HEALTH_REPORT_FQN.toString()],
-    });
+    const { actions, entitySetId } = this.props;
+    actions.getReports({ entitySetId });
   }
 
-  handleOnSelectReport = (report :Map<*, *>) => {
+  handleOnClickReport = (reportEntityKeyId :string) => {
 
-    const { actions, entitySetIds } = this.props;
-    actions.getReportInFull({
-      report,
-      entitySetId: entitySetIds[BEHAVIORAL_HEALTH_REPORT_FQN.toString()],
-    });
+    const { actions } = this.props;
+    actions.goToRoute(REPORT_VIEW_PATH.replace(REPORT_ID_PARAM, reportEntityKeyId));
   }
 
   renderReports = () => {
@@ -110,14 +106,15 @@ class ReportListContainer extends Component<Props> {
 
     const reportListElements = reports.map((report :Map<*, *>) => {
 
-      const dateOccurredFormatted = moment(report.getIn([DATE_TIME_OCCURRED_FQN, 0], '')).format('YYYY-MM-DD');
-      const dateReportedFormatted = moment(report.getIn([DATE_TIME_REPORTED_FQN, 0], '')).format('YYYY-MM-DD');
+      const reportEntityKeyId :string = report.getIn([OPENLATTICE_ID_FQN, 0]);
+      const dateOccurredFormatted = formatAsDate(report.getIn([DATE_TIME_OCCURRED_FQN, 0], ''));
+      const dateReportedFormatted = formatAsDate(report.getIn([DATE_TIME_REPORTED_FQN, 0], ''));
 
       return (
         <ReportDetailCard
-            id={report.getIn([OPENLATTICE_ID_FQN, 0])}
-            key={report.getIn([OPENLATTICE_ID_FQN, 0])}
-            onClick={() => this.handleOnSelectReport(report)}>
+            id={reportEntityKeyId}
+            key={reportEntityKeyId}
+            onClick={() => this.handleOnClickReport(reportEntityKeyId)}>
           <DetailItem>
             <h2>Date Occurred</h2>
             <p>{ dateOccurredFormatted }</p>
@@ -163,20 +160,13 @@ class ReportListContainer extends Component<Props> {
       return <Spinner />;
     }
 
-    return (
-      <Switch>
-        <Route path={REPORT_VIEW_PATH} component={HackyBehavioralHealthReportViewContainer} />
-        <Route path={REPORT_EDIT_PATH} component={HackyBehavioralHealthReportEditContainer} />
-        <Route render={this.renderReports} />
-      </Switch>
-    );
+    return this.renderReports();
   }
 }
 
 function mapStateToProps(state :Map<*, *>) :Object {
 
   const selectedOrganizationId :string = state.getIn(['app', 'selectedOrganizationId']);
-
   const bhrEntitySetId :string = state.getIn([
     'app',
     BEHAVIORAL_HEALTH_REPORT_FQN.toString(),
@@ -185,9 +175,7 @@ function mapStateToProps(state :Map<*, *>) :Object {
   ]);
 
   return {
-    entitySetIds: {
-      [BEHAVIORAL_HEALTH_REPORT_FQN.toString()]: bhrEntitySetId
-    },
+    entitySetId: bhrEntitySetId,
     isFetchingReports: state.getIn(['reports', 'isFetchingReports']),
     reports: state.getIn(['reports', 'reports'], List()),
   };
@@ -196,8 +184,8 @@ function mapStateToProps(state :Map<*, *>) :Object {
 function mapDispatchToProps(dispatch :Function) :Object {
 
   return {
-    actions: bindActionCreators({ getReportInFull, getReports }, dispatch)
+    actions: bindActionCreators({ getReports, goToRoute }, dispatch)
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ReportListContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(HackyReportsContainer);

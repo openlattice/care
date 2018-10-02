@@ -15,7 +15,6 @@ import { bindActionCreators } from 'redux';
 import Spinner from '../../components/spinner/Spinner';
 import StyledCard from '../../components/cards/StyledCard';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
-import { randomId } from '../../utils/Utils';
 
 import { SearchResult, SearchResultsWrapper } from '../search/SearchResultsStyledComponents';
 import {
@@ -82,7 +81,6 @@ type Props = {
   };
   bhrEntitySetId :string;
   consumer :Map<*, *>;
-  history :RouterHistory;
   isSearching :boolean;
   peopleEntitySetId :string;
   searchResults :List<*>;
@@ -95,20 +93,23 @@ class ConsumerNeighborsSearchContainer extends React.Component<Props, State> {
 
   componentWillMount() {
 
-    this.props.actions.searchConsumerNeighbors({
-      entitySetId: this.props.peopleEntitySetId,
-      entityId: this.props.consumer.getIn(['id', 0])
+    const { actions, consumer, peopleEntitySetId } = this.props;
+    actions.searchConsumerNeighbors({
+      entitySetId: peopleEntitySetId,
+      entityId: consumer.getIn(['id', 0])
     });
   }
 
   componentWillUnmount() {
 
-    this.props.actions.clearConsumerNeighborsSearchResults();
+    const { actions } = this.props;
+    actions.clearConsumerNeighborsSearchResults();
   }
 
   renderSearchResults = () => {
 
-    if (!this.props.searchResults || this.props.searchResults.isEmpty()) {
+    const { bhrEntitySetId, onSelectSearchResult, searchResults } = this.props;
+    if (!searchResults || searchResults.isEmpty()) {
       return (
         <SearchResultsWrapper>
           <div>No Behavioral Health Reports were found for the selected consumer. Please try again.</div>
@@ -122,19 +123,19 @@ class ConsumerNeighborsSearchContainer extends React.Component<Props, State> {
      *
      */
 
-    const searchResults = [];
-    const showDivider :boolean = this.props.searchResults.size > 1;
-    this.props.searchResults
-      .filter((searchResults :Map<*, *>) => {
+    const elements = [];
+    const showDivider :boolean = searchResults.size > 1;
+    searchResults
+      .filter((searchResult :Map<*, *>) => {
         // include only BHR results
-        return searchResults.getIn(['neighborEntitySet', 'id']) === this.props.bhrEntitySetId;
+        return searchResult.getIn(['neighborEntitySet', 'id']) === bhrEntitySetId;
       })
       .forEach((searchResult :Map<*, *>) => {
-        searchResults.push(
+        elements.push(
           <SearchResult
-              key={randomId()}
+              key={searchResult.get('neighborId')}
               showDivider={showDivider}
-              onClick={() => this.props.onSelectSearchResult(searchResult)}>
+              onClick={() => onSelectSearchResult(searchResult)}>
             <BHRDetailsRow>
               <BHRDetailItem scStyles={{ width: '150px' }}>
                 <strong>Date Occurred</strong>
@@ -160,14 +161,15 @@ class ConsumerNeighborsSearchContainer extends React.Component<Props, State> {
 
     return (
       <SearchResultsWrapper>
-        { searchResults }
+        { elements }
       </SearchResultsWrapper>
     );
   }
 
   render() {
 
-    if (this.props.isSearching) {
+    const { isSearching } = this.props;
+    if (isSearching) {
       return <Spinner />;
     }
 

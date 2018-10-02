@@ -63,8 +63,8 @@ export default function* sagas() :Generator<*, *, *> {
 
     // ReportsSagas
     fork(ReportsSagas.deleteReportWatcher),
-    fork(ReportsSagas.getReportInFullWatcher),
+    fork(ReportsSagas.getReportNeighborsWatcher),
     fork(ReportsSagas.getReportsWatcher),
-    fork(ReportsSagas.submitReportEditsWatcher),
+    fork(ReportsSagas.updateReportWatcher),
   ]);
 }

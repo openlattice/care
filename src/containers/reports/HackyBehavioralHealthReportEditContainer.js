@@ -7,10 +7,10 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import { List, Map, Set } from 'immutable';
 import { Models } from 'lattice';
-import { Button } from 'lattice-ui-kit';
+import { Button, Modal } from 'lattice-ui-kit';
 import { connect } from 'react-redux';
-import { Redirect } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
+import type { Match } from 'react-router';
 
 import ComplainantInfoView from '../../components/ComplainantInfoView';
 import ConsumerInfoView from '../../components/ConsumerInfoView';
@@ -18,11 +18,13 @@ import DispositionView from '../../components/DispositionView';
 import OfficerInfoView from '../../components/OfficerInfoView';
 import ReportInfoView from '../../components/ReportInfoView';
 
+import Spinner from '../../components/spinner/Spinner';
 import StyledCard from '../../components/cards/StyledCard';
-import { submitReportEdits } from './ReportsActions';
+import { updateReport } from './ReportsActions';
 import { goToRoute } from '../../core/router/RoutingActions';
-import { REPORTS_PATH, REPORT_VIEW_PATH } from '../../core/router/Routes';
+import { REPORT_VIEW_PATH, REPORT_ID_PARAM } from '../../core/router/Routes';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
+import { isValidUuid } from '../../utils/Utils';
 import {
   gatherComplainantData,
   gatherConsumerData,
@@ -57,17 +59,18 @@ const Section = styled.div`
 type Props = {
   actions :{
     goToRoute :(route :string) => void;
-    submitReportEdits :RequestSequence;
+    updateReport :RequestSequence;
   };
-  edm :Map<*, *>;
+  entityKeyId :string;
   entitySetId :string;
+  isUpdatingReport :boolean;
   selectedOrganizationId :string;
   selectedReportData :Map<*, *>;
-  selectedReportEntityKeyId :string;
 };
 
 type State = {
   reportEdits :Map<FullyQualifiedName, Set<any>>;
+  isUpdateModalVisible :boolean;
 };
 
 class HackyBehavioralHealthReportEditContainer extends Component<Props, State> {
@@ -76,37 +79,45 @@ class HackyBehavioralHealthReportEditContainer extends Component<Props, State> {
 
     super(props);
     this.state = {
+      isUpdateModalVisible: false,
       reportEdits: Map(),
     };
   }
 
-  handleOnClickDiscard = () => {
+  componentDidUpdate(prevProps) {
 
-    const { actions } = this.props;
-    actions.goToRoute(REPORT_VIEW_PATH);
+    const { isUpdatingReport } = this.props;
+    if (prevProps.isUpdatingReport === true && isUpdatingReport === false) {
+      // TODO: we still need to somehow indicate to the user if the update succeeded
+      // it's safe to hide the modal since we went from updating to not updating
+      this.setState({
+        isUpdateModalVisible: false,
+        reportEdits: Map(),
+      });
+    }
   }
 
-  handleOnClickUpdate = () => {
+  hideUpdateModal = () => {
 
-    const {
-      actions,
-      edm,
-      entitySetId,
-      selectedReportEntityKeyId
-    } = this.props;
+    this.setState({ isUpdateModalVisible: false });
+  }
+
+  showUpdateModal = () => {
+
+    this.setState({ isUpdateModalVisible: true });
+  }
+
+  handleOnClickDiscard = () => {
+
+    const { actions, entityKeyId } = this.props;
+    actions.goToRoute(REPORT_VIEW_PATH.replace(REPORT_ID_PARAM, entityKeyId));
+  }
+
+  updateReport = () => {
+
+    const { actions, entityKeyId, entitySetId } = this.props;
     const { reportEdits } = this.state;
-
-    const entityData :Map<string, Set<any>> = Map().withMutations((map :Map<string, Set<any>>) => {
-      reportEdits.forEach((value :Set<any>, fqn :FullyQualifiedName) => {
-        const id :string = edm.getIn(['fqnToIdMap', fqn]);
-        map.setIn([selectedReportEntityKeyId, id], value);
-      });
-    });
-
-    actions.submitReportEdits({
-      entityData,
-      entitySetId,
-    });
+    actions.updateReport({ entityKeyId, entitySetId, reportEdits });
   }
 
   updateStateValue = (section :string, key :FullyQualifiedName, value :any) => {
@@ -144,7 +155,7 @@ class HackyBehavioralHealthReportEditContainer extends Component<Props, State> {
       <ActionCard>
         <ActionButtonsWrapper>
           <Button mode="secondary" onClick={this.handleOnClickDiscard}>Discard Changes</Button>
-          <Button onClick={this.handleOnClickUpdate}>Update</Button>
+          <Button mode="primary" onClick={this.showUpdateModal}>Update</Button>
         </ActionButtonsWrapper>
       </ActionCard>
     );
@@ -201,11 +212,27 @@ class HackyBehavioralHealthReportEditContainer extends Component<Props, State> {
     );
   }
 
+  renderUpdateModal = () => {
+
+    const { isUpdateModalVisible } = this.state;
+    return (
+      <Modal
+          isVisible={isUpdateModalVisible}
+          onClose={this.hideUpdateModal}
+          onClickPrimary={this.updateReport}
+          textPrimary="Update"
+          textSecondary="Cancel"
+          textTitle="Update Report">
+        <p>Are you sure want to save these changes?</p>
+      </Modal>
+    );
+  }
+
   render() {
 
-    const { selectedReportData, selectedReportEntityKeyId } = this.props;
-    if (!selectedReportEntityKeyId || !selectedReportData || selectedReportData.isEmpty()) {
-      return <Redirect to={REPORTS_PATH} />;
+    const { isUpdatingReport } = this.props;
+    if (isUpdatingReport) {
+      return <Spinner />;
     }
 
     // TODO: this all has to be rewritten
@@ -217,13 +244,18 @@ class HackyBehavioralHealthReportEditContainer extends Component<Props, State> {
         <ContentContainerInnerWrapper>
           { this.renderActionCard() }
           { this.renderReportCard() }
+          { this.renderUpdateModal() }
         </ContentContainerInnerWrapper>
       </ContentContainerOuterWrapper>
     );
   }
 }
 
-function mapStateToProps(state :Map<*, *>) :Object {
+function mapStateToProps(state :Map<*, *>, ownProps :Object) :Object {
+
+  const match :Match = ownProps.match;
+  const reportId :?string = match.params[REPORT_ID_PARAM.substr(1)];
+  const entityKeyId :string = (reportId && isValidUuid(reportId)) ? reportId : '';
 
   const selectedOrganizationId :string = state.getIn(['app', 'selectedOrganizationId']);
   const entitySetId :string = state.getIn([
@@ -234,18 +266,18 @@ function mapStateToProps(state :Map<*, *>) :Object {
   ]);
 
   return {
+    entityKeyId,
     entitySetId,
     selectedOrganizationId,
-    edm: state.get('edm'),
+    isUpdatingReport: state.getIn(['reports', 'isUpdatingReport']),
     selectedReportData: state.getIn(['reports', 'selectedReportData'], Map()),
-    selectedReportEntityKeyId: state.getIn(['reports', 'selectedReportEntityKeyId'], ''),
   };
 }
 
 function mapDispatchToProps(dispatch :Function) :Object {
 
   return {
-    actions: bindActionCreators({ goToRoute, submitReportEdits }, dispatch)
+    actions: bindActionCreators({ goToRoute, updateReport }, dispatch)
   };
 }
 

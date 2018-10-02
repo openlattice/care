@@ -16,7 +16,7 @@ import FollowUpReportManager from '../followup/FollowUpReportManager';
 import FormContainer from '../form/FormContainer';
 import HomeContainer from '../home/HomeContainer';
 import Spinner from '../../components/spinner/Spinner';
-import ReportListContainer from '../reports/ReportListContainer';
+import HackyReportsManager from '../reports/HackyReportsManager';
 import { loadApp, loadHospitals, switchOrganization } from './AppActions';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { isValidUuid } from '../../utils/Utils';
@@ -163,7 +163,7 @@ class AppContainer extends Component<Props> {
         <Route exact strict path={HOME_PATH} component={HomeContainer} />
         <Route path={BHR_PATH} component={FormContainer} />
         <Route path={FOLLOW_UP_PATH} component={FollowUpReportManager} />
-        <Route path={REPORTS_PATH} component={ReportListContainer} />
+        <Route path={REPORTS_PATH} component={HackyReportsManager} />
         <Redirect to={HOME_PATH} />
       </Switch>
     );

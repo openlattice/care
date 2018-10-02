@@ -25,6 +25,7 @@ import Logger from '../../utils/Logger';
 import * as Routes from '../../core/router/Routes';
 import { APP_NAME } from '../../shared/Consts';
 import { ERR_ACTION_VALUE_NOT_DEFINED } from '../../utils/Errors';
+import { storeOrganizationId } from '../../utils/Utils';
 import { isBaltimoreOrg } from '../../utils/Whitelist';
 import {
   LOAD_APP,
@@ -165,7 +166,10 @@ function* switchOrganizationWatcher() :Generator<*, *, *> {
   yield takeEvery(SWITCH_ORGANIZATION, switchOrganizationWorker);
 }
 
-function* switchOrganizationWorker() :Generator<*, *, *> {
+function* switchOrganizationWorker(action :Object) :Generator<*, *, *> {
+
+  // TODO: this was added in quickly, might need refactoring
+  storeOrganizationId(action.orgId);
 
   // not ideal since it resets clears form inputs, but none of that is being stored in redux at the moment anyway...
   // TODO: check action.orgId !== selectedOrganizationId

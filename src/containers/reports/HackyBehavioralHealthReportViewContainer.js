@@ -8,8 +8,8 @@ import styled from 'styled-components';
 import { Map } from 'immutable';
 import { Button, Modal } from 'lattice-ui-kit';
 import { connect } from 'react-redux';
-import { Redirect } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
+import type { Match } from 'react-router';
 
 import ComplainantInfoView from '../../components/ComplainantInfoView';
 import ConsumerInfoView from '../../components/ConsumerInfoView';
@@ -19,10 +19,11 @@ import ReportInfoView from '../../components/ReportInfoView';
 
 import Spinner from '../../components/spinner/Spinner';
 import StyledCard from '../../components/cards/StyledCard';
-import { deleteReport, getReports } from './ReportsActions';
-import { REPORT_EDIT_PATH, REPORTS_PATH } from '../../core/router/Routes';
+import { deleteReport, getReportNeighbors } from './ReportsActions';
+import { REPORT_EDIT_PATH, REPORT_ID_PARAM } from '../../core/router/Routes';
 import { goToRoute } from '../../core/router/RoutingActions';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
+import { isValidUuid } from '../../utils/Utils';
 import {
   ContentContainerInnerWrapper,
   ContentContainerOuterWrapper,
@@ -56,15 +57,15 @@ const Section = styled.div`
 type Props = {
   actions :{
     deleteReport :RequestSequence;
-    getReportInFull :RequestSequence;
+    getReportNeighbors :RequestSequence;
     goToRoute :(route :string) => void;
   };
+  entityKeyId :string;
   entitySetId :string;
   isDeletingReport :boolean;
-  isFetchingReportInFull :boolean;
+  isFetchingReport :boolean;
   selectedOrganizationId :string;
   selectedReportData :Map<*, *>;
-  selectedReportEntityKeyId :string;
 };
 
 type State = {
@@ -81,6 +82,17 @@ class HackyBehavioralHealthReportViewContainer extends Component<Props, State> {
     };
   }
 
+  componentDidMount() {
+
+    const { actions, entityKeyId, entitySetId } = this.props;
+    actions.getReportNeighbors({ entityKeyId, entitySetId });
+  }
+
+  hideDeleteModal = () => {
+
+    this.setState({ isDeleteModalVisible: false });
+  }
+
   showDeleteModal = () => {
 
     this.setState({ isDeleteModalVisible: true });
@@ -88,22 +100,14 @@ class HackyBehavioralHealthReportViewContainer extends Component<Props, State> {
 
   handleOnClickEditReportButton = () => {
 
-    const { actions } = this.props;
-    actions.goToRoute(REPORT_EDIT_PATH);
-  }
-
-  handleOnCloseModal = () => {
-
-    this.setState({ isDeleteModalVisible: false });
+    const { actions, entityKeyId } = this.props;
+    actions.goToRoute(REPORT_EDIT_PATH.replace(REPORT_ID_PARAM, entityKeyId));
   }
 
   deleteReport = () => {
 
-    const { actions, entitySetId, selectedReportEntityKeyId } = this.props;
-    actions.deleteReport({
-      entitySetId,
-      entityKeyId: selectedReportEntityKeyId,
-    });
+    const { actions, entityKeyId, entitySetId } = this.props;
+    actions.deleteReport({ entityKeyId, entitySetId });
   }
 
   renderActionCard = () => {
@@ -111,8 +115,8 @@ class HackyBehavioralHealthReportViewContainer extends Component<Props, State> {
     return (
       <ActionCard>
         <ActionButtonsWrapper>
-          <Button onClick={this.showDeleteModal}>Delete</Button>
-          <Button mode="secondary" onClick={this.handleOnClickEditReportButton}>Edit</Button>
+          <Button mode="secondary" onClick={this.showDeleteModal}>Delete</Button>
+          <Button mode="primary" onClick={this.handleOnClickEditReportButton}>Edit</Button>
         </ActionButtonsWrapper>
       </ActionCard>
     );
@@ -165,7 +169,7 @@ class HackyBehavioralHealthReportViewContainer extends Component<Props, State> {
     return (
       <Modal
           isVisible={isDeleteModalVisible}
-          onClose={this.handleOnCloseModal}
+          onClose={this.hideDeleteModal}
           onClickPrimary={this.deleteReport}
           textPrimary="Delete"
           textSecondary="Cancel"
@@ -177,13 +181,13 @@ class HackyBehavioralHealthReportViewContainer extends Component<Props, State> {
 
   render() {
 
-    const { isDeletingReport, isFetchingReportInFull, selectedReportEntityKeyId } = this.props;
-    if (isFetchingReportInFull || isDeletingReport) {
-      return <Spinner />;
-    }
+    const {
+      isDeletingReport,
+      isFetchingReport,
+    } = this.props;
 
-    if (!selectedReportEntityKeyId) {
-      return <Redirect to={REPORTS_PATH} />;
+    if (isFetchingReport || isDeletingReport) {
+      return <Spinner />;
     }
 
     // TODO: this all has to be rewritten
@@ -202,7 +206,11 @@ class HackyBehavioralHealthReportViewContainer extends Component<Props, State> {
   }
 }
 
-function mapStateToProps(state :Map<*, *>) :Object {
+function mapStateToProps(state :Map<*, *>, ownParams :Object) :Object {
+
+  const match :Match = ownParams.match;
+  const reportId :?string = match.params[REPORT_ID_PARAM.substr(1)];
+  const entityKeyId :string = (reportId && isValidUuid(reportId)) ? reportId : '';
 
   const selectedOrganizationId :string = state.getIn(['app', 'selectedOrganizationId']);
   const entitySetId :string = state.getIn([
@@ -213,19 +221,19 @@ function mapStateToProps(state :Map<*, *>) :Object {
   ]);
 
   return {
+    entityKeyId,
     entitySetId,
     selectedOrganizationId,
     isDeletingReport: state.getIn(['reports', 'isDeletingReport']),
-    isFetchingReportInFull: state.getIn(['reports', 'isFetchingReportInFull']),
+    isFetchingReport: state.getIn(['reports', 'isFetchingReport']),
     selectedReportData: state.getIn(['reports', 'selectedReportData'], Map()),
-    selectedReportEntityKeyId: state.getIn(['reports', 'selectedReportEntityKeyId'], ''),
   };
 }
 
 function mapDispatchToProps(dispatch :Function) :Object {
 
   return {
-    actions: bindActionCreators({ deleteReport, goToRoute, getReports }, dispatch)
+    actions: bindActionCreators({ deleteReport, getReportNeighbors, goToRoute }, dispatch)
   };
 }
 
