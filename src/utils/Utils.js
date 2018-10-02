@@ -42,7 +42,7 @@ function getLatticeConfigBaseUrl() :string {
   if (!__ENV_DEV__) {
     baseUrl = window.location.host.startsWith('staging') ? 'staging' : 'production';
   }
-  return 'production';
+  return baseUrl;
 }
 
 function resetLatticeConfig() :void {
