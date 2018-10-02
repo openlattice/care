@@ -1,17 +1,26 @@
 import React from 'react';
 
 import { withRouter } from 'react-router';
+import { Link } from 'react-router-dom';
 
-import FormNav from './FormNav';
 import FieldHeader from './text/styled/FieldHeader';
 import TextField from './text/TextField';
 import { FORM_PATHS } from '../shared/Consts';
 import { isPortlandOrg } from '../utils/Whitelist';
+import { checkboxesHelper } from '../containers/reports/HackyUtils';
 import {
+  EditButton,
   FlexyWrapper,
   FormGridWrapper,
   FullWidthItem,
 } from './form/StyledFormComponents';
+
+import {
+  OFFICER_NAME_FQN,
+  OFFICER_SEQ_ID_FQN,
+  OFFICER_INJURIES_FQN,
+  OFFICER_CERTIFICATION_FQN,
+} from '../edm/DataModelFqns';
 
 class OfficerInfoView extends React.Component {
 
@@ -22,17 +31,10 @@ class OfficerInfoView extends React.Component {
     };
   }
 
-  handlePageChange = (path) => {
-
-    // TODO: validation
-    const { handlePageChange } = this.props;
-    handlePageChange(path);
-  }
-
   // TODO: replace this with real components from lattice-ui-kit
-  renderTempCheckbox = (label, name, value, isChecked) => {
+  renderTempCheckbox = (label, name, value, isChecked, onChange) => {
 
-    const { handleCheckboxChange, isInReview } = this.props;
+    const { isReadOnly } = this.props;
     const { section } = this.state;
     const id = `${name}-${value}`;
     return (
@@ -40,10 +42,10 @@ class OfficerInfoView extends React.Component {
         <input
             checked={isChecked}
             data-section={section}
-            disabled={isInReview}
+            disabled={isReadOnly}
             id={id}
             name={name}
-            onChange={handleCheckboxChange}
+            onChange={onChange}
             type="checkbox"
             value={value} />
         { label }
@@ -53,26 +55,51 @@ class OfficerInfoView extends React.Component {
 
   renderOfficerCertification = () => {
 
-    const { input } = this.props;
+    const { input, updateStateValue } = this.props;
+    const { section } = this.state;
     return (
       <FullWidthItem>
         <FieldHeader>Officer Certification</FieldHeader>
         <FlexyWrapper>
           {
-            this.renderTempCheckbox('CRT Unit', 'officerCertification', 'crtUnit',
-              input.officerCertification.indexOf('crtUnit') !== -1)
+            this.renderTempCheckbox(
+              'CRT Unit',
+              OFFICER_CERTIFICATION_FQN,
+              'crtUnit',
+              input[OFFICER_CERTIFICATION_FQN].indexOf('crtUnit') !== -1,
+              event => updateStateValue(section, OFFICER_CERTIFICATION_FQN,
+                checkboxesHelper(input[OFFICER_CERTIFICATION_FQN], event.target.value))
+            )
           }
           {
-            this.renderTempCheckbox('BEST', 'officerCertification', 'best',
-              input.officerCertification.indexOf('best') !== -1)
+            this.renderTempCheckbox(
+              'BEST',
+              OFFICER_CERTIFICATION_FQN,
+              'best',
+              input[OFFICER_CERTIFICATION_FQN].indexOf('best') !== -1,
+              event => updateStateValue(section, OFFICER_CERTIFICATION_FQN,
+                checkboxesHelper(input[OFFICER_CERTIFICATION_FQN], event.target.value))
+            )
           }
           {
-            this.renderTempCheckbox('CIT', 'officerCertification', 'cit',
-              input.officerCertification.indexOf('cit') !== -1)
+            this.renderTempCheckbox(
+              'CIT',
+              OFFICER_CERTIFICATION_FQN,
+              'cit',
+              input[OFFICER_CERTIFICATION_FQN].indexOf('cit') !== -1,
+              event => updateStateValue(section, OFFICER_CERTIFICATION_FQN,
+                checkboxesHelper(input[OFFICER_CERTIFICATION_FQN], event.target.value))
+            )
           }
           {
-            this.renderTempCheckbox('N/A', 'officerCertification', 'n/a',
-              input.officerCertification.indexOf('n/a') !== -1)
+            this.renderTempCheckbox(
+              'N/A',
+              OFFICER_CERTIFICATION_FQN,
+              'n/a',
+              input[OFFICER_CERTIFICATION_FQN].indexOf('n/a') !== -1,
+              event => updateStateValue(section, OFFICER_CERTIFICATION_FQN,
+                checkboxesHelper(input[OFFICER_CERTIFICATION_FQN], event.target.value))
+            )
           }
         </FlexyWrapper>
       </FullWidthItem>
@@ -81,14 +108,21 @@ class OfficerInfoView extends React.Component {
 
   renderOfficerCertificationPortland = () => {
 
-    const { input } = this.props;
+    const { input, updateStateValue } = this.props;
+    const { section } = this.state;
     return (
       <FullWidthItem>
         <FieldHeader>Officer Certification</FieldHeader>
         <FlexyWrapper>
           {
-            this.renderTempCheckbox('CIT', 'officerCertification', 'cit',
-              input.officerCertification.indexOf('cit') !== -1)
+            this.renderTempCheckbox(
+              'CIT',
+              OFFICER_CERTIFICATION_FQN,
+              'cit',
+              input[OFFICER_CERTIFICATION_FQN].indexOf('cit') !== -1,
+              event => updateStateValue(section, OFFICER_CERTIFICATION_FQN,
+                checkboxesHelper(input[OFFICER_CERTIFICATION_FQN], event.target.value))
+            )
           }
         </FlexyWrapper>
       </FullWidthItem>
@@ -100,6 +134,7 @@ class OfficerInfoView extends React.Component {
     const {
       input,
       isInReview,
+      isReadOnly,
       selectedOrganizationId,
       updateStateValue,
     } = this.props;
@@ -109,26 +144,29 @@ class OfficerInfoView extends React.Component {
       <>
         <FormGridWrapper>
           <FullWidthItem>
-            { !isInReview && (
-              <h1>Officer</h1>
+            <h1>Officer</h1>
+            { isInReview && (
+              <Link to={FORM_PATHS.OFFICER}>
+                <EditButton onClick={this.handleOnClickEditReport}>Edit</EditButton>
+              </Link>
             )}
           </FullWidthItem>
           <TextField
-              disabled={isInReview}
+              disabled={isReadOnly}
               header="Officer Name"
-              onChange={value => updateStateValue(section, 'officerName', value)}
-              value={input.officerName} />
+              onChange={value => updateStateValue(section, OFFICER_NAME_FQN, value)}
+              value={input[OFFICER_NAME_FQN]} />
           <TextField
-              disabled={isInReview}
+              disabled={isReadOnly}
               header="Officer Seq Id"
-              onChange={value => updateStateValue(section, 'officerSeqID', value)}
-              value={input.officerSeqID} />
+              onChange={value => updateStateValue(section, OFFICER_SEQ_ID_FQN, value)}
+              value={input[OFFICER_SEQ_ID_FQN]} />
           <FullWidthItem>
             <TextField
-                disabled={isInReview}
+                disabled={isReadOnly}
                 header="Officer Injuries"
-                onChange={value => updateStateValue(section, 'officerInjuries', value)}
-                value={input.officerInjuries} />
+                onChange={value => updateStateValue(section, OFFICER_INJURIES_FQN, value)}
+                value={input[OFFICER_INJURIES_FQN]} />
           </FullWidthItem>
           {
             isPortlandOrg(selectedOrganizationId)
@@ -136,16 +174,6 @@ class OfficerInfoView extends React.Component {
               : this.renderOfficerCertification()
           }
         </FormGridWrapper>
-        {
-          !isInReview
-            ? (
-              <FormNav
-                  prevPath={FORM_PATHS.DISPOSITION}
-                  nextPath={FORM_PATHS.REVIEW}
-                  handlePageChange={this.handlePageChange} />
-            )
-            : null
-        }
       </>
     );
   }

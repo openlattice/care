@@ -2,46 +2,54 @@ import React from 'react';
 
 import moment from 'moment';
 import { withRouter } from 'react-router';
+import { Link } from 'react-router-dom';
 
-import FormNav from './FormNav';
 import FieldHeader from './text/styled/FieldHeader';
 import TextField from './text/TextField';
 import { FORM_PATHS } from '../shared/Consts';
+import { replaceDateTimeDate, replaceDateTimeTime } from '../utils/DateUtils';
 import {
+  EditButton,
   FlexyWrapper,
   FormGridWrapper,
   FullWidthItem,
   HalfWidthItem,
 } from './form/StyledFormComponents';
+import {
+  CAD_NUMBER_FQN,
+  COMPANION_OFFENSE_REPORT_FQN,
+  COMPLAINT_NUMBER_FQN,
+  DATE_TIME_OCCURRED_FQN,
+  DATE_TIME_REPORTED_FQN,
+  DISPATCH_REASON_FQN,
+  INCIDENT_FQN,
+  LOCATION_OF_INCIDENT_FQN,
+  ON_VIEW_FQN,
+  POST_OF_OCCURRENCE_FQN,
+  UNIT_FQN,
+} from '../edm/DataModelFqns';
 
 class ReportInfoView extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      dateOccurredValid: true,
-      dateReportedValid: true,
+      datetimeOccurredValid: true,
+      datetimeReportedValid: true,
       section: 'reportInfo',
     };
-  }
-
-  handlePageChange = (path) => {
-
-    // TODO: validation
-    const { handlePageChange } = this.props;
-    handlePageChange(path);
   }
 
   // TODO: replace this with real components from lattice-ui-kit
   renderTempRadio = (label, name, value, isChecked, onChange) => {
 
-    const { isInReview } = this.props;
+    const { isReadOnly } = this.props;
     const id = `${name}-${value}`;
     return (
       <label htmlFor={id}>
         <input
             checked={isChecked}
-            disabled={isInReview}
+            disabled={isReadOnly}
             id={id}
             name={name}
             onChange={onChange}
@@ -57,6 +65,7 @@ class ReportInfoView extends React.Component {
     const {
       input,
       isInReview,
+      isReadOnly,
       updateStateValue,
     } = this.props;
     const { section } = this.state;
@@ -65,89 +74,92 @@ class ReportInfoView extends React.Component {
       <>
         <FormGridWrapper>
           <FullWidthItem>
-            { !isInReview && (
-              <h1>Report</h1>
+            <h1>Report</h1>
+            { isInReview && (
+              <Link to={FORM_PATHS.REPORT}>
+                <EditButton onClick={this.handleOnClickEditReport}>Edit</EditButton>
+              </Link>
             )}
           </FullWidthItem>
           <TextField
-              disabled={isInReview}
+              disabled={isReadOnly}
               header="Primary Reason for Dispatch"
-              onChange={value => updateStateValue(section, 'dispatchReason', value)}
-              value={input.dispatchReason} />
+              onChange={value => updateStateValue(section, DISPATCH_REASON_FQN, value)}
+              value={input[DISPATCH_REASON_FQN]} />
           <TextField
-              disabled={isInReview}
+              disabled={isReadOnly}
               header="Complaint Number*"
-              onChange={value => updateStateValue(section, 'complaintNumber', value)}
-              value={input.complaintNumber} />
+              onChange={value => updateStateValue(section, COMPLAINT_NUMBER_FQN, value)}
+              value={input[COMPLAINT_NUMBER_FQN]} />
           <HalfWidthItem>
             <FieldHeader>Companion Offense Report Prepared</FieldHeader>
             <FlexyWrapper inline>
               {
                 this.renderTempRadio(
                   'Yes',
-                  'companionOffenseReport',
+                  COMPANION_OFFENSE_REPORT_FQN,
                   true,
-                  input.companionOffenseReport === true,
-                  () => updateStateValue(section, 'companionOffenseReport', true),
+                  input[COMPANION_OFFENSE_REPORT_FQN] === true,
+                  () => updateStateValue(section, COMPANION_OFFENSE_REPORT_FQN, true),
                 )
               }
               {
                 this.renderTempRadio(
                   'No',
-                  'companionOffenseReport',
+                  COMPANION_OFFENSE_REPORT_FQN,
                   false,
-                  input.companionOffenseReport === false,
-                  () => updateStateValue(section, 'companionOffenseReport', false)
+                  input[COMPANION_OFFENSE_REPORT_FQN] === false,
+                  () => updateStateValue(section, COMPANION_OFFENSE_REPORT_FQN, false)
                 )
               }
             </FlexyWrapper>
           </HalfWidthItem>
           <TextField
-              disabled={isInReview}
+              disabled={isReadOnly}
               header="Crime / Incident*"
-              onChange={value => updateStateValue(section, 'incident', value)}
-              value={input.incident} />
+              onChange={value => updateStateValue(section, INCIDENT_FQN, value)}
+              value={input[INCIDENT_FQN]} />
           <FullWidthItem>
             <TextField
-                disabled={isInReview}
+                disabled={isReadOnly}
                 header="Location of Offense / Incident"
-                onChange={value => updateStateValue(section, 'locationOfIncident', value)}
-                value={input.locationOfIncident} />
+                onChange={value => updateStateValue(section, LOCATION_OF_INCIDENT_FQN, value)}
+                value={input[LOCATION_OF_INCIDENT_FQN]} />
           </FullWidthItem>
           <TextField
-              disabled={isInReview}
+              disabled={isReadOnly}
               header="Unit"
-              onChange={value => updateStateValue(section, 'unit', value)}
-              value={input.unit} />
+              onChange={value => updateStateValue(section, UNIT_FQN, value)}
+              value={input[UNIT_FQN]} />
           <TextField
-              disabled={isInReview}
+              disabled={isReadOnly}
               header="Post of Occurrence"
-              onChange={value => updateStateValue(section, 'postOfOccurrence', value)}
-              value={input.postOfOccurrence} />
+              onChange={value => updateStateValue(section, POST_OF_OCCURRENCE_FQN, value)}
+              value={input[POST_OF_OCCURRENCE_FQN]} />
           <TextField
-              disabled={isInReview}
+              disabled={isReadOnly}
               header="CAD Number"
-              onChange={value => updateStateValue(section, 'cadNumber', value)}
-              value={input.cadNumber} />
+              onChange={value => updateStateValue(section, CAD_NUMBER_FQN, value)}
+              value={input[CAD_NUMBER_FQN]} />
           <HalfWidthItem>
             <FieldHeader>On View</FieldHeader>
             <FlexyWrapper inline>
               {
                 this.renderTempRadio(
                   'Yes',
-                  'onView',
+                  ON_VIEW_FQN,
                   true,
-                  input.onView === true,
-                  () => updateStateValue(section, 'onView', true),
+                  input[ON_VIEW_FQN] === true,
+                  () => updateStateValue(section, ON_VIEW_FQN, true),
                 )
               }
               {
                 this.renderTempRadio(
                   'No',
-                  'onView',
+                  ON_VIEW_FQN,
                   false,
-                  input.onView === false,
-                  () => updateStateValue(section, 'onView', false),
+                  input[ON_VIEW_FQN] === false,
+                  () => updateStateValue(section, ON_VIEW_FQN, false),
                 )
               }
             </FlexyWrapper>
@@ -156,73 +168,68 @@ class ReportInfoView extends React.Component {
             <label htmlFor="date-occurred">
               <FieldHeader>Date Occurred*</FieldHeader>
               <input
-                  disabled={isInReview}
+                  disabled={isReadOnly}
                   id="date-occurred"
                   onChange={(event) => {
                     const date = event.target.value;
                     const isValid = moment(date).isSameOrBefore(moment());
-                    this.setState({ dateOccurredValid: isValid });
-                    updateStateValue(section, 'dateOccurred', date)
+                    this.setState({ datetimeOccurredValid: isValid });
+
+                    const datetime = replaceDateTimeDate(input[DATE_TIME_OCCURRED_FQN], date);
+                    updateStateValue(section, DATE_TIME_OCCURRED_FQN, datetime);
                   }}
                   type="date"
-                  value={input.dateOccurred} />
+                  value={moment(input[DATE_TIME_OCCURRED_FQN]).format(moment.HTML5_FMT.DATE)} />
             </label>
           </HalfWidthItem>
           <HalfWidthItem>
             <label htmlFor="time-occurred">
               <FieldHeader>Time Occurred</FieldHeader>
               <input
-                  disabled={isInReview}
+                  disabled={isReadOnly}
                   id="time-occurred"
                   onChange={(event) => {
-                    updateStateValue(section, 'timeOccurred', event.target.value);
+                    const datetime = replaceDateTimeTime(input[DATE_TIME_OCCURRED_FQN], event.target.value);
+                    updateStateValue(section, DATE_TIME_OCCURRED_FQN, datetime);
                   }}
                   type="time"
-                  value={input.timeOccurred} />
+                  value={moment(input[DATE_TIME_OCCURRED_FQN]).format(moment.HTML5_FMT.TIME)} />
             </label>
           </HalfWidthItem>
           <HalfWidthItem>
             <label htmlFor="date-reported">
               <FieldHeader>Date Reported*</FieldHeader>
               <input
-                  disabled={isInReview}
+                  disabled={isReadOnly}
                   id="date-reported"
                   onChange={(event) => {
                     const date = event.target.value;
-                    const isValid = (
-                      moment(date).isSameOrBefore(moment()) && moment(date).isSameOrAfter(moment(input.dateOccurred))
-                    );
-                    this.setState({ dateReportedValid: isValid });
-                    updateStateValue(section, 'dateReported', date);
+                    const isValid = moment(date).isSameOrBefore(moment())
+                        && moment(date).isSameOrAfter(moment(input[DATE_TIME_OCCURRED_FQN]));
+                    this.setState({ datetimeReportedValid: isValid });
+
+                    const datetime = replaceDateTimeDate(input[DATE_TIME_REPORTED_FQN], date);
+                    updateStateValue(section, DATE_TIME_REPORTED_FQN, datetime);
                   }}
                   type="date"
-                  value={input.dateReported} />
+                  value={moment(input[DATE_TIME_REPORTED_FQN]).format(moment.HTML5_FMT.DATE)} />
             </label>
           </HalfWidthItem>
           <HalfWidthItem>
             <label htmlFor="time-reported">
               <FieldHeader>Time Reported</FieldHeader>
               <input
-                  disabled={isInReview}
+                  disabled={isReadOnly}
                   id="time-reported"
                   onChange={(event) => {
-                    updateStateValue(section, 'timeReported', event.target.value);
+                    const datetime = replaceDateTimeTime(input[DATE_TIME_REPORTED_FQN], event.target.value);
+                    updateStateValue(section, DATE_TIME_REPORTED_FQN, datetime);
                   }}
                   type="time"
-                  value={input.timeReported} />
+                  value={moment(input[DATE_TIME_REPORTED_FQN]).format(moment.HTML5_FMT.TIME)} />
             </label>
           </HalfWidthItem>
         </FormGridWrapper>
-        {
-          !isInReview
-            ? (
-              <FormNav
-                  prevPath={FORM_PATHS.CONSUMER}
-                  nextPath={FORM_PATHS.COMPLAINANT}
-                  handlePageChange={this.handlePageChange} />
-            )
-            : null
-        }
       </>
     );
   }

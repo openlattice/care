@@ -1,15 +1,15 @@
 import React from 'react';
 
-import isInteger from 'lodash/isInteger';
 import parseInt from 'lodash/parseInt';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
+import { Link } from 'react-router-dom';
 
-import FormNav from './FormNav';
 import FieldHeader from './text/styled/FieldHeader';
 import TextAreaField from './text/TextAreaField';
 import TextField from './text/TextField';
 import {
+  EditButton,
   FlexyWrapper,
   FormGridWrapper,
   FullWidthItem,
@@ -17,6 +17,23 @@ import {
 } from './form/StyledFormComponents';
 import { FORM_PATHS } from '../shared/Consts';
 import { isPortlandOrg } from '../utils/Whitelist';
+import { checkboxesHelper } from '../containers/reports/HackyUtils';
+import {
+  DEESCALATION_SCALE_FQN,
+  DEESCALATION_TECHNIQUES_FQN,
+  DEESCALATION_TECHNIQUES_OTHER_FQN,
+  DISPOSITION_FQN,
+  HOSPITAL_TRANSPORT_INDICATOR_FQN,
+  HOSPITAL_FQN,
+  HOSPITAL_NAME_FQN,
+  INCIDENT_NARRATIVE_FQN,
+  REFERRAL_DEST_FQN,
+  REFERRAL_PROVIDER_INDICATOR_FQN,
+  SPECIAL_RESOURCES_CALLED_FQN,
+  STABILIZED_INDICATOR_FQN,
+  TRANSPORTING_AGENCY_FQN,
+  VOLUNTARY_ACTION_INDICATOR_FQN,
+} from '../edm/DataModelFqns';
 
 const incidentNarrativeTitle = `Narrative of Incident, to include: Results of investigation, basis for actions taken,
 emotional states, additional witnesses. Property listing.`;
@@ -30,41 +47,10 @@ class DispositionView extends React.Component {
     };
   }
 
-  handlePageChange = (path) => {
-
-    // TODO: validation
-    const { handlePageChange } = this.props;
-    handlePageChange(path);
-  }
-
-  handleOnChange = (event) => {
-
-    // TODO: validation
-    const { updateStateValue } = this.props;
-    const { section } = this.state;
-    const { name, value } = event.target;
-    updateStateValue(section, name, value);
-  }
-
-  handleOnChangeScaleSelection = (event) => {
-
-    const { updateStateValue } = this.props;
-    const { section } = this.state;
-    const { name, value } = event.target;
-
-    const valueAsInt = parseInt(value);
-    if (isInteger(valueAsInt) && `${valueAsInt}` === value) {
-      updateStateValue(section, name, valueAsInt);
-    }
-    else {
-      updateStateValue(section, name, value);
-    }
-  }
-
   // TODO: replace this with real components from lattice-ui-kit
-  renderTempCheckbox = (label, name, value, isChecked) => {
+  renderTempCheckbox = (label, name, value, isChecked, onChange) => {
 
-    const { handleCheckboxChange, isInReview } = this.props;
+    const { isReadOnly } = this.props;
     const { section } = this.state;
     const id = `${name}-${value}`;
     return (
@@ -72,10 +58,10 @@ class DispositionView extends React.Component {
         <input
             checked={isChecked}
             data-section={section}
-            disabled={isInReview}
+            disabled={isReadOnly}
             id={id}
             name={name}
-            onChange={handleCheckboxChange}
+            onChange={onChange}
             type="checkbox"
             value={value} />
         { label }
@@ -86,7 +72,7 @@ class DispositionView extends React.Component {
   // TODO: replace this with real components from lattice-ui-kit
   renderTempRadio = (label, name, value, isChecked, onChange) => {
 
-    const { isInReview } = this.props;
+    const { isReadOnly } = this.props;
     const { section } = this.state;
     const id = `${name}-${value}`;
     return (
@@ -94,10 +80,10 @@ class DispositionView extends React.Component {
         <input
             checked={isChecked}
             data-section={section}
-            disabled={isInReview}
+            disabled={isReadOnly}
             id={id}
             name={name}
-            onChange={onChange || this.handleOnChange}
+            onChange={onChange}
             type="radio"
             value={value} />
         { label }
@@ -110,7 +96,7 @@ class DispositionView extends React.Component {
     const {
       hospitals,
       input,
-      isInReview,
+      isReadOnly,
       updateStateValue,
     } = this.props;
     const { section } = this.state;
@@ -118,9 +104,9 @@ class DispositionView extends React.Component {
     if (hospitals.isEmpty()) {
       return (
         <TextField
-            disabled={isInReview}
-            onChange={value => updateStateValue(section, 'hospital', value)}
-            value={input.hospital} />
+            disabled={isReadOnly}
+            onChange={value => updateStateValue(section, HOSPITAL_FQN, value)}
+            value={input[HOSPITAL_FQN]} />
       );
     }
 
@@ -136,10 +122,10 @@ class DispositionView extends React.Component {
     return (
       <select
           data-section={section}
-          disabled={isInReview}
-          name="hospital"
-          onChange={this.handleOnChange}
-          value={input.hospital}>
+          disabled={isReadOnly}
+          name={HOSPITAL_FQN}
+          onChange={event => updateStateValue(section, HOSPITAL_FQN, event.target.value)}
+          value={input[HOSPITAL_FQN]}>
         <option value="">Select</option>
         { hospitalOptions }
       </select>
@@ -148,7 +134,7 @@ class DispositionView extends React.Component {
 
   renderDeescalationScalePortland = () => {
 
-    const { input, isInReview } = this.props;
+    const { input, isReadOnly, updateStateValue } = this.props;
     const { section } = this.state;
 
     const scaleRadios = [];
@@ -158,13 +144,13 @@ class DispositionView extends React.Component {
       scaleRadios.push(
         <label key={labelKey} htmlFor={inputKey}>
           <input
-              checked={input.deescalationscale === i}
+              checked={input[DEESCALATION_SCALE_FQN] === i}
               data-section={section}
-              disabled={isInReview}
+              disabled={isReadOnly}
               id={inputKey}
               key={inputKey}
-              name="deescalationscale"
-              onChange={this.handleOnChangeScaleSelection}
+              name={DEESCALATION_SCALE_FQN}
+              onChange={event => updateStateValue(section, DEESCALATION_SCALE_FQN, parseInt(event.target.value))}
               type="radio"
               value={i} />
           { i }
@@ -185,36 +171,101 @@ class DispositionView extends React.Component {
 
   renderDisposition = () => {
 
-    const { input } = this.props;
+    const { input, updateStateValue } = this.props;
+    const { section } = this.state;
     return (
       <FullWidthItem>
         <FieldHeader>Disposition</FieldHeader>
         <FlexyWrapper>
-          { this.renderTempCheckbox('Arrest', 'disposition', 'arrest', input.disposition.indexOf('arrest') !== -1) }
-          { this.renderTempCheckbox('EP', 'disposition', 'ep', input.disposition.indexOf('ep') !== -1) }
           {
-            this.renderTempCheckbox('Voluntary ER Intake', 'disposition', 'voluntaryER',
-              input.disposition.indexOf('voluntaryER') !== -1)
+            this.renderTempCheckbox(
+              'Arrest',
+              DISPOSITION_FQN,
+              'arrest',
+              input[DISPOSITION_FQN].indexOf('arrest') !== -1,
+              event => updateStateValue(section, DISPOSITION_FQN,
+                checkboxesHelper(input[DISPOSITION_FQN], event.target.value))
+            )
           }
-          { this.renderTempCheckbox('BCRI', 'disposition', 'bcri', input.disposition.indexOf('bcri') !== -1) }
           {
-            this.renderTempCheckbox('Information and Referral', 'disposition', 'infoAndReferral',
-              input.disposition.indexOf('infoAndReferral') !== -1)
+            this.renderTempCheckbox(
+              'EP',
+              DISPOSITION_FQN,
+              'ep',
+              input[DISPOSITION_FQN].indexOf('ep') !== -1,
+              event => updateStateValue(section, DISPOSITION_FQN,
+                checkboxesHelper(input[DISPOSITION_FQN], event.target.value))
+            )
           }
-          { this.renderTempCheckbox('LEAD', 'disposition', 'lead', input.disposition.indexOf('lead') !== -1) }
+          {
+            this.renderTempCheckbox(
+              'Voluntary ER Intake',
+              DISPOSITION_FQN,
+              'voluntaryER',
+              input[DISPOSITION_FQN].indexOf('voluntaryER') !== -1,
+              event => updateStateValue(section, DISPOSITION_FQN,
+                checkboxesHelper(input[DISPOSITION_FQN], event.target.value))
+            )
+          }
+          {
+            this.renderTempCheckbox(
+              'BCRI',
+              DISPOSITION_FQN,
+              'bcri',
+              input[DISPOSITION_FQN].indexOf('bcri') !== -1,
+              event => updateStateValue(section, DISPOSITION_FQN,
+                checkboxesHelper(input[DISPOSITION_FQN], event.target.value))
+            )
+          }
+          {
+            this.renderTempCheckbox(
+              'Information and Referral',
+              DISPOSITION_FQN,
+              'infoAndReferral',
+              input[DISPOSITION_FQN].indexOf('infoAndReferral') !== -1,
+              event => updateStateValue(section, DISPOSITION_FQN,
+                checkboxesHelper(input[DISPOSITION_FQN], event.target.value))
+            )
+          }
+          {
+            this.renderTempCheckbox(
+              'LEAD',
+              DISPOSITION_FQN,
+              'lead',
+              input[DISPOSITION_FQN].indexOf('lead') !== -1,
+              event => updateStateValue(section, DISPOSITION_FQN,
+                checkboxesHelper(input[DISPOSITION_FQN], event.target.value))
+            )
+          }
           {
             this.renderTempCheckbox(
               'Contacted or Referred to Current Treatment Provider',
-              'disposition',
+              DISPOSITION_FQN,
               'contactedTreatementProvider',
-              input.disposition.indexOf('contactedTreatementProvider') !== -1
+              input[DISPOSITION_FQN].indexOf('contactedTreatementProvider') !== -1,
+              event => updateStateValue(section, DISPOSITION_FQN,
+                checkboxesHelper(input[DISPOSITION_FQN], event.target.value))
             )
           }
-          { this.renderTempCheckbox('Criminal Citation', 'disposition', 'criminalCitation',
-            input.disposition.indexOf('criminalCitation') !== -1)
+          {
+            this.renderTempCheckbox(
+              'Criminal Citation',
+              DISPOSITION_FQN,
+              'criminalCitation',
+              input[DISPOSITION_FQN].indexOf('criminalCitation') !== -1,
+              event => updateStateValue(section, DISPOSITION_FQN,
+                checkboxesHelper(input[DISPOSITION_FQN], event.target.value))
+            )
           }
-          { this.renderTempCheckbox('Civil Citation', 'disposition', 'civilCitation',
-            input.disposition.indexOf('civilCitation') !== -1)
+          {
+            this.renderTempCheckbox(
+              'Civil Citation',
+              DISPOSITION_FQN,
+              'civilCitation',
+              input[DISPOSITION_FQN].indexOf('civilCitation') !== -1,
+              event => updateStateValue(section, DISPOSITION_FQN,
+                checkboxesHelper(input[DISPOSITION_FQN], event.target.value))
+            )
           }
         </FlexyWrapper>
       </FullWidthItem>
@@ -223,27 +274,61 @@ class DispositionView extends React.Component {
 
   renderDispositionPortland = () => {
 
-    const { input } = this.props;
+    const { input, updateStateValue } = this.props;
+    const { section } = this.state;
     return (
       <FullWidthItem>
         <FieldHeader>Disposition</FieldHeader>
         <FlexyWrapper>
           {
-            this.renderTempCheckbox('Referred to BHU', 'disposition', 'referredToBHU',
-              input.disposition.indexOf('referredToBHU') !== -1)
+            this.renderTempCheckbox(
+              'Referred to BHU',
+              DISPOSITION_FQN,
+              'referredToBHU',
+              input[DISPOSITION_FQN].indexOf('referredToBHU') !== -1,
+              event => updateStateValue(section, DISPOSITION_FQN,
+                checkboxesHelper(input[DISPOSITION_FQN], event.target.value))
+            )
           }
           {
-            this.renderTempCheckbox('Referred to Crisis', 'disposition', 'referredToCrisis',
-              input.disposition.indexOf('referredToCrisis') !== -1)
+            this.renderTempCheckbox(
+              'Referred to Crisis',
+              DISPOSITION_FQN,
+              'referredToCrisis',
+              input[DISPOSITION_FQN].indexOf('referredToCrisis') !== -1,
+              event => updateStateValue(section, DISPOSITION_FQN,
+                checkboxesHelper(input[DISPOSITION_FQN], event.target.value))
+            )
           }
-          { this.renderTempCheckbox('Arrest', 'disposition', 'arrest', input.disposition.indexOf('arrest') !== -1) }
           {
-            this.renderTempCheckbox('Diverted from Arrest', 'disposition', 'divertedFromArrest',
-              input.disposition.indexOf('divertedFromArrest') !== -1)
+            this.renderTempCheckbox(
+              'Arrest',
+              DISPOSITION_FQN,
+              'arrest',
+              input[DISPOSITION_FQN].indexOf('arrest') !== -1,
+              event => updateStateValue(section, DISPOSITION_FQN,
+                checkboxesHelper(input[DISPOSITION_FQN], event.target.value))
+            )
           }
           {
-            this.renderTempCheckbox('Resisted or Refused Supports', 'disposition', 'resistedOrRefusedSupports',
-              input.disposition.indexOf('resistedOrRefusedSupports') !== -1)
+            this.renderTempCheckbox(
+              'Diverted from Arrest',
+              DISPOSITION_FQN,
+              'divertedFromArrest',
+              input[DISPOSITION_FQN].indexOf('divertedFromArrest') !== -1,
+              event => updateStateValue(section, DISPOSITION_FQN,
+                checkboxesHelper(input[DISPOSITION_FQN], event.target.value))
+            )
+          }
+          {
+            this.renderTempCheckbox(
+              'Resisted or Refused Supports',
+              DISPOSITION_FQN,
+              'resistedOrRefusedSupports',
+              input[DISPOSITION_FQN].indexOf('resistedOrRefusedSupports') !== -1,
+              event => updateStateValue(section, DISPOSITION_FQN,
+                checkboxesHelper(input[DISPOSITION_FQN], event.target.value))
+            )
           }
         </FlexyWrapper>
       </FullWidthItem>
@@ -254,7 +339,7 @@ class DispositionView extends React.Component {
 
     const {
       input,
-      isInReview,
+      isReadOnly,
       updateStateValue,
       updateStateValues
     } = this.props;
@@ -268,16 +353,16 @@ class DispositionView extends React.Component {
             {
               this.renderTempRadio(
                 'Yes',
-                'stabilizedindicator',
+                STABILIZED_INDICATOR_FQN,
                 true,
-                input.stabilizedindicator === true,
+                input[STABILIZED_INDICATOR_FQN] === true,
                 () => {
                   updateStateValues(section, {
                     // set to true
-                    stabilizedindicator: true,
+                    [STABILIZED_INDICATOR_FQN]: true,
                     // set default values
-                    referraldestination: '',
-                    referralprovidedindicator: true
+                    [REFERRAL_DEST_FQN]: '',
+                    [REFERRAL_PROVIDER_INDICATOR_FQN]: true,
                   });
                 }
               )
@@ -285,16 +370,16 @@ class DispositionView extends React.Component {
             {
               this.renderTempRadio(
                 'No',
-                'stabilizedindicator',
+                STABILIZED_INDICATOR_FQN,
                 false,
-                input.stabilizedindicator === false,
+                input[STABILIZED_INDICATOR_FQN] === false,
                 () => {
                   updateStateValues(section, {
                     // set to false
-                    stabilizedindicator: false,
+                    [STABILIZED_INDICATOR_FQN]: false,
                     // clear values
-                    referraldestination: '',
-                    referralprovidedindicator: false
+                    [REFERRAL_DEST_FQN]: '',
+                    [REFERRAL_PROVIDER_INDICATOR_FQN]: false,
                   });
                 }
               )
@@ -303,10 +388,10 @@ class DispositionView extends React.Component {
         </HalfWidthItem>
         <HalfWidthItem>
           <TextField
-              disabled={isInReview}
+              disabled={isReadOnly}
               header="If Yes, specify referral information"
-              onChange={value => updateStateValue(section, 'referraldestination', value)}
-              value={input.referraldestination} />
+              onChange={value => updateStateValue(section, REFERRAL_DEST_FQN, value)}
+              value={input[REFERRAL_DEST_FQN]} />
         </HalfWidthItem>
       </>
     );
@@ -314,38 +399,81 @@ class DispositionView extends React.Component {
 
   renderSpecializedResources = () => {
 
-    const { input } = this.props;
+    const { input, updateStateValue } = this.props;
+    const { section } = this.state;
     return (
       <FullWidthItem>
         <FieldHeader>Called for Specialized Resources</FieldHeader>
         <FlexyWrapper>
           {
-            this.renderTempCheckbox('BCRI / Mobile Crisis Response Team', 'specializedResourcesCalled', 'bcri',
-              input.specializedResourcesCalled.indexOf('bcri') !== -1)
+            this.renderTempCheckbox(
+              'BCRI / Mobile Crisis Response Team',
+              SPECIAL_RESOURCES_CALLED_FQN,
+              'bcri',
+              input[SPECIAL_RESOURCES_CALLED_FQN].indexOf('bcri') !== -1,
+              event => updateStateValue(section, SPECIAL_RESOURCES_CALLED_FQN,
+                checkboxesHelper(input[SPECIAL_RESOURCES_CALLED_FQN], event.target.value))
+            )
           }
           {
-            this.renderTempCheckbox('CIT Officer', 'specializedResourcesCalled', 'citOfficer',
-              input.specializedResourcesCalled.indexOf('citOfficer') !== -1)
+            this.renderTempCheckbox(
+              'CIT Officer',
+              SPECIAL_RESOURCES_CALLED_FQN,
+              'citOfficer',
+              input[SPECIAL_RESOURCES_CALLED_FQN].indexOf('citOfficer') !== -1,
+              event => updateStateValue(section, SPECIAL_RESOURCES_CALLED_FQN,
+                checkboxesHelper(input[SPECIAL_RESOURCES_CALLED_FQN], event.target.value))
+            )
           }
           {
-            this.renderTempCheckbox('CRT Unit', 'specializedResourcesCalled', 'crtUnit',
-              input.specializedResourcesCalled.indexOf('crtUnit') !== -1)
+            this.renderTempCheckbox(
+              'CRT Unit',
+              SPECIAL_RESOURCES_CALLED_FQN,
+              'crtUnit',
+              input[SPECIAL_RESOURCES_CALLED_FQN].indexOf('crtUnit') !== -1,
+              event => updateStateValue(section, SPECIAL_RESOURCES_CALLED_FQN,
+                checkboxesHelper(input[SPECIAL_RESOURCES_CALLED_FQN], event.target.value))
+            )
           }
           {
-            this.renderTempCheckbox('ESU', 'specializedResourcesCalled', 'esu',
-              input.specializedResourcesCalled.indexOf('esu') !== -1)
+            this.renderTempCheckbox(
+              'ESU',
+              SPECIAL_RESOURCES_CALLED_FQN,
+              'esu',
+              input[SPECIAL_RESOURCES_CALLED_FQN].indexOf('esu') !== -1,
+              event => updateStateValue(section, SPECIAL_RESOURCES_CALLED_FQN,
+                checkboxesHelper(input[SPECIAL_RESOURCES_CALLED_FQN], event.target.value))
+            )
           }
           {
-            this.renderTempCheckbox('SWAT', 'specializedResourcesCalled', 'swat',
-              input.specializedResourcesCalled.indexOf('swat') !== -1)
+            this.renderTempCheckbox(
+              'SWAT',
+              SPECIAL_RESOURCES_CALLED_FQN,
+              'swat',
+              input[SPECIAL_RESOURCES_CALLED_FQN].indexOf('swat') !== -1,
+              event => updateStateValue(section, SPECIAL_RESOURCES_CALLED_FQN,
+                checkboxesHelper(input[SPECIAL_RESOURCES_CALLED_FQN], event.target.value))
+            )
           }
           {
-            this.renderTempCheckbox('Negotiation Team', 'specializedResourcesCalled', 'negotiationTeam',
-              input.specializedResourcesCalled.indexOf('negotiationTeam') !== -1)
+            this.renderTempCheckbox(
+              'Negotiation Team',
+              SPECIAL_RESOURCES_CALLED_FQN,
+              'negotiationTeam',
+              input[SPECIAL_RESOURCES_CALLED_FQN].indexOf('negotiationTeam') !== -1,
+              event => updateStateValue(section, SPECIAL_RESOURCES_CALLED_FQN,
+                checkboxesHelper(input[SPECIAL_RESOURCES_CALLED_FQN], event.target.value))
+            )
           }
           {
-            this.renderTempCheckbox('Homeless Outreach', 'specializedResourcesCalled', 'homelessOutreach',
-              input.specializedResourcesCalled.indexOf('homelessOutreach') !== -1)
+            this.renderTempCheckbox(
+              'Homeless Outreach',
+              SPECIAL_RESOURCES_CALLED_FQN,
+              'homelessOutreach',
+              input[SPECIAL_RESOURCES_CALLED_FQN].indexOf('homelessOutreach') !== -1,
+              event => updateStateValue(section, SPECIAL_RESOURCES_CALLED_FQN,
+                checkboxesHelper(input[SPECIAL_RESOURCES_CALLED_FQN], event.target.value))
+            )
           }
         </FlexyWrapper>
       </FullWidthItem>
@@ -354,7 +482,8 @@ class DispositionView extends React.Component {
 
   renderSpecializedResourcesPortland = () => {
 
-    const { input } = this.props;
+    const { input, updateStateValue } = this.props;
+    const { section } = this.state;
     return (
       <FullWidthItem>
         <FieldHeader>Called for Specialized Resources</FieldHeader>
@@ -362,22 +491,42 @@ class DispositionView extends React.Component {
           {
             this.renderTempCheckbox(
               'Behavioral Health Unit (BHU)',
-              'specializedResourcesCalled',
+              SPECIAL_RESOURCES_CALLED_FQN,
               'BehavioralHealthUnit',
-              input.specializedResourcesCalled.indexOf('BehavioralHealthUnit') !== -1
+              input[SPECIAL_RESOURCES_CALLED_FQN].indexOf('BehavioralHealthUnit') !== -1,
+              event => updateStateValue(section, SPECIAL_RESOURCES_CALLED_FQN,
+                checkboxesHelper(input[SPECIAL_RESOURCES_CALLED_FQN], event.target.value))
             )
           }
           {
-            this.renderTempCheckbox('Crisis Team', 'specializedResourcesCalled', 'CrisisTeam',
-              input.specializedResourcesCalled.indexOf('CrisisTeam') !== -1)
+            this.renderTempCheckbox(
+              'Crisis Team',
+              SPECIAL_RESOURCES_CALLED_FQN,
+              'CrisisTeam',
+              input[SPECIAL_RESOURCES_CALLED_FQN].indexOf('CrisisTeam') !== -1,
+              event => updateStateValue(section, SPECIAL_RESOURCES_CALLED_FQN,
+                checkboxesHelper(input[SPECIAL_RESOURCES_CALLED_FQN], event.target.value))
+            )
           }
           {
-            this.renderTempCheckbox('Voluntary Transport', 'specializedResourcesCalled', 'voluntaryTransport',
-              input.specializedResourcesCalled.indexOf('voluntaryTransport') !== -1)
+            this.renderTempCheckbox(
+              'Voluntary Transport',
+              SPECIAL_RESOURCES_CALLED_FQN,
+              'voluntaryTransport',
+              input[SPECIAL_RESOURCES_CALLED_FQN].indexOf('voluntaryTransport') !== -1,
+              event => updateStateValue(section, SPECIAL_RESOURCES_CALLED_FQN,
+                checkboxesHelper(input[SPECIAL_RESOURCES_CALLED_FQN], event.target.value))
+            )
           }
           {
-            this.renderTempCheckbox('Involuntary Transport', 'specializedResourcesCalled', 'involuntaryTransport',
-              input.specializedResourcesCalled.indexOf('involuntaryTransport') !== -1)
+            this.renderTempCheckbox(
+              'Involuntary Transport',
+              SPECIAL_RESOURCES_CALLED_FQN,
+              'involuntaryTransport',
+              input[SPECIAL_RESOURCES_CALLED_FQN].indexOf('involuntaryTransport') !== -1,
+              event => updateStateValue(section, SPECIAL_RESOURCES_CALLED_FQN,
+                checkboxesHelper(input[SPECIAL_RESOURCES_CALLED_FQN], event.target.value))
+            )
           }
         </FlexyWrapper>
       </FullWidthItem>
@@ -388,7 +537,7 @@ class DispositionView extends React.Component {
 
     const {
       input,
-      isInReview,
+      isReadOnly,
       updateStateValue,
       updateStateValues,
     } = this.props;
@@ -401,17 +550,17 @@ class DispositionView extends React.Component {
           {
             this.renderTempRadio(
               'Yes',
-              'hospitaltransportindicator',
+              HOSPITAL_TRANSPORT_INDICATOR_FQN,
               true,
-              input.hospitaltransportindicator === true,
+              input[HOSPITAL_TRANSPORT_INDICATOR_FQN] === true,
               () => {
                 updateStateValues(section, {
                   // set to true
-                  hospitaltransportindicator: true,
+                  [HOSPITAL_TRANSPORT_INDICATOR_FQN]: true,
                   // set default values
-                  hospitalname: '',
-                  TransportingAgency: 'police',
-                  voluntaryactionindicator: true
+                  [HOSPITAL_NAME_FQN]: '',
+                  [TRANSPORTING_AGENCY_FQN]: 'police',
+                  [VOLUNTARY_ACTION_INDICATOR_FQN]: true
                 });
               }
             )
@@ -419,43 +568,43 @@ class DispositionView extends React.Component {
           {
             this.renderTempRadio(
               'No',
-              'hospitaltransportindicator',
+              HOSPITAL_TRANSPORT_INDICATOR_FQN,
               false,
-              input.hospitaltransportindicator === false,
+              input[HOSPITAL_TRANSPORT_INDICATOR_FQN] === false,
               () => {
                 updateStateValues(section, {
                   // set to true
-                  hospitaltransportindicator: false,
+                  [HOSPITAL_TRANSPORT_INDICATOR_FQN]: false,
                   // clear values
-                  hospitalname: '',
-                  TransportingAgency: '',
-                  voluntaryactionindicator: null
+                  [HOSPITAL_NAME_FQN]: '',
+                  [TRANSPORTING_AGENCY_FQN]: '',
+                  [VOLUNTARY_ACTION_INDICATOR_FQN]: null
                 });
               }
             )
           }
         </FullWidthItem>
         {
-          input.hospitaltransportindicator && (
+          input[HOSPITAL_TRANSPORT_INDICATOR_FQN] && (
             <>
               <HalfWidthItem>
                 <FlexyWrapper inline>
                   {
                     this.renderTempRadio(
                       'Voluntary',
-                      'voluntaryactionindicator',
+                      VOLUNTARY_ACTION_INDICATOR_FQN,
                       true,
-                      input.voluntaryactionindicator === true,
-                      () => updateStateValue(section, 'voluntaryactionindicator', true)
+                      input[VOLUNTARY_ACTION_INDICATOR_FQN] === true,
+                      () => updateStateValue(section, VOLUNTARY_ACTION_INDICATOR_FQN, true)
                     )
                   }
                   {
                     this.renderTempRadio(
                       'Involuntary',
-                      'voluntaryactionindicator',
+                      VOLUNTARY_ACTION_INDICATOR_FQN,
                       false,
-                      input.voluntaryactionindicator === false,
-                      () => updateStateValue(section, 'voluntaryactionindicator', false)
+                      input[VOLUNTARY_ACTION_INDICATOR_FQN] === false,
+                      () => updateStateValue(section, VOLUNTARY_ACTION_INDICATOR_FQN, false)
                     )
                   }
                 </FlexyWrapper>
@@ -463,21 +612,31 @@ class DispositionView extends React.Component {
               <HalfWidthItem>
                 <FlexyWrapper inline>
                   {
-                    this.renderTempRadio('Police', 'TransportingAgency', 'police',
-                      input.TransportingAgency === 'police')
+                    this.renderTempRadio(
+                      'Police',
+                      TRANSPORTING_AGENCY_FQN,
+                      'police',
+                      input[TRANSPORTING_AGENCY_FQN] === 'police',
+                      () => updateStateValue(section, TRANSPORTING_AGENCY_FQN, 'police')
+                    )
                   }
                   {
-                    this.renderTempRadio('Medcu', 'TransportingAgency', 'medcu',
-                      input.TransportingAgency === 'medcu')
+                    this.renderTempRadio(
+                      'Medcu',
+                      TRANSPORTING_AGENCY_FQN,
+                      'medcu',
+                      input[TRANSPORTING_AGENCY_FQN] === 'medcu',
+                      () => updateStateValue(section, TRANSPORTING_AGENCY_FQN, 'medcu')
+                    )
                   }
                 </FlexyWrapper>
               </HalfWidthItem>
               <FullWidthItem>
                 <TextField
-                    disabled={isInReview}
+                    disabled={isReadOnly}
                     header="Hospital name"
-                    onChange={value => updateStateValue(section, 'hospitalname', value)}
-                    value={input.hospitalname} />
+                    onChange={value => updateStateValue(section, HOSPITAL_NAME_FQN, value)}
+                    value={input[HOSPITAL_NAME_FQN]} />
               </FullWidthItem>
             </>
           )
@@ -490,7 +649,7 @@ class DispositionView extends React.Component {
 
     const {
       input,
-      isInReview,
+      isReadOnly,
       selectedOrganizationId,
       updateStateValue,
     } = this.props;
@@ -504,19 +663,19 @@ class DispositionView extends React.Component {
             {
               this.renderTempRadio(
                 'Yes',
-                'hospitaltransportindicator',
+                HOSPITAL_TRANSPORT_INDICATOR_FQN,
                 true,
-                input.hospitaltransportindicator === true,
-                () => updateStateValue(section, 'hospitaltransportindicator', true),
+                input[HOSPITAL_TRANSPORT_INDICATOR_FQN] === true,
+                () => updateStateValue(section, HOSPITAL_TRANSPORT_INDICATOR_FQN, true),
               )
             }
             {
               this.renderTempRadio(
                 'No',
-                'hospitaltransportindicator',
+                HOSPITAL_TRANSPORT_INDICATOR_FQN,
                 false,
-                input.hospitaltransportindicator === false,
-                () => updateStateValue(section, 'hospitaltransportindicator', false),
+                input[HOSPITAL_TRANSPORT_INDICATOR_FQN] === false,
+                () => updateStateValue(section, HOSPITAL_TRANSPORT_INDICATOR_FQN, false),
               )
             }
           </FlexyWrapper>
@@ -527,9 +686,9 @@ class DispositionView extends React.Component {
             isPortlandOrg(selectedOrganizationId)
               ? (
                 <TextField
-                    disabled={isInReview}
-                    onChange={value => updateStateValue(section, 'hospital', value)}
-                    value={input.hospital} />
+                    disabled={isReadOnly}
+                    onChange={value => updateStateValue(section, HOSPITAL_FQN, value)}
+                    value={input[HOSPITAL_FQN]} />
               )
               : this.renderHospitalsSelect()
           }
@@ -542,7 +701,7 @@ class DispositionView extends React.Component {
 
     const {
       input,
-      isInReview,
+      isReadOnly,
       selectedOrganizationId,
       updateStateValue,
     } = this.props;
@@ -558,41 +717,83 @@ class DispositionView extends React.Component {
           <FieldHeader>{ titleValue }</FieldHeader>
           <FlexyWrapper>
             {
-              this.renderTempCheckbox('Verbalization', 'deescalationTechniques', 'verbalization',
-                input.deescalationTechniques.indexOf('verbalization') !== -1)
+              this.renderTempCheckbox(
+                'Verbalization',
+                DEESCALATION_TECHNIQUES_FQN,
+                'verbalization',
+                input[DEESCALATION_TECHNIQUES_FQN].indexOf('verbalization') !== -1,
+                event => updateStateValue(section, DEESCALATION_TECHNIQUES_FQN,
+                  checkboxesHelper(input[DEESCALATION_TECHNIQUES_FQN], event.target.value))
+              )
             }
             {
-              this.renderTempCheckbox('Handcuffs', 'deescalationTechniques', 'handcuffs',
-                input.deescalationTechniques.indexOf('handcuffs') !== -1)
+              this.renderTempCheckbox(
+                'Handcuffs',
+                DEESCALATION_TECHNIQUES_FQN,
+                'handcuffs',
+                input[DEESCALATION_TECHNIQUES_FQN].indexOf('handcuffs') !== -1,
+                event => updateStateValue(section, DEESCALATION_TECHNIQUES_FQN,
+                  checkboxesHelper(input[DEESCALATION_TECHNIQUES_FQN], event.target.value))
+              )
             }
             {
-              this.renderTempCheckbox('Leg Restraints', 'deescalationTechniques', 'legRestraints',
-                input.deescalationTechniques.indexOf('legRestraints') !== -1)
+              this.renderTempCheckbox(
+                'Leg Restraints',
+                DEESCALATION_TECHNIQUES_FQN,
+                'legRestraints',
+                input[DEESCALATION_TECHNIQUES_FQN].indexOf('legRestraints') !== -1,
+                event => updateStateValue(section, DEESCALATION_TECHNIQUES_FQN,
+                  checkboxesHelper(input[DEESCALATION_TECHNIQUES_FQN], event.target.value))
+              )
             }
             {
-              this.renderTempCheckbox('Taser', 'deescalationTechniques', 'taser',
-                input.deescalationTechniques.indexOf('taser') !== -1)
+              this.renderTempCheckbox(
+                'Taser',
+                DEESCALATION_TECHNIQUES_FQN,
+                'taser',
+                input[DEESCALATION_TECHNIQUES_FQN].indexOf('taser') !== -1,
+                event => updateStateValue(section, DEESCALATION_TECHNIQUES_FQN,
+                  checkboxesHelper(input[DEESCALATION_TECHNIQUES_FQN], event.target.value))
+              )
             }
             {
-              this.renderTempCheckbox('Arrest Control (Hands / Feet)', 'deescalationTechniques', 'arrestControl',
-                input.deescalationTechniques.indexOf('arrestControl') !== -1)
+              this.renderTempCheckbox(
+                'Arrest Control (Hands / Feet)',
+                DEESCALATION_TECHNIQUES_FQN,
+                'arrestControl',
+                input[DEESCALATION_TECHNIQUES_FQN].indexOf('arrestControl') !== -1,
+                event => updateStateValue(section, DEESCALATION_TECHNIQUES_FQN,
+                  checkboxesHelper(input[DEESCALATION_TECHNIQUES_FQN], event.target.value))
+              )
             }
             {
-              this.renderTempCheckbox('N/A', 'deescalationTechniques', 'n/a',
-                input.deescalationTechniques.indexOf('n/a') !== -1)
+              this.renderTempCheckbox(
+                'N/A',
+                DEESCALATION_TECHNIQUES_FQN,
+                'n/a',
+                input[DEESCALATION_TECHNIQUES_FQN].indexOf('n/a') !== -1,
+                event => updateStateValue(section, DEESCALATION_TECHNIQUES_FQN,
+                  checkboxesHelper(input[DEESCALATION_TECHNIQUES_FQN], event.target.value))
+              )
             }
             {
-              this.renderTempCheckbox('Other', 'deescalationTechniques', 'other',
-                input.deescalationTechniques.indexOf('other') !== -1)
+              this.renderTempCheckbox(
+                'Other',
+                DEESCALATION_TECHNIQUES_FQN,
+                'other',
+                input[DEESCALATION_TECHNIQUES_FQN].indexOf('other') !== -1,
+                event => updateStateValue(section, DEESCALATION_TECHNIQUES_FQN,
+                  checkboxesHelper(input[DEESCALATION_TECHNIQUES_FQN], event.target.value))
+              )
             }
           </FlexyWrapper>
         </HalfWidthItem>
         <HalfWidthItem>
           <TextField
-              disabled={isInReview}
+              disabled={isReadOnly}
               header="If other, specify other techniques"
-              onChange={value => updateStateValue(section, 'deescalationTechniquesOther', value)}
-              value={input.deescalationTechniquesOther} />
+              onChange={value => updateStateValue(section, DEESCALATION_TECHNIQUES_OTHER_FQN, value)}
+              value={input[DEESCALATION_TECHNIQUES_OTHER_FQN]} />
         </HalfWidthItem>
       </>
     );
@@ -603,6 +804,7 @@ class DispositionView extends React.Component {
     const {
       input,
       isInReview,
+      isReadOnly,
       selectedOrganizationId,
       updateStateValue,
     } = this.props;
@@ -612,8 +814,11 @@ class DispositionView extends React.Component {
       <>
         <FormGridWrapper>
           <FullWidthItem>
-            { !isInReview && (
-              <h1>Disposition</h1>
+            <h1>Disposition</h1>
+            { isInReview && (
+              <Link to={FORM_PATHS.DISPOSITION}>
+                <EditButton onClick={this.handleOnClickEditReport}>Edit</EditButton>
+              </Link>
             )}
           </FullWidthItem>
           {
@@ -646,23 +851,13 @@ class DispositionView extends React.Component {
           }
           <FullWidthItem>
             <TextAreaField
-                disabled={isInReview}
+                disabled={isReadOnly}
                 header={incidentNarrativeTitle}
-                name="incidentNarrative"
-                onChange={value => updateStateValue(section, 'incidentNarrative', value)}
-                value={input.incidentNarrative} />
+                name={INCIDENT_NARRATIVE_FQN}
+                onChange={value => updateStateValue(section, INCIDENT_NARRATIVE_FQN, value)}
+                value={input[INCIDENT_NARRATIVE_FQN]} />
           </FullWidthItem>
         </FormGridWrapper>
-        {
-          !isInReview
-            ? (
-              <FormNav
-                  prevPath={FORM_PATHS.COMPLAINANT}
-                  nextPath={FORM_PATHS.OFFICER}
-                  handlePageChange={this.handlePageChange} />
-            )
-            : null
-        }
       </>
     );
   }

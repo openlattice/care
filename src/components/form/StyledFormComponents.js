@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Colors } from 'lattice-ui-kit';
+import { Button, Colors } from 'lattice-ui-kit';
 
 const { NEUTRALS } = Colors;
 
@@ -8,6 +8,7 @@ const FormGridWrapper = styled.div`
   display: grid;
   grid-gap: 30px;
   grid-template-columns: 1fr 1fr;
+  position: relative;
 
   h1 {
     font-size: 32px;
@@ -42,7 +43,14 @@ const FlexyWrapper = styled.div`
   flex-direction: ${({ inline }) => (inline ? 'row' : 'column')};
 `;
 
+const EditButton = styled(Button)`
+  position: absolute;
+  right: 0;
+  top: 0;
+`;
+
 export {
+  EditButton,
   FlexyWrapper,
   FormGridWrapper,
   FullWidthItem,

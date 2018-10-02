@@ -12,12 +12,13 @@ import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 
+import HackyBehavioralHealthReportEditContainer from './HackyBehavioralHealthReportEditContainer';
 import HackyBehavioralHealthReportViewContainer from './HackyBehavioralHealthReportViewContainer';
 import Spinner from '../../components/spinner/Spinner';
 import StyledCard from '../../components/cards/StyledCard';
 import { getReportInFull, getReports } from './ReportsActions';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
-import { REPORT_VIEW_PATH } from '../../core/router/Routes';
+import { REPORT_EDIT_PATH, REPORT_VIEW_PATH } from '../../core/router/Routes';
 import {
   ContentContainerInnerWrapper,
   ContentContainerOuterWrapper,
@@ -25,8 +26,8 @@ import {
 
 import {
   COMPLAINT_NUMBER_FQN,
-  DATE_OCCURRED_FQN,
-  DATE_REPORTED_FQN,
+  DATE_TIME_OCCURRED_FQN,
+  DATE_TIME_REPORTED_FQN,
   DISPATCH_REASON_FQN,
   INCIDENT_FQN,
   LOCATION_OF_INCIDENT_FQN,
@@ -109,11 +110,12 @@ class ReportListContainer extends Component<Props> {
 
     const reportListElements = reports.map((report :Map<*, *>) => {
 
-      const dateOccurredFormatted = moment(report.getIn([DATE_OCCURRED_FQN.toString(), 0], '')).format('YYYY-MM-DD');
-      const dateReportedFormatted = moment(report.getIn([DATE_REPORTED_FQN.toString(), 0], '')).format('YYYY-MM-DD');
+      const dateOccurredFormatted = moment(report.getIn([DATE_TIME_OCCURRED_FQN, 0], '')).format('YYYY-MM-DD');
+      const dateReportedFormatted = moment(report.getIn([DATE_TIME_REPORTED_FQN, 0], '')).format('YYYY-MM-DD');
 
       return (
         <ReportDetailCard
+            id={report.getIn([OPENLATTICE_ID_FQN, 0])}
             key={report.getIn([OPENLATTICE_ID_FQN, 0])}
             onClick={() => this.handleOnSelectReport(report)}>
           <DetailItem>
@@ -164,6 +166,7 @@ class ReportListContainer extends Component<Props> {
     return (
       <Switch>
         <Route path={REPORT_VIEW_PATH} component={HackyBehavioralHealthReportViewContainer} />
+        <Route path={REPORT_EDIT_PATH} component={HackyBehavioralHealthReportEditContainer} />
         <Route render={this.renderReports} />
       </Switch>
     );

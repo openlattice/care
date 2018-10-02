@@ -4,9 +4,6 @@
 
 import React from 'react';
 
-import isInteger from 'lodash/isInteger';
-import moment from 'moment';
-import parseInt from 'lodash/parseInt';
 import { Map } from 'immutable';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -16,13 +13,7 @@ import type { RouterHistory } from 'react-router';
 
 import FormView from '../../components/FormView';
 import { hardRestart, submitReport } from './ReportActionFactory';
-
-import {
-  APP_TYPES_FQNS,
-  CONSUMER_STATE,
-  FORM_PATHS,
-  PERSON,
-} from '../../shared/Consts';
+import { APP_TYPES_FQNS, FORM_PATHS } from '../../shared/Consts';
 
 import {
   getComplainantInfoInitialState,
@@ -32,17 +23,7 @@ import {
   getReportInfoInitialState
 } from './DataModelDefinitions';
 
-import type {
-  ComplainantInfo,
-  ConsumerInfo,
-  DispositionInfo,
-  OfficerInfo,
-  ReportInfo
-} from './DataModelDefinitions';
-
-/*
- * types
- */
+const { PEOPLE_FQN } = APP_TYPES_FQNS;
 
 type Props = {
   actions :{
@@ -55,12 +36,12 @@ type Props = {
 };
 
 type State = {
-  consumerInfo :ConsumerInfo;
-  complainantInfo :ComplainantInfo;
-  dispositionInfo :DispositionInfo;
+  consumerInfo :Object;
+  complainantInfo :Object;
+  dispositionInfo :Object;
   isConsumerSelected :boolean;
-  officerInfo :OfficerInfo;
-  reportInfo :ReportInfo;
+  officerInfo :Object;
+  reportInfo :Object;
 };
 
 class Form extends React.Component<Props, State> {
@@ -69,7 +50,7 @@ class Form extends React.Component<Props, State> {
 
     super(props);
 
-    // TODO: fix Flow errors
+    // TODO: these don't need to be separated anymore
     this.state = {
       complainantInfo: getComplainantInfoInitialState(),
       consumerInfo: getConsumerInfoInitialState(),
@@ -104,52 +85,6 @@ class Form extends React.Component<Props, State> {
     this.setState({ [sectionKey]: sectionState });
   }
 
-  // For radio or select input
-  handleSingleSelection = (e) => {
-    const sectionKey = e.target.dataset.section;
-    const sectionState = this.state[sectionKey];
-    if (e.target.value === 'true') {
-      sectionState[e.target.name] = true;
-    }
-    else if (e.target.value === 'false') {
-      sectionState[e.target.name] = false;
-    }
-    else {
-      sectionState[e.target.name] = e.target.value;
-    }
-    this.setState({ [sectionKey]: sectionState });
-  }
-
-  handleCheckboxChange = (e) => {
-    const sectionKey = e.target.dataset.section;
-    const sectionState = this.state[sectionKey];
-    const idx = sectionState[e.target.name].indexOf(e.target.value);
-    if (idx === -1) {
-      sectionState[e.target.name].push(e.target.value);
-    }
-    else {
-      sectionState[e.target.name].splice(idx, 1);
-    }
-    this.setState({ [sectionKey]: sectionState });
-  }
-
-  handleScaleSelection = (e) => {
-
-    const sectionKey = e.target.dataset.section;
-    const sectionState = this.state[sectionKey];
-
-    const value = e.target.value;
-    const valueAsInt = parseInt(value);
-    if (isInteger(valueAsInt) && `${valueAsInt}` === value) {
-      sectionState[e.target.name] = valueAsInt;
-    }
-    else {
-      sectionState[e.target.name] = value;
-    }
-
-    this.setState({ [sectionKey]: sectionState });
-  }
-
   handlePageChange = (path) => {
     const { history } = this.props;
     history.push(path);
@@ -157,22 +92,7 @@ class Form extends React.Component<Props, State> {
 
   handlePersonSelection = (person) => {
 
-    const consumerState = getConsumerInfoInitialState();
-    if (person) {
-      Object.keys(PERSON).forEach((key) => {
-        const consumerKey = CONSUMER_STATE[key];
-        const personKey = PERSON[key];
-        if (person[personKey] && person[personKey].length > 0) {
-          consumerState[consumerKey] = person[personKey][0];
-        }
-      });
-      const dob = person[PERSON.DOB_FQN];
-      if (dob && dob.length > 0) {
-        if (moment(dob[0]).isValid()) {
-          consumerState[CONSUMER_STATE.AGE] = `${moment().diff(moment(dob[0]), 'years')}`;
-        }
-      }
-    }
+    const consumerState = getConsumerInfoInitialState(person);
     this.setState({
       consumerInfo: consumerState,
       isConsumerSelected: !!person
@@ -185,46 +105,61 @@ class Form extends React.Component<Props, State> {
 
     event.preventDefault();
 
-    this.props.actions.submitReport({
-      complainantInfo: this.state.complainantInfo,
-      consumerInfo: this.state.consumerInfo,
-      dispositionInfo: this.state.dispositionInfo,
-      officerInfo: this.state.officerInfo,
-      reportInfo: this.state.reportInfo,
-      app: this.props.app
+    const { actions, app } = this.props;
+    const {
+      complainantInfo,
+      consumerInfo,
+      dispositionInfo,
+      officerInfo,
+      reportInfo,
+    } = this.state;
+
+    actions.submitReport({
+      app,
+      complainantInfo,
+      consumerInfo,
+      dispositionInfo,
+      officerInfo,
+      reportInfo,
     });
   }
 
   render() {
 
-    const { PEOPLE_FQN } = APP_TYPES_FQNS;
-    const selectedOrganizationId :string = this.props.app.get('selectedOrganizationId');
-    const peopleEntitySetId :string = this.props.app.getIn([
+    const { app, submissionState } = this.props;
+    const {
+      complainantInfo,
+      consumerInfo,
+      dispositionInfo,
+      isConsumerSelected,
+      officerInfo,
+      reportInfo,
+    } = this.state;
+
+    const selectedOrganizationId :string = app.get('selectedOrganizationId');
+    const peopleEntitySetId :string = app.getIn([
       PEOPLE_FQN.getFullyQualifiedName(),
       'entitySetsByOrganization',
       selectedOrganizationId
     ]);
-    const organizations = this.props.app.get('organizations');
+    const organizations = app.get('organizations');
 
     return (
       <FormView
-          complainantInfo={this.state.complainantInfo}
-          consumerInfo={this.state.consumerInfo}
-          consumerIsSelected={this.state.isConsumerSelected}
-          dispositionInfo={this.state.dispositionInfo}
-          handleCheckboxChange={this.handleCheckboxChange}
+          complainantInfo={complainantInfo}
+          consumerInfo={consumerInfo}
+          consumerIsSelected={isConsumerSelected}
+          dispositionInfo={dispositionInfo}
           handlePageChange={this.handlePageChange}
           handlePersonSelection={this.handlePersonSelection}
           handlePicture={this.handlePicture}
-          handleScaleSelection={this.handleScaleSelection}
-          handleSingleSelection={this.handleSingleSelection}
           handleSubmit={this.handleSubmit}
-          officerInfo={this.state.officerInfo}
+          officerInfo={officerInfo}
           organizations={organizations}
           personEntitySetId={peopleEntitySetId}
-          reportInfo={this.state.reportInfo}
+          reportInfo={reportInfo}
           selectedOrganizationId={selectedOrganizationId}
-          submissionState={this.props.submissionState}
+          submissionState={submissionState}
           updateStateValue={this.updateStateValue}
           updateStateValues={this.updateStateValues} />
     );

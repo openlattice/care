@@ -13,30 +13,26 @@ const { FullyQualifiedName } = Models;
 const CAD_NUMBER_FQN = new FullyQualifiedName('bhr.cadNumber');
 const COMPANION_OFFENSE_REPORT_FQN = new FullyQualifiedName('bhr.companionOffenseReport');
 const COMPLAINT_NUMBER_FQN = new FullyQualifiedName('bhr.complaintNumber');
-const DATE_OCCURRED_FQN = new FullyQualifiedName('bhr.dateOccurred');
-const DATE_REPORTED_FQN = new FullyQualifiedName('bhr.dateReported');
+const DATE_TIME_OCCURRED_FQN = new FullyQualifiedName('bhr.datetimeOccurred');
+const DATE_TIME_REPORTED_FQN = new FullyQualifiedName('bhr.datetimeReported');
 const DISPATCH_REASON_FQN = new FullyQualifiedName('bhr.dispatchReason');
 const INCIDENT_FQN = new FullyQualifiedName('bhr.incident');
 const LOCATION_OF_INCIDENT_FQN = new FullyQualifiedName('bhr.locationOfIncident');
 const ON_VIEW_FQN = new FullyQualifiedName('bhr.onView');
 const POST_OF_OCCURRENCE_FQN = new FullyQualifiedName('bhr.postOfOccurrence');
-const TIME_OCCURRED_FQN = new FullyQualifiedName('bhr.timeOccurred');
-const TIME_REPORTED_FQN = new FullyQualifiedName('bhr.timeReported');
 const UNIT_FQN = new FullyQualifiedName('bhr.unit');
 
 export {
   CAD_NUMBER_FQN,
   COMPANION_OFFENSE_REPORT_FQN,
   COMPLAINT_NUMBER_FQN,
-  DATE_OCCURRED_FQN,
-  DATE_REPORTED_FQN,
+  DATE_TIME_OCCURRED_FQN,
+  DATE_TIME_REPORTED_FQN,
   DISPATCH_REASON_FQN,
   INCIDENT_FQN,
   LOCATION_OF_INCIDENT_FQN,
   ON_VIEW_FQN,
   POST_OF_OCCURRENCE_FQN,
-  TIME_OCCURRED_FQN,
-  TIME_REPORTED_FQN,
   UNIT_FQN,
 };
 
@@ -132,10 +128,6 @@ const PERSON_RACE_FQN = new FullyQualifiedName('nc.PersonRace');
 const PERSON_SEX_FQN = new FullyQualifiedName('nc.PersonSex');
 const PERSON_ID_FQN = new FullyQualifiedName('nc.SubjectIdentification');
 const PERSON_PICTURE_FQN = new FullyQualifiedName('person.picture');
-const HACKY_FIRST_NAME_FQN = new FullyQualifiedName('__DO_NOT_USE__', 'firstName');
-const HACKY_MIDDLE_NAME_FQN = new FullyQualifiedName('__DO_NOT_USE__', 'middleName');
-const HACKY_LAST_NAME_FQN = new FullyQualifiedName('__DO_NOT_USE__', 'lastName');
-const HACKY_ID_FQN = new FullyQualifiedName('__DO_NOT_USE__', 'identification');
 
 export {
   PERSON_DOB_FQN,
@@ -146,10 +138,6 @@ export {
   PERSON_SEX_FQN,
   PERSON_ID_FQN,
   PERSON_PICTURE_FQN,
-  HACKY_FIRST_NAME_FQN,
-  HACKY_MIDDLE_NAME_FQN,
-  HACKY_LAST_NAME_FQN,
-  HACKY_ID_FQN,
 };
 
 /*

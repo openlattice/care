@@ -7,17 +7,17 @@ import { Models } from 'lattice';
 import { DataIntegrationApiActionFactory, DataIntegrationApiSagas } from 'lattice-sagas';
 import { call, put, takeEvery } from 'redux-saga/effects';
 
+import { APP_TYPES_FQNS, STRING_ID_FQN } from '../../shared/Consts';
 import {
-  formatDateWithTZOAsZeros,
-  formatTimeWithSecondsAsZeros,
-} from '../../utils/DateUtils';
-
-import {
-  APP_TYPES_FQNS,
-  NC_SUBJ_ID_FQN,
-  PERSON,
-  STRING_ID_FQN
-} from '../../shared/Consts';
+  PERSON_DOB_FQN,
+  PERSON_LAST_NAME_FQN,
+  PERSON_FIRST_NAME_FQN,
+  PERSON_MIDDLE_NAME_FQN,
+  PERSON_RACE_FQN,
+  PERSON_SEX_FQN,
+  PERSON_ID_FQN,
+  PERSON_PICTURE_FQN,
+} from '../../edm/DataModelFqns';
 
 import {
   HARD_RESTART,
@@ -54,38 +54,22 @@ function prepReportEntityData(
   propertyTypes.forEach((propertyType :Map<*, *>) => {
     const id :string = propertyType.get('id', '');
     const fqn :FullyQualifiedName = new FullyQualifiedName(propertyType.get('type', {}));
-    const value = allInfo[fqn.getName()];
+    const value = allInfo[fqn.toString()];
     let formattedValue = Array.isArray(value) ? value : [value];
     if (formattedValue.length > 0) {
       if (formattedValue[0] === null || formattedValue[0] === undefined || formattedValue[0] === '') {
         formattedValue = [];
       }
-      // !!! HACK START !!!
-      else if (fqn.getName() === 'dateOccurred') {
-        // HACK: temp hack. "dateOccurred" is "DateTimeOffset", but should actually just be "Date".
-        formattedValue = [formatDateWithTZOAsZeros(formattedValue[0])];
-      }
-      else if (fqn.getName() === 'dateReported') {
-        // HACK: temp hack. "dateReported" is "DateTimeOffset", but should actually just be "Date".
-        formattedValue = [formatDateWithTZOAsZeros(formattedValue[0])];
-      }
-      else if (fqn.getName() === 'timeOccurred') {
-        formattedValue = [formatTimeWithSecondsAsZeros(formattedValue[0])];
-      }
-      else if (fqn.getName() === 'timeReported') {
-        formattedValue = [formatTimeWithSecondsAsZeros(formattedValue[0])];
-      }
-      // !!! HACK END !!!
     }
     details[id] = formattedValue;
   });
 
   // !!! HACK START !!! - this is to make data migration easier later on when the new data model is ready
   const ncSubjectIdPropertyType :Map<*, *> = propertyTypes.find((propertyType :Map<*, *>) => {
-    return FullyQualifiedName.toString(propertyType.get('type', {})) === NC_SUBJ_ID_FQN;
+    return FullyQualifiedName.toString(propertyType.get('type', {})) === PERSON_ID_FQN.toString();
   });
 
-  details[ncSubjectIdPropertyType.get('id', '')] = [allInfo.identification];
+  details[ncSubjectIdPropertyType.get('id', '')] = [allInfo[PERSON_ID_FQN]];
   // !!! HACK END !!!
 
   const entityId :string = primaryKeys
@@ -112,19 +96,8 @@ function prepReportEntityData(
 function prepPeopleEntityData(
   entitySetId :string,
   propertyTypes :List,
-  consumerInfo :Object
+  consumerInfo :Object,
 ) :Object {
-
-  const {
-    dob,
-    firstName,
-    gender,
-    identification,
-    lastName,
-    middleName,
-    picture,
-    race
-  } = consumerInfo;
 
   /*
    * details
@@ -136,21 +109,30 @@ function prepPeopleEntityData(
     props[fqn] = propertyType.get('id', '');
   });
 
+  const id = consumerInfo[PERSON_ID_FQN];
+  const firstName = consumerInfo[PERSON_FIRST_NAME_FQN];
+  const lastName = consumerInfo[PERSON_LAST_NAME_FQN];
+  const middleName = consumerInfo[PERSON_MIDDLE_NAME_FQN];
+  const dob = consumerInfo[PERSON_DOB_FQN];
+  const race = consumerInfo[PERSON_RACE_FQN];
+  const sex = consumerInfo[PERSON_SEX_FQN];
+  const picture = consumerInfo[PERSON_PICTURE_FQN];
+
   const details = {};
-  details[props[PERSON.ID_FQN]] = [identification];
-  details[props[PERSON.LAST_NAME_FQN]] = (lastName && lastName.length) ? [lastName] : [];
-  details[props[PERSON.FIRST_NAME_FQN]] = (firstName && firstName.length) ? [firstName] : [];
-  details[props[PERSON.MIDDLE_NAME_FQN]] = (middleName && middleName.length) ? [middleName] : [];
-  details[props[PERSON.DOB_FQN]] = (dob && dob.length) ? [dob] : [];
-  details[props[PERSON.SEX_FQN]] = (gender && gender.length) ? [gender] : [];
-  details[props[PERSON.RACE_FQN]] = (race && race.length) ? [race] : [];
-  details[props[PERSON.PICTURE_FQN]] = (picture && picture.length) ? [picture] : [];
+  details[props[PERSON_ID_FQN]] = [id];
+  details[props[PERSON_FIRST_NAME_FQN]] = firstName ? [firstName] : [];
+  details[props[PERSON_LAST_NAME_FQN]] = lastName ? [lastName] : [];
+  details[props[PERSON_MIDDLE_NAME_FQN]] = middleName ? [middleName] : [];
+  details[props[PERSON_DOB_FQN]] = dob ? [dob] : [];
+  details[props[PERSON_RACE_FQN]] = race ? [race] : [];
+  details[props[PERSON_SEX_FQN]] = sex ? [sex] : [];
+  details[props[PERSON_PICTURE_FQN]] = picture ? [picture] : [];
 
   /*
    * key
    */
 
-  const entityId = btoa(identification);
+  const entityId = btoa(id);
   const key = {
     entityId,
     entitySetId,
@@ -176,14 +158,14 @@ function prepAppearsInEntityData(
   });
 
   const details = {
-    [idPropertyType.get('id', '')]: [consumerInfo.identification]
+    [idPropertyType.get('id', '')]: [consumerInfo[PERSON_ID_FQN]]
   };
 
   /*
    * key
    */
 
-  const entityId = btoa(consumerInfo.identification);
+  const entityId = btoa(consumerInfo[PERSON_ID_FQN]);
   const key = {
     entityId,
     entitySetId,
@@ -294,7 +276,7 @@ export function* submitReportWorker(action :SequenceAction) :Generator<*, *, *> 
      * 2. write entity data
      */
 
-    const response :Response = yield call(
+    const response = yield call(
       createEntityAndAssociationDataWorker,
       createEntityAndAssociationData({
         associations: [appearsInData],

@@ -12,32 +12,7 @@ export const APP_TYPES_FQNS = {
   PEOPLE_FQN: new FullyQualifiedName('app.people')
 };
 
-export const PERSON = {
-  LAST_NAME_FQN: 'nc.PersonSurName',
-  FIRST_NAME_FQN: 'nc.PersonGivenName',
-  MIDDLE_NAME_FQN: 'nc.PersonMiddleName',
-  RACE_FQN: 'nc.PersonRace',
-  SEX_FQN: 'nc.PersonSex',
-  DOB_FQN: 'nc.PersonBirthDate',
-  ID_FQN: 'nc.SubjectIdentification',
-  AGE_FQN: 'person.age',
-  PICTURE_FQN: 'person.picture'
-};
-
-export const CONSUMER_STATE = {
-  AGE: 'age',
-  LAST_NAME_FQN: 'lastName',
-  FIRST_NAME_FQN: 'firstName',
-  MIDDLE_NAME_FQN: 'middleName',
-  RACE_FQN: 'race',
-  SEX_FQN: 'gender',
-  DOB_FQN: 'dob',
-  ID_FQN: 'identification',
-  PICTURE_FQN: 'picture'
-};
-
 export const STRING_ID_FQN = 'general.stringid';
-export const NC_SUBJ_ID_FQN = 'nc.SubjectIdentification';
 
 export const RACE = {
   americanIndian: 'American Indian or Alaska Native',

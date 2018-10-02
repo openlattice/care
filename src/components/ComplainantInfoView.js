@@ -1,11 +1,18 @@
 import React, { Component } from 'react';
 
 import { withRouter } from 'react-router';
+import { Link } from 'react-router-dom';
 
-import FormNav from './FormNav';
 import TextField from './text/TextField';
 import { FORM_PATHS } from '../shared/Consts';
-import { FormGridWrapper, FullWidthItem } from './form/StyledFormComponents';
+import { EditButton, FormGridWrapper, FullWidthItem } from './form/StyledFormComponents';
+
+import {
+  COMPLAINANT_NAME_FQN,
+  COMPLAINANT_ADDRESS_FQN,
+  COMPLAINANT_RELATIONSHIP_FQN,
+  COMPLAINANT_PHONE_FQN,
+} from '../edm/DataModelFqns';
 
 // TODO: add flow types and PropTypes
 class ComplainantInfoView extends Component {
@@ -17,58 +24,52 @@ class ComplainantInfoView extends Component {
     };
   }
 
-  handlePageChange = (path) => {
-
-    // TODO: validation
-    const { handlePageChange } = this.props;
-    handlePageChange(path);
-  }
-
   render() {
 
-    const { input, isInReview, updateStateValue } = this.props;
+    const {
+      input,
+      isInReview,
+      isReadOnly,
+      updateStateValue
+    } = this.props;
     const { section } = this.state;
+
     return (
       <>
         <FormGridWrapper>
           <FullWidthItem>
-            { !isInReview && (
-              <h1>Complainant</h1>
+            <h1>Complainant</h1>
+            { isInReview && (
+              <Link to={FORM_PATHS.COMPLAINANT}>
+                <EditButton onClick={this.handleOnClickEditReport}>Edit</EditButton>
+              </Link>
             )}
           </FullWidthItem>
           <FullWidthItem>
             <TextField
-                disabled={isInReview}
+                disabled={isReadOnly}
                 header="Complainant Name (Last, First, Middle)"
-                onChange={value => updateStateValue(section, 'complainantName', value)}
-                value={input.complainantName} />
+                onChange={value => updateStateValue(section, COMPLAINANT_NAME_FQN, value)}
+                value={input[COMPLAINANT_NAME_FQN]} />
           </FullWidthItem>
           <FullWidthItem>
             <TextField
-                disabled={isInReview}
+                disabled={isReadOnly}
                 header="Residence / Address (Street, Apt Number, City, County, State, Zip)"
-                onChange={value => updateStateValue(section, 'complainantAddress', value)}
-                value={input.complainantAddress} />
+                onChange={value => updateStateValue(section, COMPLAINANT_ADDRESS_FQN, value)}
+                value={input[COMPLAINANT_ADDRESS_FQN]} />
           </FullWidthItem>
           <TextField
-              disabled={isInReview}
+              disabled={isReadOnly}
               header="Relationship to Consumer"
-              onChange={value => updateStateValue(section, 'complainantConsumerRelationship', value)}
-              value={input.complainantConsumerRelationship} />
+              onChange={value => updateStateValue(section, COMPLAINANT_RELATIONSHIP_FQN, value)}
+              value={input[COMPLAINANT_RELATIONSHIP_FQN]} />
           <TextField
-              disabled={isInReview}
+              disabled={isReadOnly}
               header="Phone Number"
-              onChange={value => updateStateValue(section, 'complainantPhone', value)}
-              value={input.complainantPhone} />
+              onChange={value => updateStateValue(section, COMPLAINANT_PHONE_FQN, value)}
+              value={input[COMPLAINANT_PHONE_FQN]} />
         </FormGridWrapper>
-        {
-          !isInReview && (
-            <FormNav
-                prevPath={FORM_PATHS.REPORT}
-                nextPath={FORM_PATHS.DISPOSITION}
-                handlePageChange={this.handlePageChange} />
-          )
-        }
       </>
     );
   }

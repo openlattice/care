@@ -16,8 +16,10 @@ import DispositionView from './DispositionView';
 import OfficerInfoView from './OfficerInfoView';
 import ReviewView from './ReviewView';
 import StyledCard from './cards/StyledCard';
+import FormNav from './FormNav';
 import { SUBMISSION_STATES } from '../containers/form/ReportReducer';
 import { BHR_PATH, HOME_PATH, ROOT } from '../core/router/Routes';
+import { FORM_PATHS } from '../shared/Consts';
 
 const ContainerOuterWrapper = styled.div`
   align-items: flex-start;
@@ -60,12 +62,9 @@ function FormView({
   consumerInfo,
   consumerIsSelected,
   dispositionInfo,
-  handleCheckboxChange,
   handlePageChange,
   handlePersonSelection,
   handlePicture,
-  handleScaleSelection,
-  handleSingleSelection,
   handleSubmit,
   isInReview,
   officerInfo,
@@ -86,12 +85,17 @@ function FormView({
 
   const getReportInfoView = () => {
     return (
-      <ReportInfoView
-          handlePageChange={handlePageChange}
-          input={reportInfo}
-          isInReview={false}
-          updateStateValue={updateStateValue}
-          updateStateValues={updateStateValues} />
+      <>
+        <ReportInfoView
+            input={reportInfo}
+            isInReview={false}
+            updateStateValue={updateStateValue}
+            updateStateValues={updateStateValues} />
+        <FormNav
+            prevPath={FORM_PATHS.CONSUMER}
+            nextPath={FORM_PATHS.COMPLAINANT}
+            handlePageChange={handlePageChange} />
+      </>
     );
   };
 
@@ -100,83 +104,98 @@ function FormView({
       <ConsumerSearch
           handlePersonSelection={handlePersonSelection}
           personEntitySetId={personEntitySetId}
-          handlePageChange={handlePageChange}
           selectedOrganizationId={selectedOrganizationId} />
     );
   };
 
   const getConsumerInfoView = () => {
     return (
-      <ConsumerInfoView
-          consumerIsSelected={consumerIsSelected}
-          handleCheckboxChange={handleCheckboxChange}
-          handlePageChange={handlePageChange}
-          handlePicture={handlePicture}
-          handleScaleSelection={handleScaleSelection}
-          handleSingleSelection={handleSingleSelection}
-          input={consumerInfo}
-          isInReview={false}
-          selectedOrganizationId={selectedOrganizationId}
-          updateStateValue={updateStateValue}
-          updateStateValues={updateStateValues} />
+      <>
+        <ConsumerInfoView
+            consumerIsSelected={consumerIsSelected}
+            handlePicture={handlePicture}
+            input={consumerInfo}
+            isInReview={false}
+            selectedOrganizationId={selectedOrganizationId}
+            updateStateValue={updateStateValue}
+            updateStateValues={updateStateValues} />
+        <FormNav
+            prevPath={FORM_PATHS.CONSUMER_SEARCH}
+            nextPath={FORM_PATHS.REPORT}
+            handlePageChange={handlePageChange} />
+      </>
     );
   };
 
   const getComplainantInfoView = () => {
     return (
-      <ComplainantInfoView
-          handlePageChange={handlePageChange}
-          input={complainantInfo}
-          isInReview={false}
-          updateStateValue={updateStateValue}
-          updateStateValues={updateStateValues} />
+      <>
+        <ComplainantInfoView
+            input={complainantInfo}
+            isInReview={false}
+            updateStateValue={updateStateValue}
+            updateStateValues={updateStateValues} />
+        <FormNav
+            prevPath={FORM_PATHS.REPORT}
+            nextPath={FORM_PATHS.DISPOSITION}
+            handlePageChange={handlePageChange} />
+      </>
     );
   };
 
   const getDispositionView = () => {
     return (
-      <DispositionView
-          handleCheckboxChange={handleCheckboxChange}
-          handlePageChange={handlePageChange}
-          input={dispositionInfo}
-          isInReview={false}
-          selectedOrganizationId={selectedOrganizationId}
-          updateStateValue={updateStateValue}
-          updateStateValues={updateStateValues} />
+      <>
+        <DispositionView
+            input={dispositionInfo}
+            isInReview={false}
+            selectedOrganizationId={selectedOrganizationId}
+            updateStateValue={updateStateValue}
+            updateStateValues={updateStateValues} />
+        <FormNav
+            prevPath={FORM_PATHS.COMPLAINANT}
+            nextPath={FORM_PATHS.OFFICER}
+            handlePageChange={handlePageChange} />
+      </>
     );
   };
 
   const getOfficerInfoView = () => {
     return (
-      <OfficerInfoView
-          handleCheckboxChange={handleCheckboxChange}
-          handlePageChange={handlePageChange}
-          input={officerInfo}
-          isInReview={false}
-          selectedOrganizationId={selectedOrganizationId}
-          updateStateValue={updateStateValue}
-          updateStateValues={updateStateValues} />
+      <>
+        <OfficerInfoView
+            input={officerInfo}
+            isInReview={false}
+            selectedOrganizationId={selectedOrganizationId}
+            updateStateValue={updateStateValue}
+            updateStateValues={updateStateValues} />
+        <FormNav
+            prevPath={FORM_PATHS.DISPOSITION}
+            nextPath={FORM_PATHS.REVIEW}
+            handlePageChange={handlePageChange} />
+      </>
     );
   };
 
   const getReviewView = () => {
     return (
-      <ReviewView
-          handleCheckboxChange={handleCheckboxChange}
-          handlePageChange={handlePageChange}
-          handleScaleSelection={handleScaleSelection}
-          handleSingleSelection={handleSingleSelection}
-          handleSubmit={handleSubmit}
-          reportInfo={reportInfo}
-          consumerInfo={consumerInfo}
-          complainantInfo={complainantInfo}
-          dispositionInfo={dispositionInfo}
-          officerInfo={officerInfo}
-          isInReview
-          consumerIsSelected={consumerIsSelected}
-          selectedOrganizationId={selectedOrganizationId}
-          updateStateValue={updateStateValue}
-          updateStateValues={updateStateValues} />
+      <>
+        <ReviewView
+            reportInfo={reportInfo}
+            consumerInfo={consumerInfo}
+            complainantInfo={complainantInfo}
+            dispositionInfo={dispositionInfo}
+            officerInfo={officerInfo}
+            isInReview
+            consumerIsSelected={consumerIsSelected}
+            selectedOrganizationId={selectedOrganizationId}
+            updateStateValue={updateStateValue}
+            updateStateValues={updateStateValues} />
+        <FormNav
+            handlePageChange={handlePageChange}
+            handleSubmit={handleSubmit}
+            submit />
+      </>
     );
   };
 

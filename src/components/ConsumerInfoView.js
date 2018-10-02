@@ -2,8 +2,8 @@ import React from 'react';
 
 import moment from 'moment';
 import { withRouter } from 'react-router';
+import { Link } from 'react-router-dom';
 
-import FormNav from './FormNav';
 import FieldHeader from './text/styled/FieldHeader';
 import TextAreaField from './text/TextAreaField';
 import TextField from './text/TextField';
@@ -11,12 +11,62 @@ import SelfieWebCam, { DATA_URL_PREFIX } from './SelfieWebCam';
 
 import { FORM_PATHS } from '../shared/Consts';
 import { isPortlandOrg } from '../utils/Whitelist';
+import { checkboxesHelper } from '../containers/reports/HackyUtils';
 import {
+  EditButton,
   FlexyWrapper,
   FormGridWrapper,
   FullWidthItem,
   HalfWidthItem,
 } from './form/StyledFormComponents';
+import {
+  ADDRESS_FQN,
+  PHONE_FQN,
+  MILITARY_STATUS_FQN,
+  GENDER_FQN,
+  RACE_FQN,
+  AGE_FQN,
+  DOB_FQN,
+  HOMELESS_FQN,
+  HOMELESS_LOCATION_FQN,
+  DRUGS_ALCOHOL_FQN,
+  DRUG_TYPE_FQN,
+  PRESCRIBED_MEDICATION_FQN,
+  TAKING_MEDICATION_FQN,
+  PREV_PSYCH_ADMISSION_FQN,
+  SELF_DIAGNOSIS_FQN,
+  SELF_DIAGNOSIS_OTHER_FQN,
+  ARMED_WITH_WEAPON_FQN,
+  ARMED_WEAPON_TYPE_FQN,
+  ACCESS_TO_WEAPONS_FQN,
+  ACCESSIBLE_WEAPON_TYPE_FQN,
+  OBSERVED_BEHAVIORS_FQN,
+  OBSERVED_BEHAVIORS_OTHER_FQN,
+  EMOTIONAL_STATE_FQN,
+  EMOTIONAL_STATE_OTHER_FQN,
+  PHOTOS_TAKEN_OF_FQN,
+  INJURIES_FQN,
+  INJURIES_OTHER_FQN,
+  SUICIDAL_FQN,
+  SUICIDAL_ACTIONS_FQN,
+  SUICIDE_ATTEMPT_METHOD_FQN,
+  SUICIDE_ATTEMPT_METHOD_OTHER_FQN,
+  DIRECTED_AGAINST_FQN,
+  DIRECTED_AGAINST_OTHER_FQN,
+  HIST_DIRECTED_AGAINST_FQN,
+  HIST_DIRECTED_AGAINST_OTHER_FQN,
+  HISTORY_OF_VIOLENCE_FQN,
+  HISTORY_OF_VIOLENCE_TEXT_FQN,
+  SCALE_1_TO_10_FQN,
+  PERSON_DOB_FQN,
+  PERSON_LAST_NAME_FQN,
+  PERSON_FIRST_NAME_FQN,
+  PERSON_MIDDLE_NAME_FQN,
+  PERSON_RACE_FQN,
+  PERSON_SEX_FQN,
+  PERSON_ID_FQN,
+  PERSON_PICTURE_FQN,
+} from '../edm/DataModelFqns';
 
 class ConsumerInfoView extends React.Component {
 
@@ -34,13 +84,6 @@ class ConsumerInfoView extends React.Component {
     };
   }
 
-  handlePageChange = (path) => {
-
-    // TODO: validation
-    const { handlePageChange } = this.props;
-    handlePageChange(path);
-  }
-
   handleOnChangeTakePicture = (event) => {
 
     this.setState({
@@ -55,16 +98,16 @@ class ConsumerInfoView extends React.Component {
   handleOnSelfieCapture = (selfieDataAsBase64) => {
 
     const { handlePicture, section } = this.props;
-    handlePicture(section, 'picture', (selfieDataAsBase64 || ''));
+    handlePicture(section, PERSON_PICTURE_FQN, (selfieDataAsBase64 || ''));
   }
 
   renderConsumerPicture = (input) => {
 
-    if (!input.picture) {
+    if (!input[PERSON_PICTURE_FQN]) {
       return null;
     }
 
-    const pictureDataUrl = `${DATA_URL_PREFIX}${input.picture}`;
+    const pictureDataUrl = `${DATA_URL_PREFIX}${input[PERSON_PICTURE_FQN]}`;
     return (
       <FullWidthItem>
         <FieldHeader>
@@ -106,7 +149,7 @@ class ConsumerInfoView extends React.Component {
 
   renderViolenceScale = () => {
 
-    const { handleScaleSelection, input, isInReview } = this.props;
+    const { input, isReadOnly, updateStateValue } = this.props;
     const { section } = this.state;
 
     const scaleRadios = [];
@@ -116,18 +159,18 @@ class ConsumerInfoView extends React.Component {
       scaleRadios.push(
         <label key={labelKey} htmlFor={inputKey}>
           <input
-              checked={input.scale1to10 === i}
+              checked={input[SCALE_1_TO_10_FQN] === i}
               data-section={section}
-              disabled={isInReview}
+              disabled={isReadOnly}
               id={inputKey}
               key={inputKey}
-              name="scale1to10"
-              onChange={handleScaleSelection}
+              name={SCALE_1_TO_10_FQN}
+              onChange={event => updateStateValue(section, SCALE_1_TO_10_FQN, parseInt(event.target.value))}
               type="radio"
               value={i} />
           { i }
         </label>
-      )
+      );
     }
 
     return scaleRadios;
@@ -135,7 +178,11 @@ class ConsumerInfoView extends React.Component {
 
   renderViolencePortland = () => {
 
-    const { input, isInReview, updateStateValue } = this.props;
+    const {
+      input,
+      isReadOnly,
+      updateStateValue
+    } = this.props;
     const { section } = this.state;
 
     return (
@@ -151,80 +198,144 @@ class ConsumerInfoView extends React.Component {
           <FieldHeader>Violent behavior during this incident was directed towards</FieldHeader>
           <FlexyWrapper>
             {
-              this.renderTempCheckbox('Police', 'directedagainst', 'police',
-                input.directedagainst.indexOf('police') !== -1)
+              this.renderTempCheckbox(
+                'Police',
+                DIRECTED_AGAINST_FQN,
+                'police',
+                input[DIRECTED_AGAINST_FQN].indexOf('police') !== -1,
+                event => updateStateValue(section, DIRECTED_AGAINST_FQN,
+                  checkboxesHelper(input[DIRECTED_AGAINST_FQN], event.target.value))
+              )
             }
             {
-              this.renderTempCheckbox('Family', 'directedagainst', 'family',
-                input.directedagainst.indexOf('family') !== -1)
+              this.renderTempCheckbox(
+                'Family',
+                DIRECTED_AGAINST_FQN,
+                'family',
+                input[DIRECTED_AGAINST_FQN].indexOf('family') !== -1,
+                event => updateStateValue(section, DIRECTED_AGAINST_FQN,
+                  checkboxesHelper(input[DIRECTED_AGAINST_FQN], event.target.value))
+              )
             }
             {
-              this.renderTempCheckbox('Significant other', 'directedagainst', 'significantOther',
-                input.directedagainst.indexOf('significantOther') !== -1)
+              this.renderTempCheckbox(
+                'Significant other',
+                DIRECTED_AGAINST_FQN,
+                'significantOther',
+                input[DIRECTED_AGAINST_FQN].indexOf('significantOther') !== -1,
+                event => updateStateValue(section, DIRECTED_AGAINST_FQN,
+                  checkboxesHelper(input[DIRECTED_AGAINST_FQN], event.target.value))
+              )
             }
             {
-              this.renderTempCheckbox('Other', 'directedagainst', 'other',
-                input.directedagainst.indexOf('other') !== -1)
+              this.renderTempCheckbox(
+                'Other',
+                DIRECTED_AGAINST_FQN,
+                'other',
+                input[DIRECTED_AGAINST_FQN].indexOf('other') !== -1,
+                event => updateStateValue(section, DIRECTED_AGAINST_FQN,
+                  checkboxesHelper(input[DIRECTED_AGAINST_FQN], event.target.value))
+              )
             }
           </FlexyWrapper>
         </HalfWidthItem>
         <HalfWidthItem>
           <TextField
-              disabled={isInReview}
+              disabled={isReadOnly}
               header="If other, specify others"
-              onChange={value => updateStateValue(section, 'directedagainstother', value)}
-              value={input.directedagainstother} />
+              onChange={value => updateStateValue(section, DIRECTED_AGAINST_OTHER_FQN, value)}
+              value={input[DIRECTED_AGAINST_OTHER_FQN]} />
         </HalfWidthItem>
         <FullWidthItem>
           <FieldHeader>History of Violent Behavior</FieldHeader>
           <FlexyWrapper inline>
-            { this.renderTempRadio('Yes', 'historyofviolence', true, input.historyofviolence === true) }
-            { this.renderTempRadio('No', 'historyofviolence', false, input.historyofviolence === false) }
+            {
+              this.renderTempRadio(
+                'Yes',
+                HISTORY_OF_VIOLENCE_FQN,
+                true,
+                input[HISTORY_OF_VIOLENCE_FQN] === true,
+                () => updateStateValue(section, HISTORY_OF_VIOLENCE_FQN, true)
+              )
+            }
+            {
+              this.renderTempRadio(
+                'No',
+                HISTORY_OF_VIOLENCE_FQN,
+                false,
+                input[HISTORY_OF_VIOLENCE_FQN] === false,
+                () => updateStateValue(section, HISTORY_OF_VIOLENCE_FQN, false)
+              )
+            }
           </FlexyWrapper>
         </FullWidthItem>
         <HalfWidthItem>
           <FieldHeader>Violent behavior was directed towards</FieldHeader>
           <FlexyWrapper>
             {
-              this.renderTempCheckbox('Police', 'historicaldirectedagainst', 'police',
-                input.historicaldirectedagainst.indexOf('police') !== -1)
+              this.renderTempCheckbox(
+                'Police',
+                HIST_DIRECTED_AGAINST_FQN,
+                'police',
+                input[HIST_DIRECTED_AGAINST_FQN].indexOf('police') !== -1,
+                event => updateStateValue(section, HIST_DIRECTED_AGAINST_FQN,
+                  checkboxesHelper(input[HIST_DIRECTED_AGAINST_FQN], event.target.value))
+              )
             }
             {
-              this.renderTempCheckbox('Family', 'historicaldirectedagainst', 'family',
-                input.historicaldirectedagainst.indexOf('family') !== -1)
+              this.renderTempCheckbox(
+                'Family',
+                HIST_DIRECTED_AGAINST_FQN,
+                'family',
+                input[HIST_DIRECTED_AGAINST_FQN].indexOf('family') !== -1,
+                event => updateStateValue(section, HIST_DIRECTED_AGAINST_FQN,
+                  checkboxesHelper(input[HIST_DIRECTED_AGAINST_FQN], event.target.value))
+              )
             }
             {
-              this.renderTempCheckbox('Significant other', 'historicaldirectedagainst', 'significantOther',
-                input.historicaldirectedagainst.indexOf('significantOther') !== -1)
+              this.renderTempCheckbox(
+                'Significant other',
+                HIST_DIRECTED_AGAINST_FQN,
+                'significantOther',
+                input[HIST_DIRECTED_AGAINST_FQN].indexOf('significantOther') !== -1,
+                event => updateStateValue(section, HIST_DIRECTED_AGAINST_FQN,
+                  checkboxesHelper(input[HIST_DIRECTED_AGAINST_FQN], event.target.value))
+              )
             }
             {
-              this.renderTempCheckbox('Other', 'historicaldirectedagainst', 'other',
-                input.historicaldirectedagainst.indexOf('other') !== -1)
+              this.renderTempCheckbox(
+                'Other',
+                HIST_DIRECTED_AGAINST_FQN,
+                'other',
+                input[HIST_DIRECTED_AGAINST_FQN].indexOf('other') !== -1,
+                event => updateStateValue(section, HIST_DIRECTED_AGAINST_FQN,
+                  checkboxesHelper(input[HIST_DIRECTED_AGAINST_FQN], event.target.value))
+              )
             }
           </FlexyWrapper>
         </HalfWidthItem>
         <HalfWidthItem>
           <TextField
-              disabled={isInReview}
+              disabled={isReadOnly}
               header="If other, specify others"
-              onChange={value => updateStateValue(section, 'historicaldirectedagainstother', value)}
-              value={input.historicaldirectedagainstother} />
+              onChange={value => updateStateValue(section, HIST_DIRECTED_AGAINST_OTHER_FQN, value)}
+              value={input[HIST_DIRECTED_AGAINST_OTHER_FQN]} />
         </HalfWidthItem>
         <FullWidthItem>
           <TextAreaField
-              disabled={isInReview}
+              disabled={isReadOnly}
               header="Description of historical incidents involving violent behavior"
-              onChange={value => updateStateValue(section, 'historyofviolencetext', value)}
-              value={input.historyofviolencetext} />
+              onChange={value => updateStateValue(section, HISTORY_OF_VIOLENCE_TEXT_FQN, value)}
+              value={input[HISTORY_OF_VIOLENCE_TEXT_FQN]} />
         </FullWidthItem>
       </>
     );
   }
 
   // TODO: replace this with real components from lattice-ui-kit
-  renderTempRadio = (label, name, value, isChecked) => {
+  renderTempRadio = (label, name, value, isChecked, onChange) => {
 
-    const { handleSingleSelection, isInReview } = this.props;
+    const { isReadOnly } = this.props;
     const { section } = this.state;
     const id = `${name}-${value}`;
     return (
@@ -232,10 +343,10 @@ class ConsumerInfoView extends React.Component {
         <input
             checked={isChecked}
             data-section={section}
-            disabled={isInReview}
+            disabled={isReadOnly}
             id={id}
             name={name}
-            onChange={handleSingleSelection}
+            onChange={onChange}
             type="radio"
             value={value} />
         { label }
@@ -244,9 +355,9 @@ class ConsumerInfoView extends React.Component {
   }
 
   // TODO: replace this with real components from lattice-ui-kit
-  renderTempCheckbox = (label, name, value, isChecked) => {
+  renderTempCheckbox = (label, name, value, isChecked, onChange) => {
 
-    const { handleCheckboxChange, isInReview } = this.props;
+    const { isReadOnly } = this.props;
     const { section } = this.state;
     const id = `${name}-${value}`;
     return (
@@ -254,10 +365,10 @@ class ConsumerInfoView extends React.Component {
         <input
             checked={isChecked}
             data-section={section}
-            disabled={isInReview}
+            disabled={isReadOnly}
             id={id}
             name={name}
-            onChange={handleCheckboxChange}
+            onChange={onChange}
             type="checkbox"
             value={value} />
         { label }
@@ -268,9 +379,9 @@ class ConsumerInfoView extends React.Component {
   render() {
     const {
       consumerIsSelected,
-      handleSingleSelection,
       input,
       isInReview,
+      isReadOnly,
       selectedOrganizationId,
       updateStateValue,
       updateStateValues,
@@ -281,64 +392,92 @@ class ConsumerInfoView extends React.Component {
       <>
         <FormGridWrapper>
           <FullWidthItem>
-            {
-              isInReview
-                ? null
-                : (
-                  <h1>Consumer</h1>
-                )
-            }
+            <h1>Consumer</h1>
+            { isInReview && (
+              <Link to={FORM_PATHS.CONSUMER}>
+                <EditButton onClick={this.handleOnClickEditReport}>Edit</EditButton>
+              </Link>
+            )}
           </FullWidthItem>
           <TextField
-              disabled={consumerIsSelected || isInReview}
+              disabled={consumerIsSelected || isReadOnly}
               header="Last Name"
-              onChange={value => updateStateValue(section, 'lastName', value)}
-              value={input.lastName} />
+              onChange={value => updateStateValue(section, PERSON_LAST_NAME_FQN, value)}
+              value={input[PERSON_LAST_NAME_FQN]} />
           <TextField
-              disabled={consumerIsSelected || isInReview}
+              disabled={consumerIsSelected || isReadOnly}
               header="First Name"
-              onChange={value => updateStateValue(section, 'firstName', value)}
-              value={input.firstName} />
+              onChange={value => updateStateValue(section, PERSON_FIRST_NAME_FQN, value)}
+              value={input[PERSON_FIRST_NAME_FQN]} />
           <TextField
-              disabled={consumerIsSelected || isInReview}
+              disabled={consumerIsSelected || isReadOnly}
               header="Middle Name"
-              onChange={value => updateStateValue(section, 'middleName', value)}
-              value={input.middleName} />
+              onChange={value => updateStateValue(section, PERSON_MIDDLE_NAME_FQN, value)}
+              value={input[PERSON_MIDDLE_NAME_FQN]} />
           <TextField
               disabled
               header="Consumer Identification*"
-              value={input.identification} />
+              value={input[PERSON_ID_FQN]} />
           <FullWidthItem>
             <TextField
-                disabled={isInReview}
+                disabled={isReadOnly}
                 header="Residence / Address (Street, Apt Number, City, County, State, Zip)"
-                onChange={value => updateStateValue(section, 'address', value)}
-                value={input.address} />
+                onChange={value => updateStateValue(section, ADDRESS_FQN, value)}
+                value={input[ADDRESS_FQN]} />
           </FullWidthItem>
           <TextField
-              disabled={isInReview}
+              disabled={isReadOnly}
               header="Consumer Phone Number"
-              onChange={value => updateStateValue(section, 'phone', value)}
-              value={input.phone} />
+              onChange={value => updateStateValue(section, PHONE_FQN, value)}
+              value={input[PHONE_FQN]} />
           {
-            isInReview || consumerIsSelected
+            isReadOnly || consumerIsSelected
               ? this.renderConsumerPicture(input)
               : this.renderSelfieWebCam()
           }
           <FullWidthItem>
             <FieldHeader>Military Status</FieldHeader>
-            { this.renderTempRadio('Active', 'militaryStatus', 'active', input.militaryStatus === 'active') }
-            { this.renderTempRadio('Veteran', 'militaryStatus', 'veteran', input.militaryStatus === 'veteran') }
-            { this.renderTempRadio('N/A', 'militaryStatus', 'n/a', input.militaryStatus === 'n/a') }
+            {
+              this.renderTempRadio(
+                'Active',
+                MILITARY_STATUS_FQN,
+                'active',
+                input[MILITARY_STATUS_FQN] === 'active',
+                () => updateStateValue(section, MILITARY_STATUS_FQN, 'active')
+              )
+            }
+            {
+              this.renderTempRadio(
+                'Veteran',
+                MILITARY_STATUS_FQN,
+                'veteran',
+                input[MILITARY_STATUS_FQN] === 'veteran',
+                () => updateStateValue(section, MILITARY_STATUS_FQN, 'veteran')
+              )
+            }
+            {
+              this.renderTempRadio(
+                'N/A',
+                MILITARY_STATUS_FQN,
+                'n/a',
+                input[MILITARY_STATUS_FQN] === 'n/a',
+                () => updateStateValue(section, MILITARY_STATUS_FQN, 'n/a')
+              )
+            }
           </FullWidthItem>
           <HalfWidthItem>
             <FieldHeader>Gender</FieldHeader>
             <select
                 data-section={section}
-                disabled={consumerIsSelected || isInReview}
-                name="gender"
-                onChange={handleSingleSelection}
-                value={input.gender}>
+                disabled={consumerIsSelected || isReadOnly}
+                name={PERSON_SEX_FQN}
+                onChange={(event) => {
+                  updateStateValues(section, {
+                    [PERSON_SEX_FQN]: event.target.value,
+                    [GENDER_FQN]: event.target.value,
+                  });
+                }}
+                value={input[PERSON_SEX_FQN]}>
               <option value="">Select</option>
               <option value="female">Female</option>
               <option value="male">Male</option>
@@ -349,10 +488,15 @@ class ConsumerInfoView extends React.Component {
             <FieldHeader>Race</FieldHeader>
             <select
                 data-section={section}
-                disabled={consumerIsSelected || isInReview}
-                name="race"
-                onChange={handleSingleSelection}
-                value={input.race}>
+                disabled={consumerIsSelected || isReadOnly}
+                name={PERSON_RACE_FQN}
+                onChange={(event) => {
+                  updateStateValues(section, {
+                    [PERSON_RACE_FQN]: event.target.value,
+                    [RACE_FQN]: event.target.value,
+                  });
+                }}
+                value={input[PERSON_RACE_FQN]}>
               <option value="">Select</option>
               <option value="americanIndian">American Indian or Alaska Native</option>
               <option value="asian">Asian</option>
@@ -367,148 +511,339 @@ class ConsumerInfoView extends React.Component {
             <label htmlFor="date-of-birth">
               <FieldHeader>Date of Birth</FieldHeader>
               <input
-                  disabled={consumerIsSelected || isInReview}
+                  disabled={consumerIsSelected || isReadOnly}
                   id="date-of-birth"
-                  onChange={(e) => {
-                    const dob = moment(e.target.value).format('YYYY-MM-DD');
+                  onChange={(event) => {
+                    const dob = moment(event.target.value).format('YYYY-MM-DD');
                     const age = moment().diff(dob, 'years').toString();
-                    updateStateValues(section, { age, dob });
+                    updateStateValues(section, {
+                      [AGE_FQN]: age,
+                      [DOB_FQN]: dob,
+                      [PERSON_DOB_FQN]: dob,
+                    });
                   }}
                   type="date"
-                  value={input.dob} />
+                  value={input[PERSON_DOB_FQN]} />
             </label>
           </HalfWidthItem>
           <TextField
-              disabled={isInReview}
+              disabled={isReadOnly}
               header="Age"
-              onChange={value => updateStateValue(section, 'age', value)}
-              value={input.age} />
+              onChange={value => updateStateValue(section, AGE_FQN, value)}
+              value={input[AGE_FQN]} />
           <HalfWidthItem>
             <FieldHeader>Homeless</FieldHeader>
             <FlexyWrapper inline>
-              { this.renderTempRadio('Yes', 'homeless', true, input.homeless === true) }
-              { this.renderTempRadio('No', 'homeless', false, input.homeless === false) }
+              {
+                this.renderTempRadio(
+                  'Yes',
+                  HOMELESS_FQN,
+                  true,
+                  input[HOMELESS_FQN] === true,
+                  () => updateStateValue(section, HOMELESS_FQN, true)
+                )
+              }
+              {
+                this.renderTempRadio(
+                  'No',
+                  HOMELESS_FQN,
+                  false,
+                  input[HOMELESS_FQN] === false,
+                  () => updateStateValue(section, HOMELESS_FQN, false)
+                )
+              }
             </FlexyWrapper>
           </HalfWidthItem>
           <HalfWidthItem>
             <TextField
-                disabled={isInReview}
+                disabled={isReadOnly}
                 header="If Yes, where do they usually sleep / frequent?"
-                onChange={value => updateStateValue(section, 'homelessLocation', value)}
-                value={input.homelessLocation} />
+                onChange={value => updateStateValue(section, HOMELESS_LOCATION_FQN, value)}
+                value={input[HOMELESS_LOCATION_FQN]} />
           </HalfWidthItem>
           <HalfWidthItem>
             <FieldHeader>Consumer Using Drugs, Alcohol</FieldHeader>
             <FlexyWrapper inline>
-              { this.renderTempRadio('Drugs', 'drugsAlcohol', 'drugs', input.drugsAlcohol === 'drugs') }
-              { this.renderTempRadio('Alcohol', 'drugsAlcohol', 'alcohol', input.drugsAlcohol === 'alcohol') }
-              { this.renderTempRadio('Both', 'drugsAlcohol', 'both', input.drugsAlcohol === 'both') }
-              { this.renderTempRadio('N/A', 'drugsAlcohol', 'n/a', input.drugsAlcohol === 'n/a') }
+              {
+                this.renderTempRadio(
+                  'Drugs',
+                  DRUGS_ALCOHOL_FQN,
+                  'drugs',
+                  input[DRUGS_ALCOHOL_FQN] === 'drugs',
+                  () => updateStateValue(section, DRUGS_ALCOHOL_FQN, 'drugs')
+                )
+              }
+              {
+                this.renderTempRadio(
+                  'Alcohol',
+                  DRUGS_ALCOHOL_FQN,
+                  'alcohol',
+                  input[DRUGS_ALCOHOL_FQN] === 'alcohol',
+                  () => updateStateValue(section, DRUGS_ALCOHOL_FQN, 'alcohol')
+                )
+              }
+              {
+                this.renderTempRadio(
+                  'Both',
+                  DRUGS_ALCOHOL_FQN,
+                  'both',
+                  input[DRUGS_ALCOHOL_FQN] === 'both',
+                  () => updateStateValue(section, DRUGS_ALCOHOL_FQN, 'both')
+                )
+              }
+              {
+                this.renderTempRadio(
+                  'N/A',
+                  DRUGS_ALCOHOL_FQN,
+                  'n/a',
+                  input[DRUGS_ALCOHOL_FQN] === 'n/a',
+                  () => updateStateValue(section, DRUGS_ALCOHOL_FQN, 'n/a')
+                )
+              }
             </FlexyWrapper>
           </HalfWidthItem>
           <HalfWidthItem>
             <TextField
-                disabled={isInReview}
+                disabled={isReadOnly}
                 header="Drug type"
-                onChange={value => updateStateValue(section, 'drugType', value)}
-                value={input.drugType} />
+                onChange={value => updateStateValue(section, DRUG_TYPE_FQN, value)}
+                value={input[DRUG_TYPE_FQN]} />
           </HalfWidthItem>
           <HalfWidthItem>
             <FieldHeader>Prescribed Medication</FieldHeader>
             <FlexyWrapper inline>
-              { this.renderTempRadio('Yes', 'prescribedMedication', 'yes', input.prescribedMedication === 'yes') }
-              { this.renderTempRadio('No', 'prescribedMedication', 'no', input.prescribedMedication === 'no') }
               {
-                this.renderTempRadio('Unknown', 'prescribedMedication', 'unknown',
-                  input.prescribedMedication === 'unknown')
+                this.renderTempRadio(
+                  'Yes',
+                  PRESCRIBED_MEDICATION_FQN,
+                  'yes',
+                  input[PRESCRIBED_MEDICATION_FQN] === 'yes',
+                  () => updateStateValue(section, PRESCRIBED_MEDICATION_FQN, 'yes')
+                )
+              }
+              {
+                this.renderTempRadio(
+                  'No',
+                  PRESCRIBED_MEDICATION_FQN,
+                  'no',
+                  input[PRESCRIBED_MEDICATION_FQN] === 'no',
+                  () => updateStateValue(section, PRESCRIBED_MEDICATION_FQN, 'no')
+                )
+              }
+              {
+                this.renderTempRadio(
+                  'Unknown',
+                  PRESCRIBED_MEDICATION_FQN,
+                  'unknown',
+                  input[PRESCRIBED_MEDICATION_FQN] === 'unknown',
+                  () => updateStateValue(section, PRESCRIBED_MEDICATION_FQN, 'unknown')
+                )
               }
             </FlexyWrapper>
           </HalfWidthItem>
           <HalfWidthItem>
             <FieldHeader>If yes, is consumer taking medication?</FieldHeader>
             <FlexyWrapper inline>
-              { this.renderTempRadio('Yes', 'takingMedication', 'yes', input.takingMedication === 'yes') }
-              { this.renderTempRadio('No', 'takingMedication', 'no', input.takingMedication === 'no') }
-              { this.renderTempRadio('Unknown', 'takingMedication', 'unknown', input.takingMedication === 'unknown') }
+              {
+                this.renderTempRadio(
+                  'Yes',
+                  TAKING_MEDICATION_FQN,
+                  'yes',
+                  input[TAKING_MEDICATION_FQN] === 'yes',
+                  () => updateStateValue(section, TAKING_MEDICATION_FQN, 'yes')
+                )
+              }
+              {
+                this.renderTempRadio(
+                  'No',
+                  TAKING_MEDICATION_FQN,
+                  'no',
+                  input[TAKING_MEDICATION_FQN] === 'no',
+                  () => updateStateValue(section, TAKING_MEDICATION_FQN, 'no')
+                )
+              }
+              {
+                this.renderTempRadio(
+                  'Unknown',
+                  TAKING_MEDICATION_FQN,
+                  'unknown',
+                  input[TAKING_MEDICATION_FQN] === 'unknown',
+                  () => updateStateValue(section, TAKING_MEDICATION_FQN, 'unknown')
+                )
+              }
             </FlexyWrapper>
           </HalfWidthItem>
           <FullWidthItem>
             <FieldHeader>Does Consumer Have Previous Psychiatric Hospital Admission?</FieldHeader>
-            { this.renderTempRadio('Yes', 'prevPsychAdmission', 'yes', input.prevPsychAdmission === 'yes') }
-            { this.renderTempRadio('No', 'prevPsychAdmission', 'no', input.prevPsychAdmission === 'no') }
-            { this.renderTempRadio('Unknown', 'prevPsychAdmission', 'unknown', input.prevPsychAdmission === 'unknown') }
+            {
+              this.renderTempRadio(
+                'Yes',
+                PREV_PSYCH_ADMISSION_FQN,
+                'yes',
+                input[PREV_PSYCH_ADMISSION_FQN] === 'yes',
+                () => updateStateValue(section, PREV_PSYCH_ADMISSION_FQN, 'yes')
+              )
+            }
+            {
+              this.renderTempRadio(
+                'No',
+                PREV_PSYCH_ADMISSION_FQN,
+                'no',
+                input[PREV_PSYCH_ADMISSION_FQN] === 'no',
+                () => updateStateValue(section, PREV_PSYCH_ADMISSION_FQN, 'no')
+              )
+            }
+            {
+              this.renderTempRadio(
+                'Unknown',
+                PREV_PSYCH_ADMISSION_FQN,
+                'unknown',
+                input[PREV_PSYCH_ADMISSION_FQN] === 'unknown',
+                () => updateStateValue(section, PREV_PSYCH_ADMISSION_FQN, 'unknown')
+              )
+            }
           </FullWidthItem>
           <HalfWidthItem>
             <FieldHeader>Self Diagnosis (check all that apply)</FieldHeader>
             <FlexyWrapper>
               {
-                this.renderTempCheckbox('Bipolar', 'selfDiagnosis', 'bipolar',
-                  input.selfDiagnosis.indexOf('bipolar') !== -1)
+                this.renderTempCheckbox(
+                  'Bipolar',
+                  SELF_DIAGNOSIS_FQN,
+                  'bipolar',
+                  input[SELF_DIAGNOSIS_FQN].indexOf('bipolar') !== -1,
+                  event => updateStateValue(section, SELF_DIAGNOSIS_FQN,
+                    checkboxesHelper(input[SELF_DIAGNOSIS_FQN], event.target.value))
+                )
               }
               {
-                this.renderTempCheckbox('Depression', 'selfDiagnosis', 'depression',
-                  input.selfDiagnosis.indexOf('depression') !== -1)
+                this.renderTempCheckbox(
+                  'Depression',
+                  SELF_DIAGNOSIS_FQN,
+                  'depression',
+                  input[SELF_DIAGNOSIS_FQN].indexOf('depression') !== -1,
+                  event => updateStateValue(section, SELF_DIAGNOSIS_FQN,
+                    checkboxesHelper(input[SELF_DIAGNOSIS_FQN], event.target.value))
+                )
               }
               {
-                this.renderTempCheckbox('PTSD', 'selfDiagnosis', 'ptsd',
-                  input.selfDiagnosis.indexOf('ptsd') !== -1)
+                this.renderTempCheckbox(
+                  'PTSD',
+                  SELF_DIAGNOSIS_FQN,
+                  'ptsd',
+                  input[SELF_DIAGNOSIS_FQN].indexOf('ptsd') !== -1,
+                  event => updateStateValue(section, SELF_DIAGNOSIS_FQN,
+                    checkboxesHelper(input[SELF_DIAGNOSIS_FQN], event.target.value))
+                )
               }
               {
-                this.renderTempCheckbox('Schizophrenia', 'selfDiagnosis', 'schizophrenia',
-                  input.selfDiagnosis.indexOf('schizophrenia') !== -1)
+                this.renderTempCheckbox(
+                  'Schizophrenia',
+                  SELF_DIAGNOSIS_FQN,
+                  'schizophrenia',
+                  input[SELF_DIAGNOSIS_FQN].indexOf('schizophrenia') !== -1,
+                  event => updateStateValue(section, SELF_DIAGNOSIS_FQN,
+                    checkboxesHelper(input[SELF_DIAGNOSIS_FQN], event.target.value))
+                )
               }
               {
-                this.renderTempCheckbox('Dementia', 'selfDiagnosis', 'dementia',
-                  input.selfDiagnosis.indexOf('dementia') !== -1)
+                this.renderTempCheckbox(
+                  'Dementia',
+                  SELF_DIAGNOSIS_FQN,
+                  'dementia',
+                  input[SELF_DIAGNOSIS_FQN].indexOf('dementia') !== -1,
+                  event => updateStateValue(section, SELF_DIAGNOSIS_FQN,
+                    checkboxesHelper(input[SELF_DIAGNOSIS_FQN], event.target.value))
+                )
               }
               {
                 isPortlandOrg(selectedOrganizationId) && this.renderTempCheckbox(
                   'Developmental Disabilities / Autism',
-                  'selfDiagnosis',
+                  SELF_DIAGNOSIS_FQN,
                   'DevelopmentalDisabilities/Autism',
-                  input.selfDiagnosis.indexOf('DevelopmentalDisabilities/Autism') !== -1
+                  input[SELF_DIAGNOSIS_FQN].indexOf('DevelopmentalDisabilities/Autism') !== -1,
+                  event => updateStateValue(section, SELF_DIAGNOSIS_FQN,
+                    checkboxesHelper(input[SELF_DIAGNOSIS_FQN], event.target.value))
                 )
               }
               {
-                this.renderTempCheckbox('Other', 'selfDiagnosis', 'other',
-                  input.selfDiagnosis.indexOf('other') !== -1)
+                this.renderTempCheckbox(
+                  'Other',
+                  SELF_DIAGNOSIS_FQN,
+                  'other',
+                  input[SELF_DIAGNOSIS_FQN].indexOf('other') !== -1,
+                  event => updateStateValue(section, SELF_DIAGNOSIS_FQN,
+                    checkboxesHelper(input[SELF_DIAGNOSIS_FQN], event.target.value))
+                )
               }
             </FlexyWrapper>
           </HalfWidthItem>
           <HalfWidthItem>
             <TextField
-                disabled={isInReview}
+                disabled={isReadOnly}
                 header="If other, specify other diagnoses"
-                onChange={value => updateStateValue(section, 'selfDiagnosisOther', value)}
-                value={input.selfDiagnosisOther} />
+                onChange={value => updateStateValue(section, SELF_DIAGNOSIS_OTHER_FQN, value)}
+                value={input[SELF_DIAGNOSIS_OTHER_FQN]} />
           </HalfWidthItem>
           <HalfWidthItem>
             <FieldHeader>Armed with Weapon?</FieldHeader>
             <FlexyWrapper inline>
-              { this.renderTempRadio('Yes', 'armedWithWeapon', true, input.armedWithWeapon === true) }
-              { this.renderTempRadio('No', 'armedWithWeapon', false, input.armedWithWeapon === false) }
+              {
+                this.renderTempRadio(
+                  'Yes',
+                  ARMED_WITH_WEAPON_FQN,
+                  true,
+                  input[ARMED_WITH_WEAPON_FQN] === true,
+                  () => updateStateValue(section, ARMED_WITH_WEAPON_FQN, true)
+                )
+              }
+              {
+                this.renderTempRadio(
+                  'No',
+                  ARMED_WITH_WEAPON_FQN,
+                  false,
+                  input[ARMED_WITH_WEAPON_FQN] === false,
+                  () => updateStateValue(section, ARMED_WITH_WEAPON_FQN, false)
+                )
+              }
             </FlexyWrapper>
           </HalfWidthItem>
           <HalfWidthItem>
             <TextField
-                disabled={isInReview}
+                disabled={isReadOnly}
                 header="If Yes, specify weapon type"
-                onChange={value => updateStateValue(section, 'armedWeaponType', value)}
-                value={input.armedWeaponType} />
+                onChange={value => updateStateValue(section, ARMED_WEAPON_TYPE_FQN, value)}
+                value={input[ARMED_WEAPON_TYPE_FQN]} />
           </HalfWidthItem>
           <HalfWidthItem>
             <FieldHeader>Have Access to Weapons?</FieldHeader>
             <FlexyWrapper inline>
-              { this.renderTempRadio('Yes', 'accessToWeapons', true, input.accessToWeapons === true) }
-              { this.renderTempRadio('No', 'accessToWeapons', false, input.accessToWeapons === false) }
+              {
+                this.renderTempRadio(
+                  'Yes',
+                  ACCESS_TO_WEAPONS_FQN,
+                  true,
+                  input[ACCESS_TO_WEAPONS_FQN] === true,
+                  () => updateStateValue(section, ACCESS_TO_WEAPONS_FQN, true)
+                )
+              }
+              {
+                this.renderTempRadio(
+                  'No',
+                  ACCESS_TO_WEAPONS_FQN,
+                  false,
+                  input[ACCESS_TO_WEAPONS_FQN] === false,
+                  () => updateStateValue(section, ACCESS_TO_WEAPONS_FQN, false)
+                )
+              }
             </FlexyWrapper>
           </HalfWidthItem>
           <HalfWidthItem>
             <TextField
-                disabled={isInReview}
+                disabled={isReadOnly}
                 header="If Yes, specify weapon type"
-                onChange={value => updateStateValue(section, 'accessibleWeaponType', value)}
-                value={input.accessibleWeaponType} />
+                onChange={value => updateStateValue(section, ACCESSIBLE_WEAPON_TYPE_FQN, value)}
+                value={input[ACCESSIBLE_WEAPON_TYPE_FQN]} />
           </HalfWidthItem>
           <HalfWidthItem>
             <FieldHeader>Observed Behaviors (check all that apply)</FieldHeader>
@@ -516,83 +851,101 @@ class ConsumerInfoView extends React.Component {
               {
                 this.renderTempCheckbox(
                   'Disorientation / Confusion',
-                  'observedBehaviors',
+                  OBSERVED_BEHAVIORS_FQN,
                   'disorientation',
-                  input.observedBehaviors.indexOf('disorientation') !== -1
+                  input[OBSERVED_BEHAVIORS_FQN].indexOf('disorientation') !== -1,
+                  event => updateStateValue(section, OBSERVED_BEHAVIORS_FQN,
+                    checkboxesHelper(input[OBSERVED_BEHAVIORS_FQN], event.target.value))
                 )
               }
               {
                 this.renderTempCheckbox(
                   'Abnormal Behavior / Appearance (neglect self-care)',
-                  'observedBehaviors',
+                  OBSERVED_BEHAVIORS_FQN,
                   'abnormalBehavior',
-                  input.observedBehaviors.indexOf('abnormalBehavior') !== -1
+                  input[OBSERVED_BEHAVIORS_FQN].indexOf('abnormalBehavior') !== -1,
+                  event => updateStateValue(section, OBSERVED_BEHAVIORS_FQN,
+                    checkboxesHelper(input[OBSERVED_BEHAVIORS_FQN], event.target.value))
                 )
               }
               {
                 this.renderTempCheckbox(
                   'Hearing Voices / Hallucinating',
-                  'observedBehaviors',
+                  OBSERVED_BEHAVIORS_FQN,
                   'hearingVoices',
-                  input.observedBehaviors.indexOf('hearingVoices') !== -1
+                  input[OBSERVED_BEHAVIORS_FQN].indexOf('hearingVoices') !== -1,
+                  event => updateStateValue(section, OBSERVED_BEHAVIORS_FQN,
+                    checkboxesHelper(input[OBSERVED_BEHAVIORS_FQN], event.target.value))
                 )
               }
               {
                 this.renderTempCheckbox(
                   'Anxious / Excited / Agitated',
-                  'observedBehaviors',
+                  OBSERVED_BEHAVIORS_FQN,
                   'anxious',
-                  input.observedBehaviors.indexOf('anxious') !== -1
+                  input[OBSERVED_BEHAVIORS_FQN].indexOf('anxious') !== -1,
+                  event => updateStateValue(section, OBSERVED_BEHAVIORS_FQN,
+                    checkboxesHelper(input[OBSERVED_BEHAVIORS_FQN], event.target.value))
                 )
               }
               {
                 this.renderTempCheckbox(
                   'Depressed Mood',
-                  'observedBehaviors',
+                  OBSERVED_BEHAVIORS_FQN,
                   'depressed',
-                  input.observedBehaviors.indexOf('depressed') !== -1
+                  input[OBSERVED_BEHAVIORS_FQN].indexOf('depressed') !== -1,
+                  event => updateStateValue(section, OBSERVED_BEHAVIORS_FQN,
+                    checkboxesHelper(input[OBSERVED_BEHAVIORS_FQN], event.target.value))
                 )
               }
               {
                 this.renderTempCheckbox(
                   'Paranoid or Suspicious',
-                  'observedBehaviors',
+                  OBSERVED_BEHAVIORS_FQN,
                   'paranoid',
-                  input.observedBehaviors.indexOf('paranoid') !== -1
+                  input[OBSERVED_BEHAVIORS_FQN].indexOf('paranoid') !== -1,
+                  event => updateStateValue(section, OBSERVED_BEHAVIORS_FQN,
+                    checkboxesHelper(input[OBSERVED_BEHAVIORS_FQN], event.target.value))
                 )
               }
               {
                 this.renderTempCheckbox(
                   'Self-harm',
-                  'observedBehaviors',
+                  OBSERVED_BEHAVIORS_FQN,
                   'self-harm',
-                  input.observedBehaviors.indexOf('self-harm') !== -1
+                  input[OBSERVED_BEHAVIORS_FQN].indexOf('self-harm') !== -1,
+                  event => updateStateValue(section, OBSERVED_BEHAVIORS_FQN,
+                    checkboxesHelper(input[OBSERVED_BEHAVIORS_FQN], event.target.value))
                 )
               }
               {
                 this.renderTempCheckbox(
                   'Threatening / Violent Towards Others',
-                  'observedBehaviors',
+                  OBSERVED_BEHAVIORS_FQN,
                   'threatening',
-                  input.observedBehaviors.indexOf('threatening') !== -1
+                  input[OBSERVED_BEHAVIORS_FQN].indexOf('threatening') !== -1,
+                  event => updateStateValue(section, OBSERVED_BEHAVIORS_FQN,
+                    checkboxesHelper(input[OBSERVED_BEHAVIORS_FQN], event.target.value))
                 )
               }
               {
                 this.renderTempCheckbox(
                   'Other',
-                  'observedBehaviors',
+                  OBSERVED_BEHAVIORS_FQN,
                   'other',
-                  input.observedBehaviors.indexOf('other') !== -1
+                  input[OBSERVED_BEHAVIORS_FQN].indexOf('other') !== -1,
+                  event => updateStateValue(section, OBSERVED_BEHAVIORS_FQN,
+                    checkboxesHelper(input[OBSERVED_BEHAVIORS_FQN], event.target.value))
                 )
               }
             </FlexyWrapper>
           </HalfWidthItem>
           <HalfWidthItem>
             <TextField
-                disabled={isInReview}
+                disabled={isReadOnly}
                 header="If other, specify other observed behaviors"
-                onChange={value => updateStateValue(section, 'observedBehaviorsOther', value)}
-                value={input.observedBehaviorsOther} />
+                onChange={value => updateStateValue(section, OBSERVED_BEHAVIORS_OTHER_FQN, value)}
+                value={input[OBSERVED_BEHAVIORS_OTHER_FQN]} />
           </HalfWidthItem>
           {
             isPortlandOrg(selectedOrganizationId)
@@ -603,107 +956,231 @@ class ConsumerInfoView extends React.Component {
             <FieldHeader>Emotional State (check all that apply)</FieldHeader>
             <FlexyWrapper>
               {
-                this.renderTempCheckbox('Angry', 'emotionalState', 'angry',
-                  input.emotionalState.indexOf('angry') !== -1)
+                this.renderTempCheckbox(
+                  'Angry',
+                  EMOTIONAL_STATE_FQN,
+                  'angry',
+                  input[EMOTIONAL_STATE_FQN].indexOf('angry') !== -1,
+                  event => updateStateValue(section, EMOTIONAL_STATE_FQN,
+                    checkboxesHelper(input[EMOTIONAL_STATE_FQN], event.target.value))
+                )
               }
               {
-                this.renderTempCheckbox('Afraid', 'emotionalState', 'afraid',
-                  input.emotionalState.indexOf('afraid') !== -1)
+                this.renderTempCheckbox(
+                  'Afraid',
+                  EMOTIONAL_STATE_FQN,
+                  'afraid',
+                  input[EMOTIONAL_STATE_FQN].indexOf('afraid') !== -1,
+                  event => updateStateValue(section, EMOTIONAL_STATE_FQN,
+                    checkboxesHelper(input[EMOTIONAL_STATE_FQN], event.target.value))
+                )
               }
               {
-                this.renderTempCheckbox('Apologetic', 'emotionalState', 'apologetic',
-                  input.emotionalState.indexOf('apologetic') !== -1)
+                this.renderTempCheckbox(
+                  'Apologetic',
+                  EMOTIONAL_STATE_FQN,
+                  'apologetic',
+                  input[EMOTIONAL_STATE_FQN].indexOf('apologetic') !== -1,
+                  event => updateStateValue(section, EMOTIONAL_STATE_FQN,
+                    checkboxesHelper(input[EMOTIONAL_STATE_FQN], event.target.value))
+                )
               }
               {
-                this.renderTempCheckbox('Calm', 'emotionalState', 'calm',
-                  input.emotionalState.indexOf('calm') !== -1)
+                this.renderTempCheckbox(
+                  'Calm',
+                  EMOTIONAL_STATE_FQN,
+                  'calm',
+                  input[EMOTIONAL_STATE_FQN].indexOf('calm') !== -1,
+                  event => updateStateValue(section, EMOTIONAL_STATE_FQN,
+                    checkboxesHelper(input[EMOTIONAL_STATE_FQN], event.target.value))
+                )
               }
               {
-                this.renderTempCheckbox('Crying', 'emotionalState', 'crying',
-                  input.emotionalState.indexOf('crying') !== -1)
+                this.renderTempCheckbox(
+                  'Crying',
+                  EMOTIONAL_STATE_FQN,
+                  'crying',
+                  input[EMOTIONAL_STATE_FQN].indexOf('crying') !== -1,
+                  event => updateStateValue(section, EMOTIONAL_STATE_FQN,
+                    checkboxesHelper(input[EMOTIONAL_STATE_FQN], event.target.value))
+                )
               }
               {
-                this.renderTempCheckbox('Fearful', 'emotionalState', 'fearful',
-                  input.emotionalState.indexOf('fearful') !== -1)
+                this.renderTempCheckbox(
+                  'Fearful',
+                  EMOTIONAL_STATE_FQN,
+                  'fearful',
+                  input[EMOTIONAL_STATE_FQN].indexOf('fearful') !== -1,
+                  event => updateStateValue(section, EMOTIONAL_STATE_FQN,
+                    checkboxesHelper(input[EMOTIONAL_STATE_FQN], event.target.value))
+                )
               }
               {
-                this.renderTempCheckbox('Nervous', 'emotionalState', 'nervous',
-                  input.emotionalState.indexOf('nervous') !== -1)
+                this.renderTempCheckbox(
+                  'Nervous',
+                  EMOTIONAL_STATE_FQN,
+                  'nervous',
+                  input[EMOTIONAL_STATE_FQN].indexOf('nervous') !== -1,
+                  event => updateStateValue(section, EMOTIONAL_STATE_FQN,
+                    checkboxesHelper(input[EMOTIONAL_STATE_FQN], event.target.value))
+                )
               }
               {
-                this.renderTempCheckbox('Other', 'emotionalState', 'other',
-                  input.emotionalState.indexOf('other') !== -1)
+                this.renderTempCheckbox(
+                  'Other',
+                  EMOTIONAL_STATE_FQN,
+                  'other',
+                  input[EMOTIONAL_STATE_FQN].indexOf('other') !== -1,
+                  event => updateStateValue(section, EMOTIONAL_STATE_FQN,
+                    checkboxesHelper(input[EMOTIONAL_STATE_FQN], event.target.value))
+                )
               }
             </FlexyWrapper>
           </HalfWidthItem>
           <HalfWidthItem>
             <TextField
-                disabled={isInReview}
+                disabled={isReadOnly}
                 header="If other, specify other states"
-                onChange={value => updateStateValue(section, 'emotionalStateOther', value)}
-                value={input.emotionalStateOther} />
+                onChange={value => updateStateValue(section, EMOTIONAL_STATE_OTHER_FQN, value)}
+                value={input[EMOTIONAL_STATE_OTHER_FQN]} />
           </HalfWidthItem>
           <HalfWidthItem>
             <FieldHeader>Consumer Injuries (check all that apply)</FieldHeader>
             <FlexyWrapper>
               {
-                this.renderTempCheckbox('Abrasions', 'injuries', 'abrasions',
-                  input.injuries.indexOf('abrasions') !== -1)
+                this.renderTempCheckbox(
+                  'Abrasions',
+                  INJURIES_FQN,
+                  'abrasions',
+                  input[INJURIES_FQN].indexOf('abrasions') !== -1,
+                  event => updateStateValue(section, INJURIES_FQN,
+                    checkboxesHelper(input[INJURIES_FQN], event.target.value))
+                )
               }
               {
-                this.renderTempCheckbox('Bruises', 'injuries', 'bruises',
-                  input.injuries.indexOf('bruises') !== -1)
+                this.renderTempCheckbox(
+                  'Bruises',
+                  INJURIES_FQN,
+                  'bruises',
+                  input[INJURIES_FQN].indexOf('bruises') !== -1,
+                  event => updateStateValue(section, INJURIES_FQN,
+                    checkboxesHelper(input[INJURIES_FQN], event.target.value))
+                )
               }
               {
-                this.renderTempCheckbox('Complaints of Pain', 'injuries', 'complaintsOfPain',
-                  input.injuries.indexOf('complaintsOfPain') !== -1)
+                this.renderTempCheckbox(
+                  'Complaints of Pain',
+                  INJURIES_FQN,
+                  'complaintsOfPain',
+                  input[INJURIES_FQN].indexOf('complaintsOfPain') !== -1,
+                  event => updateStateValue(section, INJURIES_FQN,
+                    checkboxesHelper(input[INJURIES_FQN], event.target.value))
+                )
               }
               {
-                this.renderTempCheckbox('Concussion', 'injuries', 'concussion',
-                  input.injuries.indexOf('concussion') !== -1)
+                this.renderTempCheckbox(
+                  'Concussion',
+                  INJURIES_FQN,
+                  'concussion',
+                  input[INJURIES_FQN].indexOf('concussion') !== -1,
+                  event => updateStateValue(section, INJURIES_FQN,
+                    checkboxesHelper(input[INJURIES_FQN], event.target.value))
+                )
               }
               {
-                this.renderTempCheckbox('Fractures', 'injuries', 'fractures',
-                  input.injuries.indexOf('fractures') !== -1)
+                this.renderTempCheckbox(
+                  'Fractures',
+                  INJURIES_FQN,
+                  'fractures',
+                  input[INJURIES_FQN].indexOf('fractures') !== -1,
+                  event => updateStateValue(section, INJURIES_FQN,
+                    checkboxesHelper(input[INJURIES_FQN], event.target.value))
+                )
               }
               {
-                this.renderTempCheckbox('Other', 'injuries', 'other',
-                  input.injuries.indexOf('other') !== -1)
+                this.renderTempCheckbox(
+                  'Other',
+                  INJURIES_FQN,
+                  'other',
+                  input[INJURIES_FQN].indexOf('other') !== -1,
+                  event => updateStateValue(section, INJURIES_FQN,
+                    checkboxesHelper(input[INJURIES_FQN], event.target.value))
+                )
               }
             </FlexyWrapper>
           </HalfWidthItem>
           <HalfWidthItem>
             <TextField
-                disabled={isInReview}
+                disabled={isReadOnly}
                 header="If other, specify other injuries"
-                onChange={value => updateStateValue(section, 'injuriesOther', value)}
-                value={input.injuriesOther} />
+                onChange={value => updateStateValue(section, INJURIES_OTHER_FQN, value)}
+                value={input[INJURIES_OTHER_FQN]} />
           </HalfWidthItem>
           <HalfWidthItem>
             <FieldHeader>Suicidal</FieldHeader>
             <FlexyWrapper inline>
-              { this.renderTempRadio('Yes', 'suicidal', true, input.suicidal === true) }
-              { this.renderTempRadio('No', 'suicidal', false, input.suicidal === false) }
+              {
+                this.renderTempRadio(
+                  'Yes',
+                  SUICIDAL_FQN,
+                  true,
+                  input[SUICIDAL_FQN] === true,
+                  () => updateStateValue(section, SUICIDAL_FQN, true)
+                )
+              }
+              {
+                this.renderTempRadio(
+                  'No',
+                  SUICIDAL_FQN,
+                  false,
+                  input[SUICIDAL_FQN] === false,
+                  () => updateStateValue(section, SUICIDAL_FQN, false)
+                )
+              }
             </FlexyWrapper>
           </HalfWidthItem>
           <HalfWidthItem>
             <FieldHeader>If Yes, check all that apply</FieldHeader>
             <FlexyWrapper>
               {
-                this.renderTempCheckbox('Thoughts', 'suicidalActions', 'thoughts',
-                  input.suicidalActions.indexOf('thoughts') !== -1)
+                this.renderTempCheckbox(
+                  'Thoughts',
+                  SUICIDAL_ACTIONS_FQN,
+                  'thoughts',
+                  input[SUICIDAL_ACTIONS_FQN].indexOf('thoughts') !== -1,
+                  event => updateStateValue(section, SUICIDAL_ACTIONS_FQN,
+                    checkboxesHelper(input[SUICIDAL_ACTIONS_FQN], event.target.value))
+                )
               }
               {
-                this.renderTempCheckbox('Threat', 'suicidalActions', 'threat',
-                  input.suicidalActions.indexOf('threat') !== -1)
+                this.renderTempCheckbox(
+                  'Threat',
+                  SUICIDAL_ACTIONS_FQN,
+                  'threat',
+                  input[SUICIDAL_ACTIONS_FQN].indexOf('threat') !== -1,
+                  event => updateStateValue(section, SUICIDAL_ACTIONS_FQN,
+                    checkboxesHelper(input[SUICIDAL_ACTIONS_FQN], event.target.value))
+                )
               }
               {
-                this.renderTempCheckbox('Attempt', 'suicidalActions', 'attempt',
-                  input.suicidalActions.indexOf('attempt') !== -1)
+                this.renderTempCheckbox(
+                  'Attempt',
+                  SUICIDAL_ACTIONS_FQN,
+                  'attempt',
+                  input[SUICIDAL_ACTIONS_FQN].indexOf('attempt') !== -1,
+                  event => updateStateValue(section, SUICIDAL_ACTIONS_FQN,
+                    checkboxesHelper(input[SUICIDAL_ACTIONS_FQN], event.target.value))
+                )
               }
               {
-                this.renderTempCheckbox('Completed', 'suicidalActions', 'completed',
-                  input.suicidalActions.indexOf('completed') !== -1)
+                this.renderTempCheckbox(
+                  'Completed',
+                  SUICIDAL_ACTIONS_FQN,
+                  'completed',
+                  input[SUICIDAL_ACTIONS_FQN].indexOf('completed') !== -1,
+                  event => updateStateValue(section, SUICIDAL_ACTIONS_FQN,
+                    checkboxesHelper(input[SUICIDAL_ACTIONS_FQN], event.target.value))
+                )
               }
             </FlexyWrapper>
           </HalfWidthItem>
@@ -711,58 +1188,90 @@ class ConsumerInfoView extends React.Component {
             <FieldHeader>Method Used to Attempt, Threaten, or Complete Suicide</FieldHeader>
             <FlexyWrapper>
               {
-                this.renderTempCheckbox('Alcohol', 'suicideAttemptMethod', 'alcohol',
-                  input.suicideAttemptMethod.indexOf('alcohol') !== -1)
+                this.renderTempCheckbox(
+                  'Alcohol',
+                  SUICIDE_ATTEMPT_METHOD_FQN,
+                  'alcohol',
+                  input[SUICIDE_ATTEMPT_METHOD_FQN].indexOf('alcohol') !== -1,
+                  event => updateStateValue(section, SUICIDE_ATTEMPT_METHOD_FQN,
+                    checkboxesHelper(input[SUICIDE_ATTEMPT_METHOD_FQN], event.target.value))
+                )
               }
               {
-                this.renderTempCheckbox('Knife / Cutting Tool', 'suicideAttemptMethod', 'knife',
-                  input.suicideAttemptMethod.indexOf('knife') !== -1)
+                this.renderTempCheckbox(
+                  'Knife / Cutting Tool',
+                  SUICIDE_ATTEMPT_METHOD_FQN,
+                  'knife',
+                  input[SUICIDE_ATTEMPT_METHOD_FQN].indexOf('knife') !== -1,
+                  event => updateStateValue(section, SUICIDE_ATTEMPT_METHOD_FQN,
+                    checkboxesHelper(input[SUICIDE_ATTEMPT_METHOD_FQN], event.target.value))
+                )
               }
               {
-                this.renderTempCheckbox('Firearm', 'suicideAttemptMethod', 'firearm',
-                  input.suicideAttemptMethod.indexOf('firearm') !== -1)
+                this.renderTempCheckbox(
+                  'Firearm',
+                  SUICIDE_ATTEMPT_METHOD_FQN,
+                  'firearm',
+                  input[SUICIDE_ATTEMPT_METHOD_FQN].indexOf('firearm') !== -1,
+                  event => updateStateValue(section, SUICIDE_ATTEMPT_METHOD_FQN,
+                    checkboxesHelper(input[SUICIDE_ATTEMPT_METHOD_FQN], event.target.value))
+                )
               }
               {
-                this.renderTempCheckbox('Narcotics (Prescription or Illicit)', 'suicideAttemptMethod', 'narcotics',
-                  input.suicideAttemptMethod.indexOf('narcotics') !== -1)
+                this.renderTempCheckbox(
+                  'Narcotics (Prescription or Illicit)',
+                  SUICIDE_ATTEMPT_METHOD_FQN,
+                  'narcotics',
+                  input[SUICIDE_ATTEMPT_METHOD_FQN].indexOf('narcotics') !== -1,
+                  event => updateStateValue(section, SUICIDE_ATTEMPT_METHOD_FQN,
+                    checkboxesHelper(input[SUICIDE_ATTEMPT_METHOD_FQN], event.target.value))
+                )
               }
               {
-                this.renderTempCheckbox('Other', 'suicideAttemptMethod', 'other',
-                  input.suicideAttemptMethod.indexOf('other') !== -1)
+                this.renderTempCheckbox(
+                  'Other',
+                  SUICIDE_ATTEMPT_METHOD_FQN,
+                  'other',
+                  input[SUICIDE_ATTEMPT_METHOD_FQN].indexOf('other') !== -1,
+                  event => updateStateValue(section, SUICIDE_ATTEMPT_METHOD_FQN,
+                    checkboxesHelper(input[SUICIDE_ATTEMPT_METHOD_FQN], event.target.value))
+                )
               }
             </FlexyWrapper>
           </HalfWidthItem>
           <HalfWidthItem>
             <TextField
-                disabled={isInReview}
+                disabled={isReadOnly}
                 header="If other, specify other methods"
-                onChange={value => updateStateValue(section, 'suicideAttemptMethodOther', value)}
-                value={input.suicideAttemptMethodOther} />
+                onChange={value => updateStateValue(section, SUICIDE_ATTEMPT_METHOD_OTHER_FQN, value)}
+                value={input[SUICIDE_ATTEMPT_METHOD_OTHER_FQN]} />
           </HalfWidthItem>
           <FullWidthItem>
             <FieldHeader>Photos Taken Of (check all that apply)</FieldHeader>
             <FlexyWrapper inline>
               {
-                this.renderTempCheckbox('Injuries', 'photosTakenOf', 'injuries',
-                  input.photosTakenOf.indexOf('injuries') !== -1)
+                this.renderTempCheckbox(
+                  'Injuries',
+                  PHOTOS_TAKEN_OF_FQN,
+                  'injuries',
+                  input[PHOTOS_TAKEN_OF_FQN].indexOf('injuries') !== -1,
+                  event => updateStateValue(section, PHOTOS_TAKEN_OF_FQN,
+                    checkboxesHelper(input[PHOTOS_TAKEN_OF_FQN], event.target.value))
+                )
               }
               {
-                this.renderTempCheckbox('Damage / Crime Scene', 'photosTakenOf', 'propertyDamage',
-                  input.photosTakenOf.indexOf('propertyDamage') !== -1)
+                this.renderTempCheckbox(
+                  'Damage / Crime Scene',
+                  PHOTOS_TAKEN_OF_FQN,
+                  'propertyDamage',
+                  input[PHOTOS_TAKEN_OF_FQN].indexOf('propertyDamage') !== -1,
+                  event => updateStateValue(section, PHOTOS_TAKEN_OF_FQN,
+                    checkboxesHelper(input[PHOTOS_TAKEN_OF_FQN], event.target.value))
+                )
               }
             </FlexyWrapper>
           </FullWidthItem>
         </FormGridWrapper>
-        {
-          !isInReview
-            ? (
-              <FormNav
-                  prevPath={FORM_PATHS.CONSUMER_SEARCH}
-                  nextPath={FORM_PATHS.REPORT}
-                  handlePageChange={this.handlePageChange} />
-            )
-            : null
-        }
       </>
     );
   }

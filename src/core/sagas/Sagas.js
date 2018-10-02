@@ -12,6 +12,8 @@ import {
 } from 'lattice-sagas';
 import { all, fork } from 'redux-saga/effects';
 
+import * as RoutingSagas from '../router/RoutingSagas';
+
 import * as AppSagas from '../../containers/app/AppSagas';
 import * as FollowUpReportSagas from '../../containers/followup/FollowUpReportSagas';
 import * as ReportSagas from '../../containers/form/ReportSagas';
@@ -32,11 +34,18 @@ export default function* sagas() :Generator<*, *, *> {
     fork(AppApiSagas.getAppWatcher),
     fork(AppApiSagas.getAppConfigsWatcher),
     fork(AppApiSagas.getAppTypesWatcher),
+    fork(DataApiSagas.clearEntityFromEntitySetWatcher),
     fork(DataApiSagas.getEntitySetDataWatcher),
+    fork(DataApiSagas.updateEntityDataWatcher),
     fork(DataIntegrationApiSagas.createEntityAndAssociationDataWatcher),
     fork(EntityDataModelApiSagas.getEntityDataModelProjectionWatcher),
+    fork(EntityDataModelApiSagas.getAllPropertyTypesWatcher),
     fork(SearchApiSagas.searchEntityNeighborsWatcher),
     fork(SearchApiSagas.searchEntitySetDataWatcher),
+
+    // RoutingSagas
+    fork(RoutingSagas.goToRootWatcher),
+    fork(RoutingSagas.goToRouteWatcher),
 
     // Follow-Up Report Sagas
     fork(FollowUpReportSagas.submitFollowUpReportWatcher),
@@ -53,7 +62,9 @@ export default function* sagas() :Generator<*, *, *> {
     fork(SearchSagas.searchConsumersWatcher),
 
     // ReportsSagas
+    fork(ReportsSagas.deleteReportWatcher),
     fork(ReportsSagas.getReportInFullWatcher),
     fork(ReportsSagas.getReportsWatcher),
+    fork(ReportsSagas.submitReportEditsWatcher),
   ]);
 }
