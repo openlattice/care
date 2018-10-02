@@ -12,4 +12,5 @@ export const FOLLOW_UP_PATH :string = '/followup';
 export const HOME_PATH :string = '/home';
 export const REPORTS_PATH :string = '/reports';
 
+export const REPORT_EDIT_PATH :string = `${REPORTS_PATH}/edit`;
 export const REPORT_VIEW_PATH :string = `${REPORTS_PATH}/view`;

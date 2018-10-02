@@ -3,7 +3,7 @@
  */
 
 import { Map } from 'immutable';
-import { Constants } from 'lattice';
+import { Constants, Types } from 'lattice';
 import {
   DataApiActions,
   DataApiSagas,
@@ -17,17 +17,22 @@ import Logger from '../../utils/Logger';
 import { REPORT_VIEW_PATH } from '../../core/router/Routes';
 import { ERR_ACTION_VALUE_NOT_DEFINED } from '../../utils/Errors';
 import {
+  DELETE_REPORT,
   GET_REPORT_IN_FULL,
   GET_REPORTS,
+  SUBMIT_REPORT_EDITS,
+  deleteReport,
   getReportInFull,
   getReports,
+  submitReportEdits,
 } from './ReportsActions';
 
-const LOG = new Logger('AppSagas');
+const LOG = new Logger('ReportsSagas');
 
 const { OPENLATTICE_ID_FQN } = Constants;
-const { getEntitySetData } = DataApiActions;
-const { getEntitySetDataWorker } = DataApiSagas;
+const { UpdateTypes } = Types;
+const { clearEntityFromEntitySet, getEntitySetData, updateEntityData } = DataApiActions;
+const { clearEntityFromEntitySetWorker, getEntitySetDataWorker, updateEntityDataWorker } = DataApiSagas;
 const { searchEntityNeighbors } = SearchApiActions;
 const { searchEntityNeighborsWorker } = SearchApiSagas;
 
@@ -38,8 +43,45 @@ const { searchEntityNeighborsWorker } = SearchApiSagas;
  */
 
 /*
+*
+* ReportsActions.deleteReport()
+*
+*/
+
+function* deleteReportWorker(action :SequenceAction) :Generator<*, *, *> {
+
+  const { id, value } = action;
+  if (value === null || value === undefined) {
+    yield put(deleteReport.failure(id, ERR_ACTION_VALUE_NOT_DEFINED));
+    return;
+  }
+
+  const entityKeyId :string = value.entityKeyId;
+  const entitySetId :string = value.entitySetId;
+
+  try {
+    yield put(deleteReport.request(action.id, { entityKeyId, entitySetId }));
+    const response = yield call(clearEntityFromEntitySetWorker, clearEntityFromEntitySet({ entityKeyId, entitySetId }));
+    if (response.error) throw response.error;
+    yield put(deleteReport.success(action.id));
+  }
+  catch (error) {
+    LOG.error('caught exception in worker saga', error);
+    yield put(deleteReport.failure(action.id, error));
+  }
+  finally {
+    yield put(deleteReport.finally(action.id));
+  }
+}
+
+function* deleteReportWatcher() :Generator<*, *, *> {
+
+  yield takeEvery(DELETE_REPORT, deleteReportWorker);
+}
+
+/*
  *
- * ReportActions.getReports()
+ * ReportsActions.getReports()
  *
  */
 
@@ -60,7 +102,7 @@ function* getReportsWorker(action :SequenceAction) :Generator<*, *, *> {
     yield put(getReports.success(action.id, response.data));
   }
   catch (error) {
-    LOG.error('caught exception in getReportsWorker()', error);
+    LOG.error('caught exception in worker saga', error);
     yield put(getReports.failure(action.id, error));
   }
   finally {
@@ -96,6 +138,7 @@ function* getReportInFullWorker(action :SequenceAction) :Generator<*, *, *> {
 
     // the push() happens here because request() above sets "selectedReportEntityKeyId", which is needed for
     // the component that will render the report in full. otherwise, the report will redirect.
+    // TODO: this is probably not the way to handle this routing
     yield put(push(REPORT_VIEW_PATH));
 
     const response = yield call(
@@ -110,7 +153,7 @@ function* getReportInFullWorker(action :SequenceAction) :Generator<*, *, *> {
     yield put(getReportInFull.success(action.id, response.data));
   }
   catch (error) {
-    LOG.error('caught exception in getReportInFullWorker()', error);
+    LOG.error('caught exception in worker saga', error);
     yield put(getReportInFull.failure(action.id, error));
   }
   finally {
@@ -125,13 +168,61 @@ function* getReportInFullWatcher() :Generator<*, *, *> {
 
 /*
  *
+ * ReportsActions.submitReportEdits()
+ *
+ */
+
+function* submitReportEditsWorker(action :SequenceAction) :Generator<*, *, *> {
+
+  const { id, value } = action;
+  if (value === null || value === undefined) {
+    yield put(submitReportEdits.failure(id, ERR_ACTION_VALUE_NOT_DEFINED));
+    return;
+  }
+
+  const entityData :Map<string, List<any>> = value.entityData;
+  const entitySetId :string = value.entitySetId;
+
+  try {
+    yield put(submitReportEdits.request(action.id));
+    const response = yield call(
+      updateEntityDataWorker,
+      updateEntityData({
+        entitySetId,
+        entities: entityData.toJS(),
+        updateType: UpdateTypes.PartialReplace,
+      })
+    );
+    if (response.error) throw response.error;
+    yield put(submitReportEdits.success(action.id, response.data));
+  }
+  catch (error) {
+    LOG.error('caught exception in worker saga', error);
+    yield put(submitReportEdits.failure(action.id, error));
+  }
+  finally {
+    yield put(submitReportEdits.finally(action.id));
+  }
+}
+
+function* submitReportEditsWatcher() :Generator<*, *, *> {
+
+  yield takeEvery(SUBMIT_REPORT_EDITS, submitReportEditsWorker);
+}
+
+/*
+ *
  * exports
  *
  */
 
 export {
-  getReportInFullWorker,
+  deleteReportWatcher,
+  deleteReportWorker,
   getReportInFullWatcher,
+  getReportInFullWorker,
   getReportsWatcher,
   getReportsWorker,
+  submitReportEditsWatcher,
+  submitReportEditsWorker,
 };

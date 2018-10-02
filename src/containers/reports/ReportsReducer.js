@@ -2,19 +2,20 @@
  * @flow
  */
 
-import isNumber from 'lodash/isNumber';
 import { List, Map, fromJS } from 'immutable';
 import { Constants } from 'lattice';
 
-import { getReportInFull, getReports } from './ReportsActions';
+import { deleteReport, getReportInFull, getReports } from './ReportsActions';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 
 const INITIAL_STATE :Map<*, *> = fromJS({
   actions: {
+    deleteReport: { error: Map() },
     getReportInFull: { error: Map() },
     getReports: { error: Map() },
   },
+  isDeletingReport: false,
   isFetchingReportInFull: false,
   isFetchingReports: false,
   reports: List(),
@@ -25,6 +26,45 @@ const INITIAL_STATE :Map<*, *> = fromJS({
 export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :Object) {
 
   switch (action.type) {
+
+    case deleteReport.case(action.type): {
+      return deleteReport.reducer(state, action, {
+        REQUEST: () => {
+          const seqAction :SequenceAction = (action :any);
+          return state
+            .set('isDeletingReport', true)
+            .setIn(['actions', 'deleteReport', seqAction.id], fromJS(seqAction));
+        },
+        SUCCESS: () => {
+
+          const seqAction :SequenceAction = (action :any);
+          const storedSeqAction :Map<*, *> = state.getIn(['actions', 'deleteReport', seqAction.id], Map());
+          if (storedSeqAction.isEmpty()) {
+            return state;
+          }
+
+          const entityKeyId :string = storedSeqAction.getIn(['value', 'entityKeyId']);
+          const reports :List<Map<*, *>> = state.get('reports');
+          const selectedReportIndex :number = reports
+            .findIndex((report :Map<*, *>) => report.getIn([OPENLATTICE_ID_FQN, 0]) === entityKeyId);
+
+          return state
+            .set('selectedReportEntityKeyId', '')
+            .set('selectedReportData', Map())
+            .set('reports', reports.delete(selectedReportIndex));
+        },
+        FAILURE: () => {
+          // TODO: need error handling
+          return state;
+        },
+        FINALLY: () => {
+          const seqAction :SequenceAction = (action :any);
+          return state
+            .set('isDeletingReport', false)
+            .deleteIn(['actions', 'deleteReport', seqAction.id]);
+        },
+      });
+    }
 
     case getReportInFull.case(action.type): {
       return getReportInFull.reducer(state, action, {

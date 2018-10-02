@@ -37,7 +37,8 @@ const PORTLAND_ORGS_WL :string[] = [
 ];
 
 const isPortlandOrg = (orgId :string) => (
-  PORTLAND_ORGS_WL.reduce((matchFound, id) => matchFound || (orgId === id), false)
+  // PORTLAND_ORGS_WL.reduce((matchFound, id) => matchFound || (orgId === id), false)
+  true
 );
 
 // const isPortlandUser = () => {

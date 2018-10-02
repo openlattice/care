@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 
 import styled from 'styled-components';
 import { Map } from 'immutable';
+import { EntityDataModelApiActions } from 'lattice-sagas';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Redirect, Route, Switch } from 'react-router-dom';
@@ -30,6 +31,8 @@ import {
   APP_CONTAINER_WIDTH,
   APP_CONTENT_PADDING
 } from '../../core/style/Sizes';
+
+const { getAllPropertyTypes } = EntityDataModelApiActions;
 
 // TODO: this should come from lattice-ui-kit, maybe after the next release. current version v0.1.1
 const APP_BG :string = '#f8f8fb';
@@ -76,6 +79,7 @@ const MissingOrgsWrapper = styled.div`
 
 type Props = {
   actions :{
+    getAllPropertyTypes :RequestSequence;
     loadApp :RequestSequence;
     loadHospitals :RequestSequence;
     switchOrganization :(orgId :string) => Object;
@@ -89,6 +93,7 @@ class AppContainer extends Component<Props> {
 
     const { actions } = this.props;
     actions.loadApp();
+    actions.getAllPropertyTypes();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -189,6 +194,7 @@ function mapStateToProps(state :Map<*, *>) :Object {
 function mapDispatchToProps(dispatch :Function) :Object {
 
   const actions = {
+    getAllPropertyTypes,
     loadApp,
     loadHospitals,
     switchOrganization,

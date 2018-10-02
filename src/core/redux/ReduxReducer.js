@@ -7,6 +7,7 @@ import { combineReducers } from 'redux-immutable';
 
 import appReducer from '../../containers/app/AppReducer';
 import bhrReducer from '../../containers/form/ReportReducer';
+import edmReducer from '../../edm/EdmReducer';
 import followupReducer from '../../containers/followup/FollowUpReportReducer';
 import hospitalsReducer from '../../containers/form/HospitalsReducer';
 import reportsReducer from '../../containers/reports/ReportsReducer';
@@ -17,6 +18,7 @@ export default function reduxReducer() {
   return combineReducers({
     app: appReducer,
     auth: AuthReducer,
+    edm: edmReducer,
     followUpReport: followupReducer,
     hospitals: hospitalsReducer,
     report: bhrReducer,
