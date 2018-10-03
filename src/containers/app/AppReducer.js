@@ -7,6 +7,7 @@ import { List, Map, fromJS } from 'immutable';
 import has from 'lodash/has';
 
 import { APP_TYPES_FQNS } from '../../shared/Consts';
+import { getOrganizationId } from '../../utils/Utils';
 import {
   SWITCH_ORGANIZATION,
   loadApp,
@@ -73,6 +74,7 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
           const seqAction :SequenceAction = (action :any);
           return state
             .set('isLoadingApp', true)
+            .set('selectedOrganizationId', '')
             .setIn(['actions', 'loadApp', seqAction.id], fromJS(seqAction));
         },
         SUCCESS: () => {
@@ -121,9 +123,13 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
             }
           });
 
-          let selectedOrganizationId :string = state.get('selectedOrganizationId');
+          let selectedOrganizationId :string = '';
           if (appConfigs.length && !selectedOrganizationId.length) {
             selectedOrganizationId = appConfigs[0].organization.id;
+          }
+          const storedOrganizationId :?string = getOrganizationId();
+          if (storedOrganizationId) {
+            selectedOrganizationId = storedOrganizationId;
           }
 
           appTypes.forEach((appType :Object) => {

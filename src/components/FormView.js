@@ -76,13 +76,6 @@ function FormView({
   updateStateValues,
 }) {
 
-  // const getProgress = () => {
-  //   const page = getCurrentPage();
-  //   const num = Math.ceil(((page - 1) / (MAX_PAGE - 1)) * 100);
-  //   const percentage = `${num.toString()}%`;
-  //   return num === 0 ? { num: 5, percentage } : { num, percentage };
-  // };
-
   const getReportInfoView = () => {
     return (
       <>

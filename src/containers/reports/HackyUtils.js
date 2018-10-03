@@ -5,6 +5,7 @@
 import moment from 'moment';
 import { List, Map } from 'immutable';
 
+import { formatAsDate } from '../../utils/DateUtils';
 import {
   // ReportInfoView
   CAD_NUMBER_FQN,
@@ -163,7 +164,7 @@ function gatherConsumerData(data :Map<*, *>) :{[key :string] :any} {
   result[GENDER_FQN] = data.getIn([PERSON_SEX_FQN, 0]);
   result[RACE_FQN] = data.getIn([PERSON_RACE_FQN, 0]);
 
-  const dob = moment(data.getIn([PERSON_DOB_FQN, 0])).format('YYYY-MM-DD');
+  const dob = formatAsDate(data.getIn([PERSON_DOB_FQN, 0]));
   result[DOB_FQN] = dob;
   result[PERSON_DOB_FQN] = dob;
 

@@ -6,28 +6,29 @@ import moment from 'moment';
 
 import { isNonEmptyString } from './LangUtils';
 
-// TZO = timezone and offset
-function formatDateWithTZOAsZeros(value :?string) :string {
+function formatAsDate(value :string) :string {
 
-  const dateString :string = value || '';
-  if (isNonEmptyString(dateString)) {
-    return moment(dateString).utc().set({ hour: 0, minute: 0, second: 0 }).format();
-  }
-
-  return '';
-}
-
-function formatTimeWithSecondsAsZeros(value :?string) :string {
-
-  const timeString :string = value || '';
   if (isNonEmptyString(value)) {
-    return moment(timeString, moment.HTML5_FMT.TIME).format('HH:mm:00Z');
+    const valueMoment :moment = moment(value);
+    if (valueMoment.isValid()) {
+      return valueMoment.format(moment.HTML5_FMT.DATE);
+    }
   }
-
   return '';
 }
 
-function replaceDateTimeDate(datetime :string, date :string) {
+function formatAsTime(value :string) :string {
+
+  if (isNonEmptyString(value)) {
+    const valueMoment :moment = moment(value);
+    if (valueMoment.isValid()) {
+      return valueMoment.format(moment.HTML5_FMT.TIME);
+    }
+  }
+  return '';
+}
+
+function replaceDateTimeDate(datetime :string, date :string) :string {
 
   // TODO: this should be the default behavior some of the time, but what about the rest?
   let datetimeMomemt :moment = moment().set({ hour: 0, minute: 0, second: 0 });
@@ -49,7 +50,7 @@ function replaceDateTimeDate(datetime :string, date :string) {
   return dt;
 }
 
-function replaceDateTimeTime(datetime :string, time :string) {
+function replaceDateTimeTime(datetime :string, time :string) :string {
 
   // TODO: this should be the default behavior some of the time, but what about the rest?
   let datetimeMomemt :moment = moment().set({ hour: 0, minute: 0, second: 0 });
@@ -72,8 +73,8 @@ function replaceDateTimeTime(datetime :string, time :string) {
 }
 
 export {
-  formatDateWithTZOAsZeros,
-  formatTimeWithSecondsAsZeros,
+  formatAsDate,
+  formatAsTime,
   replaceDateTimeDate,
   replaceDateTimeTime,
 };

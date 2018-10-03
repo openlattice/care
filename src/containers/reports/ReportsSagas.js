@@ -2,34 +2,37 @@
  * @flow
  */
 
-import { Map } from 'immutable';
-import { Constants, Types } from 'lattice';
+import { List, Map } from 'immutable';
+import { Models, Types } from 'lattice';
 import {
   DataApiActions,
   DataApiSagas,
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
-import { push } from 'react-router-redux';
-import { call, put, takeEvery } from 'redux-saga/effects';
+import {
+  call,
+  put,
+  select,
+  takeEvery,
+} from 'redux-saga/effects';
 
 import Logger from '../../utils/Logger';
-import { REPORT_VIEW_PATH } from '../../core/router/Routes';
 import { ERR_ACTION_VALUE_NOT_DEFINED } from '../../utils/Errors';
 import {
   DELETE_REPORT,
-  GET_REPORT_IN_FULL,
+  GET_REPORT_NEIGHBORS,
   GET_REPORTS,
-  SUBMIT_REPORT_EDITS,
+  UPDATE_REPORT,
   deleteReport,
-  getReportInFull,
+  getReportNeighbors,
   getReports,
-  submitReportEdits,
+  updateReport,
 } from './ReportsActions';
 
 const LOG = new Logger('ReportsSagas');
 
-const { OPENLATTICE_ID_FQN } = Constants;
+const { FullyQualifiedName } = Models;
 const { UpdateTypes } = Types;
 const { clearEntityFromEntitySet, getEntitySetData, updateEntityData } = DataApiActions;
 const { clearEntityFromEntitySetWorker, getEntitySetDataWorker, updateEntityDataWorker } = DataApiSagas;
@@ -117,74 +120,79 @@ function* getReportsWatcher() :Generator<*, *, *> {
 
 /*
  *
- * ReportsActions.getReportInFull()
+ * ReportsActions.getReportNeighbors()
  *
  */
 
-function* getReportInFullWorker(action :SequenceAction) :Generator<*, *, *> {
+function* getReportNeighborsWorker(action :SequenceAction) :Generator<*, *, *> {
 
   const { id, value } = action;
   if (value === null || value === undefined) {
-    yield put(getReportInFull.failure(id, ERR_ACTION_VALUE_NOT_DEFINED));
+    yield put(getReportNeighbors.failure(id, ERR_ACTION_VALUE_NOT_DEFINED));
     return;
   }
 
   const entitySetId :string = value.entitySetId;
-  const report :Map<*, *> = value.report;
-  const reportEntityKeyId :string = report.getIn([OPENLATTICE_ID_FQN, 0]);
+  const entityKeyId :string = value.entityKeyId;
 
   try {
-    yield put(getReportInFull.request(action.id, reportEntityKeyId));
-
-    // the push() happens here because request() above sets "selectedReportEntityKeyId", which is needed for
-    // the component that will render the report in full. otherwise, the report will redirect.
-    // TODO: this is probably not the way to handle this routing
-    yield put(push(REPORT_VIEW_PATH));
+    yield put(getReportNeighbors.request(action.id, { entityKeyId }));
 
     const response = yield call(
       searchEntityNeighborsWorker,
       searchEntityNeighbors({
         entitySetId,
-        entityId: reportEntityKeyId,
+        // TODO: it should probably be "entityKeyId", not "entityId". this api might have to be updated
+        entityId: entityKeyId,
       })
     );
 
     if (response.error) throw response.error;
-    yield put(getReportInFull.success(action.id, response.data));
+    yield put(getReportNeighbors.success(action.id, response.data));
   }
   catch (error) {
     LOG.error('caught exception in worker saga', error);
-    yield put(getReportInFull.failure(action.id, error));
+    yield put(getReportNeighbors.failure(action.id, error));
   }
   finally {
-    yield put(getReportInFull.finally(action.id));
+    yield put(getReportNeighbors.finally(action.id));
   }
 }
 
-function* getReportInFullWatcher() :Generator<*, *, *> {
+function* getReportNeighborsWatcher() :Generator<*, *, *> {
 
-  yield takeEvery(GET_REPORT_IN_FULL, getReportInFullWorker);
+  yield takeEvery(GET_REPORT_NEIGHBORS, getReportNeighborsWorker);
 }
 
 /*
  *
- * ReportsActions.submitReportEdits()
+ * ReportsActions.updateReport()
  *
  */
 
-function* submitReportEditsWorker(action :SequenceAction) :Generator<*, *, *> {
+function* updateReportWorker(action :SequenceAction) :Generator<*, *, *> {
 
   const { id, value } = action;
   if (value === null || value === undefined) {
-    yield put(submitReportEdits.failure(id, ERR_ACTION_VALUE_NOT_DEFINED));
+    yield put(updateReport.failure(id, ERR_ACTION_VALUE_NOT_DEFINED));
     return;
   }
 
-  const entityData :Map<string, List<any>> = value.entityData;
+  const entityKeyId :string = value.entityKeyId;
   const entitySetId :string = value.entitySetId;
+  const reportEdits :Map<string, List<any>> = value.reportEdits;
 
   try {
-    yield put(submitReportEdits.request(action.id));
+    yield put(updateReport.request(action.id, value));
+
+    const edm :Map<*, *> = yield select(state => state.get('edm'));
+    const entityData :Map<string, List<any>> = Map().withMutations((map :Map<string, List<any>>) => {
+      reportEdits.forEach((data :List<any>, fqn :FullyQualifiedName) => {
+        const propertyTypeId :string = edm.getIn(['fqnToIdMap', fqn]);
+        map.setIn([entityKeyId, propertyTypeId], data);
+      });
+    });
+
     const response = yield call(
       updateEntityDataWorker,
       updateEntityData({
@@ -194,20 +202,20 @@ function* submitReportEditsWorker(action :SequenceAction) :Generator<*, *, *> {
       })
     );
     if (response.error) throw response.error;
-    yield put(submitReportEdits.success(action.id, response.data));
+    yield put(updateReport.success(action.id, response.data));
   }
   catch (error) {
     LOG.error('caught exception in worker saga', error);
-    yield put(submitReportEdits.failure(action.id, error));
+    yield put(updateReport.failure(action.id, error));
   }
   finally {
-    yield put(submitReportEdits.finally(action.id));
+    yield put(updateReport.finally(action.id));
   }
 }
 
-function* submitReportEditsWatcher() :Generator<*, *, *> {
+function* updateReportWatcher() :Generator<*, *, *> {
 
-  yield takeEvery(SUBMIT_REPORT_EDITS, submitReportEditsWorker);
+  yield takeEvery(UPDATE_REPORT, updateReportWorker);
 }
 
 /*
@@ -219,10 +227,10 @@ function* submitReportEditsWatcher() :Generator<*, *, *> {
 export {
   deleteReportWatcher,
   deleteReportWorker,
-  getReportInFullWatcher,
-  getReportInFullWorker,
+  getReportNeighborsWatcher,
+  getReportNeighborsWorker,
   getReportsWatcher,
   getReportsWorker,
-  submitReportEditsWatcher,
-  submitReportEditsWorker,
+  updateReportWatcher,
+  updateReportWorker,
 };

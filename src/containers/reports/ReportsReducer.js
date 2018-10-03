@@ -5,21 +5,26 @@
 import { List, Map, fromJS } from 'immutable';
 import { Constants } from 'lattice';
 
-import { deleteReport, getReportInFull, getReports } from './ReportsActions';
+import {
+  deleteReport,
+  getReportNeighbors,
+  getReports,
+  updateReport,
+} from './ReportsActions';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 
 const INITIAL_STATE :Map<*, *> = fromJS({
   actions: {
     deleteReport: { error: Map() },
-    getReportInFull: { error: Map() },
+    getReportNeighbors: { error: Map() },
     getReports: { error: Map() },
   },
   isDeletingReport: false,
-  isFetchingReportInFull: false,
+  isFetchingReport: false,
   isFetchingReports: false,
+  isUpdatingReport: false,
   reports: List(),
-  selectedReportEntityKeyId: '',
   selectedReportData: Map(),
 });
 
@@ -49,7 +54,6 @@ export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :
             .findIndex((report :Map<*, *>) => report.getIn([OPENLATTICE_ID_FQN, 0]) === entityKeyId);
 
           return state
-            .set('selectedReportEntityKeyId', '')
             .set('selectedReportData', Map())
             .set('reports', reports.delete(selectedReportIndex));
         },
@@ -66,37 +70,27 @@ export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :
       });
     }
 
-    case getReportInFull.case(action.type): {
-      return getReportInFull.reducer(state, action, {
+    case getReportNeighbors.case(action.type): {
+      return getReportNeighbors.reducer(state, action, {
         REQUEST: () => {
           const seqAction :SequenceAction = (action :any);
           return state
-            .set('isFetchingReportInFull', true)
+            .set('isFetchingReport', true)
             .set('selectedReportData', Map())
-            .set('selectedReportEntityKeyId', seqAction.value)
-            .setIn(['actions', 'getReportInFull', seqAction.id], fromJS(seqAction));
+            .setIn(['actions', 'getReportNeighbors', seqAction.id], fromJS(seqAction));
         },
         SUCCESS: () => {
+
           const seqAction :SequenceAction = (action :any);
-          if (!state.hasIn(['actions', 'getReportInFull', seqAction.id])) {
+          const storedSeqAction :Map<*, *> = state.getIn(['actions', 'getReportNeighbors', seqAction.id], Map());
+          if (storedSeqAction.isEmpty()) {
             return state;
           }
 
-          const { value } = seqAction;
-          if (value === null || value === undefined) {
-            // TODO: perhaps set error state?
-            return state;
-          }
-
-          const selectedReportEntityKeyId :string = state.get('selectedReportEntityKeyId');
-          let selectedReport :Map<*, *> = state.get('reports').find(report => (
-            report.getIn([OPENLATTICE_ID_FQN, 0]) === selectedReportEntityKeyId
-          ));
-
-          if (!selectedReport || selectedReport.isEmpty()) {
-            // TODO: perhaps set error state?
-            return state;
-          }
+          const { value = {} } = seqAction;
+          const entityKeyId :string = storedSeqAction.getIn(['value', 'entityKeyId']);
+          let selectedReport :Map<*, *> = state.get('reports')
+            .find(report => report.getIn([OPENLATTICE_ID_FQN, 0]) === entityKeyId, null, Map());
 
           fromJS(value).forEach((neighbor :Map<*, *>) => {
             neighbor.get('neighborDetails', Map()).forEach((data :List<*>, key :string) => {
@@ -111,13 +105,13 @@ export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :
         },
         FAILURE: () => {
           // TODO: need to actually handle the error
-          return state.set('reports', List());
+          return state;
         },
         FINALLY: () => {
           const seqAction :SequenceAction = (action :any);
           return state
-            .set('isFetchingReportInFull', false)
-            .deleteIn(['actions', 'getReportInFull', seqAction.id]);
+            .set('isFetchingReport', false)
+            .deleteIn(['actions', 'getReportNeighbors', seqAction.id]);
         },
       });
     }
@@ -128,6 +122,7 @@ export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :
           const seqAction :SequenceAction = (action :any);
           return state
             .set('isFetchingReports', true)
+            .set('selectedReportData', Map())
             .setIn(['actions', 'getReports', seqAction.id], fromJS(seqAction));
         },
         SUCCESS: () => {
@@ -153,6 +148,41 @@ export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :
           return state
             .set('isFetchingReports', false)
             .deleteIn(['actions', 'getReports', seqAction.id]);
+        },
+      });
+    }
+
+    case updateReport.case(action.type): {
+      return updateReport.reducer(state, action, {
+        REQUEST: () => {
+          const seqAction :SequenceAction = (action :any);
+          return state
+            .set('isUpdatingReport', true)
+            .setIn(['actions', 'updateReport', seqAction.id], fromJS(seqAction));
+        },
+        SUCCESS: () => {
+
+          const seqAction :SequenceAction = (action :any);
+          const storedSeqAction :Map<*, *> = state.getIn(['actions', 'updateReport', seqAction.id], Map());
+          if (storedSeqAction.isEmpty()) {
+            return state;
+          }
+
+          const reportEdits :Map<*, *> = storedSeqAction.getIn(['value', 'reportEdits']);
+          const selectedReportData :Map<*, *> = state.get('selectedReportData');
+
+          // not fully confident in the merge()
+          return state.set('selectedReportData', selectedReportData.merge(reportEdits));
+        },
+        FAILURE: () => {
+          // TODO: need to actually handle the error, perhaps set update state as failure?
+          return state;
+        },
+        FINALLY: () => {
+          const seqAction :SequenceAction = (action :any);
+          return state
+            .set('isUpdatingReport', false)
+            .deleteIn(['actions', 'updateReport', seqAction.id]);
         },
       });
     }

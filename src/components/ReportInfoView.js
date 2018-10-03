@@ -7,7 +7,12 @@ import { Link } from 'react-router-dom';
 import FieldHeader from './text/styled/FieldHeader';
 import TextField from './text/TextField';
 import { FORM_PATHS } from '../shared/Consts';
-import { replaceDateTimeDate, replaceDateTimeTime } from '../utils/DateUtils';
+import {
+  formatAsDate,
+  formatAsTime,
+  replaceDateTimeDate,
+  replaceDateTimeTime,
+} from '../utils/DateUtils';
 import {
   EditButton,
   FlexyWrapper,
@@ -69,6 +74,11 @@ class ReportInfoView extends React.Component {
       updateStateValue,
     } = this.props;
     const { section } = this.state;
+
+    const dateOccurredFormatted = formatAsDate(input[DATE_TIME_OCCURRED_FQN]);
+    const dateReportedFormatted = formatAsDate(input[DATE_TIME_REPORTED_FQN]);
+    const timeOccurredFormatted = formatAsTime(input[DATE_TIME_OCCURRED_FQN]);
+    const timeReportedFormatted = formatAsTime(input[DATE_TIME_REPORTED_FQN]);
 
     return (
       <>
@@ -179,7 +189,7 @@ class ReportInfoView extends React.Component {
                     updateStateValue(section, DATE_TIME_OCCURRED_FQN, datetime);
                   }}
                   type="date"
-                  value={moment(input[DATE_TIME_OCCURRED_FQN]).format(moment.HTML5_FMT.DATE)} />
+                  value={dateOccurredFormatted} />
             </label>
           </HalfWidthItem>
           <HalfWidthItem>
@@ -193,7 +203,7 @@ class ReportInfoView extends React.Component {
                     updateStateValue(section, DATE_TIME_OCCURRED_FQN, datetime);
                   }}
                   type="time"
-                  value={moment(input[DATE_TIME_OCCURRED_FQN]).format(moment.HTML5_FMT.TIME)} />
+                  value={timeOccurredFormatted} />
             </label>
           </HalfWidthItem>
           <HalfWidthItem>
@@ -212,7 +222,7 @@ class ReportInfoView extends React.Component {
                     updateStateValue(section, DATE_TIME_REPORTED_FQN, datetime);
                   }}
                   type="date"
-                  value={moment(input[DATE_TIME_REPORTED_FQN]).format(moment.HTML5_FMT.DATE)} />
+                  value={dateReportedFormatted} />
             </label>
           </HalfWidthItem>
           <HalfWidthItem>
@@ -226,7 +236,7 @@ class ReportInfoView extends React.Component {
                     updateStateValue(section, DATE_TIME_REPORTED_FQN, datetime);
                   }}
                   type="time"
-                  value={moment(input[DATE_TIME_REPORTED_FQN]).format(moment.HTML5_FMT.TIME)} />
+                  value={timeReportedFormatted} />
             </label>
           </HalfWidthItem>
         </FormGridWrapper>

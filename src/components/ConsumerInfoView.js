@@ -10,6 +10,7 @@ import TextField from './text/TextField';
 import SelfieWebCam, { DATA_URL_PREFIX } from './SelfieWebCam';
 
 import { FORM_PATHS } from '../shared/Consts';
+import { formatAsDate } from '../utils/DateUtils';
 import { isPortlandOrg } from '../utils/Whitelist';
 import { checkboxesHelper } from '../containers/reports/HackyUtils';
 import {
@@ -514,7 +515,7 @@ class ConsumerInfoView extends React.Component {
                   disabled={consumerIsSelected || isReadOnly}
                   id="date-of-birth"
                   onChange={(event) => {
-                    const dob = moment(event.target.value).format('YYYY-MM-DD');
+                    const dob = formatAsDate(event.target.value);
                     const age = moment().diff(dob, 'years').toString();
                     updateStateValues(section, {
                       [AGE_FQN]: age,
