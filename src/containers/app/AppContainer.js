@@ -17,14 +17,16 @@ import FormContainer from '../form/FormContainer';
 import HomeContainer from '../home/HomeContainer';
 import Spinner from '../../components/spinner/Spinner';
 import HackyReportsManager from '../reports/HackyReportsManager';
+import DashboardContainer from '../dashboard/DashboardContainer';
 import { loadApp, loadHospitals, switchOrganization } from './AppActions';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { isValidUuid } from '../../utils/Utils';
 import {
   BHR_PATH,
+  DASHBOARD_PATH,
   FOLLOW_UP_PATH,
   HOME_PATH,
-  REPORTS_PATH,
+  REPORTS_PATH
 } from '../../core/router/Routes';
 import {
   APP_CONTAINER_MAX_WIDTH,
@@ -164,6 +166,7 @@ class AppContainer extends Component<Props> {
         <Route path={BHR_PATH} component={FormContainer} />
         <Route path={FOLLOW_UP_PATH} component={FollowUpReportManager} />
         <Route path={REPORTS_PATH} component={HackyReportsManager} />
+        <Route path={DASHBOARD_PATH} component={DashboardContainer} />
         <Redirect to={HOME_PATH} />
       </Switch>
     );

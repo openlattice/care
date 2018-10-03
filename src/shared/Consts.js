@@ -93,3 +93,22 @@ export const STATES = [
 ];
 
 export const DATA_URL_PREFIX = 'data:image/png;base64,';
+
+export const SUMMARY_STATS = {
+  NUM_REPORTS: 'numReports',
+  AVG_AGE: 'avgAge',
+  NUM_HOMELESS: 'numHomeless',
+  NUM_MALE: 'numMale',
+  NUM_VETERANS: 'numVeterans',
+  NUM_USING_SUBSTANCE: 'numUsingSubstance',
+  NUM_USING_ALCOHOL: 'numUsingAlcohol',
+  NUM_USING_DRUGS: 'numUsingDrugs'
+};
+
+export const DASHBOARD_COUNTS = {
+  RACE: 'raceCounts',
+  AGE: 'ageCounts',
+  GENDER: 'genderCounts',
+  REPORTS_BY_DATE: 'reportsByDate',
+  REPORTS_BY_TIME: 'reportsByTime'
+}
