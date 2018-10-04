@@ -12,6 +12,7 @@ const SummaryStatsWrapper = styled.div`
   flex-direction: row;
   height: 300px;
   width: 100%;
+  margin-bottom: 30px;
 
   article:first-child {
     width: 300px;

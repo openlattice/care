@@ -15,7 +15,14 @@ import {
   FullWidthItem,
   HalfWidthItem,
 } from './form/StyledFormComponents';
-import { FORM_PATHS } from '../shared/Consts';
+import {
+  DEESCALATION_TECHNIQUES,
+  DISPOSITIONS,
+  DISPOSITIONS_PORTLAND,
+  FORM_PATHS,
+  RESOURCES,
+  RESOURCES_PORTLAND
+} from '../shared/Consts';
 import { isPortlandOrg } from '../utils/Whitelist';
 import { checkboxesHelper } from '../containers/reports/HackyUtils';
 import {
@@ -169,6 +176,20 @@ class DispositionView extends React.Component {
     );
   }
 
+  renderCheckbox = (label, fqn, value) => {
+
+    const { input, updateStateValue } = this.props;
+    const { section } = this.state;
+
+    return this.renderTempCheckbox(
+      label,
+      fqn,
+      value,
+      input[fqn].indexOf(value) !== -1,
+      event => updateStateValue(section, fqn, checkboxesHelper(input[fqn], event.target.value))
+    );
+  }
+
   renderDisposition = () => {
 
     const { input, updateStateValue } = this.props;
@@ -177,96 +198,15 @@ class DispositionView extends React.Component {
       <FullWidthItem>
         <FieldHeader>Disposition</FieldHeader>
         <FlexyWrapper>
-          {
-            this.renderTempCheckbox(
-              'Arrest',
-              DISPOSITION_FQN,
-              'arrest',
-              input[DISPOSITION_FQN].indexOf('arrest') !== -1,
-              event => updateStateValue(section, DISPOSITION_FQN,
-                checkboxesHelper(input[DISPOSITION_FQN], event.target.value))
-            )
-          }
-          {
-            this.renderTempCheckbox(
-              'EP',
-              DISPOSITION_FQN,
-              'ep',
-              input[DISPOSITION_FQN].indexOf('ep') !== -1,
-              event => updateStateValue(section, DISPOSITION_FQN,
-                checkboxesHelper(input[DISPOSITION_FQN], event.target.value))
-            )
-          }
-          {
-            this.renderTempCheckbox(
-              'Voluntary ER Intake',
-              DISPOSITION_FQN,
-              'voluntaryER',
-              input[DISPOSITION_FQN].indexOf('voluntaryER') !== -1,
-              event => updateStateValue(section, DISPOSITION_FQN,
-                checkboxesHelper(input[DISPOSITION_FQN], event.target.value))
-            )
-          }
-          {
-            this.renderTempCheckbox(
-              'BCRI',
-              DISPOSITION_FQN,
-              'bcri',
-              input[DISPOSITION_FQN].indexOf('bcri') !== -1,
-              event => updateStateValue(section, DISPOSITION_FQN,
-                checkboxesHelper(input[DISPOSITION_FQN], event.target.value))
-            )
-          }
-          {
-            this.renderTempCheckbox(
-              'Information and Referral',
-              DISPOSITION_FQN,
-              'infoAndReferral',
-              input[DISPOSITION_FQN].indexOf('infoAndReferral') !== -1,
-              event => updateStateValue(section, DISPOSITION_FQN,
-                checkboxesHelper(input[DISPOSITION_FQN], event.target.value))
-            )
-          }
-          {
-            this.renderTempCheckbox(
-              'LEAD',
-              DISPOSITION_FQN,
-              'lead',
-              input[DISPOSITION_FQN].indexOf('lead') !== -1,
-              event => updateStateValue(section, DISPOSITION_FQN,
-                checkboxesHelper(input[DISPOSITION_FQN], event.target.value))
-            )
-          }
-          {
-            this.renderTempCheckbox(
-              'Contacted or Referred to Current Treatment Provider',
-              DISPOSITION_FQN,
-              'contactedTreatementProvider',
-              input[DISPOSITION_FQN].indexOf('contactedTreatementProvider') !== -1,
-              event => updateStateValue(section, DISPOSITION_FQN,
-                checkboxesHelper(input[DISPOSITION_FQN], event.target.value))
-            )
-          }
-          {
-            this.renderTempCheckbox(
-              'Criminal Citation',
-              DISPOSITION_FQN,
-              'criminalCitation',
-              input[DISPOSITION_FQN].indexOf('criminalCitation') !== -1,
-              event => updateStateValue(section, DISPOSITION_FQN,
-                checkboxesHelper(input[DISPOSITION_FQN], event.target.value))
-            )
-          }
-          {
-            this.renderTempCheckbox(
-              'Civil Citation',
-              DISPOSITION_FQN,
-              'civilCitation',
-              input[DISPOSITION_FQN].indexOf('civilCitation') !== -1,
-              event => updateStateValue(section, DISPOSITION_FQN,
-                checkboxesHelper(input[DISPOSITION_FQN], event.target.value))
-            )
-          }
+          {this.renderCheckbox('Arrest', DISPOSITION_FQN, DISPOSITIONS.ARREST)}
+          {this.renderCheckbox('EP', DISPOSITION_FQN, DISPOSITIONS.EP)}
+          {this.renderCheckbox('Voluntary ER Intake', DISPOSITION_FQN, DISPOSITIONS.VOLUNTARY_ER)}
+          {this.renderCheckbox('BCRI', DISPOSITION_FQN, DISPOSITIONS.BCRI)}
+          {this.renderCheckbox('Information and Referral', DISPOSITION_FQN, DISPOSITIONS.INFO_AND_REFERRAL)}
+          {this.renderCheckbox('LEAD', DISPOSITION_FQN, DISPOSITIONS.LEAD)}
+          {this.renderCheckbox('Contacted or Referred to Current Treatment Provider', DISPOSITION_FQN, DISPOSITIONS.CONTACTED_PROVIDER)}
+          {this.renderCheckbox('Criminal Citation', DISPOSITION_FQN, DISPOSITIONS.CRIMINAL_CITATION)}
+          {this.renderCheckbox('Civil Citation', DISPOSITION_FQN, DISPOSITIONS.CIVIL_CITATION)}
         </FlexyWrapper>
       </FullWidthItem>
     );
@@ -280,56 +220,11 @@ class DispositionView extends React.Component {
       <FullWidthItem>
         <FieldHeader>Disposition</FieldHeader>
         <FlexyWrapper>
-          {
-            this.renderTempCheckbox(
-              'Referred to BHU',
-              DISPOSITION_FQN,
-              'referredToBHU',
-              input[DISPOSITION_FQN].indexOf('referredToBHU') !== -1,
-              event => updateStateValue(section, DISPOSITION_FQN,
-                checkboxesHelper(input[DISPOSITION_FQN], event.target.value))
-            )
-          }
-          {
-            this.renderTempCheckbox(
-              'Referred to Crisis',
-              DISPOSITION_FQN,
-              'referredToCrisis',
-              input[DISPOSITION_FQN].indexOf('referredToCrisis') !== -1,
-              event => updateStateValue(section, DISPOSITION_FQN,
-                checkboxesHelper(input[DISPOSITION_FQN], event.target.value))
-            )
-          }
-          {
-            this.renderTempCheckbox(
-              'Arrest',
-              DISPOSITION_FQN,
-              'arrest',
-              input[DISPOSITION_FQN].indexOf('arrest') !== -1,
-              event => updateStateValue(section, DISPOSITION_FQN,
-                checkboxesHelper(input[DISPOSITION_FQN], event.target.value))
-            )
-          }
-          {
-            this.renderTempCheckbox(
-              'Diverted from Arrest',
-              DISPOSITION_FQN,
-              'divertedFromArrest',
-              input[DISPOSITION_FQN].indexOf('divertedFromArrest') !== -1,
-              event => updateStateValue(section, DISPOSITION_FQN,
-                checkboxesHelper(input[DISPOSITION_FQN], event.target.value))
-            )
-          }
-          {
-            this.renderTempCheckbox(
-              'Resisted or Refused Supports',
-              DISPOSITION_FQN,
-              'resistedOrRefusedSupports',
-              input[DISPOSITION_FQN].indexOf('resistedOrRefusedSupports') !== -1,
-              event => updateStateValue(section, DISPOSITION_FQN,
-                checkboxesHelper(input[DISPOSITION_FQN], event.target.value))
-            )
-          }
+          {this.renderCheckbox('Referred to BHU', DISPOSITION_FQN, DISPOSITIONS_PORTLAND.REFERRED_TO_BHU)}
+          {this.renderCheckbox('Referred to Crisis', DISPOSITION_FQN, DISPOSITIONS_PORTLAND.REFERRED_TO_CRISIS)}
+          {this.renderCheckbox('Arrest', DISPOSITION_FQN, DISPOSITIONS_PORTLAND.ARREST)}
+          {this.renderCheckbox('Diverted from Arrest', DISPOSITION_FQN, DISPOSITIONS_PORTLAND.DIVERTED_FROM_ARREST)}
+          {this.renderCheckbox('Resisted or Refused Supports', DISPOSITION_FQN, DISPOSITIONS_PORTLAND.RESISTED_SUPPORT)}
         </FlexyWrapper>
       </FullWidthItem>
     );
@@ -405,76 +300,13 @@ class DispositionView extends React.Component {
       <FullWidthItem>
         <FieldHeader>Called for Specialized Resources</FieldHeader>
         <FlexyWrapper>
-          {
-            this.renderTempCheckbox(
-              'BCRI / Mobile Crisis Response Team',
-              SPECIAL_RESOURCES_CALLED_FQN,
-              'bcri',
-              input[SPECIAL_RESOURCES_CALLED_FQN].indexOf('bcri') !== -1,
-              event => updateStateValue(section, SPECIAL_RESOURCES_CALLED_FQN,
-                checkboxesHelper(input[SPECIAL_RESOURCES_CALLED_FQN], event.target.value))
-            )
-          }
-          {
-            this.renderTempCheckbox(
-              'CIT Officer',
-              SPECIAL_RESOURCES_CALLED_FQN,
-              'citOfficer',
-              input[SPECIAL_RESOURCES_CALLED_FQN].indexOf('citOfficer') !== -1,
-              event => updateStateValue(section, SPECIAL_RESOURCES_CALLED_FQN,
-                checkboxesHelper(input[SPECIAL_RESOURCES_CALLED_FQN], event.target.value))
-            )
-          }
-          {
-            this.renderTempCheckbox(
-              'CRT Unit',
-              SPECIAL_RESOURCES_CALLED_FQN,
-              'crtUnit',
-              input[SPECIAL_RESOURCES_CALLED_FQN].indexOf('crtUnit') !== -1,
-              event => updateStateValue(section, SPECIAL_RESOURCES_CALLED_FQN,
-                checkboxesHelper(input[SPECIAL_RESOURCES_CALLED_FQN], event.target.value))
-            )
-          }
-          {
-            this.renderTempCheckbox(
-              'ESU',
-              SPECIAL_RESOURCES_CALLED_FQN,
-              'esu',
-              input[SPECIAL_RESOURCES_CALLED_FQN].indexOf('esu') !== -1,
-              event => updateStateValue(section, SPECIAL_RESOURCES_CALLED_FQN,
-                checkboxesHelper(input[SPECIAL_RESOURCES_CALLED_FQN], event.target.value))
-            )
-          }
-          {
-            this.renderTempCheckbox(
-              'SWAT',
-              SPECIAL_RESOURCES_CALLED_FQN,
-              'swat',
-              input[SPECIAL_RESOURCES_CALLED_FQN].indexOf('swat') !== -1,
-              event => updateStateValue(section, SPECIAL_RESOURCES_CALLED_FQN,
-                checkboxesHelper(input[SPECIAL_RESOURCES_CALLED_FQN], event.target.value))
-            )
-          }
-          {
-            this.renderTempCheckbox(
-              'Negotiation Team',
-              SPECIAL_RESOURCES_CALLED_FQN,
-              'negotiationTeam',
-              input[SPECIAL_RESOURCES_CALLED_FQN].indexOf('negotiationTeam') !== -1,
-              event => updateStateValue(section, SPECIAL_RESOURCES_CALLED_FQN,
-                checkboxesHelper(input[SPECIAL_RESOURCES_CALLED_FQN], event.target.value))
-            )
-          }
-          {
-            this.renderTempCheckbox(
-              'Homeless Outreach',
-              SPECIAL_RESOURCES_CALLED_FQN,
-              'homelessOutreach',
-              input[SPECIAL_RESOURCES_CALLED_FQN].indexOf('homelessOutreach') !== -1,
-              event => updateStateValue(section, SPECIAL_RESOURCES_CALLED_FQN,
-                checkboxesHelper(input[SPECIAL_RESOURCES_CALLED_FQN], event.target.value))
-            )
-          }
+          {this.renderCheckbox('BCRI / Mobile Crisis Response Team', SPECIAL_RESOURCES_CALLED_FQN, RESOURCES.BCRI)}
+          {this.renderCheckbox('CIT Officer', SPECIAL_RESOURCES_CALLED_FQN, RESOURCES.CIT)}
+          {this.renderCheckbox('CRT Unit', SPECIAL_RESOURCES_CALLED_FQN, RESOURCES.CRT)}
+          {this.renderCheckbox('ESU', SPECIAL_RESOURCES_CALLED_FQN, RESOURCES.ESU)}
+          {this.renderCheckbox('SWAT', SPECIAL_RESOURCES_CALLED_FQN, RESOURCES.SWAT)}
+          {this.renderCheckbox('Negotiation Team', SPECIAL_RESOURCES_CALLED_FQN, RESOURCES.NEGOTIATION)}
+          {this.renderCheckbox('Homeless Outreach', SPECIAL_RESOURCES_CALLED_FQN, RESOURCES.HOMELESS_OUTREACH)}
         </FlexyWrapper>
       </FullWidthItem>
     );
@@ -488,46 +320,10 @@ class DispositionView extends React.Component {
       <FullWidthItem>
         <FieldHeader>Called for Specialized Resources</FieldHeader>
         <FlexyWrapper>
-          {
-            this.renderTempCheckbox(
-              'Behavioral Health Unit (BHU)',
-              SPECIAL_RESOURCES_CALLED_FQN,
-              'BehavioralHealthUnit',
-              input[SPECIAL_RESOURCES_CALLED_FQN].indexOf('BehavioralHealthUnit') !== -1,
-              event => updateStateValue(section, SPECIAL_RESOURCES_CALLED_FQN,
-                checkboxesHelper(input[SPECIAL_RESOURCES_CALLED_FQN], event.target.value))
-            )
-          }
-          {
-            this.renderTempCheckbox(
-              'Crisis Team',
-              SPECIAL_RESOURCES_CALLED_FQN,
-              'CrisisTeam',
-              input[SPECIAL_RESOURCES_CALLED_FQN].indexOf('CrisisTeam') !== -1,
-              event => updateStateValue(section, SPECIAL_RESOURCES_CALLED_FQN,
-                checkboxesHelper(input[SPECIAL_RESOURCES_CALLED_FQN], event.target.value))
-            )
-          }
-          {
-            this.renderTempCheckbox(
-              'Voluntary Transport',
-              SPECIAL_RESOURCES_CALLED_FQN,
-              'voluntaryTransport',
-              input[SPECIAL_RESOURCES_CALLED_FQN].indexOf('voluntaryTransport') !== -1,
-              event => updateStateValue(section, SPECIAL_RESOURCES_CALLED_FQN,
-                checkboxesHelper(input[SPECIAL_RESOURCES_CALLED_FQN], event.target.value))
-            )
-          }
-          {
-            this.renderTempCheckbox(
-              'Involuntary Transport',
-              SPECIAL_RESOURCES_CALLED_FQN,
-              'involuntaryTransport',
-              input[SPECIAL_RESOURCES_CALLED_FQN].indexOf('involuntaryTransport') !== -1,
-              event => updateStateValue(section, SPECIAL_RESOURCES_CALLED_FQN,
-                checkboxesHelper(input[SPECIAL_RESOURCES_CALLED_FQN], event.target.value))
-            )
-          }
+          {this.renderCheckbox('Behavioral Health Unit (BHU)', SPECIAL_RESOURCES_CALLED_FQN, RESOURCES_PORTLAND.BHU)}
+          {this.renderCheckbox('Crisis Team', SPECIAL_RESOURCES_CALLED_FQN, RESOURCES_PORTLAND.CRISIS)}
+          {this.renderCheckbox('Voluntary Transport', SPECIAL_RESOURCES_CALLED_FQN, RESOURCES_PORTLAND.VOLUNTARY)}
+          {this.renderCheckbox('Involuntary Transport', SPECIAL_RESOURCES_CALLED_FQN, RESOURCES_PORTLAND.INVOLUNTARY)}
         </FlexyWrapper>
       </FullWidthItem>
     );
@@ -716,76 +512,13 @@ class DispositionView extends React.Component {
         <HalfWidthItem>
           <FieldHeader>{ titleValue }</FieldHeader>
           <FlexyWrapper>
-            {
-              this.renderTempCheckbox(
-                'Verbalization',
-                DEESCALATION_TECHNIQUES_FQN,
-                'verbalization',
-                input[DEESCALATION_TECHNIQUES_FQN].indexOf('verbalization') !== -1,
-                event => updateStateValue(section, DEESCALATION_TECHNIQUES_FQN,
-                  checkboxesHelper(input[DEESCALATION_TECHNIQUES_FQN], event.target.value))
-              )
-            }
-            {
-              this.renderTempCheckbox(
-                'Handcuffs',
-                DEESCALATION_TECHNIQUES_FQN,
-                'handcuffs',
-                input[DEESCALATION_TECHNIQUES_FQN].indexOf('handcuffs') !== -1,
-                event => updateStateValue(section, DEESCALATION_TECHNIQUES_FQN,
-                  checkboxesHelper(input[DEESCALATION_TECHNIQUES_FQN], event.target.value))
-              )
-            }
-            {
-              this.renderTempCheckbox(
-                'Leg Restraints',
-                DEESCALATION_TECHNIQUES_FQN,
-                'legRestraints',
-                input[DEESCALATION_TECHNIQUES_FQN].indexOf('legRestraints') !== -1,
-                event => updateStateValue(section, DEESCALATION_TECHNIQUES_FQN,
-                  checkboxesHelper(input[DEESCALATION_TECHNIQUES_FQN], event.target.value))
-              )
-            }
-            {
-              this.renderTempCheckbox(
-                'Taser',
-                DEESCALATION_TECHNIQUES_FQN,
-                'taser',
-                input[DEESCALATION_TECHNIQUES_FQN].indexOf('taser') !== -1,
-                event => updateStateValue(section, DEESCALATION_TECHNIQUES_FQN,
-                  checkboxesHelper(input[DEESCALATION_TECHNIQUES_FQN], event.target.value))
-              )
-            }
-            {
-              this.renderTempCheckbox(
-                'Arrest Control (Hands / Feet)',
-                DEESCALATION_TECHNIQUES_FQN,
-                'arrestControl',
-                input[DEESCALATION_TECHNIQUES_FQN].indexOf('arrestControl') !== -1,
-                event => updateStateValue(section, DEESCALATION_TECHNIQUES_FQN,
-                  checkboxesHelper(input[DEESCALATION_TECHNIQUES_FQN], event.target.value))
-              )
-            }
-            {
-              this.renderTempCheckbox(
-                'N/A',
-                DEESCALATION_TECHNIQUES_FQN,
-                'n/a',
-                input[DEESCALATION_TECHNIQUES_FQN].indexOf('n/a') !== -1,
-                event => updateStateValue(section, DEESCALATION_TECHNIQUES_FQN,
-                  checkboxesHelper(input[DEESCALATION_TECHNIQUES_FQN], event.target.value))
-              )
-            }
-            {
-              this.renderTempCheckbox(
-                'Other',
-                DEESCALATION_TECHNIQUES_FQN,
-                'other',
-                input[DEESCALATION_TECHNIQUES_FQN].indexOf('other') !== -1,
-                event => updateStateValue(section, DEESCALATION_TECHNIQUES_FQN,
-                  checkboxesHelper(input[DEESCALATION_TECHNIQUES_FQN], event.target.value))
-              )
-            }
+            {this.renderCheckbox('Verbalization', DEESCALATION_TECHNIQUES_FQN, DEESCALATION_TECHNIQUES.VERBALIZATION)}
+            {this.renderCheckbox('Handcuffs', DEESCALATION_TECHNIQUES_FQN, DEESCALATION_TECHNIQUES.HANDCUFFS)}
+            {this.renderCheckbox('Leg Restraints', DEESCALATION_TECHNIQUES_FQN, DEESCALATION_TECHNIQUES.LEG_RESTRAINTS)}
+            {this.renderCheckbox('Taser', DEESCALATION_TECHNIQUES_FQN, DEESCALATION_TECHNIQUES.TASER)}
+            {this.renderCheckbox('Arrest Control (Hands / Feet)', DEESCALATION_TECHNIQUES_FQN, DEESCALATION_TECHNIQUES.ARREST_CONTROL)}
+            {this.renderCheckbox('N/A', DEESCALATION_TECHNIQUES_FQN, DEESCALATION_TECHNIQUES.N_A)}
+            {this.renderCheckbox('Other', DEESCALATION_TECHNIQUES_FQN, DEESCALATION_TECHNIQUES.OTHER)}
           </FlexyWrapper>
         </HalfWidthItem>
         <HalfWidthItem>

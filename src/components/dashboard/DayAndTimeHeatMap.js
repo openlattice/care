@@ -1,171 +1,42 @@
 import React from 'react';
-import styled from 'styled-components';
-import moment from 'moment';
-import { isImmutable, Map } from 'immutable';
 
-import { HEATMAP_COLORS } from '../../utils/Colors';
-
-const Wrapper = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  border-radius: 5px;
-  background-color: #ffffff;
-  border: 1px solid #e1e1eb;
-  padding: 30px;
-  margin-top: 20px;
-`;
-
-const Title = styled.div`
-  font-weight: 600;
-  color: #2e2e34;
-  font-size: 20px;
-  margin-bottom: 20px;
-`;
-
-const Row = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-`;
-
-const Label = styled.div`
-  width: 40px;
-  height: 40px;
-  font-size: 14px;
-  font-weight: 400;
-  margin: 2px;
-  color: #2e2e34;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-`;
-
-const Cell = styled.div.attrs({
-  style: ({ color }) => ({
-    backgroundColor: color
-  })
-})`
-  display: flex;
-  border-radius: 5px;
-  width: 40px;
-  height: 40px;
-  margin: 2px;
-`;
-
-const LegendWrapper = styled.div`
-  margin: 20px 0;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  height: 50px;
-`;
-
-const LegendItem = styled.div`
-  height: 100%;
-  width: 50px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: flex-start;
-
-  span:last-child {
-    color: #8e929b;
-    font-size: 12px;
-    font-weight: 400;
-    margin-left: 5px;
-  }
-`;
-
-const LegendColor = styled.div.attrs({
-  style: ({ color }) => ({
-    backgroundColor: color
-  })
-})`
-  width: 100%;
-  height: 20px;
-`;
+import HeatMap from './HeatMap';
 
 const DayAndTimeHeatMap = ({ counts }) => {
 
-  let min = 0;
-  let max = 0;
+  const colValues = [];
+  for (let i = 0; i < 24; i++) {
+    colValues.push(i);
+  }
 
-  counts.valueSeq().forEach((hourCounts) => {
-    hourCounts.forEach((count) => {
-      if (count > max) {
-        max = count;
-      }
-    });
-  });
+  const colHeaderFormatter = (value) => {
+    let formattedTime;
 
-  const chunkSize = ((max + 1) - min) / HEATMAP_COLORS.length;
-
-  const renderHeaderRow = () => {
-    const labels = [];
-    labels.push(<Label key={-1} />);
-    for (let i = 0; i < 24; i++) {
-      let formattedTime;
-
-      if (i === 0) {
-        formattedTime = `12a`;
-      }
-      else if (i < 12) {
-        formattedTime = `${i}a`;
-      }
-      else if (i === 12) {
-        formattedTime = '12p';
-      }
-      else {
-        formattedTime = `${i - 12}p`;
-      }
-      labels.push(<Label key={i}>{formattedTime}</Label>);
+    if (value === 0) {
+      formattedTime = `12a`;
     }
-
-    return <Row>{labels}</Row>;
-  }
-
-  const renderRow = (key) => {
-    const cells = [];
-    cells.push(<Label key={key}>{key}</Label>);
-    for (let i = 0; i < 24; i += 1) {
-      const count = counts.getIn([key, `${i}`], 0);
-      const groupOffset = Math.floor((max - count) / chunkSize);
-      const index = Number.isNaN(groupOffset) ? 0 : HEATMAP_COLORS.length - 1 - groupOffset;
-
-      cells.push(<Cell key={`${key}|${i}`} color={HEATMAP_COLORS[index]} />);
+    else if (value < 12) {
+      formattedTime = `${value}a`;
     }
-
-    return <Row>{cells}</Row>;
+    else if (value === 12) {
+      formattedTime = '12p';
+    }
+    else {
+      formattedTime = `${value - 12}p`;
+    }
+    return formattedTime;
   }
 
-  const renderLegend = () => {
-    return (
-      <LegendWrapper>
-        {HEATMAP_COLORS.map((color, index) => (
-          <LegendItem key={`legend|${index}`}>
-            <LegendColor color={color} />
-            <span>&ge; {Math.ceil(chunkSize * index)}</span>
-          </LegendItem>
-        ))}
-      </LegendWrapper>
-    )
-  }
 
   return (
-    <Wrapper>
-      <Title>Reports by Day of Week and Time</Title>
-      {renderHeaderRow()}
-      {renderRow('Mon')}
-      {renderRow('Tue')}
-      {renderRow('Wed')}
-      {renderRow('Thu')}
-      {renderRow('Fri')}
-      {renderRow('Sat')}
-      {renderRow('Sun')}
-      {renderLegend()}
-    </Wrapper>
+    <HeatMap
+        title="Reports by Day of Week and Time"
+        rowHeaders={['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']}
+        colValues={colValues}
+        colHeaderFormatter={colHeaderFormatter}
+        cellSize={40}
+        counts={counts}
+        square />
   );
 }
 

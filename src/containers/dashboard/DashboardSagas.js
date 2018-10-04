@@ -14,17 +14,23 @@ import { call, put, takeEvery } from 'redux-saga/effects';
 import {
   APP_TYPES_FQNS,
   DASHBOARD_COUNTS,
+  DEESCALATION_TECHNIQUES,
+  DISPOSITIONS,
+  DISPOSITIONS_PORTLAND,
   SUMMARY_STATS
 } from '../../shared/Consts';
 
 import {
   AGE_FQN,
   DATE_TIME_OCCURRED_FQN,
+  DEESCALATION_TECHNIQUES_FQN,
+  DISPOSITION_FQN,
   DRUGS_ALCOHOL_FQN,
   GENDER_FQN,
   HOMELESS_FQN,
   MILITARY_STATUS_FQN,
-  RACE_FQN
+  RACE_FQN,
+  SPECIAL_RESOURCES_CALLED_FQN
 } from '../../edm/DataModelFqns';
 
 import {
@@ -39,8 +45,11 @@ import {
 
 import {
   getPeopleESId,
-  getReportESId
+  getReportESId,
+  getSelectedOrganizationId
 } from '../../utils/AppUtils';
+
+import { isPortlandOrg } from '../../utils/Whitelist';
 
 import { getFqnObj } from '../../utils/DataUtils';
 
@@ -55,15 +64,17 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *>  {
       app
     } = action.value;
 
+    const isPortland = isPortlandOrg(getSelectedOrganizationId(app));
     const reportESId :string = getReportESId(app);
 
     const ceiling = yield call(DataApi.getEntitySetSize, reportESId);
     const datePropertyTypeId = yield call(EntityDataModelApi.getPropertyTypeId, DATE_TIME_OCCURRED_FQN);
     const bhrs = yield call(SearchApi.searchEntitySetData, reportESId, {
-      searchTerm: `${datePropertyTypeId}:[${moment().subtract(1, 'month').format(DATE_FORMAT)} TO *]`,
+      searchTerm: '*',
+      // searchTerm: `${datePropertyTypeId}:[${moment().subtract(1, 'month').format(DATE_FORMAT)} TO *]`,
       start: 0,
       maxHits: ceiling,
-      fuzzy: false
+      // fuzzy: false
     });
 
     const numReports = bhrs.hits.length;
@@ -82,6 +93,17 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *>  {
     let dateCounts = Map();
     let timeCounts = Map();
     let dayAndTimeCounts = Map();
+    let dispositionCounts = Map();
+    let deescalationCounts = Map();
+    let resourceCounts = Map();
+    let dispositionsByDeescalation = Map();
+
+    const dispositionsList = isPortland ? Object.values(DISPOSITIONS_PORTLAND) : Object.values(DISPOSITIONS);
+    Object.values(DEESCALATION_TECHNIQUES).forEach((deescTechnique) => {
+      dispositionsList.forEach((disp) => {
+        dispositionsByDeescalation = dispositionsByDeescalation.setIn([deescTechnique, disp], 0);
+      });
+    });
 
     fromJS(bhrs.hits).forEach((bhr) => {
 
@@ -141,6 +163,48 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *>  {
         }
       });
 
+      bhr.get(DISPOSITION_FQN, List()).forEach((disposition) => {
+        dispositionCounts = dispositionCounts.set(disposition, dispositionCounts.get(disposition, 0) + 1);
+      });
+
+      bhr.get(DEESCALATION_TECHNIQUES_FQN, List()).forEach((technique) => {
+        deescalationCounts = deescalationCounts.set(technique, deescalationCounts.get(technique, 0) + 1);
+      });
+
+      bhr.get(SPECIAL_RESOURCES_CALLED_FQN, List()).forEach((resource) => {
+        resourceCounts = resourceCounts.set(resource, resourceCounts.get(resource, 0) + 1);
+      });
+
+      // bhr.get(DEESCALATION_TECHNIQUES_FQN, List()).forEach((deescTechnique) => {
+      //   bhr.get(DISPOSITION_FQN, List()).forEach((disp) => {
+      //     dispositionsByDeescalation = dispositionsByDeescalation.setIn([deescTechnique, disp],
+      //       dispositionsByDeescalation.getIn([deescTechnique, disp], 0) + 1);
+      //   });
+      // });
+
+      // /* HACK TO MAKE HISTORICAL DATA WORK */
+      const deescInputList = bhr.get(DEESCALATION_TECHNIQUES_FQN, List()).join(' ').toLowerCase().split(' ');
+      const deescList = Object.values(DEESCALATION_TECHNIQUES).filter(deesc => deescInputList.includes(deesc));
+      if (deescInputList.includes('leg')) deescList.push(DEESCALATION_TECHNIQUES.LEG_RESTRAINTS);
+      if (deescInputList.includes('arrest')) deescList.push(DEESCALATION_TECHNIQUES.ARREST_CONTROL);
+      if (!deescList.length) deescList.push(DEESCALATION_TECHNIQUES.N_A);
+
+      const dispInputList = bhr.get(DISPOSITION_FQN, List()).join(' ').toLowerCase().split(' ');
+      const dispList = dispositionsList.filter(disp => dispInputList.includes(disp));
+      if (dispInputList.includes('voluntary')) dispList.push(DISPOSITIONS.VOLUNTARY_ER);
+      if (dispInputList.includes('referral') || dispInputList.includes('information/referral')) dispList.push(DISPOSITIONS.INFO_AND_REFERRAL);
+      if (dispInputList.includes('provider')) dispList.push(DISPOSITIONS.CONTACTED_PROVIDER);
+      if (dispInputList.includes('criminal')) dispList.push(DISPOSITIONS.CRIMINAL_CITATION);
+      if (dispInputList.includes('civil')) dispList.push(DISPOSITIONS.CIVIL_CITATION);
+
+      deescList.forEach((deescTechnique) => {
+        dispList.forEach((disp) => {
+          dispositionsByDeescalation = dispositionsByDeescalation.setIn([deescTechnique, disp],
+            dispositionsByDeescalation.getIn([deescTechnique, disp], 0) + 1);
+        });
+      });
+      // </HACK>
+
     });
 
     const summaryStats = {
@@ -160,7 +224,11 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *>  {
       [DASHBOARD_COUNTS.GENDER]: genderCounts,
       [DASHBOARD_COUNTS.REPORTS_BY_DATE]: dateCounts,
       [DASHBOARD_COUNTS.REPORTS_BY_TIME]: timeCounts,
-      [DASHBOARD_COUNTS.REPORTS_BY_DAY_OF_WEEK]: dayAndTimeCounts
+      [DASHBOARD_COUNTS.REPORTS_BY_DAY_OF_WEEK]: dayAndTimeCounts,
+      [DASHBOARD_COUNTS.DISPOSITIONS]: dispositionCounts,
+      [DASHBOARD_COUNTS.DEESCALATION]: deescalationCounts,
+      [DASHBOARD_COUNTS.RESOURCES]: resourceCounts,
+      [DASHBOARD_COUNTS.DISPOSITIONS_BY_DEESCALATION]: dispositionsByDeescalation
     };
 
     yield put(loadDashboardData.success(action.id, { summaryStats, dashboardCounts }));

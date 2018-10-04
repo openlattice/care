@@ -9,8 +9,10 @@ import { withRouter } from 'react-router';
 import { bindActionCreators } from 'redux';
 import { Map } from 'immutable';
 
+import ButtonToolbar from '../../components/buttons/ButtonToolbar';
 import SummaryStats from '../../components/dashboard/SummaryStats';
 import OverviewCharts from '../../components/dashboard/OverviewCharts';
+import OutcomeCharts from '../../components/dashboard/OutcomeCharts';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { loadDashboardData } from './DashboardActionFactory';
 import { SUBMISSION_STATES } from './DashboardReducer';
@@ -26,10 +28,22 @@ type Props = {
 };
 
 type State = {
+  layout :string
+};
 
+const LAYOUTS = {
+  OVERVIEW: 'Overview',
+  OUTCOMES: 'Outcomes'
 };
 
 class DashboardContainer extends React.Component<Props, State>  {
+
+  constructor(props :Props) {
+    super(props);
+    this.state = {
+      layout: LAYOUTS.OVERVIEW
+    };
+  }
 
   componentDidMount() {
     const { actions, app } = this.props;
@@ -38,18 +52,27 @@ class DashboardContainer extends React.Component<Props, State>  {
 
   renderContent = () => {
     const { dashboardCounts, summaryStats } = this.props;
+    const { layout } = this.state;
+
+    const ChartsComponent = layout === LAYOUTS.OVERVIEW ? OverviewCharts : OutcomeCharts;
+
+    const viewOptions = Object.values(LAYOUTS).map((value) => ({
+      label: value,
+      value,
+      onClick: () => this.setState({ layout: value })
+    }));
+
     return (
       <div>
         <SummaryStats summaryStats={summaryStats} />
-        <OverviewCharts dashboardCounts={dashboardCounts} />
+        <ButtonToolbar options={viewOptions} value={layout} />
+        <ChartsComponent dashboardCounts={dashboardCounts} />
       </div>
     );
   }
 
   render() {
     const { isLoading } = this.props;
-
-    console.log(this.props.dashboardCounts.toJS())
 
     return (
       <div>
