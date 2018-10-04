@@ -3,17 +3,7 @@ import styled from 'styled-components';
 import moment from 'moment';
 import { isImmutable, Map } from 'immutable';
 
-const COLORS = [
-  '#feffd9',
-  '#edf8b1',
-  '#c7e9b4',
-  '#7fccbb',
-  '#40b6c4',
-  '#1e91c0',
-  '#225ea8',
-  '#253494',
-  '#081d58'
-];
+import { HEATMAP_COLORS } from '../../utils/Colors';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -110,7 +100,7 @@ const DayAndTimeHeatMap = ({ counts }) => {
     });
   });
 
-  const chunkSize = ((max + 1) - min) / COLORS.length;
+  const chunkSize = ((max + 1) - min) / HEATMAP_COLORS.length;
 
   const renderHeaderRow = () => {
     const labels = [];
@@ -142,9 +132,9 @@ const DayAndTimeHeatMap = ({ counts }) => {
     for (let i = 0; i < 24; i += 1) {
       const count = counts.getIn([key, `${i}`], 0);
       const groupOffset = Math.floor((max - count) / chunkSize);
-      const index = Number.isNaN(groupOffset) ? 0 : COLORS.length - 1 - groupOffset;
+      const index = Number.isNaN(groupOffset) ? 0 : HEATMAP_COLORS.length - 1 - groupOffset;
 
-      cells.push(<Cell key={`${key}|${i}`} color={COLORS[index]} />);
+      cells.push(<Cell key={`${key}|${i}`} color={HEATMAP_COLORS[index]} />);
     }
 
     return <Row>{cells}</Row>;
@@ -153,7 +143,7 @@ const DayAndTimeHeatMap = ({ counts }) => {
   const renderLegend = () => {
     return (
       <LegendWrapper>
-        {COLORS.map((color, index) => (
+        {HEATMAP_COLORS.map((color, index) => (
           <LegendItem key={`legend|${index}`}>
             <LegendColor color={color} />
             <span>&ge; {Math.ceil(chunkSize * index)}</span>
