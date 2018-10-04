@@ -46,6 +46,8 @@ import { getFqnObj } from '../../utils/DataUtils';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 
+const toLower = list => list.map(o => o.toLowerCase());
+
 function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *>  {
   try  {
     yield put(loadDashboardData.request(action.id));
@@ -79,25 +81,30 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *>  {
     let genderCounts = Map();
     let dateCounts = Map();
     let timeCounts = Map();
+    let dayAndTimeCounts = Map();
 
     fromJS(bhrs.hits).forEach((bhr) => {
 
       /* Summary Stats */
       ageTotal += bhr.getIn([AGE_FQN, 0], 0);
 
+      const genderList = toLower(bhr.get(GENDER_FQN, List()));
+      const raceList = toLower(bhr.get(RACE_FQN, List()));
+      const militaryStatusList = toLower(bhr.get(MILITARY_STATUS_FQN, List()));
+      const substanceList = toLower(bhr.get(DRUGS_ALCOHOL_FQN, List()));
+
       if (bhr.getIn([HOMELESS_FQN, 0], false)) {
         numHomeless += 1;
       }
 
-      if (bhr.get(GENDER_FQN, List()).includes('male')) {
+      if (genderList.includes('male')) {
         numMale += 1;
       }
 
-      if (bhr.get(MILITARY_STATUS_FQN, List()).includes('veteran')) {
+      if (militaryStatusList.includes('veteran')) {
         numVeterans += 1;
       }
 
-      const substanceList = bhr.get(DRUGS_ALCOHOL_FQN, List());
       if (substanceList.includes('drugs')) {
         numUsingDrugs += 1;
       }
@@ -109,25 +116,28 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *>  {
       }
 
       /* Dashboard Counts */
-      bhr.get(RACE_FQN, List()).forEach((race) => {
+      raceList.forEach((race) => {
         raceCounts = raceCounts.set(race, raceCounts.get(race, 0) + 1);
+      });
+
+      genderList.forEach((gender) => {
+        genderCounts = genderCounts.set(gender, genderCounts.get(gender, 0) + 1)
       });
 
       bhr.get(AGE_FQN, List()).forEach((age) => {
         ageCounts = ageCounts.set(age, ageCounts.get(age, 0) + 1);
       });
 
-      bhr.get(GENDER_FQN, List()).forEach((gender) => {
-        genderCounts = genderCounts.set(gender, genderCounts.get(gender, 0) + 1)
-      });
-
-      bhr.get(DATE_TIME_OCCURRED_FQN, List()).forEach((date) => {
+      bhr.get(DATE_TIME_OCCURRED_FQN, bhr.get('bhr.dateOccurred', List())).forEach((date) => {
         const dateMoment = moment(date);
         if (dateMoment.isValid()) {
           const dateStr = dateMoment.format(DATE_STR);
           const timeStr = dateMoment.format(TIME_STR);
+          const dayOfWeek = dateMoment.format('ddd');
+          const timeHr = dateMoment.format('H');
           dateCounts = dateCounts.set(dateStr, dateCounts.get(dateStr, 0) + 1);
           timeCounts = timeCounts.set(timeStr, timeCounts.get(timeStr, 0) + 1);
+          dayAndTimeCounts = dayAndTimeCounts.setIn([dayOfWeek, timeHr], dayAndTimeCounts.getIn([dayOfWeek, timeHr], 0) + 1);
         }
       });
 
@@ -149,10 +159,9 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *>  {
       [DASHBOARD_COUNTS.AGE]: ageCounts,
       [DASHBOARD_COUNTS.GENDER]: genderCounts,
       [DASHBOARD_COUNTS.REPORTS_BY_DATE]: dateCounts,
-      [DASHBOARD_COUNTS.REPORTS_BY_TIME]: timeCounts
+      [DASHBOARD_COUNTS.REPORTS_BY_TIME]: timeCounts,
+      [DASHBOARD_COUNTS.REPORTS_BY_DAY_OF_WEEK]: dayAndTimeCounts
     };
-
-    console.log(summaryStats)
 
     yield put(loadDashboardData.success(action.id, { summaryStats, dashboardCounts }));
   }

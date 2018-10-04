@@ -110,5 +110,6 @@ export const DASHBOARD_COUNTS = {
   AGE: 'ageCounts',
   GENDER: 'genderCounts',
   REPORTS_BY_DATE: 'reportsByDate',
-  REPORTS_BY_TIME: 'reportsByTime'
+  REPORTS_BY_TIME: 'reportsByTime',
+  REPORTS_BY_DAY_OF_WEEK: 'reportsByDayOfWeek'
 }

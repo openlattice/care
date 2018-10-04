@@ -19,6 +19,7 @@ import {
 
 import ChartWrapper from './ChartWrapper';
 import ChartTooltip from './ChartTooltip';
+import DayAndTimeHeatMap from './DayAndTimeHeatMap';
 import { DASHBOARD_COUNTS } from '../../shared/Consts';
 import { DATE_STR, TIME_STR } from '../../utils/DateUtils';
 
@@ -129,6 +130,7 @@ const OverviewCharts = ({ dashboardCounts }) => {
           xLabel={title}>
           <LineChart width={500} height={250} data={data}>
             <XAxis type="number" dataKey={title} tickFormatter={formatAsString} domain={[0, maxVal]} />
+            <YAxis type="number" dataKey="count" />
             <Tooltip content={data => tooltip('reports', chartType, data)} />
             <Line type="monotone" dataKey="count" stroke={color} strokeWidth={2} dot={false} />
           </LineChart>
@@ -174,8 +176,9 @@ const OverviewCharts = ({ dashboardCounts }) => {
     return (
       <FractionWidthContainer items={3}>
         <ChartWrapper title={title} yLabel={'# consumers'}>
-          <BarChart width={330} height={250} data={data}>
+          <BarChart width={360} height={250} data={data}>
             <XAxis type={isNumeric ? 'number' : 'category'} dataKey={title} />
+            <YAxis type="number" dataKey="count" />
             <Tooltip content={data => tooltip('consumers', { title, formatAsString: i => i }, data)} />
             <Bar dataKey="count" fill={color} />
           </BarChart>
@@ -190,6 +193,9 @@ const OverviewCharts = ({ dashboardCounts }) => {
       <ChartRow>
         {renderTimelineChart(timelineChartTypes.date)}
         {renderTimelineChart(timelineChartTypes.time)}
+      </ChartRow>
+      <ChartRow>
+        <DayAndTimeHeatMap counts={dashboardCounts.get(DASHBOARD_COUNTS.REPORTS_BY_DAY_OF_WEEK, Map())} />
       </ChartRow>
       <RowHeader>Consumer demographics</RowHeader>
       <ChartRow>

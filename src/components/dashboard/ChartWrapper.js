@@ -103,6 +103,7 @@ const BodyWrapper = styled.div`
   flex-direction: row;
   width: 100%;
   align-items: center;
+  margin-left: -40px;
 `;
 
 const FooterWrapper = styled.div`
@@ -138,13 +139,13 @@ const YLabel = styled(XLabel)`
   transform: rotate(270deg);
   white-space: nowrap;
   margin-left: -${(props) => {
-    if (props.noMargin) {
-      return 0;
+    if (props.withMargin) {
+      return 200;
     }
     if (props.secondary) {
       return 400;
     }
-    return 200;
+    return 0;
   }}%;
 `;
 
