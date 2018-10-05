@@ -5,13 +5,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import moment from 'moment';
-import { Map, Set } from 'immutable';
+import { List, Map, Set } from 'immutable';
 
 import {
   Bar,
   BarChart,
-  Line,
-  LineChart,
   Tooltip,
   XAxis,
   YAxis
@@ -20,8 +18,12 @@ import {
 import ChartWrapper from './ChartWrapper';
 import ChartTooltip from './ChartTooltip';
 import HeatMap from './HeatMap';
-import { DASHBOARD_COUNTS } from '../../shared/Consts';
-import { DATE_STR, TIME_STR } from '../../utils/DateUtils';
+import {
+  DASHBOARD_COUNTS,
+  DEESCALATION_TECHNIQUES,
+  DISPOSITIONS,
+  DISPOSITIONS_PORTLAND
+} from '../../shared/Consts';
 
 const OutcomeChartsWrapper = styled.div`
   display: flex;
@@ -55,7 +57,37 @@ const RowHeader = styled.div`
   font-weight: 600;
 `;
 
-const OutcomeCharts = ({ dashboardCounts }) => {
+const OUTCOME_LABELS = {
+  [DEESCALATION_TECHNIQUES.VERBALIZATION]: 'Verbalization',
+  [DEESCALATION_TECHNIQUES.HANDCUFFS]: 'Handcuffs',
+  [DEESCALATION_TECHNIQUES.LEG_RESTRAINTS]: 'Leg Restraints',
+  [DEESCALATION_TECHNIQUES.TASER]: 'Taser',
+  [DEESCALATION_TECHNIQUES.ARREST_CONTROL]: 'Arrest Control (Hands / Feet)',
+  [DEESCALATION_TECHNIQUES.N_A]: 'N/A',
+  [DEESCALATION_TECHNIQUES.OTHER]: 'Other',
+
+  [DISPOSITIONS.ARREST]: 'Arrest',
+  [DISPOSITIONS.EP]: 'EP',
+  [DISPOSITIONS.VOLUNTARY_ER]: 'Voluntary ER Intake',
+  [DISPOSITIONS.BCRI]: 'BCRI',
+  [DISPOSITIONS.INFO_AND_REFERRAL]: 'Information and Referral',
+  [DISPOSITIONS.LEAD]: 'LEAD',
+  [DISPOSITIONS.CONTACTED_PROVIDER]: 'Contacted/Referred to Current Treatment Provider',
+  [DISPOSITIONS.CRIMINAL_CITATION]: 'Criminal Citation',
+  [DISPOSITIONS.CIVIL_CITATION]: 'Civil Citation',
+
+  [DISPOSITIONS_PORTLAND.REFERRED_TO_BHU]: 'Referred to BHU',
+  [DISPOSITIONS_PORTLAND.REFERRED_TO_CRISIS]: 'Referred to Crisis',
+  [DISPOSITIONS_PORTLAND.ARREST]: 'Arrest',
+  [DISPOSITIONS_PORTLAND.DIVERTED_FROM_ARREST]: 'Diverted from Arrest',
+  [DISPOSITIONS_PORTLAND.RESISTED_SUPPORT]: 'Resisted or Refused Supports'
+};
+
+type Props = {
+  dashboardCounts :Map
+};
+
+const OutcomeCharts = ({ dashboardCounts } :Props) => {
 
   const tooltip = (counted, { title, formatAsString }, { label, payload }) => {
     return (
@@ -69,8 +101,8 @@ const OutcomeCharts = ({ dashboardCounts }) => {
           </TooltipRow>
         )) : null}
       </ChartTooltip>
-    )
-  }
+    );
+  };
 
   const renderBarChart = (title, color, countKey, isNumeric) => {
     const countMap = dashboardCounts.get(countKey, Map());
@@ -87,17 +119,17 @@ const OutcomeCharts = ({ dashboardCounts }) => {
       })).toJS();
     return (
       <FractionWidthContainer items={3}>
-        <ChartWrapper title={title} yLabel={'# consumers'}>
+        <ChartWrapper title={title} yLabel="# consumers">
           <BarChart width={360} height={250} data={data}>
             <XAxis type={isNumeric ? 'number' : 'category'} dataKey={title} />
             <YAxis type="number" dataKey="count" />
-            <Tooltip content={data => tooltip('consumers', { title, formatAsString: i => i }, data)} />
+            <Tooltip content={pointData => tooltip('consumers', { title, formatAsString: i => i }, pointData)} />
             <Bar dataKey="count" fill={color} />
           </BarChart>
         </ChartWrapper>
       </FractionWidthContainer>
-    )
-  }
+    );
+  };
 
   const renderDeescalationDispositionHeatmap = () => {
     const countMap = dashboardCounts.get(DASHBOARD_COUNTS.DISPOSITIONS_BY_DEESCALATION, Map());
@@ -108,11 +140,13 @@ const OutcomeCharts = ({ dashboardCounts }) => {
           title="Dispositions by de-escalation techniques"
           rowHeaders={deescList}
           colValues={dispList}
+          rowHeaderFormatter={val => OUTCOME_LABELS[val]}
+          colHeaderFormatter={val => OUTCOME_LABELS[val]}
           cellSize={50}
           counts={countMap}
           withContent />
     );
-  }
+  };
 
   return (
     <OutcomeChartsWrapper>
@@ -127,6 +161,6 @@ const OutcomeCharts = ({ dashboardCounts }) => {
       </ChartRow>
     </OutcomeChartsWrapper>
   );
-}
+};
 
 export default OutcomeCharts;

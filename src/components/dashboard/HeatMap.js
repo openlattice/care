@@ -4,8 +4,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import moment from 'moment';
-import { isImmutable, Map } from 'immutable';
+import { Map } from 'immutable';
 
 import { HEATMAP_COLORS } from '../../utils/Colors';
 
@@ -14,6 +13,7 @@ type Props = {
   colValues :string[],
   colHeaderFormatter? :(colValue :Object) => string,
   rowHeaders :string[],
+  rowHeaderFormatter? :(colValue :Object) => string,
   cellSize :number,
   counts :Map,
   withContent? :boolean,
@@ -47,7 +47,7 @@ const Row = styled.div`
 const BaseCell = styled.div`
   display: flex;
   border-radius: 5px;
-  width: ${props => props.square ? `${props.size}px` : '100%'};
+  width: ${props => (props.square ? `${props.size}px` : '100%')};
   height: ${props => props.size}px;
   margin: 2px;
   display: flex;
@@ -107,13 +107,14 @@ const HeatMap = ({
   colValues,
   colHeaderFormatter,
   rowHeaders,
+  rowHeaderFormatter,
   cellSize,
   counts,
   withContent,
   square
 } :Props) => {
 
-  let min = 0;
+  const min = 0;
   let max = 0;
 
   counts.valueSeq().forEach((subCounts) => {
@@ -134,11 +135,11 @@ const HeatMap = ({
     });
 
     return <Row>{labels}</Row>;
-  }
+  };
 
   const renderRow = (rowHeader) => {
     const cells = [];
-    cells.push(<Label square={square} size={cellSize} key={rowHeader}>{rowHeader}</Label>);
+    cells.push(<Label square={square} size={cellSize} key={rowHeader}>{rowHeaderFormatter(rowHeader)}</Label>);
     colValues.forEach((colValue) => {
       const count = counts.getIn([rowHeader, `${colValue}`], 0);
       const groupOffset = Math.floor((max - count) / chunkSize);
@@ -152,7 +153,7 @@ const HeatMap = ({
     });
 
     return <Row key={`row-${rowHeader}`}>{cells}</Row>;
-  }
+  };
 
   const renderLegend = () => {
     return (
@@ -164,22 +165,23 @@ const HeatMap = ({
           </LegendItem>
         ))}
       </LegendWrapper>
-    )
-  }
+    );
+  };
 
   return (
     <Wrapper>
       <Title>{title}</Title>
       {renderHeaderRow()}
-      {rowHeaders.map(rowHeaders => renderRow(rowHeaders))}
+      {rowHeaders.map(rowHeader => renderRow(rowHeader))}
       {renderLegend()}
     </Wrapper>
   );
-}
+};
 
 HeatMap.defaultProps = {
   withContent: false,
   colHeaderFormatter: col => col,
+  rowHeaderFormatter: row => row,
   square: false
 }
 

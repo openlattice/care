@@ -21,16 +21,29 @@ import {
 } from '../../shared/Consts';
 
 import {
+  ACCESS_TO_WEAPONS_FQN,
+  ACCESSIBLE_WEAPON_TYPE_FQN,
   AGE_FQN,
+  ARMED_WEAPON_TYPE_FQN,
+  ARMED_WITH_WEAPON_FQN,
   DATE_TIME_OCCURRED_FQN,
   DEESCALATION_TECHNIQUES_FQN,
   DISPOSITION_FQN,
+  EMOTIONAL_STATE_FQN,
   DRUGS_ALCOHOL_FQN,
   GENDER_FQN,
   HOMELESS_FQN,
+  INJURIES_FQN,
   MILITARY_STATUS_FQN,
+  OBSERVED_BEHAVIORS_FQN,
+  PRESCRIBED_MEDICATION_FQN,
   RACE_FQN,
-  SPECIAL_RESOURCES_CALLED_FQN
+  SELF_DIAGNOSIS_FQN,
+  SPECIAL_RESOURCES_CALLED_FQN,
+  SUICIDAL_FQN,
+  SUICIDAL_ACTIONS_FQN,
+  SUICIDE_ATTEMPT_METHOD_FQN,
+  TAKING_MEDICATION_FQN
 } from '../../edm/DataModelFqns';
 
 import {
@@ -93,6 +106,20 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *>  {
     let dateCounts = Map();
     let timeCounts = Map();
     let dayAndTimeCounts = Map();
+
+    let emotionalStateCounts = Map();
+    let behaviorCounts = Map();
+    let diagnosisCounts = Map();
+    let medicationCounts = Map();
+    let injuryCounts = Map();
+    let armedCounts = Map();
+    let armedWeaponTypeCounts = Map();
+    let accessibleWeaponCounts = Map();
+    let accessibleWeaponTypeCounts = Map();
+    let suicidalCounts = Map();
+    let suicidalActionCounts = Map();
+    let suicideMethodCounts = Map();
+
     let dispositionCounts = Map();
     let deescalationCounts = Map();
     let resourceCounts = Map();
@@ -105,8 +132,16 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *>  {
       });
     });
 
+
     fromJS(bhrs.hits).forEach((bhr) => {
 
+      const mapValues = (fqn, initMap, noFilter) => {
+        let map = initMap;
+        bhr.get(fqn, List()).filter(val => (noFilter || !!val)).forEach((val) => {
+          map = map.set(val, map.get(val, 0) + 1);
+        });
+        return map;
+      };
       /* Summary Stats */
       ageTotal += bhr.getIn([AGE_FQN, 0], 0);
 
@@ -143,12 +178,10 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *>  {
       });
 
       genderList.forEach((gender) => {
-        genderCounts = genderCounts.set(gender, genderCounts.get(gender, 0) + 1)
+        genderCounts = genderCounts.set(gender, genderCounts.get(gender, 0) + 1);
       });
 
-      bhr.get(AGE_FQN, List()).forEach((age) => {
-        ageCounts = ageCounts.set(age, ageCounts.get(age, 0) + 1);
-      });
+      ageCounts = mapValues(AGE_FQN, ageCounts);
 
       bhr.get(DATE_TIME_OCCURRED_FQN, bhr.get('bhr.dateOccurred', List())).forEach((date) => {
         const dateMoment = moment(date);
@@ -159,24 +192,40 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *>  {
           const timeHr = dateMoment.format('H');
           dateCounts = dateCounts.set(dateStr, dateCounts.get(dateStr, 0) + 1);
           timeCounts = timeCounts.set(timeStr, timeCounts.get(timeStr, 0) + 1);
-          dayAndTimeCounts = dayAndTimeCounts.setIn([dayOfWeek, timeHr], dayAndTimeCounts.getIn([dayOfWeek, timeHr], 0) + 1);
+          dayAndTimeCounts = dayAndTimeCounts
+            .setIn([dayOfWeek, timeHr], dayAndTimeCounts.getIn([dayOfWeek, timeHr], 0) + 1);
         }
       });
 
-      bhr.get(DISPOSITION_FQN, List()).forEach((disposition) => {
-        dispositionCounts = dispositionCounts.set(disposition, dispositionCounts.get(disposition, 0) + 1);
+      /* Incident counts */
+
+      bhr.get(PRESCRIBED_MEDICATION_FQN, List()).filter(val => !!val).map(val => val.toLowerCase()).forEach((isPrescribed) => {
+        bhr.get(TAKING_MEDICATION_FQN, List()).filter(val => !!val).map(val => val.toLowerCase()).forEach((isTaking) => {
+          medicationCounts = medicationCounts
+          .setIn([isPrescribed, isTaking], medicationCounts.getIn([isPrescribed, isTaking], 0) + 1);
+        });
       });
 
-      bhr.get(DEESCALATION_TECHNIQUES_FQN, List()).forEach((technique) => {
-        deescalationCounts = deescalationCounts.set(technique, deescalationCounts.get(technique, 0) + 1);
-      });
+      emotionalStateCounts = mapValues(EMOTIONAL_STATE_FQN, emotionalStateCounts);
+      behaviorCounts = mapValues(OBSERVED_BEHAVIORS_FQN, behaviorCounts);
+      diagnosisCounts = mapValues(SELF_DIAGNOSIS_FQN, diagnosisCounts);
+      injuryCounts = mapValues(INJURIES_FQN, injuryCounts);
+      armedCounts = mapValues(ARMED_WITH_WEAPON_FQN, armedCounts, true);
+      armedWeaponTypeCounts = mapValues(ARMED_WEAPON_TYPE_FQN, armedWeaponTypeCounts);
+      accessibleWeaponCounts = mapValues(ACCESS_TO_WEAPONS_FQN, accessibleWeaponCounts, true);
+      accessibleWeaponTypeCounts = mapValues(ACCESSIBLE_WEAPON_TYPE_FQN, accessibleWeaponTypeCounts);
+      suicidalCounts = mapValues(SUICIDAL_FQN, suicidalCounts, true);
+      suicidalActionCounts = mapValues(SUICIDAL_ACTIONS_FQN, suicidalActionCounts);
+      suicideMethodCounts = mapValues(SUICIDE_ATTEMPT_METHOD_FQN, suicideMethodCounts);
 
-      bhr.get(SPECIAL_RESOURCES_CALLED_FQN, List()).forEach((resource) => {
-        resourceCounts = resourceCounts.set(resource, resourceCounts.get(resource, 0) + 1);
-      });
+      /* Disposition counts */
 
-      // bhr.get(DEESCALATION_TECHNIQUES_FQN, List()).forEach((deescTechnique) => {
-      //   bhr.get(DISPOSITION_FQN, List()).forEach((disp) => {
+      dispositionCounts = mapValues(DISPOSITION_FQN, dispositionCounts);
+      deescalationCounts = mapValues(DEESCALATION_TECHNIQUES_FQN, deescalationCounts);
+      resourceCounts = mapValues(SPECIAL_RESOURCES_CALLED_FQN, resourceCounts);
+
+      // bhr.get(DEESCALATION_TECHNIQUES_FQN, List()).filter(val => !!val).forEach((deescTechnique) => {
+      //   bhr.get(DISPOSITION_FQN, List()).filter(val => !!val).forEach((disp) => {
       //     dispositionsByDeescalation = dispositionsByDeescalation.setIn([deescTechnique, disp],
       //       dispositionsByDeescalation.getIn([deescTechnique, disp], 0) + 1);
       //   });
@@ -192,7 +241,9 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *>  {
       const dispInputList = bhr.get(DISPOSITION_FQN, List()).join(' ').toLowerCase().split(' ');
       const dispList = dispositionsList.filter(disp => dispInputList.includes(disp));
       if (dispInputList.includes('voluntary')) dispList.push(DISPOSITIONS.VOLUNTARY_ER);
-      if (dispInputList.includes('referral') || dispInputList.includes('information/referral')) dispList.push(DISPOSITIONS.INFO_AND_REFERRAL);
+      if (dispInputList.includes('referral') || dispInputList.includes('information/referral')) {
+        dispList.push(DISPOSITIONS.INFO_AND_REFERRAL);
+      }
       if (dispInputList.includes('provider')) dispList.push(DISPOSITIONS.CONTACTED_PROVIDER);
       if (dispInputList.includes('criminal')) dispList.push(DISPOSITIONS.CRIMINAL_CITATION);
       if (dispInputList.includes('civil')) dispList.push(DISPOSITIONS.CIVIL_CITATION);
@@ -225,6 +276,18 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *>  {
       [DASHBOARD_COUNTS.REPORTS_BY_DATE]: dateCounts,
       [DASHBOARD_COUNTS.REPORTS_BY_TIME]: timeCounts,
       [DASHBOARD_COUNTS.REPORTS_BY_DAY_OF_WEEK]: dayAndTimeCounts,
+      [DASHBOARD_COUNTS.EMOTIONAL_STATE]: emotionalStateCounts,
+      [DASHBOARD_COUNTS.BEHAVIORS]: behaviorCounts,
+      [DASHBOARD_COUNTS.SELF_DIAGNOSIS]: diagnosisCounts,
+      [DASHBOARD_COUNTS.INJURIES]: injuryCounts,
+      [DASHBOARD_COUNTS.MEDICATION]: medicationCounts,
+      [DASHBOARD_COUNTS.ARMED]: armedCounts,
+      [DASHBOARD_COUNTS.ARMED_WEAPON_TYPES]: armedWeaponTypeCounts,
+      [DASHBOARD_COUNTS.WEAPON_ACCESS]: accessibleWeaponCounts,
+      [DASHBOARD_COUNTS.ACCESS_WEAPON_TYPES]: accessibleWeaponTypeCounts,
+      [DASHBOARD_COUNTS.SUICIDAL]: suicidalCounts,
+      [DASHBOARD_COUNTS.SUICIDAL_ACTIONS]: suicidalActionCounts,
+      [DASHBOARD_COUNTS.SUICIDE_METHOD]: suicideMethodCounts,
       [DASHBOARD_COUNTS.DISPOSITIONS]: dispositionCounts,
       [DASHBOARD_COUNTS.DEESCALATION]: deescalationCounts,
       [DASHBOARD_COUNTS.RESOURCES]: resourceCounts,

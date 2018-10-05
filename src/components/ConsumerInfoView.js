@@ -10,6 +10,7 @@ import TextField from './text/TextField';
 import SelfieWebCam, { DATA_URL_PREFIX } from './SelfieWebCam';
 
 import { FORM_PATHS } from '../shared/Consts';
+import { CONSUMER } from '../utils/DataConstants';
 import { formatAsDate } from '../utils/DateUtils';
 import { isPortlandOrg } from '../utils/Whitelist';
 import { checkboxesHelper } from '../containers/reports/HackyUtils';
@@ -442,27 +443,27 @@ class ConsumerInfoView extends React.Component {
               this.renderTempRadio(
                 'Active',
                 MILITARY_STATUS_FQN,
-                'active',
-                input[MILITARY_STATUS_FQN] === 'active',
-                () => updateStateValue(section, MILITARY_STATUS_FQN, 'active')
+                CONSUMER.ACTIVE_MILITARY,
+                input[MILITARY_STATUS_FQN] === CONSUMER.ACTIVE_MILITARY,
+                () => updateStateValue(section, MILITARY_STATUS_FQN, CONSUMER.ACTIVE_MILITARY)
               )
             }
             {
               this.renderTempRadio(
                 'Veteran',
                 MILITARY_STATUS_FQN,
-                'veteran',
-                input[MILITARY_STATUS_FQN] === 'veteran',
-                () => updateStateValue(section, MILITARY_STATUS_FQN, 'veteran')
+                CONSUMER.VETERAN,
+                input[MILITARY_STATUS_FQN] === CONSUMER.VETERAN,
+                () => updateStateValue(section, MILITARY_STATUS_FQN, CONSUMER.VETERAN)
               )
             }
             {
               this.renderTempRadio(
                 'N/A',
                 MILITARY_STATUS_FQN,
-                'n/a',
-                input[MILITARY_STATUS_FQN] === 'n/a',
-                () => updateStateValue(section, MILITARY_STATUS_FQN, 'n/a')
+                CONSUMER.N_A,
+                input[MILITARY_STATUS_FQN] === CONSUMER.N_A,
+                () => updateStateValue(section, MILITARY_STATUS_FQN, CONSUMER.N_A)
               )
             }
           </FullWidthItem>
@@ -480,9 +481,9 @@ class ConsumerInfoView extends React.Component {
                 }}
                 value={input[PERSON_SEX_FQN]}>
               <option value="">Select</option>
-              <option value="female">Female</option>
-              <option value="male">Male</option>
-              <option value="nonbinary">Non-binary</option>
+              <option value={CONSUMER.FEMALE}>Female</option>
+              <option value={CONSUMER.MALE}>Male</option>
+              <option value={CONSUMER.NONBINARY}>Non-binary</option>
             </select>
           </HalfWidthItem>
           <HalfWidthItem>

@@ -12,6 +12,7 @@ import { Map } from 'immutable';
 import ButtonToolbar from '../../components/buttons/ButtonToolbar';
 import SummaryStats from '../../components/dashboard/SummaryStats';
 import OverviewCharts from '../../components/dashboard/OverviewCharts';
+import IncidentCharts from '../../components/dashboard/IncidentCharts';
 import OutcomeCharts from '../../components/dashboard/OutcomeCharts';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { loadDashboardData } from './DashboardActionFactory';
@@ -33,6 +34,7 @@ type State = {
 
 const LAYOUTS = {
   OVERVIEW: 'Overview',
+  INCIDENT: 'Incident',
   OUTCOMES: 'Outcomes'
 };
 
@@ -54,7 +56,22 @@ class DashboardContainer extends React.Component<Props, State>  {
     const { dashboardCounts, summaryStats } = this.props;
     const { layout } = this.state;
 
-    const ChartsComponent = layout === LAYOUTS.OVERVIEW ? OverviewCharts : OutcomeCharts;
+    let ChartsComponent;
+
+    switch (layout) {
+      case LAYOUTS.INCIDENT:
+        ChartsComponent = IncidentCharts;
+        break;
+
+      case LAYOUTS.OUTCOMES:
+        ChartsComponent = OutcomeCharts;
+        break;
+
+      case LAYOUTS.OVERVIEW:
+      default:
+        ChartsComponent = OverviewCharts;
+        break;
+    }
 
     const viewOptions = Object.values(LAYOUTS).map((value) => ({
       label: value,
@@ -73,6 +90,7 @@ class DashboardContainer extends React.Component<Props, State>  {
 
   render() {
     const { isLoading } = this.props;
+
 
     return (
       <div>

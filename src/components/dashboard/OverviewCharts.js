@@ -55,7 +55,11 @@ const RowHeader = styled.div`
   font-weight: 600;
 `;
 
-const OverviewCharts = ({ dashboardCounts }) => {
+type Props = {
+  dashboardCounts :Map
+};
+
+const OverviewCharts = ({ dashboardCounts } :Props) => {
 
   const tooltip = (counted, { title, formatAsString }, { label, payload }) => {
     return (
@@ -69,18 +73,18 @@ const OverviewCharts = ({ dashboardCounts }) => {
           </TooltipRow>
         )) : null}
       </ChartTooltip>
-    )
-  }
+    );
+  };
 
   const getTimeAsNumber = (timeStr) => {
     const time = moment(timeStr, TIME_STR);
     if (!time.isValid()) {
       return 0;
     }
-    const hr = Number.parseInt(time.format('HH'));
-    const min = Number.parseInt(time.format('mm'));
+    const hr = Number.parseInt(time.format('HH'), 10);
+    const min = Number.parseInt(time.format('mm'), 10);
     return (hr * 60) + min;
-  }
+  };
 
   const getTimeFromNumber = (timeNum) => {
     let hr = `${Math.floor(timeNum / 60)}`;
@@ -88,7 +92,7 @@ const OverviewCharts = ({ dashboardCounts }) => {
     let min = `${timeNum % 60}`;
     min = min.length < 2 ? `0${min}` : min;
     return moment(`${hr}:${min}`, 'HH:mm').format(TIME_STR);
-  }
+  };
 
   const getDateAsNumber = (dateStr) => {
     const date = moment(dateStr, DATE_STR);
@@ -97,12 +101,12 @@ const OverviewCharts = ({ dashboardCounts }) => {
     }
     const start = moment().subtract(1, 'month').startOf('day');
     return date.diff(start, 'days');
-  }
+  };
 
   const getDateFromNumber = (dateNum) => {
     const dateMoment = moment().subtract(1, 'month').add(dateNum, 'days');
     return dateMoment.format('MMM D');
-  }
+  };
 
   const renderTimelineChart = (chartType) => {
     const {
@@ -117,7 +121,7 @@ const OverviewCharts = ({ dashboardCounts }) => {
     const countMap = dashboardCounts.get(countKey, Map());
     const data = countMap
       .keySeq()
-      .sort((o1, o2) => moment(o1, momentConversionKey).isBefore(moment(o2, momentConversionKey)) ? -1 : 1)
+      .sort((o1, o2) => (moment(o1, momentConversionKey).isBefore(moment(o2, momentConversionKey)) ? -1 : 1))
       .map(o => ({
         [title]: formatAsNumber(o),
         count: countMap.get(o)
@@ -125,19 +129,19 @@ const OverviewCharts = ({ dashboardCounts }) => {
     return (
       <FractionWidthContainer items={2}>
         <ChartWrapper
-          title={`Reports by ${title}`}
-          yLabel="# reports"
-          xLabel={title}>
+            title={`Reports by ${title}`}
+            yLabel="# reports"
+            xLabel={title}>
           <LineChart width={500} height={250} data={data}>
             <XAxis type="number" dataKey={title} tickFormatter={formatAsString} domain={[0, maxVal]} />
             <YAxis type="number" dataKey="count" />
-            <Tooltip content={data => tooltip('reports', chartType, data)} />
+            <Tooltip content={pointData => tooltip('reports', chartType, pointData)} />
             <Line type="monotone" dataKey="count" stroke={color} strokeWidth={2} dot={false} />
           </LineChart>
         </ChartWrapper>
       </FractionWidthContainer>
     );
-  }
+  };
 
   const timelineChartTypes = {
     date: {
@@ -175,17 +179,17 @@ const OverviewCharts = ({ dashboardCounts }) => {
       })).toJS();
     return (
       <FractionWidthContainer items={3}>
-        <ChartWrapper title={title} yLabel={'# consumers'}>
+        <ChartWrapper title={title} yLabel="# consumers">
           <BarChart width={360} height={250} data={data}>
             <XAxis type={isNumeric ? 'number' : 'category'} dataKey={title} />
             <YAxis type="number" dataKey="count" />
-            <Tooltip content={data => tooltip('consumers', { title, formatAsString: i => i }, data)} />
+            <Tooltip content={pointData => tooltip('consumers', { title, formatAsString: i => i }, pointData)} />
             <Bar dataKey="count" fill={color} />
           </BarChart>
         </ChartWrapper>
       </FractionWidthContainer>
-    )
-  }
+    );
+  };
 
   return (
     <OverviewChartsWrapper>
@@ -205,6 +209,6 @@ const OverviewCharts = ({ dashboardCounts }) => {
       </ChartRow>
     </OverviewChartsWrapper>
   );
-}
+};
 
 export default OverviewCharts;

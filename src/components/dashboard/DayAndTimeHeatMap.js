@@ -1,11 +1,20 @@
+/*
+ * @flow
+ */
+
 import React from 'react';
+import { Map } from 'immutable';
 
 import HeatMap from './HeatMap';
 
-const DayAndTimeHeatMap = ({ counts }) => {
+type Props = {
+  counts :Map
+};
+
+const DayAndTimeHeatMap = ({ counts } :Props) => {
 
   const colValues = [];
-  for (let i = 0; i < 24; i++) {
+  for (let i = 0; i < 24; i += 1) {
     colValues.push(i);
   }
 
@@ -13,7 +22,7 @@ const DayAndTimeHeatMap = ({ counts }) => {
     let formattedTime;
 
     if (value === 0) {
-      formattedTime = `12a`;
+      formattedTime = '12a';
     }
     else if (value < 12) {
       formattedTime = `${value}a`;
@@ -25,7 +34,7 @@ const DayAndTimeHeatMap = ({ counts }) => {
       formattedTime = `${value - 12}p`;
     }
     return formattedTime;
-  }
+  };
 
 
   return (
@@ -38,6 +47,6 @@ const DayAndTimeHeatMap = ({ counts }) => {
         counts={counts}
         square />
   );
-}
+};
 
 export default DayAndTimeHeatMap;

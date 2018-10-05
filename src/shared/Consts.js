@@ -124,7 +124,7 @@ export const DISPOSITIONS_PORTLAND = {
   ARREST: 'arrest',
   DIVERTED_FROM_ARREST: 'divertedFromArrest',
   RESISTED_SUPPORT: 'resistedOrRefusedSupports'
-}
+};
 
 export const RESOURCES = {
   BCRI: 'bcri',
@@ -134,14 +134,14 @@ export const RESOURCES = {
   SWAT: 'swat',
   NEGOTIATION: 'negotiationTeam',
   HOMELESS_OUTREACH: 'homelessOutreach'
-}
+};
 
 export const RESOURCES_PORTLAND = {
   BHU: 'BehavioralHealthUnit',
   CRISIS: 'CrisisTeam',
   VOLUNTARY: 'voluntaryTransport',
   INVOLUNTARY: 'involuntaryTransport'
-}
+};
 
 /* Dashboard Constants */
 
@@ -163,6 +163,20 @@ export const DASHBOARD_COUNTS = {
   REPORTS_BY_DATE: 'reportsByDate',
   REPORTS_BY_TIME: 'reportsByTime',
   REPORTS_BY_DAY_OF_WEEK: 'reportsByDayOfWeek',
+
+  EMOTIONAL_STATE: 'emotionalStateCounts',
+  BEHAVIORS: 'observedBehaviorsCounts',
+  SELF_DIAGNOSIS: 'selfDiagnosisCounts',
+  MEDICATION: 'medicationCounts',
+  INJURIES: 'injuryCounts',
+  ARMED: 'armedCounts',
+  ARMED_WEAPON_TYPES: 'armedWeaponTypeCounts',
+  WEAPON_ACCESS: 'weaponAccessCounts',
+  ACCESS_WEAPON_TYPES: 'accessWeaponTypeCounts',
+  SUICIDAL: 'suicidal',
+  SUICIDAL_ACTIONS: 'suicidalalActions',
+  SUICIDE_METHOD: 'suicideMethod',
+
   DISPOSITIONS: 'dispositions',
   DEESCALATION: 'deescalationTechniques',
   RESOURCES: 'resources',
