@@ -4,6 +4,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
+import { Map } from 'immutable';
 
 import { SUMMARY_STATS } from '../../shared/Consts';
 
@@ -69,7 +70,12 @@ const StatCard = styled.div`
   }
 `;
 
-const SummaryStats = ({ summaryStats }) => {
+type Props = {
+  interval :string,
+  summaryStats :Map
+};
+
+const SummaryStats = ({ interval, summaryStats } :Props) => {
   const numReports = summaryStats.get(SUMMARY_STATS.NUM_REPORTS);
   const numHomeless = summaryStats.get(SUMMARY_STATS.NUM_HOMELESS);
   const numMale = summaryStats.get(SUMMARY_STATS.NUM_MALE);
@@ -87,7 +93,7 @@ const SummaryStats = ({ summaryStats }) => {
       <article>
         <StatCard large>
           <h1>{numReports}</h1>
-          <span>reports last 6 months</span>
+          <span>{`reports last ${interval.toLowerCase()}`}</span>
         </StatCard>
       </article>
       <article>
