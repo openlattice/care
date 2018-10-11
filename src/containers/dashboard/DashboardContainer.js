@@ -10,6 +10,7 @@ import { bindActionCreators } from 'redux';
 import { Map } from 'immutable';
 
 import ButtonToolbar from '../../components/buttons/ButtonToolbar';
+import DropdownButton from '../../components/buttons/DropdownButton';
 import SummaryStats from '../../components/dashboard/SummaryStats';
 import OverviewCharts from '../../components/dashboard/OverviewCharts';
 import IncidentCharts from '../../components/dashboard/IncidentCharts';
@@ -17,6 +18,7 @@ import OutcomeCharts from '../../components/dashboard/OutcomeCharts';
 import Spinner from '../../components/spinner/Spinner';
 import { loadDashboardData } from './DashboardActionFactory';
 import { SUBMISSION_STATES } from './DashboardReducer';
+import { SUMMARY_STATS } from '../../shared/Consts';
 
 type Props = {
   app :Map,
@@ -32,29 +34,75 @@ type State = {
   layout :string
 };
 
+const OptionRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const NoReports = styled.div`
+  margin-top: 50px;
+  width: 100%;
+  text-align: center;
+  font-size: 16px;
+  color: #2e2e34;
+`;
+
 const LAYOUTS = {
   OVERVIEW: 'Overview',
   INCIDENT: 'Incident',
   OUTCOMES: 'Outcomes'
 };
 
-class DashboardContainer extends React.Component<Props, State>  {
+const TIME_LENGTHS = {
+  MONTHS_1: {
+    label: 'Month',
+    value: 1
+  },
+  MONTHS_3: {
+    label: '3 Months',
+    value: 3
+  },
+  MONTHS_6: {
+    label: '6 Months',
+    value: 6
+  },
+  YEAR: {
+    label: 'Year',
+    value: 12
+  }
+};
+
+class DashboardContainer extends React.Component<Props, State> {
 
   constructor(props :Props) {
     super(props);
     this.state = {
-      layout: LAYOUTS.OVERVIEW
+      layout: LAYOUTS.OVERVIEW,
+      timeRange: TIME_LENGTHS.MONTHS_6
     };
   }
 
   componentDidMount() {
     const { actions, app } = this.props;
-    actions.loadDashboardData({ app });
+    const { timeRange } = this.state;
+    actions.loadDashboardData({
+      app,
+      months: timeRange.value
+    });
   }
 
   renderContent = () => {
-    const { dashboardCounts, summaryStats } = this.props;
-    const { layout } = this.state;
+    const {
+      actions,
+      app,
+      dashboardCounts,
+      summaryStats
+    } = this.props;
+    const { layout, timeRange } = this.state;
+
+    const resultsArePresent = summaryStats.get(SUMMARY_STATS.NUM_REPORTS, 0) > 0;
 
     let ChartsComponent;
 
@@ -73,17 +121,33 @@ class DashboardContainer extends React.Component<Props, State>  {
         break;
     }
 
-    const viewOptions = Object.values(LAYOUTS).map((value) => ({
+    const viewOptions = Object.values(LAYOUTS).map(value => ({
       label: value,
       value,
       onClick: () => this.setState({ layout: value })
     }));
 
+    const timeOptions = Object.values(TIME_LENGTHS).map(range => ({
+      label: range.label,
+      onClick: () => {
+        this.setState({ timeRange: range });
+        actions.loadDashboardData({
+          app,
+          months: range.value
+        });
+      }
+    }));
+
     return (
       <div>
-        <SummaryStats summaryStats={summaryStats} />
-        <ButtonToolbar options={viewOptions} value={layout} />
-        <ChartsComponent dashboardCounts={dashboardCounts} />
+        {resultsArePresent ? <SummaryStats summaryStats={summaryStats} interval={timeRange.label} /> : null}
+        <OptionRow>
+          <ButtonToolbar options={viewOptions} value={layout} noPadding />
+          <DropdownButton options={timeOptions} title={timeRange.label} />
+        </OptionRow>
+        {resultsArePresent
+          ? <ChartsComponent dashboardCounts={dashboardCounts} months={timeRange.value} />
+          : <NoReports>No BHR reports were filed in this time period.</NoReports>}
       </div>
     );
   }

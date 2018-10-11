@@ -102,6 +102,19 @@ const LegendColor = styled.div.attrs({
   height: 20px;
 `;
 
+const getNHeatmapColors = (num) => {
+  if (num <= 1) return [HEATMAP_COLORS[0]];
+
+  const interval = (HEATMAP_COLORS.length - 1) / (num - 1);
+
+  const heatmapColors = [];
+  for (let i = 0; i < num; i += 1) {
+    heatmapColors.push(HEATMAP_COLORS[Math.round(i * interval)]);
+  }
+
+  return heatmapColors;
+};
+
 const HeatMap = ({
   title,
   colValues,
@@ -125,7 +138,9 @@ const HeatMap = ({
     });
   });
 
-  const chunkSize = ((max + 1) - min) / HEATMAP_COLORS.length;
+  const heatmapColors = max >= HEATMAP_COLORS.length ? HEATMAP_COLORS : getNHeatmapColors(max + 1);
+
+  const chunkSize = ((max + 1) - min) / heatmapColors.length;
 
   const renderHeaderRow = () => {
     const labels = [];
@@ -143,10 +158,10 @@ const HeatMap = ({
     colValues.forEach((colValue) => {
       const count = counts.getIn([rowHeader, `${colValue}`], 0);
       const groupOffset = Math.floor((max - count) / chunkSize);
-      const index = Number.isNaN(groupOffset) ? 0 : HEATMAP_COLORS.length - 1 - groupOffset;
+      const index = Number.isNaN(groupOffset) ? 0 : heatmapColors.length - 1 - groupOffset;
 
       cells.push(
-        <Cell square={square} size={cellSize} key={`${rowHeader}|${colValue}`} color={HEATMAP_COLORS[index]}>
+        <Cell square={square} size={cellSize} key={`${rowHeader}|${colValue}`} color={heatmapColors[index]}>
           {withContent ? count : null}
         </Cell>
       );
@@ -158,7 +173,7 @@ const HeatMap = ({
   const renderLegend = () => {
     return (
       <LegendWrapper>
-        {HEATMAP_COLORS.map((color, index) => (
+        {heatmapColors.map((color, index) => (
           <LegendItem key={`legend|${index}`}>
             <LegendColor color={color} />
             <span>&ge; {Math.ceil(chunkSize * index)}</span>
@@ -183,6 +198,6 @@ HeatMap.defaultProps = {
   colHeaderFormatter: col => col,
   rowHeaderFormatter: row => row,
   square: false
-}
+};
 
 export default HeatMap;
