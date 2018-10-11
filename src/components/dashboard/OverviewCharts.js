@@ -8,8 +8,6 @@ import moment from 'moment';
 import { Map } from 'immutable';
 
 import {
-  Bar,
-  BarChart,
   Line,
   LineChart,
   Tooltip,
@@ -17,9 +15,10 @@ import {
   YAxis
 } from 'recharts';
 
-import ChartWrapper from './ChartWrapper';
-import ChartTooltip from './ChartTooltip';
-import DayAndTimeHeatMap from './DayAndTimeHeatMap';
+import ChartWrapper from './charts/ChartWrapper';
+import ChartTooltip from './charts/ChartTooltip';
+import SimpleBarChart from './charts/SimpleBarChart';
+import DayAndTimeHeatMap from './charts/DayAndTimeHeatMap';
 import { DASHBOARD_COUNTS } from '../../shared/Consts';
 import { DATE_STR, TIME_STR } from '../../utils/DateUtils';
 
@@ -164,32 +163,16 @@ const OverviewCharts = ({ dashboardCounts } :Props) => {
     }
   };
 
-  const renderBarChart = (title, color, countKey, isNumeric) => {
-    const countMap = dashboardCounts.get(countKey, Map());
-    const data = countMap
-      .keySeq()
-      .sort((o1, o2) => {
-        const v1 = isNumeric ? o1 : countMap.get(o1);
-        const v2 = isNumeric ? o2 : countMap.get(o2);
-        return v1 > v2 ? -1 : 1;
-      })
-      .map(o => ({
-        [title]: o,
-        count: countMap.get(o)
-      })).toJS();
-    return (
-      <FractionWidthContainer items={3}>
-        <ChartWrapper title={title} yLabel="# consumers">
-          <BarChart width={360} height={250} data={data}>
-            <XAxis type={isNumeric ? 'number' : 'category'} dataKey={title} />
-            <YAxis type="number" dataKey="count" />
-            <Tooltip content={pointData => tooltip('consumers', { title, formatAsString: i => i }, pointData)} />
-            <Bar dataKey="count" fill={color} />
-          </BarChart>
-        </ChartWrapper>
-      </FractionWidthContainer>
-    );
-  };
+  const renderBarChart = (title, color, countKey, isNumeric, isVertical) => (
+    <SimpleBarChart
+        vertical={isVertical}
+        isNumeric={isNumeric}
+        dashboardCounts={dashboardCounts}
+        title={title}
+        color={color}
+        countKey={countKey}
+        numItems={3} />
+  );
 
   return (
     <OverviewChartsWrapper>

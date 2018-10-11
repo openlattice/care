@@ -4,25 +4,21 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import moment from 'moment';
-import { List, Map, Set } from 'immutable';
+import { Map, Set } from 'immutable';
 
 import {
   Bar,
   BarChart,
   Legend,
-  Line,
-  LineChart,
   Tooltip,
   XAxis,
   YAxis
 } from 'recharts';
 
-import ChartWrapper from './ChartWrapper';
-import ChartTooltip from './ChartTooltip';
-import HeatMap from './HeatMap';
+import ChartWrapper from './charts/ChartWrapper';
+import ChartTooltip from './charts/ChartTooltip';
+import SimpleBarChart from './charts/SimpleBarChart';
 import { DASHBOARD_COUNTS } from '../../shared/Consts';
-import { DATE_STR, TIME_STR } from '../../utils/DateUtils';
 
 const Wrapper = styled.div`
   display: flex;
@@ -85,35 +81,16 @@ const IncidentCharts = ({ dashboardCounts } :Props) => {
     );
   };
 
-  const renderBarChart = (title, color, countKey, numItems, isNumeric) => {
-    const countMap = dashboardCounts.get(countKey, Map());
-    const items = numItems || 3;
-    const width = 1080 / items;
-    const data = countMap
-      .keySeq()
-      .sort((o1, o2) => {
-        const v1 = isNumeric ? o1 : countMap.get(o1);
-        const v2 = isNumeric ? o2 : countMap.get(o2);
-        return v1 > v2 ? -1 : 1;
-      })
-      .map(o => ({
-        [title]: `${o}`,
-        count: countMap.get(o)
-      })).toJS();
-
-    return (
-      <FractionWidthContainer items={items}>
-        <ChartWrapper title={title} yLabel="# consumers">
-          <BarChart width={width} height={250} data={data}>
-            <XAxis type={isNumeric ? 'number' : 'category'} dataKey={title} />
-            <YAxis type="number" dataKey="count" />
-            <Tooltip content={pointData => tooltip('consumers', { title, formatAsString: i => `${i}` }, pointData)} />
-            <Bar dataKey="count" fill={color} />
-          </BarChart>
-        </ChartWrapper>
-      </FractionWidthContainer>
-    );
-  };
+  const renderBarChart = (title, color, countKey, numItems, isVertical, isShort) => (
+    <SimpleBarChart
+        vertical={isVertical}
+        dashboardCounts={dashboardCounts}
+        title={title}
+        color={color}
+        height={isShort ? 250 : undefined}
+        countKey={countKey}
+        numItems={numItems} />
+  );
 
   const renderDoubleBarChart = (title, color, countKey1, numItems) => {
     const colors = ['#00be84', '#f25497', '#0021ba', '#bc0000', '#ffde00'];
@@ -142,7 +119,7 @@ const IncidentCharts = ({ dashboardCounts } :Props) => {
 
     return (
       <FractionWidthContainer items={items}>
-        <ChartWrapper title={title} yLabel="# consumers">
+        <ChartWrapper title={title} yLabel="# consumers" xLabel=" ">
           <BarChart width={width} height={250} data={data}>
             <XAxis type="category" dataKey={title} />
             <YAxis type="number" />
@@ -159,13 +136,13 @@ const IncidentCharts = ({ dashboardCounts } :Props) => {
     <Wrapper>
       <RowHeader>Consumer state</RowHeader>
       <ChartRow>
-        {renderBarChart('Emotional states', '#00bace', DASHBOARD_COUNTS.EMOTIONAL_STATE, 2)}
-        {renderBarChart('Observed behaviors', '#ff9a58', DASHBOARD_COUNTS.BEHAVIORS, 2)}
+        {renderBarChart('Emotional states', '#00bace', DASHBOARD_COUNTS.EMOTIONAL_STATE, 2, true)}
+        {renderBarChart('Observed behaviors', '#ff9a58', DASHBOARD_COUNTS.BEHAVIORS, 2, true)}
       </ChartRow>
       <ChartRow>
-        {renderBarChart('Self diagnoses', '#a939ff', DASHBOARD_COUNTS.SELF_DIAGNOSIS, 3)}
+        {renderBarChart('Self diagnoses', '#a939ff', DASHBOARD_COUNTS.SELF_DIAGNOSIS, 3, true, true)}
         {renderDoubleBarChart('Medication prescriptions vs. usage', '#00be84', DASHBOARD_COUNTS.MEDICATION, 3)}
-        {renderBarChart('Injuries', '#f7b9d3', DASHBOARD_COUNTS.INJURIES, 3)}
+        {renderBarChart('Injuries', '#f7b9d3', DASHBOARD_COUNTS.INJURIES, 3, true, true)}
       </ChartRow>
       <RowHeader>Violence</RowHeader>
       <ChartRow>

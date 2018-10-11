@@ -94,55 +94,6 @@ export const STATES = [
 
 export const DATA_URL_PREFIX = 'data:image/png;base64,';
 
-/* Disposition Constants */
-
-export const DEESCALATION_TECHNIQUES = {
-  VERBALIZATION: 'verbalization',
-  HANDCUFFS: 'handcuffs',
-  LEG_RESTRAINTS: 'legRestraints',
-  TASER: 'taser',
-  ARREST_CONTROL: 'arrestControl',
-  N_A: 'n/a',
-  OTHER: 'other'
-};
-
-export const DISPOSITIONS = {
-  ARREST: 'arrest',
-  EP: 'ep',
-  VOLUNTARY_ER: 'voluntaryER',
-  BCRI: 'bcri',
-  INFO_AND_REFERRAL: 'infoAndReferral',
-  LEAD: 'lead',
-  CONTACTED_PROVIDER: 'contactedTreatementProvider',
-  CRIMINAL_CITATION: 'criminalCitation',
-  CIVIL_CITATION: 'civilCitation'
-};
-
-export const DISPOSITIONS_PORTLAND = {
-  REFERRED_TO_BHU: 'referredToBHU',
-  REFERRED_TO_CRISIS: 'referredToCrisis',
-  ARREST: 'arrest',
-  DIVERTED_FROM_ARREST: 'divertedFromArrest',
-  RESISTED_SUPPORT: 'resistedOrRefusedSupports'
-};
-
-export const RESOURCES = {
-  BCRI: 'bcri',
-  CIT: 'citOfficer',
-  CRT: 'crtUnit',
-  ESU: 'esu',
-  SWAT: 'swat',
-  NEGOTIATION: 'negotiationTeam',
-  HOMELESS_OUTREACH: 'homelessOutreach'
-};
-
-export const RESOURCES_PORTLAND = {
-  BHU: 'BehavioralHealthUnit',
-  CRISIS: 'CrisisTeam',
-  VOLUNTARY: 'voluntaryTransport',
-  INVOLUNTARY: 'involuntaryTransport'
-};
-
 /* Dashboard Constants */
 
 export const SUMMARY_STATS = {
@@ -180,5 +131,6 @@ export const DASHBOARD_COUNTS = {
   DISPOSITIONS: 'dispositions',
   DEESCALATION: 'deescalationTechniques',
   RESOURCES: 'resources',
-  DISPOSITIONS_BY_DEESCALATION: 'dispositionsByDeescalationTechnique'
+  DISPOSITIONS_BY_DEESCALATION: 'dispositionsByDeescalationTechnique',
+  CERTIFICATIONS: 'certificationCounts'
 };

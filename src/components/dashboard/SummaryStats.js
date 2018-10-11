@@ -38,7 +38,7 @@ const StatCardRow = styled.div`
 
 const StatCard = styled.div`
   height: 100%;
-  width: ${props => props.large ? '300px' : '200px'};
+  width: ${props => (props.large ? '300px' : '200px')};
   margin: 0 10px;
   display: flex;
   flex-direction: column;
@@ -87,7 +87,7 @@ const SummaryStats = ({ summaryStats }) => {
       <article>
         <StatCard large>
           <h1>{numReports}</h1>
-          <span>reports last month</span>
+          <span>reports last 6 months</span>
         </StatCard>
       </article>
       <article>

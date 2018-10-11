@@ -13,16 +13,18 @@ import {
   FlexyWrapper,
   FormGridWrapper,
   FullWidthItem,
-  HalfWidthItem,
+  HalfWidthItem
 } from './form/StyledFormComponents';
+import { FORM_PATHS } from '../shared/Consts';
 import {
   DEESCALATION_TECHNIQUES,
   DISPOSITIONS,
   DISPOSITIONS_PORTLAND,
-  FORM_PATHS,
   RESOURCES,
-  RESOURCES_PORTLAND
-} from '../shared/Consts';
+  RESOURCES_PORTLAND,
+  TRANSPORTING_AGENCIES,
+  VOLUNTARY_ACTION_INDICATOR
+} from '../utils/DataConstants';
 import { isPortlandOrg } from '../utils/Whitelist';
 import { checkboxesHelper } from '../containers/reports/HackyUtils';
 import {
@@ -39,7 +41,7 @@ import {
   SPECIAL_RESOURCES_CALLED_FQN,
   STABILIZED_INDICATOR_FQN,
   TRANSPORTING_AGENCY_FQN,
-  VOLUNTARY_ACTION_INDICATOR_FQN,
+  VOLUNTARY_ACTION_INDICATOR_FQN
 } from '../edm/DataModelFqns';
 
 const incidentNarrativeTitle = `Narrative of Incident, to include: Results of investigation, basis for actions taken,
@@ -61,7 +63,7 @@ class DispositionView extends React.Component {
     const { section } = this.state;
     const id = `${name}-${value}`;
     return (
-      <label htmlFor={id}>
+      <label htmlFor={id} key={id}>
         <input
             checked={isChecked}
             data-section={section}
@@ -83,7 +85,7 @@ class DispositionView extends React.Component {
     const { section } = this.state;
     const id = `${name}-${value}`;
     return (
-      <label htmlFor={id}>
+      <label htmlFor={id} key={id}>
         <input
             checked={isChecked}
             data-section={section}
@@ -97,6 +99,81 @@ class DispositionView extends React.Component {
       </label>
     );
   }
+
+  renderRadio = (label, fqn, valueIfDifferentFromLabel) => {
+    const { input, updateStateValue } = this.props;
+    const { section } = this.state;
+
+    const value = valueIfDifferentFromLabel || label;
+
+    return this.renderTempRadio(
+      label,
+      fqn,
+      value,
+      input[fqn] === value,
+      () => updateStateValue(section, fqn, value)
+    );
+  }
+
+  renderRadioButtons = (labels, fqn) => Object.values(labels).map(label => this.renderRadio(label, fqn))
+
+  renderYesNoRadio = (fqn, withUnknown, inlineFalse) => {
+    const { input, updateStateValue } = this.props;
+    const { section } = this.state;
+    const currVal = `${input[fqn]}`;
+
+    const yesVal = withUnknown ? 'Yes' : true;
+    const noVal = withUnknown ? 'No' : false;
+
+    return (
+      <FlexyWrapper inline={!inlineFalse}>
+        {
+          this.renderTempRadio(
+            'Yes',
+            fqn,
+            yesVal,
+            currVal === `${yesVal}`,
+            () => updateStateValue(section, fqn, yesVal)
+          )
+        }
+        {
+          this.renderTempRadio(
+            'No',
+            fqn,
+            noVal,
+            currVal === `${noVal}`,
+            () => updateStateValue(section, fqn, noVal)
+          )
+        }
+        {
+          withUnknown ? this.renderTempRadio(
+            'Unknown',
+            fqn,
+            'unknown',
+            currVal === 'unknown',
+            () => updateStateValue(section, fqn, 'unknown')
+          ) : null
+        }
+      </FlexyWrapper>
+    );
+  }
+
+  renderCheckbox = (label, fqn, valueIfDifferentFromLabel) => {
+
+    const { input, updateStateValue } = this.props;
+    const { section } = this.state;
+    const value = valueIfDifferentFromLabel || label;
+
+    return this.renderTempCheckbox(
+      label,
+      fqn,
+      value,
+      input[fqn].indexOf(value) !== -1,
+      event => updateStateValue(section, fqn, checkboxesHelper(input[fqn], event.target.value))
+    );
+  }
+
+  renderCheckboxes = (labels, fqn) => Object.values(labels).map(label => this.renderCheckbox(label, fqn))
 
   renderHospitalsSelect = () => {
 
@@ -176,55 +253,13 @@ class DispositionView extends React.Component {
     );
   }
 
-  renderCheckbox = (label, fqn, value) => {
-
-    const { input, updateStateValue } = this.props;
-    const { section } = this.state;
-
-    return this.renderTempCheckbox(
-      label,
-      fqn,
-      value,
-      input[fqn].indexOf(value) !== -1,
-      event => updateStateValue(section, fqn, checkboxesHelper(input[fqn], event.target.value))
-    );
-  }
-
-  renderDisposition = () => {
-
-    const { input, updateStateValue } = this.props;
-    const { section } = this.state;
+  renderDisposition = (isPortland) => {
+    const dispositions = isPortland ? DISPOSITIONS_PORTLAND : DISPOSITIONS;
     return (
       <FullWidthItem>
         <FieldHeader>Disposition</FieldHeader>
         <FlexyWrapper>
-          {this.renderCheckbox('Arrest', DISPOSITION_FQN, DISPOSITIONS.ARREST)}
-          {this.renderCheckbox('EP', DISPOSITION_FQN, DISPOSITIONS.EP)}
-          {this.renderCheckbox('Voluntary ER Intake', DISPOSITION_FQN, DISPOSITIONS.VOLUNTARY_ER)}
-          {this.renderCheckbox('BCRI', DISPOSITION_FQN, DISPOSITIONS.BCRI)}
-          {this.renderCheckbox('Information and Referral', DISPOSITION_FQN, DISPOSITIONS.INFO_AND_REFERRAL)}
-          {this.renderCheckbox('LEAD', DISPOSITION_FQN, DISPOSITIONS.LEAD)}
-          {this.renderCheckbox('Contacted or Referred to Current Treatment Provider', DISPOSITION_FQN, DISPOSITIONS.CONTACTED_PROVIDER)}
-          {this.renderCheckbox('Criminal Citation', DISPOSITION_FQN, DISPOSITIONS.CRIMINAL_CITATION)}
-          {this.renderCheckbox('Civil Citation', DISPOSITION_FQN, DISPOSITIONS.CIVIL_CITATION)}
-        </FlexyWrapper>
-      </FullWidthItem>
-    );
-  }
-
-  renderDispositionPortland = () => {
-
-    const { input, updateStateValue } = this.props;
-    const { section } = this.state;
-    return (
-      <FullWidthItem>
-        <FieldHeader>Disposition</FieldHeader>
-        <FlexyWrapper>
-          {this.renderCheckbox('Referred to BHU', DISPOSITION_FQN, DISPOSITIONS_PORTLAND.REFERRED_TO_BHU)}
-          {this.renderCheckbox('Referred to Crisis', DISPOSITION_FQN, DISPOSITIONS_PORTLAND.REFERRED_TO_CRISIS)}
-          {this.renderCheckbox('Arrest', DISPOSITION_FQN, DISPOSITIONS_PORTLAND.ARREST)}
-          {this.renderCheckbox('Diverted from Arrest', DISPOSITION_FQN, DISPOSITIONS_PORTLAND.DIVERTED_FROM_ARREST)}
-          {this.renderCheckbox('Resisted or Refused Supports', DISPOSITION_FQN, DISPOSITIONS_PORTLAND.RESISTED_SUPPORT)}
+          {this.renderCheckboxes(dispositions, DISPOSITION_FQN)}
         </FlexyWrapper>
       </FullWidthItem>
     );
@@ -292,21 +327,14 @@ class DispositionView extends React.Component {
     );
   }
 
-  renderSpecializedResources = () => {
+  renderSpecializedResources = (isPortland) => {
+    const resources = isPortland ? RESOURCES_PORTLAND : RESOURCES;
 
-    const { input, updateStateValue } = this.props;
-    const { section } = this.state;
     return (
       <FullWidthItem>
         <FieldHeader>Called for Specialized Resources</FieldHeader>
         <FlexyWrapper>
-          {this.renderCheckbox('BCRI / Mobile Crisis Response Team', SPECIAL_RESOURCES_CALLED_FQN, RESOURCES.BCRI)}
-          {this.renderCheckbox('CIT Officer', SPECIAL_RESOURCES_CALLED_FQN, RESOURCES.CIT)}
-          {this.renderCheckbox('CRT Unit', SPECIAL_RESOURCES_CALLED_FQN, RESOURCES.CRT)}
-          {this.renderCheckbox('ESU', SPECIAL_RESOURCES_CALLED_FQN, RESOURCES.ESU)}
-          {this.renderCheckbox('SWAT', SPECIAL_RESOURCES_CALLED_FQN, RESOURCES.SWAT)}
-          {this.renderCheckbox('Negotiation Team', SPECIAL_RESOURCES_CALLED_FQN, RESOURCES.NEGOTIATION)}
-          {this.renderCheckbox('Homeless Outreach', SPECIAL_RESOURCES_CALLED_FQN, RESOURCES.HOMELESS_OUTREACH)}
+          {this.renderCheckboxes(resources, SPECIAL_RESOURCES_CALLED_FQN)}
         </FlexyWrapper>
       </FullWidthItem>
     );
@@ -385,46 +413,13 @@ class DispositionView extends React.Component {
             <>
               <HalfWidthItem>
                 <FlexyWrapper inline>
-                  {
-                    this.renderTempRadio(
-                      'Voluntary',
-                      VOLUNTARY_ACTION_INDICATOR_FQN,
-                      true,
-                      input[VOLUNTARY_ACTION_INDICATOR_FQN] === true,
-                      () => updateStateValue(section, VOLUNTARY_ACTION_INDICATOR_FQN, true)
-                    )
-                  }
-                  {
-                    this.renderTempRadio(
-                      'Involuntary',
-                      VOLUNTARY_ACTION_INDICATOR_FQN,
-                      false,
-                      input[VOLUNTARY_ACTION_INDICATOR_FQN] === false,
-                      () => updateStateValue(section, VOLUNTARY_ACTION_INDICATOR_FQN, false)
-                    )
-                  }
+                  {this.renderRadio(VOLUNTARY_ACTION_INDICATOR.VOLUNTARY, VOLUNTARY_ACTION_INDICATOR_FQN, true)}
+                  {this.renderRadio(VOLUNTARY_ACTION_INDICATOR.INVOLUNTARY, VOLUNTARY_ACTION_INDICATOR_FQN, false)}
                 </FlexyWrapper>
               </HalfWidthItem>
               <HalfWidthItem>
                 <FlexyWrapper inline>
-                  {
-                    this.renderTempRadio(
-                      'Police',
-                      TRANSPORTING_AGENCY_FQN,
-                      'police',
-                      input[TRANSPORTING_AGENCY_FQN] === 'police',
-                      () => updateStateValue(section, TRANSPORTING_AGENCY_FQN, 'police')
-                    )
-                  }
-                  {
-                    this.renderTempRadio(
-                      'Medcu',
-                      TRANSPORTING_AGENCY_FQN,
-                      'medcu',
-                      input[TRANSPORTING_AGENCY_FQN] === 'medcu',
-                      () => updateStateValue(section, TRANSPORTING_AGENCY_FQN, 'medcu')
-                    )
-                  }
+                  {this.renderRadioButtons(TRANSPORTING_AGENCIES, TRANSPORTING_AGENCY_FQN)}
                 </FlexyWrapper>
               </HalfWidthItem>
               <FullWidthItem>
@@ -455,26 +450,7 @@ class DispositionView extends React.Component {
       <>
         <HalfWidthItem>
           <FieldHeader>Transported to Hospital</FieldHeader>
-          <FlexyWrapper inline>
-            {
-              this.renderTempRadio(
-                'Yes',
-                HOSPITAL_TRANSPORT_INDICATOR_FQN,
-                true,
-                input[HOSPITAL_TRANSPORT_INDICATOR_FQN] === true,
-                () => updateStateValue(section, HOSPITAL_TRANSPORT_INDICATOR_FQN, true),
-              )
-            }
-            {
-              this.renderTempRadio(
-                'No',
-                HOSPITAL_TRANSPORT_INDICATOR_FQN,
-                false,
-                input[HOSPITAL_TRANSPORT_INDICATOR_FQN] === false,
-                () => updateStateValue(section, HOSPITAL_TRANSPORT_INDICATOR_FQN, false),
-              )
-            }
-          </FlexyWrapper>
+          {this.renderYesNoRadio(HOSPITAL_TRANSPORT_INDICATOR_FQN)}
         </HalfWidthItem>
         <HalfWidthItem>
           <FieldHeader>Hospital name</FieldHeader>
@@ -512,13 +488,7 @@ class DispositionView extends React.Component {
         <HalfWidthItem>
           <FieldHeader>{ titleValue }</FieldHeader>
           <FlexyWrapper>
-            {this.renderCheckbox('Verbalization', DEESCALATION_TECHNIQUES_FQN, DEESCALATION_TECHNIQUES.VERBALIZATION)}
-            {this.renderCheckbox('Handcuffs', DEESCALATION_TECHNIQUES_FQN, DEESCALATION_TECHNIQUES.HANDCUFFS)}
-            {this.renderCheckbox('Leg Restraints', DEESCALATION_TECHNIQUES_FQN, DEESCALATION_TECHNIQUES.LEG_RESTRAINTS)}
-            {this.renderCheckbox('Taser', DEESCALATION_TECHNIQUES_FQN, DEESCALATION_TECHNIQUES.TASER)}
-            {this.renderCheckbox('Arrest Control (Hands / Feet)', DEESCALATION_TECHNIQUES_FQN, DEESCALATION_TECHNIQUES.ARREST_CONTROL)}
-            {this.renderCheckbox('N/A', DEESCALATION_TECHNIQUES_FQN, DEESCALATION_TECHNIQUES.N_A)}
-            {this.renderCheckbox('Other', DEESCALATION_TECHNIQUES_FQN, DEESCALATION_TECHNIQUES.OTHER)}
+            {this.renderCheckboxes(DEESCALATION_TECHNIQUES, DEESCALATION_TECHNIQUES_FQN)}
           </FlexyWrapper>
         </HalfWidthItem>
         <HalfWidthItem>
@@ -543,6 +513,8 @@ class DispositionView extends React.Component {
     } = this.props;
     const { section } = this.state;
 
+    const isPortland = isPortlandOrg(selectedOrganizationId);
+
     return (
       <>
         <FormGridWrapper>
@@ -554,34 +526,16 @@ class DispositionView extends React.Component {
               </Link>
             )}
           </FullWidthItem>
+          {this.renderDisposition(isPortland)}
+          {isPortland ? this.renderStabilizedOnScene() : null}
           {
-            isPortlandOrg(selectedOrganizationId)
-              ? this.renderDispositionPortland()
-              : this.renderDisposition()
-          }
-          {
-            isPortlandOrg(selectedOrganizationId)
-              ? this.renderStabilizedOnScene()
-              : null
-          }
-          {
-            isPortlandOrg(selectedOrganizationId)
+            isPortland
               ? this.renderTransportedToHospitalPortland()
               : this.renderTransportedToHospital()
           }
-          {
-            isPortlandOrg(selectedOrganizationId)
-              ? this.renderDeescalationScalePortland()
-              : null
-          }
-          {
-            this.renderDeescalationTechniques()
-          }
-          {
-            isPortlandOrg(selectedOrganizationId)
-              ? this.renderSpecializedResourcesPortland()
-              : this.renderSpecializedResources()
-          }
+          {isPortland ? this.renderDeescalationScalePortland() : null}
+          {this.renderDeescalationTechniques()}
+          {this.renderSpecializedResources(isPortland)}
           <FullWidthItem>
             <TextAreaField
                 disabled={isReadOnly}

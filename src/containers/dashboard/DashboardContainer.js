@@ -14,7 +14,7 @@ import SummaryStats from '../../components/dashboard/SummaryStats';
 import OverviewCharts from '../../components/dashboard/OverviewCharts';
 import IncidentCharts from '../../components/dashboard/IncidentCharts';
 import OutcomeCharts from '../../components/dashboard/OutcomeCharts';
-import LoadingSpinner from '../../components/LoadingSpinner';
+import Spinner from '../../components/spinner/Spinner';
 import { loadDashboardData } from './DashboardActionFactory';
 import { SUBMISSION_STATES } from './DashboardReducer';
 
@@ -94,7 +94,7 @@ class DashboardContainer extends React.Component<Props, State>  {
 
     return (
       <div>
-        {isLoading ? <LoadingSpinner /> : this.renderContent()}
+        {isLoading ? <Spinner /> : this.renderContent()}
       </div>
     );
   }

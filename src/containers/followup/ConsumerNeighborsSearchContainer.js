@@ -27,6 +27,13 @@ import {
   searchConsumerNeighbors
 } from '../search/SearchActionFactory';
 
+import {
+  COMPLAINT_NUMBER_FQN,
+  DATE_TIME_OCCURRED_FQN,
+  DATE_TIME_REPORTED_FQN,
+  INCIDENT_FQN
+} from '../../edm/DataModelFqns';
+
 const {
   BEHAVIORAL_HEALTH_REPORT_FQN
 } = APP_TYPES_FQNS;
@@ -139,19 +146,19 @@ class ConsumerNeighborsSearchContainer extends React.Component<Props, State> {
             <BHRDetailsRow>
               <BHRDetailItem scStyles={{ width: '150px' }}>
                 <strong>Date Occurred</strong>
-                <span>{ searchResult.getIn(['neighborDetails', 'bhr.dateOccurred', 0], '') }</span>
+                <span>{ searchResult.getIn(['neighborDetails', DATE_TIME_OCCURRED_FQN, 0], '') }</span>
               </BHRDetailItem>
               <BHRDetailItem scStyles={{ width: '150px' }}>
                 <strong>Date Reported</strong>
-                <span>{ searchResult.getIn(['neighborDetails', 'bhr.dateReported', 0], '') }</span>
+                <span>{ searchResult.getIn(['neighborDetails', DATE_TIME_REPORTED_FQN, 0], '') }</span>
               </BHRDetailItem>
               <BHRDetailItem scStyles={{ width: '150px' }}>
                 <strong>Complaint Number</strong>
-                <span>{ searchResult.getIn(['neighborDetails', 'bhr.complaintNumber', 0], '') }</span>
+                <span>{ searchResult.getIn(['neighborDetails', COMPLAINT_NUMBER_FQN, 0], '') }</span>
               </BHRDetailItem>
               <BHRDetailItem>
                 <strong>Incident</strong>
-                <span>{ searchResult.getIn(['neighborDetails', 'bhr.incident', 0], '') }</span>
+                <span>{ searchResult.getIn(['neighborDetails', INCIDENT_FQN, 0], '') }</span>
               </BHRDetailItem>
             </BHRDetailsRow>
             <FontAwesomeIcon icon={faAngleRight} size="2x" />

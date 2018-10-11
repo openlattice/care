@@ -6,7 +6,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Map } from 'immutable';
 
-import { HEATMAP_COLORS } from '../../utils/Colors';
+import { HEATMAP_COLORS } from '../../../utils/Colors';
 
 type Props = {
   title :string,

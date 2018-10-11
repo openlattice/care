@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import FieldHeader from './text/styled/FieldHeader';
 import TextField from './text/TextField';
 import { FORM_PATHS } from '../shared/Consts';
+import { CERTIFICATIONS, CERTIFICATIONS_PORTLAND } from '../utils/DataConstants';
 import { isPortlandOrg } from '../utils/Whitelist';
 import { checkboxesHelper } from '../containers/reports/HackyUtils';
 import {
@@ -38,7 +39,7 @@ class OfficerInfoView extends React.Component {
     const { section } = this.state;
     const id = `${name}-${value}`;
     return (
-      <label htmlFor={id}>
+      <label htmlFor={id} key={id}>
         <input
             checked={isChecked}
             data-section={section}
@@ -53,77 +54,31 @@ class OfficerInfoView extends React.Component {
     );
   }
 
-  renderOfficerCertification = () => {
+  renderCheckbox = (label, fqn, valueIfDifferentFromLabel) => {
 
     const { input, updateStateValue } = this.props;
     const { section } = this.state;
-    return (
-      <FullWidthItem>
-        <FieldHeader>Officer Certification</FieldHeader>
-        <FlexyWrapper>
-          {
-            this.renderTempCheckbox(
-              'CRT Unit',
-              OFFICER_CERTIFICATION_FQN,
-              'crtUnit',
-              input[OFFICER_CERTIFICATION_FQN].indexOf('crtUnit') !== -1,
-              event => updateStateValue(section, OFFICER_CERTIFICATION_FQN,
-                checkboxesHelper(input[OFFICER_CERTIFICATION_FQN], event.target.value))
-            )
-          }
-          {
-            this.renderTempCheckbox(
-              'BEST',
-              OFFICER_CERTIFICATION_FQN,
-              'best',
-              input[OFFICER_CERTIFICATION_FQN].indexOf('best') !== -1,
-              event => updateStateValue(section, OFFICER_CERTIFICATION_FQN,
-                checkboxesHelper(input[OFFICER_CERTIFICATION_FQN], event.target.value))
-            )
-          }
-          {
-            this.renderTempCheckbox(
-              'CIT',
-              OFFICER_CERTIFICATION_FQN,
-              'cit',
-              input[OFFICER_CERTIFICATION_FQN].indexOf('cit') !== -1,
-              event => updateStateValue(section, OFFICER_CERTIFICATION_FQN,
-                checkboxesHelper(input[OFFICER_CERTIFICATION_FQN], event.target.value))
-            )
-          }
-          {
-            this.renderTempCheckbox(
-              'N/A',
-              OFFICER_CERTIFICATION_FQN,
-              'n/a',
-              input[OFFICER_CERTIFICATION_FQN].indexOf('n/a') !== -1,
-              event => updateStateValue(section, OFFICER_CERTIFICATION_FQN,
-                checkboxesHelper(input[OFFICER_CERTIFICATION_FQN], event.target.value))
-            )
-          }
-        </FlexyWrapper>
-      </FullWidthItem>
+    const value = valueIfDifferentFromLabel || label;
+
+    return this.renderTempCheckbox(
+      label,
+      fqn,
+      value,
+      input[fqn].indexOf(value) !== -1,
+      event => updateStateValue(section, fqn, checkboxesHelper(input[fqn], event.target.value))
     );
   }
 
-  renderOfficerCertificationPortland = () => {
+  renderCheckboxes = (labels, fqn) => Object.values(labels).map(label => this.renderCheckbox(label, fqn))
 
-    const { input, updateStateValue } = this.props;
-    const { section } = this.state;
+  renderOfficerCertification = (isPortland) => {
+    const certifications = isPortland ? CERTIFICATIONS_PORTLAND : CERTIFICATIONS;
+
     return (
       <FullWidthItem>
         <FieldHeader>Officer Certification</FieldHeader>
         <FlexyWrapper>
-          {
-            this.renderTempCheckbox(
-              'CIT',
-              OFFICER_CERTIFICATION_FQN,
-              'cit',
-              input[OFFICER_CERTIFICATION_FQN].indexOf('cit') !== -1,
-              event => updateStateValue(section, OFFICER_CERTIFICATION_FQN,
-                checkboxesHelper(input[OFFICER_CERTIFICATION_FQN], event.target.value))
-            )
-          }
+          {this.renderCheckboxes(certifications, OFFICER_CERTIFICATION_FQN)}
         </FlexyWrapper>
       </FullWidthItem>
     );
@@ -139,6 +94,8 @@ class OfficerInfoView extends React.Component {
       updateStateValue,
     } = this.props;
     const { section } = this.state;
+
+    const isPortland = isPortlandOrg(selectedOrganizationId);
 
     return (
       <>
@@ -168,11 +125,7 @@ class OfficerInfoView extends React.Component {
                 onChange={value => updateStateValue(section, OFFICER_INJURIES_FQN, value)}
                 value={input[OFFICER_INJURIES_FQN]} />
           </FullWidthItem>
-          {
-            isPortlandOrg(selectedOrganizationId)
-              ? this.renderOfficerCertificationPortland()
-              : this.renderOfficerCertification()
-          }
+          {this.renderOfficerCertification(isPortland)}
         </FormGridWrapper>
       </>
     );

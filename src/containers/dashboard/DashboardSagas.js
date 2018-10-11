@@ -4,21 +4,21 @@
 
 /* eslint-disable no-use-before-define */
 
-import axios from 'axios';
 import moment from 'moment';
 import { List, Map, fromJS } from 'immutable';
-import { DataApi, EntityDataModelApi, Models, SearchApi } from 'lattice';
-import { DataIntegrationApiActionFactory, DataIntegrationApiSagas } from 'lattice-sagas';
+import { DataApi, EntityDataModelApi, SearchApi } from 'lattice';
 import { call, put, takeEvery } from 'redux-saga/effects';
 
 import {
-  APP_TYPES_FQNS,
   DASHBOARD_COUNTS,
-  DEESCALATION_TECHNIQUES,
-  DISPOSITIONS,
-  DISPOSITIONS_PORTLAND,
   SUMMARY_STATS
 } from '../../shared/Consts';
+
+import {
+  DEESCALATION_TECHNIQUES,
+  DISPOSITIONS,
+  DISPOSITIONS_PORTLAND
+} from '../../utils/DataConstants';
 
 import {
   ACCESS_TO_WEAPONS_FQN,
@@ -36,6 +36,7 @@ import {
   INJURIES_FQN,
   MILITARY_STATUS_FQN,
   OBSERVED_BEHAVIORS_FQN,
+  OFFICER_CERTIFICATION_FQN,
   PRESCRIBED_MEDICATION_FQN,
   RACE_FQN,
   SELF_DIAGNOSIS_FQN,
@@ -57,21 +58,18 @@ import {
 } from './DashboardActionFactory';
 
 import {
-  getPeopleESId,
   getReportESId,
   getSelectedOrganizationId
 } from '../../utils/AppUtils';
 
 import { isPortlandOrg } from '../../utils/Whitelist';
 
-import { getFqnObj } from '../../utils/DataUtils';
-
 const DATE_FORMAT = 'YYYY-MM-DD';
 
 const toLower = list => list.map(o => o.toLowerCase());
 
-function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *>  {
-  try  {
+function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *> {
+  try {
     yield put(loadDashboardData.request(action.id));
     const {
       app
@@ -83,11 +81,10 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *>  {
     const ceiling = yield call(DataApi.getEntitySetSize, reportESId);
     const datePropertyTypeId = yield call(EntityDataModelApi.getPropertyTypeId, DATE_TIME_OCCURRED_FQN);
     const bhrs = yield call(SearchApi.searchEntitySetData, reportESId, {
-      searchTerm: '*',
-      // searchTerm: `${datePropertyTypeId}:[${moment().subtract(1, 'month').format(DATE_FORMAT)} TO *]`,
+      searchTerm: `${datePropertyTypeId}:[${moment().subtract(6, 'month').format(DATE_FORMAT)} TO *]`,
       start: 0,
       maxHits: ceiling,
-      // fuzzy: false
+      fuzzy: false
     });
 
     const numReports = bhrs.hits.length;
@@ -124,6 +121,7 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *>  {
     let deescalationCounts = Map();
     let resourceCounts = Map();
     let dispositionsByDeescalation = Map();
+    let certificationCounts = Map();
 
     const dispositionsList = isPortland ? Object.values(DISPOSITIONS_PORTLAND) : Object.values(DISPOSITIONS);
     Object.values(DEESCALATION_TECHNIQUES).forEach((deescTechnique) => {
@@ -183,7 +181,7 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *>  {
 
       ageCounts = mapValues(AGE_FQN, ageCounts);
 
-      bhr.get(DATE_TIME_OCCURRED_FQN, bhr.get('bhr.dateOccurred', List())).forEach((date) => {
+      bhr.get(DATE_TIME_OCCURRED_FQN, List()).forEach((date) => {
         const dateMoment = moment(date);
         if (dateMoment.isValid()) {
           const dateStr = dateMoment.format(DATE_STR);
@@ -202,7 +200,7 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *>  {
       bhr.get(PRESCRIBED_MEDICATION_FQN, List()).filter(val => !!val).map(val => val.toLowerCase()).forEach((isPrescribed) => {
         bhr.get(TAKING_MEDICATION_FQN, List()).filter(val => !!val).map(val => val.toLowerCase()).forEach((isTaking) => {
           medicationCounts = medicationCounts
-          .setIn([isPrescribed, isTaking], medicationCounts.getIn([isPrescribed, isTaking], 0) + 1);
+            .setIn([isPrescribed, isTaking], medicationCounts.getIn([isPrescribed, isTaking], 0) + 1);
         });
       });
 
@@ -223,38 +221,14 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *>  {
       dispositionCounts = mapValues(DISPOSITION_FQN, dispositionCounts);
       deescalationCounts = mapValues(DEESCALATION_TECHNIQUES_FQN, deescalationCounts);
       resourceCounts = mapValues(SPECIAL_RESOURCES_CALLED_FQN, resourceCounts);
+      certificationCounts = mapValues(OFFICER_CERTIFICATION_FQN, certificationCounts);
 
-      // bhr.get(DEESCALATION_TECHNIQUES_FQN, List()).filter(val => !!val).forEach((deescTechnique) => {
-      //   bhr.get(DISPOSITION_FQN, List()).filter(val => !!val).forEach((disp) => {
-      //     dispositionsByDeescalation = dispositionsByDeescalation.setIn([deescTechnique, disp],
-      //       dispositionsByDeescalation.getIn([deescTechnique, disp], 0) + 1);
-      //   });
-      // });
-
-      // /* HACK TO MAKE HISTORICAL DATA WORK */
-      const deescInputList = bhr.get(DEESCALATION_TECHNIQUES_FQN, List()).join(' ').toLowerCase().split(' ');
-      const deescList = Object.values(DEESCALATION_TECHNIQUES).filter(deesc => deescInputList.includes(deesc));
-      if (deescInputList.includes('leg')) deescList.push(DEESCALATION_TECHNIQUES.LEG_RESTRAINTS);
-      if (deescInputList.includes('arrest')) deescList.push(DEESCALATION_TECHNIQUES.ARREST_CONTROL);
-      if (!deescList.length) deescList.push(DEESCALATION_TECHNIQUES.N_A);
-
-      const dispInputList = bhr.get(DISPOSITION_FQN, List()).join(' ').toLowerCase().split(' ');
-      const dispList = dispositionsList.filter(disp => dispInputList.includes(disp));
-      if (dispInputList.includes('voluntary')) dispList.push(DISPOSITIONS.VOLUNTARY_ER);
-      if (dispInputList.includes('referral') || dispInputList.includes('information/referral')) {
-        dispList.push(DISPOSITIONS.INFO_AND_REFERRAL);
-      }
-      if (dispInputList.includes('provider')) dispList.push(DISPOSITIONS.CONTACTED_PROVIDER);
-      if (dispInputList.includes('criminal')) dispList.push(DISPOSITIONS.CRIMINAL_CITATION);
-      if (dispInputList.includes('civil')) dispList.push(DISPOSITIONS.CIVIL_CITATION);
-
-      deescList.forEach((deescTechnique) => {
-        dispList.forEach((disp) => {
+      bhr.get(DEESCALATION_TECHNIQUES_FQN, List()).filter(val => !!val).forEach((deescTechnique) => {
+        bhr.get(DISPOSITION_FQN, List()).filter(val => !!val).forEach((disp) => {
           dispositionsByDeescalation = dispositionsByDeescalation.setIn([deescTechnique, disp],
             dispositionsByDeescalation.getIn([deescTechnique, disp], 0) + 1);
         });
       });
-      // </HACK>
 
     });
 
@@ -291,7 +265,8 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *>  {
       [DASHBOARD_COUNTS.DISPOSITIONS]: dispositionCounts,
       [DASHBOARD_COUNTS.DEESCALATION]: deescalationCounts,
       [DASHBOARD_COUNTS.RESOURCES]: resourceCounts,
-      [DASHBOARD_COUNTS.DISPOSITIONS_BY_DEESCALATION]: dispositionsByDeescalation
+      [DASHBOARD_COUNTS.DISPOSITIONS_BY_DEESCALATION]: dispositionsByDeescalation,
+      [DASHBOARD_COUNTS.CERTIFICATIONS]: certificationCounts
     };
 
     yield put(loadDashboardData.success(action.id, { summaryStats, dashboardCounts }));

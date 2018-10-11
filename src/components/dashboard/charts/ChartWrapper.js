@@ -5,10 +5,11 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import BasicButton from '../buttons/BasicButton';
+import BasicButton from '../../buttons/BasicButton';
 
 type Props = {
   noMargin? :boolean,
+  noOffset? :boolean,
   title :string,
   xLabel? :string,
   yLabel? :string,
@@ -103,7 +104,7 @@ const BodyWrapper = styled.div`
   flex-direction: row;
   width: 100%;
   align-items: center;
-  margin-left: -40px;
+  margin-left: ${props => (props.noOffset ? 0 : -40)}px;
 `;
 
 const FooterWrapper = styled.div`
@@ -154,6 +155,7 @@ const ChartWrapper = ({
   infoText,
   children,
   noMargin,
+  noOffset,
   title,
   xLabel,
   yLabel,
@@ -174,7 +176,7 @@ const ChartWrapper = ({
           ) : null}
         </Buttons>
       </HeaderRow>
-      <BodyWrapper>
+      <BodyWrapper noOffset={noOffset}>
         {yLabel ? (
           <YLabelWrapper>
             <YLabel noMargin={noMargin}>{yLabel}</YLabel>
