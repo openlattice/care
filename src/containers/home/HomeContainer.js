@@ -46,7 +46,7 @@ const StyledNavLink = styled(NavLink)`
   }
 `;
 
-const StyledNavCard = StyledCard.extend`
+const StyledNavCard = styled(StyledCard)`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -65,7 +65,7 @@ const LinkText = styled.span`
 const HomeContainer = () => (
   <ContainerWrapper>
     <Content>
-      <StyledNavLink to={Routes.BHR}>
+      <StyledNavLink to={Routes.BHR_PATH}>
         <StyledNavCard>
           <LinkTextWrapper>
             <FontAwesomeIcon icon={faFileAlt} size="2x" />

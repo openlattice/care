@@ -10,16 +10,20 @@ import {
   EntityDataModelApiSagas,
   SearchApiSagas,
 } from 'lattice-sagas';
-import { fork } from 'redux-saga/effects';
+import { all, fork } from 'redux-saga/effects';
 
-import * as AppSagas from '../../containers/form/AppSagas';
+import * as RoutingSagas from '../router/RoutingSagas';
+
+import * as AppSagas from '../../containers/app/AppSagas';
+import * as DashboardSagas from '../../containers/dashboard/DashboardSagas';
 import * as FollowUpReportSagas from '../../containers/followup/FollowUpReportSagas';
 import * as ReportSagas from '../../containers/form/ReportSagas';
+import * as ReportsSagas from '../../containers/reports/ReportsSagas';
 import * as SearchSagas from '../../containers/search/SearchSagas';
 
 export default function* sagas() :Generator<*, *, *> {
 
-  yield [
+  yield all([
     // "lattice-auth" sagas
     fork(AuthSagas.watchAuthAttempt),
     fork(AuthSagas.watchAuthSuccess),
@@ -31,25 +35,40 @@ export default function* sagas() :Generator<*, *, *> {
     fork(AppApiSagas.getAppWatcher),
     fork(AppApiSagas.getAppConfigsWatcher),
     fork(AppApiSagas.getAppTypesWatcher),
+    fork(DataApiSagas.clearEntityFromEntitySetWatcher),
     fork(DataApiSagas.getEntitySetDataWatcher),
+    fork(DataApiSagas.updateEntityDataWatcher),
     fork(DataIntegrationApiSagas.createEntityAndAssociationDataWatcher),
     fork(EntityDataModelApiSagas.getEntityDataModelProjectionWatcher),
+    fork(EntityDataModelApiSagas.getAllPropertyTypesWatcher),
     fork(SearchApiSagas.searchEntityNeighborsWatcher),
     fork(SearchApiSagas.searchEntitySetDataWatcher),
+
+    // RoutingSagas
+    fork(RoutingSagas.goToRootWatcher),
+    fork(RoutingSagas.goToRouteWatcher),
 
     // Follow-Up Report Sagas
     fork(FollowUpReportSagas.submitFollowUpReportWatcher),
 
+    // Dashboard Sagas
+    fork(DashboardSagas.loadDashboardDataWatcher),
+
     // Report Sagas
     fork(AppSagas.loadAppWatcher),
-    fork(AppSagas.loadAppConfigsWatcher),
     fork(AppSagas.loadHospitalsWatcher),
-    fork(AppSagas.selectOrganizationWatcher),
+    fork(AppSagas.switchOrganizationWatcher),
     fork(ReportSagas.hardRestartWatcher),
     fork(ReportSagas.submitReportWatcher),
 
     // SearchSagas
     fork(SearchSagas.searchConsumerNeighborsWatcher),
-    fork(SearchSagas.searchConsumersWatcher)
-  ];
+    fork(SearchSagas.searchConsumersWatcher),
+
+    // ReportsSagas
+    fork(ReportsSagas.deleteReportWatcher),
+    fork(ReportsSagas.getReportNeighborsWatcher),
+    fork(ReportsSagas.getReportsWatcher),
+    fork(ReportsSagas.updateReportWatcher),
+  ]);
 }

@@ -9,11 +9,8 @@ import { Models } from 'lattice';
 import { DataIntegrationApiActionFactory, DataIntegrationApiSagas } from 'lattice-sagas';
 import { call, put, takeEvery } from 'redux-saga/effects';
 
-import {
-  APP_TYPES_FQNS,
-  NC_SUBJ_ID_FQN,
-  STRING_ID_FQN
-} from '../../shared/Consts';
+import { APP_TYPES_FQNS, STRING_ID_FQN } from '../../shared/Consts';
+import { PERSON_ID_FQN } from '../../edm/DataModelFqns';
 
 import {
   CLINICIAN_NAME_VAL,
@@ -22,7 +19,6 @@ import {
   OFFICER_SEQ_ID_VAL,
   REASON_VAL,
   SUMMARY_VAL,
-  TIME_VAL
 } from './FollowUpReportConstants';
 
 import {
@@ -67,10 +63,9 @@ function prepReportEntityData(
     'bhr.followupreason': reportInfo[REASON_VAL],
     'bhr.officerName': reportInfo[OFFICER_NAME_VAL],
     'bhr.officerSeqID': reportInfo[OFFICER_SEQ_ID_VAL],
-    'bhr.timeReported': reportInfo[TIME_VAL],
     'event.comments': reportInfo[SUMMARY_VAL],
     'health.staff': reportInfo[CLINICIAN_NAME_VAL],
-    [NC_SUBJ_ID_FQN]: consumer.getIn([NC_SUBJ_ID_FQN, 0])
+    [PERSON_ID_FQN]: consumer.getIn([PERSON_ID_FQN, 0])
   };
 
   const details = {};
@@ -113,7 +108,7 @@ function prepAppearsInEntityData(
   propertyTypes :List
 ) :Object {
 
-  const consumerIdentification = consumer.getIn([NC_SUBJ_ID_FQN, 0]);
+  const consumerIdentification = consumer.getIn([PERSON_ID_FQN, 0]);
   const consumerEntityId = btoa(consumerIdentification);
 
   /*
@@ -169,7 +164,7 @@ function* submitFollowUpReportWorker(action :SequenceAction) :Generator<*, *, *>
       reportInfo
     } = action.value;
 
-    const selectedOrganizationId = app.get('selectedOrganization');
+    const selectedOrganizationId = app.get('selectedOrganizationId');
 
     const appearsInESId :string = app.getIn([
       APPEARS_IN_FQN.getFullyQualifiedName(),

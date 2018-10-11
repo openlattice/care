@@ -4,24 +4,25 @@
 
 import React from 'react';
 
-import PropTypes from 'prop-types';
 import moment from 'moment';
 import styled from 'styled-components';
-import { faUserAlt } from '@fortawesome/pro-light-svg-icons';
+import { Colors } from 'lattice-ui-kit';
+import { faUserCircle } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Map } from 'immutable';
 
-import { DATA_URL_PREFIX, PERSON } from '../../shared/Consts';
+import { DATA_URL_PREFIX } from '../../shared/Consts';
+import {
+  PERSON_DOB_FQN,
+  PERSON_LAST_NAME_FQN,
+  PERSON_FIRST_NAME_FQN,
+  PERSON_RACE_FQN,
+  PERSON_SEX_FQN,
+  PERSON_ID_FQN,
+  PERSON_PICTURE_FQN,
+} from '../../edm/DataModelFqns';
 
-const {
-  DOB_FQN,
-  FIRST_NAME_FQN,
-  ID_FQN,
-  LAST_NAME_FQN,
-  PICTURE_FQN,
-  RACE_FQN,
-  SEX_FQN
-} = PERSON;
+const { NEUTRALS } = Colors;
 
 /*
  * styled components
@@ -36,6 +37,7 @@ const PersonDetailsSearchResultWrapper = styled.div`
 
 const PersonPictureWrapper = styled.div`
   align-items: center;
+  color: ${NEUTRALS[3]};
   display: flex;
   justify-content: center;
   width: 200px;
@@ -80,18 +82,18 @@ type Props = {
   personDetails :Map<*, *>;
 };
 
-const PersonDetailsSearchResult = (props :Props) => {
+const PersonDetailsSearchResult = ({ personDetails } :Props) => {
 
   // TODO: how do we avoid having to hardcode FQNs???
-  const pictureStr = props.personDetails.getIn([PICTURE_FQN, 0], '');
+  const pictureStr = personDetails.getIn([PERSON_PICTURE_FQN, 0], '');
   const pictureImgSrc = `${DATA_URL_PREFIX}${pictureStr}`;
 
-  const id = props.personDetails.getIn([ID_FQN, 0], '');
-  const firstName = props.personDetails.getIn([FIRST_NAME_FQN, 0], '');
-  const lastName = props.personDetails.getIn([LAST_NAME_FQN, 0], '');
-  const sex = props.personDetails.getIn([SEX_FQN, 0], '');
-  const race = props.personDetails.getIn([RACE_FQN, 0], '');
-  const dob = props.personDetails.getIn([DOB_FQN, 0], '');
+  const id = personDetails.getIn([PERSON_ID_FQN, 0], '');
+  const firstName = personDetails.getIn([PERSON_FIRST_NAME_FQN, 0], '');
+  const lastName = personDetails.getIn([PERSON_LAST_NAME_FQN, 0], '');
+  const sex = personDetails.getIn([PERSON_SEX_FQN, 0], '');
+  const race = personDetails.getIn([PERSON_RACE_FQN, 0], '');
+  const dob = personDetails.getIn([PERSON_DOB_FQN, 0], '');
 
   let dobFormatted = dob;
   if (dob) {
@@ -103,7 +105,7 @@ const PersonDetailsSearchResult = (props :Props) => {
       <PersonPictureWrapper>
         {
           (!pictureStr || pictureStr.length <= 0)
-            ? <FontAwesomeIcon icon={faUserAlt} size="6x" />
+            ? <FontAwesomeIcon icon={faUserCircle} size="6x" />
             : <PersonPicture src={pictureImgSrc} role="presentation" />
         }
       </PersonPictureWrapper>
@@ -155,10 +157,6 @@ const PersonDetailsSearchResult = (props :Props) => {
 
 PersonDetailsSearchResult.defaultProps = {
   personDetails: Map()
-};
-
-PersonDetailsSearchResult.propTypes = {
-  personDetails: PropTypes.instanceOf(Map)
 };
 
 export default PersonDetailsSearchResult;

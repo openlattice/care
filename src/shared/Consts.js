@@ -12,32 +12,7 @@ export const APP_TYPES_FQNS = {
   PEOPLE_FQN: new FullyQualifiedName('app.people')
 };
 
-export const PERSON = {
-  LAST_NAME_FQN: 'nc.PersonSurName',
-  FIRST_NAME_FQN: 'nc.PersonGivenName',
-  MIDDLE_NAME_FQN: 'nc.PersonMiddleName',
-  RACE_FQN: 'nc.PersonRace',
-  SEX_FQN: 'nc.PersonSex',
-  DOB_FQN: 'nc.PersonBirthDate',
-  ID_FQN: 'nc.SubjectIdentification',
-  AGE_FQN: 'person.age',
-  PICTURE_FQN: 'person.picture'
-};
-
-export const CONSUMER_STATE = {
-  AGE: 'age',
-  LAST_NAME_FQN: 'lastName',
-  FIRST_NAME_FQN: 'firstName',
-  MIDDLE_NAME_FQN: 'middleName',
-  RACE_FQN: 'race',
-  SEX_FQN: 'gender',
-  DOB_FQN: 'dob',
-  ID_FQN: 'identification',
-  PICTURE_FQN: 'picture'
-};
-
 export const STRING_ID_FQN = 'general.stringid';
-export const NC_SUBJ_ID_FQN = 'nc.SubjectIdentification';
 
 export const RACE = {
   americanIndian: 'American Indian or Alaska Native',
@@ -117,9 +92,45 @@ export const STATES = [
   'WY'
 ];
 
-export const MAX_PAGE = 7;
-
-export const INT_16_MAX_VALUE = 32767;
-export const INT_16_MIN_VALUE = -32768;
-
 export const DATA_URL_PREFIX = 'data:image/png;base64,';
+
+/* Dashboard Constants */
+
+export const SUMMARY_STATS = {
+  NUM_REPORTS: 'numReports',
+  AVG_AGE: 'avgAge',
+  NUM_HOMELESS: 'numHomeless',
+  NUM_MALE: 'numMale',
+  NUM_VETERANS: 'numVeterans',
+  NUM_USING_SUBSTANCE: 'numUsingSubstance',
+  NUM_USING_ALCOHOL: 'numUsingAlcohol',
+  NUM_USING_DRUGS: 'numUsingDrugs'
+};
+
+export const DASHBOARD_COUNTS = {
+  RACE: 'raceCounts',
+  AGE: 'ageCounts',
+  GENDER: 'genderCounts',
+  REPORTS_BY_DATE: 'reportsByDate',
+  REPORTS_BY_TIME: 'reportsByTime',
+  REPORTS_BY_DAY_OF_WEEK: 'reportsByDayOfWeek',
+
+  EMOTIONAL_STATE: 'emotionalStateCounts',
+  BEHAVIORS: 'observedBehaviorsCounts',
+  SELF_DIAGNOSIS: 'selfDiagnosisCounts',
+  MEDICATION: 'medicationCounts',
+  INJURIES: 'injuryCounts',
+  ARMED: 'armedCounts',
+  ARMED_WEAPON_TYPES: 'armedWeaponTypeCounts',
+  WEAPON_ACCESS: 'weaponAccessCounts',
+  ACCESS_WEAPON_TYPES: 'accessWeaponTypeCounts',
+  SUICIDAL: 'suicidal',
+  SUICIDAL_ACTIONS: 'suicidalalActions',
+  SUICIDE_METHOD: 'suicideMethod',
+
+  DISPOSITIONS: 'dispositions',
+  DEESCALATION: 'deescalationTechniques',
+  RESOURCES: 'resources',
+  DISPOSITIONS_BY_DEESCALATION: 'dispositionsByDeescalationTechnique',
+  CERTIFICATIONS: 'certificationCounts'
+};

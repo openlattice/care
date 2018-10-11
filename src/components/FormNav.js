@@ -1,11 +1,30 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import { Button } from 'lattice-ui-kit';
 
-import { NavBtnWrapper, StyledButton, SubmitButton } from '../shared/Layout';
+const NavWrapper = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 30px;
+`;
 
+const SubmitButton = styled(Button).attrs({
+  type: 'submit'
+})`
+  margin: 0;
+`;
+
+const NavButton = styled(Button).attrs({
+  type: 'button'
+})`
+  margin: 0 15px;
+`;
 
 const FormNav = ({
   handlePageChange,
+  handleSubmit,
   nextPath,
   prevPath,
   submit
@@ -20,54 +39,41 @@ const FormNav = ({
   };
 
   const renderNav = () => (
-    <NavBtnWrapper>
+    <NavWrapper>
       {
         prevPath && prevPath.length
           ? (
-            <StyledButton onClick={onClickPrev}>
+            <NavButton onClick={onClickPrev}>
               Prev
-            </StyledButton>
+            </NavButton>
           )
           : null
       }
       {
         nextPath && nextPath.length
           ? (
-            <StyledButton onClick={onClickNext}>
+            <NavButton onClick={onClickNext}>
               Next
-            </StyledButton>
+            </NavButton>
           )
           : null
       }
-    </NavBtnWrapper>
+    </NavWrapper>
   );
 
   const renderSubmit = () => (
-    <NavBtnWrapper>
-      <SubmitButton>
+    <NavWrapper>
+      <SubmitButton mode="primary" onClick={handleSubmit}>
         Submit
       </SubmitButton>
-    </NavBtnWrapper>
+    </NavWrapper>
   );
 
-  return (
-    <NavBtnWrapper>
-      { submit ? renderSubmit() : renderNav() }
-    </NavBtnWrapper>
-  );
-};
+  if (submit) {
+    return renderSubmit();
+  }
 
-FormNav.defaultProps = {
-  prevPath: '',
-  nextPath: '',
-  submit: false
-};
-
-FormNav.propTypes = {
-  prevPath: PropTypes.string,
-  nextPath: PropTypes.string,
-  submit: PropTypes.bool,
-  handlePageChange: PropTypes.func.isRequired
+  return renderNav();
 };
 
 export default FormNav;

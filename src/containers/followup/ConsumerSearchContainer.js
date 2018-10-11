@@ -8,14 +8,13 @@ import styled from 'styled-components';
 import { faAngleRight } from '@fortawesome/pro-light-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { List, Map } from 'immutable';
+import { Constants } from 'lattice';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { bindActionCreators } from 'redux';
 
-import Loading from '../../components/Loading';
+import Spinner from '../../components/spinner/Spinner';
 import SearchInput from '../../components/SearchInput';
-import { randomId } from '../../utils/Utils';
-
 import PersonDetailsSearchResult from '../search/PersonDetailsSearchResult';
 import { SearchResult, SearchResultsWrapper } from '../search/SearchResultsStyledComponents';
 
@@ -24,6 +23,7 @@ import {
   searchConsumers
 } from '../search/SearchActionFactory';
 
+const { OPENLATTICE_ID_FQN } = Constants;
 /*
  * styled components
  */
@@ -43,7 +43,6 @@ const Title = styled.span`
 `;
 
 const FullWidthSearchInput = styled(SearchInput)`
-  margin: 20px 0;
   width: 100%;
 `;
 
@@ -125,7 +124,7 @@ class ConsumerSearchContainer extends React.Component<Props, State> {
       this.props.searchResults.forEach((searchResult :Map<*, *>) => {
         searchResults.push(
           <SearchResult
-              key={randomId()}
+              key={searchResult.getIn([OPENLATTICE_ID_FQN, 0])}
               showDivider={showDivider}
               onClick={() => this.props.onSelectSearchResult(searchResult)}>
             <PersonDetailsSearchResult personDetails={searchResult} />
@@ -139,7 +138,7 @@ class ConsumerSearchContainer extends React.Component<Props, State> {
       <SearchResultsWrapper>
         {
           (this.props.isSearching)
-            ? <Loading />
+            ? <Spinner />
             : null
         }
         {

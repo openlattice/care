@@ -1,443 +1,246 @@
 import React from 'react';
 
-import DatePicker from 'react-bootstrap-date-picker';
-import PropTypes from 'prop-types';
-import ReactRouterPropTypes from 'react-router-prop-types';
-import TimePicker from 'react-bootstrap-time-picker';
 import moment from 'moment';
-import { FormGroup, FormControl, Col } from 'react-bootstrap';
 import { withRouter } from 'react-router';
+import { Link } from 'react-router-dom';
 
-import FormNav from './FormNav';
+import FieldHeader from './text/styled/FieldHeader';
+import TextField from './text/TextField';
+import { FORM_PATHS } from '../shared/Consts';
 import {
-  TitleLabel,
-  InlineRadio,
-  PaddedRow,
-  SectionWrapper,
-  ContentWrapper,
-  SectionHeader
-} from '../shared/Layout';
-import { FORM_PATHS, FORM_ERRORS } from '../shared/Consts';
+  formatAsDate,
+  formatAsTime,
+  replaceDateTimeDate,
+  replaceDateTimeTime,
+} from '../utils/DateUtils';
 import {
-  setDidClickNav,
-  setRequiredErrors,
-  renderErrors,
-  validateSectionNavigation
-} from '../shared/Helpers';
-import { fixDatePickerIsoDateTime, getCurrentPage } from '../utils/Utils';
-import { bootstrapValidation } from '../shared/Validation';
+  EditButton,
+  FlexyWrapper,
+  FormGridWrapper,
+  FullWidthItem,
+  HalfWidthItem,
+} from './form/StyledFormComponents';
+import {
+  CAD_NUMBER_FQN,
+  COMPANION_OFFENSE_REPORT_FQN,
+  COMPLAINT_NUMBER_FQN,
+  DATE_TIME_OCCURRED_FQN,
+  DATE_TIME_REPORTED_FQN,
+  DISPATCH_REASON_FQN,
+  INCIDENT_FQN,
+  LOCATION_OF_INCIDENT_FQN,
+  ON_VIEW_FQN,
+  POST_OF_OCCURRENCE_FQN,
+  UNIT_FQN,
+} from '../edm/DataModelFqns';
 
 class ReportInfoView extends React.Component {
+
   constructor(props) {
     super(props);
-
     this.state = {
-      requiredFields: ['dateOccurred', 'dateReported', 'complaintNumber', 'incident'],
-      sectionFormatErrors: [],
-      sectionRequiredErrors: [FORM_ERRORS.IS_REQUIRED],
-      sectionErrors: [],
-      postOfOccurrenceValid: true,
-      complaintNumberValid: true,
-      incidentValid: true,
-      cadNumberValid: true,
-      dateOccurredValid: true,
-      dateReportedValid: true,
-      unitValid: true,
-      didClickNav: this.props.location.state
-        ? this.props.location.state.didClickNav
-        : false,
-      currentPage: getCurrentPage()
+      datetimeOccurredValid: true,
+      datetimeReportedValid: true,
+      section: 'reportInfo',
     };
   }
 
-  static propTypes = {
-    handleDatePickerDateTimeOffset: PropTypes.func.isRequired,
-    handleTextInput: PropTypes.func.isRequired,
-    handleTimeInput: PropTypes.func.isRequired,
-    handleSingleSelection: PropTypes.func.isRequired,
-    isInReview: PropTypes.func.isRequired,
-    handlePageChange: PropTypes.func.isRequired,
-    section: PropTypes.string.isRequired,
-    history: ReactRouterPropTypes.history.isRequired,
-    location: ReactRouterPropTypes.location.isRequired,
-    input: PropTypes.shape({
-      dispatchReason: PropTypes.string.isRequired,
-      complaintNumber: PropTypes.string.isRequired,
-      companionOffenseReport: PropTypes.bool.isRequired,
-      incident: PropTypes.string.isRequired,
-      locationOfIncident: PropTypes.string.isRequired,
-      unit: PropTypes.string.isRequired,
-      postOfOccurrence: PropTypes.string.isRequired,
-      cadNumber: PropTypes.string.isRequired,
-      onView: PropTypes.bool.isRequired,
-      dateOccurred: PropTypes.string.isRequired,
-      timeOccurred: PropTypes.string.isRequired,
-      dateReported: PropTypes.string.isRequired,
-      timeReported: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired
-    }).isRequired
-  }
+  // TODO: replace this with real components from lattice-ui-kit
+  renderTempRadio = (label, name, value, isChecked, onChange) => {
 
-  areRequiredFieldsValid = () => (
-    this.state.requiredFields.every(fieldName => this.state[`${fieldName}Valid`])
-  )
-
-  handlePageChange = (path) => {
-    this.setState(setDidClickNav);
-    this.setState(setRequiredErrors, () => {
-      if (this.areRequiredFieldsValid()
-          && this.state.sectionRequiredErrors.length < 1
-          && this.state.sectionFormatErrors.length < 1) {
-        this.props.handlePageChange(path);
-      }
-    });
-  }
-
-  setInputErrors = (name, inputValid, sectionFormatErrors) => {
-    this.setState({
-      [`${name}Valid`]: inputValid,
-      sectionFormatErrors
-    });
-  }
-
-  componentWillUnmount() {
-    validateSectionNavigation(
-      this.props.input,
-      this.state.requiredFields,
-      this.state.currentPage,
-      this.props.history
+    const { isReadOnly } = this.props;
+    const id = `${name}-${value}`;
+    return (
+      <label htmlFor={id}>
+        <input
+            checked={isChecked}
+            disabled={isReadOnly}
+            id={id}
+            name={name}
+            onChange={onChange}
+            type="radio"
+            value={value} />
+        { label }
+      </label>
     );
   }
 
   render() {
+
     const {
-      handleDatePickerDateTimeOffset,
-      handleTextInput,
-      handleTimeInput,
-      handleSingleSelection,
       input,
       isInReview,
-      section
+      isReadOnly,
+      updateStateValue,
     } = this.props;
+    const { section } = this.state;
 
-    const {
-      postOfOccurrenceValid,
-      complaintNumberValid,
-      incidentValid,
-      cadNumberValid,
-      dateOccurredValid,
-      dateReportedValid,
-      unitValid,
-      didClickNav,
-      sectionFormatErrors,
-      sectionRequiredErrors
-    } = this.state;
-
-    const isReviewPage = isInReview();
+    const dateOccurredFormatted = formatAsDate(input[DATE_TIME_OCCURRED_FQN]);
+    const dateReportedFormatted = formatAsDate(input[DATE_TIME_REPORTED_FQN]);
+    const timeOccurredFormatted = formatAsTime(input[DATE_TIME_OCCURRED_FQN]);
+    const timeReportedFormatted = formatAsTime(input[DATE_TIME_REPORTED_FQN]);
 
     return (
-      <SectionWrapper>
-        { !isReviewPage ? <SectionHeader>Report Info</SectionHeader> : null}
-        <ContentWrapper>
-          <PaddedRow>
-            <Col lg={6}>
-              <TitleLabel>Primary Reason for Dispatch</TitleLabel>
-              <FormControl
-                  data-section={section}
-                  name="dispatchReason"
-                  value={input.dispatchReason}
-                  onChange={(e) => {
-                    handleTextInput(
-                      e,
-                      'string',
-                      sectionFormatErrors,
-                      this.setInputErrors
-                    );
+      <>
+        <FormGridWrapper>
+          <FullWidthItem>
+            <h1>Report</h1>
+            { isInReview && (
+              <Link to={FORM_PATHS.REPORT}>
+                <EditButton onClick={this.handleOnClickEditReport}>Edit</EditButton>
+              </Link>
+            )}
+          </FullWidthItem>
+          <TextField
+              disabled={isReadOnly}
+              header="Primary Reason for Dispatch"
+              onChange={value => updateStateValue(section, DISPATCH_REASON_FQN, value)}
+              value={input[DISPATCH_REASON_FQN]} />
+          <TextField
+              disabled={isReadOnly}
+              header="Complaint Number*"
+              onChange={value => updateStateValue(section, COMPLAINT_NUMBER_FQN, value)}
+              value={input[COMPLAINT_NUMBER_FQN]} />
+          <HalfWidthItem>
+            <FieldHeader>Companion Offense Report Prepared</FieldHeader>
+            <FlexyWrapper inline>
+              {
+                this.renderTempRadio(
+                  'Yes',
+                  COMPANION_OFFENSE_REPORT_FQN,
+                  true,
+                  input[COMPANION_OFFENSE_REPORT_FQN] === true,
+                  () => updateStateValue(section, COMPANION_OFFENSE_REPORT_FQN, true),
+                )
+              }
+              {
+                this.renderTempRadio(
+                  'No',
+                  COMPANION_OFFENSE_REPORT_FQN,
+                  false,
+                  input[COMPANION_OFFENSE_REPORT_FQN] === false,
+                  () => updateStateValue(section, COMPANION_OFFENSE_REPORT_FQN, false)
+                )
+              }
+            </FlexyWrapper>
+          </HalfWidthItem>
+          <TextField
+              disabled={isReadOnly}
+              header="Crime / Incident*"
+              onChange={value => updateStateValue(section, INCIDENT_FQN, value)}
+              value={input[INCIDENT_FQN]} />
+          <FullWidthItem>
+            <TextField
+                disabled={isReadOnly}
+                header="Location of Offense / Incident"
+                onChange={value => updateStateValue(section, LOCATION_OF_INCIDENT_FQN, value)}
+                value={input[LOCATION_OF_INCIDENT_FQN]} />
+          </FullWidthItem>
+          <TextField
+              disabled={isReadOnly}
+              header="Unit"
+              onChange={value => updateStateValue(section, UNIT_FQN, value)}
+              value={input[UNIT_FQN]} />
+          <TextField
+              disabled={isReadOnly}
+              header="Post of Occurrence"
+              onChange={value => updateStateValue(section, POST_OF_OCCURRENCE_FQN, value)}
+              value={input[POST_OF_OCCURRENCE_FQN]} />
+          <TextField
+              disabled={isReadOnly}
+              header="CAD Number"
+              onChange={value => updateStateValue(section, CAD_NUMBER_FQN, value)}
+              value={input[CAD_NUMBER_FQN]} />
+          <HalfWidthItem>
+            <FieldHeader>On View</FieldHeader>
+            <FlexyWrapper inline>
+              {
+                this.renderTempRadio(
+                  'Yes',
+                  ON_VIEW_FQN,
+                  true,
+                  input[ON_VIEW_FQN] === true,
+                  () => updateStateValue(section, ON_VIEW_FQN, true),
+                )
+              }
+              {
+                this.renderTempRadio(
+                  'No',
+                  ON_VIEW_FQN,
+                  false,
+                  input[ON_VIEW_FQN] === false,
+                  () => updateStateValue(section, ON_VIEW_FQN, false),
+                )
+              }
+            </FlexyWrapper>
+          </HalfWidthItem>
+          <HalfWidthItem>
+            <label htmlFor="date-occurred">
+              <FieldHeader>Date Occurred*</FieldHeader>
+              <input
+                  disabled={isReadOnly}
+                  id="date-occurred"
+                  onChange={(event) => {
+                    const date = event.target.value;
+                    const isValid = moment(date).isSameOrBefore(moment());
+                    this.setState({ datetimeOccurredValid: isValid });
+
+                    const datetime = replaceDateTimeDate(input[DATE_TIME_OCCURRED_FQN], date);
+                    updateStateValue(section, DATE_TIME_OCCURRED_FQN, datetime);
                   }}
-                  disabled={isReviewPage} />
-            </Col>
-            <Col lg={6}>
-              <FormGroup
-                  validationState={bootstrapValidation(
-                    input.complaintNumber,
-                    complaintNumberValid,
-                    true,
-                    didClickNav
-                  )}>
-                <TitleLabel>Complaint Number*</TitleLabel>
-                <FormControl
-                    data-section={section}
-                    name="complaintNumber"
-                    value={input.complaintNumber}
-                    onChange={(e) => {
-                      handleTextInput(
-                        e,
-                        'int64',
-                        sectionFormatErrors,
-                        this.setInputErrors
-                      );
-                    }}
-                    disabled={isReviewPage} />
-              </FormGroup>
-            </Col>
-          </PaddedRow>
-
-          <PaddedRow>
-            <Col lg={6}>
-              <TitleLabel>Companion Offense Report Prepared</TitleLabel>
-              <InlineRadio
-                  inline
-                  data-section={section}
-                  name="companionOffenseReport"
-                  value
-                  checked={input.companionOffenseReport}
-                  onChange={handleSingleSelection}
-                  disabled={isReviewPage}>Yes
-              </InlineRadio>
-              <InlineRadio
-                  inline
-                  data-section={section}
-                  name="companionOffenseReport"
-                  value={false}
-                  checked={!input.companionOffenseReport}
-                  onChange={handleSingleSelection}
-                  disabled={isReviewPage}>No
-              </InlineRadio>
-            </Col>
-            <Col lg={6}>
-              <FormGroup
-                  validationState={bootstrapValidation(
-                    input.incident,
-                    incidentValid,
-                    true,
-                    didClickNav
-                  )}>
-                <TitleLabel>Crime / Incident*</TitleLabel>
-                <FormControl
-                    data-section={section}
-                    name="incident"
-                    value={input.incident}
-                    onChange={(e) => {
-                      handleTextInput(
-                        e,
-                        'string',
-                        sectionFormatErrors,
-                        this.setInputErrors
-                      );
-                    }}
-                    disabled={isReviewPage} />
-              </FormGroup>
-            </Col>
-          </PaddedRow>
-
-          <PaddedRow>
-            <Col lg={12}>
-              <TitleLabel>Location of Offense / Incident</TitleLabel>
-              <FormControl
-                  data-section={section}
-                  name="locationOfIncident"
-                  value={input.locationOfIncident}
-                  onChange={(e) => {
-                    handleTextInput(
-                      e,
-                      'string',
-                      sectionFormatErrors,
-                      this.setInputErrors
-                    );
+                  type="date"
+                  value={dateOccurredFormatted} />
+            </label>
+          </HalfWidthItem>
+          <HalfWidthItem>
+            <label htmlFor="time-occurred">
+              <FieldHeader>Time Occurred</FieldHeader>
+              <input
+                  disabled={isReadOnly}
+                  id="time-occurred"
+                  onChange={(event) => {
+                    const datetime = replaceDateTimeTime(input[DATE_TIME_OCCURRED_FQN], event.target.value);
+                    updateStateValue(section, DATE_TIME_OCCURRED_FQN, datetime);
                   }}
-                  disabled={isReviewPage} />
-            </Col>
-          </PaddedRow>
+                  type="time"
+                  value={timeOccurredFormatted} />
+            </label>
+          </HalfWidthItem>
+          <HalfWidthItem>
+            <label htmlFor="date-reported">
+              <FieldHeader>Date Reported*</FieldHeader>
+              <input
+                  disabled={isReadOnly}
+                  id="date-reported"
+                  onChange={(event) => {
+                    const date = event.target.value;
+                    const isValid = moment(date).isSameOrBefore(moment())
+                        && moment(date).isSameOrAfter(moment(input[DATE_TIME_OCCURRED_FQN]));
+                    this.setState({ datetimeReportedValid: isValid });
 
-          <PaddedRow>
-            <Col lg={6}>
-              <FormGroup
-                  validationState={bootstrapValidation(
-                    input.unit,
-                    unitValid,
-                    false,
-                    didClickNav
-                  )}>
-                <TitleLabel>Unit</TitleLabel>
-                <FormControl
-                    data-section={section}
-                    name="unit"
-                    value={input.unit}
-                    onChange={(e) => {
-                      handleTextInput(
-                        e,
-                        'alphanumeric',
-                        sectionFormatErrors,
-                        this.setInputErrors
-                      );
-                    }}
-                    disabled={isReviewPage} />
-              </FormGroup>
-            </Col>
-            <Col lg={6}>
-              <FormGroup
-                  validationState={bootstrapValidation(
-                    input.postOfOccurrence,
-                    postOfOccurrenceValid,
-                    false,
-                    didClickNav
-                  )}>
-                <TitleLabel>Post of Occurrence</TitleLabel>
-                <FormControl
-                    data-section={section}
-                    name="postOfOccurrence"
-                    value={input.postOfOccurrence}
-                    onChange={(e) => {
-                      handleTextInput(
-                        e,
-                        'int16',
-                        sectionFormatErrors,
-                        this.setInputErrors
-                      );
-                    }}
-                    disabled={isReviewPage} />
-              </FormGroup>
-            </Col>
-          </PaddedRow>
-
-          <PaddedRow>
-            <Col lg={6}>
-              <FormGroup
-                  validationState={bootstrapValidation(
-                    input.cadNumber,
-                    cadNumberValid,
-                    false,
-                    didClickNav
-                  )}>
-                <TitleLabel>CAD Number</TitleLabel>
-                <FormControl
-                    data-section={section}
-                    name="cadNumber"
-                    value={input.cadNumber}
-                    onChange={(e) => {
-                      handleTextInput(
-                        e,
-                        'int16',
-                        sectionFormatErrors,
-                        this.setInputErrors
-                      );
-                    }}
-                    disabled={isReviewPage} />
-              </FormGroup>
-            </Col>
-            <Col lg={6}>
-              <TitleLabel>On View</TitleLabel>
-              <InlineRadio
-                  inline
-                  data-section={section}
-                  name="onView"
-                  value
-                  checked={input.onView}
-                  onChange={handleSingleSelection}
-                  disabled={isReviewPage}>Yes
-              </InlineRadio>
-              <InlineRadio
-                  inline
-                  data-section={section}
-                  name="onView"
-                  value={false}
-                  checked={!input.onView}
-                  onChange={handleSingleSelection}
-                  disabled={isReviewPage}>No
-              </InlineRadio>
-            </Col>
-          </PaddedRow>
-
-          <PaddedRow>
-            <Col lg={6}>
-              <FormGroup
-                  validationState={bootstrapValidation(
-                    input.dateOccurred,
-                    dateOccurredValid,
-                    true,
-                    didClickNav
-                  )}>
-                <TitleLabel>Date Occurred*</TitleLabel>
-                <DatePicker
-                    disabled={isReviewPage}
-                    onChange={(brokenDTO) => {
-                      const fixedDTO = fixDatePickerIsoDateTime(brokenDTO);
-                      const chosenDate = moment(fixedDTO);
-                      this.setState(
-                        {
-                          dateOccurredValid: chosenDate.isSameOrBefore(moment())
-                        },
-                        () => {
-                          handleDatePickerDateTimeOffset(fixedDTO, section, 'dateOccurred');
-                        }
-                      );
-                    }}
-                    value={input.dateOccurred} />
-              </FormGroup>
-            </Col>
-            <Col lg={6}>
-              <TitleLabel>Time Occurred</TitleLabel>
-              <TimePicker
-                  value={input.timeOccurred}
-                  onChange={(e) => {
-                    handleTimeInput(e, section, 'timeOccurred');
+                    const datetime = replaceDateTimeDate(input[DATE_TIME_REPORTED_FQN], date);
+                    updateStateValue(section, DATE_TIME_REPORTED_FQN, datetime);
                   }}
-                  disabled={isReviewPage} />
-            </Col>
-          </PaddedRow>
-
-          <PaddedRow>
-            <Col lg={6}>
-              <FormGroup
-                  validationState={bootstrapValidation(
-                    input.dateReported,
-                    dateReportedValid,
-                    true,
-                    didClickNav
-                  )}>
-                <TitleLabel>Date Reported*</TitleLabel>
-                <DatePicker
-                    value={input.dateReported}
-                    onChange={(brokenDTO) => {
-                      const fixedDTO = fixDatePickerIsoDateTime(brokenDTO);
-                      const chosenDate = moment(fixedDTO);
-                      this.setState(
-                        {
-                          dateReportedValid: (
-                            chosenDate.isSameOrBefore(moment()) && chosenDate.isSameOrAfter(moment(input.dateOccurred))
-                          )
-                        },
-                        () => {
-                          handleDatePickerDateTimeOffset(fixedDTO, section, 'dateReported');
-                        }
-                      );
-                    }}
-                    disabled={isReviewPage} />
-              </FormGroup>
-            </Col>
-            <Col lg={6}>
-              <TitleLabel>Time Reported</TitleLabel>
-              <TimePicker
-                  disabled={isReviewPage}
-                  onChange={(e) => {
-                    handleTimeInput(e, section, 'timeReported');
+                  type="date"
+                  value={dateReportedFormatted} />
+            </label>
+          </HalfWidthItem>
+          <HalfWidthItem>
+            <label htmlFor="time-reported">
+              <FieldHeader>Time Reported</FieldHeader>
+              <input
+                  disabled={isReadOnly}
+                  id="time-reported"
+                  onChange={(event) => {
+                    const datetime = replaceDateTimeTime(input[DATE_TIME_REPORTED_FQN], event.target.value);
+                    updateStateValue(section, DATE_TIME_REPORTED_FQN, datetime);
                   }}
-                  value={input.timeReported} />
-            </Col>
-          </PaddedRow>
-        </ContentWrapper>
-        {
-          !isReviewPage
-            ? (
-              <FormNav
-                  prevPath={FORM_PATHS.CONSUMER}
-                  nextPath={FORM_PATHS.COMPLAINANT}
-                  handlePageChange={this.handlePageChange} />
-            )
-            : null
-        }
-        { renderErrors(sectionFormatErrors, sectionRequiredErrors, didClickNav) }
-      </SectionWrapper>
+                  type="time"
+                  value={timeReportedFormatted} />
+            </label>
+          </HalfWidthItem>
+        </FormGridWrapper>
+      </>
     );
   }
 }

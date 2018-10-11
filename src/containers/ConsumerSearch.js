@@ -1,19 +1,17 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Button } from 'react-bootstrap';
+import { Button } from 'lattice-ui-kit';
 
 import ConsumerSearchContainer from './followup/ConsumerSearchContainer';
-import { SectionHeader } from '../shared/Layout';
+import { FormGridWrapper, FullWidthItem } from '../components/form/StyledFormComponents';
 
-const StyledButton = styled(Button)`
-  margin-bottom: 20px;
+const CreateButton = styled(Button)`
+  width: 100%;
 `;
 
 const DividerStatement = styled.div`
+  font-size: 16px;
   text-align: center;
-  font-size: 20px;
-  margin-bottom: 20px;
 `;
 
 /*
@@ -22,34 +20,40 @@ const DividerStatement = styled.div`
 
 class ConsumerSearch extends React.Component {
 
-  static propTypes = {
-    personEntitySetId: PropTypes.string.isRequired,
-    handlePersonSelection: PropTypes.func.isRequired
-  }
-
   handleOnSelectConsumerSearchResult = (searchResult) => {
 
-    this.props.handlePersonSelection(searchResult.toJS());
+    const { handlePersonSelection } = this.props;
+    handlePersonSelection(searchResult.toJS());
   }
 
   render() {
+
+    const { handlePersonSelection, personEntitySetId } = this.props;
     return (
-      <div>
-        <SectionHeader>Select Consumer</SectionHeader>
-        <StyledButton
-            onClick={() => {
-              // this is hacky and terrible
-              this.props.handlePersonSelection(null);
-            }}
-            block>
-          Create New Consumer Entry
-        </StyledButton>
-        <DividerStatement>—OR—</DividerStatement>
-        <ConsumerSearchContainer
-            peopleEntitySetId={this.props.personEntitySetId}
-            showTitle={false}
-            onSelectSearchResult={this.handleOnSelectConsumerSearchResult} />
-      </div>
+      <FormGridWrapper>
+        <FullWidthItem>
+          <h1>Select Consumer</h1>
+        </FullWidthItem>
+        <FullWidthItem>
+          <CreateButton
+              mode="secondary"
+              onClick={() => {
+                // this is hacky and terrible
+                handlePersonSelection(null);
+              }}>
+            Create New Consumer Entry
+          </CreateButton>
+        </FullWidthItem>
+        <FullWidthItem>
+          <DividerStatement>— OR —</DividerStatement>
+        </FullWidthItem>
+        <FullWidthItem>
+          <ConsumerSearchContainer
+              peopleEntitySetId={personEntitySetId}
+              showTitle={false}
+              onSelectSearchResult={this.handleOnSelectConsumerSearchResult} />
+        </FullWidthItem>
+      </FormGridWrapper>
     );
   }
 }
