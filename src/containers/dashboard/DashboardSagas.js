@@ -72,7 +72,8 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *> {
   try {
     yield put(loadDashboardData.request(action.id));
     const {
-      app
+      app,
+      months
     } = action.value;
 
     const isPortland = isPortlandOrg(getSelectedOrganizationId(app));
@@ -81,7 +82,7 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *> {
     const ceiling = yield call(DataApi.getEntitySetSize, reportESId);
     const datePropertyTypeId = yield call(EntityDataModelApi.getPropertyTypeId, DATE_TIME_OCCURRED_FQN);
     const bhrs = yield call(SearchApi.searchEntitySetData, reportESId, {
-      searchTerm: `${datePropertyTypeId}:[${moment().subtract(6, 'month').format(DATE_FORMAT)} TO *]`,
+      searchTerm: `${datePropertyTypeId}:[${moment().subtract(months, 'month').format(DATE_FORMAT)} TO *]`,
       start: 0,
       maxHits: ceiling,
       fuzzy: false

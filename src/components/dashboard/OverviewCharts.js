@@ -55,10 +55,11 @@ const RowHeader = styled.div`
 `;
 
 type Props = {
-  dashboardCounts :Map
+  dashboardCounts :Map,
+  months :number
 };
 
-const OverviewCharts = ({ dashboardCounts } :Props) => {
+const OverviewCharts = ({ dashboardCounts, months } :Props) => {
 
   const tooltip = (counted, { title, formatAsString }, { label, payload }) => {
     return (
@@ -98,12 +99,12 @@ const OverviewCharts = ({ dashboardCounts } :Props) => {
     if (!date.isValid()) {
       return 0;
     }
-    const start = moment().subtract(1, 'month').startOf('day');
+    const start = moment().subtract(months, 'month').startOf('day');
     return date.diff(start, 'days');
   };
 
   const getDateFromNumber = (dateNum) => {
-    const dateMoment = moment().subtract(1, 'month').add(dateNum, 'days');
+    const dateMoment = moment().subtract(months, 'month').add(dateNum, 'days');
     return dateMoment.format('MMM D');
   };
 
