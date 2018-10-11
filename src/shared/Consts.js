@@ -93,3 +93,44 @@ export const STATES = [
 ];
 
 export const DATA_URL_PREFIX = 'data:image/png;base64,';
+
+/* Dashboard Constants */
+
+export const SUMMARY_STATS = {
+  NUM_REPORTS: 'numReports',
+  AVG_AGE: 'avgAge',
+  NUM_HOMELESS: 'numHomeless',
+  NUM_MALE: 'numMale',
+  NUM_VETERANS: 'numVeterans',
+  NUM_USING_SUBSTANCE: 'numUsingSubstance',
+  NUM_USING_ALCOHOL: 'numUsingAlcohol',
+  NUM_USING_DRUGS: 'numUsingDrugs'
+};
+
+export const DASHBOARD_COUNTS = {
+  RACE: 'raceCounts',
+  AGE: 'ageCounts',
+  GENDER: 'genderCounts',
+  REPORTS_BY_DATE: 'reportsByDate',
+  REPORTS_BY_TIME: 'reportsByTime',
+  REPORTS_BY_DAY_OF_WEEK: 'reportsByDayOfWeek',
+
+  EMOTIONAL_STATE: 'emotionalStateCounts',
+  BEHAVIORS: 'observedBehaviorsCounts',
+  SELF_DIAGNOSIS: 'selfDiagnosisCounts',
+  MEDICATION: 'medicationCounts',
+  INJURIES: 'injuryCounts',
+  ARMED: 'armedCounts',
+  ARMED_WEAPON_TYPES: 'armedWeaponTypeCounts',
+  WEAPON_ACCESS: 'weaponAccessCounts',
+  ACCESS_WEAPON_TYPES: 'accessWeaponTypeCounts',
+  SUICIDAL: 'suicidal',
+  SUICIDAL_ACTIONS: 'suicidalalActions',
+  SUICIDE_METHOD: 'suicideMethod',
+
+  DISPOSITIONS: 'dispositions',
+  DEESCALATION: 'deescalationTechniques',
+  RESOURCES: 'resources',
+  DISPOSITIONS_BY_DEESCALATION: 'dispositionsByDeescalationTechnique',
+  CERTIFICATIONS: 'certificationCounts'
+};

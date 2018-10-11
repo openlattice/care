@@ -63,8 +63,6 @@ function prepReportEntityData(
     'bhr.followupreason': reportInfo[REASON_VAL],
     'bhr.officerName': reportInfo[OFFICER_NAME_VAL],
     'bhr.officerSeqID': reportInfo[OFFICER_SEQ_ID_VAL],
-    // 2018-09-14 - removing "bhr.timeReported" as it is not part of the "bhr.followup" EntityType anymore
-    // 'bhr.timeReported': reportInfo[TIME_VAL],
     'event.comments': reportInfo[SUMMARY_VAL],
     'health.staff': reportInfo[CLINICIAN_NAME_VAL],
     [PERSON_ID_FQN]: consumer.getIn([PERSON_ID_FQN, 0])

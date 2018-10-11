@@ -72,6 +72,9 @@ function replaceDateTimeTime(datetime :string, time :string) :string {
   return dt;
 }
 
+export const DATE_STR = 'MM/DD/YYYY';
+export const TIME_STR = 'hh:mm a';
+
 export {
   formatAsDate,
   formatAsTime,

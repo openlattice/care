@@ -15,6 +15,7 @@ import { all, fork } from 'redux-saga/effects';
 import * as RoutingSagas from '../router/RoutingSagas';
 
 import * as AppSagas from '../../containers/app/AppSagas';
+import * as DashboardSagas from '../../containers/dashboard/DashboardSagas';
 import * as FollowUpReportSagas from '../../containers/followup/FollowUpReportSagas';
 import * as ReportSagas from '../../containers/form/ReportSagas';
 import * as ReportsSagas from '../../containers/reports/ReportsSagas';
@@ -49,6 +50,9 @@ export default function* sagas() :Generator<*, *, *> {
 
     // Follow-Up Report Sagas
     fork(FollowUpReportSagas.submitFollowUpReportWatcher),
+
+    // Dashboard Sagas
+    fork(DashboardSagas.loadDashboardDataWatcher),
 
     // Report Sagas
     fork(AppSagas.loadAppWatcher),
