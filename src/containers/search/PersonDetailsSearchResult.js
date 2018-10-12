@@ -86,7 +86,7 @@ const PersonDetailsSearchResult = ({ personDetails } :Props) => {
 
   // TODO: how do we avoid having to hardcode FQNs???
   const pictureStr = personDetails.getIn([PERSON_PICTURE_FQN, 0], '');
-  const pictureImgSrc = `${DATA_URL_PREFIX}${pictureStr}`;
+  const pictureImgSrc = pictureStr.startsWith('data:image') ? pictureStr : `${DATA_URL_PREFIX}${pictureStr}`;
 
   const id = personDetails.getIn([PERSON_ID_FQN, 0], '');
   const firstName = personDetails.getIn([PERSON_FIRST_NAME_FQN, 0], '');
