@@ -27,6 +27,7 @@
   },
   "license": "GPLv3",
   "dependencies": {
+    "@atlaskit/datetime-picker": "^6.3.15",
     "@babel/polyfill": "^7.0.0",
     "@babel/runtime": "^7.0.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.0",

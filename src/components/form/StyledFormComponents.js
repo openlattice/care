@@ -56,3 +56,42 @@ export {
   FullWidthItem,
   HalfWidthItem,
 };
+
+const StyledFormViewWrapper = styled.div`
+  display: flex;
+  width: 100%;
+`;
+
+const StyledFormWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin: 30px auto;
+  width: 960px;
+`;
+
+const StyledTitleWrapper = styled.div`
+  align-items: center;
+  color: #37454a;
+  display: flex;
+  font-size: 32px;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  width: 100%;
+`;
+
+const StyledSectionWrapper = styled.div`
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 0;
+  width: 100%;
+  border: solid 1px #e1e1eb;
+`;
+
+export {
+  StyledFormWrapper,
+  StyledFormViewWrapper,
+  StyledSectionWrapper,
+  StyledTitleWrapper
+};

@@ -1,9 +1,11 @@
 import React from 'react';
 
+import styled from 'styled-components';
 import moment from 'moment';
 import { withRouter } from 'react-router';
 import { Link } from 'react-router-dom';
 
+import ButtonToolbar from './buttons/ButtonToolbar';
 import FieldHeader from './text/styled/FieldHeader';
 import TextField from './text/TextField';
 import SelfieWebCam, { DATA_URL_PREFIX } from './SelfieWebCam';
@@ -82,6 +84,10 @@ import {
   PERSON_PICTURE_FQN,
 } from '../edm/DataModelFqns';
 
+const PersonPicture = styled.img`
+  max-width: 100%;
+`;
+
 class ConsumerInfoView extends React.Component {
 
   static defaultProps = {
@@ -94,25 +100,26 @@ class ConsumerInfoView extends React.Component {
     super(props);
     this.state = {
       section: 'consumerInfo',
-      showSelfieWebCam: false,
+      shouldTakePhoto: false
     };
-  }
-
-  handleOnChangeTakePicture = (event) => {
-
-    this.setState({
-      showSelfieWebCam: event.target.checked || false
-    });
-
-    if (this.selfieWebCam) {
-      this.selfieWebCam.closeMediaStream();
-    }
   }
 
   handleOnSelfieCapture = (selfieDataAsBase64) => {
 
-    const { handlePicture, section } = this.props;
+    const { handlePicture } = this.props;
+    const { section } = this.state;
     handlePicture(section, PERSON_PICTURE_FQN, (selfieDataAsBase64 || ''));
+  }
+
+  getPictureDataUrl = () => {
+    const { input } = this.props;
+
+    let pictureDataUrl = input[PERSON_PICTURE_FQN];
+    if (pictureDataUrl && !pictureDataUrl.startsWith('data:image')) {
+      pictureDataUrl = `${DATA_URL_PREFIX}${pictureDataUrl}`;
+    }
+
+    return pictureDataUrl;
   }
 
   renderConsumerPicture = (input) => {
@@ -121,42 +128,87 @@ class ConsumerInfoView extends React.Component {
       return null;
     }
 
-    const pictureDataUrl = `${DATA_URL_PREFIX}${input[PERSON_PICTURE_FQN]}`;
+    const pictureDataUrl = this.getPictureDataUrl();
     return (
       <FullWidthItem>
         <FieldHeader>
           Consumer Picture
         </FieldHeader>
-        <img
+        <PersonPicture
             alt="Consumer"
             src={pictureDataUrl} />
       </FullWidthItem>
     );
   }
 
-  renderSelfieWebCam = () => {
+  handleOnSelectImage = (e) => {
+    const { handlePicture } = this.props;
+    const { section } = this.state;
+    const { files } = e.target;
 
-    const { showSelfieWebCam } = this.state;
+    if (files.length) {
+      const file = files[0];
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const pictureDataAsBase64 = reader.result;
+        handlePicture(section, PERSON_PICTURE_FQN, (pictureDataAsBase64 || ''));
+      };
+    }
+  }
+
+  renderPhotoSelection = () => {
+    const { input } = this.props;
+    const { shouldTakePhoto } = this.state;
+
+    const pictureOptions = [
+      {
+        label: 'Upload a Photo',
+        value: false,
+        onClick: () => {
+          this.setState({ shouldTakePhoto: false });
+          if (this.selfieWebCam) {
+            this.selfieWebCam.closeMediaStream();
+          }
+        }
+      },
+      {
+        label: 'Take a Photo',
+        value: true,
+        onClick: () => this.setState({ shouldTakePhoto: true })
+      }
+    ];
+
+    const pictureDataUrl = this.getPictureDataUrl();
+
     return (
       <FullWidthItem>
         <FieldHeader>
           Consumer Picture
         </FieldHeader>
-        <label htmlFor="consumer-picture-checkbox">
-          <input id="consumer-picture-checkbox" type="checkbox" onChange={this.handleOnChangeTakePicture} />
-          Take a picture with your webcam
-        </label>
+        <ButtonToolbar options={pictureOptions} value={shouldTakePhoto} isBasic />
         {
-          !showSelfieWebCam
-            ? null
-            : (
+          shouldTakePhoto
+            ? (
               <SelfieWebCam
                   onSelfieCapture={this.handleOnSelfieCapture}
                   ref={(element) => {
                     this.selfieWebCam = element;
                   }} />
+            ) : (
+            <>
+              <label htmlFor="consumer-picture-file">
+                <input
+                    id="consumer-picture-file"
+                    type="file"
+                    onChange={this.handleOnSelectImage}
+                    accept=".jpg, .png, .jpeg" />
+              </label>
+              {pictureDataUrl.length ? <PersonPicture alt="Consumer" src={pictureDataUrl} /> : null}
+            </>
             )
         }
+
       </FullWidthItem>
     );
   }
@@ -416,7 +468,7 @@ class ConsumerInfoView extends React.Component {
           {
             isReadOnly || consumerIsSelected
               ? this.renderConsumerPicture(input)
-              : this.renderSelfieWebCam()
+              : this.renderPhotoSelection()
           }
           <FullWidthItem>
             <FieldHeader>Military Status</FieldHeader>

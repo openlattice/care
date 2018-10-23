@@ -14,17 +14,17 @@ const ToolbarWrapper = styled.div`
 const StyledButton = styled.button`
   display: flex;
   justify-content: center;
-  border-top: 1px solid #ceced9;
-  border-bottom: 1px solid #ceced9;
-  border-right: 1px solid #ceced9;
+  border-top: 1px solid ${props => props.styles.border};
+  border-bottom: 1px solid ${props => props.styles.border};
+  border-right: 1px solid ${props => props.styles.border};
   text-decoration: none;
-  padding: 10px 50px;
+  padding: ${props => props.styles.padding};
   min-width: 130px;
   font-family: 'Open Sans', sans-serif;
   font-size: 12px;
-  font-weight: 600;
-  background-color: ${props => (props.selected ? '#6124e2' : 'transparent')};
-  color: ${props => (props.selected ? '#ffffff' : '#8e929b')};
+  font-weight: ${props => (props.selected ? 600 : props.styles.defaultFontWeight)};
+  background-color: ${props => (props.selected ? props.styles.selectedBackgroundColor : 'transparent')};
+  color: ${props => (props.selected ? props.styles.selectedTextColor : '#8e929b')};
 
   &:hover {
     cursor: pointer;
@@ -32,8 +32,8 @@ const StyledButton = styled.button`
     ${(props) => {
       if (!props.selected) {
         return css`
-          color: #6124e2;
-          background-color: #e4d8ff;
+          color: ${props.styles.hoverColor};
+          background-color: ${props.styles.hoverBackgroundColor};
         `;
       }
       return '';
@@ -46,7 +46,7 @@ const StyledButton = styled.button`
 
   &:first-child {
     border-radius: 4px 0 0 4px;
-    border-left: 1px solid #ceced9;
+    border-left: 1px solid ${props => props.styles.border};
   }
 
   &:last-child {
@@ -63,24 +63,67 @@ type SearchOption = {
 type Props = {
   options :SearchOption[],
   value :string,
-  noPadding? :boolean
+  noPadding? :boolean,
+  isBasic? :boolean
 }
 
-const ButtonToolbar = ({ options, value, noPadding } :Props) => (
-  <ToolbarWrapper noPadding={noPadding}>
-    { options.map(option => (
-      <StyledButton
-          key={option.value}
-          onClick={option.onClick}
-          selected={option.value === value}>
-        {option.label}
-      </StyledButton>
-    )) }
-  </ToolbarWrapper>
-);
+const APPEARANCES = {
+  DEFAULT: 'DEFAULT',
+  BASIC: 'BASIC'
+};
+
+const getColors = (appearance) => {
+  switch (appearance) {
+    case APPEARANCES.BASIC: {
+      return {
+        border: '#dcdce7',
+        selectedTextColor: '#8e929b',
+        padding: '6px 15px',
+        selectedBackgroundColor: '#dcdce7',
+        defaultFontWeight: '400',
+        hoverColor: '#8e929b',
+        hoverBackgroundColor: '#f0f0f7'
+      };
+    }
+    case APPEARANCES.DEFAULT:
+    default:
+      return {
+        border: '#ceced9',
+        padding: '10px 50px',
+        selectedTextColor: '#ffffff',
+        selectedBackgroundColor: '#6124e2',
+        defaultFontWeight: '600',
+        hoverColor: '#6124e2',
+        hoverBackgroundColor: '#e4d8ff'
+      };
+  }
+};
+
+const ButtonToolbar = ({
+  options,
+  value,
+  noPadding,
+  isBasic
+} :Props) => {
+  const appearance = isBasic ? APPEARANCES.BASIC : APPEARANCES.DEFAULT;
+  return (
+    <ToolbarWrapper noPadding={noPadding} styles={getColors(appearance)}>
+      { options.map(option => (
+        <StyledButton
+            key={option.value}
+            onClick={option.onClick}
+            styles={getColors(appearance)}
+            selected={option.value === value}>
+          {option.label}
+        </StyledButton>
+      )) }
+    </ToolbarWrapper>
+  );
+}
 
 ButtonToolbar.defaultProps = {
-  noPadding: false
+  noPadding: false,
+  isBasic: false
 };
 
 export default ButtonToolbar;

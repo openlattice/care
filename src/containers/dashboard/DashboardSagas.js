@@ -127,7 +127,7 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *> {
     const dispositionsList = isPortland ? Object.values(DISPOSITIONS_PORTLAND) : Object.values(DISPOSITIONS);
     Object.values(DEESCALATION_TECHNIQUES).forEach((deescTechnique) => {
       dispositionsList.forEach((disp) => {
-        dispositionsByDeescalation = dispositionsByDeescalation.setIn([deescTechnique, disp], 0);
+        dispositionsByDeescalation = dispositionsByDeescalation.setIn([disp, deescTechnique], 0);
       });
     });
 

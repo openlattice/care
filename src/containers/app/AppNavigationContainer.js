@@ -9,7 +9,12 @@ import { Colors } from 'lattice-ui-kit';
 import { withRouter } from 'react-router';
 import { NavLink } from 'react-router-dom';
 
-import { DASHBOARD_PATH, HOME_PATH, REPORTS_PATH } from '../../core/router/Routes';
+import {
+  DASHBOARD_PATH,
+  HOME_PATH,
+  PEOPLE_PATH,
+  REPORTS_PATH
+} from '../../core/router/Routes';
 
 const { NEUTRALS, PURPLES } = Colors;
 
@@ -69,6 +74,7 @@ class AppNavigationContainer extends Component<Props> {
         <NavLinkWrapper to={HOME_PATH}>Home</NavLinkWrapper>
         <NavLinkWrapper to={REPORTS_PATH}>Reports</NavLinkWrapper>
         <NavLinkWrapper to={DASHBOARD_PATH}>Dashboard</NavLinkWrapper>
+        <NavLinkWrapper to={PEOPLE_PATH}>People</NavLinkWrapper>
       </NavigationContentWrapper>
     );
   }
