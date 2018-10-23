@@ -17,7 +17,8 @@ type Props = {
   cellSize :number,
   counts :Map,
   withContent? :boolean,
-  square? :boolean
+  square? :boolean,
+  exponential? :boolean
 }
 
 const Wrapper = styled.div`
@@ -61,6 +62,7 @@ const Label = styled(BaseCell)`
   font-size: 14px;
   font-weight: 400;
   color: #2e2e34;
+  word-break: break-word;
 `;
 
 const Cell = styled(BaseCell).attrs({
@@ -115,6 +117,21 @@ const getNHeatmapColors = (num) => {
   return heatmapColors;
 };
 
+const getChunkSize = (max, min, numColors) => ((max + 1) - min) / numColors;
+
+const getOffset = (max, count, numColors, exponential) => {
+  if (!exponential) return Math.floor((max - count) / getChunkSize(max, 0, numColors)) + 1;
+
+  if (count === 0) {
+    return numColors;
+  }
+  if (count >= max) {
+    return 1;
+  }
+
+  return numColors - Math.floor(Math.log(count ** numColors) / Math.log(max));
+};
+
 const HeatMap = ({
   title,
   colValues,
@@ -124,7 +141,8 @@ const HeatMap = ({
   cellSize,
   counts,
   withContent,
-  square
+  square,
+  exponential
 } :Props) => {
 
   const min = 0;
@@ -140,7 +158,7 @@ const HeatMap = ({
 
   const heatmapColors = max >= HEATMAP_COLORS.length ? HEATMAP_COLORS : getNHeatmapColors(max + 1);
 
-  const chunkSize = ((max + 1) - min) / heatmapColors.length;
+  const chunkSize = getChunkSize(max, min, heatmapColors.length);
 
   const renderHeaderRow = () => {
     const labels = [];
@@ -157,8 +175,8 @@ const HeatMap = ({
     cells.push(<Label square={square} size={cellSize} key={rowHeader}>{rowHeaderFormatter(rowHeader)}</Label>);
     colValues.forEach((colValue) => {
       const count = counts.getIn([rowHeader, `${colValue}`], 0);
-      const groupOffset = Math.floor((max - count) / chunkSize);
-      const index = Number.isNaN(groupOffset) ? 0 : heatmapColors.length - 1 - groupOffset;
+      const groupOffset = getOffset(max, count, heatmapColors.length, exponential);
+      const index = Number.isNaN(groupOffset) ? 0 : heatmapColors.length - groupOffset;
 
       cells.push(
         <Cell square={square} size={cellSize} key={`${rowHeader}|${colValue}`} color={heatmapColors[index]}>
@@ -170,13 +188,23 @@ const HeatMap = ({
     return <Row key={`row-${rowHeader}`}>{cells}</Row>;
   };
 
+  const getLegendValue = (index) => {
+    if (!exponential) {
+      return Math.ceil(chunkSize * index);
+    }
+    if (index === 0) {
+      return 0;
+    }
+    return Math.round(max ** (index / heatmapColors.length));
+  }
+
   const renderLegend = () => {
     return (
       <LegendWrapper>
         {heatmapColors.map((color, index) => (
           <LegendItem key={`legend|${index}`}>
             <LegendColor color={color} />
-            <span>&ge; {Math.ceil(chunkSize * index)}</span>
+            <span>&ge; {getLegendValue(index)}</span>
           </LegendItem>
         ))}
       </LegendWrapper>
@@ -197,7 +225,8 @@ HeatMap.defaultProps = {
   withContent: false,
   colHeaderFormatter: col => col,
   rowHeaderFormatter: row => row,
-  square: false
+  square: false,
+  exponential: false
 };
 
 export default HeatMap;
