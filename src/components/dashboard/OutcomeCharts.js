@@ -54,10 +54,11 @@ const OutcomeCharts = ({ dashboardCounts } :Props) => {
     return (
       <HeatMap
           title="Dispositions by de-escalation techniques"
-          rowHeaders={deescList}
-          colValues={dispList}
+          rowHeaders={dispList}
+          colValues={deescList}
           cellSize={50}
           counts={countMap}
+          exponential
           withContent />
     );
   };
