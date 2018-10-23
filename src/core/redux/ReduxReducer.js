@@ -11,6 +11,7 @@ import dashboardReducer from '../../containers/dashboard/DashboardReducer';
 import edmReducer from '../../edm/EdmReducer';
 import followupReducer from '../../containers/followup/FollowUpReportReducer';
 import hospitalsReducer from '../../containers/form/HospitalsReducer';
+import peopleReducer from '../../containers/people/PeopleReducer';
 import reportsReducer from '../../containers/reports/ReportsReducer';
 import searchReducer from '../../containers/search/SearchReducer';
 
@@ -23,6 +24,7 @@ export default function reduxReducer() {
     edm: edmReducer,
     followUpReport: followupReducer,
     hospitals: hospitalsReducer,
+    people: peopleReducer,
     report: bhrReducer,
     reports: reportsReducer,
     search: searchReducer

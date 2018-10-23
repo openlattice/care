@@ -15,6 +15,7 @@ import AppHeaderContainer from './AppHeaderContainer';
 import FollowUpReportManager from '../followup/FollowUpReportManager';
 import FormContainer from '../form/FormContainer';
 import HomeContainer from '../home/HomeContainer';
+import PeopleContainer from '../people/PeopleContainer';
 import Spinner from '../../components/spinner/Spinner';
 import HackyReportsManager from '../reports/HackyReportsManager';
 import DashboardContainer from '../dashboard/DashboardContainer';
@@ -26,6 +27,7 @@ import {
   DASHBOARD_PATH,
   FOLLOW_UP_PATH,
   HOME_PATH,
+  PEOPLE_PATH,
   REPORTS_PATH
 } from '../../core/router/Routes';
 import {
@@ -167,6 +169,7 @@ class AppContainer extends Component<Props> {
         <Route path={FOLLOW_UP_PATH} component={FollowUpReportManager} />
         <Route path={REPORTS_PATH} component={HackyReportsManager} />
         <Route path={DASHBOARD_PATH} component={DashboardContainer} />
+        <Route path={PEOPLE_PATH} component={PeopleContainer} />
         <Redirect to={HOME_PATH} />
       </Switch>
     );
