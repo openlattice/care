@@ -76,8 +76,8 @@ class TextField extends Component<Props, State> {
 
   shouldComponentUpdate(nextProps :Props) {
 
-    const { value } = this.props;
-    if (nextProps.value !== value) {
+    const { disabled, value } = this.props;
+    if (nextProps.value !== value || nextProps.disabled !== disabled) {
       return true;
     }
     return false;

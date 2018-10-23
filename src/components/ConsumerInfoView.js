@@ -84,7 +84,7 @@ import {
   PERSON_PICTURE_FQN,
 } from '../edm/DataModelFqns';
 
-const PeresonPicture = styled.img`
+const PersonPicture = styled.img`
   max-width: 100%;
 `;
 
@@ -134,7 +134,7 @@ class ConsumerInfoView extends React.Component {
         <FieldHeader>
           Consumer Picture
         </FieldHeader>
-        <PeresonPicture
+        <PersonPicture
             alt="Consumer"
             src={pictureDataUrl} />
       </FullWidthItem>
@@ -204,7 +204,7 @@ class ConsumerInfoView extends React.Component {
                     onChange={this.handleOnSelectImage}
                     accept=".jpg, .png, .jpeg" />
               </label>
-              {pictureDataUrl.length ? <PeresonPicture alt="Consumer" src={pictureDataUrl} /> : null}
+              {pictureDataUrl.length ? <PersonPicture alt="Consumer" src={pictureDataUrl} /> : null}
             </>
             )
         }
