@@ -4,7 +4,7 @@
 
 import React, { Component } from 'react';
 
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Colors } from 'lattice-ui-kit';
 import { withRouter } from 'react-router';
 import { NavLink } from 'react-router-dom';
@@ -24,13 +24,6 @@ const NAV_LINK_ACTIVE_CLASSNAME :string = 'nav-link-active';
  * styled components
  */
 
-const NavigationContentWrapper = styled.nav`
-  display: flex;
-  flex: 0 0 auto;
-  justify-content: flex-start;
-  margin-left: 30px;
-`;
-
 const NavLinkWrapper = styled(NavLink).attrs({
   activeClassName: NAV_LINK_ACTIVE_CLASSNAME
 })`
@@ -40,7 +33,7 @@ const NavLinkWrapper = styled(NavLink).attrs({
   display: flex;
   font-size: 12px;
   letter-spacing: 0;
-  margin-right: 30px;
+  margin-right: ${props => (props.dropdown ? 0 : 30)}px;
   outline: none;
   padding: 13px 2px 10px 2px;
   text-align: left;
@@ -63,21 +56,52 @@ const NavLinkWrapper = styled(NavLink).attrs({
   }
 `;
 
-type Props = {};
+const NavigationContentWrapper = styled.nav`
+  display: flex;
+  flex-direction: ${props => (props.dropdown ? 'column' : 'row')};
+  flex: 0 0 auto;
+  justify-content: flex-start;
+  margin-left: ${props => (props.dropdown ? 0 : 30)}px;
 
-class AppNavigationContainer extends Component<Props> {
+  ${(props) => {
+    if (props.dropdown) {
+      return css`
+        width: 100%;
 
-  render() {
+        ${NavLinkWrapper} {
+          width: 100%;
+          padding: 20px 0;
+          justify-content: center;
 
-    return (
-      <NavigationContentWrapper>
-        <NavLinkWrapper to={HOME_PATH}>Home</NavLinkWrapper>
-        <NavLinkWrapper to={REPORTS_PATH}>Reports</NavLinkWrapper>
-        <NavLinkWrapper to={DASHBOARD_PATH}>Dashboard</NavLinkWrapper>
-        <NavLinkWrapper to={PEOPLE_PATH}>People</NavLinkWrapper>
-      </NavigationContentWrapper>
-    );
-  }
-}
+          &:hover {
+            background-color: #e4d8ff;
+          }
+
+          &.${NAV_LINK_ACTIVE_CLASSNAME} {
+            border-bottom: none !important;
+          }
+        }
+      `;
+    }
+    return '';
+  }}
+`;
+
+type Props = {
+  dropdown? :boolean
+};
+
+const AppNavigationContainer = ({ dropdown } :Props) => (
+  <NavigationContentWrapper dropdown={dropdown}>
+    <NavLinkWrapper to={HOME_PATH}>Home</NavLinkWrapper>
+    <NavLinkWrapper to={REPORTS_PATH}>Reports</NavLinkWrapper>
+    <NavLinkWrapper to={DASHBOARD_PATH}>Dashboard</NavLinkWrapper>
+    <NavLinkWrapper to={PEOPLE_PATH}>People</NavLinkWrapper>
+  </NavigationContentWrapper>
+);
+
+AppNavigationContainer.defaultProps = {
+  dropdown: false
+};
 
 export default withRouter(AppNavigationContainer);

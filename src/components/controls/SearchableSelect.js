@@ -68,6 +68,7 @@ const SearchInput = styled.input.attrs({
   type: 'text'
 })`
   ${inputStyle}
+  width: ${props => (props.fullWidth ? '100%' : 'auto')};
   background-color: ${props => (props.transparent ? '#f9f9fd' : '#ffffff')};
 `;
 
@@ -170,7 +171,8 @@ type Props = {
   dropdownIcon? :boolean,
   split? :boolean,
   noFilter? :boolean,
-  withBorders? :boolean
+  withBorders? :boolean,
+  fullWidth? :boolean
 }
 
 type State = {
@@ -198,7 +200,8 @@ class SearchableSelect extends React.Component<Props, State> {
     dropdownIcon: true,
     split: false,
     noFilter: false,
-    withBorders: false
+    withBorders: false,
+    fullWidth: false
   };
 
   constructor(props :Props) {
@@ -291,6 +294,7 @@ class SearchableSelect extends React.Component<Props, State> {
       selectOnly,
       disabled,
       transparent,
+      fullWidth,
       searchPlaceholder,
       onClear,
       searchIcon,
@@ -328,6 +332,7 @@ class SearchableSelect extends React.Component<Props, State> {
                   onChange={this.handleOnChangeSearchQuery}
                   onClick={this.showDataTable}
                   searchIcon={searchIcon}
+                  fullWidth={fullWidth}
                   dropdownIcon={dropdownIcon} />
             )
           }

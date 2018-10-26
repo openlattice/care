@@ -19,8 +19,12 @@ import BasicButton from './BasicButton';
    openAbove? :boolean,
    fullSize? :boolean,
    width? :number,
-   selected :Immutable.List<*>
- }
+   selected :Immutable.List<*>,
+   hideOnClick :boolean,
+   relativeToPage? :boolean
+ };
+
+const TEXT_COLOR = '#8e929b';
 
 const RefWrapper = styled.div`
   width: ${props => (props.fullSize ? '100%' : 'auto')};
@@ -34,7 +38,7 @@ const SearchableSelectWrapper = styled.div`
   width: ${props => (props.fullSize ? '100%' : 'auto')};
   margin: 0;
   padding: 0;
-  position: relative;
+  position: ${props => (props.relativeToPage ? 'statuc' : 'relative')};
 `;
 
 const SearchInputWrapper = styled.div`
@@ -50,7 +54,7 @@ const SearchIcon = styled.div`
   position: absolute;
   margin: 0 20px;
   right: 0;
-  color: ${props => (props.open ? '#ffffff' : '#8e929b')}
+  color: ${props => (props.open ? '#ffffff' : TEXT_COLOR)}
 `;
 
 
@@ -61,18 +65,31 @@ const SearchButton = styled(BasicButton)`
   font-size: 14px;
   font-weight: 600;
   letter-spacing: 0;
-  padding: 0 45px 0 20px;
+  padding: 0 ${props => (props.transparent ? 20 : 45)}px 0 20px;
   outline: none;
   border: none;
   ${(props) => {
-    if (props.open) {
+    if (props.transparent) {
       return css`
-        background-color: #8e929b;
-        color: #ffffff;
+        background-color: transparent;
 
         &:hover {
-          background-color: #8e929b !important;
-          color: #ffffff !important;
+          background-color: transparent !important;
+          color: #555e6f;
+        }
+      `;
+    }
+    return '';
+  }}
+  ${(props) => {
+    if (props.open) {
+      return css`
+        background-color: ${props.transparent ? 'transparent' : TEXT_COLOR};
+        color: ${props.transparent ? '#555e6f' : '#ffffff'};
+
+        &:hover {
+          background-color: ${props.transparent ? 'transparent' : TEXT_COLOR} !important;
+          color: ${props.transparent ? '#555e6f' : '#ffffff'} !important;
         }
       `;
     }
@@ -86,14 +103,21 @@ const DataTableWrapper = styled.div`
   border: 1px solid #e1e1eb;
   position: absolute;
   z-index: 1;
-  width: 100%;
   visibility: ${props => (props.isVisible ? 'visible' : 'hidden')}};
   box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.1);
   margin: ${props => (props.openAbove ? '-303px 0 0 0' : '45px 0 0 0')};
   bottom: ${props => (props.openAbove ? '45px' : 'auto')};
   max-width: ${props => (props.fullSize ? '100%' : '400px')};
   min-width: ${props => (props.width ? `${props.width}px` : 'auto')};
-  width: ${props => (props.fullSize ? '100%' : 'auto')};
+
+  ${props => (props.relativeToPage ? (
+    css`
+      left: 10px;
+      right: 10px;
+    `
+  ) : css`
+      width: ${props.fullSize ? '100%' : 'auto'};
+    `)}
 `;
 
 export default class DropdownButtonWrapper extends Component<Props, State> {
@@ -101,7 +125,9 @@ export default class DropdownButtonWrapper extends Component<Props, State> {
   static defaultProps = {
     openAbove: false,
     transparent: false,
-    fullSize: false
+    fullSize: false,
+    hideOnClick: false,
+    relativeToPage: false
   }
 
   constructor(props :Props) {
@@ -112,15 +138,16 @@ export default class DropdownButtonWrapper extends Component<Props, State> {
   }
 
   componentWillMount() {
-    document.addEventListener('mousedown', this.closeDataTable, false);
+    document.addEventListener('click', this.closeDataTable, false);
   }
 
   componentWillUnmount() {
-    document.removeEventListener('mousedown', this.closeDataTable, false);
+    document.removeEventListener('click', this.closeDataTable, false);
   }
 
   closeDataTable = (e) => {
-    if (this.node.contains(e.target)) {
+    const { hideOnClick } = this.props;
+    if ((!hideOnClick && this.node.contains(e.target)) || this.togglebutton.contains(e.target)) {
       return;
     }
     this.setState({ isVisibleDataTable: false });
@@ -128,14 +155,16 @@ export default class DropdownButtonWrapper extends Component<Props, State> {
 
   toggleDataTable = (e) => {
     e.stopPropagation();
+    const { isVisibleDataTable } = this.state;
 
     this.setState({
-      isVisibleDataTable: !this.state.isVisibleDataTable
+      isVisibleDataTable: !isVisibleDataTable
     });
   }
 
   handleOnSelect = (label :string) => {
-    this.props.onSelect(this.props.options.get(label));
+    const { onSelect, options } = this.props;
+    onSelect(options.get(label));
   }
 
   render() {
@@ -144,19 +173,28 @@ export default class DropdownButtonWrapper extends Component<Props, State> {
       short,
       fullSize,
       children,
-      width
+      width,
+      transparent
     } = this.props;
     const { isVisibleDataTable } = this.state;
     return (
       <RefWrapper innerRef={(node) => { this.node = node; }} {...this.props}>
         <SearchableSelectWrapper isVisibleDataTable={isVisibleDataTable} {...this.props}>
           <SearchInputWrapper short={short}>
-            <SearchButton open={isVisibleDataTable} onClick={this.toggleDataTable} {...this.props}>
+            <SearchButton
+                innerRef={(togglebutton) => { this.togglebutton = togglebutton; }}
+                open={isVisibleDataTable}
+                onClick={this.toggleDataTable}
+                {...this.props}>
               {title}
             </SearchButton>
-            <SearchIcon open={isVisibleDataTable}>
-              <FontAwesomeIcon icon={isVisibleDataTable ? faChevronUp : faChevronDown} />
-            </SearchIcon>
+            {
+              transparent ? null : (
+                <SearchIcon open={isVisibleDataTable}>
+                  <FontAwesomeIcon icon={isVisibleDataTable ? faChevronUp : faChevronDown} />
+                </SearchIcon>
+              )
+            }
           </SearchInputWrapper>
           {
             !isVisibleDataTable

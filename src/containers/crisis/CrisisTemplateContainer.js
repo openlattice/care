@@ -57,11 +57,13 @@ const PageWrapper = styled.div`
   display: flex;
   flex-direction: column;
   padding: 5px;
-  margin: 0 auto;
-  width: inherit;
+  margin: 0;
+  width: 100%;
+  max-width: 65vw;
 
   @media only screen and (min-width: ${MEDIA_QUERY_MD}px) {
     padding: 10px;
+    max-width: 100%;
   }
 
   @media only screen and (min-width: ${MEDIA_QUERY_LG}px) {

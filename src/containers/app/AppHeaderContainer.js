@@ -18,6 +18,7 @@ import { faBars } from '@fortawesome/pro-solid-svg-icons';
 
 import AppNavigationContainer from './AppNavigationContainer';
 import OpenLatticeLogo from '../../assets/images/logo_v2.png';
+import DropdownButtonWrapper from '../../components/buttons/DropdownButtonWrapper';
 import * as Routes from '../../core/router/Routes';
 import { switchOrganization } from './AppActions';
 import {
@@ -48,16 +49,15 @@ const AppHeaderInnerWrapper = styled.div`
   flex: 1 0 auto;
   justify-content: space-between;
   max-width: ${APP_CONTAINER_MAX_WIDTH}px;
-  min-width: ${MEDIA_QUERY_TECH_SM}px;
   padding: 0 10px;
 
   @media only screen and (min-width: ${MEDIA_QUERY_MD}px) {
-    min-width: ${MEDIA_QUERY_MD};
+    min-width: ${MEDIA_QUERY_MD - 40};
     padding: 0 20px;
   }
 
   @media only screen and (min-width: ${MEDIA_QUERY_LG}px) {
-    min-width: ${MEDIA_QUERY_LG};
+    min-width: ${MEDIA_QUERY_LG - (2 * APP_CONTENT_PADDING)};
     padding: 0 ${APP_CONTENT_PADDING}px;
   }
 `;
@@ -100,6 +100,7 @@ const shouldDisplay = (size, props) => {
 
 const DisplayControl = styled.div`
   display: ${props => (shouldDisplay(0, props) ? 'inherit' : 'none')};
+  ${props => (props.fullWidth ? css`width: 100%;` : '')}
 
   @media only screen and (min-width: ${MEDIA_QUERY_TECH_SM}px) {
     display: ${props => (shouldDisplay(MEDIA_QUERY_TECH_SM, props) ? 'inherit' : 'none')};
@@ -132,8 +133,14 @@ const AppTitle = styled.h1`
 const LogoutButton = styled(Button)`
   font-size: 12px;
   line-height: 16px;
-  margin-left: 30px;
-  padding: 6px 29px;
+  padding: 20px 0;
+  width: 100%;
+
+  @media only screen and (min-width: ${MEDIA_QUERY_LG}px) {
+    padding: 6px 29px;
+    margin-left: 30px;
+    width: auto;
+  }
 `;
 
 const orgSelectStyles = {
@@ -167,6 +174,13 @@ const orgSelectStyles = {
   }),
 };
 
+const DropdownMenuWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+`;
+
 type Props = {
   actions :{
     logout :() => void;
@@ -175,7 +189,7 @@ type Props = {
   app :Map<*, *>;
 };
 
-class AppHeaderContainer extends Component<Props> {
+class AppHeaderContainer extends Component<Props, State> {
 
   renderLeftSideContent = () => (
     <LeftSideContentWrapper>
@@ -187,27 +201,44 @@ class AppHeaderContainer extends Component<Props> {
           </AppTitle>
         </DisplayControl>
       </LogoTitleWrapperLink>
-      <AppNavigationContainer />
+      <DisplayControl min={MEDIA_QUERY_MD}>
+        <AppNavigationContainer />
+      </DisplayControl>
     </LeftSideContentWrapper>
   )
 
-  renderRightSideContent = () => {
-
+  renderLogoutButton = () => {
     const { actions } = this.props;
     return (
-      <RightSideContentWrapper>
-        { this.renderOrgSelect() }
-        <DisplayControl min={MEDIA_QUERY_LG}>
-          <LogoutButton onClick={actions.logout}>
-            Log Out
-          </LogoutButton>
-        </DisplayControl>
-        <DisplayControl max={MEDIA_QUERY_TECH_SM}>
-          <FontAwesomeIcon icon={faBars} />
-        </DisplayControl>
-      </RightSideContentWrapper>
-    );
+      <LogoutButton onClick={actions.logout}>
+        Log Out
+      </LogoutButton>
+    )
   }
+
+  renderRightSideContent = () => (
+    <RightSideContentWrapper>
+      { this.renderOrgSelect() }
+      <DisplayControl min={MEDIA_QUERY_LG}>
+        {this.renderLogoutButton()}
+      </DisplayControl>
+      <DisplayControl max={MEDIA_QUERY_MD}>
+        <DropdownButtonWrapper
+            title={<FontAwesomeIcon icon={faBars} />}
+            transparent
+            fullSize
+            hideOnClick
+            relativeToPage>
+          <DropdownMenuWrapper>
+            <DisplayControl fullWidth max={MEDIA_QUERY_TECH_SM}>
+              <AppNavigationContainer dropdown />
+            </DisplayControl>
+            {this.renderLogoutButton()}
+          </DropdownMenuWrapper>
+        </DropdownButtonWrapper>
+      </DisplayControl>
+    </RightSideContentWrapper>
+  )
 
   renderOrgSelect = () => {
 

@@ -4,7 +4,7 @@ export default styled.button.attrs({
   type: 'button'
 })`
   padding: 10px 20px;
-  margin: 15px;
+  margin: ${props => (props.noMargin ? 0 : 15)}px;
   text-transform: uppercase;
   font-size: 14px;
   border-radius: 3px;

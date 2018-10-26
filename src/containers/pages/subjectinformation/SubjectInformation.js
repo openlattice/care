@@ -22,6 +22,7 @@ import { STATE } from '../../../utils/constants/StateConstants';
 import { SUBJECT_INFORMATION, OTHER } from '../../../utils/constants/CrisisTemplateConstants';
 import { GENDERS, RACES } from './Constants';
 import { BLACK, OFF_WHITE } from '../../../shared/Colors';
+import { MEDIA_QUERY_MD } from '../../../core/style/Sizes';
 import {
   PERSON_DOB_FQN,
   PERSON_LAST_NAME_FQN,
@@ -98,14 +99,21 @@ const UnknownPersonRow = styled.button`
   justify-content: flex-start;
   align-items: center;
   border: none;
-  padding: 10px 20px;
   width: 100%;
-
   background-color: rgba(228, 216, 255, 0.${props => (props.selected ? 5 : 0)});
   color: ${BLACK};
+  padding: 10px 20px;
 
   span {
-    margin-left: 20px;
+    margin-left: 10px;
+  }
+
+  @media only screen and (min-width: ${MEDIA_QUERY_MD}px) {
+    padding: 10px 15px;
+
+    span {
+      margin-left: 20px;
+    }
   }
 
   &:hover {
@@ -129,15 +137,16 @@ class ObservedBehaviors extends React.Component<Props> {
   renderInput = (field, disabledIfSelected, width) => {
     const { values, actions } = this.props;
     const disabled = disabledIfSelected && !values.get(SUBJECT_INFORMATION.IS_NEW_PERSON);
+    const extraProps = width ? { width: `${width}px` } : {};
 
     return (
       <StyledInput
           padBottom
-          width={`${width}px`}
           name={field}
           disabled={disabled}
           value={values.get(field)}
-          onChange={({ target }) => actions.setInputValue({ field, value: target.value })} />
+          onChange={({ target }) => actions.setInputValue({ field, value: target.value })}
+          {...extraProps} />
     );
   };
 
@@ -273,6 +282,7 @@ class ObservedBehaviors extends React.Component<Props> {
                 options={this.getPersonOptions()}
                 transparent
                 searchIcon
+                fullWidth
                 dropdownIcon={false}
                 split
                 noFilter
@@ -283,14 +293,12 @@ class ObservedBehaviors extends React.Component<Props> {
             isCreatingNewPerson || values.get(SUBJECT_INFORMATION.PERSON_ID).length
               ? (
                 <IndentWrapper extraIndent>
-                  <FormSection>
-                    <Header>
-                      <HeaderWithClearButton>
-                        <h1>Subject Information</h1>
-                        <BackButton onClick={actions.clear}>Clear Fields</BackButton>
-                      </HeaderWithClearButton>
-                    </Header>
-                  </FormSection>
+                  <Header>
+                    <HeaderWithClearButton>
+                      <h1>Subject Information</h1>
+                      <BackButton onClick={actions.clear} noMargin>Clear Fields</BackButton>
+                    </HeaderWithClearButton>
+                  </Header>
                   <RequiredField><FormText noMargin>Last</FormText></RequiredField>
                   {this.renderInput(SUBJECT_INFORMATION.LAST, true)}
                   <RequiredField><FormText noMargin>First</FormText></RequiredField>

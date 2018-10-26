@@ -35,42 +35,33 @@ type Props = {
 const CIRCLE_RADIUS = 13;
 
 const SidebarWrapper = styled.div`
-  width: 120px;
-  max-width: 25%;
+  width: 150px;
+  max-width: 35vw;
   background-color: ${PURPLE};
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
   color: ${OFF_WHITE};
-  padding: 5px;
+  padding: 15px;
 
   @media only screen and (min-width: ${MEDIA_QUERY_MD}px) {
-    bottom: 20px;
-    width: 200px
-    padding: 15px;
+    width: 250px;
   }
 
   @media only screen and (min-width: ${MEDIA_QUERY_LG}px) {
-    bottom: 50px;
     width: 300px;
-    padding: 20px;
   }
 
   h1 {
     color: ${WHITE};
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 600;
     margin-bottom: 30px;
 
     @media only screen and (min-width: ${MEDIA_QUERY_MD}px) {
-      font-size: 16px;
-    }
-
-    @media only screen and (min-width: ${MEDIA_QUERY_LG}px) {
       font-size: 18px;
     }
-  }
 `;
 
 const Divider = styled.div`
@@ -99,13 +90,13 @@ const StepItem = styled.div`
 
   div {
     margin-left: 4px;
-    font-size: 10px;
+    font-size: 12px;
     font-weight: ${props => (props.selected ? 600 : 400)};
     color: ${props => (props.selected ? WHITE : OFF_WHITE)};
 
     @media only screen and (min-width: ${MEDIA_QUERY_MD}px) {
-      margin-left: 8px;
-      font-size: 12px;
+      margin-left: 10px;
+      font-size: 14px;
     }
 
     @media only screen and (min-width: ${MEDIA_QUERY_LG}px) {
