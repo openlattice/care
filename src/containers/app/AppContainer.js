@@ -34,7 +34,6 @@ import {
 } from '../../core/router/Routes';
 import {
   APP_CONTAINER_MAX_WIDTH,
-  APP_CONTAINER_WIDTH,
   APP_CONTENT_PADDING,
   MEDIA_QUERY_TECH_SM,
   MEDIA_QUERY_MD,

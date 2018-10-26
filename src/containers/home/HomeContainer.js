@@ -13,6 +13,7 @@ import { NavLink } from 'react-router-dom';
 
 import StyledCard from '../../components/cards/StyledCard';
 import * as Routes from '../../core/router/Routes';
+import { MEDIA_QUERY_MD } from '../../core/style/Sizes';
 
 /*
  * styled components
@@ -30,8 +31,12 @@ const ContainerWrapper = styled.div`
 const Content = styled.div`
   display: flex;
   flex-direction: column;
-  margin-top: 50px;
-  width: 900px;
+  max-width: 900px;
+  width: 100%;
+
+  @media only screen and (min-width: ${MEDIA_QUERY_MD}px) {
+    margin-top: 50px;
+  }
 `;
 
 const StyledNavLink = styled(NavLink)`
@@ -62,8 +67,13 @@ const LinkTextWrapper = styled.div`
 `;
 
 const LinkText = styled.span`
-  font-size: 18px;
-  margin-left: 20px;
+  font-size: 14px;
+  padding: 0 15px;
+
+  @media only screen and (min-width: ${MEDIA_QUERY_MD}px) {
+    font-size: 18px;
+    padding: 0 20px;
+  }
 `;
 
 const HomeContainer = () => (
