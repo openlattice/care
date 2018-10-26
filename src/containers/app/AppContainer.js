@@ -12,6 +12,7 @@ import { bindActionCreators } from 'redux';
 import { Redirect, Route, Switch } from 'react-router-dom';
 
 import AppHeaderContainer from './AppHeaderContainer';
+import CrisisTemplateContainer from '../crisis/CrisisTemplateContainer';
 import FollowUpReportManager from '../followup/FollowUpReportManager';
 import FormContainer from '../form/FormContainer';
 import HomeContainer from '../home/HomeContainer';
@@ -24,6 +25,7 @@ import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { isValidUuid } from '../../utils/Utils';
 import {
   BHR_PATH,
+  CRISIS_PATH,
   DASHBOARD_PATH,
   FOLLOW_UP_PATH,
   HOME_PATH,
@@ -33,7 +35,10 @@ import {
 import {
   APP_CONTAINER_MAX_WIDTH,
   APP_CONTAINER_WIDTH,
-  APP_CONTENT_PADDING
+  APP_CONTENT_PADDING,
+  MEDIA_QUERY_TECH_SM,
+  MEDIA_QUERY_MD,
+  MEDIA_QUERY_LG
 } from '../../core/style/Sizes';
 
 const { getAllPropertyTypes } = EntityDataModelApiActions;
@@ -52,8 +57,20 @@ const AppContainerWrapper = styled.div`
   flex-direction: column;
   height: 100%;
   margin: 0;
-  min-width: ${APP_CONTAINER_WIDTH}px;
+  min-width: 300px;
   padding: 0;
+
+  @media only screen and (min-width: ${MEDIA_QUERY_TECH_SM}px) {
+    min-width: ${MEDIA_QUERY_TECH_SM};
+  }
+
+  @media only screen and (min-width: ${MEDIA_QUERY_MD}px) {
+    min-width: ${MEDIA_QUERY_MD};
+  }
+
+  @media only screen and (min-width: ${MEDIA_QUERY_LG}px) {
+    min-width: ${MEDIA_QUERY_LG};
+  }
 `;
 
 const AppContentOuterWrapper = styled.main`
@@ -139,6 +156,8 @@ class AppContainer extends Component<Props> {
     </MissingOrgsWrapper>
   )
 
+  wrapComponent = AppComponent => () => <AppContentInnerWrapper><AppComponent /></AppContentInnerWrapper>;
+
   renderAppContent = () => {
 
     const { app } = this.props;
@@ -164,12 +183,13 @@ class AppContainer extends Component<Props> {
 
     return (
       <Switch>
-        <Route exact strict path={HOME_PATH} component={HomeContainer} />
-        <Route path={BHR_PATH} component={FormContainer} />
-        <Route path={FOLLOW_UP_PATH} component={FollowUpReportManager} />
-        <Route path={REPORTS_PATH} component={HackyReportsManager} />
-        <Route path={DASHBOARD_PATH} component={DashboardContainer} />
-        <Route path={PEOPLE_PATH} component={PeopleContainer} />
+        <Route exact strict path={HOME_PATH} render={this.wrapComponent(HomeContainer)} />
+        <Route path={BHR_PATH} component={this.wrapComponent(FormContainer)} />
+        <Route path={CRISIS_PATH} component={CrisisTemplateContainer} />
+        <Route path={FOLLOW_UP_PATH} component={this.wrapComponent(FollowUpReportManager)} />
+        <Route path={REPORTS_PATH} component={this.wrapComponent(HackyReportsManager)} />
+        <Route path={DASHBOARD_PATH} component={this.wrapComponent(DashboardContainer)} />
+        <Route path={PEOPLE_PATH} component={this.wrapComponent(PeopleContainer)} />
         <Redirect to={HOME_PATH} />
       </Switch>
     );
@@ -181,9 +201,7 @@ class AppContainer extends Component<Props> {
       <AppContainerWrapper>
         <AppHeaderContainer />
         <AppContentOuterWrapper>
-          <AppContentInnerWrapper>
-            { this.renderAppContent() }
-          </AppContentInnerWrapper>
+          { this.renderAppContent() }
         </AppContentOuterWrapper>
       </AppContainerWrapper>
     );

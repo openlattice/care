@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 
 import Select from 'react-select';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Map } from 'immutable';
 import { AuthActionFactory } from 'lattice-auth';
 import { Button, Colors } from 'lattice-ui-kit';
@@ -13,6 +13,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router';
 import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBars } from '@fortawesome/pro-solid-svg-icons';
 
 import AppNavigationContainer from './AppNavigationContainer';
 import OpenLatticeLogo from '../../assets/images/logo_v2.png';
@@ -22,6 +24,9 @@ import {
   APP_CONTAINER_MAX_WIDTH,
   APP_CONTAINER_WIDTH,
   APP_CONTENT_PADDING,
+  MEDIA_QUERY_TECH_SM,
+  MEDIA_QUERY_MD,
+  MEDIA_QUERY_LG
 } from '../../core/style/Sizes';
 
 const { logout } = AuthActionFactory;
@@ -43,8 +48,18 @@ const AppHeaderInnerWrapper = styled.div`
   flex: 1 0 auto;
   justify-content: space-between;
   max-width: ${APP_CONTAINER_MAX_WIDTH}px;
-  min-width: ${APP_CONTAINER_WIDTH}px;
-  padding: 0 ${APP_CONTENT_PADDING}px;
+  min-width: ${MEDIA_QUERY_TECH_SM}px;
+  padding: 0 10px;
+
+  @media only screen and (min-width: ${MEDIA_QUERY_MD}px) {
+    min-width: ${MEDIA_QUERY_MD};
+    padding: 0 20px;
+  }
+
+  @media only screen and (min-width: ${MEDIA_QUERY_LG}px) {
+    min-width: ${MEDIA_QUERY_LG};
+    padding: 0 ${APP_CONTENT_PADDING}px;
+  }
 `;
 
 const LeftSideContentWrapper = styled.div`
@@ -75,6 +90,27 @@ const LogoTitleWrapperLink = styled(Link)`
   &:hover {
     outline: none;
     text-decoration: none;
+  }
+`;
+
+const shouldDisplay = (size, props) => {
+  const { min, max } = props;
+  return !((min && min > size) || (max && max < size));
+};
+
+const DisplayControl = styled.div`
+  display: ${props => (shouldDisplay(0, props) ? 'inherit' : 'none')};
+
+  @media only screen and (min-width: ${MEDIA_QUERY_TECH_SM}px) {
+    display: ${props => (shouldDisplay(MEDIA_QUERY_TECH_SM, props) ? 'inherit' : 'none')};
+  }
+
+  @media only screen and (min-width: ${MEDIA_QUERY_MD}px) {
+    display: ${props => (shouldDisplay(MEDIA_QUERY_MD, props) ? 'inherit' : 'none')};
+  }
+
+  @media only screen and (min-width: ${MEDIA_QUERY_LG}px) {
+    display: ${props => (shouldDisplay(MEDIA_QUERY_LG, props) ? 'inherit' : 'none')};
   }
 `;
 
@@ -145,9 +181,11 @@ class AppHeaderContainer extends Component<Props> {
     <LeftSideContentWrapper>
       <LogoTitleWrapperLink to={Routes.ROOT}>
         <AppLogoIcon />
-        <AppTitle>
-          Behavioral Health Report
-        </AppTitle>
+        <DisplayControl min={MEDIA_QUERY_LG}>
+          <AppTitle>
+            Behavioral Health Report
+          </AppTitle>
+        </DisplayControl>
       </LogoTitleWrapperLink>
       <AppNavigationContainer />
     </LeftSideContentWrapper>
@@ -159,9 +197,14 @@ class AppHeaderContainer extends Component<Props> {
     return (
       <RightSideContentWrapper>
         { this.renderOrgSelect() }
-        <LogoutButton onClick={actions.logout}>
-          Log Out
-        </LogoutButton>
+        <DisplayControl min={MEDIA_QUERY_LG}>
+          <LogoutButton onClick={actions.logout}>
+            Log Out
+          </LogoutButton>
+        </DisplayControl>
+        <DisplayControl max={MEDIA_QUERY_TECH_SM}>
+          <FontAwesomeIcon icon={faBars} />
+        </DisplayControl>
       </RightSideContentWrapper>
     );
   }

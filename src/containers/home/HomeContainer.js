@@ -44,6 +44,10 @@ const StyledNavLink = styled(NavLink)`
       border-color: #95aabf;
     }
   }
+
+  &:not(:first-child) {
+    margin-top: 25px;
+  }
 `;
 
 const StyledNavCard = styled(StyledCard)`
@@ -74,7 +78,16 @@ const HomeContainer = () => (
           <FontAwesomeIcon icon={faAngleRight} size="2x" />
         </StyledNavCard>
       </StyledNavLink>
-      <StyledNavLink to={Routes.FOLLOW_UP_PATH} style={{ marginTop: '25px' }}>
+      <StyledNavLink to={Routes.CRISIS_PATH}>
+        <StyledNavCard>
+          <LinkTextWrapper>
+            <FontAwesomeIcon icon={faFileAlt} size="2x" />
+            <LinkText>Crisis Template</LinkText>
+          </LinkTextWrapper>
+          <FontAwesomeIcon icon={faAngleRight} size="2x" />
+        </StyledNavCard>
+      </StyledNavLink>
+      <StyledNavLink to={Routes.FOLLOW_UP_PATH}>
         <StyledNavCard>
           <LinkTextWrapper>
             <FontAwesomeIcon icon={faFileAlt} size="2x" />

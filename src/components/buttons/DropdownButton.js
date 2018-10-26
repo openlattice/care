@@ -84,7 +84,7 @@ const MenuContainer = styled.div`
     text-transform: none;
     font-family: 'Open Sans', sans-serif;
     font-size: 14px;
-    color: #555e6f;
+    color: #2e2e34;
     border: none;
     min-width: fit-content !important;
 
