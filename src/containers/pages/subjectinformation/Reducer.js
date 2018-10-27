@@ -2,6 +2,7 @@
  * @flow
  */
 
+import moment from 'moment';
 import randomUUID from 'uuid/v4';
 import { Map, fromJS } from 'immutable';
 
@@ -9,6 +10,7 @@ import { CLEAR, SET_INPUT_VALUE, SET_INPUT_VALUES } from './ActionFactory';
 import { CLEAR_CRISIS_TEMPLATE } from '../../crisis/CrisisActionFactory';
 import { SUBJECT_INFORMATION } from '../../../utils/constants/CrisisTemplateConstants';
 import { FORM_STEP_STATUS } from '../../../utils/constants/FormConstants';
+import { isNotInteger } from '../../../utils/ValidationUtils';
 
 const {
   FULL_NAME,
@@ -63,5 +65,24 @@ export function getStatus(state :Map<*, *>) :boolean {
   if (state === INITIAL_STATE) {
     return FORM_STEP_STATUS.INITIAL;
   }
-  return FORM_STEP_STATUS.COMPLETED;
+  let finished = false;
+
+  // selected existing person
+  if (state.get(PERSON_ID, '').length) {
+    finished = true;
+  }
+
+  // creating new person
+  if (state.get(LAST, '').length
+    && state.get(FIRST, '').length
+    && state.get(GENDER, '').length
+    && state.get(RACE, '').length
+    && state.get(SSN_LAST_4).length === 4
+    && state.get(DOB, '').length && moment(state.get(DOB, '')).isValid()
+    && !isNotInteger(state.get(AGE))
+  ) {
+    finished = true;
+  }
+
+  return finished ? FORM_STEP_STATUS.COMPLETED : FORM_STEP_STATUS.IN_PROGRESS;
 }

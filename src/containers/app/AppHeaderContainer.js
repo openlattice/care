@@ -48,16 +48,16 @@ const AppHeaderInnerWrapper = styled.div`
   display: flex;
   flex: 1 0 auto;
   justify-content: space-between;
-  max-width: ${APP_CONTAINER_MAX_WIDTH}px;
+  max-width: calc(100% - 20px);
   padding: 0 10px;
 
   @media only screen and (min-width: ${MEDIA_QUERY_MD}px) {
-    min-width: ${MEDIA_QUERY_MD - 40};
+    min-width: ${MEDIA_QUERY_MD - 40}px;
     padding: 0 20px;
   }
 
   @media only screen and (min-width: ${MEDIA_QUERY_LG}px) {
-    min-width: ${MEDIA_QUERY_LG - (2 * APP_CONTENT_PADDING)};
+    min-width: ${MEDIA_QUERY_LG - (2 * APP_CONTENT_PADDING)}px;
     padding: 0 ${APP_CONTENT_PADDING}px;
   }
 `;

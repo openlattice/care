@@ -90,7 +90,7 @@ const OfficerSafety = ({ values, actions } :Props) => {
               onChange={({ target }) => actions.setInputValue({ field: otherField, value: target.value })} />
         ) : null}
       </>
-    )
+    );
   };
 
   const renderInput = (field) => {
@@ -157,7 +157,7 @@ const OfficerSafety = ({ values, actions } :Props) => {
       </FormSection>
       <FormSection>
         <Header>
-          <h1>Threats/Violence/Weapons</h1>
+          <h1>Threats / Violence / Weapons</h1>
           <RequiredField>Select all that apply.</RequiredField>
         </Header>
 

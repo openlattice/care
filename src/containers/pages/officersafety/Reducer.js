@@ -2,11 +2,11 @@
  * @flow
  */
 
-import { Map, fromJS } from 'immutable';
+import { List, Map, fromJS } from 'immutable';
 
 import { SET_INPUT_VALUE } from './ActionFactory';
 import { CLEAR_CRISIS_TEMPLATE } from '../../crisis/CrisisActionFactory';
-import { OFFICER_SAFETY } from '../../../utils/constants/CrisisTemplateConstants';
+import { OFFICER_SAFETY, OTHER } from '../../../utils/constants/CrisisTemplateConstants';
 import { FORM_STEP_STATUS } from '../../../utils/constants/FormConstants';
 
 const {
@@ -58,5 +58,34 @@ export function getStatus(state :Map<*, *>) :boolean {
   if (state === INITIAL_STATE) {
     return FORM_STEP_STATUS.INITIAL;
   }
-  return FORM_STEP_STATUS.COMPLETED;
+
+  let finished = true;
+
+  if (state.get(HAD_WEAPON)) {
+    const weaponList = state.get(WEAPONS, List());
+    if (!weaponList.size) {
+      finished = false;
+    }
+    if (weaponList.includes(OTHER) && !state.get(OTHER_WEAPON).length) {
+      finished = false;
+    }
+  }
+
+  if (state.get(THREATENED_VIOLENCE)) {
+    if (!state.get(THREATENED_PERSON_NAME, '').length) {
+      finished = false;
+    }
+  }
+
+  if (state.get(HAD_INJURIES)) {
+    if (!state.get(INJURY_DESCRIPTION).length) {
+      finished = false;
+    }
+
+    if (state.get(INJURY_TYPE) === OTHER && !state.get(OTHER_INJURY_TYPE).length) {
+      finished = false;
+    }
+  }
+
+  return finished ? FORM_STEP_STATUS.COMPLETED : FORM_STEP_STATUS.IN_PROGRESS;
 }
