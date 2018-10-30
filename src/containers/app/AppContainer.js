@@ -12,6 +12,7 @@ import { bindActionCreators } from 'redux';
 import { Redirect, Route, Switch } from 'react-router-dom';
 
 import AppHeaderContainer from './AppHeaderContainer';
+import DownloadsContainer from '../downloads/DownloadsContainer';
 import FollowUpReportManager from '../followup/FollowUpReportManager';
 import FormContainer from '../form/FormContainer';
 import HomeContainer from '../home/HomeContainer';
@@ -25,6 +26,7 @@ import { isValidUuid } from '../../utils/Utils';
 import {
   BHR_PATH,
   DASHBOARD_PATH,
+  DOWNLOADS_PATH,
   FOLLOW_UP_PATH,
   HOME_PATH,
   PEOPLE_PATH,
@@ -169,6 +171,7 @@ class AppContainer extends Component<Props> {
         <Route path={FOLLOW_UP_PATH} component={FollowUpReportManager} />
         <Route path={REPORTS_PATH} component={HackyReportsManager} />
         <Route path={DASHBOARD_PATH} component={DashboardContainer} />
+        <Route path={DOWNLOADS_PATH} component={DownloadsContainer} />
         <Route path={PEOPLE_PATH} component={PeopleContainer} />
         <Redirect to={HOME_PATH} />
       </Switch>

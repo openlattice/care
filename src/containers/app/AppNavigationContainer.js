@@ -11,6 +11,7 @@ import { NavLink } from 'react-router-dom';
 
 import {
   DASHBOARD_PATH,
+  DOWNLOADS_PATH,
   HOME_PATH,
   PEOPLE_PATH,
   REPORTS_PATH
@@ -75,6 +76,7 @@ class AppNavigationContainer extends Component<Props> {
         <NavLinkWrapper to={REPORTS_PATH}>Reports</NavLinkWrapper>
         <NavLinkWrapper to={DASHBOARD_PATH}>Dashboard</NavLinkWrapper>
         <NavLinkWrapper to={PEOPLE_PATH}>People</NavLinkWrapper>
+        <NavLinkWrapper to={DOWNLOADS_PATH}>Downloads</NavLinkWrapper>
       </NavigationContentWrapper>
     );
   }
