@@ -10,6 +10,7 @@ import { STATE } from '../../utils/constants/StateConstants';
 import appReducer from '../../containers/app/AppReducer';
 import bhrReducer from '../../containers/form/ReportReducer';
 import dashboardReducer from '../../containers/dashboard/DashboardReducer';
+import downloadsReducer from '../../containers/downloads/DownloadsReducer';
 import edmReducer from '../../edm/EdmReducer';
 import followupReducer from '../../containers/followup/FollowUpReportReducer';
 import hospitalsReducer from '../../containers/form/HospitalsReducer';
@@ -30,6 +31,7 @@ export default function reduxReducer() {
     app: appReducer,
     auth: AuthReducer,
     dashboard: dashboardReducer,
+    downloads: downloadsReducer,
     edm: edmReducer,
     followUpReport: followupReducer,
     hospitals: hospitalsReducer,

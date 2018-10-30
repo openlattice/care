@@ -13,6 +13,7 @@ export const FOLLOW_UP_PATH :string = '/followup';
 export const HOME_PATH :string = '/home';
 export const REPORTS_PATH :string = '/reports';
 export const DASHBOARD_PATH :string = '/dashboard';
+export const DOWNLOADS_PATH :string = '/downloads';
 export const PEOPLE_PATH :string = '/people';
 
 export const REPORT_ID_PARAM :string = ':reportId';
