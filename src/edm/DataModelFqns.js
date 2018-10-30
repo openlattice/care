@@ -207,3 +207,13 @@ export {
   OFFICER_INJURIES_FQN,
   OFFICER_CERTIFICATION_FQN
 };
+
+/*
+ * Other
+ */
+
+const DATE_TIME_FQN = new FullyQualifiedName('general.datetime');
+
+export {
+  DATE_TIME_FQN
+};

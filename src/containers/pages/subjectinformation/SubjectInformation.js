@@ -224,6 +224,9 @@ class ObservedBehaviors extends React.Component<Props> {
       [SUBJECT_INFORMATION.LAST]: person.getIn([PERSON_LAST_NAME_FQN, 0], ''),
       [SUBJECT_INFORMATION.MIDDLE]: person.getIn([PERSON_MIDDLE_NAME_FQN, 0], ''),
       [SUBJECT_INFORMATION.DOB]: person.getIn([PERSON_DOB_FQN, 0], ''),
+      [SUBJECT_INFORMATION.RACE]: person.getIn([PERSON_RACE_FQN, 0], ''),
+      [SUBJECT_INFORMATION.GENDER]: person.getIn([PERSON_SEX_FQN, 0], ''),
+      [SUBJECT_INFORMATION.AGE]: moment().diff(moment(person.getIn([PERSON_DOB_FQN, 0], '')), 'years'),
       [SUBJECT_INFORMATION.SSN_LAST_4]: 'XXXX',
       [SUBJECT_INFORMATION.IS_NEW_PERSON]: false
     });
@@ -237,7 +240,7 @@ class ObservedBehaviors extends React.Component<Props> {
       actions.setInputValue({
         field: SUBJECT_INFORMATION.AGE,
         value: moment().diff(moment(value), 'years')
-      })
+      });
     }
   }
 

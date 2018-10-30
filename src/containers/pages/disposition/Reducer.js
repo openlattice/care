@@ -136,3 +136,7 @@ export function getStatus(state :Map<*, *>) :boolean {
 
   return finished ? FORM_STEP_STATUS.COMPLETED : FORM_STEP_STATUS.IN_PROGRESS;
 }
+
+export function processForSubmit(state :Map<*, *>) :Object {
+  return state.toJS();
+}

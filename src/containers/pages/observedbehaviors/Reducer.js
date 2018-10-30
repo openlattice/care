@@ -48,3 +48,7 @@ export function getStatus(state :Map<*, *>) :boolean {
   }
   return FORM_STEP_STATUS.COMPLETED;
 }
+
+export function processForSubmit(state :Map<*, *>) :Object {
+  return state.toJS();
+}

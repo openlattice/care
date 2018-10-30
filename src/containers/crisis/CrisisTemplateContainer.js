@@ -24,11 +24,26 @@ import Disposition from '../pages/disposition/Disposition';
 import { getCurrentPage, getNextPath, getPrevPath } from '../../utils/NavigationUtils';
 import { hardRestart, submitReport } from '../form/ReportActionFactory';
 import { clearCrisisTemplate } from './CrisisActionFactory';
-import { getStatus as validateSubjectInformation } from '../pages/subjectinformation/Reducer';
-import { getStatus as validateObservedBehaviors } from '../pages/observedbehaviors/Reducer';
-import { getStatus as validateNatureOfCrisis } from '../pages/natureofcrisis/Reducer';
-import { getStatus as validateOfficerSafety } from '../pages/officersafety/Reducer';
-import { getStatus as validateDisposition } from '../pages/disposition/Reducer';
+import {
+  getStatus as validateSubjectInformation,
+  processForSubmit as processSubjectInformation
+} from '../pages/subjectinformation/Reducer';
+import {
+  getStatus as validateObservedBehaviors,
+  processForSubmit as processObservedBehaviors
+} from '../pages/observedbehaviors/Reducer';
+import {
+  getStatus as validateNatureOfCrisis,
+  processForSubmit as processNatureOfCrisis
+} from '../pages/natureofcrisis/Reducer';
+import {
+  getStatus as validateOfficerSafety,
+  processForSubmit as processOfficerSafety
+} from '../pages/officersafety/Reducer';
+import {
+  getStatus as validateDisposition,
+  processForSubmit as processDisposition
+} from '../pages/disposition/Reducer';
 import { FORM_STEP_STATUS } from '../../utils/constants/FormConstants';
 import { STATE } from '../../utils/constants/StateConstants';
 import { CRISIS_PATH } from '../../core/router/Routes';
@@ -128,31 +143,36 @@ const PAGES = [
     Component: SubjectInformation,
     validator: validateSubjectInformation,
     title: 'Subject Information',
-    stateField: STATE.SUBJECT_INFORMATION
+    stateField: STATE.SUBJECT_INFORMATION,
+    postProcessor: processSubjectInformation
   },
   {
     Component: ObservedBehaviors,
     validator: validateObservedBehaviors,
     title: 'Observed Behaviors',
-    stateField: STATE.OBSERVED_BEHAVIORS
+    stateField: STATE.OBSERVED_BEHAVIORS,
+    postProcessor: processObservedBehaviors
   },
   {
     Component: NatureOfCrisis,
     validator: validateNatureOfCrisis,
     title: 'Nature of Crisis, Assistance, and Housing',
-    stateField: STATE.NATURE_OF_CRISIS
+    stateField: STATE.NATURE_OF_CRISIS,
+    postProcessor: processNatureOfCrisis
   },
   {
     Component: OfficerSafety,
     validator: validateOfficerSafety,
     title: 'Officer Safety',
-    stateField: STATE.OFFICER_SAFETY
+    stateField: STATE.OFFICER_SAFETY,
+    postProcessor: processOfficerSafety
   },
   {
     Component: Disposition,
     validator: validateDisposition,
     title: 'Disposition',
-    stateField: STATE.DISPOSITION
+    stateField: STATE.DISPOSITION,
+    postProcessor: processDisposition
   }
 ];
 
@@ -176,10 +196,16 @@ class CrisisTemplateContainer extends React.Component<Props> {
 
     event.preventDefault();
 
-    const { actions, app } = this.props;
+    const { actions, app, state } = this.props;
 
-    // TODO
+    let submission = {};
 
+    PAGES.forEach((page) => {
+      const { postProcessor, stateField } = page;
+      submission = Object.assign({}, submission, postProcessor(state.get(stateField)));
+    });
+
+    console.log(submission);
   }
 
   isReadyToSubmit = () => {
@@ -213,7 +239,7 @@ class CrisisTemplateContainer extends React.Component<Props> {
             : <BackButton onClick={() => this.handlePageChange(prevPath)}>Back</BackButton>
           }
           { index === PAGES.length - 1
-            ? <button type="button" disabled={!this.isReadyToSubmit()}>Submit</button>
+            ? <button type="button" disabled={!this.isReadyToSubmit()} onClick={this.handleSubmit}>Submit</button>
             : <button type="button" disabled={!complete} onClick={() => this.handlePageChange(nextPath)}>Next</button>
           }
         </ButtonRow>

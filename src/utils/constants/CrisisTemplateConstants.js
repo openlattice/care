@@ -63,3 +63,12 @@ export const DISPOSITION = {
   ARRESTABLE_OFFENSES: 'arrestableOffenses',
   NO_ACTION_VALUES: 'noActionPossibleValues'
 };
+
+export const POST_PROCESS_FIELDS = {
+  TIMESTAMP: 'timestamp',
+  FORM_ID: 'formId',
+  HOMELESS: 'isHomeless',
+  DOB: 'personDOB',
+  GENDER: 'personGender',
+  RACE: 'personRace'
+};

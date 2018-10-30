@@ -8,7 +8,7 @@ import { Map, fromJS } from 'immutable';
 
 import { CLEAR, SET_INPUT_VALUE, SET_INPUT_VALUES } from './ActionFactory';
 import { CLEAR_CRISIS_TEMPLATE } from '../../crisis/CrisisActionFactory';
-import { SUBJECT_INFORMATION } from '../../../utils/constants/CrisisTemplateConstants';
+import { SUBJECT_INFORMATION, POST_PROCESS_FIELDS } from '../../../utils/constants/CrisisTemplateConstants';
 import { FORM_STEP_STATUS } from '../../../utils/constants/FormConstants';
 import { isNotInteger } from '../../../utils/ValidationUtils';
 
@@ -85,4 +85,19 @@ export function getStatus(state :Map<*, *>) :boolean {
   }
 
   return finished ? FORM_STEP_STATUS.COMPLETED : FORM_STEP_STATUS.IN_PROGRESS;
+}
+
+export function processForSubmit(state :Map<*, *>) :Object {
+  const dobMoment = moment(state.get(DOB, ''));
+  const dob = dobMoment.isValid() ? dobMoment.format('MM-DD-YYYY') : '';
+
+  const preprocessedState = state.get(IS_NEW_PERSON)
+    ? state.set(DOB, dob).set(PERSON_ID, randomUUID())
+    : Map().set(PERSON_ID, state.get(PERSON_ID));
+
+  return preprocessedState
+    .set(POST_PROCESS_FIELDS.DOB, dob)
+    .set(POST_PROCESS_FIELDS.RACE, state.get(RACE))
+    .set(POST_PROCESS_FIELDS.GENDER, state.get(GENDER))
+    .toJS();
 }
