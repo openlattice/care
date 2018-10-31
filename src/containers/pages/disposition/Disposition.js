@@ -12,6 +12,7 @@ import { List, Map } from 'immutable';
 import StyledCheckbox from '../../../components/controls/StyledCheckbox';
 import StyledInput, { StyledTextArea } from '../../../components/controls/StyledInput';
 import StyledRadio from '../../../components/controls/StyledRadio';
+import { showInvalidFields } from '../../../utils/NavigationUtils';
 import { STATE } from '../../../utils/constants/StateConstants';
 import { DISPOSITION, OTHER } from '../../../utils/constants/CrisisTemplateConstants';
 import {
@@ -27,12 +28,14 @@ import {
 import {
   FormWrapper,
   FormSection,
+  FormSectionWithValidation,
   FormText,
   Header,
   IndentWrapper,
   RequiredField
 } from '../../../components/crisis/FormComponents';
 
+import { getInvalidFields } from './Reducer';
 import * as ActionFactory from './ActionFactory';
 
 type Props = {
@@ -178,6 +181,8 @@ const ObservedBehaviors = ({ values, actions } :Props) => {
 
   const hasDisposition = value => values.get(DISPOSITION.DISPOSITIONS).includes(value);
 
+  const invalidFields = showInvalidFields(window.location) ? getInvalidFields(values) : [];
+
   return (
     <FormWrapper>
       <FormSection>
@@ -186,7 +191,7 @@ const ObservedBehaviors = ({ values, actions } :Props) => {
         </Header>
         {renderCheckboxList(DISPOSITION.SPECIALISTS, OFFICER_TRAINING)}
       </FormSection>
-      <FormSection>
+      <FormSectionWithValidation invalid={invalidFields.includes(DISPOSITION.DISPOSITIONS)}>
         <Header>
           <h1>Disposition</h1>
           <RequiredField>Check all that apply.</RequiredField>
@@ -200,7 +205,9 @@ const ObservedBehaviors = ({ values, actions } :Props) => {
         {
           hasDisposition(DISPOSITIONS.NOTIFIED_SOMEONE) ? (
             <IndentWrapper extraIndent>
-              {renderCheckboxList(DISPOSITION.PEOPLE_NOTIFIED, PEOPLE_NOTIFIED, DISPOSITION.OTHER_PEOPLE_NOTIFIED)}
+              <FormSectionWithValidation invalid={invalidFields.includes(DISPOSITION.PEOPLE_NOTIFIED)}>
+                {renderCheckboxList(DISPOSITION.PEOPLE_NOTIFIED, PEOPLE_NOTIFIED, DISPOSITION.OTHER_PEOPLE_NOTIFIED)}
+              </FormSectionWithValidation>
             </IndentWrapper>
           ) : null
         }
@@ -213,7 +220,9 @@ const ObservedBehaviors = ({ values, actions } :Props) => {
         {
           hasDisposition(DISPOSITIONS.VERBAL_REFERRAL) ? (
             <IndentWrapper extraIndent>
-              {renderCheckboxList(DISPOSITION.VERBAL_REFERRALS, VERBAL_REFERRALS, DISPOSITION.OTHER_VERBAL_REFERRAL)}
+              <FormSectionWithValidation invalid={invalidFields.includes(DISPOSITION.VERBAL_REFERRALS)}>
+                {renderCheckboxList(DISPOSITION.VERBAL_REFERRALS, VERBAL_REFERRALS, DISPOSITION.OTHER_VERBAL_REFERRAL)}
+              </FormSectionWithValidation>
             </IndentWrapper>
           ) : null
         }
@@ -222,7 +231,9 @@ const ObservedBehaviors = ({ values, actions } :Props) => {
         {
           hasDisposition(DISPOSITIONS.COURTESY_TRANPORT) ? (
             <IndentWrapper extraIndent>
-              {renderCheckboxList(DISPOSITION.COURTESY_TRANSPORTS, COURTESY_TRANSPORTS)}
+              <FormSectionWithValidation invalid={invalidFields.includes(DISPOSITION.COURTESY_TRANSPORTS)}>
+                {renderCheckboxList(DISPOSITION.COURTESY_TRANSPORTS, COURTESY_TRANSPORTS)}
+              </FormSectionWithValidation>
             </IndentWrapper>
           ) : null
         }
@@ -236,8 +247,10 @@ const ObservedBehaviors = ({ values, actions } :Props) => {
         {
           hasDisposition(DISPOSITIONS.HOSPITAL) ? (
             <IndentWrapper extraIndent>
-              {renderRadio(DISPOSITION.WAS_VOLUNTARY_TRANSPORT, true, 'Voluntary')}
-              {renderRadio(DISPOSITION.WAS_VOLUNTARY_TRANSPORT, false, 'Involuntary')}
+              <FormSectionWithValidation invalid={invalidFields.includes(DISPOSITION.WAS_VOLUNTARY_TRANSPORT)}>
+                {renderRadio(DISPOSITION.WAS_VOLUNTARY_TRANSPORT, true, 'Voluntary')}
+                {renderRadio(DISPOSITION.WAS_VOLUNTARY_TRANSPORT, false, 'Involuntary')}
+              </FormSectionWithValidation>
             </IndentWrapper>
           ) : null
         }
@@ -248,7 +261,9 @@ const ObservedBehaviors = ({ values, actions } :Props) => {
         {
           hasDisposition(DISPOSITIONS.ARRESTABLE_OFFENSE) ? (
             <IndentWrapper extraIndent>
-              {renderCheckboxList(DISPOSITION.ARRESTABLE_OFFENSES, ARRESTABLE_OFFENSES)}
+              <FormSectionWithValidation invalid={invalidFields.includes(DISPOSITION.ARRESTABLE_OFFENSES)}>
+                {renderCheckboxList(DISPOSITION.ARRESTABLE_OFFENSES, ARRESTABLE_OFFENSES)}
+              </FormSectionWithValidation>
             </IndentWrapper>
           ) : null
         }
@@ -257,12 +272,14 @@ const ObservedBehaviors = ({ values, actions } :Props) => {
         {
           hasDisposition(DISPOSITIONS.NO_ACTION_POSSIBLE) ? (
             <IndentWrapper extraIndent>
-              {renderCheckboxList(DISPOSITION.NO_ACTION_VALUES, NO_ACTION_VALUES)}
+              <FormSectionWithValidation invalid={invalidFields.includes(DISPOSITION.NO_ACTION_VALUES)}>
+                {renderCheckboxList(DISPOSITION.NO_ACTION_VALUES, NO_ACTION_VALUES)}
+              </FormSectionWithValidation>
             </IndentWrapper>
           ) : null
         }
-      </FormSection>
-      <FormSection>
+      </FormSectionWithValidation>
+      <FormSectionWithValidation invalid={invalidFields.includes(DISPOSITION.HAS_REPORT_NUMBER)}>
         <Header>
           <h1>Additional Details</h1>
         </Header>
@@ -273,22 +290,30 @@ const ObservedBehaviors = ({ values, actions } :Props) => {
           DISPOSITION.INCIDENT_DESCRIPTION
         )}
         {values.get(DISPOSITION.HAS_REPORT_NUMBER)
-          ? <IndentWrapper extraIndent>{renderInput(DISPOSITION.REPORT_NUMBER)}</IndentWrapper>
+          ? (
+            <IndentWrapper extraIndent>
+              <FormSectionWithValidation invalid={invalidFields.includes(DISPOSITION.REPORT_NUMBER)}>
+                {renderInput(DISPOSITION.REPORT_NUMBER)}
+              </FormSectionWithValidation>
+            </IndentWrapper>
+          )
           : null}
         {renderRadio(DISPOSITION.HAS_REPORT_NUMBER, false, 'No report number', DISPOSITION.REPORT_NUMBER)}
         {values.get(DISPOSITION.HAS_REPORT_NUMBER) === false
           ? (
             <IndentWrapper extraIndent>
-              <RequiredField>
-                <FormText gray noMargin>
-                  Describe the incident briefly below.
-                </FormText>
-              </RequiredField>
-              {renderInput(DISPOSITION.INCIDENT_DESCRIPTION, true)}
+              <FormSectionWithValidation invalid={invalidFields.includes(DISPOSITION.INCIDENT_DESCRIPTION)}>
+                <RequiredField>
+                  <FormText gray noMargin>
+                    Describe the incident briefly below.
+                  </FormText>
+                </RequiredField>
+                {renderInput(DISPOSITION.INCIDENT_DESCRIPTION, true)}
+              </FormSectionWithValidation>
             </IndentWrapper>
           )
           : null}
-      </FormSection>
+      </FormSectionWithValidation>
     </FormWrapper>
   );
 };

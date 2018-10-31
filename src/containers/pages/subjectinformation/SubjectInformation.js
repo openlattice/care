@@ -14,14 +14,15 @@ import { faUser } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import BackButton from '../../../components/buttons/BackButton';
-import StyledInput, { SearchInput } from '../../../components/controls/StyledInput';
+import StyledInput from '../../../components/controls/StyledInput';
 import StyledCheckbox from '../../../components/controls/StyledCheckbox';
 import StyledRadio from '../../../components/controls/StyledRadio';
 import SearchableSelect from '../../../components/controls/SearchableSelect';
+import { showInvalidFields } from '../../../utils/NavigationUtils';
 import { STATE } from '../../../utils/constants/StateConstants';
-import { SUBJECT_INFORMATION, OTHER } from '../../../utils/constants/CrisisTemplateConstants';
+import { SUBJECT_INFORMATION } from '../../../utils/constants/CrisisTemplateConstants';
 import { GENDERS, RACES } from './Constants';
-import { BLACK, OFF_WHITE } from '../../../shared/Colors';
+import { BLACK } from '../../../shared/Colors';
 import { MEDIA_QUERY_MD } from '../../../core/style/Sizes';
 import {
   PERSON_DOB_FQN,
@@ -30,13 +31,13 @@ import {
   PERSON_MIDDLE_NAME_FQN,
   PERSON_RACE_FQN,
   PERSON_SEX_FQN,
-  PERSON_ID_FQN,
-  PERSON_PICTURE_FQN
+  PERSON_ID_FQN
 } from '../../../edm/DataModelFqns';
 import { getPeopleESId } from '../../../utils/AppUtils';
 import {
   FormWrapper,
   FormSection,
+  FormSectionWithValidation,
   FormText,
   Header,
   IndentWrapper,
@@ -48,6 +49,7 @@ import {
   searchConsumers
 } from '../../search/SearchActionFactory';
 
+import { getInvalidFields } from './Reducer';
 import * as ActionFactory from './ActionFactory';
 
 
@@ -247,6 +249,7 @@ class ObservedBehaviors extends React.Component<Props> {
   render() {
     const { actions, values } = this.props;
     const isCreatingNewPerson = values.get(SUBJECT_INFORMATION.IS_NEW_PERSON);
+    const invalidFields = showInvalidFields(window.location) ? getInvalidFields(values) : [];
 
     const toggleNewPerson = (event) => {
       event.preventDefault();
@@ -265,10 +268,15 @@ class ObservedBehaviors extends React.Component<Props> {
           [SUBJECT_INFORMATION.MIDDLE]: '',
           [SUBJECT_INFORMATION.DOB]: '',
           [SUBJECT_INFORMATION.SSN_LAST_4]: '',
+          [SUBJECT_INFORMATION.RACE]: '',
+          [SUBJECT_INFORMATION.GENDER]: '',
+          [SUBJECT_INFORMATION.AGE]: '',
           [SUBJECT_INFORMATION.IS_NEW_PERSON]: true
         });
       }
     };
+
+    const PersonFormSection = isCreatingNewPerson ? FormSectionWithValidation : FormSection;
 
     return (
       <Wrapper>
@@ -276,7 +284,9 @@ class ObservedBehaviors extends React.Component<Props> {
           <FormSection>
             <Header>
               <h1>Quick Search</h1>
-              <span>{'Search by last name, first name, or alias. No results? Skip to "Subject Information" below'}</span>
+              <span>
+                {'Search by last name, first name, or alias. No results? Skip to "Subject Information" below'}
+              </span>
             </Header>
             <SearchableSelect
                 value={values.get(SUBJECT_INFORMATION.FULL_NAME)}
@@ -302,25 +312,35 @@ class ObservedBehaviors extends React.Component<Props> {
                       <BackButton onClick={actions.clear} noMargin>Clear Fields</BackButton>
                     </HeaderWithClearButton>
                   </Header>
-                  <RequiredField><FormText noMargin>Last</FormText></RequiredField>
-                  {this.renderInput(SUBJECT_INFORMATION.LAST, true)}
-                  <RequiredField><FormText noMargin>First</FormText></RequiredField>
-                  {this.renderInput(SUBJECT_INFORMATION.FIRST, true)}
-                  <FormText noMargin>Mid.</FormText>
-                  {this.renderInput(SUBJECT_INFORMATION.MIDDLE, true, 50)}
-                  <RequiredField><FormText noMargin>DOB</FormText></RequiredField>
-                  <DatePickerWrapper>
-                    <DatePicker
-                        value={values.get(SUBJECT_INFORMATION.DOB)}
-                        isDisabled={!isCreatingNewPerson}
-                        dateFormat="MM-DD-YYYY"
-                        onChange={this.onDobChange}
-                        selectProps={{
-                          placeholder: 'MM-DD-YYYY'
-                        }} />
-                  </DatePickerWrapper>
-                  <RequiredField><FormText noMargin>SSN (last 4 digits)</FormText></RequiredField>
-                  {this.renderInput(SUBJECT_INFORMATION.SSN_LAST_4, true, 75)}
+                  <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.LAST)}>
+                    <RequiredField><FormText noMargin>Last</FormText></RequiredField>
+                    {this.renderInput(SUBJECT_INFORMATION.LAST, true)}
+                  </PersonFormSection>
+                  <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.FIRST)}>
+                    <RequiredField><FormText noMargin>First</FormText></RequiredField>
+                    {this.renderInput(SUBJECT_INFORMATION.FIRST, true)}
+                  </PersonFormSection>
+                  <FormSection>
+                    <FormText noMargin>Mid.</FormText>
+                    {this.renderInput(SUBJECT_INFORMATION.MIDDLE, true, 50)}
+                  </FormSection>
+                  <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.DOB)}>
+                    <RequiredField><FormText noMargin>DOB</FormText></RequiredField>
+                    <DatePickerWrapper>
+                      <DatePicker
+                          value={values.get(SUBJECT_INFORMATION.DOB)}
+                          isDisabled={!isCreatingNewPerson}
+                          dateFormat="MM-DD-YYYY"
+                          onChange={this.onDobChange}
+                          selectProps={{
+                            placeholder: 'MM-DD-YYYY'
+                          }} />
+                    </DatePickerWrapper>
+                  </PersonFormSection>
+                  <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.SSN)}>
+                    <RequiredField><FormText noMargin>SSN (last 4 digits)</FormText></RequiredField>
+                    {this.renderInput(SUBJECT_INFORMATION.SSN_LAST_4, true, 75)}
+                  </PersonFormSection>
                 </IndentWrapper>
               ) : null
           }
@@ -339,18 +359,18 @@ class ObservedBehaviors extends React.Component<Props> {
           {
             isCreatingNewPerson ? (
               <IndentWrapper extraIndent>
-                <FormSection>
+                <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.AGE)}>
                   <RequiredField><FormText noMargin>Age (approximate)</FormText></RequiredField>
                   {this.renderInput(SUBJECT_INFORMATION.AGE, false, 70)}
-                </FormSection>
-                <FormSection>
+                </PersonFormSection>
+                <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.GENDER)}>
                   <RequiredField><FormText noMargin>Gender</FormText></RequiredField>
                   {this.renderRadioButtons(SUBJECT_INFORMATION.GENDER, GENDERS)}
-                </FormSection>
-                <FormSection>
+                </PersonFormSection>
+                <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.RACE)}>
                   <RequiredField><FormText noMargin>Race</FormText></RequiredField>
                   {this.renderRadioButtons(SUBJECT_INFORMATION.RACE, RACES)}
-                </FormSection>
+                </PersonFormSection>
               </IndentWrapper>
             ) : null
           }

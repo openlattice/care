@@ -21,9 +21,14 @@ import NatureOfCrisis from '../pages/natureofcrisis/NatureOfCrisis';
 import OfficerSafety from '../pages/officersafety/OfficerSafety';
 import Disposition from '../pages/disposition/Disposition';
 
-import { getCurrentPage, getNextPath, getPrevPath } from '../../utils/NavigationUtils';
 import { hardRestart, submitReport } from '../form/ReportActionFactory';
 import { clearCrisisTemplate } from './CrisisActionFactory';
+import {
+  getCurrentPage,
+  getNextPath,
+  getPrevPath,
+  setShowInvalidFields
+} from '../../utils/NavigationUtils';
 import {
   getStatus as validateSubjectInformation,
   processForSubmit as processSubjectInformation
@@ -47,8 +52,7 @@ import {
 import { FORM_STEP_STATUS } from '../../utils/constants/FormConstants';
 import { STATE } from '../../utils/constants/StateConstants';
 import { CRISIS_PATH } from '../../core/router/Routes';
-import { APP_CONTAINER_WIDTH, MEDIA_QUERY_MD, MEDIA_QUERY_LG } from '../../core/style/Sizes';
-
+import { MEDIA_QUERY_MD, MEDIA_QUERY_LG } from '../../core/style/Sizes';
 
 type Props = {
   actions :{
@@ -99,41 +103,47 @@ const FormWrapper = styled.div`
   }
 `;
 
+const ValidationWrapper = styled.button`
+  width: fit-content;
+  height: fit-content;
+
+  &:hover {
+    cursor: pointer !important;
+  }
+`;
+
 const ButtonRow = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
   justify-content: flex-end;
   align-items: center;
+`;
 
-  button {
-    padding: 10px 20px;
-    margin: 15px;
-    text-transform: uppercase;
-    font-size: 14px;
-    border-radius: 3px;
-    border: none;
+const ForwardButton = styled.button.attrs({
+  type: 'button'
+})`
+  padding: 10px 20px;
+  margin: 15px;
+  text-transform: uppercase;
+  font-size: 14px;
+  border-radius: 3px;
+  border: none;
 
-    &:focus {
-      outline: none;
-    }
+  &:focus {
+    outline: none;
+  }
+
+  &:hover:enabled {
+    cursor: pointer;
+  }
+
+  &:last-child {
+    color: ${props => (props.canProgress ? '#f8f8fb' : '#aaafbc')};
+    background-color: ${props => (props.canProgress ? '#6124e2' : '#dcdce7')};
 
     &:hover:enabled {
-      cursor: pointer;
-    }
-
-    &:last-child {
-      color: #f8f8fb;
-      background-color: #6124e2;
-
-      &:disabled {
-        background-color: #dcdce7;
-        color: #aaafbc;
-      }
-
-      &:hover:enabled {
-        background-color: #8045ff;
-      }
+      background-color: ${props => (props.canProgress ? '#8045ff' : '#dcdce7')};
     }
   }
 `;
@@ -221,13 +231,28 @@ class CrisisTemplateContainer extends React.Component<Props> {
     return ready;
   }
 
-  renderPage = (page, index) => {
+  renderForwardButton = (page, isSubmit) => {
     const { state } = this.props;
 
-    const { Component, validator, stateField } = page;
-    const prevPath = getPrevPath(window.location);
-    const nextPath = getNextPath(window.location, PAGES.length);
+    const { validator, stateField } = page;
     const complete = validator(state.get(stateField)) === FORM_STEP_STATUS.COMPLETED;
+    const nextPath = getNextPath(window.location, PAGES.length);
+
+    const disabled = isSubmit ? !this.isReadyToSubmit() : !complete;
+    let onClick = isSubmit ? this.handleSubmit : () => this.handlePageChange(nextPath);
+
+    if (disabled) {
+      const showInvalidFieldsPath = setShowInvalidFields(window.location);
+      onClick = () => this.handlePageChange(showInvalidFieldsPath);
+    }
+
+    return <ForwardButton onClick={onClick} canProgress={!disabled}>{isSubmit ? 'Submit' : 'Next'}</ForwardButton>;
+  }
+
+  renderPage = (page, index) => {
+
+    const { Component } = page;
+    const prevPath = getPrevPath(window.location);
     return (
       <PageWrapper>
         <FormWrapper>
@@ -238,10 +263,7 @@ class CrisisTemplateContainer extends React.Component<Props> {
             ? <BackButton>Reset</BackButton>
             : <BackButton onClick={() => this.handlePageChange(prevPath)}>Back</BackButton>
           }
-          { index === PAGES.length - 1
-            ? <button type="button" disabled={!this.isReadyToSubmit()} onClick={this.handleSubmit}>Submit</button>
-            : <button type="button" disabled={!complete} onClick={() => this.handlePageChange(nextPath)}>Next</button>
-          }
+          {this.renderForwardButton(page, index === PAGES.length - 1)}
         </ButtonRow>
       </PageWrapper>
     );

@@ -2,6 +2,8 @@
  * @flow
  */
 
+import qs from 'query-string';
+
 type Location = {
   hash :string
 };
@@ -39,3 +41,19 @@ export const getIsLastPage = (location :Location, numPages :?number) :boolean =>
   const splitStr = getSplitStr(location);
   return getPage(splitStr) === numPages;
 };
+
+export const INCOMPLETE = 'incomplete';
+
+export const showInvalidFields = (location :Location) => {
+  const hashSplit = location.hash.split('?');
+  if (hashSplit.length > 1) {
+    const params = qs.parse(hashSplit[1]);
+    return !!params[INCOMPLETE];
+  }
+  return false;
+};
+
+export const setShowInvalidFields = (location :Location) => {
+  const splitStr = getSplitStr(location);
+  return `${splitStr.join('/')}?${qs.stringify({ [INCOMPLETE]: true })}`;
+}

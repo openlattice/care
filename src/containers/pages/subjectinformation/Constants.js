@@ -1,4 +1,4 @@
-import { OTHER } from '../../../utils/constants/CrisisTemplateConstants';
+import { OTHER, SUBJECT_INFORMATION } from '../../../utils/constants/CrisisTemplateConstants';
 
 export const GENDERS = [
   'Male',

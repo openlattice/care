@@ -2,11 +2,11 @@
  * @flow
  */
 
-import { Map, fromJS } from 'immutable';
+import { List, Map, fromJS } from 'immutable';
 
 import { SET_INPUT_VALUE } from './ActionFactory';
 import { CLEAR_CRISIS_TEMPLATE } from '../../crisis/CrisisActionFactory';
-import { OBSERVED_BEHAVIORS } from '../../../utils/constants/CrisisTemplateConstants';
+import { OBSERVED_BEHAVIORS, OTHER } from '../../../utils/constants/CrisisTemplateConstants';
 import { FORM_STEP_STATUS } from '../../../utils/constants/FormConstants';
 
 const {
@@ -42,11 +42,28 @@ export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :
   }
 }
 
+export function getInvalidFields(state :Map<*, *>) {
+  const invalidFields = [];
+
+  if (!state.get(BEHAVIORS, List()).size) {
+    invalidFields.push(BEHAVIORS);
+  }
+  else if (state.get(BEHAVIORS, List()).includes(OTHER) && !state.get(OTHER_BEHAVIOR, '').length) {
+    invalidFields.push(BEHAVIORS);
+  }
+
+  if (!state.get(DEMEANORS, List()).size) {
+    invalidFields.push(DEMEANORS);
+  }
+
+  return invalidFields;
+}
+
 export function getStatus(state :Map<*, *>) :boolean {
   if (state === INITIAL_STATE) {
     return FORM_STEP_STATUS.INITIAL;
   }
-  return FORM_STEP_STATUS.COMPLETED;
+  return getInvalidFields(state).length ? FORM_STEP_STATUS.IN_PROGRESS : FORM_STEP_STATUS.COMPLETED;
 }
 
 export function processForSubmit(state :Map<*, *>) :Object {

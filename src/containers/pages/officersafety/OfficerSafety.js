@@ -13,6 +13,7 @@ import StyledInput from '../../../components/controls/StyledInput';
 import StyledSelect from '../../../components/controls/StyledSelect';
 import StyledCheckbox from '../../../components/controls/StyledCheckbox';
 import YesNoToggle from '../../../components/controls/YesNoToggle';
+import { showInvalidFields } from '../../../utils/NavigationUtils';
 import { STATE } from '../../../utils/constants/StateConstants';
 import { OFFICER_SAFETY, OTHER } from '../../../utils/constants/CrisisTemplateConstants';
 import {
@@ -24,12 +25,14 @@ import {
 import {
   FormWrapper,
   FormSection,
+  FormSectionWithValidation,
   FormText,
   Header,
   IndentWrapper,
   RequiredField
 } from '../../../components/crisis/FormComponents';
 
+import { getInvalidFields } from './Reducer';
 import * as ActionFactory from './ActionFactory';
 
 type Props = {
@@ -146,6 +149,8 @@ const OfficerSafety = ({ values, actions } :Props) => {
     return <YesNoToggle value={values.get(field)} onChange={onChange} />;
   };
 
+  const invalidFields = showInvalidFields(window.location) ? getInvalidFields(values) : [];
+
   return (
     <FormWrapper>
       <FormSection>
@@ -167,7 +172,9 @@ const OfficerSafety = ({ values, actions } :Props) => {
         {values.get(OFFICER_SAFETY.HAD_WEAPON)
           ? (
             <IndentWrapper>
-              {renderCheckboxList(OFFICER_SAFETY.WEAPONS, WEAPONS, OFFICER_SAFETY.OTHER_WEAPON)}
+              <FormSectionWithValidation invalid={invalidFields.includes(OFFICER_SAFETY.WEAPONS)}>
+                {renderCheckboxList(OFFICER_SAFETY.WEAPONS, WEAPONS, OFFICER_SAFETY.OTHER_WEAPON)}
+              </FormSectionWithValidation>
             </IndentWrapper>)
           : null}
 
@@ -181,10 +188,12 @@ const OfficerSafety = ({ values, actions } :Props) => {
         {values.get(OFFICER_SAFETY.THREATENED_VIOLENCE)
           ? (
             <IndentWrapper>
-              <FormText>
-                <RequiredField>{'Threatened individual\'s full name'}</RequiredField>
-              </FormText>
-              {renderInput(OFFICER_SAFETY.THREATENED_PERSON_NAME)}
+              <FormSectionWithValidation invalid={invalidFields.includes(OFFICER_SAFETY.THREATENED_PERSON_NAME)}>
+                <FormText>
+                  <RequiredField>{'Threatened individual\'s full name'}</RequiredField>
+                </FormText>
+                {renderInput(OFFICER_SAFETY.THREATENED_PERSON_NAME)}
+              </FormSectionWithValidation>
               <FormText>Threatened person relationship</FormText>
               {renderSelect(OFFICER_SAFETY.THREATENED_PERSON_RELATIONSHIP, RELATIONSHIP_TYPES)}
             </IndentWrapper>)
@@ -200,13 +209,19 @@ const OfficerSafety = ({ values, actions } :Props) => {
         {values.get(OFFICER_SAFETY.HAD_INJURIES)
           ? (
             <IndentWrapper>
-              <FormText>
-                <RequiredField>Injury description</RequiredField>
-              </FormText>
-              {renderInput(OFFICER_SAFETY.INJURY_DESCRIPTION)}
-              <FormText>Injury type</FormText>
-              {renderSelect(OFFICER_SAFETY.INJURY_TYPE, INJURY_TYPES, [], [OFFICER_SAFETY.OTHER_INJURY_TYPE])}
-              {values.get(OFFICER_SAFETY.INJURY_TYPE) === OTHER ? renderInput(OFFICER_SAFETY.OTHER_INJURY_TYPE) : null}
+              <FormSectionWithValidation invalid={invalidFields.includes(OFFICER_SAFETY.INJURY_DESCRIPTION)}>
+                <FormText>
+                  <RequiredField>Injury description</RequiredField>
+                </FormText>
+                {renderInput(OFFICER_SAFETY.INJURY_DESCRIPTION)}
+              </FormSectionWithValidation>
+              <FormSectionWithValidation invalid={invalidFields.includes(OFFICER_SAFETY.INJURY_TYPE)}>
+                <FormText>Injury type</FormText>
+                {renderSelect(OFFICER_SAFETY.INJURY_TYPE, INJURY_TYPES, [], [OFFICER_SAFETY.OTHER_INJURY_TYPE])}
+                {values.get(OFFICER_SAFETY.INJURY_TYPE) === OTHER
+                  ? renderInput(OFFICER_SAFETY.OTHER_INJURY_TYPE)
+                  : null}
+              </FormSectionWithValidation>
             </IndentWrapper>)
           : null}
 

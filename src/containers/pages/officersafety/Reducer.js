@@ -54,40 +54,44 @@ export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :
   }
 }
 
-export function getStatus(state :Map<*, *>) :boolean {
-  if (state === INITIAL_STATE) {
-    return FORM_STEP_STATUS.INITIAL;
-  }
-
-  let finished = true;
+export function getInvalidFields(state :Map<*, *>) {
+  const invalidFields = [];
 
   if (state.get(HAD_WEAPON)) {
     const weaponList = state.get(WEAPONS, List());
     if (!weaponList.size) {
-      finished = false;
+      invalidFields.push(WEAPONS);
     }
-    if (weaponList.includes(OTHER) && !state.get(OTHER_WEAPON).length) {
-      finished = false;
+    else if (weaponList.includes(OTHER) && !state.get(OTHER_WEAPON).length) {
+      invalidFields.push(WEAPONS);
     }
   }
 
   if (state.get(THREATENED_VIOLENCE)) {
     if (!state.get(THREATENED_PERSON_NAME, '').length) {
-      finished = false;
+      invalidFields.push(THREATENED_PERSON_NAME);
     }
   }
 
   if (state.get(HAD_INJURIES)) {
     if (!state.get(INJURY_DESCRIPTION).length) {
-      finished = false;
+      invalidFields.push(INJURY_DESCRIPTION);
     }
 
     if (state.get(INJURY_TYPE) === OTHER && !state.get(OTHER_INJURY_TYPE).length) {
-      finished = false;
+      invalidFields.push(INJURY_TYPE);
     }
   }
 
-  return finished ? FORM_STEP_STATUS.COMPLETED : FORM_STEP_STATUS.IN_PROGRESS;
+  return invalidFields;
+}
+
+export function getStatus(state :Map<*, *>) :boolean {
+  if (state === INITIAL_STATE) {
+    return FORM_STEP_STATUS.INITIAL;
+  }
+
+  return getInvalidFields(state).length ? FORM_STEP_STATUS.IN_PROGRESS : FORM_STEP_STATUS.COMPLETED;
 }
 
 export function processForSubmit(state :Map<*, *>) :Object {

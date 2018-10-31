@@ -47,6 +47,11 @@ export default function* sagas() :Generator<*, *, *> {
     fork(SearchApiSagas.searchEntityNeighborsWatcher),
     fork(SearchApiSagas.searchEntitySetDataWatcher),
 
+    // AppSagas
+    fork(AppSagas.loadAppWatcher),
+    fork(AppSagas.loadHospitalsWatcher),
+    fork(AppSagas.switchOrganizationWatcher),
+
     // RoutingSagas
     fork(RoutingSagas.goToRootWatcher),
     fork(RoutingSagas.goToRouteWatcher),
@@ -65,9 +70,6 @@ export default function* sagas() :Generator<*, *, *> {
     fork(PeopleSagas.searchPeopleWatcher),
 
     // Report Sagas
-    fork(AppSagas.loadAppWatcher),
-    fork(AppSagas.loadHospitalsWatcher),
-    fork(AppSagas.switchOrganizationWatcher),
     fork(ReportSagas.hardRestartWatcher),
     fork(ReportSagas.submitReportWatcher),
 

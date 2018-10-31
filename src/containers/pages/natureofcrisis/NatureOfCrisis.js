@@ -11,16 +11,19 @@ import { List, Map } from 'immutable';
 
 import StyledCheckbox from '../../../components/controls/StyledCheckbox';
 import StyledInput from '../../../components/controls/StyledInput';
+import { showInvalidFields } from '../../../utils/NavigationUtils';
 import { STATE } from '../../../utils/constants/StateConstants';
 import { CRISIS_NATURE, OTHER } from '../../../utils/constants/CrisisTemplateConstants';
 import { NATURE_OF_CRISIS, ASSISTANCES, HOUSING_SITUATIONS } from './Constants';
 import {
   FormWrapper,
   FormSection,
+  FormSectionWithValidation,
   Header,
   RequiredField
 } from '../../../components/crisis/FormComponents';
 
+import { getInvalidFields } from './Reducer';
 import * as ActionFactory from './ActionFactory';
 
 type Props = {
@@ -84,29 +87,31 @@ const NatureOfCrisis = ({ values, actions } :Props) => {
     );
   };
 
+  const invalidFields = showInvalidFields(window.location) ? getInvalidFields(values) : [];
+
   return (
     <FormWrapper>
-      <FormSection>
+      <FormSectionWithValidation invalid={invalidFields.includes(CRISIS_NATURE.NATURE_OF_CRISIS)}>
         <Header>
           <h1>Nature of Crisis</h1>
           <RequiredField>Check all that apply.</RequiredField>
         </Header>
         {renderCheckboxList(CRISIS_NATURE.NATURE_OF_CRISIS, NATURE_OF_CRISIS)}
-      </FormSection>
-      <FormSection>
+      </FormSectionWithValidation>
+      <FormSectionWithValidation invalid={invalidFields.includes(CRISIS_NATURE.ASSISTANCE)}>
         <Header>
           <h1>Assistance on Scene for Subject</h1>
           <RequiredField>Check all that apply.</RequiredField>
         </Header>
         {renderCheckboxList(CRISIS_NATURE.ASSISTANCE, ASSISTANCES, CRISIS_NATURE.OTHER_ASSISTANCE)}
-      </FormSection>
-      <FormSection>
+      </FormSectionWithValidation>
+      <FormSectionWithValidation invalid={invalidFields.includes(CRISIS_NATURE.HOUSING)}>
         <Header>
           <h1>Current Housing Situation</h1>
           <RequiredField>Check all that apply.</RequiredField>
         </Header>
         {renderCheckboxList(CRISIS_NATURE.HOUSING, HOUSING_SITUATIONS)}
-      </FormSection>
+      </FormSectionWithValidation>
     </FormWrapper>
   );
 };

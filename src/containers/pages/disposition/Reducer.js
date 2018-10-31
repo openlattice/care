@@ -65,76 +65,84 @@ export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :
   }
 }
 
-export function getStatus(state :Map<*, *>) :boolean {
-  if (state === INITIAL_STATE) {
-    return FORM_STEP_STATUS.INITIAL;
-  }
-
-  let finished = true;
+export function getInvalidFields(state :Map<*, *>) {
+  const invalidFields = [];
 
   // DISPOSITION CHECKBOX LIST
 
   const dispositions = state.get(DISPOSITIONS);
 
+  if (!dispositions.size) {
+    invalidFields.push(DISPOSITIONS);
+  }
+
   if (dispositions.includes(DISPOSITION_TYPES.NOTIFIED_SOMEONE)) {
     const peopleNotified = state.get(PEOPLE_NOTIFIED, List());
     if (!peopleNotified.size) {
-      finished = false;
+      invalidFields.push(PEOPLE_NOTIFIED);
     }
 
-    if (peopleNotified.includes(OTHER) && !state.get(OTHER_PEOPLE_NOTIFIED, '').length) {
-      finished = false;
+    else if (peopleNotified.includes(OTHER) && !state.get(OTHER_PEOPLE_NOTIFIED, '').length) {
+      invalidFields.push(PEOPLE_NOTIFIED);
     }
   }
 
   if (dispositions.includes(DISPOSITION_TYPES.VERBAL_REFERRAL)) {
     const verbalReferrals = state.get(VERBAL_REFERRALS, List());
     if (!verbalReferrals.size) {
-      finished = false;
+      invalidFields.push(VERBAL_REFERRALS);
     }
 
-    if (verbalReferrals.includes(OTHER) && !state.get(OTHER_VERBAL_REFERRAL, '').length) {
-      finished = false;
+    else if (verbalReferrals.includes(OTHER) && !state.get(OTHER_VERBAL_REFERRAL, '').length) {
+      invalidFields.push(VERBAL_REFERRALS);
     }
   }
 
   if (dispositions.includes(DISPOSITION_TYPES.COURTESY_TRANPORT)) {
     if (!state.get(COURTESY_TRANSPORTS, List()).size) {
-      finished = false;
+      invalidFields.push(COURTESY_TRANSPORTS);
     }
   }
 
   if (dispositions.includes(DISPOSITION_TYPES.HOSPITAL)) {
     if (state.get(WAS_VOLUNTARY_TRANSPORT) === undefined) {
-      finished = false;
+      invalidFields.push(WAS_VOLUNTARY_TRANSPORT);
     }
   }
 
   if (dispositions.includes(DISPOSITION_TYPES.ARRESTABLE_OFFENSE)) {
     if (!state.get(ARRESTABLE_OFFENSES, List()).size) {
-      finished = false;
+      invalidFields.push(ARRESTABLE_OFFENSES);
     }
   }
 
   if (dispositions.includes(DISPOSITION_TYPES.NO_ACTION_POSSIBLE)) {
     if (!state.get(NO_ACTION_VALUES, List()).size) {
-      finished = false;
+      invalidFields.push(NO_ACTION_VALUES);
     }
   }
 
   // REPORT NUMBER / DESCRIPTION
 
   if (state.get(HAS_REPORT_NUMBER) === undefined) {
-    finished = false;
+    invalidFields.push(HAS_REPORT_NUMBER);
   }
   else if (state.get(HAS_REPORT_NUMBER) && !state.get(REPORT_NUMBER, '').length) {
-    finished = false;
+    invalidFields.push(REPORT_NUMBER);
   }
   else if (!state.get(HAS_REPORT_NUMBER) && !state.get(INCIDENT_DESCRIPTION, '').length) {
-    finished = false;
+    invalidFields.push(INCIDENT_DESCRIPTION);
   }
 
-  return finished ? FORM_STEP_STATUS.COMPLETED : FORM_STEP_STATUS.IN_PROGRESS;
+  return invalidFields;
+}
+
+export function getStatus(state :Map<*, *>) :boolean {
+  if (state === INITIAL_STATE) {
+    return FORM_STEP_STATUS.INITIAL;
+  }
+
+  return getInvalidFields(state).length ? FORM_STEP_STATUS.IN_PROGRESS : FORM_STEP_STATUS.COMPLETED;
 }
 
 export function processForSubmit(state :Map<*, *>) :Object {

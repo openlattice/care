@@ -1,5 +1,7 @@
 /* Field names */
 
+export const INCOMPLETE = 'incomplete';
+
 export const OTHER = 'Other';
 
 export const SUBJECT_INFORMATION = {

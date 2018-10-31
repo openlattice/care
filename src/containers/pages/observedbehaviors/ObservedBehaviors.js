@@ -11,16 +11,19 @@ import { List, Map } from 'immutable';
 
 import StyledCheckbox from '../../../components/controls/StyledCheckbox';
 import StyledInput from '../../../components/controls/StyledInput';
+import { showInvalidFields } from '../../../utils/NavigationUtils';
 import { STATE } from '../../../utils/constants/StateConstants';
 import { OBSERVED_BEHAVIORS, OTHER } from '../../../utils/constants/CrisisTemplateConstants';
 import { BEHAVIORS, DEMEANORS } from './Constants';
 import {
   FormWrapper,
   FormSection,
+  FormSectionWithValidation,
   Header,
   RequiredField
 } from '../../../components/crisis/FormComponents';
 
+import { getInvalidFields } from './Reducer';
 import * as ActionFactory from './ActionFactory';
 
 type Props = {
@@ -94,6 +97,8 @@ const ObservedBehaviors = ({ values, actions } :Props) => {
     );
   };
 
+  const invalidFields = showInvalidFields(window.location) ? getInvalidFields(values) : [];
+
   return (
     <FormWrapper>
       <FormSection>
@@ -104,20 +109,20 @@ const ObservedBehaviors = ({ values, actions } :Props) => {
         {renderSingleCheckbox(OBSERVED_BEHAVIORS.VETERAN, 'Served in the military?')}
         {renderSingleCheckbox(OBSERVED_BEHAVIORS.CHRONIC, 'Chronic complaint?')}
       </FormSection>
-      <FormSection>
+      <FormSectionWithValidation invalid={invalidFields.includes(OBSERVED_BEHAVIORS.BEHAVIORS)}>
         <Header>
           <h1>Behaviors</h1>
           <RequiredField>Check all that apply.</RequiredField>
         </Header>
         {renderCheckboxList(OBSERVED_BEHAVIORS.BEHAVIORS, BEHAVIORS, OBSERVED_BEHAVIORS.OTHER_BEHAVIOR)}
-      </FormSection>
-      <FormSection>
+      </FormSectionWithValidation>
+      <FormSectionWithValidation invalid={invalidFields.includes(OBSERVED_BEHAVIORS.DEMEANORS)}>
         <Header>
           <h1>Demeanors Observed Around Law Enforcement</h1>
           <RequiredField>Check all that apply.</RequiredField>
         </Header>
         {renderCheckboxList(OBSERVED_BEHAVIORS.DEMEANORS, DEMEANORS)}
-      </FormSection>
+      </FormSectionWithValidation>
     </FormWrapper>
   );
 };

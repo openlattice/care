@@ -34,10 +34,21 @@ export const FormSection = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 10px;
+  padding: ${props => (props.invalid ? '5px 10px 5px 10px' : '0 10px')};
+  width: 100%;
+  margin: 0 -10px ${props => (props.invalid ? 10 : 0)}px -10px;
 
   background-color: ${props => (props.invalid ? `${INVALID_BACKGROUND}` : 'transparent')};
   border: ${props => (props.invalid ? `1px solid ${INVALID_BORDER}` : 'none')};
+`;
+
+const ErrorMessage = styled.span`
+  width: 100%;
+  padding: 5px 0;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: ${RED_PINK};
 `;
 
 export const Header = styled.div`
@@ -94,4 +105,11 @@ export const RequiredField = ({ children }) => (
     <span>{children}</span>
     <RequiredAsterisk>*</RequiredAsterisk>
   </RequiredFieldWrapper>
+);
+
+export const FormSectionWithValidation = ({ errorMessage, invalid, children }) => (
+  <FormSection invalid={invalid}>
+    {invalid ? <ErrorMessage>{errorMessage || 'This is a required field.'}</ErrorMessage> : null}
+    {children}
+  </FormSection>
 );

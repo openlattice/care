@@ -61,30 +61,52 @@ export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :
   }
 }
 
+export function getInvalidFields(state :Map<*, *>) {
+  const invalidFields = [];
+
+  if (state.get(IS_NEW_PERSON)) {
+    if (!state.get(LAST, '').length) {
+      invalidFields.push(LAST);
+    }
+
+    if (!state.get(FIRST, '').length) {
+      invalidFields.push(FIRST);
+    }
+
+    if (!state.get(GENDER, '').length) {
+      invalidFields.push(GENDER);
+    }
+
+    if (!state.get(RACE, '').length) {
+      invalidFields.push(RACE);
+    }
+
+    if (state.get(SSN_LAST_4, '').length !== 4) {
+      invalidFields.push(SSN_LAST_4);
+    }
+
+    if (!state.get(DOB, '').length || !moment(state.get(DOB, '')).isValid()) {
+      invalidFields.push(DOB);
+    }
+
+    if (!state.get(AGE, '').length) {
+      invalidFields.push(AGE);
+    }
+
+  }
+  else if (!state.get(PERSON_ID, '').length) {
+    invalidFields.push(PERSON_ID);
+  }
+
+  return invalidFields;
+}
+
 export function getStatus(state :Map<*, *>) :boolean {
   if (state === INITIAL_STATE) {
     return FORM_STEP_STATUS.INITIAL;
   }
-  let finished = false;
 
-  // selected existing person
-  if (state.get(PERSON_ID, '').length) {
-    finished = true;
-  }
-
-  // creating new person
-  if (state.get(LAST, '').length
-    && state.get(FIRST, '').length
-    && state.get(GENDER, '').length
-    && state.get(RACE, '').length
-    && state.get(SSN_LAST_4).length === 4
-    && state.get(DOB, '').length && moment(state.get(DOB, '')).isValid()
-    && !isNotInteger(state.get(AGE))
-  ) {
-    finished = true;
-  }
-
-  return finished ? FORM_STEP_STATUS.COMPLETED : FORM_STEP_STATUS.IN_PROGRESS;
+  return getInvalidFields(state).length ? FORM_STEP_STATUS.IN_PROGRESS : FORM_STEP_STATUS.COMPLETED;
 }
 
 export function processForSubmit(state :Map<*, *>) :Object {
