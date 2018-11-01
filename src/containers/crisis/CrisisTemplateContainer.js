@@ -4,6 +4,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
+import moment from 'moment';
 
 import { Map } from 'immutable';
 import { bindActionCreators } from 'redux';
@@ -13,6 +14,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 
 import type { RouterHistory } from 'react-router';
 
+import ReviewContainer from './ReviewContainer';
 import BackButton from '../../components/buttons/BackButton';
 import ProgressSidebar from '../../components/form/ProgressSidebar';
 import SubjectInformation from '../pages/subjectinformation/SubjectInformation';
@@ -20,6 +22,7 @@ import ObservedBehaviors from '../pages/observedbehaviors/ObservedBehaviors';
 import NatureOfCrisis from '../pages/natureofcrisis/NatureOfCrisis';
 import OfficerSafety from '../pages/officersafety/OfficerSafety';
 import Disposition from '../pages/disposition/Disposition';
+import { FormWrapper as StyledPageWrapper } from '../../components/crisis/FormComponents';
 
 import { hardRestart, submitReport } from '../form/ReportActionFactory';
 import { clearCrisisTemplate } from './CrisisActionFactory';
@@ -53,6 +56,7 @@ import { FORM_STEP_STATUS } from '../../utils/constants/FormConstants';
 import { STATE } from '../../utils/constants/StateConstants';
 import { CRISIS_PATH } from '../../core/router/Routes';
 import { MEDIA_QUERY_MD, MEDIA_QUERY_LG } from '../../core/style/Sizes';
+import { BLACK } from '../../shared/Colors';
 
 type Props = {
   actions :{
@@ -103,21 +107,28 @@ const FormWrapper = styled.div`
   }
 `;
 
-const ValidationWrapper = styled.button`
-  width: fit-content;
-  height: fit-content;
-
-  &:hover {
-    cursor: pointer !important;
-  }
+const SpacedRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 const ButtonRow = styled.div`
   display: flex;
   flex-direction: row;
-  width: 100%;
   justify-content: flex-end;
   align-items: center;
+`;
+
+const ReviewHeader = styled.div`
+  font-size: 16px;
+  color: ${BLACK};
+
+  @media only screen and (min-width: ${MEDIA_QUERY_MD}px) {
+    font-size: 18px;
+  }
 `;
 
 const ForwardButton = styled.button.attrs({
@@ -236,10 +247,10 @@ class CrisisTemplateContainer extends React.Component<Props> {
 
     const { validator, stateField } = page;
     const complete = validator(state.get(stateField)) === FORM_STEP_STATUS.COMPLETED;
-    const nextPath = getNextPath(window.location, PAGES.length);
+    const nextPath = getNextPath(window.location, PAGES.length + 1);
 
     const disabled = isSubmit ? !this.isReadyToSubmit() : !complete;
-    let onClick = isSubmit ? this.handleSubmit : () => this.handlePageChange(nextPath);
+    let onClick = () => this.handlePageChange(nextPath);
 
     if (disabled) {
       const showInvalidFieldsPath = setShowInvalidFields(window.location);
@@ -269,6 +280,31 @@ class CrisisTemplateContainer extends React.Component<Props> {
     );
   }
 
+  renderReview = () => {
+    const ready = this.isReadyToSubmit();
+    const prevPath = getPrevPath(window.location);
+
+    const buttons = (
+      <ButtonRow>
+        <BackButton onClick={() => this.handlePageChange(prevPath)}>Back</BackButton>
+        <ForwardButton onClick={this.handleSubmit} canProgress={ready}>Submit</ForwardButton>
+      </ButtonRow>
+    );
+
+    return (
+      <PageWrapper>
+        <StyledPageWrapper>
+          <SpacedRow>
+            <ReviewHeader>{`Crisis Template Narrative: ${moment().format('MM-DD-YYYY')}`}</ReviewHeader>
+            {buttons}
+          </SpacedRow>
+          <ReviewContainer />
+        </StyledPageWrapper>
+        {buttons}
+      </PageWrapper>
+    );
+  }
+
   renderRoutes = () => PAGES.map((page, index) => {
     const path = `${CRISIS_PATH}/${index + 1}`;
     return <Route key={path} path={path} render={() => this.renderPage(page, index)} />;
@@ -288,15 +324,21 @@ class CrisisTemplateContainer extends React.Component<Props> {
   render() {
 
     const { app, submissionState } = this.props;
+    const currentPage = getCurrentPage(window.location);
 
     return (
       <CrisisTemplateWrapper>
-        <ProgressSidebar
-            formTitle="Crisis Template"
-            currentStepNumber={getCurrentPage(window.location) - 1}
-            steps={this.getSidebarSteps()} />
+        {
+          currentPage > PAGES.length ? null : (
+            <ProgressSidebar
+                formTitle="Crisis Template"
+                currentStepNumber={currentPage - 1}
+                steps={this.getSidebarSteps()} />
+          )
+        }
         <Switch>
           {this.renderRoutes()}
+          <Route path={`${CRISIS_PATH}/${PAGES.length + 1}`} render={this.renderReview} />
           <Redirect to={`${CRISIS_PATH}/1`} />
         </Switch>
       </CrisisTemplateWrapper>
