@@ -253,27 +253,10 @@ class ObservedBehaviors extends React.Component<Props> {
 
     const toggleNewPerson = (event) => {
       event.preventDefault();
-      if (isCreatingNewPerson) {
-        actions.setInputValue({
-          field: SUBJECT_INFORMATION.IS_NEW_PERSON,
-          value: false
-        });
-      }
-      else {
-        actions.setInputValues({
-          [SUBJECT_INFORMATION.PERSON_ID]: '',
-          [SUBJECT_INFORMATION.FULL_NAME]: '',
-          [SUBJECT_INFORMATION.FIRST]: '',
-          [SUBJECT_INFORMATION.LAST]: '',
-          [SUBJECT_INFORMATION.MIDDLE]: '',
-          [SUBJECT_INFORMATION.DOB]: '',
-          [SUBJECT_INFORMATION.SSN_LAST_4]: '',
-          [SUBJECT_INFORMATION.RACE]: '',
-          [SUBJECT_INFORMATION.GENDER]: '',
-          [SUBJECT_INFORMATION.AGE]: '',
-          [SUBJECT_INFORMATION.IS_NEW_PERSON]: true
-        });
-      }
+      actions.setInputValue({
+        field: SUBJECT_INFORMATION.IS_NEW_PERSON,
+        value: !isCreatingNewPerson
+      });
     };
 
     const PersonFormSection = isCreatingNewPerson ? FormSectionWithValidation : FormSection;
