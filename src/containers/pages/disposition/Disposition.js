@@ -279,7 +279,7 @@ const ObservedBehaviors = ({ values, actions } :Props) => {
           ) : null
         }
       </FormSectionWithValidation>
-      <FormSectionWithValidation invalid={invalidFields.includes(DISPOSITION.HAS_REPORT_NUMBER)}>
+      <FormSection>
         <Header>
           <h1>Additional Details</h1>
         </Header>
@@ -313,7 +313,7 @@ const ObservedBehaviors = ({ values, actions } :Props) => {
             </IndentWrapper>
           )
           : null}
-      </FormSectionWithValidation>
+      </FormSection>
     </FormWrapper>
   );
 };

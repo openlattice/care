@@ -124,14 +124,14 @@ export function getInvalidFields(state :Map<*, *>) {
 
   // REPORT NUMBER / DESCRIPTION
 
-  if (state.get(HAS_REPORT_NUMBER) === undefined) {
-    invalidFields.push(HAS_REPORT_NUMBER);
-  }
-  else if (state.get(HAS_REPORT_NUMBER) && !state.get(REPORT_NUMBER, '').length) {
-    invalidFields.push(REPORT_NUMBER);
-  }
-  else if (!state.get(HAS_REPORT_NUMBER) && !state.get(INCIDENT_DESCRIPTION, '').length) {
-    invalidFields.push(INCIDENT_DESCRIPTION);
+  if (state.get(HAS_REPORT_NUMBER) !== undefined) {
+
+    if (state.get(HAS_REPORT_NUMBER) && !state.get(REPORT_NUMBER, '').length) {
+      invalidFields.push(REPORT_NUMBER);
+    }
+    else if (!state.get(HAS_REPORT_NUMBER) && !state.get(INCIDENT_DESCRIPTION, '').length) {
+      invalidFields.push(INCIDENT_DESCRIPTION);
+    }
   }
 
   return invalidFields;
