@@ -26,12 +26,12 @@ import {
 } from '../../components/layout';
 
 import {
-  COMPLAINT_NUMBER_FQN,
   DATE_TIME_OCCURRED_FQN,
   DATE_TIME_REPORTED_FQN,
   DISPATCH_REASON_FQN,
   INCIDENT_FQN,
   LOCATION_OF_INCIDENT_FQN,
+  OL_ID_FQN
 } from '../../edm/DataModelFqns';
 
 const { OPENLATTICE_ID_FQN } = Constants;
@@ -125,7 +125,7 @@ class HackyReportsContainer extends Component<Props> {
           </DetailItem>
           <DetailItem>
             <h2>Complaint Number</h2>
-            <p>{ report.getIn([COMPLAINT_NUMBER_FQN.toString(), 0], '') }</p>
+            <p>{ report.getIn([OL_ID_FQN.toString(), 0], '') }</p>
           </DetailItem>
           <DetailItem>
             <h2>Reason for Dispatch</h2>

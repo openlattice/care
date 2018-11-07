@@ -138,7 +138,7 @@ class Form extends React.Component<Props, State> {
 
     const selectedOrganizationId :string = app.get('selectedOrganizationId');
     const peopleEntitySetId :string = app.getIn([
-      PEOPLE_FQN.getFullyQualifiedName(),
+      PEOPLE_FQN.toString(),
       'entitySetsByOrganization',
       selectedOrganizationId
     ]);

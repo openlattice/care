@@ -13,6 +13,7 @@ import { NavLink } from 'react-router-dom';
 
 import StyledCard from '../../components/cards/StyledCard';
 import * as Routes from '../../core/router/Routes';
+import { MEDIA_QUERY_MD } from '../../core/style/Sizes';
 
 /*
  * styled components
@@ -30,8 +31,12 @@ const ContainerWrapper = styled.div`
 const Content = styled.div`
   display: flex;
   flex-direction: column;
-  margin-top: 50px;
-  width: 900px;
+  max-width: 900px;
+  width: 100%;
+
+  @media only screen and (min-width: ${MEDIA_QUERY_MD}px) {
+    margin-top: 50px;
+  }
 `;
 
 const StyledNavLink = styled(NavLink)`
@@ -43,6 +48,10 @@ const StyledNavLink = styled(NavLink)`
     > div {
       border-color: #95aabf;
     }
+  }
+
+  &:not(:first-child) {
+    margin-top: 25px;
   }
 `;
 
@@ -58,8 +67,13 @@ const LinkTextWrapper = styled.div`
 `;
 
 const LinkText = styled.span`
-  font-size: 18px;
-  margin-left: 20px;
+  font-size: 14px;
+  padding: 0 15px;
+
+  @media only screen and (min-width: ${MEDIA_QUERY_MD}px) {
+    font-size: 18px;
+    padding: 0 20px;
+  }
 `;
 
 const HomeContainer = () => (
@@ -74,7 +88,16 @@ const HomeContainer = () => (
           <FontAwesomeIcon icon={faAngleRight} size="2x" />
         </StyledNavCard>
       </StyledNavLink>
-      <StyledNavLink to={Routes.FOLLOW_UP_PATH} style={{ marginTop: '25px' }}>
+      <StyledNavLink to={Routes.CRISIS_PATH}>
+        <StyledNavCard>
+          <LinkTextWrapper>
+            <FontAwesomeIcon icon={faFileAlt} size="2x" />
+            <LinkText>Crisis Template</LinkText>
+          </LinkTextWrapper>
+          <FontAwesomeIcon icon={faAngleRight} size="2x" />
+        </StyledNavCard>
+      </StyledNavLink>
+      <StyledNavLink to={Routes.FOLLOW_UP_PATH}>
         <StyledNavCard>
           <LinkTextWrapper>
             <FontAwesomeIcon icon={faFileAlt} size="2x" />

@@ -314,7 +314,7 @@ export default class EditPerson extends React.Component<Props, State> {
                   dateFormat={DATE_DISPLAY_FORMAT}
                   onChange={dob => this.setState({ person: person.set(PERSON_DOB_FQN, dob) })}
                   selectProps={{
-                    placeholder: DATE_DISPLAY_FORMAT,
+                    placeholder: DATE_DISPLAY_FORMAT
                   }} />
             </FullWidthWrapper>
           </HalfWidthItem>

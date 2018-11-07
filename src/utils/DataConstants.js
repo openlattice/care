@@ -1,3 +1,9 @@
+/* Form Types */
+export const FORM_TYPE = {
+  BHR: 'Behavioral Health Report',
+  CRISIS_TEMPLATE: 'Crisis Template'
+};
+
 /* Consumer Constants */
 
 export const GENDERS = {
