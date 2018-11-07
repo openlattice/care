@@ -3,10 +3,11 @@ import styled from 'styled-components';
 
 import { APP_CONTAINER_WIDTH, MEDIA_QUERY_MD, MEDIA_QUERY_LG } from '../../core/style/Sizes';
 import {
+  WHITE,
   BLACK,
   GRAY,
   INVALID_BACKGROUND,
-  INVALID_BORDER,
+  INVALID_TAG,
   RED_PINK
 } from '../../shared/Colors';
 
@@ -39,7 +40,6 @@ export const FormSection = styled.div`
   margin: 0 -10px ${props => (props.invalid ? 10 : 0)}px -10px;
 
   background-color: ${props => (props.invalid ? `${INVALID_BACKGROUND}` : 'transparent')};
-  border: ${props => (props.invalid ? `1px solid ${INVALID_BORDER}` : 'none')};
 `;
 
 const ErrorMessage = styled.span`
@@ -48,7 +48,7 @@ const ErrorMessage = styled.span`
   text-align: center;
   font-size: 14px;
   font-weight: 600;
-  color: ${RED_PINK};
+  color: ${INVALID_TAG};
 `;
 
 export const Header = styled.div`

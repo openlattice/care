@@ -184,9 +184,10 @@ const REPORT_INFO_INITIAL_STATE :Map<string, *> = fromJS({
   [FQNS.DISPATCH_REASON_FQN]: '',
   [FQNS.INCIDENT_FQN]: '',
   [FQNS.LOCATION_OF_INCIDENT_FQN]: '',
-  [FQNS.UNIT_FQN]: '',
+  [FQNS.OL_ID_FQN]: '',
   [FQNS.ON_VIEW_FQN]: false,
   [FQNS.POST_OF_OCCURRENCE_FQN]: '',
+  [FQNS.UNIT_FQN]: ''
 });
 
 function getReportInfoInitialState() {

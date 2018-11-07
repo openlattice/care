@@ -131,7 +131,7 @@ class AppContainer extends Component<Props> {
 
       const selectedOrgId :string = nextOrgId;
       const hospitalsEntitySetId = nextProps.app.getIn(
-        [HOSPITALS_FQN.getFullyQualifiedName(), 'entitySetsByOrganization', selectedOrgId]
+        [HOSPITALS_FQN.toString(), 'entitySetsByOrganization', selectedOrgId]
       );
       if (isValidUuid(hospitalsEntitySetId)) {
         actions.loadHospitals({
@@ -185,13 +185,13 @@ class AppContainer extends Component<Props> {
     return (
       <Switch>
         <Route exact strict path={HOME_PATH} render={this.wrapComponent(HomeContainer)} />
-        <Route path={BHR_PATH} component={this.wrapComponent(FormContainer)} />
+        <Route path={BHR_PATH} render={this.wrapComponent(FormContainer)} />
         <Route path={CRISIS_PATH} component={CrisisTemplateContainer} />
-        <Route path={FOLLOW_UP_PATH} component={this.wrapComponent(FollowUpReportManager)} />
-        <Route path={REPORTS_PATH} component={this.wrapComponent(HackyReportsManager)} />
-        <Route path={DASHBOARD_PATH} component={this.wrapComponent(DashboardContainer)} />
-        <Route path={DOWNLOADS_PATH} component={this.wrapComponent(DownloadsContainer)} />
-        <Route path={PEOPLE_PATH} component={this.wrapComponent(PeopleContainer)} />
+        <Route path={FOLLOW_UP_PATH} render={this.wrapComponent(FollowUpReportManager)} />
+        <Route path={REPORTS_PATH} render={this.wrapComponent(HackyReportsManager)} />
+        <Route path={DASHBOARD_PATH} render={this.wrapComponent(DashboardContainer)} />
+        <Route path={DOWNLOADS_PATH} render={this.wrapComponent(DownloadsContainer)} />
+        <Route path={PEOPLE_PATH} render={this.wrapComponent(PeopleContainer)} />
         <Redirect to={HOME_PATH} />
       </Switch>
     );

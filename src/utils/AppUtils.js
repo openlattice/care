@@ -12,13 +12,13 @@ const {
 export const getSelectedOrganizationId = (app :Map) => app.get('selectedOrganizationId');
 
 export const getPeopleESId :string = (app :Map) => app.getIn([
-  PEOPLE_FQN.getFullyQualifiedName(),
+  PEOPLE_FQN.toString(),
   'entitySetsByOrganization',
   getSelectedOrganizationId(app)
 ]);
 
 export const getReportESId :string = (app :Map) => app.getIn([
-  BEHAVIORAL_HEALTH_REPORT_FQN.getFullyQualifiedName(),
+  BEHAVIORAL_HEALTH_REPORT_FQN.toString(),
   'entitySetsByOrganization',
   getSelectedOrganizationId(app)
 ]);

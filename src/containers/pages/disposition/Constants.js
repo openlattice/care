@@ -38,15 +38,24 @@ export const COURTESY_TRANSPORTS = [
   'General'
 ];
 
+export const NOT_ARRESTED = 'Not arrested';
+export const ARRESTED = 'Arrested';
+export const CRIMES_AGAINST_PERSON = 'Crimes against person';
+export const FELONY = 'Felony';
+
 export const ARRESTABLE_OFFENSES = [
-  'Not arrested',
-  'Arrested',
-  'Crimes against person',
-  'Felony'
+  NOT_ARRESTED,
+  ARRESTED,
+  CRIMES_AGAINST_PERSON,
+  FELONY
 ];
 
+export const UNABLE_TO_CONTACT = 'Unable to contact';
+export const NO_ACTION_NECESSARY = 'No action possible / necessary';
+export const RESOURCES_DECLINED = 'Resources offered + declined';
+
 export const NO_ACTION_VALUES = [
-  'Unable to contact',
-  'No action possible / necessary',
-  'Resources offered + declined'
+  UNABLE_TO_CONTACT,
+  NO_ACTION_NECESSARY,
+  RESOURCES_DECLINED
 ];

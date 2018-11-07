@@ -2,12 +2,14 @@
  * @flow
  */
 
+import randomUUID from 'uuid/v4';
 import { List, Map } from 'immutable';
 import { Models } from 'lattice';
 import { DataIntegrationApiActionFactory, DataIntegrationApiSagas } from 'lattice-sagas';
 import { call, put, takeEvery } from 'redux-saga/effects';
 
 import { APP_TYPES_FQNS, STRING_ID_FQN } from '../../shared/Consts';
+import { FORM_TYPE } from '../../utils/DataConstants';
 import {
   PERSON_DOB_FQN,
   PERSON_LAST_NAME_FQN,
@@ -17,6 +19,9 @@ import {
   PERSON_SEX_FQN,
   PERSON_ID_FQN,
   PERSON_PICTURE_FQN,
+  COMPLAINT_NUMBER_FQN,
+  OL_ID_FQN,
+  TYPE_FQN
 } from '../../edm/DataModelFqns';
 
 import {
@@ -206,43 +211,50 @@ export function* submitReportWorker(action :SequenceAction) :Generator<*, *, *> 
       reportInfo
     );
 
+    let formID = allInfo[OL_ID_FQN.toString()];
+    if (!formID.trim().length) {
+      formID = randomUUID();
+    }
+    allInfo[COMPLAINT_NUMBER_FQN] = formID;
+    allInfo[TYPE_FQN] = FORM_TYPE.BHR;
+
     const selectedOrganizationId = app.get('selectedOrganizationId');
 
     const appearsInESId :string = app.getIn([
-      APPEARS_IN_FQN.getFullyQualifiedName(),
+      APPEARS_IN_FQN.toString(),
       'entitySetsByOrganization',
       selectedOrganizationId
     ]);
 
     const appearsInPropertyTypes :Map<*, *> = app.getIn(
-      [APPEARS_IN_FQN.getFullyQualifiedName(), 'propertyTypes'],
+      [APPEARS_IN_FQN.toString(), 'propertyTypes'],
       Map()
     ).valueSeq();
 
     const peopleESId :string = app.getIn([
-      PEOPLE_FQN.getFullyQualifiedName(),
+      PEOPLE_FQN.toString(),
       'entitySetsByOrganization',
       selectedOrganizationId
     ]);
 
     const peoplePropertyTypes :Map<*, *> = app.getIn(
-      [PEOPLE_FQN.getFullyQualifiedName(), 'propertyTypes'],
+      [PEOPLE_FQN.toString(), 'propertyTypes'],
       Map()
     ).valueSeq();
 
     const reportESId :string = app.getIn([
-      BEHAVIORAL_HEALTH_REPORT_FQN.getFullyQualifiedName(),
+      BEHAVIORAL_HEALTH_REPORT_FQN.toString(),
       'entitySetsByOrganization',
       selectedOrganizationId
     ]);
 
     const reportPrimaryKeys :List<string> = app.getIn(
-      [BEHAVIORAL_HEALTH_REPORT_FQN.getFullyQualifiedName(), 'primaryKeys'],
+      [BEHAVIORAL_HEALTH_REPORT_FQN.toString(), 'primaryKeys'],
       List()
     ).valueSeq();
 
     const reportPropertyTypes :Map<*, *> = app.getIn(
-      [BEHAVIORAL_HEALTH_REPORT_FQN.getFullyQualifiedName(), 'propertyTypes'],
+      [BEHAVIORAL_HEALTH_REPORT_FQN.toString(), 'propertyTypes'],
       Map()
     ).valueSeq();
 

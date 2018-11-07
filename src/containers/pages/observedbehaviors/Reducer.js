@@ -6,23 +6,23 @@ import { List, Map, fromJS } from 'immutable';
 
 import { SET_INPUT_VALUE } from './ActionFactory';
 import { CLEAR_CRISIS_TEMPLATE } from '../../crisis/CrisisActionFactory';
-import { OBSERVED_BEHAVIORS, OTHER } from '../../../utils/constants/CrisisTemplateConstants';
+import { OBSERVED_BEHAVIORS, OTHER, POST_PROCESS_FIELDS } from '../../../utils/constants/CrisisTemplateConstants';
 import { FORM_STEP_STATUS } from '../../../utils/constants/FormConstants';
 
 const {
   VETERAN,
-  CHRONIC,
   BEHAVIORS,
   OTHER_BEHAVIOR,
-  DEMEANORS
+  DEMEANORS,
+  OTHER_DEMEANOR
 } = OBSERVED_BEHAVIORS;
 
 const INITIAL_STATE :Map<*, *> = fromJS({
   [VETERAN]: false,
-  [CHRONIC]: false,
   [BEHAVIORS]: [],
   [OTHER_BEHAVIOR]: '',
-  [DEMEANORS]: []
+  [DEMEANORS]: [],
+  [OTHER_DEMEANOR]: ''
 });
 
 export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :Object) {
@@ -55,6 +55,9 @@ export function getInvalidFields(state :Map<*, *>) {
   if (!state.get(DEMEANORS, List()).size) {
     invalidFields.push(DEMEANORS);
   }
+  else if (state.get(DEMEANORS, List()).includes(OTHER) && !state.get(OTHER_DEMEANOR, '').length) {
+    invalidFields.push(DEMEANORS);
+  }
 
   return invalidFields;
 }
@@ -67,5 +70,11 @@ export function getStatus(state :Map<*, *>) :boolean {
 }
 
 export function processForSubmit(state :Map<*, *>) :Object {
-  return state.toJS();
+  let newState = state;
+
+  if (state.get(VETERAN)) {
+    newState = newState.set(POST_PROCESS_FIELDS.MILITARY_STATUS, 'Veteran');
+  }
+
+  return newState.toJS();
 }

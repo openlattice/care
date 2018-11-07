@@ -18,10 +18,12 @@ export const ASSISTANCES = [
   OTHER
 ];
 
+export const HOMELESS_STR = 'Homeless';
+
 export const HOUSING_SITUATIONS = [
   'Stable Housing',
   'Service Provider Housing',
   'Homeless Shelter',
-  'Homeless',
+  HOMELESS_STR,
   'Unknown'
 ];

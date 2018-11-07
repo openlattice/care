@@ -22,9 +22,11 @@ import ObservedBehaviors from '../pages/observedbehaviors/ObservedBehaviors';
 import NatureOfCrisis from '../pages/natureofcrisis/NatureOfCrisis';
 import OfficerSafety from '../pages/officersafety/OfficerSafety';
 import Disposition from '../pages/disposition/Disposition';
+import submitConfig from '../../config/formconfig/CrisisTemplateConfig';
 import { FormWrapper as StyledPageWrapper } from '../../components/crisis/FormComponents';
 
-import { hardRestart, submitReport } from '../form/ReportActionFactory';
+import { hardRestart } from '../form/ReportActionFactory';
+import { submit } from '../../utils/submit/SubmitActionFactory';
 import { clearCrisisTemplate } from './CrisisActionFactory';
 import {
   getCurrentPage,
@@ -54,6 +56,8 @@ import {
 } from '../pages/disposition/Reducer';
 import { FORM_STEP_STATUS } from '../../utils/constants/FormConstants';
 import { STATE } from '../../utils/constants/StateConstants';
+import { POST_PROCESS_FIELDS } from '../../utils/constants/CrisisTemplateConstants';
+import { FORM_TYPE } from '../../utils/DataConstants';
 import { CRISIS_PATH } from '../../core/router/Routes';
 import { MEDIA_QUERY_MD, MEDIA_QUERY_LG } from '../../core/style/Sizes';
 import { BLACK } from '../../shared/Colors';
@@ -61,8 +65,8 @@ import { BLACK } from '../../shared/Colors';
 type Props = {
   actions :{
     hardRestart :() => void,
-    submitReport :(args :Object) => void,
-    clearCrisisTemplate :() => void
+    clearCrisisTemplate :() => void,
+    submit :(args :Object) => void
   },
   app :Map<*, *>,
   history :RouterHistory,
@@ -219,17 +223,25 @@ class CrisisTemplateContainer extends React.Component<Props> {
 
     const { actions, app, state } = this.props;
 
-    let submission = {};
+    let submission = {
+      [POST_PROCESS_FIELDS.FORM_TYPE]: FORM_TYPE.CRISIS_TEMPLATE,
+      [POST_PROCESS_FIELDS.TIMESTAMP]: moment().toISOString(true)
+    };
 
     PAGES.forEach((page) => {
       const { postProcessor, stateField } = page;
       submission = Object.assign({}, submission, postProcessor(state.get(stateField)));
     });
 
-    console.log(submission);
+    actions.submit({
+      app,
+      config: submitConfig,
+      values: submission
+    });
   }
 
   isReadyToSubmit = () => {
+    return true;
     const { state } = this.props;
     let ready = true;
     PAGES.forEach((page) => {
@@ -359,7 +371,7 @@ function mapDispatchToProps(dispatch :Function) :Object {
 
   const actions = {
     hardRestart,
-    submitReport,
+    submit,
     clearCrisisTemplate
   };
 

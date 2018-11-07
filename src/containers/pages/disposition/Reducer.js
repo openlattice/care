@@ -2,13 +2,23 @@
  * @flow
  */
 
+import randomUUID from 'uuid/v4';
 import { List, Map, fromJS } from 'immutable';
 
 import { SET_INPUT_VALUE } from './ActionFactory';
 import { CLEAR_CRISIS_TEMPLATE } from '../../crisis/CrisisActionFactory';
-import { DISPOSITION, OTHER } from '../../../utils/constants/CrisisTemplateConstants';
+import { DISPOSITION, OTHER, POST_PROCESS_FIELDS } from '../../../utils/constants/CrisisTemplateConstants';
 import { FORM_STEP_STATUS } from '../../../utils/constants/FormConstants';
-import { DISPOSITIONS as DISPOSITION_TYPES } from './Constants';
+import {
+  NOT_ARRESTED,
+  ARRESTED,
+  CRIMES_AGAINST_PERSON,
+  FELONY,
+  UNABLE_TO_CONTACT,
+  NO_ACTION_NECESSARY,
+  RESOURCES_DECLINED,
+  DISPOSITIONS as DISPOSITION_TYPES
+} from './Constants';
 
 const {
   SPECIALISTS,
@@ -146,5 +156,69 @@ export function getStatus(state :Map<*, *>) :boolean {
 }
 
 export function processForSubmit(state :Map<*, *>) :Object {
-  return state.toJS();
+  const dispositions = state.get(DISPOSITIONS, List());
+  let newState = state
+    .set(
+      POST_PROCESS_FIELDS.VERBAL_REFERRAL_INDICATOR,
+      dispositions.includes(DISPOSITION_TYPES.VERBAL_REFERRAL)
+    ).set(
+      POST_PROCESS_FIELDS.HOSPITAL_TRANPORT,
+      dispositions.includes(DISPOSITION_TYPES.COURTESY_TRANPORT)
+    ).set(
+      POST_PROCESS_FIELDS.NARCAN_ADMINISTERED,
+      dispositions.includes(DISPOSITION_TYPES.ADMINISTERED_DRUG)
+    ).set(
+      POST_PROCESS_FIELDS.ARRESTABLE_OFFENSE,
+      dispositions.includes(DISPOSITION_TYPES.ARRESTABLE_OFFENSE)
+    ).set(
+      POST_PROCESS_FIELDS.TRANSPORT_INDICATOR,
+      dispositions.includes(DISPOSITION_TYPES.COURTESY_TRANPORT)
+    );
+
+  let formID = state.get(REPORT_NUMBER, '');
+  if (!formID.trim().length) {
+    formID = randomUUID();
+  }
+  newState = newState.set(POST_PROCESS_FIELDS.FORM_ID, formID);
+
+
+  // handle arrestable offenses
+  const arrestableOffense = state.get(ARRESTABLE_OFFENSES, List());
+
+  newState = newState.set(
+    POST_PROCESS_FIELDS.CRIMES_AGAINST_PERSON,
+    arrestableOffense.includes(CRIMES_AGAINST_PERSON)
+  );
+
+  newState = newState.set(
+    POST_PROCESS_FIELDS.FELONY_COMMITTED,
+    arrestableOffense.includes(FELONY)
+  );
+
+  if (arrestableOffense.includes(ARRESTED)) {
+    newState = newState.set(POST_PROCESS_FIELDS.ARREST_INDICATOR, true);
+  }
+  else if (arrestableOffense.includes(NOT_ARRESTED)) {
+    newState = newState.set(POST_PROCESS_FIELDS.ARREST_INDICATOR, false);
+  }
+
+  // handle no action values
+  const noActionValues = state.get(NO_ACTION_VALUES, List());
+
+  newState = newState.set(
+    POST_PROCESS_FIELDS.UNABLE_TO_CONTACT,
+    noActionValues.includes(UNABLE_TO_CONTACT)
+  );
+
+  newState = newState.set(
+    POST_PROCESS_FIELDS.NO_ACTION_POSSIBLE,
+    noActionValues.includes(NO_ACTION_NECESSARY)
+  );
+
+  newState = newState.set(
+    POST_PROCESS_FIELDS.RESOURCES_DECLINED,
+    noActionValues.includes(RESOURCES_DECLINED)
+  );
+
+  return newState.toJS();
 }

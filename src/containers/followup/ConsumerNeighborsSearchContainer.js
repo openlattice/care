@@ -28,10 +28,10 @@ import {
 } from '../search/SearchActionFactory';
 
 import {
-  COMPLAINT_NUMBER_FQN,
   DATE_TIME_OCCURRED_FQN,
   DATE_TIME_REPORTED_FQN,
-  INCIDENT_FQN
+  INCIDENT_FQN,
+  OL_ID_FQN
 } from '../../edm/DataModelFqns';
 
 const {
@@ -154,7 +154,7 @@ class ConsumerNeighborsSearchContainer extends React.Component<Props, State> {
               </BHRDetailItem>
               <BHRDetailItem scStyles={{ width: '150px' }}>
                 <strong>Complaint Number</strong>
-                <span>{ searchResult.getIn(['neighborDetails', COMPLAINT_NUMBER_FQN, 0], '') }</span>
+                <span>{ searchResult.getIn(['neighborDetails', OL_ID_FQN, 0], '') }</span>
               </BHRDetailItem>
               <BHRDetailItem>
                 <strong>Incident</strong>
@@ -199,7 +199,7 @@ function mapStateToProps(state :Map<*, *>) :Object {
 
   const bhrEntitySetId :string = state.getIn([
     'app',
-    BEHAVIORAL_HEALTH_REPORT_FQN.getFullyQualifiedName(),
+    BEHAVIORAL_HEALTH_REPORT_FQN.toString(),
     'entitySetsByOrganization',
     selectedOrganizationId
   ]);

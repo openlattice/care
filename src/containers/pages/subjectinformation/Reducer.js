@@ -89,7 +89,8 @@ export function getInvalidFields(state :Map<*, *>) {
       invalidFields.push(DOB);
     }
 
-    if (!state.get(AGE, '').length) {
+    const age = state.get(AGE, '');
+    if (!(age > 0) && !age.length) {
       invalidFields.push(AGE);
     }
 

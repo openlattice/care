@@ -6,8 +6,9 @@ import { List, Map, fromJS } from 'immutable';
 
 import { SET_INPUT_VALUE } from './ActionFactory';
 import { CLEAR_CRISIS_TEMPLATE } from '../../crisis/CrisisActionFactory';
-import { CRISIS_NATURE, OTHER } from '../../../utils/constants/CrisisTemplateConstants';
+import { CRISIS_NATURE, OTHER, POST_PROCESS_FIELDS } from '../../../utils/constants/CrisisTemplateConstants';
 import { FORM_STEP_STATUS } from '../../../utils/constants/FormConstants';
+import { HOMELESS_STR } from './Constants';
 
 const {
   NATURE_OF_CRISIS,
@@ -69,5 +70,7 @@ export function getStatus(state :Map<*, *>) :boolean {
 }
 
 export function processForSubmit(state :Map<*, *>) :Object {
-  return state.toJS();
+  return state
+    .set(POST_PROCESS_FIELDS.HOMELESS, state.get(HOUSING, List()).includes(HOMELESS_STR))
+    .toJS();
 }

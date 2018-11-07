@@ -211,7 +211,7 @@ const OfficerSafety = ({ values, actions } :Props) => {
             <IndentWrapper>
               <FormSectionWithValidation invalid={invalidFields.includes(OFFICER_SAFETY.INJURY_DESCRIPTION)}>
                 <FormText>
-                  <RequiredField>Injury description</RequiredField>
+                  <RequiredField>Person Injured</RequiredField>
                 </FormText>
                 {renderInput(OFFICER_SAFETY.INJURY_DESCRIPTION)}
               </FormSectionWithValidation>

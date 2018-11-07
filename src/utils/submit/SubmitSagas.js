@@ -38,7 +38,7 @@ function getEntityId(primaryKey, propertyTypesById, values, fields) {
   });
   const pKeyVals = [];
   primaryKey.forEach((pKey) => {
-    const propertyTypeFqn = new FullyQualifiedName(propertyTypesById[pKey].type).getFullyQualifiedName();
+    const propertyTypeFqn = new FullyQualifiedName(propertyTypesById[pKey].type).toString();
     const fieldName = fieldNamesByFqn[propertyTypeFqn];
     const value = values[fieldName];
     const rawValues = [value] || [];
@@ -130,13 +130,12 @@ function* submitWorker(action :SequenceAction) :Generator<*, *, *> {
   try {
     yield put(submit.request(action.id));
     const selectedOrganizationId = app.get('selectedOrganizationId');
-    const entitySetNames = config.entitySets.map(({ name }) => app.getIn([
+    const allEntitySetIds = config.entitySets.map(({ name }) => app.getIn([
       name,
       'entitySetsByOrganization',
       selectedOrganizationId
     ]));
-    const allEntitySetIdsRequest = entitySetNames.map(name => call(EntityDataModelApi.getEntitySetId, name));
-    const allEntitySetIds = yield all(allEntitySetIdsRequest);
+
     const edmDetailsRequest = allEntitySetIds.map(id => ({
       id,
       type: 'EntitySet',
@@ -150,7 +149,7 @@ function* submitWorker(action :SequenceAction) :Generator<*, *, *> {
 
     const propertyTypesByFqn = {};
     Object.values(edmDetails.propertyTypes).forEach((propertyType) => {
-      const fqn = new FullyQualifiedName(propertyType.type).getFullyQualifiedName();
+      const fqn = new FullyQualifiedName(propertyType.type).toString();
       propertyTypesByFqn[fqn] = propertyType;
     });
 
@@ -293,7 +292,7 @@ function* replaceAssociationWorker(action :SequenceAction) :Generator<*, *, *> {
 
     const propertyTypesByFqn = {};
     Object.values(edmDetails.propertyTypes).forEach((propertyType) => {
-      const fqn = new FullyQualifiedName(propertyType.type).getFullyQualifiedName();
+      const fqn = new FullyQualifiedName(propertyType.type).toString();
       propertyTypesByFqn[fqn] = propertyType;
     });
 

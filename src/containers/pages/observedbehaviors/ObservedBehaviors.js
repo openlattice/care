@@ -107,7 +107,6 @@ const ObservedBehaviors = ({ values, actions } :Props) => {
           <span>Check all that apply.</span>
         </Header>
         {renderSingleCheckbox(OBSERVED_BEHAVIORS.VETERAN, 'Served in the military?')}
-        {renderSingleCheckbox(OBSERVED_BEHAVIORS.CHRONIC, 'Chronic complaint?')}
       </FormSection>
       <FormSectionWithValidation invalid={invalidFields.includes(OBSERVED_BEHAVIORS.BEHAVIORS)}>
         <Header>
@@ -121,7 +120,7 @@ const ObservedBehaviors = ({ values, actions } :Props) => {
           <h1>Demeanors Observed Around Law Enforcement</h1>
           <RequiredField>Check all that apply.</RequiredField>
         </Header>
-        {renderCheckboxList(OBSERVED_BEHAVIORS.DEMEANORS, DEMEANORS)}
+        {renderCheckboxList(OBSERVED_BEHAVIORS.DEMEANORS, DEMEANORS, OBSERVED_BEHAVIORS.OTHER_DEMEANOR)}
       </FormSectionWithValidation>
     </FormWrapper>
   );

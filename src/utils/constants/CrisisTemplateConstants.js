@@ -20,10 +20,10 @@ export const SUBJECT_INFORMATION = {
 
 export const OBSERVED_BEHAVIORS = {
   VETERAN: 'isVeteran',
-  CHRONIC: 'chronicComplaint',
   BEHAVIORS: 'behaviors',
   OTHER_BEHAVIOR: 'otherBehavior',
-  DEMEANORS: 'demeanors'
+  DEMEANORS: 'demeanors',
+  OTHER_DEMEANOR: 'otherDemeanor'
 };
 
 export const CRISIS_NATURE = {
@@ -60,6 +60,7 @@ export const DISPOSITION = {
   VERBAL_REFERRALS: 'verbalReferrals',
   OTHER_VERBAL_REFERRAL: 'otherVerbalReferral',
   COURTESY_TRANSPORTS: 'courtesyTransports',
+  TRANSPORT_INDICATOR: 'tranportDidHappen',
   HOSPITALS: 'hospitals',
   WAS_VOLUNTARY_TRANSPORT: 'wasVoluntaryTransport',
   ARRESTABLE_OFFENSES: 'arrestableOffenses',
@@ -67,10 +68,25 @@ export const DISPOSITION = {
 };
 
 export const POST_PROCESS_FIELDS = {
+  FORM_TYPE: 'formSubmissionType',
   TIMESTAMP: 'timestamp',
   FORM_ID: 'formId',
   HOMELESS: 'isHomeless',
   DOB: 'personDOB',
   GENDER: 'personGender',
-  RACE: 'personRace'
+  RACE: 'personRace',
+
+  MILITARY_STATUS: 'militaryStatus',
+
+  VERBAL_REFERRAL_INDICATOR: 'verbalReferralIndicator',
+  HOSPITAL_TRANPORT: 'hospitalTransport',
+  NARCAN_ADMINISTERED: 'narcanAdministered',
+  ARRESTABLE_OFFENSE: 'arrestableOffense',
+
+  ARREST_INDICATOR: 'personWasArrested',
+  CRIMES_AGAINST_PERSON: 'crimesAgainstPerson',
+  FELONY_COMMITTED: 'felonyWasCommitted',
+  NO_ACTION_POSSIBLE: 'noActionPossible',
+  UNABLE_TO_CONTACT: 'unableToContact',
+  RESOURCES_DECLINED: 'resourcesOfferedAndDeclined'
 };

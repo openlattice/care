@@ -7,5 +7,5 @@ export const BLACK = '#2e2e34';
 export const GRAY = '#8e929b';
 export const TAG_GRAY = '#dcdce7';
 
-export const INVALID_BACKGROUND = 'rgba(255, 230, 113, 0.15)';
-export const INVALID_BORDER = 'rgba(255, 60, 93, 0.15)';
+export const INVALID_BACKGROUND = '#fff2f2';
+export const INVALID_TAG = '#fb4d4d';

@@ -23,5 +23,6 @@ export const DEMEANORS = [
   'Cooperative / Attentive',
   'Distant / Removed',
   'Scared / Nervous',
-  'Verbally threatening / Aggressive'
+  'Verbally threatening / Aggressive',
+  OTHER
 ];
