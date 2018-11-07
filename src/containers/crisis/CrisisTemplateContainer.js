@@ -241,7 +241,6 @@ class CrisisTemplateContainer extends React.Component<Props> {
   }
 
   isReadyToSubmit = () => {
-    return true;
     const { state } = this.props;
     let ready = true;
     PAGES.forEach((page) => {
