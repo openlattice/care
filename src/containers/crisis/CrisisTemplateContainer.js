@@ -14,6 +14,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 
 import type { RouterHistory } from 'react-router';
 
+import Spinner from '../../components/spinner/Spinner';
 import ReviewContainer from './ReviewContainer';
 import BackButton from '../../components/buttons/BackButton';
 import ProgressSidebar from '../../components/form/ProgressSidebar';
@@ -55,10 +56,10 @@ import {
   processForSubmit as processDisposition
 } from '../pages/disposition/Reducer';
 import { FORM_STEP_STATUS } from '../../utils/constants/FormConstants';
-import { STATE } from '../../utils/constants/StateConstants';
+import { STATE, SUBMIT } from '../../utils/constants/StateConstants';
 import { POST_PROCESS_FIELDS } from '../../utils/constants/CrisisTemplateConstants';
 import { FORM_TYPE } from '../../utils/DataConstants';
-import { CRISIS_PATH } from '../../core/router/Routes';
+import { CRISIS_PATH, HOME_PATH } from '../../core/router/Routes';
 import { MEDIA_QUERY_MD, MEDIA_QUERY_LG } from '../../core/style/Sizes';
 import { BLACK } from '../../shared/Colors';
 
@@ -70,8 +71,9 @@ type Props = {
   },
   app :Map<*, *>,
   history :RouterHistory,
-  submissionState :number,
-  state :Map<*, *>
+  state :Map<*, *>,
+  isSubmitting :boolean,
+  isSubmitted :boolean
 };
 
 const CrisisTemplateWrapper = styled.div`
@@ -163,6 +165,34 @@ const ForwardButton = styled.button.attrs({
   }
 `;
 
+const SubmittedView = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  position: relative;
+  min-height: 230px;
+
+  h1 {
+    color: ${BLACK};
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 30px;
+  }
+
+  ${ForwardButton} {
+    background-color: #6124e2;
+    color: #f8f8fb;
+    padding: 12px 20px;
+    margin-bottom: 5px;
+
+    &:hover {
+      background-color: #8045ff;
+    }
+  }
+`;
+
 const PAGES = [
   {
     Component: SubjectInformation,
@@ -221,7 +251,11 @@ class CrisisTemplateContainer extends React.Component<Props> {
 
     event.preventDefault();
 
-    const { actions, app, state } = this.props;
+    const {
+      actions,
+      app,
+      state
+    } = this.props;
 
     let submission = {
       [POST_PROCESS_FIELDS.FORM_TYPE]: FORM_TYPE.CRISIS_TEMPLATE,
@@ -334,8 +368,48 @@ class CrisisTemplateContainer extends React.Component<Props> {
 
   render() {
 
-    const { app, submissionState } = this.props;
+    const {
+      actions,
+      history,
+      isSubmitting,
+      isSubmitted
+    } = this.props;
     const currentPage = getCurrentPage(window.location);
+
+    if (isSubmitting) {
+      return (
+        <PageWrapper>
+          <StyledPageWrapper>
+            <CrisisTemplateWrapper>
+              <SubmittedView>
+                <Spinner />
+              </SubmittedView>
+            </CrisisTemplateWrapper>
+          </StyledPageWrapper>
+        </PageWrapper>
+      );
+    }
+
+    if (isSubmitted) {
+      const clearAndNavigate = (route) => {
+        actions.clearCrisisTemplate();
+        history.push(route);
+      };
+
+      return (
+        <PageWrapper>
+          <StyledPageWrapper>
+            <CrisisTemplateWrapper>
+              <SubmittedView>
+                <h1>Your report has been submitted!</h1>
+                <ForwardButton onClick={() => clearAndNavigate(HOME_PATH)} canProgress>Return to Home</ForwardButton>
+                <BackButton onClick={() => clearAndNavigate(CRISIS_PATH)}>Create another crisis template</BackButton>
+              </SubmittedView>
+            </CrisisTemplateWrapper>
+          </StyledPageWrapper>
+        </PageWrapper>
+      );
+    }
 
     return (
       <CrisisTemplateWrapper>
@@ -361,8 +435,9 @@ function mapStateToProps(state :Map<*, *>) :Object {
 
   return {
     app: state.get('app', Map()),
-    submissionState: state.getIn(['report', 'submissionState']),
-    state
+    state,
+    isSubmitting: state.getIn([STATE.SUBMIT, SUBMIT.SUBMITTING], false),
+    isSubmitted: state.getIn([STATE.SUBMIT, SUBMIT.SUBMITTED], false),
   };
 }
 

@@ -17,6 +17,7 @@ import hospitalsReducer from '../../containers/form/HospitalsReducer';
 import peopleReducer from '../../containers/people/PeopleReducer';
 import reportsReducer from '../../containers/reports/ReportsReducer';
 import searchReducer from '../../containers/search/SearchReducer';
+import submitReducer from '../../utils/submit/SubmitReducer';
 
 // pages
 import dispositionReducer from '../../containers/pages/disposition/Reducer';
@@ -45,6 +46,8 @@ export default function reduxReducer() {
     [STATE.NATURE_OF_CRISIS]: natureOfCrisisReducer,
     [STATE.OBSERVED_BEHAVIORS]: observedBehaviorsReducer,
     [STATE.OFFICER_SAFETY]: officerSafetyReducer,
-    [STATE.SUBJECT_INFORMATION]: subjectInformationReducer
+    [STATE.SUBJECT_INFORMATION]: subjectInformationReducer,
+
+    [STATE.SUBMIT]: submitReducer
   });
 }

@@ -112,7 +112,7 @@ export function getStatus(state :Map<*, *>) :boolean {
 
 export function processForSubmit(state :Map<*, *>) :Object {
   const dobMoment = moment(state.get(DOB, ''));
-  const dob = dobMoment.isValid() ? dobMoment.format('MM-DD-YYYY') : '';
+  const dob = dobMoment.isValid() ? dobMoment.format('YYYY-MM-DD') : '';
 
   const preprocessedState = state.get(IS_NEW_PERSON)
     ? state.set(DOB, dob).set(PERSON_ID, randomUUID())

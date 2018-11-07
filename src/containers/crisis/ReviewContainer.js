@@ -87,7 +87,7 @@ class ReviewContainer extends React.Component<Props> {
       list = list.splice(list.indexOf(OTHER), 1, values.get(otherField, ''));
     }
 
-    return list.map(val => <span>{val}</span>);
+    return list.map(val => <span key={val}>{val}</span>);
   }
 
   renderName = () => {
@@ -223,7 +223,7 @@ class ReviewContainer extends React.Component<Props> {
           violenceList.size ? (
             <Section>
               <h1>Threats / Violence / Weapons</h1>
-              <div>{violenceList.map(val => <span>{val}</span>)}</div>
+              <div>{violenceList.map(val => <span key={val}>{val}</span>)}</div>
             </Section>
           ) : null
         }
@@ -307,7 +307,7 @@ class ReviewContainer extends React.Component<Props> {
         }
         <Section>
           <h1>Disposition</h1>
-          <div>{dispositionValues.map(val => <span>{val}</span>)}</div>
+          <div>{dispositionValues.map(val => <span key={val}>{val}</span>)}</div>
         </Section>
       </>
     );
