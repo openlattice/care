@@ -174,7 +174,8 @@ class ReviewContainer extends React.Component<Props> {
       THREATENED_PERSON_RELATIONSHIP,
       HAD_INJURIES,
       INJURY_TYPE,
-      INJURY_DESCRIPTION,
+      INJURED_PARTIES,
+      OTHER_INJURED_PERSON,
       OTHER_INJURY_TYPE
     } = OFFICER_SAFETY;
 
@@ -196,7 +197,15 @@ class ReviewContainer extends React.Component<Props> {
     }
 
     if (officerSafety.get(HAD_INJURIES)) {
-      violenceList = violenceList.push(`Injured parties: ${officerSafety.get(INJURY_DESCRIPTION, '')}`);
+      let injuredParties = officerSafety.get(INJURED_PARTIES, List());
+      if (injuredParties.includes(OTHER)) {
+        injuredParties = injuredParties.splice(
+          injuredParties.indexOf(OTHER),
+          1,
+          officerSafety.get(OTHER_INJURED_PERSON, '')
+        );
+      }
+      violenceList = violenceList.concat(injuredParties.map(val => `Injured party: ${val}`));
 
       let injuryTypes = officerSafety.get(INJURY_TYPE, List());
       if (injuryTypes.includes(OTHER)) {

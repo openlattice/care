@@ -20,6 +20,13 @@ export const RELATIONSHIP_TYPES = [
   'Unknown'
 ];
 
+export const PERSON_TYPES = [
+  'Officer',
+  'Co-responder',
+  'Subject',
+  OTHER
+];
+
 export const INJURY_TYPES = [
   'Abrasion',
   'Bruise',
@@ -30,10 +37,10 @@ export const INJURY_TYPES = [
   'Gunshot',
   'Human Bite',
   'Laceration',
-  OTHER,
   'Other sickness',
   'Soft tissue damage',
   'Sprain / strain / twist',
   'Unconscious',
-  'No injuries noted or visible'
+  'No injuries noted or visible',
+  OTHER
 ];

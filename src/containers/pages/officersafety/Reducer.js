@@ -17,7 +17,8 @@ const {
   THREATENED_VIOLENCE,
   THREATENED_PERSON_RELATIONSHIP,
   HAD_INJURIES,
-  INJURY_DESCRIPTION,
+  INJURED_PARTIES,
+  OTHER_INJURED_PERSON,
   INJURY_TYPE,
   OTHER_INJURY_TYPE
 } = OFFICER_SAFETY;
@@ -30,7 +31,8 @@ const INITIAL_STATE :Map<*, *> = fromJS({
   [THREATENED_VIOLENCE]: false,
   [THREATENED_PERSON_RELATIONSHIP]: [],
   [HAD_INJURIES]: false,
-  [INJURY_DESCRIPTION]: '',
+  [INJURED_PARTIES]: [],
+  [OTHER_INJURED_PERSON]: '',
   [INJURY_TYPE]: [],
   [OTHER_INJURY_TYPE]: ''
 });
@@ -66,11 +68,14 @@ export function getInvalidFields(state :Map<*, *>) {
   }
 
   if (state.get(HAD_INJURIES)) {
-    if (!state.get(INJURY_DESCRIPTION).length) {
-      invalidFields.push(INJURY_DESCRIPTION);
+    if (!state.get(INJURED_PARTIES, List()).size) {
+      invalidFields.push(INJURED_PARTIES);
+    }
+    else if (state.get(INJURED_PARTIES, List()).includes(OTHER) && !state.get(OTHER_INJURED_PERSON, '').length) {
+      invalidFields.push(INJURED_PARTIES);
     }
 
-    if (state.get(INJURY_TYPE) === OTHER && !state.get(OTHER_INJURY_TYPE).length) {
+    if (state.get(INJURY_TYPE, List()).includes(OTHER) && !state.get(OTHER_INJURY_TYPE).length) {
       invalidFields.push(INJURY_TYPE);
     }
   }
