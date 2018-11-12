@@ -248,6 +248,7 @@ const OTHER_NOTIFIED_FQN = new FullyQualifiedName('ol.othernotified');
 const OTHER_WEAPON_TYPE_FQN = new FullyQualifiedName('ol.weapontypeother');
 const THREATENED_INDICATOR_FQN = new FullyQualifiedName('ol.threatened');
 const PERSON_INJURED_FQN = new FullyQualifiedName('ol.personinjured');
+const OTHER_PERSON_INJURED_FQN = new FullyQualifiedName('ol.otherpersoninjured');
 const TRANSPORT_INDICATOR_FQN = new FullyQualifiedName('ol.transportindicator');
 
 export {
@@ -273,5 +274,6 @@ export {
   OTHER_WEAPON_TYPE_FQN,
   THREATENED_INDICATOR_FQN,
   PERSON_INJURED_FQN,
+  OTHER_PERSON_INJURED_FQN,
   TRANSPORT_INDICATOR_FQN
 };
