@@ -15,7 +15,6 @@ const {
   WEAPONS,
   OTHER_WEAPON,
   THREATENED_VIOLENCE,
-  THREATENED_PERSON_NAME,
   THREATENED_PERSON_RELATIONSHIP,
   HAD_INJURIES,
   INJURY_DESCRIPTION,
@@ -29,11 +28,10 @@ const INITIAL_STATE :Map<*, *> = fromJS({
   [WEAPONS]: [],
   [OTHER_WEAPON]: '',
   [THREATENED_VIOLENCE]: false,
-  [THREATENED_PERSON_NAME]: '',
-  [THREATENED_PERSON_RELATIONSHIP]: '',
+  [THREATENED_PERSON_RELATIONSHIP]: [],
   [HAD_INJURIES]: false,
   [INJURY_DESCRIPTION]: '',
-  [INJURY_TYPE]: '',
+  [INJURY_TYPE]: [],
   [OTHER_INJURY_TYPE]: ''
 });
 
@@ -64,12 +62,6 @@ export function getInvalidFields(state :Map<*, *>) {
     }
     else if (weaponList.includes(OTHER) && !state.get(OTHER_WEAPON).length) {
       invalidFields.push(WEAPONS);
-    }
-  }
-
-  if (state.get(THREATENED_VIOLENCE)) {
-    if (!state.get(THREATENED_PERSON_NAME, '').length) {
-      invalidFields.push(THREATENED_PERSON_NAME);
     }
   }
 

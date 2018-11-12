@@ -171,7 +171,6 @@ class ReviewContainer extends React.Component<Props> {
       WEAPONS,
       OTHER_WEAPON,
       THREATENED_VIOLENCE,
-      THREATENED_PERSON_NAME,
       THREATENED_PERSON_RELATIONSHIP,
       HAD_INJURIES,
       INJURY_TYPE,
@@ -191,26 +190,20 @@ class ReviewContainer extends React.Component<Props> {
     }
 
     if (officerSafety.get(THREATENED_VIOLENCE)) {
-      let text = `Threatened violence against: ${officerSafety.get(THREATENED_PERSON_NAME, '')}`;
-      const relationship = officerSafety.get(THREATENED_PERSON_RELATIONSHIP, '');
-      if (relationship.length) {
-        text = `${text} (${relationship})`;
-      }
-
-      violenceList = violenceList.push(text);
+      violenceList = violenceList.concat(officerSafety.get(THREATENED_PERSON_RELATIONSHIP, List()).map(val => (
+        `Threatened violence against: ${val}`
+      )));
     }
 
     if (officerSafety.get(HAD_INJURIES)) {
-      let text = `Injuries: ${officerSafety.get(INJURY_DESCRIPTION, '')}`;
-      let type = officerSafety.get(INJURY_TYPE, '');
-      if (type === OTHER) {
-        type = officerSafety.get(OTHER_INJURY_TYPE, '');
-      }
-      if (type.length) {
-        text = `${text} (${type})`;
+      violenceList = violenceList.push(`Injured parties: ${officerSafety.get(INJURY_DESCRIPTION, '')}`);
+
+      let injuryTypes = officerSafety.get(INJURY_TYPE, List());
+      if (injuryTypes.includes(OTHER)) {
+        injuryTypes = injuryTypes.splice(injuryTypes.indexOf(OTHER), 1, officerSafety.get(OTHER_INJURY_TYPE, ''));
       }
 
-      violenceList = violenceList.push(text);
+      violenceList = violenceList.concat(injuryTypes.map(val => `Injury type: ${val}`));
     }
 
     return (

@@ -3,14 +3,12 @@
  */
 
 import React from 'react';
-import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
 import { List, Map } from 'immutable';
 
 import StyledInput from '../../../components/controls/StyledInput';
-import StyledSelect from '../../../components/controls/StyledSelect';
 import StyledCheckbox from '../../../components/controls/StyledCheckbox';
 import YesNoToggle from '../../../components/controls/YesNoToggle';
 import { showInvalidFields } from '../../../utils/NavigationUtils';
@@ -124,21 +122,6 @@ const OfficerSafety = ({ values, actions } :Props) => {
     }
   };
 
-  const renderSelect = (field, valueList, dependentListFields, dependentStringFields) => {
-    const onChange = (event) => {
-      const { value } = event.target;
-      actions.setInputValue({ field, value });
-      clearDependentFields(dependentListFields, dependentStringFields);
-    };
-
-    return (
-      <StyledSelect value={values.get(field)} onChange={onChange}>
-        <option value="">Select</option>
-        {valueList.map(value => <option value={value} key={`${field}-${value}`}>{value}</option>)}
-      </StyledSelect>
-    );
-  };
-
   const renderYesNoToggle = (field, dependentListFields, dependentStringFields) => {
 
     const onChange = (value) => {
@@ -182,20 +165,14 @@ const OfficerSafety = ({ values, actions } :Props) => {
 
         {renderYesNoToggle(
           OFFICER_SAFETY.THREATENED_VIOLENCE,
-          [],
-          [OFFICER_SAFETY.THREATENED_PERSON_NAME, OFFICER_SAFETY.THREATENED_PERSON_RELATIONSHIP]
+          [OFFICER_SAFETY.THREATENED_PERSON_RELATIONSHIP],
+          []
         )}
         {values.get(OFFICER_SAFETY.THREATENED_VIOLENCE)
           ? (
             <IndentWrapper>
-              <FormSectionWithValidation invalid={invalidFields.includes(OFFICER_SAFETY.THREATENED_PERSON_NAME)}>
-                <FormText>
-                  <RequiredField>{'Threatened individual\'s full name'}</RequiredField>
-                </FormText>
-                {renderInput(OFFICER_SAFETY.THREATENED_PERSON_NAME)}
-              </FormSectionWithValidation>
-              <FormText>Threatened person relationship</FormText>
-              {renderSelect(OFFICER_SAFETY.THREATENED_PERSON_RELATIONSHIP, RELATIONSHIP_TYPES)}
+              <FormText>Threatened person relationship(s)</FormText>
+              {renderCheckboxList(OFFICER_SAFETY.THREATENED_PERSON_RELATIONSHIP, RELATIONSHIP_TYPES)}
             </IndentWrapper>)
           : null}
 
@@ -203,24 +180,21 @@ const OfficerSafety = ({ values, actions } :Props) => {
 
         {renderYesNoToggle(
           OFFICER_SAFETY.HAD_INJURIES,
-          [],
-          [OFFICER_SAFETY.INJURY_DESCRIPTION, OFFICER_SAFETY.INJURY_TYPE, OFFICER_SAFETY.OTHER_INJURY_TYPE]
+          [OFFICER_SAFETY.INJURY_TYPE],
+          [OFFICER_SAFETY.INJURY_DESCRIPTION, OFFICER_SAFETY.OTHER_INJURY_TYPE]
         )}
         {values.get(OFFICER_SAFETY.HAD_INJURIES)
           ? (
             <IndentWrapper>
               <FormSectionWithValidation invalid={invalidFields.includes(OFFICER_SAFETY.INJURY_DESCRIPTION)}>
                 <FormText>
-                  <RequiredField>Person Injured</RequiredField>
+                  <RequiredField>Injured Parties</RequiredField>
                 </FormText>
                 {renderInput(OFFICER_SAFETY.INJURY_DESCRIPTION)}
               </FormSectionWithValidation>
               <FormSectionWithValidation invalid={invalidFields.includes(OFFICER_SAFETY.INJURY_TYPE)}>
-                <FormText>Injury type</FormText>
-                {renderSelect(OFFICER_SAFETY.INJURY_TYPE, INJURY_TYPES, [], [OFFICER_SAFETY.OTHER_INJURY_TYPE])}
-                {values.get(OFFICER_SAFETY.INJURY_TYPE) === OTHER
-                  ? renderInput(OFFICER_SAFETY.OTHER_INJURY_TYPE)
-                  : null}
+                <FormText>Injury type(s)</FormText>
+                {renderCheckboxList(OFFICER_SAFETY.INJURY_TYPE, INJURY_TYPES, OFFICER_SAFETY.OTHER_INJURY_TYPE)}
               </FormSectionWithValidation>
             </IndentWrapper>)
           : null}
