@@ -39,10 +39,10 @@ export const OFFICER_SAFETY = {
   WEAPONS: 'weapons',
   OTHER_WEAPON: 'otherWeapon',
   THREATENED_VIOLENCE: 'threatenedViolence',
-  THREATENED_PERSON_NAME: 'threatenedPersonName',
   THREATENED_PERSON_RELATIONSHIP: 'threatenedPersonRelationship',
   HAD_INJURIES: 'hadInjuries',
-  INJURY_DESCRIPTION: 'injuryDescription',
+  INJURED_PARTIES: 'injuredParties',
+  OTHER_INJURED_PERSON: 'otherInjuredPerson',
   INJURY_TYPE: 'injuryType',
   OTHER_INJURY_TYPE: 'otherInjuryType'
 };
