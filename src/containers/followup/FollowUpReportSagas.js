@@ -72,7 +72,7 @@ function prepReportEntityData(
   propertyTypes.forEach((propertyType :Map<*, *>) => {
     const id :string = propertyType.get('id');
     const fqn :FullyQualifiedName = new FullyQualifiedName(propertyType.get('type'));
-    const value = propertyTypeFqnToValuesMap[fqn.getFullyQualifiedName()];
+    const value = propertyTypeFqnToValuesMap[fqn.toString()];
     if (value !== null && value !== undefined && value !== '') {
       details[id] = [value];
     }
@@ -167,35 +167,35 @@ function* submitFollowUpReportWorker(action :SequenceAction) :Generator<*, *, *>
     const selectedOrganizationId = app.get('selectedOrganizationId');
 
     const appearsInESId :string = app.getIn([
-      APPEARS_IN_FQN.getFullyQualifiedName(),
+      APPEARS_IN_FQN.toString(),
       'entitySetsByOrganization',
       selectedOrganizationId
     ]);
 
     const appearsInPropertyTypes :Map<*, *> = app.getIn(
-      [APPEARS_IN_FQN.getFullyQualifiedName(), 'propertyTypes'],
+      [APPEARS_IN_FQN.toString(), 'propertyTypes'],
       Map()
     ).valueSeq();
 
     const peopleESId :string = app.getIn([
-      PEOPLE_FQN.getFullyQualifiedName(),
+      PEOPLE_FQN.toString(),
       'entitySetsByOrganization',
       selectedOrganizationId
     ]);
 
     const reportESId :string = app.getIn([
-      FOLLOW_UP_REPORT_FQN.getFullyQualifiedName(),
+      FOLLOW_UP_REPORT_FQN.toString(),
       'entitySetsByOrganization',
       selectedOrganizationId
     ]);
 
     const reportPKPropertyTypeIds :List<string> = app.getIn(
-      [FOLLOW_UP_REPORT_FQN.getFullyQualifiedName(), 'primaryKeys'],
+      [FOLLOW_UP_REPORT_FQN.toString(), 'primaryKeys'],
       List()
     ).valueSeq();
 
     const reportPropertyTypes :Map<*, *> = app.getIn(
-      [FOLLOW_UP_REPORT_FQN.getFullyQualifiedName(), 'propertyTypes'],
+      [FOLLOW_UP_REPORT_FQN.toString(), 'propertyTypes'],
       Map()
     ).valueSeq();
 

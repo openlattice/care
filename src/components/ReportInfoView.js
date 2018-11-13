@@ -23,12 +23,12 @@ import {
 import {
   CAD_NUMBER_FQN,
   COMPANION_OFFENSE_REPORT_FQN,
-  COMPLAINT_NUMBER_FQN,
   DATE_TIME_OCCURRED_FQN,
   DATE_TIME_REPORTED_FQN,
   DISPATCH_REASON_FQN,
   INCIDENT_FQN,
   LOCATION_OF_INCIDENT_FQN,
+  OL_ID_FQN,
   ON_VIEW_FQN,
   POST_OF_OCCURRENCE_FQN,
   UNIT_FQN,
@@ -99,8 +99,8 @@ class ReportInfoView extends React.Component {
           <TextField
               disabled={isReadOnly}
               header="Complaint Number*"
-              onChange={value => updateStateValue(section, COMPLAINT_NUMBER_FQN, value)}
-              value={input[COMPLAINT_NUMBER_FQN]} />
+              onChange={value => updateStateValue(section, OL_ID_FQN, value)}
+              value={input[OL_ID_FQN]} />
           <HalfWidthItem>
             <FieldHeader>Companion Offense Report Prepared</FieldHeader>
             <FlexyWrapper inline>

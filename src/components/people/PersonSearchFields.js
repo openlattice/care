@@ -30,7 +30,7 @@ const TitleLabel = styled.div`
   font-size: 16px;
   font-weight: 400;
   display: block;
-  color: #555e6f;
+  color: #2e2e34;
   margin-bottom: 10px;
 `;
 
