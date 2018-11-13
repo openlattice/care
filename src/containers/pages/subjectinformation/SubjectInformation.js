@@ -280,7 +280,7 @@ class ObservedBehaviors extends React.Component<Props> {
             <Header>
               <h1>Quick Search</h1>
               <span>
-                {'Search by last name, first name, or alias. No results? Skip to "Subject Information" below'}
+                {'Search by last name, first name, or alias. No results? Click "Create New Person" above'}
               </span>
             </Header>
             <SearchableSelect
