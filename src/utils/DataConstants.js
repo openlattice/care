@@ -175,3 +175,35 @@ export const CERTIFICATIONS = {
 export const CERTIFICATIONS_PORTLAND = {
   CIT: 'CIT'
 };
+
+export const DISPATCH_REASONS = {
+  EP: 'Emergency Petition',
+  CRISIS: 'Behavioral Crisis',
+  ON_VIEW: 'On View',
+  DESTRUCTION_OF_PROPERTY: 'Destruction of Property',
+  SUICIDAL: 'Suicidal Person',
+  TRESPASSING: 'Trespassing',
+  DOMESTIC_ISSUE: 'Domestic/Family Issue',
+  ASSAULT: 'Assault (non-sexual)',
+  SEXUAL_ASSAULT: 'Sexual offense/assault',
+  OTHER: 'Other'
+};
+
+export const CRIME_TYPE = {
+  EP: 'Emergency Petition',
+  CRISIS: 'Behavioral Crisis',
+  SUICIDAL: 'Suicide Attempt',
+  OTHER: 'Other'
+};
+
+export const DRUG_TYPES = {
+  MARIJUANA: 'Marijuana',
+  COCAINE: 'Cocaine',
+  CRACK: 'Crack cocaine',
+  PILLS: 'Pills',
+  K2: 'K2',
+  METH: 'Methamphetamines',
+  METHADONE: 'Methadone',
+  HEROIN: 'Heroin',
+  OTHER: 'Other'
+};

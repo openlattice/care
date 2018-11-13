@@ -16,7 +16,9 @@ const COMPLAINT_NUMBER_FQN = new FullyQualifiedName('bhr.complaintNumber');
 const DATE_TIME_OCCURRED_FQN = new FullyQualifiedName('bhr.datetimeOccurred');
 const DATE_TIME_REPORTED_FQN = new FullyQualifiedName('bhr.datetimeReported');
 const DISPATCH_REASON_FQN = new FullyQualifiedName('bhr.dispatchReason');
+const DISPATCH_REASON_OTHER_FQN = new FullyQualifiedName('ol.reasonother');
 const INCIDENT_FQN = new FullyQualifiedName('bhr.incident');
+const INCIDENT_OTHER_FQN = new FullyQualifiedName('ol.incidenttypeother');
 const LOCATION_OF_INCIDENT_FQN = new FullyQualifiedName('bhr.locationOfIncident');
 const ON_VIEW_FQN = new FullyQualifiedName('bhr.onView');
 const POST_OF_OCCURRENCE_FQN = new FullyQualifiedName('bhr.postOfOccurrence');
@@ -29,7 +31,9 @@ export {
   DATE_TIME_OCCURRED_FQN,
   DATE_TIME_REPORTED_FQN,
   DISPATCH_REASON_FQN,
+  DISPATCH_REASON_OTHER_FQN,
   INCIDENT_FQN,
+  INCIDENT_OTHER_FQN,
   LOCATION_OF_INCIDENT_FQN,
   ON_VIEW_FQN,
   POST_OF_OCCURRENCE_FQN,
@@ -51,6 +55,7 @@ const HOMELESS_FQN = new FullyQualifiedName('bhr.homeless');
 const HOMELESS_LOCATION_FQN = new FullyQualifiedName('bhr.homelessLocation');
 const DRUGS_ALCOHOL_FQN = new FullyQualifiedName('bhr.drugsAlcohol');
 const DRUG_TYPE_FQN = new FullyQualifiedName('bhr.drugType');
+const DRUG_TYPE_OTHER_FQN = new FullyQualifiedName('ol.drugtypeother');
 const PRESCRIBED_MEDICATION_FQN = new FullyQualifiedName('bhr.prescribedMedication');
 const TAKING_MEDICATION_FQN = new FullyQualifiedName('bhr.takingMedication');
 const PREV_PSYCH_ADMISSION_FQN = new FullyQualifiedName('bhr.prevPsychAdmission');
@@ -92,6 +97,7 @@ export {
   HOMELESS_LOCATION_FQN,
   DRUGS_ALCOHOL_FQN,
   DRUG_TYPE_FQN,
+  DRUG_TYPE_OTHER_FQN,
   PRESCRIBED_MEDICATION_FQN,
   TAKING_MEDICATION_FQN,
   PREV_PSYCH_ADMISSION_FQN,
