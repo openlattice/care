@@ -9,6 +9,8 @@ import styled, { css } from 'styled-components';
 import { faTimes } from '@fortawesome/pro-regular-svg-icons';
 import { faSearch } from '@fortawesome/pro-light-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import Spinner from '../spinner/Spinner';
 import downArrowIcon from '../../assets/svg/down-arrow.svg';
 import { BLACK } from '../../shared/Colors';
 
@@ -118,6 +120,18 @@ const DataTableWrapper = styled.div`
   bottom: ${props => (props.openAbove ? '45px' : 'auto')};
 `;
 
+const NoContentWrapper = styled.div`
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: ${props => (props.searching ? 50 : 30)}px;
+  font-size: 14px;
+  font-weight: 600;
+  font-style: italic;
+  color: ${BLACK};
+`;
+
 const SearchOption = styled.div`
   padding: 10px 20px;
   display: flex;
@@ -172,7 +186,9 @@ type Props = {
   split? :boolean,
   noFilter? :boolean,
   withBorders? :boolean,
-  fullWidth? :boolean
+  fullWidth? :boolean,
+  isLoadingResults? :boolean,
+  noResults? :boolean
 }
 
 type State = {
@@ -201,7 +217,9 @@ class SearchableSelect extends React.Component<Props, State> {
     split: false,
     noFilter: false,
     withBorders: false,
-    fullWidth: false
+    fullWidth: false,
+    isLoadingResults: false,
+    noResults: false
   };
 
   constructor(props :Props) {
@@ -285,6 +303,46 @@ class SearchableSelect extends React.Component<Props, State> {
     return <SearchOptionContainer>{options}</SearchOptionContainer>;
   }
 
+  renderDropdownContents = () => {
+    const { isVisibleDataTable, searchQuery } = this.state;
+    const {
+      className,
+      short,
+      openAbove,
+      selectOnly,
+      disabled,
+      transparent,
+      fullWidth,
+      searchPlaceholder,
+      onClear,
+      searchIcon,
+      dropdownIcon,
+      value,
+      isLoadingResults,
+      noResults
+    } = this.props;
+
+    if (isLoadingResults) {
+      return (
+        <DataTableWrapper isVisible openAbove={openAbove}>
+          <NoContentWrapper searching>
+            <Spinner />
+          </NoContentWrapper>
+        </DataTableWrapper>
+      );
+    }
+
+    if (isVisibleDataTable && value.length) {
+      return (
+        <DataTableWrapper isVisible={isVisibleDataTable} openAbove={openAbove}>
+          {noResults ? <NoContentWrapper>No results</NoContentWrapper> : this.renderTable()}
+        </DataTableWrapper>
+      );
+    }
+
+    return null;
+  }
+
   render() {
     const { isVisibleDataTable, searchQuery } = this.state;
     const {
@@ -298,10 +356,9 @@ class SearchableSelect extends React.Component<Props, State> {
       searchPlaceholder,
       onClear,
       searchIcon,
-      dropdownIcon
+      dropdownIcon,
+      value
     } = this.props;
-
-    const { value } = this.props;
 
     return (
       <SearchableSelectWrapper isVisibleDataTable={isVisibleDataTable} className={className}>
@@ -353,15 +410,7 @@ class SearchableSelect extends React.Component<Props, State> {
               )
           }
         </SearchInputWrapper>
-        {
-          !isVisibleDataTable || !value.length
-            ? null
-            : (
-              <DataTableWrapper isVisible={isVisibleDataTable} openAbove={openAbove}>
-                {this.renderTable()}
-              </DataTableWrapper>
-            )
-        }
+        {this.renderDropdownContents()}
       </SearchableSelectWrapper>
     );
   }

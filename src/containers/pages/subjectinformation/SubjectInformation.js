@@ -58,6 +58,8 @@ type Props = {
   app :Map<*, *>,
   values :Map<*, *>,
   searchResults :List<*>,
+  isSearchingPeople :boolean,
+  noResults :boolean,
   actions :{
     clear :() => void,
     setInputValue :(value :{ field :string, value :Object }) => void,
@@ -87,46 +89,6 @@ const HeaderWithClearButton = styled.div`
 const DatePickerWrapper = styled.div`
   width: 160px;
   margin-bottom: 20px;
-`;
-
-const Or = styled.div`
-  margin: 20px 50px;
-  font-size: 16px;
-  font-weight: bold;
-  color: ${BLACK};
-`;
-
-const UnknownPersonRow = styled.button`
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  border: none;
-  width: 100%;
-  background-color: rgba(228, 216, 255, 0.${props => (props.selected ? 5 : 0)});
-  color: ${BLACK};
-  padding: 10px 20px;
-
-  span {
-    margin-left: 10px;
-  }
-
-  @media only screen and (min-width: ${MEDIA_QUERY_MD}px) {
-    padding: 10px 15px;
-
-    span {
-      margin-left: 20px;
-    }
-  }
-
-  &:hover {
-    background-color: rgba(228, 216, 255, 0.${props => (props.selected ? 3 : 0)});
-    cursor: pointer;
-  }
-
-  &:focus {
-    outline: none;
-  }
 `;
 
 const CreateNewPersonButton = styled(SecondaryButton)`
@@ -242,7 +204,13 @@ class ObservedBehaviors extends React.Component<Props> {
   }
 
   render() {
-    const { actions, values } = this.props;
+    const {
+      actions,
+      values,
+      isSearchingPeople,
+      noResults
+    } = this.props;
+
     const isCreatingNewPerson = values.get(SUBJECT_INFORMATION.IS_NEW_PERSON);
     const invalidFields = showInvalidFields(window.location) ? getInvalidFields(values) : [];
 
@@ -288,6 +256,8 @@ class ObservedBehaviors extends React.Component<Props> {
                 onInputChange={this.handleFullNameChange}
                 onSelect={this.selectPerson}
                 options={this.getPersonOptions()}
+                isLoadingResults={isSearchingPeople}
+                noResults={noResults}
                 transparent
                 searchIcon
                 fullWidth
@@ -372,10 +342,15 @@ class ObservedBehaviors extends React.Component<Props> {
 
 function mapStateToProps(state) {
 
+  const consumers = state.getIn(['search', 'consumers'], Map());
+  const searchResults = consumers.get('searchResults', List());
+
   return {
     app: state.get('app', Map()),
     values: state.get(STATE.SUBJECT_INFORMATION),
-    searchResults: state.getIn(['search', 'consumers', 'searchResults'], List())
+    searchResults,
+    isSearchingPeople: consumers.get('isSearching', false),
+    noResults: consumers.get('searchComplete', false) && searchResults.size === 0
   };
 }
 
