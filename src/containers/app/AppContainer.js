@@ -21,9 +21,9 @@ import PeopleContainer from '../people/PeopleContainer';
 import Spinner from '../../components/spinner/Spinner';
 import HackyReportsManager from '../reports/HackyReportsManager';
 import DashboardContainer from '../dashboard/DashboardContainer';
-import { loadApp, loadHospitals, switchOrganization } from './AppActions';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { isValidUuid } from '../../utils/Utils';
+import { loadApp, loadHospitals, switchOrganization } from './AppActions';
 import {
   BHR_PATH,
   CRISIS_PATH,
@@ -223,7 +223,7 @@ function mapDispatchToProps(dispatch :Function) :Object {
     getAllPropertyTypes,
     loadApp,
     loadHospitals,
-    switchOrganization,
+    switchOrganization
   };
 
   return {

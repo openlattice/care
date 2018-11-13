@@ -4,10 +4,10 @@
 
 import { Models } from 'lattice';
 import { List, Map, fromJS } from 'immutable';
+import { AccountUtils } from 'lattice-auth';
 import has from 'lodash/has';
 
 import { APP_TYPES_FQNS } from '../../shared/Consts';
-import { getOrganizationId } from '../../utils/Utils';
 import {
   SWITCH_ORGANIZATION,
   loadApp,
@@ -127,7 +127,7 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
           if (appConfigs.length && !selectedOrganizationId.length) {
             selectedOrganizationId = appConfigs[0].organization.id;
           }
-          const storedOrganizationId :?string = getOrganizationId();
+          const storedOrganizationId :?string = AccountUtils.retrieveOrganizationId();
           if (storedOrganizationId) {
             selectedOrganizationId = storedOrganizationId;
           }

@@ -53,15 +53,6 @@ function resetLatticeConfig() :void {
   });
 }
 
-function getOrganizationId() :?string {
-
-  const organizationId :?string = localStorage.getItem(ORGANIZATION_ID);
-  if (typeof organizationId === 'string' && organizationId.trim().length) {
-    return organizationId;
-  }
-  return null;
-}
-
 function storeOrganizationId(organizationId :?string) :void {
 
   if (!organizationId || !isValidUuid(organizationId)) {
@@ -72,7 +63,6 @@ function storeOrganizationId(organizationId :?string) :void {
 
 export {
   getLatticeConfigBaseUrl,
-  getOrganizationId,
   isValidUuid,
   randomStringId,
   resetLatticeConfig,
