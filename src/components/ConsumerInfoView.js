@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import ButtonToolbar from './buttons/ButtonToolbar';
 import FieldHeader from './text/styled/FieldHeader';
 import TextField from './text/TextField';
+import StyledSelect from './controls/StyledSelect';
 import SelfieWebCam, { DATA_URL_PREFIX } from './SelfieWebCam';
 
 import { FORM_PATHS } from '../shared/Consts';
@@ -23,7 +24,8 @@ import {
   SUBSTANCES,
   SUICIDAL_ACTIONS,
   SUICIDE_METHODS,
-  VIOLENCE_TARGET_PORTLAND
+  VIOLENCE_TARGET_PORTLAND,
+  DRUG_TYPES
 } from '../utils/DataConstants';
 import { formatAsDate } from '../utils/DateUtils';
 import { isPortlandOrg } from '../utils/Whitelist';
@@ -47,6 +49,7 @@ import {
   HOMELESS_LOCATION_FQN,
   DRUGS_ALCOHOL_FQN,
   DRUG_TYPE_FQN,
+  DRUG_TYPE_OTHER_FQN,
   PRESCRIBED_MEDICATION_FQN,
   TAKING_MEDICATION_FQN,
   PREV_PSYCH_ADMISSION_FQN,
@@ -431,6 +434,34 @@ class ConsumerInfoView extends React.Component {
     );
   }
 
+  renderSelect = (field, valueList, dependentStringFields) => {
+    const {
+      input,
+      isInReview,
+      isReadOnly,
+      updateStateValue,
+    } = this.props;
+    const { section } = this.state;
+
+    const onChange = (event) => {
+      const { value } = event.target;
+      updateStateValue(section, field, value);
+
+      if (dependentStringFields) {
+        dependentStringFields.forEach((dependentStringField) => {
+          updateStateValue(section, dependentStringField, '');
+        });
+      }
+    };
+
+    return (
+      <StyledSelect value={input[field]} onChange={onChange} disabled={isReadOnly}>
+        <option value="">Select</option>
+        {Object.values(valueList).map(value => <option value={value} key={`${field}-${value}`}>{value}</option>)}
+      </StyledSelect>
+    );
+  };
+
   render() {
     const {
       consumerIsSelected,
@@ -541,7 +572,16 @@ class ConsumerInfoView extends React.Component {
             </FlexyWrapper>
           </HalfWidthItem>
           <HalfWidthItem>
-            {this.renderInput('Drug type', DRUG_TYPE_FQN)}
+            <FieldHeader>Drug type</FieldHeader>
+            {this.renderSelect(DRUG_TYPE_FQN, DRUG_TYPES, [DRUG_TYPE_OTHER_FQN])}
+          </HalfWidthItem>
+          <HalfWidthItem />
+          <HalfWidthItem>
+            {
+              input[DRUG_TYPE_FQN] === DRUG_TYPES.OTHER
+                ? this.renderInput('Other drug type', DRUG_TYPE_OTHER_FQN)
+                : null
+            }
           </HalfWidthItem>
           <HalfWidthItem>
             <FieldHeader>Prescribed Medication</FieldHeader>

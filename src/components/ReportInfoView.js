@@ -3,9 +3,11 @@ import React from 'react';
 import moment from 'moment';
 import { withRouter } from 'react-router';
 import { Link } from 'react-router-dom';
+import { List } from 'immutable';
 
 import FieldHeader from './text/styled/FieldHeader';
 import TextField from './text/TextField';
+import StyledSelect from './controls/StyledSelect';
 import { FORM_PATHS } from '../shared/Consts';
 import {
   formatAsDate,
@@ -20,13 +22,16 @@ import {
   FullWidthItem,
   HalfWidthItem,
 } from './form/StyledFormComponents';
+import { DISPATCH_REASONS, CRIME_TYPE } from '../utils/DataConstants';
 import {
   CAD_NUMBER_FQN,
   COMPANION_OFFENSE_REPORT_FQN,
   DATE_TIME_OCCURRED_FQN,
   DATE_TIME_REPORTED_FQN,
   DISPATCH_REASON_FQN,
+  DISPATCH_REASON_OTHER_FQN,
   INCIDENT_FQN,
+  INCIDENT_OTHER_FQN,
   LOCATION_OF_INCIDENT_FQN,
   OL_ID_FQN,
   ON_VIEW_FQN,
@@ -65,6 +70,34 @@ class ReportInfoView extends React.Component {
     );
   }
 
+  renderSelect = (field, valueList, dependentStringFields) => {
+    const {
+      input,
+      isInReview,
+      isReadOnly,
+      updateStateValue,
+    } = this.props;
+    const { section } = this.state;
+
+    const onChange = (event) => {
+      const { value } = event.target;
+      updateStateValue(section, field, value);
+
+      if (dependentStringFields) {
+        dependentStringFields.forEach((dependentStringField) => {
+          updateStateValue(section, dependentStringField, '');
+        });
+      }
+    };
+
+    return (
+      <StyledSelect value={input[field]} onChange={onChange} disabled={isReadOnly}>
+        <option value="">Select</option>
+        {Object.values(valueList).map(value => <option value={value} key={`${field}-${value}`}>{value}</option>)}
+      </StyledSelect>
+    );
+  };
+
   render() {
 
     const {
@@ -93,11 +126,6 @@ class ReportInfoView extends React.Component {
           </FullWidthItem>
           <TextField
               disabled={isReadOnly}
-              header="Primary Reason for Dispatch"
-              onChange={value => updateStateValue(section, DISPATCH_REASON_FQN, value)}
-              value={input[DISPATCH_REASON_FQN]} />
-          <TextField
-              disabled={isReadOnly}
               header="Complaint Number*"
               onChange={value => updateStateValue(section, OL_ID_FQN, value)}
               value={input[OL_ID_FQN]} />
@@ -124,11 +152,40 @@ class ReportInfoView extends React.Component {
               }
             </FlexyWrapper>
           </HalfWidthItem>
-          <TextField
-              disabled={isReadOnly}
-              header="Crime / Incident*"
-              onChange={value => updateStateValue(section, INCIDENT_FQN, value)}
-              value={input[INCIDENT_FQN]} />
+          <HalfWidthItem>
+            <FieldHeader>Primary Reason for Dispatch</FieldHeader>
+            <FlexyWrapper>
+              {this.renderSelect(DISPATCH_REASON_FQN, DISPATCH_REASONS, [DISPATCH_REASON_OTHER_FQN])}
+            </FlexyWrapper>
+          </HalfWidthItem>
+          <HalfWidthItem>
+            {
+              input[DISPATCH_REASON_FQN] === DISPATCH_REASONS.OTHER ? (
+                <TextField
+                    disabled={isReadOnly}
+                    header="Other dispatch reason"
+                    onChange={value => updateStateValue(section, DISPATCH_REASON_OTHER_FQN, value)}
+                    value={input[DISPATCH_REASON_OTHER_FQN]} />
+              ) : null
+            }
+          </HalfWidthItem>
+          <HalfWidthItem>
+            <FieldHeader>Crime / Incident*</FieldHeader>
+            <FlexyWrapper>
+              {this.renderSelect(INCIDENT_FQN, CRIME_TYPE, [INCIDENT_OTHER_FQN])}
+            </FlexyWrapper>
+          </HalfWidthItem>
+          <HalfWidthItem>
+            {
+              input[INCIDENT_FQN] === CRIME_TYPE.OTHER ? (
+                <TextField
+                    disabled={isReadOnly}
+                    header="Other crime / incident type"
+                    onChange={value => updateStateValue(section, INCIDENT_OTHER_FQN, value)}
+                    value={input[INCIDENT_OTHER_FQN]} />
+              ) : null
+            }
+          </HalfWidthItem>
           <FullWidthItem>
             <TextField
                 disabled={isReadOnly}
