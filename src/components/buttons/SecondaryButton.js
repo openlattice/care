@@ -13,10 +13,15 @@ const SecondaryButton = styled.button`
 
   &:hover {
     background-color: #d0bbff;
+    cursor: pointer;
   }
 
   &:active {
     background-color: #b898ff;
+  }
+
+  &:focus {
+    outline: none;
   }
 
 `;

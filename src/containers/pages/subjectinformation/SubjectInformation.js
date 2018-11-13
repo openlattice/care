@@ -14,6 +14,7 @@ import { faUser } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import BackButton from '../../../components/buttons/BackButton';
+import SecondaryButton from '../../../components/buttons/SecondaryButton';
 import StyledInput from '../../../components/controls/StyledInput';
 import StyledCheckbox from '../../../components/controls/StyledCheckbox';
 import StyledRadio from '../../../components/controls/StyledRadio';
@@ -128,6 +129,12 @@ const UnknownPersonRow = styled.button`
   }
 `;
 
+const CreateNewPersonButton = styled(SecondaryButton)`
+  padding: 12px 20px;
+  width: fit-content;
+  align-self: flex-end;
+`;
+
 class ObservedBehaviors extends React.Component<Props> {
 
   constructor(props) {
@@ -138,14 +145,13 @@ class ObservedBehaviors extends React.Component<Props> {
 
   renderInput = (field, disabledIfSelected, width) => {
     const { values, actions } = this.props;
-    const disabled = disabledIfSelected && !values.get(SUBJECT_INFORMATION.IS_NEW_PERSON);
     const extraProps = width ? { width: `${width}px` } : {};
 
     return (
       <StyledInput
           padBottom
           name={field}
-          disabled={disabled}
+          disabled={!values.get(SUBJECT_INFORMATION.IS_NEW_PERSON)}
           value={values.get(field)}
           onChange={({ target }) => actions.setInputValue({ field, value: target.value })}
           {...extraProps} />
@@ -166,6 +172,7 @@ class ObservedBehaviors extends React.Component<Props> {
     return valueList.map(value => (
       <StyledRadio
           key={`${field}-${value}`}
+          disabled={!values.get(SUBJECT_INFORMATION.IS_NEW_PERSON)}
           label={value}
           value={value}
           checked={currValue === value}
@@ -234,29 +241,33 @@ class ObservedBehaviors extends React.Component<Props> {
     });
   }
 
-  onDobChange = (value) => {
-    const { actions } = this.props;
-    actions.setInputValue({ field: SUBJECT_INFORMATION.DOB, value });
-
-    if (moment(value).isValid()) {
-      actions.setInputValue({
-        field: SUBJECT_INFORMATION.AGE,
-        value: moment().diff(moment(value), 'years')
-      });
-    }
-  }
-
   render() {
     const { actions, values } = this.props;
     const isCreatingNewPerson = values.get(SUBJECT_INFORMATION.IS_NEW_PERSON);
     const invalidFields = showInvalidFields(window.location) ? getInvalidFields(values) : [];
 
-    const toggleNewPerson = (event) => {
+    const toggleNewPerson = (event, value) => {
       event.preventDefault();
       actions.setInputValue({
         field: SUBJECT_INFORMATION.IS_NEW_PERSON,
-        value: !isCreatingNewPerson
+        value
       });
+    };
+
+    const toggleDOBUnknown = (event) => {
+      const { checked } = event.target;
+      if (checked) {
+        actions.setInputValues({
+          [SUBJECT_INFORMATION.DOB_UNKNOWN]: true,
+          [SUBJECT_INFORMATION.DOB]: ''
+        });
+      }
+      else {
+        actions.setInputValues({
+          [SUBJECT_INFORMATION.DOB_UNKNOWN]: false,
+          [SUBJECT_INFORMATION.AGE]: ''
+        });
+      }
     };
 
     const PersonFormSection = isCreatingNewPerson ? FormSectionWithValidation : FormSection;
@@ -265,6 +276,7 @@ class ObservedBehaviors extends React.Component<Props> {
       <Wrapper>
         <FormWrapper>
           <FormSection>
+            <CreateNewPersonButton onClick={e => toggleNewPerson(e, true)}>Create New Person</CreateNewPersonButton>
             <Header>
               <h1>Quick Search</h1>
               <span>
@@ -285,67 +297,62 @@ class ObservedBehaviors extends React.Component<Props> {
                 withBorders
                 short />
           </FormSection>
-          {
-            isCreatingNewPerson || values.get(SUBJECT_INFORMATION.PERSON_ID).length
-              ? (
-                <IndentWrapper extraIndent>
-                  <Header>
-                    <HeaderWithClearButton>
-                      <h1>Subject Information</h1>
-                      <BackButton onClick={actions.clear} noMargin>Clear Fields</BackButton>
-                    </HeaderWithClearButton>
-                  </Header>
-                  <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.LAST)}>
-                    <RequiredField><FormText noMargin>Last</FormText></RequiredField>
-                    {this.renderInput(SUBJECT_INFORMATION.LAST, true)}
-                  </PersonFormSection>
-                  <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.FIRST)}>
-                    <RequiredField><FormText noMargin>First</FormText></RequiredField>
-                    {this.renderInput(SUBJECT_INFORMATION.FIRST, true)}
-                  </PersonFormSection>
-                  <FormSection>
-                    <FormText noMargin>Mid.</FormText>
-                    {this.renderInput(SUBJECT_INFORMATION.MIDDLE, true, 50)}
-                  </FormSection>
-                  <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.DOB)}>
-                    <RequiredField><FormText noMargin>DOB</FormText></RequiredField>
-                    <DatePickerWrapper>
-                      <DatePicker
-                          value={values.get(SUBJECT_INFORMATION.DOB)}
-                          isDisabled={!isCreatingNewPerson}
-                          dateFormat="MM-DD-YYYY"
-                          onChange={this.onDobChange}
-                          selectProps={{
-                            placeholder: 'MM-DD-YYYY'
-                          }} />
-                    </DatePickerWrapper>
-                  </PersonFormSection>
-                  <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.SSN)}>
-                    <RequiredField><FormText noMargin>SSN (last 4 digits)</FormText></RequiredField>
-                    {this.renderInput(SUBJECT_INFORMATION.SSN_LAST_4, true, 75)}
-                  </PersonFormSection>
-                </IndentWrapper>
-              ) : null
-          }
         </FormWrapper>
-        <Or>OR</Or>
-        <FormWrapper>
-          <UnknownPersonRow selected={isCreatingNewPerson} onClick={toggleNewPerson} name="prow">
-            <StyledCheckbox
-                name="checkbox"
-                checked={isCreatingNewPerson}
-                onChange={toggleNewPerson}
-                noMargin />
-            <FontAwesomeIcon size="2x" icon={faUser} />
-            <span>Unknown person</span>
-          </UnknownPersonRow>
-          {
-            isCreatingNewPerson ? (
+        {
+          isCreatingNewPerson || values.get(SUBJECT_INFORMATION.PERSON_ID) ? (
+            <FormWrapper>
               <IndentWrapper extraIndent>
-                <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.AGE)}>
-                  <RequiredField><FormText noMargin>Age (approximate)</FormText></RequiredField>
-                  {this.renderInput(SUBJECT_INFORMATION.AGE, false, 70)}
+                <Header>
+                  <HeaderWithClearButton>
+                    <h1>Subject Information</h1>
+                    <BackButton onClick={actions.clear} noMargin>Clear Fields</BackButton>
+                  </HeaderWithClearButton>
+                </Header>
+                <PersonFormSection>
+                  <FormText noMargin>Last</FormText>
+                  {this.renderInput(SUBJECT_INFORMATION.LAST, true)}
                 </PersonFormSection>
+                <PersonFormSection>
+                  <FormText noMargin>First</FormText>
+                  {this.renderInput(SUBJECT_INFORMATION.FIRST, true)}
+                </PersonFormSection>
+                <FormSection>
+                  <FormText noMargin>Mid.</FormText>
+                  {this.renderInput(SUBJECT_INFORMATION.MIDDLE, true, 80)}
+                </FormSection>
+                <StyledCheckbox
+                    name="dobCheckbox"
+                    checked={values.get(SUBJECT_INFORMATION.DOB_UNKNOWN)}
+                    label="DOB Unknown"
+                    onChange={toggleDOBUnknown} />
+                <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.DOB)}>
+                  {
+                    values.get(SUBJECT_INFORMATION.DOB_UNKNOWN) ? (
+                      <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.AGE)}>
+                        <RequiredField><FormText noMargin>Age (approximate)</FormText></RequiredField>
+                        {this.renderInput(SUBJECT_INFORMATION.AGE, false, 70)}
+                      </PersonFormSection>
+                    ) : (
+                      <DatePickerWrapper>
+                        <RequiredField><FormText noMargin>DOB</FormText></RequiredField>
+                        <DatePicker
+                            value={values.get(SUBJECT_INFORMATION.DOB)}
+                            isDisabled={!isCreatingNewPerson}
+                            dateFormat="MM-DD-YYYY"
+                            onChange={value => actions.setInputValue({ field: SUBJECT_INFORMATION.DOB, value })}
+                            selectProps={{
+                              placeholder: 'MM-DD-YYYY'
+                            }} />
+                      </DatePickerWrapper>
+                    )
+                  }
+                </PersonFormSection>
+                <PersonFormSection>
+                  <FormText noMargin>SSN (last 4 digits)</FormText>
+                  {this.renderInput(SUBJECT_INFORMATION.SSN_LAST_4, true, 75)}
+                </PersonFormSection>
+              </IndentWrapper>
+              <IndentWrapper extraIndent>
                 <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.GENDER)}>
                   <RequiredField><FormText noMargin>Gender</FormText></RequiredField>
                   {this.renderRadioButtons(SUBJECT_INFORMATION.GENDER, GENDERS)}
@@ -355,9 +362,9 @@ class ObservedBehaviors extends React.Component<Props> {
                   {this.renderRadioButtons(SUBJECT_INFORMATION.RACE, RACES)}
                 </PersonFormSection>
               </IndentWrapper>
-            ) : null
-          }
-        </FormWrapper>
+            </FormWrapper>
+          ) : null
+        }
       </Wrapper>
     );
   }
