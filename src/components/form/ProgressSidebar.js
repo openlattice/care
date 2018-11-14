@@ -23,7 +23,8 @@ const {
 type Step = {
   title :string,
   status :string,
-  onClick :() => void
+  onClick :() => void,
+  disabled :boolean
 }
 
 type Props = {
@@ -106,11 +107,13 @@ const StepItem = styled.div`
   }
 
   &:hover {
-    cursor: pointer;
+    ${props => (props.isDisabled ? '' : css`
+      cursor: pointer;
 
-    div {
-      color: ${WHITE};
-    }
+      div {
+        color: ${WHITE};
+      }
+      `)}
   }
 `;
 
@@ -136,7 +139,12 @@ const InProgressSymbol = styled.span`
 const ProgressSidebar = ({ formTitle, currentStepNumber, steps } :Props) => {
 
   const renderStep = (step :Step, index :number) => {
-    const { title, status, onClick } = step;
+    const {
+      title,
+      status,
+      onClick,
+      disabled
+    } = step;
     const items = [];
 
     const selected = index === currentStepNumber;
@@ -159,8 +167,10 @@ const ProgressSidebar = ({ formTitle, currentStepNumber, steps } :Props) => {
       }
     }
 
+    const clickFn = disabled ? () => {} : onClick;
+
     items.push(
-      <StepItem selected={selected} status={status} key={`step-${index}`} onClick={onClick}>
+      <StepItem selected={selected} status={status} key={`step-${index}`} onClick={clickFn} isDisabled={disabled}>
         <Circle selected={selected} status={status}>{content}</Circle>
         <div>{title}</div>
       </StepItem>

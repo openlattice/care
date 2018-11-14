@@ -20,6 +20,9 @@ import {
   DISPOSITION
 } from '../../utils/constants/CrisisTemplateConstants';
 import { DISPOSITIONS as DISP_VALUES } from '../pages/disposition/Constants';
+import { MEDIA_QUERY_MD } from '../../core/style/Sizes';
+import { FormWrapper } from '../../components/crisis/FormComponents';
+
 
 type Props = {
   subjectInformation :Map<*, *>,
@@ -76,6 +79,15 @@ const Section = styled.div`
         margin-right: 0;
       }
     }
+  }
+`;
+
+const ReviewHeader = styled.div`
+  font-size: 16px;
+  color: ${BLACK};
+
+  @media only screen and (min-width: ${MEDIA_QUERY_MD}px) {
+    font-size: 18px;
   }
 `;
 
@@ -317,13 +329,16 @@ class ReviewContainer extends React.Component<Props> {
 
   render() {
     return (
-      <Wrapper>
-        {this.renderName()}
-        {this.renderBehaviors()}
-        {this.renderNatureOfCrisis()}
-        {this.renderOfficerSafety()}
-        {this.renderDisposition()}
-      </Wrapper>
+      <FormWrapper>
+        <ReviewHeader>{`Crisis Template Narrative: ${moment().format('MM-DD-YYYY')}`}</ReviewHeader>
+        <Wrapper>
+          {this.renderName()}
+          {this.renderBehaviors()}
+          {this.renderNatureOfCrisis()}
+          {this.renderOfficerSafety()}
+          {this.renderDisposition()}
+        </Wrapper>
+      </FormWrapper>
     );
   }
 }

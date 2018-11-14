@@ -119,13 +119,6 @@ const FormWrapper = styled.div`
   }
 `;
 
-const SpacedRow = styled.div`
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  justify-content: space-between;
-  align-items: center;
-`;
 
 const ButtonRow = styled.div`
   display: flex;
@@ -134,14 +127,6 @@ const ButtonRow = styled.div`
   align-items: center;
 `;
 
-const ReviewHeader = styled.div`
-  font-size: 16px;
-  color: ${BLACK};
-
-  @media only screen and (min-width: ${MEDIA_QUERY_MD}px) {
-    font-size: 18px;
-  }
-`;
 
 const ResetModalBody = styled.div`
   padding: 10px;
@@ -255,6 +240,13 @@ const PAGES = [
     title: 'Disposition',
     stateField: STATE.DISPOSITION,
     postProcessor: processDisposition
+  },
+  {
+    Component: ReviewContainer,
+    title: 'Review & Submit',
+    stateField: '',
+    postProcessor: () => ({}),
+    requireAllPreviousValid: true
   }
 ];
 
@@ -326,7 +318,7 @@ class CrisisTemplateContainer extends React.Component<Props, State> {
     let ready = true;
     PAGES.forEach((page) => {
       const { validator, stateField } = page;
-      if (validator(state.get(stateField)) !== FORM_STEP_STATUS.COMPLETED) {
+      if (validator && validator(state.get(stateField)) !== FORM_STEP_STATUS.COMPLETED) {
         ready = false;
       }
     });
@@ -334,14 +326,17 @@ class CrisisTemplateContainer extends React.Component<Props, State> {
     return ready;
   }
 
-  renderForwardButton = (page, isSubmit) => {
+  renderForwardButton = (page, index) => {
     const { state } = this.props;
 
+    const isReview = index === PAGES.length - 2;
+    const isSubmit = index === PAGES.length - 1;
+
     const { validator, stateField } = page;
-    const complete = validator(state.get(stateField)) === FORM_STEP_STATUS.COMPLETED;
+    const complete = validator ? validator(state.get(stateField)) === FORM_STEP_STATUS.COMPLETED : true;
     const nextPath = getNextPath(window.location, PAGES.length + 1);
 
-    const disabled = isSubmit ? !this.isReadyToSubmit() : !complete;
+    const disabled = (isSubmit || isReview) ? !this.isReadyToSubmit() : !complete;
     let onClick = () => this.handlePageChange(nextPath);
 
     if (disabled) {
@@ -349,7 +344,16 @@ class CrisisTemplateContainer extends React.Component<Props, State> {
       onClick = () => this.handlePageChange(showInvalidFieldsPath);
     }
 
-    return <ForwardButton onClick={onClick} canProgress={!disabled}>{isSubmit ? 'Submit' : 'Next'}</ForwardButton>;
+    let buttonText = 'Next';
+    if (isReview) {
+      buttonText = 'Review';
+    }
+    if (isSubmit) {
+      buttonText = 'Submit';
+      onClick = this.handleSubmit;
+    }
+
+    return <ForwardButton onClick={onClick} canProgress={!disabled}>{buttonText}</ForwardButton>;
   }
 
   renderPage = (page, index) => {
@@ -366,33 +370,8 @@ class CrisisTemplateContainer extends React.Component<Props, State> {
             ? <BackButton onClick={() => this.setState({ confirmReset: true })}>Reset</BackButton>
             : <BackButton onClick={() => this.handlePageChange(prevPath)}>Back</BackButton>
           }
-          {this.renderForwardButton(page, index === PAGES.length - 1)}
+          {this.renderForwardButton(page, index)}
         </ButtonRow>
-      </PageWrapper>
-    );
-  }
-
-  renderReview = () => {
-    const ready = this.isReadyToSubmit();
-    const prevPath = getPrevPath(window.location);
-
-    const buttons = (
-      <ButtonRow>
-        <BackButton onClick={() => this.handlePageChange(prevPath)}>Back</BackButton>
-        <ForwardButton onClick={this.handleSubmit} canProgress={ready}>Submit</ForwardButton>
-      </ButtonRow>
-    );
-
-    return (
-      <PageWrapper>
-        <StyledPageWrapper>
-          <SpacedRow>
-            <ReviewHeader>{`Crisis Template Narrative: ${moment().format('MM-DD-YYYY')}`}</ReviewHeader>
-            {buttons}
-          </SpacedRow>
-          <ReviewContainer />
-        </StyledPageWrapper>
-        {buttons}
       </PageWrapper>
     );
   }
@@ -406,10 +385,29 @@ class CrisisTemplateContainer extends React.Component<Props, State> {
     const { history, state } = this.props;
 
     return PAGES.map((page, index) => {
-      const { title, validator, stateField } = page;
-      const status = validator(state.get(stateField));
+      const {
+        title,
+        validator,
+        stateField,
+        requireAllPreviousValid
+      } = page;
+      const status = validator ? validator(state.get(stateField)) : undefined;
       const onClick = () => history.push(`${CRISIS_PATH}/${index + 1}`);
-      return { title, status, onClick };
+      let disabled = false;
+      if (requireAllPreviousValid) {
+        PAGES.slice(0, index).forEach((prevPage) => {
+          if (prevPage.validator && prevPage.validator(state.get(prevPage.stateField)) !== FORM_STEP_STATUS.COMPLETED) {
+            disabled = true;
+          }
+        });
+      }
+
+      return {
+        title,
+        status,
+        onClick,
+        disabled
+      };
     });
   }
 
@@ -418,7 +416,7 @@ class CrisisTemplateContainer extends React.Component<Props, State> {
     const doReset = () => {
       actions.clearCrisisTemplate();
       history.push(HOME_PATH);
-    }
+    };
 
     return (
       <ResetModalBody>
@@ -499,7 +497,6 @@ class CrisisTemplateContainer extends React.Component<Props, State> {
         </ModalTransition>
         <Switch>
           {this.renderRoutes()}
-          <Route path={`${CRISIS_PATH}/${PAGES.length + 1}`} render={this.renderReview} />
           <Redirect to={START_PATH} />
         </Switch>
       </CrisisTemplateWrapper>
