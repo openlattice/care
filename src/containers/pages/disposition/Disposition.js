@@ -283,6 +283,9 @@ const ObservedBehaviors = ({ values, actions } :Props) => {
         <Header>
           <h1>Additional Details</h1>
         </Header>
+        <RequiredField>
+          <FormText noMargin>Report info</FormText>
+        </RequiredField>
         {renderRadio(
           DISPOSITION.HAS_REPORT_NUMBER,
           true,
