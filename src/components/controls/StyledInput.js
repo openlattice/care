@@ -8,8 +8,8 @@ const style = css`
   display: flex;
   flex: 0 1 auto;
   width: ${props => props.width || '100%'};
-  height: 38px;
-  font-size: 14px;
+  height: 45px;
+  font-size: 16px;
   line-height: 19px;
   border-radius: 3px;
   background-color: #f9f9fd;

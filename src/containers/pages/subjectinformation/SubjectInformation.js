@@ -109,13 +109,20 @@ class ObservedBehaviors extends React.Component<Props> {
     const { values, actions } = this.props;
     const extraProps = width ? { width: `${width}px` } : {};
 
+    const onChange = ({ target }) => {
+      const { value } = target;
+      if (field !== SUBJECT_INFORMATION.SSN_LAST_4 || value.length <= 4) {
+        actions.setInputValue({ field, value });
+      }
+    };
+
     return (
       <StyledInput
           padBottom
           name={field}
           disabled={!values.get(SUBJECT_INFORMATION.IS_NEW_PERSON)}
           value={values.get(field)}
-          onChange={({ target }) => actions.setInputValue({ field, value: target.value })}
+          onChange={onChange}
           {...extraProps} />
     );
   };
@@ -319,7 +326,7 @@ class ObservedBehaviors extends React.Component<Props> {
                 </PersonFormSection>
                 <PersonFormSection>
                   <FormText noMargin>SSN (last 4 digits)</FormText>
-                  {this.renderInput(SUBJECT_INFORMATION.SSN_LAST_4, true, 75)}
+                  {this.renderInput(SUBJECT_INFORMATION.SSN_LAST_4, true, 85)}
                 </PersonFormSection>
               </IndentWrapper>
               <IndentWrapper extraIndent>

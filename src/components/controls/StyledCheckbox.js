@@ -11,7 +11,7 @@ const Control = styled.label`
   padding: 0 10px 0 20px;
   margin-bottom: ${props => (props.noMargin ? 0 : 10)}px;
   font-family: 'Open Sans', sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: normal;
   color: ${props => (props.checked ? '#2e2e34' : '#8e929b')};
   cursor: ${props => (props.disabled ? 'default' : 'pointer')};
