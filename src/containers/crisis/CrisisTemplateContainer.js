@@ -78,7 +78,8 @@ type Props = {
 };
 
 type State = {
-  confirmReset :boolean
+  confirmReset :boolean,
+  formInProgress :boolean
 }
 
 const CrisisTemplateWrapper = styled.div`
@@ -257,13 +258,26 @@ const PAGES = [
   }
 ];
 
+const START_PATH = `${CRISIS_PATH}/1`;
+
 class CrisisTemplateContainer extends React.Component<Props, State> {
 
   constructor(props) {
     super(props);
     this.state = {
-      confirmReset: false
+      confirmReset: false,
+      formInProgress: false
     };
+  }
+
+  componentDidMount() {
+    const { history } = this.props;
+    const { formInProgress } = this.state;
+
+    if (!formInProgress && !window.location.href.endsWith(START_PATH)) {
+      history.push(START_PATH);
+    }
+    this.setState({ formInProgress: true });
   }
 
   componentWillUnmount() {
@@ -486,7 +500,7 @@ class CrisisTemplateContainer extends React.Component<Props, State> {
         <Switch>
           {this.renderRoutes()}
           <Route path={`${CRISIS_PATH}/${PAGES.length + 1}`} render={this.renderReview} />
-          <Redirect to={`${CRISIS_PATH}/1`} />
+          <Redirect to={START_PATH} />
         </Switch>
       </CrisisTemplateWrapper>
     );

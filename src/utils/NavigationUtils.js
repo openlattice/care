@@ -56,4 +56,4 @@ export const showInvalidFields = (location :Location) => {
 export const setShowInvalidFields = (location :Location) => {
   const splitStr = getSplitStr(location);
   return `${splitStr.join('/')}?${qs.stringify({ [INCOMPLETE]: true })}`;
-}
+};
