@@ -143,6 +143,9 @@ export function getInvalidFields(state :Map<*, *>) {
       invalidFields.push(INCIDENT_DESCRIPTION);
     }
   }
+  else {
+    invalidFields.push(HAS_REPORT_NUMBER);
+  }
 
   return invalidFields;
 }

@@ -18,7 +18,8 @@ const INITIAL_STATE :Map<*, *> = fromJS({
   },
   consumers: {
     isSearching: false,
-    searchResults: List()
+    searchResults: List(),
+    searchComplete: false
   }
 });
 
@@ -50,7 +51,8 @@ export default function searchReducer(state :Map<*, *> = INITIAL_STATE, action :
         REQUEST: () => {
           return state
             .setIn(['consumers', 'isSearching'], true)
-            .setIn(['consumers', 'searchResults'], List());
+            .setIn(['consumers', 'searchResults'], List())
+            .setIn(['consumers', 'searchComplete'], false);
         },
         SUCCESS: () => {
           return state.setIn(['consumers', 'searchResults'], fromJS(action.value.hits));
@@ -59,7 +61,7 @@ export default function searchReducer(state :Map<*, *> = INITIAL_STATE, action :
           return state.setIn(['consumers', 'searchResults'], List());
         },
         FINALLY: () => {
-          return state.setIn(['consumers', 'isSearching'], false);
+          return state.setIn(['consumers', 'isSearching'], false).setIn(['consumers', 'searchComplete'], true);
         }
       });
     }

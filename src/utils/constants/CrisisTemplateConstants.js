@@ -12,6 +12,7 @@ export const SUBJECT_INFORMATION = {
   FIRST: 'firstName',
   MIDDLE: 'middleInitial',
   DOB: 'dob',
+  DOB_UNKNOWN: 'dobUnknown',
   GENDER: 'gender',
   RACE: 'race',
   AGE: 'age',

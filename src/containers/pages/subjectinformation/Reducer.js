@@ -20,6 +20,7 @@ const {
   FIRST,
   MIDDLE,
   DOB,
+  DOB_UNKNOWN,
   GENDER,
   RACE,
   AGE,
@@ -34,6 +35,7 @@ const INITIAL_STATE :Map<*, *> = fromJS({
   [FIRST]: '',
   [MIDDLE]: '',
   [DOB]: '',
+  [DOB_UNKNOWN]: false,
   [GENDER]: '',
   [RACE]: '',
   [AGE]: '',
@@ -65,13 +67,6 @@ export function getInvalidFields(state :Map<*, *>) {
   const invalidFields = [];
 
   if (state.get(IS_NEW_PERSON)) {
-    if (!state.get(LAST, '').length) {
-      invalidFields.push(LAST);
-    }
-
-    if (!state.get(FIRST, '').length) {
-      invalidFields.push(FIRST);
-    }
 
     if (!state.get(GENDER, '').length) {
       invalidFields.push(GENDER);
@@ -81,17 +76,14 @@ export function getInvalidFields(state :Map<*, *>) {
       invalidFields.push(RACE);
     }
 
-    if (state.get(SSN_LAST_4, '').length !== 4) {
-      invalidFields.push(SSN_LAST_4);
+    if (state.get(DOB_UNKNOWN)) {
+      const age = state.get(AGE, '');
+      if (!(age > 0) && !age.length) {
+        invalidFields.push(AGE);
+      }
     }
-
-    if (!state.get(DOB, '').length || !moment(state.get(DOB, '')).isValid()) {
+    else if (!state.get(DOB, '').length || !moment(state.get(DOB, '')).isValid()) {
       invalidFields.push(DOB);
-    }
-
-    const age = state.get(AGE, '');
-    if (!(age > 0) && !age.length) {
-      invalidFields.push(AGE);
     }
 
   }
@@ -114,9 +106,13 @@ export function processForSubmit(state :Map<*, *>) :Object {
   const dobMoment = moment(state.get(DOB, ''));
   const dob = dobMoment.isValid() ? dobMoment.format('YYYY-MM-DD') : '';
 
-  const preprocessedState = state.get(IS_NEW_PERSON)
+  let preprocessedState = state.get(IS_NEW_PERSON)
     ? state.set(DOB, dob).set(PERSON_ID, randomUUID())
     : Map().set(PERSON_ID, state.get(PERSON_ID));
+
+  if (dobMoment.isValid() && !state.get(AGE)) {
+    preprocessedState = preprocessedState.set(AGE, moment().diff(dobMoment, 'years'));
+  }
 
   return preprocessedState
     .set(POST_PROCESS_FIELDS.DOB, dob)

@@ -17,7 +17,7 @@ export const RadioContainer = styled.label`
   position: relative;
   padding-left: 30px;
   margin: 5px;
-  font-size: 14px;
+  font-size: 16px;
   color: #2e2e34;
   -webkit-user-select: none;
   -moz-user-select: none;
