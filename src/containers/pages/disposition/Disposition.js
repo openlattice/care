@@ -279,7 +279,7 @@ const ObservedBehaviors = ({ values, actions } :Props) => {
           ) : null
         }
       </FormSectionWithValidation>
-      <FormSection>
+      <FormSectionWithValidation invalid={invalidFields.includes(DISPOSITION.HAS_REPORT_NUMBER)}>
         <Header>
           <h1>Additional Details</h1>
         </Header>
@@ -293,6 +293,11 @@ const ObservedBehaviors = ({ values, actions } :Props) => {
           ? (
             <IndentWrapper extraIndent>
               <FormSectionWithValidation invalid={invalidFields.includes(DISPOSITION.REPORT_NUMBER)}>
+                <RequiredField>
+                  <FormText gray noMargin>
+                    Report number
+                  </FormText>
+                </RequiredField>
                 {renderInput(DISPOSITION.REPORT_NUMBER)}
               </FormSectionWithValidation>
             </IndentWrapper>
@@ -313,7 +318,7 @@ const ObservedBehaviors = ({ values, actions } :Props) => {
             </IndentWrapper>
           )
           : null}
-      </FormSection>
+      </FormSectionWithValidation>
     </FormWrapper>
   );
 };
