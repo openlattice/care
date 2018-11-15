@@ -29,7 +29,7 @@ const getPersonEntitySetId = (app) => {
   const selectedOrganizationId = app.get('selectedOrganizationId');
 
   return app.getIn([
-    PEOPLE_FQN.getFullyQualifiedName(),
+    PEOPLE_FQN.toString(),
     'entitySetsByOrganization',
     selectedOrganizationId
   ]);

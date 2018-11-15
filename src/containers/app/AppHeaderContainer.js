@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 
 import Select from 'react-select';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Map } from 'immutable';
 import { AuthActionFactory } from 'lattice-auth';
 import { Button, Colors } from 'lattice-ui-kit';
@@ -13,15 +13,21 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router';
 import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBars } from '@fortawesome/pro-solid-svg-icons';
 
 import AppNavigationContainer from './AppNavigationContainer';
 import OpenLatticeLogo from '../../assets/images/logo_v2.png';
+import DropdownButtonWrapper from '../../components/buttons/DropdownButtonWrapper';
 import * as Routes from '../../core/router/Routes';
 import { switchOrganization } from './AppActions';
 import {
   APP_CONTAINER_MAX_WIDTH,
   APP_CONTAINER_WIDTH,
   APP_CONTENT_PADDING,
+  MEDIA_QUERY_TECH_SM,
+  MEDIA_QUERY_MD,
+  MEDIA_QUERY_LG
 } from '../../core/style/Sizes';
 
 const { logout } = AuthActionFactory;
@@ -42,9 +48,18 @@ const AppHeaderInnerWrapper = styled.div`
   display: flex;
   flex: 1 0 auto;
   justify-content: space-between;
-  max-width: ${APP_CONTAINER_MAX_WIDTH}px;
-  min-width: ${APP_CONTAINER_WIDTH}px;
-  padding: 0 ${APP_CONTENT_PADDING}px;
+  max-width: calc(100% - 20px);
+  padding: 0 10px;
+
+  @media only screen and (min-width: ${MEDIA_QUERY_MD}px) {
+    min-width: ${MEDIA_QUERY_MD - 40}px;
+    padding: 0 20px;
+  }
+
+  @media only screen and (min-width: ${MEDIA_QUERY_LG}px) {
+    min-width: ${MEDIA_QUERY_LG - (2 * APP_CONTENT_PADDING)}px;
+    padding: 0 ${APP_CONTENT_PADDING}px;
+  }
 `;
 
 const LeftSideContentWrapper = styled.div`
@@ -78,6 +93,28 @@ const LogoTitleWrapperLink = styled(Link)`
   }
 `;
 
+const shouldDisplay = (size, props) => {
+  const { min, max } = props;
+  return !((min && min > size) || (max && max < size));
+};
+
+const DisplayControl = styled.div`
+  display: ${props => (shouldDisplay(0, props) ? 'inherit' : 'none')};
+  ${props => (props.fullWidth ? css`width: 100%;` : '')}
+
+  @media only screen and (min-width: ${MEDIA_QUERY_TECH_SM}px) {
+    display: ${props => (shouldDisplay(MEDIA_QUERY_TECH_SM, props) ? 'inherit' : 'none')};
+  }
+
+  @media only screen and (min-width: ${MEDIA_QUERY_MD}px) {
+    display: ${props => (shouldDisplay(MEDIA_QUERY_MD, props) ? 'inherit' : 'none')};
+  }
+
+  @media only screen and (min-width: ${MEDIA_QUERY_LG}px) {
+    display: ${props => (shouldDisplay(MEDIA_QUERY_LG, props) ? 'inherit' : 'none')};
+  }
+`;
+
 const AppLogoIcon = styled.img.attrs({
   alt: 'OpenLattice Logo Icon',
   src: OpenLatticeLogo,
@@ -96,8 +133,14 @@ const AppTitle = styled.h1`
 const LogoutButton = styled(Button)`
   font-size: 12px;
   line-height: 16px;
-  margin-left: 30px;
-  padding: 6px 29px;
+  padding: 20px 0;
+  width: 100%;
+
+  @media only screen and (min-width: ${MEDIA_QUERY_LG}px) {
+    padding: 6px 29px;
+    margin-left: 30px;
+    width: auto;
+  }
 `;
 
 const orgSelectStyles = {
@@ -131,6 +174,13 @@ const orgSelectStyles = {
   }),
 };
 
+const DropdownMenuWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+`;
+
 type Props = {
   actions :{
     logout :() => void;
@@ -139,32 +189,56 @@ type Props = {
   app :Map<*, *>;
 };
 
-class AppHeaderContainer extends Component<Props> {
+class AppHeaderContainer extends Component<Props, State> {
 
   renderLeftSideContent = () => (
     <LeftSideContentWrapper>
       <LogoTitleWrapperLink to={Routes.ROOT}>
         <AppLogoIcon />
-        <AppTitle>
-          Behavioral Health Report
-        </AppTitle>
+        <DisplayControl min={MEDIA_QUERY_LG}>
+          <AppTitle>
+            Behavioral Health Report
+          </AppTitle>
+        </DisplayControl>
       </LogoTitleWrapperLink>
-      <AppNavigationContainer />
+      <DisplayControl min={MEDIA_QUERY_MD}>
+        <AppNavigationContainer />
+      </DisplayControl>
     </LeftSideContentWrapper>
   )
 
-  renderRightSideContent = () => {
-
+  renderLogoutButton = () => {
     const { actions } = this.props;
     return (
-      <RightSideContentWrapper>
-        { this.renderOrgSelect() }
-        <LogoutButton onClick={actions.logout}>
-          Log Out
-        </LogoutButton>
-      </RightSideContentWrapper>
-    );
+      <LogoutButton onClick={actions.logout}>
+        Log Out
+      </LogoutButton>
+    )
   }
+
+  renderRightSideContent = () => (
+    <RightSideContentWrapper>
+      { this.renderOrgSelect() }
+      <DisplayControl min={MEDIA_QUERY_LG}>
+        {this.renderLogoutButton()}
+      </DisplayControl>
+      <DisplayControl max={MEDIA_QUERY_MD}>
+        <DropdownButtonWrapper
+            title={<FontAwesomeIcon icon={faBars} />}
+            transparent
+            fullSize
+            hideOnClick
+            relativeToPage>
+          <DropdownMenuWrapper>
+            <DisplayControl fullWidth max={MEDIA_QUERY_TECH_SM}>
+              <AppNavigationContainer dropdown />
+            </DisplayControl>
+            {this.renderLogoutButton()}
+          </DropdownMenuWrapper>
+        </DropdownButtonWrapper>
+      </DisplayControl>
+    </RightSideContentWrapper>
+  )
 
   renderOrgSelect = () => {
 

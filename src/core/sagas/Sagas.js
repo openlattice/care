@@ -16,11 +16,13 @@ import * as RoutingSagas from '../router/RoutingSagas';
 
 import * as AppSagas from '../../containers/app/AppSagas';
 import * as DashboardSagas from '../../containers/dashboard/DashboardSagas';
+import * as DownloadsSagas from '../../containers/downloads/DownloadsSagas';
 import * as FollowUpReportSagas from '../../containers/followup/FollowUpReportSagas';
 import * as PeopleSagas from '../../containers/people/PeopleSagas';
 import * as ReportSagas from '../../containers/form/ReportSagas';
 import * as ReportsSagas from '../../containers/reports/ReportsSagas';
 import * as SearchSagas from '../../containers/search/SearchSagas';
+import * as SubmitSagas from '../../utils/submit/SubmitSagas';
 
 export default function* sagas() :Generator<*, *, *> {
 
@@ -45,12 +47,20 @@ export default function* sagas() :Generator<*, *, *> {
     fork(SearchApiSagas.searchEntityNeighborsWatcher),
     fork(SearchApiSagas.searchEntitySetDataWatcher),
 
+    // AppSagas
+    fork(AppSagas.loadAppWatcher),
+    fork(AppSagas.loadHospitalsWatcher),
+    fork(AppSagas.switchOrganizationWatcher),
+
     // RoutingSagas
     fork(RoutingSagas.goToRootWatcher),
     fork(RoutingSagas.goToRouteWatcher),
 
     // Dashboard Sagas
     fork(DashboardSagas.loadDashboardDataWatcher),
+
+    // Downloads Sagas
+    fork(DownloadsSagas.downloadFormsWatcher),
 
     // Follow-Up Report Sagas
     fork(FollowUpReportSagas.submitFollowUpReportWatcher),
@@ -60,20 +70,22 @@ export default function* sagas() :Generator<*, *, *> {
     fork(PeopleSagas.searchPeopleWatcher),
 
     // Report Sagas
-    fork(AppSagas.loadAppWatcher),
-    fork(AppSagas.loadHospitalsWatcher),
-    fork(AppSagas.switchOrganizationWatcher),
     fork(ReportSagas.hardRestartWatcher),
     fork(ReportSagas.submitReportWatcher),
-
-    // SearchSagas
-    fork(SearchSagas.searchConsumerNeighborsWatcher),
-    fork(SearchSagas.searchConsumersWatcher),
 
     // ReportsSagas
     fork(ReportsSagas.deleteReportWatcher),
     fork(ReportsSagas.getReportNeighborsWatcher),
     fork(ReportsSagas.getReportsWatcher),
     fork(ReportsSagas.updateReportWatcher),
+
+    // SearchSagas
+    fork(SearchSagas.searchConsumerNeighborsWatcher),
+    fork(SearchSagas.searchConsumersWatcher),
+
+    // SubmitSagas
+    fork(SubmitSagas.replaceAssociationWatcher),
+    fork(SubmitSagas.replaceEntityWatcher),
+    fork(SubmitSagas.submitWatcher)
   ]);
 }

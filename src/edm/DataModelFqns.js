@@ -16,7 +16,9 @@ const COMPLAINT_NUMBER_FQN = new FullyQualifiedName('bhr.complaintNumber');
 const DATE_TIME_OCCURRED_FQN = new FullyQualifiedName('bhr.datetimeOccurred');
 const DATE_TIME_REPORTED_FQN = new FullyQualifiedName('bhr.datetimeReported');
 const DISPATCH_REASON_FQN = new FullyQualifiedName('bhr.dispatchReason');
+const DISPATCH_REASON_OTHER_FQN = new FullyQualifiedName('ol.reasonother');
 const INCIDENT_FQN = new FullyQualifiedName('bhr.incident');
+const INCIDENT_OTHER_FQN = new FullyQualifiedName('ol.incidenttypeother');
 const LOCATION_OF_INCIDENT_FQN = new FullyQualifiedName('bhr.locationOfIncident');
 const ON_VIEW_FQN = new FullyQualifiedName('bhr.onView');
 const POST_OF_OCCURRENCE_FQN = new FullyQualifiedName('bhr.postOfOccurrence');
@@ -29,11 +31,13 @@ export {
   DATE_TIME_OCCURRED_FQN,
   DATE_TIME_REPORTED_FQN,
   DISPATCH_REASON_FQN,
+  DISPATCH_REASON_OTHER_FQN,
   INCIDENT_FQN,
+  INCIDENT_OTHER_FQN,
   LOCATION_OF_INCIDENT_FQN,
   ON_VIEW_FQN,
   POST_OF_OCCURRENCE_FQN,
-  UNIT_FQN,
+  UNIT_FQN
 };
 
 /*
@@ -51,6 +55,7 @@ const HOMELESS_FQN = new FullyQualifiedName('bhr.homeless');
 const HOMELESS_LOCATION_FQN = new FullyQualifiedName('bhr.homelessLocation');
 const DRUGS_ALCOHOL_FQN = new FullyQualifiedName('bhr.drugsAlcohol');
 const DRUG_TYPE_FQN = new FullyQualifiedName('bhr.drugType');
+const DRUG_TYPE_OTHER_FQN = new FullyQualifiedName('ol.drugtypeother');
 const PRESCRIBED_MEDICATION_FQN = new FullyQualifiedName('bhr.prescribedMedication');
 const TAKING_MEDICATION_FQN = new FullyQualifiedName('bhr.takingMedication');
 const PREV_PSYCH_ADMISSION_FQN = new FullyQualifiedName('bhr.prevPsychAdmission');
@@ -73,6 +78,7 @@ const SUICIDE_ATTEMPT_METHOD_FQN = new FullyQualifiedName('bhr.suicideAttemptMet
 const SUICIDE_ATTEMPT_METHOD_OTHER_FQN = new FullyQualifiedName('bhr.suicideAttemptMethodOther');
 const DIRECTED_AGAINST_FQN = new FullyQualifiedName('ol.directedagainst');
 const DIRECTED_AGAINST_OTHER_FQN = new FullyQualifiedName('ol.directedagainstother');
+const DIRECTED_AGAINST_RELATION_FQN = new FullyQualifiedName('ol.directedrelation');
 const HIST_DIRECTED_AGAINST_FQN = new FullyQualifiedName('ol.historicaldirectedagainst');
 const HIST_DIRECTED_AGAINST_OTHER_FQN = new FullyQualifiedName('ol.historicaldirectedagainstother');
 const HISTORY_OF_VIOLENCE_FQN = new FullyQualifiedName('ol.historyofviolence');
@@ -91,6 +97,7 @@ export {
   HOMELESS_LOCATION_FQN,
   DRUGS_ALCOHOL_FQN,
   DRUG_TYPE_FQN,
+  DRUG_TYPE_OTHER_FQN,
   PRESCRIBED_MEDICATION_FQN,
   TAKING_MEDICATION_FQN,
   PREV_PSYCH_ADMISSION_FQN,
@@ -113,11 +120,12 @@ export {
   SUICIDE_ATTEMPT_METHOD_OTHER_FQN,
   DIRECTED_AGAINST_FQN,
   DIRECTED_AGAINST_OTHER_FQN,
+  DIRECTED_AGAINST_RELATION_FQN,
   HIST_DIRECTED_AGAINST_FQN,
   HIST_DIRECTED_AGAINST_OTHER_FQN,
   HISTORY_OF_VIOLENCE_FQN,
   HISTORY_OF_VIOLENCE_TEXT_FQN,
-  SCALE_1_TO_10_FQN,
+  SCALE_1_TO_10_FQN
 };
 
 const PERSON_DOB_FQN = new FullyQualifiedName('nc.PersonBirthDate');
@@ -126,6 +134,7 @@ const PERSON_FIRST_NAME_FQN = new FullyQualifiedName('nc.PersonGivenName');
 const PERSON_MIDDLE_NAME_FQN = new FullyQualifiedName('nc.PersonMiddleName');
 const PERSON_RACE_FQN = new FullyQualifiedName('nc.PersonRace');
 const PERSON_SEX_FQN = new FullyQualifiedName('nc.PersonSex');
+const PERSON_SSN_LAST_4_FQN = new FullyQualifiedName('general.ssnlast4');
 const PERSON_ID_FQN = new FullyQualifiedName('nc.SubjectIdentification');
 const PERSON_PICTURE_FQN = new FullyQualifiedName('person.picture');
 
@@ -136,8 +145,9 @@ export {
   PERSON_MIDDLE_NAME_FQN,
   PERSON_RACE_FQN,
   PERSON_SEX_FQN,
+  PERSON_SSN_LAST_4_FQN,
   PERSON_ID_FQN,
-  PERSON_PICTURE_FQN,
+  PERSON_PICTURE_FQN
 };
 
 /*
@@ -153,7 +163,7 @@ export {
   COMPLAINANT_NAME_FQN,
   COMPLAINANT_ADDRESS_FQN,
   COMPLAINANT_RELATIONSHIP_FQN,
-  COMPLAINANT_PHONE_FQN,
+  COMPLAINANT_PHONE_FQN
 };
 
 /*
@@ -164,7 +174,7 @@ const DEESCALATION_SCALE_FQN = new FullyQualifiedName('ol.deescalationscale');
 const DEESCALATION_TECHNIQUES_FQN = new FullyQualifiedName('bhr.deescalationTechniques');
 const DEESCALATION_TECHNIQUES_OTHER_FQN = new FullyQualifiedName('bhr.deescalationTechniquesOther');
 const DISPOSITION_FQN = new FullyQualifiedName('bhr.disposition');
-const HOSPITAL_TRANSPORT_INDICATOR_FQN = new FullyQualifiedName('ol.hospitaltransportindicator');
+const HOSPITAL_TRANSPORT_INDICATOR_FQN = new FullyQualifiedName('bhr.hospitalTransport');
 const HOSPITAL_FQN = new FullyQualifiedName('bhr.hospital');
 const HOSPITAL_NAME_FQN = new FullyQualifiedName('health.hospitalname');
 const INCIDENT_NARRATIVE_FQN = new FullyQualifiedName('bhr.incidentNarrative');
@@ -189,7 +199,7 @@ export {
   SPECIAL_RESOURCES_CALLED_FQN,
   STABILIZED_INDICATOR_FQN,
   TRANSPORTING_AGENCY_FQN,
-  VOLUNTARY_ACTION_INDICATOR_FQN,
+  VOLUNTARY_ACTION_INDICATOR_FQN
 };
 
 /*
@@ -205,5 +215,71 @@ export {
   OFFICER_NAME_FQN,
   OFFICER_SEQ_ID_FQN,
   OFFICER_INJURIES_FQN,
-  OFFICER_CERTIFICATION_FQN,
+  OFFICER_CERTIFICATION_FQN
+};
+
+/*
+ * Other
+ */
+
+const DATE_TIME_FQN = new FullyQualifiedName('general.datetime');
+
+export {
+  DATE_TIME_FQN
+};
+
+/*
+ * Crisis Template Specific
+ */
+
+const DEMEANORS_FQN = new FullyQualifiedName('ol.attitude');
+const OTHER_DEMEANORS_FQN = new FullyQualifiedName('ol.attitudeother');
+const PERSON_ASSISTING_FQN = new FullyQualifiedName('ol.persontoassist');
+const OTHER_PERSON_ASSISTING_FQN = new FullyQualifiedName('ol.persontoassistother');
+const NARCAN_ADMINISTERED_FQN = new FullyQualifiedName('ol.narcanadministered');
+const HOUSING_SITUATION_FQN = new FullyQualifiedName('housing.living_arrangements');
+const ARREST_INDICATOR_FQN = new FullyQualifiedName('ol.arrestedindicator');
+const CRIMES_AGAINST_PERSON_FQN = new FullyQualifiedName('ol.crimeagainstperson');
+const FELONY_INDICATOR_FQN = new FullyQualifiedName('ol.felony');
+const ARRESTABLE_OFFENSE_FQN = new FullyQualifiedName('ol.arrestableoffense');
+const OL_ID_FQN = new FullyQualifiedName('ol.id');
+const TYPE_FQN = new FullyQualifiedName('ol.type');
+const CATEGORY_FQN = new FullyQualifiedName('ol.category');
+const OTHER_TEXT_FQN = new FullyQualifiedName('ol.othertext');
+const ORGANIZATION_NAME_FQN = new FullyQualifiedName('ol.organizationname');
+const NO_ACTION_POSSIBLE_FQN = new FullyQualifiedName('ol.noactionpossible');
+const UNABLE_TO_CONTACT_FQN = new FullyQualifiedName('ol.unabletocontact');
+const RESOURCES_DECLINED_FQN = new FullyQualifiedName('ol.offereddeclined');
+const OTHER_NOTIFIED_FQN = new FullyQualifiedName('ol.othernotified');
+const OTHER_WEAPON_TYPE_FQN = new FullyQualifiedName('ol.weapontypeother');
+const THREATENED_INDICATOR_FQN = new FullyQualifiedName('ol.threatened');
+const PERSON_INJURED_FQN = new FullyQualifiedName('ol.personinjured');
+const OTHER_PERSON_INJURED_FQN = new FullyQualifiedName('ol.otherpersoninjured');
+const TRANSPORT_INDICATOR_FQN = new FullyQualifiedName('ol.transportindicator');
+
+export {
+  DEMEANORS_FQN,
+  OTHER_DEMEANORS_FQN,
+  PERSON_ASSISTING_FQN,
+  OTHER_PERSON_ASSISTING_FQN,
+  NARCAN_ADMINISTERED_FQN,
+  HOUSING_SITUATION_FQN,
+  ARREST_INDICATOR_FQN,
+  CRIMES_AGAINST_PERSON_FQN,
+  NO_ACTION_POSSIBLE_FQN,
+  FELONY_INDICATOR_FQN,
+  ARRESTABLE_OFFENSE_FQN,
+  OL_ID_FQN,
+  TYPE_FQN,
+  CATEGORY_FQN,
+  OTHER_TEXT_FQN,
+  ORGANIZATION_NAME_FQN,
+  UNABLE_TO_CONTACT_FQN,
+  RESOURCES_DECLINED_FQN,
+  OTHER_NOTIFIED_FQN,
+  OTHER_WEAPON_TYPE_FQN,
+  THREATENED_INDICATOR_FQN,
+  PERSON_INJURED_FQN,
+  OTHER_PERSON_INJURED_FQN,
+  TRANSPORT_INDICATOR_FQN
 };

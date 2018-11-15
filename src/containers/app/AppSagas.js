@@ -14,12 +14,14 @@ import {
   EntityDataModelApiSagas,
 } from 'lattice-sagas';
 import { push } from 'react-router-redux';
+import { AccountUtils } from 'lattice-auth';
 import {
   all,
   call,
   put,
   takeEvery
 } from 'redux-saga/effects';
+
 
 import Logger from '../../utils/Logger';
 import * as Routes from '../../core/router/Routes';
@@ -30,6 +32,7 @@ import { isBaltimoreOrg } from '../../utils/Whitelist';
 import {
   LOAD_APP,
   LOAD_HOSPITALS,
+  RETRIEVE_ORGANIZATION_ATTEMPT,
   SWITCH_ORGANIZATION,
   loadApp,
   loadHospitals
@@ -169,7 +172,7 @@ function* switchOrganizationWatcher() :Generator<*, *, *> {
 function* switchOrganizationWorker(action :Object) :Generator<*, *, *> {
 
   // TODO: this was added in quickly, might need refactoring
-  storeOrganizationId(action.orgId);
+  AccountUtils.storeOrganizationId(action.orgId);
 
   // not ideal since it resets clears form inputs, but none of that is being stored in redux at the moment anyway...
   // TODO: check action.orgId !== selectedOrganizationId
@@ -185,5 +188,5 @@ function* switchOrganizationWorker(action :Object) :Generator<*, *, *> {
 export {
   loadAppWatcher,
   loadHospitalsWatcher,
-  switchOrganizationWatcher,
+  switchOrganizationWatcher
 };
