@@ -13,14 +13,25 @@ import {
 import { call, put, takeEvery } from 'redux-saga/effects';
 
 import FileSaver from '../../utils/FileSaver';
-import { DATE_TIME_OCCURRED_FQN } from '../../edm/DataModelFqns';
+import {
+  DATE_TIME_OCCURRED_FQN,
+  STRING_ID_FQN,
+  OL_ID_FQN
+} from '../../edm/DataModelFqns';
 import {
   DOWNLOAD_FORMS,
   downloadForms
 } from './DownloadsActionFactory';
-import { getReportESId } from '../../utils/AppUtils';
+import { getReportESId, getPeopleESId, getAppearsInESId } from '../../utils/AppUtils';
 
 const { OPENLATTICE_ID_FQN } = Constants;
+
+const HIDDEN_FQNS = [
+  OPENLATTICE_ID_FQN,
+  STRING_ID_FQN.toString(),
+  OL_ID_FQN.toString(),
+  'id'
+];
 
 function* downloadFormsWorker(action :SequenceAction) :Generator<*, *, *> {
 
@@ -34,9 +45,26 @@ function* downloadFormsWorker(action :SequenceAction) :Generator<*, *, *> {
 
     const start = moment(startDate);
     const end = moment(endDate);
-    const entitySetId = getReportESId(app);
-    const propertyTypeId = yield call(EntityDataModelApi.getPropertyTypeId, DATE_TIME_OCCURRED_FQN);
-    const entitySetSize = yield call(DataApi.getEntitySetSize, entitySetId);
+    const reportEntitySetId = getReportESId(app);
+    const peopleEntitySetId = getPeopleESId(app);
+    const appearsInEntitySetId = getAppearsInESId(app);
+
+    const projection = yield call(EntityDataModelApi.getEntityDataModelProjection,
+      [reportEntitySetId, peopleEntitySetId, appearsInEntitySetId].map(id => ({
+        id,
+        type: 'EntitySet',
+        include: ['EntitySet', 'PropertyTypeInEntitySet']
+      })));
+
+    let propertyTypesByFqn = Map();
+    Object.values(projection.propertyTypes).forEach((propertyType) => {
+      const { type } = propertyType;
+      const { name, namespace } = type;
+      propertyTypesByFqn = propertyTypesByFqn.set(`${namespace}.${name}`, fromJS(propertyType));
+    });
+
+    const propertyTypeId = propertyTypesByFqn.getIn([DATE_TIME_OCCURRED_FQN, 'id']);
+    const entitySetSize = yield call(DataApi.getEntitySetSize, reportEntitySetId);
     const options = {
       searchTerm: `${propertyTypeId}: [${start.toISOString(true)} TO ${end.toISOString(true)}]`,
       start: 0,
@@ -44,28 +72,34 @@ function* downloadFormsWorker(action :SequenceAction) :Generator<*, *, *> {
       fuzzy: false
     };
 
-    const reportData = yield call(SearchApi.searchEntitySetData, entitySetId, options);
+    const reportData = yield call(SearchApi.searchEntitySetData, reportEntitySetId, options);
 
     let reportsAsMap = Map();
     reportData.hits.forEach((row) => {
       reportsAsMap = reportsAsMap.set(row[OPENLATTICE_ID_FQN][0], fromJS(row));
     });
 
-    let neighborsById = yield call(SearchApi.searchEntityNeighborsBulk, entitySetId, reportsAsMap.keySeq().toJS());
+    let neighborsById = yield call(
+      SearchApi.searchEntityNeighborsBulk,
+      reportEntitySetId,
+      reportsAsMap.keySeq().toJS()
+    );
     neighborsById = fromJS(neighborsById);
 
     const getUpdatedEntity = (combinedEntityInit, entitySetName, details) => {
       let combinedEntity = combinedEntityInit;
       details.keySeq().forEach((fqn) => {
-        const header = `${fqn}|${entitySetName}`;
-        if (header) {
-          let newArrayValues = combinedEntity.get(header, Immutable.List());
-          details.get(fqn).forEach((val) => {
-            if (!newArrayValues.includes(val)) {
-              newArrayValues = newArrayValues.push(val);
-            }
-          });
-          combinedEntity = combinedEntity.set(header, newArrayValues);
+        if (!HIDDEN_FQNS.includes(fqn)) {
+          const header = propertyTypesByFqn.getIn([fqn, 'title'], `${fqn}|${entitySetName}`);
+          if (header) {
+            let newArrayValues = combinedEntity.get(header, Immutable.List());
+            details.get(fqn).forEach((val) => {
+              if (!newArrayValues.includes(val)) {
+                newArrayValues = newArrayValues.push(val);
+              }
+            });
+            combinedEntity = combinedEntity.set(header, newArrayValues);
+          }
         }
       });
       return combinedEntity;

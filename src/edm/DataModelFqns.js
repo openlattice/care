@@ -243,6 +243,7 @@ const CRIMES_AGAINST_PERSON_FQN = new FullyQualifiedName('ol.crimeagainstperson'
 const FELONY_INDICATOR_FQN = new FullyQualifiedName('ol.felony');
 const ARRESTABLE_OFFENSE_FQN = new FullyQualifiedName('ol.arrestableoffense');
 const OL_ID_FQN = new FullyQualifiedName('ol.id');
+const STRING_ID_FQN = new FullyQualifiedName('general.stringid');
 const TYPE_FQN = new FullyQualifiedName('ol.type');
 const CATEGORY_FQN = new FullyQualifiedName('ol.category');
 const OTHER_TEXT_FQN = new FullyQualifiedName('ol.othertext');
@@ -270,6 +271,7 @@ export {
   FELONY_INDICATOR_FQN,
   ARRESTABLE_OFFENSE_FQN,
   OL_ID_FQN,
+  STRING_ID_FQN,
   TYPE_FQN,
   CATEGORY_FQN,
   OTHER_TEXT_FQN,
