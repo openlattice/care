@@ -135,6 +135,7 @@ const PERSON_MIDDLE_NAME_FQN = new FullyQualifiedName('nc.PersonMiddleName');
 const PERSON_RACE_FQN = new FullyQualifiedName('nc.PersonRace');
 const PERSON_SEX_FQN = new FullyQualifiedName('nc.PersonSex');
 const PERSON_SSN_LAST_4_FQN = new FullyQualifiedName('general.ssnlast4');
+const PERSON_SUFFIX_FQN = new FullyQualifiedName('nc.PersonSuffix');
 const PERSON_ID_FQN = new FullyQualifiedName('nc.SubjectIdentification');
 const PERSON_PICTURE_FQN = new FullyQualifiedName('person.picture');
 
@@ -146,6 +147,7 @@ export {
   PERSON_RACE_FQN,
   PERSON_SEX_FQN,
   PERSON_SSN_LAST_4_FQN,
+  PERSON_SUFFIX_FQN,
   PERSON_ID_FQN,
   PERSON_PICTURE_FQN
 };
@@ -257,6 +259,8 @@ const THREATENED_INDICATOR_FQN = new FullyQualifiedName('ol.threatened');
 const PERSON_INJURED_FQN = new FullyQualifiedName('ol.personinjured');
 const OTHER_PERSON_INJURED_FQN = new FullyQualifiedName('ol.otherpersoninjured');
 const TRANSPORT_INDICATOR_FQN = new FullyQualifiedName('ol.transportindicator');
+const SUPERVISOR_FQN = new FullyQualifiedName('bhr.supervisor');
+const SUPERVISOR_ID_FQN = new FullyQualifiedName('bhr.supervisorID');
 
 export {
   DEMEANORS_FQN,
@@ -283,5 +287,7 @@ export {
   THREATENED_INDICATOR_FQN,
   PERSON_INJURED_FQN,
   OTHER_PERSON_INJURED_FQN,
-  TRANSPORT_INDICATOR_FQN
+  TRANSPORT_INDICATOR_FQN,
+  SUPERVISOR_FQN,
+  SUPERVISOR_ID_FQN
 };
