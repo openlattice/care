@@ -301,6 +301,7 @@ class ObservedBehaviors extends React.Component<Props> {
                     name="dobCheckbox"
                     checked={values.get(SUBJECT_INFORMATION.DOB_UNKNOWN)}
                     label="DOB Unknown"
+                    disabled={!isCreatingNewPerson}
                     onChange={toggleDOBUnknown} />
                 <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.DOB)}>
                   {
