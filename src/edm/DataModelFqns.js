@@ -132,6 +132,7 @@ const PERSON_DOB_FQN = new FullyQualifiedName('nc.PersonBirthDate');
 const PERSON_LAST_NAME_FQN = new FullyQualifiedName('nc.PersonSurName');
 const PERSON_FIRST_NAME_FQN = new FullyQualifiedName('nc.PersonGivenName');
 const PERSON_MIDDLE_NAME_FQN = new FullyQualifiedName('nc.PersonMiddleName');
+const PERSON_NICK_NAME_FQN = new FullyQualifiedName('im.PersonNickName');
 const PERSON_RACE_FQN = new FullyQualifiedName('nc.PersonRace');
 const PERSON_SEX_FQN = new FullyQualifiedName('nc.PersonSex');
 const PERSON_SSN_LAST_4_FQN = new FullyQualifiedName('general.ssnlast4');
@@ -144,6 +145,7 @@ export {
   PERSON_LAST_NAME_FQN,
   PERSON_FIRST_NAME_FQN,
   PERSON_MIDDLE_NAME_FQN,
+  PERSON_NICK_NAME_FQN,
   PERSON_RACE_FQN,
   PERSON_SEX_FQN,
   PERSON_SSN_LAST_4_FQN,
@@ -234,6 +236,8 @@ export {
  * Crisis Template Specific
  */
 
+const BIOLOGICALLY_INDUCED_CAUSES_FQN = new FullyQualifiedName('bhr.biologicallyinducedoptions');
+const CHEMICALLY_INDUCED_CAUSES_FQN = new FullyQualifiedName('bhr.chemicallyinducedoptions');
 const DEMEANORS_FQN = new FullyQualifiedName('ol.attitude');
 const OTHER_DEMEANORS_FQN = new FullyQualifiedName('ol.attitudeother');
 const PERSON_ASSISTING_FQN = new FullyQualifiedName('ol.persontoassist');
@@ -263,6 +267,8 @@ const SUPERVISOR_FQN = new FullyQualifiedName('bhr.supervisor');
 const SUPERVISOR_ID_FQN = new FullyQualifiedName('bhr.supervisorID');
 
 export {
+  BIOLOGICALLY_INDUCED_CAUSES_FQN,
+  CHEMICALLY_INDUCED_CAUSES_FQN,
   DEMEANORS_FQN,
   OTHER_DEMEANORS_FQN,
   PERSON_ASSISTING_FQN,

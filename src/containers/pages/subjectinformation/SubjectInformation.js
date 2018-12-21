@@ -30,6 +30,7 @@ import {
   PERSON_LAST_NAME_FQN,
   PERSON_FIRST_NAME_FQN,
   PERSON_MIDDLE_NAME_FQN,
+  PERSON_NICK_NAME_FQN,
   PERSON_RACE_FQN,
   PERSON_SEX_FQN,
   PERSON_ID_FQN
@@ -201,6 +202,7 @@ class ObservedBehaviors extends React.Component<Props> {
       [SUBJECT_INFORMATION.FIRST]: person.getIn([PERSON_FIRST_NAME_FQN, 0], ''),
       [SUBJECT_INFORMATION.LAST]: person.getIn([PERSON_LAST_NAME_FQN, 0], ''),
       [SUBJECT_INFORMATION.MIDDLE]: person.getIn([PERSON_MIDDLE_NAME_FQN, 0], ''),
+      [SUBJECT_INFORMATION.AKA]: person.getIn([PERSON_NICK_NAME_FQN, 0], ''),
       [SUBJECT_INFORMATION.DOB]: person.getIn([PERSON_DOB_FQN, 0], ''),
       [SUBJECT_INFORMATION.RACE]: person.getIn([PERSON_RACE_FQN, 0], ''),
       [SUBJECT_INFORMATION.GENDER]: person.getIn([PERSON_SEX_FQN, 0], ''),
@@ -251,11 +253,11 @@ class ObservedBehaviors extends React.Component<Props> {
       <Wrapper>
         <FormWrapper>
           <FormSection>
-            <CreateNewPersonButton onClick={e => toggleNewPerson(e, true)}>Create New Person</CreateNewPersonButton>
+            <CreateNewPersonButton onClick={e => toggleNewPerson(e, true)}>Create New Subject</CreateNewPersonButton>
             <Header>
               <h1>Quick Search</h1>
               <span>
-                {'Search by last name, first name, or alias. No results? Click "Create New Person" above'}
+                {'Search by last name, first name, or alias. No results? Click "Create New Subject" above'}
               </span>
             </Header>
             <SearchableSelect
@@ -296,6 +298,10 @@ class ObservedBehaviors extends React.Component<Props> {
                 <FormSection>
                   <FormText noMargin>Mid.</FormText>
                   {this.renderInput(SUBJECT_INFORMATION.MIDDLE, true, 80)}
+                </FormSection>
+                <FormSection>
+                  <FormText noMargin>AKA / Alias</FormText>
+                  {this.renderInput(SUBJECT_INFORMATION.AKA, true)}
                 </FormSection>
                 <StyledCheckbox
                     name="dobCheckbox"

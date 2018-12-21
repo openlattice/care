@@ -4,10 +4,12 @@
 
 import React from 'react';
 import styled from 'styled-components';
+import moment from 'moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
 import { List, Map } from 'immutable';
+import { DateTimePicker } from '@atlaskit/datetime-picker';
 
 import StyledCheckbox from '../../../components/controls/StyledCheckbox';
 import StyledInput, { StyledTextArea } from '../../../components/controls/StyledInput';
@@ -45,9 +47,17 @@ type Props = {
   }
 }
 
+const DateTimePickerWrapper = styled.div`
+  min-width: 300px;
+  margin-bottom: 10px;
+`;
+
 const InputWithMargin = styled(StyledInput)`
   margin: 10px 0;
 `;
+
+const dateFormat = 'MM/DD/YYYY';
+const timeFormat = 'hh:mm A';
 
 const ObservedBehaviors = ({ values, actions } :Props) => {
   const { setInputValue } = actions;
@@ -179,6 +189,16 @@ const ObservedBehaviors = ({ values, actions } :Props) => {
     );
   };
 
+  const onDateChange = (newDate) => {
+    const value = newDate.endsWith('T')
+      ? moment(newDate.slice(0, newDate.length - 1)).toISOString(true)
+      : newDate;
+    setInputValue({
+      field: DISPOSITION.INCIDENT_DATE_TIME,
+      value
+    });
+  }
+
   const hasDisposition = value => values.get(DISPOSITION.DISPOSITIONS).includes(value);
 
   const invalidFields = showInvalidFields(window.location) ? getInvalidFields(values) : [];
@@ -283,13 +303,26 @@ const ObservedBehaviors = ({ values, actions } :Props) => {
         <Header>
           <h1>Additional Details</h1>
         </Header>
+        <RequiredField invalid={invalidFields.includes(DISPOSITION.INCIDENT_DATE_TIME)}>
+          <FormText noMargin>Incident date/time</FormText>
+        </RequiredField>
+        <DateTimePickerWrapper>
+          <DateTimePicker
+              dateFormat={dateFormat}
+              timeFormat={timeFormat}
+              value={values.get(DISPOSITION.INCIDENT_DATE_TIME)}
+              onChange={onDateChange}
+              datePickerSelectProps={{
+                placeholder: dateFormat,
+              }} />
+        </DateTimePickerWrapper>
         <RequiredField>
           <FormText noMargin>Report info</FormText>
         </RequiredField>
         {renderRadio(
           DISPOSITION.HAS_REPORT_NUMBER,
           true,
-          'Incident has a report number',
+          'Incident has a report or CFS number',
           DISPOSITION.INCIDENT_DESCRIPTION
         )}
         {values.get(DISPOSITION.HAS_REPORT_NUMBER)
@@ -298,7 +331,7 @@ const ObservedBehaviors = ({ values, actions } :Props) => {
               <FormSectionWithValidation invalid={invalidFields.includes(DISPOSITION.REPORT_NUMBER)}>
                 <RequiredField>
                   <FormText gray noMargin>
-                    Report number
+                    Report / CFS number
                   </FormText>
                 </RequiredField>
                 {renderInput(DISPOSITION.REPORT_NUMBER)}
@@ -306,7 +339,7 @@ const ObservedBehaviors = ({ values, actions } :Props) => {
             </IndentWrapper>
           )
           : null}
-        {renderRadio(DISPOSITION.HAS_REPORT_NUMBER, false, 'No report number', DISPOSITION.REPORT_NUMBER)}
+        {renderRadio(DISPOSITION.HAS_REPORT_NUMBER, false, 'No report or CFS number', DISPOSITION.REPORT_NUMBER)}
         {values.get(DISPOSITION.HAS_REPORT_NUMBER) === false
           ? (
             <IndentWrapper extraIndent>

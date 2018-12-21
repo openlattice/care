@@ -12,6 +12,8 @@ import { HOMELESS_STR } from './Constants';
 
 const {
   NATURE_OF_CRISIS,
+  BIOLOGICAL_CAUSES,
+  CHEMICAL_CAUSES,
   ASSISTANCE,
   OTHER_ASSISTANCE,
   HOUSING
@@ -19,6 +21,8 @@ const {
 
 const INITIAL_STATE :Map<*, *> = fromJS({
   [NATURE_OF_CRISIS]: [],
+  [BIOLOGICAL_CAUSES]: [],
+  [CHEMICAL_CAUSES]: [],
   [ASSISTANCE]: [],
   [OTHER_ASSISTANCE]: '',
   [HOUSING]: []

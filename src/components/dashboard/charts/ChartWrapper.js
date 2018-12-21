@@ -198,6 +198,6 @@ const ChartWrapper = ({
       }
     </Card>
   );
-}
+};
 
 export default ChartWrapper;
