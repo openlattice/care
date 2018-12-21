@@ -55,7 +55,7 @@ export const Header = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  margin-bottom: 15px;
+  margin-bottom: ${props => (props.noMargin ? 0 : 15)}px;
   color: ${BLACK};
 
   h1 {

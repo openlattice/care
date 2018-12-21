@@ -11,6 +11,7 @@ export const SUBJECT_INFORMATION = {
   LAST: 'lastName',
   FIRST: 'firstName',
   MIDDLE: 'middleInitial',
+  AKA: 'aka',
   DOB: 'dob',
   DOB_UNKNOWN: 'dobUnknown',
   GENDER: 'gender',
@@ -23,12 +24,17 @@ export const OBSERVED_BEHAVIORS = {
   VETERAN: 'isVeteran',
   BEHAVIORS: 'behaviors',
   OTHER_BEHAVIOR: 'otherBehavior',
+  SUICIDE_ATTEMPT_TYPE: 'suicideAttemptType',
+  SUICIDE_METHODS: 'suicideMethods',
+  OTHER_SUICIDE_METHOD: 'otherSuicideMethod',
   DEMEANORS: 'demeanors',
   OTHER_DEMEANOR: 'otherDemeanor'
 };
 
 export const CRISIS_NATURE = {
   NATURE_OF_CRISIS: 'natureOfCrisis',
+  BIOLOGICAL_CAUSES: 'biologicalCauses',
+  CHEMICAL_CAUSES: 'chemicalCauses',
   ASSISTANCE: 'assistance',
   OTHER_ASSISTANCE: 'otherAssistance',
   HOUSING: 'currentHousing'
@@ -51,6 +57,7 @@ export const OFFICER_SAFETY = {
 export const DISPOSITION = {
   SPECIALISTS: 'specialists',
   DISPOSITIONS: 'dispositions',
+  INCIDENT_DATE_TIME: 'incidentDateTime',
   HAS_REPORT_NUMBER: 'hasReportNumber',
   REPORT_NUMBER: 'reportNumber',
   INCIDENT_DESCRIPTION: 'incidentDescription',
@@ -78,6 +85,7 @@ export const POST_PROCESS_FIELDS = {
   RACE: 'personRace',
 
   MILITARY_STATUS: 'militaryStatus',
+  IS_SUICIDAL: 'isSuicidal',
 
   VERBAL_REFERRAL_INDICATOR: 'verbalReferralIndicator',
   HOSPITAL_TRANPORT: 'hospitalTransport',

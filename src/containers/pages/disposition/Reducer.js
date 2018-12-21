@@ -2,6 +2,7 @@
  * @flow
  */
 
+import moment from 'moment';
 import randomUUID from 'uuid/v4';
 import { List, Map, fromJS } from 'immutable';
 
@@ -23,6 +24,7 @@ import {
 const {
   SPECIALISTS,
   DISPOSITIONS,
+  INCIDENT_DATE_TIME,
   HAS_REPORT_NUMBER,
   REPORT_NUMBER,
   INCIDENT_DESCRIPTION,
@@ -42,6 +44,7 @@ const {
 const INITIAL_STATE :Map<*, *> = fromJS({
   [SPECIALISTS]: [],
   [DISPOSITIONS]: [],
+  [INCIDENT_DATE_TIME]: '',
   [HAS_REPORT_NUMBER]: undefined,
   [REPORT_NUMBER]: '',
   [INCIDENT_DESCRIPTION]: '',
@@ -132,7 +135,11 @@ export function getInvalidFields(state :Map<*, *>) {
     }
   }
 
-  // REPORT NUMBER / DESCRIPTION
+  // INCIDENT DATETIME / REPORT NUMBER / DESCRIPTION
+
+  if (!moment(state.get(INCIDENT_DATE_TIME, '')).isValid()) {
+    invalidFields.push(INCIDENT_DATE_TIME);
+  }
 
   if (state.get(HAS_REPORT_NUMBER) !== undefined) {
 
@@ -182,6 +189,10 @@ export function processForSubmit(state :Map<*, *>) :Object {
   if (!formID.trim().length) {
     formID = randomUUID();
   }
+
+  const incidentMoment = moment(state.get(INCIDENT_DATE_TIME, ''));
+  newState = newState.set(INCIDENT_DATE_TIME, incidentMoment.isValid() ? incidentMoment.toISOString(true) : '');
+
   newState = newState.set(POST_PROCESS_FIELDS.FORM_ID, formID);
 
 

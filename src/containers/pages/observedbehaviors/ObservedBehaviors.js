@@ -11,15 +11,23 @@ import { List, Map } from 'immutable';
 
 import StyledCheckbox from '../../../components/controls/StyledCheckbox';
 import StyledInput from '../../../components/controls/StyledInput';
+import StyledRadio from '../../../components/controls/StyledRadio';
 import { showInvalidFields } from '../../../utils/NavigationUtils';
 import { STATE } from '../../../utils/constants/StateConstants';
 import { OBSERVED_BEHAVIORS, OTHER } from '../../../utils/constants/CrisisTemplateConstants';
-import { BEHAVIORS, DEMEANORS } from './Constants';
+import {
+  BEHAVIORS,
+  SUICIDE_BEHAVIORS,
+  SUICIDE_ACTION_TYPE,
+  SUICIDE_METHODS,
+  DEMEANORS
+} from './Constants';
 import {
   FormWrapper,
   FormSection,
   FormSectionWithValidation,
   Header,
+  IndentWrapper,
   RequiredField
 } from '../../../components/crisis/FormComponents';
 
@@ -46,13 +54,28 @@ const ObservedBehaviors = ({ values, actions } :Props) => {
       valueList = valueList.push(value);
     }
 
+    if (value === SUICIDE_BEHAVIORS && !checked) {
+      actions.setInputValue({
+        field: OBSERVED_BEHAVIORS.SUICIDE_ATTEMPT_TYPE,
+        value: ''
+      });
+      actions.setInputValue({
+        field: OBSERVED_BEHAVIORS.SUICIDE_METHODS,
+        value: List()
+      });
+      actions.setInputValue({
+        field: OBSERVED_BEHAVIORS.OTHER_SUICIDE_METHOD,
+        value: ''
+      });
+    }
+
     actions.setInputValue({
       field: name,
       value: valueList
     });
   };
 
-  const renderCheckboxList = (field, valueList, otherField) => {
+  const renderCheckboxList = (field, valueList, otherField, suicideDetailsElements) => {
     const currentValues = values.get(field, List());
 
     const onChange = (event) => {
@@ -65,13 +88,16 @@ const ObservedBehaviors = ({ values, actions } :Props) => {
     };
 
     const checkboxes = valueList.map(value => (
-      <StyledCheckbox
-          name={field}
-          value={value}
-          label={value}
-          key={`${field}-${value}`}
-          checked={currentValues.includes(value)}
-          onChange={onChange} />
+      <>
+        <StyledCheckbox
+            name={field}
+            value={value}
+            label={value}
+            key={`${field}-${value}`}
+            checked={currentValues.includes(value)}
+            onChange={onChange} />
+        { value === SUICIDE_BEHAVIORS && currentValues.includes(SUICIDE_BEHAVIORS) ? suicideDetailsElements : null }
+      </>
     ));
 
     return (
@@ -97,7 +123,43 @@ const ObservedBehaviors = ({ values, actions } :Props) => {
     );
   };
 
+  const renderRadio = (field, value, label, inverseDependentField) => {
+    const checked = values.get(field) === value;
+
+    const onChange = () => {
+      if (inverseDependentField) {
+        actions.setInputValue({
+          field: inverseDependentField,
+          value: ''
+        });
+      }
+      actions.setInputValue({ field, value });
+    };
+
+    return (
+      <StyledRadio
+          label={label}
+          checked={checked}
+          onChange={onChange} />
+    );
+  };
+
   const invalidFields = showInvalidFields(window.location) ? getInvalidFields(values) : [];
+
+  const suicideDetails = () => {
+    return (
+      <IndentWrapper extraIndent>
+        <Header noMargin><span>Suicide threat or attempt?</span></Header>
+        {SUICIDE_ACTION_TYPE.map(type => renderRadio(OBSERVED_BEHAVIORS.SUICIDE_ATTEMPT_TYPE, type, type))}
+        <Header><span>Suicide methods</span></Header>
+        {renderCheckboxList(
+          OBSERVED_BEHAVIORS.SUICIDE_METHODS,
+          SUICIDE_METHODS,
+          OBSERVED_BEHAVIORS.OTHER_SUICIDE_METHOD
+        )}
+      </IndentWrapper>
+    );
+  };
 
   return (
     <FormWrapper>
@@ -113,7 +175,12 @@ const ObservedBehaviors = ({ values, actions } :Props) => {
           <h1>Behaviors</h1>
           <RequiredField>Check all that apply.</RequiredField>
         </Header>
-        {renderCheckboxList(OBSERVED_BEHAVIORS.BEHAVIORS, BEHAVIORS, OBSERVED_BEHAVIORS.OTHER_BEHAVIOR)}
+        {renderCheckboxList(
+          OBSERVED_BEHAVIORS.BEHAVIORS,
+          BEHAVIORS,
+          OBSERVED_BEHAVIORS.OTHER_BEHAVIOR,
+          suicideDetails()
+        )}
       </FormSectionWithValidation>
       <FormSectionWithValidation invalid={invalidFields.includes(OBSERVED_BEHAVIORS.DEMEANORS)}>
         <Header>
