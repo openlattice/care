@@ -14,12 +14,21 @@ import StyledInput from '../../../components/controls/StyledInput';
 import { showInvalidFields } from '../../../utils/NavigationUtils';
 import { STATE } from '../../../utils/constants/StateConstants';
 import { CRISIS_NATURE, OTHER } from '../../../utils/constants/CrisisTemplateConstants';
-import { NATURE_OF_CRISIS, ASSISTANCES, HOUSING_SITUATIONS } from './Constants';
+import {
+  NATURE_OF_CRISIS,
+  BIOLOGICAL,
+  CHEMICAL,
+  BIOLOGICAL_CAUSES,
+  CHEMICAL_CAUSES,
+  ASSISTANCES,
+  HOUSING_SITUATIONS
+} from './Constants';
 import {
   FormWrapper,
   FormSection,
   FormSectionWithValidation,
   Header,
+  IndentWrapper,
   RequiredField
 } from '../../../components/crisis/FormComponents';
 
@@ -52,7 +61,7 @@ const NatureOfCrisis = ({ values, actions } :Props) => {
     });
   };
 
-  const renderCheckboxList = (field, valueList, otherField) => {
+  const renderCheckboxList = (field, valueList, otherField, dependentSubFields) => {
     const currentValues = values.get(field, List());
 
     const onChange = (event) => {
@@ -62,16 +71,25 @@ const NatureOfCrisis = ({ values, actions } :Props) => {
       if (!!otherField && value === OTHER && !checked) {
         actions.setInputValue({ field: otherField, value: '' });
       }
+
+      if (dependentSubFields && dependentSubFields[value] && !checked) {
+        actions.setInputValue({ field: dependentSubFields[value].field, value: List() });
+      }
     };
 
     const checkboxes = valueList.map(value => (
-      <StyledCheckbox
-          name={field}
-          value={value}
-          label={value}
-          key={`${field}-${value}`}
-          checked={currentValues.includes(value)}
-          onChange={onChange} />
+      <>
+        <StyledCheckbox
+            name={field}
+            value={value}
+            label={value}
+            key={`${field}-${value}`}
+            checked={currentValues.includes(value)}
+            onChange={onChange} />
+        {dependentSubFields && dependentSubFields[value] && currentValues.includes(value) ? (
+          <IndentWrapper key={`${field}-${value}-ext`} extraIndent>{dependentSubFields[value].element}</IndentWrapper>
+        ) : null}
+      </>
     ));
 
     return (
@@ -96,7 +114,16 @@ const NatureOfCrisis = ({ values, actions } :Props) => {
           <h1>Nature of Crisis</h1>
           <RequiredField>Check all that apply.</RequiredField>
         </Header>
-        {renderCheckboxList(CRISIS_NATURE.NATURE_OF_CRISIS, NATURE_OF_CRISIS)}
+        {renderCheckboxList(CRISIS_NATURE.NATURE_OF_CRISIS, NATURE_OF_CRISIS, null, {
+          [BIOLOGICAL]: {
+            element: renderCheckboxList(CRISIS_NATURE.BIOLOGICAL_CAUSES, BIOLOGICAL_CAUSES),
+            field: CRISIS_NATURE.BIOLOGICAL_CAUSES
+          },
+          [CHEMICAL]: {
+            element: renderCheckboxList(CRISIS_NATURE.CHEMICAL_CAUSES, CHEMICAL_CAUSES),
+            field: CRISIS_NATURE.CHEMICAL_CAUSES
+          }
+        })}
       </FormSectionWithValidation>
       <FormSectionWithValidation invalid={invalidFields.includes(CRISIS_NATURE.ASSISTANCE)}>
         <Header>

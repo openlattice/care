@@ -47,7 +47,7 @@ export const RadioSelection = styled.span`
   }
 
   ${RadioContainer} ${RadioInputContainer}:disabled ~ & {
-    background-color: white;
+    background-color: rgb(244, 245, 247);
     cursor: default;
   }
 

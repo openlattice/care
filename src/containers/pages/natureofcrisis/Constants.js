@@ -1,11 +1,29 @@
 import { OTHER } from '../../../utils/constants/CrisisTemplateConstants';
 
+export const BIOLOGICAL = 'Biologically Induced (Depression / Anxiety)';
+export const CHEMICAL = 'Chemically Induced (Crack / Meth / PCP / Heroin)';
+
 export const NATURE_OF_CRISIS = [
-  'Biologically Induced (Depression / Anxiety)',
+  BIOLOGICAL,
   'Medically Induced (Traumatic Brain Injury / UTI)',
-  'Chemically Induced (Crack / Meth / PCP / Heroin)',
+  CHEMICAL,
   'Excited Delirium',
   'Unknown'
+];
+
+export const BIOLOGICAL_CAUSES = [
+  'Depression',
+  'Anxiety',
+  'Schizophrenia',
+  'Bipolar',
+  'PTSD'
+];
+
+export const CHEMICAL_CAUSES = [
+  'OTC',
+  'Prescription',
+  'Illicit',
+  'Poison'
 ];
 
 export const ASSISTANCES = [

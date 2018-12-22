@@ -1,5 +1,7 @@
 import { OTHER } from '../../../utils/constants/CrisisTemplateConstants';
 
+export const SUICIDE_BEHAVIORS = 'Suicide behaviors';
+
 export const BEHAVIORS = [
   'Belligerent / Uncooperative',
   'Bizzare, unusual behavior',
@@ -12,7 +14,20 @@ export const BEHAVIORS = [
   'Neglect of self care',
   'Out of touch with reality',
   'Paranoid',
-  'Suicide behaviors, threat/attempt',
+  SUICIDE_BEHAVIORS,
+  OTHER
+];
+
+export const SUICIDE_ACTION_TYPE = [
+  'Threat',
+  'Attempt'
+];
+
+export const SUICIDE_METHODS = [
+  'Overdose',
+  'Weapon',
+  'Hanging',
+  'Jump',
   'Suicide by cop',
   OTHER
 ];

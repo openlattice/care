@@ -5,6 +5,7 @@
 import { List, Map, fromJS } from 'immutable';
 
 import { SET_INPUT_VALUE } from './ActionFactory';
+import { SUICIDE_BEHAVIORS } from './Constants';
 import { CLEAR_CRISIS_TEMPLATE } from '../../crisis/CrisisActionFactory';
 import { OBSERVED_BEHAVIORS, OTHER, POST_PROCESS_FIELDS } from '../../../utils/constants/CrisisTemplateConstants';
 import { FORM_STEP_STATUS } from '../../../utils/constants/FormConstants';
@@ -13,6 +14,9 @@ const {
   VETERAN,
   BEHAVIORS,
   OTHER_BEHAVIOR,
+  SUICIDE_ATTEMPT_TYPE,
+  SUICIDE_METHODS,
+  OTHER_SUICIDE_METHOD,
   DEMEANORS,
   OTHER_DEMEANOR
 } = OBSERVED_BEHAVIORS;
@@ -21,6 +25,9 @@ const INITIAL_STATE :Map<*, *> = fromJS({
   [VETERAN]: false,
   [BEHAVIORS]: [],
   [OTHER_BEHAVIOR]: '',
+  [SUICIDE_ATTEMPT_TYPE]: '',
+  [SUICIDE_METHODS]: [],
+  [OTHER_SUICIDE_METHOD]: '',
   [DEMEANORS]: [],
   [OTHER_DEMEANOR]: ''
 });
@@ -74,6 +81,10 @@ export function processForSubmit(state :Map<*, *>) :Object {
 
   if (state.get(VETERAN)) {
     newState = newState.set(POST_PROCESS_FIELDS.MILITARY_STATUS, 'Veteran');
+  }
+
+  if (state.get(BEHAVIORS, List()).includes(SUICIDE_BEHAVIORS)) {
+    newState = newState.set(POST_PROCESS_FIELDS.IS_SUICIDAL, true);
   }
 
   return newState.toJS();
