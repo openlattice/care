@@ -70,6 +70,7 @@ const DateTimeRange = ({
               timeFormat={timeFormat}
               value={startDate}
               onChange={onStartChange}
+              timeIsEditable
               datePickerSelectProps={{
                 placeholder: dateFormat,
               }} />
@@ -81,6 +82,7 @@ const DateTimeRange = ({
               timeFormat={timeFormat}
               value={endDate}
               onChange={onEndChange}
+              timeIsEditable
               datePickerSelectProps={{
                 placeholder: dateFormat,
               }} />
