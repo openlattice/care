@@ -207,3 +207,5 @@ export const DRUG_TYPES = {
   HEROIN: 'Heroin',
   OTHER: 'Other'
 };
+
+export const CONTENT_TYPE = 'content-type';

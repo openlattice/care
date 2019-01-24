@@ -209,7 +209,7 @@ const PAGES = [
   {
     Component: SubjectInformation,
     validator: validateSubjectInformation,
-    title: 'Subject Information',
+    title: 'Person Information',
     stateField: STATE.SUBJECT_INFORMATION,
     postProcessor: processSubjectInformation
   },
