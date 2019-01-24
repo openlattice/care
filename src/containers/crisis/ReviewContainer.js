@@ -169,7 +169,7 @@ class ReviewContainer extends React.Component<Props> {
         </Section>
         <Section>
           <h1>Current Housing Situation</h1>
-          <div>{this.getValueList(natureOfCrisis, HOUSING)}</div>
+          <div><span>{natureOfCrisis.get(HOUSING, '')}</span></div>
         </Section>
       </>
     );
