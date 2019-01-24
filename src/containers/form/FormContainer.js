@@ -79,8 +79,9 @@ class Form extends React.Component<Props, State> {
     this.setState({ [section]: sectionState });
   }
 
-  handlePicture = (sectionKey, sectionPropertyName, value) => {
+  handlePicture = (sectionKey, contentTypePropertyName, sectionPropertyName, contentType, value) => {
     const sectionState = this.state[sectionKey];
+    sectionState[contentTypePropertyName] = contentType;
     sectionState[sectionPropertyName] = value;
     this.setState({ [sectionKey]: sectionState });
   }

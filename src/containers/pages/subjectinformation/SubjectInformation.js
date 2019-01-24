@@ -253,11 +253,11 @@ class ObservedBehaviors extends React.Component<Props> {
       <Wrapper>
         <FormWrapper>
           <FormSection>
-            <CreateNewPersonButton onClick={e => toggleNewPerson(e, true)}>Create New Subject</CreateNewPersonButton>
+            <CreateNewPersonButton onClick={e => toggleNewPerson(e, true)}>Create New Person</CreateNewPersonButton>
             <Header>
               <h1>Quick Search</h1>
               <span>
-                {'Search by last name, first name, or alias. No results? Click "Create New Subject" above'}
+                {'Search by last name, first name, or alias. No results? Click "Create New Person" above'}
               </span>
             </Header>
             <SearchableSelect
@@ -283,7 +283,7 @@ class ObservedBehaviors extends React.Component<Props> {
               <IndentWrapper extraIndent>
                 <Header>
                   <HeaderWithClearButton>
-                    <h1>Subject Information</h1>
+                    <h1>Person Information</h1>
                     <BackButton onClick={actions.clear} noMargin>Clear Fields</BackButton>
                   </HeaderWithClearButton>
                 </Header>

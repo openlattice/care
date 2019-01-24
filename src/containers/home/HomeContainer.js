@@ -77,7 +77,8 @@ const LinkText = styled.span`
 `;
 
 // HACK
-const WASPC_ORG_IDS = [
+const CRISIS_TEMPLATE_ORG_IDS = [
+  // WASPC
   '8c732544-4c51-4129-b326-c87c83ac20a7',
   '9a582e49-2607-4817-9157-c0c484706297',
   'b59565ac-251b-476e-8340-97aa2d9a05ab',
@@ -92,7 +93,10 @@ const WASPC_ORG_IDS = [
   '6b8b9830-794f-44be-be04-1a8e4bfde053',
   '977dd0e1-4dee-4a5a-88ec-b01fd0937b34',
   '6712201d-9fbd-49e1-a4bd-b8a88651ffa7',
-  '42802c67-7ff0-4ff0-8d9d-f96f0c8ca942'
+  '42802c67-7ff0-4ff0-8d9d-f96f0c8ca942',
+
+  // JOHNSON COUNTY
+  'aeba1be8-5d72-4f46-b0a9-5319bfb40faa'
 ];
 
 type Props = {
@@ -112,7 +116,7 @@ const HomeContainer = ({ orgId } :Props) => (
         </StyledNavCard>
       </StyledNavLink>
       {
-        WASPC_ORG_IDS.includes(orgId) ? null : (
+        CRISIS_TEMPLATE_ORG_IDS.includes(orgId) ? null : (
           <>
             <StyledNavLink to={Routes.BHR_PATH}>
               <StyledNavCard>
