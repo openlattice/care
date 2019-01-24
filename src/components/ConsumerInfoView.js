@@ -18,6 +18,7 @@ import {
   GENDERS,
   INJURIES,
   MILITARY_STATUS,
+  CONTENT_TYPE,
   PHOTOS_TAKEN,
   RACES,
   SELF_DIAGNOSIS,
@@ -111,7 +112,7 @@ class ConsumerInfoView extends React.Component {
 
     const { handlePicture } = this.props;
     const { section } = this.state;
-    handlePicture(section, PERSON_PICTURE_FQN, (selfieDataAsBase64 || ''));
+    handlePicture(section, CONTENT_TYPE, PERSON_PICTURE_FQN, 'image/png', (selfieDataAsBase64 || ''));
   }
 
   getPictureDataUrl = () => {
@@ -151,11 +152,12 @@ class ConsumerInfoView extends React.Component {
 
     if (files.length) {
       const file = files[0];
+      const { type } = file;
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = () => {
         const pictureDataAsBase64 = reader.result;
-        handlePicture(section, PERSON_PICTURE_FQN, (pictureDataAsBase64 || ''));
+        handlePicture(section, CONTENT_TYPE, PERSON_PICTURE_FQN, type, (pictureDataAsBase64 || ''));
       };
     }
   }

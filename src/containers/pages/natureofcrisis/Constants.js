@@ -36,7 +36,7 @@ export const ASSISTANCES = [
   OTHER
 ];
 
-export const HOMELESS_STR = 'Homeless';
+export const HOMELESS_STR = ' Unsheltered Homeless';
 
 export const HOUSING_SITUATIONS = [
   'Stable Housing',

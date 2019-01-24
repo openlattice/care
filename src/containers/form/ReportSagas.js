@@ -9,7 +9,7 @@ import { DataIntegrationApiActionFactory, DataIntegrationApiSagas } from 'lattic
 import { call, put, takeEvery } from 'redux-saga/effects';
 
 import { APP_TYPES_FQNS, STRING_ID_FQN } from '../../shared/Consts';
-import { FORM_TYPE } from '../../utils/DataConstants';
+import { FORM_TYPE, CONTENT_TYPE } from '../../utils/DataConstants';
 import {
   PERSON_DOB_FQN,
   PERSON_LAST_NAME_FQN,
@@ -121,7 +121,10 @@ function prepPeopleEntityData(
   const dob = consumerInfo[PERSON_DOB_FQN];
   const race = consumerInfo[PERSON_RACE_FQN];
   const sex = consumerInfo[PERSON_SEX_FQN];
-  const picture = consumerInfo[PERSON_PICTURE_FQN];
+  const picture = {
+    [CONTENT_TYPE]: consumerInfo[CONTENT_TYPE],
+    data: consumerInfo[PERSON_PICTURE_FQN]
+  };
 
   const details = {};
   details[props[PERSON_ID_FQN]] = [id];

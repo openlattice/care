@@ -25,7 +25,7 @@ const INITIAL_STATE :Map<*, *> = fromJS({
   [CHEMICAL_CAUSES]: [],
   [ASSISTANCE]: [],
   [OTHER_ASSISTANCE]: '',
-  [HOUSING]: []
+  [HOUSING]: ''
 });
 
 export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :Object) {
@@ -59,7 +59,7 @@ export function getInvalidFields(state :Map<*, *>) {
     invalidFields.push(ASSISTANCE);
   }
 
-  if (!state.get(HOUSING, List()).size) {
+  if (!state.get(HOUSING).length) {
     invalidFields.push(HOUSING);
   }
 
@@ -75,6 +75,6 @@ export function getStatus(state :Map<*, *>) :boolean {
 
 export function processForSubmit(state :Map<*, *>) :Object {
   return state
-    .set(POST_PROCESS_FIELDS.HOMELESS, state.get(HOUSING, List()).includes(HOMELESS_STR))
+    .set(POST_PROCESS_FIELDS.HOMELESS, state.get(HOUSING, '') === HOMELESS_STR)
     .toJS();
 }

@@ -11,6 +11,7 @@ import { List, Map } from 'immutable';
 
 import StyledCheckbox from '../../../components/controls/StyledCheckbox';
 import StyledInput from '../../../components/controls/StyledInput';
+import StyledRadio from '../../../components/controls/StyledRadio';
 import { showInvalidFields } from '../../../utils/NavigationUtils';
 import { STATE } from '../../../utils/constants/StateConstants';
 import { CRISIS_NATURE, OTHER } from '../../../utils/constants/CrisisTemplateConstants';
@@ -105,6 +106,19 @@ const NatureOfCrisis = ({ values, actions } :Props) => {
     );
   };
 
+  const renderRadio = (field, value, label) => {
+    const checked = values.get(field) === value;
+
+    const onChange = () => actions.setInputValue({ field, value });
+
+    return (
+      <StyledRadio
+          label={label}
+          checked={checked}
+          onChange={onChange} />
+    );
+  };
+
   const invalidFields = showInvalidFields(window.location) ? getInvalidFields(values) : [];
 
   return (
@@ -135,9 +149,9 @@ const NatureOfCrisis = ({ values, actions } :Props) => {
       <FormSectionWithValidation invalid={invalidFields.includes(CRISIS_NATURE.HOUSING)}>
         <Header>
           <h1>Current Housing Situation</h1>
-          <RequiredField>Check all that apply.</RequiredField>
+          <RequiredField>Select one.</RequiredField>
         </Header>
-        {renderCheckboxList(CRISIS_NATURE.HOUSING, HOUSING_SITUATIONS)}
+        {HOUSING_SITUATIONS.map(housing => renderRadio(CRISIS_NATURE.HOUSING, housing, housing))}
       </FormSectionWithValidation>
     </FormWrapper>
   );
