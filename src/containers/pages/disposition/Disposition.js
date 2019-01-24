@@ -310,6 +310,7 @@ const ObservedBehaviors = ({ values, actions } :Props) => {
           <DateTimePicker
               dateFormat={dateFormat}
               timeFormat={timeFormat}
+              timeIsEditable
               value={values.get(DISPOSITION.INCIDENT_DATE_TIME)}
               onChange={onDateChange}
               datePickerSelectProps={{
