@@ -2,10 +2,9 @@
  * @flow
  */
 
-import { Map } from 'immutable';
-import createSagaMiddleware from 'redux-saga';
-
-import { routerMiddleware } from 'react-router-redux';
+import Immutable from 'immutable';
+import createSagaMiddleware from '@redux-saga/core';
+import { routerMiddleware } from 'connected-react-router/immutable';
 import { applyMiddleware, compose, createStore } from 'redux';
 
 import sagas from '../sagas/Sagas';
@@ -34,8 +33,8 @@ export default function initializeReduxStore(routerHistory :any) :Object {
   /* eslint-enable */
 
   const reduxStore = createStore(
-    reduxReducer(),
-    Map(),
+    reduxReducer(routerHistory),
+    Immutable.Map(),
     composeEnhancers(...reduxEnhancers)
   );
 

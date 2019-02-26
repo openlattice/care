@@ -2,12 +2,11 @@
  * @flow
  */
 
-import log from 'loglevel';
-import moment from 'moment';
-
 import isEmpty from 'lodash/isEmpty';
 import isError from 'lodash/isError';
 import isString from 'lodash/isString';
+import log from 'loglevel';
+import { format } from 'date-fns';
 
 // injected by Webpack.DefinePlugin
 declare var __ENV_DEV__ :boolean;
@@ -19,7 +18,7 @@ const LOG_LEVELS = {
   DEBUG: 'debug',
   INFO: 'info',
   WARN: 'warn',
-  ERROR: 'error'
+  ERROR: 'error',
 };
 
 const TIMESTAMP_FORMAT = 'YYYY-MM-DD HH:mm:ss';
@@ -34,28 +33,28 @@ else {
   log.setLevel(log.levels.INFO);
 }
 
-function isNonEmptyString(value :any) {
+function isNonEmptyString(value :any) :boolean {
 
   return isString(value) && !isEmpty(value);
 }
 
-function getMessagePrefix(loggerLevel, loggerName) {
+function getMessagePrefix(loggerLevel :string, loggerName :string) :string {
 
-  return `[${moment().format(TIMESTAMP_FORMAT)} ${loggerLevel.toUpperCase()} ${__PACKAGE__}] ${loggerName}`;
+  return `[${format(new Date(), TIMESTAMP_FORMAT)} ${loggerLevel.toUpperCase()} ${__PACKAGE__}] ${loggerName}`;
 }
 
 export default class Logger {
 
-  name :string;
   logger :Object;
+  name :string;
 
   constructor(name :string) {
 
-    this.name = name;
     this.logger = log.getLogger(name);
+    this.name = name;
   }
 
-  log(logLevel :string, message :any, ...args :any[]) {
+  log(logLevel :string, message :any, ...args :any[]) :void {
 
     const messagePrefix = getMessagePrefix(logLevel, this.name);
 
@@ -76,27 +75,27 @@ export default class Logger {
     }
   }
 
-  trace(message :any) {
+  trace(message :any) :void {
 
     this.log(LOG_LEVELS.TRACE, message);
   }
 
-  debug(message :any, ...args :any[]) {
+  debug(message :any, ...args :any[]) :void {
 
     this.log(LOG_LEVELS.DEBUG, message, ...args);
   }
 
-  info(message :any, ...args :any[]) {
+  info(message :any, ...args :any[]) :void {
 
     this.log(LOG_LEVELS.INFO, message, ...args);
   }
 
-  warn(message :any, ...args :any[]) {
+  warn(message :any, ...args :any[]) :void {
 
     this.log(LOG_LEVELS.WARN, message, ...args);
   }
 
-  error(message :any, ...args :any[]) {
+  error(message :any, ...args :any[]) :void {
 
     this.log(LOG_LEVELS.ERROR, message, ...args);
   }

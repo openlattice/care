@@ -178,11 +178,11 @@ export default class DropdownButtonWrapper extends Component<Props, State> {
     } = this.props;
     const { isVisibleDataTable } = this.state;
     return (
-      <RefWrapper innerRef={(node) => { this.node = node; }} {...this.props}>
+      <RefWrapper ref={(node) => { this.node = node; }} {...this.props}>
         <SearchableSelectWrapper isVisibleDataTable={isVisibleDataTable} {...this.props}>
           <SearchInputWrapper short={short}>
             <SearchButton
-                innerRef={(togglebutton) => { this.togglebutton = togglebutton; }}
+                ref={(togglebutton) => { this.togglebutton = togglebutton; }}
                 open={isVisibleDataTable}
                 onClick={this.toggleDataTable}
                 {...this.props}>
