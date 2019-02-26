@@ -3,10 +3,10 @@
  */
 
 import randomUUID from 'uuid/v4';
+import { call, put, takeEvery } from '@redux-saga/core/effects';
 import { List, Map } from 'immutable';
 import { Models } from 'lattice';
-import { DataIntegrationApiActionFactory, DataIntegrationApiSagas } from 'lattice-sagas';
-import { call, put, takeEvery } from 'redux-saga/effects';
+import { DataIntegrationApiActions, DataIntegrationApiSagas } from 'lattice-sagas';
 
 import { APP_TYPES_FQNS, STRING_ID_FQN } from '../../shared/Consts';
 import { FORM_TYPE, CONTENT_TYPE } from '../../utils/DataConstants';
@@ -31,7 +31,7 @@ import {
 } from './ReportActionFactory';
 
 const { FullyQualifiedName } = Models;
-const { createEntityAndAssociationData } = DataIntegrationApiActionFactory;
+const { createEntityAndAssociationData } = DataIntegrationApiActions;
 const { createEntityAndAssociationDataWorker } = DataIntegrationApiSagas;
 
 const {

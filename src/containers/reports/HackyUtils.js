@@ -1,9 +1,4 @@
-/*
- * @flow
- */
-
-import moment from 'moment';
-import { List, Map } from 'immutable';
+import { List } from 'immutable';
 
 import { formatAsDate } from '../../utils/DateUtils';
 import {
@@ -95,7 +90,7 @@ import {
   OFFICER_CERTIFICATION_FQN,
 } from '../../edm/DataModelFqns';
 
-function gatherReportData(data :Map<*, *>) :{[key :string] :any} {
+function gatherReportData(data) {
 
   const result = {
     [CAD_NUMBER_FQN]: data.getIn([CAD_NUMBER_FQN, 0]),
@@ -115,7 +110,7 @@ function gatherReportData(data :Map<*, *>) :{[key :string] :any} {
   return result;
 }
 
-function gatherConsumerData(data :Map<*, *>) :{[key :string] :any} {
+function gatherConsumerData(data) {
 
   const result = {
     [ADDRESS_FQN]: data.getIn([ADDRESS_FQN, 0]),
@@ -173,7 +168,7 @@ function gatherConsumerData(data :Map<*, *>) :{[key :string] :any} {
   return result;
 }
 
-function gatherComplainantData(data :Map<*, *>) :{[key :string] :any} {
+function gatherComplainantData(data) {
 
   const result = {
     [COMPLAINANT_NAME_FQN]: data.getIn([COMPLAINANT_NAME_FQN, 0]),
@@ -185,7 +180,7 @@ function gatherComplainantData(data :Map<*, *>) :{[key :string] :any} {
   return result;
 }
 
-function gatherDispositionData(data :Map<*, *>) :{[key :string] :any} {
+function gatherDispositionData(data) {
 
   const result = {
     [DEESCALATION_SCALE_FQN]: data.getIn([DEESCALATION_SCALE_FQN, 0]),
@@ -209,7 +204,7 @@ function gatherDispositionData(data :Map<*, *>) :{[key :string] :any} {
   return result;
 }
 
-function gatherOfficerData(data :Map<*, *>) :{[key :string] :any} {
+function gatherOfficerData(data) {
 
   const result = {
     [OFFICER_NAME_FQN]: data.getIn([OFFICER_NAME_FQN, 0]),
@@ -223,7 +218,7 @@ function gatherOfficerData(data :Map<*, *>) :{[key :string] :any} {
   return result;
 }
 
-function checkboxesHelper(values :any[], value :any) :any[] {
+function checkboxesHelper(values, value) {
 
   const index = values.indexOf(value);
   if (index === -1) {

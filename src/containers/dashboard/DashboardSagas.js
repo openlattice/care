@@ -5,9 +5,9 @@
 /* eslint-disable no-use-before-define */
 
 import moment from 'moment';
+import { call, put, takeEvery } from '@redux-saga/core/effects';
 import { List, Map, fromJS } from 'immutable';
 import { DataApi, EntityDataModelApi, SearchApi } from 'lattice';
-import { call, put, takeEvery } from 'redux-saga/effects';
 
 import {
   DASHBOARD_COUNTS,

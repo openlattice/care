@@ -3,8 +3,15 @@
  */
 
 /* eslint-disable no-use-before-define */
-
+import {
+  all,
+  call,
+  put,
+  takeEvery
+} from '@redux-saga/core/effects';
+import { push } from 'connected-react-router';
 import { Types } from 'lattice';
+import { AccountUtils } from 'lattice-auth';
 import {
   AppApiActions,
   AppApiSagas,
@@ -13,15 +20,6 @@ import {
   EntityDataModelApiActions,
   EntityDataModelApiSagas,
 } from 'lattice-sagas';
-import { push } from 'react-router-redux';
-import { AccountUtils } from 'lattice-auth';
-import {
-  all,
-  call,
-  put,
-  takeEvery
-} from 'redux-saga/effects';
-
 
 import Logger from '../../utils/Logger';
 import * as Routes from '../../core/router/Routes';
@@ -32,7 +30,6 @@ import { isBaltimoreOrg } from '../../utils/Whitelist';
 import {
   LOAD_APP,
   LOAD_HOSPITALS,
-  RETRIEVE_ORGANIZATION_ATTEMPT,
   SWITCH_ORGANIZATION,
   loadApp,
   loadHospitals

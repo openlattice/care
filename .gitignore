@@ -1,7 +1,9 @@
-node_modules
+coverage/
 
+# npm
 npm-debug.log
-
 package-lock.json
+node_modules/
 
-.DS_Store
+# macOS
+*.DS_Store

@@ -3,9 +3,9 @@
  */
 
 import moment from 'moment';
-import { EntityDataModelApi, Constants, DataApi, SearchApi } from 'lattice';
-import { call, put, takeEvery } from 'redux-saga/effects';
+import { call, put, takeEvery } from '@redux-saga/core/effects';
 import { Map } from 'immutable';
+import { EntityDataModelApi, Constants, DataApi, SearchApi } from 'lattice';
 
 import {
   EDIT_PERSON,

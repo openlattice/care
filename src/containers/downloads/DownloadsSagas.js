@@ -1,16 +1,22 @@
 /*
  * @flow
  */
-import Immutable, { fromJS, Map } from 'immutable';
+
 import Papa from 'papaparse';
 import moment from 'moment';
+import { call, put, takeEvery } from '@redux-saga/core/effects';
+import {
+  List,
+  Map,
+  OrderedSet,
+  fromJS,
+} from 'immutable';
 import {
   Constants,
   DataApi,
   EntityDataModelApi,
   SearchApi
 } from 'lattice';
-import { call, put, takeEvery } from 'redux-saga/effects';
 
 import FileSaver from '../../utils/FileSaver';
 import {
@@ -175,7 +181,7 @@ function* downloadFormsWorker(action :SequenceAction) :Generator<*, *, *> {
         if (!HIDDEN_FQNS.includes(fqn)) {
           const header = propertyTypesByFqn.getIn([fqn, 'title'], `${fqn}|${entitySetName}`);
           if (header) {
-            let newArrayValues = combinedEntity.get(header, Immutable.List());
+            let newArrayValues = combinedEntity.get(header, List());
             details.get(fqn).forEach((val) => {
               if (!newArrayValues.includes(val)) {
                 newArrayValues = newArrayValues.push(val);
@@ -188,11 +194,11 @@ function* downloadFormsWorker(action :SequenceAction) :Generator<*, *, *> {
       return combinedEntity;
     };
 
-    let jsonResults = Immutable.List();
-    let allHeaders = Immutable.OrderedSet();
+    let jsonResults = List();
+    let allHeaders = OrderedSet();
     neighborsById.keySeq().forEach((id) => {
       let combinedEntity = getUpdatedEntity(
-        Immutable.Map(),
+        Map(),
         'BHRs',
         reportsAsMap.get(id)
       );
