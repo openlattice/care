@@ -1,10 +1,6 @@
-/*
- * @flow
- */
-
 import moment from 'moment';
 import randomUUID from 'uuid/v4';
-import { Map, fromJS } from 'immutable';
+import { fromJS } from 'immutable';
 
 import * as FQNS from '../../edm/DataModelFqns';
 import { isNonEmptyObject } from '../../utils/LangUtils';
@@ -13,7 +9,7 @@ import { isNonEmptyObject } from '../../utils/LangUtils';
  * Complainant Information Section
  */
 
-const COMPLAINANT_INFO_INITIAL_STATE :Map<string, *> = fromJS({
+const COMPLAINANT_INFO_INITIAL_STATE = fromJS({
   [FQNS.COMPLAINANT_ADDRESS_FQN]: '',
   [FQNS.COMPLAINANT_RELATIONSHIP_FQN]: '',
   [FQNS.COMPLAINANT_NAME_FQN]: '',
@@ -28,7 +24,7 @@ function getComplainantInfoInitialState() {
  * Consumer Information Section
  */
 
-const CONSUMER_INFO_INITIAL_STATE :Map<string, *> = fromJS({
+const CONSUMER_INFO_INITIAL_STATE = fromJS({
   [FQNS.ADDRESS_FQN]: '',
   [FQNS.AGE_FQN]: '',
   [FQNS.ARMED_WEAPON_TYPE_FQN]: '',
@@ -78,7 +74,7 @@ const CONSUMER_INFO_INITIAL_STATE :Map<string, *> = fromJS({
   [FQNS.TAKING_MEDICATION_FQN]: '',
 });
 
-function getConsumerInfoInitialState(person :?Object) {
+function getConsumerInfoInitialState(person) {
 
   const info = CONSUMER_INFO_INITIAL_STATE.toJS();
   if (person && isNonEmptyObject(person)) {
@@ -136,7 +132,7 @@ function getConsumerInfoInitialState(person :?Object) {
  * Disposition Information Section
  */
 
-const DISPOSITION_INFO_INITIAL_STATE :Map<string, *> = fromJS({
+const DISPOSITION_INFO_INITIAL_STATE = fromJS({
   [FQNS.DEESCALATION_SCALE_FQN]: 1,
   [FQNS.DEESCALATION_TECHNIQUES_FQN]: [],
   [FQNS.DEESCALATION_TECHNIQUES_OTHER_FQN]: '',
@@ -161,7 +157,7 @@ function getDispositionInfoInitialState() {
  * Officer Information Section
  */
 
-const OFFICER_INFO_INITIAL_STATE :Map<string, *> = fromJS({
+const OFFICER_INFO_INITIAL_STATE = fromJS({
   [FQNS.OFFICER_CERTIFICATION_FQN]: [],
   [FQNS.OFFICER_INJURIES_FQN]: '',
   [FQNS.OFFICER_NAME_FQN]: '',
@@ -176,7 +172,7 @@ function getOfficerInfoInitialState() {
  * Report Information Section
  */
 
-const REPORT_INFO_INITIAL_STATE :Map<string, *> = fromJS({
+const REPORT_INFO_INITIAL_STATE = fromJS({
   [FQNS.CAD_NUMBER_FQN]: '',
   [FQNS.COMPANION_OFFENSE_REPORT_FQN]: false,
   [FQNS.COMPLAINT_NUMBER_FQN]: '',

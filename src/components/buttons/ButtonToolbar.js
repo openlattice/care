@@ -119,7 +119,7 @@ const ButtonToolbar = ({
       )) }
     </ToolbarWrapper>
   );
-}
+};
 
 ButtonToolbar.defaultProps = {
   noPadding: false,

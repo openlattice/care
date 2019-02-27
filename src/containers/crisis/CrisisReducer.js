@@ -2,8 +2,8 @@
  * @flow
  */
 
+import { LOCATION_CHANGE } from 'connected-react-router';
 import { Map, fromJS } from 'immutable';
-import { LOCATION_CHANGE } from 'react-router-redux';
 
 import * as Routes from '../../core/router/Routes';
 import { submitCrisisReport } from './CrisisActionFactory';

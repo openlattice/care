@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import Select from 'react-select';
 import styled, { css } from 'styled-components';
 import { Map } from 'immutable';
-import { AuthActionFactory } from 'lattice-auth';
+import { AuthActions } from 'lattice-auth';
 import { Button, Colors } from 'lattice-ui-kit';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -30,7 +30,7 @@ import {
   MEDIA_QUERY_LG
 } from '../../core/style/Sizes';
 
-const { logout } = AuthActionFactory;
+const { logout } = AuthActions;
 const { NEUTRALS, PURPLES, WHITE } = Colors;
 
 // TODO: this should come from lattice-ui-kit, maybe after the next release. current version v0.1.1

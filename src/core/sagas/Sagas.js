@@ -2,6 +2,7 @@
  * @flow
  */
 
+import { all, fork } from '@redux-saga/core/effects';
 import { AuthSagas } from 'lattice-auth';
 import {
   AppApiSagas,
@@ -10,7 +11,6 @@ import {
   EntityDataModelApiSagas,
   SearchApiSagas,
 } from 'lattice-sagas';
-import { all, fork } from 'redux-saga/effects';
 
 import * as RoutingSagas from '../router/RoutingSagas';
 
@@ -39,7 +39,7 @@ export default function* sagas() :Generator<*, *, *> {
     fork(AppApiSagas.getAppWatcher),
     fork(AppApiSagas.getAppConfigsWatcher),
     fork(AppApiSagas.getAppTypesWatcher),
-    fork(DataApiSagas.clearEntityFromEntitySetWatcher),
+    fork(DataApiSagas.deleteEntityWatcher),
     fork(DataApiSagas.getEntitySetDataWatcher),
     fork(DataApiSagas.updateEntityDataWatcher),
     fork(DataIntegrationApiSagas.createEntityAndAssociationDataWatcher),

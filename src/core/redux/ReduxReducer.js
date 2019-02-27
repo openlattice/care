@@ -2,6 +2,7 @@
  * @flow
  */
 
+import { connectRouter } from 'connected-react-router/immutable';
 import { AuthReducer } from 'lattice-auth';
 import { combineReducers } from 'redux-immutable';
 
@@ -27,7 +28,7 @@ import observedBehaviorsReducer from '../../containers/pages/observedbehaviors/R
 import officerSafetyReducer from '../../containers/pages/officersafety/Reducer';
 import subjectInformationReducer from '../../containers/pages/subjectinformation/Reducer';
 
-export default function reduxReducer() {
+export default function reduxReducer(routerHistory :any) {
 
   return combineReducers({
     app: appReducer,
@@ -40,6 +41,7 @@ export default function reduxReducer() {
     people: peopleReducer,
     report: bhrReducer,
     reports: reportsReducer,
+    router: connectRouter(routerHistory),
     search: searchReducer,
 
     // page reducers

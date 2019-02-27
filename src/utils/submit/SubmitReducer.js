@@ -8,8 +8,6 @@ import { CLEAR_CRISIS_TEMPLATE } from '../../containers/crisis/CrisisActionFacto
 import { SUBMIT } from '../constants/StateConstants';
 import {
   CLEAR_SUBMIT,
-  replaceAssociation,
-  replaceEntity,
   submit
 } from './SubmitActionFactory';
 
@@ -24,34 +22,8 @@ const INITIAL_STATE :Immutable.Map<*, *> = Immutable.Map().withMutations((map :I
 function submitReducer(state :Immutable.Map<*, *> = INITIAL_STATE, action :Object) {
   switch (action.type) {
 
-    case replaceEntity.case(action.type): {
-      return replaceEntity.reducer(state, action, {
-        REQUEST: () => state
-          .set(SUBMIT.SUBMITTING, true)
-          .set(SUBMIT.SUBMITTED, false)
-          .set(SUBMIT.SUCCESS, false)
-          .set(SUBMIT.ERROR, ''),
-        SUCCESS: () => state.set(SUBMIT.SUCCESS, true).set(SUBMIT.ERROR, ''),
-        FAILURE: () => state.set(SUBMIT.SUCCESS, false).set(SUBMIT.ERROR, action.value),
-        FINALLY: () => state.set(SUBMIT.SUBMITTING, false).set(SUBMIT.SUBMITTED, true)
-      });
-    }
-
     case submit.case(action.type): {
       return submit.reducer(state, action, {
-        REQUEST: () => state
-          .set(SUBMIT.SUBMITTING, true)
-          .set(SUBMIT.SUBMITTED, false)
-          .set(SUBMIT.SUCCESS, false)
-          .set(SUBMIT.ERROR, ''),
-        SUCCESS: () => state.set(SUBMIT.SUCCESS, true).set(SUBMIT.ERROR, ''),
-        FAILURE: () => state.set(SUBMIT.SUCCESS, false).set(SUBMIT.ERROR, action.value),
-        FINALLY: () => state.set(SUBMIT.SUBMITTING, false).set(SUBMIT.SUBMITTED, true)
-      });
-    }
-
-    case replaceAssociation.case(action.type): {
-      return replaceAssociation.reducer(state, action, {
         REQUEST: () => state
           .set(SUBMIT.SUBMITTING, true)
           .set(SUBMIT.SUBMITTED, false)
