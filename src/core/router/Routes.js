@@ -15,6 +15,7 @@ export const REPORTS_PATH :string = '/reports';
 export const DASHBOARD_PATH :string = '/dashboard';
 export const DOWNLOADS_PATH :string = '/downloads';
 export const PEOPLE_PATH :string = '/people';
+export const SUBSCRIBE_PATH :string = '/subscribe';
 
 export const REPORT_ID_PARAM :string = ':reportId';
 export const REPORT_EDIT_PATH :string = `${REPORTS_PATH}/${REPORT_ID_PARAM}/edit`;

@@ -9,7 +9,9 @@ export const APP_TYPES_FQNS = {
   BEHAVIORAL_HEALTH_REPORT_FQN: new FullyQualifiedName('app.bhr'),
   FOLLOW_UP_REPORT_FQN: new FullyQualifiedName('app.followup'),
   HOSPITALS_FQN: new FullyQualifiedName('app.hospitals'),
-  PEOPLE_FQN: new FullyQualifiedName('app.people')
+  PEOPLE_FQN: new FullyQualifiedName('app.people'),
+  REPORTED_FQN: new FullyQualifiedName('app.reported'),
+  STAFF_FQN: new FullyQualifiedName('app.staff')
 };
 
 export const STRING_ID_FQN = 'general.stringid';

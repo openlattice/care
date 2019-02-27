@@ -35,6 +35,7 @@ const SearchableSelectWrapper = styled.div`
   padding: 0;
   position: relative;
   width: 100%;
+  max-height: fit-content;
 `;
 
 const SearchInputWrapper = styled.div`
@@ -304,19 +305,9 @@ class SearchableSelect extends React.Component<Props, State> {
   }
 
   renderDropdownContents = () => {
-    const { isVisibleDataTable, searchQuery } = this.state;
+    const { isVisibleDataTable } = this.state;
     const {
-      className,
-      short,
       openAbove,
-      selectOnly,
-      disabled,
-      transparent,
-      fullWidth,
-      searchPlaceholder,
-      onClear,
-      searchIcon,
-      dropdownIcon,
       value,
       isLoadingResults,
       noResults

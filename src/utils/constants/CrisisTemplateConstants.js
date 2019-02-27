@@ -78,6 +78,7 @@ export const DISPOSITION = {
 export const POST_PROCESS_FIELDS = {
   FORM_TYPE: 'formSubmissionType',
   TIMESTAMP: 'timestamp',
+  USER_EMAIL: 'userEmail',
   FORM_ID: 'formId',
   HOMELESS: 'isHomeless',
   DOB: 'personDOB',

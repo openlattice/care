@@ -19,7 +19,9 @@ const {
   BEHAVIORAL_HEALTH_REPORT_FQN,
   FOLLOW_UP_REPORT_FQN,
   HOSPITALS_FQN,
-  PEOPLE_FQN
+  PEOPLE_FQN,
+  REPORTED_FQN,
+  STAFF_FQN
 } = APP_TYPES_FQNS;
 
 const appearsInFqn :string = APPEARS_IN_FQN.toString();
@@ -27,6 +29,8 @@ const bhrFqn :string = BEHAVIORAL_HEALTH_REPORT_FQN.toString();
 const followUpFqn :string = FOLLOW_UP_REPORT_FQN.toString();
 const hospitalsFqn :string = HOSPITALS_FQN.toString();
 const peopleFqn :string = PEOPLE_FQN.toString();
+const reportedFqn :string = REPORTED_FQN.toString();
+const staffFqn :string = STAFF_FQN.toString();
 
 const APP_CONFIG_INITIAL_STATE :Map<*, *> = fromJS({
   entitySetsByOrganization: Map(),
@@ -40,6 +44,8 @@ const INITIAL_STATE :Map<*, *> = fromJS({
   [followUpFqn]: APP_CONFIG_INITIAL_STATE,
   [hospitalsFqn]: APP_CONFIG_INITIAL_STATE,
   [peopleFqn]: APP_CONFIG_INITIAL_STATE,
+  [reportedFqn]: APP_CONFIG_INITIAL_STATE,
+  [staffFqn]: APP_CONFIG_INITIAL_STATE,
   actions: {
     loadApp: Map(),
   },
@@ -109,12 +115,16 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
             const followUpConfig = appConfig.config[followUpFqn];
             const hospitalsConfig = appConfig.config[hospitalsFqn];
             const peopleConfig = appConfig.config[peopleFqn];
+            const reportedConfig = appConfig.config[reportedFqn];
+            const staffConfig = appConfig.config[staffFqn];
 
             newState = newState
               .setIn([appearsInFqn, 'entitySetsByOrganization', orgId], appearsInConfig.entitySetId)
               .setIn([bhrFqn, 'entitySetsByOrganization', orgId], bhrConfig.entitySetId)
               .setIn([followUpFqn, 'entitySetsByOrganization', orgId], followUpConfig.entitySetId)
-              .setIn([peopleFqn, 'entitySetsByOrganization', orgId], peopleConfig.entitySetId);
+              .setIn([peopleFqn, 'entitySetsByOrganization', orgId], peopleConfig.entitySetId)
+              .setIn([reportedFqn, 'entitySetsByOrganization', orgId], reportedConfig.entitySetId)
+              .setIn([staffFqn, 'entitySetsByOrganization', orgId], staffConfig.entitySetId);
 
             // 2018-02-08:
             // since hospitals is a new EntitySet for the app, old app installations will break without this check.
@@ -166,6 +176,12 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
             .setIn([peopleFqn, 'entitySetsByOrganization'], Map())
             .setIn([peopleFqn, 'primaryKeys'], List())
             .setIn([peopleFqn, 'propertyTypes'], Map())
+            .setIn([reportedFqn, 'entitySetsByOrganization'], Map())
+            .setIn([reportedFqn, 'primaryKeys'], List())
+            .setIn([reportedFqn, 'propertyTypes'], Map())
+            .setIn([staffFqn, 'entitySetsByOrganization'], Map())
+            .setIn([staffFqn, 'primaryKeys'], List())
+            .setIn([staffFqn, 'propertyTypes'], Map())
             .setIn(['errors', 'loadApp'], fromJS(error))
             .set('organizations', Map())
             .set('selectedOrganizationId', '');

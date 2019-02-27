@@ -12,6 +12,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { Redirect, Route, Switch } from 'react-router-dom';
+import { AuthUtils } from 'lattice-auth';
 
 import type { RouterHistory } from 'react-router';
 
@@ -298,7 +299,8 @@ class CrisisTemplateContainer extends React.Component<Props, State> {
 
     let submission = {
       [POST_PROCESS_FIELDS.FORM_TYPE]: FORM_TYPE.CRISIS_TEMPLATE,
-      [POST_PROCESS_FIELDS.TIMESTAMP]: moment().toISOString(true)
+      [POST_PROCESS_FIELDS.TIMESTAMP]: moment().toISOString(true),
+      [POST_PROCESS_FIELDS.USER_EMAIL]: AuthUtils.getUserInfo().email
     };
 
     PAGES.forEach((page) => {
