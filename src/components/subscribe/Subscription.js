@@ -289,7 +289,7 @@ export default class Subscription extends React.Component<Props, State> {
                     onChange={this.handleDateChange}
                     timeIsEditable />
               </DateTimePickerWrapper>
-            ) : <ReadOnlyDetail>{expiration.format('MMMM DD YYYY, hh:mm a, Z')}</ReadOnlyDetail>
+            ) : <ReadOnlyDetail>{expiration.format('MMMM DD YYYY, hh:mm a')}</ReadOnlyDetail>
           }
         </DetailSection>
       </>
