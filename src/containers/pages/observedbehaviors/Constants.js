@@ -33,7 +33,7 @@ export const SUICIDE_METHODS = [
 ];
 
 export const DEMEANORS = [
-  'Belligerent / Uncoorperative',
+  'Belligerent / Uncooperative',
   'Charged / Attacked Officer',
   'Cooperative / Attentive',
   'Distant / Removed',
