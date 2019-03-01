@@ -2,6 +2,12 @@
  * @flow
  */
 
+import {
+  call,
+  put,
+  select,
+  takeEvery,
+} from '@redux-saga/core/effects';
 import { List, Map } from 'immutable';
 import { Models, Types } from 'lattice';
 import {
@@ -10,12 +16,6 @@ import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
-import {
-  call,
-  put,
-  select,
-  takeEvery,
-} from 'redux-saga/effects';
 
 import Logger from '../../utils/Logger';
 import { ERR_ACTION_VALUE_NOT_DEFINED } from '../../utils/Errors';
@@ -33,9 +33,9 @@ import {
 const LOG = new Logger('ReportsSagas');
 
 const { FullyQualifiedName } = Models;
-const { UpdateTypes } = Types;
-const { clearEntityFromEntitySet, getEntitySetData, updateEntityData } = DataApiActions;
-const { clearEntityFromEntitySetWorker, getEntitySetDataWorker, updateEntityDataWorker } = DataApiSagas;
+const { DeleteTypes, UpdateTypes } = Types;
+const { deleteEntity, getEntitySetData, updateEntityData } = DataApiActions;
+const { deleteEntityWorker, getEntitySetDataWorker, updateEntityDataWorker } = DataApiSagas;
 const { searchEntityNeighbors } = SearchApiActions;
 const { searchEntityNeighborsWorker } = SearchApiSagas;
 
@@ -64,7 +64,10 @@ function* deleteReportWorker(action :SequenceAction) :Generator<*, *, *> {
 
   try {
     yield put(deleteReport.request(action.id, { entityKeyId, entitySetId }));
-    const response = yield call(clearEntityFromEntitySetWorker, clearEntityFromEntitySet({ entityKeyId, entitySetId }));
+    const response = yield call(
+      deleteEntityWorker,
+      deleteEntity({ entityKeyId, entitySetId, deleteType: DeleteTypes.Soft })
+    );
     if (response.error) throw response.error;
     yield put(deleteReport.success(action.id));
   }

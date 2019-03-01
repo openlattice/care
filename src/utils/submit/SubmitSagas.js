@@ -1,28 +1,19 @@
 /*
  * @flow
  */
-import Immutable from 'immutable';
 import {
-  DataApi,
+  call,
+  put,
+  takeEvery,
+} from '@redux-saga/core/effects';
+import {
   DataIntegrationApi,
   EntityDataModelApi,
   Models
 } from 'lattice';
 
 import {
-  call,
-  put,
-  takeEvery,
-  all
-} from 'redux-saga/effects';
-
-import { stripIdField } from '../DataUtils';
-import {
-  REPLACE_ASSOCIATION,
-  REPLACE_ENTITY,
   SUBMIT,
-  replaceAssociation,
-  replaceEntity,
   submit
 } from './SubmitActionFactory';
 
@@ -87,36 +78,6 @@ function shouldCreateEntity(entityDescription, values, details) {
     if (allFalse) return false;
   }
   return true;
-}
-
-function* replaceEntityWorker(action :SequenceAction) :Generator<*, *, *> {
-  try {
-    yield put(replaceEntity.request(action.id));
-    const {
-      entityKeyId,
-      entitySetName,
-      values,
-      callback
-    } = action.value;
-
-    const entitySetId = yield call(EntityDataModelApi.getEntitySetId, entitySetName);
-    yield call(DataApi.replaceEntityInEntitySetUsingFqns, entitySetId, entityKeyId, stripIdField(values));
-
-    yield put(replaceEntity.success(action.id));
-    if (callback) {
-      callback();
-    }
-  }
-  catch (error) {
-    yield put(replaceEntity.failure(action.id, error));
-  }
-  finally {
-    yield put(replaceEntity.finally(action.id));
-  }
-}
-
-function* replaceEntityWatcher() :Generator<*, *, *> {
-  yield takeEvery(REPLACE_ENTITY, replaceEntityWorker);
 }
 
 function* submitWorker(action :SequenceAction) :Generator<*, *, *> {
@@ -250,101 +211,6 @@ function* submitWatcher() :Generator<*, *, *> {
   yield takeEvery(SUBMIT, submitWorker);
 }
 
-
-const getMapFromPropertyIdsToValues = (entity, propertyTypesByFqn) => {
-  let entityObject = Immutable.Map();
-  Object.keys(entity).forEach((key) => {
-    const propertyTypeKeyId = propertyTypesByFqn[key].id;
-    const property = entity[key] ? [entity[key]] : [];
-    entityObject = entityObject.set(propertyTypeKeyId, property);
-  });
-  return entityObject;
-};
-
-function* replaceAssociationWorker(action :SequenceAction) :Generator<*, *, *> {
-  const {
-    associationEntity,
-    associationEntitySetName,
-    associationEntityKeyId,
-    srcEntitySetName,
-    srcEntityKeyId,
-    dstEntitySetName,
-    dstEntityKeyId,
-    callback
-  } = action.value;
-
-  try {
-    yield put(replaceAssociation.request(action.id));
-
-    // Collect Entity Set Ids for association, src, and dst
-    const associationEntitySetId = yield call(EntityDataModelApi.getEntitySetId, associationEntitySetName);
-    const srcEntitySetId = yield call(EntityDataModelApi.getEntitySetId, srcEntitySetName);
-    const dstEntitySetId = yield call(EntityDataModelApi.getEntitySetId, dstEntitySetName);
-
-    const allEntitySetIds = [associationEntitySetId, srcEntitySetId, dstEntitySetId];
-
-    const edmDetailsRequest = allEntitySetIds.map(id => ({
-      id,
-      type: 'EntitySet',
-      include: ['PropertyTypeInEntitySet']
-    }));
-    const edmDetails = yield call(EntityDataModelApi.getEntityDataModelProjection, edmDetailsRequest);
-
-    const propertyTypesByFqn = {};
-    Object.values(edmDetails.propertyTypes).forEach((propertyType) => {
-      const fqn = new FullyQualifiedName(propertyType.type).toString();
-      propertyTypesByFqn[fqn] = propertyType;
-    });
-
-    const associationEntityOject = getMapFromPropertyIdsToValues(
-      associationEntity,
-      propertyTypesByFqn
-    );
-
-    // Delete existing association
-    if (associationEntityKeyId) {
-      yield call(DataApi.clearEntityFromEntitySet, associationEntitySetId, associationEntityKeyId);
-    }
-
-    // Create new association
-    yield call(
-      DataApi.createAssociations,
-      {
-        [associationEntitySetId]: [{
-          dst: {
-            entitySetId: dstEntitySetId,
-            entityKeyId: dstEntityKeyId
-          },
-          data: associationEntityOject.toJS(),
-          src: {
-            entitySetId: srcEntitySetId,
-            entityKeyId: srcEntityKeyId
-          },
-        }]
-      }
-    );
-
-    yield put(replaceAssociation.success(action.id));
-
-    if (callback) {
-      callback();
-    }
-  }
-  catch (error) {
-    console.error(error);
-    yield put(replaceAssociation.failure(action.id, error));
-  }
-  finally {
-    yield put(replaceAssociation.finally(action.id));
-  }
-}
-
-function* replaceAssociationWatcher() :Generator<*, *, *> {
-  yield takeEvery(REPLACE_ASSOCIATION, replaceAssociationWorker);
-}
-
 export {
-  replaceAssociationWatcher,
-  replaceEntityWatcher,
   submitWatcher
 };

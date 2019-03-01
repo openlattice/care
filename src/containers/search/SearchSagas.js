@@ -4,8 +4,8 @@
 
 /* eslint-disable no-use-before-define */
 
-import { SearchApiActionFactory, SearchApiSagas } from 'lattice-sagas';
-import { call, put, takeEvery } from 'redux-saga/effects';
+import { call, put, takeEvery } from '@redux-saga/core/effects';
+import { SearchApiActions, SearchApiSagas } from 'lattice-sagas';
 
 import {
   SEARCH_CONSUMER_NEIGHBORS,
@@ -17,7 +17,7 @@ import {
 const {
   searchEntityNeighbors,
   searchEntitySetData,
-} = SearchApiActionFactory;
+} = SearchApiActions;
 
 const {
   searchEntityNeighborsWorker,

@@ -7,9 +7,9 @@ export const FORM_TYPE = {
 /* Consumer Constants */
 
 export const GENDERS = {
-  FEMALE: 'female',
-  MALE: 'male',
-  NONBINARY: 'non-binary'
+  FEMALE: 'Female',
+  MALE: 'Male',
+  NONBINARY: 'Non-Binary'
 };
 
 export const RACES = {
