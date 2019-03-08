@@ -85,8 +85,6 @@ export default function* sagas() :Generator<*, *, *> {
     fork(SearchSagas.searchConsumersWatcher),
 
     // SubmitSagas
-    fork(SubmitSagas.replaceAssociationWatcher),
-    fork(SubmitSagas.replaceEntityWatcher),
     fork(SubmitSagas.submitWatcher),
 
     // SubscribeSagas
