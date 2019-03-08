@@ -14,7 +14,8 @@ import {
   DOWNLOADS_PATH,
   HOME_PATH,
   PEOPLE_PATH,
-  REPORTS_PATH
+  REPORTS_PATH,
+  SUBSCRIBE_PATH
 } from '../../core/router/Routes';
 
 const { NEUTRALS, PURPLES } = Colors;
@@ -99,6 +100,7 @@ const AppNavigationContainer = ({ dropdown } :Props) => (
     <NavLinkWrapper to={DASHBOARD_PATH}>Dashboard</NavLinkWrapper>
     <NavLinkWrapper to={PEOPLE_PATH}>People</NavLinkWrapper>
     <NavLinkWrapper to={DOWNLOADS_PATH}>Downloads</NavLinkWrapper>
+    <NavLinkWrapper to={SUBSCRIBE_PATH}>Subscribe</NavLinkWrapper>
   </NavigationContentWrapper>
 );
 

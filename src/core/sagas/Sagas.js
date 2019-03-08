@@ -23,6 +23,7 @@ import * as ReportSagas from '../../containers/form/ReportSagas';
 import * as ReportsSagas from '../../containers/reports/ReportsSagas';
 import * as SearchSagas from '../../containers/search/SearchSagas';
 import * as SubmitSagas from '../../utils/submit/SubmitSagas';
+import * as SubscribeSagas from '../../containers/subscribe/SubscribeSagas';
 
 export default function* sagas() :Generator<*, *, *> {
 
@@ -84,6 +85,14 @@ export default function* sagas() :Generator<*, *, *> {
     fork(SearchSagas.searchConsumersWatcher),
 
     // SubmitSagas
-    fork(SubmitSagas.submitWatcher)
+    fork(SubmitSagas.replaceAssociationWatcher),
+    fork(SubmitSagas.replaceEntityWatcher),
+    fork(SubmitSagas.submitWatcher),
+
+    // SubscribeSagas
+    fork(SubscribeSagas.getSubscriptionsWatcher),
+    fork(SubscribeSagas.createSubscriptionWatcher),
+    fork(SubscribeSagas.updateSubscriptionWatcher),
+    fork(SubscribeSagas.expireSubscriptionWatcher)
   ]);
 }

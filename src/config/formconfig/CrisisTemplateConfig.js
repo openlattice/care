@@ -12,7 +12,9 @@ import {
 const {
   APPEARS_IN_FQN,
   BEHAVIORAL_HEALTH_REPORT_FQN,
-  PEOPLE_FQN
+  PEOPLE_FQN,
+  REPORTED_FQN,
+  STAFF_FQN
 } = APP_TYPES_FQNS;
 
 const config = {
@@ -99,8 +101,23 @@ const config = {
       }
     },
     {
+      name: STAFF_FQN,
+      alias: 'staff',
+      fields: {
+        [POST_PROCESS_FIELDS.USER_EMAIL]: FQN.PERSON_ID_FQN
+      }
+    },
+    {
       name: APPEARS_IN_FQN,
       alias: 'appearsin',
+      entityId: POST_PROCESS_FIELDS.TIMESTAMP,
+      fields: {
+        [POST_PROCESS_FIELDS.TIMESTAMP]: FQN.DATE_TIME_FQN
+      }
+    },
+    {
+      name: REPORTED_FQN,
+      alias: 'reported',
       entityId: POST_PROCESS_FIELDS.TIMESTAMP,
       fields: {
         [POST_PROCESS_FIELDS.TIMESTAMP]: FQN.DATE_TIME_FQN
@@ -112,6 +129,11 @@ const config = {
       src: 'person',
       dst: 'report',
       association: 'appearsin'
+    },
+    {
+      src: 'staff',
+      dst: 'report',
+      association: 'reported'
     }
   ]
 };
