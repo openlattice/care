@@ -96,7 +96,15 @@ const CRISIS_TEMPLATE_ORG_IDS = [
   '42802c67-7ff0-4ff0-8d9d-f96f0c8ca942',
 
   // JOHNSON COUNTY
-  'aeba1be8-5d72-4f46-b0a9-5319bfb40faa'
+  'aeba1be8-5d72-4f46-b0a9-5319bfb40faa',
+
+  // KCSO
+  'aa07442f-4835-4d95-83ed-a7f28d1a1584',
+  'aa7e90ba-b4f2-41ea-9f5b-7f220d605afa',
+  'c957fb77-940e-47cf-a7bd-e43ce2ec3e13',
+  '67089f2e-48be-41e9-87b2-2269de47f101',
+  'fd85f4e9-419c-4af9-8195-dc3a883bbed8',
+  '7eebd1bf-71af-4339-8b2f-fe4f89d18393'
 ];
 
 type Props = {
