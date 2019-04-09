@@ -155,7 +155,7 @@ function* downloadFormsWorker(action :SequenceAction) :Generator<*, *, *> {
     const propertyTypeId = propertyTypesByFqn.getIn([FQN.DATE_TIME_OCCURRED_FQN, 'id']);
     const entitySetSize = yield call(DataApi.getEntitySetSize, reportEntitySetId);
     const options = {
-      searchTerm: `${propertyTypeId}: [${start.toISOString(true)} TO ${end.toISOString(true)}]`,
+      searchTerm: `${reportEntitySetId}.${propertyTypeId}: [${start.toISOString(true)} TO ${end.toISOString(true)}]`,
       start: 0,
       maxHits: entitySetSize,
       fuzzy: false
