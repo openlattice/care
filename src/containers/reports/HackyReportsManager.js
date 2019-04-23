@@ -24,11 +24,11 @@ import {
   REPORT_VIEW_PATH,
   REPORTS_PATH,
 } from '../../core/router/Routes';
+import CrisisReportView from './CrisisReportView';
 
 type Props = {
   reports :List<*>;
 };
-
 
 class HackyReportsManager extends Component<Props> {
 
@@ -82,7 +82,9 @@ class HackyReportsManager extends Component<Props> {
     return (
       <Switch>
         <Route exact path={REPORTS_PATH} component={HackyReportsContainer} />
-        <Route path={REPORT_VIEW_PATH} render={this.renderView} />
+        {/* <Route path={REPORT_VIEW_PATH} component={CrisisTemplateContainer} /> */}
+        {/* <Route path={REPORT_VIEW_PATH} render={this.renderView} /> */}
+        <Route path={REPORT_VIEW_PATH} component={CrisisReportView} />
         <Route path={REPORT_EDIT_PATH} render={this.renderEdit} />
         <Redirect to={REPORTS_PATH} />
       </Switch>
