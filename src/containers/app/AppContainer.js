@@ -190,7 +190,7 @@ class AppContainer extends Component<Props> {
         <Route path={BHR_PATH} render={this.wrapComponent(FormContainer)} />
         <Route path={CRISIS_PATH} component={CrisisTemplateContainer} />
         <Route path={FOLLOW_UP_PATH} render={this.wrapComponent(FollowUpReportManager)} />
-        <Route path={REPORTS_PATH} render={this.wrapComponent(HackyReportsManager)} />
+        <Route path={REPORTS_PATH} component={HackyReportsManager} />
         <Route path={DASHBOARD_PATH} render={this.wrapComponent(DashboardContainer)} />
         <Route path={DOWNLOADS_PATH} render={this.wrapComponent(DownloadsContainer)} />
         <Route path={PEOPLE_PATH} render={this.wrapComponent(PeopleContainer)} />

@@ -19,4 +19,5 @@ export const ContentContainerInnerWrapper = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   width: ${APP_CONTENT_WIDTH}px;
+  padding: 30px;
 `;
