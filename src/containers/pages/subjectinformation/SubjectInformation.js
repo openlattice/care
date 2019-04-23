@@ -10,8 +10,6 @@ import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
 import { List, Map, OrderedMap } from 'immutable';
 import { DatePicker } from '@atlaskit/datetime-picker';
-import { faUser } from '@fortawesome/pro-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import BackButton from '../../../components/buttons/BackButton';
 import SecondaryButton from '../../../components/buttons/SecondaryButton';
@@ -23,8 +21,6 @@ import { showInvalidFields } from '../../../utils/NavigationUtils';
 import { STATE } from '../../../utils/constants/StateConstants';
 import { SUBJECT_INFORMATION } from '../../../utils/constants/CrisisTemplateConstants';
 import { GENDERS, RACES } from './Constants';
-import { BLACK } from '../../../shared/Colors';
-import { MEDIA_QUERY_MD } from '../../../core/style/Sizes';
 import {
   PERSON_DOB_FQN,
   PERSON_LAST_NAME_FQN,
@@ -46,10 +42,7 @@ import {
   RequiredField
 } from '../../../components/crisis/FormComponents';
 
-import {
-  clearConsumerSearchResults,
-  searchConsumers
-} from '../../search/SearchActionFactory';
+import { searchConsumers } from '../../search/SearchActionFactory';
 
 import { getInvalidFields } from './Reducer';
 import * as ActionFactory from './ActionFactory';
@@ -371,7 +364,6 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
 
   const actions = {
-    clearConsumerSearchResults,
     searchConsumers
   };
 
