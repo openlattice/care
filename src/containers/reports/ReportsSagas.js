@@ -22,9 +22,11 @@ import { ERR_ACTION_VALUE_NOT_DEFINED } from '../../utils/Errors';
 import {
   DELETE_REPORT,
   GET_REPORT_NEIGHBORS,
+  GET_REPORT,
   GET_REPORTS,
   UPDATE_REPORT,
   deleteReport,
+  getReport,
   getReportNeighbors,
   getReports,
   updateReport,
@@ -84,6 +86,30 @@ function* deleteReportWatcher() :Generator<*, *, *> {
 
   yield takeEvery(DELETE_REPORT, deleteReportWorker);
 }
+
+/*
+ *
+ * ReportsActions.getReport()
+ *
+ */
+
+function* getReportWorker(action :SequenceAction) :Generator<*, *, *> {
+  try {
+    yield put(getReport.request(action.id));
+    yield put(getReport.success(action.id));
+  }
+  catch (error) {
+    yield put(getReport.failure(action.id));
+  }
+  finally {
+    yield put(getReport.finally(action.id));
+  }
+}
+
+function* getReportWatcher() :Generator<*, *, *> {
+  yield takeEvery(GET_REPORT, getReportWorker);
+}
+
 
 /*
  *
@@ -234,6 +260,8 @@ export {
   getReportNeighborsWorker,
   getReportsWatcher,
   getReportsWorker,
+  getReportWatcher,
+  getReportWorker,
   updateReportWatcher,
   updateReportWorker,
 };
