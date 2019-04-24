@@ -24,7 +24,6 @@ import {
   FormSectionWithValidation,
   FormText,
   Header,
-  IndentWrapper,
   RequiredField
 } from '../../../components/crisis/FormComponents';
 
@@ -47,13 +46,6 @@ type Props = {
     searchConsumers :() => void
   }
 }
-
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-`;
 
 const HeaderWithClearButton = styled.div`
   display: flex;
@@ -151,106 +143,71 @@ class SubjectInformation extends React.Component<Props> {
     const PersonFormSection = isCreatingNewPerson ? FormSectionWithValidation : FormSection;
 
     return (
-      <Wrapper>
-        {/* <FormWrapper>
-          <FormSection>
-            <CreateNewPersonButton onClick={e => toggleNewPerson(e, true)}>Create New Person</CreateNewPersonButton>
-            <Header>
-              <h1>Quick Search</h1>
-              <span>
-                {'Search by last name, first name, or alias. No results? Click "Create New Person" above'}
-              </span>
-            </Header>
-            <SearchableSelect
-                value={values.get(SUBJECT_INFORMATION.FULL_NAME)}
-                onInputChange={this.handleFullNameChange}
-                onSelect={this.selectPerson}
-                options={this.getPersonOptions()}
-                isLoadingResults={isSearchingPeople}
-                noResults={noResults}
-                transparent
-                searchIcon
-                fullWidth
-                dropdownIcon={false}
-                split
-                noFilter
-                withBorders
-                short />
-          </FormSection>
-        </FormWrapper> */}
-        {
-          /* isCreatingNewPerson || values.get(SUBJECT_INFORMATION.PERSON_ID) ?  */(
-            <FormWrapper>
-              <IndentWrapper extraIndent>
-                <Header>
-                  <HeaderWithClearButton>
-                    <h1>Person Information</h1>
-                    <BackButton onClick={actions.clear} noMargin>Clear Fields</BackButton>
-                  </HeaderWithClearButton>
-                </Header>
-                <PersonFormSection>
-                  <FormText noMargin>Last</FormText>
-                  {this.renderInput(SUBJECT_INFORMATION.LAST, true)}
-                </PersonFormSection>
-                <PersonFormSection>
-                  <FormText noMargin>First</FormText>
-                  {this.renderInput(SUBJECT_INFORMATION.FIRST, true)}
-                </PersonFormSection>
-                <FormSection>
-                  <FormText noMargin>Mid.</FormText>
-                  {this.renderInput(SUBJECT_INFORMATION.MIDDLE, true, 80)}
-                </FormSection>
-                <FormSection>
-                  <FormText noMargin>AKA / Alias</FormText>
-                  {this.renderInput(SUBJECT_INFORMATION.AKA, true)}
-                </FormSection>
-                <StyledCheckbox
-                    name="dobCheckbox"
-                    checked={values.get(SUBJECT_INFORMATION.DOB_UNKNOWN)}
-                    label="DOB Unknown"
-                    disabled={!isCreatingNewPerson}
-                    onChange={toggleDOBUnknown} />
-                <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.DOB)}>
-                  {
-                    values.get(SUBJECT_INFORMATION.DOB_UNKNOWN) ? (
-                      <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.AGE)}>
-                        <RequiredField><FormText noMargin>Age (approximate)</FormText></RequiredField>
-                        {this.renderInput(SUBJECT_INFORMATION.AGE, false, 70)}
-                      </PersonFormSection>
-                    ) : (
-                      <DatePickerWrapper>
-                        <RequiredField><FormText noMargin>DOB</FormText></RequiredField>
-                        <DatePicker
-                            value={values.get(SUBJECT_INFORMATION.DOB)}
-                            isDisabled={!isCreatingNewPerson}
-                            dateFormat="MM-DD-YYYY"
-                            onChange={value => actions.setInputValue({ field: SUBJECT_INFORMATION.DOB, value })}
-                            selectProps={{
-                              placeholder: 'MM-DD-YYYY'
-                            }} />
-                      </DatePickerWrapper>
-                    )
-                  }
-                </PersonFormSection>
-                <PersonFormSection>
-                  <FormText noMargin>SSN (last 4 digits)</FormText>
-                  {this.renderInput(SUBJECT_INFORMATION.SSN_LAST_4, true, 85)}
-                </PersonFormSection>
-              </IndentWrapper>
-              <IndentWrapper extraIndent>
-                <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.GENDER)}>
-                  <RequiredField><FormText noMargin>Gender</FormText></RequiredField>
-                  {this.renderRadioButtons(SUBJECT_INFORMATION.GENDER, GENDERS)}
-                </PersonFormSection>
-                <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.RACE)}>
-                  <RequiredField><FormText noMargin>Race</FormText></RequiredField>
-                  {this.renderRadioButtons(SUBJECT_INFORMATION.RACE, RACES)}
-                </PersonFormSection>
-              </IndentWrapper>
-            </FormWrapper>
-          )
-        }
-      </Wrapper>
+          /* isCreatingNewPerson || values.get(SUBJECT_INFORMATION.PERSON_ID) ?  */
+      <FormWrapper>
+        <Header>
+          <HeaderWithClearButton>
+            <h1>Person Information</h1>
+            <BackButton onClick={actions.clear} noMargin>Clear Fields</BackButton>
+          </HeaderWithClearButton>
+        </Header>
+        <PersonFormSection>
+          <FormText noMargin>Last</FormText>
+          {this.renderInput(SUBJECT_INFORMATION.LAST, true)}
+        </PersonFormSection>
+        <PersonFormSection>
+          <FormText noMargin>First</FormText>
+          {this.renderInput(SUBJECT_INFORMATION.FIRST, true)}
+        </PersonFormSection>
+        <FormSection>
+          <FormText noMargin>Mid.</FormText>
+          {this.renderInput(SUBJECT_INFORMATION.MIDDLE, true, 80)}
+        </FormSection>
+        <FormSection>
+          <FormText noMargin>AKA / Alias</FormText>
+          {this.renderInput(SUBJECT_INFORMATION.AKA, true)}
+        </FormSection>
+        <StyledCheckbox
+            name="dobCheckbox"
+            checked={values.get(SUBJECT_INFORMATION.DOB_UNKNOWN)}
+            label="DOB Unknown"
+            disabled={!isCreatingNewPerson}
+            onChange={toggleDOBUnknown} />
+        <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.DOB)}>
+          {
+            values.get(SUBJECT_INFORMATION.DOB_UNKNOWN) ? (
+              <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.AGE)}>
+                <RequiredField><FormText noMargin>Age (approximate)</FormText></RequiredField>
+                {this.renderInput(SUBJECT_INFORMATION.AGE, false, 70)}
+              </PersonFormSection>
+            ) : (
+              <DatePickerWrapper>
+                <RequiredField><FormText noMargin>DOB</FormText></RequiredField>
+                <DatePicker
+                    value={values.get(SUBJECT_INFORMATION.DOB)}
+                    isDisabled={!isCreatingNewPerson}
+                    dateFormat="MM-DD-YYYY"
+                    onChange={value => actions.setInputValue({ field: SUBJECT_INFORMATION.DOB, value })}
+                    selectProps={{
+                      placeholder: 'MM-DD-YYYY'
+                    }} />
+              </DatePickerWrapper>
+            )
+          }
+        </PersonFormSection>
+        <PersonFormSection>
+          <FormText noMargin>SSN (last 4 digits)</FormText>
+          {this.renderInput(SUBJECT_INFORMATION.SSN_LAST_4, true, 85)}
+        </PersonFormSection>
+        <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.GENDER)}>
+          <RequiredField><FormText noMargin>Gender</FormText></RequiredField>
+          {this.renderRadioButtons(SUBJECT_INFORMATION.GENDER, GENDERS)}
+        </PersonFormSection>
+        <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.RACE)}>
+          <RequiredField><FormText noMargin>Race</FormText></RequiredField>
+          {this.renderRadioButtons(SUBJECT_INFORMATION.RACE, RACES)}
+        </PersonFormSection>
+      </FormWrapper>
     );
   }
 }

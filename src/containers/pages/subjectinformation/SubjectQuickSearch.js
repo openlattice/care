@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import { Map, OrderedMap } from 'immutable';
+import { OrderedMap } from 'immutable';
 
 import SearchableSelect from '../../../components/controls/SearchableSelect';
 import {
@@ -10,6 +10,10 @@ import {
   Header
 } from '../../../components/crisis/FormComponents';
 import SecondaryButton from '../../../components/buttons/SecondaryButton';
+
+const StyledFormWrapper = styled(FormWrapper)`
+  margin-bottom: 30px;
+`;
 
 const CreateNewPersonButton = styled(SecondaryButton)`
   padding: 12px 20px;
@@ -43,7 +47,7 @@ class SubjectQuickSearch extends Component<Props> {
     } = this.props;
 
     return (
-      <FormWrapper>
+      <StyledFormWrapper>
         <FormSection>
           <CreateNewPersonButton onClick={handleClick}>Create New Person</CreateNewPersonButton>
           <Header>
@@ -68,7 +72,7 @@ class SubjectQuickSearch extends Component<Props> {
               withBorders
               short />
         </FormSection>
-      </FormWrapper>
+      </StyledFormWrapper>
     );
   }
 }
