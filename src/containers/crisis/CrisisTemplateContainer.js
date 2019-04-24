@@ -485,7 +485,7 @@ class CrisisTemplateContainer extends React.Component<Props, State> {
         {
           currentPage > PAGES.length ? null : (
             <ProgressSidebar
-                formTitle="Crisis Template"
+                formTitle="New Crisis Template"
                 currentStepNumber={currentPage - 1}
                 steps={this.getSidebarSteps()} />
           )
