@@ -91,7 +91,7 @@ const CreateNewPersonButton = styled(SecondaryButton)`
   align-self: flex-end;
 `;
 
-class ObservedBehaviors extends React.Component<Props> {
+class SubjectInformation extends React.Component<Props> {
 
   constructor(props) {
     super(props);
@@ -378,4 +378,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ObservedBehaviors));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(SubjectInformation));
