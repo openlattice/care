@@ -17,9 +17,7 @@ import * as RoutingSagas from '../router/RoutingSagas';
 import * as AppSagas from '../../containers/app/AppSagas';
 import * as DashboardSagas from '../../containers/dashboard/DashboardSagas';
 import * as DownloadsSagas from '../../containers/downloads/DownloadsSagas';
-import * as FollowUpReportSagas from '../../containers/followup/FollowUpReportSagas';
 import * as PeopleSagas from '../../containers/people/PeopleSagas';
-import * as ReportSagas from '../../containers/form/ReportSagas';
 import * as ReportsSagas from '../../containers/reports/ReportsSagas';
 import * as SearchSagas from '../../containers/search/SearchSagas';
 import * as SubmitSagas from '../../utils/submit/SubmitSagas';
@@ -63,16 +61,9 @@ export default function* sagas() :Generator<*, *, *> {
     // Downloads Sagas
     fork(DownloadsSagas.downloadFormsWatcher),
 
-    // Follow-Up Report Sagas
-    fork(FollowUpReportSagas.submitFollowUpReportWatcher),
-
     // People Sagas
     fork(PeopleSagas.editPersonWatcher),
     fork(PeopleSagas.searchPeopleWatcher),
-
-    // Report Sagas
-    fork(ReportSagas.hardRestartWatcher),
-    fork(ReportSagas.submitReportWatcher),
 
     // ReportsSagas
     fork(ReportsSagas.deleteReportWatcher),
