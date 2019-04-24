@@ -77,7 +77,7 @@ const LinkText = styled.span`
 `;
 
 // HACK
-const CRISIS_TEMPLATE_ORG_IDS = [
+/* const CRISIS_TEMPLATE_ORG_IDS = [
   // WASPC
   '8c732544-4c51-4129-b326-c87c83ac20a7',
   '9a582e49-2607-4817-9157-c0c484706297',
@@ -105,13 +105,9 @@ const CRISIS_TEMPLATE_ORG_IDS = [
   '67089f2e-48be-41e9-87b2-2269de47f101',
   'fd85f4e9-419c-4af9-8195-dc3a883bbed8',
   '7eebd1bf-71af-4339-8b2f-fe4f89d18393'
-];
+]; */
 
-type Props = {
-  orgId :string
-}
-
-const HomeContainer = ({ orgId } :Props) => (
+const HomeContainer = () => (
   <ContainerWrapper>
     <Content>
       <StyledNavLink to={Routes.CRISIS_PATH}>
@@ -123,30 +119,6 @@ const HomeContainer = ({ orgId } :Props) => (
           <FontAwesomeIcon icon={faAngleRight} size="2x" />
         </StyledNavCard>
       </StyledNavLink>
-      {
-        CRISIS_TEMPLATE_ORG_IDS.includes(orgId) ? null : (
-          <>
-            <StyledNavLink to={Routes.BHR_PATH}>
-              <StyledNavCard>
-                <LinkTextWrapper>
-                  <FontAwesomeIcon icon={faFileAlt} size="2x" />
-                  <LinkText>Behavioral Health Report</LinkText>
-                </LinkTextWrapper>
-                <FontAwesomeIcon icon={faAngleRight} size="2x" />
-              </StyledNavCard>
-            </StyledNavLink>
-            <StyledNavLink to={Routes.FOLLOW_UP_PATH}>
-              <StyledNavCard>
-                <LinkTextWrapper>
-                  <FontAwesomeIcon icon={faFileAlt} size="2x" />
-                  <LinkText>Follow-Up Report</LinkText>
-                </LinkTextWrapper>
-                <FontAwesomeIcon icon={faAngleRight} size="2x" />
-              </StyledNavCard>
-            </StyledNavLink>
-          </>
-        )
-      }
     </Content>
   </ContainerWrapper>
 );
