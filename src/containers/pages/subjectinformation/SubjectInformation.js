@@ -65,11 +65,7 @@ const DatePickerWrapper = styled.div`
 
 class SubjectInformation extends React.Component<Props> {
 
-  constructor(props) {
-    super(props);
-
-    this.searchTimeout = null;
-  }
+  searchTimeout = null;
 
   renderInput = (field, disabledIfSelected, width) => {
     const { values, actions } = this.props;
