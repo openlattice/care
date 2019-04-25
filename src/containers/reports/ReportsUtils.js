@@ -45,7 +45,7 @@ const compileNatureOfCrisisData = (data :Map) => ({
 });
 
 const compileOfficerSafetyData = (data :Map) => ({
-  
+
 });
 
 const compileDispositionData = (data :Map) => ({
@@ -53,7 +53,9 @@ const compileDispositionData = (data :Map) => ({
 });
 
 export {
-  compileSubjectData,
+  compileDispositionData,
+  compileNatureOfCrisisData,
   compileObservedBehaviorData,
-  compileNatureOfCrisisData
+  compileOfficerSafetyData,
+  compileSubjectData,
 };
