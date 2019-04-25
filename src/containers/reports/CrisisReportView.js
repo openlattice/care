@@ -37,7 +37,6 @@ import {
   getCurrentPage,
   getNextPath,
   getPrevPath,
-  setShowInvalidFields
 } from '../../utils/NavigationUtils';
 import {
   getStatus as validateSubjectInformation,
@@ -335,33 +334,17 @@ class CrisisTemplateContainer extends React.Component<Props, State> {
   }
 
   renderForwardButton = (page, index) => {
-    const { state } = this.props;
-
-    const isReview = index === PAGES.length - 2;
     const isSubmit = index === PAGES.length - 1;
-
-    const { validator, stateField } = page;
-    const complete = validator ? validator(state.get(stateField)) === FORM_STEP_STATUS.COMPLETED : true;
     const nextPath = getNextPath(window.location, PAGES.length + 1);
 
-    const disabled = (isSubmit || isReview) ? !this.isReadyToSubmit() : !complete;
-    let onClick = () => this.handlePageChange(nextPath);
+    const onClick = () => this.handlePageChange(nextPath);
 
-    if (disabled) {
-      const showInvalidFieldsPath = setShowInvalidFields(window.location);
-      onClick = () => this.handlePageChange(showInvalidFieldsPath);
-    }
-
-    let buttonText = 'Next';
-    if (isReview) {
-      buttonText = 'Review';
-    }
+    const buttonText = 'Next';
     if (isSubmit) {
-      buttonText = 'Submit';
-      onClick = this.handleSubmit;
+      return null;
     }
 
-    return <ForwardButton onClick={onClick} canProgress={!disabled}>{buttonText}</ForwardButton>;
+    return <ForwardButton onClick={onClick} canProgress>{buttonText}</ForwardButton>;
   }
 
   renderPage = (page, index) => {
@@ -496,7 +479,7 @@ class CrisisTemplateContainer extends React.Component<Props, State> {
         {
           currentPage > PAGES.length ? null : (
             <ProgressSidebar
-                formTitle="Crisis Template Report"
+                formTitle="Review Crisis Template"
                 currentStepNumber={currentPage - 1}
                 steps={this.getSidebarSteps()} />
           )
