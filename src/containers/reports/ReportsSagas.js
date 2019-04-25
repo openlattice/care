@@ -42,9 +42,11 @@ import {
 import {
   compileSubjectData,
   compileObservedBehaviorData,
+  compileNatureOfCrisisData,
 } from './ReportsUtils';
 import { setInputValues as setSubjectInformation } from '../pages/subjectinformation/ActionFactory';
 import { setInputValues as setObservedBehaviors } from '../pages/observedbehaviors/ActionFactory';
+import { setInputValues as setNatureOfCrisisData } from '../pages/natureofcrisis/ActionFactory';
 
 const LOG = new Logger('ReportsSagas');
 
@@ -183,9 +185,11 @@ function* getReportWorker(action :SequenceAction) :Generator<*, *, *> {
 
     const subjectInformation = compileSubjectData(subjectData);
     const observedBehaviors = compileObservedBehaviorData(reportData);
+    const natureOfCrisis = compileNatureOfCrisisData(reportData);
 
     yield put(setSubjectInformation(subjectInformation));
     yield put(setObservedBehaviors(observedBehaviors));
+    yield put(setNatureOfCrisisData(natureOfCrisis));
 
     yield put(getReport.success(action.id));
   }
