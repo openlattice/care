@@ -184,9 +184,6 @@ function* getReportWorker(action :SequenceAction) :Generator<*, *, *> {
 
     const subjectData = subjectDataList.first(Map()).get('neighborDetails', Map());
 
-
-    console.log(reportData, subjectData);
-
     const subjectInformation = compileSubjectData(subjectData);
     const observedBehaviors = compileObservedBehaviorData(reportData);
     const natureOfCrisis = compileNatureOfCrisisData(reportData);
@@ -198,7 +195,7 @@ function* getReportWorker(action :SequenceAction) :Generator<*, *, *> {
     yield put(setNatureOfCrisisData(natureOfCrisis));
     yield put(setOfficerSafetyData(officerSafety));
     yield put(setDispositionData(disposition));
-    
+
     yield put(getReport.success(action.id));
   }
   catch (error) {
