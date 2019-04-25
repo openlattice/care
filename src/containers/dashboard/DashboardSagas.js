@@ -81,8 +81,9 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *> {
 
     const ceiling = yield call(DataApi.getEntitySetSize, reportESId);
     const datePropertyTypeId = yield call(EntityDataModelApi.getPropertyTypeId, DATE_TIME_OCCURRED_FQN);
+    const startDate = moment().subtract(months, 'month').format(DATE_FORMAT);
     const bhrs = yield call(SearchApi.searchEntitySetData, reportESId, {
-      searchTerm: `${datePropertyTypeId}:[${moment().subtract(months, 'month').format(DATE_FORMAT)} TO *]`,
+      searchTerm: `${reportESId}.${datePropertyTypeId}:[${startDate} TO *]`,
       start: 0,
       maxHits: ceiling,
       fuzzy: false

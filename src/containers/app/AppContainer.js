@@ -14,25 +14,23 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import AppHeaderContainer from './AppHeaderContainer';
 import CrisisTemplateContainer from '../crisis/CrisisTemplateContainer';
 import DownloadsContainer from '../downloads/DownloadsContainer';
-import FollowUpReportManager from '../followup/FollowUpReportManager';
-import FormContainer from '../form/FormContainer';
 import HomeContainer from '../home/HomeContainer';
 import PeopleContainer from '../people/PeopleContainer';
 import Spinner from '../../components/spinner/Spinner';
 import HackyReportsManager from '../reports/HackyReportsManager';
 import DashboardContainer from '../dashboard/DashboardContainer';
+import SubscribeContainer from '../subscribe/SubscribeContainer';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { isValidUuid } from '../../utils/Utils';
 import { loadApp, loadHospitals, switchOrganization } from './AppActions';
 import {
-  BHR_PATH,
   CRISIS_PATH,
   DASHBOARD_PATH,
   DOWNLOADS_PATH,
-  FOLLOW_UP_PATH,
   HOME_PATH,
   PEOPLE_PATH,
-  REPORTS_PATH
+  REPORTS_PATH,
+  SUBSCRIBE_PATH
 } from '../../core/router/Routes';
 import {
   APP_CONTAINER_MAX_WIDTH,
@@ -185,13 +183,12 @@ class AppContainer extends Component<Props> {
     return (
       <Switch>
         <Route exact strict path={HOME_PATH} render={this.wrapComponent(HomeContainer)} />
-        <Route path={BHR_PATH} render={this.wrapComponent(FormContainer)} />
         <Route path={CRISIS_PATH} component={CrisisTemplateContainer} />
-        <Route path={FOLLOW_UP_PATH} render={this.wrapComponent(FollowUpReportManager)} />
         <Route path={REPORTS_PATH} render={this.wrapComponent(HackyReportsManager)} />
         <Route path={DASHBOARD_PATH} render={this.wrapComponent(DashboardContainer)} />
         <Route path={DOWNLOADS_PATH} render={this.wrapComponent(DownloadsContainer)} />
         <Route path={PEOPLE_PATH} render={this.wrapComponent(PeopleContainer)} />
+        <Route path={SUBSCRIBE_PATH} render={this.wrapComponent(SubscribeContainer)} />
         <Redirect to={HOME_PATH} />
       </Switch>
     );

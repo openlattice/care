@@ -14,7 +14,8 @@ import {
   DOWNLOADS_PATH,
   HOME_PATH,
   PEOPLE_PATH,
-  REPORTS_PATH
+  REPORTS_PATH,
+  SUBSCRIBE_PATH
 } from '../../core/router/Routes';
 
 const { NEUTRALS, PURPLES } = Colors;
