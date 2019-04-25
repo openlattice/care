@@ -44,7 +44,8 @@ type Props = {
     setInputValue :(value :{ field :string, value :Object }) => void,
     setInputValues :(values :{}) => void,
     searchConsumers :() => void
-  }
+  },
+  disabled :boolean;
 }
 
 const HeaderWithClearButton = styled.div`
@@ -114,7 +115,8 @@ class SubjectInformation extends React.Component<Props> {
   render() {
     const {
       actions,
-      values,
+      disabled,
+      values
     } = this.props;
 
     const isCreatingNewPerson = values.get(SUBJECT_INFORMATION.IS_NEW_PERSON);
@@ -143,7 +145,7 @@ class SubjectInformation extends React.Component<Props> {
         <Header>
           <HeaderWithClearButton>
             <h1>Person Information</h1>
-            <BackButton onClick={actions.clear} noMargin>Clear Fields</BackButton>
+            { !disabled && <BackButton onClick={actions.clear} noMargin>Clear Fields</BackButton> }
           </HeaderWithClearButton>
         </Header>
         <PersonFormSection>
@@ -180,7 +182,7 @@ class SubjectInformation extends React.Component<Props> {
                 <RequiredField><FormText noMargin>DOB</FormText></RequiredField>
                 <DatePicker
                     value={values.get(SUBJECT_INFORMATION.DOB)}
-                    isDisabled={!isCreatingNewPerson}
+                    isDisabled={!isCreatingNewPerson || disabled}
                     dateFormat="MM-DD-YYYY"
                     onChange={value => actions.setInputValue({ field: SUBJECT_INFORMATION.DOB, value })}
                     selectProps={{

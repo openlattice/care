@@ -330,6 +330,7 @@ class Disposition extends React.Component<Props> {
           </RequiredField>
           <DateTimePickerWrapper>
             <DateTimePicker
+                isDisabled={disabled}
                 dateFormat={dateFormat}
                 timeFormat={timeFormat}
                 timeIsEditable
