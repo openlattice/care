@@ -9,8 +9,10 @@ import {
   deleteReport,
   getReportNeighbors,
   getReports,
+  getReport,
   updateReport,
 } from './ReportsActions';
+import RequestStates from '../../utils/constants/RequestStates';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 
@@ -21,9 +23,9 @@ const INITIAL_STATE :Map<*, *> = fromJS({
     getReports: { error: Map() },
   },
   isDeletingReport: false,
-  isFetchingReport: false,
   isFetchingReports: false,
   isUpdatingReport: false,
+  fetchState: RequestStates.PRE_REQUEST,
   reports: List(),
   selectedReportData: Map(),
 });
@@ -31,6 +33,14 @@ const INITIAL_STATE :Map<*, *> = fromJS({
 export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :Object) {
 
   switch (action.type) {
+
+    case getReport.case(action.type): {
+      return getReport.reducer(state, action, {
+        REQUEST: () => state.set('fetchState', RequestStates.IS_REQUESTING),
+        SUCCESS: () => state.set('fetchState', RequestStates.REQUEST_SUCCESS),
+        FAILURE: () => state.set('fetchState', RequestStates.REQUEST_FAILURE),
+      });
+    }
 
     case deleteReport.case(action.type): {
       return deleteReport.reducer(state, action, {
