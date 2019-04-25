@@ -15,6 +15,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import { AuthUtils } from 'lattice-auth';
 
 import type { Match, RouterHistory } from 'react-router';
+import type { Dispatch } from 'redux';
 
 import Spinner from '../../components/spinner/Spinner';
 // import ReviewContainer from './ReviewContainer';
@@ -28,6 +29,7 @@ import Disposition from '../pages/disposition/Disposition';
 import submitConfig from '../../config/formconfig/CrisisTemplateConfig';
 import { FormWrapper as StyledPageWrapper } from '../../components/crisis/FormComponents';
 
+import { getReport } from './ReportsActions';
 import { hardRestart } from '../form/ReportActionFactory';
 import { submit } from '../../utils/submit/SubmitActionFactory';
 import { clearCrisisTemplate } from '../crisis/CrisisActionFactory';
@@ -61,7 +63,7 @@ import { FORM_STEP_STATUS } from '../../utils/constants/FormConstants';
 import { STATE, SUBMIT } from '../../utils/constants/StateConstants';
 import { POST_PROCESS_FIELDS } from '../../utils/constants/CrisisTemplateConstants';
 import { FORM_TYPE } from '../../utils/DataConstants';
-import { CRISIS_PATH, HOME_PATH } from '../../core/router/Routes';
+import { CRISIS_PATH, HOME_PATH, REPORT_ID_PARAM } from '../../core/router/Routes';
 import { MEDIA_QUERY_MD, MEDIA_QUERY_LG } from '../../core/style/Sizes';
 import { BLACK, INVALID_TAG } from '../../shared/Colors';
 
@@ -69,7 +71,8 @@ type Props = {
   actions :{
     hardRestart :() => void,
     clearCrisisTemplate :() => void,
-    submit :(args :Object) => void
+    submit :(args :Object) => void,
+    getReport :RequestSequence;
   },
   app :Map<*, *>,
   history :RouterHistory,
@@ -265,12 +268,14 @@ class CrisisTemplateContainer extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { history } = this.props;
+    const { actions, match } = this.props;
     const { formInProgress } = this.state;
 
     // if (!formInProgress && !window.location.href.endsWith(START_PATH)) {
     //   history.push(START_PATH);
     // }
+    const reportEKID :?UUID = match.params[REPORT_ID_PARAM.substr(1)];
+    actions.getReport(reportEKID);
     this.setState({ formInProgress: true });
   }
 
@@ -521,19 +526,22 @@ function mapStateToProps(state :Map<*, *>) :Object {
   };
 }
 
-function mapDispatchToProps(dispatch :Function) :Object {
+function mapDispatchToProps(dispatch :Dispatch<*>) :Object {
 
   const actions = {
+    clearCrisisTemplate,
+    getReport,
     hardRestart,
     submit,
-    clearCrisisTemplate
   };
 
   return {
+    // $FlowFixMe
     actions: bindActionCreators(actions, dispatch)
   };
 }
 
+// $FlowFixMe
 export default withRouter(
   connect(mapStateToProps, mapDispatchToProps)(CrisisTemplateContainer)
 );

@@ -3,12 +3,13 @@
  */
 
 import {
+  all,
   call,
   put,
   select,
   takeEvery,
 } from '@redux-saga/core/effects';
-import { List, Map } from 'immutable';
+import { List, Map, fromJS } from 'immutable';
 import { Models, Types } from 'lattice';
 import {
   DataApiActions,
@@ -18,7 +19,7 @@ import {
 } from 'lattice-sagas';
 
 import Logger from '../../utils/Logger';
-import { ERR_ACTION_VALUE_NOT_DEFINED } from '../../utils/Errors';
+import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
 import {
   DELETE_REPORT,
   GET_REPORT_NEIGHBORS,
@@ -31,15 +32,44 @@ import {
   getReports,
   updateReport,
 } from './ReportsActions';
+import { isValidUuid } from '../../utils/Utils';
+import { isDefined } from '../../utils/LangUtils';
+import {
+  getAppearsInESId,
+  getPeopleESId,
+  getReportESId,
+} from '../../utils/AppUtils';
+import {
+  compileSubjectData,
+  compileObservedBehaviorData,
+} from './ReportsUtils';
+import { setInputValues as setSubjectInformation } from '../pages/subjectinformation/ActionFactory';
+import { setInputValues as setObservedBehaviors } from '../pages/observedbehaviors/ActionFactory';
 
 const LOG = new Logger('ReportsSagas');
 
 const { FullyQualifiedName } = Models;
 const { DeleteTypes, UpdateTypes } = Types;
-const { deleteEntity, getEntitySetData, updateEntityData } = DataApiActions;
-const { deleteEntityWorker, getEntitySetDataWorker, updateEntityDataWorker } = DataApiSagas;
-const { searchEntityNeighbors } = SearchApiActions;
-const { searchEntityNeighborsWorker } = SearchApiSagas;
+const {
+  deleteEntity,
+  getEntityData,
+  getEntitySetData,
+  updateEntityData,
+} = DataApiActions;
+const {
+  deleteEntityWorker,
+  getEntityDataWorker,
+  getEntitySetDataWorker,
+  updateEntityDataWorker,
+} = DataApiSagas;
+const {
+  searchEntityNeighbors,
+  searchEntityNeighborsWithFilter,
+} = SearchApiActions;
+const {
+  searchEntityNeighborsWorker,
+  searchEntityNeighborsWithFilterWorker,
+} = SearchApiSagas;
 
 /*
  *
@@ -95,11 +125,73 @@ function* deleteReportWatcher() :Generator<*, *, *> {
 
 function* getReportWorker(action :SequenceAction) :Generator<*, *, *> {
   try {
-    yield put(getReport.request(action.id));
+    const { value: reportEKID } = action;
+    if (!isDefined(reportEKID)) throw ERR_ACTION_VALUE_NOT_DEFINED;
+    if (!isValidUuid(reportEKID)) throw ERR_ACTION_VALUE_TYPE;
+
+    yield put(getReport.request(action.id, reportEKID));
+
+    const app = yield select(state => state.getIn(['app'], Map()));
+    const reportESID :UUID = getReportESId(app);
+    const peopleESID :UUID = getPeopleESId(app);
+    const appearsInESID :UUID = getAppearsInESId(app);
+
+    // Get bhr.report data
+    const reportRequest = call(getEntityDataWorker, getEntityData({
+      entitySetId: reportESID,
+      entityKeyId: reportEKID,
+    }));
+
+    // Get person -> appearsin -> bhr.report
+    const personSearchParams = {
+      entitySetId: reportESID,
+      filter: {
+        entityKeyIds: [reportEKID],
+        edgeEntitySetIds: [appearsInESID],
+        destinationEntitySetIds: [],
+        sourceEntitySetIds: [peopleESID],
+      }
+    };
+
+    const personRequest = call(
+      searchEntityNeighborsWithFilterWorker,
+      searchEntityNeighborsWithFilter(personSearchParams)
+    );
+
+    const [reportResponse, personResponse] = yield all([
+      reportRequest,
+      personRequest
+    ]);
+
+    const reportData = fromJS(reportResponse.data);
+
+    // should only be one person per report
+    const subjectDataList = fromJS(personResponse.data)
+      .get(reportEKID, List());
+
+    if (subjectDataList.count() > 1) {
+      LOG.warn('more than one person found in report', reportEKID);
+    }
+    if (!subjectDataList.count()) {
+      LOG.warn('person not found in report', reportEKID);
+    }
+
+    const subjectData = subjectDataList.first(Map()).get('neighborDetails', Map());
+
+
+    console.log(reportData, subjectData);
+
+    const subjectInformation = compileSubjectData(subjectData);
+    const observedBehaviors = compileObservedBehaviorData(reportData);
+
+    yield put(setSubjectInformation(subjectInformation));
+    yield put(setObservedBehaviors(observedBehaviors));
+
     yield put(getReport.success(action.id));
   }
   catch (error) {
-    yield put(getReport.failure(action.id));
+    LOG.error('caught exception in worker saga', error);
+    yield put(getReport.failure(action.id, error));
   }
   finally {
     yield put(getReport.finally(action.id));
