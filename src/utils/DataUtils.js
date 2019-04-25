@@ -3,6 +3,8 @@ import { Constants } from 'lattice';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 
+export const SEARCH_PREFIX = 'entity';
+
 export const getFqnObj = (fqnStr) => {
   const splitStr = fqnStr.split('.');
   return {
@@ -25,3 +27,10 @@ export const stripIdField = (entity) => {
   }
   return newEntity;
 };
+
+export const getSearchTerm = (propertyTypeId, searchString) => `${SEARCH_PREFIX}.${propertyTypeId}:"${searchString}"`;
+
+export const getDateRangeSearchTerm = (
+  propertyTypeId,
+  searchString
+) => `${SEARCH_PREFIX}.${propertyTypeId}:${searchString}`;
