@@ -98,16 +98,6 @@ const OfficerSafety = ({ values, actions, disabled } :Props) => {
     );
   };
 
-  const renderInput = (field) => {
-    return (
-      <StyledInput
-          disabled={disabled}
-          name={field}
-          value={values.get(field)}
-          onChange={({ target }) => actions.setInputValue({ field, value: target.value })} />
-    );
-  };
-
   const clearDependentFields = (dependentListFields, dependentStringFields) => {
     if (dependentListFields) {
       dependentListFields.forEach((dependentListField) => {
@@ -163,7 +153,8 @@ const OfficerSafety = ({ values, actions, disabled } :Props) => {
               <FormSectionWithValidation invalid={invalidFields.includes(OFFICER_SAFETY.WEAPONS)}>
                 {renderCheckboxList(OFFICER_SAFETY.WEAPONS, WEAPONS, OFFICER_SAFETY.OTHER_WEAPON)}
               </FormSectionWithValidation>
-            </IndentWrapper>)
+            </IndentWrapper>
+          )
           : null}
 
         <FormText>Did subject threaten violence toward another person?</FormText>
@@ -178,7 +169,8 @@ const OfficerSafety = ({ values, actions, disabled } :Props) => {
             <IndentWrapper>
               <FormText>Threatened person relationship(s)</FormText>
               {renderCheckboxList(OFFICER_SAFETY.THREATENED_PERSON_RELATIONSHIP, RELATIONSHIP_TYPES)}
-            </IndentWrapper>)
+            </IndentWrapper>
+          )
           : null}
 
         <FormText>Were there any injuries during the incident?</FormText>
@@ -205,7 +197,8 @@ const OfficerSafety = ({ values, actions, disabled } :Props) => {
                 <FormText>Injury type(s)</FormText>
                 {renderCheckboxList(OFFICER_SAFETY.INJURY_TYPE, INJURY_TYPES, OFFICER_SAFETY.OTHER_INJURY_TYPE)}
               </FormSectionWithValidation>
-            </IndentWrapper>)
+            </IndentWrapper>
+          )
           : null}
 
       </FormSection>
