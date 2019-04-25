@@ -52,6 +52,8 @@ import {
   TIME_STR
 } from '../../utils/DateUtils';
 
+import { getDateRangeSearchTerm } from '../../utils/DataUtils';
+
 import {
   LOAD_DASHBOARD_DATA,
   loadDashboardData
@@ -83,7 +85,7 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *> {
     const datePropertyTypeId = yield call(EntityDataModelApi.getPropertyTypeId, DATE_TIME_OCCURRED_FQN);
     const startDate = moment().subtract(months, 'month').format(DATE_FORMAT);
     const bhrs = yield call(SearchApi.searchEntitySetData, reportESId, {
-      searchTerm: `${reportESId}.${datePropertyTypeId}:[${startDate} TO *]`,
+      searchTerm: getDateRangeSearchTerm(datePropertyTypeId, `[${startDate} TO *]`),
       start: 0,
       maxHits: ceiling,
       fuzzy: false
