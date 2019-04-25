@@ -40,13 +40,17 @@ import {
   getReportESId,
 } from '../../utils/AppUtils';
 import {
-  compileSubjectData,
-  compileObservedBehaviorData,
+  compileDispositionData,
   compileNatureOfCrisisData,
+  compileObservedBehaviorData,
+  compileOfficerSafetyData,
+  compileSubjectData,
 } from './ReportsUtils';
-import { setInputValues as setSubjectInformation } from '../pages/subjectinformation/ActionFactory';
-import { setInputValues as setObservedBehaviors } from '../pages/observedbehaviors/ActionFactory';
+import { setInputValues as setDispositionData } from '../pages/disposition/ActionFactory';
 import { setInputValues as setNatureOfCrisisData } from '../pages/natureofcrisis/ActionFactory';
+import { setInputValues as setObservedBehaviors } from '../pages/observedbehaviors/ActionFactory';
+import { setInputValues as setOfficerSafetyData } from '../pages/officersafety/ActionFactory';
+import { setInputValues as setSubjectInformation } from '../pages/subjectinformation/ActionFactory';
 
 const LOG = new Logger('ReportsSagas');
 
@@ -186,11 +190,15 @@ function* getReportWorker(action :SequenceAction) :Generator<*, *, *> {
     const subjectInformation = compileSubjectData(subjectData);
     const observedBehaviors = compileObservedBehaviorData(reportData);
     const natureOfCrisis = compileNatureOfCrisisData(reportData);
+    const officerSafety = compileOfficerSafetyData(reportData);
+    const disposition = compileDispositionData(reportData);
 
     yield put(setSubjectInformation(subjectInformation));
     yield put(setObservedBehaviors(observedBehaviors));
     yield put(setNatureOfCrisisData(natureOfCrisis));
-
+    yield put(setOfficerSafetyData(officerSafety));
+    yield put(setDispositionData(disposition));
+    
     yield put(getReport.success(action.id));
   }
   catch (error) {
