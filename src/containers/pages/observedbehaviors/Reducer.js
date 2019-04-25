@@ -4,7 +4,7 @@
 
 import { List, Map, fromJS } from 'immutable';
 
-import { SET_INPUT_VALUE } from './ActionFactory';
+import { SET_INPUT_VALUE, SET_INPUT_VALUES } from './ActionFactory';
 import { SUICIDE_BEHAVIORS } from './Constants';
 import { CLEAR_CRISIS_TEMPLATE } from '../../crisis/CrisisActionFactory';
 import { OBSERVED_BEHAVIORS, OTHER, POST_PROCESS_FIELDS } from '../../../utils/constants/CrisisTemplateConstants';
@@ -40,6 +40,9 @@ export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :
       const { field, value } = action.value;
       return state.set(field, value);
     }
+
+    case SET_INPUT_VALUES:
+      return state.merge(fromJS(action.value));
 
     case CLEAR_CRISIS_TEMPLATE:
       return INITIAL_STATE;
