@@ -124,7 +124,7 @@ const OfficerSafety = ({ values, actions, disabled } :Props) => {
       clearDependentFields(dependentListFields, dependentStringFields);
     };
 
-    return <YesNoToggle value={values.get(field)} onChange={onChange} />;
+    return <YesNoToggle disabled={disabled} value={values.get(field)} onChange={onChange} />;
   };
 
   const invalidFields = showInvalidFields(window.location) ? getInvalidFields(values) : [];

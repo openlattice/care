@@ -8,19 +8,20 @@ import {
   WHITE,
   OFF_WHITE,
   PURPLE,
-  GREEN
+  GRAY,
 } from '../../shared/Colors';
 
 type Props = {
   value :boolean,
-  onChange :(value :boolean) => void
+  onChange :(value :boolean) => void;
+  disabled :boolean;
 }
 
 const ToggleWrapper = styled.div`
   display: flex;
   flex-direction: row;
   border-radius: 3px;
-  border: 2px solid ${PURPLE};
+  border: 2px solid ${({ disabled }) => (disabled ? GRAY : PURPLE)};
   height: 40px;
   width: 130px;
 `;
@@ -34,8 +35,15 @@ const ToggleTab = styled.div`
   justify-content: center;
   align-items: center;
 
-  background-color: ${props => (props.selected ? PURPLE : WHITE)};
-  color: ${props => (props.selected ? WHITE : PURPLE)};
+  background-color: ${({ disabled, selected }) => {
+    if (disabled && selected) return GRAY;
+    return selected ? PURPLE : WHITE;
+  }};
+  color: ${({ disabled, selected }) => {
+    if (selected) return WHITE;
+    return (disabled) ? GRAY : PURPLE;
+  }};
+  pointer-events: ${props => (props.disabled ? 'none' : 'auto')};
 
   &:hover {
     cursor: pointer;
@@ -52,12 +60,12 @@ const ToggleTab = styled.div`
 
 `;
 
-const YesNoToggle = ({ value, onChange } :Props) => {
+const YesNoToggle = ({ value, onChange, disabled } :Props) => {
 
   return (
-    <ToggleWrapper>
-      <ToggleTab selected={!value} onClick={() => onChange(false)}>No</ToggleTab>
-      <ToggleTab selected={value} onClick={() => onChange(true)}>Yes</ToggleTab>
+    <ToggleWrapper disabled={disabled}>
+      <ToggleTab disabled={disabled} selected={!value} onClick={() => onChange(false)}>No</ToggleTab>
+      <ToggleTab disabled={disabled} selected={value} onClick={() => onChange(true)}>Yes</ToggleTab>
     </ToggleWrapper>
   );
 };
