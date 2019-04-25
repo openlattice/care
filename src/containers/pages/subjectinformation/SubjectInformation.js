@@ -139,7 +139,6 @@ class SubjectInformation extends React.Component<Props> {
     const PersonFormSection = isCreatingNewPerson ? FormSectionWithValidation : FormSection;
 
     return (
-          /* isCreatingNewPerson || values.get(SUBJECT_INFORMATION.PERSON_ID) ?  */
       <FormWrapper>
         <Header>
           <HeaderWithClearButton>

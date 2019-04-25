@@ -254,8 +254,6 @@ const PAGES = [
   // }
 ];
 
-const START_PATH = `${CRISIS_PATH}/1`;
-
 class CrisisTemplateContainer extends React.Component<Props, State> {
 
   constructor(props) {
@@ -268,14 +266,9 @@ class CrisisTemplateContainer extends React.Component<Props, State> {
 
   componentDidMount() {
     const { actions, match } = this.props;
-    const { formInProgress } = this.state;
 
-    // if (!formInProgress && !window.location.href.endsWith(START_PATH)) {
-    //   history.push(START_PATH);
-    // }
     const reportEKID :?UUID = match.params[REPORT_ID_PARAM.substr(1)];
     actions.getReport(reportEKID);
-    this.setState({ formInProgress: true });
   }
 
   componentWillUnmount() {
@@ -354,7 +347,7 @@ class CrisisTemplateContainer extends React.Component<Props, State> {
     return (
       <PageWrapper>
         <FormWrapper>
-          <Component />
+          <Component disabled />
         </FormWrapper>
         <ButtonRow>
           { index === 0

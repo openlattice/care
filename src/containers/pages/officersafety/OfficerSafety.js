@@ -38,10 +38,11 @@ type Props = {
   values :Map<*, *>,
   actions :{
     setInputValue :(value :{ field :string, value :Object }) => void
-  }
+  };
+  disabled :boolean;
 }
 
-const OfficerSafety = ({ values, actions } :Props) => {
+const OfficerSafety = ({ values, actions, disabled } :Props) => {
 
   const onCheckboxChange = (event) => {
     const { name, checked, value } = event.target;
@@ -74,6 +75,7 @@ const OfficerSafety = ({ values, actions } :Props) => {
 
     const checkboxes = valueList.map(value => (
       <StyledCheckbox
+          disabled={disabled}
           name={field}
           value={value}
           label={value}
@@ -87,6 +89,7 @@ const OfficerSafety = ({ values, actions } :Props) => {
         {checkboxes}
         { !!otherField && currentValues.includes(OTHER) ? (
           <StyledInput
+              disabled={disabled}
               key={`${field}-other-value`}
               value={values.get(otherField, '')}
               onChange={({ target }) => actions.setInputValue({ field: otherField, value: target.value })} />
@@ -98,6 +101,7 @@ const OfficerSafety = ({ values, actions } :Props) => {
   const renderInput = (field) => {
     return (
       <StyledInput
+          disabled={disabled}
           name={field}
           value={values.get(field)}
           onChange={({ target }) => actions.setInputValue({ field, value: target.value })} />

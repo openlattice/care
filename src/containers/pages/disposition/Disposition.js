@@ -44,7 +44,8 @@ type Props = {
   values :Map<*, *>,
   actions :{
     setInputValue :(value :{ field :string, value :Object }) => void
-  }
+  };
+  disabled :boolean;
 }
 
 const DateTimePickerWrapper = styled.div`
@@ -75,7 +76,7 @@ class Disposition extends React.Component<Props> {
   }
 
   render() {
-    const { values, actions } = this.props;
+    const { values, actions, disabled } = this.props;
     const { setInputValue } = actions;
 
     const clearDependentFields = (dependentListFields, dependentStringFields, dependentBoolFields) => {
@@ -109,6 +110,7 @@ class Disposition extends React.Component<Props> {
       const Input = isTextArea ? StyledTextArea : StyledInput;
       return (
         <Input
+            disabled={disabled}
             name={field}
             value={values.get(field)}
             onChange={({ target }) => actions.setInputValue({ field, value: target.value })} />
@@ -146,6 +148,7 @@ class Disposition extends React.Component<Props> {
 
       const checkboxes = valueList.map(value => (
         <StyledCheckbox
+            disabled={disabled}
             name={field}
             value={value}
             label={value}
@@ -159,6 +162,7 @@ class Disposition extends React.Component<Props> {
           {checkboxes}
           { !!otherField && currentValues.includes(OTHER) ? (
             <InputWithMargin
+                disabled={disabled}
                 key={`${field}-other-value`}
                 value={values.get(otherField, '')}
                 onChange={({ target }) => setInputValue({ field: otherField, value: target.value })} />
@@ -175,6 +179,7 @@ class Disposition extends React.Component<Props> {
 
       return (
         <StyledCheckbox
+            disabled={disabled}
             name={DISPOSITION.DISPOSITIONS}
             checked={values.get(DISPOSITION.DISPOSITIONS).includes(value)}
             label={value}
@@ -199,6 +204,7 @@ class Disposition extends React.Component<Props> {
 
       return (
         <StyledRadio
+            disabled={disabled}
             label={label}
             checked={checked}
             onChange={onChange} />
@@ -213,7 +219,7 @@ class Disposition extends React.Component<Props> {
         field: DISPOSITION.INCIDENT_DATE_TIME,
         value
       });
-    }
+    };
 
     const hasDisposition = value => values.get(DISPOSITION.DISPOSITIONS).includes(value);
 
