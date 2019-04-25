@@ -72,7 +72,7 @@ export function getInvalidFields(state :Map<*, *>) {
   return invalidFields;
 }
 
-export function getStatus(state :Map<*, *>) :boolean {
+export function getStatus(state :Map<*, *>) :string {
   if (state === INITIAL_STATE) {
     return FORM_STEP_STATUS.INITIAL;
   }
