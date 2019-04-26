@@ -17,7 +17,7 @@ import DownloadsContainer from '../downloads/DownloadsContainer';
 import HomeContainer from '../home/HomeContainer';
 import PeopleContainer from '../people/PeopleContainer';
 import Spinner from '../../components/spinner/Spinner';
-import HackyReportsManager from '../reports/HackyReportsManager';
+import HackyReportsManager from '../reports/LegitReportsRouter';
 import DashboardContainer from '../dashboard/DashboardContainer';
 import SubscribeContainer from '../subscribe/SubscribeContainer';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
