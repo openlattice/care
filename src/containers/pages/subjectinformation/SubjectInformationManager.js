@@ -25,7 +25,8 @@ class SubjectInformationManager extends Component<Props> {
   renderSubjectInformation = () => {
     const { values } = this.props;
     const isCreatingNewPerson = values.get(SUBJECT_INFORMATION.IS_NEW_PERSON);
-    if (isCreatingNewPerson) {
+    const hasPersonId = values.get(SUBJECT_INFORMATION.PERSON_ID) !== '';
+    if (isCreatingNewPerson || hasPersonId) {
       return <SubjectInformation />;
     }
     return null;

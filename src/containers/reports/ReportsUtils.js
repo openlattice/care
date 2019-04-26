@@ -24,7 +24,7 @@ import {
 const compileSubjectData = (subjectData :Map, reportData :Map) => {
 
   const dobUnknown = !subjectData.hasIn([FQN.PERSON_DOB_FQN, 0]);
-  const subjectDob = subjectData.getIn([FQN.AGE_FQN, 0], '');
+  const subjectDob = subjectData.getIn([FQN.PERSON_DOB_FQN, 0], '');
   const subjectDobMoment = moment(subjectDob);
 
   const reportedAge = reportData.getIn([FQN.AGE_FQN, 0], '');
@@ -82,9 +82,9 @@ const compileOfficerSafetyData = (data :Map) => {
 
   const hadInjuries = (
     injuryType.length > 0
-    || isDefined(otherInjuryType)
+    || otherInjuryType.length > 0
     || injuredParties.length > 0
-    || isDefined(otherInjuredPerson)
+    || otherInjuredPerson.length > 0
   );
 
   return {
