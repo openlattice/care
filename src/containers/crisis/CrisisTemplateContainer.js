@@ -20,7 +20,7 @@ import Spinner from '../../components/spinner/Spinner';
 import ReviewContainer from './ReviewContainer';
 import BackButton from '../../components/buttons/BackButton';
 import ProgressSidebar from '../../components/form/ProgressSidebar';
-import SubjectInformation from '../pages/subjectinformation/SubjectInformation';
+import SubjectInformationManager from '../pages/subjectinformation/SubjectInformationManager';
 import ObservedBehaviors from '../pages/observedbehaviors/ObservedBehaviors';
 import NatureOfCrisis from '../pages/natureofcrisis/NatureOfCrisis';
 import OfficerSafety from '../pages/officersafety/OfficerSafety';
@@ -208,7 +208,7 @@ const SubmittedView = styled.div`
 
 const PAGES = [
   {
-    Component: SubjectInformation,
+    Component: SubjectInformationManager,
     validator: validateSubjectInformation,
     title: 'Person Information',
     stateField: STATE.SUBJECT_INFORMATION,
@@ -485,7 +485,7 @@ class CrisisTemplateContainer extends React.Component<Props, State> {
         {
           currentPage > PAGES.length ? null : (
             <ProgressSidebar
-                formTitle="Crisis Template"
+                formTitle="New Crisis Template"
                 currentStepNumber={currentPage - 1}
                 steps={this.getSidebarSteps()} />
           )

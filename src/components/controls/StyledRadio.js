@@ -13,17 +13,18 @@ export const RadioInputContainer = styled.input.attrs({
 `;
 
 export const RadioContainer = styled.label`
-  display: inline-flex;
+  display: inline-block;
   position: relative;
-  padding-left: 30px;
-  margin: 5px;
+  color: ${props => (props.disabled ? '#8e929b' : '#2e2e34')};
   font-size: 16px;
-  color: #2e2e34;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+  font-family: 'Open Sans', sans-serif;
   font-weight: normal;
+  line-height: 19px;
+  margin: 5px 0;
+  min-height: 20px;
+  padding-left: 30px;
+  user-select: none;
+  white-space: pre-wrap;
 `;
 
 export const RadioSelection = styled.span`
@@ -34,10 +35,11 @@ export const RadioSelection = styled.span`
   width: 20px;
   background-color: #e6e6f7;
   border-radius: 50%;
-  border: 1px solid #c9c9da;
+  border: 1px solid #e6e6f7;
 
   ${RadioContainer}:hover ${RadioInputContainer} ~ & {
     background-color: #ccc;
+    border-color: #ccc;
     cursor: pointer;
   }
 
@@ -47,8 +49,14 @@ export const RadioSelection = styled.span`
   }
 
   ${RadioContainer} ${RadioInputContainer}:disabled ~ & {
-    background-color: rgb(244, 245, 247);
+    background-color: #e6e6f7;
+    border: 1px solid #e6e6f7;
     cursor: default;
+  }
+
+  ${RadioContainer} ${RadioInputContainer}:checked:disabled ~ & {
+    background-color: #b6bbc7;
+    border: 1px solid #b6bbc7;
   }
 
   &:after {
@@ -69,10 +77,6 @@ export const RadioSelection = styled.span`
     border-radius: 50%;
     background-color: white;
   }
-
-  ${RadioContainer} ${RadioInputContainer}:disabled ~ &:after {
-    background-color: #ccc;
-  }
 `;
 
 type Props = {
@@ -92,7 +96,7 @@ const StyledRadio = ({
   onChange,
   disabled
 } :Props) => (
-  <RadioContainer>
+  <RadioContainer disabled={disabled}>
     {label}
     <RadioInputContainer
         name={name}

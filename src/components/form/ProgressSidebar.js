@@ -21,16 +21,16 @@ const {
 } = FORM_STEP_STATUS;
 
 type Step = {
-  title :string,
-  status :string,
-  onClick :() => void,
-  disabled :boolean
+  title :string;
+  status :string;
+  onClick :() => void;
+  disabled :boolean;
 }
 
 type Props = {
-  formTitle :string,
-  currentStepNumber :number,
-  steps :Step[]
+  formTitle :string;
+  currentStepNumber :number;
+  steps :Step[];
 }
 
 const CIRCLE_RADIUS = 13;

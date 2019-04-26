@@ -6,15 +6,17 @@ import React from 'react';
 import styled from 'styled-components';
 
 const Control = styled.label`
-  display: block;
+  display: inline-block;
   position: relative;
-  padding: 0 10px 0 20px;
-  margin-bottom: ${props => (props.noMargin ? 0 : 10)}px;
-  font-family: 'Open Sans', sans-serif;
+  color: ${props => (props.disabled ? '#8e929b' : '#2e2e34')};
   font-size: 16px;
+  font-family: 'Open Sans', sans-serif;
   font-weight: normal;
-  color: ${props => (props.checked ? '#2e2e34' : '#8e929b')};
-  cursor: ${props => (props.disabled ? 'default' : 'pointer')};
+  line-height: 19px;
+  margin: 5px 0;
+  min-height: 20px;
+  padding: 0 10px 0 30px;
+  vertical-align: middle;
 
   input {
     position: absolute;
@@ -29,6 +31,11 @@ const CheckboxInput = styled.input.attrs({
   position: absolute;
   z-index: -1;
   opacity: 0;
+  vertical-align: middle;
+  
+  :focus + div {
+    background: #ccc;
+  }
 `;
 
 const CheckboxIndicator = styled.div`
@@ -37,28 +44,26 @@ const CheckboxIndicator = styled.div`
   left: 0;
   height: 20px;
   width: 20px;
-  margin-top: -2px;
-  border-radius: 2px;
-  background: #E6E6F7;
+  background: #e6e6f7;
+  border-radius: 3px;
 
   ${Control}:hover input ~ &,
   ${Control} input:focus & {
-    background: #CCCCCC;
+    background: #ccc;
+    cursor: pointer;
   }
 
   ${Control} input:checked ~ & {
     background: #6124e2;
   }
 
-  ${Control}:hover input:not([disabled]):checked ~ &,
-  ${Control} input:checked:focus & {
-    background: #6124e2;
+  ${Control} input:disabled ~ & {
+    background: #e6e6f7;
+    cursor: default;
   }
 
-  ${Control} input:disabled ~ & {
-    background: #b6bbc6;
-    opacity: 0.6;
-    pointer-events: none;
+  ${Control} input:checked:disabled ~ &{
+    background: #b6bbc7;
   }
 
   &:after {
@@ -69,11 +74,10 @@ const CheckboxIndicator = styled.div`
     top: 4px;
     width: 3px;
     height: 8px;
-    border solid: #FFFFFF;
+    border: solid white;
     border-width: 0 2px 2px 0;
     transform: rotate(45deg);
 
-    ${Control} input:disabled ~ &,
     ${Control} input:checked ~ & {
       display: block;
     }
@@ -83,7 +87,7 @@ const CheckboxIndicator = styled.div`
       top: 4px;
       width: 5px;
       height: 10px;
-      border: solid #FFFFFF;
+      border: solid white;
       border-width: 0 2px 2px 0;
       transform: rotate(45deg);
     }
@@ -93,7 +97,6 @@ const CheckboxIndicator = styled.div`
 const CheckboxLabel = styled.span`
   margin-left: 5px;
   font-weight: ${props => (props.bold ? 600 : 400)};
-  color: #2e2e34;
 `;
 
 type Props = {

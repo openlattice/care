@@ -1,7 +1,8 @@
-import React from 'react';
+// @flow
 import { Map } from 'immutable';
+import type { FullyQualifiedName } from 'lattice';
 
-import { APP_TYPES_FQNS, STRING_ID_FQN } from '../shared/Consts';
+import { APP_TYPES_FQNS } from '../shared/Consts';
 
 const {
   APPEARS_IN_FQN,
@@ -12,16 +13,16 @@ const {
 
 export const getSelectedOrganizationId = (app :Map) => app.get('selectedOrganizationId');
 
-const getEntitySetId :string = (app :Map, fqn :FullyQualifiedName) => app.getIn([
+const getEntitySetId = (app :Map, fqn :FullyQualifiedName) :string => app.getIn([
   fqn.toString(),
   'entitySetsByOrganization',
   getSelectedOrganizationId(app)
 ]);
 
-export const getPeopleESId :string = (app :Map) => getEntitySetId(app, PEOPLE_FQN);
+export const getPeopleESId = (app :Map) :string => getEntitySetId(app, PEOPLE_FQN);
 
-export const getReportESId :string = (app :Map) => getEntitySetId(app, BEHAVIORAL_HEALTH_REPORT_FQN);
+export const getReportESId = (app :Map) :string => getEntitySetId(app, BEHAVIORAL_HEALTH_REPORT_FQN);
 
-export const getAppearsInESId :string = (app :Map) => getEntitySetId(app, APPEARS_IN_FQN);
+export const getAppearsInESId = (app :Map) :string => getEntitySetId(app, APPEARS_IN_FQN);
 
-export const getStaffESId :string = (app :Map) => getEntitySetId(app, STAFF_FQN);
+export const getStaffESId = (app :Map) :string => getEntitySetId(app, STAFF_FQN);

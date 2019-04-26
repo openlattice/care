@@ -26,7 +26,6 @@ import {
 } from './Constants';
 import {
   FormWrapper,
-  FormSection,
   FormSectionWithValidation,
   Header,
   IndentWrapper,
@@ -40,10 +39,11 @@ type Props = {
   values :Map<*, *>,
   actions :{
     setInputValue :(value :{ field :string, value :Object }) => void
-  }
+  };
+  diabled :boolean;
 }
 
-const NatureOfCrisis = ({ values, actions } :Props) => {
+const NatureOfCrisis = ({ values, actions, disabled } :Props) => {
 
   const onCheckboxChange = (event) => {
     const { name, checked, value } = event.target;
@@ -81,6 +81,7 @@ const NatureOfCrisis = ({ values, actions } :Props) => {
     const checkboxes = valueList.map(value => (
       <>
         <StyledCheckbox
+            disabled={disabled}
             name={field}
             value={value}
             label={value}
@@ -98,6 +99,7 @@ const NatureOfCrisis = ({ values, actions } :Props) => {
         {checkboxes}
         { !!otherField && currentValues.includes(OTHER) ? (
           <StyledInput
+              disabled={disabled}
               key={`${field}-other-value`}
               value={values.get(otherField, '')}
               onChange={({ target }) => actions.setInputValue({ field: otherField, value: target.value })} />
@@ -113,6 +115,7 @@ const NatureOfCrisis = ({ values, actions } :Props) => {
 
     return (
       <StyledRadio
+          disabled={disabled}
           label={label}
           checked={checked}
           onChange={onChange} />

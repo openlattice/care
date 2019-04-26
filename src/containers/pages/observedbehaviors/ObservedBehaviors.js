@@ -3,7 +3,6 @@
  */
 
 import React from 'react';
-import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
@@ -38,10 +37,11 @@ type Props = {
   values :Map<*, *>,
   actions :{
     setInputValue :(value :{ field :string, value :Object }) => void
-  }
+  },
+  disabled :boolean;
 }
 
-const ObservedBehaviors = ({ values, actions } :Props) => {
+const ObservedBehaviors = ({ values, actions, disabled } :Props) => {
 
   const onCheckboxChange = (event) => {
     const { name, checked, value } = event.target;
@@ -90,6 +90,7 @@ const ObservedBehaviors = ({ values, actions } :Props) => {
     const checkboxes = valueList.map(value => (
       <>
         <StyledCheckbox
+            disabled={disabled}
             name={field}
             value={value}
             label={value}
@@ -105,6 +106,7 @@ const ObservedBehaviors = ({ values, actions } :Props) => {
         {checkboxes}
         { !!otherField && currentValues.includes(OTHER) ? (
           <StyledInput
+              disabled={disabled}
               key={`${field}-other-value`}
               value={values.get(otherField, '')}
               onChange={({ target }) => actions.setInputValue({ field: otherField, value: target.value })} />
@@ -116,6 +118,7 @@ const ObservedBehaviors = ({ values, actions } :Props) => {
   const renderSingleCheckbox = (field, label) => {
     return (
       <StyledCheckbox
+          disabled={disabled}
           name={field}
           checked={values.get(field)}
           label={label}
@@ -138,6 +141,7 @@ const ObservedBehaviors = ({ values, actions } :Props) => {
 
     return (
       <StyledRadio
+          disabled={disabled}
           label={label}
           checked={checked}
           onChange={onChange} />
