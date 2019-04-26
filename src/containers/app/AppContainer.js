@@ -17,7 +17,7 @@ import DownloadsContainer from '../downloads/DownloadsContainer';
 import HomeContainer from '../home/HomeContainer';
 import PeopleContainer from '../people/PeopleContainer';
 import Spinner from '../../components/spinner/Spinner';
-import HackyReportsManager from '../reports/LegitReportsRouter';
+import LegitReportsRouter from '../reports/LegitReportsRouter';
 import DashboardContainer from '../dashboard/DashboardContainer';
 import SubscribeContainer from '../subscribe/SubscribeContainer';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
@@ -184,7 +184,7 @@ class AppContainer extends Component<Props> {
       <Switch>
         <Route exact strict path={HOME_PATH} render={this.wrapComponent(HomeContainer)} />
         <Route path={CRISIS_PATH} component={CrisisTemplateContainer} />
-        <Route path={REPORTS_PATH} component={HackyReportsManager} />
+        <Route path={REPORTS_PATH} component={LegitReportsRouter} />
         <Route path={DASHBOARD_PATH} render={this.wrapComponent(DashboardContainer)} />
         <Route path={DOWNLOADS_PATH} render={this.wrapComponent(DownloadsContainer)} />
         <Route path={PEOPLE_PATH} render={this.wrapComponent(PeopleContainer)} />
