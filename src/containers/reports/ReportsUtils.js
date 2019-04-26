@@ -82,9 +82,9 @@ const compileOfficerSafetyData = (data :Map) => {
 
   const hadInjuries = (
     injuryType.length > 0
-    || isDefined(otherInjuryType)
+    || otherInjuryType.length > 0
     || injuredParties.length > 0
-    || isDefined(otherInjuredPerson)
+    || otherInjuredPerson.length > 0
   );
 
   return {
