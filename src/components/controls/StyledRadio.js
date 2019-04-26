@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 export const RadioInputContainer = styled.input.attrs({
   type: 'radio'
