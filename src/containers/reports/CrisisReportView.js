@@ -14,7 +14,6 @@ import type { Match, RouterHistory } from 'react-router';
 import type { Dispatch } from 'redux';
 
 import Spinner from '../../components/spinner/Spinner';
-// import ReviewContainer from './ReviewContainer';
 import BackButton from '../../components/buttons/BackButton';
 import ProgressSidebar from '../../components/form/ProgressSidebar';
 import SubjectInformation from '../pages/subjectinformation/SubjectInformation';
