@@ -21,20 +21,37 @@ import {
   NOT_ARRESTED,
 } from '../pages/disposition/Constants';
 
-const compileSubjectData = (data :Map) => ({
-  [SUBJECT_INFORMATION.PERSON_ID]: data.getIn([FQN.PERSON_ID_FQN, 0], ''),
-  [SUBJECT_INFORMATION.FULL_NAME]: formatPersonName(data),
-  [SUBJECT_INFORMATION.FIRST]: data.getIn([FQN.PERSON_FIRST_NAME_FQN, 0], ''),
-  [SUBJECT_INFORMATION.LAST]: data.getIn([FQN.PERSON_LAST_NAME_FQN, 0], ''),
-  [SUBJECT_INFORMATION.MIDDLE]: data.getIn([FQN.PERSON_MIDDLE_NAME_FQN, 0], ''),
-  [SUBJECT_INFORMATION.AKA]: data.getIn([FQN.PERSON_NICK_NAME_FQN, 0], ''),
-  [SUBJECT_INFORMATION.DOB]: data.getIn([FQN.PERSON_DOB_FQN, 0], ''),
-  [SUBJECT_INFORMATION.RACE]: data.getIn([FQN.PERSON_RACE_FQN, 0], ''),
-  [SUBJECT_INFORMATION.GENDER]: data.getIn([FQN.PERSON_SEX_FQN, 0], ''),
-  [SUBJECT_INFORMATION.AGE]: moment().diff(moment(data.getIn([FQN.PERSON_DOB_FQN, 0], '')), 'years'),
-  [SUBJECT_INFORMATION.SSN_LAST_4]: 'XXXX',
-  [SUBJECT_INFORMATION.IS_NEW_PERSON]: false
-});
+const compileSubjectData = (subjectData :Map, reportData :Map) => {
+
+  const dobUnknown = !subjectData.hasIn([FQN.PERSON_DOB_FQN, 0]);
+  const subjectDob = subjectData.getIn([FQN.AGE_FQN, 0], '');
+  const subjectDobMoment = moment(subjectDob);
+
+  const reportedAge = reportData.getIn([FQN.AGE_FQN, 0], '');
+  const reportDateTime = reportData.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0], '');
+  const reportDateTimeMoment = moment(reportDateTime);
+
+  let ageDuringReport = reportedAge;
+  if (reportDateTimeMoment.isValid() && subjectDobMoment.isValid()) {
+    ageDuringReport = reportDateTimeMoment.diff(subjectDobMoment, 'years');
+  }
+
+  return {
+    [SUBJECT_INFORMATION.PERSON_ID]: subjectData.getIn([FQN.PERSON_ID_FQN, 0], ''),
+    [SUBJECT_INFORMATION.FULL_NAME]: formatPersonName(subjectData),
+    [SUBJECT_INFORMATION.FIRST]: subjectData.getIn([FQN.PERSON_FIRST_NAME_FQN, 0], ''),
+    [SUBJECT_INFORMATION.LAST]: subjectData.getIn([FQN.PERSON_LAST_NAME_FQN, 0], ''),
+    [SUBJECT_INFORMATION.MIDDLE]: subjectData.getIn([FQN.PERSON_MIDDLE_NAME_FQN, 0], ''),
+    [SUBJECT_INFORMATION.AKA]: subjectData.getIn([FQN.PERSON_NICK_NAME_FQN, 0], ''),
+    [SUBJECT_INFORMATION.DOB]: subjectDob,
+    [SUBJECT_INFORMATION.RACE]: subjectData.getIn([FQN.PERSON_RACE_FQN, 0], ''),
+    [SUBJECT_INFORMATION.GENDER]: subjectData.getIn([FQN.PERSON_SEX_FQN, 0], ''),
+    [SUBJECT_INFORMATION.AGE]: ageDuringReport,
+    [SUBJECT_INFORMATION.DOB_UNKNOWN]: dobUnknown,
+    [SUBJECT_INFORMATION.SSN_LAST_4]: 'XXXX',
+    [SUBJECT_INFORMATION.IS_NEW_PERSON]: false
+  };
+};
 
 const compileObservedBehaviorData = (data :Map) => ({
   [OBSERVED_BEHAVIORS.VETERAN]: data.getIn([FQN.MILITARY_STATUS_FQN, 0]) === 'Veteran',

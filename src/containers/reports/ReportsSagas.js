@@ -184,7 +184,7 @@ function* getReportWorker(action :SequenceAction) :Generator<*, *, *> {
 
     const subjectData = subjectDataList.first(Map()).get('neighborDetails', Map());
 
-    const subjectInformation = compileSubjectData(subjectData);
+    const subjectInformation = compileSubjectData(subjectData, reportData);
     const observedBehaviors = compileObservedBehaviorData(reportData);
     const natureOfCrisis = compileNatureOfCrisisData(reportData);
     const officerSafety = compileOfficerSafetyData(reportData);
