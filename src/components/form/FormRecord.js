@@ -1,0 +1,92 @@
+// @flow
+import React from 'react';
+import styled from 'styled-components';
+import moment from 'moment';
+import { Button } from 'lattice-ui-kit';
+
+import { MEDIA_QUERY_MD, MEDIA_QUERY_LG } from '../../core/style/Sizes';
+
+const StyledFormWrapper = styled.div`
+  display: flex;
+  flex: 1 1 auto;
+  align-items: flex-start;
+  background: #ffffff;
+  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);
+  flex-direction: row;
+  font-size: 14px;
+  margin-bottom: 5px;
+  padding: 20px;
+
+  @media only screen and (min-width: ${MEDIA_QUERY_MD}px) {
+    margin-bottom: 10px;
+  }
+
+  @media only screen and (min-width: ${MEDIA_QUERY_LG}px) {
+    margin-bottom: 15px;
+    font-size: 16px;
+  }
+`;
+
+const RecordGrid = styled.div`
+  display: grid;
+  width: 100%;
+  grid-gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+`;
+
+const Bold = styled.b`
+  font-weight: 600;
+  color: #2e2e34;
+
+  ::after {
+    content: ": ";
+  }
+`;
+
+const StyledButton = styled(Button)`
+  margin-left: auto;
+`;
+
+const StyledDiv = styled.div`
+  line-height: 20px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+`;
+
+type RecordProps = {
+  label :string;
+  time :string;
+  email :string;
+};
+const Record = ({ label, time, email } :RecordProps) => (
+  <div>
+    <StyledDiv>
+      <span>
+        <Bold>{label}</Bold>
+        {moment(time).format('MM/DD/YYYY h:mm A')}
+      </span>
+    </StyledDiv>
+    <StyledDiv>
+      <span>
+        <Bold>By</Bold>
+        {email}
+      </span>
+    </StyledDiv>
+  </div>
+);
+
+const FormRecord = () => {
+  return (
+    <StyledFormWrapper>
+      <RecordGrid>
+        <Record label="Submitted" email="solomonsolomonsolomonsolomonsolomon@openlattice.com" />
+      </RecordGrid>
+      <StyledButton mode="primary">
+        EDIT
+      </StyledButton>
+    </StyledFormWrapper>
+  );
+};
+
+export default FormRecord;
