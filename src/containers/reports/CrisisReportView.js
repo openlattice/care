@@ -168,15 +168,15 @@ const PAGES = [
 
 type Props = {
   actions :{
-    hardRestart :() => void,
-    clearCrisisTemplate :() => void,
-    submit :(args :Object) => void,
+    hardRestart :() => void;
+    clearCrisisTemplate :() => void;
+    submit :(args :Object) => void;
     getReport :RequestSequence;
-  },
-  history :RouterHistory,
+  };
+  history :RouterHistory;
   match :Match;
-  state :Map<*, *>,
-  fetchState :RequestState,
+  state :Map;
+  fetchState :RequestState;
   submittedStaff :Map;
   lastUpdatedStaff :Map;
 };
