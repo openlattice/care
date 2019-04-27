@@ -8,7 +8,8 @@ const {
   APPEARS_IN_FQN,
   BEHAVIORAL_HEALTH_REPORT_FQN,
   PEOPLE_FQN,
-  STAFF_FQN
+  STAFF_FQN,
+  REPORTED_FQN,
 } = APP_TYPES_FQNS;
 
 export const getSelectedOrganizationId = (app :Map) => app.get('selectedOrganizationId');
@@ -26,3 +27,5 @@ export const getReportESId = (app :Map) :string => getEntitySetId(app, BEHAVIORA
 export const getAppearsInESId = (app :Map) :string => getEntitySetId(app, APPEARS_IN_FQN);
 
 export const getStaffESId = (app :Map) :string => getEntitySetId(app, STAFF_FQN);
+
+export const getReportedESId = (app :Map) :string => getEntitySetId(app, REPORTED_FQN);

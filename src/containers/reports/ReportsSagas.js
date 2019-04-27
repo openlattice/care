@@ -38,6 +38,8 @@ import {
   getAppearsInESId,
   getPeopleESId,
   getReportESId,
+  getStaffESId,
+  getReportedESId,
 } from '../../utils/AppUtils';
 import {
   compileDispositionData,
@@ -141,6 +143,8 @@ function* getReportWorker(action :SequenceAction) :Generator<*, *, *> {
     const reportESID :UUID = getReportESId(app);
     const peopleESID :UUID = getPeopleESId(app);
     const appearsInESID :UUID = getAppearsInESId(app);
+    const reportedESID :UUID = getReportedESId(app);
+    const staffESID :UUID = getStaffESId(app);
 
     // Get bhr.report data
     const reportRequest = call(getEntityDataWorker, getEntityData({
@@ -164,11 +168,29 @@ function* getReportWorker(action :SequenceAction) :Generator<*, *, *> {
       searchEntityNeighborsWithFilter(personSearchParams)
     );
 
-    const [reportResponse, personResponse] = yield all([
+    const staffSearchParams = {
+      entitySetId: reportESID,
+      filter: {
+        entityKeyIds: [reportEKID],
+        edgeEntitySetIds: [reportedESID],
+        destinationEntitySetIds: [],
+        sourceEntitySetIds: [staffESID]
+      }
+    };
+
+    const staffRequest = call(
+      searchEntityNeighborsWithFilterWorker,
+      searchEntityNeighborsWithFilter(staffSearchParams)
+    );
+
+    const [reportResponse, personResponse, staffResponse] = yield all([
       reportRequest,
-      personRequest
+      personRequest,
+      staffRequest
     ]);
 
+    const staffData = fromJS(staffResponse.data);
+    console.log(staffData);
     const reportData = fromJS(reportResponse.data);
 
     // should only be one person per report
