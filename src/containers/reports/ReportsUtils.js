@@ -23,9 +23,9 @@ import {
 
 const compileSubjectData = (subjectData :Map, reportData :Map) => {
 
-  const dobUnknown = !subjectData.hasIn([FQN.PERSON_DOB_FQN, 0]);
   const subjectDob = subjectData.getIn([FQN.PERSON_DOB_FQN, 0], '');
   const subjectDobMoment = moment(subjectDob);
+  const dobUnknown = !!subjectDob;
 
   const reportedAge = reportData.getIn([FQN.AGE_FQN, 0], '');
   const reportDateTime = reportData.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0], '');
