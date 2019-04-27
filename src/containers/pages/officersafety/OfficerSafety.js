@@ -38,10 +38,11 @@ type Props = {
   values :Map<*, *>,
   actions :{
     setInputValue :(value :{ field :string, value :Object }) => void
-  }
+  };
+  disabled :boolean;
 }
 
-const OfficerSafety = ({ values, actions } :Props) => {
+const OfficerSafety = ({ values, actions, disabled } :Props) => {
 
   const onCheckboxChange = (event) => {
     const { name, checked, value } = event.target;
@@ -74,6 +75,7 @@ const OfficerSafety = ({ values, actions } :Props) => {
 
     const checkboxes = valueList.map(value => (
       <StyledCheckbox
+          disabled={disabled}
           name={field}
           value={value}
           label={value}
@@ -87,20 +89,12 @@ const OfficerSafety = ({ values, actions } :Props) => {
         {checkboxes}
         { !!otherField && currentValues.includes(OTHER) ? (
           <StyledInput
+              disabled={disabled}
               key={`${field}-other-value`}
               value={values.get(otherField, '')}
               onChange={({ target }) => actions.setInputValue({ field: otherField, value: target.value })} />
         ) : null}
       </>
-    );
-  };
-
-  const renderInput = (field) => {
-    return (
-      <StyledInput
-          name={field}
-          value={values.get(field)}
-          onChange={({ target }) => actions.setInputValue({ field, value: target.value })} />
     );
   };
 
@@ -130,7 +124,7 @@ const OfficerSafety = ({ values, actions } :Props) => {
       clearDependentFields(dependentListFields, dependentStringFields);
     };
 
-    return <YesNoToggle value={values.get(field)} onChange={onChange} />;
+    return <YesNoToggle disabled={disabled} value={values.get(field)} onChange={onChange} />;
   };
 
   const invalidFields = showInvalidFields(window.location) ? getInvalidFields(values) : [];
@@ -159,7 +153,8 @@ const OfficerSafety = ({ values, actions } :Props) => {
               <FormSectionWithValidation invalid={invalidFields.includes(OFFICER_SAFETY.WEAPONS)}>
                 {renderCheckboxList(OFFICER_SAFETY.WEAPONS, WEAPONS, OFFICER_SAFETY.OTHER_WEAPON)}
               </FormSectionWithValidation>
-            </IndentWrapper>)
+            </IndentWrapper>
+          )
           : null}
 
         <FormText>Did subject threaten violence toward another person?</FormText>
@@ -174,7 +169,8 @@ const OfficerSafety = ({ values, actions } :Props) => {
             <IndentWrapper>
               <FormText>Threatened person relationship(s)</FormText>
               {renderCheckboxList(OFFICER_SAFETY.THREATENED_PERSON_RELATIONSHIP, RELATIONSHIP_TYPES)}
-            </IndentWrapper>)
+            </IndentWrapper>
+          )
           : null}
 
         <FormText>Were there any injuries during the incident?</FormText>
@@ -201,7 +197,8 @@ const OfficerSafety = ({ values, actions } :Props) => {
                 <FormText>Injury type(s)</FormText>
                 {renderCheckboxList(OFFICER_SAFETY.INJURY_TYPE, INJURY_TYPES, OFFICER_SAFETY.OTHER_INJURY_TYPE)}
               </FormSectionWithValidation>
-            </IndentWrapper>)
+            </IndentWrapper>
+          )
           : null}
 
       </FormSection>

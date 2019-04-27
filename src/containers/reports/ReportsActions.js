@@ -16,12 +16,17 @@ const getReports :RequestSequence = newRequestSequence(GET_REPORTS);
 const UPDATE_REPORT :'UPDATE_REPORT' = 'UPDATE_REPORT';
 const updateReport :RequestSequence = newRequestSequence(UPDATE_REPORT);
 
+const GET_REPORT :'GET_REPORT' = 'GET_REPORT';
+const getReport :RequestSequence = newRequestSequence(GET_REPORT);
+
 export {
   DELETE_REPORT,
   GET_REPORT_NEIGHBORS,
+  GET_REPORT,
   GET_REPORTS,
   UPDATE_REPORT,
   deleteReport,
+  getReport,
   getReportNeighbors,
   getReports,
   updateReport,

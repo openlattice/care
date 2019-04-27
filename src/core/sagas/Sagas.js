@@ -70,6 +70,7 @@ export default function* sagas() :Generator<*, *, *> {
     fork(ReportsSagas.getReportNeighborsWatcher),
     fork(ReportsSagas.getReportsWatcher),
     fork(ReportsSagas.updateReportWatcher),
+    fork(ReportsSagas.getReportWatcher),
 
     // SearchSagas
     fork(SearchSagas.searchConsumerNeighborsWatcher),
