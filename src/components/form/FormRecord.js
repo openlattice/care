@@ -1,9 +1,13 @@
 // @flow
 import React from 'react';
 import styled from 'styled-components';
+import { Map } from 'immutable';
 import moment from 'moment';
-import { Button } from 'lattice-ui-kit';
 
+import {
+  DATE_TIME_FQN,
+  PERSON_ID_FQN,
+} from '../../edm/DataModelFqns';
 import { MEDIA_QUERY_MD, MEDIA_QUERY_LG } from '../../core/style/Sizes';
 
 const StyledFormWrapper = styled.div`
@@ -43,10 +47,6 @@ const Bold = styled.b`
   }
 `;
 
-const StyledButton = styled(Button)`
-  margin-left: auto;
-`;
-
 const StyledDiv = styled.div`
   line-height: 20px;
   white-space: nowrap;
@@ -76,15 +76,33 @@ const Record = ({ label, time, email } :RecordProps) => (
   </div>
 );
 
-const FormRecord = () => {
+type FormRecordProps = {
+  submitted :Map;
+  lastUpdated :Map;
+}
+const FormRecord = ({ submitted, lastUpdated } :FormRecordProps) => {
+
+  const submittedTime = submitted.getIn(['associationDetails', DATE_TIME_FQN, 0], '');
+  const submittedEmail = submitted.getIn(['neighborDetails', PERSON_ID_FQN, 0], '');
+  const lastTime = lastUpdated.getIn(['associationDetails', DATE_TIME_FQN, 0], '');
+  const lastEmail = lastUpdated.getIn(['neighborDetails', PERSON_ID_FQN, 0], '');
+
   return (
     <StyledFormWrapper>
       <RecordGrid>
-        <Record label="Submitted" email="solomonsolomonsolomonsolomonsolomon@openlattice.com" />
+        <Record
+            label="Submitted"
+            time={submittedTime}
+            email={submittedEmail} />
+        { !lastUpdated.isEmpty()
+          && (
+            <Record
+                label="Last Updated"
+                time={lastTime}
+                email={lastEmail} />
+          )
+        }
       </RecordGrid>
-      <StyledButton mode="primary">
-        EDIT
-      </StyledButton>
     </StyledFormWrapper>
   );
 };

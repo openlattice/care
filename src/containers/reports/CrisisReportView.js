@@ -177,6 +177,8 @@ type Props = {
   match :Match;
   state :Map<*, *>,
   fetchState :RequestState,
+  submittedStaff :Map;
+  lastUpdatedStaff :Map;
 };
 
 class CrisisTemplateContainer extends React.Component<Props> {
@@ -267,7 +269,9 @@ class CrisisTemplateContainer extends React.Component<Props> {
   render() {
     const {
       fetchState,
-      match
+      match,
+      submittedStaff,
+      lastUpdatedStaff,
     } = this.props;
     const baseUrl = `${match.url}/1`;
     const currentPage = getCurrentPage(window.location);
@@ -288,7 +292,7 @@ class CrisisTemplateContainer extends React.Component<Props> {
         }
         <PageWrapper>
           <FormWrapper>
-            <FormRecordCard />
+            <FormRecordCard submitted={submittedStaff} lastUpdated={lastUpdatedStaff} />
             <Switch>
               {this.renderRoutes()}
               <Redirect to={baseUrl} />
@@ -303,8 +307,10 @@ class CrisisTemplateContainer extends React.Component<Props> {
 function mapStateToProps(state :Map<*, *>) :Object {
 
   return {
-    state,
     fetchState: state.getIn(['reports', 'fetchState'], RequestStates.PRE_REQUEST),
+    lastUpdatedStaff: state.getIn(['reports', 'lastUpdatedStaff'], Map()),
+    state,
+    submittedStaff: state.getIn(['reports', 'submittedStaff'], Map()),
   };
 }
 

@@ -9,6 +9,7 @@ import {
   select,
   takeEvery,
 } from '@redux-saga/core/effects';
+import moment from 'moment';
 import { List, Map, fromJS } from 'immutable';
 import { Models, Types } from 'lattice';
 import {
@@ -53,6 +54,7 @@ import { setInputValues as setNatureOfCrisisData } from '../pages/natureofcrisis
 import { setInputValues as setObservedBehaviors } from '../pages/observedbehaviors/ActionFactory';
 import { setInputValues as setOfficerSafetyData } from '../pages/officersafety/ActionFactory';
 import { setInputValues as setSubjectInformation } from '../pages/subjectinformation/ActionFactory';
+import * as FQN from '../../edm/DataModelFqns';
 
 const LOG = new Logger('ReportsSagas');
 
@@ -189,10 +191,18 @@ function* getReportWorker(action :SequenceAction) :Generator<*, *, *> {
       staffRequest
     ]);
 
-    const staffData = fromJS(staffResponse.data);
-    console.log(staffData);
-    const reportData = fromJS(reportResponse.data);
+    const staffDataList = fromJS(staffResponse.data)
+      .get(reportEKID, List())
+      .sort((staffA :Map, staffB :Map) :number => {
+        const timeA = moment(staffA.getIn(['associationDetails', FQN.DATE_TIME_FQN, 0]));
+        const timeB = moment(staffB.getIn(['associationDetails', FQN.DATE_TIME_FQN, 0]));
+        return timeA.diff(timeB);
+      });
 
+    const submittedStaff :Map = staffDataList.first(Map());
+    const lastUpdatedStaff :Map = !staffDataList.last(Map()).equals(submittedStaff) ? staffDataList.last(Map()) : Map();
+
+    const reportData = fromJS(reportResponse.data);
     // should only be one person per report
     const subjectDataList = fromJS(personResponse.data)
       .get(reportEKID, List());
@@ -218,7 +228,7 @@ function* getReportWorker(action :SequenceAction) :Generator<*, *, *> {
     yield put(setOfficerSafetyData(officerSafety));
     yield put(setDispositionData(disposition));
 
-    yield put(getReport.success(action.id));
+    yield put(getReport.success(action.id, { submittedStaff, lastUpdatedStaff }));
   }
   catch (error) {
     LOG.error('caught exception in worker saga', error);
