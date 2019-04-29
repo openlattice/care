@@ -1,8 +1,9 @@
 // @flow
 import React from 'react';
 import styled from 'styled-components';
-import { Map } from 'immutable';
 import moment from 'moment';
+import { Button } from 'lattice-ui-kit';
+import { Map } from 'immutable';
 
 import {
   DATE_TIME_FQN,
@@ -77,10 +78,21 @@ const Record = ({ label, time, email } :RecordProps) => (
 );
 
 type FormRecordProps = {
-  submitted :Map;
   lastUpdated :Map;
+  onClickPrimary :() => void;
+  onClickSecondary :() => void;
+  primaryText ? :string;
+  secondaryText ? :String;
+  submitted :Map;
 }
-const FormRecord = ({ submitted, lastUpdated } :FormRecordProps) => {
+const FormRecord = ({
+  lastUpdated,
+  onClickPrimary,
+  onClickSecondary,
+  primaryText,
+  secondaryText,
+  submitted,
+} :FormRecordProps) => {
 
   const submittedTime = submitted.getIn(['associationDetails', DATE_TIME_FQN, 0], '');
   const submittedEmail = submitted.getIn(['neighborDetails', PERSON_ID_FQN, 0], '');
@@ -94,7 +106,7 @@ const FormRecord = ({ submitted, lastUpdated } :FormRecordProps) => {
             label="Submitted"
             time={submittedTime}
             email={submittedEmail} />
-        { !lastUpdated.isEmpty()
+        { lastUpdated.isEmpty()
           && (
             <Record
                 label="Last Updated"
@@ -103,8 +115,18 @@ const FormRecord = ({ submitted, lastUpdated } :FormRecordProps) => {
           )
         }
       </RecordGrid>
+      <Button
+          onClick={onClickPrimary}
+          mode="primary">
+        {primaryText}
+      </Button>
     </StyledFormWrapper>
   );
+};
+
+FormRecord.defaultProps = {
+  primaryText: 'Edit',
+  secondaryText: 'Delete'
 };
 
 export default FormRecord;

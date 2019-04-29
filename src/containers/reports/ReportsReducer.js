@@ -12,6 +12,7 @@ import {
   getReport,
   updateReport,
 } from './ReportsActions';
+import { CLEAR_CRISIS_TEMPLATE } from '../crisis/CrisisActionFactory';
 import RequestStates from '../../utils/constants/RequestStates';
 
 const { OPENLATTICE_ID_FQN } = Constants;
@@ -35,6 +36,10 @@ const INITIAL_STATE :Map<*, *> = fromJS({
 export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :Object) {
 
   switch (action.type) {
+
+    case CLEAR_CRISIS_TEMPLATE: {
+      return state;
+    }
 
     case getReport.case(action.type): {
       return getReport.reducer(state, action, {

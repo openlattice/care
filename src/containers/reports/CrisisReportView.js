@@ -15,6 +15,7 @@ import type { Dispatch } from 'redux';
 
 import FormRecordCard from '../../components/form/FormRecord';
 import Spinner from '../../components/spinner/Spinner';
+import ReviewContainer from '../crisis/ReviewContainer';
 import BackButton from '../../components/buttons/BackButton';
 import ProgressSidebar from '../../components/form/ProgressSidebar';
 import SubjectInformation from '../pages/subjectinformation/SubjectInformation';
@@ -29,6 +30,7 @@ import {
   getCurrentPage,
   getNextPath,
   getPrevPath,
+  setShowInvalidFields
 } from '../../utils/NavigationUtils';
 import {
   getStatus as validateSubjectInformation,
@@ -50,6 +52,7 @@ import {
   getStatus as validateDisposition,
   processForSubmit as processDisposition
 } from '../pages/disposition/Reducer';
+import { FORM_STEP_STATUS } from '../../utils/constants/FormConstants';
 import { STATE } from '../../utils/constants/StateConstants';
 import { REPORT_ID_PARAM } from '../../core/router/Routes';
 import { MEDIA_QUERY_MD, MEDIA_QUERY_LG } from '../../core/style/Sizes';
@@ -164,6 +167,13 @@ const PAGES = [
     stateField: STATE.DISPOSITION,
     postProcessor: processDisposition
   },
+  {
+    Component: ReviewContainer,
+    title: 'Review & Submit',
+    stateField: '',
+    postProcessor: () => ({}),
+    requireAllPreviousValid: true
+  }
 ];
 
 type Props = {
@@ -181,7 +191,15 @@ type Props = {
   lastUpdatedStaff :Map;
 };
 
-class CrisisTemplateContainer extends React.Component<Props> {
+type State = {
+  edit :boolean;
+}
+
+class CrisisTemplateContainer extends React.Component<Props, State> {
+
+  state = {
+    edit: false
+  }
 
   componentDidMount() {
     const { actions, match } = this.props;
@@ -204,28 +222,68 @@ class CrisisTemplateContainer extends React.Component<Props> {
     });
   }
 
+  handleEditClick = () => {
+    const { edit } = this.state;
+    this.setState({
+      edit: !edit
+    });
+  }
+
+  handleDeleteClick = () => {
+    console.log('Doing delete things');
+  }
+
+  isReadyToSubmit = () => {
+    const { state } = this.props;
+    let ready = true;
+    PAGES.forEach((page) => {
+      const { validator, stateField } = page;
+      if (validator && validator(state.get(stateField)) !== FORM_STEP_STATUS.COMPLETED) {
+        ready = false;
+      }
+    });
+
+    return ready;
+  }
+
   renderForwardButton = (page, index) => {
+    const { state } = this.props;
+
+    const isReview = index === PAGES.length - 2;
     const isSubmit = index === PAGES.length - 1;
+
+    const { validator, stateField } = page;
+    const complete = validator ? validator(state.get(stateField)) === FORM_STEP_STATUS.COMPLETED : true;
     const nextPath = getNextPath(window.location, PAGES.length + 1);
 
-    const onClick = () => this.handlePageChange(nextPath);
+    const disabled = (isSubmit || isReview) ? !this.isReadyToSubmit() : !complete;
+    let onClick = () => this.handlePageChange(nextPath);
 
-    const buttonText = 'Next';
-    if (isSubmit) {
-      return null;
+    if (disabled) {
+      const showInvalidFieldsPath = setShowInvalidFields(window.location);
+      onClick = () => this.handlePageChange(showInvalidFieldsPath);
     }
 
-    return <ForwardButton onClick={onClick} canProgress>{buttonText}</ForwardButton>;
+    let buttonText = 'Next';
+    if (isReview) {
+      buttonText = 'Review';
+    }
+    if (isSubmit) {
+      buttonText = 'Submit';
+      onClick = this.handleSubmit;
+    }
+
+    return <ForwardButton onClick={onClick} canProgress={!disabled}>{buttonText}</ForwardButton>;
   }
 
   renderPage = (page, index) => {
-
+    const { edit } = this.state;
     const { Component } = page;
     const prevPath = getPrevPath(window.location);
     return (
       <>
         <div>
-          <Component disabled />
+          <Component disabled={!edit} />
         </div>
         <ButtonRow>
           { (index !== 0) && <BackButton onClick={() => this.handlePageChange(prevPath)}>Back</BackButton> }
@@ -254,7 +312,7 @@ class CrisisTemplateContainer extends React.Component<Props> {
         validator,
         stateField,
       } = page;
-      const status = validator(state.get(stateField));
+      const status = validator ? validator(state.get(stateField)) : undefined;
       const onClick = () => history.push(`${currentPath}/${index + 1}`);
 
       return {
@@ -273,6 +331,7 @@ class CrisisTemplateContainer extends React.Component<Props> {
       submittedStaff,
       lastUpdatedStaff,
     } = this.props;
+    const { edit } = this.state;
     const baseUrl = `${match.url}/1`;
     const currentPage = getCurrentPage(window.location);
 
@@ -292,7 +351,12 @@ class CrisisTemplateContainer extends React.Component<Props> {
         }
         <PageWrapper>
           <FormWrapper>
-            <FormRecordCard submitted={submittedStaff} lastUpdated={lastUpdatedStaff} />
+            <FormRecordCard
+                onClickPrimary={this.handleEditClick}
+                onClickSecondary={this.handleDeleteClick}
+                primaryText={edit ? 'Discard' : 'Edit'}
+                submitted={submittedStaff}
+                lastUpdated={lastUpdatedStaff} />
             <Switch>
               {this.renderRoutes()}
               <Redirect to={baseUrl} />
