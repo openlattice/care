@@ -139,13 +139,15 @@ class SubjectInformation extends React.Component<Props> {
     };
 
     const PersonFormSection = isCreatingNewPerson ? FormSectionWithValidation : FormSection;
-
     return (
       <FormWrapper>
         <Header>
           <HeaderWithClearButton>
             <h1>Person Information</h1>
-            { !disabled && <BackButton onClick={actions.clear} noMargin>Clear Fields</BackButton> }
+            {
+              (!disabled && isCreatingNewPerson)
+              && <BackButton onClick={actions.clear} noMargin>Clear Fields</BackButton>
+            }
           </HeaderWithClearButton>
         </Header>
         <PersonFormSection>
