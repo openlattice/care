@@ -4,11 +4,14 @@
 
 import React from 'react';
 import styled from 'styled-components';
+import moment from 'moment';
+
 import { Map } from 'immutable';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { Redirect, Route, Switch } from 'react-router-dom';
+import { AuthUtils } from 'lattice-auth';
 
 import type { Match, RouterHistory } from 'react-router';
 import type { Dispatch } from 'redux';
@@ -54,6 +57,8 @@ import {
 } from '../pages/disposition/Reducer';
 import { FORM_STEP_STATUS } from '../../utils/constants/FormConstants';
 import { STATE } from '../../utils/constants/StateConstants';
+import { POST_PROCESS_FIELDS } from '../../utils/constants/CrisisTemplateConstants';
+import { FORM_TYPE } from '../../utils/DataConstants';
 import { REPORT_ID_PARAM } from '../../core/router/Routes';
 import { MEDIA_QUERY_MD, MEDIA_QUERY_LG } from '../../core/style/Sizes';
 import RequestStates from '../../utils/constants/RequestStates';
@@ -195,7 +200,7 @@ type State = {
   edit :boolean;
 }
 
-class CrisisTemplateContainer extends React.Component<Props, State> {
+class CrisisReportView extends React.Component<Props, State> {
 
   state = {
     edit: false
@@ -231,6 +236,30 @@ class CrisisTemplateContainer extends React.Component<Props, State> {
 
   handleDeleteClick = () => {
     console.log('Doing delete things');
+  }
+
+  handleSubmit = (e :SyntheticEvent) => {
+    console.log('Doing submit things');
+    e.preventDefault();
+
+    const {
+      actions,
+      app,
+      state
+    } = this.props;
+
+    let submission = {
+      [POST_PROCESS_FIELDS.FORM_TYPE]: FORM_TYPE.CRISIS_TEMPLATE,
+      [POST_PROCESS_FIELDS.TIMESTAMP]: moment().toISOString(true),
+      [POST_PROCESS_FIELDS.USER_EMAIL]: AuthUtils.getUserInfo().email
+    };
+
+    PAGES.forEach((page) => {
+      const { postProcessor, stateField } = page;
+      submission = Object.assign({}, submission, postProcessor(state.get(stateField)));
+    });
+
+    console.log(submission);
   }
 
   isReadyToSubmit = () => {
@@ -393,5 +422,5 @@ function mapDispatchToProps(dispatch :Dispatch<*>) :Object {
 
 // $FlowFixMe
 export default withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(CrisisTemplateContainer)
+  connect(mapStateToProps, mapDispatchToProps)(CrisisReportView)
 );
