@@ -13,6 +13,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import type { Match, RouterHistory } from 'react-router';
 import type { Dispatch } from 'redux';
 
+import FormRecordCard from '../../components/form/FormRecord';
 import Spinner from '../../components/spinner/Spinner';
 import BackButton from '../../components/buttons/BackButton';
 import ProgressSidebar from '../../components/form/ProgressSidebar';
@@ -55,19 +56,6 @@ import { MEDIA_QUERY_MD, MEDIA_QUERY_LG } from '../../core/style/Sizes';
 import RequestStates from '../../utils/constants/RequestStates';
 import type { RequestState } from '../../utils/constants/RequestStates';
 
-type Props = {
-  actions :{
-    hardRestart :() => void,
-    clearCrisisTemplate :() => void,
-    submit :(args :Object) => void,
-    getReport :RequestSequence;
-  },
-  history :RouterHistory,
-  match :Match;
-  state :Map<*, *>,
-  fetchState :RequestState,
-};
-
 const CrisisTemplateWrapper = styled.div`
   width: 100%;
   display: flex;
@@ -93,7 +81,6 @@ const PageWrapper = styled.div`
 `;
 
 const FormWrapper = styled.div`
-  padding: 5px;
   width: 100%;
 
   @media only screen and (min-width: ${MEDIA_QUERY_MD}px) {
@@ -179,6 +166,21 @@ const PAGES = [
   },
 ];
 
+type Props = {
+  actions :{
+    hardRestart :() => void;
+    clearCrisisTemplate :() => void;
+    submit :(args :Object) => void;
+    getReport :RequestSequence;
+  };
+  history :RouterHistory;
+  match :Match;
+  state :Map;
+  fetchState :RequestState;
+  submittedStaff :Map;
+  lastUpdatedStaff :Map;
+};
+
 class CrisisTemplateContainer extends React.Component<Props> {
 
   componentDidMount() {
@@ -221,15 +223,15 @@ class CrisisTemplateContainer extends React.Component<Props> {
     const { Component } = page;
     const prevPath = getPrevPath(window.location);
     return (
-      <PageWrapper>
-        <FormWrapper>
+      <>
+        <div>
           <Component disabled />
-        </FormWrapper>
+        </div>
         <ButtonRow>
           { (index !== 0) && <BackButton onClick={() => this.handlePageChange(prevPath)}>Back</BackButton> }
           {this.renderForwardButton(page, index)}
         </ButtonRow>
-      </PageWrapper>
+      </>
     );
   }
 
@@ -267,7 +269,9 @@ class CrisisTemplateContainer extends React.Component<Props> {
   render() {
     const {
       fetchState,
-      match
+      match,
+      submittedStaff,
+      lastUpdatedStaff,
     } = this.props;
     const baseUrl = `${match.url}/1`;
     const currentPage = getCurrentPage(window.location);
@@ -286,10 +290,15 @@ class CrisisTemplateContainer extends React.Component<Props> {
                 steps={this.getSidebarSteps()} />
           )
         }
-        <Switch>
-          {this.renderRoutes()}
-          <Redirect to={baseUrl} />
-        </Switch>
+        <PageWrapper>
+          <FormWrapper>
+            <FormRecordCard submitted={submittedStaff} lastUpdated={lastUpdatedStaff} />
+            <Switch>
+              {this.renderRoutes()}
+              <Redirect to={baseUrl} />
+            </Switch>
+          </FormWrapper>
+        </PageWrapper>
       </CrisisTemplateWrapper>
     );
   }
@@ -298,8 +307,10 @@ class CrisisTemplateContainer extends React.Component<Props> {
 function mapStateToProps(state :Map<*, *>) :Object {
 
   return {
-    state,
     fetchState: state.getIn(['reports', 'fetchState'], RequestStates.PRE_REQUEST),
+    lastUpdatedStaff: state.getIn(['reports', 'lastUpdatedStaff'], Map()),
+    state,
+    submittedStaff: state.getIn(['reports', 'submittedStaff'], Map()),
   };
 }
 

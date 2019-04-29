@@ -1,7 +1,6 @@
 // @flow
 import moment from 'moment';
 import { List, Map } from 'immutable';
-import { isDefined } from '../../utils/LangUtils';
 import * as FQN from '../../edm/DataModelFqns';
 import { formatPersonName } from '../pages/subjectinformation/SubjectInformationManagerUtils';
 import {
@@ -23,8 +22,8 @@ import {
 
 const compileSubjectData = (subjectData :Map, reportData :Map) => {
 
-  const dobUnknown = !subjectData.hasIn([FQN.PERSON_DOB_FQN, 0]);
   const subjectDob = subjectData.getIn([FQN.PERSON_DOB_FQN, 0], '');
+  const dobUnknown = !!subjectDob;
   const subjectDobMoment = moment(subjectDob);
 
   const reportedAge = reportData.getIn([FQN.AGE_FQN, 0], '');

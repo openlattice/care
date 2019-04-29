@@ -28,6 +28,8 @@ const INITIAL_STATE :Map<*, *> = fromJS({
   fetchState: RequestStates.PRE_REQUEST,
   reports: List(),
   selectedReportData: Map(),
+  submittedStaff: Map(),
+  lastUpdatedStaff: Map()
 });
 
 export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :Object) {
@@ -37,7 +39,13 @@ export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :
     case getReport.case(action.type): {
       return getReport.reducer(state, action, {
         REQUEST: () => state.set('fetchState', RequestStates.IS_REQUESTING),
-        SUCCESS: () => state.set('fetchState', RequestStates.REQUEST_SUCCESS),
+        SUCCESS: () => {
+          const { submittedStaff, lastUpdatedStaff } = action.value;
+          return state
+            .set('fetchState', RequestStates.REQUEST_SUCCESS)
+            .set('submittedStaff', submittedStaff)
+            .set('lastUpdatedStaff', lastUpdatedStaff);
+        },
         FAILURE: () => state.set('fetchState', RequestStates.REQUEST_FAILURE),
       });
     }
