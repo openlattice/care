@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { AuthUtils } from 'lattice-auth';
+import { ModalTransition } from '@atlaskit/modal-dialog';
 
 import type { Match, RouterHistory } from 'react-router';
 import type { Dispatch } from 'redux';
@@ -26,6 +27,9 @@ import ObservedBehaviors from '../pages/observedbehaviors/ObservedBehaviors';
 import NatureOfCrisis from '../pages/natureofcrisis/NatureOfCrisis';
 import OfficerSafety from '../pages/officersafety/OfficerSafety';
 import Disposition from '../pages/disposition/Disposition';
+import DiscardModal from '../../components/modals/DiscardModal';
+import RequestStates from '../../utils/constants/RequestStates';
+import type { RequestState } from '../../utils/constants/RequestStates';
 
 import { getReport, updateReport } from './ReportsActions';
 import { clearCrisisTemplate } from '../crisis/CrisisActionFactory';
@@ -59,10 +63,8 @@ import { FORM_STEP_STATUS } from '../../utils/constants/FormConstants';
 import { STATE } from '../../utils/constants/StateConstants';
 import { POST_PROCESS_FIELDS } from '../../utils/constants/CrisisTemplateConstants';
 import { FORM_TYPE } from '../../utils/DataConstants';
-import { REPORT_ID_PARAM } from '../../core/router/Routes';
+import { REPORT_ID_PARAM, HOME_PATH } from '../../core/router/Routes';
 import { MEDIA_QUERY_MD, MEDIA_QUERY_LG } from '../../core/style/Sizes';
-import RequestStates from '../../utils/constants/RequestStates';
-import type { RequestState } from '../../utils/constants/RequestStates';
 
 const CrisisTemplateWrapper = styled.div`
   width: 100%;
@@ -199,12 +201,14 @@ type Props = {
 
 type State = {
   edit :boolean;
+  showDiscard :boolean;
 }
 
 class CrisisReportView extends React.Component<Props, State> {
 
   state = {
-    edit: false
+    edit: false,
+    showDiscard: false
   }
 
   componentDidMount() {
@@ -233,6 +237,24 @@ class CrisisReportView extends React.Component<Props, State> {
     this.setState({
       edit: !edit
     });
+  }
+
+  handleShowDiscard = () => {
+    this.setState({
+      showDiscard: true
+    });
+  }
+
+  handleCloseDiscard = () => {
+    this.setState({
+      showDiscard: false
+    });
+  }
+
+  handleDiscardClick = () => {
+    const { actions, history } = this.props;
+    actions.clearCrisisTemplate();
+    history.push(HOME_PATH);
   }
 
   handleDeleteClick = () => {
@@ -369,9 +391,12 @@ class CrisisReportView extends React.Component<Props, State> {
       submittedStaff,
       lastUpdatedStaff,
     } = this.props;
-    const { edit } = this.state;
+    const { edit, showDiscard } = this.state;
     const baseUrl = `${match.url}/1`;
     const currentPage = getCurrentPage(window.location);
+
+    let primaryClick = this.handleEditClick;
+    if (edit) primaryClick = this.handleShowDiscard;
 
     if (fetchState === RequestStates.IS_REQUESTING) {
       return <Spinner />;
@@ -390,7 +415,7 @@ class CrisisReportView extends React.Component<Props, State> {
         <PageWrapper>
           <FormWrapper>
             <FormRecordCard
-                onClickPrimary={this.handleEditClick}
+                onClickPrimary={primaryClick}
                 onClickSecondary={this.handleDeleteClick}
                 primaryText={edit ? 'Discard' : 'Edit'}
                 submitted={submittedStaff}
@@ -401,6 +426,15 @@ class CrisisReportView extends React.Component<Props, State> {
             </Switch>
           </FormWrapper>
         </PageWrapper>
+        <ModalTransition>
+          { showDiscard
+            && (
+              <DiscardModal
+                  onDiscard={this.handleDiscardClick}
+                  onClose={this.handleCloseDiscard} />
+            )
+          }
+        </ModalTransition>
       </CrisisTemplateWrapper>
     );
   }
