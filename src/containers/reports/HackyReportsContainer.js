@@ -13,7 +13,7 @@ import { bindActionCreators } from 'redux';
 import Spinner from '../../components/spinner/Spinner';
 import StyledCard from '../../components/cards/StyledCard';
 import { getReports } from './ReportsActions';
-import { goToRoute } from '../../core/router/RoutingActions';
+import { goToPath } from '../../core/router/RoutingActions';
 import { formatAsDate } from '../../utils/DateUtils';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import {
@@ -68,7 +68,7 @@ const DetailItem = styled.div`
 type Props = {
   actions :{
     getReports :RequestSequence;
-    goToRoute :(route :string) => void;
+    goToPath :(path :string) => void;
   };
   entitySetId :string;
   isFetchingReports :boolean;
@@ -86,7 +86,7 @@ class HackyReportsContainer extends Component<Props> {
   handleOnClickReport = (reportEntityKeyId :string) => {
 
     const { actions } = this.props;
-    actions.goToRoute(REPORT_VIEW_PATH.replace(REPORT_ID_PARAM, reportEntityKeyId));
+    actions.goToPath(REPORT_VIEW_PATH.replace(REPORT_ID_PARAM, reportEntityKeyId));
   }
 
   renderReports = () => {
@@ -184,7 +184,7 @@ function mapStateToProps(state :Map<*, *>) :Object {
 function mapDispatchToProps(dispatch :Function) :Object {
 
   return {
-    actions: bindActionCreators({ getReports, goToRoute }, dispatch)
+    actions: bindActionCreators({ getReports, goToPath }, dispatch)
   };
 }
 

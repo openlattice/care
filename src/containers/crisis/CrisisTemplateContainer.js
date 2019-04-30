@@ -460,9 +460,9 @@ class CrisisTemplateContainer extends React.Component<Props, State> {
     }
 
     if (isSubmitted) {
-      const clearAndNavigate = (route) => {
+      const clearAndNavigate = (path) => {
         actions.clearCrisisTemplate();
-        history.push(route);
+        history.push(path);
       };
 
       return (
