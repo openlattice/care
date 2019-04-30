@@ -100,6 +100,7 @@ const AppNavigationContainer = ({ dropdown } :Props) => (
     <NavLinkWrapper to={DASHBOARD_PATH}>Dashboard</NavLinkWrapper>
     <NavLinkWrapper to={PEOPLE_PATH}>People</NavLinkWrapper>
     <NavLinkWrapper to={DOWNLOADS_PATH}>Downloads</NavLinkWrapper>
+    <NavLinkWrapper to={SUBSCRIBE_PATH}>Subscribe</NavLinkWrapper>
   </NavigationContentWrapper>
 );
 
