@@ -137,7 +137,7 @@ function* getReportWorker(action :SequenceAction) :Generator<*, *, *> {
 
     yield put(getReport.request(action.id, reportEKID));
 
-    const app = yield select(state => state.getIn(['app'], Map()));
+    const app = yield select(state => state.get('app', Map()));
     const reportESID :UUID = getReportESId(app);
     const peopleESID :UUID = getPeopleESId(app);
     const appearsInESID :UUID = getAppearsInESId(app);
@@ -299,7 +299,7 @@ function* updateReportWorker(action :SequenceAction) :Generator<*, *, *> {
     yield put(updateReport.request(action.id, value));
 
     const edm :Map<*, *> = yield select(state => state.get('edm'));
-    const app = yield select(state => state.getIn(['app'], Map()));
+    const app = yield select(state => state.get('app', Map()));
     const reportESID :UUID = getReportESId(app);
 
     const reportFields = BHR_CONFIG.fields;

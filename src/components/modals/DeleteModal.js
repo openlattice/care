@@ -9,11 +9,11 @@ type Props = {
 
 const DeleteModal = ({ actions, onClose } :Props) => {
 
-  const message = 'Clicking on "Delete Temmplate" will delete the current Crisis Template and return to the home screen.';
+  const message = 'Clicking on "Delete Template" will delete the current Crisis Template and return to the home screen.';
   return (
     <Modal
         actions={actions}
-        heading="Delete Temmplate?"
+        heading="Delete Template"
         appearance="warning"
         onClose={onClose}>
       <div>
