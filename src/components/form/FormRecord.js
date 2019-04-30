@@ -82,7 +82,7 @@ type FormRecordProps = {
   onClickPrimary :() => void;
   onClickSecondary :() => void;
   primaryText ? :string;
-  secondaryText ? :String;
+  secondaryText ? :string;
   submitted :Map;
 }
 const FormRecord = ({
