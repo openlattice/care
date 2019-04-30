@@ -9,7 +9,7 @@ import Logger from '../../utils/Logger';
 import { ERR_INVALID_ROUTE } from '../../utils/Errors';
 import {
   GO_TO_ROOT,
-  GO_TO_ROUTE,
+  GO_TO_PATH,
   routingFailure,
 } from './RoutingActions';
 
@@ -25,25 +25,25 @@ const LOG = new Logger('RoutingSagas');
 
 /*
  *
- * RoutingActions.goToRoute()
+ * RoutingActions.goToPath()
  *
  */
 
-function* goToRouteWorker(action :RoutingAction) :Generator<*, *, *> {
+function* goToPathWorker(action :RoutingAction) :Generator<*, *, *> {
 
-  const { route } = action;
-  if (route === null || route === undefined || !route.startsWith('/', 0)) {
-    LOG.error(ERR_INVALID_ROUTE, route);
-    yield put(routingFailure(ERR_INVALID_ROUTE, route));
+  const { path } = action;
+  if (path === null || path === undefined || !path.startsWith('/', 0)) {
+    LOG.error(ERR_INVALID_ROUTE, path);
+    yield put(routingFailure(ERR_INVALID_ROUTE, path));
     return;
   }
 
-  yield put(push(route));
+  yield put(push(path));
 }
 
-function* goToRouteWatcher() :Generator<*, *, *> {
+function* goToPathWatcher() :Generator<*, *, *> {
 
-  yield takeEvery(GO_TO_ROUTE, goToRouteWorker);
+  yield takeEvery(GO_TO_PATH, goToPathWorker);
 }
 
 /*
@@ -54,7 +54,7 @@ function* goToRouteWatcher() :Generator<*, *, *> {
 
 function* goToRootWatcher() :Generator<*, *, *> {
 
-  yield takeEvery(GO_TO_ROOT, goToRouteWorker);
+  yield takeEvery(GO_TO_ROOT, goToPathWorker);
 }
 
 /*
@@ -65,6 +65,6 @@ function* goToRootWatcher() :Generator<*, *, *> {
 
 export {
   goToRootWatcher,
-  goToRouteWatcher,
-  goToRouteWorker,
+  goToPathWatcher,
+  goToPathWorker,
 };

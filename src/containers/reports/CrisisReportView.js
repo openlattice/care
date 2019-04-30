@@ -273,9 +273,7 @@ class CrisisReportView extends React.Component<Props, State> {
     history.push(HOME_PATH);
   }
 
-  handleDelete = () => {
-    console.log('Doing delete things');
-  }
+  handleDelete = () => {}
 
   handleSubmit = () => {
 

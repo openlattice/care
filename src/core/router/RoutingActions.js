@@ -6,29 +6,29 @@ import * as Routes from './Routes';
 
 declare type RoutingAction = {
   type :string;
-  route :string;
+  path :string;
 };
 
 const GO_TO_ROOT :'GO_TO_ROOT' = 'GO_TO_ROOT';
 function goToRoot() :RoutingAction {
   return {
-    route: Routes.ROOT,
+    path: Routes.ROOT,
     type: GO_TO_ROOT,
   };
 }
 
-const GO_TO_ROUTE :'GO_TO_ROUTE' = 'GO_TO_ROUTE';
-function goToRoute(route :string) :RoutingAction {
+const GO_TO_PATH :'GO_TO_PATH' = 'GO_TO_PATH';
+function goToPath(path :string) :RoutingAction {
   return {
-    route,
-    type: GO_TO_ROUTE,
+    path,
+    type: GO_TO_PATH,
   };
 }
 
 const ROUTING_FAILURE :'ROUTING_FAILURE' = 'ROUTING_FAILURE';
-function routingFailure(errorMessage :string, route :any) :Object {
+function routingFailure(errorMessage :string, path :any) :Object {
   return {
-    route,
+    path,
     error: errorMessage,
     type: ROUTING_FAILURE,
   };
@@ -36,10 +36,10 @@ function routingFailure(errorMessage :string, route :any) :Object {
 
 export {
   GO_TO_ROOT,
-  GO_TO_ROUTE,
+  GO_TO_PATH,
   ROUTING_FAILURE,
   goToRoot,
-  goToRoute,
+  goToPath,
   routingFailure,
 };
 

@@ -53,7 +53,7 @@ export default function* sagas() :Generator<*, *, *> {
 
     // RoutingSagas
     fork(RoutingSagas.goToRootWatcher),
-    fork(RoutingSagas.goToRouteWatcher),
+    fork(RoutingSagas.goToPathWatcher),
 
     // Dashboard Sagas
     fork(DashboardSagas.loadDashboardDataWatcher),
