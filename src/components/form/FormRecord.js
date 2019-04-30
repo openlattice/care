@@ -115,11 +115,16 @@ const FormRecord = ({
           )
         }
       </RecordGrid>
-      <Button
-          onClick={onClickPrimary}
-          mode="primary">
-        {primaryText}
-      </Button>
+      {
+        onClickPrimary
+        && (
+          <Button
+              onClick={onClickPrimary}
+              mode="primary">
+            {primaryText}
+          </Button>
+        )
+      }
     </StyledFormWrapper>
   );
 };

@@ -174,7 +174,7 @@ const PAGES = [
   },
   {
     Component: ReviewContainer,
-    title: 'Review & Submit',
+    title: 'Review',
     stateField: '',
     postProcessor: () => ({}),
     requireAllPreviousValid: true
@@ -281,9 +281,14 @@ class CrisisReportView extends React.Component<Props, State> {
 
   renderForwardButton = (page, index) => {
     const { state } = this.props;
+    const { edit } = this.state;
 
     const isReview = index === PAGES.length - 2;
     const isSubmit = index === PAGES.length - 1;
+
+    if (isSubmit && !edit) {
+      return null;
+    }
 
     const { validator, stateField } = page;
     const complete = validator ? validator(state.get(stateField)) === FORM_STEP_STATUS.COMPLETED : true;
