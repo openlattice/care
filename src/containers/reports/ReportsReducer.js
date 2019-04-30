@@ -33,7 +33,7 @@ export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :
   switch (action.type) {
 
     case CLEAR_CRISIS_TEMPLATE: {
-      return state;
+      return INITIAL_STATE;
     }
 
     case getReport.case(action.type): {

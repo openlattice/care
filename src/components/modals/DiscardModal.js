@@ -14,7 +14,7 @@ const DiscardModal = ({ actions, onClose } :Props) => {
   return (
     <Modal
         actions={actions}
-        heading="Discard Changes?"
+        heading="Discard Changes"
         appearance="warning"
         onClose={onClose}>
       <div>
