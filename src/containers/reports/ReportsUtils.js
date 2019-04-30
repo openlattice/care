@@ -46,7 +46,7 @@ const compileSubjectData = (subjectData :Map, reportData :Map) => {
     [SUBJECT_INFORMATION.GENDER]: subjectData.getIn([FQN.PERSON_SEX_FQN, 0], ''),
     [SUBJECT_INFORMATION.AGE]: ageDuringReport,
     [SUBJECT_INFORMATION.DOB_UNKNOWN]: dobUnknown,
-    [SUBJECT_INFORMATION.SSN_LAST_4]: subjectData.getIn([FQN.PERSON_SSN_LAST_4_FQN, 0], ''),
+    // [SUBJECT_INFORMATION.SSN_LAST_4]: subjectData.getIn([FQN.PERSON_SSN_LAST_4_FQN, 0], ''),
     [SUBJECT_INFORMATION.IS_NEW_PERSON]: false
   };
 };
