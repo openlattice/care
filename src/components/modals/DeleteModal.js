@@ -7,23 +7,25 @@ type Props = {
   actions :Object[];
 };
 
-const DiscardModal = ({ actions, onClose } :Props) => {
+const DeleteModal = ({ actions, onClose } :Props) => {
 
-  // eslint-disable-next-line max-len
-  const message = 'Clicking on "Discard Changes" will discard all changes made to the current Crisis Template and return to the home screen.';
+  const message = 'Clicking on "Delete Temmplate" will delete the current Crisis Template and return to the home screen.';
   return (
     <Modal
         actions={actions}
-        heading="Discard Changes?"
+        heading="Delete Temmplate?"
         appearance="warning"
         onClose={onClose}>
       <div>
         <p>
           {message}
         </p>
+        <p>
+          This action cannot be undone.
+        </p>
       </div>
     </Modal>
   );
 };
 
-export default DiscardModal;
+export default DeleteModal;

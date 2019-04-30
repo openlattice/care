@@ -106,7 +106,7 @@ const FormRecord = ({
             label="Submitted"
             time={submittedTime}
             email={submittedEmail} />
-        { lastUpdated.isEmpty()
+        { !lastUpdated.isEmpty()
           && (
             <Record
                 label="Last Updated"

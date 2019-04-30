@@ -28,7 +28,9 @@ import NatureOfCrisis from '../pages/natureofcrisis/NatureOfCrisis';
 import OfficerSafety from '../pages/officersafety/OfficerSafety';
 import Disposition from '../pages/disposition/Disposition';
 import DiscardModal from '../../components/modals/DiscardModal';
+import DeleteModal from '../../components/modals/DeleteModal';
 import RequestStates from '../../utils/constants/RequestStates';
+import SubmitSuccess from '../../components/crisis/SubmitSuccess';
 import type { RequestState } from '../../utils/constants/RequestStates';
 
 import { getReport, updateReport } from './ReportsActions';
@@ -195,6 +197,7 @@ type Props = {
   match :Match;
   state :Map;
   fetchState :RequestState;
+  updateState :RequestState;
   submittedStaff :Map;
   lastUpdatedStaff :Map;
 };
@@ -202,13 +205,15 @@ type Props = {
 type State = {
   edit :boolean;
   showDiscard :boolean;
+  showDelete :boolean;
 }
 
 class CrisisReportView extends React.Component<Props, State> {
 
   state = {
     edit: false,
-    showDiscard: false
+    showDelete: false,
+    showDiscard: false,
   }
 
   componentDidMount() {
@@ -233,9 +238,8 @@ class CrisisReportView extends React.Component<Props, State> {
   }
 
   handleEditClick = () => {
-    const { edit } = this.state;
     this.setState({
-      edit: !edit
+      edit: true
     });
   }
 
@@ -251,13 +255,25 @@ class CrisisReportView extends React.Component<Props, State> {
     });
   }
 
-  handleDiscardClick = () => {
+  handleShowDelete = () => {
+    this.setState({
+      showDelete: true,
+    });
+  }
+
+  handleCloseDelete = () => {
+    this.setState({
+      showDelete: false,
+    });
+  }
+
+  handleDiscard = () => {
     const { actions, history } = this.props;
     actions.clearCrisisTemplate();
     history.push(HOME_PATH);
   }
 
-  handleDeleteClick = () => {
+  handleDelete = () => {
     console.log('Doing delete things');
   }
 
@@ -387,19 +403,49 @@ class CrisisReportView extends React.Component<Props, State> {
   render() {
     const {
       fetchState,
+      lastUpdatedStaff,
       match,
       submittedStaff,
-      lastUpdatedStaff,
+      updateState,
     } = this.props;
-    const { edit, showDiscard } = this.state;
+    const { edit, showDelete, showDiscard } = this.state;
     const baseUrl = `${match.url}/1`;
     const currentPage = getCurrentPage(window.location);
+
+    const discardActions = [
+      {
+        onClick: this.handleDiscard,
+        text: 'Discard Changes'
+      },
+      {
+        onClick: this.handleCloseDiscard,
+        text: 'Stay On Page'
+      }
+    ];
+
+    const deleteActions = [
+      {
+        onClick: this.handleDelete,
+        text: 'Delete Template'
+      },
+      {
+        onClick: this.handleCloseDelete,
+        text: 'Stay On Page'
+      },
+    ];
 
     let primaryClick = this.handleEditClick;
     if (edit) primaryClick = this.handleShowDiscard;
 
-    if (fetchState === RequestStates.IS_REQUESTING) {
+    if (
+      fetchState === RequestStates.IS_REQUESTING
+      || updateState === RequestStates.IS_REQUESTING
+    ) {
       return <Spinner />;
+    }
+
+    if (updateState === RequestStates.REQUEST_SUCCESS) {
+      return <SubmitSuccess />;
     }
 
     return (
@@ -416,7 +462,7 @@ class CrisisReportView extends React.Component<Props, State> {
           <FormWrapper>
             <FormRecordCard
                 onClickPrimary={primaryClick}
-                onClickSecondary={this.handleDeleteClick}
+                onClickSecondary={this.handleDelete}
                 primaryText={edit ? 'Discard' : 'Edit'}
                 submitted={submittedStaff}
                 lastUpdated={lastUpdatedStaff} />
@@ -430,8 +476,17 @@ class CrisisReportView extends React.Component<Props, State> {
           { showDiscard
             && (
               <DiscardModal
-                  onDiscard={this.handleDiscardClick}
+                  actions={discardActions}
                   onClose={this.handleCloseDiscard} />
+            )
+          }
+        </ModalTransition>
+        <ModalTransition>
+          { showDelete
+            && (
+              <DeleteModal
+                  actions={deleteActions}
+                  onClose={this.handleCloseDelete} />
             )
           }
         </ModalTransition>
@@ -444,6 +499,7 @@ function mapStateToProps(state :Map<*, *>) :Object {
 
   return {
     fetchState: state.getIn(['reports', 'fetchState'], RequestStates.PRE_REQUEST),
+    updateState: state.getIn(['reports', 'updateState'], RequestStates.PRE_REQUEST),
     lastUpdatedStaff: state.getIn(['reports', 'lastUpdatedStaff'], Map()),
     state,
     submittedStaff: state.getIn(['reports', 'submittedStaff'], Map()),
