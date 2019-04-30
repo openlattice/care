@@ -21,9 +21,8 @@ import {
 } from '../pages/disposition/Constants';
 
 const compileSubjectData = (subjectData :Map, reportData :Map) => {
-
   const subjectDob = subjectData.getIn([FQN.PERSON_DOB_FQN, 0], '');
-  const dobUnknown = !!subjectDob;
+  const dobUnknown = !subjectDob;
   const subjectDobMoment = moment(subjectDob);
 
   const reportedAge = reportData.getIn([FQN.AGE_FQN, 0], '');
