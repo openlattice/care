@@ -27,7 +27,7 @@ import NatureOfCrisis from '../pages/natureofcrisis/NatureOfCrisis';
 import OfficerSafety from '../pages/officersafety/OfficerSafety';
 import Disposition from '../pages/disposition/Disposition';
 
-import { getReport } from './ReportsActions';
+import { getReport, updateReport } from './ReportsActions';
 import { clearCrisisTemplate } from '../crisis/CrisisActionFactory';
 import {
   getCurrentPage,
@@ -187,6 +187,7 @@ type Props = {
     clearCrisisTemplate :() => void;
     submit :(args :Object) => void;
     getReport :RequestSequence;
+    updateReport :RequestSequence;
   };
   history :RouterHistory;
   match :Match;
@@ -238,15 +239,15 @@ class CrisisReportView extends React.Component<Props, State> {
     console.log('Doing delete things');
   }
 
-  handleSubmit = (e :SyntheticEvent) => {
-    console.log('Doing submit things');
-    e.preventDefault();
+  handleSubmit = () => {
 
     const {
       actions,
-      app,
-      state
+      state,
+      match
     } = this.props;
+
+    const reportEKID :?UUID = match.params[REPORT_ID_PARAM.substr(1)];
 
     let submission = {
       [POST_PROCESS_FIELDS.FORM_TYPE]: FORM_TYPE.CRISIS_TEMPLATE,
@@ -259,7 +260,10 @@ class CrisisReportView extends React.Component<Props, State> {
       submission = Object.assign({}, submission, postProcessor(state.get(stateField)));
     });
 
-    console.log(submission);
+    actions.updateReport({
+      entityKeyId: reportEKID,
+      formData: submission,
+    });
   }
 
   isReadyToSubmit = () => {
@@ -411,7 +415,8 @@ function mapDispatchToProps(dispatch :Dispatch<*>) :Object {
 
   const actions = {
     clearCrisisTemplate,
-    getReport
+    getReport,
+    updateReport,
   };
 
   return {

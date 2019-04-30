@@ -7,9 +7,6 @@ import { newRequestSequence } from 'redux-reqseq';
 const DELETE_REPORT :'DELETE_REPORT' = 'DELETE_REPORT';
 const deleteReport :RequestSequence = newRequestSequence(DELETE_REPORT);
 
-const GET_REPORT_NEIGHBORS :'GET_REPORT_NEIGHBORS' = 'GET_REPORT_NEIGHBORS';
-const getReportNeighbors :RequestSequence = newRequestSequence(GET_REPORT_NEIGHBORS);
-
 const GET_REPORTS :'GET_REPORTS' = 'GET_REPORTS';
 const getReports :RequestSequence = newRequestSequence(GET_REPORTS);
 
@@ -21,13 +18,11 @@ const getReport :RequestSequence = newRequestSequence(GET_REPORT);
 
 export {
   DELETE_REPORT,
-  GET_REPORT_NEIGHBORS,
   GET_REPORT,
   GET_REPORTS,
   UPDATE_REPORT,
   deleteReport,
   getReport,
-  getReportNeighbors,
   getReports,
   updateReport,
 };

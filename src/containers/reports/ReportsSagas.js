@@ -20,16 +20,15 @@ import {
 } from 'lattice-sagas';
 
 import Logger from '../../utils/Logger';
+import { BHR_CONFIG } from '../../config/formconfig/CrisisTemplateConfig';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
 import {
   DELETE_REPORT,
-  GET_REPORT_NEIGHBORS,
   GET_REPORT,
   GET_REPORTS,
   UPDATE_REPORT,
   deleteReport,
   getReport,
-  getReportNeighbors,
   getReports,
   updateReport,
 } from './ReportsActions';
@@ -282,52 +281,6 @@ function* getReportsWatcher() :Generator<*, *, *> {
 
 /*
  *
- * ReportsActions.getReportNeighbors()
- *
- */
-
-function* getReportNeighborsWorker(action :SequenceAction) :Generator<*, *, *> {
-
-  const { id, value } = action;
-  if (value === null || value === undefined) {
-    yield put(getReportNeighbors.failure(id, ERR_ACTION_VALUE_NOT_DEFINED));
-    return;
-  }
-
-  const entitySetId :string = value.entitySetId;
-  const entityKeyId :string = value.entityKeyId;
-
-  try {
-    yield put(getReportNeighbors.request(action.id, { entityKeyId }));
-
-    const response = yield call(
-      searchEntityNeighborsWorker,
-      searchEntityNeighbors({
-        entitySetId,
-        // TODO: it should probably be "entityKeyId", not "entityId". this api might have to be updated
-        entityId: entityKeyId,
-      })
-    );
-
-    if (response.error) throw response.error;
-    yield put(getReportNeighbors.success(action.id, response.data));
-  }
-  catch (error) {
-    LOG.error('caught exception in worker saga', error);
-    yield put(getReportNeighbors.failure(action.id, error));
-  }
-  finally {
-    yield put(getReportNeighbors.finally(action.id));
-  }
-}
-
-function* getReportNeighborsWatcher() :Generator<*, *, *> {
-
-  yield takeEvery(GET_REPORT_NEIGHBORS, getReportNeighborsWorker);
-}
-
-/*
- *
  * ReportsActions.updateReport()
  *
  */
@@ -340,26 +293,43 @@ function* updateReportWorker(action :SequenceAction) :Generator<*, *, *> {
     return;
   }
 
-  const entityKeyId :string = value.entityKeyId;
-  const entitySetId :string = value.entitySetId;
-  const reportEdits :Map<string, List<any>> = value.reportEdits;
+  const {
+    entityKeyId,
+    formData,
+  } = value;
 
   try {
     yield put(updateReport.request(action.id, value));
 
     const edm :Map<*, *> = yield select(state => state.get('edm'));
-    const entityData :Map<string, List<any>> = Map().withMutations((map :Map<string, List<any>>) => {
-      reportEdits.forEach((data :List<any>, fqn :FullyQualifiedName) => {
-        const propertyTypeId :string = edm.getIn(['fqnToIdMap', fqn]);
-        map.setIn([entityKeyId, propertyTypeId], data);
-      });
+    const app = yield select(state => state.getIn(['app'], Map()));
+    const reportESID :UUID = getReportESId(app);
+
+    const reportFields = BHR_CONFIG.fields;
+    const updatedProperties = {};
+    Object.keys(reportFields).forEach((field) => {
+      const fqn = reportFields[field];
+      const propertyTypeId = edm.getIn(['fqnToIdMap', fqn]);
+      if (!propertyTypeId) LOG.error('propertyType id for fqn not found', fqn);
+      let updatedValue;
+      if (Array.isArray(formData[field])) {
+        updatedValue = formData[field];
+      }
+      else {
+        updatedValue = [formData[field]];
+      }
+      updatedProperties[propertyTypeId] = updatedValue;
     });
+
+    const updateData = {
+      [entityKeyId]: updatedProperties
+    };
 
     const response = yield call(
       updateEntityDataWorker,
       updateEntityData({
-        entitySetId,
-        entities: entityData.toJS(),
+        entitySetId: reportESID,
+        entities: updateData,
         updateType: UpdateTypes.PartialReplace,
       })
     );
@@ -389,8 +359,6 @@ function* updateReportWatcher() :Generator<*, *, *> {
 export {
   deleteReportWatcher,
   deleteReportWorker,
-  getReportNeighborsWatcher,
-  getReportNeighborsWorker,
   getReportsWatcher,
   getReportsWorker,
   getReportWatcher,
