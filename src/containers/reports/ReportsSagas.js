@@ -11,7 +11,7 @@ import {
 } from '@redux-saga/core/effects';
 import moment from 'moment';
 import { List, Map, fromJS } from 'immutable';
-import { Models, Types } from 'lattice';
+import { Types } from 'lattice';
 import {
   DataApiActions,
   DataApiSagas,
@@ -57,7 +57,6 @@ import * as FQN from '../../edm/DataModelFqns';
 
 const LOG = new Logger('ReportsSagas');
 
-const { FullyQualifiedName } = Models;
 const { DeleteTypes, UpdateTypes } = Types;
 const {
   deleteEntity,
@@ -72,11 +71,9 @@ const {
   updateEntityDataWorker,
 } = DataApiSagas;
 const {
-  searchEntityNeighbors,
   searchEntityNeighborsWithFilter,
 } = SearchApiActions;
 const {
-  searchEntityNeighborsWorker,
   searchEntityNeighborsWithFilterWorker,
 } = SearchApiSagas;
 
