@@ -79,8 +79,16 @@ class SubjectInformation extends React.Component<Props> {
       }
     };
 
+    const type = (
+      field === SUBJECT_INFORMATION.SSN_LAST_4
+      && !values.get(SUBJECT_INFORMATION.IS_NEW_PERSON)
+    )
+      ? 'password'
+      : 'text';
+
     return (
       <StyledInput
+          type={type}
           padBottom
           name={field}
           disabled={!values.get(SUBJECT_INFORMATION.IS_NEW_PERSON)}
