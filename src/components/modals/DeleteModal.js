@@ -14,7 +14,7 @@ const DeleteModal = ({ actions, onClose } :Props) => {
     <Modal
         actions={actions}
         heading="Delete Template"
-        appearance="warning"
+        appearance="danger"
         onClose={onClose}>
       <div>
         <p>

@@ -49,6 +49,7 @@ type Props = {
     };
     goToPath :(path :string) => RoutingAction;
   };
+  actionText :string;
 };
 
 class SubmitSuccess extends Component<Props> {
@@ -60,11 +61,12 @@ class SubmitSuccess extends Component<Props> {
   };
 
   render() {
+    const { actionText } = this.props;
     return (
       <PageWrapper>
         <FormWrapper>
           <SubmittedView>
-            <h1>Your report has been submitted!</h1>
+            <h1>{`Your report has been ${actionText}!`}</h1>
             <StyledButton mode="primary" onClick={this.clearAndNavigate(HOME_PATH)}>Return to Home</StyledButton>
             <StyledButton onClick={this.clearAndNavigate(CRISIS_PATH)}>New Crisis Template</StyledButton>
           </SubmittedView>

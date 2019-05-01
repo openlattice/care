@@ -91,17 +91,16 @@ const {
 
 function* deleteReportWorker(action :SequenceAction) :Generator<*, *, *> {
 
-  const { id, value } = action;
-  if (value === null || value === undefined) {
-    yield put(deleteReport.failure(id, ERR_ACTION_VALUE_NOT_DEFINED));
-    return;
-  }
-
-  const entityKeyId :string = value.entityKeyId;
-  const entitySetId :string = value.entitySetId;
-
   try {
-    yield put(deleteReport.request(action.id, { entityKeyId, entitySetId }));
+    const { value: entityKeyId } = action;
+    if (!isDefined(entityKeyId)) throw ERR_ACTION_VALUE_NOT_DEFINED;
+    if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
+
+    yield put(deleteReport.request(action.id, entityKeyId));
+
+    const app = yield select(state => state.get('app', Map()));
+    const entitySetId :UUID = getReportESId(app);
+
     const response = yield call(
       deleteEntityWorker,
       deleteEntity({ entityKeyId, entitySetId, deleteType: DeleteTypes.Soft })
