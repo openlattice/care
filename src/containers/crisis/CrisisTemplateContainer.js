@@ -26,9 +26,9 @@ import NatureOfCrisis from '../pages/natureofcrisis/NatureOfCrisis';
 import OfficerSafety from '../pages/officersafety/OfficerSafety';
 import Disposition from '../pages/disposition/Disposition';
 import submitConfig from '../../config/formconfig/CrisisTemplateConfig';
+import SubmitSuccess from '../../components/crisis/SubmitSuccess';
 import { FormWrapper as StyledPageWrapper } from '../../components/crisis/FormComponents';
 
-import { hardRestart } from '../form/ReportActionFactory';
 import { submit } from '../../utils/submit/SubmitActionFactory';
 import { clearCrisisTemplate } from './CrisisActionFactory';
 import {
@@ -67,7 +67,6 @@ import { BLACK, INVALID_TAG } from '../../shared/Colors';
 
 type Props = {
   actions :{
-    hardRestart :() => void,
     clearCrisisTemplate :() => void,
     submit :(args :Object) => void
   },
@@ -460,24 +459,7 @@ class CrisisTemplateContainer extends React.Component<Props, State> {
     }
 
     if (isSubmitted) {
-      const clearAndNavigate = (path) => {
-        actions.clearCrisisTemplate();
-        history.push(path);
-      };
-
-      return (
-        <PageWrapper>
-          <StyledPageWrapper>
-            <CrisisTemplateWrapper>
-              <SubmittedView>
-                <h1>Your report has been submitted!</h1>
-                <ForwardButton onClick={() => clearAndNavigate(HOME_PATH)} canProgress>Return to Home</ForwardButton>
-                <BackButton onClick={() => clearAndNavigate(CRISIS_PATH)}>Create another crisis template</BackButton>
-              </SubmittedView>
-            </CrisisTemplateWrapper>
-          </StyledPageWrapper>
-        </PageWrapper>
-      );
+      return <SubmitSuccess actionText="submitted" />;
     }
 
     return (
@@ -519,9 +501,8 @@ function mapStateToProps(state :Map<*, *>) :Object {
 function mapDispatchToProps(dispatch :Function) :Object {
 
   const actions = {
-    hardRestart,
+    clearCrisisTemplate,
     submit,
-    clearCrisisTemplate
   };
 
   return {
