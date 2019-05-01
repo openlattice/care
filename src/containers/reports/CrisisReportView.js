@@ -223,7 +223,7 @@ class CrisisReportView extends React.Component<Props, State> {
   componentDidMount() {
     const { actions, match } = this.props;
 
-    const reportEKID :?UUID = match.params[REPORT_ID_PARAM.substr(1)];
+    const reportEKID :?UUID = match.params[REPORT_ID_PARAM];
     actions.getReport(reportEKID);
   }
 
@@ -279,7 +279,7 @@ class CrisisReportView extends React.Component<Props, State> {
 
   handleDelete = () => {
     const { actions, match } = this.props;
-    const reportEKID :?UUID = match.params[REPORT_ID_PARAM.substr(1)];
+    const reportEKID :?UUID = match.params[REPORT_ID_PARAM];
     actions.deleteReport(reportEKID);
   }
 
@@ -291,7 +291,7 @@ class CrisisReportView extends React.Component<Props, State> {
       match
     } = this.props;
 
-    const reportEKID :?UUID = match.params[REPORT_ID_PARAM.substr(1)];
+    const reportEKID :?UUID = match.params[REPORT_ID_PARAM];
 
     let submission = {
       [POST_PROCESS_FIELDS.FORM_TYPE]: FORM_TYPE.CRISIS_TEMPLATE,

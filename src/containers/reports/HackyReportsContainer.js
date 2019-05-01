@@ -17,8 +17,8 @@ import { goToPath } from '../../core/router/RoutingActions';
 import { formatAsDate } from '../../utils/DateUtils';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import {
-  REPORT_ID_PARAM,
   REPORT_VIEW_PATH,
+  REPORT_ID_PATH,
 } from '../../core/router/Routes';
 import {
   ContentContainerInnerWrapper,
@@ -86,7 +86,7 @@ class HackyReportsContainer extends Component<Props> {
   handleOnClickReport = (reportEntityKeyId :string) => {
 
     const { actions } = this.props;
-    actions.goToPath(REPORT_VIEW_PATH.replace(REPORT_ID_PARAM, reportEntityKeyId));
+    actions.goToPath(REPORT_VIEW_PATH.replace(REPORT_ID_PATH, reportEntityKeyId));
   }
 
   renderReports = () => {
