@@ -39,6 +39,12 @@ const RecordGrid = styled.div`
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 `;
 
+const ActionGrid = styled.div`
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: 1fr 1fr;
+`;
+
 const Bold = styled.b`
   font-weight: 600;
   color: #2e2e34;
@@ -115,16 +121,28 @@ const FormRecord = ({
           )
         }
       </RecordGrid>
-      {
-        onClickPrimary
-        && (
-          <Button
-              onClick={onClickPrimary}
-              mode="primary">
-            {primaryText}
-          </Button>
-        )
-      }
+      <ActionGrid>
+        {
+          onClickPrimary
+          && (
+            <Button
+                onClick={onClickPrimary}
+                mode="primary">
+              {primaryText}
+            </Button>
+          )
+        }
+        {
+          onClickSecondary
+          && (
+            <Button
+                onClick={onClickSecondary}
+                mode="secondary">
+              {secondaryText}
+            </Button>
+          )
+        }
+      </ActionGrid>
     </StyledFormWrapper>
   );
 };
