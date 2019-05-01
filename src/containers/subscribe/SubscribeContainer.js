@@ -28,6 +28,7 @@ import { HOMELESS_STR } from '../pages/natureofcrisis/Constants';
 import { TEST_SSN, SUBSCRIPTION_TYPE } from './SubscribeConstants';
 import { getInvalidFields } from './SubscribeReducer';
 import { getPeopleESId, getReportESId, getStaffESId } from '../../utils/AppUtils';
+import { getSearchTerm } from '../../utils/DataUtils';
 import * as SubscribeActionFactory from './SubscribeActionFactory';
 
 type Props = {
@@ -196,8 +197,8 @@ function mapStateToProps(state) {
     isLoadingSubscriptions: state.getIn([STATE.SUBSCRIBE, SUBSCRIBE.IS_LOADING_SUBSCRIPTIONS]),
     subscriptions: state.getIn([STATE.SUBSCRIBE, SUBSCRIBE.SUBSCRIPTIONS]),
 
-    testQuery: `${state.getIn(['edm', 'fqnToIdMap', PERSON_SSN_LAST_4_FQN])}:"${TEST_SSN}"`,
-    homelessQuery: `${state.getIn(['edm', 'fqnToIdMap', HOUSING_SITUATION_FQN])}:"${HOMELESS_STR}"`,
+    testQuery: getSearchTerm(state.getIn(['edm', 'fqnToIdMap', PERSON_SSN_LAST_4_FQN]), TEST_SSN),
+    homelessQuery: getSearchTerm(state.getIn(['edm', 'fqnToIdMap', HOUSING_SITUATION_FQN]), HOMELESS_STR),
 
     app: state.get('app', Map())
   };
