@@ -5,8 +5,9 @@
 import { List, Map, fromJS } from 'immutable';
 
 import {
-  getReports,
+  deleteReport,
   getReport,
+  getReports,
   updateReport,
 } from './ReportsActions';
 import { CLEAR_CRISIS_TEMPLATE } from '../crisis/CrisisActionFactory';
@@ -14,18 +15,14 @@ import RequestStates from '../../utils/constants/RequestStates';
 
 const INITIAL_STATE :Map<*, *> = fromJS({
   actions: {
-    deleteReport: { error: Map() },
     getReports: { error: Map() },
   },
-  isDeletingReport: false,
-  isFetchingReports: false,
-  isUpdatingReport: false,
+  deleteState: RequestStates.PRE_REQUEST,
   fetchState: RequestStates.PRE_REQUEST,
-  updateState: RequestStates.PRE_REQUEST,
+  lastUpdatedStaff: Map(),
   reports: List(),
-  selectedReportData: Map(),
   submittedStaff: Map(),
-  lastUpdatedStaff: Map()
+  updateState: RequestStates.PRE_REQUEST,
 });
 
 export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :Object) {
@@ -88,6 +85,14 @@ export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :
         REQUEST: () => state.set('updateState', RequestStates.IS_REQUESTING),
         SUCCESS: () => state.set('updateState', RequestStates.REQUEST_SUCCESS),
         FAILURE: () => state.set('updateState', RequestStates.REQUEST_FAILURE),
+      });
+    }
+
+    case deleteReport.case(action.type): {
+      return deleteReport.reducer(state, action, {
+        REQUEST: () => state.set('deleteState', RequestStates.IS_REQUESTING),
+        SUCCESS: () => state.set('deleteState', RequestStates.REQUEST_SUCCESS),
+        FAILURE: () => state.set('deleteState', RequestStates.REQUEST_FAILURE),
       });
     }
 

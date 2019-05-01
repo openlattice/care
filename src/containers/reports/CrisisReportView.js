@@ -17,6 +17,7 @@ import { ModalTransition } from '@atlaskit/modal-dialog';
 import type { Match, RouterHistory } from 'react-router';
 import type { Dispatch } from 'redux';
 
+import NoResource from '../../components/NoResource';
 import FormRecordCard from '../../components/form/FormRecord';
 import Spinner from '../../components/spinner/Spinner';
 import ReviewContainer from '../crisis/ReviewContainer';
@@ -33,7 +34,7 @@ import RequestStates from '../../utils/constants/RequestStates';
 import SubmitSuccess from '../../components/crisis/SubmitSuccess';
 import type { RequestState } from '../../utils/constants/RequestStates';
 
-import { getReport, updateReport } from './ReportsActions';
+import { getReport, updateReport, deleteReport } from './ReportsActions';
 import { clearCrisisTemplate } from '../crisis/CrisisActionFactory';
 import {
   getCurrentPage,
@@ -187,19 +188,22 @@ const PAGES = [
 
 type Props = {
   actions :{
-    hardRestart :() => void;
-    clearCrisisTemplate :() => void;
-    submit :(args :Object) => void;
+    clearCrisisTemplate :() => {
+      type :string;
+    };
+    deleteReport :RequestSequence;
     getReport :RequestSequence;
+    submit :(args :Object) => void;
     updateReport :RequestSequence;
   };
+  deleteState :RequestState;
+  fetchState :RequestState;
   history :RouterHistory;
+  lastUpdatedStaff :Map;
   match :Match;
   state :Map;
-  fetchState :RequestState;
-  updateState :RequestState;
   submittedStaff :Map;
-  lastUpdatedStaff :Map;
+  updateState :RequestState;
 };
 
 type State = {
@@ -273,7 +277,11 @@ class CrisisReportView extends React.Component<Props, State> {
     history.push(HOME_PATH);
   }
 
-  handleDelete = () => {}
+  handleDelete = () => {
+    const { actions, match } = this.props;
+    const reportEKID :?UUID = match.params[REPORT_ID_PARAM.substr(1)];
+    actions.deleteReport(reportEKID);
+  }
 
   handleSubmit = () => {
 
@@ -400,6 +408,7 @@ class CrisisReportView extends React.Component<Props, State> {
 
   render() {
     const {
+      deleteState,
       fetchState,
       lastUpdatedStaff,
       match,
@@ -438,13 +447,15 @@ class CrisisReportView extends React.Component<Props, State> {
     if (
       fetchState === RequestStates.IS_REQUESTING
       || updateState === RequestStates.IS_REQUESTING
+      || deleteState === RequestStates.IS_REQUESTING
     ) {
       return <Spinner />;
     }
 
-    if (updateState === RequestStates.REQUEST_SUCCESS) {
-      return <SubmitSuccess />;
-    }
+    if (fetchState === RequestStates.REQUEST_FAILURE) return <NoResource />;
+
+    if (updateState === RequestStates.REQUEST_SUCCESS) return <SubmitSuccess actionText="updated" />;
+    if (deleteState === RequestStates.REQUEST_SUCCESS) return <SubmitSuccess actionText="deleted" />;
 
     return (
       <CrisisTemplateWrapper>
@@ -460,7 +471,7 @@ class CrisisReportView extends React.Component<Props, State> {
           <FormWrapper>
             <FormRecordCard
                 onClickPrimary={primaryClick}
-                onClickSecondary={this.handleDelete}
+                onClickSecondary={this.handleShowDelete}
                 primaryText={edit ? 'Discard' : 'Edit'}
                 submitted={submittedStaff}
                 lastUpdated={lastUpdatedStaff} />
@@ -498,6 +509,7 @@ function mapStateToProps(state :Map<*, *>) :Object {
   return {
     fetchState: state.getIn(['reports', 'fetchState'], RequestStates.PRE_REQUEST),
     updateState: state.getIn(['reports', 'updateState'], RequestStates.PRE_REQUEST),
+    deleteState: state.getIn(['reports', 'deleteState'], RequestStates.PRE_REQUEST),
     lastUpdatedStaff: state.getIn(['reports', 'lastUpdatedStaff'], Map()),
     state,
     submittedStaff: state.getIn(['reports', 'submittedStaff'], Map()),
@@ -508,6 +520,7 @@ function mapDispatchToProps(dispatch :Dispatch<*>) :Object {
 
   const actions = {
     clearCrisisTemplate,
+    deleteReport,
     getReport,
     updateReport,
   };
