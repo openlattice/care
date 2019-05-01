@@ -79,8 +79,16 @@ class SubjectInformation extends React.Component<Props> {
       }
     };
 
+    const type = (
+      field === SUBJECT_INFORMATION.SSN_LAST_4
+      && !values.get(SUBJECT_INFORMATION.IS_NEW_PERSON)
+    )
+      ? 'password'
+      : 'text';
+
     return (
       <StyledInput
+          type={type}
           padBottom
           name={field}
           disabled={!values.get(SUBJECT_INFORMATION.IS_NEW_PERSON)}
@@ -139,13 +147,15 @@ class SubjectInformation extends React.Component<Props> {
     };
 
     const PersonFormSection = isCreatingNewPerson ? FormSectionWithValidation : FormSection;
-
     return (
       <FormWrapper>
         <Header>
           <HeaderWithClearButton>
             <h1>Person Information</h1>
-            { !disabled && <BackButton onClick={actions.clear} noMargin>Clear Fields</BackButton> }
+            {
+              (!disabled && isCreatingNewPerson)
+              && <BackButton onClick={actions.clear} noMargin>Clear Fields</BackButton>
+            }
           </HeaderWithClearButton>
         </Header>
         <PersonFormSection>

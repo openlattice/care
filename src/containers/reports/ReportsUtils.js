@@ -21,9 +21,8 @@ import {
 } from '../pages/disposition/Constants';
 
 const compileSubjectData = (subjectData :Map, reportData :Map) => {
-
   const subjectDob = subjectData.getIn([FQN.PERSON_DOB_FQN, 0], '');
-  const dobUnknown = !!subjectDob;
+  const dobUnknown = !subjectDob;
   const subjectDobMoment = moment(subjectDob);
 
   const reportedAge = reportData.getIn([FQN.AGE_FQN, 0], '');
@@ -47,7 +46,7 @@ const compileSubjectData = (subjectData :Map, reportData :Map) => {
     [SUBJECT_INFORMATION.GENDER]: subjectData.getIn([FQN.PERSON_SEX_FQN, 0], ''),
     [SUBJECT_INFORMATION.AGE]: ageDuringReport,
     [SUBJECT_INFORMATION.DOB_UNKNOWN]: dobUnknown,
-    [SUBJECT_INFORMATION.SSN_LAST_4]: 'XXXX',
+    [SUBJECT_INFORMATION.SSN_LAST_4]: subjectData.getIn([FQN.PERSON_SSN_LAST_4_FQN, 0], ''),
     [SUBJECT_INFORMATION.IS_NEW_PERSON]: false
   };
 };

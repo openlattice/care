@@ -68,7 +68,6 @@ export const DISPOSITION = {
   VERBAL_REFERRALS: 'verbalReferrals',
   OTHER_VERBAL_REFERRAL: 'otherVerbalReferral',
   COURTESY_TRANSPORTS: 'courtesyTransports',
-  TRANSPORT_INDICATOR: 'tranportDidHappen',
   HOSPITALS: 'hospitals',
   WAS_VOLUNTARY_TRANSPORT: 'wasVoluntaryTransport',
   ARRESTABLE_OFFENSES: 'arrestableOffenses',
@@ -90,6 +89,7 @@ export const POST_PROCESS_FIELDS = {
 
   VERBAL_REFERRAL_INDICATOR: 'verbalReferralIndicator',
   HOSPITAL_TRANPORT: 'hospitalTransport',
+  TRANSPORT_INDICATOR: 'transportIndicator',
   NARCAN_ADMINISTERED: 'narcanAdministered',
   ARRESTABLE_OFFENSE: 'arrestableOffense',
 
