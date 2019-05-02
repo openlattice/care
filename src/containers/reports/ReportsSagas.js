@@ -10,8 +10,9 @@ import {
   takeEvery,
 } from '@redux-saga/core/effects';
 import moment from 'moment';
+import { isPlainObject } from 'lodash';
 import { List, Map, fromJS } from 'immutable';
-import { Types } from 'lattice';
+import { Constants, Models, Types } from 'lattice';
 import {
   DataApiActions,
   DataApiSagas,
@@ -54,17 +55,22 @@ import { setInputValues as setObservedBehaviors } from '../pages/observedbehavio
 import { setInputValues as setOfficerSafetyData } from '../pages/officersafety/ActionFactory';
 import { setInputValues as setSubjectInformation } from '../pages/subjectinformation/ActionFactory';
 import * as FQN from '../../edm/DataModelFqns';
+import { POST_PROCESS_FIELDS } from '../../utils/constants/CrisisTemplateConstants';
 
 const LOG = new Logger('ReportsSagas');
 
 const { DeleteTypes, UpdateTypes } = Types;
+const { DataGraphBuilder } = Models;
+const { OPENLATTICE_ID_FQN } = Constants;
 const {
+  createAssociations,
   deleteEntity,
   getEntityData,
   getEntitySetData,
   updateEntityData,
 } = DataApiActions;
 const {
+  createAssociationsWorker,
   deleteEntityWorker,
   getEntityDataWorker,
   getEntitySetDataWorker,
@@ -282,24 +288,50 @@ function* getReportsWatcher() :Generator<*, *, *> {
  */
 
 function* updateReportWorker(action :SequenceAction) :Generator<*, *, *> {
-
-  const { id, value } = action;
-  if (value === null || value === undefined) {
-    yield put(updateReport.failure(id, ERR_ACTION_VALUE_NOT_DEFINED));
-    return;
-  }
-
-  const {
-    entityKeyId,
-    formData,
-  } = value;
+  const response = {};
 
   try {
+    const { value } = action;
+    if (value === null || value === undefined) throw ERR_ACTION_VALUE_NOT_DEFINED;
+    const {
+      entityKeyId,
+      formData,
+    } = value;
+    if (!isPlainObject(formData) || !isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
+
     yield put(updateReport.request(action.id, value));
 
     const edm :Map<*, *> = yield select(state => state.get('edm'));
     const app = yield select(state => state.get('app', Map()));
     const reportESID :UUID = getReportESId(app);
+    const reportedESID :UUID = getReportedESId(app);
+    const staffESID :UUID = getStaffESId(app);
+    const datetimePTID :UUID = edm.getIn(['fqnToIdMap', FQN.DATE_TIME_FQN]);
+
+    const staffEKID :UUID = yield select(
+      state => state.getIn(['staff', 'currentUserStaffMemberData', OPENLATTICE_ID_FQN, 0], '')
+    );
+
+    const associations = {
+      [reportedESID]: [{
+        dst: {
+          entityKeyId,
+          entitySetId: reportESID,
+        },
+        src: {
+          entityKeyId: staffEKID,
+          entitySetId: staffESID,
+        },
+        data: {
+          [datetimePTID]: [formData[POST_PROCESS_FIELDS.TIMESTAMP]]
+        }
+      }]
+    };
+
+    const staffRequest = call(
+      createAssociationsWorker,
+      createAssociations(associations)
+    );
 
     const reportFields = BHR_CONFIG.fields;
     const updatedProperties = {};
@@ -321,7 +353,7 @@ function* updateReportWorker(action :SequenceAction) :Generator<*, *, *> {
       [entityKeyId]: updatedProperties
     };
 
-    const response = yield call(
+    const updateRequest = call(
       updateEntityDataWorker,
       updateEntityData({
         entitySetId: reportESID,
@@ -329,8 +361,23 @@ function* updateReportWorker(action :SequenceAction) :Generator<*, *, *> {
         updateType: UpdateTypes.PartialReplace,
       })
     );
+
+    const responses = yield all([
+      updateRequest,
+      staffRequest
+    ]);
+
+    const responseErrors = responses.reduce((acc, res) => {
+      if (res.error) {
+        acc.push(res.error);
+      }
+      return acc;
+    }, []);
+
+    if (responseErrors.length) response.error = responseErrors;
     if (response.error) throw response.error;
-    yield put(updateReport.success(action.id, response.data));
+
+    yield put(updateReport.success(action.id));
   }
   catch (error) {
     LOG.error('caught exception in worker saga', error);
