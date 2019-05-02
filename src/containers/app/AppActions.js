@@ -16,11 +16,16 @@ const switchOrganization = (orgId :string) :Object => ({
   type: SWITCH_ORGANIZATION
 });
 
+const INITIALIZE_APPLICATION :'INITIALIZE_APPLICATION' = 'INITIALIZE_APPLICATION';
+const initializeApplication :RequestSequence = newRequestSequence(INITIALIZE_APPLICATION);
+
 export {
+  INITIALIZE_APPLICATION,
   LOAD_APP,
   LOAD_HOSPITALS,
   SWITCH_ORGANIZATION,
+  initializeApplication,
   loadApp,
   loadHospitals,
-  switchOrganization
+  switchOrganization,
 };
