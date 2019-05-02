@@ -9,7 +9,7 @@ import {
   select,
   takeEvery,
 } from '@redux-saga/core/effects';
-import { Constants, DataApi } from 'lattice';
+import { Constants } from 'lattice';
 import { AuthUtils } from 'lattice-auth';
 import {
   DataApiActions,
