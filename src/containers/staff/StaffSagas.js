@@ -2,7 +2,7 @@
  * @flow
  */
 
-import { Map } from 'immutable';
+import { Map, fromJS } from 'immutable';
 import {
   call,
   put,
@@ -51,7 +51,8 @@ const { createOrMergeEntityDataWorker } = DataApiSagas;
 function* addNewStaffMemberWorker(action :SequenceAction) :Generator<*, *, *> {
 
   const staffMemberDataByPtId :Object = {};
-  const staffMemberDataByFQN :Object = {};
+  
+  const workerResponse :Object = {};
 
   try {
 
@@ -68,26 +69,35 @@ function* addNewStaffMemberWorker(action :SequenceAction) :Generator<*, *, *> {
 
     staffMemberDataByPtId[personIdPTId] = [value.email];
 
-    const response = yield call(
+    const createStaffResponse = yield call(
       createOrMergeEntityDataWorker,
-      createOrMergeEntityData(staffESId, [staffMemberDataByPtId])
+      createOrMergeEntityData({
+        entitySetId: staffESId,
+        entityData: [staffMemberDataByPtId]
+      })
     );
-    if (response.error) throw response.error;
 
-    staffMemberDataByFQN[FQN.PERSON_ID_FQN] = [value.email];
-    staffMemberDataByFQN[OPENLATTICE_ID_FQN] = response;
+    if (createStaffResponse.error) throw createStaffResponse.error;
 
-    yield put(addNewStaffMember.success(action.id, staffMemberDataByFQN));
+    const staffMemberDataByFQN :Object = {
+      [OPENLATTICE_ID_FQN]: fromJS(createStaffResponse.data).getIn([OPENLATTICE_ID_FQN, 0]),
+      [FQN.PERSON_ID_FQN.toString()]: [value.email]
+    };
+
+    workerResponse.data = staffMemberDataByFQN;
+
+    yield put(addNewStaffMember.success(action.id, workerResponse.data));
   }
   catch (error) {
     LOG.error(ERR_WORKER_SAGA, error);
-    yield put(addNewStaffMember.failure(action.id, error));
+    workerResponse.error = error;
+    yield put(addNewStaffMember.failure(action.id, workerResponse.error));
   }
   finally {
     yield put(addNewStaffMember.finally(action.id));
   }
 
-  return staffMemberDataByFQN;
+  return workerResponse;
 }
 
 function* addNewStaffMemberWatcher() :Generator<*, *, *> {
@@ -102,7 +112,7 @@ function* addNewStaffMemberWatcher() :Generator<*, *, *> {
  */
 
 function* getCurrentUserStaffMemberDataWorker(action :SequenceAction) :Generator<*, *, *> {
-
+  const workerResponse = {};
   try {
 
     const { value } = action;
@@ -140,15 +150,20 @@ function* getCurrentUserStaffMemberDataWorker(action :SequenceAction) :Generator
       userData = searchResult;
     }
 
-    yield put(getCurrentUserStaffMemberData.success(action.id, userData));
+    workerResponse.data = userData;
+
+    yield put(getCurrentUserStaffMemberData.success(action.id, workerResponse.data));
   }
   catch (error) {
     LOG.error(ERR_WORKER_SAGA, error);
-    yield put(getCurrentUserStaffMemberData.failure(action.id, error));
+    workerResponse.error = error;
+    yield put(getCurrentUserStaffMemberData.failure(action.id, workerResponse.error));
   }
   finally {
     yield put(getCurrentUserStaffMemberData.finally(action.id));
   }
+
+  return workerResponse;
 }
 
 function* getCurrentUserStaffMemberDataWatcher() :Generator<*, *, *> {

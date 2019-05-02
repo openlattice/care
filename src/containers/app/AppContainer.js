@@ -19,6 +19,7 @@ import Spinner from '../../components/spinner/Spinner';
 import LegitReportsRouter from '../reports/LegitReportsRouter';
 import DashboardContainer from '../dashboard/DashboardContainer';
 import SubscribeContainer from '../subscribe/SubscribeContainer';
+import RequestStates from '../../utils/constants/RequestStates';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { isValidUuid } from '../../utils/Utils';
 import {
@@ -160,9 +161,9 @@ class AppContainer extends Component<Props> {
   renderAppContent = () => {
 
     const { app } = this.props;
-    const isLoadingApp :boolean = app.get('isLoadingApp', false);
+    const initializeState :boolean = app.get('initializeState');
 
-    if (isLoadingApp) {
+    if (initializeState === RequestStates.IS_REQUESTING) {
       return (
         <Spinner />
       );

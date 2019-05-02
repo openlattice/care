@@ -67,15 +67,14 @@ function* loadAppWatcher() :Generator<*, *, *> {
 
 function* loadAppWorker(action :SequenceAction) :Generator<*, *, *> {
 
+  const workerResponse :Object = {};
   try {
     yield put(loadApp.request(action.id));
 
     /*
      * 1. load App
      */
-
-    let response :any = {};
-    response = yield call(getAppWorker, getApp(APP_NAME));
+    let response :any = yield call(getAppWorker, getApp(APP_NAME));
     if (response.error) throw response.error;
 
     /*
@@ -106,20 +105,25 @@ function* loadAppWorker(action :SequenceAction) :Generator<*, *, *> {
     if (response.error) throw response.error;
 
     const edm :Object = response.data;
-    yield put(loadApp.success(action.id, {
+    workerResponse.data = {
       app,
       appConfigs,
       appTypes,
       edm
-    }));
+    };
+
+    yield put(loadApp.success(action.id, workerResponse.data));
   }
   catch (error) {
     LOG.error('caught exception in loadAppWorker()', error);
+    workerResponse.error = error;
     yield put(loadApp.failure(action.id, error));
   }
   finally {
     yield put(loadApp.finally(action.id));
   }
+
+  return workerResponse;
 }
 
 /*
@@ -189,16 +193,27 @@ function* initializeApplicationWorker(action :SequenceAction) :Generator<*, *, *
     yield put(initializeApplication.request(action.id));
 
     // Load app
-    yield all([
+    const loadAppResponse = yield all([
       call(loadAppWorker, loadApp()),
       call(getAllPropertyTypesWorker, getAllPropertyTypes())
     ]);
 
+    const loadAppErrors = loadAppResponse.reduce((acc, response) => {
+      if (response.error) {
+        acc.push(response.error);
+      }
+      return acc;
+    }, []);
+
+    if (loadAppErrors.length) throw loadAppErrors;
+
     // Get/create current user staff entity
-    yield call(
+    const getStaffResponse = yield call(
       getCurrentUserStaffMemberDataWorker,
       getCurrentUserStaffMemberData({ createIfNotExists: true })
     );
+
+    if (getStaffResponse.error) throw getStaffResponse.error;
 
     yield put(initializeApplication.success(action.id));
   }

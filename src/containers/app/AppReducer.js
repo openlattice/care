@@ -11,7 +11,9 @@ import { APP_TYPES_FQNS } from '../../shared/Consts';
 import {
   SWITCH_ORGANIZATION,
   loadApp,
+  initializeApplication,
 } from './AppActions';
+import RequestStates from '../../utils/constants/RequestStates';
 
 const { FullyQualifiedName } = Models;
 const {
@@ -57,6 +59,7 @@ const INITIAL_STATE :Map<*, *> = fromJS({
   isLoadingApp: true,
   organizations: Map(),
   selectedOrganizationId: '',
+  initializeState: RequestStates.PRE_REQUEST,
 });
 
 const getEntityTypePropertyTypes = (edm :Object, entityTypeId :string) :Object => {
@@ -73,6 +76,14 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
 
     case SWITCH_ORGANIZATION:
       return state.set('selectedOrganizationId', action.orgId);
+
+    case initializeApplication.case(action.type): {
+      return initializeApplication.reducer(state, action, {
+        REQUEST: () => state.set('initializeState', RequestStates.IS_REQUESTING),
+        SUCCESS: () => state.set('initializeState', RequestStates.REQUEST_SUCCESS),
+        FAILURE: () => state.set('initializeState', RequestStates.REQUEST_FAILURE),
+      });
+    }
 
     case loadApp.case(action.type): {
       return loadApp.reducer(state, action, {
