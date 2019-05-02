@@ -23,7 +23,6 @@ import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { isValidUuid } from '../../utils/Utils';
 import {
   initializeApplication,
-  loadApp,
   loadHospitals,
   switchOrganization
 } from './AppActions';
@@ -102,7 +101,6 @@ const MissingOrgsWrapper = styled.div`
 
 type Props = {
   actions :{
-    loadApp :RequestSequence;
     initializeApplication :RequestSequence;
     loadHospitals :RequestSequence;
     switchOrganization :(orgId :string) => Object;
@@ -220,7 +218,6 @@ function mapDispatchToProps(dispatch :Function) :Object {
 
   const actions = {
     initializeApplication,
-    loadApp,
     loadHospitals,
     switchOrganization
   };
