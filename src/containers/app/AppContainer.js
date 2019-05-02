@@ -6,7 +6,6 @@ import React, { Component } from 'react';
 
 import styled from 'styled-components';
 import { Map } from 'immutable';
-import { EntityDataModelApiActions } from 'lattice-sagas';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Redirect, Route, Switch } from 'react-router-dom';
@@ -22,7 +21,11 @@ import DashboardContainer from '../dashboard/DashboardContainer';
 import SubscribeContainer from '../subscribe/SubscribeContainer';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { isValidUuid } from '../../utils/Utils';
-import { loadApp, loadHospitals, switchOrganization } from './AppActions';
+import {
+  initializeApplication,
+  loadHospitals,
+  switchOrganization
+} from './AppActions';
 import {
   CRISIS_PATH,
   DASHBOARD_PATH,
@@ -40,7 +43,6 @@ import {
   MEDIA_QUERY_LG
 } from '../../core/style/Sizes';
 
-const { getAllPropertyTypes } = EntityDataModelApiActions;
 
 // TODO: this should come from lattice-ui-kit, maybe after the next release. current version v0.1.1
 const APP_BG :string = '#f8f8fb';
@@ -99,8 +101,7 @@ const MissingOrgsWrapper = styled.div`
 
 type Props = {
   actions :{
-    getAllPropertyTypes :RequestSequence;
-    loadApp :RequestSequence;
+    initializeApplication :RequestSequence;
     loadHospitals :RequestSequence;
     switchOrganization :(orgId :string) => Object;
   };
@@ -112,11 +113,10 @@ class AppContainer extends Component<Props> {
   componentDidMount() {
 
     const { actions } = this.props;
-    actions.loadApp();
-    actions.getAllPropertyTypes();
+    actions.initializeApplication();
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps :Props) {
 
     // TODO: should this be moved out of AppContainer...?
 
@@ -144,7 +144,7 @@ class AppContainer extends Component<Props> {
        * already set (it is initially set to the empty string in the reducer)
        */
       if (isValidUuid(prevOrgId)) {
-        actions.loadApp(); // this is not entirely necessary
+        actions.initializeApplication();
       }
     }
   }
@@ -217,8 +217,7 @@ function mapStateToProps(state :Map<*, *>) :Object {
 function mapDispatchToProps(dispatch :Function) :Object {
 
   const actions = {
-    getAllPropertyTypes,
-    loadApp,
+    initializeApplication,
     loadHospitals,
     switchOrganization
   };
