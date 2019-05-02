@@ -23,23 +23,26 @@ import {
 
 import Logger from '../../utils/Logger';
 import * as Routes from '../../core/router/Routes';
+import { getCurrentUserStaffMemberDataWorker } from '../staff/StaffSagas';
+import { getCurrentUserStaffMemberData } from '../staff/StaffActions';
 import { APP_NAME } from '../../shared/Consts';
-import { ERR_ACTION_VALUE_NOT_DEFINED } from '../../utils/Errors';
-import { storeOrganizationId } from '../../utils/Utils';
+import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_WORKER_SAGA } from '../../utils/Errors';
 import { isBaltimoreOrg } from '../../utils/Whitelist';
 import {
+  INITIALIZE_APPLICATION,
   LOAD_APP,
   LOAD_HOSPITALS,
   SWITCH_ORGANIZATION,
+  initializeApplication,
   loadApp,
-  loadHospitals
+  loadHospitals,
 } from './AppActions';
 
 const { SecurableTypes } = Types;
 const { getEntitySetData } = DataApiActions;
 const { getEntitySetDataWorker } = DataApiSagas;
-const { getEntityDataModelProjection } = EntityDataModelApiActions;
-const { getEntityDataModelProjectionWorker } = EntityDataModelApiSagas;
+const { getEntityDataModelProjection, getAllPropertyTypes } = EntityDataModelApiActions;
+const { getEntityDataModelProjectionWorker, getAllPropertyTypesWorker } = EntityDataModelApiSagas;
 const { getApp, getAppConfigs, getAppTypes } = AppApiActions;
 const { getAppWorker, getAppConfigsWorker, getAppTypesWorker } = AppApiSagas;
 
@@ -76,7 +79,7 @@ function* loadAppWorker(action :SequenceAction) :Generator<*, *, *> {
     if (response.error) throw response.error;
 
     /*
-     * 2. load AppConfigs and AppTypes
+     * 2. load AppConfigs, AppTypes and CurrentUserStaff
      */
 
     const app = response.data;
@@ -177,13 +180,52 @@ function* switchOrganizationWorker(action :Object) :Generator<*, *, *> {
 }
 
 /*
+ * initializeApplication()
+ */
+
+function* initializeApplicationWorker(action :SequenceAction) :Generator<*, *, *> {
+
+  try {
+    yield put(initializeApplication.request(action.id));
+
+    // Load app
+    yield all([
+      call(loadAppWorker, loadApp()),
+      call(getAllPropertyTypesWorker, getAllPropertyTypes())
+    ]);
+
+    // Get/create current user staff entity
+    yield call(
+      getCurrentUserStaffMemberDataWorker,
+      getCurrentUserStaffMemberData({ createIfNotExists: true })
+    );
+
+    yield put(initializeApplication.success(action.id));
+  }
+  catch (error) {
+    LOG.error(ERR_WORKER_SAGA, error);
+    yield put(initializeApplication.failure(action.id, error));
+  }
+  finally {
+    yield put(initializeApplication.finally(action.id));
+  }
+}
+
+function* initializeApplicationWatcher() :Generator<*, *, *> {
+
+  yield takeEvery(INITIALIZE_APPLICATION, initializeApplicationWorker);
+}
+
+
+/*
  *
  * exports
  *
  */
 
 export {
+  initializeApplicationWatcher,
   loadAppWatcher,
   loadHospitalsWatcher,
-  switchOrganizationWatcher
+  switchOrganizationWatcher,
 };
