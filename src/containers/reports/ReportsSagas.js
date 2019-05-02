@@ -11,7 +11,7 @@ import {
 } from '@redux-saga/core/effects';
 import moment from 'moment';
 import { List, Map, fromJS } from 'immutable';
-import { Types } from 'lattice';
+import { Constants, Models, Types } from 'lattice';
 import {
   DataApiActions,
   DataApiSagas,
@@ -54,10 +54,13 @@ import { setInputValues as setObservedBehaviors } from '../pages/observedbehavio
 import { setInputValues as setOfficerSafetyData } from '../pages/officersafety/ActionFactory';
 import { setInputValues as setSubjectInformation } from '../pages/subjectinformation/ActionFactory';
 import * as FQN from '../../edm/DataModelFqns';
+import { POST_PROCESS_FIELDS } from '../../utils/constants/CrisisTemplateConstants';
 
 const LOG = new Logger('ReportsSagas');
 
 const { DeleteTypes, UpdateTypes } = Types;
+const { DataGraphBuilder } = Models;
+const { OPENLATTICE_ID_FQN } = Constants;
 const {
   deleteEntity,
   getEntityData,
@@ -300,6 +303,25 @@ function* updateReportWorker(action :SequenceAction) :Generator<*, *, *> {
     const edm :Map<*, *> = yield select(state => state.get('edm'));
     const app = yield select(state => state.get('app', Map()));
     const reportESID :UUID = getReportESId(app);
+    const reportedESID :UUID = getReportedESId(app);
+    const staffESID :UUID = getStaffESId(app);
+    const datetimePTID :UUID = edm.getIn(['fqnToIdMap', FQN.DATE_TIME_FQN]);
+
+    const staffEKID :UUID = yield select(
+      state => state.getIn(['staff', 'currentUserStaffMemberData', OPENLATTICE_ID_FQN, 0], Map())
+    );
+
+    const associations = {
+      [reportedESID]: [{
+        dstEntityKeyId: entityKeyId,
+        dstEntitySetId: reportESID,
+        srcEntityKeyId: staffEKID,
+        srcEntitySetId: staffESID,
+        data: {
+          [datetimePTID]: [formData[POST_PROCESS_FIELDS.TIMESTAMP]]
+        }
+      }]
+    };
 
     const reportFields = BHR_CONFIG.fields;
     const updatedProperties = {};
@@ -329,6 +351,7 @@ function* updateReportWorker(action :SequenceAction) :Generator<*, *, *> {
         updateType: UpdateTypes.PartialReplace,
       })
     );
+
     if (response.error) throw response.error;
     yield put(updateReport.success(action.id, response.data));
   }
