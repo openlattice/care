@@ -11,10 +11,7 @@ const LOAD_HOSPITALS :'LOAD_HOSPITALS' = 'LOAD_HOSPITALS';
 const loadHospitals :RequestSequence = newRequestSequence(LOAD_HOSPITALS);
 
 const SWITCH_ORGANIZATION :'SWITCH_ORGANIZATION' = 'SWITCH_ORGANIZATION';
-const switchOrganization = (orgId :string) :Object => ({
-  orgId,
-  type: SWITCH_ORGANIZATION
-});
+const switchOrganization :RequestSequence = newRequestSequence(SWITCH_ORGANIZATION);
 
 const INITIALIZE_APPLICATION :'INITIALIZE_APPLICATION' = 'INITIALIZE_APPLICATION';
 const initializeApplication :RequestSequence = newRequestSequence(INITIALIZE_APPLICATION);

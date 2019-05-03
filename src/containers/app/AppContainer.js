@@ -112,42 +112,8 @@ type Props = {
 class AppContainer extends Component<Props> {
 
   componentDidMount() {
-
     const { actions } = this.props;
     actions.initializeApplication();
-  }
-
-  componentWillReceiveProps(nextProps :Props) {
-
-    // TODO: should this be moved out of AppContainer...?
-
-    const { app, actions } = this.props;
-    const prevOrgId = app.get('selectedOrganizationId');
-    const nextOrgId = nextProps.app.get('selectedOrganizationId');
-
-    // check if the selected organization has changed
-    if (prevOrgId !== nextOrgId) {
-
-      const selectedOrgId :string = nextOrgId;
-      const hospitalsEntitySetId = nextProps.app.getIn(
-        [HOSPITALS_FQN.toString(), 'entitySetsByOrganization', selectedOrgId]
-      );
-      if (isValidUuid(hospitalsEntitySetId)) {
-        actions.loadHospitals({
-          entitySetId: hospitalsEntitySetId,
-          organizationId: selectedOrgId,
-        });
-      }
-
-      /*
-       * loadApp() is called once on page load in componentDidMount(), and then only needs to be called again when
-       * switching organizations. to avoid calling it twice on page load, we need to check if "prevOrgId" has been
-       * already set (it is initially set to the empty string in the reducer)
-       */
-      if (isValidUuid(prevOrgId)) {
-        actions.initializeApplication();
-      }
-    }
   }
 
   renderMissingOrgs = () => (

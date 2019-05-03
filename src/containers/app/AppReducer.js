@@ -9,7 +9,7 @@ import has from 'lodash/has';
 
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import {
-  SWITCH_ORGANIZATION,
+  switchOrganization,
   loadApp,
   initializeApplication,
 } from './AppActions';
@@ -73,9 +73,6 @@ const getEntityTypePropertyTypes = (edm :Object, entityTypeId :string) :Object =
 export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Object) {
 
   switch (action.type) {
-
-    case SWITCH_ORGANIZATION:
-      return state.set('selectedOrganizationId', action.orgId);
 
     case initializeApplication.case(action.type): {
       return initializeApplication.reducer(state, action, {
