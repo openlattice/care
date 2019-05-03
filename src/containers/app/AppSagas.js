@@ -185,7 +185,7 @@ function* switchOrganizationWorker(action :Object) :Generator<*, *, *> {
 
   try {
     const { value } = action;
-    if (isValidUuid(value)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUuid(value)) throw ERR_ACTION_VALUE_TYPE;
 
     const currentOrgId = yield select(state => state.getIn(['app', 'selectedOrganizationId']));
     if (value !== currentOrgId) {
