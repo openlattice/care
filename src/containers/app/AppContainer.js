@@ -20,8 +20,7 @@ import LegitReportsRouter from '../reports/LegitReportsRouter';
 import DashboardContainer from '../dashboard/DashboardContainer';
 import SubscribeContainer from '../subscribe/SubscribeContainer';
 import RequestStates from '../../utils/constants/RequestStates';
-import { APP_TYPES_FQNS } from '../../shared/Consts';
-import { isValidUuid } from '../../utils/Utils';
+import type { RequestState } from '../../utils/constants/RequestStates';
 import {
   initializeApplication,
   loadHospitals,
@@ -47,8 +46,6 @@ import {
 
 // TODO: this should come from lattice-ui-kit, maybe after the next release. current version v0.1.1
 const APP_BG :string = '#f8f8fb';
-
-const { HOSPITALS_FQN } = APP_TYPES_FQNS;
 
 /*
  * styled components
@@ -106,7 +103,9 @@ type Props = {
     loadHospitals :RequestSequence;
     switchOrganization :(orgId :string) => Object;
   };
-  app :Map<*, *>;
+  organizations :Map;
+  selectedOrganizationId :UUID;
+  initializeState :RequestState;
 };
 
 class AppContainer extends Component<Props> {
@@ -126,18 +125,18 @@ class AppContainer extends Component<Props> {
 
   renderAppContent = () => {
 
-    const { app } = this.props;
-    const initializeState :boolean = app.get('initializeState');
+    const {
+      organizations,
+      selectedOrganizationId,
+      initializeState
+    } = this.props;
 
     if (initializeState === RequestStates.IS_REQUESTING) {
       return (
         <Spinner />
       );
     }
-
-    const orgs :Map<*, *> = app.get('organizations', Map());
-    const selectedOrganizationId :string = app.get('selectedOrganizationId', '');
-    if (orgs.isEmpty() || !selectedOrganizationId) {
+    if (organizations.isEmpty() || !selectedOrganizationId) {
       // TODO: this might be problematic
       return (
         <Switch>
@@ -177,7 +176,9 @@ class AppContainer extends Component<Props> {
 function mapStateToProps(state :Map<*, *>) :Object {
 
   return {
-    app: state.get('app', Map())
+    organizations: state.getIn(['app', 'organizations'], Map()),
+    selectedOrganizationId: state.getIn(['app', 'selectedOrganizationId'], ''),
+    initializeState: state.getIn(['app', 'initializeState']),
   };
 }
 
