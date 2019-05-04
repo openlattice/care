@@ -19,8 +19,8 @@ import Spinner from '../../components/spinner/Spinner';
 import LegitReportsRouter from '../reports/LegitReportsRouter';
 import DashboardContainer from '../dashboard/DashboardContainer';
 import SubscribeContainer from '../subscribe/SubscribeContainer';
-import { APP_TYPES_FQNS } from '../../shared/Consts';
-import { isValidUuid } from '../../utils/Utils';
+import RequestStates from '../../utils/constants/RequestStates';
+import type { RequestState } from '../../utils/constants/RequestStates';
 import {
   initializeApplication,
   loadHospitals,
@@ -46,8 +46,6 @@ import {
 
 // TODO: this should come from lattice-ui-kit, maybe after the next release. current version v0.1.1
 const APP_BG :string = '#f8f8fb';
-
-const { HOSPITALS_FQN } = APP_TYPES_FQNS;
 
 /*
  * styled components
@@ -105,48 +103,16 @@ type Props = {
     loadHospitals :RequestSequence;
     switchOrganization :(orgId :string) => Object;
   };
-  app :Map<*, *>;
+  organizations :Map;
+  selectedOrganizationId :UUID;
+  initializeState :RequestState;
 };
 
 class AppContainer extends Component<Props> {
 
   componentDidMount() {
-
     const { actions } = this.props;
     actions.initializeApplication();
-  }
-
-  componentWillReceiveProps(nextProps :Props) {
-
-    // TODO: should this be moved out of AppContainer...?
-
-    const { app, actions } = this.props;
-    const prevOrgId = app.get('selectedOrganizationId');
-    const nextOrgId = nextProps.app.get('selectedOrganizationId');
-
-    // check if the selected organization has changed
-    if (prevOrgId !== nextOrgId) {
-
-      const selectedOrgId :string = nextOrgId;
-      const hospitalsEntitySetId = nextProps.app.getIn(
-        [HOSPITALS_FQN.toString(), 'entitySetsByOrganization', selectedOrgId]
-      );
-      if (isValidUuid(hospitalsEntitySetId)) {
-        actions.loadHospitals({
-          entitySetId: hospitalsEntitySetId,
-          organizationId: selectedOrgId,
-        });
-      }
-
-      /*
-       * loadApp() is called once on page load in componentDidMount(), and then only needs to be called again when
-       * switching organizations. to avoid calling it twice on page load, we need to check if "prevOrgId" has been
-       * already set (it is initially set to the empty string in the reducer)
-       */
-      if (isValidUuid(prevOrgId)) {
-        actions.initializeApplication();
-      }
-    }
   }
 
   renderMissingOrgs = () => (
@@ -159,18 +125,18 @@ class AppContainer extends Component<Props> {
 
   renderAppContent = () => {
 
-    const { app } = this.props;
-    const isLoadingApp :boolean = app.get('isLoadingApp', false);
+    const {
+      organizations,
+      selectedOrganizationId,
+      initializeState
+    } = this.props;
 
-    if (isLoadingApp) {
+    if (initializeState === RequestStates.IS_REQUESTING) {
       return (
         <Spinner />
       );
     }
-
-    const orgs :Map<*, *> = app.get('organizations', Map());
-    const selectedOrganizationId :string = app.get('selectedOrganizationId', '');
-    if (orgs.isEmpty() || !selectedOrganizationId) {
+    if (organizations.isEmpty() || !selectedOrganizationId) {
       // TODO: this might be problematic
       return (
         <Switch>
@@ -210,7 +176,9 @@ class AppContainer extends Component<Props> {
 function mapStateToProps(state :Map<*, *>) :Object {
 
   return {
-    app: state.get('app', Map())
+    organizations: state.getIn(['app', 'organizations'], Map()),
+    selectedOrganizationId: state.getIn(['app', 'selectedOrganizationId'], ''),
+    initializeState: state.getIn(['app', 'initializeState']),
   };
 }
 

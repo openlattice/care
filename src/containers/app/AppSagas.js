@@ -7,6 +7,7 @@ import {
   all,
   call,
   put,
+  select,
   takeEvery
 } from '@redux-saga/core/effects';
 import { push } from 'connected-react-router';
@@ -25,8 +26,8 @@ import Logger from '../../utils/Logger';
 import * as Routes from '../../core/router/Routes';
 import { getCurrentUserStaffMemberDataWorker } from '../staff/StaffSagas';
 import { getCurrentUserStaffMemberData } from '../staff/StaffActions';
-import { APP_NAME } from '../../shared/Consts';
-import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_WORKER_SAGA } from '../../utils/Errors';
+import { APP_NAME, APP_TYPES_FQNS } from '../../shared/Consts';
+import { ERR_WORKER_SAGA, ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
 import { isBaltimoreOrg } from '../../utils/Whitelist';
 import {
   INITIALIZE_APPLICATION,
@@ -37,6 +38,7 @@ import {
   loadApp,
   loadHospitals,
 } from './AppActions';
+import { isValidUuid } from '../../utils/Utils';
 
 const { SecurableTypes } = Types;
 const { getEntitySetData } = DataApiActions;
@@ -45,6 +47,8 @@ const { getEntityDataModelProjection, getAllPropertyTypes } = EntityDataModelApi
 const { getEntityDataModelProjectionWorker, getAllPropertyTypesWorker } = EntityDataModelApiSagas;
 const { getApp, getAppConfigs, getAppTypes } = AppApiActions;
 const { getAppWorker, getAppConfigsWorker, getAppTypesWorker } = AppApiSagas;
+
+const { HOSPITALS_FQN } = APP_TYPES_FQNS;
 
 const BALTIMORE_HOSPITALS_ES_ID :string = '1526c664-4868-468f-9255-307aed65a7ed';
 
@@ -67,15 +71,14 @@ function* loadAppWatcher() :Generator<*, *, *> {
 
 function* loadAppWorker(action :SequenceAction) :Generator<*, *, *> {
 
+  const workerResponse :Object = {};
   try {
     yield put(loadApp.request(action.id));
 
     /*
      * 1. load App
      */
-
-    let response :any = {};
-    response = yield call(getAppWorker, getApp(APP_NAME));
+    let response :any = yield call(getAppWorker, getApp(APP_NAME));
     if (response.error) throw response.error;
 
     /*
@@ -106,20 +109,25 @@ function* loadAppWorker(action :SequenceAction) :Generator<*, *, *> {
     if (response.error) throw response.error;
 
     const edm :Object = response.data;
-    yield put(loadApp.success(action.id, {
+    workerResponse.data = {
       app,
       appConfigs,
       appTypes,
       edm
-    }));
+    };
+
+    yield put(loadApp.success(action.id, workerResponse.data));
   }
   catch (error) {
     LOG.error('caught exception in loadAppWorker()', error);
+    workerResponse.error = error;
     yield put(loadApp.failure(action.id, error));
   }
   finally {
     yield put(loadApp.finally(action.id));
   }
+
+  return workerResponse;
 }
 
 /*
@@ -132,32 +140,36 @@ function* loadHospitalsWatcher() :Generator<*, *, *> {
 }
 
 function* loadHospitalsWorker(action :SequenceAction) :Generator<*, *, *> {
-
-  const { id, value } = action;
-  if (value === null || value === undefined) {
-    yield put(loadHospitals.failure(id, ERR_ACTION_VALUE_NOT_DEFINED));
-    return;
-  }
-
-  let entitySetId :string = value.entitySetId;
-  const organizationId :string = value.organizationId;
+  const workerResponse = {};
 
   try {
     yield put(loadHospitals.request(action.id));
+
+    const organizationId :UUID = yield select(state => state.getIn(['app', 'selectedOrganizationId']));
+    let entitySetId :UUID = yield select(
+      state => state.getIn(['app', HOSPITALS_FQN, 'entitySetsByOrganization', organizationId])
+    );
+
     if (isBaltimoreOrg(organizationId)) {
       // use "Baltimore Police Department Hospitals" EntitySet
       entitySetId = BALTIMORE_HOSPITALS_ES_ID;
     }
     const response = yield call(getEntitySetDataWorker, getEntitySetData({ entitySetId }));
     if (response.error) throw response.error;
-    yield put(loadHospitals.success(action.id, response.data));
+    workerResponse.data = response.data;
+
+    yield put(loadHospitals.success(action.id, workerResponse.data));
   }
   catch (error) {
+    LOG.error(ERR_WORKER_SAGA, error);
+    workerResponse.error = error;
     yield put(loadHospitals.failure(action.id, error));
   }
   finally {
     yield put(loadHospitals.finally(action.id));
   }
+
+  return workerResponse;
 }
 
 /*
@@ -171,12 +183,20 @@ function* switchOrganizationWatcher() :Generator<*, *, *> {
 
 function* switchOrganizationWorker(action :Object) :Generator<*, *, *> {
 
-  // TODO: this was added in quickly, might need refactoring
-  AccountUtils.storeOrganizationId(action.orgId);
+  try {
+    const { value } = action;
+    if (!isValidUuid(value)) throw ERR_ACTION_VALUE_TYPE;
 
-  // not ideal since it resets clears form inputs, but none of that is being stored in redux at the moment anyway...
-  // TODO: check action.orgId !== selectedOrganizationId
-  yield put(push(Routes.HOME_PATH));
+    const currentOrgId = yield select(state => state.getIn(['app', 'selectedOrganizationId']));
+    if (value !== currentOrgId) {
+      AccountUtils.storeOrganizationId(value);
+      yield put(push(Routes.HOME_PATH));
+      yield call(initializeApplicationWorker, initializeApplication());
+    }
+  }
+  catch (error) {
+    LOG.error(ERR_WORKER_SAGA, error);
+  }
 }
 
 /*
@@ -188,17 +208,44 @@ function* initializeApplicationWorker(action :SequenceAction) :Generator<*, *, *
   try {
     yield put(initializeApplication.request(action.id));
 
-    // Load app
-    yield all([
+    // Load app and property types
+    const phaseOneResponse = yield all([
       call(loadAppWorker, loadApp()),
       call(getAllPropertyTypesWorker, getAllPropertyTypes())
     ]);
 
+    const phaseOneErrors = phaseOneResponse.reduce((acc, response) => {
+      if (response.error) {
+        acc.push(response.error);
+      }
+      return acc;
+    }, []);
+
+    if (phaseOneErrors.length) throw phaseOneErrors;
+
+    // The following requests require the completion of phase one requests
     // Get/create current user staff entity
-    yield call(
+    const staffRequest = yield call(
       getCurrentUserStaffMemberDataWorker,
       getCurrentUserStaffMemberData({ createIfNotExists: true })
     );
+
+    // Get hospitals if necessary
+    const hospitalRequest = yield call(loadHospitalsWorker, loadHospitals());
+
+    const phaseTwoResponse = yield all([
+      staffRequest,
+      hospitalRequest
+    ]);
+
+    const phaseTwo = phaseTwoResponse.reduce((acc, response) => {
+      if (response.error) {
+        acc.push(response.error);
+      }
+      return acc;
+    }, []);
+
+    if (phaseTwo.length) throw phaseTwo;
 
     yield put(initializeApplication.success(action.id));
   }
@@ -215,7 +262,6 @@ function* initializeApplicationWatcher() :Generator<*, *, *> {
 
   yield takeEvery(INITIALIZE_APPLICATION, initializeApplicationWorker);
 }
-
 
 /*
  *
