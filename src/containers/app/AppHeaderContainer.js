@@ -21,6 +21,7 @@ import OpenLatticeLogo from '../../assets/images/logo_v2.png';
 import DropdownButtonWrapper from '../../components/buttons/DropdownButtonWrapper';
 import * as Routes from '../../core/router/Routes';
 import { switchOrganization } from './AppActions';
+import { orgSelectStyles } from './OrgSelectStyles';
 import {
   APP_CONTAINER_MAX_WIDTH,
   APP_CONTAINER_WIDTH,
@@ -142,37 +143,6 @@ const LogoutButton = styled(Button)`
     width: auto;
   }
 `;
-
-const orgSelectStyles = {
-  container: styles => ({
-    ...styles,
-    width: '200px',
-  }),
-  control: (styles, { isFocused, isSelected }) => ({
-    ...styles,
-    backgroundColor: (isFocused || isSelected) ? WHITE : NEUTRALS[8],
-    borderColor: (isFocused || isSelected) ? PURPLES[1] : styles.borderColor,
-    boxShadow: 'none',
-    color: NEUTRALS[1],
-    fontSize: '12px',
-    lineHeight: 'normal',
-    height: '30px',
-    minHeight: '30px',
-    ':hover': {
-      borderColor: (isFocused || isSelected) ? PURPLES[1] : styles.borderColor,
-    },
-  }),
-  menu: styles => ({ ...styles, width: '300px' }),
-  option: styles => ({
-    ...styles,
-    backgroundColor: WHITE,
-    color: NEUTRALS[0],
-    fontSize: '12px',
-    ':hover': {
-      backgroundColor: PURPLES[6],
-    },
-  }),
-};
 
 const DropdownMenuWrapper = styled.div`
   display: flex;
