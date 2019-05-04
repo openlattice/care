@@ -278,6 +278,6 @@ function mapDispatchToProps(dispatch :Function) :Object {
   };
 }
 
-export default withRouter<any>(
+export default withRouter<*>(
   connect(mapStateToProps, mapDispatchToProps)(AppHeaderContainer)
 );

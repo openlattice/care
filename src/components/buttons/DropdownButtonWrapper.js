@@ -1,3 +1,7 @@
+/*
+ * @flow
+ */
+
 import React, { Component } from 'react';
 import styled, { css } from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -8,6 +12,17 @@ import BasicButton from './BasicButton';
 /*
  * styled components
  */
+
+type Props = {
+  title :string,
+  options :{ label :string, onClick :() => void }[],
+  openAbove? :boolean,
+  fullSize? :boolean,
+  width? :number,
+  selected :Immutable.List<*>,
+  hideOnClick :boolean,
+  relativeToPage? :boolean
+};
 
 const TEXT_COLOR = '#8e929b';
 
@@ -105,7 +120,7 @@ const DataTableWrapper = styled.div`
     `)}
 `;
 
-export default class DropdownButtonWrapper extends Component {
+export default class DropdownButtonWrapper extends Component<Props, State> {
 
   static defaultProps = {
     openAbove: false,
@@ -115,7 +130,7 @@ export default class DropdownButtonWrapper extends Component {
     relativeToPage: false
   }
 
-  constructor(props) {
+  constructor(props :Props) {
     super(props);
     this.state = {
       isVisibleDataTable: false
@@ -147,7 +162,7 @@ export default class DropdownButtonWrapper extends Component {
     });
   }
 
-  handleOnSelect = (label) => {
+  handleOnSelect = (label :string) => {
     const { onSelect, options } = this.props;
     onSelect(options.get(label));
   }
