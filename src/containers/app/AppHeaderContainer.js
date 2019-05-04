@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 
 import Select from 'react-select';
 import styled, { css } from 'styled-components';
+import isFunction from 'lodash/isFunction';
 import { Map } from 'immutable';
 import { AuthActions } from 'lattice-auth';
 import { Button, Colors } from 'lattice-ui-kit';
@@ -20,19 +21,20 @@ import AppNavigationContainer from './AppNavigationContainer';
 import OpenLatticeLogo from '../../assets/images/logo_v2.png';
 import DropdownButtonWrapper from '../../components/buttons/DropdownButtonWrapper';
 import * as Routes from '../../core/router/Routes';
+import { GOOGLE_TRACKING_ID } from '../../core/tracking/google/GoogleAnalytics';
 import { switchOrganization } from './AppActions';
 import { orgSelectStyles } from './OrgSelectStyles';
 import {
-  APP_CONTAINER_MAX_WIDTH,
-  APP_CONTAINER_WIDTH,
   APP_CONTENT_PADDING,
   MEDIA_QUERY_TECH_SM,
   MEDIA_QUERY_MD,
   MEDIA_QUERY_LG
 } from '../../core/style/Sizes';
 
+declare var gtag :?Function;
+
 const { logout } = AuthActions;
-const { NEUTRALS, PURPLES, WHITE } = Colors;
+const { NEUTRALS } = Colors;
 
 // TODO: this should come from lattice-ui-kit, maybe after the next release. current version v0.1.1
 const APP_HEADER_BORDER :string = '#e6e6eb';
@@ -159,7 +161,17 @@ type Props = {
   app :Map<*, *>;
 };
 
-class AppHeaderContainer extends Component<Props, State> {
+class AppHeaderContainer extends Component<Props, {}> {
+
+  handleOnClickLogOut = () => {
+
+    const { actions } = this.props;
+    actions.logout();
+
+    if (isFunction(gtag)) {
+      gtag('config', GOOGLE_TRACKING_ID, { user_id: undefined, send_page_view: false });
+    }
+  }
 
   renderLeftSideContent = () => (
     <LeftSideContentWrapper>
@@ -177,14 +189,11 @@ class AppHeaderContainer extends Component<Props, State> {
     </LeftSideContentWrapper>
   )
 
-  renderLogoutButton = () => {
-    const { actions } = this.props;
-    return (
-      <LogoutButton onClick={actions.logout}>
-        Log Out
-      </LogoutButton>
-    )
-  }
+  renderLogoutButton = () => (
+    <LogoutButton onClick={this.handleOnClickLogOut}>
+      Log Out
+    </LogoutButton>
+  )
 
   renderRightSideContent = () => (
     <RightSideContentWrapper>
@@ -269,6 +278,6 @@ function mapDispatchToProps(dispatch :Function) :Object {
   };
 }
 
-export default withRouter(
+export default withRouter<*>(
   connect(mapStateToProps, mapDispatchToProps)(AppHeaderContainer)
 );
