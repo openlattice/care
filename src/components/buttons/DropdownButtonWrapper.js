@@ -13,16 +13,16 @@ import BasicButton from './BasicButton';
  * styled components
  */
 
-type Props = {
-  title :string,
-  options :{ label :string, onClick :() => void }[],
-  openAbove? :boolean,
-  fullSize? :boolean,
-  width? :number,
-  selected :Immutable.List<*>,
-  hideOnClick :boolean,
-  relativeToPage? :boolean
-};
+ type Props = {
+   title :string,
+   options :{ label :string, onClick :() => void }[],
+   openAbove? :boolean,
+   fullSize? :boolean,
+   width? :number,
+   selected :Immutable.List<*>,
+   hideOnClick :boolean,
+   relativeToPage? :boolean
+ };
 
 const TEXT_COLOR = '#8e929b';
 
