@@ -108,4 +108,4 @@ AppNavigationContainer.defaultProps = {
   dropdown: false
 };
 
-export default withRouter(AppNavigationContainer);
+export default withRouter<*>(AppNavigationContainer);

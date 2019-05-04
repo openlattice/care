@@ -195,4 +195,4 @@ function mapDispatchToProps(dispatch :Function) :Object {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AppContainer);
+export default connect<*, *, *, *, *, *>(mapStateToProps, mapDispatchToProps)(AppContainer);
