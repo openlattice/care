@@ -9,6 +9,7 @@ import {
   getReport,
   getReports,
   updateReport,
+  getReportsByDateRange,
 } from './ReportsActions';
 import { CLEAR_CRISIS_TEMPLATE } from '../crisis/CrisisActionFactory';
 import RequestStates from '../../utils/constants/RequestStates';
@@ -77,6 +78,14 @@ export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :
             .set('isFetchingReports', false)
             .deleteIn(['actions', 'getReports', seqAction.id]);
         },
+      });
+    }
+
+    case getReportsByDateRange.case(action.type): {
+      return getReportsByDateRange.reducer(state, (action :any), {
+        REQUEST: () => state.set('fetchState', RequestStates.IS_REQUESTING),
+        SUCCESS: () => state.set('fetchState', RequestStates.REQUEST_SUCCESS),
+        FAILURE: () => state.set('fetchState', RequestStates.REQUEST_FAILURE),
       });
     }
 
