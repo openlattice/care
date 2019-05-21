@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { APP_CONTENT_WIDTH } from '../../core/style/Sizes';
+import { APP_CONTAINER_WIDTH } from '../../core/style/Sizes';
 
 export const ContentContainerOuterWrapper = styled.div`
   align-items: flex-start;
@@ -15,9 +15,9 @@ export const ContentContainerOuterWrapper = styled.div`
 
 export const ContentContainerInnerWrapper = styled.div`
   display: flex;
-  flex: 0 0 auto;
+  flex: 1 0 auto;
   flex-direction: column;
   justify-content: flex-start;
-  width: ${APP_CONTENT_WIDTH}px;
+  max-width: ${APP_CONTAINER_WIDTH}px;
   padding: 30px;
 `;
