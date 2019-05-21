@@ -16,13 +16,18 @@ const updateReport :RequestSequence = newRequestSequence(UPDATE_REPORT);
 const GET_REPORT :'GET_REPORT' = 'GET_REPORT';
 const getReport :RequestSequence = newRequestSequence(GET_REPORT);
 
+const GET_REPORTS_BY_DATE_RANGE :'GET_REPORTS_BY_DATE_RANGE' = 'GET_REPORTS_BY_DATE_RANGE';
+const getReportsByDateRange :RequestSequence = newRequestSequence(GET_REPORTS_BY_DATE_RANGE);
+
 export {
   DELETE_REPORT,
   GET_REPORT,
   GET_REPORTS,
+  GET_REPORTS_BY_DATE_RANGE,
   UPDATE_REPORT,
   deleteReport,
   getReport,
   getReports,
+  getReportsByDateRange,
   updateReport,
 };

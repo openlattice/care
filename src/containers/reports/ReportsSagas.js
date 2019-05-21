@@ -27,10 +27,12 @@ import {
   DELETE_REPORT,
   GET_REPORT,
   GET_REPORTS,
+  GET_REPORTS_BY_DATE_RANGE,
   UPDATE_REPORT,
   deleteReport,
   getReport,
   getReports,
+  getReportsByDateRange,
   updateReport,
 } from './ReportsActions';
 import { isValidUuid } from '../../utils/Utils';
@@ -283,6 +285,30 @@ function* getReportsWatcher() :Generator<*, *, *> {
 
 /*
  *
+ * ReportsActions.getReportsByDateRange()
+ *
+ */
+
+function* getReportsByDateRangeWorker(action :SequenceAction) :Generator<*, *, *> {
+  try {
+    yield put(getReportsByDateRange.request(action.id));
+    yield put(getReportsByDateRange.success(action.id));
+  }
+  catch (error) {
+    yield put(getReportsByDateRange.failure(action.id, error));
+  }
+  finally {
+    yield put(getReportsByDateRange.finally(action.id));
+
+  }
+}
+
+function* getReportsByDateRangeWatcher() :Generator<*, *, *> {
+  yield takeEvery(GET_REPORTS_BY_DATE_RANGE, getReportsByDateRangeWorker);
+}
+
+/*
+ *
  * ReportsActions.updateReport()
  *
  */
@@ -402,6 +428,8 @@ function* updateReportWatcher() :Generator<*, *, *> {
 export {
   deleteReportWatcher,
   deleteReportWorker,
+  getReportsByDateRangeWatcher,
+  getReportsByDateRangeWorker,
   getReportsWatcher,
   getReportsWorker,
   getReportWatcher,
