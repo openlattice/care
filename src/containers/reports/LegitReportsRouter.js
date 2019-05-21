@@ -10,7 +10,8 @@ import {
   Switch,
 } from 'react-router';
 
-import HackyReportsContainer from './HackyReportsContainer';
+// import HackyReportsContainer from './HackyReportsContainer';
+import SearchReports from './SearchReports';
 import {
   REPORT_VIEW_PATH,
   REPORTS_PATH,
@@ -19,7 +20,7 @@ import CrisisReportView from './CrisisReportView';
 
 const LegitReportsRouter = () => (
   <Switch>
-    <Route exact path={REPORTS_PATH} component={HackyReportsContainer} />
+    <Route exact path={REPORTS_PATH} component={SearchReports} />
     <Route path={REPORT_VIEW_PATH} component={CrisisReportView} />
     <Redirect to={REPORTS_PATH} />
   </Switch>
