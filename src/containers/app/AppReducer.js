@@ -9,7 +9,6 @@ import has from 'lodash/has';
 
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import {
-  switchOrganization,
   loadApp,
   initializeApplication,
 } from './AppActions';
@@ -19,7 +18,6 @@ const { FullyQualifiedName } = Models;
 const {
   APPEARS_IN_FQN,
   BEHAVIORAL_HEALTH_REPORT_FQN,
-  FOLLOW_UP_REPORT_FQN,
   HOSPITALS_FQN,
   PEOPLE_FQN,
   REPORTED_FQN,
@@ -28,7 +26,6 @@ const {
 
 const appearsInFqn :string = APPEARS_IN_FQN.toString();
 const bhrFqn :string = BEHAVIORAL_HEALTH_REPORT_FQN.toString();
-const followUpFqn :string = FOLLOW_UP_REPORT_FQN.toString();
 const hospitalsFqn :string = HOSPITALS_FQN.toString();
 const peopleFqn :string = PEOPLE_FQN.toString();
 const reportedFqn :string = REPORTED_FQN.toString();
@@ -43,7 +40,6 @@ const APP_CONFIG_INITIAL_STATE :Map<*, *> = fromJS({
 const INITIAL_STATE :Map<*, *> = fromJS({
   [appearsInFqn]: APP_CONFIG_INITIAL_STATE,
   [bhrFqn]: APP_CONFIG_INITIAL_STATE,
-  [followUpFqn]: APP_CONFIG_INITIAL_STATE,
   [hospitalsFqn]: APP_CONFIG_INITIAL_STATE,
   [peopleFqn]: APP_CONFIG_INITIAL_STATE,
   [reportedFqn]: APP_CONFIG_INITIAL_STATE,
@@ -120,7 +116,6 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
 
             const appearsInConfig = appConfig.config[appearsInFqn];
             const bhrConfig = appConfig.config[bhrFqn];
-            const followUpConfig = appConfig.config[followUpFqn];
             const hospitalsConfig = appConfig.config[hospitalsFqn];
             const peopleConfig = appConfig.config[peopleFqn];
             const reportedConfig = appConfig.config[reportedFqn];
@@ -129,7 +124,6 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
             newState = newState
               .setIn([appearsInFqn, 'entitySetsByOrganization', orgId], appearsInConfig.entitySetId)
               .setIn([bhrFqn, 'entitySetsByOrganization', orgId], bhrConfig.entitySetId)
-              .setIn([followUpFqn, 'entitySetsByOrganization', orgId], followUpConfig.entitySetId)
               .setIn([peopleFqn, 'entitySetsByOrganization', orgId], peopleConfig.entitySetId)
               .setIn([reportedFqn, 'entitySetsByOrganization', orgId], reportedConfig.entitySetId)
               .setIn([staffFqn, 'entitySetsByOrganization', orgId], staffConfig.entitySetId);
@@ -175,9 +169,6 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
             .setIn([bhrFqn, 'entitySetsByOrganization'], Map())
             .setIn([bhrFqn, 'primaryKeys'], List())
             .setIn([bhrFqn, 'propertyTypes'], Map())
-            .setIn([followUpFqn, 'entitySetsByOrganization'], Map())
-            .setIn([followUpFqn, 'primaryKeys'], List())
-            .setIn([followUpFqn, 'propertyTypes'], Map())
             .setIn([hospitalsFqn, 'entitySetsByOrganization'], Map())
             .setIn([hospitalsFqn, 'primaryKeys'], List())
             .setIn([hospitalsFqn, 'propertyTypes'], Map())
