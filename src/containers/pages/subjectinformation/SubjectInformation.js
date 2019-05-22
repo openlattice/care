@@ -27,8 +27,6 @@ import {
   RequiredField
 } from '../../../components/crisis/FormComponents';
 
-import { searchConsumers } from '../../search/SearchActionFactory';
-
 import { getInvalidFields } from './Reducer';
 import * as ActionFactory from './ActionFactory';
 
@@ -43,7 +41,6 @@ type Props = {
     clear :() => void,
     setInputValue :(value :{ field :string, value :Object }) => void,
     setInputValues :(values :{}) => void,
-    searchConsumers :() => void
   },
   disabled :boolean;
 }
@@ -235,9 +232,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
 
-  const actions = {
-    searchConsumers
-  };
+  const actions = {};
 
   Object.keys(ActionFactory).forEach((action) => {
     actions[action] = ActionFactory[action];
