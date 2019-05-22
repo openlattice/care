@@ -30,7 +30,6 @@ class SearchReports extends Component<Props> {
   }
 
   handleOnSearch = (searchValues :Map) => {
-    console.log(searchValues);
     const { actions } = this.props;
     actions.getReportsByDateRange(searchValues);
   }
