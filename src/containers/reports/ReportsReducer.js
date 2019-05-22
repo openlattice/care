@@ -38,11 +38,11 @@ export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :
       return getReport.reducer(state, action, {
         REQUEST: () => state.set('fetchState', RequestStates.IS_REQUESTING),
         SUCCESS: () => {
-          const { submittedStaff, lastUpdatedStaff } = action.value;
+          const { submitted, lastUpdated } = action.value;
           return state
             .set('fetchState', RequestStates.REQUEST_SUCCESS)
-            .set('submittedStaff', submittedStaff)
-            .set('lastUpdatedStaff', lastUpdatedStaff);
+            .set('submittedStaff', submitted)
+            .set('lastUpdatedStaff', lastUpdated);
         },
         FAILURE: () => state.set('fetchState', RequestStates.REQUEST_FAILURE),
       });

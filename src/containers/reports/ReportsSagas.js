@@ -12,7 +12,12 @@ import {
 import moment from 'moment';
 import { isPlainObject } from 'lodash';
 import { List, Map, fromJS } from 'immutable';
-import { Constants, Models, Types } from 'lattice';
+import {
+  Constants,
+  DataApi,
+  Models,
+  Types
+} from 'lattice';
 import {
   DataApiActions,
   DataApiSagas,
@@ -44,6 +49,7 @@ import {
   getStaffESId,
   getReportedESId,
 } from '../../utils/AppUtils';
+import { getDateRangeSearchTerm } from '../../utils/DataUtils';
 import {
   compileDispositionData,
   compileNatureOfCrisisData,
@@ -79,11 +85,28 @@ const {
   updateEntityDataWorker,
 } = DataApiSagas;
 const {
+  searchEntitySetData,
   searchEntityNeighborsWithFilter,
 } = SearchApiActions;
 const {
+  searchEntitySetDataWorker,
   searchEntityNeighborsWithFilterWorker,
 } = SearchApiSagas;
+
+const getStaffInteractions = (entities :List<Map>) => {
+  const sorted = entities.sort((staffA :Map, staffB :Map) :number => {
+    const timeA = moment(staffA.getIn(['associationDetails', FQN.DATE_TIME_FQN, 0]));
+    const timeB = moment(staffB.getIn(['associationDetails', FQN.DATE_TIME_FQN, 0]));
+    return timeA.diff(timeB);
+  });
+
+  const submitted = sorted.first(Map());
+
+  return {
+    submitted,
+    lastUpdated: !sorted.last(Map()).equals(submitted) ? sorted.last(Map()) : Map()
+  };
+};
 
 /*
  *
@@ -202,8 +225,7 @@ function* getReportWorker(action :SequenceAction) :Generator<*, *, *> {
         return timeA.diff(timeB);
       });
 
-    const submittedStaff :Map = staffDataList.first(Map());
-    const lastUpdatedStaff :Map = !staffDataList.last(Map()).equals(submittedStaff) ? staffDataList.last(Map()) : Map();
+    const { submitted, lastUpdated } = getStaffInteractions(staffDataList);
 
     const reportData = fromJS(reportResponse.data);
     // should only be one person per report
@@ -231,7 +253,7 @@ function* getReportWorker(action :SequenceAction) :Generator<*, *, *> {
     yield put(setOfficerSafetyData(officerSafety));
     yield put(setDispositionData(disposition));
 
-    yield put(getReport.success(action.id, { submittedStaff, lastUpdatedStaff }));
+    yield put(getReport.success(action.id, { submitted, lastUpdated }));
   }
   catch (error) {
     LOG.error('caught exception in worker saga', error);
@@ -291,8 +313,142 @@ function* getReportsWatcher() :Generator<*, *, *> {
 
 function* getReportsByDateRangeWorker(action :SequenceAction) :Generator<*, *, *> {
   try {
+    const { value } = action;
+    if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
+    if (!Map.isMap(value)) throw ERR_ACTION_VALUE_TYPE;
+
     yield put(getReportsByDateRange.request(action.id));
-    yield put(getReportsByDateRange.success(action.id));
+
+    const edm :Map<*, *> = yield select(state => state.get('edm'));
+    const app = yield select(state => state.get('app', Map()));
+
+    const entitySetId :UUID = getReportESId(app);
+    const peopleESID :UUID = getPeopleESId(app);
+    const appearsInESID :UUID = getAppearsInESId(app);
+    const reportedESID :UUID = getReportedESId(app);
+    const staffESID :UUID = getStaffESId(app);
+
+    const datetimePTID :UUID = edm.getIn(['fqnToIdMap', FQN.DATE_TIME_OCCURRED_FQN]);
+    const entitySetSize = yield call(DataApi.getEntitySetSize, entitySetId);
+
+    const startMoment = moment(value.get('dateStart', ''));
+    const endMoment = moment(value.get('dateEnd', ''));
+
+    const startDT = startMoment.isValid() ? startMoment.toISOString(true) : '*';
+    const endDT = endMoment.isValid() ? endMoment.toISOString(true) : '*';
+
+    // search for reports within date range
+    const searchOptions = {
+      searchTerm: getDateRangeSearchTerm(datetimePTID, `[${startDT} TO ${endDT}]`),
+      start: 0,
+      maxHits: entitySetSize,
+      fuzzy: false
+    };
+
+    const { data, error } = yield call(
+      searchEntitySetDataWorker,
+      searchEntitySetData({
+        entitySetId,
+        searchOptions
+      })
+    );
+
+    if (error) throw error;
+
+    // sort the reportData by time occurred DESC
+
+    const reportData = fromJS(data.hits)
+      .sort((reportA :Map, reportB :Map) :number => {
+        const timeA = moment(reportA.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0]));
+        const timeB = moment(reportB.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0]));
+        return timeB.diff(timeA);
+      });
+
+    const reportEKIDs = reportData.map(report => report.getIn([OPENLATTICE_ID_FQN, 0]));
+
+    const peopleSearchParams = {
+      entitySetId,
+      filter: {
+        entityKeyIds: reportEKIDs.toJS(),
+        edgeEntitySetIds: [appearsInESID],
+        destinationEntitySetIds: [],
+        sourceEntitySetIds: [peopleESID],
+      }
+    };
+
+    const staffSearchParams = {
+      entitySetId,
+      filter: {
+        entityKeyIds: reportEKIDs.toJS(),
+        edgeEntitySetIds: [reportedESID],
+        destinationEntitySetIds: [],
+        sourceEntitySetIds: [staffESID],
+      }
+    };
+
+    const peopleRequest = call(
+      searchEntityNeighborsWithFilterWorker,
+      searchEntityNeighborsWithFilter(peopleSearchParams)
+    );
+
+    const staffRequest = call(
+      searchEntityNeighborsWithFilterWorker,
+      searchEntityNeighborsWithFilter(staffSearchParams)
+    );
+
+    const [peopleResponse, staffResponse] = yield all([
+      peopleRequest,
+      staffRequest
+    ]);
+
+    if (peopleResponse.error || staffResponse.error) {
+      const neighborErrors = {
+        error: [
+          peopleResponse.error,
+          staffResponse.error
+        ]
+      };
+
+      throw neighborErrors;
+    }
+
+    const peopleResponseData = fromJS(peopleResponse.data);
+    const staffResponseData = fromJS(staffResponse.data);
+
+    const results = reportData.map((report) => {
+      const entityKeyId = report.getIn([OPENLATTICE_ID_FQN, 0]);
+      const dtOccurred = report.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0]);
+      const reportType = report.getIn([FQN.TYPE_FQN, 0]);
+      const natureOfCrisis = report.getIn([FQN.DISPATCH_REASON_FQN]);
+
+      const staffs = staffResponseData.get(entityKeyId, List());
+      const subjectDataList = peopleResponseData.get(entityKeyId, List());
+
+      const { submitted } = getStaffInteractions(staffs);
+
+      if (subjectDataList.count() > 1) {
+        LOG.warn('more than one person found in report', entityKeyId);
+      }
+      if (!subjectDataList.count()) {
+        LOG.warn('person not found in report', entityKeyId);
+      }
+
+      const subjectData = subjectDataList.first(Map()).get('neighborDetails', Map());
+
+      return fromJS({
+        firstName: subjectData.getIn([FQN.PERSON_FIRST_NAME_FQN, 0]),
+        lastName: subjectData.getIn([FQN.PERSON_LAST_NAME_FQN, 0]),
+        middleName: subjectData.getIn([FQN.PERSON_MIDDLE_NAME_FQN, 0]),
+        dob: subjectData.getIn([FQN.PERSON_DOB_FQN, 0]),
+        dtOccurred,
+        reportType,
+        natureOfCrisis,
+        submittor: submitted.getIn(['neighborDetails', FQN.PERSON_ID_FQN, 0]),
+        OPENLATTICE_ID_FQN: entityKeyId
+      });
+    });
+
+    yield put(getReportsByDateRange.success(action.id, results));
   }
   catch (error) {
     yield put(getReportsByDateRange.failure(action.id, error));

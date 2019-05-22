@@ -9,7 +9,7 @@ import { Search } from 'lattice-ui-kit';
 import type { Dispatch } from 'redux';
 
 import RequestStates from '../../utils/constants/RequestStates';
-import type { RequestState } from '../../utils/constants/RequestState';
+import type { RequestState } from '../../utils/constants/RequestStates';
 
 import { reportLabels, reportSearchFields } from './constants';
 import { ContentContainerInnerWrapper } from '../../components/layout';
@@ -32,7 +32,7 @@ class SearchReports extends Component<Props> {
   handleOnSearch = (searchValues :Map) => {
     console.log(searchValues);
     const { actions } = this.props;
-    actions.getReportsByDateRange();
+    actions.getReportsByDateRange(searchValues);
   }
 
   render() {
