@@ -42,7 +42,6 @@ import {
   UPDATE_REPORT,
   deleteReport,
   getReport,
-  getReports,
   getReportsByDateRange,
   updateReport,
 } from './ReportsActions';
@@ -272,43 +271,6 @@ function* getReportWorker(action :SequenceAction) :Generator<*, *, *> {
 
 function* getReportWatcher() :Generator<*, *, *> {
   yield takeEvery(GET_REPORT, getReportWorker);
-}
-
-
-/*
- *
- * ReportsActions.getReports()
- *
- */
-
-function* getReportsWorker(action :SequenceAction) :Generator<*, *, *> {
-
-  const { id, value } = action;
-  if (value === null || value === undefined) {
-    yield put(getReports.failure(id, ERR_ACTION_VALUE_NOT_DEFINED));
-    return;
-  }
-
-  const entitySetId :string = value.entitySetId;
-
-  try {
-    yield put(getReports.request(action.id));
-    const response = yield call(getEntitySetDataWorker, getEntitySetData({ entitySetId }));
-    if (response.error) throw response.error;
-    yield put(getReports.success(action.id, response.data));
-  }
-  catch (error) {
-    LOG.error('caught exception in worker saga', error);
-    yield put(getReports.failure(action.id, error));
-  }
-  finally {
-    yield put(getReports.finally(action.id));
-  }
-}
-
-function* getReportsWatcher() :Generator<*, *, *> {
-
-  yield takeEvery(GET_REPORTS, getReportsWorker);
 }
 
 /*

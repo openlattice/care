@@ -7,7 +7,6 @@ import { List, Map, fromJS } from 'immutable';
 import {
   deleteReport,
   getReport,
-  getReports,
   updateReport,
   getReportsByDateRange,
 } from './ReportsActions';
@@ -15,9 +14,6 @@ import { CLEAR_CRISIS_TEMPLATE } from '../crisis/CrisisActionFactory';
 import RequestStates from '../../utils/constants/RequestStates';
 
 const INITIAL_STATE :Map<*, *> = fromJS({
-  actions: {
-    getReports: { error: Map() },
-  },
   deleteState: RequestStates.PRE_REQUEST,
   fetchState: RequestStates.PRE_REQUEST,
   lastUpdatedStaff: Map(),
@@ -45,39 +41,6 @@ export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :
             .set('lastUpdatedStaff', lastUpdated);
         },
         FAILURE: () => state.set('fetchState', RequestStates.REQUEST_FAILURE),
-      });
-    }
-
-    case getReports.case(action.type): {
-      return getReports.reducer(state, (action :any), {
-        REQUEST: () => {
-          const seqAction :SequenceAction = action;
-          return state
-            .set('isFetchingReports', true)
-            .set('selectedReportData', Map())
-            .setIn(['actions', 'getReports', seqAction.id], fromJS(seqAction));
-        },
-        SUCCESS: () => {
-          const seqAction :SequenceAction = action;
-          if (!state.hasIn(['actions', 'getReports', seqAction.id])) {
-            return state;
-          }
-
-          const { value } = seqAction;
-          if (value === null || value === undefined) {
-            // TODO: perhaps set error state?
-            return state;
-          }
-
-          return state.set('reports', fromJS(value));
-        },
-        FAILURE: () => state.set('reports', List()),
-        FINALLY: () => {
-          const seqAction :SequenceAction = action;
-          return state
-            .set('isFetchingReports', false)
-            .deleteIn(['actions', 'getReports', seqAction.id]);
-        },
       });
     }
 
