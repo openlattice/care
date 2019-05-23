@@ -2,9 +2,10 @@
 import { Map } from 'immutable';
 
 const reportLabels = Map({
-  reportType: 'Report Type',
-  badge: 'Badge',
-  submitter: 'Submitter'
+  lastName: 'Last Name',
+  firstName: 'First Name',
+  middleName: 'Middle Name',
+  dob: 'DOB'
 });
 
 const reportSearchFields = [
