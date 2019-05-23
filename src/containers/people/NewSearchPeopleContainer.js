@@ -50,7 +50,8 @@ class NewSearchPeopleContainer extends Component<Props> {
             onSearch={this.handleOnSearch}
             resultComponent={PersonResult}
             resultLabels={resultLabels}
-            searchFields={searchFields} />
+            searchFields={searchFields}
+            title="Search People" />
       </ContentWrapper>
     );
   }
