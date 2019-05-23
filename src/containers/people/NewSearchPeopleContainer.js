@@ -1,15 +1,14 @@
 // @flow
 
 import React, { Component } from 'react';
-import RequestStates from 'redux-reqseq';
-import { Constants } from 'lattice';
 import { List, Map } from 'immutable';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import { Constants } from 'lattice';
 import { Search, PersonResult } from 'lattice-ui-kit';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { RequestStates } from 'redux-reqseq';
 import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
-
 
 import { personLabels, personSearchFields } from './constants';
 import { ContentWrapper } from '../../components/layout';
@@ -47,7 +46,7 @@ class NewSearchPeopleContainer extends Component<Props> {
     return (
       <ContentWrapper>
         <Search
-            isLoading={fetchState === RequestStates.IS_REQUESTING} />
+            isLoading={fetchState === RequestStates.PENDING} />
       </ContentWrapper>
     );
   }
