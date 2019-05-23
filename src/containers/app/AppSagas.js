@@ -21,6 +21,7 @@ import {
   EntityDataModelApiActions,
   EntityDataModelApiSagas,
 } from 'lattice-sagas';
+import type { SequenceAction } from 'redux-reqseq';
 
 import Logger from '../../utils/Logger';
 import * as Routes from '../../core/router/Routes';
