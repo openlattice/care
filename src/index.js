@@ -35,7 +35,7 @@ const GlobalStyle = createGlobalStyle`
   html,
   body {
     background-color: ${WHITE};
-    color: ${NEUTRALS[1]};
+    color: ${NEUTRALS[0]};
     font-family: 'Open Sans', sans-serif;
     height: 100%;
     width: 100%;
