@@ -1,7 +1,7 @@
 // @flow
 import { Map } from 'immutable';
 
-const personLabels = Map({
+const resultLabels = Map({
   lastName: 'Last name',
   firstName: 'First name',
   middleName: 'Middle name',
@@ -12,7 +12,7 @@ const personLabels = Map({
   identifier: 'Identifier',
 });
 
-const personSearchFields = [
+const searchFields = [
   {
     id: 'lastName',
     label: 'Last Name',
@@ -29,6 +29,6 @@ const personSearchFields = [
 ];
 
 export {
-  personLabels,
-  personSearchFields,
+  resultLabels,
+  searchFields,
 };

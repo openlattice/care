@@ -5,10 +5,9 @@
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router';
 import { Map } from 'immutable';
 
-import SearchPeopleContainer from './SearchPeopleContainer';
+import NewSearchPeopleContainer from './NewSearchPeopleContainer';
 import EditPerson from '../../components/people/EditPerson';
 import { clearSearchResults, editPerson, selectPerson } from './PeopleActions';
 import { StyledSectionWrapper } from '../../components/form/StyledFormComponents';
@@ -45,7 +44,7 @@ class PeopleContainer extends React.Component<Props> {
     const { isEditingPerson, selectedPerson } = this.props;
 
     return (
-      <div>
+      <>
         {
           selectedPerson.size
             ? (
@@ -57,9 +56,9 @@ class PeopleContainer extends React.Component<Props> {
                     handleSubmit={this.handleEdit} />
               </StyledSectionWrapper>
             )
-            : <SearchPeopleContainer />
+            : <NewSearchPeopleContainer />
         }
-      </div>
+      </>
     );
   }
 }
@@ -86,6 +85,5 @@ function mapDispatchToProps(dispatch :Function) :Object {
   };
 }
 
-export default withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(PeopleContainer)
-);
+// $FlowFixMe
+export default connect(mapStateToProps, mapDispatchToProps)(PeopleContainer);
