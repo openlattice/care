@@ -16,7 +16,7 @@ import PersonSearchFields from '../../components/people/PersonSearchFields';
 import Spinner from '../../components/spinner/Spinner';
 import NoSearchResults from '../../components/people/NoSearchResults';
 import PersonDetailsSearchResult from '../search/PersonDetailsSearchResult';
-import { searchPeople, selectPerson } from './PeopleActionFactory';
+import { searchPeople, selectPerson } from './PeopleActions';
 import { SearchResult, SearchResultsWrapper } from '../search/SearchResultsStyledComponents';
 import {
   StyledFormWrapper,

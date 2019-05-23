@@ -5,14 +5,19 @@
 import moment from 'moment';
 import { call, put, takeEvery } from '@redux-saga/core/effects';
 import { Map } from 'immutable';
-import { EntityDataModelApi, Constants, DataApi, SearchApi } from 'lattice';
+import {
+  EntityDataModelApi,
+  Constants,
+  DataApi,
+  SearchApi
+} from 'lattice';
 
 import {
   EDIT_PERSON,
   SEARCH_PEOPLE,
   editPerson,
   searchPeople
-} from './PeopleActionFactory';
+} from './PeopleActions';
 
 import {
   PERSON_DOB_FQN,
@@ -33,7 +38,7 @@ const getPersonEntitySetId = (app) => {
     'entitySetsByOrganization',
     selectedOrganizationId
   ]);
-}
+};
 
 function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
   const { id, value } = action;
