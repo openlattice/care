@@ -1,15 +1,15 @@
 // @flow
 
 import React, { Component } from 'react';
+import RequestStates from 'redux-reqseq';
 import { Constants } from 'lattice';
 import { List, Map } from 'immutable';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Search, PersonResult } from 'lattice-ui-kit';
 import type { Dispatch } from 'redux';
+import type { RequestSequence, RequestState } from 'redux-reqseq';
 
-import RequestStates from '../../utils/constants/RequestStates';
-import type { RequestState } from '../../utils/constants/RequestStates';
 
 import { personLabels, personSearchFields } from './constants';
 import { ContentWrapper } from '../../components/layout';
