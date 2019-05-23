@@ -8,56 +8,17 @@ import { call, put, takeEvery } from '@redux-saga/core/effects';
 import { SearchApiActions, SearchApiSagas } from 'lattice-sagas';
 
 import {
-  SEARCH_CONSUMER_NEIGHBORS,
   SEARCH_CONSUMERS,
-  searchConsumerNeighbors,
-  searchConsumers
+  searchConsumers,
 } from './SearchActionFactory';
 
 const {
-  searchEntityNeighbors,
   searchEntitySetData,
 } = SearchApiActions;
 
 const {
-  searchEntityNeighborsWorker,
   searchEntitySetDataWorker,
 } = SearchApiSagas;
-
-/*
- * searchConsumerNeighbors sagas
- */
-
-function* searchConsumerNeighborsWatcher() :Generator<*, *, *> {
-
-  yield takeEvery(SEARCH_CONSUMER_NEIGHBORS, searchConsumerNeighborsWorker);
-}
-
-function* searchConsumerNeighborsWorker(action :SequenceAction) :Generator<*, *, *> {
-
-  try {
-    yield put(searchConsumerNeighbors.request(action.id, action.value));
-
-    const response :Response = yield call(
-      searchEntityNeighborsWorker,
-      searchEntityNeighbors({
-        entitySetId: action.value.entitySetId,
-        entityId: action.value.entityId,
-      })
-    );
-
-    if (response.error) {
-      yield put(searchConsumerNeighbors.failure(action.id, response.error));
-    }
-    yield put(searchConsumerNeighbors.success(action.id, response.data));
-  }
-  catch (error) {
-    yield put(searchConsumerNeighbors.failure(action.id, error));
-  }
-  finally {
-    yield put(searchConsumerNeighbors.finally(action.id));
-  }
-}
 
 /*
  * searchConsumers sagas
@@ -73,7 +34,7 @@ function* searchConsumersWorker(action :SequenceAction) :Generator<*, *, *> {
   try {
     yield put(searchConsumers.request(action.id, action.value));
 
-    const response :Response = yield call(
+    const response = yield call(
       searchEntitySetDataWorker,
       searchEntitySetData({
         entitySetId: action.value.entitySetId,
@@ -99,8 +60,6 @@ function* searchConsumersWorker(action :SequenceAction) :Generator<*, *, *> {
 }
 
 export {
-  searchConsumerNeighborsWatcher,
-  searchConsumerNeighborsWorker,
   searchConsumersWatcher,
   searchConsumersWorker
 };
