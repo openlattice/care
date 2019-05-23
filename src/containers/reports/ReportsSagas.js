@@ -568,8 +568,6 @@ export {
   deleteReportWorker,
   getReportsByDateRangeWatcher,
   getReportsByDateRangeWorker,
-  getReportsWatcher,
-  getReportsWorker,
   getReportWatcher,
   getReportWorker,
   updateReportWatcher,
