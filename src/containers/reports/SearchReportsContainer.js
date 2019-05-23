@@ -30,7 +30,7 @@ type Props = {
   fetchState :RequestState;
 }
 
-class SearchReports extends Component<Props> {
+class SearchReportsContainer extends Component<Props> {
 
   handleOnSearch = (searchValues :Map) => {
     const { actions } = this.props;
@@ -74,4 +74,4 @@ const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
 });
 
 // $FlowFixMe
-export default connect(mapStateToProps, mapDispatchToProps)(SearchReports);
+export default connect(mapStateToProps, mapDispatchToProps)(SearchReportsContainer);
