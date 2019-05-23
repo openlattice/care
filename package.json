@@ -48,6 +48,7 @@
     "lattice-ui-kit": "0.2.1",
     "lodash": "~4.17.10",
     "loglevel": "~1.6.0",
+    "luxon": "^1.15.0",
     "moment": "~2.24.0",
     "papaparse": "^4.6.1",
     "polished": "~3.0.0",
