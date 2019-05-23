@@ -10,7 +10,7 @@ import { Map } from 'immutable';
 
 import SearchPeopleContainer from './SearchPeopleContainer';
 import EditPerson from '../../components/people/EditPerson';
-import { clearSearchResults, editPerson, selectPerson } from './PeopleActionFactory';
+import { clearSearchResults, editPerson, selectPerson } from './PeopleActions';
 import { StyledSectionWrapper } from '../../components/form/StyledFormComponents';
 
 type Props = {

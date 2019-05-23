@@ -10,7 +10,7 @@ import {
   SELECT_PERSON,
   editPerson,
   searchPeople
-} from './PeopleActionFactory';
+} from './PeopleActions';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 
