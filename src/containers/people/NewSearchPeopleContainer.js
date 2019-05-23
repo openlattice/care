@@ -10,7 +10,7 @@ import { RequestStates } from 'redux-reqseq';
 import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
-import { personLabels, personSearchFields } from './constants';
+import { resultLabels, searchFields } from './constants';
 import { ContentWrapper } from '../../components/layout';
 import { searchPeople } from './PeopleActions';
 import { REPORT_VIEW_PATH, REPORT_ID_PATH } from '../../core/router/Routes';
@@ -46,7 +46,11 @@ class NewSearchPeopleContainer extends Component<Props> {
     return (
       <ContentWrapper>
         <Search
-            isLoading={fetchState === RequestStates.PENDING} />
+            isLoading={fetchState === RequestStates.PENDING}
+            onSearch={this.handleOnSearch}
+            resultComponent={PersonResult}
+            resultLabels={resultLabels}
+            searchFields={searchFields} />
       </ContentWrapper>
     );
   }
