@@ -139,4 +139,5 @@ const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   }, dispatch)
 });
 
+// $FlowFixMe
 export default connect(null, mapDispatchToProps)(ReportResult);
