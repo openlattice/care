@@ -8,11 +8,12 @@ import { connect } from 'react-redux';
 import { Search } from 'lattice-ui-kit';
 import type { Dispatch } from 'redux';
 
+import ReportResult from './ReportResult';
 import RequestStates from '../../utils/constants/RequestStates';
 import type { RequestState } from '../../utils/constants/RequestStates';
 
 import { reportLabels, reportSearchFields } from './constants';
-import { ContentContainerInnerWrapper } from '../../components/layout';
+import { ContentWrapper } from '../../components/layout';
 import { getReportsByDateRange } from './ReportsActions';
 
 type Props = {
@@ -35,21 +36,24 @@ class SearchReports extends Component<Props> {
   }
 
   render() {
-    const { fetchState } = this.props;
+    const { fetchState, searchResults } = this.props;
     return (
-      <ContentContainerInnerWrapper>
+      <ContentWrapper>
         <Search
             isLoading={fetchState === RequestStates.IS_REQUESTING}
             onSearch={this.handleOnSearch}
+            resultLabels={reportLabels}
+            resultComponent={ReportResult}
             searchFields={reportSearchFields}
+            searchResults={searchResults}
             title="Search Reports" />
-      </ContentContainerInnerWrapper>
+      </ContentWrapper>
     );
   }
 }
 
 const mapStateToProps = state => ({
-  searchResults: state.getIn(['reports', 'reports'], List()),
+  searchResults: state.getIn(['reports', 'reportsByDateRange'], List()),
   fetchState: state.getIn(['reports', 'fetchState'])
 });
 
