@@ -1,7 +1,6 @@
 // @flow
 
 import React, { Component } from 'react';
-// import styled from 'styled-components';
 import { List, Map } from 'immutable';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -25,10 +24,6 @@ type Props = {
 }
 
 class SearchReports extends Component<Props> {
-
-  componentDidMount() {
-
-  }
 
   handleOnSearch = (searchValues :Map) => {
     const { actions } = this.props;
