@@ -82,8 +82,8 @@ const AppContentOuterWrapper = styled.main`
 
 const AppContentInnerWrapper = styled.div`
   display: flex;
-  flex: 1 0 auto;
   flex-direction: column;
+  flex: 1 0 auto;
   justify-content: flex-start;
   max-width: ${APP_CONTAINER_MAX_WIDTH}px;
   padding: ${APP_CONTENT_PADDING}px;
@@ -153,7 +153,7 @@ class AppContainer extends Component<Props> {
         <Route path={REPORTS_PATH} component={LegitReportsRouter} />
         <Route path={DASHBOARD_PATH} render={this.wrapComponent(DashboardContainer)} />
         <Route path={DOWNLOADS_PATH} render={this.wrapComponent(DownloadsContainer)} />
-        <Route path={PEOPLE_PATH} render={this.wrapComponent(PeopleContainer)} />
+        <Route path={PEOPLE_PATH} component={PeopleContainer} />
         <Route path={SUBSCRIBE_PATH} render={this.wrapComponent(SubscribeContainer)} />
         <Redirect to={HOME_PATH} />
       </Switch>
