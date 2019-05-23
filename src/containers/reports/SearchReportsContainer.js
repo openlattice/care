@@ -6,17 +6,19 @@ import { List, Map } from 'immutable';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Search } from 'lattice-ui-kit';
+import { RequestStates } from 'redux-reqseq';
+
+import type { RequestState } from 'redux-reqseq';
 import type { Dispatch } from 'redux';
 
 import ReportResult from './ReportResult';
-import RequestStates from '../../utils/constants/RequestStates';
-import type { RequestState } from '../../utils/constants/RequestStates';
 
 import { reportLabels, reportSearchFields } from './constants';
 import { ContentWrapper } from '../../components/layout';
 import { getReportsByDateRange } from './ReportsActions';
 import { REPORT_VIEW_PATH, REPORT_ID_PATH } from '../../core/router/Routes';
 import { goToPath } from '../../core/router/RoutingActions';
+
 import type { RoutingAction } from '../../core/router/RoutingActions';
 
 const { OPENLATTICE_ID_FQN } = Constants;
@@ -48,7 +50,7 @@ class SearchReportsContainer extends Component<Props> {
     return (
       <ContentWrapper>
         <Search
-            isLoading={fetchState === RequestStates.IS_REQUESTING}
+            isLoading={fetchState === RequestStates.PENDING}
             onSearch={this.handleOnSearch}
             onResultClick={this.handleResultClick}
             resultLabels={reportLabels}

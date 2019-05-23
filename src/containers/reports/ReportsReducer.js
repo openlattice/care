@@ -3,6 +3,7 @@
  */
 
 import { List, Map, fromJS } from 'immutable';
+import { RequestStates } from 'redux-reqseq';
 
 import {
   deleteReport,
@@ -11,15 +12,14 @@ import {
   getReportsByDateRange,
 } from './ReportsActions';
 import { CLEAR_CRISIS_TEMPLATE } from '../crisis/CrisisActionFactory';
-import RequestStates from '../../utils/constants/RequestStates';
 
 const INITIAL_STATE :Map<*, *> = fromJS({
-  deleteState: RequestStates.PRE_REQUEST,
-  fetchState: RequestStates.PRE_REQUEST,
+  deleteState: RequestStates.STANDBY,
+  fetchState: RequestStates.STANDBY,
   lastUpdatedStaff: Map(),
   reportsByDateRange: List(),
   submittedStaff: Map(),
-  updateState: RequestStates.PRE_REQUEST,
+  updateState: RequestStates.STANDBY,
 });
 
 export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :Object) {
@@ -32,41 +32,41 @@ export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :
 
     case getReport.case(action.type): {
       return getReport.reducer(state, action, {
-        REQUEST: () => state.set('fetchState', RequestStates.IS_REQUESTING),
+        REQUEST: () => state.set('fetchState', RequestStates.PENDING),
         SUCCESS: () => {
           const { submitted, lastUpdated } = action.value;
           return state
-            .set('fetchState', RequestStates.REQUEST_SUCCESS)
+            .set('fetchState', RequestStates.SUCCESS)
             .set('submittedStaff', submitted)
             .set('lastUpdatedStaff', lastUpdated);
         },
-        FAILURE: () => state.set('fetchState', RequestStates.REQUEST_FAILURE),
+        FAILURE: () => state.set('fetchState', RequestStates.FAILURE),
       });
     }
 
     case getReportsByDateRange.case(action.type): {
       return getReportsByDateRange.reducer(state, (action :any), {
-        REQUEST: () => state.set('fetchState', RequestStates.IS_REQUESTING),
+        REQUEST: () => state.set('fetchState', RequestStates.PENDING),
         SUCCESS: () => state
-          .set('fetchState', RequestStates.REQUEST_SUCCESS)
+          .set('fetchState', RequestStates.SUCCESS)
           .set('reportsByDateRange', action.value),
-        FAILURE: () => state.set('fetchState', RequestStates.REQUEST_FAILURE),
+        FAILURE: () => state.set('fetchState', RequestStates.FAILURE),
       });
     }
 
     case updateReport.case(action.type): {
       return updateReport.reducer(state, action, {
-        REQUEST: () => state.set('updateState', RequestStates.IS_REQUESTING),
-        SUCCESS: () => state.set('updateState', RequestStates.REQUEST_SUCCESS),
-        FAILURE: () => state.set('updateState', RequestStates.REQUEST_FAILURE),
+        REQUEST: () => state.set('updateState', RequestStates.PENDING),
+        SUCCESS: () => state.set('updateState', RequestStates.SUCCESS),
+        FAILURE: () => state.set('updateState', RequestStates.FAILURE),
       });
     }
 
     case deleteReport.case(action.type): {
       return deleteReport.reducer(state, action, {
-        REQUEST: () => state.set('deleteState', RequestStates.IS_REQUESTING),
-        SUCCESS: () => state.set('deleteState', RequestStates.REQUEST_SUCCESS),
-        FAILURE: () => state.set('deleteState', RequestStates.REQUEST_FAILURE),
+        REQUEST: () => state.set('deleteState', RequestStates.PENDING),
+        SUCCESS: () => state.set('deleteState', RequestStates.SUCCESS),
+        FAILURE: () => state.set('deleteState', RequestStates.FAILURE),
       });
     }
 

@@ -13,9 +13,11 @@ import { withRouter } from 'react-router';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { AuthUtils } from 'lattice-auth';
 import { ModalTransition } from '@atlaskit/modal-dialog';
+import { RequestStates } from 'redux-reqseq';
 
 import type { Match, RouterHistory } from 'react-router';
 import type { Dispatch } from 'redux';
+import type { RequestState } from 'redux-reqseq';
 
 import NoResource from '../../components/NoResource';
 import FormRecordCard from '../../components/form/FormRecord';
@@ -30,9 +32,7 @@ import OfficerSafety from '../pages/officersafety/OfficerSafety';
 import Disposition from '../pages/disposition/Disposition';
 import DiscardModal from '../../components/modals/DiscardModal';
 import DeleteModal from '../../components/modals/DeleteModal';
-import RequestStates from '../../utils/constants/RequestStates';
 import SubmitSuccess from '../../components/crisis/SubmitSuccess';
-import type { RequestState } from '../../utils/constants/RequestStates';
 
 import { getReport, updateReport, deleteReport } from './ReportsActions';
 import { clearCrisisTemplate } from '../crisis/CrisisActionFactory';
@@ -445,17 +445,17 @@ class CrisisReportView extends React.Component<Props, State> {
     if (edit) primaryClick = this.handleShowDiscard;
 
     if (
-      fetchState === RequestStates.IS_REQUESTING
-      || updateState === RequestStates.IS_REQUESTING
-      || deleteState === RequestStates.IS_REQUESTING
+      fetchState === RequestStates.PENDING
+      || updateState === RequestStates.PENDING
+      || deleteState === RequestStates.PENDING
     ) {
       return <Spinner />;
     }
 
-    if (fetchState === RequestStates.REQUEST_FAILURE) return <NoResource />;
+    if (fetchState === RequestStates.FAILURE) return <NoResource />;
 
-    if (updateState === RequestStates.REQUEST_SUCCESS) return <SubmitSuccess actionText="updated" />;
-    if (deleteState === RequestStates.REQUEST_SUCCESS) return <SubmitSuccess actionText="deleted" />;
+    if (updateState === RequestStates.SUCCESS) return <SubmitSuccess actionText="updated" />;
+    if (deleteState === RequestStates.SUCCESS) return <SubmitSuccess actionText="deleted" />;
 
     return (
       <CrisisTemplateWrapper>
@@ -507,9 +507,9 @@ class CrisisReportView extends React.Component<Props, State> {
 function mapStateToProps(state :Map<*, *>) :Object {
 
   return {
-    fetchState: state.getIn(['reports', 'fetchState'], RequestStates.PRE_REQUEST),
-    updateState: state.getIn(['reports', 'updateState'], RequestStates.PRE_REQUEST),
-    deleteState: state.getIn(['reports', 'deleteState'], RequestStates.PRE_REQUEST),
+    fetchState: state.getIn(['reports', 'fetchState'], RequestStates.STANDBY),
+    updateState: state.getIn(['reports', 'updateState'], RequestStates.STANDBY),
+    deleteState: state.getIn(['reports', 'deleteState'], RequestStates.STANDBY),
     lastUpdatedStaff: state.getIn(['reports', 'lastUpdatedStaff'], Map()),
     state,
     submittedStaff: state.getIn(['reports', 'submittedStaff'], Map()),

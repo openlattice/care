@@ -1,12 +1,12 @@
 // @flow
+import { RequestStates } from 'redux-reqseq';
 import { Map, fromJS } from 'immutable';
 import {
   getCurrentUserStaffMemberData
 } from './StaffActions';
-import RequestStates from '../../utils/constants/RequestStates';
 
 const INITIAL_STATE :Map = fromJS({
-  fetchState: RequestStates.PRE_REQUEST,
+  fetchState: RequestStates.STANDBY,
   currentUserStaffMemberData: Map(),
 });
 
@@ -15,11 +15,11 @@ export default function staffReducer(state :Map = INITIAL_STATE, action :Object)
 
     case getCurrentUserStaffMemberData.case(action.type): {
       return getCurrentUserStaffMemberData.reducer(state, action, {
-        REQUEST: () => state.set('fetchState', RequestStates.IS_REQUESTING),
+        REQUEST: () => state.set('fetchState', RequestStates.PENDING),
         SUCCESS: () => state
-          .set('fetchState', RequestStates.REQUEST_SUCCESS)
+          .set('fetchState', RequestStates.SUCCESS)
           .set('currentUserStaffMemberData', fromJS(action.value)),
-        FAILURE: () => state.set('fetchState', RequestStates.REQUEST_FAILURE),
+        FAILURE: () => state.set('fetchState', RequestStates.FAILURE),
       });
     }
 
