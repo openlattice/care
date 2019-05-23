@@ -1,4 +1,4 @@
-import { isImmutable } from 'immutable';
+import { isImmutable, Set } from 'immutable';
 import { Constants } from 'lattice';
 
 const { OPENLATTICE_ID_FQN } = Constants;
@@ -34,3 +34,9 @@ export const getDateRangeSearchTerm = (
   propertyTypeId,
   searchString
 ) => `${SEARCH_PREFIX}.${propertyTypeId}:${searchString}`;
+
+// https://github.com/immutable-js/immutable-js/wiki/Predicates#pick--omit
+export const keyIn = (keys) => {
+  const keySet = Set(keys);
+  return (v, k) => keySet.has(k);
+};
