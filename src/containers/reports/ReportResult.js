@@ -1,6 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import isFunction from 'lodash/isFunction';
 import { Map } from 'immutable';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileAlt } from '@fortawesome/pro-light-svg-icons';
@@ -10,16 +11,9 @@ import {
   CardSegment,
   Colors
 } from 'lattice-ui-kit';
-import { Constants } from 'lattice';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import type { Dispatch } from 'redux';
 
-import { goToPath } from '../../core/router/RoutingActions';
 import { keyIn } from '../../utils/DataUtils';
-import { REPORT_VIEW_PATH, REPORT_ID_PATH } from '../../core/router/Routes';
 
-const { OPENLATTICE_ID_FQN } = Constants;
 const { NEUTRALS } = Colors;
 
 const StyledCard = styled(Card)`
@@ -71,6 +65,7 @@ type Props = {
   actions :{
     goToPath :RequestSequence;
   };
+  onResultClick :(result :Map) => void;
   resultLabels :Map;
   result :Map;
 }
@@ -96,14 +91,16 @@ class ReportResult extends Component<Props> {
   }
 
   handleClick = () => {
-    const { actions, result } = this.props;
-    const reportEKID = result.get(OPENLATTICE_ID_FQN);
-    actions.goToPath(REPORT_VIEW_PATH.replace(REPORT_ID_PATH, reportEKID));
+    const { onResultClick, result } = this.props;
+    console.log(result);
+    if (isFunction(onResultClick)) {
+      onResultClick(result);
+    }
   }
 
   render() {
 
-    const { result } = this.props;
+    const { result, onResultClick } = this.props;
     const subset = result.filter(keyIn(['lastName', 'firstName', 'middleName', 'dob']));
     const details = this.transformResultToDetailsList(subset);
     const reportType = result.get('reportType');
@@ -111,7 +108,7 @@ class ReportResult extends Component<Props> {
     const reporter = result.get('reporter');
 
     return (
-      <StyledCard onClick={this.handleClick}>
+      <StyledCard onClick={onResultClick}>
         <CardSegment vertical>
           <ReportHeader>
             <FontAwesomeIcon icon={faFileAlt} color="black" fixedWidth />
@@ -144,11 +141,4 @@ class ReportResult extends Component<Props> {
   }
 }
 
-const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
-  actions: bindActionCreators({
-    goToPath
-  }, dispatch)
-});
-
-// $FlowFixMe
-export default connect(null, mapDispatchToProps)(ReportResult);
+export default ReportResult;

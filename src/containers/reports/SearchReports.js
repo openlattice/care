@@ -1,6 +1,7 @@
 // @flow
 
 import React, { Component } from 'react';
+import { Constants } from 'lattice';
 import { List, Map } from 'immutable';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -14,10 +15,16 @@ import type { RequestState } from '../../utils/constants/RequestStates';
 import { reportLabels, reportSearchFields } from './constants';
 import { ContentWrapper } from '../../components/layout';
 import { getReportsByDateRange } from './ReportsActions';
+import { REPORT_VIEW_PATH, REPORT_ID_PATH } from '../../core/router/Routes';
+import { goToPath } from '../../core/router/RoutingActions';
+import type { RoutingAction } from '../../core/router/RoutingActions';
+
+const { OPENLATTICE_ID_FQN } = Constants;
 
 type Props = {
   actions :{
     getReportsByDateRange :RequestSequence;
+    goToPath :(path :string) => RoutingAction;
   };
   searchResults :List<Map>;
   fetchState :RequestState;
@@ -30,6 +37,13 @@ class SearchReports extends Component<Props> {
     actions.getReportsByDateRange(searchValues);
   }
 
+  handleResultClick = (result :Map) => {
+    const { actions } = this.props;
+    console.log('click', result);
+    const reportEKID = result.get(OPENLATTICE_ID_FQN);
+    actions.goToPath(REPORT_VIEW_PATH.replace(REPORT_ID_PATH, reportEKID));
+  }
+
   render() {
     const { fetchState, searchResults } = this.props;
     return (
@@ -37,6 +51,7 @@ class SearchReports extends Component<Props> {
         <Search
             isLoading={fetchState === RequestStates.IS_REQUESTING}
             onSearch={this.handleOnSearch}
+            onResultClick={this.handleResultClick}
             resultLabels={reportLabels}
             resultComponent={ReportResult}
             searchFields={reportSearchFields}
@@ -54,7 +69,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
-    getReportsByDateRange
+    getReportsByDateRange,
+    goToPath
   }, dispatch)
 });
 
