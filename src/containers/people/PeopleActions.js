@@ -3,6 +3,7 @@
  */
 
 import { newRequestSequence } from 'redux-reqseq';
+import type { RequestSequence } from 'redux-reqseq';
 
 const CLEAR_SEARCH_RESULTS :string = 'CLEAR_SEARCH_RESULTS';
 const clearSearchResults :RequestSequence = newRequestSequence(CLEAR_SEARCH_RESULTS);

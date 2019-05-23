@@ -6,6 +6,7 @@ import { List, Map, OrderedMap } from 'immutable';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import type { Dispatch } from 'redux';
+import type { RequestSequence } from 'redux-reqseq';
 
 import SearchableSelect from '../../../components/controls/SearchableSelect';
 import SecondaryButton from '../../../components/buttons/SecondaryButton';
