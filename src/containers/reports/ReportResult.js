@@ -22,6 +22,17 @@ import { REPORT_VIEW_PATH, REPORT_ID_PATH } from '../../core/router/Routes';
 const { OPENLATTICE_ID_FQN } = Constants;
 const { NEUTRALS } = Colors;
 
+const StyledCard = styled(Card)`
+  :hover {
+    box-shadow: rgba(0, 0, 0, 0.07) 0px 5px 15px 0px;
+    cursor: pointer;
+
+    * {
+      cursor: inherit;
+    }
+  }
+`;
+
 const Truncated = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
@@ -100,7 +111,7 @@ class ReportResult extends Component<Props> {
     const reporter = result.get('reporter');
 
     return (
-      <Card onClick={this.handleClick}>
+      <StyledCard onClick={this.handleClick}>
         <CardSegment vertical>
           <ReportHeader>
             <FontAwesomeIcon icon={faFileAlt} color="black" fixedWidth />
@@ -128,7 +139,7 @@ class ReportResult extends Component<Props> {
             </DetailsGrid>
           </div>
         </CardSegment>
-      </Card>
+      </StyledCard>
     );
   }
 }
