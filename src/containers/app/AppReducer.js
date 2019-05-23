@@ -2,17 +2,17 @@
  * @flow
  */
 
-import { Models } from 'lattice';
-import { List, Map, fromJS } from 'immutable';
-import { AccountUtils } from 'lattice-auth';
 import has from 'lodash/has';
+import { List, Map, fromJS } from 'immutable';
+import { Models } from 'lattice';
+import { AccountUtils } from 'lattice-auth';
+import { RequestStates } from 'redux-reqseq';
 
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import {
   loadApp,
   initializeApplication,
 } from './AppActions';
-import RequestStates from '../../utils/constants/RequestStates';
 
 const { FullyQualifiedName } = Models;
 const {
@@ -55,7 +55,7 @@ const INITIAL_STATE :Map<*, *> = fromJS({
   isLoadingApp: true,
   organizations: Map(),
   selectedOrganizationId: '',
-  initializeState: RequestStates.PRE_REQUEST,
+  initializeState: RequestStates.STANDBY,
 });
 
 const getEntityTypePropertyTypes = (edm :Object, entityTypeId :string) :Object => {
@@ -72,9 +72,9 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
 
     case initializeApplication.case(action.type): {
       return initializeApplication.reducer(state, action, {
-        REQUEST: () => state.set('initializeState', RequestStates.IS_REQUESTING),
-        SUCCESS: () => state.set('initializeState', RequestStates.REQUEST_SUCCESS),
-        FAILURE: () => state.set('initializeState', RequestStates.REQUEST_FAILURE),
+        REQUEST: () => state.set('initializeState', RequestStates.PENDING),
+        SUCCESS: () => state.set('initializeState', RequestStates.SUCCESS),
+        FAILURE: () => state.set('initializeState', RequestStates.FAILURE),
       });
     }
 
