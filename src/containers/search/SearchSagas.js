@@ -6,6 +6,7 @@
 
 import { call, put, takeEvery } from '@redux-saga/core/effects';
 import { SearchApiActions, SearchApiSagas } from 'lattice-sagas';
+import type { SequenceAction } from 'redux-reqseq';
 
 import {
   SEARCH_CONSUMERS,

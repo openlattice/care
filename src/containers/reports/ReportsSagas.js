@@ -30,6 +30,7 @@ import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
+import type { SequenceAction } from 'redux-reqseq';
 
 import Logger from '../../utils/Logger';
 import { BHR_CONFIG } from '../../config/formconfig/CrisisTemplateConfig';
@@ -37,7 +38,6 @@ import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../utils
 import {
   DELETE_REPORT,
   GET_REPORT,
-  GET_REPORTS,
   GET_REPORTS_BY_DATE_RANGE,
   UPDATE_REPORT,
   deleteReport,
@@ -79,14 +79,12 @@ const {
   createAssociations,
   deleteEntity,
   getEntityData,
-  getEntitySetData,
   updateEntityData,
 } = DataApiActions;
 const {
   createAssociationsWorker,
   deleteEntityWorker,
   getEntityDataWorker,
-  getEntitySetDataWorker,
   updateEntityDataWorker,
 } = DataApiSagas;
 const {

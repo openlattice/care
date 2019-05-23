@@ -11,6 +11,7 @@ import {
   DataApi,
   SearchApi
 } from 'lattice';
+import type { SequenceAction } from 'redux-reqseq';
 
 import {
   EDIT_PERSON,

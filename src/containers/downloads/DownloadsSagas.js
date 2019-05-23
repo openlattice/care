@@ -17,6 +17,7 @@ import {
   EntityDataModelApi,
   SearchApi
 } from 'lattice';
+import type { SequenceAction } from 'redux-reqseq';
 
 import FileSaver from '../../utils/FileSaver';
 import {
@@ -221,7 +222,7 @@ function* downloadFormsWorker(action :SequenceAction) :Generator<*, *, *> {
       jsonResults = jsonResults.push(combinedEntity);
     });
 
-    let fieldsNotInList = allHeaders.filter(val => !ORDERED_FQNS.includes(titleToFqn.get(val)));
+    const fieldsNotInList = allHeaders.filter(val => !ORDERED_FQNS.includes(titleToFqn.get(val)));
 
     const fields = allHeaders
       .filter(val => ORDERED_FQNS.includes(titleToFqn.get(val)))

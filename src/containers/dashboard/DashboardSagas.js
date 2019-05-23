@@ -8,6 +8,7 @@ import moment from 'moment';
 import { call, put, takeEvery } from '@redux-saga/core/effects';
 import { List, Map, fromJS } from 'immutable';
 import { DataApi, EntityDataModelApi, SearchApi } from 'lattice';
+import type { SequenceAction } from 'redux-reqseq';
 
 import {
   DASHBOARD_COUNTS,
@@ -275,7 +276,7 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *> {
 
     yield put(loadDashboardData.success(action.id, { summaryStats, dashboardCounts }));
   }
-  catch (error)  {
+  catch (error) {
     console.error(error);
     yield put(loadDashboardData.failure(action.id, error));
   }

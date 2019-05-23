@@ -8,6 +8,8 @@ import { Models } from 'lattice';
 import { AccountUtils } from 'lattice-auth';
 import { RequestStates } from 'redux-reqseq';
 
+import type { SequenceAction } from 'redux-reqseq';
+
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import {
   loadApp,
