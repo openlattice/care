@@ -1,7 +1,6 @@
 // @flow
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import isFunction from 'lodash/isFunction';
 import { Map } from 'immutable';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileAlt } from '@fortawesome/pro-light-svg-icons';
@@ -11,9 +10,16 @@ import {
   CardSegment,
   Colors
 } from 'lattice-ui-kit';
+import { Constants } from 'lattice';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import type { Dispatch } from 'redux';
 
+import { goToPath } from '../../core/router/RoutingActions';
 import { keyIn } from '../../utils/DataUtils';
+import { REPORT_VIEW_PATH, REPORT_ID_PATH } from '../../core/router/Routes';
 
+const { OPENLATTICE_ID_FQN } = Constants;
 const { NEUTRALS } = Colors;
 
 const Truncated = styled.div`
@@ -51,7 +57,9 @@ const Subheading = styled.span`
 `;
 
 type Props = {
-  onClick :(result :Map) => void;
+  actions :{
+    goToPath :RequestSequence;
+  };
   resultLabels :Map;
   result :Map;
 }
@@ -77,10 +85,9 @@ class ReportResult extends Component<Props> {
   }
 
   handleClick = () => {
-    const { onClick, result } = this.props;
-    if (isFunction(onClick)) {
-      onClick(result);
-    }
+    const { actions, result } = this.props;
+    const reportEKID = result.get(OPENLATTICE_ID_FQN);
+    actions.goToPath(REPORT_VIEW_PATH.replace(REPORT_ID_PATH, reportEKID));
   }
 
   render() {
@@ -126,4 +133,10 @@ class ReportResult extends Component<Props> {
   }
 }
 
-export default ReportResult;
+const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
+  actions: bindActionCreators({
+    goToPath
+  }, dispatch)
+});
+
+export default connect(null, mapDispatchToProps)(ReportResult);
