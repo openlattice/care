@@ -39,7 +39,6 @@ class SearchReports extends Component<Props> {
 
   handleResultClick = (result :Map) => {
     const { actions } = this.props;
-    console.log('click', result);
     const reportEKID = result.get(OPENLATTICE_ID_FQN);
     actions.goToPath(REPORT_VIEW_PATH.replace(REPORT_ID_PATH, reportEKID));
   }

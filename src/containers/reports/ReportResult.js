@@ -62,10 +62,7 @@ const Subheading = styled.span`
 `;
 
 type Props = {
-  actions :{
-    goToPath :RequestSequence;
-  };
-  onResultClick :(result :Map) => void;
+  onClick :(result :Map) => void;
   resultLabels :Map;
   result :Map;
 }
@@ -91,16 +88,15 @@ class ReportResult extends Component<Props> {
   }
 
   handleClick = () => {
-    const { onResultClick, result } = this.props;
-    console.log(result);
-    if (isFunction(onResultClick)) {
-      onResultClick(result);
+    const { onClick, result } = this.props;
+    if (isFunction(onClick)) {
+      onClick(result);
     }
   }
 
   render() {
 
-    const { result, onResultClick } = this.props;
+    const { result } = this.props;
     const subset = result.filter(keyIn(['lastName', 'firstName', 'middleName', 'dob']));
     const details = this.transformResultToDetailsList(subset);
     const reportType = result.get('reportType');
@@ -108,7 +104,7 @@ class ReportResult extends Component<Props> {
     const reporter = result.get('reporter');
 
     return (
-      <StyledCard onClick={onResultClick}>
+      <StyledCard onClick={this.handleClick}>
         <CardSegment vertical>
           <ReportHeader>
             <FontAwesomeIcon icon={faFileAlt} color="black" fixedWidth />
@@ -119,22 +115,20 @@ class ReportResult extends Component<Props> {
               {`${occurred} · ${reporter}`}
             </Subheading>
           </ReportHeader>
-          <div>
-            <DetailsGrid>
-              { details
-                && details.map((detail :Map, index :number) => (
-                  <div key={index.toString()}>
-                    <Label subtle>
-                      {detail.get('label', '')}
-                    </Label>
-                    <Truncated>
-                      {detail.get('value', '')}
-                    </Truncated>
-                  </div>
-                ))
-              }
-            </DetailsGrid>
-          </div>
+          <DetailsGrid>
+            { details
+              && details.map((detail :Map, index :number) => (
+                <div key={index.toString()}>
+                  <Label subtle>
+                    {detail.get('label', '')}
+                  </Label>
+                  <Truncated>
+                    {detail.get('value', '')}
+                  </Truncated>
+                </div>
+              ))
+            }
+          </DetailsGrid>
         </CardSegment>
       </StyledCard>
     );
