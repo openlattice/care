@@ -3,6 +3,7 @@
  */
 
 import { newRequestSequence } from 'redux-reqseq';
+import type { RequestSequence } from 'redux-reqseq';
 
 const DOWNLOAD_FORMS :string = 'DOWNLOAD_FORMS';
 const downloadForms :RequestSequence = newRequestSequence(DOWNLOAD_FORMS);

@@ -3,6 +3,7 @@
  */
 
 import { newRequestSequence } from 'redux-reqseq';
+import type { RequestSequence } from 'redux-reqseq';
 
 const SUBMIT_REPORT :'SUBMIT_REPORT' = 'SUBMIT_REPORT';
 const submitReport :RequestSequence = newRequestSequence(SUBMIT_REPORT);

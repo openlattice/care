@@ -17,7 +17,7 @@ import { RequestStates } from 'redux-reqseq';
 
 import type { Match, RouterHistory } from 'react-router';
 import type { Dispatch } from 'redux';
-import type { RequestState } from 'redux-reqseq';
+import type { RequestState, RequestSequence } from 'redux-reqseq';
 
 import NoResource from '../../components/NoResource';
 import FormRecordCard from '../../components/form/FormRecord';

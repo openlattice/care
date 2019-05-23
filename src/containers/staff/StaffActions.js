@@ -1,6 +1,7 @@
 // @flow
 
 import { newRequestSequence } from 'redux-reqseq';
+import type { RequestSequence } from 'redux-reqseq';
 
 const ADD_NEW_STAFF_MEMBER :'ADD_NEW_STAFF_MEMBER' = 'ADD_NEW_STAFF_MEMBER';
 const addNewStaffMember :RequestSequence = newRequestSequence(ADD_NEW_STAFF_MEMBER);

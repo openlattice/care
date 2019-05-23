@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { RequestStates } from 'redux-reqseq';
-import type { RequestState } from 'redux-reqseq';
+import type { RequestState, RequestSequence } from 'redux-reqseq';
 
 import AppHeaderContainer from './AppHeaderContainer';
 import CrisisTemplateContainer from '../crisis/CrisisTemplateContainer';

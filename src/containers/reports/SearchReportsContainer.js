@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { Search } from 'lattice-ui-kit';
 import { RequestStates } from 'redux-reqseq';
 
-import type { RequestState } from 'redux-reqseq';
+import type { RequestSequence, RequestState } from 'redux-reqseq';
 import type { Dispatch } from 'redux';
 
 import ReportResult from './ReportResult';

@@ -3,6 +3,7 @@
  */
 
 import { newRequestSequence } from 'redux-reqseq';
+import type { RequestSequence } from 'redux-reqseq';
 
 const DELETE_REPORT :'DELETE_REPORT' = 'DELETE_REPORT';
 const deleteReport :RequestSequence = newRequestSequence(DELETE_REPORT);
