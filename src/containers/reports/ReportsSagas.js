@@ -10,8 +10,14 @@ import {
   takeEvery,
 } from '@redux-saga/core/effects';
 import moment from 'moment';
+import { DateTime } from 'luxon';
 import { isPlainObject } from 'lodash';
-import { List, Map, fromJS } from 'immutable';
+import {
+  List,
+  Map,
+  OrderedMap,
+  fromJS
+} from 'immutable';
 import {
   Constants,
   DataApi,
@@ -335,7 +341,7 @@ function* getReportsByDateRangeWorker(action :SequenceAction) :Generator<*, *, *
     const endMoment = moment(value.get('dateEnd', ''));
 
     const startDT = startMoment.isValid() ? startMoment.toISOString(true) : '*';
-    const endDT = endMoment.isValid() ? endMoment.toISOString(true) : '*';
+    const endDT = endMoment.isValid() ? endMoment.endOf('day').toISOString(true) : '*';
 
     // search for reports within date range
     const searchOptions = {
@@ -417,9 +423,15 @@ function* getReportsByDateRangeWorker(action :SequenceAction) :Generator<*, *, *
 
     const results = reportData.map((report) => {
       const entityKeyId = report.getIn([OPENLATTICE_ID_FQN, 0]);
-      const dtOccurred = report.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0]);
       const reportType = report.getIn([FQN.TYPE_FQN, 0]);
       const natureOfCrisis = report.getIn([FQN.DISPATCH_REASON_FQN]);
+      const rawOccurred = report.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0]);
+      let occurred;
+      if (rawOccurred) {
+        occurred = DateTime.fromISO(
+          rawOccurred
+        ).toLocaleString(DateTime.DATE_SHORT);
+      }
 
       const staffs = staffResponseData.get(entityKeyId, List());
       const subjectDataList = peopleResponseData.get(entityKeyId, List());
@@ -434,17 +446,25 @@ function* getReportsByDateRangeWorker(action :SequenceAction) :Generator<*, *, *
       }
 
       const subjectData = subjectDataList.first(Map()).get('neighborDetails', Map());
+      const rawDob = subjectData.getIn([FQN.PERSON_DOB_FQN, 0]);
+      let dob;
+      if (rawDob) {
+        dob = DateTime.fromISO(
+          rawDob
+        ).toLocaleString(DateTime.DATE_SHORT);
+      }
 
-      return fromJS({
-        firstName: subjectData.getIn([FQN.PERSON_FIRST_NAME_FQN, 0]),
+
+      return OrderedMap({
         lastName: subjectData.getIn([FQN.PERSON_LAST_NAME_FQN, 0]),
+        firstName: subjectData.getIn([FQN.PERSON_FIRST_NAME_FQN, 0]),
         middleName: subjectData.getIn([FQN.PERSON_MIDDLE_NAME_FQN, 0]),
-        dob: subjectData.getIn([FQN.PERSON_DOB_FQN, 0]),
-        dtOccurred,
+        dob,
+        occurred,
         reportType,
         natureOfCrisis,
-        submittor: submitted.getIn(['neighborDetails', FQN.PERSON_ID_FQN, 0]),
-        OPENLATTICE_ID_FQN: entityKeyId
+        reporter: submitted.getIn(['neighborDetails', FQN.PERSON_ID_FQN, 0]),
+        [OPENLATTICE_ID_FQN]: entityKeyId
       });
     });
 

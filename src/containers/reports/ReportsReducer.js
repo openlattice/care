@@ -21,7 +21,7 @@ const INITIAL_STATE :Map<*, *> = fromJS({
   deleteState: RequestStates.PRE_REQUEST,
   fetchState: RequestStates.PRE_REQUEST,
   lastUpdatedStaff: Map(),
-  reports: List(),
+  reportsByDateRange: List(),
   submittedStaff: Map(),
   updateState: RequestStates.PRE_REQUEST,
 });
@@ -84,7 +84,9 @@ export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :
     case getReportsByDateRange.case(action.type): {
       return getReportsByDateRange.reducer(state, (action :any), {
         REQUEST: () => state.set('fetchState', RequestStates.IS_REQUESTING),
-        SUCCESS: () => state.set('fetchState', RequestStates.REQUEST_SUCCESS),
+        SUCCESS: () => state
+          .set('fetchState', RequestStates.REQUEST_SUCCESS)
+          .set('reportsByDateRange', action.value),
         FAILURE: () => state.set('fetchState', RequestStates.REQUEST_FAILURE),
       });
     }
