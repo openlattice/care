@@ -28,12 +28,10 @@ export const stripIdField = (entity) => {
   return newEntity;
 };
 
-export const getSearchTerm = (propertyTypeId, searchString) => `${SEARCH_PREFIX}.${propertyTypeId}:"${searchString}"`;
-
-export const getDateRangeSearchTerm = (
-  propertyTypeId,
-  searchString
-) => `${SEARCH_PREFIX}.${propertyTypeId}:${searchString}`;
+export const getSearchTerm = (propertyTypeId, searchString, exact = false) => {
+  const searchTerm = exact ? `"${searchString}"` : searchString;
+  return `${SEARCH_PREFIX}.${propertyTypeId}:${searchTerm}`;
+};
 
 // https://github.com/immutable-js/immutable-js/wiki/Predicates#pick--omit
 export const keyIn = (keys) => {

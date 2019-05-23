@@ -54,7 +54,7 @@ import {
   getStaffESId,
   getReportedESId,
 } from '../../utils/AppUtils';
-import { getDateRangeSearchTerm } from '../../utils/DataUtils';
+import { getSearchTerm } from '../../utils/DataUtils';
 import {
   compileDispositionData,
   compileNatureOfCrisisData,
@@ -305,7 +305,7 @@ function* getReportsByDateRangeWorker(action :SequenceAction) :Generator<*, *, *
 
     // search for reports within date range
     const searchOptions = {
-      searchTerm: getDateRangeSearchTerm(datetimePTID, `[${startDT} TO ${endDT}]`),
+      searchTerm: getSearchTerm(datetimePTID, `[${startDT} TO ${endDT}]`),
       start: 0,
       maxHits: entitySetSize,
       fuzzy: false

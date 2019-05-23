@@ -132,7 +132,7 @@ function* getCurrentUserStaffMemberDataWorker(action :SequenceAction) :Generator
     const personIdPTId :UUID = yield select(state => state.getIn(['edm', 'fqnToIdMap', FQN.PERSON_ID_FQN]));
     const searchOptions :Object = {
       maxHits: 1,
-      searchTerm: getSearchTerm(personIdPTId, userInfo.email),
+      searchTerm: getSearchTerm(personIdPTId, userInfo.email, true),
       start: 0,
     };
 
