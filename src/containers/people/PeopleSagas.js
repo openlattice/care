@@ -9,23 +9,32 @@ import {
   select,
   takeEvery
 } from '@redux-saga/core/effects';
-import { Map } from 'immutable';
+import {
+  List,
+  Map,
+  OrderedMap,
+  fromJS
+} from 'immutable';
 import {
   EntityDataModelApi,
   Constants,
   DataApi,
-  SearchApi
 } from 'lattice';
+import {
+  SearchApiActions,
+  SearchApiSagas,
+} from 'lattice-sagas';
 import type { SequenceAction } from 'redux-reqseq';
 
+
+import * as FQN from '../../edm/DataModelFqns';
+import Logger from '../../utils/Logger';
 import {
   EDIT_PERSON,
   SEARCH_PEOPLE,
   editPerson,
   searchPeople
 } from './PeopleActions';
-
-import * as FQN from '../../edm/DataModelFqns';
 import {
   getPeopleESId,
 } from '../../utils/AppUtils';
@@ -33,6 +42,9 @@ import { isDefined } from '../../utils/LangUtils';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
 
 const { OPENLATTICE_ID_FQN } = Constants;
+const { searchEntitySetData } = SearchApiActions;
+const { searchEntitySetDataWorker } = SearchApiSagas;
+const LOG = new Logger('PeopleSagas');
 
 function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
 
@@ -83,12 +95,44 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
       maxHits: 100
     };
 
-    const peopleESId = getPeopleESId(app);
-    const response = yield call(SearchApi.advancedSearchEntitySetData, peopleESId, searchOptions);
+    const entitySetId = getPeopleESId(app);
 
-    yield put(searchPeople.success(action.id, response.hits));
+    const { data, error } = yield call(
+      searchEntitySetDataWorker,
+      searchEntitySetData({
+        entitySetId,
+        searchOptions
+      })
+    );
+
+    if (error) throw error;
+
+    const hits = fromJS(data.hits);
+    const result :List<OrderedMap> = hits.map((person :Map) => {
+      const rawDob = person.getIn([FQN.PERSON_DOB_FQN, 0]);
+      let formattedDob;
+      if (rawDob) {
+        formattedDob = DateTime.fromISO(
+          rawDob
+        ).toLocaleString(DateTime.DATE_SHORT);
+      }
+
+      return OrderedMap({
+        [FQN.PERSON_LAST_NAME_FQN]: person.getIn([FQN.PERSON_LAST_NAME_FQN, 0]),
+        [FQN.PERSON_FIRST_NAME_FQN]: person.getIn([FQN.PERSON_FIRST_NAME_FQN, 0]),
+        [FQN.PERSON_MIDDLE_NAME_FQN]: person.getIn([FQN.PERSON_MIDDLE_NAME_FQN, 0]),
+        [FQN.PERSON_SEX_FQN]: person.getIn([FQN.PERSON_SEX_FQN, 0]),
+        [FQN.PERSON_RACE_FQN]: person.getIn([FQN.PERSON_RACE_FQN, 0]),
+        [FQN.PERSON_DOB_FQN]: formattedDob,
+        [FQN.PERSON_ID_FQN]: person.getIn([FQN.PERSON_ID_FQN, 0]),
+        [OPENLATTICE_ID_FQN]: person.getIn([OPENLATTICE_ID_FQN, 0])
+      });
+    });
+
+    yield put(searchPeople.success(action.id, result));
   }
   catch (error) {
+    LOG.error(error);
     yield put(searchPeople.failure(action.id, error));
   }
   finally {

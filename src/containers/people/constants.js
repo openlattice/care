@@ -1,15 +1,15 @@
 // @flow
-import { Map } from 'immutable';
+import { OrderedMap } from 'immutable';
+import * as FQN from '../../edm/DataModelFqns';
 
-const resultLabels = Map({
-  lastName: 'Last name',
-  firstName: 'First name',
-  middleName: 'Middle name',
-  sex: 'Sex',
-  gender: 'Gender',
-  ethnicity: 'Ethnicity',
-  dob: 'DOB',
-  identifier: 'Identifier',
+const resultLabels = OrderedMap({
+  [FQN.PERSON_LAST_NAME_FQN]: 'Last name',
+  [FQN.PERSON_FIRST_NAME_FQN]: 'First name',
+  [FQN.PERSON_MIDDLE_NAME_FQN]: 'Middle name',
+  [FQN.PERSON_SEX_FQN]: 'Sex',
+  [FQN.PERSON_RACE_FQN]: 'Ethnicity',
+  [FQN.PERSON_DOB_FQN]: 'DOB',
+  [FQN.PERSON_ID_FQN]: 'Identifier',
 });
 
 const searchFields = [

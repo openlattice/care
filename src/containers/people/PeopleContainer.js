@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Map } from 'immutable';
 
-import NewSearchPeopleContainer from './NewSearchPeopleContainer';
+import SearchPeopleContainer from './SearchPeopleContainer';
 import EditPerson from '../../components/people/EditPerson';
 import { clearSearchResults, editPerson, selectPerson } from './PeopleActions';
 import { StyledSectionWrapper } from '../../components/form/StyledFormComponents';
@@ -56,7 +56,7 @@ class PeopleContainer extends React.Component<Props> {
                     handleSubmit={this.handleEdit} />
               </StyledSectionWrapper>
             )
-            : <NewSearchPeopleContainer />
+            : <SearchPeopleContainer />
         }
       </>
     );

@@ -1,16 +1,13 @@
 // @flow
+
 import React, { Component } from 'react';
-import styled from 'styled-components';
 import isFunction from 'lodash/isFunction';
-import { Map } from 'immutable';
+import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFileAlt } from '@fortawesome/pro-light-svg-icons';
-import {
-  Label,
-  Card,
-  CardSegment,
-  Colors
-} from 'lattice-ui-kit';
+import { faPortrait } from '@fortawesome/pro-solid-svg-icons';
+import { Map } from 'immutable';
+
+import { Card, Label, Colors } from 'lattice-ui-kit';
 
 const { NEUTRALS } = Colors;
 
@@ -25,47 +22,37 @@ const StyledCard = styled(Card)`
   }
 `;
 
+const DetailsGrid = styled.div`
+  display: grid;
+  grid-gap: 20px 30px;
+  grid-template-columns: repeat(3, minmax(0, 2fr)) 1fr;
+  padding: 10px 20px;
+  flex: 1;
+
+  > div:last-child {
+    grid-column: 3 / -1;
+  }
+`;
+
+const ResultWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  padding: 10px;
+`;
+
 const Truncated = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
 
-const DetailsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  grid-gap: 20px 30px;
-`;
-
-const ReportHeader = styled.div`
-  display: flex;
-  flex: 1;
-  font-size: 20px;
-  font-weight: 600;
-  margin: 0 0 10px 0;
-  align-items: center;
-`;
-
-const ReportType = styled.span`
-  font-size: 14px;
-  font-weight: 600;
-  margin: 0 15px;
-`;
-
-const Subheading = styled.span`
-  color: ${NEUTRALS[1]};
-  font-size: 14px;
-  font-weight: 600;
-  margin: 0 5px;
-`;
-
 type Props = {
-  onClick ? :(result :Map) => void;
-  resultLabels ? :Map;
   result :Map;
+  resultLabels ? :Map;
+  onClick ? :(result :Map) => void;
 }
 
-class ReportResult extends Component<Props> {
+class PersonResult extends Component<Props> {
 
   static defaultProps = {
     onClick: undefined,
@@ -95,37 +82,24 @@ class ReportResult extends Component<Props> {
   }
 
   handleClick = () => {
-    const { onClick, result } = this.props;
+    const { result, onClick } = this.props;
     if (isFunction(onClick)) {
       onClick(result);
     }
   }
 
   render() {
-
     const { result } = this.props;
     const details = this.transformResultToDetailsList(result);
 
-    const reportType = result.get('reportType');
-    const occurred = result.get('occurred');
-    const reporter = result.get('reporter');
-
     return (
       <StyledCard onClick={this.handleClick}>
-        <CardSegment vertical>
-          <ReportHeader>
-            <FontAwesomeIcon icon={faFileAlt} color="black" fixedWidth />
-            <ReportType>
-              { reportType }
-            </ReportType>
-            <Subheading>
-              {`${occurred} · ${reporter}`}
-            </Subheading>
-          </ReportHeader>
+        <ResultWrapper>
+          <FontAwesomeIcon icon={faPortrait} size="8x" color={NEUTRALS[5]} />
           <DetailsGrid>
             { details
-              && details.map((detail :Map, index :number) => (
-                <div key={index.toString()}>
+              && details.map((detail :Map) => (
+                <div key={detail.get('key')}>
                   <Label subtle>
                     {detail.get('label', '')}
                   </Label>
@@ -136,10 +110,11 @@ class ReportResult extends Component<Props> {
               ))
             }
           </DetailsGrid>
-        </CardSegment>
+        </ResultWrapper>
       </StyledCard>
     );
   }
 }
 
-export default ReportResult;
+export default PersonResult;
+export type { Props as ResultProps };
