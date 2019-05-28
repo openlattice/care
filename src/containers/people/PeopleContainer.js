@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { Map } from 'immutable';
 
 import SearchPeopleContainer from './SearchPeopleContainer';
+import Profile from './Profile';
 import EditPerson from '../../components/people/EditPerson';
 import { clearSearchResults, editPerson, selectPerson } from './PeopleActions';
 import { StyledSectionWrapper } from '../../components/form/StyledFormComponents';
@@ -47,15 +48,7 @@ class PeopleContainer extends React.Component<Props> {
       <>
         {
           selectedPerson.size
-            ? (
-              <StyledSectionWrapper>
-                <EditPerson
-                    inputPerson={selectedPerson}
-                    isSavingChanges={isEditingPerson}
-                    backToSearch={() => this.handlePersonSelection(Map())}
-                    handleSubmit={this.handleEdit} />
-              </StyledSectionWrapper>
-            )
+            ? <Profile />
             : <SearchPeopleContainer />
         }
       </>

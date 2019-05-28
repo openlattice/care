@@ -11,7 +11,7 @@ import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import PersonResult from './PersonResult';
 import { resultLabels, searchFields } from './constants';
-import { ContentWrapper } from '../../components/layout';
+import { ContentWrapper, ContentOuterWrapper } from '../../components/layout';
 import { searchPeople, selectPerson } from './PeopleActions';
 
 type Props = {
@@ -43,17 +43,19 @@ class NewSearchPeopleContainer extends Component<Props> {
   render() {
     const { fetchState, searchResults } = this.props;
     return (
-      <ContentWrapper>
-        <Search
-            isLoading={fetchState === RequestStates.PENDING}
-            onResultClick={this.handleResultClick}
-            onSearch={this.handleOnSearch}
-            resultComponent={PersonResult}
-            resultLabels={resultLabels}
-            searchFields={searchFields}
-            searchResults={searchResults}
-            title="Search People" />
-      </ContentWrapper>
+      <ContentOuterWrapper>
+        <ContentWrapper>
+          <Search
+              isLoading={fetchState === RequestStates.PENDING}
+              onResultClick={this.handleResultClick}
+              onSearch={this.handleOnSearch}
+              resultComponent={PersonResult}
+              resultLabels={resultLabels}
+              searchFields={searchFields}
+              searchResults={searchResults}
+              title="Search People" />
+        </ContentWrapper>
+      </ContentOuterWrapper>
     );
   }
 }

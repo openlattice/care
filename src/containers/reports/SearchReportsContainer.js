@@ -14,7 +14,7 @@ import type { Dispatch } from 'redux';
 import ReportResult from './ReportResult';
 
 import { reportLabels, reportSearchFields } from './constants';
-import { ContentWrapper } from '../../components/layout';
+import { ContentWrapper, ContentOuterWrapper } from '../../components/layout';
 import { getReportsByDateRange } from './ReportsActions';
 import { REPORT_VIEW_PATH, REPORT_ID_PATH } from '../../core/router/Routes';
 import { goToPath } from '../../core/router/RoutingActions';
@@ -48,17 +48,19 @@ class SearchReportsContainer extends Component<Props> {
   render() {
     const { fetchState, searchResults } = this.props;
     return (
-      <ContentWrapper>
-        <Search
-            isLoading={fetchState === RequestStates.PENDING}
-            onSearch={this.handleOnSearch}
-            onResultClick={this.handleResultClick}
-            resultLabels={reportLabels}
-            resultComponent={ReportResult}
-            searchFields={reportSearchFields}
-            searchResults={searchResults}
-            title="Search Reports" />
-      </ContentWrapper>
+      <ContentOuterWrapper>
+        <ContentWrapper>
+          <Search
+              isLoading={fetchState === RequestStates.PENDING}
+              onSearch={this.handleOnSearch}
+              onResultClick={this.handleResultClick}
+              resultLabels={reportLabels}
+              resultComponent={ReportResult}
+              searchFields={reportSearchFields}
+              searchResults={searchResults}
+              title="Search Reports" />
+        </ContentWrapper>
+      </ContentOuterWrapper>
     );
   }
 }
