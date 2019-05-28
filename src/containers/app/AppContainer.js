@@ -7,8 +7,10 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import { Map } from 'immutable';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { Redirect, Route, Switch } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
+import { RequestStates } from 'redux-reqseq';
+import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import AppHeaderContainer from './AppHeaderContainer';
 import CrisisTemplateContainer from '../crisis/CrisisTemplateContainer';
@@ -19,8 +21,6 @@ import Spinner from '../../components/spinner/Spinner';
 import LegitReportsRouter from '../reports/LegitReportsRouter';
 import DashboardContainer from '../dashboard/DashboardContainer';
 import SubscribeContainer from '../subscribe/SubscribeContainer';
-import RequestStates from '../../utils/constants/RequestStates';
-import type { RequestState } from '../../utils/constants/RequestStates';
 import {
   initializeApplication,
   loadHospitals,
@@ -131,7 +131,7 @@ class AppContainer extends Component<Props> {
       initializeState
     } = this.props;
 
-    if (initializeState === RequestStates.IS_REQUESTING) {
+    if (initializeState === RequestStates.PENDING) {
       return (
         <Spinner />
       );

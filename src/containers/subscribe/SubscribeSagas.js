@@ -2,16 +2,11 @@
  * @flow
  */
 
-import moment from 'moment';
 import {
-  EntityDataModelApi,
-  Constants,
-  DataApi,
   PersistentSearchApi,
-  SearchApi
 } from 'lattice';
-import { Map } from 'immutable';
 import { call, put, takeEvery } from '@redux-saga/core/effects';
+import type { SequenceAction } from 'redux-reqseq';
 
 import {
   CREATE_SUBSCRIPTION,
@@ -24,17 +19,6 @@ import {
   updateSubscription
 } from './SubscribeActionFactory';
 
-import {
-  PERSON_DOB_FQN,
-  PERSON_LAST_NAME_FQN,
-  PERSON_FIRST_NAME_FQN
-} from '../../edm/DataModelFqns';
-
-import { APP_TYPES_FQNS } from '../../shared/Consts';
-
-const { OPENLATTICE_ID_FQN } = Constants;
-const { PEOPLE_FQN } = APP_TYPES_FQNS;
-
 function* createSubscriptionWorker(action :SequenceAction) :Generator<*, *, *> {
 
   try {
@@ -46,11 +30,10 @@ function* createSubscriptionWorker(action :SequenceAction) :Generator<*, *, *> {
     yield put(getSubscriptions());
   }
   catch (error) {
-    console.error(error);
     yield put(createSubscription.failure(action.id, error));
   }
   finally {
-    yield put(createSubscription.finally(action.id))
+    yield put(createSubscription.finally(action.id));
   }
 }
 
@@ -70,11 +53,10 @@ function* updateSubscriptionWorker(action :SequenceAction) :Generator<*, *, *> {
     yield put(getSubscriptions());
   }
   catch (error) {
-    console.error(error);
     yield put(updateSubscription.failure(action.id, error));
   }
   finally {
-    yield put(updateSubscription.finally(action.id))
+    yield put(updateSubscription.finally(action.id));
   }
 }
 
@@ -93,11 +75,10 @@ function* expireSubscriptionWorker(action :SequenceAction) :Generator<*, *, *> {
     yield put(getSubscriptions());
   }
   catch (error) {
-    console.error(error);
     yield put(expireSubscription.failure(action.id, error));
   }
   finally {
-    yield put(expireSubscription.finally(action.id))
+    yield put(expireSubscription.finally(action.id));
   }
 }
 
@@ -115,11 +96,10 @@ function* getSubscriptionsWorker(action :SequenceAction) :Generator<*, *, *> {
     yield put(getSubscriptions.success(action.id, subscriptions));
   }
   catch (error) {
-    console.error(error);
     yield put(getSubscriptions.failure(action.id, error));
   }
   finally {
-    yield put(getSubscriptions.finally(action.id))
+    yield put(getSubscriptions.finally(action.id));
   }
 }
 

@@ -72,7 +72,7 @@ export default function* sagas() :Generator<*, *, *> {
 
     // ReportsSagas
     fork(ReportsSagas.deleteReportWatcher),
-    fork(ReportsSagas.getReportsWatcher),
+    fork(ReportsSagas.getReportsByDateRangeWatcher),
     fork(ReportsSagas.updateReportWatcher),
     fork(ReportsSagas.getReportWatcher),
 

@@ -3,6 +3,7 @@
  */
 
 import { newRequestSequence } from 'redux-reqseq';
+import type { RequestSequence } from 'redux-reqseq';
 
 const CLEAR_CRISIS_TEMPLATE :'CLEAR_CRISIS_TEMPLATE' = 'CLEAR_CRISIS_TEMPLATE';
 const clearCrisisTemplate = () => ({

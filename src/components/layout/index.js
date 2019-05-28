@@ -1,23 +1,13 @@
 import styled from 'styled-components';
 
-import { APP_CONTENT_WIDTH } from '../../core/style/Sizes';
+import { APP_CONTAINER_WIDTH } from '../../core/style/Sizes';
 
-export const ContentContainerOuterWrapper = styled.div`
-  align-items: flex-start;
+export const ContentWrapper = styled.div`
   display: flex;
-  flex: 1 0 auto;
-  flex-direction: row;
-  justify-content: center;
-  margin: 0;
-  padding: 0;
-  position: relative;
-`;
-
-export const ContentContainerInnerWrapper = styled.div`
-  display: flex;
-  flex: 0 0 auto;
   flex-direction: column;
+  flex: 1 0 auto;
   justify-content: flex-start;
-  width: ${APP_CONTENT_WIDTH}px;
+  max-width: ${APP_CONTAINER_WIDTH}px;
   padding: 30px;
+  width: 100vw;
 `;

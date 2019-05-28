@@ -3,6 +3,7 @@
  */
 
 import { newRequestSequence } from 'redux-reqseq';
+import type { RequestSequence } from 'redux-reqseq';
 
 const GET_SUBSCRIPTIONS :string = 'GET_SUBSCRIPTIONS';
 const getSubscriptions :RequestSequence = newRequestSequence(GET_SUBSCRIPTIONS);

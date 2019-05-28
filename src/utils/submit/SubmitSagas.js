@@ -11,6 +11,7 @@ import {
   EntityDataModelApi,
   Models
 } from 'lattice';
+import type { SequenceAction } from 'redux-reqseq';
 
 import {
   SUBMIT,

@@ -5,7 +5,13 @@
 import moment from 'moment';
 import { call, put, takeEvery } from '@redux-saga/core/effects';
 import { Map } from 'immutable';
-import { EntityDataModelApi, Constants, DataApi, SearchApi } from 'lattice';
+import {
+  EntityDataModelApi,
+  Constants,
+  DataApi,
+  SearchApi
+} from 'lattice';
+import type { SequenceAction } from 'redux-reqseq';
 
 import {
   EDIT_PERSON,
