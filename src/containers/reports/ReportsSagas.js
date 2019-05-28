@@ -295,7 +295,6 @@ function* getReportsByDateRangeWorker(action :SequenceAction) :Generator<*, *, *
     const staffESID :UUID = getStaffESId(app);
 
     const datetimePTID :UUID = edm.getIn(['fqnToIdMap', FQN.DATE_TIME_OCCURRED_FQN]);
-    const entitySetSize = yield call(DataApi.getEntitySetSize, entitySetId);
 
     const startMoment = moment(value.get('dateStart', ''));
     const endMoment = moment(value.get('dateEnd', ''));
@@ -307,7 +306,7 @@ function* getReportsByDateRangeWorker(action :SequenceAction) :Generator<*, *, *
     const searchOptions = {
       searchTerm: getDateRangeSearchTerm(datetimePTID, `[${startDT} TO ${endDT}]`),
       start: 0,
-      maxHits: entitySetSize,
+      maxHits: 10000,
       fuzzy: false
     };
 
