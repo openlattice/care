@@ -55,7 +55,6 @@ class ProfileContainer extends Component<Props> {
   componentDidMount() {
     const { actions, selectedPerson } = this.props;
     const personEKID = selectedPerson.get(OPENLATTICE_ID_FQN, '');
-    console.log('I made it here');
     actions.getProfileReports(personEKID);
   }
 

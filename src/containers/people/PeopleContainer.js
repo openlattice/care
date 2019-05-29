@@ -9,13 +9,14 @@ import { Map } from 'immutable';
 
 import SearchPeopleContainer from './SearchPeopleContainer';
 import ProfileContainer from '../profile/ProfileContainer';
-import { clearSearchResults, editPerson } from './PeopleActions';
+import { clearSearchResults } from './PeopleActions';
+import { clearSelectedPerson } from '../profile/ProfileActions';
 
 type Props = {
   selectedPerson :Map<*, *>,
   actions :{
-    editPerson :(person :Map<*, *>) => void,
-    clearSearchResults :() => void
+    clearSearchResults :() => void;
+    clearSelectedPerson :() => void;
   }
 }
 
@@ -24,6 +25,7 @@ class PeopleContainer extends React.Component<Props> {
   componentWillUnmount() {
     const { actions } = this.props;
     actions.clearSearchResults();
+    actions.clearSelectedPerson();
   }
 
   render() {
@@ -53,7 +55,7 @@ function mapDispatchToProps(dispatch :Function) :Object {
 
   const actions = {
     clearSearchResults,
-    editPerson
+    clearSelectedPerson,
   };
 
   return {

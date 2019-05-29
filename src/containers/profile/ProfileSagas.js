@@ -70,13 +70,10 @@ function* getProfileReportsWorker(action :SequenceAction) :Generator<any, any, a
     );
 
     if (reportsRequest.error) throw reportsRequest.error;
-
     const reportsData = fromJS(reportsRequest.data)
       .get(entityKeyId, List());
 
-    console.log(reportsData);
-
-    yield put(getProfileReports.request(action.id));
+    yield put(getProfileReports.success(action.id));
   }
   catch (error) {
     yield put(getProfileReports.failure(action.id));
@@ -87,8 +84,8 @@ function* getProfileReportsWorker(action :SequenceAction) :Generator<any, any, a
   }
 }
 
-function getProfileReportsWatcher() :Generator<any, any, any> {
-  takeEvery(GET_PROFILE_REPORTS, getProfileReportsWorker);
+function* getProfileReportsWatcher() :Generator<any, any, any> {
+  yield takeEvery(GET_PROFILE_REPORTS, getProfileReportsWorker);
 }
 
 export {

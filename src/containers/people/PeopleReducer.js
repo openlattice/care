@@ -9,7 +9,6 @@ import type { SequenceAction } from 'redux-reqseq';
 
 import {
   CLEAR_SEARCH_RESULTS,
-  SELECT_PERSON,
   editPerson,
   searchPeople
 } from './PeopleActions';
@@ -53,9 +52,6 @@ export default function peopleReducer(state :Map<*, *> = INITIAL_STATE, action :
 
     case CLEAR_SEARCH_RESULTS:
       return INITIAL_STATE;
-
-    case SELECT_PERSON:
-      return state.set('selectedPerson', fromJS(action.value));
 
     default:
       return state;
