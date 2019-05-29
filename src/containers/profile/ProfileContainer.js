@@ -7,18 +7,21 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { RequestStates } from 'redux-reqseq';
 import {
-  Banner,
   Card,
   CardSegment,
   CardStack,
   SearchResults
 } from 'lattice-ui-kit';
+import { faPortrait } from '@fortawesome/pro-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import { ContentWrapper, ContentOuterWrapper } from '../../components/layout';
-import { editPerson } from './PeopleActions';
+import { editPerson } from './ProfileActions';
+import ProfileBanner from './ProfileBanner';
+import ProfileDetails from './ProfileDetails';
 
 const Aside = styled.div`
 `;
@@ -38,37 +41,27 @@ type Props = {
   };
   fetchState :RequestState;
   editState :RequestState;
+  selectedPerson :Map;
 };
 
-class Profile extends Component<Props> {
+class ProfileContainer extends Component<Props> {
   componentDidMount() {
 
   }
 
   render() {
+    const { selectedPerson } = this.props;
     return (
       <ContentOuterWrapper>
-        <Banner isOpen>
-          NAME
-        </Banner>
+        <ProfileBanner selectedPerson={selectedPerson} />
         <ContentWrapper>
           <ProfileGrid>
             <Aside>
-              aside
+              <FontAwesomeIcon icon={faPortrait} size="8x" />
             </Aside>
             <Main>
               <CardStack>
-                <Card>
-                  <CardSegment>
-                    NAME
-                  </CardSegment>
-                  <CardSegment>
-                    DOB
-                  </CardSegment>
-                  <CardSegment>
-                    DEETS
-                  </CardSegment>
-                </Card>
+                <ProfileDetails selectedPerson={selectedPerson} />
                 <SearchResults />
               </CardStack>
             </Main>
@@ -90,4 +83,4 @@ const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
 });
 
 // $FlowFixMe
-export default connect(mapStateToProps, mapDispatchToProps)(Profile);
+export default connect(mapStateToProps, mapDispatchToProps)(ProfileContainer);

@@ -8,10 +8,8 @@ import { connect } from 'react-redux';
 import { Map } from 'immutable';
 
 import SearchPeopleContainer from './SearchPeopleContainer';
-import Profile from './Profile';
-import EditPerson from '../../components/people/EditPerson';
+import ProfileContainer from '../profile/ProfileContainer';
 import { clearSearchResults, editPerson, selectPerson } from './PeopleActions';
-import { StyledSectionWrapper } from '../../components/form/StyledFormComponents';
 
 type Props = {
   app :Map<*, *>,
@@ -42,13 +40,13 @@ class PeopleContainer extends React.Component<Props> {
   }
 
   render() {
-    const { isEditingPerson, selectedPerson } = this.props;
+    const { selectedPerson } = this.props;
 
     return (
       <>
         {
           selectedPerson.size
-            ? <Profile />
+            ? <ProfileContainer />
             : <SearchPeopleContainer />
         }
       </>
@@ -61,7 +59,6 @@ function mapStateToProps(state :Map<*, *>) :Object {
   return {
     app: state.get('app', Map()),
     selectedPerson: state.getIn(['people', 'selectedPerson'], Map()),
-    isEditingPerson: state.getIn(['people', 'isEditingPerson'], false)
   };
 }
 
