@@ -1,7 +1,7 @@
 {
-  "name": "baltimore-health",
+  "name": "bhr",
   "version": "0.0.0",
-  "homepage": "https://github.com/openlattice/baltimore-health",
+  "homepage": "https://github.com/Lattice-Works/bhr",
   "description": "OpenLattice - Behavioral Health Report",
   "author": {
     "name": "OpenLattice, Inc.",
@@ -14,16 +14,20 @@
       "email": "hristo@openlattice.com"
     },
     {
-      "name": "Corwin Crownover",
-      "email": "corwin@openlattice.com"
+      "name": "Katherine Bernstein",
+      "email": "katherine@openlattice.com"
+    },
+    {
+      "name": "Solomon Tang",
+      "email": "solomon@openlattice.com"
     }
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/openlattice/baltimore-health.git"
+    "url": "git+https://github.com/Lattice-Works/bhr.git"
   },
   "bugs": {
-    "url": "https://github.com/openlattice/baltimore-health/issues"
+    "url": "https://github.com/Lattice-Works/bhr/issues"
   },
   "license": "GPLv3",
   "dependencies": {
