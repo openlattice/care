@@ -18,6 +18,7 @@ import * as AppSagas from '../../containers/app/AppSagas';
 import * as DashboardSagas from '../../containers/dashboard/DashboardSagas';
 import * as DownloadsSagas from '../../containers/downloads/DownloadsSagas';
 import * as PeopleSagas from '../../containers/people/PeopleSagas';
+import * as ProfileSagas from '../../containers/profile/ProfileSagas';
 import * as ReportsSagas from '../../containers/reports/ReportsSagas';
 import * as SearchSagas from '../../containers/search/SearchSagas';
 import * as StaffSagas from '../../containers/staff/StaffSagas';
@@ -69,6 +70,9 @@ export default function* sagas() :Generator<*, *, *> {
     // People Sagas
     fork(PeopleSagas.editPersonWatcher),
     fork(PeopleSagas.searchPeopleWatcher),
+
+    // Profile Sagas
+    fork(ProfileSagas.getProfileReportsWatcher),
 
     // ReportsSagas
     fork(ReportsSagas.deleteReportWatcher),
