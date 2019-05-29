@@ -7,8 +7,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { RequestStates } from 'redux-reqseq';
 import {
-  Card,
-  CardSegment,
   CardStack,
   SearchResults
 } from 'lattice-ui-kit';
@@ -22,6 +20,12 @@ import { ContentWrapper, ContentOuterWrapper } from '../../components/layout';
 import { editPerson } from './ProfileActions';
 import ProfileBanner from './ProfileBanner';
 import ProfileDetails from './ProfileDetails';
+
+// Fixed placeholder size
+const PlaceholderPortrait = styled(FontAwesomeIcon)`
+  height: 265px !important;
+  width: 200px !important;
+`;
 
 const Aside = styled.div`
 `;
@@ -57,7 +61,7 @@ class ProfileContainer extends Component<Props> {
         <ContentWrapper>
           <ProfileGrid>
             <Aside>
-              <FontAwesomeIcon icon={faPortrait} size="8x" />
+              <PlaceholderPortrait icon={faPortrait} />
             </Aside>
             <Main>
               <CardStack>
