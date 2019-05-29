@@ -9,14 +9,11 @@ import { Map } from 'immutable';
 
 import SearchPeopleContainer from './SearchPeopleContainer';
 import ProfileContainer from '../profile/ProfileContainer';
-import { clearSearchResults, editPerson, selectPerson } from './PeopleActions';
+import { clearSearchResults, editPerson } from './PeopleActions';
 
 type Props = {
-  app :Map<*, *>,
   selectedPerson :Map<*, *>,
-  isEditingPerson :boolean,
   actions :{
-    selectPerson :(person :Map<*, *>) => void,
     editPerson :(person :Map<*, *>) => void,
     clearSearchResults :() => void
   }
@@ -27,16 +24,6 @@ class PeopleContainer extends React.Component<Props> {
   componentWillUnmount() {
     const { actions } = this.props;
     actions.clearSearchResults();
-  }
-
-  handlePersonSelection = (person) => {
-    const { actions } = this.props;
-    actions.selectPerson(person);
-  }
-
-  handleEdit = (entity) => {
-    const { app, actions } = this.props;
-    actions.editPerson({ app, entity });
   }
 
   render() {
@@ -58,7 +45,7 @@ function mapStateToProps(state :Map<*, *>) :Object {
 
   return {
     app: state.get('app', Map()),
-    selectedPerson: state.getIn(['people', 'selectedPerson'], Map()),
+    selectedPerson: state.getIn(['profile', 'selectedPerson'], Map()),
   };
 }
 
@@ -66,8 +53,7 @@ function mapDispatchToProps(dispatch :Function) :Object {
 
   const actions = {
     clearSearchResults,
-    editPerson,
-    selectPerson
+    editPerson
   };
 
   return {

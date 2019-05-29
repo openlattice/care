@@ -77,7 +77,7 @@ class ProfileContainer extends Component<Props> {
 }
 
 const mapStateToProps = state => ({
-  selectedPerson: state.getIn(['people', 'selectedPerson'], Map()),
+  selectedPerson: state.getIn(['profile', 'selectedPerson'], Map()),
 });
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({

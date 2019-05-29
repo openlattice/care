@@ -12,7 +12,8 @@ import type { RequestSequence, RequestState } from 'redux-reqseq';
 import PersonResult from './PersonResult';
 import { resultLabels, searchFields } from './constants';
 import { ContentWrapper, ContentOuterWrapper } from '../../components/layout';
-import { searchPeople, selectPerson } from './PeopleActions';
+import { searchPeople } from './PeopleActions';
+import { selectPerson } from '../profile/ProfileActions';
 
 type Props = {
   actions :{
