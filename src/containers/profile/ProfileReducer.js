@@ -4,11 +4,12 @@ import { List, Map, fromJS } from 'immutable';
 import { RequestStates } from 'redux-reqseq';
 import type { SequenceAction } from 'redux-reqseq';
 
-import { getProfileReports } from './ProfileActions';
+import { getProfileReports, SELECT_PERSON } from './ProfileActions';
 
 const INITIAL_STATE :Map = fromJS({
   fetchState: RequestStates.STANDBY,
   reports: List(),
+  selectedPerson: Map(),
 });
 
 export default function profileReducer(state :Map = INITIAL_STATE, action :SequenceAction) {
@@ -20,6 +21,9 @@ export default function profileReducer(state :Map = INITIAL_STATE, action :Seque
         FAILURE: () => state.set('fetchState', RequestStates.FAILURE),
       });
     }
+
+    case SELECT_PERSON:
+      return state.set('selectedPerson', fromJS(action.value));
 
     default:
       return state;
