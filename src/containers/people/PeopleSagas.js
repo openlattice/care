@@ -109,8 +109,8 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
 
     const hits = fromJS(data.hits);
     const result :List<OrderedMap> = hits.map((person :Map) => {
-      const rawDob = person.getIn([FQN.PERSON_DOB_FQN, 0]);
-      let formattedDob;
+      const rawDob :string = person.getIn([FQN.PERSON_DOB_FQN, 0], '');
+      let formattedDob = '';
       if (rawDob) {
         formattedDob = DateTime.fromISO(
           rawDob
@@ -118,14 +118,14 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
       }
 
       return OrderedMap({
-        [FQN.PERSON_LAST_NAME_FQN]: person.getIn([FQN.PERSON_LAST_NAME_FQN, 0]),
-        [FQN.PERSON_FIRST_NAME_FQN]: person.getIn([FQN.PERSON_FIRST_NAME_FQN, 0]),
-        [FQN.PERSON_MIDDLE_NAME_FQN]: person.getIn([FQN.PERSON_MIDDLE_NAME_FQN, 0]),
-        [FQN.PERSON_SEX_FQN]: person.getIn([FQN.PERSON_SEX_FQN, 0]),
-        [FQN.PERSON_RACE_FQN]: person.getIn([FQN.PERSON_RACE_FQN, 0]),
+        [FQN.PERSON_LAST_NAME_FQN]: person.getIn([FQN.PERSON_LAST_NAME_FQN, 0], ''),
+        [FQN.PERSON_FIRST_NAME_FQN]: person.getIn([FQN.PERSON_FIRST_NAME_FQN, 0], ''),
+        [FQN.PERSON_MIDDLE_NAME_FQN]: person.getIn([FQN.PERSON_MIDDLE_NAME_FQN, 0], ''),
+        [FQN.PERSON_SEX_FQN]: person.getIn([FQN.PERSON_SEX_FQN, 0], ''),
+        [FQN.PERSON_RACE_FQN]: person.getIn([FQN.PERSON_RACE_FQN, 0], ''),
         [FQN.PERSON_DOB_FQN]: formattedDob,
-        [FQN.PERSON_ID_FQN]: person.getIn([FQN.PERSON_ID_FQN, 0]),
-        [OPENLATTICE_ID_FQN]: person.getIn([OPENLATTICE_ID_FQN, 0])
+        [FQN.PERSON_ID_FQN]: person.getIn([FQN.PERSON_ID_FQN, 0], ''),
+        [OPENLATTICE_ID_FQN]: person.getIn([OPENLATTICE_ID_FQN, 0], '')
       });
     });
 
