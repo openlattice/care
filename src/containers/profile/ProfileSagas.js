@@ -53,15 +53,28 @@ function* getProfileReportsWorker(action :SequenceAction) :Generator<any, any, a
     const reportedESID :UUID = getReportedESId(app);
     const staffESID :UUID = getStaffESId(app);
 
-    const profileReportsSearchParams = {
+    // all reports for person
+    const reportsSearchParams = {
       entitySetId: peopleESID,
       filter: {
         entityKeyIds: [entityKeyId],
         edgeEntitySetIds: [appearsInESID],
-        destinationEntitySetIds: [],
-        sourceEntitySetIds: [peopleESID],
+        destinationEntitySetIds: [reportESID],
+        sourceEntitySetIds: [],
       }
     };
+
+    const reportsRequest = yield call(
+      searchEntityNeighborsWithFilterWorker,
+      searchEntityNeighborsWithFilter(reportsSearchParams)
+    );
+
+    if (reportsRequest.error) throw reportsRequest.error;
+
+    const reportsData = fromJS(reportsRequest.data)
+      .get(entityKeyId, List());
+
+    console.log(reportsData);
 
     yield put(getProfileReports.request(action.id));
   }

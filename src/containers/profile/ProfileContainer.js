@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import { Constants } from 'lattice';
 import { List, Map } from 'immutable';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -17,9 +18,11 @@ import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import { ContentWrapper, ContentOuterWrapper } from '../../components/layout';
-import { editPerson } from './ProfileActions';
+import { getProfileReports } from './ProfileActions';
 import ProfileBanner from './ProfileBanner';
 import ProfileDetails from './ProfileDetails';
+
+const { OPENLATTICE_ID_FQN } = Constants;
 
 // Fixed placeholder size
 const PlaceholderPortrait = styled(FontAwesomeIcon)`
@@ -41,7 +44,7 @@ const ProfileGrid = styled.div`
 
 type Props = {
   actions :{
-    editPerson :RequestSequence;
+    getProfileReports :RequestSequence;
   };
   fetchState :RequestState;
   editState :RequestState;
@@ -50,7 +53,10 @@ type Props = {
 
 class ProfileContainer extends Component<Props> {
   componentDidMount() {
-
+    const { actions, selectedPerson } = this.props;
+    const personEKID = selectedPerson.get(OPENLATTICE_ID_FQN, '');
+    console.log('I made it here');
+    actions.getProfileReports(personEKID);
   }
 
   render() {
@@ -82,7 +88,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
-    editPerson
+    getProfileReports,
   }, dispatch)
 });
 
