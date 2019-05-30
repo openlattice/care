@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import isFunction from 'lodash/isFunction';
+import { DateTime } from 'luxon';
 import { Map } from 'immutable';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileAlt } from '@fortawesome/pro-light-svg-icons';
@@ -11,7 +12,7 @@ import {
   DataGrid,
 } from 'lattice-ui-kit';
 
-import { TYPE_FQN } from '../../edm/DataModelFqns';
+import { DATE_TIME_OCCURRED_FQN, TYPE_FQN } from '../../edm/DataModelFqns';
 
 const ReportHeader = styled.div`
   display: flex;
@@ -48,11 +49,25 @@ class ReportResult extends Component<Props> {
     }
   }
 
+  formatResult = () => {
+    const { result } = this.props;
+    const rawDob :string = result.getIn([DATE_TIME_OCCURRED_FQN, 0]);
+    if (rawDob) {
+      const formattedDob = DateTime.fromISO(
+        rawDob
+      ).toLocaleString(DateTime.DATE_SHORT);
+      return result.setIn([DATE_TIME_OCCURRED_FQN.toString(), 0], formattedDob);
+    }
+
+    return result;
+  }
+
   render() {
 
     const { result, resultLabels } = this.props;
 
     const reportType = result.get(TYPE_FQN, '');
+    const formattedResult = this.formatResult();
 
     return (
       <Card onClick={this.handleClick}>
@@ -65,7 +80,7 @@ class ReportResult extends Component<Props> {
           </ReportHeader>
           <DataGrid
               columns={2}
-              data={result}
+              data={formattedResult}
               labelMap={resultLabels} />
         </CardSegment>
       </Card>
