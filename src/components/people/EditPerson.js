@@ -4,7 +4,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { List, Map } from 'immutable';
+import { List, Map, fromJS } from 'immutable';
 import { DatePicker } from '@atlaskit/datetime-picker';
 
 import ButtonToolbar from '../buttons/ButtonToolbar';
@@ -76,7 +76,7 @@ export default class EditPerson extends React.Component<Props, State> {
   constructor(props :Props) {
     super(props);
     this.state = {
-      person: props.inputPerson,
+      person: this.setMultimapToMap(props.inputPerson),
       isEditing: false,
       shouldTakePhoto: false
     };
@@ -85,11 +85,20 @@ export default class EditPerson extends React.Component<Props, State> {
   componentWillReceiveProps(nextProps :Props) {
     const { inputPerson, isSavingChanges } = this.props;
     if (nextProps.inputPerson !== inputPerson) {
-      this.setState({ person: nextProps.inputPerson });
+      this.setState({ person: this.setMultimapToMap(nextProps.inputPerson) });
     }
     if (isSavingChanges && !nextProps.isSavingChanges) {
       this.setState({ isEditing: false });
     }
+  }
+
+  setMultimapToMap = (setMultimap) => {
+    let map = Map();
+    fromJS(setMultimap).entrySeq().forEach(([key, valueList]) => {
+      map = map.set(key, valueList.join(', '));
+    });
+
+    return map;
   }
 
   renderConsumerPicture = () => {
