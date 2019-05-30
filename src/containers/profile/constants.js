@@ -1,6 +1,11 @@
 import { OrderedMap } from 'immutable';
 import * as FQN from '../../edm/DataModelFqns';
 
+const labelMapReport = OrderedMap({
+  [FQN.DATE_TIME_OCCURRED_FQN]: 'Incident Date',
+  [FQN.DISPATCH_REASON_FQN]: 'Nature'
+});
+
 const labelMapNames = OrderedMap({
   [FQN.PERSON_LAST_NAME_FQN]: 'Last Name',
   [FQN.PERSON_MIDDLE_NAME_FQN]: 'Middle Name',
@@ -22,7 +27,8 @@ const labelMapAttributes = OrderedMap({
 });
 
 export {
-  labelMapNames,
-  labelMapDobAlias,
   labelMapAttributes,
+  labelMapDobAlias,
+  labelMapNames,
+  labelMapReport,
 };

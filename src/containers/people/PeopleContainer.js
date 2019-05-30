@@ -3,19 +3,21 @@
  */
 
 import React from 'react';
+import {
+  Redirect,
+  Route,
+  Switch,
+} from 'react-router';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Map } from 'immutable';
 
 import SearchPeopleContainer from './SearchPeopleContainer';
 import ProfileContainer from '../profile/ProfileContainer';
-import { clearSearchResults } from './PeopleActions';
 import { clearSelectedPerson } from '../profile/ProfileActions';
+import { PEOPLE_PATH, PROFILE_PATH } from '../../core/router/Routes';
 
 type Props = {
-  selectedPerson :Map<*, *>,
   actions :{
-    clearSearchResults :() => void;
     clearSelectedPerson :() => void;
   }
 }
@@ -24,37 +26,24 @@ class PeopleContainer extends React.Component<Props> {
 
   componentWillUnmount() {
     const { actions } = this.props;
-    actions.clearSearchResults();
     actions.clearSelectedPerson();
   }
 
   render() {
-    const { selectedPerson } = this.props;
 
     return (
-      <>
-        {
-          selectedPerson.size
-            ? <ProfileContainer />
-            : <SearchPeopleContainer />
-        }
-      </>
+      <Switch>
+        <Route exact path={PEOPLE_PATH} component={SearchPeopleContainer} />
+        <Route path={PROFILE_PATH} component={ProfileContainer} />
+        <Redirect to={PEOPLE_PATH} />
+      </Switch>
     );
   }
-}
-
-function mapStateToProps(state :Map<*, *>) :Object {
-
-  return {
-    app: state.get('app', Map()),
-    selectedPerson: state.getIn(['profile', 'selectedPerson'], Map()),
-  };
 }
 
 function mapDispatchToProps(dispatch :Function) :Object {
 
   const actions = {
-    clearSearchResults,
     clearSelectedPerson,
   };
 
@@ -64,4 +53,4 @@ function mapDispatchToProps(dispatch :Function) :Object {
 }
 
 // $FlowFixMe
-export default connect(mapStateToProps, mapDispatchToProps)(PeopleContainer);
+export default connect(null, mapDispatchToProps)(PeopleContainer);

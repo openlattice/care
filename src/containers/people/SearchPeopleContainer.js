@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 import { List, Map } from 'immutable';
+import { Constants } from 'lattice';
 import { Search } from 'lattice-ui-kit';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -14,6 +15,10 @@ import { resultLabels, searchFields } from './constants';
 import { ContentWrapper, ContentOuterWrapper } from '../../components/layout';
 import { searchPeople } from './PeopleActions';
 import { selectPerson } from '../profile/ProfileActions';
+import { goToPath } from '../../core/router/RoutingActions';
+import { PROFILE_PATH, PROFILE_ID_PATH } from '../../core/router/Routes';
+
+const { OPENLATTICE_ID_FQN } = Constants;
 
 type Props = {
   actions :{
@@ -38,7 +43,9 @@ class NewSearchPeopleContainer extends Component<Props> {
 
   handleResultClick = (person :Map) => {
     const { actions } = this.props;
+    const personEKID = person.getIn([OPENLATTICE_ID_FQN, 0]);
     actions.selectPerson(person);
+    actions.goToPath(PROFILE_PATH.replace(PROFILE_ID_PATH, personEKID));
   }
 
   render() {
@@ -68,6 +75,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
+    goToPath,
     searchPeople,
     selectPerson,
   }, dispatch)

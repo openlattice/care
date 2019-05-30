@@ -10,7 +10,7 @@ const Content = styled.div`
   flex: 1;
   font-size: 24px;
   min-width: 0;
-  justify-content: space-evenly;
+  justify-content: center;
 `;
 
 const Name = styled.strong`
@@ -21,6 +21,7 @@ const Name = styled.strong`
 `;
 
 const Birthdate = styled.span`
+  margin-left: 30px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -31,10 +32,10 @@ type Props = {
 }
 
 const ProfileBanner = ({ selectedPerson } :Props) => {
-  const firstName = selectedPerson.get(FQN.PERSON_FIRST_NAME_FQN, '');
-  const lastName = selectedPerson.get(FQN.PERSON_LAST_NAME_FQN, '');
-  const dob = selectedPerson.get(FQN.PERSON_DOB_FQN, '');
-  const middle = selectedPerson.get(FQN.PERSON_MIDDLE_NAME_FQN, '');
+  const firstName = selectedPerson.getIn([FQN.PERSON_FIRST_NAME_FQN, 0], '');
+  const lastName = selectedPerson.getIn([FQN.PERSON_LAST_NAME_FQN, 0], '');
+  const dob = selectedPerson.getIn([FQN.PERSON_DOB_FQN, 0], '');
+  const middle = selectedPerson.getIn([FQN.PERSON_MIDDLE_NAME_FQN, 0], '');
   let middleInitial = '';
 
   if (middle) {
@@ -42,7 +43,7 @@ const ProfileBanner = ({ selectedPerson } :Props) => {
   }
 
   return (
-    <Banner isOpen>
+    <Banner isOpen={!selectedPerson.isEmpty()}>
       <Content>
         <Name>{`${lastName}, ${firstName} ${middleInitial}`}</Name>
         <Birthdate>{`DOB: ${dob}`}</Birthdate>
