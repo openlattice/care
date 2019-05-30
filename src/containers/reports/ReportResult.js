@@ -14,17 +14,6 @@ import {
 
 const { NEUTRALS } = Colors;
 
-const StyledCard = styled(Card)`
-  :hover {
-    box-shadow: rgba(0, 0, 0, 0.07) 0px 5px 15px 0px;
-    cursor: pointer;
-
-    * {
-      cursor: inherit;
-    }
-  }
-`;
-
 const Truncated = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
@@ -106,12 +95,12 @@ class ReportResult extends Component<Props> {
     const { result } = this.props;
     const details = this.transformResultToDetailsList(result);
 
-    const reportType = result.get('reportType');
-    const occurred = result.get('occurred');
-    const reporter = result.get('reporter');
+    const reportType = result.get('reportType', '');
+    const occurred = result.get('occurred', '');
+    const reporter = result.get('reporter', '');
 
     return (
-      <StyledCard onClick={this.handleClick}>
+      <Card onClick={this.handleClick}>
         <CardSegment vertical>
           <ReportHeader>
             <FontAwesomeIcon icon={faFileAlt} color="black" fixedWidth />
@@ -137,7 +126,7 @@ class ReportResult extends Component<Props> {
             }
           </DetailsGrid>
         </CardSegment>
-      </StyledCard>
+      </Card>
     );
   }
 }

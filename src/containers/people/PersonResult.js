@@ -11,17 +11,6 @@ import { Card, Label, Colors } from 'lattice-ui-kit';
 
 const { NEUTRALS } = Colors;
 
-const StyledCard = styled(Card)`
-  :hover {
-    box-shadow: rgba(0, 0, 0, 0.07) 0px 5px 15px 0px;
-    cursor: pointer;
-
-    * {
-      cursor: inherit;
-    }
-  }
-`;
-
 const DetailsGrid = styled.div`
   display: grid;
   grid-gap: 20px 30px;
@@ -93,7 +82,7 @@ class PersonResult extends Component<Props> {
     const details = this.transformResultToDetailsList(result);
 
     return (
-      <StyledCard onClick={this.handleClick}>
+      <Card onClick={this.handleClick}>
         <ResultWrapper>
           <FontAwesomeIcon icon={faPortrait} size="8x" color={NEUTRALS[5]} />
           <DetailsGrid>
@@ -111,7 +100,7 @@ class PersonResult extends Component<Props> {
             }
           </DetailsGrid>
         </ResultWrapper>
-      </StyledCard>
+      </Card>
     );
   }
 }
