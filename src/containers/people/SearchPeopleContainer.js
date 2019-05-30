@@ -29,13 +29,12 @@ type Props = {
   fetchState :RequestState;
 }
 
-class NewSearchPeopleContainer extends Component<Props> {
+class SearchPeopleContainer extends Component<Props> {
 
   handleOnSearch = (searchValues :Map) => {
     const { actions } = this.props;
-    const hasValues = searchValues.reduce((notEmpty, value) => {
-      return notEmpty || !!value;
-    }, false);
+    const hasValues = searchValues.reduce((notEmpty, value) => notEmpty || !!value, false);
+
     if (hasValues) {
       actions.searchPeople(searchValues);
     }
@@ -82,4 +81,4 @@ const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
 });
 
 // $FlowFixMe
-export default connect(mapStateToProps, mapDispatchToProps)(NewSearchPeopleContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(SearchPeopleContainer);

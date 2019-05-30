@@ -52,7 +52,7 @@ const { createOrMergeEntityDataWorker } = DataApiSagas;
 function* addNewStaffMemberWorker(action :SequenceAction) :Generator<*, *, *> {
 
   const staffMemberDataByPtId :Object = {};
-  
+
   const workerResponse :Object = {};
 
   try {

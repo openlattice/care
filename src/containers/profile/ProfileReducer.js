@@ -5,7 +5,7 @@ import { RequestStates } from 'redux-reqseq';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
-  CLEAR_SELECTED_PERSON,
+  CLEAR_PROFILE,
   getProfileReports,
   getPersonData,
   SELECT_PERSON,
@@ -43,7 +43,7 @@ export default function profileReducer(state :Map = INITIAL_STATE, action :Seque
     case SELECT_PERSON:
       return state.set('selectedPerson', fromJS(action.value));
 
-    case CLEAR_SELECTED_PERSON:
+    case CLEAR_PROFILE:
       return INITIAL_STATE;
 
     default:

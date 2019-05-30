@@ -20,8 +20,6 @@ import {
 } from 'immutable';
 import {
   Constants,
-  DataApi,
-  Models,
   Types
 } from 'lattice';
 import {
@@ -73,7 +71,6 @@ import { POST_PROCESS_FIELDS } from '../../utils/constants/CrisisTemplateConstan
 const LOG = new Logger('ReportsSagas');
 
 const { DeleteTypes, UpdateTypes } = Types;
-const { DataGraphBuilder } = Models;
 const { OPENLATTICE_ID_FQN } = Constants;
 const {
   createAssociations,

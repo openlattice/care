@@ -12,17 +12,17 @@ const getProfileReports :RequestSequence = newRequestSequence(GET_PROFILE_REPORT
 const SELECT_PERSON :'SELECT_PERSON' = 'SELECT_PERSON';
 const selectPerson :RequestSequence = newRequestSequence(SELECT_PERSON);
 
-const CLEAR_SELECTED_PERSON :'CLEAR_SELECTED_PERSON' = 'CLEAR_SELECTED_PERSON';
-const clearSelectedPerson = () => ({
-  type: CLEAR_SELECTED_PERSON
+const CLEAR_PROFILE :'CLEAR_PROFILE' = 'CLEAR_PROFILE';
+const clearProfile = () => ({
+  type: CLEAR_PROFILE
 });
 
 export {
-  CLEAR_SELECTED_PERSON,
+  CLEAR_PROFILE,
   GET_PERSON_DATA,
   GET_PROFILE_REPORTS,
   SELECT_PERSON,
-  clearSelectedPerson,
+  clearProfile,
   getPersonData,
   getProfileReports,
   selectPerson,

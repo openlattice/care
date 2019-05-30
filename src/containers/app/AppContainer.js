@@ -16,7 +16,7 @@ import AppHeaderContainer from './AppHeaderContainer';
 import CrisisTemplateContainer from '../crisis/CrisisTemplateContainer';
 import DownloadsContainer from '../downloads/DownloadsContainer';
 import HomeContainer from '../home/HomeContainer';
-import PeopleContainer from '../people/PeopleContainer';
+import PeopleRouter from '../people/PeopleRouter';
 import Spinner from '../../components/spinner/Spinner';
 import LegitReportsRouter from '../reports/LegitReportsRouter';
 import DashboardContainer from '../dashboard/DashboardContainer';
@@ -151,7 +151,7 @@ class AppContainer extends Component<Props> {
         <Route path={REPORTS_PATH} component={LegitReportsRouter} />
         <Route path={DASHBOARD_PATH} render={this.wrapComponent(DashboardContainer)} />
         <Route path={DOWNLOADS_PATH} render={this.wrapComponent(DownloadsContainer)} />
-        <Route path={PEOPLE_PATH} component={PeopleContainer} />
+        <Route path={PEOPLE_PATH} component={PeopleRouter} />
         <Route path={SUBSCRIBE_PATH} render={this.wrapComponent(SubscribeContainer)} />
         <Redirect to={HOME_PATH} />
       </Switch>

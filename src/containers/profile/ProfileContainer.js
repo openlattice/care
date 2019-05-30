@@ -29,7 +29,7 @@ import ProfileResult from './ProfileResult';
 import CrisisCountCard from './CrisisCountCard';
 import { labelMapReport } from './constants';
 import { ContentWrapper, ContentOuterWrapper } from '../../components/layout';
-import { getPersonData, getProfileReports } from './ProfileActions';
+import { clearProfile, getPersonData, getProfileReports } from './ProfileActions';
 import { DATE_TIME_OCCURRED_FQN } from '../../edm/DataModelFqns';
 import {
   PROFILE_ID_PARAM,
@@ -66,6 +66,7 @@ const ProfileGrid = styled.div`
 
 type Props = {
   actions :{
+    clearProfile :() => { type :string };
     getPersonData :RequestSequence;
     getProfileReports :RequestSequence;
     goToPath :RequestSequence;
@@ -85,6 +86,11 @@ class ProfileContainer extends Component<Props> {
       actions.getPersonData(personEKID);
     }
     actions.getProfileReports(personEKID);
+  }
+
+  componentWillUnmount() {
+    const { actions } = this.props;
+    actions.clearProfile();
   }
 
   countCrisisCalls = () => {
@@ -173,6 +179,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
+    clearProfile,
     getPersonData,
     getProfileReports,
     goToPath
