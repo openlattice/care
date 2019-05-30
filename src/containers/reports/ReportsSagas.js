@@ -295,16 +295,15 @@ function* getReportsByDateRangeWorker(action :SequenceAction) :Generator<*, *, *
     const staffESID :UUID = getStaffESId(app);
 
     const datetimePTID :UUID = edm.getIn(['fqnToIdMap', FQN.DATE_TIME_OCCURRED_FQN]);
+    const startDT = DateTime.fromISO(value.get('dateStart', ''));
+    const endDT = DateTime.fromISO(value.get('dateEnd', ''));
 
-    const startMoment = moment(value.get('dateStart', ''));
-    const endMoment = moment(value.get('dateEnd', ''));
-
-    const startDT = startMoment.isValid() ? startMoment.toISOString(true) : '*';
-    const endDT = endMoment.isValid() ? endMoment.endOf('day').toISOString(true) : '*';
+    const startTerm = startDT.isValid ? startDT.toISO() : '*';
+    const endTerm = endDT.isValid ? endDT.endOf('day').toISO() : '*';
 
     // search for reports within date range
     const searchOptions = {
-      searchTerm: getSearchTerm(datetimePTID, `[${startDT} TO ${endDT}]`),
+      searchTerm: getSearchTerm(datetimePTID, `[${startTerm} TO ${endTerm}]`),
       start: 0,
       maxHits: 10000,
       fuzzy: false

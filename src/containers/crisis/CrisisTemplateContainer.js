@@ -4,10 +4,10 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import moment from 'moment';
 
 import Modal, { ModalTransition } from '@atlaskit/modal-dialog';
 import { Map } from 'immutable';
+import { DateTime } from 'luxon';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
@@ -298,7 +298,7 @@ class CrisisTemplateContainer extends React.Component<Props, State> {
 
     let submission = {
       [POST_PROCESS_FIELDS.FORM_TYPE]: FORM_TYPE.CRISIS_TEMPLATE,
-      [POST_PROCESS_FIELDS.TIMESTAMP]: moment().toISOString(true),
+      [POST_PROCESS_FIELDS.TIMESTAMP]: DateTime.local().toISO(),
       [POST_PROCESS_FIELDS.USER_EMAIL]: AuthUtils.getUserInfo().email
     };
 
