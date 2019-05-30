@@ -3,6 +3,9 @@
 import { newRequestSequence } from 'redux-reqseq';
 import type { RequestSequence } from 'redux-reqseq';
 
+const GET_PERSON_DATA :'GET_PERSON_DATA' = 'GET_PERSON_DATA';
+const getPersonData :RequestSequence = newRequestSequence(GET_PERSON_DATA);
+
 const GET_PROFILE_REPORTS :'GET_PROFILE_REPORTS' = 'GET_PROFILE_REPORTS';
 const getProfileReports :RequestSequence = newRequestSequence(GET_PROFILE_REPORTS);
 
@@ -16,9 +19,11 @@ const clearSelectedPerson = () => ({
 
 export {
   CLEAR_SELECTED_PERSON,
+  GET_PERSON_DATA,
   GET_PROFILE_REPORTS,
   SELECT_PERSON,
   clearSelectedPerson,
+  getPersonData,
   getProfileReports,
   selectPerson,
 };

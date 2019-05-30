@@ -14,29 +14,78 @@ import {
 import {
   SearchApiActions,
   SearchApiSagas,
+  DataApiActions,
+  DataApiSagas,
 } from 'lattice-sagas';
 
 import type { SequenceAction } from 'redux-reqseq';
 
-import { GET_PROFILE_REPORTS, getProfileReports } from './ProfileActions';
+import {
+  GET_PERSON_DATA,
+  GET_PROFILE_REPORTS,
+  getPersonData,
+  getProfileReports,
+} from './ProfileActions';
 import {
   getAppearsInESId,
   getPeopleESId,
   getReportESId,
-  getStaffESId,
-  getReportedESId,
 } from '../../utils/AppUtils';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
 import { isDefined } from '../../utils/LangUtils';
 import { isValidUuid } from '../../utils/Utils';
+import * as FQN from '../../edm/DataModelFqns';
 
-const {
-  searchEntityNeighborsWithFilter,
-} = SearchApiActions;
+const { searchEntityNeighborsWithFilter } = SearchApiActions;
+const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
+const { getEntityData } = DataApiActions;
+const { getEntityDataWorker } = DataApiSagas;
 
-const {
-  searchEntityNeighborsWithFilterWorker,
-} = SearchApiSagas;
+function* getPersonDataWorker(action :SequenceAction) :Generator<any, any, any> {
+  try {
+    const { value: entityKeyId } = action;
+    if (!isDefined(entityKeyId)) throw ERR_ACTION_VALUE_NOT_DEFINED;
+    if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
+    yield put(getPersonData.request(action.id, entityKeyId));
+
+    const app :Map = yield select(state => state.get('app', Map()));
+    const entitySetId :UUID = getPeopleESId(app);
+
+    const personResponse = yield call(
+      getEntityDataWorker,
+      getEntityData({
+        entitySetId,
+        entityKeyId
+      })
+    );
+
+    if (personResponse.error) throw personResponse.error;
+
+    const personData = fromJS(personResponse.data);
+
+    const rawDob :string = personData.getIn([FQN.PERSON_DOB_FQN, 0], '');
+    let formattedDob = '';
+    if (rawDob) {
+      formattedDob = DateTime.fromISO(
+        rawDob
+      ).toLocaleString(DateTime.DATE_SHORT);
+    }
+
+    const person = personData.setIn([FQN.PERSON_DOB_FQN.toString(), 0], formattedDob);
+
+    yield put(getPersonData.success(action.id, person));
+  }
+  catch (error) {
+    yield put(getPersonData.failure(action.id, error));
+  }
+  finally {
+    yield put(getPersonData.finally(action.id));
+  }
+}
+
+function* getPersonDataWatcher() :Generator<any, any, any> {
+  yield takeEvery(GET_PERSON_DATA, getPersonDataWorker);
+}
 
 function* getProfileReportsWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
@@ -50,8 +99,6 @@ function* getProfileReportsWorker(action :SequenceAction) :Generator<any, any, a
     const reportESID :UUID = getReportESId(app);
     const peopleESID :UUID = getPeopleESId(app);
     const appearsInESID :UUID = getAppearsInESId(app);
-    const reportedESID :UUID = getReportedESId(app);
-    const staffESID :UUID = getStaffESId(app);
 
     // all reports for person
     const reportsSearchParams = {
@@ -70,10 +117,24 @@ function* getProfileReportsWorker(action :SequenceAction) :Generator<any, any, a
     );
 
     if (reportsRequest.error) throw reportsRequest.error;
-    const reportsData = fromJS(reportsRequest.data)
-      .get(entityKeyId, List());
 
-    yield put(getProfileReports.success(action.id));
+    // Sort unique reports by datetime occurred DESC
+    const reportsData = fromJS(reportsRequest.data)
+      .get(entityKeyId, List())
+      .map((report :Map) => report.get('neighborDetails'))
+      .toSet()
+      .toList()
+      .sort((reportA :Map, reportB :Map) :number => {
+        const timeA = DateTime.fromISO(reportA.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0]));
+        const timeB = DateTime.fromISO(reportB.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0]));
+
+        if (!timeA.isValid) return 1;
+        if (!timeB.isValid) return -1;
+
+        return timeB.diff(timeA).toObject().milliseconds;
+      });
+
+    yield put(getProfileReports.success(action.id, reportsData));
   }
   catch (error) {
     yield put(getProfileReports.failure(action.id));
@@ -89,6 +150,8 @@ function* getProfileReportsWatcher() :Generator<any, any, any> {
 }
 
 export {
-  getProfileReportsWorker,
+  getPersonDataWatcher,
+  getPersonDataWorker,
   getProfileReportsWatcher,
+  getProfileReportsWorker,
 };

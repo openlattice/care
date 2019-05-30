@@ -117,16 +117,7 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
         ).toLocaleString(DateTime.DATE_SHORT);
       }
 
-      return OrderedMap({
-        [FQN.PERSON_LAST_NAME_FQN]: person.getIn([FQN.PERSON_LAST_NAME_FQN, 0], ''),
-        [FQN.PERSON_FIRST_NAME_FQN]: person.getIn([FQN.PERSON_FIRST_NAME_FQN, 0], ''),
-        [FQN.PERSON_MIDDLE_NAME_FQN]: person.getIn([FQN.PERSON_MIDDLE_NAME_FQN, 0], ''),
-        [FQN.PERSON_SEX_FQN]: person.getIn([FQN.PERSON_SEX_FQN, 0], ''),
-        [FQN.PERSON_RACE_FQN]: person.getIn([FQN.PERSON_RACE_FQN, 0], ''),
-        [FQN.PERSON_DOB_FQN]: formattedDob,
-        [FQN.PERSON_ID_FQN]: person.getIn([FQN.PERSON_ID_FQN, 0], ''),
-        [OPENLATTICE_ID_FQN]: person.getIn([OPENLATTICE_ID_FQN, 0], '')
-      });
+      return person.set(FQN.DOB_FQN, List([formattedDob]));
     });
 
     yield put(searchPeople.success(action.id, result));
