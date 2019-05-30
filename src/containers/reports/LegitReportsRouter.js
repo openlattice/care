@@ -11,11 +11,11 @@ import {
 } from 'react-router';
 
 import SearchReportsContainer from './SearchReportsContainer';
+import CrisisReportView from './CrisisReportView';
 import {
   REPORT_VIEW_PATH,
   REPORTS_PATH,
 } from '../../core/router/Routes';
-import CrisisReportView from './CrisisReportView';
 
 const LegitReportsRouter = () => (
   <Switch>

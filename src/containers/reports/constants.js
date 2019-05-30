@@ -1,7 +1,7 @@
 // @flow
-import { Map } from 'immutable';
+import { OrderedMap } from 'immutable';
 
-const reportLabels = Map({
+const reportLabels = OrderedMap({
   lastName: 'Last Name',
   firstName: 'First Name',
   middleName: 'Middle Name',

@@ -12,20 +12,7 @@ import {
   Colors
 } from 'lattice-ui-kit';
 
-import { keyIn } from '../../utils/DataUtils';
-
 const { NEUTRALS } = Colors;
-
-const StyledCard = styled(Card)`
-  :hover {
-    box-shadow: rgba(0, 0, 0, 0.07) 0px 5px 15px 0px;
-    cursor: pointer;
-
-    * {
-      cursor: inherit;
-    }
-  }
-`;
 
 const Truncated = styled.div`
   overflow: hidden;
@@ -35,7 +22,7 @@ const Truncated = styled.div`
 
 const DetailsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, minmax(0px, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   grid-gap: 20px 30px;
 `;
 
@@ -62,29 +49,38 @@ const Subheading = styled.span`
 `;
 
 type Props = {
-  onClick :(result :Map) => void;
-  resultLabels :Map;
+  onClick ? :(result :Map) => void;
+  resultLabels ? :Map;
   result :Map;
 }
 
 class ReportResult extends Component<Props> {
 
+  static defaultProps = {
+    onClick: undefined,
+    resultLabels: Map(),
+  }
+
   transformResultToDetailsList = (result :Map) => {
-
     const { resultLabels } = this.props;
-    const labels = result.map((value :any, key :string) => {
-      let label = key;
-      if (resultLabels && Map.isMap(resultLabels)) {
-        label = resultLabels.get(key, key);
-      }
 
-      return Map({
-        key,
+    let details;
+    if (resultLabels && Map.isMap(resultLabels)) {
+      details = resultLabels.map((label :string, key :string) => Map({
         label,
+        value: result.get(key, ''),
+        key
+      }));
+    }
+    else {
+      details = result.map((value :any, key :string) => Map({
+        label: key,
         value,
-      });
-    });
-    return labels.toList();
+        key
+      }));
+    }
+
+    return details.toList();
   }
 
   handleClick = () => {
@@ -97,14 +93,14 @@ class ReportResult extends Component<Props> {
   render() {
 
     const { result } = this.props;
-    const subset = result.filter(keyIn(['lastName', 'firstName', 'middleName', 'dob']));
-    const details = this.transformResultToDetailsList(subset);
-    const reportType = result.get('reportType');
-    const occurred = result.get('occurred');
-    const reporter = result.get('reporter');
+    const details = this.transformResultToDetailsList(result);
+
+    const reportType = result.get('reportType', '');
+    const occurred = result.get('occurred', '');
+    const reporter = result.get('reporter', '');
 
     return (
-      <StyledCard onClick={this.handleClick}>
+      <Card onClick={this.handleClick}>
         <CardSegment vertical>
           <ReportHeader>
             <FontAwesomeIcon icon={faFileAlt} color="black" fixedWidth />
@@ -130,7 +126,7 @@ class ReportResult extends Component<Props> {
             }
           </DetailsGrid>
         </CardSegment>
-      </StyledCard>
+      </Card>
     );
   }
 }

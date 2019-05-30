@@ -16,7 +16,7 @@ import AppHeaderContainer from './AppHeaderContainer';
 import CrisisTemplateContainer from '../crisis/CrisisTemplateContainer';
 import DownloadsContainer from '../downloads/DownloadsContainer';
 import HomeContainer from '../home/HomeContainer';
-import PeopleContainer from '../people/PeopleContainer';
+import PeopleRouter from '../people/PeopleRouter';
 import Spinner from '../../components/spinner/Spinner';
 import LegitReportsRouter from '../reports/LegitReportsRouter';
 import DashboardContainer from '../dashboard/DashboardContainer';
@@ -82,8 +82,8 @@ const AppContentOuterWrapper = styled.main`
 
 const AppContentInnerWrapper = styled.div`
   display: flex;
-  flex: 1 0 auto;
   flex-direction: column;
+  flex: 1 0 auto;
   justify-content: flex-start;
   max-width: ${APP_CONTAINER_MAX_WIDTH}px;
   padding: ${APP_CONTENT_PADDING}px;
@@ -137,11 +137,9 @@ class AppContainer extends Component<Props> {
       );
     }
     if (organizations.isEmpty() || !selectedOrganizationId) {
-      // TODO: this might be problematic
       return (
         <Switch>
-          <Route exact strict path={HOME_PATH} render={this.renderMissingOrgs} />
-          <Redirect to={HOME_PATH} />
+          <Route render={this.renderMissingOrgs} />
         </Switch>
       );
     }
@@ -153,7 +151,7 @@ class AppContainer extends Component<Props> {
         <Route path={REPORTS_PATH} component={LegitReportsRouter} />
         <Route path={DASHBOARD_PATH} render={this.wrapComponent(DashboardContainer)} />
         <Route path={DOWNLOADS_PATH} render={this.wrapComponent(DownloadsContainer)} />
-        <Route path={PEOPLE_PATH} render={this.wrapComponent(PeopleContainer)} />
+        <Route path={PEOPLE_PATH} component={PeopleRouter} />
         <Route path={SUBSCRIBE_PATH} render={this.wrapComponent(SubscribeContainer)} />
         <Redirect to={HOME_PATH} />
       </Switch>

@@ -139,19 +139,27 @@ const PERSON_SSN_LAST_4_FQN = new FullyQualifiedName('general.ssnlast4');
 const PERSON_SUFFIX_FQN = new FullyQualifiedName('nc.PersonSuffix');
 const PERSON_ID_FQN = new FullyQualifiedName('nc.SubjectIdentification');
 const PERSON_PICTURE_FQN = new FullyQualifiedName('person.picture');
+const PERSON_HAIR_COLOR_FQN = new FullyQualifiedName('nc.PersonHairColorText');
+const PERSON_EYE_COLOR_FQN = new FullyQualifiedName('nc.PersonEyeColorText');
+const PERSON_HEIGHT_FQN = new FullyQualifiedName('nc.PersonHeightMeasure');
+const PERSON_WEIGHT_FQN = new FullyQualifiedName('nc.PersonWeightMeasure');
 
 export {
   PERSON_DOB_FQN,
-  PERSON_LAST_NAME_FQN,
+  PERSON_EYE_COLOR_FQN,
   PERSON_FIRST_NAME_FQN,
+  PERSON_HAIR_COLOR_FQN,
+  PERSON_HEIGHT_FQN,
+  PERSON_ID_FQN,
+  PERSON_LAST_NAME_FQN,
   PERSON_MIDDLE_NAME_FQN,
   PERSON_NICK_NAME_FQN,
+  PERSON_PICTURE_FQN,
   PERSON_RACE_FQN,
   PERSON_SEX_FQN,
   PERSON_SSN_LAST_4_FQN,
   PERSON_SUFFIX_FQN,
-  PERSON_ID_FQN,
-  PERSON_PICTURE_FQN
+  PERSON_WEIGHT_FQN,
 };
 
 /*

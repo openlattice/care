@@ -20,8 +20,6 @@ import {
 } from 'immutable';
 import {
   Constants,
-  DataApi,
-  Models,
   Types
 } from 'lattice';
 import {
@@ -54,7 +52,7 @@ import {
   getStaffESId,
   getReportedESId,
 } from '../../utils/AppUtils';
-import { getDateRangeSearchTerm } from '../../utils/DataUtils';
+import { getSearchTerm } from '../../utils/DataUtils';
 import {
   compileDispositionData,
   compileNatureOfCrisisData,
@@ -73,7 +71,6 @@ import { POST_PROCESS_FIELDS } from '../../utils/constants/CrisisTemplateConstan
 const LOG = new Logger('ReportsSagas');
 
 const { DeleteTypes, UpdateTypes } = Types;
-const { DataGraphBuilder } = Models;
 const { OPENLATTICE_ID_FQN } = Constants;
 const {
   createAssociations,
@@ -304,7 +301,7 @@ function* getReportsByDateRangeWorker(action :SequenceAction) :Generator<*, *, *
 
     // search for reports within date range
     const searchOptions = {
-      searchTerm: getDateRangeSearchTerm(datetimePTID, `[${startDT} TO ${endDT}]`),
+      searchTerm: getSearchTerm(datetimePTID, `[${startDT} TO ${endDT}]`),
       start: 0,
       maxHits: 10000,
       fuzzy: false
