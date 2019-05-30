@@ -29,7 +29,7 @@
   "bugs": {
     "url": "https://github.com/Lattice-Works/bhr/issues"
   },
-  "license": "GPLv3",
+  "license": "UNLICENSED",
   "dependencies": {
     "@atlaskit/datetime-picker": "8.0.0",
     "@atlaskit/modal-dialog": "8.0.4",
