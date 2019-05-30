@@ -1,6 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import { DateTime } from 'luxon';
 import { Map } from 'immutable';
 import {
   Card,
@@ -13,6 +14,7 @@ import {
   labelMapDobAlias,
   labelMapNames,
 } from './constants';
+import { PERSON_DOB_FQN } from '../../edm/DataModelFqns';
 
 const Centered = styled(CardSegment)`
   align-items: center;
@@ -34,26 +36,38 @@ class ProfileDetails extends Component<Props> {
     </Centered>
   )
 
-  renderDetails = () => {
+  formatResult = () => {
     const { selectedPerson } = this.props;
+    const rawDob :string = selectedPerson.getIn([PERSON_DOB_FQN, 0]);
+    if (rawDob) {
+      const formattedDob = DateTime.fromISO(rawDob).toLocaleString(DateTime.DATE_SHORT);
+      return selectedPerson.setIn([PERSON_DOB_FQN.toString(), 0], formattedDob);
+    }
+
+    return selectedPerson;
+  }
+
+  renderDetails = () => {
+    const formattedPerson = this.formatResult();
+
     return (
       <>
         <CardSegment>
           <DataGrid
               columns={3}
-              data={selectedPerson}
+              data={formattedPerson}
               labelMap={labelMapNames} />
         </CardSegment>
         <CardSegment>
           <DataGrid
               columns={3}
-              data={selectedPerson}
+              data={formattedPerson}
               labelMap={labelMapDobAlias} />
         </CardSegment>
         <CardSegment>
           <DataGrid
               columns={3}
-              data={selectedPerson}
+              data={formattedPerson}
               labelMap={labelMapAttributes} />
         </CardSegment>
       </>
