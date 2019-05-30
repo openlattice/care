@@ -137,11 +137,9 @@ class AppContainer extends Component<Props> {
       );
     }
     if (organizations.isEmpty() || !selectedOrganizationId) {
-      // TODO: this might be problematic
       return (
         <Switch>
-          <Route exact strict path={HOME_PATH} render={this.renderMissingOrgs} />
-          <Redirect to={HOME_PATH} />
+          <Route render={this.renderMissingOrgs} />
         </Switch>
       );
     }
