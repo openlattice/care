@@ -9,7 +9,6 @@ import {
   select,
   takeEvery,
 } from '@redux-saga/core/effects';
-import moment from 'moment';
 import { DateTime } from 'luxon';
 import { isPlainObject } from 'lodash';
 import {

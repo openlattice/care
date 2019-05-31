@@ -1,5 +1,5 @@
 // @flow
-import moment from 'moment';
+import { DateTime } from 'luxon';
 import { List, Map } from 'immutable';
 import * as FQN from '../../edm/DataModelFqns';
 import { formatPersonName } from '../pages/subjectinformation/SubjectInformationManagerUtils';
@@ -23,15 +23,19 @@ import {
 const compileSubjectData = (subjectData :Map, reportData :Map) => {
   const subjectDob = subjectData.getIn([FQN.PERSON_DOB_FQN, 0], '');
   const dobUnknown = !subjectDob;
-  const subjectDobMoment = moment(subjectDob);
+  const dobDate = DateTime.fromISO(subjectDob);
 
   const reportedAge = reportData.getIn([FQN.AGE_FQN, 0], '');
-  const reportDateTime = reportData.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0], '');
-  const reportDateTimeMoment = moment(reportDateTime);
+  const occurred = reportData.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0], '');
+  const occurredDT = DateTime.fromISO(occurred);
 
   let ageDuringReport = reportedAge;
-  if (reportDateTimeMoment.isValid() && subjectDobMoment.isValid()) {
-    ageDuringReport = reportDateTimeMoment.diff(subjectDobMoment, 'years');
+  if (occurredDT.isValid && dobDate.isValid) {
+    ageDuringReport = dobDate
+      .until(occurredDT)
+      .toDuration(['years', 'months'])
+      .toObject()
+      .years;
   }
 
   return {

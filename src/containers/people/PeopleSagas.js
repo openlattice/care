@@ -63,8 +63,8 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
     const dobPTID :UUID = edm.getIn(['fqnToIdMap', FQN.PERSON_DOB_FQN]);
 
     const searchFields = [];
-    const updateSearchField = (searchString :string, property :string, exact :boolean = false) => {
-      const searchTerm = searchString; // exact ? `"${searchString}"` :
+    const updateSearchField = (searchString :string, property :string, exact? :boolean) => {
+      const searchTerm = exact ? `"${searchString}"` : searchString;
       searchFields.push({
         searchTerm,
         property,
