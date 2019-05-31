@@ -354,6 +354,7 @@ function mapStateToProps(state :Map<*, *>) :Object {
   };
 }
 
+// $FlowFixMe
 export default withRouter(
   connect(mapStateToProps, null)(ReviewContainer)
 );

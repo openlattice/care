@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router';
 import { List, Map } from 'immutable';
 import { DateTimePicker } from '@atlaskit/datetime-picker';
 
@@ -406,4 +406,7 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Disposition));
+// $FlowFixMe
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(Disposition)
+);

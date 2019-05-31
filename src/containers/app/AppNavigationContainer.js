@@ -108,4 +108,5 @@ AppNavigationContainer.defaultProps = {
   dropdown: false
 };
 
-export default withRouter<*>(AppNavigationContainer);
+// $FlowFixMe
+export default withRouter(AppNavigationContainer);

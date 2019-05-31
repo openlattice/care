@@ -3,10 +3,9 @@
  */
 
 import React from 'react';
-import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router';
 import { List, Map } from 'immutable';
 
 import StyledCheckbox from '../../../components/controls/StyledCheckbox';
@@ -182,4 +181,7 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(NatureOfCrisis));
+// $FlowFixMe
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(NatureOfCrisis)
+);

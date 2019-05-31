@@ -5,7 +5,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router';
 import { List, Map } from 'immutable';
 
 import Spinner from '../../components/spinner/Spinner';
@@ -212,4 +212,7 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(SubscribeContainer));
+// $FlowFixMe
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(SubscribeContainer)
+);

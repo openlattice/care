@@ -9,7 +9,7 @@ import { SUBSCRIPTION_TYPE } from './SubscribeConstants';
 
 import {
   getSubscriptions,
-} from './SubscribeActionFactory'
+} from './SubscribeActionFactory';
 
 const {
   IS_LOADING_SUBSCRIPTIONS,
