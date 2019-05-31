@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
 import { List, Map } from 'immutable';
-import { DatePicker } from '@atlaskit/datetime-picker';
+import { DatePicker } from 'lattice-ui-kit';
 
 import BackButton from '../../../components/buttons/BackButton';
 import StyledInput from '../../../components/controls/StyledInput';
@@ -190,11 +190,7 @@ class SubjectInformation extends React.Component<Props> {
                 <DatePicker
                     value={values.get(SUBJECT_INFORMATION.DOB)}
                     isDisabled={!isCreatingNewPerson || disabled}
-                    dateFormat="MM-DD-YYYY"
-                    onChange={value => actions.setInputValue({ field: SUBJECT_INFORMATION.DOB, value })}
-                    selectProps={{
-                      placeholder: 'MM-DD-YYYY'
-                    }} />
+                    onChange={value => actions.setInputValue({ field: SUBJECT_INFORMATION.DOB, value })} />
               </DatePickerWrapper>
             )
           }
