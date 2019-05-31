@@ -2,18 +2,13 @@
  * @flow
  */
 
-import moment from 'moment';
-import randomUUID from 'uuid/v4';
 import { List, Map, fromJS } from 'immutable';
 
 import { SUBSCRIBE } from '../../utils/constants/StateConstants';
 import { SUBSCRIPTION_TYPE } from './SubscribeConstants';
 
 import {
-  createSubscription,
-  expireSubscription,
   getSubscriptions,
-  updateSubscription
 } from './SubscribeActionFactory'
 
 const {

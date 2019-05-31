@@ -20,7 +20,9 @@ import ChartTooltip from './charts/ChartTooltip';
 import SimpleBarChart from './charts/SimpleBarChart';
 import DayAndTimeHeatMap from './charts/DayAndTimeHeatMap';
 import { DASHBOARD_COUNTS } from '../../shared/Consts';
-import { DATE_STR, TIME_STR } from '../../utils/DateUtils';
+
+const DATE_STR = 'MM/DD/YYYY';
+const TIME_STR = 'hh:mm a';
 
 const OverviewChartsWrapper = styled.div`
   display: flex;
