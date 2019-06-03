@@ -41,7 +41,7 @@ class ProfileDetails extends Component<Props> {
     const rawDob :string = selectedPerson.getIn([PERSON_DOB_FQN, 0]);
     if (rawDob) {
       const formattedDob = DateTime.fromISO(rawDob).toLocaleString(DateTime.DATE_SHORT);
-      return selectedPerson.setIn([PERSON_DOB_FQN.toString(), 0], formattedDob);
+      return selectedPerson.setIn([PERSON_DOB_FQN, 0], formattedDob);
     }
 
     return selectedPerson;

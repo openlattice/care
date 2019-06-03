@@ -75,7 +75,7 @@ class PersonResult extends Component<Props> {
     const rawDatetime :string = result.getIn([PERSON_DOB_FQN, 0]);
     if (rawDatetime) {
       const formattedDob = DateTime.fromISO(rawDatetime).toLocaleString(DateTime.DATE_SHORT);
-      return result.setIn([PERSON_DOB_FQN.toString(), 0], formattedDob);
+      return result.setIn([PERSON_DOB_FQN, 0], formattedDob);
     }
 
     return result;

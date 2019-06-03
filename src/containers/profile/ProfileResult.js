@@ -54,7 +54,7 @@ class ReportResult extends Component<Props> {
     const rawDatetime :string = result.getIn([DATE_TIME_OCCURRED_FQN, 0]);
     if (rawDatetime) {
       const formattedDob = DateTime.fromISO(rawDatetime).toLocaleString(DateTime.DATE_SHORT);
-      return result.setIn([DATE_TIME_OCCURRED_FQN.toString(), 0], formattedDob);
+      return result.setIn([DATE_TIME_OCCURRED_FQN, 0], formattedDob);
     }
 
     return result;
