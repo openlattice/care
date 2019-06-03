@@ -55,6 +55,7 @@ class SearchPeopleContainer extends Component<Props> {
       <ContentOuterWrapper>
         <ContentWrapper>
           <Search
+              hasSearched={fetchState !== RequestStates.STANDBY}
               isLoading={fetchState === RequestStates.PENDING}
               onResultClick={this.handleResultClick}
               onSearch={this.handleOnSearch}

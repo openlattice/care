@@ -157,6 +157,7 @@ class ProfileContainer extends Component<Props> {
                     isLoading={fetchPersonState === RequestStates.PENDING}
                     selectedPerson={selectedPerson} />
                 <SearchResults
+                    hasSearched={fetchReportsState !== RequestStates.STANDBY}
                     isLoading={fetchReportsState === RequestStates.PENDING}
                     onResultClick={this.handleResultClick}
                     results={reports}
