@@ -278,6 +278,7 @@ function mapDispatchToProps(dispatch :Function) :Object {
   };
 }
 
-export default withRouter<*>(
+// $FlowFixMe
+export default withRouter(
   connect(mapStateToProps, mapDispatchToProps)(AppHeaderContainer)
 );

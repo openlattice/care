@@ -1,6 +1,10 @@
 // flow-typed signature: 540e42745f797051f3bf17a6af1ccf06
 // flow-typed version: 6a3fe49a8b/history_v4.x.x/flow_>=v0.25.x
 
+declare module 'history' {
+  declare module.exports: any;
+}
+
 declare module "history/createBrowserHistory" {
   declare function Unblock(): void;
 
