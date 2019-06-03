@@ -37,6 +37,7 @@ import {
   REPORT_ID_PATH
 } from '../../core/router/Routes';
 import { goToPath } from '../../core/router/RoutingActions';
+import type { RoutingAction } from '../../core/router/RoutingActions';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 const { NEUTRALS } = Colors;
@@ -69,7 +70,7 @@ type Props = {
     clearProfile :() => { type :string };
     getPersonData :RequestSequence;
     getProfileReports :RequestSequence;
-    goToPath :RequestSequence;
+    goToPath :(path :string) => RoutingAction;
   };
   fetchPersonState :RequestState;
   fetchReportsState :RequestState;
