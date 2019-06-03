@@ -48,11 +48,6 @@ import {
   TAKING_MEDICATION_FQN
 } from '../../edm/DataModelFqns';
 
-import {
-  DATE_STR,
-  TIME_STR
-} from '../../utils/DateUtils';
-
 import { getSearchTerm } from '../../utils/DataUtils';
 
 import {
@@ -189,8 +184,8 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *> {
       bhr.get(DATE_TIME_OCCURRED_FQN, List()).forEach((date) => {
         const dateMoment = moment(date);
         if (dateMoment.isValid()) {
-          const dateStr = dateMoment.format(DATE_STR);
-          const timeStr = dateMoment.format(TIME_STR);
+          const dateStr = dateMoment.format('MM/DD/YYYY');
+          const timeStr = dateMoment.format('hh:mm a');
           const dayOfWeek = dateMoment.format('ddd');
           const timeHr = dateMoment.format('H');
           dateCounts = dateCounts.set(dateStr, dateCounts.get(dateStr, 0) + 1);
