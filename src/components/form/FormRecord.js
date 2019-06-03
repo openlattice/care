@@ -1,7 +1,7 @@
 // @flow
 import React from 'react';
 import styled from 'styled-components';
-import moment from 'moment';
+import { DateTime } from 'luxon';
 import { Button } from 'lattice-ui-kit';
 import { Map } from 'immutable';
 
@@ -71,7 +71,7 @@ const Record = ({ label, time, email } :RecordProps) => (
     <StyledDiv>
       <span>
         <Bold>{label}</Bold>
-        {moment(time).format('MM/DD/YYYY h:mm A')}
+        {DateTime.fromISO(time).toLocaleString(DateTime.DATETIME_SHORT)}
       </span>
     </StyledDiv>
     <StyledDiv>

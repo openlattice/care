@@ -68,7 +68,7 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
       searchFields.push({
         searchTerm,
         property,
-        exact: true
+        exact
       });
     };
 

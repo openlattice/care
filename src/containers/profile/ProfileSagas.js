@@ -63,17 +63,7 @@ function* getPersonDataWorker(action :SequenceAction) :Generator<any, any, any> 
 
     const personData = fromJS(personResponse.data);
 
-    const rawDob :string = personData.getIn([FQN.PERSON_DOB_FQN, 0], '');
-    let formattedDob = '';
-    if (rawDob) {
-      formattedDob = DateTime.fromISO(
-        rawDob
-      ).toLocaleString(DateTime.DATE_SHORT);
-    }
-
-    const person = personData.setIn([FQN.PERSON_DOB_FQN.toString(), 0], formattedDob);
-
-    yield put(getPersonData.success(action.id, person));
+    yield put(getPersonData.success(action.id, personData));
   }
   catch (error) {
     yield put(getPersonData.failure(action.id, error));

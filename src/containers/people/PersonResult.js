@@ -3,11 +3,12 @@
 import React, { Component } from 'react';
 import isFunction from 'lodash/isFunction';
 import styled from 'styled-components';
+import { DateTime } from 'luxon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPortrait } from '@fortawesome/pro-solid-svg-icons';
 import { Map } from 'immutable';
-
 import { Card, Label, Colors } from 'lattice-ui-kit';
+import { PERSON_DOB_FQN } from '../../edm/DataModelFqns';
 
 const { NEUTRALS } = Colors;
 
@@ -70,6 +71,16 @@ class PersonResult extends Component<Props> {
     return details.toList();
   }
 
+  formatResult = (result :Map) => {
+    const rawDatetime :string = result.getIn([PERSON_DOB_FQN, 0]);
+    if (rawDatetime) {
+      const formattedDob = DateTime.fromISO(rawDatetime).toLocaleString(DateTime.DATE_SHORT);
+      return result.setIn([PERSON_DOB_FQN, 0], formattedDob);
+    }
+
+    return result;
+  }
+
   handleClick = () => {
     const { result, onClick } = this.props;
     if (isFunction(onClick)) {
@@ -79,7 +90,8 @@ class PersonResult extends Component<Props> {
 
   render() {
     const { result } = this.props;
-    const details = this.transformResultToDetailsList(result);
+    const formattedResult = this.formatResult(result);
+    const details = this.transformResultToDetailsList(formattedResult);
 
     return (
       <Card onClick={this.handleClick}>

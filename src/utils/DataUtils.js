@@ -32,3 +32,9 @@ export const getSearchTerm = (propertyTypeId, searchString, exact = false) => {
   const searchTerm = exact ? `"${searchString}"` : searchString;
   return `${SEARCH_PREFIX}.${propertyTypeId}:${searchTerm}`;
 };
+
+// https://github.com/immutable-js/immutable-js/wiki/Predicates#pick--omit
+export const keyIn = (keys) => {
+  const keySet = Set(keys);
+  return (v, k) => keySet.has(k);
+};

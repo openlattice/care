@@ -15,13 +15,15 @@ import { resultLabels, searchFields } from './constants';
 import { ContentWrapper, ContentOuterWrapper } from '../../components/layout';
 import { searchPeople } from './PeopleActions';
 import { selectPerson } from '../profile/ProfileActions';
-import { goToPath } from '../../core/router/RoutingActions';
 import { PROFILE_PATH, PROFILE_ID_PATH } from '../../core/router/Routes';
+import { goToPath } from '../../core/router/RoutingActions';
+import type { RoutingAction } from '../../core/router/RoutingActions';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 
 type Props = {
   actions :{
+    goToPath :(path :string) => RoutingAction;
     searchPeople :RequestSequence;
     selectPerson :RequestSequence;
   };

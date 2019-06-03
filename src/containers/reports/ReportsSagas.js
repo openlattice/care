@@ -9,7 +9,6 @@ import {
   select,
   takeEvery,
 } from '@redux-saga/core/effects';
-import moment from 'moment';
 import { DateTime } from 'luxon';
 import { isPlainObject } from 'lodash';
 import {
@@ -95,9 +94,13 @@ const {
 
 const getStaffInteractions = (entities :List<Map>) => {
   const sorted = entities.sort((staffA :Map, staffB :Map) :number => {
-    const timeA = moment(staffA.getIn(['associationDetails', FQN.DATE_TIME_FQN, 0]));
-    const timeB = moment(staffB.getIn(['associationDetails', FQN.DATE_TIME_FQN, 0]));
-    return timeA.diff(timeB);
+    const timeA = DateTime.fromISO(staffA.getIn(['associationDetails', FQN.DATE_TIME_FQN, 0]));
+    const timeB = DateTime.fromISO(staffB.getIn(['associationDetails', FQN.DATE_TIME_FQN, 0]));
+
+    if (!timeA.isValid) return 1;
+    if (!timeB.isValid) return -1;
+
+    return timeB.diff(timeA).toObject().milliseconds;
   });
 
   const submitted = sorted.first(Map());
@@ -218,19 +221,18 @@ function* getReportWorker(action :SequenceAction) :Generator<*, *, *> {
     ]);
 
     const staffDataList = fromJS(staffResponse.data)
-      .get(reportEKID, List())
-      .sort((staffA :Map, staffB :Map) :number => {
-        const timeA = moment(staffA.getIn(['associationDetails', FQN.DATE_TIME_FQN, 0]));
-        const timeB = moment(staffB.getIn(['associationDetails', FQN.DATE_TIME_FQN, 0]));
-        return timeA.diff(timeB);
-      });
+      .get(reportEKID, List());
 
     const { submitted, lastUpdated } = getStaffInteractions(staffDataList);
 
     const reportData = fromJS(reportResponse.data);
+
     // should only be one person per report
     const subjectDataList = fromJS(personResponse.data)
-      .get(reportEKID, List());
+      .get(reportEKID, List())
+      .map((report :Map) => report.get('neighborDetails'))
+      .toSet()
+      .toList();
 
     if (subjectDataList.count() > 1) {
       LOG.warn('more than one person found in report', reportEKID);
@@ -239,7 +241,7 @@ function* getReportWorker(action :SequenceAction) :Generator<*, *, *> {
       LOG.warn('person not found in report', reportEKID);
     }
 
-    const subjectData = subjectDataList.first(Map()).get('neighborDetails', Map());
+    const subjectData = subjectDataList.first(Map());
 
     const subjectInformation = compileSubjectData(subjectData, reportData);
     const observedBehaviors = compileObservedBehaviorData(reportData);
@@ -292,16 +294,15 @@ function* getReportsByDateRangeWorker(action :SequenceAction) :Generator<*, *, *
     const staffESID :UUID = getStaffESId(app);
 
     const datetimePTID :UUID = edm.getIn(['fqnToIdMap', FQN.DATE_TIME_OCCURRED_FQN]);
+    const startDT = DateTime.fromISO(value.get('dateStart', ''));
+    const endDT = DateTime.fromISO(value.get('dateEnd', ''));
 
-    const startMoment = moment(value.get('dateStart', ''));
-    const endMoment = moment(value.get('dateEnd', ''));
-
-    const startDT = startMoment.isValid() ? startMoment.toISOString(true) : '*';
-    const endDT = endMoment.isValid() ? endMoment.endOf('day').toISOString(true) : '*';
+    const startTerm = startDT.isValid ? startDT.toISO() : '*';
+    const endTerm = endDT.isValid ? endDT.endOf('day').toISO() : '*';
 
     // search for reports within date range
     const searchOptions = {
-      searchTerm: getSearchTerm(datetimePTID, `[${startDT} TO ${endDT}]`),
+      searchTerm: getSearchTerm(datetimePTID, `[${startTerm} TO ${endTerm}]`),
       start: 0,
       maxHits: 10000,
       fuzzy: false
@@ -321,9 +322,13 @@ function* getReportsByDateRangeWorker(action :SequenceAction) :Generator<*, *, *
 
     const reportData = fromJS(data.hits)
       .sort((reportA :Map, reportB :Map) :number => {
-        const timeA = moment(reportA.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0]));
-        const timeB = moment(reportB.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0]));
-        return timeB.diff(timeA);
+        const timeA = DateTime.fromISO(reportA.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0]));
+        const timeB = DateTime.fromISO(reportB.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0]));
+
+        if (!timeA.isValid) return 1;
+        if (!timeB.isValid) return -1;
+
+        return timeB.diff(timeA).toObject().milliseconds;
       });
 
     const reportEKIDs = reportData.map(report => report.getIn([OPENLATTICE_ID_FQN, 0]));
@@ -409,7 +414,6 @@ function* getReportsByDateRangeWorker(action :SequenceAction) :Generator<*, *, *
           rawDob
         ).toLocaleString(DateTime.DATE_SHORT);
       }
-
 
       return OrderedMap({
         lastName: subjectData.getIn([FQN.PERSON_LAST_NAME_FQN, 0]),
