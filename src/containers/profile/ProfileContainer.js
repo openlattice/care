@@ -23,10 +23,11 @@ import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 import type { Match } from 'react-router';
 
+import CrisisCountCard from './CrisisCountCard';
+import EditProfileModal from './EditProfileModal';
 import ProfileBanner from './ProfileBanner';
 import ProfileDetails from './ProfileDetails';
 import ProfileResult from './ProfileResult';
-import CrisisCountCard from './CrisisCountCard';
 import { labelMapReport } from './constants';
 import { ContentWrapper, ContentOuterWrapper } from '../../components/layout';
 import { clearProfile, getPersonData, getProfileReports } from './ProfileActions';
@@ -79,7 +80,16 @@ type Props = {
   match :Match;
 };
 
-class ProfileContainer extends Component<Props> {
+type State = {
+  showEdit :boolean;
+};
+
+class ProfileContainer extends Component<Props, State> {
+
+  state = {
+    showEdit: false
+  };
+
   componentDidMount() {
     const { actions, match, selectedPerson } = this.props;
     const personEKID = selectedPerson.get([OPENLATTICE_ID_FQN, 0]) || match.params[PROFILE_ID_PARAM];
@@ -119,6 +129,18 @@ class ProfileContainer extends Component<Props> {
     actions.goToPath(REPORT_VIEW_PATH.replace(REPORT_ID_PATH, reportEKID));
   }
 
+  openEditModal = () => {
+    this.setState({
+      showEdit: true
+    });
+  }
+
+  closeEditModal = () => {
+    this.setState({
+      showEdit: false
+    });
+  }
+
   render() {
     const {
       fetchPersonState,
@@ -126,6 +148,7 @@ class ProfileContainer extends Component<Props> {
       reports,
       selectedPerson
     } = this.props;
+    const { showEdit } = this.state;
     const count = this.countCrisisCalls();
     return (
       <ContentOuterWrapper>
@@ -142,9 +165,12 @@ class ProfileContainer extends Component<Props> {
                       mode="primary">
                     New Crisis Template
                   </MarginButton>
-                  <Button>
+                  <Button onClick={this.openEditModal}>
                     Edit Profile
                   </Button>
+                  <EditProfileModal
+                      isVisible={showEdit}
+                      onClose={this.closeEditModal} />
                 </CardSegment>
               </Card>
             </Aside>
