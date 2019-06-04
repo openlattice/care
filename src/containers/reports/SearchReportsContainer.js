@@ -51,6 +51,7 @@ class SearchReportsContainer extends Component<Props> {
       <ContentOuterWrapper>
         <ContentWrapper>
           <Search
+              hasSearched={fetchState !== RequestStates.STANDBY}
               isLoading={fetchState === RequestStates.PENDING}
               onSearch={this.handleOnSearch}
               onResultClick={this.handleResultClick}
