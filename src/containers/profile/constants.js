@@ -26,9 +26,66 @@ const labelMapAttributes = OrderedMap({
   [FQN.PERSON_EYE_COLOR_FQN]: 'Eye Color',
 });
 
+const generateOptions = (list :string[]) => list.map(value => ({
+  label: value,
+  value
+}));
+
+// https://nief.org/attribute-registry/codesets/NCICSexCode/
+const sexOptions = generateOptions([
+  'Female',
+  'Male',
+  'Unknown'
+]);
+
+const raceOptions = generateOptions([
+  'American Indian',
+  'Asian / Pacific Islander',
+  'Black / African American',
+  'Hispanic (Non-White)',
+  'White',
+  'Unknown',
+]);
+
+// https://nief.org/attribute-registry/codesets/NCICEyeColorCode/
+const eyeOptions = generateOptions([
+  'Black',
+  'Blue',
+  'Brown',
+  'Gray',
+  'Green',
+  'Hazel',
+  'Maroon',
+  'Multicolored',
+  'Pink',
+  'Unknown',
+]);
+
+// https://nief.org/attribute-registry/codesets/NCICHairColorCode/
+const hairOptions = generateOptions([
+  'Bald',
+  'Black',
+  'Blond',
+  'Blue',
+  'Brown',
+  'Gray',
+  'Green',
+  'Orange',
+  'Pink',
+  'Purple',
+  'Red',
+  'Sandy',
+  'White',
+  'Unknown',
+]);
+
 export {
+  eyeOptions,
+  hairOptions,
   labelMapAttributes,
   labelMapDobAlias,
   labelMapNames,
   labelMapReport,
+  raceOptions,
+  sexOptions,
 };

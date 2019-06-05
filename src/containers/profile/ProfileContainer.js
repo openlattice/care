@@ -16,7 +16,7 @@ import {
   Colors,
   SearchResults
 } from 'lattice-ui-kit';
-import { faPortrait } from '@fortawesome/pro-solid-svg-icons';
+import { faEdit, faPortrait, faUser } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import type { Dispatch } from 'redux';
@@ -24,7 +24,7 @@ import type { RequestSequence, RequestState } from 'redux-reqseq';
 import type { Match } from 'react-router';
 
 import CrisisCountCard from './CrisisCountCard';
-import EditProfileModal from './EditProfileModal';
+import EditProfileForm from './EditProfileForm';
 import ProfileBanner from './ProfileBanner';
 import ProfileDetails from './ProfileDetails';
 import ProfileResult from './ProfileResult';
@@ -41,16 +41,30 @@ import { goToPath } from '../../core/router/RoutingActions';
 import type { RoutingAction } from '../../core/router/RoutingActions';
 
 const { OPENLATTICE_ID_FQN } = Constants;
-const { NEUTRALS } = Colors;
-
-const MarginButton = styled(Button)`
-  margin-bottom: 10px;
-`;
+const { NEUTRALS, PURPLES } = Colors;
 
 // Fixed placeholder size
 const PlaceholderPortrait = styled(FontAwesomeIcon)`
   height: 265px !important;
   width: 200px !important;
+`;
+
+const H1 = styled.h1`
+  display: flex;
+  flex: 1 0 auto;
+  color: white;
+  align-items: center;
+`;
+
+const UserIcon = styled(FontAwesomeIcon).attrs({
+  icon: faUser
+})`
+  margin-right: 10px;
+`;
+
+const EditButton = styled(Button)`
+  margin-left: auto;
+  padding: 7px;
 `;
 
 const Aside = styled.div`
@@ -129,26 +143,56 @@ class ProfileContainer extends Component<Props, State> {
     actions.goToPath(REPORT_VIEW_PATH.replace(REPORT_ID_PATH, reportEKID));
   }
 
-  openEditModal = () => {
+  handleShowEdit = () => {
     this.setState({
       showEdit: true
     });
   }
 
-  closeEditModal = () => {
+  handleHideEdit = () => {
     this.setState({
       showEdit: false
     });
   }
 
+  renderProfileDetails = () => {
+    const { fetchPersonState, selectedPerson } = this.props;
+    const { showEdit } = this.state;
+
+    let content = (
+      <ProfileDetails
+          isLoading={fetchPersonState === RequestStates.PENDING}
+          selectedPerson={selectedPerson} />
+    );
+
+    if (showEdit) {
+      content = <EditProfileForm />;
+    }
+
+    return (
+      <Card>
+        <CardSegment padding="sm" bgColor={PURPLES[2]}>
+          <header>
+            <H1>
+              <UserIcon fixedWidth />
+              About
+              <EditButton mode="primary" onClick={this.handleShowEdit}>
+                <FontAwesomeIcon icon={faEdit} fixedWidth />
+              </EditButton>
+            </H1>
+          </header>
+        </CardSegment>
+        { content }
+      </Card>
+    );
+  }
+
   render() {
     const {
-      fetchPersonState,
       fetchReportsState,
       reports,
       selectedPerson
     } = this.props;
-    const { showEdit } = this.state;
     const count = this.countCrisisCalls();
     return (
       <ContentOuterWrapper>
@@ -161,16 +205,9 @@ class ProfileContainer extends Component<Props, State> {
                   <PlaceholderPortrait icon={faPortrait} color={NEUTRALS[5]} />
                 </CardSegment>
                 <CardSegment vertical padding="sm">
-                  <MarginButton
-                      mode="primary">
+                  <Button mode="primary">
                     New Crisis Template
-                  </MarginButton>
-                  <Button onClick={this.openEditModal}>
-                    Edit Profile
                   </Button>
-                  <EditProfileModal
-                      isVisible={showEdit}
-                      onClose={this.closeEditModal} />
                 </CardSegment>
               </Card>
             </Aside>
@@ -179,9 +216,7 @@ class ProfileContainer extends Component<Props, State> {
                 <CrisisCountCard
                     count={count}
                     isLoading={fetchReportsState === RequestStates.PENDING} />
-                <ProfileDetails
-                    isLoading={fetchPersonState === RequestStates.PENDING}
-                    selectedPerson={selectedPerson} />
+                { this.renderProfileDetails() }
                 <SearchResults
                     hasSearched={fetchReportsState !== RequestStates.STANDBY}
                     isLoading={fetchReportsState === RequestStates.PENDING}

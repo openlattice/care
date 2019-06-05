@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { DateTime } from 'luxon';
 import { Map } from 'immutable';
 import {
-  Card,
   CardSegment,
   DataGrid,
   Spinner
@@ -77,12 +76,12 @@ class ProfileDetails extends Component<Props> {
   render() {
     const { isLoading } = this.props;
     return (
-      <Card>
+      <>
         { isLoading
           ? this.renderLoading()
           : this.renderDetails()
         }
-      </Card>
+      </>
     );
   }
 }
