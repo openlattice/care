@@ -25,6 +25,8 @@ import {
   GET_PROFILE_REPORTS,
   getPersonData,
   getProfileReports,
+  UPDATE_PROFILE_ABOUT,
+  updateProfileAbout,
 } from './ProfileActions';
 import {
   getAppearsInESId,
@@ -139,9 +141,28 @@ function* getProfileReportsWatcher() :Generator<any, any, any> {
   yield takeEvery(GET_PROFILE_REPORTS, getProfileReportsWorker);
 }
 
+function* updateProfileAboutWorker(action :SequenceAction) :Generator<any, any, any> {
+  try {
+    yield put(updateProfileAbout.request(action.id));
+    yield put(updateProfileAbout.success(action.id));
+  }
+  catch (error) {
+    yield put(updateProfileAbout.failure(action.id));
+  }
+  finally {
+    yield put(updateProfileAbout.finally(action.id));
+  }
+}
+
+function* updateProfileAboutWatcher() :Generator<any, any, any> {
+  yield takeEvery(UPDATE_PROFILE_ABOUT, updateProfileAboutWorker);
+}
+
 export {
   getPersonDataWatcher,
   getPersonDataWorker,
   getProfileReportsWatcher,
   getProfileReportsWorker,
+  updateProfileAboutWorker,
+  updateProfileAboutWatcher,
 };

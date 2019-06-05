@@ -6,14 +6,16 @@ import type { SequenceAction } from 'redux-reqseq';
 
 import {
   CLEAR_PROFILE,
-  getProfileReports,
-  getPersonData,
   SELECT_PERSON,
+  getPersonData,
+  getProfileReports,
+  updateProfileAbout,
 } from './ProfileActions';
 
 const INITIAL_STATE :Map = fromJS({
   fetchReportsState: RequestStates.STANDBY,
   fetchPersonState: RequestStates.STANDBY,
+  updateAboutState: RequestStates.STANDBY,
   reports: List(),
   selectedPerson: Map(),
 });
@@ -37,6 +39,14 @@ export default function profileReducer(state :Map = INITIAL_STATE, action :Seque
           .set('fetchPersonState', RequestStates.SUCCESS)
           .set('selectedPerson', action.value),
         FAILURE: () => state.set('fetchPersonState', RequestStates.FAILURE),
+      });
+    }
+
+    case updateProfileAbout.case(action.type): {
+      return updateProfileAbout.reducer(state, action, {
+        REQUEST: () => state.set('updateAboutState', RequestStates.PENDING),
+        SUCCESS: () => state.set('updateAboutState', RequestStates.SUCCESS),
+        FAILURE: () => state.set('updateAboutState', RequestStates.FAILURE),
       });
     }
 
