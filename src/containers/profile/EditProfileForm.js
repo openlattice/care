@@ -78,7 +78,7 @@ class EditProfileForm extends Component<Props, State> {
               <Label htmlFor="race">Race</Label>
               <Select
                   type="text"
-                  id="race"
+                  inputId="race"
                   menuPortalTarget={document.body}
                   onChange={this.handleOnChange}
                   options={raceOptions} />
@@ -87,7 +87,7 @@ class EditProfileForm extends Component<Props, State> {
               <Label htmlFor="sex">Sex</Label>
               <Select
                   type="text"
-                  id="sex"
+                  inputId="sex"
                   onChange={this.handleOnChange}
                   options={sexOptions} />
             </div>
@@ -101,11 +101,19 @@ class EditProfileForm extends Component<Props, State> {
             </div>
             <div>
               <Label htmlFor="hair-color">Hair Color</Label>
-              <Select type="text" id="hair-color" onChange={this.handleOnChange} options={hairOptions} />
+              <Select
+                  type="text"
+                  inputId="hair-color"
+                  onChange={this.handleOnChange}
+                  options={hairOptions} />
             </div>
             <div>
               <Label htmlFor="eye-color">Eye Color</Label>
-              <Select type="text" id="eye-color" onChange={this.handleOnChange} option={eyeOptions} />
+              <Select
+                  type="text"
+                  inputId="eye-color"
+                  onChange={this.handleOnChange}
+                  option={eyeOptions} />
             </div>
           </FormGrid>
         </CardSegment>
