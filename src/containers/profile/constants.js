@@ -79,6 +79,23 @@ const hairOptions = generateOptions([
   'Unknown',
 ]);
 
+const personFqnsByName = {
+  aliases: FQN.PERSON_NICK_NAME_FQN,
+  dob: FQN.PERSON_DOB_FQN,
+  firstName: FQN.PERSON_FIRST_NAME_FQN,
+  lastName: FQN.PERSON_LAST_NAME_FQN,
+  middleName: FQN.PERSON_MIDDLE_NAME_FQN,
+  race: FQN.PERSON_RACE_FQN,
+  sex: FQN.PERSON_SEX_FQN,
+};
+
+const physicalAppearanceFqnsByName = {
+  eyeColor: FQN.EYE_COLOR_FQN,
+  hairColor: FQN.HAIR_COLOR_FQN,
+  height: FQN.HEIGHT_FQN,
+  weight: FQN.WEIGHT_FQN
+};
+
 export {
   eyeOptions,
   hairOptions,
@@ -86,6 +103,8 @@ export {
   labelMapDobAlias,
   labelMapNames,
   labelMapReport,
+  personFqnsByName,
+  physicalAppearanceFqnsByName,
   raceOptions,
   sexOptions,
 };

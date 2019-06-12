@@ -114,7 +114,7 @@ class EditProfileForm extends Component<Props, State> {
   }
 
   render() {
-    const { onDiscard, onSubmit } = this.props;
+    const { onDiscard } = this.props;
     const { editedData } = this.state;
     return (
       <>

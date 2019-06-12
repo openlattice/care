@@ -35,7 +35,6 @@ const peopleFqn :string = PEOPLE_FQN.toString();
 const reportedFqn :string = REPORTED_FQN.toString();
 const staffFqn :string = STAFF_FQN.toString();
 
-
 const APP_CONFIG_INITIAL_STATE :Map<*, *> = fromJS({
   entitySetsByOrganization: Map(),
   primaryKeys: List(),

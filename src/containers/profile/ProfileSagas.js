@@ -1,6 +1,7 @@
 // @flow
 import { DateTime } from 'luxon';
 import {
+  all,
   call,
   put,
   select,
@@ -17,31 +18,38 @@ import {
   DataApiActions,
   DataApiSagas,
 } from 'lattice-sagas';
+import { Models, Types } from 'lattice';
 
 import type { SequenceAction } from 'redux-reqseq';
 
+import { personFqnsByName, physicalAppearanceFqnsByName } from './constants';
 import {
   GET_PERSON_DATA,
   GET_PROFILE_REPORTS,
+  UPDATE_PROFILE_ABOUT,
+  createPhysicalAppearance,
   getPersonData,
   getProfileReports,
-  UPDATE_PROFILE_ABOUT,
   updateProfileAbout,
 } from './ProfileActions';
 import {
   getAppearsInESId,
   getPeopleESId,
   getReportESId,
+  getHasESId,
+  getPhysicalAppearanceESId,
 } from '../../utils/AppUtils';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
 import { isDefined } from '../../utils/LangUtils';
 import { isValidUuid } from '../../utils/Utils';
 import * as FQN from '../../edm/DataModelFqns';
 
+const { DataGraphBuilder } = Models;
+const { UpdateTypes } = Types;
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
 const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
-const { getEntityData } = DataApiActions;
-const { getEntityDataWorker } = DataApiSagas;
+const { createEntityAndAssociationData, getEntityData, updateEntityData } = DataApiActions;
+const { createEntityAndAssociationDataWorker, getEntityDataWorker, updateEntityDataWorker } = DataApiSagas;
 
 function* getPersonDataWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
@@ -141,21 +149,158 @@ function* getProfileReportsWatcher() :Generator<any, any, any> {
   yield takeEvery(GET_PROFILE_REPORTS, getProfileReportsWorker);
 }
 
+function* createPhysicalAppearanceWorker(action :SequenceAction) :Generator<any, any, any> {
+  let response = {};
+  try {
+    const { value } :Object = action;
+    const { appearanceProperties, personEKID } = value;
+
+    if (!isDefined(appearanceProperties)) throw ERR_ACTION_VALUE_NOT_DEFINED;
+    if (!isValidUuid(personEKID) || Map.isMap(appearanceProperties)) throw ERR_ACTION_VALUE_TYPE;
+    // if (!isValidUuid(appearanceEKID)) throw ERR_ACTION_VALUE_TYPE;
+    yield put(createPhysicalAppearance.request(action.id, personEKID));
+
+    const edm :Map<*, *> = yield select(state => state.get('edm'));
+    const app = yield select(state => state.get('app', Map()));
+    const peopleESID :UUID = getPeopleESId(app);
+    const hasESID :UUID = getHasESId(app);
+    const physicalAppearanceESID :UUID = getPhysicalAppearanceESId(app);
+    const datetimePTID :UUID = edm.getIn(['fqnToIdMap', FQN.DATE_TIME_FQN]);
+
+    const now = DateTime.local().toISO();
+    const associations = {
+      [hasESID]: [{
+        srcEntityKeyId: personEKID,
+        srcEntitySetId: peopleESID,
+        dstEntityIndex: 0,
+        dstEntitySetId: physicalAppearanceESID,
+        data: {
+          [datetimePTID]: [now]
+        }
+      }]
+    };
+
+    const entities = {
+      [physicalAppearanceESID]: [appearanceProperties]
+    };
+
+    const dataGraph = new DataGraphBuilder()
+      .setAssociations(associations)
+      .setEntities(entities)
+      .build();
+
+    response = yield call(
+      createEntityAndAssociationDataWorker,
+      createEntityAndAssociationData(dataGraph)
+    );
+
+    yield put(createPhysicalAppearance.success(action.id));
+  }
+  catch (error) {
+    response.error = error;
+    yield put(createPhysicalAppearance.failure(action.id));
+  }
+  finally {
+    yield put(createPhysicalAppearance.finally(action.id));
+  }
+
+  return response;
+}
+
+const getUpdatedPropertiesByName = ({ data, fqnsByName, edm }) :Object => {
+  const updatedProperties = {};
+  Object.keys(fqnsByName).forEach((name) => {
+    const fqn = fqnsByName[name];
+    const propertyTypeId = edm.getIn(['fqnToIdMap', fqn]);
+    let formattedValue;
+    const currentValue = data.get(name);
+    if (Array.isArray(currentValue)) {
+      formattedValue = currentValue;
+    }
+    else {
+      formattedValue = [currentValue];
+    }
+    updatedProperties[propertyTypeId] = formattedValue;
+  });
+
+  return updatedProperties;
+};
+
 function* updateProfileAboutWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
     const { value } :Object = action;
     const { data, personEKID, appearanceEKID } = value;
 
     if (!isDefined(data)) throw ERR_ACTION_VALUE_NOT_DEFINED;
-    if (!isValidUuid(personEKID) || Map.isMap(data)) throw ERR_ACTION_VALUE_TYPE;
-    // if (!isValidUuid(appearanceEKID)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUuid(personEKID)) throw ERR_ACTION_VALUE_TYPE;
     yield put(updateProfileAbout.request(action.id, personEKID));
 
-    
+    debugger;
+
+    const edm :Map<*, *> = yield select(state => state.get('edm'));
+    const app = yield select(state => state.get('app', Map()));
+    const peopleESID :UUID = getPeopleESId(app);
+    // const hasESID :UUID = getHasESId(app);
+    const physicalAppearanceESID :UUID = getPhysicalAppearanceESId(app);
+
+    debugger;
+
+    const newPersonProperties = getUpdatedPropertiesByName({
+      data,
+      fqnsByName: personFqnsByName,
+      edm
+    });
+
+    const appearanceProperties = getUpdatedPropertiesByName({
+      data,
+      fqnsByName: physicalAppearanceFqnsByName,
+      edm
+    });
+
+    debugger;
+
+    const personRequest = call(
+      updateEntityDataWorker,
+      updateEntityData({
+        entitySetId: peopleESID,
+        entities: {
+          [personEKID]: newPersonProperties
+        },
+        updateType: UpdateTypes.PartialReplace,
+      })
+    );
+
+    // only do this if appearanceEKID is valid;
+    let appearanceRequest = call(
+      createPhysicalAppearanceWorker,
+      createPhysicalAppearance({
+        appearanceProperties,
+        personEKID
+      })
+    );
+
+    if (appearanceEKID) {
+      appearanceRequest = call(
+        updateEntityDataWorker,
+        updateEntityData({
+          entitySetId: physicalAppearanceESID,
+          entities: {
+            [appearanceEKID]: appearanceProperties
+          },
+          updateType: UpdateTypes.PartialReplace,
+        })
+      );
+    }
+
+    const responses = yield all([
+      personRequest,
+      appearanceRequest,
+    ]);
+
     yield put(updateProfileAbout.success(action.id));
   }
   catch (error) {
-    yield put(updateProfileAbout.failure(action.id));
+    yield put(updateProfileAbout.failure(action.id, error));
   }
   finally {
     yield put(updateProfileAbout.finally(action.id));

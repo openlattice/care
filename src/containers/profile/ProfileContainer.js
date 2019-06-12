@@ -30,7 +30,12 @@ import ProfileDetails from './ProfileDetails';
 import ProfileResult from './ProfileResult';
 import { labelMapReport } from './constants';
 import { ContentWrapper, ContentOuterWrapper } from '../../components/layout';
-import { clearProfile, getPersonData, getProfileReports } from './ProfileActions';
+import {
+  clearProfile,
+  getPersonData,
+  getProfileReports,
+  updateProfileAbout
+} from './ProfileActions';
 import { DATE_TIME_OCCURRED_FQN } from '../../edm/DataModelFqns';
 import {
   PROFILE_ID_PARAM,
@@ -86,6 +91,7 @@ type Props = {
     getPersonData :RequestSequence;
     getProfileReports :RequestSequence;
     goToPath :(path :string) => RoutingAction;
+    updateProfileAbout :RequestSequence;
   };
   fetchPersonState :RequestState;
   fetchReportsState :RequestState;
@@ -156,8 +162,9 @@ class ProfileContainer extends Component<Props, State> {
     });
   }
 
-  handleSubmit = (...args) => {
-    console.log(args);
+  handleSubmit = (payload :Object) => {
+    const { actions } = this.props;
+    actions.updateProfileAbout(payload);
   }
 
   renderProfileDetails = () => {
@@ -257,7 +264,8 @@ const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
     clearProfile,
     getPersonData,
     getProfileReports,
-    goToPath
+    goToPath,
+    updateProfileAbout,
   }, dispatch)
 });
 
