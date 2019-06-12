@@ -143,7 +143,15 @@ function* getProfileReportsWatcher() :Generator<any, any, any> {
 
 function* updateProfileAboutWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
-    yield put(updateProfileAbout.request(action.id));
+    const { value } :Object = action;
+    const { data, personEKID, appearanceEKID } = value;
+
+    if (!isDefined(data)) throw ERR_ACTION_VALUE_NOT_DEFINED;
+    if (!isValidUuid(personEKID) || Map.isMap(data)) throw ERR_ACTION_VALUE_TYPE;
+    // if (!isValidUuid(appearanceEKID)) throw ERR_ACTION_VALUE_TYPE;
+    yield put(updateProfileAbout.request(action.id, personEKID));
+
+    
     yield put(updateProfileAbout.success(action.id));
   }
   catch (error) {

@@ -90,6 +90,7 @@ type Props = {
   fetchPersonState :RequestState;
   fetchReportsState :RequestState;
   selectedPerson :Map;
+  physicalAppearance :Map;
   reports :List<Map>;
   match :Match;
 };
@@ -155,8 +156,12 @@ class ProfileContainer extends Component<Props, State> {
     });
   }
 
+  handleSubmit = (...args) => {
+    console.log(args);
+  }
+
   renderProfileDetails = () => {
-    const { fetchPersonState, selectedPerson } = this.props;
+    const { fetchPersonState, physicalAppearance, selectedPerson } = this.props;
     const { showEdit } = this.state;
 
     let content = (
@@ -166,7 +171,13 @@ class ProfileContainer extends Component<Props, State> {
     );
 
     if (showEdit) {
-      content = <EditProfileForm />;
+      content = (
+        <EditProfileForm
+            selectedPerson={selectedPerson}
+            physicalAppearance={physicalAppearance}
+            onDiscard={this.handleHideEdit}
+            onSubmit={this.handleSubmit} />
+      );
     }
 
     return (
@@ -235,6 +246,7 @@ class ProfileContainer extends Component<Props, State> {
 
 const mapStateToProps = state => ({
   selectedPerson: state.getIn(['profile', 'selectedPerson'], Map()),
+  physicalAppearance: state.getIn(['profile', 'physicalAppearance'], Map()),
   fetchReportsState: state.getIn(['profile', 'fetchReportsState'], RequestStates.STANDBY),
   fetchPersonState: state.getIn(['profile', 'fetchPersonState'], RequestStates.STANDBY),
   reports: state.getIn(['profile', 'reports'], List())

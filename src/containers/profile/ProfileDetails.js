@@ -51,19 +51,19 @@ class ProfileDetails extends Component<Props> {
 
     return (
       <>
-        <CardSegment>
+        <CardSegment padding="md">
           <DataGrid
               columns={3}
               data={formattedPerson}
               labelMap={labelMapNames} />
         </CardSegment>
-        <CardSegment>
+        <CardSegment padding="md">
           <DataGrid
               columns={3}
               data={formattedPerson}
               labelMap={labelMapDobAlias} />
         </CardSegment>
-        <CardSegment>
+        <CardSegment padding="md">
           <DataGrid
               columns={3}
               data={formattedPerson}
