@@ -7,10 +7,12 @@ export const APP_NAME = 'BehavioralHealthReport';
 export const APP_TYPES_FQNS = {
   APPEARS_IN_FQN: new FullyQualifiedName('app.appearsin'),
   BEHAVIORAL_HEALTH_REPORT_FQN: new FullyQualifiedName('app.bhr'),
+  HAS_FQN: new FullyQualifiedName('app.has'),
   HOSPITALS_FQN: new FullyQualifiedName('app.hospitals'),
   PEOPLE_FQN: new FullyQualifiedName('app.people'),
+  PHYSICAL_APPEARANCE_FQN: new FullyQualifiedName('app.physicalappearance'),
   REPORTED_FQN: new FullyQualifiedName('app.reported'),
-  STAFF_FQN: new FullyQualifiedName('app.staff')
+  STAFF_FQN: new FullyQualifiedName('app.staff'),
 };
 
 export const STRING_ID_FQN = 'general.stringid';

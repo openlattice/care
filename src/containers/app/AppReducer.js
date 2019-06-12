@@ -20,10 +20,12 @@ const { FullyQualifiedName } = Models;
 const {
   APPEARS_IN_FQN,
   BEHAVIORAL_HEALTH_REPORT_FQN,
+  HAS_FQN,
   HOSPITALS_FQN,
   PEOPLE_FQN,
+  PHYSICAL_APPEARANCE_FQN,
   REPORTED_FQN,
-  STAFF_FQN
+  STAFF_FQN,
 } = APP_TYPES_FQNS;
 
 const appearsInFqn :string = APPEARS_IN_FQN.toString();
@@ -32,6 +34,7 @@ const hospitalsFqn :string = HOSPITALS_FQN.toString();
 const peopleFqn :string = PEOPLE_FQN.toString();
 const reportedFqn :string = REPORTED_FQN.toString();
 const staffFqn :string = STAFF_FQN.toString();
+
 
 const APP_CONFIG_INITIAL_STATE :Map<*, *> = fromJS({
   entitySetsByOrganization: Map(),
@@ -122,13 +125,17 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
             const peopleConfig = appConfig.config[peopleFqn];
             const reportedConfig = appConfig.config[reportedFqn];
             const staffConfig = appConfig.config[staffFqn];
+            const physicalAppearanceConfig = appConfig.config[PHYSICAL_APPEARANCE_FQN];
+            const hasConfig = appConfig.config[HAS_FQN];
 
             newState = newState
               .setIn([appearsInFqn, 'entitySetsByOrganization', orgId], appearsInConfig.entitySetId)
               .setIn([bhrFqn, 'entitySetsByOrganization', orgId], bhrConfig.entitySetId)
               .setIn([peopleFqn, 'entitySetsByOrganization', orgId], peopleConfig.entitySetId)
               .setIn([reportedFqn, 'entitySetsByOrganization', orgId], reportedConfig.entitySetId)
-              .setIn([staffFqn, 'entitySetsByOrganization', orgId], staffConfig.entitySetId);
+              .setIn([staffFqn, 'entitySetsByOrganization', orgId], staffConfig.entitySetId)
+              .setIn([PHYSICAL_APPEARANCE_FQN, 'entitySetsByOrganization', orgId], physicalAppearanceConfig.entitySetId)
+              .setIn([HAS_FQN, 'entitySetsByOrganization', orgId], hasConfig.entitySetId);
 
             // 2018-02-08:
             // since hospitals is a new EntitySet for the app, old app installations will break without this check.
@@ -183,6 +190,12 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
             .setIn([staffFqn, 'entitySetsByOrganization'], Map())
             .setIn([staffFqn, 'primaryKeys'], List())
             .setIn([staffFqn, 'propertyTypes'], Map())
+            .setIn([PHYSICAL_APPEARANCE_FQN, 'entitySetsByOrganization'], Map())
+            .setIn([PHYSICAL_APPEARANCE_FQN, 'primaryKeys'], List())
+            .setIn([PHYSICAL_APPEARANCE_FQN, 'propertyTypes'], Map())
+            .setIn([HAS_FQN, 'entitySetsByOrganization'], Map())
+            .setIn([HAS_FQN, 'primaryKeys'], List())
+            .setIn([HAS_FQN, 'propertyTypes'], Map())
             .setIn(['errors', 'loadApp'], fromJS(error))
             .set('organizations', Map())
             .set('selectedOrganizationId', '');
