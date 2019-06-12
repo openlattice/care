@@ -235,15 +235,10 @@ function* updateProfileAboutWorker(action :SequenceAction) :Generator<any, any, 
     if (!isValidUuid(personEKID)) throw ERR_ACTION_VALUE_TYPE;
     yield put(updateProfileAbout.request(action.id, personEKID));
 
-    debugger;
-
     const edm :Map<*, *> = yield select(state => state.get('edm'));
     const app = yield select(state => state.get('app', Map()));
     const peopleESID :UUID = getPeopleESId(app);
-    // const hasESID :UUID = getHasESId(app);
     const physicalAppearanceESID :UUID = getPhysicalAppearanceESId(app);
-
-    debugger;
 
     const newPersonProperties = getUpdatedPropertiesByName({
       data,
@@ -256,8 +251,6 @@ function* updateProfileAboutWorker(action :SequenceAction) :Generator<any, any, 
       fqnsByName: physicalAppearanceFqnsByName,
       edm
     });
-
-    debugger;
 
     const personRequest = call(
       updateEntityDataWorker,
