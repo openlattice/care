@@ -20,10 +20,10 @@ const labelMapDobAlias = OrderedMap({
 const labelMapAttributes = OrderedMap({
   [FQN.PERSON_RACE_FQN]: 'Race',
   [FQN.PERSON_SEX_FQN]: 'Sex',
-  [FQN.PERSON_HEIGHT_FQN]: 'Height',
-  [FQN.PERSON_WEIGHT_FQN]: 'Weight',
-  [FQN.PERSON_HAIR_COLOR_FQN]: 'Hair Color',
-  [FQN.PERSON_EYE_COLOR_FQN]: 'Eye Color',
+  [FQN.HEIGHT_FQN]: 'Height',
+  [FQN.WEIGHT_FQN]: 'Weight',
+  [FQN.HAIR_COLOR_FQN]: 'Hair Color',
+  [FQN.EYE_COLOR_FQN]: 'Eye Color',
 });
 
 const generateOptions = (list :string[]) => list.map(value => ({

@@ -20,6 +20,9 @@ const clearProfile = () => ({
   type: CLEAR_PROFILE
 });
 
+const GET_PHYSICAL_APPEARANCE :'GET_PHYSICAL_APPEARANCE' = 'GET_PHYSICAL_APPEARANCE';
+const getPhysicalAppearance :RequestSequence = newRequestSequence(GET_PHYSICAL_APPEARANCE);
+
 const CREATE_PHYSICAL_APPEARANCE :'CREATE_PHYSICAL_APPEARANCE' = 'CREATE_PHYSICAL_APPEARANCE';
 const createPhysicalAppearance :RequestSequence = newRequestSequence(CREATE_PHYSICAL_APPEARANCE);
 
@@ -27,12 +30,14 @@ export {
   CLEAR_PROFILE,
   CREATE_PHYSICAL_APPEARANCE,
   GET_PERSON_DATA,
+  GET_PHYSICAL_APPEARANCE,
   GET_PROFILE_REPORTS,
   SELECT_PERSON,
   UPDATE_PROFILE_ABOUT,
   clearProfile,
   createPhysicalAppearance,
   getPersonData,
+  getPhysicalAppearance,
   getProfileReports,
   selectPerson,
   updateProfileAbout,

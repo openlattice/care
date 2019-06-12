@@ -22,13 +22,16 @@ import { Models, Types } from 'lattice';
 
 import type { SequenceAction } from 'redux-reqseq';
 
+import Logger from '../../utils/Logger';
 import { personFqnsByName, physicalAppearanceFqnsByName } from './constants';
 import {
   GET_PERSON_DATA,
+  GET_PHYSICAL_APPEARANCE,
   GET_PROFILE_REPORTS,
   UPDATE_PROFILE_ABOUT,
   createPhysicalAppearance,
   getPersonData,
+  getPhysicalAppearance,
   getProfileReports,
   updateProfileAbout,
 } from './ProfileActions';
@@ -44,12 +47,69 @@ import { isDefined } from '../../utils/LangUtils';
 import { isValidUuid } from '../../utils/Utils';
 import * as FQN from '../../edm/DataModelFqns';
 
+const LOG = new Logger('ProfileSagas');
+
 const { DataGraphBuilder } = Models;
 const { UpdateTypes } = Types;
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
 const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
 const { createEntityAndAssociationData, getEntityData, updateEntityData } = DataApiActions;
 const { createEntityAndAssociationDataWorker, getEntityDataWorker, updateEntityDataWorker } = DataApiSagas;
+
+function* getPhysicalAppearanceWorker(action :SequenceAction) :Generator<any, any, any> {
+  const response = {};
+  try {
+    const { value: entityKeyId } = action;
+    if (!isDefined(entityKeyId)) throw ERR_ACTION_VALUE_NOT_DEFINED;
+    if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
+
+    yield put(getPhysicalAppearance.request(action.id, entityKeyId));
+
+    const app :Map = yield select(state => state.get('app', Map()));
+    const entitySetId :UUID = getPeopleESId(app);
+    const physicalAppearanceESID :UUID = getPhysicalAppearanceESId(app);
+    const hasESID :UUID = getHasESId(app);
+
+    const appearanceSearchParams = {
+      entitySetId,
+      filter: {
+        entityKeyIds: [entityKeyId],
+        edgeEntitySetIds: [hasESID],
+        destinationEntitySetIds: [physicalAppearanceESID],
+        sourceEntitySetIds: [],
+      }
+    };
+
+    const appearanceRequest = yield call(
+      searchEntityNeighborsWithFilterWorker,
+      searchEntityNeighborsWithFilter(appearanceSearchParams)
+    );
+
+    if (appearanceRequest.error) throw appearanceRequest.error;
+    const appearanceDataList = fromJS(appearanceRequest.data).get(entityKeyId);
+    if (appearanceDataList.count() > 1) {
+      LOG.warn('more than one appearance found in person', entityKeyId);
+    }
+
+    const appearanceData = appearanceDataList
+      .first(Map())
+      .get('neighborDetails', Map());
+
+    response.data = appearanceData;
+
+    yield put(getPhysicalAppearance.success(action.id, appearanceData));
+  }
+  catch (error) {
+    response.error = error;
+    yield put(getPhysicalAppearance.failure(action.id, error));
+  }
+
+  return response;
+}
+
+function* getPhysicalApperanceWatcher() :Generator<any, any, any> {
+  yield takeEvery(GET_PHYSICAL_APPEARANCE, getPhysicalAppearanceWorker);
+}
 
 function* getPersonDataWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
@@ -61,7 +121,12 @@ function* getPersonDataWorker(action :SequenceAction) :Generator<any, any, any> 
     const app :Map = yield select(state => state.get('app', Map()));
     const entitySetId :UUID = getPeopleESId(app);
 
-    const personResponse = yield call(
+    const appearanceRequest = call(
+      getPhysicalAppearanceWorker,
+      getPhysicalAppearance(entityKeyId)
+    );
+
+    const personRequest = call(
       getEntityDataWorker,
       getEntityData({
         entitySetId,
@@ -69,7 +134,13 @@ function* getPersonDataWorker(action :SequenceAction) :Generator<any, any, any> 
       })
     );
 
+    const [personResponse, appearanceResponse] = yield all([
+      personRequest,
+      appearanceRequest,
+    ]);
+
     if (personResponse.error) throw personResponse.error;
+    if (appearanceResponse.error) throw appearanceResponse.error;
 
     const personData = fromJS(personResponse.data);
 
@@ -307,8 +378,10 @@ function* updateProfileAboutWatcher() :Generator<any, any, any> {
 export {
   getPersonDataWatcher,
   getPersonDataWorker,
+  getPhysicalAppearanceWorker,
+  getPhysicalApperanceWatcher,
   getProfileReportsWatcher,
   getProfileReportsWorker,
-  updateProfileAboutWorker,
   updateProfileAboutWatcher,
+  updateProfileAboutWorker,
 };

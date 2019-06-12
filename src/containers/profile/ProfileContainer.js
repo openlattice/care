@@ -33,6 +33,7 @@ import { ContentWrapper, ContentOuterWrapper } from '../../components/layout';
 import {
   clearProfile,
   getPersonData,
+  getPhysicalAppearance,
   getProfileReports,
   updateProfileAbout
 } from './ProfileActions';
@@ -89,16 +90,18 @@ type Props = {
   actions :{
     clearProfile :() => { type :string };
     getPersonData :RequestSequence;
+    getPhysicalAppearance :RequestSequence;
     getProfileReports :RequestSequence;
     goToPath :(path :string) => RoutingAction;
     updateProfileAbout :RequestSequence;
   };
+  fetchAppearanceState :RequestState;
   fetchPersonState :RequestState;
   fetchReportsState :RequestState;
-  selectedPerson :Map;
+  match :Match;
   physicalAppearance :Map;
   reports :List<Map>;
-  match :Match;
+  selectedPerson :Map;
 };
 
 type State = {
@@ -112,10 +115,18 @@ class ProfileContainer extends Component<Props, State> {
   };
 
   componentDidMount() {
-    const { actions, match, selectedPerson } = this.props;
+    const {
+      actions,
+      match,
+      physicalAppearance,
+      selectedPerson
+    } = this.props;
     const personEKID = selectedPerson.get([OPENLATTICE_ID_FQN, 0]) || match.params[PROFILE_ID_PARAM];
     if (selectedPerson.isEmpty()) {
       actions.getPersonData(personEKID);
+    }
+    else if (physicalAppearance.isEmpty()) {
+      actions.getPhysicalAppearance(personEKID);
     }
     actions.getProfileReports(personEKID);
   }
@@ -168,13 +179,24 @@ class ProfileContainer extends Component<Props, State> {
   }
 
   renderProfileDetails = () => {
-    const { fetchPersonState, physicalAppearance, selectedPerson } = this.props;
+    const {
+      fetchAppearanceState,
+      fetchPersonState,
+      physicalAppearance,
+      selectedPerson
+    } = this.props;
     const { showEdit } = this.state;
+
+    const isLoading = (
+      fetchPersonState === RequestStates.PENDING
+      || fetchAppearanceState === RequestStates.PENDING
+    );
 
     let content = (
       <ProfileDetails
-          isLoading={fetchPersonState === RequestStates.PENDING}
-          selectedPerson={selectedPerson} />
+          isLoading={isLoading}
+          selectedPerson={selectedPerson}
+          physicalAppearance={physicalAppearance} />
     );
 
     if (showEdit) {
@@ -252,17 +274,19 @@ class ProfileContainer extends Component<Props, State> {
 }
 
 const mapStateToProps = state => ({
-  selectedPerson: state.getIn(['profile', 'selectedPerson'], Map()),
-  physicalAppearance: state.getIn(['profile', 'physicalAppearance'], Map()),
-  fetchReportsState: state.getIn(['profile', 'fetchReportsState'], RequestStates.STANDBY),
+  fetchAppearanceState: state.getIn(['profile', 'fetchAppearanceState'], RequestStates.STANDBY),
   fetchPersonState: state.getIn(['profile', 'fetchPersonState'], RequestStates.STANDBY),
-  reports: state.getIn(['profile', 'reports'], List())
+  fetchReportsState: state.getIn(['profile', 'fetchReportsState'], RequestStates.STANDBY),
+  physicalAppearance: state.getIn(['profile', 'physicalAppearance'], Map()),
+  reports: state.getIn(['profile', 'reports'], List()),
+  selectedPerson: state.getIn(['profile', 'selectedPerson'], Map()),
 });
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
     clearProfile,
     getPersonData,
+    getPhysicalAppearance,
     getProfileReports,
     goToPath,
     updateProfileAbout,

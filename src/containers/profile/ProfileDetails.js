@@ -24,6 +24,7 @@ const Centered = styled(CardSegment)`
 
 type Props = {
   isLoading :boolean;
+  physicalAppearance :Map;
   selectedPerson :Map;
 };
 
@@ -36,14 +37,17 @@ class ProfileDetails extends Component<Props> {
   )
 
   formatResult = () => {
-    const { selectedPerson } = this.props;
+    const { physicalAppearance, selectedPerson } = this.props;
     const rawDob :string = selectedPerson.getIn([PERSON_DOB_FQN, 0]);
+    let formattedPerson = selectedPerson;
     if (rawDob) {
       const formattedDob = DateTime.fromISO(rawDob).toLocaleString(DateTime.DATE_SHORT);
-      return selectedPerson.setIn([PERSON_DOB_FQN, 0], formattedDob);
+
+      // setIn behavior does not call .toString() like getIn does
+      formattedPerson = selectedPerson.setIn([PERSON_DOB_FQN.toString(), 0], formattedDob);
     }
 
-    return selectedPerson;
+    return formattedPerson.merge(physicalAppearance);
   }
 
   renderDetails = () => {
