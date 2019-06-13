@@ -26,6 +26,9 @@ const getPhysicalAppearance :RequestSequence = newRequestSequence(GET_PHYSICAL_A
 const CREATE_PHYSICAL_APPEARANCE :'CREATE_PHYSICAL_APPEARANCE' = 'CREATE_PHYSICAL_APPEARANCE';
 const createPhysicalAppearance :RequestSequence = newRequestSequence(CREATE_PHYSICAL_APPEARANCE);
 
+const UPDATE_PHYSICAL_APPEARANCE :'UPDATE_PHYSICAL_APPEARANCE' = 'UPDATE_PHYSICAL_APPEARANCE';
+const updatePhysicalAppearance :RequestSequence = newRequestSequence(UPDATE_PHYSICAL_APPEARANCE);
+
 export {
   CLEAR_PROFILE,
   CREATE_PHYSICAL_APPEARANCE,
@@ -33,6 +36,7 @@ export {
   GET_PHYSICAL_APPEARANCE,
   GET_PROFILE_REPORTS,
   SELECT_PERSON,
+  UPDATE_PHYSICAL_APPEARANCE,
   UPDATE_PROFILE_ABOUT,
   clearProfile,
   createPhysicalAppearance,
@@ -40,5 +44,6 @@ export {
   getPhysicalAppearance,
   getProfileReports,
   selectPerson,
+  updatePhysicalAppearance,
   updateProfileAbout,
 };
