@@ -58,7 +58,13 @@ export default function profileReducer(state :Map = INITIAL_STATE, action :Seque
     case updateProfileAbout.case(action.type): {
       return updateProfileAbout.reducer(state, action, {
         REQUEST: () => state.set('updateAboutState', RequestStates.PENDING),
-        SUCCESS: () => state.set('updateAboutState', RequestStates.SUCCESS),
+        SUCCESS: () => {
+          const { updatedPerson, updatedPhysicalAppearance } = action.value;
+          return state
+            .set('updateAboutState', RequestStates.SUCCESS)
+            .set('selectedPerson', updatedPerson)
+            .set('physicalAppearance', updatedPhysicalAppearance);
+        },
         FAILURE: () => state.set('updateAboutState', RequestStates.FAILURE),
       });
     }
