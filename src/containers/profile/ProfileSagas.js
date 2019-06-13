@@ -91,7 +91,7 @@ function* getPhysicalAppearanceWorker(action :SequenceAction) :Generator<any, an
     if (appearanceRequest.error) throw appearanceRequest.error;
     const appearanceDataList = fromJS(appearanceRequest.data).get(entityKeyId, List());
     if (appearanceDataList.count() > 1) {
-      LOG.warn('more than one appearance found in person', entityKeyId, appearanceDataList);
+      LOG.warn('more than one appearance found in person', entityKeyId);
     }
 
     const appearanceData = appearanceDataList
