@@ -1,4 +1,5 @@
 // @flow
+import isPlainObject from 'lodash/isPlainObject';
 import { DateTime } from 'luxon';
 import {
   all,
@@ -223,14 +224,13 @@ function* getProfileReportsWatcher() :Generator<any, any, any> {
 }
 
 function* createPhysicalAppearanceWorker(action :SequenceAction) :Generator<any, any, any> {
-  let response = {};
+  const response = {};
   try {
     const { value } :Object = action;
     const { appearanceProperties, personEKID } = value;
 
     if (!isDefined(appearanceProperties)) throw ERR_ACTION_VALUE_NOT_DEFINED;
-    if (!isValidUuid(personEKID) || Map.isMap(appearanceProperties)) throw ERR_ACTION_VALUE_TYPE;
-    // if (!isValidUuid(appearanceEKID)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUuid(personEKID) || !isPlainObject(appearanceProperties)) throw ERR_ACTION_VALUE_TYPE;
     yield put(createPhysicalAppearance.request(action.id, personEKID));
 
     const edm :Map<*, *> = yield select(state => state.get('edm'));
@@ -293,6 +293,8 @@ function* updatePhysicalAppearanceWorker(action :SequenceAction) :Generator<any,
   try {
     const { value } :Object = action;
     const { appearanceEKID, appearanceProperties } = value;
+    if (!isDefined(appearanceProperties)) throw ERR_ACTION_VALUE_NOT_DEFINED;
+    if (!isValidUuid(appearanceEKID) || !isPlainObject(appearanceProperties)) throw ERR_ACTION_VALUE_TYPE;
     yield put(updatePhysicalAppearance.request(action.id));
 
     const edm :Map<*, *> = yield select(state => state.get('edm'));
@@ -403,7 +405,6 @@ function* updateProfileAboutWorker(action :SequenceAction) :Generator<any, any, 
 
     const updatedPerson = simulateResponseData(fromJS(newPersonProperties), personEKID, edm);
     const updatedPhysicalAppearance = appearanceResponse.data;
-
 
     yield put(updateProfileAbout.success(action.id, { updatedPerson, updatedPhysicalAppearance }));
   }
