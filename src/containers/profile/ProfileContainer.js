@@ -47,7 +47,7 @@ import { goToPath } from '../../core/router/RoutingActions';
 import type { RoutingAction } from '../../core/router/RoutingActions';
 
 const { OPENLATTICE_ID_FQN } = Constants;
-const { NEUTRALS, PURPLES } = Colors;
+const { NEUTRALS, PURPLES, WHITE } = Colors;
 
 // Fixed placeholder size
 const PlaceholderPortrait = styled(FontAwesomeIcon)`
@@ -58,7 +58,7 @@ const PlaceholderPortrait = styled(FontAwesomeIcon)`
 const H1 = styled.h1`
   display: flex;
   flex: 1 0 auto;
-  color: white;
+  color: ${WHITE};
   align-items: center;
 `;
 
