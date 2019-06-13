@@ -6,16 +6,21 @@ import type { SequenceAction } from 'redux-reqseq';
 
 import {
   CLEAR_PROFILE,
-  getProfileReports,
-  getPersonData,
   SELECT_PERSON,
+  getPersonData,
+  getProfileReports,
+  updateProfileAbout,
+  getPhysicalAppearance,
 } from './ProfileActions';
 
 const INITIAL_STATE :Map = fromJS({
-  fetchReportsState: RequestStates.STANDBY,
+  fetchAppearanceState: RequestStates.STANDBY,
   fetchPersonState: RequestStates.STANDBY,
+  fetchReportsState: RequestStates.STANDBY,
+  physicalAppearance: Map(),
   reports: List(),
   selectedPerson: Map(),
+  updateAboutState: RequestStates.STANDBY,
 });
 
 export default function profileReducer(state :Map = INITIAL_STATE, action :SequenceAction) {
@@ -37,6 +42,30 @@ export default function profileReducer(state :Map = INITIAL_STATE, action :Seque
           .set('fetchPersonState', RequestStates.SUCCESS)
           .set('selectedPerson', action.value),
         FAILURE: () => state.set('fetchPersonState', RequestStates.FAILURE),
+      });
+    }
+
+    case getPhysicalAppearance.case(action.type): {
+      return getPhysicalAppearance.reducer(state, action, {
+        REQUEST: () => state.set('fetchAppearanceState', RequestStates.PENDING),
+        SUCCESS: () => state
+          .set('fetchAppearanceState', RequestStates.SUCCESS)
+          .set('physicalAppearance', action.value),
+        FAILURE: () => state.set('fetchAppearanceState', RequestStates.FAILURE),
+      });
+    }
+
+    case updateProfileAbout.case(action.type): {
+      return updateProfileAbout.reducer(state, action, {
+        REQUEST: () => state.set('updateAboutState', RequestStates.PENDING),
+        SUCCESS: () => {
+          const { updatedPerson, updatedPhysicalAppearance } = action.value;
+          return state
+            .set('updateAboutState', RequestStates.SUCCESS)
+            .set('selectedPerson', updatedPerson)
+            .set('physicalAppearance', updatedPhysicalAppearance);
+        },
+        FAILURE: () => state.set('updateAboutState', RequestStates.FAILURE),
       });
     }
 

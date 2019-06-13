@@ -7,6 +7,30 @@ import { Models } from 'lattice';
 const { FullyQualifiedName } = Models;
 
 /*
+ * PhysicalAppearance
+ */
+
+const COMPLEXION_FQN = new FullyQualifiedName('nc.complexion');
+const HAIR_COLOR_FQN = new FullyQualifiedName('ol.haircolor');
+const FACIAL_HAIR_FQN = new FullyQualifiedName('ol.facialhair');
+const HEIGHT_FQN = new FullyQualifiedName('ol.height');
+const WEIGHT_FQN = new FullyQualifiedName('ol.weight');
+const BODY_DESCRIPTION_FQN = new FullyQualifiedName('ol.bodydescription');
+const EYE_COLOR_FQN = new FullyQualifiedName('ol.eyecolor');
+const GROOMING_FQN = new FullyQualifiedName('ol.grooming');
+
+export {
+  COMPLEXION_FQN,
+  HAIR_COLOR_FQN,
+  FACIAL_HAIR_FQN,
+  HEIGHT_FQN,
+  WEIGHT_FQN,
+  BODY_DESCRIPTION_FQN,
+  EYE_COLOR_FQN,
+  GROOMING_FQN
+};
+
+/*
  * ReportInfoView
  */
 

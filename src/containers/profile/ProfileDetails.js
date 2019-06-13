@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { DateTime } from 'luxon';
 import { Map } from 'immutable';
 import {
-  Card,
   CardSegment,
   DataGrid,
   Spinner
@@ -25,6 +24,7 @@ const Centered = styled(CardSegment)`
 
 type Props = {
   isLoading :boolean;
+  physicalAppearance :Map;
   selectedPerson :Map;
 };
 
@@ -37,14 +37,17 @@ class ProfileDetails extends Component<Props> {
   )
 
   formatResult = () => {
-    const { selectedPerson } = this.props;
+    const { physicalAppearance, selectedPerson } = this.props;
     const rawDob :string = selectedPerson.getIn([PERSON_DOB_FQN, 0]);
+    let formattedPerson = selectedPerson;
     if (rawDob) {
       const formattedDob = DateTime.fromISO(rawDob).toLocaleString(DateTime.DATE_SHORT);
-      return selectedPerson.setIn([PERSON_DOB_FQN, 0], formattedDob);
+
+      // setIn behavior does not call .toString() like getIn does
+      formattedPerson = selectedPerson.setIn([PERSON_DOB_FQN.toString(), 0], formattedDob);
     }
 
-    return selectedPerson;
+    return formattedPerson.merge(physicalAppearance);
   }
 
   renderDetails = () => {
@@ -52,19 +55,19 @@ class ProfileDetails extends Component<Props> {
 
     return (
       <>
-        <CardSegment>
+        <CardSegment padding="md">
           <DataGrid
               columns={3}
               data={formattedPerson}
               labelMap={labelMapNames} />
         </CardSegment>
-        <CardSegment>
+        <CardSegment padding="md">
           <DataGrid
               columns={3}
               data={formattedPerson}
               labelMap={labelMapDobAlias} />
         </CardSegment>
-        <CardSegment>
+        <CardSegment padding="md">
           <DataGrid
               columns={3}
               data={formattedPerson}
@@ -77,12 +80,12 @@ class ProfileDetails extends Component<Props> {
   render() {
     const { isLoading } = this.props;
     return (
-      <Card>
+      <>
         { isLoading
           ? this.renderLoading()
           : this.renderDetails()
         }
-      </Card>
+      </>
     );
   }
 }

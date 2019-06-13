@@ -16,20 +16,27 @@ import {
   Colors,
   SearchResults
 } from 'lattice-ui-kit';
-import { faPortrait } from '@fortawesome/pro-solid-svg-icons';
+import { faEdit, faPortrait, faUser } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 import type { Match } from 'react-router';
 
+import CrisisCountCard from './CrisisCountCard';
+import EditProfileForm from './EditProfileForm';
 import ProfileBanner from './ProfileBanner';
 import ProfileDetails from './ProfileDetails';
 import ProfileResult from './ProfileResult';
-import CrisisCountCard from './CrisisCountCard';
 import { labelMapReport } from './constants';
 import { ContentWrapper, ContentOuterWrapper } from '../../components/layout';
-import { clearProfile, getPersonData, getProfileReports } from './ProfileActions';
+import {
+  clearProfile,
+  getPersonData,
+  getPhysicalAppearance,
+  getProfileReports,
+  updateProfileAbout
+} from './ProfileActions';
 import { DATE_TIME_OCCURRED_FQN } from '../../edm/DataModelFqns';
 import {
   PROFILE_ID_PARAM,
@@ -40,16 +47,30 @@ import { goToPath } from '../../core/router/RoutingActions';
 import type { RoutingAction } from '../../core/router/RoutingActions';
 
 const { OPENLATTICE_ID_FQN } = Constants;
-const { NEUTRALS } = Colors;
-
-const MarginButton = styled(Button)`
-  margin-bottom: 10px;
-`;
+const { NEUTRALS, PURPLES, WHITE } = Colors;
 
 // Fixed placeholder size
 const PlaceholderPortrait = styled(FontAwesomeIcon)`
   height: 265px !important;
   width: 200px !important;
+`;
+
+const H1 = styled.h1`
+  display: flex;
+  flex: 1 0 auto;
+  color: ${WHITE};
+  align-items: center;
+`;
+
+const UserIcon = styled(FontAwesomeIcon).attrs({
+  icon: faUser
+})`
+  margin-right: 10px;
+`;
+
+const EditButton = styled(Button)`
+  margin-left: auto;
+  padding: 7px;
 `;
 
 const Aside = styled.div`
@@ -69,24 +90,56 @@ type Props = {
   actions :{
     clearProfile :() => { type :string };
     getPersonData :RequestSequence;
+    getPhysicalAppearance :RequestSequence;
     getProfileReports :RequestSequence;
     goToPath :(path :string) => RoutingAction;
+    updateProfileAbout :RequestSequence;
   };
+  fetchAppearanceState :RequestState;
   fetchPersonState :RequestState;
   fetchReportsState :RequestState;
-  selectedPerson :Map;
-  reports :List<Map>;
+  updateAboutState :RequestState;
   match :Match;
+  physicalAppearance :Map;
+  reports :List<Map>;
+  selectedPerson :Map;
 };
 
-class ProfileContainer extends Component<Props> {
+type State = {
+  showEdit :boolean;
+};
+
+class ProfileContainer extends Component<Props, State> {
+
+  state = {
+    showEdit: false
+  };
+
   componentDidMount() {
-    const { actions, match, selectedPerson } = this.props;
+    const {
+      actions,
+      match,
+      physicalAppearance,
+      selectedPerson
+    } = this.props;
     const personEKID = selectedPerson.get([OPENLATTICE_ID_FQN, 0]) || match.params[PROFILE_ID_PARAM];
     if (selectedPerson.isEmpty()) {
       actions.getPersonData(personEKID);
     }
+    else if (physicalAppearance.isEmpty()) {
+      actions.getPhysicalAppearance(personEKID);
+    }
     actions.getProfileReports(personEKID);
+  }
+
+  componentDidUpdate(prevProps :Props) {
+    const { updateAboutState } = this.props;
+    const { updateAboutState: prevUpdateAboutState } = prevProps;
+    if (
+      updateAboutState === RequestStates.SUCCESS
+      && prevUpdateAboutState === RequestStates.PENDING) {
+      this.handleHideEdit();
+    }
   }
 
   componentWillUnmount() {
@@ -119,9 +172,78 @@ class ProfileContainer extends Component<Props> {
     actions.goToPath(REPORT_VIEW_PATH.replace(REPORT_ID_PATH, reportEKID));
   }
 
+  handleShowEdit = () => {
+    this.setState({
+      showEdit: true
+    });
+  }
+
+  handleHideEdit = () => {
+    this.setState({
+      showEdit: false
+    });
+  }
+
+  handleSubmit = (payload :Object) => {
+    const { actions } = this.props;
+    actions.updateProfileAbout(payload);
+  }
+
+  renderProfileDetails = () => {
+    const {
+      fetchAppearanceState,
+      fetchPersonState,
+      physicalAppearance,
+      selectedPerson,
+      updateAboutState,
+    } = this.props;
+    const { showEdit } = this.state;
+
+    const isLoading = (
+      fetchPersonState === RequestStates.PENDING
+      || fetchAppearanceState === RequestStates.PENDING
+    );
+
+    const isUpdating = updateAboutState === RequestStates.PENDING;
+
+    let content = (
+      <ProfileDetails
+          isLoading={isLoading}
+          selectedPerson={selectedPerson}
+          physicalAppearance={physicalAppearance} />
+    );
+
+    if (showEdit) {
+      content = (
+        <EditProfileForm
+            selectedPerson={selectedPerson}
+            physicalAppearance={physicalAppearance}
+            onDiscard={this.handleHideEdit}
+            onSubmit={this.handleSubmit}
+            isLoading={isUpdating} />
+      );
+    }
+
+    return (
+      <Card>
+        <CardSegment padding="sm" bgColor={PURPLES[2]}>
+          <header>
+            <H1>
+              <UserIcon fixedWidth />
+              About
+              <EditButton mode="primary" onClick={this.handleShowEdit}>
+                <FontAwesomeIcon icon={faEdit} fixedWidth />
+              </EditButton>
+            </H1>
+          </header>
+        </CardSegment>
+        { content }
+      </Card>
+    );
+  }
+
   render() {
     const {
-      fetchPersonState,
       fetchReportsState,
       reports,
       selectedPerson
@@ -138,12 +260,8 @@ class ProfileContainer extends Component<Props> {
                   <PlaceholderPortrait icon={faPortrait} color={NEUTRALS[5]} />
                 </CardSegment>
                 <CardSegment vertical padding="sm">
-                  <MarginButton
-                      mode="primary">
+                  <Button mode="primary">
                     New Crisis Template
-                  </MarginButton>
-                  <Button>
-                    Edit Profile
                   </Button>
                 </CardSegment>
               </Card>
@@ -153,9 +271,7 @@ class ProfileContainer extends Component<Props> {
                 <CrisisCountCard
                     count={count}
                     isLoading={fetchReportsState === RequestStates.PENDING} />
-                <ProfileDetails
-                    isLoading={fetchPersonState === RequestStates.PENDING}
-                    selectedPerson={selectedPerson} />
+                { this.renderProfileDetails() }
                 <SearchResults
                     hasSearched={fetchReportsState !== RequestStates.STANDBY}
                     isLoading={fetchReportsState === RequestStates.PENDING}
@@ -173,18 +289,23 @@ class ProfileContainer extends Component<Props> {
 }
 
 const mapStateToProps = state => ({
-  selectedPerson: state.getIn(['profile', 'selectedPerson'], Map()),
-  fetchReportsState: state.getIn(['profile', 'fetchReportsState'], RequestStates.STANDBY),
+  fetchAppearanceState: state.getIn(['profile', 'fetchAppearanceState'], RequestStates.STANDBY),
   fetchPersonState: state.getIn(['profile', 'fetchPersonState'], RequestStates.STANDBY),
-  reports: state.getIn(['profile', 'reports'], List())
+  fetchReportsState: state.getIn(['profile', 'fetchReportsState'], RequestStates.STANDBY),
+  updateAboutState: state.getIn(['profile', 'updateAboutState'], RequestStates.STANDBY),
+  physicalAppearance: state.getIn(['profile', 'physicalAppearance'], Map()),
+  reports: state.getIn(['profile', 'reports'], List()),
+  selectedPerson: state.getIn(['profile', 'selectedPerson'], Map()),
 });
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
     clearProfile,
     getPersonData,
+    getPhysicalAppearance,
     getProfileReports,
-    goToPath
+    goToPath,
+    updateProfileAbout,
   }, dispatch)
 });
 

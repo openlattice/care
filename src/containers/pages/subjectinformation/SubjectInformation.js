@@ -32,17 +32,18 @@ import * as ActionFactory from './ActionFactory';
 
 
 type Props = {
-  app :Map<*, *>,
-  values :Map<*, *>,
-  searchResults :List<*>,
-  isSearchingPeople :boolean,
-  noResults :boolean,
   actions :{
     clear :() => void,
     setInputValue :(value :{ field :string, value :Object }) => void,
     setInputValues :(values :{}) => void,
   },
+  app :Map<*, *>,
+  className :string;
   disabled :boolean;
+  isSearchingPeople :boolean,
+  noResults :boolean,
+  searchResults :List<*>,
+  values :Map<*, *>,
 }
 
 const HeaderWithClearButton = styled.div`
@@ -120,6 +121,7 @@ class SubjectInformation extends React.Component<Props> {
   render() {
     const {
       actions,
+      className,
       disabled,
       values
     } = this.props;
@@ -145,7 +147,7 @@ class SubjectInformation extends React.Component<Props> {
 
     const PersonFormSection = isCreatingNewPerson ? FormSectionWithValidation : FormSection;
     return (
-      <FormWrapper>
+      <FormWrapper className={className}>
         <Header>
           <HeaderWithClearButton>
             <h1>Person Information</h1>

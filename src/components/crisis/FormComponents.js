@@ -1,9 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { APP_CONTAINER_WIDTH, MEDIA_QUERY_MD, MEDIA_QUERY_LG } from '../../core/style/Sizes';
+import { MEDIA_QUERY_MD, MEDIA_QUERY_LG } from '../../core/style/Sizes';
 import {
-  WHITE,
   BLACK,
   GRAY,
   INVALID_BACKGROUND,
