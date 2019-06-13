@@ -69,8 +69,8 @@ class EditProfileForm extends Component<Props, State> {
 
     const eyeColor = physicalAppearance.getIn([FQN.EYE_COLOR_FQN, 0], '');
     const hairColor = physicalAppearance.getIn([FQN.HAIR_COLOR_FQN, 0], '');
-    const height = physicalAppearance.getIn([FQN.HEIGHT_FQN, 0]);
-    const weight = physicalAppearance.getIn([FQN.WEIGHT_FQN, 0]);
+    const height = physicalAppearance.getIn([FQN.HEIGHT_FQN, 0], '');
+    const weight = physicalAppearance.getIn([FQN.WEIGHT_FQN, 0], '');
 
     return Map({
       aliases,
