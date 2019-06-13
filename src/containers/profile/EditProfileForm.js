@@ -37,10 +37,11 @@ const ActionRow = styled.div`
 `;
 
 type Props = {
-  selectedPerson :Map;
-  physicalAppearance :Map;
-  onSubmit :(payload :Object) => void;
+  isLoading :boolean;
   onDiscard :() => void;
+  onSubmit :(payload :Object) => void;
+  physicalAppearance :Map;
+  selectedPerson :Map;
 }
 
 type State = {
@@ -114,7 +115,7 @@ class EditProfileForm extends Component<Props, State> {
   }
 
   render() {
-    const { onDiscard } = this.props;
+    const { onDiscard, isLoading } = this.props;
     const { editedData } = this.state;
     return (
       <>
@@ -233,7 +234,7 @@ class EditProfileForm extends Component<Props, State> {
           </FormGrid>
           <ActionRow>
             <Button onClick={onDiscard}>Discard</Button>
-            <Button mode="primary" onClick={this.handleSubmit}>Submit</Button>
+            <Button mode="primary" onClick={this.handleSubmit} isLoading={isLoading}>Submit</Button>
           </ActionRow>
         </CardSegment>
       </>

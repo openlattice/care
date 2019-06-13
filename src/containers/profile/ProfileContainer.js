@@ -98,6 +98,7 @@ type Props = {
   fetchAppearanceState :RequestState;
   fetchPersonState :RequestState;
   fetchReportsState :RequestState;
+  updateAboutState :RequestState;
   match :Match;
   physicalAppearance :Map;
   reports :List<Map>;
@@ -129,6 +130,16 @@ class ProfileContainer extends Component<Props, State> {
       actions.getPhysicalAppearance(personEKID);
     }
     actions.getProfileReports(personEKID);
+  }
+
+  componentDidUpdate(prevProps :Props) {
+    const { updateAboutState } = this.props;
+    const { updateAboutState: prevUpdateAboutState } = prevProps;
+    if (
+      updateAboutState === RequestStates.SUCCESS
+      && prevUpdateAboutState === RequestStates.PENDING) {
+      this.handleHideEdit();
+    }
   }
 
   componentWillUnmount() {
@@ -183,7 +194,8 @@ class ProfileContainer extends Component<Props, State> {
       fetchAppearanceState,
       fetchPersonState,
       physicalAppearance,
-      selectedPerson
+      selectedPerson,
+      updateAboutState,
     } = this.props;
     const { showEdit } = this.state;
 
@@ -191,6 +203,8 @@ class ProfileContainer extends Component<Props, State> {
       fetchPersonState === RequestStates.PENDING
       || fetchAppearanceState === RequestStates.PENDING
     );
+
+    const isUpdating = updateAboutState === RequestStates.PENDING;
 
     let content = (
       <ProfileDetails
@@ -205,7 +219,8 @@ class ProfileContainer extends Component<Props, State> {
             selectedPerson={selectedPerson}
             physicalAppearance={physicalAppearance}
             onDiscard={this.handleHideEdit}
-            onSubmit={this.handleSubmit} />
+            onSubmit={this.handleSubmit}
+            isLoading={isUpdating} />
       );
     }
 
@@ -277,6 +292,7 @@ const mapStateToProps = state => ({
   fetchAppearanceState: state.getIn(['profile', 'fetchAppearanceState'], RequestStates.STANDBY),
   fetchPersonState: state.getIn(['profile', 'fetchPersonState'], RequestStates.STANDBY),
   fetchReportsState: state.getIn(['profile', 'fetchReportsState'], RequestStates.STANDBY),
+  updateAboutState: state.getIn(['profile', 'updateAboutState'], RequestStates.STANDBY),
   physicalAppearance: state.getIn(['profile', 'physicalAppearance'], Map()),
   reports: state.getIn(['profile', 'reports'], List()),
   selectedPerson: state.getIn(['profile', 'selectedPerson'], Map()),
