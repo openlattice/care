@@ -33,6 +33,7 @@ import {
   getPersonData,
   getPhysicalAppearance,
   getProfileReports,
+  updatePhysicalAppearance,
   updateProfileAbout,
 } from './ProfileActions';
 import {
@@ -46,6 +47,7 @@ import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../utils
 import { isDefined } from '../../utils/LangUtils';
 import { isValidUuid } from '../../utils/Utils';
 import * as FQN from '../../edm/DataModelFqns';
+import { simulateResponseData } from '../../utils/DataUtils';
 
 const LOG = new Logger('ProfileSagas');
 
@@ -260,35 +262,80 @@ function* createPhysicalAppearanceWorker(action :SequenceAction) :Generator<any,
       .setEntities(entities)
       .build();
 
-    response = yield call(
+    const createResponse = yield call(
       createEntityAndAssociationDataWorker,
       createEntityAndAssociationData(dataGraph)
     );
 
-    yield put(createPhysicalAppearance.success(action.id));
+    if (createResponse.error) throw createResponse.error;
+
+    const createdAppearanceEKID = fromJS(createResponse.data).getIn([
+      'entityKeyIds',
+      physicalAppearanceESID,
+      0
+    ]);
+
+    const newPhysicalAppearance = simulateResponseData(fromJS(appearanceProperties), createdAppearanceEKID, edm);
+    response.data = newPhysicalAppearance;
+
+    yield put(createPhysicalAppearance.success(action.id, newPhysicalAppearance));
   }
   catch (error) {
     response.error = error;
-    yield put(createPhysicalAppearance.failure(action.id));
-  }
-  finally {
-    yield put(createPhysicalAppearance.finally(action.id));
+    yield put(createPhysicalAppearance.failure(action.id, error));
   }
 
   return response;
 }
 
-const getUpdatedPropertiesByName = ({ data, fqnsByName, edm }) :Object => {
+function* updatePhysicalAppearanceWorker(action :SequenceAction) :Generator<any, any, any> {
+  const response = {};
+  try {
+    const { value } :Object = action;
+    const { appearanceEKID, appearanceProperties } = value;
+    yield put(updatePhysicalAppearance.request(action.id));
+
+    const edm :Map<*, *> = yield select(state => state.get('edm'));
+    const app = yield select(state => state.get('app', Map()));
+    const physicalAppearanceESID :UUID = getPhysicalAppearanceESId(app);
+
+    const updateResponse = yield call(
+      updateEntityDataWorker,
+      updateEntityData({
+        entitySetId: physicalAppearanceESID,
+        entities: {
+          [appearanceEKID]: appearanceProperties
+        },
+        updateType: UpdateTypes.PartialReplace,
+      })
+    );
+
+    if (updateResponse.error) throw updateResponse.error;
+
+    const updatedPhysicalAppearance = simulateResponseData(fromJS(appearanceProperties), appearanceEKID, edm);
+    response.data = updatedPhysicalAppearance;
+
+    yield put(updatePhysicalAppearance.success(action.id, updatedPhysicalAppearance));
+  }
+  catch (error) {
+    response.error = error;
+    yield put(updatePhysicalAppearance.failure(action.id, error));
+  }
+
+  return response;
+}
+
+const getUpdatedPropertiesByName = (data, fqnsByName, edm) :Object => {
   const updatedProperties = {};
   Object.keys(fqnsByName).forEach((name) => {
     const fqn = fqnsByName[name];
     const propertyTypeId = edm.getIn(['fqnToIdMap', fqn]);
-    let formattedValue;
+    let formattedValue = [];
     const currentValue = data.get(name);
     if (Array.isArray(currentValue)) {
       formattedValue = currentValue;
     }
-    else {
+    else if (currentValue !== '' && currentValue !== undefined && currentValue !== null) {
       formattedValue = [currentValue];
     }
     updatedProperties[propertyTypeId] = formattedValue;
@@ -309,21 +356,20 @@ function* updateProfileAboutWorker(action :SequenceAction) :Generator<any, any, 
     const edm :Map<*, *> = yield select(state => state.get('edm'));
     const app = yield select(state => state.get('app', Map()));
     const peopleESID :UUID = getPeopleESId(app);
-    const physicalAppearanceESID :UUID = getPhysicalAppearanceESId(app);
 
-    const newPersonProperties = getUpdatedPropertiesByName({
+    const newPersonProperties = getUpdatedPropertiesByName(
       data,
-      fqnsByName: personFqnsByName,
+      personFqnsByName,
       edm
-    });
+    );
 
-    const appearanceProperties = getUpdatedPropertiesByName({
+    const appearanceProperties = getUpdatedPropertiesByName(
       data,
-      fqnsByName: physicalAppearanceFqnsByName,
+      physicalAppearanceFqnsByName,
       edm
-    });
+    );
 
-    const personRequest = call(
+    const updatePersonRequest = call(
       updateEntityDataWorker,
       updateEntityData({
         entitySetId: peopleESID,
@@ -334,34 +380,32 @@ function* updateProfileAboutWorker(action :SequenceAction) :Generator<any, any, 
       })
     );
 
-    // only do this if appearanceEKID is valid;
-    let appearanceRequest = call(
+    let physicalAppearanceRequest = call(
       createPhysicalAppearanceWorker,
-      createPhysicalAppearance({
-        appearanceProperties,
-        personEKID
-      })
+      createPhysicalAppearance({ appearanceProperties, personEKID })
     );
 
+    // update appearance if it already exists
     if (appearanceEKID) {
-      appearanceRequest = call(
-        updateEntityDataWorker,
-        updateEntityData({
-          entitySetId: physicalAppearanceESID,
-          entities: {
-            [appearanceEKID]: appearanceProperties
-          },
-          updateType: UpdateTypes.PartialReplace,
-        })
+      physicalAppearanceRequest = call(
+        updatePhysicalAppearanceWorker,
+        updatePhysicalAppearance({ appearanceEKID, appearanceProperties })
       );
     }
 
-    const responses = yield all([
-      personRequest,
-      appearanceRequest,
+    const [personResponse, appearanceResponse] = yield all([
+      updatePersonRequest,
+      physicalAppearanceRequest,
     ]);
 
-    yield put(updateProfileAbout.success(action.id));
+    if (personResponse.error) throw personResponse.error;
+    if (appearanceResponse.error) throw appearanceResponse.error;
+
+    const updatedPerson = simulateResponseData(fromJS(newPersonProperties), personEKID, edm);
+    const updatedPhysicalAppearance = appearanceResponse.data;
+
+
+    yield put(updateProfileAbout.success(action.id, { updatedPerson, updatedPhysicalAppearance }));
   }
   catch (error) {
     yield put(updateProfileAbout.failure(action.id, error));
