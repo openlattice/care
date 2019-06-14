@@ -2,31 +2,34 @@
  * @flow
  */
 
-import { Models } from 'lattice';
-import { List, Map, fromJS } from 'immutable';
-import { AccountUtils } from 'lattice-auth';
 import has from 'lodash/has';
+import { List, Map, fromJS } from 'immutable';
+import { Models } from 'lattice';
+import { AccountUtils } from 'lattice-auth';
+import { RequestStates } from 'redux-reqseq';
+
+import type { SequenceAction } from 'redux-reqseq';
 
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import {
-  SWITCH_ORGANIZATION,
   loadApp,
+  initializeApplication,
 } from './AppActions';
 
 const { FullyQualifiedName } = Models;
 const {
   APPEARS_IN_FQN,
   BEHAVIORAL_HEALTH_REPORT_FQN,
-  FOLLOW_UP_REPORT_FQN,
+  HAS_FQN,
   HOSPITALS_FQN,
   PEOPLE_FQN,
+  PHYSICAL_APPEARANCE_FQN,
   REPORTED_FQN,
-  STAFF_FQN
+  STAFF_FQN,
 } = APP_TYPES_FQNS;
 
 const appearsInFqn :string = APPEARS_IN_FQN.toString();
 const bhrFqn :string = BEHAVIORAL_HEALTH_REPORT_FQN.toString();
-const followUpFqn :string = FOLLOW_UP_REPORT_FQN.toString();
 const hospitalsFqn :string = HOSPITALS_FQN.toString();
 const peopleFqn :string = PEOPLE_FQN.toString();
 const reportedFqn :string = REPORTED_FQN.toString();
@@ -41,7 +44,6 @@ const APP_CONFIG_INITIAL_STATE :Map<*, *> = fromJS({
 const INITIAL_STATE :Map<*, *> = fromJS({
   [appearsInFqn]: APP_CONFIG_INITIAL_STATE,
   [bhrFqn]: APP_CONFIG_INITIAL_STATE,
-  [followUpFqn]: APP_CONFIG_INITIAL_STATE,
   [hospitalsFqn]: APP_CONFIG_INITIAL_STATE,
   [peopleFqn]: APP_CONFIG_INITIAL_STATE,
   [reportedFqn]: APP_CONFIG_INITIAL_STATE,
@@ -57,6 +59,7 @@ const INITIAL_STATE :Map<*, *> = fromJS({
   isLoadingApp: true,
   organizations: Map(),
   selectedOrganizationId: '',
+  initializeState: RequestStates.STANDBY,
 });
 
 const getEntityTypePropertyTypes = (edm :Object, entityTypeId :string) :Object => {
@@ -71,8 +74,13 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
 
   switch (action.type) {
 
-    case SWITCH_ORGANIZATION:
-      return state.set('selectedOrganizationId', action.orgId);
+    case initializeApplication.case(action.type): {
+      return initializeApplication.reducer(state, action, {
+        REQUEST: () => state.set('initializeState', RequestStates.PENDING),
+        SUCCESS: () => state.set('initializeState', RequestStates.SUCCESS),
+        FAILURE: () => state.set('initializeState', RequestStates.FAILURE),
+      });
+    }
 
     case loadApp.case(action.type): {
       return loadApp.reducer(state, action, {
@@ -112,19 +120,21 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
 
             const appearsInConfig = appConfig.config[appearsInFqn];
             const bhrConfig = appConfig.config[bhrFqn];
-            const followUpConfig = appConfig.config[followUpFqn];
             const hospitalsConfig = appConfig.config[hospitalsFqn];
             const peopleConfig = appConfig.config[peopleFqn];
             const reportedConfig = appConfig.config[reportedFqn];
             const staffConfig = appConfig.config[staffFqn];
+            const physicalAppearanceConfig = appConfig.config[PHYSICAL_APPEARANCE_FQN];
+            const hasConfig = appConfig.config[HAS_FQN];
 
             newState = newState
               .setIn([appearsInFqn, 'entitySetsByOrganization', orgId], appearsInConfig.entitySetId)
               .setIn([bhrFqn, 'entitySetsByOrganization', orgId], bhrConfig.entitySetId)
-              .setIn([followUpFqn, 'entitySetsByOrganization', orgId], followUpConfig.entitySetId)
               .setIn([peopleFqn, 'entitySetsByOrganization', orgId], peopleConfig.entitySetId)
               .setIn([reportedFqn, 'entitySetsByOrganization', orgId], reportedConfig.entitySetId)
-              .setIn([staffFqn, 'entitySetsByOrganization', orgId], staffConfig.entitySetId);
+              .setIn([staffFqn, 'entitySetsByOrganization', orgId], staffConfig.entitySetId)
+              .setIn([PHYSICAL_APPEARANCE_FQN, 'entitySetsByOrganization', orgId], physicalAppearanceConfig.entitySetId)
+              .setIn([HAS_FQN, 'entitySetsByOrganization', orgId], hasConfig.entitySetId);
 
             // 2018-02-08:
             // since hospitals is a new EntitySet for the app, old app installations will break without this check.
@@ -167,9 +177,6 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
             .setIn([bhrFqn, 'entitySetsByOrganization'], Map())
             .setIn([bhrFqn, 'primaryKeys'], List())
             .setIn([bhrFqn, 'propertyTypes'], Map())
-            .setIn([followUpFqn, 'entitySetsByOrganization'], Map())
-            .setIn([followUpFqn, 'primaryKeys'], List())
-            .setIn([followUpFqn, 'propertyTypes'], Map())
             .setIn([hospitalsFqn, 'entitySetsByOrganization'], Map())
             .setIn([hospitalsFqn, 'primaryKeys'], List())
             .setIn([hospitalsFqn, 'propertyTypes'], Map())
@@ -182,6 +189,12 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
             .setIn([staffFqn, 'entitySetsByOrganization'], Map())
             .setIn([staffFqn, 'primaryKeys'], List())
             .setIn([staffFqn, 'propertyTypes'], Map())
+            .setIn([PHYSICAL_APPEARANCE_FQN, 'entitySetsByOrganization'], Map())
+            .setIn([PHYSICAL_APPEARANCE_FQN, 'primaryKeys'], List())
+            .setIn([PHYSICAL_APPEARANCE_FQN, 'propertyTypes'], Map())
+            .setIn([HAS_FQN, 'entitySetsByOrganization'], Map())
+            .setIn([HAS_FQN, 'primaryKeys'], List())
+            .setIn([HAS_FQN, 'propertyTypes'], Map())
             .setIn(['errors', 'loadApp'], fromJS(error))
             .set('organizations', Map())
             .set('selectedOrganizationId', '');

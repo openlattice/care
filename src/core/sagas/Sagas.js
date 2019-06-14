@@ -18,8 +18,10 @@ import * as AppSagas from '../../containers/app/AppSagas';
 import * as DashboardSagas from '../../containers/dashboard/DashboardSagas';
 import * as DownloadsSagas from '../../containers/downloads/DownloadsSagas';
 import * as PeopleSagas from '../../containers/people/PeopleSagas';
+import * as ProfileSagas from '../../containers/profile/ProfileSagas';
 import * as ReportsSagas from '../../containers/reports/ReportsSagas';
 import * as SearchSagas from '../../containers/search/SearchSagas';
+import * as StaffSagas from '../../containers/staff/StaffSagas';
 import * as SubmitSagas from '../../utils/submit/SubmitSagas';
 import * as SubscribeSagas from '../../containers/subscribe/SubscribeSagas';
 
@@ -47,13 +49,17 @@ export default function* sagas() :Generator<*, *, *> {
     fork(SearchApiSagas.searchEntitySetDataWatcher),
 
     // AppSagas
+    fork(AppSagas.initializeApplicationWatcher),
     fork(AppSagas.loadAppWatcher),
     fork(AppSagas.loadHospitalsWatcher),
     fork(AppSagas.switchOrganizationWatcher),
 
+    // StaffSagas
+    fork(StaffSagas.getCurrentUserStaffMemberDataWatcher),
+
     // RoutingSagas
     fork(RoutingSagas.goToRootWatcher),
-    fork(RoutingSagas.goToRouteWatcher),
+    fork(RoutingSagas.goToPathWatcher),
 
     // Dashboard Sagas
     fork(DashboardSagas.loadDashboardDataWatcher),
@@ -65,15 +71,18 @@ export default function* sagas() :Generator<*, *, *> {
     fork(PeopleSagas.editPersonWatcher),
     fork(PeopleSagas.searchPeopleWatcher),
 
+    // Profile Sagas
+    fork(ProfileSagas.getPersonDataWatcher),
+    fork(ProfileSagas.getProfileReportsWatcher),
+    fork(ProfileSagas.updateProfileAboutWatcher),
+
     // ReportsSagas
     fork(ReportsSagas.deleteReportWatcher),
-    fork(ReportsSagas.getReportNeighborsWatcher),
-    fork(ReportsSagas.getReportsWatcher),
+    fork(ReportsSagas.getReportsByDateRangeWatcher),
     fork(ReportsSagas.updateReportWatcher),
     fork(ReportsSagas.getReportWatcher),
 
     // SearchSagas
-    fork(SearchSagas.searchConsumerNeighborsWatcher),
     fork(SearchSagas.searchConsumersWatcher),
 
     // SubmitSagas

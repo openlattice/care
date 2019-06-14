@@ -6,6 +6,7 @@ import { List, Map, OrderedMap } from 'immutable';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import type { Dispatch } from 'redux';
+import type { RequestSequence } from 'redux-reqseq';
 
 import SearchableSelect from '../../../components/controls/SearchableSelect';
 import SecondaryButton from '../../../components/buttons/SecondaryButton';
@@ -21,13 +22,14 @@ import { getPeopleESId } from '../../../utils/AppUtils';
 import { SUBJECT_INFORMATION } from '../../../utils/constants/CrisisTemplateConstants';
 import {
   PERSON_DOB_FQN,
-  PERSON_LAST_NAME_FQN,
   PERSON_FIRST_NAME_FQN,
+  PERSON_ID_FQN,
+  PERSON_LAST_NAME_FQN,
   PERSON_MIDDLE_NAME_FQN,
   PERSON_NICK_NAME_FQN,
   PERSON_RACE_FQN,
   PERSON_SEX_FQN,
-  PERSON_ID_FQN
+  PERSON_SSN_LAST_4_FQN,
 } from '../../../edm/DataModelFqns';
 
 const StyledFormWrapper = styled(FormWrapper)`
@@ -115,7 +117,7 @@ class SubjectQuickSearch extends Component<Props, State> {
       [SUBJECT_INFORMATION.RACE]: person.getIn([PERSON_RACE_FQN, 0], ''),
       [SUBJECT_INFORMATION.GENDER]: person.getIn([PERSON_SEX_FQN, 0], ''),
       [SUBJECT_INFORMATION.AGE]: moment().diff(moment(person.getIn([PERSON_DOB_FQN, 0], '')), 'years'),
-      [SUBJECT_INFORMATION.SSN_LAST_4]: 'XXXX',
+      [SUBJECT_INFORMATION.SSN_LAST_4]: person.getIn([PERSON_SSN_LAST_4_FQN, 0], ''),
       [SUBJECT_INFORMATION.IS_NEW_PERSON]: false
     });
   }

@@ -1,7 +1,6 @@
 // @flow
-import moment from 'moment';
+import { DateTime } from 'luxon';
 import { List, Map } from 'immutable';
-import { isDefined } from '../../utils/LangUtils';
 import * as FQN from '../../edm/DataModelFqns';
 import { formatPersonName } from '../pages/subjectinformation/SubjectInformationManagerUtils';
 import {
@@ -22,18 +21,21 @@ import {
 } from '../pages/disposition/Constants';
 
 const compileSubjectData = (subjectData :Map, reportData :Map) => {
-
-  const dobUnknown = !subjectData.hasIn([FQN.PERSON_DOB_FQN, 0]);
   const subjectDob = subjectData.getIn([FQN.PERSON_DOB_FQN, 0], '');
-  const subjectDobMoment = moment(subjectDob);
+  const dobUnknown = !subjectDob;
+  const dobDate = DateTime.fromISO(subjectDob);
 
   const reportedAge = reportData.getIn([FQN.AGE_FQN, 0], '');
-  const reportDateTime = reportData.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0], '');
-  const reportDateTimeMoment = moment(reportDateTime);
+  const occurred = reportData.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0], '');
+  const occurredDT = DateTime.fromISO(occurred);
 
   let ageDuringReport = reportedAge;
-  if (reportDateTimeMoment.isValid() && subjectDobMoment.isValid()) {
-    ageDuringReport = reportDateTimeMoment.diff(subjectDobMoment, 'years');
+  if (occurredDT.isValid && dobDate.isValid) {
+    ageDuringReport = dobDate
+      .until(occurredDT)
+      .toDuration(['years', 'months'])
+      .toObject()
+      .years;
   }
 
   return {
@@ -48,7 +50,7 @@ const compileSubjectData = (subjectData :Map, reportData :Map) => {
     [SUBJECT_INFORMATION.GENDER]: subjectData.getIn([FQN.PERSON_SEX_FQN, 0], ''),
     [SUBJECT_INFORMATION.AGE]: ageDuringReport,
     [SUBJECT_INFORMATION.DOB_UNKNOWN]: dobUnknown,
-    [SUBJECT_INFORMATION.SSN_LAST_4]: 'XXXX',
+    [SUBJECT_INFORMATION.SSN_LAST_4]: subjectData.getIn([FQN.PERSON_SSN_LAST_4_FQN, 0], ''),
     [SUBJECT_INFORMATION.IS_NEW_PERSON]: false
   };
 };

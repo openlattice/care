@@ -17,6 +17,7 @@ import {
   EntityDataModelApi,
   SearchApi
 } from 'lattice';
+import type { SequenceAction } from 'redux-reqseq';
 
 import FileSaver from '../../utils/FileSaver';
 import {
@@ -24,7 +25,7 @@ import {
   downloadForms
 } from './DownloadsActionFactory';
 import { getReportESId, getPeopleESId, getAppearsInESId } from '../../utils/AppUtils';
-import { getDateRangeSearchTerm } from '../../utils/DataUtils';
+import { getSearchTerm } from '../../utils/DataUtils';
 import * as FQN from '../../edm/DataModelFqns';
 
 const { OPENLATTICE_ID_FQN } = Constants;
@@ -156,7 +157,7 @@ function* downloadFormsWorker(action :SequenceAction) :Generator<*, *, *> {
     const propertyTypeId = propertyTypesByFqn.getIn([FQN.DATE_TIME_OCCURRED_FQN, 'id']);
     const entitySetSize = yield call(DataApi.getEntitySetSize, reportEntitySetId);
     const options = {
-      searchTerm: getDateRangeSearchTerm(propertyTypeId, `[${start.toISOString(true)} TO ${end.toISOString(true)}]`),
+      searchTerm: getSearchTerm(propertyTypeId, `[${start.toISOString(true)} TO ${end.toISOString(true)}]`),
       start: 0,
       maxHits: entitySetSize,
       fuzzy: false
@@ -221,7 +222,7 @@ function* downloadFormsWorker(action :SequenceAction) :Generator<*, *, *> {
       jsonResults = jsonResults.push(combinedEntity);
     });
 
-    let fieldsNotInList = allHeaders.filter(val => !ORDERED_FQNS.includes(titleToFqn.get(val)));
+    const fieldsNotInList = allHeaders.filter(val => !ORDERED_FQNS.includes(titleToFqn.get(val)));
 
     const fields = allHeaders
       .filter(val => ORDERED_FQNS.includes(titleToFqn.get(val)))

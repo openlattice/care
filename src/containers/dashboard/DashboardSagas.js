@@ -8,6 +8,7 @@ import moment from 'moment';
 import { call, put, takeEvery } from '@redux-saga/core/effects';
 import { List, Map, fromJS } from 'immutable';
 import { DataApi, EntityDataModelApi, SearchApi } from 'lattice';
+import type { SequenceAction } from 'redux-reqseq';
 
 import {
   DASHBOARD_COUNTS,
@@ -47,12 +48,7 @@ import {
   TAKING_MEDICATION_FQN
 } from '../../edm/DataModelFqns';
 
-import {
-  DATE_STR,
-  TIME_STR
-} from '../../utils/DateUtils';
-
-import { getDateRangeSearchTerm } from '../../utils/DataUtils';
+import { getSearchTerm } from '../../utils/DataUtils';
 
 import {
   LOAD_DASHBOARD_DATA,
@@ -85,7 +81,7 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *> {
     const datePropertyTypeId = yield call(EntityDataModelApi.getPropertyTypeId, DATE_TIME_OCCURRED_FQN);
     const startDate = moment().subtract(months, 'month').format(DATE_FORMAT);
     const bhrs = yield call(SearchApi.searchEntitySetData, reportESId, {
-      searchTerm: getDateRangeSearchTerm(datePropertyTypeId, `[${startDate} TO *]`),
+      searchTerm: getSearchTerm(datePropertyTypeId, `[${startDate} TO *]`),
       start: 0,
       maxHits: ceiling,
       fuzzy: false
@@ -188,8 +184,8 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *> {
       bhr.get(DATE_TIME_OCCURRED_FQN, List()).forEach((date) => {
         const dateMoment = moment(date);
         if (dateMoment.isValid()) {
-          const dateStr = dateMoment.format(DATE_STR);
-          const timeStr = dateMoment.format(TIME_STR);
+          const dateStr = dateMoment.format('MM/DD/YYYY');
+          const timeStr = dateMoment.format('hh:mm a');
           const dayOfWeek = dateMoment.format('ddd');
           const timeHr = dateMoment.format('H');
           dateCounts = dateCounts.set(dateStr, dateCounts.get(dateStr, 0) + 1);
@@ -275,7 +271,7 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *> {
 
     yield put(loadDashboardData.success(action.id, { summaryStats, dashboardCounts }));
   }
-  catch (error)  {
+  catch (error) {
     console.error(error);
     yield put(loadDashboardData.failure(action.id, error));
   }

@@ -6,9 +6,9 @@ import React from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router';
 import { List, Map } from 'immutable';
-import { DatePicker } from '@atlaskit/datetime-picker';
+import { DatePicker } from 'lattice-ui-kit';
 
 import BackButton from '../../../components/buttons/BackButton';
 import StyledInput from '../../../components/controls/StyledInput';
@@ -27,25 +27,23 @@ import {
   RequiredField
 } from '../../../components/crisis/FormComponents';
 
-import { searchConsumers } from '../../search/SearchActionFactory';
-
 import { getInvalidFields } from './Reducer';
 import * as ActionFactory from './ActionFactory';
 
 
 type Props = {
-  app :Map<*, *>,
-  values :Map<*, *>,
-  searchResults :List<*>,
-  isSearchingPeople :boolean,
-  noResults :boolean,
   actions :{
     clear :() => void,
     setInputValue :(value :{ field :string, value :Object }) => void,
     setInputValues :(values :{}) => void,
-    searchConsumers :() => void
   },
+  app :Map<*, *>,
+  className :string;
   disabled :boolean;
+  isSearchingPeople :boolean,
+  noResults :boolean,
+  searchResults :List<*>,
+  values :Map<*, *>,
 }
 
 const HeaderWithClearButton = styled.div`
@@ -79,8 +77,16 @@ class SubjectInformation extends React.Component<Props> {
       }
     };
 
+    const type = (
+      field === SUBJECT_INFORMATION.SSN_LAST_4
+      && !values.get(SUBJECT_INFORMATION.IS_NEW_PERSON)
+    )
+      ? 'password'
+      : 'text';
+
     return (
       <StyledInput
+          type={type}
           padBottom
           name={field}
           disabled={!values.get(SUBJECT_INFORMATION.IS_NEW_PERSON)}
@@ -115,6 +121,7 @@ class SubjectInformation extends React.Component<Props> {
   render() {
     const {
       actions,
+      className,
       disabled,
       values
     } = this.props;
@@ -139,13 +146,15 @@ class SubjectInformation extends React.Component<Props> {
     };
 
     const PersonFormSection = isCreatingNewPerson ? FormSectionWithValidation : FormSection;
-
     return (
-      <FormWrapper>
+      <FormWrapper className={className}>
         <Header>
           <HeaderWithClearButton>
             <h1>Person Information</h1>
-            { !disabled && <BackButton onClick={actions.clear} noMargin>Clear Fields</BackButton> }
+            {
+              (!disabled && isCreatingNewPerson)
+              && <BackButton onClick={actions.clear} noMargin>Clear Fields</BackButton>
+            }
           </HeaderWithClearButton>
         </Header>
         <PersonFormSection>
@@ -183,11 +192,7 @@ class SubjectInformation extends React.Component<Props> {
                 <DatePicker
                     value={values.get(SUBJECT_INFORMATION.DOB)}
                     isDisabled={!isCreatingNewPerson || disabled}
-                    dateFormat="MM-DD-YYYY"
-                    onChange={value => actions.setInputValue({ field: SUBJECT_INFORMATION.DOB, value })}
-                    selectProps={{
-                      placeholder: 'MM-DD-YYYY'
-                    }} />
+                    onChange={value => actions.setInputValue({ field: SUBJECT_INFORMATION.DOB, value })} />
               </DatePickerWrapper>
             )
           }
@@ -225,9 +230,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
 
-  const actions = {
-    searchConsumers
-  };
+  const actions = {};
 
   Object.keys(ActionFactory).forEach((action) => {
     actions[action] = ActionFactory[action];
@@ -240,4 +243,7 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(SubjectInformation));
+// $FlowFixMe
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(SubjectInformation)
+);

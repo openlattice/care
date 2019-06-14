@@ -6,23 +6,26 @@ import React, { Component } from 'react';
 
 import styled from 'styled-components';
 import { Map } from 'immutable';
-import { EntityDataModelApiActions } from 'lattice-sagas';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { Redirect, Route, Switch } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
+import { RequestStates } from 'redux-reqseq';
+import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import AppHeaderContainer from './AppHeaderContainer';
 import CrisisTemplateContainer from '../crisis/CrisisTemplateContainer';
 import DownloadsContainer from '../downloads/DownloadsContainer';
 import HomeContainer from '../home/HomeContainer';
-import PeopleContainer from '../people/PeopleContainer';
+import PeopleRouter from '../people/PeopleRouter';
 import Spinner from '../../components/spinner/Spinner';
 import LegitReportsRouter from '../reports/LegitReportsRouter';
 import DashboardContainer from '../dashboard/DashboardContainer';
 import SubscribeContainer from '../subscribe/SubscribeContainer';
-import { APP_TYPES_FQNS } from '../../shared/Consts';
-import { isValidUuid } from '../../utils/Utils';
-import { loadApp, loadHospitals, switchOrganization } from './AppActions';
+import {
+  initializeApplication,
+  loadHospitals,
+  switchOrganization
+} from './AppActions';
 import {
   CRISIS_PATH,
   DASHBOARD_PATH,
@@ -40,12 +43,9 @@ import {
   MEDIA_QUERY_LG
 } from '../../core/style/Sizes';
 
-const { getAllPropertyTypes } = EntityDataModelApiActions;
 
 // TODO: this should come from lattice-ui-kit, maybe after the next release. current version v0.1.1
 const APP_BG :string = '#f8f8fb';
-
-const { HOSPITALS_FQN } = APP_TYPES_FQNS;
 
 /*
  * styled components
@@ -82,8 +82,8 @@ const AppContentOuterWrapper = styled.main`
 
 const AppContentInnerWrapper = styled.div`
   display: flex;
-  flex: 1 0 auto;
   flex-direction: column;
+  flex: 1 0 auto;
   justify-content: flex-start;
   max-width: ${APP_CONTAINER_MAX_WIDTH}px;
   padding: ${APP_CONTENT_PADDING}px;
@@ -99,54 +99,20 @@ const MissingOrgsWrapper = styled.div`
 
 type Props = {
   actions :{
-    getAllPropertyTypes :RequestSequence;
-    loadApp :RequestSequence;
+    initializeApplication :RequestSequence;
     loadHospitals :RequestSequence;
     switchOrganization :(orgId :string) => Object;
   };
-  app :Map<*, *>;
+  organizations :Map;
+  selectedOrganizationId :UUID;
+  initializeState :RequestState;
 };
 
 class AppContainer extends Component<Props> {
 
   componentDidMount() {
-
     const { actions } = this.props;
-    actions.loadApp();
-    actions.getAllPropertyTypes();
-  }
-
-  componentWillReceiveProps(nextProps) {
-
-    // TODO: should this be moved out of AppContainer...?
-
-    const { app, actions } = this.props;
-    const prevOrgId = app.get('selectedOrganizationId');
-    const nextOrgId = nextProps.app.get('selectedOrganizationId');
-
-    // check if the selected organization has changed
-    if (prevOrgId !== nextOrgId) {
-
-      const selectedOrgId :string = nextOrgId;
-      const hospitalsEntitySetId = nextProps.app.getIn(
-        [HOSPITALS_FQN.toString(), 'entitySetsByOrganization', selectedOrgId]
-      );
-      if (isValidUuid(hospitalsEntitySetId)) {
-        actions.loadHospitals({
-          entitySetId: hospitalsEntitySetId,
-          organizationId: selectedOrgId,
-        });
-      }
-
-      /*
-       * loadApp() is called once on page load in componentDidMount(), and then only needs to be called again when
-       * switching organizations. to avoid calling it twice on page load, we need to check if "prevOrgId" has been
-       * already set (it is initially set to the empty string in the reducer)
-       */
-      if (isValidUuid(prevOrgId)) {
-        actions.loadApp(); // this is not entirely necessary
-      }
-    }
+    actions.initializeApplication();
   }
 
   renderMissingOrgs = () => (
@@ -159,23 +125,21 @@ class AppContainer extends Component<Props> {
 
   renderAppContent = () => {
 
-    const { app } = this.props;
-    const isLoadingApp :boolean = app.get('isLoadingApp', false);
+    const {
+      organizations,
+      selectedOrganizationId,
+      initializeState
+    } = this.props;
 
-    if (isLoadingApp) {
+    if (initializeState === RequestStates.PENDING) {
       return (
         <Spinner />
       );
     }
-
-    const orgs :Map<*, *> = app.get('organizations', Map());
-    const selectedOrganizationId :string = app.get('selectedOrganizationId', '');
-    if (orgs.isEmpty() || !selectedOrganizationId) {
-      // TODO: this might be problematic
+    if (organizations.isEmpty() || !selectedOrganizationId) {
       return (
         <Switch>
-          <Route exact strict path={HOME_PATH} render={this.renderMissingOrgs} />
-          <Redirect to={HOME_PATH} />
+          <Route render={this.renderMissingOrgs} />
         </Switch>
       );
     }
@@ -187,7 +151,7 @@ class AppContainer extends Component<Props> {
         <Route path={REPORTS_PATH} component={LegitReportsRouter} />
         <Route path={DASHBOARD_PATH} render={this.wrapComponent(DashboardContainer)} />
         <Route path={DOWNLOADS_PATH} render={this.wrapComponent(DownloadsContainer)} />
-        <Route path={PEOPLE_PATH} render={this.wrapComponent(PeopleContainer)} />
+        <Route path={PEOPLE_PATH} component={PeopleRouter} />
         <Route path={SUBSCRIBE_PATH} render={this.wrapComponent(SubscribeContainer)} />
         <Redirect to={HOME_PATH} />
       </Switch>
@@ -210,15 +174,16 @@ class AppContainer extends Component<Props> {
 function mapStateToProps(state :Map<*, *>) :Object {
 
   return {
-    app: state.get('app', Map())
+    organizations: state.getIn(['app', 'organizations'], Map()),
+    selectedOrganizationId: state.getIn(['app', 'selectedOrganizationId'], ''),
+    initializeState: state.getIn(['app', 'initializeState']),
   };
 }
 
 function mapDispatchToProps(dispatch :Function) :Object {
 
   const actions = {
-    getAllPropertyTypes,
-    loadApp,
+    initializeApplication,
     loadHospitals,
     switchOrganization
   };
@@ -228,4 +193,4 @@ function mapDispatchToProps(dispatch :Function) :Object {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AppContainer);
+export default connect<*, *, *, *, *, *>(mapStateToProps, mapDispatchToProps)(AppContainer);

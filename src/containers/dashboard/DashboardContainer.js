@@ -5,7 +5,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router';
 import { bindActionCreators } from 'redux';
 import { Map } from 'immutable';
 
@@ -162,7 +161,7 @@ class DashboardContainer extends React.Component<Props, State> {
       </div>
     );
   }
-};
+}
 
 function mapStateToProps(state :Map<*, *>) :Object {
   const dashboard = state.get('dashboard');
@@ -186,4 +185,5 @@ function mapDispatchToProps(dispatch :Function) :Object {
   };
 }
 
+// $FlowFixMe
 export default connect(mapStateToProps, mapDispatchToProps)(DashboardContainer);

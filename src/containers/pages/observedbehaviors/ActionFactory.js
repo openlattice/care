@@ -3,6 +3,7 @@
  */
 
 import { newRequestSequence } from 'redux-reqseq';
+import type { RequestSequence } from 'redux-reqseq';
 
 const SET_INPUT_VALUE :string = 'SET_INPUT_VALUE_OBSERVED_BEHAVIORS';
 const setInputValue :RequestSequence = newRequestSequence(SET_INPUT_VALUE);

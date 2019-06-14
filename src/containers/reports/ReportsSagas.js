@@ -9,27 +9,37 @@ import {
   select,
   takeEvery,
 } from '@redux-saga/core/effects';
-import { List, Map, fromJS } from 'immutable';
-import { Models, Types } from 'lattice';
+import { DateTime } from 'luxon';
+import { isPlainObject } from 'lodash';
+import {
+  List,
+  Map,
+  OrderedMap,
+  fromJS
+} from 'immutable';
+import {
+  Constants,
+  Types
+} from 'lattice';
 import {
   DataApiActions,
   DataApiSagas,
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
+import type { SequenceAction } from 'redux-reqseq';
 
 import Logger from '../../utils/Logger';
+import { BHR_CONFIG } from '../../config/formconfig/CrisisTemplateConfig';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
 import {
   DELETE_REPORT,
-  GET_REPORT_NEIGHBORS,
   GET_REPORT,
-  GET_REPORTS,
+  GET_REPORTS_BY_DATE_RANGE,
   UPDATE_REPORT,
   deleteReport,
   getReport,
-  getReportNeighbors,
-  getReports,
+  getReportsByDateRange,
   updateReport,
 } from './ReportsActions';
 import { isValidUuid } from '../../utils/Utils';
@@ -38,7 +48,10 @@ import {
   getAppearsInESId,
   getPeopleESId,
   getReportESId,
+  getStaffESId,
+  getReportedESId,
 } from '../../utils/AppUtils';
+import { getSearchTerm } from '../../utils/DataUtils';
 import {
   compileDispositionData,
   compileNatureOfCrisisData,
@@ -51,31 +64,52 @@ import { setInputValues as setNatureOfCrisisData } from '../pages/natureofcrisis
 import { setInputValues as setObservedBehaviors } from '../pages/observedbehaviors/ActionFactory';
 import { setInputValues as setOfficerSafetyData } from '../pages/officersafety/ActionFactory';
 import { setInputValues as setSubjectInformation } from '../pages/subjectinformation/ActionFactory';
+import * as FQN from '../../edm/DataModelFqns';
+import { POST_PROCESS_FIELDS } from '../../utils/constants/CrisisTemplateConstants';
 
 const LOG = new Logger('ReportsSagas');
 
-const { FullyQualifiedName } = Models;
 const { DeleteTypes, UpdateTypes } = Types;
+const { OPENLATTICE_ID_FQN } = Constants;
 const {
+  createAssociations,
   deleteEntity,
   getEntityData,
-  getEntitySetData,
   updateEntityData,
 } = DataApiActions;
 const {
+  createAssociationsWorker,
   deleteEntityWorker,
   getEntityDataWorker,
-  getEntitySetDataWorker,
   updateEntityDataWorker,
 } = DataApiSagas;
 const {
-  searchEntityNeighbors,
+  searchEntitySetData,
   searchEntityNeighborsWithFilter,
 } = SearchApiActions;
 const {
-  searchEntityNeighborsWorker,
+  searchEntitySetDataWorker,
   searchEntityNeighborsWithFilterWorker,
 } = SearchApiSagas;
+
+const getStaffInteractions = (entities :List<Map>) => {
+  const sorted = entities.sort((staffA :Map, staffB :Map) :number => {
+    const timeA = DateTime.fromISO(staffA.getIn(['associationDetails', FQN.DATE_TIME_FQN, 0]));
+    const timeB = DateTime.fromISO(staffB.getIn(['associationDetails', FQN.DATE_TIME_FQN, 0]));
+
+    if (!timeA.isValid) return 1;
+    if (!timeB.isValid) return -1;
+
+    return timeB.diff(timeA).toObject().milliseconds;
+  });
+
+  const submitted = sorted.first(Map());
+
+  return {
+    submitted,
+    lastUpdated: !sorted.last(Map()).equals(submitted) ? sorted.last(Map()) : Map()
+  };
+};
 
 /*
  *
@@ -91,17 +125,16 @@ const {
 
 function* deleteReportWorker(action :SequenceAction) :Generator<*, *, *> {
 
-  const { id, value } = action;
-  if (value === null || value === undefined) {
-    yield put(deleteReport.failure(id, ERR_ACTION_VALUE_NOT_DEFINED));
-    return;
-  }
-
-  const entityKeyId :string = value.entityKeyId;
-  const entitySetId :string = value.entitySetId;
-
   try {
-    yield put(deleteReport.request(action.id, { entityKeyId, entitySetId }));
+    const { value: entityKeyId } = action;
+    if (!isDefined(entityKeyId)) throw ERR_ACTION_VALUE_NOT_DEFINED;
+    if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
+
+    yield put(deleteReport.request(action.id, entityKeyId));
+
+    const app = yield select(state => state.get('app', Map()));
+    const entitySetId :UUID = getReportESId(app);
+
     const response = yield call(
       deleteEntityWorker,
       deleteEntity({ entityKeyId, entitySetId, deleteType: DeleteTypes.Soft })
@@ -137,10 +170,12 @@ function* getReportWorker(action :SequenceAction) :Generator<*, *, *> {
 
     yield put(getReport.request(action.id, reportEKID));
 
-    const app = yield select(state => state.getIn(['app'], Map()));
+    const app = yield select(state => state.get('app', Map()));
     const reportESID :UUID = getReportESId(app);
     const peopleESID :UUID = getPeopleESId(app);
     const appearsInESID :UUID = getAppearsInESId(app);
+    const reportedESID :UUID = getReportedESId(app);
+    const staffESID :UUID = getStaffESId(app);
 
     // Get bhr.report data
     const reportRequest = call(getEntityDataWorker, getEntityData({
@@ -164,16 +199,40 @@ function* getReportWorker(action :SequenceAction) :Generator<*, *, *> {
       searchEntityNeighborsWithFilter(personSearchParams)
     );
 
-    const [reportResponse, personResponse] = yield all([
+    const staffSearchParams = {
+      entitySetId: reportESID,
+      filter: {
+        entityKeyIds: [reportEKID],
+        edgeEntitySetIds: [reportedESID],
+        destinationEntitySetIds: [],
+        sourceEntitySetIds: [staffESID]
+      }
+    };
+
+    const staffRequest = call(
+      searchEntityNeighborsWithFilterWorker,
+      searchEntityNeighborsWithFilter(staffSearchParams)
+    );
+
+    const [reportResponse, personResponse, staffResponse] = yield all([
       reportRequest,
-      personRequest
+      personRequest,
+      staffRequest
     ]);
+
+    const staffDataList = fromJS(staffResponse.data)
+      .get(reportEKID, List());
+
+    const { submitted, lastUpdated } = getStaffInteractions(staffDataList);
 
     const reportData = fromJS(reportResponse.data);
 
     // should only be one person per report
     const subjectDataList = fromJS(personResponse.data)
-      .get(reportEKID, List());
+      .get(reportEKID, List())
+      .map((report :Map) => report.get('neighborDetails'))
+      .toSet()
+      .toList();
 
     if (subjectDataList.count() > 1) {
       LOG.warn('more than one person found in report', reportEKID);
@@ -182,7 +241,7 @@ function* getReportWorker(action :SequenceAction) :Generator<*, *, *> {
       LOG.warn('person not found in report', reportEKID);
     }
 
-    const subjectData = subjectDataList.first(Map()).get('neighborDetails', Map());
+    const subjectData = subjectDataList.first(Map());
 
     const subjectInformation = compileSubjectData(subjectData, reportData);
     const observedBehaviors = compileObservedBehaviorData(reportData);
@@ -196,7 +255,7 @@ function* getReportWorker(action :SequenceAction) :Generator<*, *, *> {
     yield put(setOfficerSafetyData(officerSafety));
     yield put(setDispositionData(disposition));
 
-    yield put(getReport.success(action.id));
+    yield put(getReport.success(action.id, { submitted, lastUpdated }));
   }
   catch (error) {
     LOG.error('caught exception in worker saga', error);
@@ -211,87 +270,177 @@ function* getReportWatcher() :Generator<*, *, *> {
   yield takeEvery(GET_REPORT, getReportWorker);
 }
 
-
 /*
  *
- * ReportsActions.getReports()
+ * ReportsActions.getReportsByDateRange()
  *
  */
 
-function* getReportsWorker(action :SequenceAction) :Generator<*, *, *> {
-
-  const { id, value } = action;
-  if (value === null || value === undefined) {
-    yield put(getReports.failure(id, ERR_ACTION_VALUE_NOT_DEFINED));
-    return;
-  }
-
-  const entitySetId :string = value.entitySetId;
-
+function* getReportsByDateRangeWorker(action :SequenceAction) :Generator<*, *, *> {
   try {
-    yield put(getReports.request(action.id));
-    const response = yield call(getEntitySetDataWorker, getEntitySetData({ entitySetId }));
-    if (response.error) throw response.error;
-    yield put(getReports.success(action.id, response.data));
-  }
-  catch (error) {
-    LOG.error('caught exception in worker saga', error);
-    yield put(getReports.failure(action.id, error));
-  }
-  finally {
-    yield put(getReports.finally(action.id));
-  }
-}
+    const { value } = action;
+    if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
+    if (!Map.isMap(value)) throw ERR_ACTION_VALUE_TYPE;
 
-function* getReportsWatcher() :Generator<*, *, *> {
+    yield put(getReportsByDateRange.request(action.id));
 
-  yield takeEvery(GET_REPORTS, getReportsWorker);
-}
+    const edm :Map<*, *> = yield select(state => state.get('edm'));
+    const app = yield select(state => state.get('app', Map()));
 
-/*
- *
- * ReportsActions.getReportNeighbors()
- *
- */
+    const entitySetId :UUID = getReportESId(app);
+    const peopleESID :UUID = getPeopleESId(app);
+    const appearsInESID :UUID = getAppearsInESId(app);
+    const reportedESID :UUID = getReportedESId(app);
+    const staffESID :UUID = getStaffESId(app);
 
-function* getReportNeighborsWorker(action :SequenceAction) :Generator<*, *, *> {
+    const datetimePTID :UUID = edm.getIn(['fqnToIdMap', FQN.DATE_TIME_OCCURRED_FQN]);
+    const startDT = DateTime.fromISO(value.get('dateStart', ''));
+    const endDT = DateTime.fromISO(value.get('dateEnd', ''));
 
-  const { id, value } = action;
-  if (value === null || value === undefined) {
-    yield put(getReportNeighbors.failure(id, ERR_ACTION_VALUE_NOT_DEFINED));
-    return;
-  }
+    const startTerm = startDT.isValid ? startDT.toISO() : '*';
+    const endTerm = endDT.isValid ? endDT.endOf('day').toISO() : '*';
 
-  const entitySetId :string = value.entitySetId;
-  const entityKeyId :string = value.entityKeyId;
+    // search for reports within date range
+    const searchOptions = {
+      searchTerm: getSearchTerm(datetimePTID, `[${startTerm} TO ${endTerm}]`),
+      start: 0,
+      maxHits: 10000,
+      fuzzy: false
+    };
 
-  try {
-    yield put(getReportNeighbors.request(action.id, { entityKeyId }));
-
-    const response = yield call(
-      searchEntityNeighborsWorker,
-      searchEntityNeighbors({
+    const { data, error } = yield call(
+      searchEntitySetDataWorker,
+      searchEntitySetData({
         entitySetId,
-        // TODO: it should probably be "entityKeyId", not "entityId". this api might have to be updated
-        entityId: entityKeyId,
+        searchOptions
       })
     );
 
-    if (response.error) throw response.error;
-    yield put(getReportNeighbors.success(action.id, response.data));
+    if (error) throw error;
+
+    // sort the reportData by time occurred DESC
+
+    const reportData = fromJS(data.hits)
+      .sort((reportA :Map, reportB :Map) :number => {
+        const timeA = DateTime.fromISO(reportA.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0]));
+        const timeB = DateTime.fromISO(reportB.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0]));
+
+        if (!timeA.isValid) return 1;
+        if (!timeB.isValid) return -1;
+
+        return timeB.diff(timeA).toObject().milliseconds;
+      });
+
+    const reportEKIDs = reportData.map(report => report.getIn([OPENLATTICE_ID_FQN, 0]));
+
+    const peopleSearchParams = {
+      entitySetId,
+      filter: {
+        entityKeyIds: reportEKIDs.toJS(),
+        edgeEntitySetIds: [appearsInESID],
+        destinationEntitySetIds: [],
+        sourceEntitySetIds: [peopleESID],
+      }
+    };
+
+    const staffSearchParams = {
+      entitySetId,
+      filter: {
+        entityKeyIds: reportEKIDs.toJS(),
+        edgeEntitySetIds: [reportedESID],
+        destinationEntitySetIds: [],
+        sourceEntitySetIds: [staffESID],
+      }
+    };
+
+    const peopleRequest = call(
+      searchEntityNeighborsWithFilterWorker,
+      searchEntityNeighborsWithFilter(peopleSearchParams)
+    );
+
+    const staffRequest = call(
+      searchEntityNeighborsWithFilterWorker,
+      searchEntityNeighborsWithFilter(staffSearchParams)
+    );
+
+    const [peopleResponse, staffResponse] = yield all([
+      peopleRequest,
+      staffRequest
+    ]);
+
+    if (peopleResponse.error || staffResponse.error) {
+      const neighborErrors = {
+        error: [
+          peopleResponse.error,
+          staffResponse.error
+        ]
+      };
+
+      throw neighborErrors;
+    }
+
+    const peopleResponseData = fromJS(peopleResponse.data);
+    const staffResponseData = fromJS(staffResponse.data);
+
+    const results = reportData.map((report) => {
+      const entityKeyId = report.getIn([OPENLATTICE_ID_FQN, 0]);
+      const reportType = report.getIn([FQN.TYPE_FQN, 0]);
+      const natureOfCrisis = report.getIn([FQN.DISPATCH_REASON_FQN]);
+      const rawOccurred = report.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0]);
+      let occurred;
+      if (rawOccurred) {
+        occurred = DateTime.fromISO(
+          rawOccurred
+        ).toLocaleString(DateTime.DATE_SHORT);
+      }
+
+      const staffs = staffResponseData.get(entityKeyId, List());
+      const subjectDataList = peopleResponseData.get(entityKeyId, List());
+
+      const { submitted } = getStaffInteractions(staffs);
+
+      if (subjectDataList.count() > 1) {
+        LOG.warn('more than one person found in report', entityKeyId);
+      }
+      if (!subjectDataList.count()) {
+        LOG.warn('person not found in report', entityKeyId);
+      }
+
+      const subjectData = subjectDataList.first(Map()).get('neighborDetails', Map());
+      const rawDob = subjectData.getIn([FQN.PERSON_DOB_FQN, 0]);
+      let dob;
+      if (rawDob) {
+        dob = DateTime.fromISO(
+          rawDob
+        ).toLocaleString(DateTime.DATE_SHORT);
+      }
+
+      return OrderedMap({
+        lastName: subjectData.getIn([FQN.PERSON_LAST_NAME_FQN, 0]),
+        firstName: subjectData.getIn([FQN.PERSON_FIRST_NAME_FQN, 0]),
+        middleName: subjectData.getIn([FQN.PERSON_MIDDLE_NAME_FQN, 0]),
+        dob,
+        occurred,
+        reportType,
+        natureOfCrisis,
+        reporter: submitted.getIn(['neighborDetails', FQN.PERSON_ID_FQN, 0]),
+        [OPENLATTICE_ID_FQN]: entityKeyId
+      });
+    });
+
+    yield put(getReportsByDateRange.success(action.id, results));
   }
   catch (error) {
-    LOG.error('caught exception in worker saga', error);
-    yield put(getReportNeighbors.failure(action.id, error));
+    yield put(getReportsByDateRange.failure(action.id, error));
   }
   finally {
-    yield put(getReportNeighbors.finally(action.id));
+    yield put(getReportsByDateRange.finally(action.id));
+
   }
 }
 
-function* getReportNeighborsWatcher() :Generator<*, *, *> {
-
-  yield takeEvery(GET_REPORT_NEIGHBORS, getReportNeighborsWorker);
+function* getReportsByDateRangeWatcher() :Generator<*, *, *> {
+  yield takeEvery(GET_REPORTS_BY_DATE_RANGE, getReportsByDateRangeWorker);
 }
 
 /*
@@ -301,38 +450,96 @@ function* getReportNeighborsWatcher() :Generator<*, *, *> {
  */
 
 function* updateReportWorker(action :SequenceAction) :Generator<*, *, *> {
-
-  const { id, value } = action;
-  if (value === null || value === undefined) {
-    yield put(updateReport.failure(id, ERR_ACTION_VALUE_NOT_DEFINED));
-    return;
-  }
-
-  const entityKeyId :string = value.entityKeyId;
-  const entitySetId :string = value.entitySetId;
-  const reportEdits :Map<string, List<any>> = value.reportEdits;
+  const response = {};
 
   try {
+    const { value } = action;
+    if (value === null || value === undefined) throw ERR_ACTION_VALUE_NOT_DEFINED;
+    const {
+      entityKeyId,
+      formData,
+    } = value;
+    if (!isPlainObject(formData) || !isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
+
     yield put(updateReport.request(action.id, value));
 
     const edm :Map<*, *> = yield select(state => state.get('edm'));
-    const entityData :Map<string, List<any>> = Map().withMutations((map :Map<string, List<any>>) => {
-      reportEdits.forEach((data :List<any>, fqn :FullyQualifiedName) => {
-        const propertyTypeId :string = edm.getIn(['fqnToIdMap', fqn]);
-        map.setIn([entityKeyId, propertyTypeId], data);
-      });
+    const app = yield select(state => state.get('app', Map()));
+    const reportESID :UUID = getReportESId(app);
+    const reportedESID :UUID = getReportedESId(app);
+    const staffESID :UUID = getStaffESId(app);
+    const datetimePTID :UUID = edm.getIn(['fqnToIdMap', FQN.DATE_TIME_FQN]);
+
+    const staffEKID :UUID = yield select(
+      state => state.getIn(['staff', 'currentUserStaffMemberData', OPENLATTICE_ID_FQN, 0], '')
+    );
+
+    const associations = {
+      [reportedESID]: [{
+        dst: {
+          entityKeyId,
+          entitySetId: reportESID,
+        },
+        src: {
+          entityKeyId: staffEKID,
+          entitySetId: staffESID,
+        },
+        data: {
+          [datetimePTID]: [formData[POST_PROCESS_FIELDS.TIMESTAMP]]
+        }
+      }]
+    };
+
+    const staffRequest = call(
+      createAssociationsWorker,
+      createAssociations(associations)
+    );
+
+    const reportFields = BHR_CONFIG.fields;
+    const updatedProperties = {};
+    Object.keys(reportFields).forEach((field) => {
+      const fqn = reportFields[field];
+      const propertyTypeId = edm.getIn(['fqnToIdMap', fqn]);
+      if (!propertyTypeId) LOG.error('propertyType id for fqn not found', fqn);
+      let updatedValue;
+      if (Array.isArray(formData[field])) {
+        updatedValue = formData[field];
+      }
+      else {
+        updatedValue = [formData[field]];
+      }
+      updatedProperties[propertyTypeId] = updatedValue;
     });
 
-    const response = yield call(
+    const updateData = {
+      [entityKeyId]: updatedProperties
+    };
+
+    const updateRequest = call(
       updateEntityDataWorker,
       updateEntityData({
-        entitySetId,
-        entities: entityData.toJS(),
+        entitySetId: reportESID,
+        entities: updateData,
         updateType: UpdateTypes.PartialReplace,
       })
     );
+
+    const responses = yield all([
+      updateRequest,
+      staffRequest
+    ]);
+
+    const responseErrors = responses.reduce((acc, res) => {
+      if (res.error) {
+        acc.push(res.error);
+      }
+      return acc;
+    }, []);
+
+    if (responseErrors.length) response.error = responseErrors;
     if (response.error) throw response.error;
-    yield put(updateReport.success(action.id, response.data));
+
+    yield put(updateReport.success(action.id));
   }
   catch (error) {
     LOG.error('caught exception in worker saga', error);
@@ -357,10 +564,8 @@ function* updateReportWatcher() :Generator<*, *, *> {
 export {
   deleteReportWatcher,
   deleteReportWorker,
-  getReportNeighborsWatcher,
-  getReportNeighborsWorker,
-  getReportsWatcher,
-  getReportsWorker,
+  getReportsByDateRangeWatcher,
+  getReportsByDateRangeWorker,
   getReportWatcher,
   getReportWorker,
   updateReportWatcher,

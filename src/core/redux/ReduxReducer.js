@@ -14,8 +14,10 @@ import downloadsReducer from '../../containers/downloads/DownloadsReducer';
 import edmReducer from '../../edm/EdmReducer';
 import hospitalsReducer from '../../containers/form/HospitalsReducer';
 import peopleReducer from '../../containers/people/PeopleReducer';
+import profileReducer from '../../containers/profile/ProfileReducer';
 import reportsReducer from '../../containers/reports/ReportsReducer';
 import searchReducer from '../../containers/search/SearchReducer';
+import staffReducer from '../../containers/staff/StaffReducer';
 import submitReducer from '../../utils/submit/SubmitReducer';
 import subscribeReducer from '../../containers/subscribe/SubscribeReducer';
 
@@ -36,9 +38,11 @@ export default function reduxReducer(routerHistory :any) {
     edm: edmReducer,
     hospitals: hospitalsReducer,
     people: peopleReducer,
+    profile: profileReducer,
     reports: reportsReducer,
     router: connectRouter(routerHistory),
     search: searchReducer,
+    staff: staffReducer,
 
     // page reducers
     [STATE.DISPOSITION]: dispositionReducer,

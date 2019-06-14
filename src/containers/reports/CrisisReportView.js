@@ -4,16 +4,25 @@
 
 import React from 'react';
 import styled from 'styled-components';
+
 import { Map } from 'immutable';
+import { DateTime } from 'luxon';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { Redirect, Route, Switch } from 'react-router-dom';
+import { AuthUtils } from 'lattice-auth';
+import { ModalTransition } from '@atlaskit/modal-dialog';
+import { RequestStates } from 'redux-reqseq';
 
 import type { Match, RouterHistory } from 'react-router';
 import type { Dispatch } from 'redux';
+import type { RequestSequence, RequestState } from 'redux-reqseq';
 
+import NoResource from '../../components/NoResource';
+import FormRecordCard from '../../components/form/FormRecord';
 import Spinner from '../../components/spinner/Spinner';
+import ReviewContainer from '../crisis/ReviewContainer';
 import BackButton from '../../components/buttons/BackButton';
 import ProgressSidebar from '../../components/form/ProgressSidebar';
 import SubjectInformation from '../pages/subjectinformation/SubjectInformation';
@@ -21,13 +30,17 @@ import ObservedBehaviors from '../pages/observedbehaviors/ObservedBehaviors';
 import NatureOfCrisis from '../pages/natureofcrisis/NatureOfCrisis';
 import OfficerSafety from '../pages/officersafety/OfficerSafety';
 import Disposition from '../pages/disposition/Disposition';
+import DiscardModal from '../../components/modals/DiscardModal';
+import DeleteModal from '../../components/modals/DeleteModal';
+import SubmitSuccess from '../../components/crisis/SubmitSuccess';
 
-import { getReport } from './ReportsActions';
+import { getReport, updateReport, deleteReport } from './ReportsActions';
 import { clearCrisisTemplate } from '../crisis/CrisisActionFactory';
 import {
   getCurrentPage,
   getNextPath,
   getPrevPath,
+  setShowInvalidFields
 } from '../../utils/NavigationUtils';
 import {
   getStatus as validateSubjectInformation,
@@ -49,24 +62,12 @@ import {
   getStatus as validateDisposition,
   processForSubmit as processDisposition
 } from '../pages/disposition/Reducer';
+import { FORM_STEP_STATUS } from '../../utils/constants/FormConstants';
 import { STATE } from '../../utils/constants/StateConstants';
-import { REPORT_ID_PARAM } from '../../core/router/Routes';
+import { POST_PROCESS_FIELDS } from '../../utils/constants/CrisisTemplateConstants';
+import { FORM_TYPE } from '../../utils/DataConstants';
+import { REPORT_ID_PARAM, HOME_PATH } from '../../core/router/Routes';
 import { MEDIA_QUERY_MD, MEDIA_QUERY_LG } from '../../core/style/Sizes';
-import RequestStates from '../../utils/constants/RequestStates';
-import type { RequestState } from '../../utils/constants/RequestStates';
-
-type Props = {
-  actions :{
-    hardRestart :() => void,
-    clearCrisisTemplate :() => void,
-    submit :(args :Object) => void,
-    getReport :RequestSequence;
-  },
-  history :RouterHistory,
-  match :Match;
-  state :Map<*, *>,
-  fetchState :RequestState,
-};
 
 const CrisisTemplateWrapper = styled.div`
   width: 100%;
@@ -93,7 +94,6 @@ const PageWrapper = styled.div`
 `;
 
 const FormWrapper = styled.div`
-  padding: 5px;
   width: 100%;
 
   @media only screen and (min-width: ${MEDIA_QUERY_MD}px) {
@@ -177,14 +177,53 @@ const PAGES = [
     stateField: STATE.DISPOSITION,
     postProcessor: processDisposition
   },
+  {
+    Component: ReviewContainer,
+    title: 'Review',
+    stateField: '',
+    postProcessor: () => ({}),
+    requireAllPreviousValid: true
+  }
 ];
 
-class CrisisTemplateContainer extends React.Component<Props> {
+type Props = {
+  actions :{
+    clearCrisisTemplate :() => {
+      type :string;
+    };
+    deleteReport :RequestSequence;
+    getReport :RequestSequence;
+    submit :(args :Object) => void;
+    updateReport :RequestSequence;
+  };
+  deleteState :RequestState;
+  fetchState :RequestState;
+  history :RouterHistory;
+  lastUpdatedStaff :Map;
+  match :Match;
+  state :Map;
+  submittedStaff :Map;
+  updateState :RequestState;
+};
+
+type State = {
+  edit :boolean;
+  showDiscard :boolean;
+  showDelete :boolean;
+}
+
+class CrisisReportView extends React.Component<Props, State> {
+
+  state = {
+    edit: false,
+    showDelete: false,
+    showDiscard: false,
+  }
 
   componentDidMount() {
     const { actions, match } = this.props;
 
-    const reportEKID :?UUID = match.params[REPORT_ID_PARAM.substr(1)];
+    const reportEKID :?UUID = match.params[REPORT_ID_PARAM];
     actions.getReport(reportEKID);
   }
 
@@ -202,34 +241,137 @@ class CrisisTemplateContainer extends React.Component<Props> {
     });
   }
 
+  handleEditClick = () => {
+    this.setState({
+      edit: true
+    });
+  }
+
+  handleShowDiscard = () => {
+    this.setState({
+      showDiscard: true
+    });
+  }
+
+  handleCloseDiscard = () => {
+    this.setState({
+      showDiscard: false
+    });
+  }
+
+  handleShowDelete = () => {
+    this.setState({
+      showDelete: true,
+    });
+  }
+
+  handleCloseDelete = () => {
+    this.setState({
+      showDelete: false,
+    });
+  }
+
+  handleDiscard = () => {
+    const { actions, history } = this.props;
+    actions.clearCrisisTemplate();
+    history.push(HOME_PATH);
+  }
+
+  handleDelete = () => {
+    const { actions, match } = this.props;
+    const reportEKID :?UUID = match.params[REPORT_ID_PARAM];
+    actions.deleteReport(reportEKID);
+  }
+
+  handleSubmit = () => {
+
+    const {
+      actions,
+      state,
+      match
+    } = this.props;
+
+    const reportEKID :?UUID = match.params[REPORT_ID_PARAM];
+
+    let submission = {
+      [POST_PROCESS_FIELDS.FORM_TYPE]: FORM_TYPE.CRISIS_TEMPLATE,
+      [POST_PROCESS_FIELDS.TIMESTAMP]: DateTime.local().toISO(),
+      [POST_PROCESS_FIELDS.USER_EMAIL]: AuthUtils.getUserInfo().email
+    };
+
+    PAGES.forEach((page) => {
+      const { postProcessor, stateField } = page;
+      submission = Object.assign({}, submission, postProcessor(state.get(stateField)));
+    });
+
+    actions.updateReport({
+      entityKeyId: reportEKID,
+      formData: submission,
+    });
+  }
+
+  isReadyToSubmit = () => {
+    const { state } = this.props;
+    let ready = true;
+    PAGES.forEach((page) => {
+      const { validator, stateField } = page;
+      if (validator && validator(state.get(stateField)) !== FORM_STEP_STATUS.COMPLETED) {
+        ready = false;
+      }
+    });
+
+    return ready;
+  }
+
   renderForwardButton = (page, index) => {
+    const { state } = this.props;
+    const { edit } = this.state;
+
+    const isReview = index === PAGES.length - 2;
     const isSubmit = index === PAGES.length - 1;
-    const nextPath = getNextPath(window.location, PAGES.length + 1);
 
-    const onClick = () => this.handlePageChange(nextPath);
-
-    const buttonText = 'Next';
-    if (isSubmit) {
+    if (isSubmit && !edit) {
       return null;
     }
 
-    return <ForwardButton onClick={onClick} canProgress>{buttonText}</ForwardButton>;
+    const { validator, stateField } = page;
+    const complete = validator ? validator(state.get(stateField)) === FORM_STEP_STATUS.COMPLETED : true;
+    const nextPath = getNextPath(window.location, PAGES.length + 1);
+
+    const disabled = (isSubmit || isReview) ? !this.isReadyToSubmit() : !complete;
+    let onClick = () => this.handlePageChange(nextPath);
+
+    if (disabled) {
+      const showInvalidFieldsPath = setShowInvalidFields(window.location);
+      onClick = () => this.handlePageChange(showInvalidFieldsPath);
+    }
+
+    let buttonText = 'Next';
+    if (isReview) {
+      buttonText = 'Review';
+    }
+    if (isSubmit) {
+      buttonText = 'Submit';
+      onClick = this.handleSubmit;
+    }
+
+    return <ForwardButton onClick={onClick} canProgress={!disabled}>{buttonText}</ForwardButton>;
   }
 
   renderPage = (page, index) => {
-
+    const { edit } = this.state;
     const { Component } = page;
     const prevPath = getPrevPath(window.location);
     return (
-      <PageWrapper>
-        <FormWrapper>
-          <Component disabled />
-        </FormWrapper>
+      <>
+        <div>
+          <Component disabled={!edit} />
+        </div>
         <ButtonRow>
           { (index !== 0) && <BackButton onClick={() => this.handlePageChange(prevPath)}>Back</BackButton> }
           {this.renderForwardButton(page, index)}
         </ButtonRow>
-      </PageWrapper>
+      </>
     );
   }
 
@@ -252,7 +394,7 @@ class CrisisTemplateContainer extends React.Component<Props> {
         validator,
         stateField,
       } = page;
-      const status = validator(state.get(stateField));
+      const status = validator ? validator(state.get(stateField)) : undefined;
       const onClick = () => history.push(`${currentPath}/${index + 1}`);
 
       return {
@@ -266,15 +408,54 @@ class CrisisTemplateContainer extends React.Component<Props> {
 
   render() {
     const {
+      deleteState,
       fetchState,
-      match
+      lastUpdatedStaff,
+      match,
+      submittedStaff,
+      updateState,
     } = this.props;
+    const { edit, showDelete, showDiscard } = this.state;
     const baseUrl = `${match.url}/1`;
     const currentPage = getCurrentPage(window.location);
 
-    if (fetchState === RequestStates.IS_REQUESTING) {
+    const discardActions = [
+      {
+        onClick: this.handleDiscard,
+        text: 'Discard Changes'
+      },
+      {
+        onClick: this.handleCloseDiscard,
+        text: 'Stay On Page'
+      }
+    ];
+
+    const deleteActions = [
+      {
+        onClick: this.handleDelete,
+        text: 'Delete Template'
+      },
+      {
+        onClick: this.handleCloseDelete,
+        text: 'Stay On Page'
+      },
+    ];
+
+    let primaryClick = this.handleEditClick;
+    if (edit) primaryClick = this.handleShowDiscard;
+
+    if (
+      fetchState === RequestStates.PENDING
+      || updateState === RequestStates.PENDING
+      || deleteState === RequestStates.PENDING
+    ) {
       return <Spinner />;
     }
+
+    if (fetchState === RequestStates.FAILURE) return <NoResource />;
+
+    if (updateState === RequestStates.SUCCESS) return <SubmitSuccess actionText="updated" />;
+    if (deleteState === RequestStates.SUCCESS) return <SubmitSuccess actionText="deleted" />;
 
     return (
       <CrisisTemplateWrapper>
@@ -286,10 +467,38 @@ class CrisisTemplateContainer extends React.Component<Props> {
                 steps={this.getSidebarSteps()} />
           )
         }
-        <Switch>
-          {this.renderRoutes()}
-          <Redirect to={baseUrl} />
-        </Switch>
+        <PageWrapper>
+          <FormWrapper>
+            <FormRecordCard
+                onClickPrimary={primaryClick}
+                onClickSecondary={this.handleShowDelete}
+                primaryText={edit ? 'Discard' : 'Edit'}
+                submitted={submittedStaff}
+                lastUpdated={lastUpdatedStaff} />
+            <Switch>
+              {this.renderRoutes()}
+              <Redirect to={baseUrl} />
+            </Switch>
+          </FormWrapper>
+        </PageWrapper>
+        <ModalTransition>
+          { showDiscard
+            && (
+              <DiscardModal
+                  actions={discardActions}
+                  onClose={this.handleCloseDiscard} />
+            )
+          }
+        </ModalTransition>
+        <ModalTransition>
+          { showDelete
+            && (
+              <DeleteModal
+                  actions={deleteActions}
+                  onClose={this.handleCloseDelete} />
+            )
+          }
+        </ModalTransition>
       </CrisisTemplateWrapper>
     );
   }
@@ -298,8 +507,12 @@ class CrisisTemplateContainer extends React.Component<Props> {
 function mapStateToProps(state :Map<*, *>) :Object {
 
   return {
+    fetchState: state.getIn(['reports', 'fetchState'], RequestStates.STANDBY),
+    updateState: state.getIn(['reports', 'updateState'], RequestStates.STANDBY),
+    deleteState: state.getIn(['reports', 'deleteState'], RequestStates.STANDBY),
+    lastUpdatedStaff: state.getIn(['reports', 'lastUpdatedStaff'], Map()),
     state,
-    fetchState: state.getIn(['reports', 'fetchState'], RequestStates.PRE_REQUEST),
+    submittedStaff: state.getIn(['reports', 'submittedStaff'], Map()),
   };
 }
 
@@ -307,7 +520,9 @@ function mapDispatchToProps(dispatch :Dispatch<*>) :Object {
 
   const actions = {
     clearCrisisTemplate,
-    getReport
+    deleteReport,
+    getReport,
+    updateReport,
   };
 
   return {
@@ -318,5 +533,5 @@ function mapDispatchToProps(dispatch :Dispatch<*>) :Object {
 
 // $FlowFixMe
 export default withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(CrisisTemplateContainer)
+  connect(mapStateToProps, mapDispatchToProps)(CrisisReportView)
 );
