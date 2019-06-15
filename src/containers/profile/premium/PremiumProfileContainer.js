@@ -24,6 +24,7 @@ import type { RequestSequence, RequestState } from 'redux-reqseq';
 import type { Match } from 'react-router';
 
 import BehaviorCard from './BehaviorCard';
+import DeescalationCard from './DeescalationCard';
 import OfficerSafetyCard from './OfficerSafetyCard';
 import CrisisCountCard from '../CrisisCountCard';
 import ProfileBanner from '../ProfileBanner';
@@ -168,6 +169,7 @@ class ProfileContainer extends Component<Props, State> {
                 <BehaviorCard reports={reports} />
                 <OfficerSafetyCard />
               </BehaviorAndHistoryGrid>
+              <DeescalationCard />
               <SearchResults
                   hasSearched={fetchReportsState !== RequestStates.STANDBY}
                   isLoading={fetchReportsState === RequestStates.PENDING}

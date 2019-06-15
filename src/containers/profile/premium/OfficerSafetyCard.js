@@ -20,7 +20,7 @@ const IconWrapper = styled.div`
 
 const H1 = styled.h1`
   display: flex;
-  flex: 1 0 auto;
+  flex: 1;
   margin: 0;
   font-size: 18px;
   font-weight: 600;
@@ -29,6 +29,7 @@ const H1 = styled.h1`
 
 const StyledCardSegment = styled(CardSegment)`
   min-height: 300px;
+  min-width: 300px;
 `;
 
 type Props = {
@@ -52,7 +53,9 @@ class BehaviorCard extends Component<Props, State> {
             Officer Safety
           </H1>
         </CardHeader>
-        <StyledCardSegment />
+        <StyledCardSegment>
+
+        </StyledCardSegment>
       </Card>
     );
   }
