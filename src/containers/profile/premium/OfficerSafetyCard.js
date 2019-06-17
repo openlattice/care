@@ -33,7 +33,7 @@ const IconWrapper = styled.div`
   display: flex;
   flex-direction: column;
   flex: 0 0 auto;
-  margin-right: 5px;
+  margin-right: 10px;
 `;
 
 const H1 = styled.h1`

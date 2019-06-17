@@ -23,6 +23,7 @@ import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 import type { Match } from 'react-router';
 
+import AboutCard from './AboutCard';
 import BehaviorCard from './BehaviorCard';
 import DeescalationCard from './DeescalationCard';
 import OfficerSafetyCard from './OfficerSafetyCard';
@@ -140,6 +141,7 @@ class ProfileContainer extends Component<Props, State> {
   render() {
     const {
       fetchReportsState,
+      physicalAppearance,
       reports,
       selectedPerson
     } = this.props;
@@ -150,16 +152,19 @@ class ProfileContainer extends Component<Props, State> {
         <ContentWrapper>
           <ProfileGrid>
             <Aside>
-              <Card>
-                <CardSegment padding="sm">
-                  <PlaceholderPortrait icon={faPortrait} color={NEUTRALS[5]} />
-                </CardSegment>
-                <CardSegment vertical padding="sm">
-                  <Button mode="primary">
-                    New Crisis Template
-                  </Button>
-                </CardSegment>
-              </Card>
+              <CardStack>
+                <Card>
+                  <CardSegment padding="sm">
+                    <PlaceholderPortrait icon={faPortrait} color={NEUTRALS[5]} />
+                  </CardSegment>
+                  <CardSegment vertical padding="sm">
+                    <Button mode="primary">
+                      New Crisis Template
+                    </Button>
+                  </CardSegment>
+                </Card>
+                <AboutCard selectedPerson={selectedPerson} physicalAppearance={physicalAppearance} />
+              </CardStack>
             </Aside>
             <CardStack>
               <CrisisCountCard

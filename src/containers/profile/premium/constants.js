@@ -7,5 +7,5 @@ const THREATENED_VIOLENCE :string = 'Threatened Violence';
 export {
   ARMED_WITH_WEAPON,
   INJURED_PARTIES,
-  THREATENED_VIOLENCE,
+  THREATENED_VIOLENCE
 };
