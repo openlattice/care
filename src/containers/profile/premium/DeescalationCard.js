@@ -2,7 +2,13 @@ import React from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTheaterMasks } from '@fortawesome/pro-solid-svg-icons';
-import { Card, CardHeader, Colors } from 'lattice-ui-kit';
+import {
+  Card,
+  CardHeader,
+  Colors
+} from 'lattice-ui-kit';
+
+import SpecificTechniques from './SpecificTechniques';
 
 const { NEUTRALS } = Colors;
 
@@ -24,12 +30,21 @@ const H1 = styled.h1`
   align-items: center;
 `;
 
+const Header = styled.header`
+  font-weight: 600;
+  margin-bottom: 10px;
+`;
+
+const UL = styled.ul`
+  padding-inline-start: inherit;
+`;
+
 const DeescalationContentWrapper = styled.div`
   display: flex;
   min-height: 150px;
 
   > div {
-    flex: 1 0 auto;
+    flex: 0 0 50%;
     padding: 10px 20px;
   }
 
@@ -50,8 +65,16 @@ const DeescalationCard = () => {
         </H1>
       </CardHeader>
       <DeescalationContentWrapper>
-        <div />
-        <div />
+        <SpecificTechniques />
+        <div>
+          <Header>
+            General Best Practices
+          </Header>
+          <UL>
+            <li>Make one request at a time</li>
+            <li>Attempt to re-orient to current place and time - Grounding Techniques</li>
+          </UL>
+        </div>
       </DeescalationContentWrapper>
     </Card>
   );
