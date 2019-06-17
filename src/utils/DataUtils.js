@@ -62,3 +62,9 @@ export const simulateResponseData = (properties :Map, entityKeyId :UUID, edm :Ma
 
   return transformedIds;
 };
+
+export const inchesToFeetString = (inches :number) => {
+  const remainder = inches % 12;
+  const feet = Math.floor(inches / 12);
+  return `${feet}'${remainder}"`;
+};
