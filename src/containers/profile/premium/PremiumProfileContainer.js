@@ -167,7 +167,7 @@ class ProfileContainer extends Component<Props, State> {
                   isLoading={fetchReportsState === RequestStates.PENDING} />
               <BehaviorAndHistoryGrid>
                 <BehaviorCard reports={reports} />
-                <OfficerSafetyCard />
+                <OfficerSafetyCard reports={reports} />
               </BehaviorAndHistoryGrid>
               <DeescalationCard />
               <SearchResults
