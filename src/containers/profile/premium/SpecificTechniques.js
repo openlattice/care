@@ -1,17 +1,17 @@
 // @flow
-import React, { Component } from 'react';
+import React from 'react';
 import styled from 'styled-components';
+import { List } from 'immutable';
 import {
-  Button
+  Button,
+  IconSplash
 } from 'lattice-ui-kit';
+import { UL } from '../../../components/layout';
 
-const Header = styled.header`
+const H2 = styled.h2`
+  font-size: 16px;
   font-weight: 600;
-  margin-bottom: 10px;
-`;
-
-const UL = styled.ul`
-  padding-inline-start: inherit;
+  margin: 0 0 10px 0;
 `;
 
 const ActionRow = styled.div`
@@ -20,22 +20,33 @@ const ActionRow = styled.div`
   justify-content: center;
 `;
 
-type Props = {}
-
-class SpecificTechniques extends Component<Props> {
-  render() {
-    return (
-      <div>
-        <Header>
-          Specific Techniques
-        </Header>
-        <UL />
-        <ActionRow>
-          <Button>Suggest a Technique</Button>
-        </ActionRow>
-      </div>
-    );
-  }
+type Props = {
+  techniques :List;
 }
+
+const SpecificTechniques = (props :Props) => {
+  const { techniques } = props;
+
+  return (
+    <div>
+      <H2>
+        Specific Techniques
+      </H2>
+      {
+        techniques.count()
+          ? (
+            <UL>
+              <li>Techniques</li>
+            </UL>
+          )
+          : <IconSplash caption="No known triggers." />
+      }
+      <UL />
+      <ActionRow>
+        <Button>Suggest a Technique</Button>
+      </ActionRow>
+    </div>
+  );
+};
 
 export default SpecificTechniques;
