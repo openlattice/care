@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { List } from 'immutable';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTheaterMasks } from '@fortawesome/pro-solid-svg-icons';
 import {
@@ -42,6 +43,8 @@ const DeescalationContentWrapper = styled.div`
   min-height: 150px;
 
   > div {
+    display: flex;
+    flex-direction: column;
     flex: 0 0 50%;
     padding: 10px 20px;
   }
@@ -63,7 +66,7 @@ const DeescalationCard = () => {
         </H1>
       </CardHeader>
       <DeescalationContentWrapper>
-        <SpecificTechniques />
+        <SpecificTechniques techniques={List()} />
         <div>
           <H2>
             General Best Practices
