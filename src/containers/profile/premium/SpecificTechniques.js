@@ -39,11 +39,10 @@ const SpecificTechniques = (props :Props) => {
               <li>Techniques</li>
             </UL>
           )
-          : <IconSplash caption="No known triggers." />
+          : <IconSplash caption="No known techniques." />
       }
-      <UL />
       <ActionRow>
-        <Button>Suggest a Technique</Button>
+        <Button mode="subtle">Suggest a Technique</Button>
       </ActionRow>
     </div>
   );

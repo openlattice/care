@@ -2,7 +2,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { CardSegment, IconSplash } from 'lattice-ui-kit';
+import { Button, CardSegment, IconSplash } from 'lattice-ui-kit';
 import { List } from 'immutable';
 import { UL } from '../../../components/layout';
 
@@ -10,6 +10,12 @@ const H2 = styled.h2`
   font-size: 16px;
   font-weight: 600;
   margin: 0 0 10px 0;
+`;
+
+const ActionRow = styled.div`
+  display: flex;
+  flex: 1;
+  justify-content: center;
 `;
 
 type Props = {
@@ -33,6 +39,9 @@ const Triggers = (props :Props) => {
           )
           : <IconSplash caption="No known triggers." />
       }
+      <ActionRow>
+        <Button mode="subtle">Suggest a Trigger</Button>
+      </ActionRow>
     </CardSegment>
   );
 };
