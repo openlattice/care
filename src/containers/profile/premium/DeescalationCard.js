@@ -9,6 +9,7 @@ import {
 } from 'lattice-ui-kit';
 
 import SpecificTechniques from './SpecificTechniques';
+import { UL } from '../../../components/layout';
 
 const { NEUTRALS } = Colors;
 
@@ -30,13 +31,10 @@ const H1 = styled.h1`
   align-items: center;
 `;
 
-const Header = styled.header`
+const H2 = styled.h2`
+  font-size: 16px;
   font-weight: 600;
-  margin-bottom: 10px;
-`;
-
-const UL = styled.ul`
-  padding-inline-start: inherit;
+  margin: 0 0 10px 0;
 `;
 
 const DeescalationContentWrapper = styled.div`
@@ -67,9 +65,9 @@ const DeescalationCard = () => {
       <DeescalationContentWrapper>
         <SpecificTechniques />
         <div>
-          <Header>
+          <H2>
             General Best Practices
-          </Header>
+          </H2>
           <UL>
             <li>Make one request at a time</li>
             <li>Attempt to re-orient to current place and time - Grounding Techniques</li>
