@@ -8,11 +8,12 @@ import { faExclamationTriangle } from '@fortawesome/pro-solid-svg-icons';
 import {
   Card,
   CardHeader,
-  CardSegment,
+  CardSegment
 } from 'lattice-ui-kit';
 
 import DashedList from './DashedList';
 import BehaviorItem from './BehaviorItem';
+import Triggers from './Triggers';
 import {
   ARMED_WITH_WEAPON_FQN,
   INJURIES_FQN,
@@ -46,7 +47,7 @@ const H1 = styled.h1`
 `;
 
 const StyledCardSegment = styled(CardSegment)`
-  min-height: 300px;
+  min-height: 150px;
   min-width: 300px;
 `;
 
@@ -124,6 +125,7 @@ class OfficerSafetyCard extends Component<Props> {
             }
           </DashedList>
         </StyledCardSegment>
+        <Triggers triggers={List()} />
       </Card>
     );
   }
