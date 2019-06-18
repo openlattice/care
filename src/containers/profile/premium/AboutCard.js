@@ -99,7 +99,7 @@ class AboutCard extends Component<Props> {
 
     return (
       <Card>
-        <CardHeader mode="primary" vertical padding="sm">
+        <CardHeader mode="primary" padding="sm">
           <H1>
             <IconWrapper>
               <FontAwesomeIcon icon={faUser} fixedWidth />
