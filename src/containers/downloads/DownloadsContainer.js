@@ -14,7 +14,6 @@ import DateTimeRange from '../../components/controls/DateTimeRange';
 import * as DownloadsActionFactory from './DownloadsActionFactory';
 
 type Props = {
-  app :Map<*, *>,
   downloading :boolean,
   actions :{
     downloadForms :Function
@@ -55,7 +54,7 @@ const ButtonRow = styled.div`
 
 class DownloadsContainer extends React.Component<Props, State> {
 
-  constructor(props) {
+  constructor(props :Props) {
     super(props);
     this.state = {
       startDate: '',
@@ -64,10 +63,10 @@ class DownloadsContainer extends React.Component<Props, State> {
   }
 
   download = () => {
-    const { app, actions } = this.props;
-    const { startDate, endDate } = this.state;
+    const { actions } = this.props;
+    const { endDate, startDate } = this.state;
 
-    actions.downloadForms({ app, startDate, endDate });
+    actions.downloadForms({ endDate, startDate });
   }
 
   onDateChange = (field, newDate) => {
@@ -79,7 +78,7 @@ class DownloadsContainer extends React.Component<Props, State> {
 
   render() {
     const { downloading } = this.props;
-    const { startDate, endDate } = this.state;
+    const { endDate, startDate } = this.state;
 
     return (
       <DownloadsWrapper>
@@ -101,10 +100,9 @@ class DownloadsContainer extends React.Component<Props, State> {
   }
 }
 
-function mapStateToProps(state :Immutable.Map<*, *>) :Object {
+function mapStateToProps(state :Map) :Object {
 
   return {
-    app: state.get('app', Map()),
     downloading: state.getIn(['downloads', 'downloading'])
   };
 }
@@ -123,4 +121,5 @@ function mapDispatchToProps(dispatch :Function) :Object {
   };
 }
 
+// $FlowFixMe
 export default connect(mapStateToProps, mapDispatchToProps)(DownloadsContainer);
