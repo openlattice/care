@@ -47,15 +47,20 @@ const H1 = styled.h1`
 `;
 
 const StyledCardSegment = styled(CardSegment)`
-  min-height: 150px;
+  min-height: 100px;
   min-width: 300px;
 `;
 
 type Props = {
-  reports :List<Map>;
+  isLoading ? :boolean;
+  reports ? :List<Map>;
 };
 
 class OfficerSafetyCard extends Component<Props> {
+  static defaultProps = {
+    isLoading: false,
+    reports: List()
+  }
 
   countSafetyIncidents = memoizeOne((reports :List) :Map => Map()
     .withMutations((mutable) => {
@@ -97,14 +102,15 @@ class OfficerSafetyCard extends Component<Props> {
   }
 
   render() {
-    const { reports } = this.props;
+    const { isLoading, reports } = this.props;
 
     const safetyIncidentCounts = this.countSafetyIncidents(reports);
-    const total = reports.count();
+    const total = reports ? reports.count() : 0;
+    const headerMode = total ? 'warning' : 'default';
 
     return (
       <Card>
-        <CardHeader mode="warning" padding="sm">
+        <CardHeader mode={headerMode} padding="sm">
           <H1>
             <IconWrapper>
               <FontAwesomeIcon icon={faExclamationTriangle} fixedWidth />
@@ -113,7 +119,7 @@ class OfficerSafetyCard extends Component<Props> {
           </H1>
         </CardHeader>
         <StyledCardSegment padding="sm">
-          <DashedList>
+          <DashedList isLoading={isLoading}>
             {
               safetyIncidentCounts.map(([name, count]) => (
                 <BehaviorItem
