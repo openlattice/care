@@ -24,12 +24,15 @@ import type { RequestSequence, RequestState } from 'redux-reqseq';
 import type { Match } from 'react-router';
 
 import AboutCard from './AboutCard';
-import BehaviorCard from './BehaviorCard';
+import BackgroundInformationCard from './BackgroundInformationCard';
 import DeescalationCard from './DeescalationCard';
+import BehaviorCard from './BehaviorCard';
 import OfficerSafetyCard from './OfficerSafetyCard';
+import ResponsePlanCard from './ResponsePlanCard';
 import CrisisCountCard from '../CrisisCountCard';
 import ProfileBanner from '../ProfileBanner';
 import ProfileResult from '../ProfileResult';
+import RecentIncidentCard from '../RecentIncidentCard';
 import { labelMapReport } from '../constants';
 import { ContentWrapper, ContentOuterWrapper } from '../../../components/layout';
 import {
@@ -70,7 +73,7 @@ const ProfileGrid = styled.div`
   grid-gap: 20px;
 `;
 
-const BehaviorAndHistoryGrid = styled.div`
+const BehaviorAndSafetyGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-gap: 20px;
@@ -88,7 +91,7 @@ type Props = {
   fetchAppearanceState :RequestState;
   fetchPersonState :RequestState;
   fetchReportsState :RequestState;
-  updateAboutState :RequestState;
+  // updateAboutState :RequestState;
   match :Match;
   physicalAppearance :Map;
   reports :List<Map>;
@@ -115,7 +118,8 @@ class ProfileContainer extends Component<Props, State> {
 
   countCrisisCalls = () => {
     const { reports } = this.props;
-    let count = 0;
+    let total = 0;
+    let recent = 0;
     reports.forEach((report :Map) => {
       const occurred = report.getIn([DATE_TIME_OCCURRED_FQN, 0], '');
       const dtOccurred = DateTime.fromISO(occurred);
@@ -125,11 +129,17 @@ class ProfileContainer extends Component<Props, State> {
           .toObject()
           .years;
 
-        if (durationInYears <= 1) count += 1;
+        const durationInWeeks = dtOccurred
+          .until(DateTime.local()).toDuration(['weeks'])
+          .toObject()
+          .weeks;
+
+        if (durationInYears <= 1) total += 1;
+        if (durationInWeeks <= 1) recent += 1;
       }
     });
 
-    return count;
+    return { recent, total };
   }
 
   handleResultClick = (result :Map) => {
@@ -141,11 +151,20 @@ class ProfileContainer extends Component<Props, State> {
   render() {
     const {
       fetchReportsState,
+      fetchAppearanceState,
+      fetchPersonState,
       physicalAppearance,
       reports,
       selectedPerson
     } = this.props;
-    const count = this.countCrisisCalls();
+    const { recent, total } = this.countCrisisCalls();
+
+    const isLoadingReports = fetchReportsState === RequestStates.PENDING;
+    const isLoadingAbout = (
+      fetchPersonState === RequestStates.PENDING
+      || fetchAppearanceState === RequestStates.PENDING
+    );
+
     return (
       <ContentOuterWrapper>
         <ProfileBanner selectedPerson={selectedPerson} />
@@ -163,21 +182,31 @@ class ProfileContainer extends Component<Props, State> {
                     </Button>
                   </CardSegment>
                 </Card>
-                <AboutCard selectedPerson={selectedPerson} physicalAppearance={physicalAppearance} />
+                <AboutCard
+                    isLoading={isLoadingAbout}
+                    selectedPerson={selectedPerson}
+                    physicalAppearance={physicalAppearance} />
               </CardStack>
             </Aside>
             <CardStack>
               <CrisisCountCard
-                  count={count}
-                  isLoading={fetchReportsState === RequestStates.PENDING} />
-              <BehaviorAndHistoryGrid>
-                <BehaviorCard reports={reports} />
-                <OfficerSafetyCard reports={reports} />
-              </BehaviorAndHistoryGrid>
+                  count={total}
+                  isLoading={isLoadingReports} />
+              <RecentIncidentCard count={recent} />
+              <BehaviorAndSafetyGrid>
+                <BehaviorCard
+                    reports={reports}
+                    isLoading={isLoadingReports} />
+                <OfficerSafetyCard
+                    reports={reports}
+                    isLoading={isLoadingReports} />
+              </BehaviorAndSafetyGrid>
               <DeescalationCard />
+              <ResponsePlanCard />
+              <BackgroundInformationCard />
               <SearchResults
                   hasSearched={fetchReportsState !== RequestStates.STANDBY}
-                  isLoading={fetchReportsState === RequestStates.PENDING}
+                  isLoading={isLoadingReports}
                   onResultClick={this.handleResultClick}
                   results={reports}
                   resultLabels={labelMapReport}
@@ -194,7 +223,7 @@ const mapStateToProps = state => ({
   fetchAppearanceState: state.getIn(['profile', 'fetchAppearanceState'], RequestStates.STANDBY),
   fetchPersonState: state.getIn(['profile', 'fetchPersonState'], RequestStates.STANDBY),
   fetchReportsState: state.getIn(['profile', 'fetchReportsState'], RequestStates.STANDBY),
-  updateAboutState: state.getIn(['profile', 'updateAboutState'], RequestStates.STANDBY),
+  // updateAboutState: state.getIn(['profile', 'updateAboutState'], RequestStates.STANDBY),
   physicalAppearance: state.getIn(['profile', 'physicalAppearance'], Map()),
   reports: state.getIn(['profile', 'reports'], List()),
   selectedPerson: state.getIn(['profile', 'selectedPerson'], Map()),

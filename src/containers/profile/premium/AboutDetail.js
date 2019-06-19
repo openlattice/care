@@ -3,9 +3,11 @@ import React from 'react';
 import styled from 'styled-components';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { aboutDetailSkeleton } from '../../../components/skeletons';
 
 const Detail = styled.div`
   margin: 5px 0;
+  ${props => (props.isLoading ? aboutDetailSkeleton : null)}
 `;
 
 const IconWrapper = styled.span`

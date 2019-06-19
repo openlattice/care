@@ -2,7 +2,9 @@
 import React, { PureComponent } from 'react';
 import styled from 'styled-components';
 import memoizeOne from 'memoize-one';
-import { Map, List } from 'immutable';
+import { List, Map } from 'immutable';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHeadSideBrain } from '@fortawesome/pro-solid-svg-icons';
 import {
   Card,
   CardHeader,
@@ -22,17 +24,30 @@ const H1 = styled.h1`
   align-items: center;
 `;
 
+const IconWrapper = styled.div`
+  vertical-align: middle;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 auto;
+  margin-right: 10px;
+`;
+
 const StyledCardSegment = styled(CardSegment)`
-  min-height: 300px;
   min-width: 300px;
 `;
 
 type Props = {
-  reports :List<Map>;
+  isLoading ? :boolean;
+  reports ? :List<Map>;
 };
 
 // Do not re-render when reports do not change
 class BehaviorCard extends PureComponent<Props> {
+  static defaultProps = {
+    isLoading: false,
+    reports: List(),
+  }
 
   countBehaviors = memoizeOne((reports :List) :Map => Map()
     .withMutations((mutable) => {
@@ -55,20 +70,23 @@ class BehaviorCard extends PureComponent<Props> {
     .toArray());
 
   render() {
-    const { reports } = this.props;
+    const { isLoading, reports } = this.props;
 
     const behaviorCounts = this.countBehaviors(reports);
-    const total = reports.count();
+    const total = reports ? reports.count() : 0;
 
     return (
       <Card>
         <CardHeader mode="primary" padding="sm">
           <H1>
+            <IconWrapper>
+              <FontAwesomeIcon icon={faHeadSideBrain} fixedWidth />
+            </IconWrapper>
             Behaviors
           </H1>
         </CardHeader>
         <StyledCardSegment padding="sm">
-          <DashedList>
+          <DashedList isLoading={isLoading}>
             {
               behaviorCounts.map(([name, count]) => (
                 <BehaviorItem

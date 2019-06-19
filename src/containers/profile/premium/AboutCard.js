@@ -52,6 +52,7 @@ const AboutGrid = styled.div`
 type Props = {
   physicalAppearance :Map;
   selectedPerson :Map;
+  isLoading :boolean;
 };
 
 class AboutCard extends Component<Props> {
@@ -73,6 +74,7 @@ class AboutCard extends Component<Props> {
   render() {
 
     const {
+      isLoading,
       physicalAppearance,
       selectedPerson
     } = this.props;
@@ -118,13 +120,31 @@ class AboutCard extends Component<Props> {
           {aliases}
         </CardSegment>
         <CardSegment vertical padding="sm">
-          <AboutDetail icon={faUser} content={race} />
-          <AboutDetail icon={faVenusMars} content={sex} />
+          <AboutDetail
+              content={race}
+              isLoading={isLoading}
+              icon={faUser} />
+          <AboutDetail
+              content={sex}
+              isLoading={isLoading}
+              icon={faVenusMars} />
           <AboutGrid>
-            <AboutDetail icon={faRulerVertical} content={formattedHeight} />
-            <AboutDetail icon={faWeightHanging} content={formattedWeight} />
-            <AboutDetail icon={faUserHardHat} content={hairColor} />
-            <AboutDetail icon={faEye} content={eyeColor} />
+            <AboutDetail
+                content={formattedHeight}
+                isLoading={isLoading}
+                icon={faRulerVertical} />
+            <AboutDetail
+                content={formattedWeight}
+                isLoading={isLoading}
+                icon={faWeightHanging} />
+            <AboutDetail
+                content={hairColor}
+                isLoading={isLoading}
+                icon={faUserHardHat} />
+            <AboutDetail
+                content={eyeColor}
+                isLoading={isLoading}
+                icon={faEye} />
           </AboutGrid>
         </CardSegment>
       </Card>
