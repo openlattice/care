@@ -3,8 +3,13 @@
  */
 
 import Papa from 'papaparse';
-import moment from 'moment';
-import { call, put, takeEvery } from '@redux-saga/core/effects';
+import { DateTime } from 'luxon';
+import {
+  call,
+  put,
+  select,
+  takeEvery
+} from '@redux-saga/core/effects';
 import {
   List,
   Map,
@@ -13,10 +18,9 @@ import {
 } from 'immutable';
 import {
   Constants,
-  DataApi,
   EntityDataModelApi,
-  SearchApi
 } from 'lattice';
+import { SearchApiActions, SearchApiSagas } from 'lattice-sagas';
 import type { SequenceAction } from 'redux-reqseq';
 
 import FileSaver from '../../utils/FileSaver';
@@ -29,6 +33,15 @@ import { getSearchTerm } from '../../utils/DataUtils';
 import * as FQN from '../../edm/DataModelFqns';
 
 const { OPENLATTICE_ID_FQN } = Constants;
+
+const {
+  searchEntitySetDataWorker,
+  searchEntityNeighborsWithFilterWorker
+} = SearchApiSagas;
+const {
+  searchEntitySetData,
+  searchEntityNeighborsWithFilter
+} = SearchApiActions;
 
 const HIDDEN_FQNS = [
   OPENLATTICE_ID_FQN,
@@ -126,19 +139,20 @@ function* downloadFormsWorker(action :SequenceAction) :Generator<*, *, *> {
   try {
     yield put(downloadForms.request(action.id));
     const {
-      app,
       startDate,
       endDate
     } = action.value;
 
-    const start = moment(startDate);
-    const end = moment(endDate);
-    const reportEntitySetId = getReportESId(app);
-    const peopleEntitySetId = getPeopleESId(app);
-    const appearsInEntitySetId = getAppearsInESId(app);
+    const startDT = DateTime.fromISO(startDate);
+    const endDT = DateTime.fromISO(endDate);
+    const edm :Map = yield select(state => state.get('edm'));
+    const app = yield select(state => state.get('app', Map()));
+    const reportESID = getReportESId(app);
+    const peopleESID = getPeopleESId(app);
+    const appearsInESID = getAppearsInESId(app);
 
     const projection = yield call(EntityDataModelApi.getEntityDataModelProjection,
-      [reportEntitySetId, peopleEntitySetId, appearsInEntitySetId].map(id => ({
+      [reportESID, peopleESID, appearsInESID].map(id => ({
         id,
         type: 'EntitySet',
         include: ['EntitySet', 'PropertyTypeInEntitySet']
@@ -153,29 +167,49 @@ function* downloadFormsWorker(action :SequenceAction) :Generator<*, *, *> {
       propertyTypesByFqn = propertyTypesByFqn.set(fqn, fromJS(propertyType));
       titleToFqn = titleToFqn.set(title, fqn);
     });
-
-    const propertyTypeId = propertyTypesByFqn.getIn([FQN.DATE_TIME_OCCURRED_FQN, 'id']);
-    const entitySetSize = yield call(DataApi.getEntitySetSize, reportEntitySetId);
+    const datetimePTID = edm.getIn(['fqnToIdMap', FQN.DATE_TIME_OCCURRED_FQN]);
     const options = {
-      searchTerm: getSearchTerm(propertyTypeId, `[${start.toISOString(true)} TO ${end.toISOString(true)}]`),
+      searchTerm: getSearchTerm(datetimePTID, `[${startDT.toString()} TO ${endDT.toString()}]`),
       start: 0,
-      maxHits: entitySetSize,
+      maxHits: 10000,
       fuzzy: false
     };
 
-    const reportData = yield call(SearchApi.searchEntitySetData, reportEntitySetId, options);
+    const reportsResponse = yield call(
+      searchEntitySetDataWorker,
+      searchEntitySetData({
+        entitySetId: reportESID,
+        searchOptions: options
+      })
+    );
+
+    if (reportsResponse.error) throw reportsResponse.error;
+    const reportData = fromJS(reportsResponse.data);
 
     let reportsAsMap = Map();
-    reportData.hits.forEach((row) => {
-      reportsAsMap = reportsAsMap.set(row[OPENLATTICE_ID_FQN][0], fromJS(row));
+    reportData.get('hits', List()).forEach((row) => {
+      const reportEKID = row.getIn([OPENLATTICE_ID_FQN, 0]);
+      reportsAsMap = reportsAsMap.set(reportEKID, row);
     });
+    const reportEKIDs = reportsAsMap.keySeq().toJS();
 
-    let neighborsById = yield call(
-      SearchApi.searchEntityNeighborsBulk,
-      reportEntitySetId,
-      reportsAsMap.keySeq().toJS()
+    const peopleSearchParams = {
+      entitySetId: reportESID,
+      filter: {
+        entityKeyIds: reportEKIDs,
+        edgeEntitySetIds: [appearsInESID],
+        destinationEntitySetIds: [],
+        sourceEntitySetIds: [peopleESID],
+      }
+    };
+
+    const peopleSearchResponse = yield call(
+      searchEntityNeighborsWithFilterWorker,
+      searchEntityNeighborsWithFilter(peopleSearchParams)
     );
-    neighborsById = fromJS(neighborsById);
+
+    if (peopleSearchResponse.error) throw peopleSearchResponse.error;
+    const peopleData = fromJS(peopleSearchResponse.data);
 
     const getUpdatedEntity = (combinedEntityInit, entitySetName, details) => {
       let combinedEntity = combinedEntityInit;
@@ -198,14 +232,14 @@ function* downloadFormsWorker(action :SequenceAction) :Generator<*, *, *> {
 
     let jsonResults = List();
     let allHeaders = OrderedSet();
-    neighborsById.keySeq().forEach((id) => {
+    reportEKIDs.forEach((id) => {
       let combinedEntity = getUpdatedEntity(
         Map(),
         'BHRs',
-        reportsAsMap.get(id)
+        reportsAsMap.get(id, Map())
       );
 
-      neighborsById.get(id).forEach((neighbor) => {
+      peopleData.get(id, List()).forEach((neighbor) => {
         combinedEntity = getUpdatedEntity(
           combinedEntity,
           neighbor.getIn(['associationEntitySet', 'name']),
@@ -240,7 +274,7 @@ function* downloadFormsWorker(action :SequenceAction) :Generator<*, *, *> {
       data: jsonResults.toJS()
     });
 
-    const name = `BHRs-${start.format('MM-DD-YYYY')}-to-${end.format('MM-DD-YYYY')}`;
+    const name = `BHRs-${startDT.toISODate()}-to-${endDT.toISODate()}`;
 
     FileSaver.saveFile(csv, name, 'csv');
 
@@ -255,6 +289,11 @@ function* downloadFormsWorker(action :SequenceAction) :Generator<*, *, *> {
   }
 }
 
-export function* downloadFormsWatcher() :Generator<*, *, *> {
+function* downloadFormsWatcher() :Generator<*, *, *> {
   yield takeEvery(DOWNLOAD_FORMS, downloadFormsWorker);
 }
+
+export {
+  downloadFormsWatcher,
+  downloadFormsWorker,
+};
