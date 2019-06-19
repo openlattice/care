@@ -48,7 +48,7 @@ const ProfileBanner = ({ selectedPerson } :Props) => {
   }
 
   return (
-    <Banner isOpen={!selectedPerson.isEmpty()} sticky>
+    <Banner mode="default" isOpen={!selectedPerson.isEmpty()} sticky>
       <Content>
         <Name>{`${lastName}, ${firstName} ${middleInitial}`}</Name>
         <Birthdate>{`DOB: ${formattedDob}`}</Birthdate>
