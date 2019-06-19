@@ -40,7 +40,6 @@ const H2 = styled.h2`
 
 const DeescalationContentWrapper = styled.div`
   display: flex;
-  min-height: 150px;
 
   > div {
     display: flex;
