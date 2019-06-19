@@ -16,7 +16,6 @@ const H2 = styled.h2`
 
 const ActionRow = styled.div`
   display: flex;
-  flex: 1;
   justify-content: center;
 `;
 
