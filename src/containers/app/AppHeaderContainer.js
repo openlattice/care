@@ -247,6 +247,7 @@ class AppHeaderContainer extends Component<Props, {}> {
           onChange={handleOnChange}
           options={organizationOptions}
           placeholder="Select..."
+          menuPortalTarget={document.body}
           styles={orgSelectStyles} />
     );
   }
