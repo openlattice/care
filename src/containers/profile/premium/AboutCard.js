@@ -4,10 +4,11 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import { DateTime } from 'luxon';
 import {
+  Button,
   Card,
   CardSegment,
   CardHeader,
-  Label
+  Label,
 } from 'lattice-ui-kit';
 import { Map } from 'immutable';
 import {
@@ -17,10 +18,11 @@ import {
   faVenusMars,
   faWeightHanging,
 } from '@fortawesome/pro-solid-svg-icons';
-import { faUserHardHat } from '@fortawesome/pro-regular-svg-icons';
+import { faUserHardHat, faEdit } from '@fortawesome/pro-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import AboutDetail from './AboutDetail';
+import EditAboutModal from './EditAboutModal';
 import * as FQN from '../../../edm/DataModelFqns';
 import { inchesToFeetString } from '../../../utils/DataUtils';
 
@@ -36,6 +38,11 @@ const H1 = styled.h1`
   font-size: 18px;
   font-weight: 600;
   align-items: center;
+`;
+
+const EditButton = styled(Button)`
+  margin-left: auto;
+  padding: 7px;
 `;
 
 const Name = styled(AboutDetail)`
@@ -63,7 +70,27 @@ type Props = {
   isLoading :boolean;
 };
 
-class AboutCard extends Component<Props> {
+type State = {
+  showEdit :boolean;
+};
+
+class AboutCard extends Component<Props, State> {
+
+  state = {
+    showEdit: false
+  };
+
+  handleShowEdit = () => {
+    this.setState({
+      showEdit: true
+    });
+  }
+
+  handleHideEdit = () => {
+    this.setState({
+      showEdit: false
+    });
+  }
 
   formattedName = () => {
     const { selectedPerson } = this.props;
@@ -86,6 +113,7 @@ class AboutCard extends Component<Props> {
       physicalAppearance,
       selectedPerson
     } = this.props;
+    const { showEdit } = this.state;
 
     const formattedName = this.formattedName();
 
@@ -115,6 +143,9 @@ class AboutCard extends Component<Props> {
               <FontAwesomeIcon icon={faUser} fixedWidth />
             </IconWrapper>
             About
+            <EditButton mode="primary" onClick={this.handleShowEdit}>
+              <FontAwesomeIcon icon={faEdit} fixedWidth />
+            </EditButton>
           </H1>
         </CardHeader>
         <CardSegment vertical padding="sm">
@@ -155,6 +186,7 @@ class AboutCard extends Component<Props> {
                 icon={faEye} />
           </AboutGrid>
         </CardSegment>
+        <EditAboutModal isOpen={showEdit} onClose={this.handleHideEdit} />
       </Card>
     );
   }

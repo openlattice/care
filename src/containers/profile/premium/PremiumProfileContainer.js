@@ -102,7 +102,7 @@ type State = {
   showEdit :boolean;
 };
 
-class ProfileContainer extends Component<Props, State> {
+class PremiumProfileContainer extends Component<Props, State> {
 
   componentDidMount() {
     const {
@@ -241,4 +241,4 @@ const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
 });
 
 // $FlowFixMe
-export default connect(mapStateToProps, mapDispatchToProps)(ProfileContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(PremiumProfileContainer);
