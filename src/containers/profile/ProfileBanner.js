@@ -12,6 +12,8 @@ const Content = styled.div`
   font-size: 24px;
   min-width: 0;
   justify-content: center;
+  transition: opacity 0.5s;
+  opacity: ${props => (props.hasContent ? 0 : 1)};
 `;
 
 const Name = styled.strong`
@@ -48,8 +50,8 @@ const ProfileBanner = ({ selectedPerson } :Props) => {
   }
 
   return (
-    <Banner mode="default" isOpen={!selectedPerson.isEmpty()} sticky>
-      <Content>
+    <Banner mode="default" isOpen sticky>
+      <Content hasContent={selectedPerson.isEmpty()}>
         <Name>{`${lastName}, ${firstName} ${middleInitial}`}</Name>
         <Birthdate>{`DOB: ${formattedDob}`}</Birthdate>
       </Content>
