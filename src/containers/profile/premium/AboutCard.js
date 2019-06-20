@@ -38,15 +38,23 @@ const H1 = styled.h1`
   align-items: center;
 `;
 
-const Name = styled.div`
+const Name = styled(AboutDetail)`
   text-transform: uppercase;
   font-weight: 600;
+`;
+
+const Birthdate = styled(AboutDetail)`
+  width: 50%;
 `;
 
 const AboutGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-gap: 5px;
+
+  > div:nth-child(-n + 2) {
+    grid-column: auto / span 2;
+  };
 `;
 
 type Props = {
@@ -82,22 +90,22 @@ class AboutCard extends Component<Props> {
     const formattedName = this.formattedName();
 
     const rawDob = selectedPerson.getIn([FQN.PERSON_DOB_FQN, 0], '');
-    const race = selectedPerson.getIn([FQN.PERSON_RACE_FQN, 0], '---');
-    const sex = selectedPerson.getIn([FQN.PERSON_SEX_FQN, 0], '---');
-    const aliases = selectedPerson.getIn([FQN.PERSON_NICK_NAME_FQN], '---');
+    const race = selectedPerson.getIn([FQN.PERSON_RACE_FQN, 0], '');
+    const sex = selectedPerson.getIn([FQN.PERSON_SEX_FQN, 0], '');
+    const aliases = selectedPerson.getIn([FQN.PERSON_NICK_NAME_FQN], '');
     let formattedDob = '';
 
     if (rawDob) {
       formattedDob = DateTime.fromISO(rawDob).toLocaleString(DateTime.DATE_SHORT);
     }
 
-    const hairColor = physicalAppearance.getIn([FQN.HAIR_COLOR_FQN, 0], '---');
-    const eyeColor = physicalAppearance.getIn([FQN.EYE_COLOR_FQN, 0], '---');
+    const hairColor = physicalAppearance.getIn([FQN.HAIR_COLOR_FQN, 0], '');
+    const eyeColor = physicalAppearance.getIn([FQN.EYE_COLOR_FQN, 0], '');
     const height = physicalAppearance.getIn([FQN.HEIGHT_FQN, 0]);
     const weight = physicalAppearance.getIn([FQN.WEIGHT_FQN, 0]);
 
-    const formattedHeight = height ? inchesToFeetString(height) : '---';
-    const formattedWeight = weight ? `${weight} lbs` : '---';
+    const formattedHeight = height ? inchesToFeetString(height) : '';
+    const formattedWeight = weight ? `${weight} lbs` : '';
 
     return (
       <Card>
@@ -110,25 +118,25 @@ class AboutCard extends Component<Props> {
           </H1>
         </CardHeader>
         <CardSegment vertical padding="sm">
-          <Name>{formattedName}</Name>
-          <div>{formattedDob}</div>
+          <Name content={formattedName} isLoading={isLoading} />
+          <Birthdate content={formattedDob} isLoading={isLoading} />
         </CardSegment>
         <CardSegment vertical padding="sm">
-          <Label subtle>
-            Aliases
-          </Label>
-          {aliases}
+          <Label subtle>Aliases</Label>
+          <AboutDetail
+              content={aliases}
+              isLoading={isLoading} />
         </CardSegment>
         <CardSegment vertical padding="sm">
-          <AboutDetail
-              content={race}
-              isLoading={isLoading}
-              icon={faUser} />
-          <AboutDetail
-              content={sex}
-              isLoading={isLoading}
-              icon={faVenusMars} />
           <AboutGrid>
+            <AboutDetail
+                content={race}
+                isLoading={isLoading}
+                icon={faUser} />
+            <AboutDetail
+                content={sex}
+                isLoading={isLoading}
+                icon={faVenusMars} />
             <AboutDetail
                 content={formattedHeight}
                 isLoading={isLoading}
