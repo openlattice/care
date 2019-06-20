@@ -42,7 +42,7 @@ const H1 = styled.h1`
 
 const EditButton = styled(Button)`
   margin-left: auto;
-  padding: 7px;
+  padding: 2px;
 `;
 
 const Name = styled(AboutDetail)`
