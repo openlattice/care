@@ -2,11 +2,13 @@
  * @flow
  */
 
+import { Map } from 'immutable';
 import { connectRouter } from 'connected-react-router/immutable';
 import { AuthReducer } from 'lattice-auth';
 import { combineReducers } from 'redux-immutable';
 
 import { STATE } from '../../utils/constants/StateConstants';
+import { INITIALIZE_APPLICATION } from '../../containers/app/AppActions';
 
 import appReducer from '../../containers/app/AppReducer';
 import dashboardReducer from '../../containers/dashboard/DashboardReducer';
@@ -30,7 +32,7 @@ import subjectInformationReducer from '../../containers/pages/subjectinformation
 
 export default function reduxReducer(routerHistory :any) {
 
-  return combineReducers({
+  const allReducers = combineReducers({
     app: appReducer,
     auth: AuthReducer,
     dashboard: dashboardReducer,
@@ -54,4 +56,14 @@ export default function reduxReducer(routerHistory :any) {
     [STATE.SUBMIT]: submitReducer,
     [STATE.SUBSCRIBE]: subscribeReducer
   });
+
+  const rootReducer = (state ? :Map, action :Object) => {
+    if (action.type === INITIALIZE_APPLICATION) {
+      return allReducers(undefined, action);
+    }
+
+    return allReducers(state, action);
+  };
+
+  return rootReducer;
 }
