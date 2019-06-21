@@ -18,6 +18,7 @@ import DownloadsContainer from '../downloads/DownloadsContainer';
 import HomeContainer from '../home/HomeContainer';
 import PeopleRouter from '../people/PeopleRouter';
 import Spinner from '../../components/spinner/Spinner';
+import SupportButton from '../../components/buttons/SupportButton';
 import LegitReportsRouter from '../reports/LegitReportsRouter';
 import DashboardContainer from '../dashboard/DashboardContainer';
 import SubscribeContainer from '../subscribe/SubscribeContainer';
@@ -42,7 +43,6 @@ import {
   MEDIA_QUERY_MD,
   MEDIA_QUERY_LG
 } from '../../core/style/Sizes';
-
 
 // TODO: this should come from lattice-ui-kit, maybe after the next release. current version v0.1.1
 const APP_BG :string = '#f8f8fb';
@@ -165,6 +165,7 @@ class AppContainer extends Component<Props> {
         <AppHeaderContainer />
         <AppContentOuterWrapper>
           { this.renderAppContent() }
+          <SupportButton />
         </AppContentOuterWrapper>
       </AppContainerWrapper>
     );
