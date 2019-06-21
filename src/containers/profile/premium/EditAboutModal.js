@@ -2,8 +2,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import { Map } from 'immutable';
-import { Card, CardHeader } from 'lattice-ui-kit';
-import Modal, { ModalTransition } from '@atlaskit/modal-dialog';
+import { Card, CardHeader, Modal } from 'lattice-ui-kit';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/pro-solid-svg-icons';
 import { connect } from 'react-redux';
@@ -17,7 +16,7 @@ import EditProfileForm from '../EditProfileForm';
 import { updateProfileAbout } from '../ProfileActions';
 
 const StyledCard = styled(Card)`
-  margin: 0 -20px;
+  margin: 0 -30px;
   border: none;
 `;
 
@@ -69,12 +68,15 @@ class EditAboutModal extends Component<Props> {
       selectedPerson,
       updateAboutState
     } = this.props;
+
     return (
-      <ModalTransition>
+      <>
         { isOpen && (
           <Modal
-              scrollBehavior="outside'"
-              onClose={onClose}>
+              isVisible
+              onClose={onClose}
+              viewportScrolling
+              withHeader={false}>
             <StyledCard>
               <CardHeader mode="primary" padding="sm">
                 <H1>
@@ -91,7 +93,7 @@ class EditAboutModal extends Component<Props> {
             </StyledCard>
           </Modal>
         )}
-      </ModalTransition>
+      </>
     );
   }
 }
