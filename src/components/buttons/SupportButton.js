@@ -18,23 +18,23 @@ const ButtonLink = styled.a.attrs(() => ({
   href: 'https://support.openlattice.com/servicedesk/customer/portal/1',
   target: '_blank'
 }))`
-  display: flex;
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
   align-items: center;
   background-color: ${WHITE};
   border-radius: 5px;
   border: 1px solid ${NEUTRALS[4]};
+  bottom: 30px;
   color: ${NEUTRALS[1]};
-  height: 38px;
-  font-weight: 600;
-  justify-content: center;
-  padding: 0 10px;
+  display: flex;
   font-size: 12px;
+  font-weight: 600;
+  height: 38px;
+  justify-content: center;
   line-height: 17px;
-  text-decoration: none;
+  padding: 0 10px;
+  position: fixed;
+  right: 30px;
   text-align: center;
+  text-decoration: none;
 
   :hover {
     background-color: ${NEUTRALS[8]};
