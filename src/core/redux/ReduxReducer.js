@@ -57,7 +57,7 @@ export default function reduxReducer(routerHistory :any) {
     [STATE.SUBSCRIBE]: subscribeReducer
   });
 
-  const rootReducer = (state ? :Map, action :Object) => {
+  const rootReducer = (state :Map, action :Object) => {
     if (action.type === INITIALIZE_APPLICATION) {
       return allReducers(undefined, action);
     }
