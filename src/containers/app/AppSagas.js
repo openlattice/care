@@ -192,7 +192,7 @@ function* switchOrganizationWorker(action :Object) :Generator<*, *, *> {
     if (value !== currentOrgId) {
       AccountUtils.storeOrganizationId(value);
       yield put(push(Routes.HOME_PATH));
-      yield call(initializeApplicationWorker, initializeApplication());
+      yield put(initializeApplication());
     }
   }
   catch (error) {
