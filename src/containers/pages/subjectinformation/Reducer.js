@@ -10,7 +10,6 @@ import { CLEAR, SET_INPUT_VALUE, SET_INPUT_VALUES } from './ActionFactory';
 import { CLEAR_CRISIS_TEMPLATE } from '../../crisis/CrisisActionFactory';
 import { SUBJECT_INFORMATION, POST_PROCESS_FIELDS } from '../../../utils/constants/CrisisTemplateConstants';
 import { FORM_STEP_STATUS } from '../../../utils/constants/FormConstants';
-import { isNotInteger } from '../../../utils/ValidationUtils';
 
 const {
   FULL_NAME,
