@@ -72,9 +72,7 @@ class BehaviorCard extends PureComponent<Props> {
 
   render() {
     const { isLoading, reports } = this.props;
-
     const behaviorCounts = this.countBehaviors(reports);
-    console.log(behaviorCounts);
     const total = reports ? reports.count() : 0;
 
     return (

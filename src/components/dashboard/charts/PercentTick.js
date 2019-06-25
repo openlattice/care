@@ -50,7 +50,6 @@ type Props = {
 
 const PercentTick = ({ payload, y } :Props) => {
   const { value } = payload;
-  console.log(payload);
 
   const lines = splitText(value);
   const yInit = y - (lines.length * 10);
