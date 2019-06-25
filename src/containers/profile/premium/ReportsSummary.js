@@ -1,5 +1,6 @@
 // @flow
 import React, { PureComponent } from 'react';
+import styled from 'styled-components';
 import { Models } from 'lattice';
 import { List, Map } from 'immutable';
 import { Card, CardSegment } from 'lattice-ui-kit';
@@ -12,6 +13,15 @@ import {
 } from '../../../edm/DataModelFqns';
 
 const { FullyQualifiedName } = Models;
+
+const H1 = styled.h1`
+  display: flex;
+  flex: 1;
+  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  align-items: center;
+`;
 
 type Props = {
   reports :List<Map>;
@@ -36,6 +46,7 @@ class ReportsSummary extends PureComponent<Props> {
     const data = this.countPropertyValues(reports, OBSERVED_BEHAVIORS_FQN);
     return (
       <CardSegment padding="sm" vertical>
+        <H1>Behavior</H1>
         <PercentBarChart data={data} total={total} />
       </CardSegment>
     );
@@ -47,6 +58,7 @@ class ReportsSummary extends PureComponent<Props> {
     const data = this.countPropertyValues(reports, DISPATCH_REASON_FQN);
     return (
       <CardSegment padding="sm" vertical>
+        <H1>Nature of Crisis</H1>
         <PercentBarChart data={data} total={total} />
       </CardSegment>
     );
@@ -58,6 +70,7 @@ class ReportsSummary extends PureComponent<Props> {
     const data = this.countPropertyValues(reports, DISPOSITION_FQN);
     return (
       <CardSegment padding="sm" vertical>
+        <H1>Disposition</H1>
         <PercentBarChart data={data} total={total} />
       </CardSegment>
     );
