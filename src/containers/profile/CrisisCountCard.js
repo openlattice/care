@@ -6,7 +6,7 @@ import {
   CardSegment,
   Colors
 } from 'lattice-ui-kit';
-import { crisisCountSkeleton } from '../../components/skeletons/CrisisCountSkeleton';
+import { crisisCountSkeleton } from '../../components/skeletons';
 
 const { NEUTRALS } = Colors;
 
