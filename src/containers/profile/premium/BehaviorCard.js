@@ -52,17 +52,18 @@ class BehaviorCard extends PureComponent<Props> {
   countBehaviors = memoizeOne((reports :List) :Map => Map()
     .withMutations((mutable) => {
       reports.forEach((report) => {
-        const behavior = report.getIn([OBSERVED_BEHAVIORS_FQN, 0], '');
+        const behavior = report.get(OBSERVED_BEHAVIORS_FQN, []);
 
-        // increment if behavior exists
-        if (mutable.has(behavior)) {
-          mutable.update(behavior, count => count + 1);
-        }
-
-        // add new behaviors with names
-        if (behavior && behavior.length) {
-          mutable.set(behavior, 1);
-        }
+        behavior.forEach((type) => {
+          if (type) {
+            if (mutable.has(type)) {
+              mutable.update(type, count => count + 1);
+            }
+            else {
+              mutable.set(type, 1);
+            }
+          }
+        });
       });
     })
     .sortBy(count => count, (valueA, valueB) => valueB - valueA)
@@ -73,6 +74,7 @@ class BehaviorCard extends PureComponent<Props> {
     const { isLoading, reports } = this.props;
 
     const behaviorCounts = this.countBehaviors(reports);
+    console.log(behaviorCounts);
     const total = reports ? reports.count() : 0;
 
     return (
