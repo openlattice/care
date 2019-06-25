@@ -1,7 +1,6 @@
 // @flow
 import React, { PureComponent } from 'react';
 import styled from 'styled-components';
-import memoizeOne from 'memoize-one';
 import { List, Map } from 'immutable';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeadSideBrain } from '@fortawesome/pro-solid-svg-icons';
@@ -50,10 +49,10 @@ class BehaviorCard extends PureComponent<Props> {
     reports: List(),
   }
 
-  countBehaviors = memoizeOne((reports :List) :Map => countPropertyOccurrance(reports, OBSERVED_BEHAVIORS_FQN)
+  countBehaviors = (reports :List) :Map => countPropertyOccurrance(reports, OBSERVED_BEHAVIORS_FQN)
     .sortBy(count => count, (valueA, valueB) => valueB - valueA)
     .toKeyedSeq()
-    .toArray());
+    .toArray();
 
   render() {
     const { isLoading, reports } = this.props;

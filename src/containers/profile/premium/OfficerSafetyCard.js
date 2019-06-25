@@ -1,7 +1,6 @@
 // @flow
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import memoizeOne from 'memoize-one';
 import { List, Map } from 'immutable';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationTriangle } from '@fortawesome/pro-solid-svg-icons';
@@ -22,6 +21,7 @@ import {
   PERSON_INJURED_FQN,
   THREATENED_INDICATOR_FQN,
 } from '../../../edm/DataModelFqns';
+import { incrementValueAtKey } from './Utils';
 import {
   ARMED_WITH_WEAPON,
   INJURED_PARTIES,
@@ -62,7 +62,7 @@ class OfficerSafetyCard extends Component<Props> {
     reports: List()
   }
 
-  countSafetyIncidents = memoizeOne((reports :List) :Map => Map()
+  countSafetyIncidents = (reports :List) :Map => Map()
     .withMutations((mutable) => {
       reports.forEach((report) => {
         const injuryType = report.get(INJURIES_FQN, List()).toJS();
@@ -80,26 +80,14 @@ class OfficerSafetyCard extends Component<Props> {
         const armedWithWeapon :boolean = report.getIn([ARMED_WITH_WEAPON_FQN, 0], false);
         const threatenedViolence :boolean = report.getIn([THREATENED_INDICATOR_FQN, 0], false);
 
-        this.incrementSafteyIncident(mutable, ARMED_WITH_WEAPON, armedWithWeapon);
-        this.incrementSafteyIncident(mutable, INJURED_PARTIES, threatenedViolence);
-        this.incrementSafteyIncident(mutable, THREATENED_VIOLENCE, hadInjuries);
+        incrementValueAtKey(mutable, ARMED_WITH_WEAPON, armedWithWeapon);
+        incrementValueAtKey(mutable, INJURED_PARTIES, threatenedViolence);
+        incrementValueAtKey(mutable, THREATENED_VIOLENCE, hadInjuries);
       });
     })
     .sortBy(count => count, (valueA, valueB) => valueB - valueA)
     .toKeyedSeq()
-    .toArray());
-
-  incrementSafteyIncident = (mutable :Map, incidentType :string, value :boolean) => {
-    // increment if behavior exists
-    if (value) {
-      if (mutable.has(incidentType)) {
-        mutable.update(incidentType, count => count + 1);
-      }
-      else {
-        mutable.set(incidentType, 1);
-      }
-    }
-  }
+    .toArray();
 
   render() {
     const { isLoading, reports } = this.props;
