@@ -6,6 +6,7 @@ import { List, Map } from 'immutable';
 import { Card, CardSegment } from 'lattice-ui-kit';
 import { OBSERVED_BEHAVIORS_FQN } from '../../../edm/DataModelFqns';
 import PercentBarChart from '../../../components/dashboard/charts/PercentBarChart';
+import { countPropertyOccurrance } from './Utils';
 
 const { FullyQualifiedName } = Models;
 
@@ -30,24 +31,7 @@ class ReportsSummary extends PureComponent<Props> {
 
   countPropertyValues = memoizeOne((reports :List, propertyTypeFqn :FullyQualifiedName) :Map => {
     const total = reports.count();
-    return Map()
-      .withMutations((mutable) => {
-        reports.forEach((report) => {
-          const propertyValues = report.get(propertyTypeFqn, []);
-
-          propertyValues.forEach((value) => {
-            // increment if behavior exists
-            if (value) {
-              if (mutable.has(value)) {
-                mutable.update(value, count => count + 1);
-              }
-              else {
-                mutable.set(value, 1);
-              }
-            }
-          });
-        });
-      })
+    return countPropertyOccurrance(reports, propertyTypeFqn)
       .sortBy(count => count, (valueA, valueB) => valueB - valueA)
       .toArray()
       .map(([name, count]) => {

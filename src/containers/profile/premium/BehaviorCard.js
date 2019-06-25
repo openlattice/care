@@ -14,6 +14,7 @@ import {
 import DashedList from './DashedList';
 import BehaviorItem from './BehaviorItem';
 import { OBSERVED_BEHAVIORS_FQN } from '../../../edm/DataModelFqns';
+import { countPropertyOccurrance } from './Utils';
 
 const H1 = styled.h1`
   display: flex;
@@ -49,23 +50,7 @@ class BehaviorCard extends PureComponent<Props> {
     reports: List(),
   }
 
-  countBehaviors = memoizeOne((reports :List) :Map => Map()
-    .withMutations((mutable) => {
-      reports.forEach((report) => {
-        const behavior = report.get(OBSERVED_BEHAVIORS_FQN, []);
-
-        behavior.forEach((type) => {
-          if (type) {
-            if (mutable.has(type)) {
-              mutable.update(type, count => count + 1);
-            }
-            else {
-              mutable.set(type, 1);
-            }
-          }
-        });
-      });
-    })
+  countBehaviors = memoizeOne((reports :List) :Map => countPropertyOccurrance(reports, OBSERVED_BEHAVIORS_FQN)
     .sortBy(count => count, (valueA, valueB) => valueB - valueA)
     .toKeyedSeq()
     .toArray());
