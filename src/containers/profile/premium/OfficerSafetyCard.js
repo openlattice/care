@@ -1,5 +1,5 @@
 // @flow
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import styled from 'styled-components';
 import { List, Map } from 'immutable';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -56,7 +56,7 @@ type Props = {
   reports ? :List<Map>;
 };
 
-class OfficerSafetyCard extends Component<Props> {
+class OfficerSafetyCard extends PureComponent<Props> {
   static defaultProps = {
     isLoading: false,
     reports: List()
