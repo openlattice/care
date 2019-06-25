@@ -25,9 +25,10 @@ import type { Match } from 'react-router';
 
 import AboutCard from './AboutCard';
 import BackgroundInformationCard from './BackgroundInformationCard';
-import DeescalationCard from './DeescalationCard';
 import BehaviorCard from './BehaviorCard';
+import DeescalationCard from './DeescalationCard';
 import OfficerSafetyCard from './OfficerSafetyCard';
+import ReportsSummary from './ReportsSummary';
 import ResponsePlanCard from './ResponsePlanCard';
 import CrisisCountCard from '../CrisisCountCard';
 import ProfileBanner from '../ProfileBanner';
@@ -211,6 +212,7 @@ class PremiumProfileContainer extends Component<Props, State> {
                   results={reports}
                   resultLabels={labelMapReport}
                   resultComponent={ProfileResult} />
+              <ReportsSummary reports={reports} />
             </CardStack>
           </ProfileGrid>
         </ContentWrapper>
