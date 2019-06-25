@@ -25,6 +25,7 @@ import AboutDetail from './AboutDetail';
 import EditAboutModal from './EditAboutModal';
 import * as FQN from '../../../edm/DataModelFqns';
 import { inchesToFeetString } from '../../../utils/DataUtils';
+import { getNameFromPerson } from '../../../utils/PersonUtils';
 
 const IconWrapper = styled.span`
   vertical-align: middle;
@@ -92,20 +93,6 @@ class AboutCard extends Component<Props, State> {
     });
   }
 
-  formattedName = () => {
-    const { selectedPerson } = this.props;
-    const firstName = selectedPerson.getIn([FQN.PERSON_FIRST_NAME_FQN, 0], '');
-    const lastName = selectedPerson.getIn([FQN.PERSON_LAST_NAME_FQN, 0], '');
-    const middle = selectedPerson.getIn([FQN.PERSON_MIDDLE_NAME_FQN, 0], '');
-    let middleInitial = '';
-
-    if (middle) {
-      middleInitial = `${middle.charAt(0)}.`;
-    }
-
-    return `${lastName}, ${firstName} ${middleInitial}`;
-  }
-
   render() {
 
     const {
@@ -115,7 +102,7 @@ class AboutCard extends Component<Props, State> {
     } = this.props;
     const { showEdit } = this.state;
 
-    const formattedName = this.formattedName();
+    const formattedName = getNameFromPerson(selectedPerson);
 
     const rawDob = selectedPerson.getIn([FQN.PERSON_DOB_FQN, 0], '');
     const race = selectedPerson.getIn([FQN.PERSON_RACE_FQN, 0], '');

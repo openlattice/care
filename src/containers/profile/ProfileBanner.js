@@ -1,10 +1,9 @@
 // @flow
 import React from 'react';
 import styled from 'styled-components';
-import { DateTime } from 'luxon';
 import { Map } from 'immutable';
 import { Banner } from 'lattice-ui-kit';
-import * as FQN from '../../edm/DataModelFqns';
+import { getDobFromPerson, getNameFromPerson } from '../../utils/PersonUtils';
 
 const Content = styled.div`
   display: flex;
@@ -35,25 +34,14 @@ type Props = {
 }
 
 const ProfileBanner = ({ selectedPerson } :Props) => {
-  const firstName = selectedPerson.getIn([FQN.PERSON_FIRST_NAME_FQN, 0], '');
-  const lastName = selectedPerson.getIn([FQN.PERSON_LAST_NAME_FQN, 0], '');
-  const rawDob = selectedPerson.getIn([FQN.PERSON_DOB_FQN, 0], '');
-  const middle = selectedPerson.getIn([FQN.PERSON_MIDDLE_NAME_FQN, 0], '');
-  let middleInitial = '';
-  let formattedDob = '';
-  if (middle) {
-    middleInitial = `${middle.charAt(0)}.`;
-  }
-
-  if (rawDob) {
-    formattedDob = DateTime.fromISO(rawDob).toLocaleString(DateTime.DATE_SHORT);
-  }
+  const dob = getDobFromPerson(selectedPerson);
+  const name = getNameFromPerson(selectedPerson);
 
   return (
     <Banner mode="default" isOpen sticky>
       <Content hasContent={selectedPerson.isEmpty()}>
-        <Name>{`${lastName}, ${firstName} ${middleInitial}`}</Name>
-        <Birthdate>{`DOB: ${formattedDob}`}</Birthdate>
+        <Name>{name}</Name>
+        <Birthdate>{`DOB: ${dob}`}</Birthdate>
       </Content>
     </Banner>
   );
