@@ -11,6 +11,7 @@ import { RequestStates } from 'redux-reqseq';
 import {
   Button,
   Card,
+  CardHeader,
   CardSegment,
   CardStack,
   Colors,
@@ -47,7 +48,7 @@ import { goToPath } from '../../core/router/RoutingActions';
 import type { RoutingAction } from '../../core/router/RoutingActions';
 
 const { OPENLATTICE_ID_FQN } = Constants;
-const { NEUTRALS, PURPLES, WHITE } = Colors;
+const { NEUTRALS } = Colors;
 
 // Fixed placeholder size
 const PlaceholderPortrait = styled(FontAwesomeIcon)`
@@ -58,7 +59,9 @@ const PlaceholderPortrait = styled(FontAwesomeIcon)`
 const H1 = styled.h1`
   display: flex;
   flex: 1 0 auto;
-  color: ${WHITE};
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
   align-items: center;
 `;
 
@@ -226,17 +229,15 @@ class ProfileContainer extends Component<Props, State> {
 
     return (
       <Card>
-        <CardSegment padding="sm" bgColor={PURPLES[2]}>
-          <header>
-            <H1>
-              <UserIcon fixedWidth />
-              About
-              <EditButton mode="primary" onClick={this.handleShowEdit}>
-                <FontAwesomeIcon icon={faEdit} fixedWidth />
-              </EditButton>
-            </H1>
-          </header>
-        </CardSegment>
+        <CardHeader mode="primary" padding="sm">
+          <H1>
+            <UserIcon fixedWidth />
+            About
+            <EditButton mode="primary" onClick={this.handleShowEdit}>
+              <FontAwesomeIcon icon={faEdit} fixedWidth />
+            </EditButton>
+          </H1>
+        </CardHeader>
         { content }
       </Card>
     );

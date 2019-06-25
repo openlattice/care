@@ -1,9 +1,8 @@
-import { OTHER, SUBJECT_INFORMATION } from '../../../utils/constants/CrisisTemplateConstants';
 
 export const GENDERS = [
   'Male',
   'Female',
-  OTHER
+  'Unknown',
 ];
 
 export const RACES = [
