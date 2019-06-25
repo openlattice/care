@@ -4,12 +4,14 @@ import {
   Bar,
   BarChart,
   XAxis,
+  Tooltip,
   LabelList,
   ResponsiveContainer,
   YAxis
 } from 'recharts';
 import { Colors } from 'lattice-ui-kit';
 import PercentTick from './PercentTick';
+import ChartTooltip from './ChartTooltip';
 
 const { PURPLES } = Colors;
 
@@ -19,6 +21,22 @@ type Props = {
 };
 
 class BasicBarChart extends Component <Props> {
+
+  renderTooltip = ({ label, payload } :any) => {
+    const data = payload[0];
+    if (data && data.payload) {
+      const { count, percent } = data.payload;
+      return (
+        <ChartTooltip>
+          <div>{label}</div>
+          <div>{`count: ${count}`}</div>
+          <div>{`percent: ${percent}`}</div>
+        </ChartTooltip>
+      );
+    }
+
+    return null;
+  };
 
   renderLabel = (labelProps :any) => {
     const { total } = this.props;
@@ -55,6 +73,7 @@ class BasicBarChart extends Component <Props> {
               hide
               type="number"
               domain={[0, 100]} />
+          <Tooltip content={this.renderTooltip} />
           <Bar
               barSize={24}
               maxBarSize={32}
