@@ -65,15 +65,15 @@ class OfficerSafetyCard extends PureComponent<Props> {
   countSafetyIncidents = (reports :List) :Map => Map()
     .withMutations((mutable) => {
       reports.forEach((report) => {
-        const injuryType = report.get(INJURIES_FQN, List()).toJS();
+        const injuryType = report.get(INJURIES_FQN, List());
+        const injuredParties = report.get(PERSON_INJURED_FQN, List());
         const otherInjuryType = report.getIn([INJURIES_OTHER_FQN, 0], '');
-        const injuredParties = report.get(PERSON_INJURED_FQN, List()).toJS();
         const otherInjuredPerson = report.getIn([OTHER_PERSON_INJURED_FQN, 0], '');
 
         const hadInjuries :boolean = (
-          injuryType.length > 0
+          injuryType.count() > 0
+          || injuredParties.count() > 0
           || otherInjuryType.length > 0
-          || injuredParties.length > 0
           || otherInjuredPerson.length > 0
         );
 
