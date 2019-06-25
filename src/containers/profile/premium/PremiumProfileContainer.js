@@ -92,7 +92,6 @@ type Props = {
   fetchAppearanceState :RequestState;
   fetchPersonState :RequestState;
   fetchReportsState :RequestState;
-  // updateAboutState :RequestState;
   match :Match;
   physicalAppearance :Map;
   reports :List<Map>;
@@ -225,7 +224,6 @@ const mapStateToProps = state => ({
   fetchAppearanceState: state.getIn(['profile', 'fetchAppearanceState'], RequestStates.STANDBY),
   fetchPersonState: state.getIn(['profile', 'fetchPersonState'], RequestStates.STANDBY),
   fetchReportsState: state.getIn(['profile', 'fetchReportsState'], RequestStates.STANDBY),
-  // updateAboutState: state.getIn(['profile', 'updateAboutState'], RequestStates.STANDBY),
   physicalAppearance: state.getIn(['profile', 'physicalAppearance'], Map()),
   reports: state.getIn(['profile', 'reports'], List()),
   selectedPerson: state.getIn(['profile', 'selectedPerson'], Map()),
