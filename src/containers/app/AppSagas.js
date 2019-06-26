@@ -11,7 +11,7 @@ import {
   takeEvery
 } from '@redux-saga/core/effects';
 import { push } from 'connected-react-router';
-import { Types } from 'lattice';
+import { Constants, Types, SearchApi } from 'lattice';
 import { AccountUtils } from 'lattice-auth';
 import {
   AppApiActions,
@@ -20,7 +20,10 @@ import {
   DataApiSagas,
   EntityDataModelApiActions,
   EntityDataModelApiSagas,
+  SearchApiActions,
+  SearchApiSagas,
 } from 'lattice-sagas';
+import { Map, fromJS } from 'immutable';
 import type { SequenceAction } from 'redux-reqseq';
 
 import Logger from '../../utils/Logger';
@@ -41,15 +44,18 @@ import {
 } from './AppActions';
 import { isValidUuid } from '../../utils/Utils';
 
+const { OPENLATTICE_ID_FQN } = Constants;
 const { SecurableTypes } = Types;
-const { getEntitySetData } = DataApiActions;
-const { getEntitySetDataWorker } = DataApiSagas;
-const { getEntityDataModelProjection, getAllPropertyTypes } = EntityDataModelApiActions;
-const { getEntityDataModelProjectionWorker, getAllPropertyTypesWorker } = EntityDataModelApiSagas;
 const { getApp, getAppConfigs, getAppTypes } = AppApiActions;
 const { getAppWorker, getAppConfigsWorker, getAppTypesWorker } = AppApiSagas;
+const { getEntityDataModelProjection, getAllPropertyTypes } = EntityDataModelApiActions;
+const { getEntityDataModelProjectionWorker, getAllPropertyTypesWorker } = EntityDataModelApiSagas;
+const { getEntitySetData } = DataApiActions;
+const { getEntitySetDataWorker } = DataApiSagas;
+const { searchEntitySetData } = SearchApiActions;
+const { searchEntitySetDataWorker } = SearchApiSagas;
 
-const { HOSPITALS_FQN } = APP_TYPES_FQNS;
+const { HOSPITALS_FQN, APP_SETTINGS_FQN } = APP_TYPES_FQNS;
 
 const BALTIMORE_HOSPITALS_ES_ID :string = '1526c664-4868-468f-9255-307aed65a7ed';
 
@@ -87,19 +93,19 @@ function* loadAppWorker(action :SequenceAction) :Generator<*, *, *> {
      */
 
     const app = response.data;
-    response = yield all([
+    const [appConfigsResponse, appTypesResponse] = yield all([
       call(getAppConfigsWorker, getAppConfigs(app.id)),
       call(getAppTypesWorker, getAppTypes(app.appTypeIds)),
     ]);
-    if (response[0].error) throw response[0].error;
-    if (response[1].error) throw response[1].error;
+    if (appConfigsResponse.error) throw appConfigsResponse.error;
+    if (appTypesResponse.error) throw appTypesResponse.error;
 
     /*
      * 3. load EntityTypes and PropertyTypes
      */
 
-    const appConfigs :Object[] = response[0].data;
-    const appTypesMap :Object = response[1].data;
+    const appConfigs :Object[] = appConfigsResponse.data;
+    const appTypesMap :Object = appTypesResponse.data;
     const appTypes :Object[] = (Object.values(appTypesMap) :any);
     const projection :Object[] = appTypes.map((appType :Object) => ({
       id: appType.entityTypeId,
@@ -109,10 +115,46 @@ function* loadAppWorker(action :SequenceAction) :Generator<*, *, *> {
     response = yield call(getEntityDataModelProjectionWorker, getEntityDataModelProjection(projection));
     if (response.error) throw response.error;
 
+    const appSettingsESIDByOrgId = Map().withMutations((mutable) => {
+      appConfigs.forEach((appConfig :Object) => {
+        const { config } = appConfig;
+        const { organization } :Object = appConfig;
+        const orgId :string = organization.id;
+        if (Object.keys(config).length) {
+          const appSettingsConfig = config[APP_SETTINGS_FQN];
+          mutable.set(orgId, appSettingsConfig.entitySetId);
+        }
+      });
+    });
+
+    const appSettingsRequests = appSettingsESIDByOrgId.valueSeq().map(entitySetId => (
+      call(SearchApi.searchEntitySetData, entitySetId, {
+        start: 0,
+        maxHits: 10000,
+        searchTerm: '*'
+      })));
+
+    const orgIds = appSettingsESIDByOrgId.keySeq().toJS();
+    const appSettingResults = yield all(appSettingsRequests.toJS());
+
+    let i = 0;
+    let appSettingsByOrgId = Map();
+    appSettingResults.map(({ hits }) => hits).forEach((setting) => {
+      const entitySetId = orgIds[i];
+      const settingsEntity = setting[0];
+      if (settingsEntity) {
+        const settings = JSON.parse(settingsEntity['ol.appdetails']);
+        settings[OPENLATTICE_ID_FQN] = settingsEntity[OPENLATTICE_ID_FQN][0];
+        appSettingsByOrgId = appSettingsByOrgId.set(entitySetId, fromJS(settings));
+      }
+      i += 1;
+    });
+
     const edm :Object = response.data;
     workerResponse.data = {
       app,
       appConfigs,
+      appSettingsByOrgId,
       appTypes,
       edm
     };
