@@ -23,4 +23,3 @@ export const REPORT_VIEW_PATH :string = `${REPORTS_PATH}/${REPORT_ID_PATH}/view`
 export const PROFILE_ID_PARAM :string = 'profileId';
 export const PROFILE_ID_PATH :string = `:${PROFILE_ID_PARAM}`;
 export const PROFILE_PATH :string = `${PEOPLE_PATH}/${PROFILE_ID_PATH}`;
-export const PROFILE_PATH_PREMIUM :string = `${PEOPLE_PATH}/${PROFILE_ID_PATH}/premium`;
