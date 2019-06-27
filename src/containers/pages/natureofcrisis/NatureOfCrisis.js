@@ -13,7 +13,7 @@ import StyledInput from '../../../components/controls/StyledInput';
 import StyledRadio from '../../../components/controls/StyledRadio';
 import { showInvalidFields } from '../../../utils/NavigationUtils';
 import { STATE } from '../../../utils/constants/StateConstants';
-import { CRISIS_NATURE, OTHER } from '../../../utils/constants/CrisisTemplateConstants';
+import { CRISIS_NATURE, OTHER } from '../../../utils/constants/CrisisReportConstants';
 import {
   NATURE_OF_CRISIS,
   BIOLOGICAL,

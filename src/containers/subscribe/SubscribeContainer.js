@@ -153,13 +153,13 @@ class SubscribeContainer extends React.Component<Props, State> {
       <>
         {this.renderSubscription(
           'Test Alerts',
-          'Email notifications will be sent for crisis templates for newly created users whose SSN ends with "0000"',
+          'Email notifications will be sent for crisis reports for newly created users whose SSN ends with "0000"',
           testQuery,
           testSubscription
         )}
         {this.renderSubscription(
           'Homeless Alerts',
-          'Email notifications will be sent for crisis templates where current housing situation is marked as "Unsheltered Homeless"',
+          'Email notifications will be sent for crisis reports where current housing situation is marked as "Unsheltered Homeless"',
           homelessQuery,
           homelessSubscription
         )}

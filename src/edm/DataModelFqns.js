@@ -273,7 +273,7 @@ export {
 };
 
 /*
- * Crisis Template Specific
+ * Crisis Report Specific
  */
 
 const BIOLOGICALLY_INDUCED_CAUSES_FQN = new FullyQualifiedName('bhr.biologicallyinducedoptions');

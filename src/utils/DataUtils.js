@@ -1,5 +1,6 @@
 // @flow
 import {
+  getIn,
   isImmutable,
   List,
   Map,
@@ -68,3 +69,5 @@ export const inchesToFeetString = (inches :number) => {
   const feet = Math.floor(inches / 12);
   return `${feet}'${remainder}"`;
 };
+
+export const getEntityKeyId = (entity :Map | Object) :string => getIn(entity, [OPENLATTICE_ID_FQN, 0], '');

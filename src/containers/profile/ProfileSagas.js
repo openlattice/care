@@ -6,7 +6,8 @@ import {
   call,
   put,
   select,
-  takeEvery
+  takeEvery,
+  takeLatest,
 } from '@redux-saga/core/effects';
 import {
   List,
@@ -111,7 +112,7 @@ function* getPhysicalAppearanceWorker(action :SequenceAction) :Generator<any, an
 }
 
 function* getPhysicalApperanceWatcher() :Generator<any, any, any> {
-  yield takeEvery(GET_PHYSICAL_APPEARANCE, getPhysicalAppearanceWorker);
+  yield takeLatest(GET_PHYSICAL_APPEARANCE, getPhysicalAppearanceWorker);
 }
 
 function* getPersonDataWorker(action :SequenceAction) :Generator<any, any, any> {
@@ -158,7 +159,7 @@ function* getPersonDataWorker(action :SequenceAction) :Generator<any, any, any> 
 }
 
 function* getPersonDataWatcher() :Generator<any, any, any> {
-  yield takeEvery(GET_PERSON_DATA, getPersonDataWorker);
+  yield takeLatest(GET_PERSON_DATA, getPersonDataWorker);
 }
 
 function* getProfileReportsWorker(action :SequenceAction) :Generator<any, any, any> {
@@ -220,7 +221,7 @@ function* getProfileReportsWorker(action :SequenceAction) :Generator<any, any, a
 }
 
 function* getProfileReportsWatcher() :Generator<any, any, any> {
-  yield takeEvery(GET_PROFILE_REPORTS, getProfileReportsWorker);
+  yield takeLatest(GET_PROFILE_REPORTS, getProfileReportsWorker);
 }
 
 function* createPhysicalAppearanceWorker(action :SequenceAction) :Generator<any, any, any> {

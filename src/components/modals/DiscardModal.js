@@ -10,7 +10,7 @@ type Props = {
 const DiscardModal = ({ actions, onClose } :Props) => {
 
   // eslint-disable-next-line max-len
-  const message = 'Clicking on "Discard Changes" will discard all changes made to the current Crisis Template and return to the home screen.';
+  const message = 'Clicking on "Discard Changes" will discard all changes made to the current Crisis Report and return to the home screen.';
   return (
     <Modal
         actions={actions}

@@ -35,7 +35,7 @@ import DeleteModal from '../../components/modals/DeleteModal';
 import SubmitSuccess from '../../components/crisis/SubmitSuccess';
 
 import { getReport, updateReport, deleteReport } from './ReportsActions';
-import { clearCrisisTemplate } from '../crisis/CrisisActionFactory';
+import { clearCrisisReport } from '../crisis/CrisisActionFactory';
 import {
   getCurrentPage,
   getNextPath,
@@ -64,12 +64,12 @@ import {
 } from '../pages/disposition/Reducer';
 import { FORM_STEP_STATUS } from '../../utils/constants/FormConstants';
 import { STATE } from '../../utils/constants/StateConstants';
-import { POST_PROCESS_FIELDS } from '../../utils/constants/CrisisTemplateConstants';
+import { POST_PROCESS_FIELDS } from '../../utils/constants/CrisisReportConstants';
 import { FORM_TYPE } from '../../utils/DataConstants';
 import { REPORT_ID_PARAM, HOME_PATH } from '../../core/router/Routes';
 import { MEDIA_QUERY_MD, MEDIA_QUERY_LG } from '../../core/style/Sizes';
 
-const CrisisTemplateWrapper = styled.div`
+const CrisisReportWrapper = styled.div`
   width: 100%;
   display: flex;
   flex-direction: row;
@@ -188,7 +188,7 @@ const PAGES = [
 
 type Props = {
   actions :{
-    clearCrisisTemplate :() => {
+    clearCrisisReport :() => {
       type :string;
     };
     deleteReport :RequestSequence;
@@ -229,7 +229,7 @@ class CrisisReportView extends React.Component<Props, State> {
 
   componentWillUnmount() {
     const { actions } = this.props;
-    actions.clearCrisisTemplate();
+    actions.clearCrisisReport();
   }
 
   handlePageChange = (path) => {
@@ -273,7 +273,7 @@ class CrisisReportView extends React.Component<Props, State> {
 
   handleDiscard = () => {
     const { actions, history } = this.props;
-    actions.clearCrisisTemplate();
+    actions.clearCrisisReport();
     history.push(HOME_PATH);
   }
 
@@ -294,7 +294,7 @@ class CrisisReportView extends React.Component<Props, State> {
     const reportEKID :?UUID = match.params[REPORT_ID_PARAM];
 
     let submission = {
-      [POST_PROCESS_FIELDS.FORM_TYPE]: FORM_TYPE.CRISIS_TEMPLATE,
+      [POST_PROCESS_FIELDS.FORM_TYPE]: FORM_TYPE.CRISIS_REPORT,
       [POST_PROCESS_FIELDS.TIMESTAMP]: DateTime.local().toISO(),
       [POST_PROCESS_FIELDS.USER_EMAIL]: AuthUtils.getUserInfo().email
     };
@@ -433,7 +433,7 @@ class CrisisReportView extends React.Component<Props, State> {
     const deleteActions = [
       {
         onClick: this.handleDelete,
-        text: 'Delete Template'
+        text: 'Delete Report'
       },
       {
         onClick: this.handleCloseDelete,
@@ -458,11 +458,11 @@ class CrisisReportView extends React.Component<Props, State> {
     if (deleteState === RequestStates.SUCCESS) return <SubmitSuccess actionText="deleted" />;
 
     return (
-      <CrisisTemplateWrapper>
+      <CrisisReportWrapper>
         {
           currentPage > PAGES.length ? null : (
             <ProgressSidebar
-                formTitle="Review Crisis Template"
+                formTitle="Review Crisis Report"
                 currentStepNumber={currentPage - 1}
                 steps={this.getSidebarSteps()} />
           )
@@ -499,7 +499,7 @@ class CrisisReportView extends React.Component<Props, State> {
             )
           }
         </ModalTransition>
-      </CrisisTemplateWrapper>
+      </CrisisReportWrapper>
     );
   }
 }
@@ -519,7 +519,7 @@ function mapStateToProps(state :Map<*, *>) :Object {
 function mapDispatchToProps(dispatch :Dispatch<*>) :Object {
 
   const actions = {
-    clearCrisisTemplate,
+    clearCrisisReport,
     deleteReport,
     getReport,
     updateReport,
