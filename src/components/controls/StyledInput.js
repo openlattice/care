@@ -1,7 +1,3 @@
-import React from 'react';
-import { faSearch } from '@fortawesome/pro-light-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
 import styled, { css } from 'styled-components';
 
 const style = css`
@@ -45,33 +41,3 @@ export const StyledTextArea = styled.textarea`
 `;
 
 export default StyledInput;
-
-
-/* Styled input with FontAwesome search icon */
-
-const InputWrapper = styled.div`
-  position: relative;
-  width: 100%;
-`;
-
-const PaddedStyledInput = styled(StyledInput)`
-  padding-left: 35px;
-  width: 100%;
-`;
-
-const SearchIcon = styled(FontAwesomeIcon).attrs({
-  icon: faSearch
-})`
-  position: absolute;
-  left: 10px;
-  height: 100%;
-  top: 0;
-  bottom: 0;
-`;
-
-export const SearchInput = props => (
-  <InputWrapper>
-    <SearchIcon />
-    <PaddedStyledInput {...props} />
-  </InputWrapper>
-);
