@@ -114,7 +114,7 @@ const HomeContainer = () => (
         <StyledNavCard>
           <LinkTextWrapper>
             <FontAwesomeIcon icon={faFileAlt} size="2x" />
-            <LinkText>Crisis Template</LinkText>
+            <LinkText>Crisis Report</LinkText>
           </LinkTextWrapper>
           <FontAwesomeIcon icon={faAngleRight} size="2x" />
         </StyledNavCard>

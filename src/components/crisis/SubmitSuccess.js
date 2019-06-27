@@ -68,7 +68,7 @@ class SubmitSuccess extends Component<Props> {
           <SubmittedView>
             <h1>{`Your report has been ${actionText}!`}</h1>
             <StyledButton mode="primary" onClick={this.clearAndNavigate(HOME_PATH)}>Return to Home</StyledButton>
-            <StyledButton onClick={this.clearAndNavigate(CRISIS_PATH)}>New Crisis Template</StyledButton>
+            <StyledButton onClick={this.clearAndNavigate(CRISIS_PATH)}>New Crisis Report</StyledButton>
           </SubmittedView>
         </FormWrapper>
       </PageWrapper>

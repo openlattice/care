@@ -178,7 +178,7 @@ class PremiumProfileContainer extends Component<Props, State> {
                   </CardSegment>
                   <CardSegment vertical padding="sm">
                     <Button mode="primary">
-                      New Crisis Template
+                      New Crisis Report
                     </Button>
                   </CardSegment>
                 </Card>

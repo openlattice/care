@@ -433,7 +433,7 @@ class CrisisReportView extends React.Component<Props, State> {
     const deleteActions = [
       {
         onClick: this.handleDelete,
-        text: 'Delete Template'
+        text: 'Delete Report'
       },
       {
         onClick: this.handleCloseDelete,
@@ -462,7 +462,7 @@ class CrisisReportView extends React.Component<Props, State> {
         {
           currentPage > PAGES.length ? null : (
             <ProgressSidebar
-                formTitle="Review Crisis Template"
+                formTitle="Review Crisis Report"
                 currentStepNumber={currentPage - 1}
                 steps={this.getSidebarSteps()} />
           )
