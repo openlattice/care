@@ -43,6 +43,7 @@ import {
   loadHospitals,
 } from './AppActions';
 import { isValidUuid } from '../../utils/Utils';
+import { APP_DETAILS_FQN } from '../../edm/DataModelFqns';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 const { SecurableTypes } = Types;
@@ -127,27 +128,43 @@ function* loadAppWorker(action :SequenceAction) :Generator<*, *, *> {
       });
     });
 
+    const searchOptions = {
+      start: 0,
+      maxHits: 10000,
+      searchTerm: '*'
+    };
+
     const appSettingsRequests = appSettingsESIDByOrgId.valueSeq().map(entitySetId => (
-      call(SearchApi.searchEntitySetData, entitySetId, {
-        start: 0,
-        maxHits: 10000,
-        searchTerm: '*'
-      })));
+      call(searchEntitySetDataWorker, searchEntitySetData({ entitySetId, searchOptions }))));
 
     const orgIds = appSettingsESIDByOrgId.keySeq().toJS();
-    const appSettingResults = yield all(appSettingsRequests.toJS());
+    const appSettingResponses = yield all(appSettingsRequests.toJS());
 
-    let i = 0;
-    let appSettingsByOrgId = Map();
-    appSettingResults.map(({ hits }) => hits).forEach((setting) => {
-      const entitySetId = orgIds[i];
-      const settingsEntity = setting[0];
-      if (settingsEntity) {
-        const settings = JSON.parse(settingsEntity['ol.appdetails']);
-        settings[OPENLATTICE_ID_FQN] = settingsEntity[OPENLATTICE_ID_FQN][0];
-        appSettingsByOrgId = appSettingsByOrgId.set(entitySetId, fromJS(settings));
-      }
-      i += 1;
+    const responseError = appSettingResponses.reduce(
+      (error, result) => (error || result.error), undefined
+    );
+    if (responseError) throw responseError;
+
+    const appSettingsByOrgId = Map().withMutations((mutable) => {
+      appSettingResponses.map(({ data }) => fromJS(data.hits)).forEach((hit, i) => {
+
+        const entitySetId = orgIds[i];
+        const settingsEntity = hit.first();
+        if (settingsEntity) {
+          const appDetails = settingsEntity.getIn([APP_DETAILS_FQN, 0]);
+          const settingsEKID = settingsEntity.getIn([OPENLATTICE_ID_FQN, 0]);
+          try {
+            const parsedAppDetails = JSON.parse(appDetails);
+            const parsedAppSettings = Map(parsedAppDetails)
+              .set(OPENLATTICE_ID_FQN, settingsEKID);
+            mutable.set(entitySetId, parsedAppSettings);
+          }
+          catch (error) {
+            LOG.error('could not parse app details');
+            mutable.set(entitySetId, settingsEntity.set(APP_DETAILS_FQN, Map()));
+          }
+        }
+      });
     });
 
     const edm :Object = response.data;

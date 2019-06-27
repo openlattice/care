@@ -5,6 +5,14 @@
 import { Models } from 'lattice';
 
 const { FullyQualifiedName } = Models;
+/*
+ * AppSettings
+ */
+
+const APP_DETAILS_FQN = new FullyQualifiedName('ol.appdetails');
+export {
+  APP_DETAILS_FQN
+};
 
 /*
  * PhysicalAppearance
