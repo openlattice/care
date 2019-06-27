@@ -89,10 +89,32 @@ class OfficerSafetyCard extends PureComponent<Props> {
     .toKeyedSeq()
     .toArray();
 
-  render() {
+  renderItems = () => {
     const { isLoading, reports } = this.props;
 
-    const safetyIncidentCounts = this.countSafetyIncidents(reports);
+    if (!isLoading) {
+      const safetyIncidentCounts = this.countSafetyIncidents(reports);
+      const total = reports ? reports.count() : 0;
+      return (
+        <>
+          {
+            safetyIncidentCounts.map(([name, count]) => (
+              <BehaviorItem
+                  key={name}
+                  name={name}
+                  count={count}
+                  total={total} />
+            ))
+          }
+        </>
+      );
+    }
+
+    return null;
+  }
+
+  render() {
+    const { isLoading, reports } = this.props;
     const total = reports ? reports.count() : 0;
     const headerMode = total ? 'warning' : 'default';
 
@@ -108,15 +130,7 @@ class OfficerSafetyCard extends PureComponent<Props> {
         </CardHeader>
         <StyledCardSegment padding="sm">
           <DashedList isLoading={isLoading}>
-            {
-              safetyIncidentCounts.map(([name, count]) => (
-                <BehaviorItem
-                    key={name}
-                    name={name}
-                    count={count}
-                    total={total} />
-              ))
-            }
+            { this.renderItems() }
           </DashedList>
         </StyledCardSegment>
         <Triggers triggers={List()} />
