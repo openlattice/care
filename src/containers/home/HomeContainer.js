@@ -77,7 +77,7 @@ const LinkText = styled.span`
 `;
 
 // HACK
-/* const CRISIS_TEMPLATE_ORG_IDS = [
+/* const CRISIS_REPORT_ORG_IDS = [
   // WASPC
   '8c732544-4c51-4129-b326-c87c83ac20a7',
   '9a582e49-2607-4817-9157-c0c484706297',

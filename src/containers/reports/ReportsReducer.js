@@ -11,7 +11,7 @@ import {
   updateReport,
   getReportsByDateRange,
 } from './ReportsActions';
-import { CLEAR_CRISIS_TEMPLATE } from '../crisis/CrisisActionFactory';
+import { CLEAR_CRISIS_REPORT } from '../crisis/CrisisActionFactory';
 
 const INITIAL_STATE :Map<*, *> = fromJS({
   deleteState: RequestStates.STANDBY,
@@ -26,7 +26,7 @@ export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :
 
   switch (action.type) {
 
-    case CLEAR_CRISIS_TEMPLATE: {
+    case CLEAR_CRISIS_REPORT: {
       return INITIAL_STATE;
     }
 

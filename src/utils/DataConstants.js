@@ -1,6 +1,6 @@
 /* Form Types */
 export const FORM_TYPE = {
-  CRISIS_TEMPLATE: 'Crisis Report'
+  CRISIS_REPORT: 'Crisis Report'
 };
 
 /* Consumer Constants */

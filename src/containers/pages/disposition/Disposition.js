@@ -16,7 +16,7 @@ import StyledInput, { StyledTextArea } from '../../../components/controls/Styled
 import StyledRadio from '../../../components/controls/StyledRadio';
 import { showInvalidFields } from '../../../utils/NavigationUtils';
 import { STATE } from '../../../utils/constants/StateConstants';
-import { DISPOSITION, OTHER } from '../../../utils/constants/CrisisTemplateConstants';
+import { DISPOSITION, OTHER } from '../../../utils/constants/CrisisReportConstants';
 import {
   OFFICER_TRAINING,
   DISPOSITIONS,

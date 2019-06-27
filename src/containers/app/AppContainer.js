@@ -13,7 +13,7 @@ import { RequestStates } from 'redux-reqseq';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import AppHeaderContainer from './AppHeaderContainer';
-import CrisisTemplateContainer from '../crisis/CrisisTemplateContainer';
+import CrisisReportContainer from '../crisis/CrisisReportContainer';
 import DownloadsContainer from '../downloads/DownloadsContainer';
 import HomeContainer from '../home/HomeContainer';
 import PeopleRouter from '../people/PeopleRouter';
@@ -147,7 +147,7 @@ class AppContainer extends Component<Props> {
     return (
       <Switch>
         <Route exact strict path={HOME_PATH} render={this.wrapComponent(HomeContainer)} />
-        <Route path={CRISIS_PATH} component={CrisisTemplateContainer} />
+        <Route path={CRISIS_PATH} component={CrisisReportContainer} />
         <Route path={REPORTS_PATH} component={LegitReportsRouter} />
         <Route path={DASHBOARD_PATH} render={this.wrapComponent(DashboardContainer)} />
         <Route path={DOWNLOADS_PATH} render={this.wrapComponent(DownloadsContainer)} />

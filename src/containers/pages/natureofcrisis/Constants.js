@@ -1,4 +1,4 @@
-import { OTHER } from '../../../utils/constants/CrisisTemplateConstants';
+import { OTHER } from '../../../utils/constants/CrisisReportConstants';
 
 export const BIOLOGICAL = 'Biologically Induced (Depression / Anxiety)';
 export const CHEMICAL = 'Chemically Induced (Crack / Meth / PCP / Heroin)';

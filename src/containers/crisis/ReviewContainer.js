@@ -18,7 +18,7 @@ import {
   CRISIS_NATURE,
   OFFICER_SAFETY,
   DISPOSITION
-} from '../../utils/constants/CrisisTemplateConstants';
+} from '../../utils/constants/CrisisReportConstants';
 import { DISPOSITIONS as DISP_VALUES } from '../pages/disposition/Constants';
 import { MEDIA_QUERY_MD } from '../../core/style/Sizes';
 import { FormWrapper } from '../../components/crisis/FormComponents';

@@ -16,7 +16,7 @@ import StyledCheckbox from '../../../components/controls/StyledCheckbox';
 import StyledRadio from '../../../components/controls/StyledRadio';
 import { showInvalidFields } from '../../../utils/NavigationUtils';
 import { STATE } from '../../../utils/constants/StateConstants';
-import { SUBJECT_INFORMATION } from '../../../utils/constants/CrisisTemplateConstants';
+import { SUBJECT_INFORMATION } from '../../../utils/constants/CrisisReportConstants';
 import { GENDERS, RACES } from './Constants';
 import {
   FormWrapper,

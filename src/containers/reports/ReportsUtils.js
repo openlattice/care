@@ -9,7 +9,7 @@ import {
   OBSERVED_BEHAVIORS,
   OFFICER_SAFETY,
   SUBJECT_INFORMATION,
-} from '../../utils/constants/CrisisTemplateConstants';
+} from '../../utils/constants/CrisisReportConstants';
 import {
   ARRESTED,
   CRIMES_AGAINST_PERSON,

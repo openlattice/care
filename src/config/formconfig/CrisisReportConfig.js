@@ -7,7 +7,7 @@ import {
   OFFICER_SAFETY,
   DISPOSITION,
   POST_PROCESS_FIELDS
-} from '../../utils/constants/CrisisTemplateConstants';
+} from '../../utils/constants/CrisisReportConstants';
 
 const {
   APPEARS_IN_FQN,

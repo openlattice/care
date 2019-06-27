@@ -25,12 +25,12 @@ import ObservedBehaviors from '../pages/observedbehaviors/ObservedBehaviors';
 import NatureOfCrisis from '../pages/natureofcrisis/NatureOfCrisis';
 import OfficerSafety from '../pages/officersafety/OfficerSafety';
 import Disposition from '../pages/disposition/Disposition';
-import submitConfig from '../../config/formconfig/CrisisTemplateConfig';
+import submitConfig from '../../config/formconfig/CrisisReportConfig';
 import SubmitSuccess from '../../components/crisis/SubmitSuccess';
 import { FormWrapper as StyledPageWrapper } from '../../components/crisis/FormComponents';
 
 import { submit } from '../../utils/submit/SubmitActionFactory';
-import { clearCrisisTemplate } from './CrisisActionFactory';
+import { clearCrisisReport } from './CrisisActionFactory';
 import {
   getCurrentPage,
   getNextPath,
@@ -59,7 +59,7 @@ import {
 } from '../pages/disposition/Reducer';
 import { FORM_STEP_STATUS } from '../../utils/constants/FormConstants';
 import { STATE, SUBMIT } from '../../utils/constants/StateConstants';
-import { POST_PROCESS_FIELDS } from '../../utils/constants/CrisisTemplateConstants';
+import { POST_PROCESS_FIELDS } from '../../utils/constants/CrisisReportConstants';
 import { FORM_TYPE } from '../../utils/DataConstants';
 import { CRISIS_PATH, HOME_PATH } from '../../core/router/Routes';
 import { MEDIA_QUERY_MD, MEDIA_QUERY_LG } from '../../core/style/Sizes';
@@ -67,7 +67,7 @@ import { BLACK, INVALID_TAG } from '../../shared/Colors';
 
 type Props = {
   actions :{
-    clearCrisisTemplate :() => void,
+    clearCrisisReport :() => void,
     submit :(args :Object) => void
   },
   app :Map<*, *>,
@@ -82,7 +82,7 @@ type State = {
   formInProgress :boolean
 }
 
-const CrisisTemplateWrapper = styled.div`
+const CrisisReportWrapper = styled.div`
   width: 100%;
   display: flex;
   flex-direction: row;
@@ -252,7 +252,7 @@ const PAGES = [
 
 const START_PATH = `${CRISIS_PATH}/1`;
 
-class CrisisTemplateContainer extends React.Component<Props, State> {
+class CrisisReportContainer extends React.Component<Props, State> {
 
   constructor(props) {
     super(props);
@@ -274,7 +274,7 @@ class CrisisTemplateContainer extends React.Component<Props, State> {
 
   componentWillUnmount() {
     const { actions } = this.props;
-    actions.clearCrisisTemplate();
+    actions.clearCrisisReport();
   }
 
   handlePageChange = (path) => {
@@ -297,7 +297,7 @@ class CrisisTemplateContainer extends React.Component<Props, State> {
     } = this.props;
 
     let submission = {
-      [POST_PROCESS_FIELDS.FORM_TYPE]: FORM_TYPE.CRISIS_TEMPLATE,
+      [POST_PROCESS_FIELDS.FORM_TYPE]: FORM_TYPE.CRISIS_REPORT,
       [POST_PROCESS_FIELDS.TIMESTAMP]: DateTime.local().toISO(),
       [POST_PROCESS_FIELDS.USER_EMAIL]: AuthUtils.getUserInfo().email
     };
@@ -415,15 +415,15 @@ class CrisisTemplateContainer extends React.Component<Props, State> {
   renderResetModal = () => {
     const { actions, history } = this.props;
     const doReset = () => {
-      actions.clearCrisisTemplate();
+      actions.clearCrisisReport();
       history.push(HOME_PATH);
     };
 
     return (
       <ResetModalBody>
-        <h1>Close and delete template</h1>
-        <p>{'Warning! Clicking "Close and delete" will delete all data you have entered into this crisis template.'}</p>
-        <p>Are you sure you want to exit the template and delete the content?</p>
+        <h1>Close and delete report</h1>
+        <p>{'Warning! Clicking "Close and delete" will delete all data you have entered into this crisis report.'}</p>
+        <p>Are you sure you want to exit the report and delete the content?</p>
         <ButtonRow>
           <BackButton onClick={doReset}>Close and Delete</BackButton>
           <ForwardButton onClick={() => this.setState({ confirmReset: false })} canProgress>Stay on Page</ForwardButton>
@@ -448,11 +448,11 @@ class CrisisTemplateContainer extends React.Component<Props, State> {
       return (
         <PageWrapper>
           <StyledPageWrapper>
-            <CrisisTemplateWrapper>
+            <CrisisReportWrapper>
               <SubmittedView>
                 <Spinner />
               </SubmittedView>
-            </CrisisTemplateWrapper>
+            </CrisisReportWrapper>
           </StyledPageWrapper>
         </PageWrapper>
       );
@@ -463,7 +463,7 @@ class CrisisTemplateContainer extends React.Component<Props, State> {
     }
 
     return (
-      <CrisisTemplateWrapper>
+      <CrisisReportWrapper>
         {
           currentPage > PAGES.length ? null : (
             <ProgressSidebar
@@ -483,7 +483,7 @@ class CrisisTemplateContainer extends React.Component<Props, State> {
           {this.renderRoutes()}
           <Redirect to={START_PATH} />
         </Switch>
-      </CrisisTemplateWrapper>
+      </CrisisReportWrapper>
     );
   }
 }
@@ -501,7 +501,7 @@ function mapStateToProps(state :Map<*, *>) :Object {
 function mapDispatchToProps(dispatch :Function) :Object {
 
   const actions = {
-    clearCrisisTemplate,
+    clearCrisisReport,
     submit,
   };
 
@@ -512,5 +512,5 @@ function mapDispatchToProps(dispatch :Function) :Object {
 
 // $FlowFixMe
 export default withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(CrisisTemplateContainer)
+  connect(mapStateToProps, mapDispatchToProps)(CrisisReportContainer)
 );
