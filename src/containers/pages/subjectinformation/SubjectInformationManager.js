@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 
 import SubjectQuickSearch from './SubjectQuickSearch';
 import SubjectInformation from './SubjectInformation';
-import { SUBJECT_INFORMATION } from '../../../utils/constants/CrisisTemplateConstants';
+import { SUBJECT_INFORMATION } from '../../../utils/constants/CrisisReportConstants';
 import { STATE } from '../../../utils/constants/StateConstants';
 
 const Wrapper = styled.div`

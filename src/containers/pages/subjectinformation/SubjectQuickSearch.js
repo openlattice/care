@@ -19,7 +19,7 @@ import {
   Header
 } from '../../../components/crisis/FormComponents';
 import { getPeopleESId } from '../../../utils/AppUtils';
-import { SUBJECT_INFORMATION } from '../../../utils/constants/CrisisTemplateConstants';
+import { SUBJECT_INFORMATION } from '../../../utils/constants/CrisisReportConstants';
 import {
   PERSON_DOB_FQN,
   PERSON_FIRST_NAME_FQN,

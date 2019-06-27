@@ -13,7 +13,7 @@ import StyledCheckbox from '../../../components/controls/StyledCheckbox';
 import YesNoToggle from '../../../components/controls/YesNoToggle';
 import { showInvalidFields } from '../../../utils/NavigationUtils';
 import { STATE } from '../../../utils/constants/StateConstants';
-import { OFFICER_SAFETY, OTHER } from '../../../utils/constants/CrisisTemplateConstants';
+import { OFFICER_SAFETY, OTHER } from '../../../utils/constants/CrisisReportConstants';
 import {
   TECHNIQUES,
   WEAPONS,

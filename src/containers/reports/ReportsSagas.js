@@ -30,7 +30,7 @@ import {
 import type { SequenceAction } from 'redux-reqseq';
 
 import Logger from '../../utils/Logger';
-import { BHR_CONFIG } from '../../config/formconfig/CrisisTemplateConfig';
+import { BHR_CONFIG } from '../../config/formconfig/CrisisReportConfig';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
 import {
   DELETE_REPORT,
@@ -65,7 +65,7 @@ import { setInputValues as setObservedBehaviors } from '../pages/observedbehavio
 import { setInputValues as setOfficerSafetyData } from '../pages/officersafety/ActionFactory';
 import { setInputValues as setSubjectInformation } from '../pages/subjectinformation/ActionFactory';
 import * as FQN from '../../edm/DataModelFqns';
-import { POST_PROCESS_FIELDS } from '../../utils/constants/CrisisTemplateConstants';
+import { POST_PROCESS_FIELDS } from '../../utils/constants/CrisisReportConstants';
 
 const LOG = new Logger('ReportsSagas');
 
