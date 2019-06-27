@@ -3,7 +3,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import { DateTime } from 'luxon';
-import { Constants } from 'lattice';
 import { List, Map } from 'immutable';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -44,6 +43,7 @@ import {
   updateProfileAbout
 } from '../ProfileActions';
 import { DATE_TIME_OCCURRED_FQN } from '../../../edm/DataModelFqns';
+import { getEntityKeyId } from '../../../utils/DataUtils';
 import {
   PROFILE_ID_PARAM,
   REPORT_VIEW_PATH,
@@ -52,7 +52,6 @@ import {
 import { goToPath } from '../../../core/router/RoutingActions';
 import type { RoutingAction } from '../../../core/router/RoutingActions';
 
-const { OPENLATTICE_ID_FQN } = Constants;
 const { NEUTRALS } = Colors;
 
 // Fixed placeholder size
@@ -108,12 +107,31 @@ class PremiumProfileContainer extends Component<Props, State> {
     const {
       actions,
       match,
+      physicalAppearance,
       selectedPerson
     } = this.props;
-    const personEKID = selectedPerson.get([OPENLATTICE_ID_FQN, 0]) || match.params[PROFILE_ID_PARAM];
-    // always get fresh data
-    actions.getPersonData(personEKID);
+    const personEKID = match.params[PROFILE_ID_PARAM];
+    if (selectedPerson.isEmpty()) {
+      actions.getPersonData(personEKID); // gets both person and physical appearance
+    }
+    else if (physicalAppearance.isEmpty()) {
+      actions.getPhysicalAppearance(personEKID); // only get physical appearance
+    }
     actions.getProfileReports(personEKID);
+  }
+
+  componentDidUpdate(prevProps :Props) {
+    const {
+      actions,
+      match,
+    } = this.props;
+    const { match: prevMatch } = prevProps;
+    const personEKID = match.params[PROFILE_ID_PARAM];
+    const prevPersonEKID = prevMatch.params[PROFILE_ID_PARAM];
+    if (personEKID !== prevPersonEKID) {
+      actions.getPersonData(personEKID);
+      actions.getProfileReports(personEKID);
+    }
   }
 
   countCrisisCalls = () => {
@@ -144,7 +162,7 @@ class PremiumProfileContainer extends Component<Props, State> {
 
   handleResultClick = (result :Map) => {
     const { actions } = this.props;
-    const reportEKID = result.getIn([OPENLATTICE_ID_FQN, 0]);
+    const reportEKID = getEntityKeyId(result);
     actions.goToPath(REPORT_VIEW_PATH.replace(REPORT_ID_PATH, reportEKID));
   }
 

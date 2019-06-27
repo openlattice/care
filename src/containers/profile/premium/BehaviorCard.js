@@ -54,10 +54,32 @@ class BehaviorCard extends PureComponent<Props> {
     .toKeyedSeq()
     .toArray();
 
-  render() {
+  renderItems = () => {
     const { isLoading, reports } = this.props;
-    const behaviorCounts = this.countBehaviors(reports);
-    const total = reports ? reports.count() : 0;
+
+    if (!isLoading) {
+      const behaviorCounts = this.countBehaviors(reports);
+      const total = reports ? reports.count() : 0;
+      return (
+        <>
+          {
+            behaviorCounts.map(([name, count]) => (
+              <BehaviorItem
+                  key={name}
+                  name={name}
+                  count={count}
+                  total={total} />
+            ))
+          }
+        </>
+      );
+    }
+
+    return null;
+  }
+
+  render() {
+    const { isLoading } = this.props;
 
     return (
       <Card>
@@ -71,15 +93,7 @@ class BehaviorCard extends PureComponent<Props> {
         </CardHeader>
         <StyledCardSegment padding="sm">
           <DashedList isLoading={isLoading}>
-            {
-              behaviorCounts.map(([name, count]) => (
-                <BehaviorItem
-                    key={name}
-                    name={name}
-                    count={count}
-                    total={total} />
-              ))
-            }
+            { this.renderItems() }
           </DashedList>
         </StyledCardSegment>
       </Card>
