@@ -7,9 +7,9 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router';
 import { List, Map } from 'immutable';
+import { Input } from 'lattice-ui-kit';
 
 import StyledCheckbox from '../../../components/controls/StyledCheckbox';
-import StyledInput from '../../../components/controls/StyledInput';
 import StyledRadio from '../../../components/controls/StyledRadio';
 import { showInvalidFields } from '../../../utils/NavigationUtils';
 import { STATE } from '../../../utils/constants/StateConstants';
@@ -97,7 +97,7 @@ const NatureOfCrisis = ({ values, actions, disabled } :Props) => {
       <>
         {checkboxes}
         { !!otherField && currentValues.includes(OTHER) ? (
-          <StyledInput
+          <Input
               disabled={disabled}
               key={`${field}-other-value`}
               value={values.get(otherField, '')}
