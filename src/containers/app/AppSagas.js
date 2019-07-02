@@ -148,7 +148,7 @@ function* loadAppWorker(action :SequenceAction) :Generator<*, *, *> {
     const appSettingsByOrgId = Map().withMutations((mutable) => {
       appSettingResponses.map(({ data }) => fromJS(data.hits)).forEach((hit, i) => {
 
-        const entitySetId = orgIds[i];
+        const organizationId = orgIds[i];
         const settingsEntity = hit.first();
         if (settingsEntity) {
           const appDetails = settingsEntity.getIn([APP_DETAILS_FQN, 0]);
@@ -157,11 +157,11 @@ function* loadAppWorker(action :SequenceAction) :Generator<*, *, *> {
             const parsedAppDetails = JSON.parse(appDetails);
             const parsedAppSettings = Map(parsedAppDetails)
               .set(OPENLATTICE_ID_FQN, settingsEKID);
-            mutable.set(entitySetId, parsedAppSettings);
+            mutable.set(organizationId, parsedAppSettings);
           }
           catch (error) {
             LOG.error('could not parse app details');
-            mutable.set(entitySetId, settingsEntity.set(APP_DETAILS_FQN, Map()));
+            mutable.set(organizationId, settingsEntity.set(APP_DETAILS_FQN, Map()));
           }
         }
       });
