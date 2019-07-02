@@ -29,13 +29,6 @@ const {
   STAFF_FQN,
 } = APP_TYPES_FQNS;
 
-const appearsInFqn :string = APPEARS_IN_FQN.toString();
-const bhrFqn :string = BEHAVIORAL_HEALTH_REPORT_FQN.toString();
-const hospitalsFqn :string = HOSPITALS_FQN.toString();
-const peopleFqn :string = PEOPLE_FQN.toString();
-const reportedFqn :string = REPORTED_FQN.toString();
-const staffFqn :string = STAFF_FQN.toString();
-
 const APP_CONFIG_INITIAL_STATE :Map<*, *> = fromJS({
   entitySetsByOrganization: Map(),
   primaryKeys: List(),
@@ -43,12 +36,12 @@ const APP_CONFIG_INITIAL_STATE :Map<*, *> = fromJS({
 });
 
 const INITIAL_STATE :Map<*, *> = fromJS({
-  [appearsInFqn]: APP_CONFIG_INITIAL_STATE,
-  [bhrFqn]: APP_CONFIG_INITIAL_STATE,
-  [hospitalsFqn]: APP_CONFIG_INITIAL_STATE,
-  [peopleFqn]: APP_CONFIG_INITIAL_STATE,
-  [reportedFqn]: APP_CONFIG_INITIAL_STATE,
-  [staffFqn]: APP_CONFIG_INITIAL_STATE,
+  [APPEARS_IN_FQN]: APP_CONFIG_INITIAL_STATE,
+  [BEHAVIORAL_HEALTH_REPORT_FQN]: APP_CONFIG_INITIAL_STATE,
+  [HOSPITALS_FQN]: APP_CONFIG_INITIAL_STATE,
+  [PEOPLE_FQN]: APP_CONFIG_INITIAL_STATE,
+  [REPORTED_FQN]: APP_CONFIG_INITIAL_STATE,
+  [STAFF_FQN]: APP_CONFIG_INITIAL_STATE,
   actions: {
     loadApp: Map(),
   },
@@ -117,34 +110,34 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
 
           appConfigs.forEach((appConfig :Object) => {
 
-            const organization :Object = appConfig.organization;
+            const { organization } :Object = appConfig;
             const orgId :string = organization.id;
             organizations[orgId] = organization;
 
-            const appearsInConfig = appConfig.config[appearsInFqn];
+            const appearsInConfig = appConfig.config[APPEARS_IN_FQN];
             const appSettingsConfig = appConfig.config[APP_SETTINGS_FQN];
-            const bhrConfig = appConfig.config[bhrFqn];
+            const bhrConfig = appConfig.config[BEHAVIORAL_HEALTH_REPORT_FQN];
             const hasConfig = appConfig.config[HAS_FQN];
-            const hospitalsConfig = appConfig.config[hospitalsFqn];
-            const peopleConfig = appConfig.config[peopleFqn];
+            const hospitalsConfig = appConfig.config[HOSPITALS_FQN];
+            const peopleConfig = appConfig.config[PEOPLE_FQN];
             const physicalAppearanceConfig = appConfig.config[PHYSICAL_APPEARANCE_FQN];
-            const reportedConfig = appConfig.config[reportedFqn];
-            const staffConfig = appConfig.config[staffFqn];
+            const reportedConfig = appConfig.config[REPORTED_FQN];
+            const staffConfig = appConfig.config[STAFF_FQN];
 
             newState = newState
               .setIn([APP_SETTINGS_FQN, 'entitySetsByOrganization', orgId], appSettingsConfig.entitySetId)
-              .setIn([appearsInFqn, 'entitySetsByOrganization', orgId], appearsInConfig.entitySetId)
-              .setIn([bhrFqn, 'entitySetsByOrganization', orgId], bhrConfig.entitySetId)
+              .setIn([APPEARS_IN_FQN, 'entitySetsByOrganization', orgId], appearsInConfig.entitySetId)
+              .setIn([BEHAVIORAL_HEALTH_REPORT_FQN, 'entitySetsByOrganization', orgId], bhrConfig.entitySetId)
               .setIn([HAS_FQN, 'entitySetsByOrganization', orgId], hasConfig.entitySetId)
-              .setIn([peopleFqn, 'entitySetsByOrganization', orgId], peopleConfig.entitySetId)
+              .setIn([PEOPLE_FQN, 'entitySetsByOrganization', orgId], peopleConfig.entitySetId)
               .setIn([PHYSICAL_APPEARANCE_FQN, 'entitySetsByOrganization', orgId], physicalAppearanceConfig.entitySetId)
-              .setIn([reportedFqn, 'entitySetsByOrganization', orgId], reportedConfig.entitySetId)
-              .setIn([staffFqn, 'entitySetsByOrganization', orgId], staffConfig.entitySetId);
+              .setIn([REPORTED_FQN, 'entitySetsByOrganization', orgId], reportedConfig.entitySetId)
+              .setIn([STAFF_FQN, 'entitySetsByOrganization', orgId], staffConfig.entitySetId);
 
             // 2018-02-08:
             // since hospitals is a new EntitySet for the app, old app installations will break without this check.
             if (has(hospitalsConfig, 'entitySetId')) {
-              newState = newState.setIn([hospitalsFqn, 'entitySetsByOrganization', orgId], hospitalsConfig.entitySetId);
+              newState = newState.setIn([HOSPITALS_FQN, 'entitySetsByOrganization', orgId], hospitalsConfig.entitySetId);
             }
           });
 
