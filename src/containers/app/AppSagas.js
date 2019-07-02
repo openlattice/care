@@ -11,7 +11,7 @@ import {
   takeEvery
 } from '@redux-saga/core/effects';
 import { push } from 'connected-react-router';
-import { Constants, Types, SearchApi } from 'lattice';
+import { Constants, Types } from 'lattice';
 import { AccountUtils } from 'lattice-auth';
 import {
   AppApiActions,
@@ -32,7 +32,6 @@ import { getCurrentUserStaffMemberDataWorker } from '../staff/StaffSagas';
 import { getCurrentUserStaffMemberData } from '../staff/StaffActions';
 import { APP_NAME, APP_TYPES_FQNS } from '../../shared/Consts';
 import { ERR_WORKER_SAGA, ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
-import { isBaltimoreOrg } from '../../utils/Whitelist';
 import {
   INITIALIZE_APPLICATION,
   LOAD_APP,
@@ -57,8 +56,6 @@ const { searchEntitySetData } = SearchApiActions;
 const { searchEntitySetDataWorker } = SearchApiSagas;
 
 const { HOSPITALS_FQN, APP_SETTINGS_FQN } = APP_TYPES_FQNS;
-
-const BALTIMORE_HOSPITALS_ES_ID :string = '1526c664-4868-468f-9255-307aed65a7ed';
 
 const LOG = new Logger('AppSagas');
 
@@ -134,8 +131,11 @@ function* loadAppWorker(action :SequenceAction) :Generator<*, *, *> {
       searchTerm: '*'
     };
 
-    const appSettingsRequests = appSettingsESIDByOrgId.valueSeq().map(entitySetId => (
-      call(searchEntitySetDataWorker, searchEntitySetData({ entitySetId, searchOptions }))));
+    const appSettingsRequests = appSettingsESIDByOrgId
+      .valueSeq()
+      .map(entitySetId => (
+        call(searchEntitySetDataWorker, searchEntitySetData({ entitySetId, searchOptions }))
+      ));
 
     const orgIds = appSettingsESIDByOrgId.keySeq().toJS();
     const appSettingResponses = yield all(appSettingsRequests.toJS());
@@ -206,14 +206,10 @@ function* loadHospitalsWorker(action :SequenceAction) :Generator<*, *, *> {
     yield put(loadHospitals.request(action.id));
 
     const organizationId :UUID = yield select(state => state.getIn(['app', 'selectedOrganizationId']));
-    let entitySetId :UUID = yield select(
+    const entitySetId :UUID = yield select(
       state => state.getIn(['app', HOSPITALS_FQN, 'entitySetsByOrganization', organizationId])
     );
 
-    if (isBaltimoreOrg(organizationId)) {
-      // use "Baltimore Police Department Hospitals" EntitySet
-      entitySetId = BALTIMORE_HOSPITALS_ES_ID;
-    }
     const response = yield call(getEntitySetDataWorker, getEntitySetData({ entitySetId }));
     if (response.error) throw response.error;
     workerResponse.data = response.data;
