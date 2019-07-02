@@ -45,7 +45,7 @@
     "file-saver": "^2.0.0-rc.4",
     "history": "~4.9.0",
     "immutable": "4.0.0-rc.10",
-    "lattice": "0.60.0",
+    "lattice": "0.62.0",
     "lattice-auth": "0.15.0",
     "lattice-sagas": "0.21.0",
     "lattice-ui-kit": "~0.6.0",
