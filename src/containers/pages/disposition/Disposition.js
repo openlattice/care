@@ -10,9 +10,9 @@ import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router';
 import { List, Map } from 'immutable';
 import { DateTimePicker } from '@atlaskit/datetime-picker';
+import { Input, TextArea } from 'lattice-ui-kit';
 
 import StyledCheckbox from '../../../components/controls/StyledCheckbox';
-import StyledInput, { StyledTextArea } from '../../../components/controls/StyledInput';
 import StyledRadio from '../../../components/controls/StyledRadio';
 import { showInvalidFields } from '../../../utils/NavigationUtils';
 import { STATE } from '../../../utils/constants/StateConstants';
@@ -53,7 +53,7 @@ const DateTimePickerWrapper = styled.div`
   margin-bottom: 10px;
 `;
 
-const InputWithMargin = styled(StyledInput)`
+const InputWithMargin = styled(Input)`
   margin: 10px 0;
 `;
 
@@ -107,9 +107,9 @@ class Disposition extends React.Component<Props> {
     };
 
     const renderInput = (field, isTextArea) => {
-      const Input = isTextArea ? StyledTextArea : StyledInput;
+      const InputComponent = isTextArea ? TextArea : Input;
       return (
-        <Input
+        <InputComponent
             disabled={disabled}
             name={field}
             value={values.get(field)}

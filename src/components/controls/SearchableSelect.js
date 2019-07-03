@@ -9,6 +9,7 @@ import styled, { css } from 'styled-components';
 import { faTimes } from '@fortawesome/pro-regular-svg-icons';
 import { faSearch } from '@fortawesome/pro-light-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Input } from 'lattice-ui-kit';
 
 import Spinner from '../spinner/Spinner';
 import downArrowIcon from '../../assets/svg/down-arrow.svg';
@@ -67,12 +68,11 @@ const inputStyle = css`
   }
 `;
 
-const SearchInput = styled.input.attrs({
+const SearchInput = styled(Input).attrs({
   type: 'text'
 })`
-  ${inputStyle}
+  padding: 0 ${props => (props.dropdownIcon ? 45 : 35)}px 0 ${props => (props.searchIcon ? 35 : 20)}px;
   width: ${props => (props.fullWidth ? '100%' : 'auto')};
-  background-color: ${props => (props.transparent ? '#f9f9fd' : '#ffffff')};
 `;
 
 const SearchIcon = styled.div`

@@ -7,8 +7,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router';
 import { List, Map } from 'immutable';
+import { Input } from 'lattice-ui-kit';
 
-import StyledInput from '../../../components/controls/StyledInput';
 import StyledCheckbox from '../../../components/controls/StyledCheckbox';
 import YesNoToggle from '../../../components/controls/YesNoToggle';
 import { showInvalidFields } from '../../../utils/NavigationUtils';
@@ -88,7 +88,7 @@ const OfficerSafety = ({ values, actions, disabled } :Props) => {
       <>
         {checkboxes}
         { !!otherField && currentValues.includes(OTHER) ? (
-          <StyledInput
+          <Input
               disabled={disabled}
               key={`${field}-other-value`}
               value={values.get(otherField, '')}
