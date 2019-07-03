@@ -59,7 +59,7 @@ class BasicBarChart extends Component <Props> {
     return (
       <ResponsiveContainer minHeight={40 * numberOfBars} width="100%">
         <BarChart
-            margin={{ right: 60 }}
+            margin={{ right: 80 }}
             layout="vertical"
             data={data}>
           <YAxis
