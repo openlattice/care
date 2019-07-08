@@ -39,7 +39,7 @@ type Props = {
   actions :{
     updateProfileAbout :RequestSequence;
   };
-  isOpen :boolean;
+  isVisible :boolean;
   onClose :() => void;
   physicalAppearance :Map;
   selectedPerson :Map;
@@ -47,9 +47,6 @@ type Props = {
 };
 
 class EditAboutModal extends Component<Props> {
-
-  modalRef :{ current :null | HTMLDivElement } = React.createRef();
-
   componentDidUpdate(prevProps :Props) {
     const { updateAboutState, onClose } = this.props;
     const { updateAboutState: prevUpdateAboutState } = prevProps;
@@ -62,7 +59,7 @@ class EditAboutModal extends Component<Props> {
   render() {
     const {
       actions,
-      isOpen,
+      isVisible,
       onClose,
       physicalAppearance,
       selectedPerson,
@@ -70,30 +67,26 @@ class EditAboutModal extends Component<Props> {
     } = this.props;
 
     return (
-      <>
-        { isOpen && (
-          <Modal
-              isVisible
-              onClose={onClose}
-              viewportScrolling
-              withHeader={false}>
-            <StyledCard>
-              <CardHeader mode="primary" padding="sm">
-                <H1>
-                  <UserIcon fixedWidth />
-                  Edit About
-                </H1>
-              </CardHeader>
-              <EditProfileForm
-                  isLoading={updateAboutState === RequestStates.PENDING}
-                  onDiscard={onClose}
-                  onSubmit={actions.updateProfileAbout}
-                  physicalAppearance={physicalAppearance}
-                  selectedPerson={selectedPerson} />
-            </StyledCard>
-          </Modal>
-        )}
-      </>
+      <Modal
+          isVisible={isVisible}
+          onClose={onClose}
+          viewportScrolling
+          withHeader={false}>
+        <StyledCard>
+          <CardHeader mode="primary" padding="sm">
+            <H1>
+              <UserIcon fixedWidth />
+              Edit About
+            </H1>
+          </CardHeader>
+          <EditProfileForm
+              isLoading={updateAboutState === RequestStates.PENDING}
+              onDiscard={onClose}
+              onSubmit={actions.updateProfileAbout}
+              physicalAppearance={physicalAppearance}
+              selectedPerson={selectedPerson} />
+        </StyledCard>
+      </Modal>
     );
   }
 }
