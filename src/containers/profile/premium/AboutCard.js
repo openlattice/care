@@ -173,7 +173,7 @@ class AboutCard extends Component<Props, State> {
                 icon={faEye} />
           </AboutGrid>
         </CardSegment>
-        <EditAboutModal isOpen={showEdit} onClose={this.handleHideEdit} />
+        <EditAboutModal isVisible={showEdit} onClose={this.handleHideEdit} />
       </Card>
     );
   }
