@@ -7,7 +7,7 @@ const resultLabels = OrderedMap({
   [FQN.PERSON_FIRST_NAME_FQN]: 'First name',
   [FQN.PERSON_MIDDLE_NAME_FQN]: 'Middle name',
   [FQN.PERSON_SEX_FQN]: 'Sex',
-  [FQN.PERSON_RACE_FQN]: 'Ethnicity',
+  [FQN.PERSON_RACE_FQN]: 'Race',
   [FQN.PERSON_DOB_FQN]: 'DOB',
   [FQN.PERSON_ID_FQN]: 'Identifier',
 });
