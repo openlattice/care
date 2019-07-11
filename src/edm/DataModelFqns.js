@@ -267,8 +267,10 @@ export {
  */
 
 const DATE_TIME_FQN = new FullyQualifiedName('general.datetime');
+const COMPLETED_DT_FQN = new FullyQualifiedName('date.completeddatetime');
 
 export {
+  COMPLETED_DT_FQN,
   DATE_TIME_FQN
 };
 

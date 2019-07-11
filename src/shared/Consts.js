@@ -10,6 +10,7 @@ export const APP_TYPES_FQNS = {
   BEHAVIORAL_HEALTH_REPORT_FQN: new FullyQualifiedName('app.bhr'),
   HAS_FQN: new FullyQualifiedName('app.has'),
   HOSPITALS_FQN: new FullyQualifiedName('app.hospitals'),
+  OBSERVED_IN_FQN: new FullyQualifiedName('app.observedin'),
   PEOPLE_FQN: new FullyQualifiedName('app.people'),
   PHYSICAL_APPEARANCE_FQN: new FullyQualifiedName('app.physicalappearance'),
   REPORTED_FQN: new FullyQualifiedName('app.reported'),
