@@ -44,7 +44,7 @@
     "connected-react-router": "~6.5.0",
     "file-saver": "^2.0.0-rc.4",
     "history": "~4.9.0",
-    "immutable": "4.0.0-rc.10",
+    "immutable": "4.0.0-rc.9",
     "lattice": "0.60.0",
     "lattice-auth": "0.16.0",
     "lattice-sagas": "0.21.0",
