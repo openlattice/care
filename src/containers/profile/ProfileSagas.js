@@ -82,8 +82,8 @@ function* getPhysicalAppearanceWorker(action :SequenceAction) :Generator<any, an
       filter: {
         entityKeyIds: [entityKeyId],
         edgeEntitySetIds: [observedInESID],
-        destinationEntitySetIds: [physicalAppearanceESID],
-        sourceEntitySetIds: [],
+        destinationEntitySetIds: [],
+        sourceEntitySetIds: [physicalAppearanceESID],
       }
     };
 
@@ -99,8 +99,7 @@ function* getPhysicalAppearanceWorker(action :SequenceAction) :Generator<any, an
     }
 
     const appearanceData = appearanceDataList
-      .first(Map())
-      .get('neighborDetails', Map());
+      .getIn([0, 'neighborDetails'], Map());
 
     response.data = appearanceData;
 
@@ -127,7 +126,6 @@ function* getPersonDataWorker(action :SequenceAction) :Generator<any, any, any> 
 
     const app :Map = yield select(state => state.get('app', Map()));
     const entitySetId :UUID = getESIDFromApp(app, PEOPLE_FQN);
-
     const appearanceRequest = call(
       getPhysicalAppearanceWorker,
       getPhysicalAppearance(entityKeyId)
@@ -242,15 +240,15 @@ function* createPhysicalAppearanceWorker(action :SequenceAction) :Generator<any,
     const peopleESID :UUID = getESIDFromApp(app, PEOPLE_FQN);
     const observedInESID :UUID = getESIDFromApp(app, OBSERVED_IN_FQN);
     const physicalAppearanceESID :UUID = getESIDFromApp(app, PHYSICAL_APPEARANCE_FQN);
-    const datetimePTID :UUID = edm.getIn(['fqnToIdMap', FQN.DATE_TIME_FQN]);
+    const datetimePTID :UUID = edm.getIn(['fqnToIdMap', FQN.COMPLETED_DT_FQN]);
 
     const now = DateTime.local().toISO();
     const associations = {
       [observedInESID]: [{
-        srcEntityKeyId: personEKID,
-        srcEntitySetId: peopleESID,
-        dstEntityIndex: 0,
-        dstEntitySetId: physicalAppearanceESID,
+        srcEntityIndex: 0,
+        srcEntitySetId: physicalAppearanceESID,
+        dstEntityKeyId: personEKID,
+        dstEntitySetId: peopleESID,
         data: {
           [datetimePTID]: [now]
         }
