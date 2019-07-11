@@ -69,11 +69,11 @@ export default function profileReducer(state :Map = INITIAL_STATE, action :Seque
       });
     }
 
-    case SELECT_PERSON:
-      return state.set('selectedPerson', fromJS(action.value));
-
     case CLEAR_PROFILE:
       return INITIAL_STATE;
+
+    case SELECT_PERSON:
+      return state.set('selectedPerson', fromJS(action.value));
 
     default:
       return state;

@@ -36,7 +36,6 @@ import RecentIncidentCard from '../RecentIncidentCard';
 import { labelMapReport } from '../constants';
 import { ContentWrapper, ContentOuterWrapper } from '../../../components/layout';
 import {
-  clearProfile,
   getPersonData,
   getPhysicalAppearance,
   getProfileReports,
@@ -81,7 +80,6 @@ const BehaviorAndSafetyGrid = styled.div`
 
 type Props = {
   actions :{
-    clearProfile :() => { type :string };
     getPersonData :RequestSequence;
     getPhysicalAppearance :RequestSequence;
     getProfileReports :RequestSequence;
@@ -108,16 +106,21 @@ class PremiumProfileContainer extends Component<Props, State> {
       actions,
       match,
       physicalAppearance,
+      reports,
       selectedPerson
     } = this.props;
     const personEKID = match.params[PROFILE_ID_PARAM];
-    if (selectedPerson.isEmpty()) {
-      actions.getPersonData(personEKID); // gets both person and physical appearance
+    if (physicalAppearance.isEmpty()) {
+      if (selectedPerson.isEmpty()) {
+        actions.getPersonData(personEKID); // gets both person and physical appearance
+      }
+      else {
+        actions.getPhysicalAppearance(personEKID); // only get physical appearance
+      }
     }
-    else if (physicalAppearance.isEmpty()) {
-      actions.getPhysicalAppearance(personEKID); // only get physical appearance
+    if (reports.isEmpty()) {
+      actions.getProfileReports(personEKID);
     }
-    actions.getProfileReports(personEKID);
   }
 
   componentDidUpdate(prevProps :Props) {
@@ -249,7 +252,6 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
-    clearProfile,
     getPersonData,
     getPhysicalAppearance,
     getProfileReports,

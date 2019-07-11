@@ -14,7 +14,7 @@ import PersonResult from './PersonResult';
 import { resultLabels, searchFields } from './constants';
 import { ContentWrapper, ContentOuterWrapper } from '../../components/layout';
 import { searchPeople } from './PeopleActions';
-import { selectPerson } from '../profile/ProfileActions';
+import { selectPerson, clearProfile } from '../profile/ProfileActions';
 import { PROFILE_PATH, PROFILE_ID_PATH } from '../../core/router/Routes';
 import { goToPath } from '../../core/router/RoutingActions';
 import type { RoutingAction } from '../../core/router/RoutingActions';
@@ -23,6 +23,7 @@ const { OPENLATTICE_ID_FQN } = Constants;
 
 type Props = {
   actions :{
+    clearProfile :() => { type :string };
     goToPath :(path :string) => RoutingAction;
     searchPeople :RequestSequence;
     selectPerson :RequestSequence;
@@ -45,6 +46,7 @@ class SearchPeopleContainer extends Component<Props> {
   handleResultClick = (person :Map) => {
     const { actions } = this.props;
     const personEKID = person.getIn([OPENLATTICE_ID_FQN, 0]);
+    actions.clearProfile();
     actions.selectPerson(person);
     actions.goToPath(PROFILE_PATH.replace(PROFILE_ID_PATH, personEKID));
   }
@@ -77,6 +79,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
+    clearProfile,
     goToPath,
     searchPeople,
     selectPerson,
