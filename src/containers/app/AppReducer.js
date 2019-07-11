@@ -2,8 +2,13 @@
  * @flow
  */
 
-import has from 'lodash/has';
-import { List, Map, fromJS } from 'immutable';
+import {
+  List,
+  Map,
+  fromJS,
+  get,
+  getIn
+} from 'immutable';
 import { Models } from 'lattice';
 import { AccountUtils } from 'lattice-auth';
 import { RequestStates } from 'redux-reqseq';
@@ -17,31 +22,8 @@ import {
 } from './AppActions';
 
 const { FullyQualifiedName } = Models;
-const {
-  APP_SETTINGS_FQN,
-  APPEARS_IN_FQN,
-  BEHAVIORAL_HEALTH_REPORT_FQN,
-  HAS_FQN,
-  HOSPITALS_FQN,
-  PEOPLE_FQN,
-  PHYSICAL_APPEARANCE_FQN,
-  REPORTED_FQN,
-  STAFF_FQN,
-} = APP_TYPES_FQNS;
-
-const APP_CONFIG_INITIAL_STATE :Map<*, *> = fromJS({
-  entitySetsByOrganization: Map(),
-  primaryKeys: List(),
-  propertyTypes: Map(),
-});
 
 const INITIAL_STATE :Map<*, *> = fromJS({
-  [APPEARS_IN_FQN]: APP_CONFIG_INITIAL_STATE,
-  [BEHAVIORAL_HEALTH_REPORT_FQN]: APP_CONFIG_INITIAL_STATE,
-  [HOSPITALS_FQN]: APP_CONFIG_INITIAL_STATE,
-  [PEOPLE_FQN]: APP_CONFIG_INITIAL_STATE,
-  [REPORTED_FQN]: APP_CONFIG_INITIAL_STATE,
-  [STAFF_FQN]: APP_CONFIG_INITIAL_STATE,
   actions: {
     loadApp: Map(),
   },
@@ -98,7 +80,6 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
             return state;
           }
 
-          let newState :Map<*, *> = state;
           const {
             app,
             appConfigs,
@@ -108,64 +89,51 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
           } = value;
           const organizations :Object = {};
 
-          appConfigs.forEach((appConfig :Object) => {
+          const newState = Map().withMutations((mutable) => {
+            appConfigs.forEach((appConfig :Object) => {
 
-            const { organization } :Object = appConfig;
-            const orgId :string = organization.id;
-            organizations[orgId] = organization;
+              const { organization } :Object = appConfig;
+              const orgId :string = organization.id;
+              organizations[orgId] = organization;
 
-            const appearsInConfig = appConfig.config[APPEARS_IN_FQN];
-            const appSettingsConfig = appConfig.config[APP_SETTINGS_FQN];
-            const bhrConfig = appConfig.config[BEHAVIORAL_HEALTH_REPORT_FQN];
-            const hasConfig = appConfig.config[HAS_FQN];
-            const hospitalsConfig = appConfig.config[HOSPITALS_FQN];
-            const peopleConfig = appConfig.config[PEOPLE_FQN];
-            const physicalAppearanceConfig = appConfig.config[PHYSICAL_APPEARANCE_FQN];
-            const reportedConfig = appConfig.config[REPORTED_FQN];
-            const staffConfig = appConfig.config[STAFF_FQN];
+              appTypes.forEach((appType) => {
+                const type = get(appType, 'type');
+                // .toString() is necessary when using setIn as immutable attempts to set the FQN instance as the key
+                const appTypeFqn = new FullyQualifiedName(type).toString();
+                const appTypeESID = getIn(appConfig, ['config', appTypeFqn, 'entitySetId']);
+                mutable.setIn([appTypeFqn, 'entitySetsByOrganization', orgId], appTypeESID);
+              });
 
-            newState = newState
-              .setIn([APP_SETTINGS_FQN, 'entitySetsByOrganization', orgId], appSettingsConfig.entitySetId)
-              .setIn([APPEARS_IN_FQN, 'entitySetsByOrganization', orgId], appearsInConfig.entitySetId)
-              .setIn([BEHAVIORAL_HEALTH_REPORT_FQN, 'entitySetsByOrganization', orgId], bhrConfig.entitySetId)
-              .setIn([HAS_FQN, 'entitySetsByOrganization', orgId], hasConfig.entitySetId)
-              .setIn([PEOPLE_FQN, 'entitySetsByOrganization', orgId], peopleConfig.entitySetId)
-              .setIn([PHYSICAL_APPEARANCE_FQN, 'entitySetsByOrganization', orgId], physicalAppearanceConfig.entitySetId)
-              .setIn([REPORTED_FQN, 'entitySetsByOrganization', orgId], reportedConfig.entitySetId)
-              .setIn([STAFF_FQN, 'entitySetsByOrganization', orgId], staffConfig.entitySetId);
+            });
 
-            // 2018-02-08:
-            // since hospitals is a new EntitySet for the app, old app installations will break without this check.
-            if (has(hospitalsConfig, 'entitySetId')) {
-              newState = newState.setIn([HOSPITALS_FQN, 'entitySetsByOrganization', orgId], hospitalsConfig.entitySetId);
+            let selectedOrganizationId :string = '';
+            if (appConfigs.length && !selectedOrganizationId.length) {
+              selectedOrganizationId = appConfigs[0].organization.id;
             }
+            const storedOrganizationId :?string = AccountUtils.retrieveOrganizationId();
+            if (storedOrganizationId) {
+              selectedOrganizationId = storedOrganizationId;
+            }
+
+            appTypes.forEach((appType :Object) => {
+              const type = get(appType, 'type');
+              const appTypeFqn = new FullyQualifiedName(type).toString();
+              const propertyTypes = getEntityTypePropertyTypes(edm, appType.entityTypeId);
+              const primaryKeys = edm.entityTypes[appType.entityTypeId].key;
+              mutable
+                .setIn([appTypeFqn, 'propertyTypes'], fromJS(propertyTypes))
+                .setIn([appTypeFqn, 'primaryKeys'], fromJS(primaryKeys));
+            });
+
+            const appSettings = appSettingsByOrgId.get(selectedOrganizationId, Map());
+
+            mutable
+              .set('app', app)
+              .set('organizations', fromJS(organizations))
+              .set('selectedOrganizationSettings', appSettings)
+              .set('selectedOrganizationId', selectedOrganizationId);
           });
-
-          let selectedOrganizationId :string = '';
-          if (appConfigs.length && !selectedOrganizationId.length) {
-            selectedOrganizationId = appConfigs[0].organization.id;
-          }
-          const storedOrganizationId :?string = AccountUtils.retrieveOrganizationId();
-          if (storedOrganizationId) {
-            selectedOrganizationId = storedOrganizationId;
-          }
-
-          appTypes.forEach((appType :Object) => {
-            const appTypeFqn :string = FullyQualifiedName.toString(appType.type.namespace, appType.type.name);
-            const propertyTypes = getEntityTypePropertyTypes(edm, appType.entityTypeId);
-            const primaryKeys = edm.entityTypes[appType.entityTypeId].key;
-            newState = newState
-              .setIn([appTypeFqn, 'propertyTypes'], fromJS(propertyTypes))
-              .setIn([appTypeFqn, 'primaryKeys'], fromJS(primaryKeys));
-          });
-
-          const appSettings = appSettingsByOrgId.get(selectedOrganizationId, Map());
-
-          return newState
-            .set('app', app)
-            .set('organizations', fromJS(organizations))
-            .set('selectedOrganizationSettings', appSettings)
-            .set('selectedOrganizationId', selectedOrganizationId);
+          return newState;
         },
         FINALLY: () => {
           const seqAction :SequenceAction = (action :any);
