@@ -38,18 +38,13 @@ import {
   updatePhysicalAppearance,
   updateProfileAbout,
 } from './ProfileActions';
-import {
-  getAppearsInESId,
-  getPeopleESId,
-  getReportESId,
-  getHasESId,
-  getPhysicalAppearanceESId,
-} from '../../utils/AppUtils';
+import { getESIDFromApp } from '../../utils/AppUtils';
+import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
 import { isDefined } from '../../utils/LangUtils';
 import { isValidUuid } from '../../utils/Utils';
-import * as FQN from '../../edm/DataModelFqns';
 import { simulateResponseData } from '../../utils/DataUtils';
+import * as FQN from '../../edm/DataModelFqns';
 
 const LOG = new Logger('ProfileSagas');
 
@@ -59,6 +54,14 @@ const { searchEntityNeighborsWithFilter } = SearchApiActions;
 const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
 const { createEntityAndAssociationData, getEntityData, updateEntityData } = DataApiActions;
 const { createEntityAndAssociationDataWorker, getEntityDataWorker, updateEntityDataWorker } = DataApiSagas;
+
+const {
+  APPEARS_IN_FQN,
+  BEHAVIORAL_HEALTH_REPORT_FQN,
+  OBSERVED_IN_FQN,
+  PEOPLE_FQN,
+  PHYSICAL_APPEARANCE_FQN,
+} = APP_TYPES_FQNS;
 
 function* getPhysicalAppearanceWorker(action :SequenceAction) :Generator<any, any, any> {
   const response = {};
@@ -70,15 +73,15 @@ function* getPhysicalAppearanceWorker(action :SequenceAction) :Generator<any, an
     yield put(getPhysicalAppearance.request(action.id, entityKeyId));
 
     const app :Map = yield select(state => state.get('app', Map()));
-    const entitySetId :UUID = getPeopleESId(app);
-    const physicalAppearanceESID :UUID = getPhysicalAppearanceESId(app);
-    const hasESID :UUID = getHasESId(app);
+    const entitySetId :UUID = getESIDFromApp(app, PEOPLE_FQN);
+    const physicalAppearanceESID :UUID = getESIDFromApp(app, PHYSICAL_APPEARANCE_FQN);
+    const observedInESID :UUID = getESIDFromApp(app, OBSERVED_IN_FQN);
 
     const appearanceSearchParams = {
       entitySetId,
       filter: {
         entityKeyIds: [entityKeyId],
-        edgeEntitySetIds: [hasESID],
+        edgeEntitySetIds: [observedInESID],
         destinationEntitySetIds: [physicalAppearanceESID],
         sourceEntitySetIds: [],
       }
@@ -123,7 +126,7 @@ function* getPersonDataWorker(action :SequenceAction) :Generator<any, any, any> 
     yield put(getPersonData.request(action.id, entityKeyId));
 
     const app :Map = yield select(state => state.get('app', Map()));
-    const entitySetId :UUID = getPeopleESId(app);
+    const entitySetId :UUID = getESIDFromApp(app, PEOPLE_FQN);
 
     const appearanceRequest = call(
       getPhysicalAppearanceWorker,
@@ -171,9 +174,9 @@ function* getProfileReportsWorker(action :SequenceAction) :Generator<any, any, a
     yield put(getProfileReports.request(action.id, entityKeyId));
 
     const app :Map = yield select(state => state.get('app', Map()));
-    const reportESID :UUID = getReportESId(app);
-    const peopleESID :UUID = getPeopleESId(app);
-    const appearsInESID :UUID = getAppearsInESId(app);
+    const reportESID :UUID = getESIDFromApp(app, BEHAVIORAL_HEALTH_REPORT_FQN);
+    const peopleESID :UUID = getESIDFromApp(app, PEOPLE_FQN);
+    const appearsInESID :UUID = getESIDFromApp(app, APPEARS_IN_FQN);
 
     // all reports for person
     const reportsSearchParams = {
@@ -236,14 +239,14 @@ function* createPhysicalAppearanceWorker(action :SequenceAction) :Generator<any,
 
     const edm :Map<*, *> = yield select(state => state.get('edm'));
     const app = yield select(state => state.get('app', Map()));
-    const peopleESID :UUID = getPeopleESId(app);
-    const hasESID :UUID = getHasESId(app);
-    const physicalAppearanceESID :UUID = getPhysicalAppearanceESId(app);
+    const peopleESID :UUID = getESIDFromApp(app, PEOPLE_FQN);
+    const observedInESID :UUID = getESIDFromApp(app, OBSERVED_IN_FQN);
+    const physicalAppearanceESID :UUID = getESIDFromApp(app, PHYSICAL_APPEARANCE_FQN);
     const datetimePTID :UUID = edm.getIn(['fqnToIdMap', FQN.DATE_TIME_FQN]);
 
     const now = DateTime.local().toISO();
     const associations = {
-      [hasESID]: [{
+      [observedInESID]: [{
         srcEntityKeyId: personEKID,
         srcEntitySetId: peopleESID,
         dstEntityIndex: 0,
@@ -300,7 +303,7 @@ function* updatePhysicalAppearanceWorker(action :SequenceAction) :Generator<any,
 
     const edm :Map<*, *> = yield select(state => state.get('edm'));
     const app = yield select(state => state.get('app', Map()));
-    const physicalAppearanceESID :UUID = getPhysicalAppearanceESId(app);
+    const physicalAppearanceESID :UUID = getESIDFromApp(app, PHYSICAL_APPEARANCE_FQN);
 
     const updateResponse = yield call(
       updateEntityDataWorker,
@@ -358,7 +361,7 @@ function* updateProfileAboutWorker(action :SequenceAction) :Generator<any, any, 
 
     const edm :Map<*, *> = yield select(state => state.get('edm'));
     const app = yield select(state => state.get('app', Map()));
-    const peopleESID :UUID = getPeopleESId(app);
+    const peopleESID :UUID = getESIDFromApp(app, PEOPLE_FQN);
 
     const newPersonProperties = getUpdatedPropertiesByName(
       data,
