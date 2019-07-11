@@ -1,14 +1,15 @@
 // @flow
-import React, { Component } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import {
+  Button,
   Card,
   CardHeader,
   CardSegment,
   IconSplash
 } from 'lattice-ui-kit';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faClipboardListCheck } from '@fortawesome/pro-solid-svg-icons';
+import { faClipboardListCheck, faEdit } from '@fortawesome/pro-solid-svg-icons';
 import { List } from 'immutable';
 
 const IconWrapper = styled.span`
@@ -25,6 +26,11 @@ const H1 = styled.h1`
   align-items: center;
 `;
 
+const EditButton = styled(Button)`
+  margin-left: auto;
+  padding: 2px;
+`;
+
 type Props = {
   isLoading ? :boolean;
   responsePlans ? :List;
@@ -38,6 +44,9 @@ const ResponsePlanCard = ({ isLoading } :Props) => (
           <FontAwesomeIcon icon={faClipboardListCheck} fixedWidth />
         </IconWrapper>
         Response Plan
+        <EditButton mode="primary">
+          <FontAwesomeIcon icon={faEdit} fixedWidth />
+        </EditButton>
       </H1>
     </CardHeader>
     <CardSegment vertical padding="sm">
@@ -48,7 +57,7 @@ const ResponsePlanCard = ({ isLoading } :Props) => (
 
 ResponsePlanCard.defaultProps = {
   isLoading: false,
-  reponsePlans: List(),
+  responsePlans: List(),
 };
 
 export default ResponsePlanCard;
