@@ -1,14 +1,18 @@
+// @flow
 import React, { Component } from 'react';
-import { Form, DataProcessingUtils } from 'lattice-fabricate';
+import { Form } from 'lattice-fabricate';
 import { schema, uiSchema } from './schemas/ResponsePlanSchemas';
 
-const {
-  processEntityData,
-  processAssociationEntityData
-} = DataProcessingUtils;
+// const {
+//   processEntityData,
+//   processAssociationEntityData
+// } = DataProcessingUtils;
 
-class EditResponsePlan extends Component {
+type Props = {
+  
+};
 
+class EditResponsePlan extends Component<Props> {
 
   render() {
     return (
