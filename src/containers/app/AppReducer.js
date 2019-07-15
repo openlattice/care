@@ -87,12 +87,30 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
           } = value;
           const organizations :Object = {};
 
+          let selectedOrganizationId :string = '';
+          if (appConfigs.length && !selectedOrganizationId.length) {
+            selectedOrganizationId = appConfigs[0].organization.id;
+          }
+          const storedOrganizationId :?string = AccountUtils.retrieveOrganizationId();
+          if (storedOrganizationId) {
+            selectedOrganizationId = storedOrganizationId;
+          }
+
           const newState = Map().withMutations((mutable) => {
             appConfigs.forEach((appConfig :Object) => {
 
               const { organization } :Object = appConfig;
               const orgId :string = organization.id;
               organizations[orgId] = organization;
+              if (orgId === selectedOrganizationId) {
+                appTypes.forEach((appType) => {
+                  const type = get(appType, 'type');
+                  // .toString() is necessary when using setIn as immutable attempts to set the FQN instance as the key
+                  const appTypeFqn = new FullyQualifiedName(type).toString();
+                  const appTypeESID = getIn(appConfig, ['config', appTypeFqn, 'entitySetId']);
+                  mutable.setIn(['selectedOrgEntitySetIds', appTypeFqn], appTypeESID);
+                });
+              }
 
               appTypes.forEach((appType) => {
                 const type = get(appType, 'type');
@@ -103,15 +121,6 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
               });
 
             });
-
-            let selectedOrganizationId :string = '';
-            if (appConfigs.length && !selectedOrganizationId.length) {
-              selectedOrganizationId = appConfigs[0].organization.id;
-            }
-            const storedOrganizationId :?string = AccountUtils.retrieveOrganizationId();
-            if (storedOrganizationId) {
-              selectedOrganizationId = storedOrganizationId;
-            }
 
             appTypes.forEach((appType :Object) => {
               const type = get(appType, 'type');
