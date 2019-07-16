@@ -11,7 +11,7 @@ import type { Match } from 'react-router';
 
 
 import NavStep from './NavStep';
-import EditResponsePlan from './responseplan/EditResponsePlan';
+import ResponsePlanForm from './responseplan/ResponsePlanForm';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
 import {
   BASIC_PATH,
@@ -45,7 +45,7 @@ const EditProfileContainer = (props :Props) => {
           <Switch>
             {/* <Route path={`${match.path}${BASIC_PATH}`} /> */}
             {/* <Route path={`${match.path}${OFFICER_SAFETY_PATH}`} /> */}
-            <Route path={`${match.path}${RESPONSE_PLAN_PATH}`} component={EditResponsePlan} />
+            <Route path={`${match.path}${RESPONSE_PLAN_PATH}`} component={ResponsePlanForm} />
             {/* <Route path={`${match.path}${CONTACTS_PATH}`} /> */}
             {/* <Route path={`${match.path}${ABOUT_PATH}`} /> */}
           </Switch>
