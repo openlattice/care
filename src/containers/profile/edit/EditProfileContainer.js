@@ -7,11 +7,11 @@ import {
   CardStack,
   Stepper,
 } from 'lattice-ui-kit';
-import type { Match } from 'react-router-dom';
+import type { Match } from 'react-router';
 
 
 import NavStep from './NavStep';
-import EditResponsePlan from './EditResponsePlan';
+import EditResponsePlan from './responseplan/EditResponsePlan';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
 import {
   BASIC_PATH,
