@@ -1,11 +1,11 @@
 import { DataProcessingUtils } from 'lattice-fabricate';
-import { APP_TYPES_FQNS } from '../../../../shared/Consts';
+import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
 import {
   CONTEXT_FQN,
   DESCRIPTION_FQN,
   TITLE_FQN,
 
-} from '../../../../edm/DataModelFqns';
+} from '../../../../../edm/DataModelFqns';
 
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
 const {
@@ -37,7 +37,7 @@ export const schema = {
       type: 'object',
       title: 'Background Information',
       properties: {
-        [getEntityAddressKey(1, RESPONSE_PLAN_FQN, CONTEXT_FQN)]: {
+        [getEntityAddressKey(0, RESPONSE_PLAN_FQN, CONTEXT_FQN)]: {
           type: 'string',
           title: 'Summary'
         }
@@ -60,7 +60,7 @@ export const schema = {
 export const uiSchema = {
   [getPageSectionKey(1, 1)]: {
     classNames: 'column-span-12',
-    [getEntityAddressKey(1, RESPONSE_PLAN_FQN, CONTEXT_FQN)]: {
+    [getEntityAddressKey(0, RESPONSE_PLAN_FQN, CONTEXT_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'textarea'
     }
