@@ -43,6 +43,7 @@ import {
 } from '../ProfileActions';
 import { DATE_TIME_OCCURRED_FQN } from '../../../edm/DataModelFqns';
 import { getEntityKeyId } from '../../../utils/DataUtils';
+import { reduceRequestStates } from '../../../utils/StateUtils';
 import {
   PROFILE_ID_PARAM,
   REPORT_VIEW_PATH,
@@ -86,8 +87,7 @@ type Props = {
     goToPath :(path :string) => RoutingAction;
     updateProfileAbout :RequestSequence;
   };
-  fetchAppearanceState :RequestState;
-  fetchPersonState :RequestState;
+  fetchAboutState :RequestState;
   fetchReportsState :RequestState;
   match :Match;
   physicalAppearance :Map;
@@ -172,8 +172,7 @@ class PremiumProfileContainer extends Component<Props, State> {
   render() {
     const {
       fetchReportsState,
-      fetchAppearanceState,
-      fetchPersonState,
+      fetchAboutState,
       physicalAppearance,
       reports,
       selectedPerson
@@ -181,10 +180,7 @@ class PremiumProfileContainer extends Component<Props, State> {
     const { recent, total } = this.countCrisisCalls();
 
     const isLoadingReports = fetchReportsState === RequestStates.PENDING;
-    const isLoadingAbout = (
-      fetchPersonState === RequestStates.PENDING
-      || fetchAppearanceState === RequestStates.PENDING
-    );
+    const isLoadingAbout = fetchAboutState === RequestStates.PENDING;
 
     return (
       <ContentOuterWrapper>
@@ -241,14 +237,20 @@ class PremiumProfileContainer extends Component<Props, State> {
   }
 }
 
-const mapStateToProps = state => ({
-  fetchAppearanceState: state.getIn(['profile', 'fetchAppearanceState'], RequestStates.STANDBY),
-  fetchPersonState: state.getIn(['profile', 'fetchPersonState'], RequestStates.STANDBY),
-  fetchReportsState: state.getIn(['profile', 'fetchReportsState'], RequestStates.STANDBY),
-  physicalAppearance: state.getIn(['profile', 'physicalAppearance'], Map()),
-  reports: state.getIn(['profile', 'reports'], List()),
-  selectedPerson: state.getIn(['profile', 'selectedPerson'], Map()),
-});
+const mapStateToProps = (state :Map) => {
+  const fetchAboutStates = [
+    state.getIn(['profile', 'person', 'fetchState']),
+    state.getIn(['profile', 'physicalAppearance', 'fetchState']),
+  ];
+
+  return {
+    fetchAboutState: reduceRequestStates(fetchAboutStates),
+    fetchReportsState: state.getIn(['profile', 'reports', 'fetchState'], RequestStates.STANDBY),
+    physicalAppearance: state.getIn(['profile', 'physicalAppearance', 'data'], Map()),
+    reports: state.getIn(['profile', 'reports', 'data'], List()),
+    selectedPerson: state.getIn(['profile', 'person', 'data'], Map()),
+  };
+};
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
