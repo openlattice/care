@@ -7,7 +7,7 @@ import type { RequestState } from 'redux-reqseq';
 const isRequestState = (requestState :string) :boolean => isString(requestState) && has(RequestStates, requestState);
 
 // Reduce an array of RequestStates by the following priorities:
-// 1) return null if ANY are not RequestStates
+// 1) return undefined if ANY are not RequestStates
 // 2) return RequestState.FAILURE if ANY are FAILURE
 // 3) return RequestState.PENDING if ANY are PENDING
 // 4) return RequestState.SUCCESS if ALL are SUCCESS
