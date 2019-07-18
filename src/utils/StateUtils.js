@@ -15,7 +15,7 @@ const isRequestState = (requestState :string) :boolean => isString(requestState)
 
 const reduceRequestStates = (requestStates :RequestState[]) => requestStates
   .reduce((acc, state) :RequestState | void => {
-    if (acc === undefined || isRequestState(state)) {
+    if (acc === undefined || !isRequestState(state)) {
       return undefined;
     }
 
@@ -23,7 +23,7 @@ const reduceRequestStates = (requestStates :RequestState[]) => requestStates
       return RequestStates.FAILURE;
     }
 
-    if (state === RequestStates.PENDING) {
+    if (state === RequestStates.PENDING || acc === RequestStates.PENDING) {
       return RequestStates.PENDING;
     }
 
