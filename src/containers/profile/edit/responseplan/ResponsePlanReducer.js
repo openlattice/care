@@ -13,6 +13,7 @@ const INITIAL_STATE :Map = fromJS({
 });
 
 const responsePlanReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
+  console.log('responseplanreducer');
   switch (action.type) {
 
     case getResponsePlan.case(action.type): {

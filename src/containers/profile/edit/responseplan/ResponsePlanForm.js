@@ -13,7 +13,10 @@ import { schema, uiSchema } from './schemas/ResponsePlanSchemas';
 import { PROFILE_ID_PARAM } from '../../../../core/router/Routes';
 import { COMPLETED_DT_FQN } from '../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
-import { submitResponsePlan } from './ResponsePlanActions';
+import {
+  getResponsePlan,
+  submitResponsePlan
+} from './ResponsePlanActions';
 
 const {
   INCLUDES_FQN,
@@ -32,7 +35,8 @@ const {
 
 type Props = {
   actions :{
-    submitResponsePlan :RequestSequence
+    submitResponsePlan :RequestSequence;
+    getResponsePlan :RequestSequence;
   },
   entitySetIds :Map;
   match :Match;
@@ -40,6 +44,12 @@ type Props = {
 };
 
 class EditResponsePlan extends Component<Props> {
+
+  componentDidMount() {
+    const { actions, match } = this.props;
+  const personEKID = match.params[PROFILE_ID_PARAM];
+    actions.getResponsePlan(personEKID);
+  }
 
   getAssociations = (formData :Object) => {
     const { match } = this.props;
@@ -94,7 +104,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
-    submitResponsePlan
+    getResponsePlan,
+    submitResponsePlan,
   }, dispatch)
 });
 
