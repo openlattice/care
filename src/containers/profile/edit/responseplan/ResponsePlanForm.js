@@ -121,7 +121,6 @@ class EditResponsePlan extends Component<Props, State> {
   }
 
   handleSubmit = ({ formData } :Object) => {
-    debugger;
     const { actions, entitySetIds, propertyTypeIds } = this.props;
     const entityData = processEntityData(formData, entitySetIds, propertyTypeIds);
     const associationEntityData = processAssociationEntityData(
@@ -129,7 +128,7 @@ class EditResponsePlan extends Component<Props, State> {
       entitySetIds,
       propertyTypeIds
     );
-    // actions.submitResponsePlan({ entityData, associationEntityData });
+    actions.submitResponsePlan({ entityData, associationEntityData });
   }
 
   render() {
