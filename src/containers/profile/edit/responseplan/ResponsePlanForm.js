@@ -1,7 +1,10 @@
 // @flow
 import React, { Component } from 'react';
 import { DateTime } from 'luxon';
-import { get, Map } from 'immutable';
+import {
+  Map,
+  get,
+} from 'immutable';
 import { Form, DataProcessingUtils } from 'lattice-fabricate';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -39,16 +42,51 @@ type Props = {
     getResponsePlan :RequestSequence;
   },
   entitySetIds :Map;
+  formData :Map;
   match :Match;
   propertyTypeIds :Map;
 };
 
-class EditResponsePlan extends Component<Props> {
+type State = {
+  formData :Object
+}
+
+class EditResponsePlan extends Component<Props, State> {
+
+  state = {
+    formData: {}
+  };
 
   componentDidMount() {
-    const { actions, match } = this.props;
-  const personEKID = match.params[PROFILE_ID_PARAM];
-    actions.getResponsePlan(personEKID);
+    const { actions, formData, match } = this.props;
+    const personEKID = match.params[PROFILE_ID_PARAM];
+    if (formData.isEmpty()) {
+      actions.getResponsePlan(personEKID);
+    }
+    else {
+      this.initializeFormData();
+    }
+  }
+
+  componentDidUpdate(prevProps :Props) {
+    const { actions, formData, match } = this.props;
+    const { formData: prevFormData, match: prevMatch } = prevProps;
+    const personEKID = match.params[PROFILE_ID_PARAM];
+    const prevPersonEKID = prevMatch.params[PROFILE_ID_PARAM];
+    if (personEKID !== prevPersonEKID) {
+      actions.getResponsePlan(personEKID);
+    }
+
+    if (!formData.equals(prevFormData)) {
+      this.initializeFormData();
+    }
+  }
+
+  initializeFormData = () => {
+    const { formData } = this.props;
+    this.setState({
+      formData: formData.toJS()
+    });
   }
 
   getAssociations = (formData :Object) => {
@@ -76,7 +114,14 @@ class EditResponsePlan extends Component<Props> {
     return strategyAssociations;
   }
 
+  handleChange = ({ formData: newFormData } :Object) => {
+    this.setState({
+      formData: newFormData
+    });
+  }
+
   handleSubmit = ({ formData } :Object) => {
+    debugger;
     const { actions, entitySetIds, propertyTypeIds } = this.props;
     const entityData = processEntityData(formData, entitySetIds, propertyTypeIds);
     const associationEntityData = processAssociationEntityData(
@@ -84,12 +129,15 @@ class EditResponsePlan extends Component<Props> {
       entitySetIds,
       propertyTypeIds
     );
-    actions.submitResponsePlan({ entityData, associationEntityData });
+    // actions.submitResponsePlan({ entityData, associationEntityData });
   }
 
   render() {
+    const { formData } = this.state;
     return (
       <Form
+          formData={formData}
+          onChange={this.handleChange}
           schema={schema}
           uiSchema={uiSchema}
           onSubmit={this.handleSubmit} />
@@ -99,7 +147,8 @@ class EditResponsePlan extends Component<Props> {
 
 const mapStateToProps = state => ({
   propertyTypeIds: state.getIn(['edm', 'fqnToIdMap'], Map()),
-  entitySetIds: state.getIn(['app', 'selectedOrgEntitySetIds'], Map())
+  entitySetIds: state.getIn(['app', 'selectedOrgEntitySetIds'], Map()),
+  formData: state.getIn(['profile', 'responsePlan', 'formData'])
 });
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({

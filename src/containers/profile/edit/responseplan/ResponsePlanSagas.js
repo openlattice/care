@@ -129,7 +129,7 @@ export function* getResponsePlanWorker(action :SequenceAction) :Generator<*, *, 
 
     if (interactionStrategyResponse.error) throw interactionStrategyResponse.error;
     const interactionStrategies = fromJS(interactionStrategyResponse.data)
-      .get(entityKeyId, List())
+      .get(responsePlanEKID, List())
       .map(entity => entity.get('neighborDetails', Map()));
 
     const formData = constructResponsePlanFormData(responsePlan, interactionStrategies);

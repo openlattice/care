@@ -7,13 +7,13 @@ import { getResponsePlan, submitResponsePlan } from './ResponsePlanActions';
 
 const INITIAL_STATE :Map = fromJS({
   fetchState: RequestStates.STANDBY,
-  updateResponsePlan: RequestStates.STANDBY,
+  formData: Map(),
+  interactionStrategies: List(),
   responsePlan: Map(),
-  interactionStrategies: List()
+  updateResponsePlan: RequestStates.STANDBY,
 });
 
 const responsePlanReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
-  console.log('responseplanreducer');
   switch (action.type) {
 
     case getResponsePlan.case(action.type): {

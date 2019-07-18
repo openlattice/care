@@ -41,7 +41,7 @@ const constructResponsePlanFormData = (responsePlan :Map, interactionStrategies 
     ],
     backgroundSummary);
 
-    mutable.setIn([
+    mutable.set(
       getPageSectionKey(1, 2),
       getEntityArrayFormData(
         interactionStrategies,
@@ -49,7 +49,7 @@ const constructResponsePlanFormData = (responsePlan :Map, interactionStrategies 
         strategyProperties,
         -1
       )
-    ]);
+    );
   });
 
   return data;
