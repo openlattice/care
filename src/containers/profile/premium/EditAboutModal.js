@@ -14,6 +14,7 @@ import type { Dispatch } from 'redux';
 
 import EditProfileForm from '../EditProfileForm';
 import { updateProfileAbout } from '../ProfileActions';
+import { reduceRequestStates } from '../../../utils/StateUtils';
 
 const StyledCard = styled(Card)`
   margin: 0 -30px;
@@ -91,11 +92,18 @@ class EditAboutModal extends Component<Props> {
   }
 }
 
-const mapStateToProps = state => ({
-  physicalAppearance: state.getIn(['profile', 'physicalAppearance'], Map()),
-  selectedPerson: state.getIn(['profile', 'selectedPerson'], Map()),
-  updateAboutState: state.getIn(['profile', 'updateAboutState'], RequestStates.STANDBY),
-});
+const mapStateToProps = (state :Map) => {
+  const fetchAboutStates = [
+    state.getIn(['profile', 'person', 'fetchState']),
+    state.getIn(['profile', 'physicalAppearance', 'fetchState']),
+  ];
+
+  return {
+    physicalAppearance: state.getIn(['profile', 'physicalAppearance', 'data'], Map()),
+    selectedPerson: state.getIn(['profile', 'person', 'data'], Map()),
+    updateAboutState: reduceRequestStates(fetchAboutStates)
+  };
+};
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
