@@ -19,11 +19,17 @@ const responsePlanReducer = (state :Map = INITIAL_STATE, action :SequenceAction)
       return getResponsePlan.reducer(state, action, {
         REQUEST: () => state.set('fetchState', RequestStates.PENDING),
         SUCCESS: () => {
-          const { responsePlan, interactionStrategies } = action.value;
+          const {
+            formData,
+            interactionStrategies,
+            responsePlan,
+          } = action.value;
+
           return state
             .set('data', responsePlan)
-            .set('interactionStrategies', interactionStrategies)
-            .set('fetchState', RequestStates.SUCCESS);
+            .set('fetchState', RequestStates.SUCCESS)
+            .set('formData', formData)
+            .set('interactionStrategies', interactionStrategies);
         },
         FAILURE: () => state.set('fetchState', RequestStates.FAILURE)
       });
