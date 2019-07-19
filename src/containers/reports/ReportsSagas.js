@@ -100,7 +100,7 @@ const getStaffInteractions = (entities :List<Map>) => {
     if (!timeA.isValid) return 1;
     if (!timeB.isValid) return -1;
 
-    return timeA.diff(timeB).toObject().milliseconds;
+    return timeB.diff(timeA).toObject().milliseconds;
   });
 
   const submitted = sorted.first() || Map();
