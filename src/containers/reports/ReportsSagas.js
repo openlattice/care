@@ -103,11 +103,13 @@ const getStaffInteractions = (entities :List<Map>) => {
     return timeB.diff(timeA).toObject().milliseconds;
   });
 
-  const submitted = sorted.first(Map());
+  const submitted = sorted.first() || Map();
+  const last = sorted.last() || Map();
+  const lastUpdated = entities.size > 1 ? last : Map();
 
   return {
     submitted,
-    lastUpdated: !sorted.last(Map()).equals(submitted) ? sorted.last(Map()) : Map()
+    lastUpdated
   };
 };
 
@@ -241,7 +243,7 @@ function* getReportWorker(action :SequenceAction) :Generator<*, *, *> {
       LOG.warn('person not found in report', reportEKID);
     }
 
-    const subjectData = subjectDataList.first(Map());
+    const subjectData = subjectDataList.first() || Map();
 
     const subjectInformation = compileSubjectData(subjectData, reportData);
     const observedBehaviors = compileObservedBehaviorData(reportData);
@@ -382,49 +384,55 @@ function* getReportsByDateRangeWorker(action :SequenceAction) :Generator<*, *, *
     const peopleResponseData = fromJS(peopleResponse.data);
     const staffResponseData = fromJS(staffResponse.data);
 
-    const results = reportData.map((report) => {
-      const entityKeyId = report.getIn([OPENLATTICE_ID_FQN, 0]);
-      const reportType = report.getIn([FQN.TYPE_FQN, 0]);
-      const natureOfCrisis = report.getIn([FQN.DISPATCH_REASON_FQN]);
-      const rawOccurred = report.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0]);
-      let occurred;
-      if (rawOccurred) {
-        occurred = DateTime.fromISO(
-          rawOccurred
-        ).toLocaleString(DateTime.DATE_SHORT);
-      }
+    const results = List().withMutations((mutable) => {
 
-      const staffs = staffResponseData.get(entityKeyId, List());
-      const subjectDataList = peopleResponseData.get(entityKeyId, List());
+      reportData.forEach((report) => {
+        const entityKeyId = report.getIn([OPENLATTICE_ID_FQN, 0]);
+        const reportType = report.getIn([FQN.TYPE_FQN, 0]);
+        const natureOfCrisis = report.getIn([FQN.DISPATCH_REASON_FQN]);
+        const rawOccurred = report.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0]);
+        let occurred;
+        if (rawOccurred) {
+          occurred = DateTime.fromISO(
+            rawOccurred
+          ).toLocaleString(DateTime.DATE_SHORT);
+        }
 
-      const { submitted } = getStaffInteractions(staffs);
+        const staffs = staffResponseData.get(entityKeyId, List());
+        const subjectDataList = peopleResponseData.get(entityKeyId, List());
 
-      if (subjectDataList.count() > 1) {
-        LOG.warn('more than one person found in report', entityKeyId);
-      }
-      if (!subjectDataList.count()) {
-        LOG.warn('person not found in report', entityKeyId);
-      }
+        const { submitted } = getStaffInteractions(staffs);
 
-      const subjectData = subjectDataList.first(Map()).get('neighborDetails', Map());
-      const rawDob = subjectData.getIn([FQN.PERSON_DOB_FQN, 0]);
-      let dob;
-      if (rawDob) {
-        dob = DateTime.fromISO(
-          rawDob
-        ).toLocaleString(DateTime.DATE_SHORT);
-      }
+        if (subjectDataList.count() > 1) {
+          LOG.warn('more than one person found in report', entityKeyId);
+        }
+        if (!subjectDataList.count()) {
+          LOG.warn('person not found in report', entityKeyId);
+        }
+        else {
+          const subjectEntity = subjectDataList.first() || Map();
+          const subjectData = subjectEntity.get('neighborDetails', Map());
+          const rawDob = subjectData.getIn([FQN.PERSON_DOB_FQN, 0]);
+          let dob;
+          if (rawDob) {
+            dob = DateTime.fromISO(
+              rawDob
+            ).toLocaleString(DateTime.DATE_SHORT);
+          }
 
-      return OrderedMap({
-        lastName: subjectData.getIn([FQN.PERSON_LAST_NAME_FQN, 0]),
-        firstName: subjectData.getIn([FQN.PERSON_FIRST_NAME_FQN, 0]),
-        middleName: subjectData.getIn([FQN.PERSON_MIDDLE_NAME_FQN, 0]),
-        dob,
-        occurred,
-        reportType,
-        natureOfCrisis,
-        reporter: submitted.getIn(['neighborDetails', FQN.PERSON_ID_FQN, 0]),
-        [OPENLATTICE_ID_FQN]: entityKeyId
+          mutable.push(OrderedMap({
+            lastName: subjectData.getIn([FQN.PERSON_LAST_NAME_FQN, 0]),
+            firstName: subjectData.getIn([FQN.PERSON_FIRST_NAME_FQN, 0]),
+            middleName: subjectData.getIn([FQN.PERSON_MIDDLE_NAME_FQN, 0]),
+            dob,
+            occurred,
+            reportType,
+            natureOfCrisis,
+            reporter: submitted.getIn(['neighborDetails', FQN.PERSON_ID_FQN, 0]),
+            [OPENLATTICE_ID_FQN]: entityKeyId
+          }));
+        }
+
       });
     });
 
