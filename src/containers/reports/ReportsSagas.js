@@ -100,7 +100,7 @@ const getStaffInteractions = (entities :List<Map>) => {
     if (!timeA.isValid) return 1;
     if (!timeB.isValid) return -1;
 
-    return timeB.diff(timeA).toObject().milliseconds;
+    return timeA.diff(timeB).toObject().milliseconds;
   });
 
   const submitted = sorted.first() || Map();
@@ -329,8 +329,9 @@ function* getReportsByDateRangeWorker(action :SequenceAction) :Generator<*, *, *
 
         if (!timeA.isValid) return 1;
         if (!timeB.isValid) return -1;
+        console.log(timeB > timeA);
 
-        return timeB.diff(timeA).toObject().milliseconds;
+        return timeB > timeA
       });
 
     const reportEKIDs = reportData.map(report => report.getIn([OPENLATTICE_ID_FQN, 0]));
