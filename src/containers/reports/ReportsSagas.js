@@ -329,9 +329,8 @@ function* getReportsByDateRangeWorker(action :SequenceAction) :Generator<*, *, *
 
         if (!timeA.isValid) return 1;
         if (!timeB.isValid) return -1;
-        console.log(timeB > timeA);
 
-        return timeB > timeA
+        return timeB.diff(timeA).toObject().milliseconds;
       });
 
     const reportEKIDs = reportData.map(report => report.getIn([OPENLATTICE_ID_FQN, 0]));
