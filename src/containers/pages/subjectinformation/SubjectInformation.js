@@ -8,15 +8,14 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router';
 import { List, Map } from 'immutable';
-import { DatePicker } from 'lattice-ui-kit';
+import { DatePicker, Input } from 'lattice-ui-kit';
 
 import BackButton from '../../../components/buttons/BackButton';
-import StyledInput from '../../../components/controls/StyledInput';
 import StyledCheckbox from '../../../components/controls/StyledCheckbox';
 import StyledRadio from '../../../components/controls/StyledRadio';
 import { showInvalidFields } from '../../../utils/NavigationUtils';
 import { STATE } from '../../../utils/constants/StateConstants';
-import { SUBJECT_INFORMATION } from '../../../utils/constants/CrisisTemplateConstants';
+import { SUBJECT_INFORMATION } from '../../../utils/constants/CrisisReportConstants';
 import { GENDERS, RACES } from './Constants';
 import {
   FormWrapper,
@@ -85,7 +84,7 @@ class SubjectInformation extends React.Component<Props> {
       : 'text';
 
     return (
-      <StyledInput
+      <Input
           type={type}
           padBottom
           name={field}

@@ -45,7 +45,6 @@ export default function* sagas() :Generator<*, *, *> {
     fork(DataIntegrationApiSagas.createEntityAndAssociationDataWatcher),
     fork(EntityDataModelApiSagas.getEntityDataModelProjectionWatcher),
     fork(EntityDataModelApiSagas.getAllPropertyTypesWatcher),
-    fork(SearchApiSagas.searchEntityNeighborsWatcher),
     fork(SearchApiSagas.searchEntitySetDataWatcher),
 
     // AppSagas
@@ -73,6 +72,7 @@ export default function* sagas() :Generator<*, *, *> {
 
     // Profile Sagas
     fork(ProfileSagas.getPersonDataWatcher),
+    fork(ProfileSagas.getPhysicalApperanceWatcher),
     fork(ProfileSagas.getProfileReportsWatcher),
     fork(ProfileSagas.updateProfileAboutWatcher),
 

@@ -1,4 +1,4 @@
-import { OTHER } from '../../../utils/constants/CrisisTemplateConstants';
+import { OTHER } from '../../../utils/constants/CrisisReportConstants';
 
 export const OFFICER_TRAINING = [
   'Officer with 40-hour CIT training',

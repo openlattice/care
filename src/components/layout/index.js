@@ -18,3 +18,7 @@ export const ContentWrapper = styled.div`
   padding: 30px;
   width: 100vw;
 `;
+
+export const UL = styled.ul`
+  padding-inline-start: inherit;
+`;

@@ -5,6 +5,14 @@
 import { Models } from 'lattice';
 
 const { FullyQualifiedName } = Models;
+/*
+ * AppSettings
+ */
+
+const APP_DETAILS_FQN = new FullyQualifiedName('ol.appdetails');
+export {
+  APP_DETAILS_FQN
+};
 
 /*
  * PhysicalAppearance
@@ -259,13 +267,15 @@ export {
  */
 
 const DATE_TIME_FQN = new FullyQualifiedName('general.datetime');
+const COMPLETED_DT_FQN = new FullyQualifiedName('date.completeddatetime');
 
 export {
+  COMPLETED_DT_FQN,
   DATE_TIME_FQN
 };
 
 /*
- * Crisis Template Specific
+ * Crisis Report Specific
  */
 
 const BIOLOGICALLY_INDUCED_CAUSES_FQN = new FullyQualifiedName('bhr.biologicallyinducedoptions');

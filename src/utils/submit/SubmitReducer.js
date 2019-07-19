@@ -4,7 +4,7 @@
 
 import Immutable from 'immutable';
 
-import { CLEAR_CRISIS_TEMPLATE } from '../../containers/crisis/CrisisActionFactory';
+import { CLEAR_CRISIS_REPORT } from '../../containers/crisis/CrisisActionFactory';
 import { SUBMIT } from '../constants/StateConstants';
 import {
   submit
@@ -34,7 +34,7 @@ function submitReducer(state :Immutable.Map<*, *> = INITIAL_STATE, action :Objec
       });
     }
 
-    case CLEAR_CRISIS_TEMPLATE:
+    case CLEAR_CRISIS_REPORT:
       return INITIAL_STATE;
 
     default:

@@ -1,7 +1,6 @@
 /* Form Types */
 export const FORM_TYPE = {
-  BHR: 'Behavioral Health Report',
-  CRISIS_TEMPLATE: 'Crisis Template'
+  CRISIS_REPORT: 'Crisis Report'
 };
 
 /* Consumer Constants */

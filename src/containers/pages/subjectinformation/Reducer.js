@@ -7,10 +7,9 @@ import randomUUID from 'uuid/v4';
 import { Map, fromJS } from 'immutable';
 
 import { CLEAR, SET_INPUT_VALUE, SET_INPUT_VALUES } from './ActionFactory';
-import { CLEAR_CRISIS_TEMPLATE } from '../../crisis/CrisisActionFactory';
-import { SUBJECT_INFORMATION, POST_PROCESS_FIELDS } from '../../../utils/constants/CrisisTemplateConstants';
+import { CLEAR_CRISIS_REPORT } from '../../crisis/CrisisActionFactory';
+import { SUBJECT_INFORMATION, POST_PROCESS_FIELDS } from '../../../utils/constants/CrisisReportConstants';
 import { FORM_STEP_STATUS } from '../../../utils/constants/FormConstants';
-import { isNotInteger } from '../../../utils/ValidationUtils';
 
 const {
   FULL_NAME,
@@ -57,7 +56,7 @@ export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :
       return state.merge(fromJS(action.value));
 
     case CLEAR:
-    case CLEAR_CRISIS_TEMPLATE:
+    case CLEAR_CRISIS_REPORT:
       return INITIAL_STATE;
 
     default:

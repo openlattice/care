@@ -13,11 +13,12 @@ import { RequestStates } from 'redux-reqseq';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import AppHeaderContainer from './AppHeaderContainer';
-import CrisisTemplateContainer from '../crisis/CrisisTemplateContainer';
+import CrisisReportContainer from '../crisis/CrisisReportContainer';
 import DownloadsContainer from '../downloads/DownloadsContainer';
 import HomeContainer from '../home/HomeContainer';
 import PeopleRouter from '../people/PeopleRouter';
 import Spinner from '../../components/spinner/Spinner';
+import SupportButton from '../../components/buttons/SupportButton';
 import LegitReportsRouter from '../reports/LegitReportsRouter';
 import DashboardContainer from '../dashboard/DashboardContainer';
 import SubscribeContainer from '../subscribe/SubscribeContainer';
@@ -42,7 +43,6 @@ import {
   MEDIA_QUERY_MD,
   MEDIA_QUERY_LG
 } from '../../core/style/Sizes';
-
 
 // TODO: this should come from lattice-ui-kit, maybe after the next release. current version v0.1.1
 const APP_BG :string = '#f8f8fb';
@@ -147,7 +147,7 @@ class AppContainer extends Component<Props> {
     return (
       <Switch>
         <Route exact strict path={HOME_PATH} render={this.wrapComponent(HomeContainer)} />
-        <Route path={CRISIS_PATH} component={CrisisTemplateContainer} />
+        <Route path={CRISIS_PATH} component={CrisisReportContainer} />
         <Route path={REPORTS_PATH} component={LegitReportsRouter} />
         <Route path={DASHBOARD_PATH} render={this.wrapComponent(DashboardContainer)} />
         <Route path={DOWNLOADS_PATH} render={this.wrapComponent(DownloadsContainer)} />
@@ -165,6 +165,7 @@ class AppContainer extends Component<Props> {
         <AppHeaderContainer />
         <AppContentOuterWrapper>
           { this.renderAppContent() }
+          <SupportButton />
         </AppContentOuterWrapper>
       </AppContainerWrapper>
     );

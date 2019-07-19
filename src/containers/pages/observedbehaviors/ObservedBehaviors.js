@@ -7,13 +7,13 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router';
 import { List, Map } from 'immutable';
+import { Input } from 'lattice-ui-kit';
 
 import StyledCheckbox from '../../../components/controls/StyledCheckbox';
-import StyledInput from '../../../components/controls/StyledInput';
 import StyledRadio from '../../../components/controls/StyledRadio';
 import { showInvalidFields } from '../../../utils/NavigationUtils';
 import { STATE } from '../../../utils/constants/StateConstants';
-import { OBSERVED_BEHAVIORS, OTHER } from '../../../utils/constants/CrisisTemplateConstants';
+import { OBSERVED_BEHAVIORS, OTHER } from '../../../utils/constants/CrisisReportConstants';
 import {
   BEHAVIORS,
   SUICIDE_BEHAVIORS,
@@ -105,7 +105,7 @@ const ObservedBehaviors = ({ values, actions, disabled } :Props) => {
       <>
         {checkboxes}
         { !!otherField && currentValues.includes(OTHER) ? (
-          <StyledInput
+          <Input
               disabled={disabled}
               key={`${field}-other-value`}
               value={values.get(otherField, '')}

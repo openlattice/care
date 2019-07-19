@@ -9,7 +9,7 @@ import type { Dispatch } from 'redux';
 import { FormWrapper } from './FormComponents';
 import { BLACK } from '../../shared/Colors';
 import { CRISIS_PATH, HOME_PATH } from '../../core/router/Routes';
-import { clearCrisisTemplate } from '../../containers/crisis/CrisisActionFactory';
+import { clearCrisisReport } from '../../containers/crisis/CrisisActionFactory';
 import { goToPath } from '../../core/router/RoutingActions';
 import type { RoutingAction } from '../../core/router/RoutingActions';
 
@@ -44,7 +44,7 @@ const StyledButton = styled(Button)`
 
 type Props = {
   actions :{
-    clearCrisisTemplate :() => {
+    clearCrisisReport :() => {
       type :string;
     };
     goToPath :(path :string) => RoutingAction;
@@ -56,7 +56,7 @@ class SubmitSuccess extends Component<Props> {
 
   clearAndNavigate = (path :string) => () => {
     const { actions } = this.props;
-    actions.clearCrisisTemplate();
+    actions.clearCrisisReport();
     actions.goToPath(path);
   };
 
@@ -68,7 +68,7 @@ class SubmitSuccess extends Component<Props> {
           <SubmittedView>
             <h1>{`Your report has been ${actionText}!`}</h1>
             <StyledButton mode="primary" onClick={this.clearAndNavigate(HOME_PATH)}>Return to Home</StyledButton>
-            <StyledButton onClick={this.clearAndNavigate(CRISIS_PATH)}>New Crisis Template</StyledButton>
+            <StyledButton onClick={this.clearAndNavigate(CRISIS_PATH)}>New Crisis Report</StyledButton>
           </SubmittedView>
         </FormWrapper>
       </PageWrapper>
@@ -79,7 +79,7 @@ class SubmitSuccess extends Component<Props> {
 const mapDispatchToProps = (dispatch :Dispatch<*>) => ({
   // $FlowFixMe
   actions: bindActionCreators({
-    clearCrisisTemplate,
+    clearCrisisReport,
     goToPath,
   }, dispatch)
 });

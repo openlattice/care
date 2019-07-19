@@ -8,19 +8,36 @@ import {
   Route,
   Switch,
 } from 'react-router';
+import { Map } from 'immutable';
+import { connect } from 'react-redux';
 
 import SearchPeopleContainer from './SearchPeopleContainer';
 import ProfileContainer from '../profile/ProfileContainer';
-import { PEOPLE_PATH, PROFILE_PATH } from '../../core/router/Routes';
+import PremiumProfileContainer from '../profile/premium/PremiumProfileContainer';
+import {
+  PEOPLE_PATH,
+  PROFILE_PATH
+} from '../../core/router/Routes';
 
+type Props = {
+  selectedOrganizationSettings :Map;
+};
 
-const PeopleRouter = () => (
-  <Switch>
-    <Route exact path={PEOPLE_PATH} component={SearchPeopleContainer} />
-    <Route path={PROFILE_PATH} component={ProfileContainer} />
-    <Redirect to={PEOPLE_PATH} />
-  </Switch>
-);
+const PeopleRouter = ({ selectedOrganizationSettings } :Props) => {
+  const premium = selectedOrganizationSettings.get('premium', false);
+  const profileComponent = premium ? PremiumProfileContainer : ProfileContainer;
 
+  return (
+    <Switch>
+      <Route exact path={PEOPLE_PATH} component={SearchPeopleContainer} />
+      <Route path={PROFILE_PATH} component={profileComponent} />
+      <Redirect to={PEOPLE_PATH} />
+    </Switch>
+  );
+};
+
+const mapStateToProps = state => ({
+  selectedOrganizationSettings: state.getIn(['app', 'selectedOrganizationSettings'], Map())
+});
 // $FlowFixMe
-export default PeopleRouter;
+export default connect(mapStateToProps)(PeopleRouter);
