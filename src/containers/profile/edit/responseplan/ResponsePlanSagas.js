@@ -21,17 +21,19 @@ import Logger from '../../../../utils/Logger';
 import {
   GET_RESPONSE_PLAN,
   SUBMIT_RESPONSE_PLAN,
+  UPDATE_RESPONSE_PLAN,
   getResponsePlan,
   submitResponsePlan,
+  updateResponsePlan,
 } from './ResponsePlanActions';
-import { constructResponsePlanFormData } from './ResponsePlanUtils';
+import { constructResponsePlanFormData, constructResponsePlanEAKIDMap } from './ResponsePlanUtils';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../../utils/Errors';
 import { getESIDFromApp } from '../../../../utils/AppUtils';
 import { isDefined } from '../../../../utils/LangUtils';
 import { isValidUuid } from '../../../../utils/Utils';
-import { submitDataGraph } from '../../../../core/sagas/data/DataActions';
-import { submitDataGraphWorker } from '../../../../core/sagas/data/DataSagas';
+import { submitDataGraph, submitPartialReplace } from '../../../../core/sagas/data/DataActions';
+import { submitDataGraphWorker, submitPartialReplaceWorker } from '../../../../core/sagas/data/DataSagas';
 // import * as FQN from '../../../../edm/DataModelFqns';
 
 const { OPENLATTICE_ID_FQN } = Constants;
@@ -133,8 +135,14 @@ export function* getResponsePlanWorker(action :SequenceAction) :Generator<*, *, 
       .map(entity => entity.get('neighborDetails', Map()));
 
     const formData = constructResponsePlanFormData(responsePlan, interactionStrategies);
+    const entityIndexToIdMap = constructResponsePlanEAKIDMap(interactionStrategies);
 
-    yield put(getResponsePlan.success(action.id, { responsePlan, interactionStrategies, formData }));
+    yield put(getResponsePlan.success(action.id, {
+      entityIndexToIdMap,
+      formData,
+      interactionStrategies,
+      responsePlan,
+    }));
   }
   catch (error) {
     LOG.error(error);
@@ -147,4 +155,29 @@ export function* getResponsePlanWorker(action :SequenceAction) :Generator<*, *, 
 
 export function* getResponsePlanWatcher() :Generator<*, *, *> {
   yield takeEvery(GET_RESPONSE_PLAN, getResponsePlanWorker);
+}
+
+export function* updateResponsePlanWorker(action :SequenceAction) :Generator<*, *, *> {
+  try {
+    const { value } = action;
+    if (value === null || value === undefined) throw ERR_ACTION_VALUE_NOT_DEFINED;
+
+    yield put(updateResponsePlan.request(action.id));
+    const response = yield call(submitPartialReplaceWorker, submitPartialReplace(action.value));
+
+    if (response.error) throw response.error;
+    
+    yield put(updateResponsePlan.success(action.id));
+  }
+  catch (error) {
+    LOG.error(error);
+    yield put(updateResponsePlan.failure(action.id, error));
+  }
+  finally {
+    yield put(updateResponsePlan.finally(action.id));
+  }
+}
+
+export function* updateResponsePlanWatcher() :Generator<*, *, *> {
+  yield takeEvery(UPDATE_RESPONSE_PLAN, updateResponsePlanWorker);
 }
