@@ -3,9 +3,14 @@ import { List, Map, fromJS } from 'immutable';
 import { RequestStates } from 'redux-reqseq';
 import type { SequenceAction } from 'redux-reqseq';
 
-import { getResponsePlan, submitResponsePlan } from './ResponsePlanActions';
+import {
+  getResponsePlan,
+  submitResponsePlan,
+  updateResponsePlan,
+} from './ResponsePlanActions';
 
 const INITIAL_STATE :Map = fromJS({
+  entityIndexToIdMap: Map(),
   fetchState: RequestStates.STANDBY,
   formData: Map(),
   interactionStrategies: List(),
@@ -21,6 +26,7 @@ const responsePlanReducer = (state :Map = INITIAL_STATE, action :SequenceAction)
         REQUEST: () => state.set('fetchState', RequestStates.PENDING),
         SUCCESS: () => {
           const {
+            entityIndexToIdMap,
             formData,
             interactionStrategies,
             responsePlan,
@@ -28,6 +34,7 @@ const responsePlanReducer = (state :Map = INITIAL_STATE, action :SequenceAction)
 
           return state
             .set('data', responsePlan)
+            .set('entityIndexToIdMap', entityIndexToIdMap)
             .set('fetchState', RequestStates.SUCCESS)
             .set('formData', formData)
             .set('interactionStrategies', interactionStrategies);
@@ -41,6 +48,14 @@ const responsePlanReducer = (state :Map = INITIAL_STATE, action :SequenceAction)
         REQUEST: () => state.set('submitState', RequestStates.PENDING),
         SUCCESS: () => state.set('submitState', RequestStates.SUCCESS),
         FAILURE: () => state.set('submitState', RequestStates.FAILURE)
+      });
+    }
+
+    case updateResponsePlan.case(action.type): {
+      return updateResponsePlan.reducer(state, action, {
+        REQUEST: () => state.set('updateState', RequestStates.PENDING),
+        SUCCESS: () => state.set('updateState', RequestStates.SUCCESS),
+        FAILURE: () => state.set('updateState', RequestStates.FAILURE)
       });
     }
 
