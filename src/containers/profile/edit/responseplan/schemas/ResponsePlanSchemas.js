@@ -78,6 +78,9 @@ export const uiSchema = {
       [getEntityAddressKey(-1, INTERACTION_STRATEGY_FQN, DESCRIPTION_FQN)]: {
         classNames: 'column-span-12',
         'ui:widget': 'textarea'
+      },
+      'ui:options': {
+        editable: true
       }
     }
   }
