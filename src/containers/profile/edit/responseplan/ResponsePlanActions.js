@@ -7,9 +7,14 @@ const submitResponsePlan = newRequestSequence(SUBMIT_RESPONSE_PLAN);
 const GET_RESPONSE_PLAN :'GET_RESPONSE_PLAN' = 'GET_RESPONSE_PLAN';
 const getResponsePlan = newRequestSequence(GET_RESPONSE_PLAN);
 
+const UPDATE_RESPONSE_PLAN :'UPDATE_RESPONSE_PLAN' = 'UPDATE_RESPONSE_PLAN';
+const updateResponsePlan = newRequestSequence(UPDATE_RESPONSE_PLAN);
+
 export {
   GET_RESPONSE_PLAN,
   SUBMIT_RESPONSE_PLAN,
+  UPDATE_RESPONSE_PLAN,
   getResponsePlan,
   submitResponsePlan,
+  updateResponsePlan,
 };
