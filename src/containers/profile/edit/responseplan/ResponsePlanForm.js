@@ -8,8 +8,9 @@ import {
 import { Form, DataProcessingUtils } from 'lattice-fabricate';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { RequestStates } from 'redux-reqseq';
 import type { Dispatch } from 'redux';
-import type { RequestSequence } from 'redux-reqseq';
+import type { RequestSequence, RequestState } from 'redux-reqseq';
 import type { Match } from 'react-router';
 
 import { schema, uiSchema } from './schemas/ResponsePlanSchemas';
@@ -18,7 +19,8 @@ import { COMPLETED_DT_FQN } from '../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
 import {
   getResponsePlan,
-  submitResponsePlan
+  submitResponsePlan,
+  updateResponsePlan,
 } from './ResponsePlanActions';
 
 const {
@@ -38,13 +40,17 @@ const {
 
 type Props = {
   actions :{
-    submitResponsePlan :RequestSequence;
     getResponsePlan :RequestSequence;
+    submitResponsePlan :RequestSequence;
+    updateResponsePlan :RequestSequence;
   },
+  deleteState :RequestState;
+  entityIndexToIdMap :Map;
   entitySetIds :Map;
   formData :Map;
   match :Match;
   propertyTypeIds :Map;
+  updateState :RequestState;
 };
 
 type State = {
@@ -69,11 +75,25 @@ class EditResponsePlan extends Component<Props, State> {
   }
 
   componentDidUpdate(prevProps :Props) {
-    const { actions, formData, match } = this.props;
-    const { formData: prevFormData, match: prevMatch } = prevProps;
+    const {
+      actions,
+      formData,
+      match,
+      updateState
+    } = this.props;
+    const {
+      formData: prevFormData,
+      match: prevMatch,
+      updateState: prevUpdateState
+    } = prevProps;
     const personEKID = match.params[PROFILE_ID_PARAM];
     const prevPersonEKID = prevMatch.params[PROFILE_ID_PARAM];
     if (personEKID !== prevPersonEKID) {
+      actions.getResponsePlan(personEKID);
+    }
+
+    if (updateState === RequestStates.SUCCESS
+      && prevUpdateState === RequestStates.PENDING) {
       actions.getResponsePlan(personEKID);
     }
 
@@ -133,8 +153,28 @@ class EditResponsePlan extends Component<Props, State> {
 
   render() {
     const { formData } = this.state;
+    const {
+      actions,
+      deleteState,
+      entitySetIds,
+      entityIndexToIdMap,
+      propertyTypeIds,
+      updateState,
+    } = this.props;
+    const formContext = {
+      deleteState,
+      editAction: actions.updateResponsePlan,
+      entityIndexToIdMap,
+      entitySetIds,
+      mappers: {},
+      propertyTypeIds,
+      updateState: updateState === RequestStates.PENDING,
+    };
+
     return (
       <Form
+          disabled
+          formContext={formContext}
           formData={formData}
           onChange={this.handleChange}
           schema={schema}
@@ -145,15 +185,19 @@ class EditResponsePlan extends Component<Props, State> {
 }
 
 const mapStateToProps = state => ({
-  propertyTypeIds: state.getIn(['edm', 'fqnToIdMap'], Map()),
+  deleteState: state.getIn(['profile', 'responsePlan', 'deleteState']),
+  entityIndexToIdMap: state.getIn(['profile', 'responsePlan', 'entityIndexToIdMap']),
   entitySetIds: state.getIn(['app', 'selectedOrgEntitySetIds'], Map()),
-  formData: state.getIn(['profile', 'responsePlan', 'formData'])
+  formData: state.getIn(['profile', 'responsePlan', 'formData']),
+  propertyTypeIds: state.getIn(['edm', 'fqnToIdMap'], Map()),
+  updateState: state.getIn(['profile', 'responsePlan', 'updateState']),
 });
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
     getResponsePlan,
     submitResponsePlan,
+    updateResponsePlan,
   }, dispatch)
 });
 
