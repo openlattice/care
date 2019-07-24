@@ -34,6 +34,7 @@ import ProfileBanner from '../ProfileBanner';
 import ProfileResult from '../ProfileResult';
 import RecentIncidentCard from '../RecentIncidentCard';
 import { labelMapReport } from '../constants';
+import Portrait from '../styled/Portrait';
 import { ContentWrapper, ContentOuterWrapper } from '../../../components/layout';
 import {
   getPersonData,
@@ -43,6 +44,7 @@ import {
 } from '../ProfileActions';
 import { DATE_TIME_OCCURRED_FQN } from '../../../edm/DataModelFqns';
 import { getEntityKeyId } from '../../../utils/DataUtils';
+import { getNameFromPerson } from '../../../utils/PersonUtils';
 import {
   PROFILE_ID_PARAM,
   REPORT_VIEW_PATH,
@@ -186,6 +188,9 @@ class PremiumProfileContainer extends Component<Props, State> {
       || fetchAppearanceState === RequestStates.PENDING
     );
 
+    const formattedName = getNameFromPerson(selectedPerson);
+    const isMalfoy = formattedName === 'Malfoy, Scorpius H.';
+
     return (
       <ContentOuterWrapper>
         <ProfileBanner selectedPerson={selectedPerson} />
@@ -195,7 +200,8 @@ class PremiumProfileContainer extends Component<Props, State> {
               <CardStack>
                 <Card>
                   <CardSegment padding="sm">
-                    <PlaceholderPortrait icon={faPortrait} color={NEUTRALS[5]} />
+                    <Portrait isMalfoy={isMalfoy} />
+                    {/* <PlaceholderPortrait icon={faPortrait} color={NEUTRALS[5]} /> */}
                   </CardSegment>
                   <CardSegment vertical padding="sm">
                     <Button mode="primary">
