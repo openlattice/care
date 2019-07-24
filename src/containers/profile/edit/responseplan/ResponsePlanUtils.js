@@ -29,29 +29,35 @@ const getEntityArrayFormData = (
 };
 
 const constructResponsePlanFormData = (responsePlan :Map, interactionStrategies :List) => {
-  const backgroundSummary = responsePlan.getIn([FQN.CONTEXT_FQN, 0]);
+  const backgroundSummary = responsePlan.getIn([FQN.CONTEXT_FQN, 0], '');
   const strategyProperties = List([
     FQN.TITLE_FQN,
     FQN.DESCRIPTION_FQN,
   ]);
 
+  const strategyFormData = getEntityArrayFormData(
+    interactionStrategies,
+    APP.INTERACTION_STRATEGY_FQN,
+    strategyProperties,
+    -1
+  );
+
   const data = Map().withMutations((mutable) => {
 
-    mutable.setIn([
-      getPageSectionKey(1, 1),
-      getEntityAddressKey(0, APP.RESPONSE_PLAN_FQN, FQN.CONTEXT_FQN)
-    ],
-    backgroundSummary);
+    if (backgroundSummary) {
+      mutable.setIn([
+        getPageSectionKey(1, 1),
+        getEntityAddressKey(0, APP.RESPONSE_PLAN_FQN, FQN.CONTEXT_FQN)
+      ],
+      backgroundSummary);
+    }
 
-    mutable.set(
-      getPageSectionKey(1, 2),
-      getEntityArrayFormData(
-        interactionStrategies,
-        APP.INTERACTION_STRATEGY_FQN,
-        strategyProperties,
-        -1
-      )
-    );
+    if (strategyFormData.size) {
+      mutable.set(
+        getPageSectionKey(1, 2),
+        strategyFormData
+      );
+    }
   });
 
   return data;
