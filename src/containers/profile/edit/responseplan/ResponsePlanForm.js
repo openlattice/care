@@ -18,6 +18,7 @@ import { PROFILE_ID_PARAM } from '../../../../core/router/Routes';
 import { COMPLETED_DT_FQN } from '../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
 import {
+  deleteInteractionStrategies,
   getResponsePlan,
   submitResponsePlan,
   updateResponsePlan,
@@ -40,6 +41,7 @@ const {
 
 type Props = {
   actions :{
+    deleteInteractionStrategies :RequestSequence;
     getResponsePlan :RequestSequence;
     submitResponsePlan :RequestSequence;
     updateResponsePlan :RequestSequence;
@@ -54,13 +56,15 @@ type Props = {
 };
 
 type State = {
-  formData :Object
+  formData :Object;
+  prepopulated :boolean;
 }
 
-class EditResponsePlan extends Component<Props, State> {
+class ResponsePlanForm extends Component<Props, State> {
 
   state = {
-    formData: {}
+    formData: {},
+    prepopulated: false
   };
 
   componentDidMount() {
@@ -105,7 +109,8 @@ class EditResponsePlan extends Component<Props, State> {
   initializeFormData = () => {
     const { formData } = this.props;
     this.setState({
-      formData: formData.toJS()
+      formData: formData.toJS(),
+      prepopulated: !!formData.size
     });
   }
 
@@ -152,28 +157,31 @@ class EditResponsePlan extends Component<Props, State> {
   }
 
   render() {
-    const { formData } = this.state;
+    const { formData, prepopulated } = this.state;
     const {
       actions,
       deleteState,
-      entitySetIds,
       entityIndexToIdMap,
+      entitySetIds,
       propertyTypeIds,
       updateState,
     } = this.props;
+
     const formContext = {
       deleteState,
+      deleteAction: actions.deleteInteractionStrategies,
       editAction: actions.updateResponsePlan,
       entityIndexToIdMap,
       entitySetIds,
       mappers: {},
       propertyTypeIds,
+      submitAction: this.handleSubmit,
       updateState: updateState === RequestStates.PENDING,
     };
 
     return (
       <Form
-          disabled
+          disabled={prepopulated}
           formContext={formContext}
           formData={formData}
           onChange={this.handleChange}
@@ -195,6 +203,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
+    deleteInteractionStrategies,
     getResponsePlan,
     submitResponsePlan,
     updateResponsePlan,
@@ -202,4 +211,4 @@ const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
 });
 
 // $FlowFixMe
-export default connect(mapStateToProps, mapDispatchToProps)(EditResponsePlan);
+export default connect(mapStateToProps, mapDispatchToProps)(ResponsePlanForm);

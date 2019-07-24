@@ -19,9 +19,11 @@ import type { SequenceAction } from 'redux-reqseq';
 
 import Logger from '../../../../utils/Logger';
 import {
+  DELETE_INTERACTION_STRATEGIES,
   GET_RESPONSE_PLAN,
   SUBMIT_RESPONSE_PLAN,
   UPDATE_RESPONSE_PLAN,
+  deleteInteractionStrategies,
   getResponsePlan,
   submitResponsePlan,
   updateResponsePlan,
@@ -32,8 +34,16 @@ import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../..
 import { getESIDFromApp } from '../../../../utils/AppUtils';
 import { isDefined } from '../../../../utils/LangUtils';
 import { isValidUuid } from '../../../../utils/Utils';
-import { submitDataGraph, submitPartialReplace } from '../../../../core/sagas/data/DataActions';
-import { submitDataGraphWorker, submitPartialReplaceWorker } from '../../../../core/sagas/data/DataSagas';
+import {
+  deleteBulkEntities,
+  submitDataGraph,
+  submitPartialReplace,
+} from '../../../../core/sagas/data/DataActions';
+import {
+  deleteBulkEntitiesWorker,
+  submitDataGraphWorker,
+  submitPartialReplaceWorker,
+} from '../../../../core/sagas/data/DataSagas';
 // import * as FQN from '../../../../edm/DataModelFqns';
 
 const { OPENLATTICE_ID_FQN } = Constants;
@@ -114,25 +124,28 @@ export function* getResponsePlanWorker(action :SequenceAction) :Generator<*, *, 
       .getIn([0, 'neighborDetails'], Map());
     const responsePlanEKID = responsePlan.getIn([OPENLATTICE_ID_FQN, 0]);
 
-    const interactionStrategySearchParams = {
-      entitySetId: responsePlanESID,
-      filter: {
-        entityKeyIds: [responsePlanEKID],
-        edgeEntitySetIds: [includesESID],
-        destinationEntitySetIds: [interactionStrategyESID],
-        sourcesEntitySetIds: []
-      }
-    };
+    let interactionStrategies = List();
+    if (responsePlanEKID) {
+      const interactionStrategySearchParams = {
+        entitySetId: responsePlanESID,
+        filter: {
+          entityKeyIds: [responsePlanEKID],
+          edgeEntitySetIds: [includesESID],
+          destinationEntitySetIds: [interactionStrategyESID],
+          sourcesEntitySetIds: []
+        }
+      };
+      const interactionStrategyResponse = yield call(
+        searchEntityNeighborsWithFilterWorker,
+        searchEntityNeighborsWithFilter(interactionStrategySearchParams)
+      );
 
-    const interactionStrategyResponse = yield call(
-      searchEntityNeighborsWithFilterWorker,
-      searchEntityNeighborsWithFilter(interactionStrategySearchParams)
-    );
+      if (interactionStrategyResponse.error) throw interactionStrategyResponse.error;
 
-    if (interactionStrategyResponse.error) throw interactionStrategyResponse.error;
-    const interactionStrategies = fromJS(interactionStrategyResponse.data)
-      .get(responsePlanEKID, List())
-      .map(entity => entity.get('neighborDetails', Map()));
+      interactionStrategies = fromJS(interactionStrategyResponse.data)
+        .get(responsePlanEKID, List())
+        .map(entity => entity.get('neighborDetails', Map()));
+    }
 
     const formData = constructResponsePlanFormData(responsePlan, interactionStrategies);
     const entityIndexToIdMap = constructResponsePlanEAKIDMap(interactionStrategies);
@@ -166,7 +179,7 @@ export function* updateResponsePlanWorker(action :SequenceAction) :Generator<*, 
     const response = yield call(submitPartialReplaceWorker, submitPartialReplace(action.value));
 
     if (response.error) throw response.error;
-    
+
     yield put(updateResponsePlan.success(action.id));
   }
   catch (error) {
@@ -180,4 +193,29 @@ export function* updateResponsePlanWorker(action :SequenceAction) :Generator<*, 
 
 export function* updateResponsePlanWatcher() :Generator<*, *, *> {
   yield takeEvery(UPDATE_RESPONSE_PLAN, updateResponsePlanWorker);
+}
+
+export function* deleteInteractionStrategiesWorker(action :SequenceAction) :Generator<*, *, *> {
+  try {
+    const { value } = action;
+    if (value === null || value === undefined) throw ERR_ACTION_VALUE_NOT_DEFINED;
+
+    yield put(deleteInteractionStrategies.request(action.id));
+    const response = yield call(deleteBulkEntitiesWorker, deleteBulkEntities(action.value));
+
+    if (response.error) throw response.error;
+
+    yield put(deleteInteractionStrategies.success(action.id));
+  }
+  catch (error) {
+    LOG.error(error);
+    yield put(deleteInteractionStrategies.failure(action.id, error));
+  }
+  finally {
+    yield put(deleteInteractionStrategies.finally(action.id));
+  }
+}
+
+export function* deleteInteractionStrategiesWatcher() :Generator<*, *, *> {
+  yield takeEvery(DELETE_INTERACTION_STRATEGIES, deleteInteractionStrategiesWorker);
 }
