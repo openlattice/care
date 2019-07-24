@@ -32,7 +32,7 @@ const ButtonLink = styled.a.attrs(() => ({
   line-height: 17px;
   padding: 0 10px;
   position: fixed;
-  right: 30px;
+  left: 30px;
   text-align: center;
   text-decoration: none;
 
