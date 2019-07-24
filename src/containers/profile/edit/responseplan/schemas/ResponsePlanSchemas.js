@@ -59,10 +59,13 @@ export const schema = {
 
 export const uiSchema = {
   [getPageSectionKey(1, 1)]: {
-    classNames: 'column-span-12',
+    classNames: 'column-span-12 grid-container',
     [getEntityAddressKey(0, RESPONSE_PLAN_FQN, CONTEXT_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'textarea'
+    },
+    'ui:options': {
+      editable: true
     }
   },
   [getPageSectionKey(1, 2)]: {
