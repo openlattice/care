@@ -15,21 +15,25 @@ import type { SequenceAction } from 'redux-reqseq';
 import Logger from '../../../utils/Logger';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_WORKER_SAGA } from '../../../utils/Errors';
 import {
+  DELETE_BULK_ENTITIES,
   SUBMIT_DATA_GRAPH,
   SUBMIT_PARTIAL_REPLACE,
+  deleteBulkEntities,
   submitDataGraph,
   submitPartialReplace,
 } from './DataActions';
 
 const LOG = new Logger('DataSagas');
 const { DataGraphBuilder } = Models;
-const { UpdateTypes } = Types;
+const { UpdateTypes, DeleteTypes } = Types;
 const {
   createEntityAndAssociationData,
+  deleteEntitiesAndNeighbors,
   updateEntityData,
 } = DataApiActions;
 const {
   createEntityAndAssociationDataWorker,
+  deleteEntitiesAndNeighborsWorker,
   updateEntityDataWorker,
 } = DataApiSagas;
 
@@ -146,7 +150,65 @@ function* submitPartialReplaceWatcher() :Generator<*, *, *> {
   yield takeEvery(SUBMIT_PARTIAL_REPLACE, submitPartialReplaceWorker);
 }
 
+/*
+ *
+ * DataActions.deleteBulkEntities()
+ *
+ */
+
+function* deleteBulkEntitiesWorker(action :SequenceAction) :Generator<*, *, *> {
+
+  const sagaResponse :Object = {};
+
+  try {
+    const { value } = action;
+    if (value === null || value === undefined) throw ERR_ACTION_VALUE_NOT_DEFINED;
+
+    yield put(deleteBulkEntities.request(action.id));
+
+    const deleteRequests = Object.keys(value).map((entitySetId) => {
+      const entityKeyIds = Array.from(value[entitySetId]);
+
+      const filter = {
+        entityKeyIds,
+        destinationEntitySetIds: [],
+        sourceEntitySetIds: []
+      };
+
+      return call(
+        deleteEntitiesAndNeighborsWorker,
+        deleteEntitiesAndNeighbors({
+          entitySetId,
+          filter,
+          deleteType: DeleteTypes.SOFT
+        })
+      );
+    });
+
+    const deleteResponses = yield all(deleteRequests);
+    const reducedError = deleteResponses.reduce((error, response) => error || response.error);
+    if (reducedError) throw reducedError;
+
+    yield put(deleteBulkEntities.success(action.id));
+  }
+  catch (error) {
+    sagaResponse.error = error;
+    yield put(deleteBulkEntities.failure(action.id, error));
+  }
+  finally {
+    yield put(deleteBulkEntities.finally(action.id));
+  }
+
+  return sagaResponse;
+}
+
+function* deleteBulkEntitiesWatcher() :Generator<*, *, *> {
+  yield takeEvery(DELETE_BULK_ENTITIES, deleteBulkEntitiesWorker);
+}
+
 export {
+  deleteBulkEntitiesWatcher,
+  deleteBulkEntitiesWorker,
   submitDataGraphWatcher,
   submitDataGraphWorker,
   submitPartialReplaceWatcher,

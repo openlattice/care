@@ -56,8 +56,10 @@ export default function* sagas() :Generator<*, *, *> {
     fork(AppSagas.switchOrganizationWatcher),
 
     // DataSagas
+    fork(DataSagas.deleteBulkEntitiesWatcher),
     fork(DataSagas.submitDataGraphWatcher),
     fork(DataSagas.submitPartialReplaceWatcher),
+
 
     // StaffSagas
     fork(StaffSagas.getCurrentUserStaffMemberDataWatcher),
@@ -89,6 +91,7 @@ export default function* sagas() :Generator<*, *, *> {
     fork(ReportsSagas.getReportWatcher),
 
     // ResponsePlanSagas
+    fork(ResponsePlanSagas.deleteInteractionStrategiesWatcher),
     fork(ResponsePlanSagas.getResponsePlanWatcher),
     fork(ResponsePlanSagas.submitResponsePlanWatcher),
     fork(ResponsePlanSagas.updateResponsePlanWatcher),
