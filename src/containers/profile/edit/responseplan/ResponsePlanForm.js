@@ -1,5 +1,6 @@
 // @flow
 import React, { Component } from 'react';
+import { Constants } from 'lattice';
 import { DateTime } from 'luxon';
 import {
   Map,
@@ -24,6 +25,8 @@ import {
   updateResponsePlan,
 } from './ResponsePlanActions';
 
+const { OPENLATTICE_ID_FQN } = Constants;
+
 const {
   INCLUDES_FQN,
   SUBJECT_OF_FQN,
@@ -31,7 +34,6 @@ const {
   RESPONSE_PLAN_FQN,
   PEOPLE_FQN
 } = APP_TYPES_FQNS;
-
 
 const {
   getPageSectionKey,
@@ -53,6 +55,7 @@ type Props = {
   match :Match;
   propertyTypeIds :Map;
   updateState :RequestState;
+  responsePlanEKID :UUID;
 };
 
 type State = {
@@ -122,16 +125,25 @@ class ResponsePlanForm extends Component<Props, State> {
       [SUBJECT_OF_FQN, personEKID, PEOPLE_FQN, 0, RESPONSE_PLAN_FQN, {
         [COMPLETED_DT_FQN.toString()]: [nowAsIsoString]
       }],
-      ...this.getInteractionStrategyAssociations(formData, nowAsIsoString)
+      ...this.getInteractionStrategyAssociations(
+        formData,
+        getPageSectionKey(1, 2),
+        nowAsIsoString
+      )
     ];
   }
 
-  getInteractionStrategyAssociations = (formData :Object, nowAsIsoString :string) => {
+  getInteractionStrategyAssociations = (
+    formData :Object,
+    pageSection :string,
+    nowAsIsoString :string,
+    idOrIndex :UUID | number = 0,
+  ) => {
     const strategyAssociations :any[][] = [];
-    const strategySize :number = get(formData, getPageSectionKey(1, 2), []).length;
+    const strategySize :number = get(formData, pageSection, []).length;
     for (let i = 0; i < strategySize; i += 1) {
       strategyAssociations.push(
-        [INCLUDES_FQN, 0, RESPONSE_PLAN_FQN, i, INTERACTION_STRATEGY_FQN, {
+        [INCLUDES_FQN, idOrIndex, RESPONSE_PLAN_FQN, i, INTERACTION_STRATEGY_FQN, {
           [COMPLETED_DT_FQN.toString()]: [nowAsIsoString]
         }]
       );
@@ -156,6 +168,29 @@ class ResponsePlanForm extends Component<Props, State> {
     actions.submitResponsePlan({ entityData, associationEntityData });
   }
 
+  handleAddInteractionStrategy = ({ formData } :Object) => {
+    const {
+      actions,
+      entitySetIds,
+      propertyTypeIds,
+      responsePlanEKID,
+    } = this.props;
+
+    if (responsePlanEKID) {
+      const associations = this.getInteractionStrategyAssociations(
+        formData,
+        getPageSectionKey(1, 1),
+        DateTime.local().toISO(),
+        responsePlanEKID,
+      );
+      const entityData = processEntityData(formData, entitySetIds, propertyTypeIds);
+      const associationEntityData = processAssociationEntityData(associations, entitySetIds, propertyTypeIds);
+
+      actions.submitResponsePlan({ entityData, associationEntityData });
+    }
+
+  }
+
   render() {
     const { formData, prepopulated } = this.state;
     const {
@@ -168,6 +203,9 @@ class ResponsePlanForm extends Component<Props, State> {
     } = this.props;
 
     const formContext = {
+      addActions: {
+        addInteractionStrategy: this.handleAddInteractionStrategy,
+      },
       deleteState,
       deleteAction: actions.deleteInteractionStrategies,
       editAction: actions.updateResponsePlan,
@@ -175,7 +213,6 @@ class ResponsePlanForm extends Component<Props, State> {
       entitySetIds,
       mappers: {},
       propertyTypeIds,
-      submitAction: this.handleSubmit,
       updateState: updateState === RequestStates.PENDING,
     };
 
@@ -195,6 +232,7 @@ class ResponsePlanForm extends Component<Props, State> {
 const mapStateToProps = state => ({
   deleteState: state.getIn(['profile', 'responsePlan', 'deleteState']),
   entityIndexToIdMap: state.getIn(['profile', 'responsePlan', 'entityIndexToIdMap']),
+  responsePlanEKID: state.getIn(['profile', 'responsePlan', 'responsePlan', OPENLATTICE_ID_FQN, 0]),
   entitySetIds: state.getIn(['app', 'selectedOrgEntitySetIds'], Map()),
   formData: state.getIn(['profile', 'responsePlan', 'formData']),
   propertyTypeIds: state.getIn(['edm', 'fqnToIdMap'], Map()),
