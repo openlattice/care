@@ -21,8 +21,10 @@ export {
 
 const DESCRIPTION_FQN = new FullyQualifiedName('ol.description');
 const TITLE_FQN = new FullyQualifiedName('ol.title');
+const INDEX_FQN = new FullyQualifiedName('ol.index');
 export {
   DESCRIPTION_FQN,
+  INDEX_FQN,
   TITLE_FQN,
 };
 

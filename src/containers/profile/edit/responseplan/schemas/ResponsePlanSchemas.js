@@ -3,8 +3,8 @@ import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
 import {
   CONTEXT_FQN,
   DESCRIPTION_FQN,
-  TITLE_FQN,
-
+  INDEX_FQN,
+  TITLE_FQN
 } from '../../../../../edm/DataModelFqns';
 
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
@@ -25,6 +25,9 @@ export const schema = {
         [getEntityAddressKey(-1, INTERACTION_STRATEGY_FQN, DESCRIPTION_FQN)]: {
           type: 'string',
           title: 'Description',
+        },
+        [getEntityAddressKey(-1, INTERACTION_STRATEGY_FQN, INDEX_FQN)]: {
+          type: 'number',
         }
       },
       required: [getEntityAddressKey(-1, INTERACTION_STRATEGY_FQN, TITLE_FQN)]
@@ -52,6 +55,7 @@ export const schema = {
       default: [{
         [getEntityAddressKey(-1, INTERACTION_STRATEGY_FQN, TITLE_FQN)]: undefined,
         [getEntityAddressKey(-1, INTERACTION_STRATEGY_FQN, DESCRIPTION_FQN)]: undefined,
+        [getEntityAddressKey(-1, INTERACTION_STRATEGY_FQN, INDEX_FQN)]: 0,
       }]
     }
   }
@@ -71,7 +75,8 @@ export const uiSchema = {
   [getPageSectionKey(1, 2)]: {
     classNames: 'column-span-12',
     'ui:options': {
-      addButtonText: '+ Add Strategy'
+      addButtonText: '+ Add Strategy',
+      addActionKey: 'addInteractionStrategy'
     },
     items: {
       classNames: 'grid-container',
@@ -81,6 +86,9 @@ export const uiSchema = {
       [getEntityAddressKey(-1, INTERACTION_STRATEGY_FQN, DESCRIPTION_FQN)]: {
         classNames: 'column-span-12',
         'ui:widget': 'textarea'
+      },
+      [getEntityAddressKey(-1, INTERACTION_STRATEGY_FQN, INDEX_FQN)]: {
+        'ui:widget': 'hidden'
       },
       'ui:options': {
         editable: true
