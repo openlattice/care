@@ -232,7 +232,7 @@ class ResponsePlanForm extends Component<Props, State> {
 const mapStateToProps = state => ({
   deleteState: state.getIn(['profile', 'responsePlan', 'deleteState']),
   entityIndexToIdMap: state.getIn(['profile', 'responsePlan', 'entityIndexToIdMap']),
-  responsePlanEKID: state.getIn(['profile', 'responsePlan', 'responsePlan', OPENLATTICE_ID_FQN, 0]),
+  responsePlanEKID: state.getIn(['profile', 'responsePlan', 'data', OPENLATTICE_ID_FQN, 0]),
   entitySetIds: state.getIn(['app', 'selectedOrgEntitySetIds'], Map()),
   formData: state.getIn(['profile', 'responsePlan', 'formData']),
   propertyTypeIds: state.getIn(['edm', 'fqnToIdMap'], Map()),

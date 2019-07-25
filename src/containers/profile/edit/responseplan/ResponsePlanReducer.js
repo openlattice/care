@@ -14,7 +14,7 @@ const INITIAL_STATE :Map = fromJS({
   fetchState: RequestStates.STANDBY,
   formData: Map(),
   interactionStrategies: List(),
-  responsePlan: Map(),
+  data: Map(),
   updateResponsePlan: RequestStates.STANDBY,
 });
 
