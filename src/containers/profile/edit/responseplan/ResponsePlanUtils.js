@@ -63,15 +63,24 @@ const constructResponsePlanFormData = (responsePlan :Map, interactionStrategies 
   return data;
 };
 
-const constructResponsePlanEAKIDMap = (interactionStrategies :List) => {
-  const interactionStrategiesEKID = interactionStrategies
+const constructResponsePlanEAKIDMap = (responsePlan :Map, interactionStrategies :List) => {
+  const interactionStrategiesEKIDs = interactionStrategies
     .map(strategy => strategy.getIn([OPENLATTICE_ID_FQN, 0]));
 
-  return fromJS({
-    [APP.INTERACTION_STRATEGY_FQN]: Map([
-      [-1, interactionStrategiesEKID]
-    ])
+  const responsePlanEKID = responsePlan.getIn([OPENLATTICE_ID_FQN, 0]);
+
+  const addressToIdMap = Map().withMutations((mutable) => {
+    if (responsePlanEKID) {
+      mutable.setIn([APP.RESPONSE_PLAN_FQN.toString(), 0], responsePlanEKID);
+    }
+
+    if (interactionStrategiesEKIDs) {
+      mutable.setIn([APP.INTERACTION_STRATEGY_FQN.toString(), -1], interactionStrategiesEKIDs);
+    }
+
   });
+
+  return addressToIdMap;
 };
 
 export {

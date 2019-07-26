@@ -68,6 +68,9 @@ export function* submitResponsePlanWorker(action :SequenceAction) :Generator<*, 
     yield put(submitResponsePlan.request(action.id));
     const response = yield call(submitDataGraphWorker, submitDataGraph(action.value));
     if (response.error) throw response.error;
+
+    const entityIndexToIdMap = yield select(state => state.getIn(['profile', 'responsePlan', 'entityIndexToIdMap']));
+    console.log(entityIndexToIdMap);
     yield put(submitResponsePlan.success(action.id));
   }
   catch (error) {
@@ -148,7 +151,7 @@ export function* getResponsePlanWorker(action :SequenceAction) :Generator<*, *, 
     }
 
     const formData = constructResponsePlanFormData(responsePlan, interactionStrategies);
-    const entityIndexToIdMap = constructResponsePlanEAKIDMap(interactionStrategies);
+    const entityIndexToIdMap = constructResponsePlanEAKIDMap(responsePlan, interactionStrategies);
 
     yield put(getResponsePlan.success(action.id, {
       entityIndexToIdMap,
