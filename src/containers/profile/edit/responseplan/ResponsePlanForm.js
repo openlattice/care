@@ -86,21 +86,14 @@ class ResponsePlanForm extends Component<Props, State> {
       actions,
       formData,
       match,
-      updateState
     } = this.props;
     const {
       formData: prevFormData,
       match: prevMatch,
-      updateState: prevUpdateState
     } = prevProps;
     const personEKID = match.params[PROFILE_ID_PARAM];
     const prevPersonEKID = prevMatch.params[PROFILE_ID_PARAM];
     if (personEKID !== prevPersonEKID) {
-      actions.getResponsePlan(personEKID);
-    }
-
-    if (updateState === RequestStates.SUCCESS
-      && prevUpdateState === RequestStates.PENDING) {
       actions.getResponsePlan(personEKID);
     }
 
