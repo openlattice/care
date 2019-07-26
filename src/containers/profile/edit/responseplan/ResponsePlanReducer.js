@@ -54,7 +54,12 @@ const responsePlanReducer = (state :Map = INITIAL_STATE, action :SequenceAction)
     case updateResponsePlan.case(action.type): {
       return updateResponsePlan.reducer(state, action, {
         REQUEST: () => state.set('updateState', RequestStates.PENDING),
-        SUCCESS: () => state.set('updateState', RequestStates.SUCCESS),
+        SUCCESS: () => {
+          const { path, formData } = action.value;
+          return state
+            .set('updateState', RequestStates.SUCCESS)
+            .setIn(['formData', ...path], formData);
+        },
         FAILURE: () => state.set('updateState', RequestStates.FAILURE)
       });
     }

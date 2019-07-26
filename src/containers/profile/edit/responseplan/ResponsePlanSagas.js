@@ -176,11 +176,11 @@ export function* updateResponsePlanWorker(action :SequenceAction) :Generator<*, 
     if (value === null || value === undefined) throw ERR_ACTION_VALUE_NOT_DEFINED;
 
     yield put(updateResponsePlan.request(action.id));
-    const response = yield call(submitPartialReplaceWorker, submitPartialReplace(action.value));
+    const response = yield call(submitPartialReplaceWorker, submitPartialReplace(value));
 
     if (response.error) throw response.error;
 
-    yield put(updateResponsePlan.success(action.id));
+    yield put(updateResponsePlan.success(action.id, value));
   }
   catch (error) {
     LOG.error(error);
