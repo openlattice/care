@@ -172,7 +172,7 @@ class ResponsePlanForm extends Component<Props, State> {
     if (responsePlanEKID) {
       const associations = this.getInteractionStrategyAssociations(
         formData,
-        getPageSectionKey(1, 1),
+        getPageSectionKey(1, 2),
         DateTime.local().toISO(),
         responsePlanEKID,
       );
