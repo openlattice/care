@@ -55,10 +55,10 @@ const responsePlanReducer = (state :Map = INITIAL_STATE, action :SequenceAction)
       return updateResponsePlan.reducer(state, action, {
         REQUEST: () => state.set('updateState', RequestStates.PENDING),
         SUCCESS: () => {
-          const { path, formData } = action.value;
+          const { path, properties } = action.value;
           return state
             .set('updateState', RequestStates.SUCCESS)
-            .setIn(['formData', ...path], formData);
+            .setIn(['formData', ...path], properties);
         },
         FAILURE: () => state.set('updateState', RequestStates.FAILURE)
       });
