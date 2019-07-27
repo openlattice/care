@@ -6,7 +6,8 @@ import {
   Card,
   CardHeader,
   CardSegment,
-  IconSplash
+  IconSplash,
+  Spinner,
 } from 'lattice-ui-kit';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClipboardListCheck, faEdit } from '@fortawesome/pro-solid-svg-icons';
@@ -33,10 +34,10 @@ const EditButton = styled(Button)`
 
 type Props = {
   isLoading ? :boolean;
-  responsePlans ? :List;
+  interactionStrategies :List;
 };
 
-const ResponsePlanCard = ({ isLoading } :Props) => (
+const ResponsePlanCard = ({ isLoading, interactionStrategies } :Props) => (
   <Card>
     <CardHeader mode="primary" padding="sm">
       <H1>
@@ -50,14 +51,14 @@ const ResponsePlanCard = ({ isLoading } :Props) => (
       </H1>
     </CardHeader>
     <CardSegment vertical padding="sm">
-      <IconSplash caption="No response plan." />
+      { isLoading && <Spinner size="2x" /> }
+      { (!isLoading && interactionStrategies.isEmpty()) && <IconSplash caption="No response plan." /> }
     </CardSegment>
   </Card>
 );
 
 ResponsePlanCard.defaultProps = {
   isLoading: false,
-  responsePlans: List(),
 };
 
 export default ResponsePlanCard;

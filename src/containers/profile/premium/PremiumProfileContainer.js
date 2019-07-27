@@ -41,6 +41,7 @@ import {
   getProfileReports,
   updateProfileAbout
 } from '../ProfileActions';
+import { getResponsePlan } from '../edit/responseplan/ResponsePlanActions';
 import { DATE_TIME_OCCURRED_FQN } from '../../../edm/DataModelFqns';
 import { getEntityKeyId } from '../../../utils/DataUtils';
 import { reduceRequestStates } from '../../../utils/StateUtils';
@@ -84,15 +85,19 @@ type Props = {
     getPersonData :RequestSequence;
     getPhysicalAppearance :RequestSequence;
     getProfileReports :RequestSequence;
+    getResponsePlan :RequestSequence;
     goToPath :(path :string) => RoutingAction;
     updateProfileAbout :RequestSequence;
   };
   fetchAboutState :RequestState;
   fetchReportsState :RequestState;
+  fetchResponsePlanState :RequestState;
   match :Match;
   physicalAppearance :Map;
   reports :List<Map>;
   selectedPerson :Map;
+  backgroundInformation :Map;
+  interactionStrategies :List<Map>;
 };
 
 type State = {
@@ -107,7 +112,8 @@ class PremiumProfileContainer extends Component<Props, State> {
       match,
       physicalAppearance,
       reports,
-      selectedPerson
+      backgroundInformation,
+      selectedPerson,
     } = this.props;
     const personEKID = match.params[PROFILE_ID_PARAM];
     if (physicalAppearance.isEmpty()) {
@@ -118,9 +124,9 @@ class PremiumProfileContainer extends Component<Props, State> {
         actions.getPhysicalAppearance(personEKID); // only get physical appearance
       }
     }
-    if (reports.isEmpty()) {
-      actions.getProfileReports(personEKID);
-    }
+
+    if (backgroundInformation.isEmpty()) actions.getResponsePlan(personEKID);
+    if (reports.isEmpty()) actions.getProfileReports(personEKID);
   }
 
   componentDidUpdate(prevProps :Props) {
@@ -134,6 +140,7 @@ class PremiumProfileContainer extends Component<Props, State> {
     if (personEKID !== prevPersonEKID) {
       actions.getPersonData(personEKID);
       actions.getProfileReports(personEKID);
+      actions.getResponsePlan(personEKID);
     }
   }
 
@@ -171,16 +178,20 @@ class PremiumProfileContainer extends Component<Props, State> {
 
   render() {
     const {
-      fetchReportsState,
+      backgroundInformation,
       fetchAboutState,
+      fetchReportsState,
+      fetchResponsePlanState,
+      interactionStrategies,
       physicalAppearance,
       reports,
-      selectedPerson
+      selectedPerson,
     } = this.props;
     const { recent, total } = this.countCrisisCalls();
 
     const isLoadingReports = fetchReportsState === RequestStates.PENDING;
     const isLoadingAbout = fetchAboutState === RequestStates.PENDING;
+    const isLoadingResponsePlan = fetchResponsePlanState === RequestStates.PENDING;
 
     return (
       <ContentOuterWrapper>
@@ -219,8 +230,12 @@ class PremiumProfileContainer extends Component<Props, State> {
                     isLoading={isLoadingReports} />
               </BehaviorAndSafetyGrid>
               <DeescalationCard />
-              <ResponsePlanCard />
-              <BackgroundInformationCard />
+              <ResponsePlanCard
+                  interactionStrategies={interactionStrategies}
+                  isLoading={isLoadingResponsePlan} />
+              <BackgroundInformationCard
+                  backgroundInformation={backgroundInformation}
+                  isLoading={isLoadingResponsePlan} />
               <SearchResults
                   hasSearched={fetchReportsState !== RequestStates.STANDBY}
                   isLoading={isLoadingReports}
@@ -244,8 +259,11 @@ const mapStateToProps = (state :Map) => {
   ];
 
   return {
+    backgroundInformation: state.getIn(['profile', 'responsePlan', 'data'], Map()),
     fetchAboutState: reduceRequestStates(fetchAboutStates),
     fetchReportsState: state.getIn(['profile', 'reports', 'fetchState'], RequestStates.STANDBY),
+    fetchResponsePlanState: state.getIn(['profile', 'responsePlan', 'fetchState'], RequestStates.STANDBY),
+    interactionStrategies: state.getIn(['profile', 'responsePlan', 'interactionStrategies'], List()),
     physicalAppearance: state.getIn(['profile', 'physicalAppearance', 'data'], Map()),
     reports: state.getIn(['profile', 'reports', 'data'], List()),
     selectedPerson: state.getIn(['profile', 'person', 'data'], Map()),
@@ -257,6 +275,7 @@ const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
     getPersonData,
     getPhysicalAppearance,
     getProfileReports,
+    getResponsePlan,
     goToPath,
     updateProfileAbout,
   }, dispatch)

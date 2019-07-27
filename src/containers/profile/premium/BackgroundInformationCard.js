@@ -5,7 +5,8 @@ import {
   Card,
   CardHeader,
   CardSegment,
-  IconSplash
+  IconSplash,
+  Spinner
 } from 'lattice-ui-kit';
 import { Map } from 'immutable';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -27,10 +28,10 @@ const H1 = styled.h1`
 
 type Props = {
   isLoading ? :boolean;
-  backgroundInformation ? :Map;
+  backgroundInformation :Map;
 };
 
-const ResponsePlanCard = ({ isLoading } :Props) => (
+const ResponsePlanCard = ({ backgroundInformation, isLoading } :Props) => (
   <Card>
     <CardHeader mode="primary" padding="sm">
       <H1>
@@ -41,15 +42,15 @@ const ResponsePlanCard = ({ isLoading } :Props) => (
       </H1>
     </CardHeader>
     <CardSegment vertical padding="sm">
-      <IconSplash caption="No background information." />
+      { isLoading && <Spinner size="2x" /> }
+      { (!isLoading && backgroundInformation.isEmpty()) && <IconSplash caption="No background information." /> }
     </CardSegment>
   </Card>
 );
 
 
 ResponsePlanCard.defaultProps = {
-  isLoading: false,
-  backgroundInformation: Map(),
+  isLoading: false
 };
 
 export default ResponsePlanCard;
