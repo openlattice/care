@@ -52,11 +52,13 @@ export const schema = {
       items: {
         $ref: '#/definitions/taskItems'
       },
-      default: [{
-        [getEntityAddressKey(-1, INTERACTION_STRATEGY_FQN, TITLE_FQN)]: undefined,
-        [getEntityAddressKey(-1, INTERACTION_STRATEGY_FQN, DESCRIPTION_FQN)]: undefined,
-        [getEntityAddressKey(-1, INTERACTION_STRATEGY_FQN, INDEX_FQN)]: 0,
-      }]
+      default: [
+        {
+          [getEntityAddressKey(-1, INTERACTION_STRATEGY_FQN, TITLE_FQN)]: undefined,
+          [getEntityAddressKey(-1, INTERACTION_STRATEGY_FQN, DESCRIPTION_FQN)]: undefined,
+          [getEntityAddressKey(-1, INTERACTION_STRATEGY_FQN, INDEX_FQN)]: 0,
+        }
+      ]
     }
   }
 };

@@ -7,6 +7,7 @@ import {
   setIn,
 } from 'immutable';
 import { Form, DataProcessingUtils } from 'lattice-fabricate';
+import { Card, CardSegment, Spinner } from 'lattice-ui-kit';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { RequestStates } from 'redux-reqseq';
@@ -47,13 +48,12 @@ type Props = {
     submitResponsePlan :RequestSequence;
     updateResponsePlan :RequestSequence;
   },
-  deleteState :RequestState;
   entityIndexToIdMap :Map;
   entitySetIds :Map;
+  fetchState :RequestState;
   formData :Map;
   match :Match;
   propertyTypeIds :Map;
-  updateState :RequestState;
   responsePlanEKID :UUID;
 };
 
@@ -143,7 +143,7 @@ class ResponsePlanForm extends Component<Props, State> {
     return strategyAssociations;
   }
 
-  // TODO: find a way to make updating indicies more efficient
+  // TODO: make updating indicies more efficient
   updateItemIndicies = ({ formData } :Object) => {
     const pageSection = getPageSectionKey(1, 2);
     const indexKey = getEntityAddressKey(-1, INTERACTION_STRATEGY_FQN, INDEX_FQN);
@@ -207,26 +207,33 @@ class ResponsePlanForm extends Component<Props, State> {
     const { formData, prepopulated } = this.state;
     const {
       actions,
-      deleteState,
       entityIndexToIdMap,
       entitySetIds,
+      fetchState,
       propertyTypeIds,
-      updateState,
     } = this.props;
 
     const formContext = {
       addActions: {
         addInteractionStrategy: this.handleAddInteractionStrategy,
       },
-      deleteState,
       deleteAction: actions.deleteInteractionStrategies,
       editAction: actions.updateResponsePlan,
       entityIndexToIdMap,
       entitySetIds,
       mappers: {},
       propertyTypeIds,
-      updateState: updateState === RequestStates.PENDING,
     };
+
+    if (fetchState === RequestStates.PENDING) {
+      return (
+        <Card>
+          <CardSegment vertical>
+            <Spinner size="2x" />
+          </CardSegment>
+        </Card>
+      );
+    }
 
     return (
       <Form
@@ -242,13 +249,12 @@ class ResponsePlanForm extends Component<Props, State> {
 }
 
 const mapStateToProps = state => ({
-  deleteState: state.getIn(['profile', 'responsePlan', 'deleteState']),
   entityIndexToIdMap: state.getIn(['profile', 'responsePlan', 'entityIndexToIdMap']),
-  responsePlanEKID: state.getIn(['profile', 'responsePlan', 'entityIndexToIdMap', RESPONSE_PLAN_FQN, 0]),
   entitySetIds: state.getIn(['app', 'selectedOrgEntitySetIds'], Map()),
+  fetchState: state.getIn(['profile', 'responsePlan', 'fetchState']),
   formData: state.getIn(['profile', 'responsePlan', 'formData']),
   propertyTypeIds: state.getIn(['edm', 'fqnToIdMap'], Map()),
-  updateState: state.getIn(['profile', 'responsePlan', 'updateState']),
+  responsePlanEKID: state.getIn(['profile', 'responsePlan', 'entityIndexToIdMap', RESPONSE_PLAN_FQN, 0]),
 });
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
