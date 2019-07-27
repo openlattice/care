@@ -1,10 +1,10 @@
 // @flow
 import React, { Component } from 'react';
-import { Constants } from 'lattice';
 import { DateTime } from 'luxon';
 import {
   Map,
   get,
+  setIn,
 } from 'immutable';
 import { Form, DataProcessingUtils } from 'lattice-fabricate';
 import { connect } from 'react-redux';
@@ -16,7 +16,7 @@ import type { Match } from 'react-router';
 
 import { schema, uiSchema } from './schemas/ResponsePlanSchemas';
 import { PROFILE_ID_PARAM } from '../../../../core/router/Routes';
-import { COMPLETED_DT_FQN } from '../../../../edm/DataModelFqns';
+import { COMPLETED_DT_FQN, INDEX_FQN } from '../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
 import {
   deleteInteractionStrategies,
@@ -24,8 +24,6 @@ import {
   submitResponsePlan,
   updateResponsePlan,
 } from './ResponsePlanActions';
-
-const { OPENLATTICE_ID_FQN } = Constants;
 
 const {
   INCLUDES_FQN,
@@ -37,6 +35,7 @@ const {
 
 const {
   getPageSectionKey,
+  getEntityAddressKey,
   processEntityData,
   processAssociationEntityData
 } = DataProcessingUtils;
@@ -144,10 +143,17 @@ class ResponsePlanForm extends Component<Props, State> {
     return strategyAssociations;
   }
 
-  handleChange = ({ formData: newFormData } :Object) => {
-    this.setState({
-      formData: newFormData
+  // TODO: find a way to make updating indicies more efficient
+  updateItemIndicies = ({ formData } :Object) => {
+    const pageSection = getPageSectionKey(1, 2);
+    const indexKey = getEntityAddressKey(-1, INTERACTION_STRATEGY_FQN, INDEX_FQN);
+    const interactionItems = get(formData, pageSection);
+    let newFormData = formData;
+    interactionItems.forEach((item, index) => {
+      newFormData = setIn(newFormData, [pageSection, index, indexKey], index);
     });
+
+    this.setState({ formData: newFormData });
   }
 
   handleSubmit = ({ formData } :Object) => {
@@ -158,10 +164,19 @@ class ResponsePlanForm extends Component<Props, State> {
       entitySetIds,
       propertyTypeIds
     );
-    actions.submitResponsePlan({ entityData, associationEntityData });
+    actions.submitResponsePlan({
+      associationEntityData,
+      entityData,
+      formData
+    });
   }
 
-  handleAddInteractionStrategy = ({ formData } :Object) => {
+  handleAddInteractionStrategy = ({
+    entityData,
+    formData,
+    path,
+    properties
+  } :Object) => {
     const {
       actions,
       entitySetIds,
@@ -176,10 +191,14 @@ class ResponsePlanForm extends Component<Props, State> {
         DateTime.local().toISO(),
         responsePlanEKID,
       );
-      const entityData = processEntityData(formData, entitySetIds, propertyTypeIds);
       const associationEntityData = processAssociationEntityData(associations, entitySetIds, propertyTypeIds);
 
-      actions.submitResponsePlan({ entityData, associationEntityData });
+      actions.submitResponsePlan({
+        associationEntityData,
+        entityData,
+        path,
+        properties
+      });
     }
 
   }
@@ -214,7 +233,7 @@ class ResponsePlanForm extends Component<Props, State> {
           disabled={prepopulated}
           formContext={formContext}
           formData={formData}
-          onChange={this.handleChange}
+          onChange={this.updateItemIndicies}
           schema={schema}
           uiSchema={uiSchema}
           onSubmit={this.handleSubmit} />
@@ -225,7 +244,7 @@ class ResponsePlanForm extends Component<Props, State> {
 const mapStateToProps = state => ({
   deleteState: state.getIn(['profile', 'responsePlan', 'deleteState']),
   entityIndexToIdMap: state.getIn(['profile', 'responsePlan', 'entityIndexToIdMap']),
-  responsePlanEKID: state.getIn(['profile', 'responsePlan', 'data', OPENLATTICE_ID_FQN, 0]),
+  responsePlanEKID: state.getIn(['profile', 'responsePlan', 'entityIndexToIdMap', RESPONSE_PLAN_FQN, 0]),
   entitySetIds: state.getIn(['app', 'selectedOrgEntitySetIds'], Map()),
   formData: state.getIn(['profile', 'responsePlan', 'formData']),
   propertyTypeIds: state.getIn(['edm', 'fqnToIdMap'], Map()),

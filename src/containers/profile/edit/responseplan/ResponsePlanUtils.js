@@ -1,13 +1,11 @@
 // @flow
-import { List, Map, fromJS } from 'immutable';
-import { Constants } from 'lattice';
+import { List, Map } from 'immutable';
 import { DataProcessingUtils } from 'lattice-fabricate';
 import type { FullyQualifiedName } from 'lattice';
 
 import { APP_TYPES_FQNS as APP } from '../../../../shared/Consts';
 import * as FQN from '../../../../edm/DataModelFqns';
 
-const { OPENLATTICE_ID_FQN } = Constants;
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
 
 const getEntityArrayFormData = (
@@ -63,11 +61,7 @@ const constructResponsePlanFormData = (responsePlan :Map, interactionStrategies 
   return data;
 };
 
-const constructResponsePlanEAKIDMap = (responsePlan :Map, interactionStrategies :List) => {
-  const interactionStrategiesEKIDs = interactionStrategies
-    .map(strategy => strategy.getIn([OPENLATTICE_ID_FQN, 0]));
-
-  const responsePlanEKID = responsePlan.getIn([OPENLATTICE_ID_FQN, 0]);
+const constructResponsePlanEAKIDMap = (responsePlanEKID :UUID, interactionStrategiesEKIDs :UUID[]) => {
 
   const addressToIdMap = Map().withMutations((mutable) => {
     if (responsePlanEKID) {

@@ -5,6 +5,7 @@ import {
   select,
   takeEvery,
 } from '@redux-saga/core/effects';
+import isPlainObject from 'lodash/isPlainObject';
 import {
   List,
   Map,
@@ -69,9 +70,35 @@ export function* submitResponsePlanWorker(action :SequenceAction) :Generator<*, 
     const response = yield call(submitDataGraphWorker, submitDataGraph(action.value));
     if (response.error) throw response.error;
 
+    const newEntityKeyIdsByEntitySetId = fromJS(response.data).get('entityKeyIds');
+
+    const selectedOrgEntitySetIds = yield select(state => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
+    const entitySetNamesByEntitySetId = selectedOrgEntitySetIds.flip();
+
+    const newEntityKeyIdsByEntitySetName = newEntityKeyIdsByEntitySetId
+      .mapKeys(entitySetId => entitySetNamesByEntitySetId.get(entitySetId));
+
+    const responsePlanEKID = newEntityKeyIdsByEntitySetName.getIn([RESPONSE_PLAN_FQN, 0]);
+    const interactionStrategyEKIDs = newEntityKeyIdsByEntitySetName.get(INTERACTION_STRATEGY_FQN);
+
+    const newResponsePlanEAKIDMap = constructResponsePlanEAKIDMap(responsePlanEKID, interactionStrategyEKIDs);
     const entityIndexToIdMap = yield select(state => state.getIn(['profile', 'responsePlan', 'entityIndexToIdMap']));
-    console.log(entityIndexToIdMap);
-    yield put(submitResponsePlan.success(action.id));
+    const newEntityIndexToIdMap = entityIndexToIdMap.mergeDeep(newResponsePlanEAKIDMap);
+
+    const { formData, path, properties } = value;
+    const prevFormData = yield select(state => state.getIn(['profile', 'responsePlan', 'formData']));
+    const newFormData = prevFormData.withMutations((mutable) => {
+      mutable.mergeDeep(fromJS(formData));
+
+      if (Array.isArray(path) && isPlainObject(properties)) {
+        mutable.setIn(path, fromJS(properties));
+      }
+    });
+
+    yield put(submitResponsePlan.success(action.id, {
+      entityIndexToIdMap: newEntityIndexToIdMap,
+      formData: newFormData
+    }));
   }
   catch (error) {
     LOG.error(error);
@@ -125,7 +152,7 @@ export function* getResponsePlanWorker(action :SequenceAction) :Generator<*, *, 
 
     const responsePlan = responsePlans
       .getIn([0, 'neighborDetails'], Map());
-    const responsePlanEKID = responsePlan.getIn([OPENLATTICE_ID_FQN, 0]);
+    const responsePlanEKID :UUID = responsePlan.getIn([OPENLATTICE_ID_FQN, 0]);
 
     let interactionStrategies = List();
     if (responsePlanEKID) {
@@ -150,8 +177,11 @@ export function* getResponsePlanWorker(action :SequenceAction) :Generator<*, *, 
         .map(entity => entity.get('neighborDetails', Map()));
     }
 
+    const interactionStrategyEKIDs :UUID[] = interactionStrategies
+      .map(strategy => strategy.getIn([OPENLATTICE_ID_FQN, 0]));
+
     const formData = constructResponsePlanFormData(responsePlan, interactionStrategies);
-    const entityIndexToIdMap = constructResponsePlanEAKIDMap(responsePlan, interactionStrategies);
+    const entityIndexToIdMap = constructResponsePlanEAKIDMap(responsePlanEKID, interactionStrategyEKIDs);
 
     yield put(getResponsePlan.success(action.id, {
       entityIndexToIdMap,
@@ -178,12 +208,12 @@ export function* updateResponsePlanWorker(action :SequenceAction) :Generator<*, 
     const { value } = action;
     if (value === null || value === undefined) throw ERR_ACTION_VALUE_NOT_DEFINED;
 
-    yield put(updateResponsePlan.request(action.id));
+    yield put(updateResponsePlan.request(action.id, value));
     const response = yield call(submitPartialReplaceWorker, submitPartialReplace(value));
 
     if (response.error) throw response.error;
 
-    yield put(updateResponsePlan.success(action.id, value));
+    yield put(updateResponsePlan.success(action.id));
   }
   catch (error) {
     LOG.error(error);
