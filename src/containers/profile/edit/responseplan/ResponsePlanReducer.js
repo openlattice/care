@@ -46,20 +46,29 @@ const responsePlanReducer = (state :Map = INITIAL_STATE, action :SequenceAction)
     case submitResponsePlan.case(action.type): {
       return submitResponsePlan.reducer(state, action, {
         REQUEST: () => state.set('submitState', RequestStates.PENDING),
-        SUCCESS: () => state.set('submitState', RequestStates.SUCCESS),
+        SUCCESS: () => {
+          const {
+            entityIndexToIdMap,
+            formData
+          } = action.value;
+          return state
+            .set('entityIndexToIdMap', entityIndexToIdMap)
+            .set('formData', formData)
+            .set('submitState', RequestStates.SUCCESS);
+        },
         FAILURE: () => state.set('submitState', RequestStates.FAILURE)
       });
     }
 
     case updateResponsePlan.case(action.type): {
       return updateResponsePlan.reducer(state, action, {
-        REQUEST: () => state.set('updateState', RequestStates.PENDING),
-        SUCCESS: () => {
+        REQUEST: () => {
           const { path, properties } = action.value;
           return state
-            .set('updateState', RequestStates.SUCCESS)
+            .set('updateState', RequestStates.PENDING)
             .setIn(['formData', ...path], properties);
         },
+        SUCCESS: () => state.set('updateState', RequestStates.SUCCESS),
         FAILURE: () => state.set('updateState', RequestStates.FAILURE)
       });
     }
