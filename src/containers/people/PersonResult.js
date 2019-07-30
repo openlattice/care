@@ -8,7 +8,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPortrait } from '@fortawesome/pro-solid-svg-icons';
 import { Map } from 'immutable';
 import { Card, Label, Colors } from 'lattice-ui-kit';
-import { PERSON_DOB_FQN } from '../../edm/DataModelFqns';
+import { PERSON_DOB_FQN, PERSON_FIRST_NAME_FQN } from '../../edm/DataModelFqns';
+import Portrait from '../profile/styled/Portrait';
 
 const { NEUTRALS } = Colors;
 
@@ -93,10 +94,15 @@ class PersonResult extends Component<Props> {
     const formattedResult = this.formatResult(result);
     const details = this.transformResultToDetailsList(formattedResult);
 
+    // REMOVE ME
+    const givenName = result.getIn([PERSON_FIRST_NAME_FQN, 0]);
+    const isMalfoy = givenName === 'Scorpius';
+
     return (
       <Card onClick={this.handleClick}>
         <ResultWrapper>
-          <FontAwesomeIcon icon={faPortrait} size="8x" color={NEUTRALS[5]} />
+          <Portrait isMalfoy={isMalfoy} height="128" width="96" />
+          {/* <FontAwesomeIcon icon={faPortrait} size="8x" color={NEUTRALS[5]} /> */}
           <DetailsGrid>
             { details
               && details.map((detail :Map) => (
