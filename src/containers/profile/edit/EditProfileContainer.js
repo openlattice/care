@@ -9,7 +9,6 @@ import {
 } from 'lattice-ui-kit';
 import type { Match } from 'react-router';
 
-
 import NavStep from './NavStep';
 import ResponsePlanForm from './responseplan/ResponsePlanForm';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';

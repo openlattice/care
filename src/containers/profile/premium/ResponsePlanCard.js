@@ -8,6 +8,7 @@ import {
   IconSplash,
   Spinner,
 } from 'lattice-ui-kit';
+import { Constants } from 'lattice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClipboardListCheck, faEdit } from '@fortawesome/pro-solid-svg-icons';
 import { List } from 'immutable';
@@ -16,6 +17,10 @@ import type { Match } from 'react-router-dom';
 
 import LinkButton from '../../../components/buttons/LinkButton';
 import { RESPONSE_PLAN_PATH } from '../../../core/router/Routes';
+import { TITLE_FQN, DESCRIPTION_FQN, INDEX_FQN } from '../../../edm/DataModelFqns';
+import InteractionStrategy from '../../../components/premium/responseplan/InteractionStrategy';
+
+const { OPENLATTICE_ID_FQN } = Constants;
 
 const IconWrapper = styled.span`
   vertical-align: middle;
@@ -58,6 +63,26 @@ const ResponsePlanCard = ({ isLoading, interactionStrategies, match } :Props) =>
     <CardSegment vertical padding="sm">
       { isLoading && <Spinner size="2x" /> }
       { (!isLoading && interactionStrategies.isEmpty()) && <IconSplash caption="No response plan." /> }
+      { (!isLoading && !interactionStrategies.isEmpty())
+        && (
+          interactionStrategies
+            .sort((stratA, stratB) => {
+              const indexA = stratA.getIn([INDEX_FQN, 0]);
+              const indexB = stratB.getIn([INDEX_FQN, 0]);
+
+              if (typeof indexA === 'number' && typeof indexB === 'number') {
+                return indexA - indexB;
+              }
+              return 1;
+            })
+            .map((strategy, step) => {
+              const title = strategy.getIn([TITLE_FQN, 0]) || '';
+              const description = strategy.getIn([DESCRIPTION_FQN, 0]) || '';
+              const ekid = strategy.getIn([OPENLATTICE_ID_FQN, 0]);
+              return <InteractionStrategy key={ekid} description={description} index={step + 1} title={title} />;
+            })
+        )
+      }
     </CardSegment>
   </Card>
 );
