@@ -5,18 +5,22 @@ import { bindActionCreators } from 'redux';
 import { Button } from 'lattice-ui-kit';
 
 import type { Dispatch } from 'redux';
+import type { RequestSequence } from 'redux-reqseq';
 
 import { goToPath } from '../../core/router/RoutingActions';
 
 type Props = {
   to :string;
+  actions :{
+    goToPath :RequestSequence;
+  };
 }
 
 class LinkButton extends Component<Props> {
 
   handleOnClick = () => {
-    const { to } = this.props;
-    goToPath(to);
+    const { to, actions } = this.props;
+    actions.goToPath(to);
   }
 
   render() {

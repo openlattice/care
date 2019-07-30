@@ -9,8 +9,13 @@ import {
   Spinner
 } from 'lattice-ui-kit';
 import { Map } from 'immutable';
+import { withRouter } from 'react-router-dom';
+import type { Match } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAddressCard } from '@fortawesome/pro-solid-svg-icons';
+import { faAddressCard, faEdit } from '@fortawesome/pro-solid-svg-icons';
+
+import LinkButton from '../../../components/buttons/LinkButton';
+import { RESPONSE_PLAN_PATH } from '../../../core/router/Routes';
 
 const IconWrapper = styled.span`
   vertical-align: middle;
@@ -26,12 +31,18 @@ const H1 = styled.h1`
   align-items: center;
 `;
 
+const EditButton = styled(LinkButton)`
+  margin-left: auto;
+  padding: 2px;
+`;
+
 type Props = {
   isLoading ? :boolean;
   backgroundInformation :Map;
+  match :Match;
 };
 
-const ResponsePlanCard = ({ backgroundInformation, isLoading } :Props) => (
+const ResponsePlanCard = ({ backgroundInformation, isLoading, match } :Props) => (
   <Card>
     <CardHeader mode="primary" padding="sm">
       <H1>
@@ -39,6 +50,9 @@ const ResponsePlanCard = ({ backgroundInformation, isLoading } :Props) => (
           <FontAwesomeIcon icon={faAddressCard} fixedWidth />
         </IconWrapper>
         Background Information
+        <EditButton mode="primary" to={`${match.url}${RESPONSE_PLAN_PATH}`}>
+          <FontAwesomeIcon icon={faEdit} fixedWidth />
+        </EditButton>
       </H1>
     </CardHeader>
     <CardSegment vertical padding="sm">
@@ -53,4 +67,4 @@ ResponsePlanCard.defaultProps = {
   isLoading: false
 };
 
-export default ResponsePlanCard;
+export default withRouter(ResponsePlanCard);

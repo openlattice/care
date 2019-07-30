@@ -1,6 +1,6 @@
 // @flow
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
 import {
   Card,
   CardSegment,
@@ -48,6 +48,7 @@ const EditProfileContainer = (props :Props) => {
             <Route path={`${match.path}${RESPONSE_PLAN_PATH}`} component={ResponsePlanForm} />
             {/* <Route path={`${match.path}${CONTACTS_PATH}`} /> */}
             {/* <Route path={`${match.path}${ABOUT_PATH}`} /> */}
+            <Redirect to={`${match.path}${RESPONSE_PLAN_PATH}`} />
           </Switch>
         </CardStack>
       </ContentWrapper>

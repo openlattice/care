@@ -2,7 +2,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import {
-  Button,
   Card,
   CardHeader,
   CardSegment,
@@ -12,6 +11,11 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClipboardListCheck, faEdit } from '@fortawesome/pro-solid-svg-icons';
 import { List } from 'immutable';
+import { withRouter } from 'react-router-dom';
+import type { Match } from 'react-router-dom';
+
+import LinkButton from '../../../components/buttons/LinkButton';
+import { RESPONSE_PLAN_PATH } from '../../../core/router/Routes';
 
 const IconWrapper = styled.span`
   vertical-align: middle;
@@ -27,7 +31,7 @@ const H1 = styled.h1`
   align-items: center;
 `;
 
-const EditButton = styled(Button)`
+const EditButton = styled(LinkButton)`
   margin-left: auto;
   padding: 2px;
 `;
@@ -35,9 +39,10 @@ const EditButton = styled(Button)`
 type Props = {
   isLoading ? :boolean;
   interactionStrategies :List;
+  match :Match;
 };
 
-const ResponsePlanCard = ({ isLoading, interactionStrategies } :Props) => (
+const ResponsePlanCard = ({ isLoading, interactionStrategies, match } :Props) => (
   <Card>
     <CardHeader mode="primary" padding="sm">
       <H1>
@@ -45,7 +50,7 @@ const ResponsePlanCard = ({ isLoading, interactionStrategies } :Props) => (
           <FontAwesomeIcon icon={faClipboardListCheck} fixedWidth />
         </IconWrapper>
         Response Plan
-        <EditButton mode="primary">
+        <EditButton mode="primary" to={`${match.url}${RESPONSE_PLAN_PATH}`}>
           <FontAwesomeIcon icon={faEdit} fixedWidth />
         </EditButton>
       </H1>
@@ -61,4 +66,4 @@ ResponsePlanCard.defaultProps = {
   isLoading: false,
 };
 
-export default ResponsePlanCard;
+export default withRouter(ResponsePlanCard);
