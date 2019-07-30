@@ -39,7 +39,7 @@ const ActionRow = styled.div`
 type Props = {
   isLoading :boolean;
   onDiscard :() => void;
-  onSubmit :(payload :Object) => void;
+  onSubmit :(payload :Object) => any;
   physicalAppearance :Map;
   selectedPerson :Map;
 }
