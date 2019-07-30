@@ -4,6 +4,7 @@ import { RequestStates } from 'redux-reqseq';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
+  deleteInteractionStrategies,
   getResponsePlan,
   submitResponsePlan,
   updateResponsePlan,
@@ -15,6 +16,7 @@ const INITIAL_STATE :Map = fromJS({
   formData: Map(),
   interactionStrategies: List(),
   data: Map(),
+  deleteState: RequestStates.STANDBY,
   updateResponsePlan: RequestStates.STANDBY,
 });
 
@@ -70,6 +72,19 @@ const responsePlanReducer = (state :Map = INITIAL_STATE, action :SequenceAction)
         },
         SUCCESS: () => state.set('updateState', RequestStates.SUCCESS),
         FAILURE: () => state.set('updateState', RequestStates.FAILURE)
+      });
+    }
+
+    case deleteInteractionStrategies.case(action.type): {
+      return deleteInteractionStrategies.reducer(state, action, {
+        REQUEST: () => state.set('deleteState', RequestStates.PENDING),
+        SUCCESS: () => {
+          const { path } = action.value;
+          return state
+            .set('deleteState', RequestStates.SUCCESS)
+            .deleteIn(['formData', ...path]);
+        },
+        FAILURE: () => state.set('deleteState', RequestStates.FAILURE)
       });
     }
 

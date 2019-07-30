@@ -45,7 +45,6 @@ import {
   submitDataGraphWorker,
   submitPartialReplaceWorker,
 } from '../../../../core/sagas/data/DataSagas';
-// import * as FQN from '../../../../edm/DataModelFqns';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
@@ -234,11 +233,12 @@ export function* deleteInteractionStrategiesWorker(action :SequenceAction) :Gene
     if (value === null || value === undefined) throw ERR_ACTION_VALUE_NOT_DEFINED;
 
     yield put(deleteInteractionStrategies.request(action.id));
-    const response = yield call(deleteBulkEntitiesWorker, deleteBulkEntities(action.value));
+    const { entityData, path } = value;
+    const response = yield call(deleteBulkEntitiesWorker, deleteBulkEntities(entityData));
 
     if (response.error) throw response.error;
 
-    yield put(deleteInteractionStrategies.success(action.id));
+    yield put(deleteInteractionStrategies.success(action.id, { path }));
   }
   catch (error) {
     LOG.error(error);
