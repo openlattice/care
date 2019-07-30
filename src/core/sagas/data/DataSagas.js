@@ -188,7 +188,7 @@ function* deleteBulkEntitiesWorker(action :SequenceAction) :Generator<*, *, *> {
     });
 
     const deleteResponses = yield all(deleteRequests);
-    const reducedError = deleteResponses.reduce((error, response) => error || response.error);
+    const reducedError = deleteResponses.reduce((acc, response) => acc.error || response.error, {});
     if (reducedError) throw reducedError;
 
     yield put(deleteBulkEntities.success(action.id));
