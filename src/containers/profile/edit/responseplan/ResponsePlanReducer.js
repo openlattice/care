@@ -11,13 +11,13 @@ import {
 } from './ResponsePlanActions';
 
 const INITIAL_STATE :Map = fromJS({
+  data: Map(),
+  deleteState: RequestStates.STANDBY,
   entityIndexToIdMap: Map(),
   fetchState: RequestStates.STANDBY,
   formData: Map(),
   interactionStrategies: List(),
-  data: Map(),
-  deleteState: RequestStates.STANDBY,
-  updateResponsePlan: RequestStates.STANDBY,
+  updateState: RequestStates.STANDBY,
 });
 
 const responsePlanReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {

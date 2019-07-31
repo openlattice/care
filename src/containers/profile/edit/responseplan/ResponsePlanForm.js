@@ -200,7 +200,6 @@ class ResponsePlanForm extends Component<Props, State> {
         properties
       });
     }
-
   }
 
   render() {
