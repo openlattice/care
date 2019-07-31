@@ -17,7 +17,7 @@ import type { Match } from 'react-router-dom';
 
 import LinkButton from '../../../components/buttons/LinkButton';
 import { RESPONSE_PLAN_PATH } from '../../../core/router/Routes';
-import { TITLE_FQN, DESCRIPTION_FQN, INDEX_FQN } from '../../../edm/DataModelFqns';
+import { TITLE_FQN, DESCRIPTION_FQN } from '../../../edm/DataModelFqns';
 import InteractionStrategy from '../../../components/premium/responseplan/InteractionStrategy';
 
 const { OPENLATTICE_ID_FQN } = Constants;
