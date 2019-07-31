@@ -34,7 +34,7 @@ const H1 = styled.h1`
 
 const Text = styled.p`
   white-space: pre-wrap;
-  overflow-wrap: break-word;
+  word-break: break-word;
 `;
 
 const EditButton = styled(LinkButton)`
