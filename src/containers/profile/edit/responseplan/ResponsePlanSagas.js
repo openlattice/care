@@ -45,6 +45,7 @@ import {
   submitDataGraphWorker,
   submitPartialReplaceWorker,
 } from '../../../../core/sagas/data/DataSagas';
+import { INDEX_FQN } from '../../../../edm/DataModelFqns';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
@@ -173,7 +174,16 @@ export function* getResponsePlanWorker(action :SequenceAction) :Generator<*, *, 
 
       interactionStrategies = fromJS(interactionStrategyResponse.data)
         .get(responsePlanEKID, List())
-        .map(entity => entity.get('neighborDetails', Map()));
+        .map(entity => entity.get('neighborDetails', Map()))
+        .sort((stratA, stratB) => {
+          const indexA = stratA.getIn([INDEX_FQN, 0]);
+          const indexB = stratB.getIn([INDEX_FQN, 0]);
+
+          if (typeof indexA === 'number' && typeof indexB === 'number') {
+            return indexA - indexB;
+          }
+          return 0;
+        });
     }
 
     const interactionStrategyEKIDs :UUID[] = interactionStrategies

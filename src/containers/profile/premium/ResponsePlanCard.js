@@ -66,15 +66,6 @@ const ResponsePlanCard = ({ isLoading, interactionStrategies, match } :Props) =>
       { (!isLoading && !interactionStrategies.isEmpty())
         && (
           interactionStrategies
-            .sort((stratA, stratB) => {
-              const indexA = stratA.getIn([INDEX_FQN, 0]);
-              const indexB = stratB.getIn([INDEX_FQN, 0]);
-
-              if (typeof indexA === 'number' && typeof indexB === 'number') {
-                return indexA - indexB;
-              }
-              return 1;
-            })
             .map((strategy, step) => {
               const title = strategy.getIn([TITLE_FQN, 0]) || '';
               const description = strategy.getIn([DESCRIPTION_FQN, 0]) || '';
