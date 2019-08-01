@@ -10,10 +10,10 @@ import type { RequestSequence } from 'redux-reqseq';
 import { goToPath } from '../../core/router/RoutingActions';
 
 type Props = {
-  to :string;
   actions :{
     goToPath :RequestSequence;
   };
+  to :string;
 }
 
 class LinkButton extends Component<Props> {
