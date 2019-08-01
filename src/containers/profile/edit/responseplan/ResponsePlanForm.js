@@ -105,14 +105,14 @@ class ResponsePlanForm extends Component<Props, State> {
     const { formData } = this.props;
     this.setState({
       formData: formData.toJS(),
-      prepopulated: !!formData.size
+      prepopulated: !formData.isEmpty()
     });
   }
 
   getAssociations = (formData :Object) => {
     const { match } = this.props;
     const personEKID = match.params[PROFILE_ID_PARAM];
-    const nowAsIsoString :string = DateTime.local().toString();
+    const nowAsIsoString :string = DateTime.local().toISO();
     return [
       [SUBJECT_OF_FQN, personEKID, PEOPLE_FQN, 0, RESPONSE_PLAN_FQN, {
         [COMPLETED_DT_FQN.toString()]: [nowAsIsoString]
@@ -167,7 +167,8 @@ class ResponsePlanForm extends Component<Props, State> {
     actions.submitResponsePlan({
       associationEntityData,
       entityData,
-      formData
+      path: [],
+      properties: formData
     });
   }
 
