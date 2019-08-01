@@ -61,7 +61,7 @@ const constructResponsePlanFormData = (responsePlan :Map, interactionStrategies 
   return data;
 };
 
-const constructResponsePlanEAKIDMap = (responsePlanEKID :UUID, interactionStrategiesEKIDs :UUID[]) => {
+const constructEntityIndexToIdMap = (responsePlanEKID :UUID, interactionStrategiesEKIDs :UUID[]) => {
 
   const addressToIdMap = Map().withMutations((mutable) => {
     if (responsePlanEKID) {
@@ -78,6 +78,6 @@ const constructResponsePlanEAKIDMap = (responsePlanEKID :UUID, interactionStrate
 };
 
 export {
-  constructResponsePlanEAKIDMap,
+  constructEntityIndexToIdMap,
   constructResponsePlanFormData
 };

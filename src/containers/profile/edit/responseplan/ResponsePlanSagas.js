@@ -29,7 +29,7 @@ import {
   submitResponsePlan,
   updateResponsePlan,
 } from './ResponsePlanActions';
-import { constructResponsePlanFormData, constructResponsePlanEAKIDMap } from './ResponsePlanUtils';
+import { constructResponsePlanFormData, constructEntityIndexToIdMap } from './ResponsePlanUtils';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../../utils/Errors';
 import { getESIDFromApp } from '../../../../utils/AppUtils';
@@ -81,7 +81,7 @@ export function* submitResponsePlanWorker(action :SequenceAction) :Generator<*, 
     const responsePlanEKID = newEntityKeyIdsByEntitySetName.getIn([RESPONSE_PLAN_FQN, 0]);
     const interactionStrategyEKIDs = newEntityKeyIdsByEntitySetName.get(INTERACTION_STRATEGY_FQN);
 
-    const newResponsePlanEAKIDMap = constructResponsePlanEAKIDMap(responsePlanEKID, interactionStrategyEKIDs);
+    const newResponsePlanEAKIDMap = constructEntityIndexToIdMap(responsePlanEKID, interactionStrategyEKIDs);
     const entityIndexToIdMap = yield select(state => state.getIn(['profile', 'responsePlan', 'entityIndexToIdMap']));
     const newEntityIndexToIdMap = entityIndexToIdMap.mergeDeep(newResponsePlanEAKIDMap);
 
@@ -188,7 +188,7 @@ export function* getResponsePlanWorker(action :SequenceAction) :Generator<*, *, 
       .map(strategy => strategy.getIn([OPENLATTICE_ID_FQN, 0]));
 
     const formData = constructResponsePlanFormData(responsePlan, interactionStrategies);
-    const entityIndexToIdMap = constructResponsePlanEAKIDMap(responsePlanEKID, interactionStrategyEKIDs);
+    const entityIndexToIdMap = constructEntityIndexToIdMap(responsePlanEKID, interactionStrategyEKIDs);
 
     yield put(getResponsePlan.success(action.id, {
       entityIndexToIdMap,
