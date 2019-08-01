@@ -67,7 +67,7 @@ export function* submitResponsePlanWorker(action :SequenceAction) :Generator<*, 
     if (value === null || value === undefined) throw ERR_ACTION_VALUE_NOT_DEFINED;
 
     yield put(submitResponsePlan.request(action.id));
-    const response = yield call(submitDataGraphWorker, submitDataGraph(action.value));
+    const response = yield call(submitDataGraphWorker, submitDataGraph(value));
     if (response.error) throw response.error;
 
     const newEntityKeyIdsByEntitySetId = fromJS(response.data).get('entityKeyIds');
@@ -85,15 +85,13 @@ export function* submitResponsePlanWorker(action :SequenceAction) :Generator<*, 
     const entityIndexToIdMap = yield select(state => state.getIn(['profile', 'responsePlan', 'entityIndexToIdMap']));
     const newEntityIndexToIdMap = entityIndexToIdMap.mergeDeep(newResponsePlanEAKIDMap);
 
-    const { formData, path, properties } = value;
-    const prevFormData = yield select(state => state.getIn(['profile', 'responsePlan', 'formData']));
-    const newFormData = prevFormData.withMutations((mutable) => {
-      mutable.mergeDeep(fromJS(formData));
+    const { path, properties } = value;
 
-      if (Array.isArray(path) && isPlainObject(properties)) {
-        mutable.setIn(path, fromJS(properties));
-      }
-    });
+    const prevFormData = yield select(state => state.getIn(['profile', 'responsePlan', 'formData']));
+    let newFormData = prevFormData;
+    if (Array.isArray(path) && isPlainObject(properties)) {
+      newFormData = prevFormData.setIn(path, fromJS(properties));
+    }
 
     yield put(submitResponsePlan.success(action.id, {
       entityIndexToIdMap: newEntityIndexToIdMap,
