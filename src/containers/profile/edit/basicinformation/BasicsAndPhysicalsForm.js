@@ -83,7 +83,7 @@ class BasicsAndPhysicalsForm extends Component<Props, State> {
     const { formData } = this.props;
     this.setState({
       formData: formData.toJS(),
-      prepopulated: !!formData.size
+      prepopulated: !formData.isEmpty()
     });
   }
 
