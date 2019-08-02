@@ -7,18 +7,14 @@ import { Map } from 'immutable';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
-import { withRouter } from 'react-router-dom';
 import type { Dispatch } from 'redux';
-import type { Match } from 'react-router-dom';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import {
-  getBasicInformation,
   updateBasicInformation,
   submitBasicInformation
 } from './BasicInformationActions';
-import { schema, uiSchema } from './schemas/BasicInformationSchemas';
-import { PROFILE_ID_PARAM } from '../../../../core/router/Routes';
+import { schema, uiSchema } from './schemas/AppearanceSchemas';
 import { COMPLETED_DT_FQN } from '../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
 
@@ -35,7 +31,6 @@ const {
 
 type Props = {
   actions :{
-    getBasicInformation :RequestSequence;
     submitBasicInformation :RequestSequence;
     updateBasicInformation :RequestSequence;
   },
@@ -43,7 +38,7 @@ type Props = {
   entitySetIds :Map;
   fetchState :RequestState;
   formData :Map;
-  match :Match;
+  personEKID :UUID;
   propertyTypeIds :Map;
 };
 
@@ -59,32 +54,9 @@ class BasicInformationForm extends Component<Props, State> {
     prepopulated: false
   }
 
-  componentDidMount() {
-    const { actions, formData, match } = this.props;
-    const personEKID = match.params[PROFILE_ID_PARAM];
-    if (formData.isEmpty()) {
-      actions.getBasicInformation(personEKID);
-    }
-    else {
-      this.initializeFormData();
-    }
-  }
-
   componentDidUpdate(prevProps :Props) {
-    const {
-      actions,
-      formData,
-      match,
-    } = this.props;
-    const {
-      formData: prevFormData,
-      match: prevMatch,
-    } = prevProps;
-    const personEKID = match.params[PROFILE_ID_PARAM];
-    const prevPersonEKID = prevMatch.params[PROFILE_ID_PARAM];
-    if (personEKID !== prevPersonEKID) {
-      actions.getBasicInformation(personEKID);
-    }
+    const { formData } = this.props;
+    const { formData: prevFormData } = prevProps;
 
     if (!formData.equals(prevFormData)) {
       this.initializeFormData();
@@ -100,8 +72,7 @@ class BasicInformationForm extends Component<Props, State> {
   }
 
   getAssociations = () => {
-    const { match } = this.props;
-    const personEKID = match.params[PROFILE_ID_PARAM];
+    const { personEKID } = this.props;
     const nowAsIsoString :string = DateTime.local().toISO();
     return [
       [OBSERVED_IN_FQN, personEKID, PEOPLE_FQN, 0, PHYSICAL_APPEARANCE_FQN, {
@@ -166,21 +137,19 @@ class BasicInformationForm extends Component<Props, State> {
 }
 
 const mapStateToProps = state => ({
-  entityIndexToIdMap: state.getIn(['profile', 'person', 'entityIndexToIdMap'], Map()),
+  entityIndexToIdMap: state.getIn(['profile', 'physicalAppearance', 'entityIndexToIdMap'], Map()),
   entitySetIds: state.getIn(['app', 'selectedOrgEntitySetIds'], Map()),
-  fetchState: state.getIn(['profile', 'person', 'fetchState'], RequestStates.STANDBY),
-  formData: state.getIn(['profile', 'person', 'formData'], Map()),
+  fetchState: state.getIn(['profile', 'physicalAppearance', 'fetchState'], RequestStates.STANDBY),
+  formData: state.getIn(['profile', 'physicalAppearance', 'formData'], Map()),
   propertyTypeIds: state.getIn(['edm', 'fqnToIdMap'], Map()),
 });
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
-    getBasicInformation,
     updateBasicInformation,
     submitBasicInformation,
   }, dispatch)
 });
 
-export default withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(BasicInformationForm)
-);
+// $FlowFixMe
+export default connect(mapStateToProps, mapDispatchToProps)(BasicInformationForm);
