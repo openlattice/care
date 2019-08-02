@@ -4,8 +4,8 @@ import { RequestStates } from 'redux-reqseq';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
-  getBasicInformation,
-  updateBasicInformation,
+  getBasics,
+  updateBasics,
 } from '../BasicInformationActions';
 
 const INITIAL_STATE :Map = fromJS({
@@ -19,8 +19,8 @@ const basicsReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
 
   switch (action.type) {
 
-    case getBasicInformation.case(action.type): {
-      return getBasicInformation.reducer(state, action, {
+    case getBasics.case(action.type): {
+      return getBasics.reducer(state, action, {
         REQUEST: () => state.set('fetchState', RequestStates.PENDING),
         SUCCESS: () => {
           const {
@@ -36,8 +36,8 @@ const basicsReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
       });
     }
 
-    case updateBasicInformation.case(action.type): {
-      return updateBasicInformation.reducer(state, action, {
+    case updateBasics.case(action.type): {
+      return updateBasics.reducer(state, action, {
         REQUEST: () => {
           const { path, properties } = action.value;
           return state

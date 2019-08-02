@@ -25,16 +25,16 @@ import { isValidUuid } from '../../../../utils/Utils';
 import {
   GET_APPEARANCE,
   GET_BASIC_INFORMATION,
-  GET_BASIC_INFO_CONTAINER,
+  GET_BASICS,
   SUBMIT_APPEARANCE,
   UPDATE_APPEARANCE,
   UPDATE_BASIC_INFORMATION,
   getAppearance,
-  getBasicInfoContainer,
   getBasicInformation,
   submitAppearance,
   updateAppearance,
-  updateBasicInformation
+  updateBasicInformation,
+  getBasics
 } from './BasicInformationActions';
 import {
   submitPartialReplace,
@@ -129,21 +129,24 @@ function* getAppearanceWorker(action :SequenceAction) :Generator<any, any, any> 
     response.error = error;
     yield put(getAppearance.failure(action.id, error));
   }
+  finally {
+    yield put(getAppearance.finally(action.id));
+  }
 
   return response;
 }
 
-function* getApperanceWatcher() :Generator<any, any, any> {
+function* getAppearanceWatcher() :Generator<any, any, any> {
   yield takeLatest(GET_APPEARANCE, getAppearanceWorker);
 }
 
-function* getBasicInformationWorker(action :SequenceAction) :Generator<any, any, any> {
+function* getBasicsWorker(action :SequenceAction) :Generator<any, any, any> {
   const response = {};
   try {
     const { value: entityKeyId } = action;
     if (!isDefined(entityKeyId)) throw ERR_ACTION_VALUE_NOT_DEFINED;
     if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
-    yield put(getBasicInformation.request(action.id, entityKeyId));
+    yield put(getBasics.request(action.id, entityKeyId));
 
     const app :Map = yield select(state => state.get('app', Map()));
     const entitySetId :UUID = getESIDFromApp(app, PEOPLE_FQN);
@@ -191,67 +194,67 @@ function* getBasicInformationWorker(action :SequenceAction) :Generator<any, any,
     }
 
     response.data = personData;
-    yield put(getBasicInformation.success(action.id, response));
+    yield put(getBasics.success(action.id, response));
   }
   catch (error) {
     response.error = error;
-    yield put(getBasicInformation.failure(action.id, error));
+    yield put(getBasics.failure(action.id, error));
   }
   finally {
-    yield put(getBasicInformation.finally(action.id));
+    yield put(getBasics.finally(action.id));
   }
   return response;
 }
 
-function* getBasicInformationWatcher() :Generator<any, any, any> {
-  yield takeLatest(GET_BASIC_INFORMATION, getBasicInformationWorker);
+function* getBasicsWatcher() :Generator<any, any, any> {
+  yield takeLatest(GET_BASICS, getBasicsWorker);
 }
 
-function* getBasicInfoContainerWorker(action :SequenceAction) :Generator<any, any, any> {
+function* getBasicInformationWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
     const { value: personEKID } = action;
     if (!isDefined(personEKID)) throw ERR_ACTION_VALUE_NOT_DEFINED;
     if (!isValidUuid(personEKID)) throw ERR_ACTION_VALUE_TYPE;
-    yield put(getBasicInfoContainer.request(action.id, personEKID));
+    yield put(getBasicInformation.request(action.id, personEKID));
 
     const appearanceRequest = call(
       getAppearanceWorker,
       getAppearance(personEKID)
     );
 
-    const basicInformationRequest = call(
-      getBasicInformationWorker,
-      getBasicInformation(personEKID)
+    const basicsRequest = call(
+      getBasicsWorker,
+      getBasics(personEKID)
     );
 
-    const [basicInformationResponse, appearanceResponse] = yield all([
-      basicInformationRequest,
+    const [basicsResponse, appearanceResponse] = yield all([
+      basicsRequest,
       appearanceRequest,
     ]);
 
-    if (basicInformationResponse.error) throw basicInformationResponse.error;
+    if (basicsResponse.error) throw basicsResponse.error;
     if (appearanceResponse.error) throw appearanceResponse.error;
 
-    yield put(getBasicInfoContainer.success(action.id));
+    yield put(getBasicInformation.success(action.id));
   }
   catch (error) {
     LOG.error(error);
-    yield put(getBasicInfoContainer.failure(action.id, error));
+    yield put(getBasicInformation.failure(action.id, error));
   }
   finally {
-    yield put(getBasicInfoContainer.finally(action.id));
+    yield put(getBasicInformation.finally(action.id));
   }
 }
 
-function* getBasicInfoContainerWatcher() :Generator<any, any, any> {
-  yield takeLatest(GET_BASIC_INFO_CONTAINER, getBasicInfoContainerWorker);
+function* getBasicInformationWatcher() :Generator<any, any, any> {
+  yield takeLatest(GET_BASIC_INFORMATION, getBasicInformationWorker);
 }
 
 export {
+  getAppearanceWatcher,
   getAppearanceWorker,
-  getApperanceWatcher,
-  getBasicInfoContainerWatcher,
-  getBasicInfoContainerWorker,
   getBasicInformationWatcher,
   getBasicInformationWorker,
+  getBasicsWatcher,
+  getBasicsWorker,
 };

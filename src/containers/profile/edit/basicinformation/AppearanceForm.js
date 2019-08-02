@@ -11,8 +11,8 @@ import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import {
-  updateBasicInformation,
-  submitBasicInformation
+  updateAppearance,
+  submitAppearance
 } from './BasicInformationActions';
 import { schema, uiSchema } from './schemas/AppearanceSchemas';
 import { COMPLETED_DT_FQN } from '../../../../edm/DataModelFqns';
@@ -31,8 +31,8 @@ const {
 
 type Props = {
   actions :{
-    submitBasicInformation :RequestSequence;
-    updateBasicInformation :RequestSequence;
+    submitAppearance :RequestSequence;
+    updateAppearance :RequestSequence;
   },
   entityIndexToIdMap :Map;
   entitySetIds :Map;
@@ -52,6 +52,10 @@ class AppearanceForm extends Component<Props, State> {
   state = {
     formData: {},
     prepopulated: false
+  }
+
+  componentDidMount() {
+    this.initializeFormData();
   }
 
   componentDidUpdate(prevProps :Props) {
@@ -90,7 +94,7 @@ class AppearanceForm extends Component<Props, State> {
       propertyTypeIds
     );
 
-    actions.submitBasicInformation({
+    actions.submitAppearance({
       associationEntityData,
       entityData,
       path: [],
@@ -108,7 +112,7 @@ class AppearanceForm extends Component<Props, State> {
     } = this.props;
     const { formData, prepopulated } = this.state;
     const formContext = {
-      editAction: actions.updateBasicInformation,
+      editAction: actions.updateAppearance,
       entityIndexToIdMap,
       entitySetIds,
       mappers: {},
@@ -146,8 +150,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
-    updateBasicInformation,
-    submitBasicInformation,
+    updateAppearance,
+    submitAppearance,
   }, dispatch)
 });
 

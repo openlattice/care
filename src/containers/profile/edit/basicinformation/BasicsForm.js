@@ -13,8 +13,7 @@ import type { Match } from 'react-router-dom';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import {
-  getBasicInformation,
-  updateBasicInformation,
+  updateBasics,
 } from './BasicInformationActions';
 import { schema, uiSchema } from './schemas/BasicInformationSchemas';
 import { PROFILE_ID_PARAM } from '../../../../core/router/Routes';
@@ -29,8 +28,7 @@ const {
 
 type Props = {
   actions :{
-    getBasicInformation :RequestSequence;
-    updateBasicInformation :RequestSequence;
+    updateBasics :RequestSequence;
   },
   entityIndexToIdMap :Map;
   entitySetIds :Map;
@@ -53,31 +51,12 @@ class BasicInformationForm extends Component<Props, State> {
   }
 
   componentDidMount() {
-    const { actions, formData, match } = this.props;
-    const personEKID = match.params[PROFILE_ID_PARAM];
-    if (formData.isEmpty()) {
-      actions.getBasicInformation(personEKID);
-    }
-    else {
-      this.initializeFormData();
-    }
+    this.initializeFormData();
   }
 
   componentDidUpdate(prevProps :Props) {
-    const {
-      actions,
-      formData,
-      match,
-    } = this.props;
-    const {
-      formData: prevFormData,
-      match: prevMatch,
-    } = prevProps;
-    const personEKID = match.params[PROFILE_ID_PARAM];
-    const prevPersonEKID = prevMatch.params[PROFILE_ID_PARAM];
-    if (personEKID !== prevPersonEKID) {
-      actions.getBasicInformation(personEKID);
-    }
+    const { formData } = this.props;
+    const { formData: prevFormData } = prevProps;
 
     if (!formData.equals(prevFormData)) {
       this.initializeFormData();
@@ -113,7 +92,7 @@ class BasicInformationForm extends Component<Props, State> {
     } = this.props;
     const { formData, prepopulated } = this.state;
     const formContext = {
-      editAction: actions.updateBasicInformation,
+      editAction: actions.updateBasics,
       entityIndexToIdMap,
       entitySetIds,
       mappers: {},
@@ -151,8 +130,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
-    getBasicInformation,
-    updateBasicInformation,
+    updateBasics,
   }, dispatch)
 });
 

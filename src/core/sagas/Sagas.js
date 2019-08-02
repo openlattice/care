@@ -99,7 +99,8 @@ export default function* sagas() :Generator<*, *, *> {
 
     // BasicInformationSagas
     fork(BasicInformationSagas.getBasicInformationWatcher),
-    // fork(BasicInformationSagas.updateBasicInformationWatcher),
+    fork(BasicInformationSagas.getAppearanceWatcher),
+    fork(BasicInformationSagas.getBasicsWatcher),
 
     // SearchSagas
     fork(SearchSagas.searchConsumersWatcher),
