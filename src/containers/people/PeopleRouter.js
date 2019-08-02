@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 
 import SearchPeopleContainer from './SearchPeopleContainer';
 import ProfileContainer from '../profile/ProfileContainer';
-import PremiumProfileContainer from '../profile/premium/PremiumProfileContainer';
+import PremiumProfileRouter from '../profile/premium/PremiumProfileRouter';
 import {
   PEOPLE_PATH,
   PROFILE_PATH
@@ -25,7 +25,7 @@ type Props = {
 
 const PeopleRouter = ({ selectedOrganizationSettings } :Props) => {
   const premium = selectedOrganizationSettings.get('premium', false);
-  const profileComponent = premium ? PremiumProfileContainer : ProfileContainer;
+  const profileComponent = premium ? PremiumProfileRouter : ProfileContainer;
 
   return (
     <Switch>

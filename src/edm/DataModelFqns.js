@@ -5,6 +5,29 @@
 import { Models } from 'lattice';
 
 const { FullyQualifiedName } = Models;
+
+/*
+ * Response Plan
+ */
+
+const CONTEXT_FQN = new FullyQualifiedName('ol.context');
+export {
+  CONTEXT_FQN
+};
+
+/*
+ * Interaction Strategy
+ */
+
+const DESCRIPTION_FQN = new FullyQualifiedName('ol.description');
+const TITLE_FQN = new FullyQualifiedName('ol.title');
+const INDEX_FQN = new FullyQualifiedName('ol.index');
+export {
+  DESCRIPTION_FQN,
+  INDEX_FQN,
+  TITLE_FQN,
+};
+
 /*
  * AppSettings
  */

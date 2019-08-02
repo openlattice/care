@@ -45,6 +45,7 @@ import {
   REPORT_ID_PATH
 } from '../../core/router/Routes';
 import { goToPath } from '../../core/router/RoutingActions';
+import { reduceRequestStates } from '../../utils/StateUtils';
 import type { RoutingAction } from '../../core/router/RoutingActions';
 
 const { OPENLATTICE_ID_FQN } = Constants;
@@ -289,15 +290,22 @@ class ProfileContainer extends Component<Props, State> {
   }
 }
 
-const mapStateToProps = state => ({
-  fetchAppearanceState: state.getIn(['profile', 'fetchAppearanceState'], RequestStates.STANDBY),
-  fetchPersonState: state.getIn(['profile', 'fetchPersonState'], RequestStates.STANDBY),
-  fetchReportsState: state.getIn(['profile', 'fetchReportsState'], RequestStates.STANDBY),
-  updateAboutState: state.getIn(['profile', 'updateAboutState'], RequestStates.STANDBY),
-  physicalAppearance: state.getIn(['profile', 'physicalAppearance'], Map()),
-  reports: state.getIn(['profile', 'reports'], List()),
-  selectedPerson: state.getIn(['profile', 'selectedPerson'], Map()),
-});
+const mapStateToProps = (state :Map) => {
+  const updateAboutStates = [
+    state.getIn(['profile', 'person', 'updateState']),
+    state.getIn(['profile', 'physicalAppearance', 'updateState']),
+  ];
+
+  return {
+    fetchAppearanceState: state.getIn(['profile', 'physicalAppearance', 'fetchState'], RequestStates.STANDBY),
+    fetchPersonState: state.getIn(['profile', 'person', 'fetchState'], RequestStates.STANDBY),
+    fetchReportsState: state.getIn(['profile', 'reports', 'fetchState'], RequestStates.STANDBY),
+    physicalAppearance: state.getIn(['profile', 'physicalAppearance', 'data'], Map()),
+    reports: state.getIn(['profile', 'reports', 'data'], List()),
+    selectedPerson: state.getIn(['profile', 'person', 'data'], Map()),
+    updateAboutState: reduceRequestStates(updateAboutStates),
+  };
+};
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({

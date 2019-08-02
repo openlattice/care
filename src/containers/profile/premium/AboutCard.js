@@ -17,8 +17,9 @@ import {
   faUser,
   faVenusMars,
   faWeightHanging,
+  faEdit
 } from '@fortawesome/pro-solid-svg-icons';
-import { faUserHardHat, faEdit } from '@fortawesome/pro-regular-svg-icons';
+import { faUserHardHat } from '@fortawesome/pro-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import AboutDetail from './AboutDetail';

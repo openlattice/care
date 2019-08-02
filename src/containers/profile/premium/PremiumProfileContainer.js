@@ -12,11 +12,8 @@ import {
   Card,
   CardSegment,
   CardStack,
-  Colors,
   SearchResults
 } from 'lattice-ui-kit';
-import { faPortrait } from '@fortawesome/pro-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
@@ -42,8 +39,10 @@ import {
   getProfileReports,
   updateProfileAbout
 } from '../ProfileActions';
+import { getResponsePlan } from '../edit/responseplan/ResponsePlanActions';
 import { DATE_TIME_OCCURRED_FQN } from '../../../edm/DataModelFqns';
 import { getEntityKeyId } from '../../../utils/DataUtils';
+import { reduceRequestStates } from '../../../utils/StateUtils';
 import { getNameFromPerson } from '../../../utils/PersonUtils';
 import {
   PROFILE_ID_PARAM,
@@ -52,14 +51,6 @@ import {
 } from '../../../core/router/Routes';
 import { goToPath } from '../../../core/router/RoutingActions';
 import type { RoutingAction } from '../../../core/router/RoutingActions';
-
-const { NEUTRALS } = Colors;
-
-// Fixed placeholder size
-const PlaceholderPortrait = styled(FontAwesomeIcon)`
-  height: 265px !important;
-  width: 200px !important;
-`;
 
 const Aside = styled.div`
   align-items: center;
@@ -85,16 +76,19 @@ type Props = {
     getPersonData :RequestSequence;
     getPhysicalAppearance :RequestSequence;
     getProfileReports :RequestSequence;
+    getResponsePlan :RequestSequence;
     goToPath :(path :string) => RoutingAction;
     updateProfileAbout :RequestSequence;
   };
-  fetchAppearanceState :RequestState;
-  fetchPersonState :RequestState;
+  fetchAboutState :RequestState;
   fetchReportsState :RequestState;
+  fetchResponsePlanState :RequestState;
   match :Match;
   physicalAppearance :Map;
   reports :List<Map>;
   selectedPerson :Map;
+  backgroundInformation :Map;
+  interactionStrategies :List<Map>;
 };
 
 type State = {
@@ -109,7 +103,8 @@ class PremiumProfileContainer extends Component<Props, State> {
       match,
       physicalAppearance,
       reports,
-      selectedPerson
+      backgroundInformation,
+      selectedPerson,
     } = this.props;
     const personEKID = match.params[PROFILE_ID_PARAM];
     if (physicalAppearance.isEmpty()) {
@@ -120,9 +115,9 @@ class PremiumProfileContainer extends Component<Props, State> {
         actions.getPhysicalAppearance(personEKID); // only get physical appearance
       }
     }
-    if (reports.isEmpty()) {
-      actions.getProfileReports(personEKID);
-    }
+
+    if (backgroundInformation.isEmpty()) actions.getResponsePlan(personEKID);
+    if (reports.isEmpty()) actions.getProfileReports(personEKID);
   }
 
   componentDidUpdate(prevProps :Props) {
@@ -136,6 +131,7 @@ class PremiumProfileContainer extends Component<Props, State> {
     if (personEKID !== prevPersonEKID) {
       actions.getPersonData(personEKID);
       actions.getProfileReports(personEKID);
+      actions.getResponsePlan(personEKID);
     }
   }
 
@@ -173,20 +169,20 @@ class PremiumProfileContainer extends Component<Props, State> {
 
   render() {
     const {
+      backgroundInformation,
+      fetchAboutState,
       fetchReportsState,
-      fetchAppearanceState,
-      fetchPersonState,
+      fetchResponsePlanState,
+      interactionStrategies,
       physicalAppearance,
       reports,
-      selectedPerson
+      selectedPerson,
     } = this.props;
     const { recent, total } = this.countCrisisCalls();
 
     const isLoadingReports = fetchReportsState === RequestStates.PENDING;
-    const isLoadingAbout = (
-      fetchPersonState === RequestStates.PENDING
-      || fetchAppearanceState === RequestStates.PENDING
-    );
+    const isLoadingAbout = fetchAboutState === RequestStates.PENDING;
+    const isLoadingResponsePlan = fetchResponsePlanState === RequestStates.PENDING;
 
     const formattedName = getNameFromPerson(selectedPerson);
     const isMalfoy = formattedName === 'Malfoy, Scorpius H.';
@@ -201,7 +197,6 @@ class PremiumProfileContainer extends Component<Props, State> {
                 <Card>
                   <CardSegment padding="sm">
                     <Portrait isMalfoy={isMalfoy} />
-                    {/* <PlaceholderPortrait icon={faPortrait} color={NEUTRALS[5]} /> */}
                   </CardSegment>
                   <CardSegment vertical padding="sm">
                     <Button mode="primary">
@@ -229,8 +224,12 @@ class PremiumProfileContainer extends Component<Props, State> {
                     isLoading={isLoadingReports} />
               </BehaviorAndSafetyGrid>
               <DeescalationCard />
-              <ResponsePlanCard />
-              <BackgroundInformationCard />
+              <ResponsePlanCard
+                  interactionStrategies={interactionStrategies}
+                  isLoading={isLoadingResponsePlan} />
+              <BackgroundInformationCard
+                  backgroundInformation={backgroundInformation}
+                  isLoading={isLoadingResponsePlan} />
               <SearchResults
                   hasSearched={fetchReportsState !== RequestStates.STANDBY}
                   isLoading={isLoadingReports}
@@ -247,20 +246,30 @@ class PremiumProfileContainer extends Component<Props, State> {
   }
 }
 
-const mapStateToProps = state => ({
-  fetchAppearanceState: state.getIn(['profile', 'fetchAppearanceState'], RequestStates.STANDBY),
-  fetchPersonState: state.getIn(['profile', 'fetchPersonState'], RequestStates.STANDBY),
-  fetchReportsState: state.getIn(['profile', 'fetchReportsState'], RequestStates.STANDBY),
-  physicalAppearance: state.getIn(['profile', 'physicalAppearance'], Map()),
-  reports: state.getIn(['profile', 'reports'], List()),
-  selectedPerson: state.getIn(['profile', 'selectedPerson'], Map()),
-});
+const mapStateToProps = (state :Map) => {
+  const fetchAboutStates = [
+    state.getIn(['profile', 'person', 'fetchState']),
+    state.getIn(['profile', 'physicalAppearance', 'fetchState']),
+  ];
+
+  return {
+    backgroundInformation: state.getIn(['profile', 'responsePlan', 'data'], Map()),
+    fetchAboutState: reduceRequestStates(fetchAboutStates),
+    fetchReportsState: state.getIn(['profile', 'reports', 'fetchState'], RequestStates.STANDBY),
+    fetchResponsePlanState: state.getIn(['profile', 'responsePlan', 'fetchState'], RequestStates.STANDBY),
+    interactionStrategies: state.getIn(['profile', 'responsePlan', 'interactionStrategies'], List()),
+    physicalAppearance: state.getIn(['profile', 'physicalAppearance', 'data'], Map()),
+    reports: state.getIn(['profile', 'reports', 'data'], List()),
+    selectedPerson: state.getIn(['profile', 'person', 'data'], Map()),
+  };
+};
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
     getPersonData,
     getPhysicalAppearance,
     getProfileReports,
+    getResponsePlan,
     goToPath,
     updateProfileAbout,
   }, dispatch)

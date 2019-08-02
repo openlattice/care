@@ -16,10 +16,12 @@ import * as RoutingSagas from '../router/RoutingSagas';
 
 import * as AppSagas from '../../containers/app/AppSagas';
 import * as DashboardSagas from '../../containers/dashboard/DashboardSagas';
+import * as DataSagas from './data/DataSagas';
 import * as DownloadsSagas from '../../containers/downloads/DownloadsSagas';
 import * as PeopleSagas from '../../containers/people/PeopleSagas';
 import * as ProfileSagas from '../../containers/profile/ProfileSagas';
 import * as ReportsSagas from '../../containers/reports/ReportsSagas';
+import * as ResponsePlanSagas from '../../containers/profile/edit/responseplan/ResponsePlanSagas';
 import * as SearchSagas from '../../containers/search/SearchSagas';
 import * as StaffSagas from '../../containers/staff/StaffSagas';
 import * as SubmitSagas from '../../utils/submit/SubmitSagas';
@@ -53,6 +55,12 @@ export default function* sagas() :Generator<*, *, *> {
     fork(AppSagas.loadHospitalsWatcher),
     fork(AppSagas.switchOrganizationWatcher),
 
+    // DataSagas
+    fork(DataSagas.deleteBulkEntitiesWatcher),
+    fork(DataSagas.submitDataGraphWatcher),
+    fork(DataSagas.submitPartialReplaceWatcher),
+
+
     // StaffSagas
     fork(StaffSagas.getCurrentUserStaffMemberDataWatcher),
 
@@ -81,6 +89,12 @@ export default function* sagas() :Generator<*, *, *> {
     fork(ReportsSagas.getReportsByDateRangeWatcher),
     fork(ReportsSagas.updateReportWatcher),
     fork(ReportsSagas.getReportWatcher),
+
+    // ResponsePlanSagas
+    fork(ResponsePlanSagas.deleteInteractionStrategiesWatcher),
+    fork(ResponsePlanSagas.getResponsePlanWatcher),
+    fork(ResponsePlanSagas.submitResponsePlanWatcher),
+    fork(ResponsePlanSagas.updateResponsePlanWatcher),
 
     // SearchSagas
     fork(SearchSagas.searchConsumersWatcher),

@@ -2,7 +2,13 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import { Map } from 'immutable';
-import { Card, CardHeader, Modal } from 'lattice-ui-kit';
+import {
+  Card,
+  CardHeader,
+  CardSegment,
+  Modal,
+  Spinner,
+} from 'lattice-ui-kit';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/pro-solid-svg-icons';
 import { connect } from 'react-redux';
@@ -14,6 +20,7 @@ import type { Dispatch } from 'redux';
 
 import EditProfileForm from '../EditProfileForm';
 import { updateProfileAbout } from '../ProfileActions';
+import { reduceRequestStates } from '../../../utils/StateUtils';
 
 const StyledCard = styled(Card)`
   margin: 0 -30px;
@@ -39,6 +46,7 @@ type Props = {
   actions :{
     updateProfileAbout :RequestSequence;
   };
+  fetchAboutState :RequestState;
   isVisible :boolean;
   onClose :() => void;
   physicalAppearance :Map;
@@ -56,14 +64,38 @@ class EditAboutModal extends Component<Props> {
     }
   }
 
-  render() {
+  renderEditProfileForm = () => {
     const {
       actions,
-      isVisible,
+      fetchAboutState,
       onClose,
       physicalAppearance,
       selectedPerson,
       updateAboutState
+    } = this.props;
+
+    if (fetchAboutState === RequestStates.PENDING) {
+      return (
+        <CardSegment vertical>
+          <Spinner size="2x" />
+        </CardSegment>
+      );
+    }
+
+    return (
+      <EditProfileForm
+          isLoading={updateAboutState === RequestStates.PENDING}
+          onDiscard={onClose}
+          onSubmit={actions.updateProfileAbout}
+          physicalAppearance={physicalAppearance}
+          selectedPerson={selectedPerson} />
+    );
+  }
+
+  render() {
+    const {
+      isVisible,
+      onClose,
     } = this.props;
 
     return (
@@ -79,23 +111,31 @@ class EditAboutModal extends Component<Props> {
               Edit About
             </H1>
           </CardHeader>
-          <EditProfileForm
-              isLoading={updateAboutState === RequestStates.PENDING}
-              onDiscard={onClose}
-              onSubmit={actions.updateProfileAbout}
-              physicalAppearance={physicalAppearance}
-              selectedPerson={selectedPerson} />
+          { this.renderEditProfileForm() }
         </StyledCard>
       </Modal>
     );
   }
 }
 
-const mapStateToProps = state => ({
-  physicalAppearance: state.getIn(['profile', 'physicalAppearance'], Map()),
-  selectedPerson: state.getIn(['profile', 'selectedPerson'], Map()),
-  updateAboutState: state.getIn(['profile', 'updateAboutState'], RequestStates.STANDBY),
-});
+const mapStateToProps = (state :Map) => {
+  const updateAboutStates = [
+    state.getIn(['profile', 'person', 'updateState']),
+    state.getIn(['profile', 'physicalAppearance', 'updateState']),
+  ];
+
+  const fetchAboutStates = [
+    state.getIn(['profile', 'person', 'fetchState']),
+    state.getIn(['profile', 'physicalAppearance', 'fetchState']),
+  ];
+
+  return {
+    fetchAboutState: reduceRequestStates(fetchAboutStates),
+    physicalAppearance: state.getIn(['profile', 'physicalAppearance', 'data'], Map()),
+    selectedPerson: state.getIn(['profile', 'person', 'data'], Map()),
+    updateAboutState: reduceRequestStates(updateAboutStates),
+  };
+};
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
