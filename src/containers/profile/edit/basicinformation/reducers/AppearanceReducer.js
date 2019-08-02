@@ -4,9 +4,9 @@ import { RequestStates } from 'redux-reqseq';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
-  getBasicInformation,
-  updateBasicInformation,
-} from './BasicInformationActions';
+  getAppearance,
+  updateAppearance,
+} from '../BasicInformationActions';
 
 const INITIAL_STATE :Map = fromJS({
   entityIndexToIdMap: Map(),
@@ -15,12 +15,12 @@ const INITIAL_STATE :Map = fromJS({
   updateState: RequestStates.STANDBY,
 });
 
-const basicInformationReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
+const appearanceReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
 
   switch (action.type) {
 
-    case getBasicInformation.case(action.type): {
-      return getBasicInformation.reducer(state, action, {
+    case getAppearance.case(action.type): {
+      return getAppearance.reducer(state, action, {
         REQUEST: () => state.set('fetchState', RequestStates.PENDING),
         SUCCESS: () => {
           const {
@@ -36,8 +36,8 @@ const basicInformationReducer = (state :Map = INITIAL_STATE, action :SequenceAct
       });
     }
 
-    case updateBasicInformation.case(action.type): {
-      return updateBasicInformation.reducer(state, action, {
+    case updateAppearance.case(action.type): {
+      return updateAppearance.reducer(state, action, {
         REQUEST: () => {
           const { path, properties } = action.value;
           return state
@@ -54,4 +54,4 @@ const basicInformationReducer = (state :Map = INITIAL_STATE, action :SequenceAct
   }
 };
 
-export default basicInformationReducer;
+export default appearanceReducer;

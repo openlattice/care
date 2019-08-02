@@ -47,7 +47,7 @@ type State = {
   prepopulated :boolean;
 };
 
-class BasicInformationForm extends Component<Props, State> {
+class AppearanceForm extends Component<Props, State> {
 
   state = {
     formData: {},
@@ -137,10 +137,10 @@ class BasicInformationForm extends Component<Props, State> {
 }
 
 const mapStateToProps = state => ({
-  entityIndexToIdMap: state.getIn(['profile', 'physicalAppearance', 'entityIndexToIdMap'], Map()),
+  entityIndexToIdMap: state.getIn(['profile', 'basicInformation', 'appearance', 'entityIndexToIdMap'], Map()),
   entitySetIds: state.getIn(['app', 'selectedOrgEntitySetIds'], Map()),
-  fetchState: state.getIn(['profile', 'physicalAppearance', 'fetchState'], RequestStates.STANDBY),
-  formData: state.getIn(['profile', 'physicalAppearance', 'formData'], Map()),
+  fetchState: state.getIn(['profile', 'basicInformation', 'appearance', 'fetchState'], RequestStates.STANDBY),
+  formData: state.getIn(['profile', 'basicInformation', 'appearance', 'formData'], Map()),
   propertyTypeIds: state.getIn(['edm', 'fqnToIdMap'], Map()),
 });
 
@@ -152,4 +152,4 @@ const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
 });
 
 // $FlowFixMe
-export default connect(mapStateToProps, mapDispatchToProps)(BasicInformationForm);
+export default connect(mapStateToProps, mapDispatchToProps)(AppearanceForm);

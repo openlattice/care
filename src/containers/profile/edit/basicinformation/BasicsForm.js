@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 import { DateTime } from 'luxon';
-import { Form, DataProcessingUtils } from 'lattice-fabricate';
+import { Form } from 'lattice-fabricate';
 import { Card, CardSegment, Spinner } from 'lattice-ui-kit';
 import { Map } from 'immutable';
 import { bindActionCreators } from 'redux';
@@ -15,7 +15,6 @@ import type { RequestSequence, RequestState } from 'redux-reqseq';
 import {
   getBasicInformation,
   updateBasicInformation,
-  submitBasicInformation
 } from './BasicInformationActions';
 import { schema, uiSchema } from './schemas/BasicInformationSchemas';
 import { PROFILE_ID_PARAM } from '../../../../core/router/Routes';
@@ -28,15 +27,9 @@ const {
   PHYSICAL_APPEARANCE_FQN,
 } = APP_TYPES_FQNS;
 
-const {
-  processEntityData,
-  processAssociationEntityData
-} = DataProcessingUtils;
-
 type Props = {
   actions :{
     getBasicInformation :RequestSequence;
-    submitBasicInformation :RequestSequence;
     updateBasicInformation :RequestSequence;
   },
   entityIndexToIdMap :Map;
@@ -110,23 +103,6 @@ class BasicInformationForm extends Component<Props, State> {
     ];
   }
 
-  handleSubmit = ({ formData } :Object) => {
-    const { actions, entitySetIds, propertyTypeIds } = this.props;
-    const entityData = processEntityData(formData, entitySetIds, propertyTypeIds);
-    const associationEntityData = processAssociationEntityData(
-      this.getAssociations(),
-      entitySetIds,
-      propertyTypeIds
-    );
-
-    actions.submitBasicInformation({
-      associationEntityData,
-      entityData,
-      path: [],
-      properties: formData
-    });
-  }
-
   render() {
     const {
       actions,
@@ -166,10 +142,10 @@ class BasicInformationForm extends Component<Props, State> {
 }
 
 const mapStateToProps = state => ({
-  entityIndexToIdMap: state.getIn(['profile', 'person', 'entityIndexToIdMap'], Map()),
+  entityIndexToIdMap: state.getIn(['profile', 'basicInformation', 'basics', 'entityIndexToIdMap'], Map()),
   entitySetIds: state.getIn(['app', 'selectedOrgEntitySetIds'], Map()),
-  fetchState: state.getIn(['profile', 'person', 'fetchState'], RequestStates.STANDBY),
-  formData: state.getIn(['profile', 'person', 'formData'], Map()),
+  fetchState: state.getIn(['profile', 'basicInformation', 'basics', 'fetchState'], RequestStates.STANDBY),
+  formData: state.getIn(['profile', 'basicInformation', 'basics', 'formData'], Map()),
   propertyTypeIds: state.getIn(['edm', 'fqnToIdMap'], Map()),
 });
 
@@ -177,7 +153,6 @@ const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
     getBasicInformation,
     updateBasicInformation,
-    submitBasicInformation,
   }, dispatch)
 });
 
