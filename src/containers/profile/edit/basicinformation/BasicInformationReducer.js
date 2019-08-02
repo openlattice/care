@@ -4,8 +4,8 @@ import { RequestStates } from 'redux-reqseq';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
-  getBasicsAndPhysicals,
-  updateBasicsAndPhysicals,
+  getBasicInformation,
+  updateBasicInformation,
 } from './BasicInformationActions';
 
 const INITIAL_STATE :Map = fromJS({
@@ -19,8 +19,8 @@ const basicInformationReducer = (state :Map = INITIAL_STATE, action :SequenceAct
 
   switch (action.type) {
 
-    case getBasicsAndPhysicals.case(action.type): {
-      return getBasicsAndPhysicals.reducer(state, action, {
+    case getBasicInformation.case(action.type): {
+      return getBasicInformation.reducer(state, action, {
         REQUEST: () => state.set('fetchState', RequestStates.PENDING),
         SUCCESS: () => {
           const {
@@ -28,6 +28,7 @@ const basicInformationReducer = (state :Map = INITIAL_STATE, action :SequenceAct
             formData,
           } = action.value;
           return state
+            .set('fetchState', RequestStates.SUCCESS)
             .set('entityIndexToIdMap', entityIndexToIdMap)
             .set('formData', formData);
         },
@@ -35,15 +36,15 @@ const basicInformationReducer = (state :Map = INITIAL_STATE, action :SequenceAct
       });
     }
 
-    case updateBasicsAndPhysicals.case(action.type): {
-      return updateBasicsAndPhysicals.reducer(state, action, {
-        REQUEST: () => state.set('updateState', RequestStates.PENDING),
-        SUCCESS: () => {
+    case updateBasicInformation.case(action.type): {
+      return updateBasicInformation.reducer(state, action, {
+        REQUEST: () => {
           const { path, properties } = action.value;
           return state
-            .set('updateState', RequestStates.SUCCESS)
+            .set('updateState', RequestStates.PENDING)
             .setIn(['formData', ...path], properties);
         },
+        SUCCESS: () => state.set('updateState', RequestStates.SUCCESS),
         FAILURE: () => state.set('updateState', RequestStates.FAILURE)
       });
     }

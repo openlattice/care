@@ -60,17 +60,18 @@ const schema = {
         },
         [getEntityAddressKey(0, PEOPLE_FQN, PERSON_DOB_FQN)]: {
           type: 'string',
-          title: 'Date of Birth'
-        },
-        [getEntityAddressKey(0, PEOPLE_FQN, PERSON_RACE_FQN)]: {
-          type: 'string',
-          title: 'Race',
-          enum: RACE_VALUES
+          title: 'Date of Birth',
+          format: 'date'
         },
         [getEntityAddressKey(0, PEOPLE_FQN, PERSON_SEX_FQN)]: {
           type: 'string',
           title: 'Sex',
           enum: SEX_VALUES
+        },
+        [getEntityAddressKey(0, PEOPLE_FQN, PERSON_RACE_FQN)]: {
+          type: 'string',
+          title: 'Race',
+          enum: RACE_VALUES
         },
       },
     },
@@ -127,16 +128,18 @@ const uiSchema = {
     [getEntityAddressKey(0, PEOPLE_FQN, PERSON_DOB_FQN)]: {
       classNames: 'column-span-4'
     },
+    [getEntityAddressKey(0, PEOPLE_FQN, PERSON_SEX_FQN)]: {
+      classNames: 'column-span-4',
+    },
     [getEntityAddressKey(0, PEOPLE_FQN, PERSON_RACE_FQN)]: {
       classNames: 'column-span-4'
-    },
-    [getEntityAddressKey(0, PEOPLE_FQN, PERSON_SEX_FQN)]: {
-      classNames: 'column-span-12',
-      'ui:widget': 'radio'
     },
   },
   [getPageSectionKey(1, 2)]: {
     classNames: 'column-span-12 grid-container',
+    'ui:options': {
+      editable: true
+    },
     [getEntityAddressKey(0, PHYSICAL_APPEARANCE_FQN, HEIGHT_FQN)]: {
       classNames: 'column-span-3'
     },

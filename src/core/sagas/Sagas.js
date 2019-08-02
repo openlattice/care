@@ -15,6 +15,7 @@ import {
 import * as RoutingSagas from '../router/RoutingSagas';
 
 import * as AppSagas from '../../containers/app/AppSagas';
+import * as BasicInformationSagas from '../../containers/profile/edit/basicinformation/BasicInformationSagas';
 import * as DashboardSagas from '../../containers/dashboard/DashboardSagas';
 import * as DataSagas from './data/DataSagas';
 import * as DownloadsSagas from '../../containers/downloads/DownloadsSagas';
@@ -95,6 +96,10 @@ export default function* sagas() :Generator<*, *, *> {
     fork(ResponsePlanSagas.getResponsePlanWatcher),
     fork(ResponsePlanSagas.submitResponsePlanWatcher),
     fork(ResponsePlanSagas.updateResponsePlanWatcher),
+
+    // BasicInformationSagas
+    fork(BasicInformationSagas.getBasicInformationWatcher),
+    fork(BasicInformationSagas.updateBasicInformationWatcher),
 
     // SearchSagas
     fork(SearchSagas.searchConsumersWatcher),

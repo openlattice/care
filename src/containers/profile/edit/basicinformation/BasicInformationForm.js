@@ -12,20 +12,25 @@ import type { Match } from 'react-router-dom';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import { PROFILE_ID_PARAM } from '../../../../core/router/Routes';
-import { schema, uiSchema } from './schemas/BasicsAndPhysicalSchemas';
-import { getBasicsAndPhysicals, updateBasicsAndPhysicals } from './BasicInformationActions';
+import { schema, uiSchema } from './schemas/BasicInformationSchemas';
+import {
+  getBasicInformation,
+  updateBasicInformation,
+  submitBasicInformation
+} from './BasicInformationActions';
 
 const {
-  getPageSectionKey,
-  getEntityAddressKey,
+  // getPageSectionKey,
+  // getEntityAddressKey,
   processEntityData,
   processAssociationEntityData
 } = DataProcessingUtils;
 
 type Props = {
   actions :{
-    getBasicsAndPhysicals :RequestSequence;
-    updateBasicsAndPhysicals :RequestSequence;
+    getBasicInformation :RequestSequence;
+    submitBasicInformation :RequestSequence;
+    updateBasicInformation :RequestSequence;
   },
   entityIndexToIdMap :Map;
   entitySetIds :Map;
@@ -40,7 +45,7 @@ type State = {
   prepopulated :boolean;
 };
 
-class BasicsAndPhysicalsForm extends Component<Props, State> {
+class BasicInformationForm extends Component<Props, State> {
 
   state = {
     formData: {},
@@ -51,7 +56,7 @@ class BasicsAndPhysicalsForm extends Component<Props, State> {
     const { actions, formData, match } = this.props;
     const personEKID = match.params[PROFILE_ID_PARAM];
     if (formData.isEmpty()) {
-      actions.getBasicsAndPhysicals(personEKID);
+      actions.getBasicInformation(personEKID);
     }
     else {
       this.initializeFormData();
@@ -71,7 +76,7 @@ class BasicsAndPhysicalsForm extends Component<Props, State> {
     const personEKID = match.params[PROFILE_ID_PARAM];
     const prevPersonEKID = prevMatch.params[PROFILE_ID_PARAM];
     if (personEKID !== prevPersonEKID) {
-      actions.getBasicsAndPhysicals(personEKID);
+      actions.getBasicInformation(personEKID);
     }
 
     if (!formData.equals(prevFormData)) {
@@ -87,6 +92,27 @@ class BasicsAndPhysicalsForm extends Component<Props, State> {
     });
   }
 
+  getAssociations = (formData :Object) => {
+
+  }
+
+  handleSubmit = ({ formData } :Object) => {
+    const { actions, entitySetIds, propertyTypeIds } = this.props;
+    const entityData = processEntityData(formData, entitySetIds, propertyTypeIds);
+    const associationEntityData = processAssociationEntityData(
+      this.getAssociations(formData),
+      entitySetIds,
+      propertyTypeIds
+    );
+
+    actions.submitBasicInformation({
+      associationEntityData,
+      entityData,
+      path: [],
+      properties: formData
+    });
+  }
+
   render() {
     const {
       actions,
@@ -97,7 +123,7 @@ class BasicsAndPhysicalsForm extends Component<Props, State> {
     } = this.props;
     const { formData, prepopulated } = this.state;
     const formContext = {
-      editAction: actions.updateBasicsAndPhysicals,
+      editAction: actions.updateBasicInformation,
       entityIndexToIdMap,
       entitySetIds,
       mappers: {},
@@ -126,20 +152,21 @@ class BasicsAndPhysicalsForm extends Component<Props, State> {
 }
 
 const mapStateToProps = state => ({
-  entityIndexToIdMap: state.getIn(['profile', 'basicsAndPhysicals', 'entityIndexToIdMap'], Map()),
+  entityIndexToIdMap: state.getIn(['profile', 'basicInformation', 'entityIndexToIdMap'], Map()),
   entitySetIds: state.getIn(['app', 'selectedOrgEntitySetIds'], Map()),
-  fetchState: state.getIn(['profile', 'basicsAndPhysicals', 'fetchState'], RequestStates.STANDBY),
-  formData: state.getIn(['profile', 'basicsAndPhysicals', 'formData'], Map()),
+  fetchState: state.getIn(['profile', 'basicInformation', 'fetchState'], RequestStates.STANDBY),
+  formData: state.getIn(['profile', 'basicInformation', 'formData'], Map()),
   propertyTypeIds: state.getIn(['edm', 'fqnToIdMap'], Map()),
 });
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
-    getBasicsAndPhysicals,
-    updateBasicsAndPhysicals,
+    getBasicInformation,
+    updateBasicInformation,
+    submitBasicInformation,
   }, dispatch)
 });
 
 export default withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(BasicsAndPhysicalsForm)
+  connect(mapStateToProps, mapDispatchToProps)(BasicInformationForm)
 );

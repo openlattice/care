@@ -7,7 +7,9 @@ import {
   Set,
 } from 'immutable';
 import { Constants, Models } from 'lattice';
+import { DataProcessingUtils } from 'lattice-fabricate';
 
+const { getEntityAddressKey } = DataProcessingUtils;
 const { FullyQualifiedName } = Models;
 const { OPENLATTICE_ID_FQN } = Constants;
 
@@ -71,3 +73,34 @@ export const inchesToFeetString = (inches :number) => {
 };
 
 export const getEntityKeyId = (entity :Map | Object) :string => getIn(entity, [OPENLATTICE_ID_FQN, 0], '');
+
+export const getFormDataFromEntity = (
+  entity :Map | Object,
+  esn :string,
+  properties :List<FullyQualifiedName> | FullyQualifiedName[],
+  index :number
+) :Map => {
+  const entityFormData = Map().withMutations((entityMutator) => {
+    properties.forEach((fqn :FullyQualifiedName) => {
+      entityMutator.set(getEntityAddressKey(index, esn, fqn), getIn(entity, [fqn, 0]));
+    });
+  });
+
+  return entityFormData;
+};
+
+export const getFormDataFromEntityArray = (
+  data :List<Map> | Object[],
+  esn :string,
+  properties :List<FullyQualifiedName> | FullyQualifiedName[],
+  index :number
+) :List<Map> => {
+  const entityFormDataList = List().withMutations((mutator :List) => {
+    data.forEach((entity :Map) => {
+      const entityFormData = getFormDataFromEntity(entity, esn, properties, index);
+      mutator.push(entityFormData);
+    });
+  });
+
+  return entityFormDataList;
+};

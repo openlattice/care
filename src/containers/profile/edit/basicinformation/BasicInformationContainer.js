@@ -1,10 +1,10 @@
 import React from 'react';
 import { CardStack } from 'lattice-ui-kit';
-import BasicsAndPhysicalsForm from './BasicsAndPhysicalsForm';
+import BasicInformationForm from './BasicInformationForm';
 
 const BasicInformationContainer = () => (
   <CardStack>
-    <BasicsAndPhysicalsForm />
+    <BasicInformationForm />
   </CardStack>
 );
 

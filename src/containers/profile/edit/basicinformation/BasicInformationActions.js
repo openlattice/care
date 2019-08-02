@@ -1,15 +1,20 @@
 // @flow
 import { newRequestSequence } from 'redux-reqseq';
 
-const GET_BASICS_AND_PHYSICALS :'GET_BASICS_AND_PHYSICALS' = 'GET_BASICS_AND_PHYSICALS';
-const getBasicsAndPhysicals = newRequestSequence(GET_BASICS_AND_PHYSICALS);
+const GET_BASIC_INFORMATION :'GET_BASIC_INFORMATION' = 'GET_BASIC_INFORMATION';
+const getBasicInformation = newRequestSequence(GET_BASIC_INFORMATION);
 
-const UPDATE_BASICS_AND_PHYSICALS :'UPDATE_BASICS_AND_PHYSICALS' = 'UPDATE_BASICS_AND_PHYSICALS';
-const updateBasicsAndPhysicals = newRequestSequence(UPDATE_BASICS_AND_PHYSICALS);
+const UPDATE_BASIC_INFORMATION :'UPDATE_BASIC_INFORMATION' = 'UPDATE_BASIC_INFORMATION';
+const updateBasicInformation = newRequestSequence(UPDATE_BASIC_INFORMATION);
+
+const SUBMIT_BASIC_INFORMATION :'SUBMIT_BASIC_INFORMATION' = 'SUBMIT_BASIC_INFORMATION';
+const submitBasicInformation = newRequestSequence(SUBMIT_BASIC_INFORMATION);
 
 export {
-  GET_BASICS_AND_PHYSICALS,
-  UPDATE_BASICS_AND_PHYSICALS,
-  getBasicsAndPhysicals,
-  updateBasicsAndPhysicals,
+  GET_BASIC_INFORMATION,
+  SUBMIT_BASIC_INFORMATION,
+  UPDATE_BASIC_INFORMATION,
+  getBasicInformation,
+  submitBasicInformation,
+  updateBasicInformation,
 };
