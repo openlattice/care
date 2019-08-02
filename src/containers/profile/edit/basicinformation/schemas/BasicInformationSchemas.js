@@ -17,9 +17,7 @@ import {
 } from '../../../../../edm/DataModelFqns';
 import {
   SEX_VALUES,
-  RACE_VALUES,
-  EYE_COLOR_VALUES,
-  HAIR_COLOR_VALUES
+  RACE_VALUES
 } from '../../../constants';
 
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
@@ -30,7 +28,7 @@ const {
 
 const schema = {
   type: 'object',
-  title: 'Basic Information',
+  title: 'Basics',
   properties: {
     [getPageSectionKey(1, 1)]: {
       type: 'object',
