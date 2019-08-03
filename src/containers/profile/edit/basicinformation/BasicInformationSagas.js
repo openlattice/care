@@ -7,6 +7,7 @@ import {
   takeEvery,
   takeLatest,
 } from '@redux-saga/core/effects';
+import isPlainObject from 'lodash/isPlainObject';
 import { DataProcessingUtils } from 'lattice-fabricate';
 import { List, Map, fromJS } from 'immutable';
 import type { SequenceAction } from 'redux-reqseq';
@@ -28,18 +29,20 @@ import {
   GET_BASICS,
   SUBMIT_APPEARANCE,
   UPDATE_APPEARANCE,
-  UPDATE_BASIC_INFORMATION,
+  UPDATE_BASICS,
   getAppearance,
   getBasicInformation,
+  getBasics,
   submitAppearance,
   updateAppearance,
-  updateBasicInformation,
-  getBasics
+  updateBasics
 } from './BasicInformationActions';
 import {
+  submitDataGraph,
   submitPartialReplace,
 } from '../../../../core/sagas/data/DataActions';
 import {
+  submitDataGraphWorker,
   submitPartialReplaceWorker,
 } from '../../../../core/sagas/data/DataSagas';
 
@@ -57,10 +60,10 @@ const {
   PHYSICAL_APPEARANCE_FQN,
 } = APP_TYPES_FQNS;
 
+const { getEntityData } = DataApiActions;
+const { getEntityDataWorker } = DataApiSagas;
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
 const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
-const { createEntityAndAssociationData, getEntityData, updateEntityData } = DataApiActions;
-const { createEntityAndAssociationDataWorker, getEntityDataWorker, updateEntityDataWorker } = DataApiSagas;
 
 function* getAppearanceWorker(action :SequenceAction) :Generator<any, any, any> {
   const response = {};
@@ -140,6 +143,77 @@ function* getAppearanceWatcher() :Generator<any, any, any> {
   yield takeLatest(GET_APPEARANCE, getAppearanceWorker);
 }
 
+function* submitAppearanceWorker(action :SequenceAction) :Generator<any, any, any> {
+  try {
+    const { value } = action;
+    if (value === null || value === undefined) throw ERR_ACTION_VALUE_NOT_DEFINED;
+
+    yield put(submitAppearance.request(action.id));
+    const response = yield call(submitDataGraphWorker, submitDataGraph(value));
+    if (response.error) throw response.error;
+
+    const newEntityKeyIdsByEntitySetId = fromJS(response.data).get('entityKeyIds');
+
+    const selectedOrgEntitySetIds = yield select(state => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
+    const entitySetNamesByEntitySetId = selectedOrgEntitySetIds.flip();
+
+    const newEntityKeyIdsByEntitySetName = newEntityKeyIdsByEntitySetId
+      .mapKeys(entitySetId => entitySetNamesByEntitySetId.get(entitySetId));
+
+    const appearanceEKID = newEntityKeyIdsByEntitySetName.getIn([PHYSICAL_APPEARANCE_FQN, 0]);
+
+    const entityIndexToIdMap = Map().setIn([PHYSICAL_APPEARANCE_FQN.toString(), 0], appearanceEKID);
+
+    const { path, properties } = value;
+
+    const prevFormData = yield select(state => state.getIn(['profile', 'basicInformation', 'appearance', 'formData']));
+    let newFormData = prevFormData;
+    if (Array.isArray(path) && isPlainObject(properties)) {
+      newFormData = prevFormData.setIn(path, fromJS(properties));
+    }
+
+    yield put(submitAppearance.success(action.id, {
+      entityIndexToIdMap,
+      formData: newFormData
+    }));
+  }
+  catch (error) {
+    yield put(submitAppearance.failure(action.id, error));
+  }
+  finally {
+    yield put(submitAppearance.finally(action.id));
+  }
+}
+
+function* submitAppearanceWatcher() :Generator<any, any, any> {
+  yield takeEvery(SUBMIT_APPEARANCE, submitAppearanceWorker);
+}
+
+function* updateAppearanceWorker(action :SequenceAction) :Generator<any, any, any> {
+  try {
+    const { value } = action;
+    if (value === null || value === undefined) throw ERR_ACTION_VALUE_NOT_DEFINED;
+
+    yield put(updateAppearance.request(action.id, value));
+    const response = yield call(submitPartialReplaceWorker, submitPartialReplace(value));
+
+    if (response.error) throw response.error;
+
+    yield put(updateAppearance.success(action.id));
+  }
+  catch (error) {
+    LOG.error(error);
+    yield put(updateAppearance.failure(action.id, error));
+  }
+  finally {
+    yield put(updateAppearance.finally(action.id));
+  }
+}
+
+function* updateAppearanceWatcher() :Generator<any, any, any> {
+  yield takeEvery(UPDATE_APPEARANCE, updateAppearanceWorker);
+}
+
 function* getBasicsWorker(action :SequenceAction) :Generator<any, any, any> {
   const response = {};
   try {
@@ -210,6 +284,31 @@ function* getBasicsWatcher() :Generator<any, any, any> {
   yield takeLatest(GET_BASICS, getBasicsWorker);
 }
 
+function* updateBasicsWorker(action :SequenceAction) :Generator<any, any, any> {
+  try {
+    const { value } = action;
+    if (value === null || value === undefined) throw ERR_ACTION_VALUE_NOT_DEFINED;
+
+    yield put(updateBasics.request(action.id, value));
+    const response = yield call(submitPartialReplaceWorker, submitPartialReplace(value));
+
+    if (response.error) throw response.error;
+
+    yield put(updateBasics.success(action.id));
+  }
+  catch (error) {
+    LOG.error(error);
+    yield put(updateBasics.failure(action.id, error));
+  }
+  finally {
+    yield put(updateBasics.finally(action.id));
+  }
+}
+
+function* updateBasicsWatcher() :Generator<any, any, any> {
+  yield takeEvery(UPDATE_BASICS, updateBasicsWorker);
+}
+
 function* getBasicInformationWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
     const { value: personEKID } = action;
@@ -257,4 +356,10 @@ export {
   getBasicInformationWorker,
   getBasicsWatcher,
   getBasicsWorker,
+  submitAppearanceWatcher,
+  submitAppearanceWorker,
+  updateAppearanceWatcher,
+  updateAppearanceWorker,
+  updateBasicsWatcher,
+  updateBasicsWorker
 };

@@ -98,9 +98,12 @@ export default function* sagas() :Generator<*, *, *> {
     fork(ResponsePlanSagas.updateResponsePlanWatcher),
 
     // BasicInformationSagas
-    fork(BasicInformationSagas.getBasicInformationWatcher),
     fork(BasicInformationSagas.getAppearanceWatcher),
+    fork(BasicInformationSagas.getBasicInformationWatcher),
     fork(BasicInformationSagas.getBasicsWatcher),
+    fork(BasicInformationSagas.submitAppearanceWatcher),
+    fork(BasicInformationSagas.updateAppearanceWatcher),
+    fork(BasicInformationSagas.updateBasicsWatcher),
 
     // SearchSagas
     fork(SearchSagas.searchConsumersWatcher),

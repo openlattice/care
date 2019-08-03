@@ -6,6 +6,7 @@ import type { SequenceAction } from 'redux-reqseq';
 import {
   getAppearance,
   updateAppearance,
+  submitAppearance,
 } from '../BasicInformationActions';
 
 const INITIAL_STATE :Map = fromJS({
@@ -22,17 +23,27 @@ const appearanceReducer = (state :Map = INITIAL_STATE, action :SequenceAction) =
     case getAppearance.case(action.type): {
       return getAppearance.reducer(state, action, {
         REQUEST: () => state.set('fetchState', RequestStates.PENDING),
+        SUCCESS: () => state
+          .merge(action.value)
+          .set('fetchState', RequestStates.SUCCESS),
+        FAILURE: () => state.set('fetchState', RequestStates.FAILURE)
+      });
+    }
+
+    case submitAppearance.case(action.type): {
+      return submitAppearance.reducer(state, action, {
+        REQUEST: () => state.set('submitState', RequestStates.PENDING),
         SUCCESS: () => {
           const {
             entityIndexToIdMap,
-            formData,
+            formData
           } = action.value;
           return state
-            .set('fetchState', RequestStates.SUCCESS)
             .set('entityIndexToIdMap', entityIndexToIdMap)
-            .set('formData', formData);
+            .set('formData', formData)
+            .set('submitState', RequestStates.SUCCESS);
         },
-        FAILURE: () => state.set('fetchState', RequestStates.FAILURE)
+        FAILURE: () => state.set('submitState', RequestStates.FAILURE)
       });
     }
 

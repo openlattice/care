@@ -79,7 +79,7 @@ class AppearanceForm extends Component<Props, State> {
     const { personEKID } = this.props;
     const nowAsIsoString :string = DateTime.local().toISO();
     return [
-      [OBSERVED_IN_FQN, personEKID, PEOPLE_FQN, 0, PHYSICAL_APPEARANCE_FQN, {
+      [OBSERVED_IN_FQN, 0, PHYSICAL_APPEARANCE_FQN, personEKID, PEOPLE_FQN, {
         [COMPLETED_DT_FQN.toString()]: [nowAsIsoString]
       }],
     ];
@@ -135,6 +135,7 @@ class AppearanceForm extends Component<Props, State> {
           disabled={prepopulated}
           schema={schema}
           uiSchema={uiSchema}
+          onSubmit={this.handleSubmit}
           formContext={formContext} />
     );
   }

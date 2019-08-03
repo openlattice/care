@@ -8,7 +8,7 @@ import type { RequestSequence } from 'redux-reqseq';
 import type { Match } from 'react-router-dom';
 
 import BasicsForm from './BasicsForm';
-import PhysicalAppearanceForm from './AppearanceForm';
+import AppearanceForm from './AppearanceForm';
 import { getBasicInformation } from './BasicInformationActions';
 import { PROFILE_ID_PARAM } from '../../../../core/router/Routes';
 
@@ -48,7 +48,7 @@ class BasicInformationContainer extends Component<Props> {
     return (
       <CardStack>
         <BasicsForm />
-        <PhysicalAppearanceForm personEKID={personEKID} />
+        <AppearanceForm personEKID={personEKID} />
       </CardStack>
     );
   }
