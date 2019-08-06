@@ -14,6 +14,7 @@ export const APP_TYPES_FQNS = {
   INTERACTION_STRATEGY_FQN: new FullyQualifiedName('app.interactionstrategy'),
   SUBJECT_OF_FQN: new FullyQualifiedName('app.subjectof'),
   OBSERVED_IN_FQN: new FullyQualifiedName('app.observedin'),
+  OFFICER_SAFETY_CONCERNS_FQN: new FullyQualifiedName('app.officersafetyconcerns'),
   PEOPLE_FQN: new FullyQualifiedName('app.people'),
   PHYSICAL_APPEARANCE_FQN: new FullyQualifiedName('app.physicalappearance'),
   REPORTED_FQN: new FullyQualifiedName('app.reported'),
