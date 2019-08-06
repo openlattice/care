@@ -112,6 +112,7 @@ export function* submitResponsePlanWatcher() :Generator<*, *, *> {
 }
 
 export function* getResponsePlanWorker(action :SequenceAction) :Generator<*, *, *> {
+  const response = {};
   try {
     const { value: entityKeyId } = action;
     if (!isDefined(entityKeyId)) throw ERR_ACTION_VALUE_NOT_DEFINED;
@@ -146,7 +147,6 @@ export function* getResponsePlanWorker(action :SequenceAction) :Generator<*, *, 
     if (responsePlans.count() > 1) {
       LOG.warn('more than one response plan found', entityKeyId);
     }
-
 
     const responsePlan = responsePlans
       .getIn([0, 'neighborDetails'], Map());
@@ -190,6 +190,8 @@ export function* getResponsePlanWorker(action :SequenceAction) :Generator<*, *, 
     const formData = constructResponsePlanFormData(responsePlan, interactionStrategies);
     const entityIndexToIdMap = constructEntityIndexToIdMap(responsePlanEKID, interactionStrategyEKIDs);
 
+    response.data = responsePlan;
+
     yield put(getResponsePlan.success(action.id, {
       entityIndexToIdMap,
       formData,
@@ -199,11 +201,14 @@ export function* getResponsePlanWorker(action :SequenceAction) :Generator<*, *, 
   }
   catch (error) {
     LOG.error(error);
+    response.error = error;
     yield put(getResponsePlan.failure(action.id, error));
   }
   finally {
     yield put(getResponsePlan.finally(action.id));
   }
+
+  return response;
 }
 
 export function* getResponsePlanWatcher() :Generator<*, *, *> {
