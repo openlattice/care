@@ -19,6 +19,7 @@ import * as BasicInformationSagas from '../../containers/profile/edit/basicinfor
 import * as DashboardSagas from '../../containers/dashboard/DashboardSagas';
 import * as DataSagas from './data/DataSagas';
 import * as DownloadsSagas from '../../containers/downloads/DownloadsSagas';
+import * as OfficerSafetySagas from '../../containers/profile/edit/officersafety/sagas/OfficerSafetySagas';
 import * as PeopleSagas from '../../containers/people/PeopleSagas';
 import * as ProfileSagas from '../../containers/profile/ProfileSagas';
 import * as ReportsSagas from '../../containers/reports/ReportsSagas';
@@ -104,6 +105,9 @@ export default function* sagas() :Generator<*, *, *> {
     fork(BasicInformationSagas.submitAppearanceWatcher),
     fork(BasicInformationSagas.updateAppearanceWatcher),
     fork(BasicInformationSagas.updateBasicsWatcher),
+
+    // OfficerSafetySagas
+    fork(OfficerSafetySagas.getOfficerSafetyWatcher),
 
     // SearchSagas
     fork(SearchSagas.searchConsumersWatcher),
