@@ -15,7 +15,7 @@ const {
 
 export const schema = {
   definitions: {
-    taskItems: {
+    interactionStrategy: {
       type: 'object',
       properties: {
         [getEntityAddressKey(-1, INTERACTION_STRATEGY_FQN, TITLE_FQN)]: {
@@ -50,7 +50,7 @@ export const schema = {
       type: 'array',
       title: 'Response Plan',
       items: {
-        $ref: '#/definitions/taskItems'
+        $ref: '#/definitions/interactionStrategy'
       },
       default: [
         {
