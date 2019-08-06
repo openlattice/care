@@ -39,7 +39,6 @@ const {
 
 type Props = {
   actions :{
-    addOfficerSafetyConcerns :RequestSequence;
     deleteOfficerSafetyConcerns :RequestSequence;
     submitOfficerSafetyConcerns :RequestSequence;
     updateOfficerSafetyConcerns :RequestSequence;
@@ -151,14 +150,12 @@ class OfficerSafetyConcernsForm extends Component<Props, State> {
       propertyTypeIds
     );
 
-    debugger;
-
-    // actions.submitOfficerSafetyConcerns({
-    //   associationEntityData,
-    //   entityData,
-    //   path: [],
-    //   properties: formData
-    // });
+    actions.submitOfficerSafetyConcerns({
+      associationEntityData,
+      entityData,
+      path: [],
+      properties: formData
+    });
   }
 
   handleAddOfficerSafetyConcern = ({
