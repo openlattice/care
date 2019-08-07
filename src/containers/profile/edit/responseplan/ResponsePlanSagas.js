@@ -222,7 +222,7 @@ export function* updateResponsePlanWorker(action :SequenceAction) :Generator<*, 
     yield put(updateResponsePlan.success(action.id));
   }
   catch (error) {
-    LOG.error('updateResponsePlan', error);
+    LOG.error('updateResponsePlanWorker', error);
     yield put(updateResponsePlan.failure(action.id, error));
   }
   finally {
