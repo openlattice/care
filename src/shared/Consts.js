@@ -5,14 +5,15 @@ const { FullyQualifiedName } = Models;
 export const APP_NAME = 'BehavioralHealthReport';
 
 export const APP_TYPES_FQNS = {
-  APP_SETTINGS_FQN: new FullyQualifiedName('app.settings'),
   APPEARS_IN_FQN: new FullyQualifiedName('app.appearsin'),
+  APP_SETTINGS_FQN: new FullyQualifiedName('app.settings'),
   BEHAVIORAL_HEALTH_REPORT_FQN: new FullyQualifiedName('app.bhr'),
   HAS_FQN: new FullyQualifiedName('app.has'),
   HOSPITALS_FQN: new FullyQualifiedName('app.hospitals'),
   INCLUDES_FQN: new FullyQualifiedName('app.includes'),
   INTERACTION_STRATEGY_FQN: new FullyQualifiedName('app.interactionstrategy'),
-  SUBJECT_OF_FQN: new FullyQualifiedName('app.subjectof'),
+  LOCATED_AT_FQN: new FullyQualifiedName('app.locatedat'),
+  LOCATION_FQN: new FullyQualifiedName('app.location'),
   OBSERVED_IN_FQN: new FullyQualifiedName('app.observedin'),
   OFFICER_SAFETY_CONCERNS_FQN: new FullyQualifiedName('app.officersafetyconcerns'),
   PEOPLE_FQN: new FullyQualifiedName('app.people'),
@@ -20,6 +21,7 @@ export const APP_TYPES_FQNS = {
   REPORTED_FQN: new FullyQualifiedName('app.reported'),
   RESPONSE_PLAN_FQN: new FullyQualifiedName('app.responseplan'),
   STAFF_FQN: new FullyQualifiedName('app.staff'),
+  SUBJECT_OF_FQN: new FullyQualifiedName('app.subjectof'),
 };
 
 export const STRING_ID_FQN = 'general.stringid';
