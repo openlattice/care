@@ -20,6 +20,8 @@ import * as DashboardSagas from '../../containers/dashboard/DashboardSagas';
 import * as DataSagas from './data/DataSagas';
 import * as DownloadsSagas from '../../containers/downloads/DownloadsSagas';
 import * as OfficerSafetySagas from '../../containers/profile/edit/officersafety/sagas/OfficerSafetySagas';
+// eslint-disable-next-line max-len
+import * as OfficerSafetyConcernsSagas from '../../containers/profile/edit/officersafety/sagas/OfficerSafetyConcernsSagas';
 import * as PeopleSagas from '../../containers/people/PeopleSagas';
 import * as ProfileSagas from '../../containers/profile/ProfileSagas';
 import * as ReportsSagas from '../../containers/reports/ReportsSagas';
@@ -108,6 +110,7 @@ export default function* sagas() :Generator<*, *, *> {
 
     // OfficerSafetySagas
     fork(OfficerSafetySagas.getOfficerSafetyWatcher),
+    fork(OfficerSafetyConcernsSagas.submitOfficerSafetyConcernsWatcher),
 
     // SearchSagas
     fork(SearchSagas.searchConsumersWatcher),
