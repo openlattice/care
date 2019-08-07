@@ -14,6 +14,7 @@ import {
 
 import * as RoutingSagas from '../router/RoutingSagas';
 
+import * as AddressSagas from '../../containers/profile/edit/basicinformation/sagas/AddressSagas';
 import * as AppSagas from '../../containers/app/AppSagas';
 import * as BasicInformationSagas from '../../containers/profile/edit/basicinformation/sagas/BasicInformationSagas';
 import * as DashboardSagas from '../../containers/dashboard/DashboardSagas';
@@ -107,6 +108,10 @@ export default function* sagas() :Generator<*, *, *> {
     fork(BasicInformationSagas.submitAppearanceWatcher),
     fork(BasicInformationSagas.updateAppearanceWatcher),
     fork(BasicInformationSagas.updateBasicsWatcher),
+
+    fork(AddressSagas.getAddressWatcher),
+    fork(AddressSagas.submitAddressWatcher),
+    fork(AddressSagas.updateAddressWatcher),
 
     // OfficerSafetySagas
     fork(OfficerSafetySagas.getOfficerSafetyWatcher),
