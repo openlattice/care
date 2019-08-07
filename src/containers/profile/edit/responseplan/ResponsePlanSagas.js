@@ -155,7 +155,7 @@ export function* getResponsePlanWorker(action :SequenceAction) :Generator<*, *, 
           entityKeyIds: [responsePlanEKID],
           edgeEntitySetIds: [includesESID],
           destinationEntitySetIds: [interactionStrategyESID],
-          sourcesEntitySetIds: []
+          sourceEntitySetIds: []
         }
       };
       const interactionStrategyResponse = yield call(
