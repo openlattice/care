@@ -19,10 +19,10 @@ import {
   DataApiSagas,
 } from 'lattice-sagas';
 
-import Logger from '../../../../utils/Logger';
-import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../../utils/Errors';
-import { isDefined } from '../../../../utils/LangUtils';
-import { isValidUuid } from '../../../../utils/Utils';
+import Logger from '../../../../../utils/Logger';
+import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../../../utils/Errors';
+import { isDefined } from '../../../../../utils/LangUtils';
+import { isValidUuid } from '../../../../../utils/Utils';
 import {
   GET_APPEARANCE,
   GET_BASIC_INFORMATION,
@@ -36,20 +36,20 @@ import {
   submitAppearance,
   updateAppearance,
   updateBasics
-} from './BasicInformationActions';
+} from '../actions/BasicInformationActions';
 import {
   submitDataGraph,
   submitPartialReplace,
-} from '../../../../core/sagas/data/DataActions';
+} from '../../../../../core/sagas/data/DataActions';
 import {
   submitDataGraphWorker,
   submitPartialReplaceWorker,
-} from '../../../../core/sagas/data/DataSagas';
+} from '../../../../../core/sagas/data/DataSagas';
 
-import { getESIDFromApp } from '../../../../utils/AppUtils';
-import { APP_TYPES_FQNS } from '../../../../shared/Consts';
-import { getFormDataFromEntity } from '../../../../utils/DataUtils';
-import * as FQN from '../../../../edm/DataModelFqns';
+import { getESIDFromApp } from '../../../../../utils/AppUtils';
+import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
+import { getFormDataFromEntity } from '../../../../../utils/DataUtils';
+import * as FQN from '../../../../../edm/DataModelFqns';
 
 const LOG = new Logger('BasicInformationSagas');
 const { getPageSectionKey, getEntityAddressKey } = DataProcessingUtils;

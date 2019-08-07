@@ -15,7 +15,7 @@ import {
 import * as RoutingSagas from '../router/RoutingSagas';
 
 import * as AppSagas from '../../containers/app/AppSagas';
-import * as BasicInformationSagas from '../../containers/profile/edit/basicinformation/BasicInformationSagas';
+import * as BasicInformationSagas from '../../containers/profile/edit/basicinformation/sagas/BasicInformationSagas';
 import * as DashboardSagas from '../../containers/dashboard/DashboardSagas';
 import * as DataSagas from './data/DataSagas';
 import * as DownloadsSagas from '../../containers/downloads/DownloadsSagas';

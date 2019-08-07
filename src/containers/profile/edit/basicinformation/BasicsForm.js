@@ -14,7 +14,7 @@ import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import {
   updateBasics,
-} from './BasicInformationActions';
+} from './actions/BasicInformationActions';
 import { schema, uiSchema } from './schemas/BasicInformationSchemas';
 import { PROFILE_ID_PARAM } from '../../../../core/router/Routes';
 import { COMPLETED_DT_FQN } from '../../../../edm/DataModelFqns';
