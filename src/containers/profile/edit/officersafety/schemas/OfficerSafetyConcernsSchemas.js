@@ -50,7 +50,7 @@ const uiSchema = {
   [getPageSectionKey(1, 1)]: {
     classNames: 'column-span-12',
     'ui:options': {
-      addButtonText: '+ Add Officer Safety Caution',
+      addButtonText: '+ Add Officer Safety Concern',
       addActionKey: 'addOfficerSafetyConcerns',
       orderable: false
     },
