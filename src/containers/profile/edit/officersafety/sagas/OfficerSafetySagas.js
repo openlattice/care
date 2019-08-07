@@ -17,8 +17,7 @@ import {
 import { getResponsePlan } from '../../responseplan/ResponsePlanActions';
 import { getResponsePlanWorker } from '../../responseplan/ResponsePlanSagas';
 import { getOfficerSafetyConcernsWorker } from './OfficerSafetyConcernsSagas';
-import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../../../utils/Errors';
-import { isDefined } from '../../../../../utils/LangUtils';
+import { ERR_ACTION_VALUE_TYPE } from '../../../../../utils/Errors';
 import { isValidUuid } from '../../../../../utils/Utils';
 
 const { OPENLATTICE_ID_FQN } = Constants;
@@ -27,7 +26,6 @@ const LOG = new Logger('ProfileSagas');
 function* getOfficerSafetyWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
     const { value: entityKeyId } = action;
-    if (!isDefined(entityKeyId)) throw ERR_ACTION_VALUE_NOT_DEFINED;
     if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
 
     yield put(getOfficerSafety.request(action.id));

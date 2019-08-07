@@ -69,7 +69,6 @@ function* getAppearanceWorker(action :SequenceAction) :Generator<any, any, any> 
   const response = {};
   try {
     const { value: entityKeyId } = action;
-    if (!isDefined(entityKeyId)) throw ERR_ACTION_VALUE_NOT_DEFINED;
     if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
 
     yield put(getAppearance.request(action.id, entityKeyId));
@@ -147,7 +146,7 @@ function* getAppearanceWatcher() :Generator<any, any, any> {
 function* submitAppearanceWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
     const { value } = action;
-    if (value === null || value === undefined) throw ERR_ACTION_VALUE_NOT_DEFINED;
+    if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
 
     yield put(submitAppearance.request(action.id));
     const response = yield call(submitDataGraphWorker, submitDataGraph(value));
@@ -194,7 +193,7 @@ function* submitAppearanceWatcher() :Generator<any, any, any> {
 function* updateAppearanceWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
     const { value } = action;
-    if (value === null || value === undefined) throw ERR_ACTION_VALUE_NOT_DEFINED;
+    if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
 
     yield put(updateAppearance.request(action.id, value));
     const response = yield call(submitPartialReplaceWorker, submitPartialReplace(value));
@@ -220,7 +219,6 @@ function* getBasicsWorker(action :SequenceAction) :Generator<any, any, any> {
   const response = {};
   try {
     const { value: entityKeyId } = action;
-    if (!isDefined(entityKeyId)) throw ERR_ACTION_VALUE_NOT_DEFINED;
     if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getBasics.request(action.id, entityKeyId));
 
@@ -290,7 +288,7 @@ function* getBasicsWatcher() :Generator<any, any, any> {
 function* updateBasicsWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
     const { value } = action;
-    if (value === null || value === undefined) throw ERR_ACTION_VALUE_NOT_DEFINED;
+    if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
 
     yield put(updateBasics.request(action.id, value));
     const response = yield call(submitPartialReplaceWorker, submitPartialReplace(value));
@@ -315,7 +313,6 @@ function* updateBasicsWatcher() :Generator<any, any, any> {
 function* getBasicInformationWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
     const { value: personEKID } = action;
-    if (!isDefined(personEKID)) throw ERR_ACTION_VALUE_NOT_DEFINED;
     if (!isValidUuid(personEKID)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getBasicInformation.request(action.id, personEKID));
 

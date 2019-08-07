@@ -64,7 +64,7 @@ const LOG = new Logger('ProfileSagas');
 export function* submitResponsePlanWorker(action :SequenceAction) :Generator<*, *, *> {
   try {
     const { value } = action;
-    if (value === null || value === undefined) throw ERR_ACTION_VALUE_NOT_DEFINED;
+    if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
 
     yield put(submitResponsePlan.request(action.id));
     const response = yield call(submitDataGraphWorker, submitDataGraph(value));
@@ -110,7 +110,6 @@ export function* getResponsePlanWorker(action :SequenceAction) :Generator<*, *, 
   const response = {};
   try {
     const { value: entityKeyId } = action;
-    if (!isDefined(entityKeyId)) throw ERR_ACTION_VALUE_NOT_DEFINED;
     if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
 
     yield put(getResponsePlan.request(action.id));
@@ -213,7 +212,7 @@ export function* getResponsePlanWatcher() :Generator<*, *, *> {
 export function* updateResponsePlanWorker(action :SequenceAction) :Generator<*, *, *> {
   try {
     const { value } = action;
-    if (value === null || value === undefined) throw ERR_ACTION_VALUE_NOT_DEFINED;
+    if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
 
     yield put(updateResponsePlan.request(action.id, value));
     const response = yield call(submitPartialReplaceWorker, submitPartialReplace(value));
@@ -238,7 +237,7 @@ export function* updateResponsePlanWatcher() :Generator<*, *, *> {
 export function* deleteInteractionStrategiesWorker(action :SequenceAction) :Generator<*, *, *> {
   try {
     const { value } = action;
-    if (value === null || value === undefined) throw ERR_ACTION_VALUE_NOT_DEFINED;
+    if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
 
     yield put(deleteInteractionStrategies.request(action.id));
     const { entityData, path } = value;
