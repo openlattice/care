@@ -194,7 +194,7 @@ class OfficerSafetyConcernsForm extends Component<Props, State> {
     } = this.props;
     const { formData, prepopulated } = this.state;
     const formContext = {
-      addAdtions: {
+      addActions: {
         addOfficerSafetyConcerns: this.handleAddOfficerSafetyConcern
       },
       editAction: actions.updateOfficerSafetyConcerns,

@@ -4,6 +4,7 @@ import {
   put,
   select,
   takeLatest,
+  takeEvery,
 } from '@redux-saga/core/effects';
 import { List, Map, fromJS } from 'immutable';
 import { Constants } from 'lattice';
@@ -17,8 +18,10 @@ import Logger from '../../../../../utils/Logger';
 import {
   GET_OFFICER_SAFETY_CONCERNS,
   SUBMIT_OFFICER_SAFETY_CONCERNS,
+  UPDATE_OFFICER_SAFETY_CONCERNS,
   getOfficerSafetyConcerns,
   submitOfficerSafetyConcerns,
+  updateOfficerSafetyConcerns,
 } from '../OfficerSafetyActions';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../../../utils/Errors';
 import { isDefined } from '../../../../../utils/LangUtils';
@@ -141,16 +144,11 @@ function* submitOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<a
         formData: Map(),
         interactionStrategies: List()
       };
-      // yield put(getResponsePlan.success(action.id, responsePlanPayload));
+      yield put(getResponsePlan.success(action.id, responsePlanPayload));
     }
 
-    const safetyConcernsEKIDs = newEntityKeyIdsByEntitySetName.getIn([OFFICER_SAFETY_CONCERNS_FQN, 0]);
-
-    let safetyConcernsIndexToIdMap = Map();
-    if (!safetyConcernsEKIDs.isEmpty()) {
-      safetyConcernsIndexToIdMap = safetyConcernsIndexToIdMap
-        .setIn([OFFICER_SAFETY_CONCERNS_FQN.toString(), -1], safetyConcernsEKIDs);
-    }
+    const safetyConcernsEKIDs = newEntityKeyIdsByEntitySetName.get(OFFICER_SAFETY_CONCERNS_FQN);
+    const safetyConcernsIndexToIdMap = constructEntityIndexToIdMap(safetyConcernsEKIDs);
 
     const entityIndexToIdMap = yield select(
       state => state.getIn([
@@ -162,7 +160,6 @@ function* submitOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<a
     );
 
     const newEntityIndexToIdMap = entityIndexToIdMap.mergeDeep(safetyConcernsIndexToIdMap);
-
     const { path, properties } = value;
 
     yield put(submitOfficerSafetyConcerns.success(action.id, {
@@ -183,6 +180,31 @@ function* submitOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<a
 
 function* submitOfficerSafetyConcernsWatcher() :Generator<any, any, any> {
   yield takeLatest(SUBMIT_OFFICER_SAFETY_CONCERNS, submitOfficerSafetyConcernsWorker);
+}
+
+export function* updateOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<*, *, *> {
+  try {
+    const { value } = action;
+    if (value === null || value === undefined) throw ERR_ACTION_VALUE_NOT_DEFINED;
+
+    yield put(updateOfficerSafetyConcerns.request(action.id, value));
+    const response = yield call(submitPartialReplaceWorker, submitPartialReplace(value));
+
+    if (response.error) throw response.error;
+
+    yield put(updateOfficerSafetyConcerns.success(action.id));
+  }
+  catch (error) {
+    LOG.error(error);
+    yield put(updateOfficerSafetyConcerns.failure(action.id, error));
+  }
+  finally {
+    yield put(updateOfficerSafetyConcerns.finally(action.id));
+  }
+}
+
+export function* updateOfficerSafetyConcernsWatcher() :Generator<*, *, *> {
+  yield takeEvery(UPDATE_OFFICER_SAFETY_CONCERNS, updateOfficerSafetyConcernsWorker);
 }
 
 export {
