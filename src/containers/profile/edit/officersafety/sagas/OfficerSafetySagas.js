@@ -52,7 +52,7 @@ function* getOfficerSafetyWorker(action :SequenceAction) :Generator<any, any, an
     yield put(getOfficerSafety.success(action.id));
   }
   catch (error) {
-    LOG.error(error);
+    LOG.error('getOfficerSafetyWorker', error);
     yield put(getOfficerSafety.failure(action.id));
   }
   finally {
