@@ -7,7 +7,7 @@ import {
   getAppearance,
   updateAppearance,
   submitAppearance,
-} from '../BasicInformationActions';
+} from '../actions/BasicInformationActions';
 
 const INITIAL_STATE :Map = fromJS({
   entityIndexToIdMap: Map(),

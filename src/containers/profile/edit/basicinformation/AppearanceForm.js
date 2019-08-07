@@ -13,7 +13,7 @@ import type { RequestSequence, RequestState } from 'redux-reqseq';
 import {
   updateAppearance,
   submitAppearance
-} from './BasicInformationActions';
+} from './actions/BasicInformationActions';
 import { schema, uiSchema } from './schemas/AppearanceSchemas';
 import { COMPLETED_DT_FQN } from '../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
