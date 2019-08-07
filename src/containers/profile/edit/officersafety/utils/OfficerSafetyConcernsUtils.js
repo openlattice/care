@@ -32,7 +32,7 @@ const constructFormData = (safetyConcerns :List<Map>) => {
 const constructEntityIndexToIdMap = (safetyConcernsEKIDs :List<UUID>) => {
   const entityIndexToIdMap = Map().withMutations((mutable) => {
     if (!safetyConcernsEKIDs.isEmpty()) {
-      mutable.setIn([OFFICER_SAFETY_CONCERNS_FQN, -1], safetyConcernsEKIDs);
+      mutable.setIn([OFFICER_SAFETY_CONCERNS_FQN.toString(), -1], safetyConcernsEKIDs);
     }
   });
 
