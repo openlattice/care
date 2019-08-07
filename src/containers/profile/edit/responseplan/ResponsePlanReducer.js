@@ -51,11 +51,12 @@ const responsePlanReducer = (state :Map = INITIAL_STATE, action :SequenceAction)
         SUCCESS: () => {
           const {
             entityIndexToIdMap,
-            formData
+            path,
+            properties,
           } = action.value;
           return state
             .set('entityIndexToIdMap', entityIndexToIdMap)
-            .set('formData', formData)
+            .setIn(['formData', ...path], properties)
             .set('submitState', RequestStates.SUCCESS);
         },
         FAILURE: () => state.set('submitState', RequestStates.FAILURE)

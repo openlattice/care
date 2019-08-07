@@ -4,8 +4,8 @@ import {
   put,
   select,
   takeEvery,
+  takeLatest,
 } from '@redux-saga/core/effects';
-import isPlainObject from 'lodash/isPlainObject';
 import {
   List,
   Map,
@@ -87,15 +87,10 @@ export function* submitResponsePlanWorker(action :SequenceAction) :Generator<*, 
 
     const { path, properties } = value;
 
-    const prevFormData = yield select(state => state.getIn(['profile', 'responsePlan', 'formData']));
-    let newFormData = prevFormData;
-    if (Array.isArray(path) && isPlainObject(properties)) {
-      newFormData = prevFormData.setIn(path, fromJS(properties));
-    }
-
     yield put(submitResponsePlan.success(action.id, {
       entityIndexToIdMap: newEntityIndexToIdMap,
-      formData: newFormData
+      path,
+      properties
     }));
   }
   catch (error) {
@@ -212,7 +207,7 @@ export function* getResponsePlanWorker(action :SequenceAction) :Generator<*, *, 
 }
 
 export function* getResponsePlanWatcher() :Generator<*, *, *> {
-  yield takeEvery(GET_RESPONSE_PLAN, getResponsePlanWorker);
+  yield takeLatest(GET_RESPONSE_PLAN, getResponsePlanWorker);
 }
 
 export function* updateResponsePlanWorker(action :SequenceAction) :Generator<*, *, *> {

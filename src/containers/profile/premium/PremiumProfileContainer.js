@@ -40,6 +40,7 @@ import {
   updateProfileAbout
 } from '../ProfileActions';
 import { getResponsePlan } from '../edit/responseplan/ResponsePlanActions';
+import { getOfficerSafety } from '../edit/officersafety/OfficerSafetyActions';
 import { DATE_TIME_OCCURRED_FQN } from '../../../edm/DataModelFqns';
 import { getEntityKeyId } from '../../../utils/DataUtils';
 import { reduceRequestStates } from '../../../utils/StateUtils';
@@ -73,6 +74,7 @@ const BehaviorAndSafetyGrid = styled.div`
 
 type Props = {
   actions :{
+    getOfficerSafety :RequestSequence;
     getPersonData :RequestSequence;
     getPhysicalAppearance :RequestSequence;
     getProfileReports :RequestSequence;
@@ -87,7 +89,7 @@ type Props = {
   physicalAppearance :Map;
   reports :List<Map>;
   selectedPerson :Map;
-  backgroundInformation :Map;
+  responsePlan :Map;
   interactionStrategies :List<Map>;
 };
 
@@ -103,7 +105,7 @@ class PremiumProfileContainer extends Component<Props, State> {
       match,
       physicalAppearance,
       reports,
-      backgroundInformation,
+      responsePlan,
       selectedPerson,
     } = this.props;
     const personEKID = match.params[PROFILE_ID_PARAM];
@@ -116,7 +118,7 @@ class PremiumProfileContainer extends Component<Props, State> {
       }
     }
 
-    if (backgroundInformation.isEmpty()) actions.getResponsePlan(personEKID);
+    if (responsePlan.isEmpty()) actions.getOfficerSafety(personEKID);
     if (reports.isEmpty()) actions.getProfileReports(personEKID);
   }
 
@@ -131,7 +133,7 @@ class PremiumProfileContainer extends Component<Props, State> {
     if (personEKID !== prevPersonEKID) {
       actions.getPersonData(personEKID);
       actions.getProfileReports(personEKID);
-      actions.getResponsePlan(personEKID);
+      actions.getOfficerSafety(personEKID);
     }
   }
 
@@ -169,7 +171,7 @@ class PremiumProfileContainer extends Component<Props, State> {
 
   render() {
     const {
-      backgroundInformation,
+      responsePlan,
       fetchAboutState,
       fetchReportsState,
       fetchResponsePlanState,
@@ -228,7 +230,7 @@ class PremiumProfileContainer extends Component<Props, State> {
                   interactionStrategies={interactionStrategies}
                   isLoading={isLoadingResponsePlan} />
               <BackgroundInformationCard
-                  backgroundInformation={backgroundInformation}
+                  backgroundInformation={responsePlan}
                   isLoading={isLoadingResponsePlan} />
               <SearchResults
                   hasSearched={fetchReportsState !== RequestStates.STANDBY}
@@ -253,7 +255,7 @@ const mapStateToProps = (state :Map) => {
   ];
 
   return {
-    backgroundInformation: state.getIn(['profile', 'responsePlan', 'data'], Map()),
+    responsePlan: state.getIn(['profile', 'responsePlan', 'data'], Map()),
     fetchAboutState: reduceRequestStates(fetchAboutStates),
     fetchReportsState: state.getIn(['profile', 'reports', 'fetchState'], RequestStates.STANDBY),
     fetchResponsePlanState: state.getIn(['profile', 'responsePlan', 'fetchState'], RequestStates.STANDBY),
@@ -266,6 +268,7 @@ const mapStateToProps = (state :Map) => {
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
+    getOfficerSafety,
     getPersonData,
     getPhysicalAppearance,
     getProfileReports,

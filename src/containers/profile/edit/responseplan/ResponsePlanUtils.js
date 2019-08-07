@@ -42,7 +42,7 @@ const constructResponsePlanFormData = (responsePlan :Map, interactionStrategies 
 
   const data = Map().withMutations((mutable) => {
 
-    if (backgroundSummary) {
+    if (!responsePlan.isEmpty()) {
       mutable.setIn([
         getPageSectionKey(1, 1),
         getEntityAddressKey(0, APP.RESPONSE_PLAN_FQN, FQN.CONTEXT_FQN)

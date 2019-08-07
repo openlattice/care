@@ -92,6 +92,7 @@ class ResponsePlanForm extends Component<Props, State> {
     } = prevProps;
     const personEKID = match.params[PROFILE_ID_PARAM];
     const prevPersonEKID = prevMatch.params[PROFILE_ID_PARAM];
+
     if (personEKID !== prevPersonEKID) {
       actions.getResponsePlan(personEKID);
     }
@@ -149,9 +150,12 @@ class ResponsePlanForm extends Component<Props, State> {
     const indexKey = getEntityAddressKey(-1, INTERACTION_STRATEGY_FQN, INDEX_FQN);
     const interactionItems = get(formData, pageSection);
     let newFormData = formData;
-    interactionItems.forEach((item, index) => {
-      newFormData = setIn(newFormData, [pageSection, index, indexKey], index);
-    });
+
+    if (Array.isArray(interactionItems)) {
+      interactionItems.forEach((item, index) => {
+        newFormData = setIn(newFormData, [pageSection, index, indexKey], index);
+      });
+    }
 
     this.setState({ formData: newFormData });
   }
