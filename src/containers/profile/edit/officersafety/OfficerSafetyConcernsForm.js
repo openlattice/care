@@ -20,6 +20,7 @@ import { schema, uiSchema } from './schemas/OfficerSafetyConcernsSchemas';
 import { COMPLETED_DT_FQN, CONTEXT_FQN } from '../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
 import { isValidUuid } from '../../../../utils/Utils';
+import { reduceRequestStates } from '../../../../utils/StateUtils';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 
@@ -228,14 +229,21 @@ class OfficerSafetyConcernsForm extends Component<Props, State> {
   }
 }
 
-const mapStateToProps = state => ({
-  entityIndexToIdMap: state.getIn(['profile', 'officerSafety', 'officerSafetyConcerns', 'entityIndexToIdMap'], Map()),
-  entitySetIds: state.getIn(['app', 'selectedOrgEntitySetIds'], Map()),
-  fetchState: state.getIn(['profile', 'officerSafety', 'officerSafetyConcerns', 'fetchState'], RequestStates.STANDBY),
-  formData: state.getIn(['profile', 'officerSafety', 'officerSafetyConcerns', 'formData'], Map()),
-  propertyTypeIds: state.getIn(['edm', 'fqnToIdMap'], Map()),
-  responsePlanEKID: state.getIn(['profile', 'responsePlan', 'data', OPENLATTICE_ID_FQN, 0])
-});
+const mapStateToProps = (state :Map) => {
+  const fetchSafetyStates = [
+    state.getIn(['profile', 'responsePlan', 'fetchState']),
+    state.getIn(['profile', 'officerSafety', 'officerSafetyConcerns', 'fetchState'])
+  ];
+
+  return {
+    entityIndexToIdMap: state.getIn(['profile', 'officerSafety', 'officerSafetyConcerns', 'entityIndexToIdMap'], Map()),
+    entitySetIds: state.getIn(['app', 'selectedOrgEntitySetIds'], Map()),
+    fetchState: reduceRequestStates(fetchSafetyStates),
+    formData: state.getIn(['profile', 'officerSafety', 'officerSafetyConcerns', 'formData'], Map()),
+    propertyTypeIds: state.getIn(['edm', 'fqnToIdMap'], Map()),
+    responsePlanEKID: state.getIn(['profile', 'responsePlan', 'data', OPENLATTICE_ID_FQN, 0])
+  };
+};
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
