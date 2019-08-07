@@ -56,10 +56,8 @@ const {
 } = APP_TYPES_FQNS;
 
 function* getOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<any, any, any> {
-  const response = {};
   try {
     const { value: entityKeyId } = action;
-    if (!isDefined(entityKeyId)) throw ERR_ACTION_VALUE_NOT_DEFINED;
     if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
 
     yield put(getOfficerSafetyConcerns.request(action.id));
@@ -102,8 +100,7 @@ function* getOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<any,
     }));
   }
   catch (error) {
-    LOG.error(error);
-    response.error = error;
+    LOG.error('getOfficerSafetyConcernsWorker', error);
     yield put(getOfficerSafetyConcerns.failure(action.id));
   }
   finally {
@@ -116,10 +113,9 @@ function* getOfficerSafetyConcernsWatcher() :Generator<any, any, any> {
 }
 
 function* submitOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<any, any, any> {
-  const response = {};
   try {
     const { value } = action;
-    if (value === null || value === undefined) throw ERR_ACTION_VALUE_NOT_DEFINED;
+    if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
 
     yield put(submitOfficerSafetyConcerns.request(action.id));
 
@@ -171,8 +167,7 @@ function* submitOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<a
     }));
   }
   catch (error) {
-    LOG.error(error);
-    response.error = error;
+    LOG.error('submitOfficerSafetyConcernsWorker', error);
     yield put(submitOfficerSafetyConcerns.failure(action.id));
   }
   finally {
@@ -187,7 +182,7 @@ function* submitOfficerSafetyConcernsWatcher() :Generator<any, any, any> {
 function* updateOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<*, *, *> {
   try {
     const { value } = action;
-    if (value === null || value === undefined) throw ERR_ACTION_VALUE_NOT_DEFINED;
+    if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
 
     yield put(updateOfficerSafetyConcerns.request(action.id, value));
     const response = yield call(submitPartialReplaceWorker, submitPartialReplace(value));
@@ -197,7 +192,7 @@ function* updateOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<*
     yield put(updateOfficerSafetyConcerns.success(action.id));
   }
   catch (error) {
-    LOG.error(error);
+    LOG.error('updateOfficerSafetyConcernsWorker', error);
     yield put(updateOfficerSafetyConcerns.failure(action.id, error));
   }
   finally {
@@ -212,7 +207,7 @@ function* updateOfficerSafetyConcernsWatcher() :Generator<*, *, *> {
 function* deleteOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<*, *, *> {
   try {
     const { value } = action;
-    if (value === null || value === undefined) throw ERR_ACTION_VALUE_NOT_DEFINED;
+    if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
 
     yield put(deleteOfficerSafetyConcerns.request(action.id));
     const { entityData, path } = value;
@@ -223,7 +218,7 @@ function* deleteOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<*
     yield put(deleteOfficerSafetyConcerns.success(action.id, { path }));
   }
   catch (error) {
-    LOG.error(error);
+    LOG.error('deleteOfficerSafetyConcernsWorker', error);
     yield put(deleteOfficerSafetyConcerns.failure(action.id, error));
   }
   finally {

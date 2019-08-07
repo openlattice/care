@@ -129,7 +129,6 @@ function* deleteReportWorker(action :SequenceAction) :Generator<*, *, *> {
 
   try {
     const { value: entityKeyId } = action;
-    if (!isDefined(entityKeyId)) throw ERR_ACTION_VALUE_NOT_DEFINED;
     if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
 
     yield put(deleteReport.request(action.id, entityKeyId));
@@ -462,7 +461,7 @@ function* updateReportWorker(action :SequenceAction) :Generator<*, *, *> {
 
   try {
     const { value } = action;
-    if (value === null || value === undefined) throw ERR_ACTION_VALUE_NOT_DEFINED;
+    if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
     const {
       entityKeyId,
       formData,

@@ -17,13 +17,13 @@ const DELETE_OFFICER_SAFETY_CONCERNS :'DELETE_OFFICER_SAFETY_CONCERNS' = 'DELETE
 const deleteOfficerSafetyConcerns = newRequestSequence(DELETE_OFFICER_SAFETY_CONCERNS);
 
 export {
-  GET_OFFICER_SAFETY,
-  getOfficerSafety,
   DELETE_OFFICER_SAFETY_CONCERNS,
+  GET_OFFICER_SAFETY,
   GET_OFFICER_SAFETY_CONCERNS,
   SUBMIT_OFFICER_SAFETY_CONCERNS,
   UPDATE_OFFICER_SAFETY_CONCERNS,
   deleteOfficerSafetyConcerns,
+  getOfficerSafety,
   getOfficerSafetyConcerns,
   submitOfficerSafetyConcerns,
   updateOfficerSafetyConcerns,

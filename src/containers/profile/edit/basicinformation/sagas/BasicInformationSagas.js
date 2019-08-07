@@ -69,7 +69,6 @@ function* getAppearanceWorker(action :SequenceAction) :Generator<any, any, any> 
   const response = {};
   try {
     const { value: entityKeyId } = action;
-    if (!isDefined(entityKeyId)) throw ERR_ACTION_VALUE_NOT_DEFINED;
     if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
 
     yield put(getAppearance.request(action.id, entityKeyId));
@@ -129,6 +128,7 @@ function* getAppearanceWorker(action :SequenceAction) :Generator<any, any, any> 
     yield put(getAppearance.success(action.id, response));
   }
   catch (error) {
+    LOG.error('getAppearanceWorker', error);
     response.error = error;
     yield put(getAppearance.failure(action.id, error));
   }
@@ -146,7 +146,7 @@ function* getAppearanceWatcher() :Generator<any, any, any> {
 function* submitAppearanceWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
     const { value } = action;
-    if (value === null || value === undefined) throw ERR_ACTION_VALUE_NOT_DEFINED;
+    if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
 
     yield put(submitAppearance.request(action.id));
     const response = yield call(submitDataGraphWorker, submitDataGraph(value));
@@ -178,6 +178,7 @@ function* submitAppearanceWorker(action :SequenceAction) :Generator<any, any, an
     }));
   }
   catch (error) {
+    LOG.error('submitAppearanceWorker', error);
     yield put(submitAppearance.failure(action.id, error));
   }
   finally {
@@ -192,7 +193,7 @@ function* submitAppearanceWatcher() :Generator<any, any, any> {
 function* updateAppearanceWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
     const { value } = action;
-    if (value === null || value === undefined) throw ERR_ACTION_VALUE_NOT_DEFINED;
+    if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
 
     yield put(updateAppearance.request(action.id, value));
     const response = yield call(submitPartialReplaceWorker, submitPartialReplace(value));
@@ -202,7 +203,7 @@ function* updateAppearanceWorker(action :SequenceAction) :Generator<any, any, an
     yield put(updateAppearance.success(action.id));
   }
   catch (error) {
-    LOG.error(error);
+    LOG.error('updateAppearanceWorker', error);
     yield put(updateAppearance.failure(action.id, error));
   }
   finally {
@@ -218,7 +219,6 @@ function* getBasicsWorker(action :SequenceAction) :Generator<any, any, any> {
   const response = {};
   try {
     const { value: entityKeyId } = action;
-    if (!isDefined(entityKeyId)) throw ERR_ACTION_VALUE_NOT_DEFINED;
     if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getBasics.request(action.id, entityKeyId));
 
@@ -271,6 +271,7 @@ function* getBasicsWorker(action :SequenceAction) :Generator<any, any, any> {
     yield put(getBasics.success(action.id, response));
   }
   catch (error) {
+    LOG.error('getBasicsWorker', error);
     response.error = error;
     yield put(getBasics.failure(action.id, error));
   }
@@ -287,7 +288,7 @@ function* getBasicsWatcher() :Generator<any, any, any> {
 function* updateBasicsWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
     const { value } = action;
-    if (value === null || value === undefined) throw ERR_ACTION_VALUE_NOT_DEFINED;
+    if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
 
     yield put(updateBasics.request(action.id, value));
     const response = yield call(submitPartialReplaceWorker, submitPartialReplace(value));
@@ -297,7 +298,7 @@ function* updateBasicsWorker(action :SequenceAction) :Generator<any, any, any> {
     yield put(updateBasics.success(action.id));
   }
   catch (error) {
-    LOG.error(error);
+    LOG.error('updateBasicsWorker', error);
     yield put(updateBasics.failure(action.id, error));
   }
   finally {
@@ -312,7 +313,6 @@ function* updateBasicsWatcher() :Generator<any, any, any> {
 function* getBasicInformationWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
     const { value: personEKID } = action;
-    if (!isDefined(personEKID)) throw ERR_ACTION_VALUE_NOT_DEFINED;
     if (!isValidUuid(personEKID)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getBasicInformation.request(action.id, personEKID));
 
@@ -337,7 +337,7 @@ function* getBasicInformationWorker(action :SequenceAction) :Generator<any, any,
     yield put(getBasicInformation.success(action.id));
   }
   catch (error) {
-    LOG.error(error);
+    LOG.error('getBasicInformationWorker', error);
     yield put(getBasicInformation.failure(action.id, error));
   }
   finally {
