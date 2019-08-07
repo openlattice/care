@@ -51,11 +51,14 @@ const uiSchema = {
     classNames: 'column-span-12',
     'ui:options': {
       addButtonText: '+ Add Officer Safety Caution',
-      addActionKey: 'addOfficerSafetyCaution',
+      addActionKey: 'addOfficerSafetyConcerns',
       orderable: false
     },
     items: {
       classNames: 'grid-container',
+      'ui:options': {
+        editable: true
+      },
       [getEntityAddressKey(-1, OFFICER_SAFETY_CONCERNS_FQN, CATEGORY_FQN)]: {
         classNames: 'column-span-12',
         'ui:widget': 'radio'
