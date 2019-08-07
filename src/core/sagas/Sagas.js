@@ -111,6 +111,7 @@ export default function* sagas() :Generator<*, *, *> {
     // OfficerSafetySagas
     fork(OfficerSafetySagas.getOfficerSafetyWatcher),
     fork(OfficerSafetyConcernsSagas.submitOfficerSafetyConcernsWatcher),
+    fork(OfficerSafetyConcernsSagas.updateOfficerSafetyConcernsWatcher),
 
     // SearchSagas
     fork(SearchSagas.searchConsumersWatcher),
