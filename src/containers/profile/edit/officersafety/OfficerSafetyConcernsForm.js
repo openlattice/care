@@ -12,6 +12,7 @@ import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import {
+  deleteOfficerSafetyConcerns,
   submitOfficerSafetyConcerns,
   updateOfficerSafetyConcerns,
 } from './OfficerSafetyActions';
@@ -197,6 +198,7 @@ class OfficerSafetyConcernsForm extends Component<Props, State> {
       addActions: {
         addOfficerSafetyConcerns: this.handleAddOfficerSafetyConcern
       },
+      deleteAction: actions.deleteOfficerSafetyConcerns,
       editAction: actions.updateOfficerSafetyConcerns,
       entityIndexToIdMap,
       entitySetIds,
@@ -237,8 +239,9 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
-    updateOfficerSafetyConcerns,
+    deleteOfficerSafetyConcerns,
     submitOfficerSafetyConcerns,
+    updateOfficerSafetyConcerns,
   }, dispatch)
 });
 

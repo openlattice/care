@@ -22,6 +22,8 @@ import {
   getOfficerSafetyConcerns,
   submitOfficerSafetyConcerns,
   updateOfficerSafetyConcerns,
+  DELETE_OFFICER_SAFETY_CONCERNS,
+  deleteOfficerSafetyConcerns,
 } from '../OfficerSafetyActions';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../../../utils/Errors';
 import { isDefined } from '../../../../../utils/LangUtils';
@@ -182,7 +184,7 @@ function* submitOfficerSafetyConcernsWatcher() :Generator<any, any, any> {
   yield takeLatest(SUBMIT_OFFICER_SAFETY_CONCERNS, submitOfficerSafetyConcernsWorker);
 }
 
-export function* updateOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<*, *, *> {
+function* updateOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<*, *, *> {
   try {
     const { value } = action;
     if (value === null || value === undefined) throw ERR_ACTION_VALUE_NOT_DEFINED;
@@ -203,13 +205,43 @@ export function* updateOfficerSafetyConcernsWorker(action :SequenceAction) :Gene
   }
 }
 
-export function* updateOfficerSafetyConcernsWatcher() :Generator<*, *, *> {
+function* updateOfficerSafetyConcernsWatcher() :Generator<*, *, *> {
   yield takeEvery(UPDATE_OFFICER_SAFETY_CONCERNS, updateOfficerSafetyConcernsWorker);
 }
 
+function* deleteOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<*, *, *> {
+  try {
+    const { value } = action;
+    if (value === null || value === undefined) throw ERR_ACTION_VALUE_NOT_DEFINED;
+
+    yield put(deleteOfficerSafetyConcerns.request(action.id));
+    const { entityData, path } = value;
+    const response = yield call(deleteBulkEntitiesWorker, deleteBulkEntities(entityData));
+
+    if (response.error) throw response.error;
+
+    yield put(deleteOfficerSafetyConcerns.success(action.id, { path }));
+  }
+  catch (error) {
+    LOG.error(error);
+    yield put(deleteOfficerSafetyConcerns.failure(action.id, error));
+  }
+  finally {
+    yield put(deleteOfficerSafetyConcerns.finally(action.id));
+  }
+}
+
+function* deleteOfficerSafetyConcernsWatcher() :Generator<*, *, *> {
+  yield takeEvery(DELETE_OFFICER_SAFETY_CONCERNS, deleteOfficerSafetyConcernsWorker);
+}
+
 export {
+  deleteOfficerSafetyConcernsWatcher,
+  deleteOfficerSafetyConcernsWorker,
   getOfficerSafetyConcernsWatcher,
   getOfficerSafetyConcernsWorker,
   submitOfficerSafetyConcernsWatcher,
   submitOfficerSafetyConcernsWorker,
+  updateOfficerSafetyConcernsWatcher,
+  updateOfficerSafetyConcernsWorker
 };
