@@ -43,7 +43,7 @@ import {
 import { getResponsePlan } from '../../responseplan/ResponsePlanActions';
 import { constructFormData, constructEntityIndexToIdMap } from '../utils/OfficerSafetyConcernsUtils';
 import { TECHNIQUES_FQN } from '../../../../../edm/DataModelFqns';
-import { getEntityKeyIdsFromList } from '../../../../../utils/DataUtils';
+import { getEntityKeyIdsFromList, groupNeighborsByEntitySetIds } from '../../../../../utils/DataUtils';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
@@ -96,22 +96,7 @@ function* getOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<any,
     const neighbors = fromJS(safetyConcernsNeighbors.data)
       .get(entityKeyId, List());
 
-    // sort neighbors by ESID
-    const neighborsByESID = Map().withMutations((mutable) => {
-      neighbors.forEach((neighbor) => {
-        const neighborESID = neighbor.getIn(['neighborEntitySet', 'id']);
-        const neighborDetails = neighbor.get('neighborDetails');
-
-        if (mutable.has(neighborESID)) {
-          const entitySetCount = mutable.get(neighborESID).count();
-          mutable.setIn([neighborESID, entitySetCount], neighborDetails);
-        }
-        else {
-          mutable.set(neighborESID, List([neighborDetails]));
-        }
-
-      });
-    });
+    const neighborsByESID = groupNeighborsByEntitySetIds(neighbors);
 
     const safetyConcerns = neighborsByESID.get(officerSafetyConcernsESID, List());
     const behaviors = neighborsByESID.get(behaviorESID, List());
