@@ -79,7 +79,7 @@ class AddressForm extends Component<Props, State> {
     const { personEKID } = this.props;
     const nowAsIsoString :string = DateTime.local().toISO();
     return [
-      [LOCATED_AT_FQN, personEKID, PEOPLE_FQN, personEKID, LOCATION_FQN, {
+      [LOCATED_AT_FQN, personEKID, PEOPLE_FQN, 0, LOCATION_FQN, {
         [COMPLETED_DT_FQN.toString()]: [nowAsIsoString]
       }],
     ];
@@ -142,10 +142,10 @@ class AddressForm extends Component<Props, State> {
 }
 
 const mapStateToProps = state => ({
-  entityIndexToIdMap: state.getIn(['profile', 'basicInformation', 'appearance', 'entityIndexToIdMap'], Map()),
+  entityIndexToIdMap: state.getIn(['profile', 'basicInformation', 'address', 'entityIndexToIdMap'], Map()),
   entitySetIds: state.getIn(['app', 'selectedOrgEntitySetIds'], Map()),
-  fetchState: state.getIn(['profile', 'basicInformation', 'appearance', 'fetchState'], RequestStates.STANDBY),
-  formData: state.getIn(['profile', 'basicInformation', 'appearance', 'formData'], Map()),
+  fetchState: state.getIn(['profile', 'basicInformation', 'address', 'fetchState'], RequestStates.STANDBY),
+  formData: state.getIn(['profile', 'basicInformation', 'address', 'formData'], Map()),
   propertyTypeIds: state.getIn(['edm', 'fqnToIdMap'], Map()),
 });
 
