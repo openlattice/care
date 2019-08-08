@@ -4,10 +4,10 @@ import { RequestStates } from 'redux-reqseq';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
-  getAppearance,
-  updateAppearance,
-  submitAppearance,
-} from '../actions/BasicInformationActions';
+  getAddress,
+  updateAddress,
+  submitAddress,
+} from '../actions/AddressActions';
 
 const INITIAL_STATE :Map = fromJS({
   entityIndexToIdMap: Map(),
@@ -20,8 +20,8 @@ const appearanceReducer = (state :Map = INITIAL_STATE, action :SequenceAction) =
 
   switch (action.type) {
 
-    case getAppearance.case(action.type): {
-      return getAppearance.reducer(state, action, {
+    case getAddress.case(action.type): {
+      return getAddress.reducer(state, action, {
         REQUEST: () => state.set('fetchState', RequestStates.PENDING),
         SUCCESS: () => state
           .merge(action.value)
@@ -30,8 +30,8 @@ const appearanceReducer = (state :Map = INITIAL_STATE, action :SequenceAction) =
       });
     }
 
-    case submitAppearance.case(action.type): {
-      return submitAppearance.reducer(state, action, {
+    case submitAddress.case(action.type): {
+      return submitAddress.reducer(state, action, {
         REQUEST: () => state.set('submitState', RequestStates.PENDING),
         SUCCESS: () => {
           const {
@@ -48,8 +48,8 @@ const appearanceReducer = (state :Map = INITIAL_STATE, action :SequenceAction) =
       });
     }
 
-    case updateAppearance.case(action.type): {
-      return updateAppearance.reducer(state, action, {
+    case updateAddress.case(action.type): {
+      return updateAddress.reducer(state, action, {
         REQUEST: () => {
           const { path, properties } = action.value;
           return state

@@ -13,12 +13,13 @@ import type { RequestSequence, RequestState } from 'redux-reqseq';
 import {
   updateAppearance,
   submitAppearance
-} from './BasicInformationActions';
+} from './actions/BasicInformationActions';
 import { schema, uiSchema } from './schemas/AppearanceSchemas';
 import { COMPLETED_DT_FQN } from '../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
 
 const {
+  IDENTIFYING_CHARACTERISTICS_FQN,
   OBSERVED_IN_FQN,
   PEOPLE_FQN,
   PHYSICAL_APPEARANCE_FQN,
@@ -82,6 +83,9 @@ class AppearanceForm extends Component<Props, State> {
       [OBSERVED_IN_FQN, 0, PHYSICAL_APPEARANCE_FQN, personEKID, PEOPLE_FQN, {
         [COMPLETED_DT_FQN.toString()]: [nowAsIsoString]
       }],
+      [OBSERVED_IN_FQN, 0, IDENTIFYING_CHARACTERISTICS_FQN, personEKID, PEOPLE_FQN, {
+        [COMPLETED_DT_FQN.toString()]: [nowAsIsoString]
+      }]
     ];
   }
 

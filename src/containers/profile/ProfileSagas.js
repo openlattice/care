@@ -67,7 +67,6 @@ function* getPhysicalAppearanceWorker(action :SequenceAction) :Generator<any, an
   const response = {};
   try {
     const { value: entityKeyId } = action;
-    if (!isDefined(entityKeyId)) throw ERR_ACTION_VALUE_NOT_DEFINED;
     if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
 
     yield put(getPhysicalAppearance.request(action.id, entityKeyId));
@@ -121,7 +120,6 @@ function* getPersonDataWorker(action :SequenceAction) :Generator<any, any, any> 
   const response = {};
   try {
     const { value: entityKeyId } = action;
-    if (!isDefined(entityKeyId)) throw ERR_ACTION_VALUE_NOT_DEFINED;
     if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getPersonData.request(action.id, entityKeyId));
 
@@ -158,7 +156,6 @@ function* getPersonDataWatcher() :Generator<any, any, any> {
 function* getProfileReportsWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
     const { value: entityKeyId } = action;
-    if (!isDefined(entityKeyId)) throw ERR_ACTION_VALUE_NOT_DEFINED;
     if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
 
     yield put(getProfileReports.request(action.id, entityKeyId));
