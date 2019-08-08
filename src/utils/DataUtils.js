@@ -107,6 +107,26 @@ const getFormDataFromEntityArray = (
   return entityFormDataList;
 };
 
+const groupNeighborsByEntitySetIds = (neighbors :List<Map>) :Map => {
+  const neighborsByESID = Map().withMutations((mutable) => {
+    neighbors.forEach((neighbor) => {
+      const neighborESID = neighbor.getIn(['neighborEntitySet', 'id']);
+      const neighborDetails = neighbor.get('neighborDetails');
+
+      if (mutable.has(neighborESID)) {
+        const entitySetCount = mutable.get(neighborESID).count();
+        mutable.setIn([neighborESID, entitySetCount], neighborDetails);
+      }
+      else {
+        mutable.set(neighborESID, List([neighborDetails]));
+      }
+
+    });
+  });
+
+  return neighborsByESID;
+};
+
 
 export {
   SEARCH_PREFIX,
@@ -119,5 +139,6 @@ export {
   inchesToFeetString,
   keyIn,
   simulateResponseData,
+  groupNeighborsByEntitySetIds,
   stripIdField,
 };
