@@ -6,7 +6,6 @@ import {
   takeEvery,
   takeLatest,
 } from '@redux-saga/core/effects';
-import isPlainObject from 'lodash/isPlainObject';
 import { DataProcessingUtils } from 'lattice-fabricate';
 import { List, Map, fromJS } from 'immutable';
 import type { SequenceAction } from 'redux-reqseq';
