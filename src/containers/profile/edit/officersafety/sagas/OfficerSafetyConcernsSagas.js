@@ -42,6 +42,8 @@ import {
 } from '../../../../../core/sagas/data/DataSagas';
 import { getResponsePlan } from '../../responseplan/ResponsePlanActions';
 import { constructFormData, constructEntityIndexToIdMap } from '../utils/OfficerSafetyConcernsUtils';
+import { TECHNIQUES_FQN } from '../../../../../edm/DataModelFqns';
+import { getEntityKeyIdsFromList } from '../../../../../utils/DataUtils';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
@@ -50,7 +52,9 @@ const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
 const LOG = new Logger('OfficerSafetyConcernsSagas');
 
 const {
+  BEHAVIOR_FQN,
   INCLUDES_FQN,
+  INTERACTION_STRATEGY_FQN,
   OFFICER_SAFETY_CONCERNS_FQN,
   RESPONSE_PLAN_FQN,
 } = APP_TYPES_FQNS;
@@ -66,37 +70,78 @@ function* getOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<any,
     const includesESID :UUID = getESIDFromApp(app, INCLUDES_FQN);
     const officerSafetyConcernsESID :UUID = getESIDFromApp(app, OFFICER_SAFETY_CONCERNS_FQN);
     const responsePlanESID :UUID = getESIDFromApp(app, RESPONSE_PLAN_FQN);
+    const interactionStrategiesESID :UUID = getESIDFromApp(app, INTERACTION_STRATEGY_FQN);
+    const behaviorESID :UUID = getESIDFromApp(app, BEHAVIOR_FQN);
 
     const safetyConcernsSearchParams = {
       entitySetId: responsePlanESID,
       filter: {
         entityKeyIds: [entityKeyId],
         edgeEntitySetIds: [includesESID],
-        destinationEntitySetIds: [officerSafetyConcernsESID],
+        destinationEntitySetIds: [
+          behaviorESID,
+          interactionStrategiesESID,
+          officerSafetyConcernsESID
+        ],
         sourceEntitySetIds: []
       }
     };
 
-    const safetyConcernsResponse = yield call(
+    const safetyConcernsNeighbors = yield call(
       searchEntityNeighborsWithFilterWorker,
       searchEntityNeighborsWithFilter(safetyConcernsSearchParams)
     );
 
-    if (safetyConcernsResponse.error) throw safetyConcernsResponse.error;
-    const safetyConcerns = fromJS(safetyConcernsResponse.data)
-      .get(entityKeyId, List())
-      .map(entity => entity.get('neighborDetails'), Map());
+    if (safetyConcernsNeighbors.error) throw safetyConcernsNeighbors.error;
+    const neighbors = fromJS(safetyConcernsNeighbors.data)
+      .get(entityKeyId, List());
 
-    const safetyConcernsEKIDs = safetyConcerns
-      .map(concern => concern.getIn([OPENLATTICE_ID_FQN, 0]));
+    // sort neighbors by ESID
+    const neighborsByESID = Map().withMutations((mutable) => {
+      neighbors.forEach((neighbor) => {
+        const neighborESID = neighbor.getIn(['neighborEntitySet', 'id']);
+        const neighborDetails = neighbor.get('neighborDetails');
 
-    const formData = constructFormData(safetyConcerns);
-    const entityIndexToIdMap = constructEntityIndexToIdMap(safetyConcernsEKIDs);
+        if (mutable.has(neighborESID)) {
+          const entitySetCount = mutable.get(neighborESID).count();
+          mutable.setIn([neighborESID, entitySetCount], neighborDetails);
+        }
+        else {
+          mutable.set(neighborESID, List([neighborDetails]));
+        }
+
+      });
+    });
+
+    const safetyConcerns = neighborsByESID.get(officerSafetyConcernsESID, List());
+    const behaviors = neighborsByESID.get(behaviorESID, List());
+
+    // only strategies with techniques should appear as a safety concern
+    const interactionStrategies = neighborsByESID
+      .get(interactionStrategiesESID, List())
+      .filter((strategy :Map) => strategy.has(TECHNIQUES_FQN));
+
+    const safetyConcernsEKIDs = getEntityKeyIdsFromList(safetyConcerns);
+    const behaviorsEKIDs = getEntityKeyIdsFromList(behaviors);
+    const interactionStrategiesEKIDs = getEntityKeyIdsFromList(interactionStrategies);
+
+    const formData = constructFormData(
+      safetyConcerns,
+      behaviors,
+      interactionStrategies
+    );
+    const entityIndexToIdMap = constructEntityIndexToIdMap(
+      safetyConcernsEKIDs,
+      behaviorsEKIDs,
+      interactionStrategiesEKIDs
+    );
 
     yield put(getOfficerSafetyConcerns.success(action.id, {
       data: safetyConcerns,
       entityIndexToIdMap,
       formData,
+      behaviors,
+      interactionStrategies,
     }));
   }
   catch (error) {
@@ -142,11 +187,26 @@ function* submitOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<a
         formData: Map(),
         interactionStrategies: List()
       };
-      yield put(getResponsePlan.success(action.id, responsePlanPayload));
+
+
+      yield put({
+        type: getResponsePlan.SUCCESS,
+        value: responsePlanPayload
+      });
+
+      // yield put(getResponsePlan.success(action.id, responsePlanPayload));
     }
 
-    const safetyConcernsEKIDs = newEntityKeyIdsByEntitySetName.get(OFFICER_SAFETY_CONCERNS_FQN);
-    const safetyConcernsIndexToIdMap = constructEntityIndexToIdMap(safetyConcernsEKIDs);
+    const safetyConcernsEKIDs = newEntityKeyIdsByEntitySetName.get(OFFICER_SAFETY_CONCERNS_FQN, List());
+    const behaviorsEKIDs = newEntityKeyIdsByEntitySetName.get(BEHAVIOR_FQN, List());
+    const interactionStrategiesEKIDs = newEntityKeyIdsByEntitySetName.get(INTERACTION_STRATEGY_FQN, List());
+
+    debugger;
+    const safetyConcernsIndexToIdMap = constructEntityIndexToIdMap(
+      safetyConcernsEKIDs,
+      behaviorsEKIDs,
+      interactionStrategiesEKIDs,
+    );
 
     const entityIndexToIdMap = yield select(
       state => state.getIn([

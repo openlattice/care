@@ -25,7 +25,9 @@ import { reduceRequestStates } from '../../../../utils/StateUtils';
 const { OPENLATTICE_ID_FQN } = Constants;
 
 const {
+  BEHAVIOR_FQN,
   INCLUDES_FQN,
+  INTERACTION_STRATEGY_FQN,
   OFFICER_SAFETY_CONCERNS_FQN,
   PEOPLE_FQN,
   RESPONSE_PLAN_FQN,
@@ -90,12 +92,32 @@ class OfficerSafetyConcernsForm extends Component<Props, State> {
   getAssociations = (formData :Object) => {
     const { personEKID, responsePlanEKID } = this.props;
     const nowAsIsoString :string = DateTime.local().toISO();
-    const associations = this.getOfficerSafetyAssocations(
+    const safetyAssociations = this.getOfficerSafetyAssocations(
       formData,
       getPageSectionKey(1, 1),
       nowAsIsoString,
       responsePlanEKID
     );
+
+    const triggerAssociations = this.getTriggerAssociations(
+      formData,
+      getPageSectionKey(1, 2),
+      nowAsIsoString,
+      responsePlanEKID
+    );
+
+    const deescalationAssociations = this.getDeescalationAssociations(
+      formData,
+      getPageSectionKey(1, 3),
+      nowAsIsoString,
+      responsePlanEKID
+    );
+
+    const associations = [
+      ...safetyAssociations,
+      ...triggerAssociations,
+      ...deescalationAssociations
+    ];
 
     // if response plan doesn't exist, add new association
     if (!isValidUuid(responsePlanEKID) && isValidUuid(personEKID)) {
@@ -115,11 +137,49 @@ class OfficerSafetyConcernsForm extends Component<Props, State> {
     nowAsIsoString :string,
     idOrIndex :UUID | number = 0,
   ) => {
-    const concernsSize :number = get(formData, pageSection, []).length;
+    const listSize :number = get(formData, pageSection, []).length;
     const associations :any[][] = [];
-    for (let i = 0; i < concernsSize; i += 1) {
+    for (let i = 0; i < listSize; i += 1) {
       associations.push(
         [INCLUDES_FQN, idOrIndex, RESPONSE_PLAN_FQN, i, OFFICER_SAFETY_CONCERNS_FQN, {
+          [COMPLETED_DT_FQN.toString()]: [nowAsIsoString]
+        }]
+      );
+    }
+
+    return associations;
+  }
+
+  getTriggerAssociations = (
+    formData :Object,
+    pageSection :string,
+    nowAsIsoString :string,
+    idOrIndex :UUID | number = 0,
+  ) => {
+    const listSize :number = get(formData, pageSection, []).length;
+    const associations :any[][] = [];
+    for (let i = 0; i < listSize; i += 1) {
+      associations.push(
+        [INCLUDES_FQN, idOrIndex, RESPONSE_PLAN_FQN, i, BEHAVIOR_FQN, {
+          [COMPLETED_DT_FQN.toString()]: [nowAsIsoString]
+        }]
+      );
+    }
+
+    return associations;
+  }
+
+  getDeescalationAssociations = (
+    formData :Object,
+    pageSection :string,
+    nowAsIsoString :string,
+    idOrIndex :UUID | number = 0,
+  ) => {
+    const listSize :number = get(formData, pageSection, []).length;
+    const associations :any[][] = [];
+    for (let i = 0; i < listSize; i += 1) {
+      associations.push(
+        [INCLUDES_FQN, idOrIndex, RESPONSE_PLAN_FQN, i, INTERACTION_STRATEGY_FQN, {
           [COMPLETED_DT_FQN.toString()]: [nowAsIsoString]
         }]
       );
@@ -141,7 +201,7 @@ class OfficerSafetyConcernsForm extends Component<Props, State> {
     if (!isValidUuid(responsePlanEKID) && isValidUuid(personEKID)) {
       // modify formData to create a blank responsePlan if one doesn't already exist
       finalFormData = setIn(formData, [
-        getPageSectionKey(1, 2),
+        getPageSectionKey(1, 0),
         getEntityAddressKey(0, RESPONSE_PLAN_FQN, CONTEXT_FQN)
       ], undefined);
     }
@@ -197,7 +257,9 @@ class OfficerSafetyConcernsForm extends Component<Props, State> {
     const { formData, prepopulated } = this.state;
     const formContext = {
       addActions: {
-        addOfficerSafetyConcerns: this.handleAddOfficerSafetyConcern
+        addOfficerSafetyConcerns: this.handleAddOfficerSafetyConcern,
+        addTrigger: this.handleAddOfficerSafetyConcern,
+        addDeescalationTechnique: this.handleAddOfficerSafetyConcern
       },
       deleteAction: actions.deleteOfficerSafetyConcerns,
       editAction: actions.updateOfficerSafetyConcerns,
