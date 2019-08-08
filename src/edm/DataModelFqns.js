@@ -7,6 +7,16 @@ import { Models } from 'lattice';
 const { FullyQualifiedName } = Models;
 
 /*
+ * Behavior
+ */
+
+const TRIGGER_FQN = new FullyQualifiedName('ol.trigger');
+
+export {
+  TRIGGER_FQN
+};
+
+/*
  * Location
  */
 
@@ -40,11 +50,13 @@ export {
  */
 
 const DESCRIPTION_FQN = new FullyQualifiedName('ol.description');
-const TITLE_FQN = new FullyQualifiedName('ol.title');
 const INDEX_FQN = new FullyQualifiedName('ol.index');
+const TECHNIQUES_FQN = new FullyQualifiedName('ol.techniques');
+const TITLE_FQN = new FullyQualifiedName('ol.title');
 export {
   DESCRIPTION_FQN,
   INDEX_FQN,
+  TECHNIQUES_FQN,
   TITLE_FQN,
 };
 
