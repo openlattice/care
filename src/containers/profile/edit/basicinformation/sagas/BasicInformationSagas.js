@@ -7,7 +7,6 @@ import {
   takeEvery,
   takeLatest,
 } from '@redux-saga/core/effects';
-import isPlainObject from 'lodash/isPlainObject';
 import { DataProcessingUtils } from 'lattice-fabricate';
 import { List, Map, fromJS } from 'immutable';
 import type { SequenceAction } from 'redux-reqseq';
@@ -37,6 +36,8 @@ import {
   updateAppearance,
   updateBasics
 } from '../actions/BasicInformationActions';
+import { getAddress } from '../actions/AddressActions';
+import { getAddressWorker } from './AddressSagas';
 import {
   submitDataGraph,
   submitPartialReplace,
@@ -166,15 +167,10 @@ function* submitAppearanceWorker(action :SequenceAction) :Generator<any, any, an
 
     const { path, properties } = value;
 
-    const prevFormData = yield select(state => state.getIn(['profile', 'basicInformation', 'appearance', 'formData']));
-    let newFormData = prevFormData;
-    if (Array.isArray(path) && isPlainObject(properties)) {
-      newFormData = prevFormData.setIn(path, fromJS(properties));
-    }
-
     yield put(submitAppearance.success(action.id, {
       entityIndexToIdMap,
-      formData: newFormData
+      path,
+      properties: fromJS(properties),
     }));
   }
   catch (error) {
@@ -326,9 +322,15 @@ function* getBasicInformationWorker(action :SequenceAction) :Generator<any, any,
       getBasics(personEKID)
     );
 
+    const addressRequest = call(
+      getAddressWorker,
+      getAddress(personEKID)
+    );
+
     const [basicsResponse, appearanceResponse] = yield all([
-      basicsRequest,
+      addressRequest,
       appearanceRequest,
+      basicsRequest,
     ]);
 
     if (basicsResponse.error) throw basicsResponse.error;

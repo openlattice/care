@@ -66,15 +66,15 @@ function* getAddressWorker(action :SequenceAction) :Generator<any, any, any> {
     const app :Map = yield select(state => state.get('app', Map()));
     const entitySetId :UUID = getESIDFromApp(app, PEOPLE_FQN);
     const locationESID :UUID = getESIDFromApp(app, LOCATION_FQN);
-    const observedInESID :UUID = getESIDFromApp(app, LOCATED_AT_FQN);
+    const locatedAtESID :UUID = getESIDFromApp(app, LOCATED_AT_FQN);
 
     const locationSearchParams = {
       entitySetId,
       filter: {
         entityKeyIds: [entityKeyId],
-        edgeEntitySetIds: [observedInESID],
-        destinationEntitySetIds: [],
-        sourceEntitySetIds: [locationESID],
+        edgeEntitySetIds: [locatedAtESID],
+        destinationEntitySetIds: [locationESID],
+        sourceEntitySetIds: [],
       }
     };
 
@@ -95,10 +95,12 @@ function* getAddressWorker(action :SequenceAction) :Generator<any, any, any> {
     if (!locationData.isEmpty()) {
 
       const locationProperties = [
-        FQN.EYE_COLOR_FQN,
-        FQN.HAIR_COLOR_FQN,
-        FQN.HEIGHT_FQN,
-        FQN.WEIGHT_FQN,
+        FQN.LOCATION_ADDRESS_LINE_2_FQN,
+        FQN.LOCATION_CITY_FQN,
+        FQN.LOCATION_NAME_FQN,
+        FQN.LOCATION_STATE_FQN,
+        FQN.LOCATION_STREET_FQN,
+        FQN.LOCATION_ZIP_FQN,
       ];
 
       const locationEKID = locationData.getIn([OPENLATTICE_ID_FQN, 0]);
@@ -158,7 +160,7 @@ function* submitAddressWorker(action :SequenceAction) :Generator<any, any, any> 
     yield put(submitAddress.success(action.id, {
       entityIndexToIdMap,
       path,
-      properties
+      properties: fromJS(properties)
     }));
   }
   catch (error) {
