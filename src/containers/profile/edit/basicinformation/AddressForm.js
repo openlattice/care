@@ -1,40 +1,44 @@
 // @flow
 import React, { Component } from 'react';
 import { DateTime } from 'luxon';
-import { Form } from 'lattice-fabricate';
+import { Form, DataProcessingUtils } from 'lattice-fabricate';
 import { Card, CardSegment, Spinner } from 'lattice-ui-kit';
 import { Map } from 'immutable';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
-import { withRouter } from 'react-router-dom';
 import type { Dispatch } from 'redux';
-import type { Match } from 'react-router-dom';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import {
-  updateBasics,
-} from './actions/BasicInformationActions';
-import { schema, uiSchema } from './schemas/BasicInformationSchemas';
-import { PROFILE_ID_PARAM } from '../../../../core/router/Routes';
+  updateAddress,
+  submitAddress
+} from './actions/AddressActions';
+import { schema, uiSchema } from './schemas/AddressSchemas';
 import { COMPLETED_DT_FQN } from '../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
 
 const {
-  OBSERVED_IN_FQN,
+  LOCATED_AT_FQN,
   PEOPLE_FQN,
-  PHYSICAL_APPEARANCE_FQN,
+  LOCATION_FQN,
 } = APP_TYPES_FQNS;
+
+const {
+  processEntityData,
+  processAssociationEntityData
+} = DataProcessingUtils;
 
 type Props = {
   actions :{
-    updateBasics :RequestSequence;
+    submitAddress :RequestSequence;
+    updateAddress :RequestSequence;
   },
   entityIndexToIdMap :Map;
   entitySetIds :Map;
   fetchState :RequestState;
   formData :Map;
-  match :Match;
+  personEKID :UUID;
   propertyTypeIds :Map;
 };
 
@@ -43,7 +47,7 @@ type State = {
   prepopulated :boolean;
 };
 
-class BasicInformationForm extends Component<Props, State> {
+class AddressForm extends Component<Props, State> {
 
   state = {
     formData: {},
@@ -72,14 +76,30 @@ class BasicInformationForm extends Component<Props, State> {
   }
 
   getAssociations = () => {
-    const { match } = this.props;
-    const personEKID = match.params[PROFILE_ID_PARAM];
+    const { personEKID } = this.props;
     const nowAsIsoString :string = DateTime.local().toISO();
     return [
-      [OBSERVED_IN_FQN, personEKID, PEOPLE_FQN, 0, PHYSICAL_APPEARANCE_FQN, {
+      [LOCATED_AT_FQN, personEKID, PEOPLE_FQN, 0, LOCATION_FQN, {
         [COMPLETED_DT_FQN.toString()]: [nowAsIsoString]
       }],
     ];
+  }
+
+  handleSubmit = ({ formData } :Object) => {
+    const { actions, entitySetIds, propertyTypeIds } = this.props;
+    const entityData = processEntityData(formData, entitySetIds, propertyTypeIds);
+    const associationEntityData = processAssociationEntityData(
+      this.getAssociations(),
+      entitySetIds,
+      propertyTypeIds
+    );
+
+    actions.submitAddress({
+      associationEntityData,
+      entityData,
+      path: [],
+      properties: formData
+    });
   }
 
   render() {
@@ -92,7 +112,7 @@ class BasicInformationForm extends Component<Props, State> {
     } = this.props;
     const { formData, prepopulated } = this.state;
     const formContext = {
-      editAction: actions.updateBasics,
+      editAction: actions.updateAddress,
       entityIndexToIdMap,
       entitySetIds,
       mappers: {},
@@ -115,25 +135,26 @@ class BasicInformationForm extends Component<Props, State> {
           disabled={prepopulated}
           schema={schema}
           uiSchema={uiSchema}
+          onSubmit={this.handleSubmit}
           formContext={formContext} />
     );
   }
 }
 
 const mapStateToProps = state => ({
-  entityIndexToIdMap: state.getIn(['profile', 'basicInformation', 'basics', 'entityIndexToIdMap'], Map()),
+  entityIndexToIdMap: state.getIn(['profile', 'basicInformation', 'address', 'entityIndexToIdMap'], Map()),
   entitySetIds: state.getIn(['app', 'selectedOrgEntitySetIds'], Map()),
-  fetchState: state.getIn(['profile', 'basicInformation', 'basics', 'fetchState'], RequestStates.STANDBY),
-  formData: state.getIn(['profile', 'basicInformation', 'basics', 'formData'], Map()),
+  fetchState: state.getIn(['profile', 'basicInformation', 'address', 'fetchState'], RequestStates.STANDBY),
+  formData: state.getIn(['profile', 'basicInformation', 'address', 'formData'], Map()),
   propertyTypeIds: state.getIn(['edm', 'fqnToIdMap'], Map()),
 });
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
-    updateBasics,
+    updateAddress,
+    submitAddress,
   }, dispatch)
 });
 
-export default withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(BasicInformationForm)
-);
+// $FlowFixMe
+export default connect(mapStateToProps, mapDispatchToProps)(AddressForm);

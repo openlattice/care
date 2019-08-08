@@ -7,6 +7,36 @@ import { Models } from 'lattice';
 const { FullyQualifiedName } = Models;
 
 /*
+ * Behavior
+ */
+
+const TRIGGER_FQN = new FullyQualifiedName('ol.trigger');
+
+export {
+  TRIGGER_FQN
+};
+
+/*
+ * Location
+ */
+
+const LOCATION_ADDRESS_LINE_2_FQN = new FullyQualifiedName('location.addressline2');
+const LOCATION_CITY_FQN = new FullyQualifiedName('location.city');
+const LOCATION_NAME_FQN = new FullyQualifiedName('location.name');
+const LOCATION_STATE_FQN = new FullyQualifiedName('location.state');
+const LOCATION_STREET_FQN = new FullyQualifiedName('location.street');
+const LOCATION_ZIP_FQN = new FullyQualifiedName('location.zip');
+
+export {
+  LOCATION_ADDRESS_LINE_2_FQN,
+  LOCATION_CITY_FQN,
+  LOCATION_NAME_FQN,
+  LOCATION_STATE_FQN,
+  LOCATION_STREET_FQN,
+  LOCATION_ZIP_FQN,
+};
+
+/*
  * Response Plan
  */
 
@@ -20,11 +50,13 @@ export {
  */
 
 const DESCRIPTION_FQN = new FullyQualifiedName('ol.description');
-const TITLE_FQN = new FullyQualifiedName('ol.title');
 const INDEX_FQN = new FullyQualifiedName('ol.index');
+const TECHNIQUES_FQN = new FullyQualifiedName('ol.techniques');
+const TITLE_FQN = new FullyQualifiedName('ol.title');
 export {
   DESCRIPTION_FQN,
   INDEX_FQN,
+  TECHNIQUES_FQN,
   TITLE_FQN,
 };
 

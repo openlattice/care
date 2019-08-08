@@ -14,8 +14,10 @@ import {
 
 import * as RoutingSagas from '../router/RoutingSagas';
 
+import * as AddressSagas from '../../containers/profile/edit/basicinformation/sagas/AddressSagas';
+import * as AppearanceSagas from '../../containers/profile/edit/basicinformation/sagas/AppearanceSagas';
 import * as AppSagas from '../../containers/app/AppSagas';
-import * as BasicInformationSagas from '../../containers/profile/edit/basicinformation/BasicInformationSagas';
+import * as BasicInformationSagas from '../../containers/profile/edit/basicinformation/sagas/BasicInformationSagas';
 import * as DashboardSagas from '../../containers/dashboard/DashboardSagas';
 import * as DataSagas from './data/DataSagas';
 import * as DownloadsSagas from '../../containers/downloads/DownloadsSagas';
@@ -101,12 +103,17 @@ export default function* sagas() :Generator<*, *, *> {
     fork(ResponsePlanSagas.updateResponsePlanWatcher),
 
     // BasicInformationSagas
-    fork(BasicInformationSagas.getAppearanceWatcher),
     fork(BasicInformationSagas.getBasicInformationWatcher),
     fork(BasicInformationSagas.getBasicsWatcher),
-    fork(BasicInformationSagas.submitAppearanceWatcher),
-    fork(BasicInformationSagas.updateAppearanceWatcher),
     fork(BasicInformationSagas.updateBasicsWatcher),
+
+    fork(AppearanceSagas.getAppearanceWatcher),
+    fork(AppearanceSagas.submitAppearanceWatcher),
+    fork(AppearanceSagas.updateAppearanceWatcher),
+
+    fork(AddressSagas.getAddressWatcher),
+    fork(AddressSagas.submitAddressWatcher),
+    fork(AddressSagas.updateAddressWatcher),
 
     // OfficerSafetySagas
     fork(OfficerSafetySagas.getOfficerSafetyWatcher),

@@ -2,13 +2,19 @@ import { DataProcessingUtils } from 'lattice-fabricate';
 import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
 import {
   DESCRIPTION_FQN,
-  CATEGORY_FQN
+  CATEGORY_FQN,
+  TRIGGER_FQN,
+  TECHNIQUES_FQN,
 } from '../../../../../edm/DataModelFqns';
 
 import { SAFETY_TYPES } from './constants';
 
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
-const { OFFICER_SAFETY_CONCERNS_FQN } = APP_TYPES_FQNS;
+const {
+  BEHAVIOR_FQN,
+  INTERACTION_STRATEGY_FQN,
+  OFFICER_SAFETY_CONCERNS_FQN,
+} = APP_TYPES_FQNS;
 
 const schema = {
   definitions: {
@@ -25,6 +31,24 @@ const schema = {
           title: 'Description',
         }
       }
+    },
+    trigger: {
+      type: 'object',
+      properties: {
+        [getEntityAddressKey(-1, BEHAVIOR_FQN, TRIGGER_FQN)]: {
+          type: 'string',
+          title: 'Trigger'
+        }
+      }
+    },
+    deescalation: {
+      type: 'object',
+      properties: {
+        [getEntityAddressKey(-1, INTERACTION_STRATEGY_FQN, TECHNIQUES_FQN)]: {
+          type: 'string',
+          title: 'Technique'
+        }
+      }
     }
   },
   type: 'object',
@@ -35,13 +59,21 @@ const schema = {
       title: 'Officer Safety Concerns',
       items: {
         $ref: '#/definitions/officerSafetyCaution'
+      }
+    },
+    [getPageSectionKey(1, 2)]: {
+      type: 'array',
+      title: 'Triggers',
+      items: {
+        $ref: '#/definitions/trigger'
       },
-      default: [
-        {
-          [getEntityAddressKey(-1, OFFICER_SAFETY_CONCERNS_FQN, CATEGORY_FQN)]: undefined,
-          [getEntityAddressKey(-1, OFFICER_SAFETY_CONCERNS_FQN, DESCRIPTION_FQN)]: undefined,
-        }
-      ]
+    },
+    [getPageSectionKey(1, 3)]: {
+      type: 'array',
+      title: 'De-escalation Techniques',
+      items: {
+        $ref: '#/definitions/deescalation'
+      },
     }
   }
 };
@@ -66,6 +98,40 @@ const uiSchema = {
       [getEntityAddressKey(-1, OFFICER_SAFETY_CONCERNS_FQN, DESCRIPTION_FQN)]: {
         classNames: 'column-span-12'
       },
+    }
+  },
+  [getPageSectionKey(1, 2)]: {
+    classNames: 'column-span-12',
+    'ui:options': {
+      addButtonText: '+ Add Trigger',
+      addActionKey: 'addTrigger',
+      orderable: false
+    },
+    items: {
+      classNames: 'grid-container',
+      'ui:options': {
+        editable: true
+      },
+      [getEntityAddressKey(-1, BEHAVIOR_FQN, TRIGGER_FQN)]: {
+        classNames: 'column-span-12'
+      }
+    }
+  },
+  [getPageSectionKey(1, 3)]: {
+    classNames: 'column-span-12',
+    'ui:options': {
+      addButtonText: '+ Add De-escalation Technique',
+      addActionKey: 'addDeescalationTechnique',
+      orderable: false
+    },
+    items: {
+      classNames: 'grid-container',
+      'ui:options': {
+        editable: true
+      },
+      [getEntityAddressKey(-1, INTERACTION_STRATEGY_FQN, TECHNIQUES_FQN)]: {
+        classNames: 'column-span-12'
+      }
     }
   }
 };

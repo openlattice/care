@@ -6,7 +6,7 @@ import type { SequenceAction } from 'redux-reqseq';
 import {
   getBasics,
   updateBasics,
-} from '../BasicInformationActions';
+} from '../actions/BasicInformationActions';
 
 const INITIAL_STATE :Map = fromJS({
   entityIndexToIdMap: Map(),
