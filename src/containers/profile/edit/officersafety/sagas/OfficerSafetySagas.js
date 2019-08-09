@@ -40,7 +40,7 @@ function* getOfficerSafetyWorker(action :SequenceAction) :Generator<any, any, an
     const responsePlanEKID = getIn(responsePlanResponse.data, [OPENLATTICE_ID_FQN, 0]);
 
     if (responsePlanEKID) {
-      const safetyConcernsResponse = yield call(
+      yield call(
         getOfficerSafetyConcernsWorker,
         getOfficerSafetyConcerns(responsePlanEKID)
       );

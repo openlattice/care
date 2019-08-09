@@ -83,9 +83,12 @@ class OfficerSafetyConcernsForm extends Component<Props, State> {
 
   initializeFormData = () => {
     const { formData } = this.props;
+    const prepopulated = formData
+      .reduce((isPopulated, value) => isPopulated || !value.isEmpty(), false);
+
     this.setState({
       formData: formData.toJS(),
-      prepopulated: !formData.isEmpty()
+      prepopulated
     });
   }
 
@@ -137,7 +140,7 @@ class OfficerSafetyConcernsForm extends Component<Props, State> {
     nowAsIsoString :string,
     idOrIndex :UUID | number = 0,
   ) => {
-    const listSize :number = get(formData, pageSection, []).length;
+    const listSize :number = (get(formData, pageSection) || []).length;
     const associations :any[][] = [];
     for (let i = 0; i < listSize; i += 1) {
       associations.push(
@@ -156,7 +159,7 @@ class OfficerSafetyConcernsForm extends Component<Props, State> {
     nowAsIsoString :string,
     idOrIndex :UUID | number = 0,
   ) => {
-    const listSize :number = get(formData, pageSection, []).length;
+    const listSize :number = (get(formData, pageSection) || []).length;
     const associations :any[][] = [];
     for (let i = 0; i < listSize; i += 1) {
       associations.push(
@@ -175,7 +178,7 @@ class OfficerSafetyConcernsForm extends Component<Props, State> {
     nowAsIsoString :string,
     idOrIndex :UUID | number = 0,
   ) => {
-    const listSize :number = get(formData, pageSection, []).length;
+    const listSize :number = (get(formData, pageSection) || []).length;
     const associations :any[][] = [];
     for (let i = 0; i < listSize; i += 1) {
       associations.push(

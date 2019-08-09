@@ -25,6 +25,7 @@ import {
   submitResponsePlan,
   updateResponsePlan,
 } from './ResponsePlanActions';
+import { isValidUuid } from '../../../../utils/Utils';
 
 const {
   INCLUDES_FQN,
@@ -70,9 +71,13 @@ class ResponsePlanForm extends Component<Props, State> {
   };
 
   componentDidMount() {
-    const { actions, formData, match } = this.props;
+    const {
+      actions,
+      match,
+      responsePlanEKID
+    } = this.props;
     const personEKID = match.params[PROFILE_ID_PARAM];
-    if (formData.isEmpty()) {
+    if (!isValidUuid(responsePlanEKID)) {
       actions.getResponsePlan(personEKID);
     }
     else {
@@ -92,7 +97,6 @@ class ResponsePlanForm extends Component<Props, State> {
     } = prevProps;
     const personEKID = match.params[PROFILE_ID_PARAM];
     const prevPersonEKID = prevMatch.params[PROFILE_ID_PARAM];
-
     if (personEKID !== prevPersonEKID) {
       actions.getResponsePlan(personEKID);
     }
@@ -104,9 +108,12 @@ class ResponsePlanForm extends Component<Props, State> {
 
   initializeFormData = () => {
     const { formData } = this.props;
+    const prepopulated = formData
+      .reduce((isPopulated, value) => isPopulated || !value.isEmpty(), false);
+
     this.setState({
       formData: formData.toJS(),
-      prepopulated: !formData.isEmpty()
+      prepopulated
     });
   }
 

@@ -49,9 +49,9 @@ const constructFormData = (
   );
 
   return Map().withMutations((mutable) => {
-    if (!safetyConcernsFormData.isEmpty()) mutable.set(getPageSectionKey(1, 1), safetyConcernsFormData);
-    if (!behaviorsFormData.isEmpty()) mutable.set(getPageSectionKey(1, 2), behaviorsFormData);
-    if (!strategiesFormData.isEmpty()) mutable.set(getPageSectionKey(1, 3), strategiesFormData);
+    mutable.set(getPageSectionKey(1, 1), safetyConcernsFormData);
+    mutable.set(getPageSectionKey(1, 2), behaviorsFormData);
+    mutable.set(getPageSectionKey(1, 3), strategiesFormData);
   });
 
 };
@@ -62,11 +62,9 @@ const constructEntityIndexToIdMap = (
   strategyEKIDs :List<UUID>,
 ) => {
   const entityIndexToIdMap = Map().withMutations((mutable) => {
-    if (!safetyConcernsEKIDs.isEmpty()) {
-      mutable.setIn([OFFICER_SAFETY_CONCERNS_FQN.toString(), -1], safetyConcernsEKIDs);
-    }
-    if (!behaviorEKIDs.isEmpty()) mutable.setIn([BEHAVIOR_FQN.toString(), -1], behaviorEKIDs);
-    if (!strategyEKIDs.isEmpty()) mutable.setIn([INTERACTION_STRATEGY_FQN.toString(), -1], strategyEKIDs);
+    mutable.setIn([OFFICER_SAFETY_CONCERNS_FQN.toString(), -1], safetyConcernsEKIDs);
+    mutable.setIn([BEHAVIOR_FQN.toString(), -1], behaviorEKIDs);
+    mutable.setIn([INTERACTION_STRATEGY_FQN.toString(), -1], strategyEKIDs);
   });
 
   return entityIndexToIdMap;

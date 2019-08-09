@@ -1,6 +1,7 @@
 // @flow
 import { Map, fromJS } from 'immutable';
 import { RequestStates } from 'redux-reqseq';
+import { DataProcessingUtils } from 'lattice-fabricate';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
@@ -10,12 +11,18 @@ import {
   updateOfficerSafetyConcerns,
 } from '../OfficerSafetyActions';
 
+const { getPageSectionKey } = DataProcessingUtils;
+
 const INITIAL_STATE :Map = fromJS({
   data: Map(),
   deleteState: RequestStates.STANDBY,
   entityIndexToIdMap: Map(),
   fetchState: RequestStates.STANDBY,
-  formData: Map(),
+  formData: {
+    [getPageSectionKey(1, 1)]: [],
+    [getPageSectionKey(1, 2)]: [],
+    [getPageSectionKey(1, 3)]: []
+  },
   updateState: RequestStates.STANDBY,
 });
 

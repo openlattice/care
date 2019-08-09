@@ -97,8 +97,8 @@ function* getAppearanceWorker(action :SequenceAction) :Generator<any, any, any> 
       LOG.warn('more than one identifying characteristic found in person', entityKeyId);
     }
 
-    const appearanceData = appearanceDataList.first(Map());
-    const identifyingCharacteristicsData = identifyingCharacteristicsList.first(Map());
+    const appearanceData = appearanceDataList.first() || Map();
+    const identifyingCharacteristicsData = identifyingCharacteristicsList.first() || Map();
 
     const appearanceEKID = appearanceData.getIn([OPENLATTICE_ID_FQN, 0]);
     const identifyingCharacteristicsEKID = identifyingCharacteristicsData.getIn([OPENLATTICE_ID_FQN, 0]);
