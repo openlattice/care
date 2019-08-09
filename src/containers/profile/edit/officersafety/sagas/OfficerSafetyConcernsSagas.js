@@ -186,7 +186,6 @@ function* submitOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<a
     const behaviorsEKIDs = newEntityKeyIdsByEntitySetName.get(BEHAVIOR_FQN, List());
     const interactionStrategiesEKIDs = newEntityKeyIdsByEntitySetName.get(INTERACTION_STRATEGY_FQN, List());
 
-    debugger;
     const safetyConcernsIndexToIdMap = constructEntityIndexToIdMap(
       safetyConcernsEKIDs,
       behaviorsEKIDs,
