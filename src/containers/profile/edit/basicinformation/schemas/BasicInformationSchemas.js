@@ -17,9 +17,7 @@ import {
 } from '../../../../../edm/DataModelFqns';
 import {
   SEX_VALUES,
-  RACE_VALUES,
-  EYE_COLOR_VALUES,
-  HAIR_COLOR_VALUES
+  RACE_VALUES
 } from '../../../constants';
 
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
@@ -30,11 +28,11 @@ const {
 
 const schema = {
   type: 'object',
-  title: 'Basics and Physicals',
+  title: 'Basics',
   properties: {
     [getPageSectionKey(1, 1)]: {
       type: 'object',
-      title: 'Basics',
+      title: '',
       properties: {
         [getEntityAddressKey(0, PEOPLE_FQN, PERSON_LAST_NAME_FQN)]: {
           type: 'string',
@@ -60,44 +58,45 @@ const schema = {
         },
         [getEntityAddressKey(0, PEOPLE_FQN, PERSON_DOB_FQN)]: {
           type: 'string',
-          title: 'Date of Birth'
-        },
-        [getEntityAddressKey(0, PEOPLE_FQN, PERSON_RACE_FQN)]: {
-          type: 'string',
-          title: 'Race',
-          enum: RACE_VALUES
+          title: 'Date of Birth',
+          format: 'date'
         },
         [getEntityAddressKey(0, PEOPLE_FQN, PERSON_SEX_FQN)]: {
           type: 'string',
           title: 'Sex',
           enum: SEX_VALUES
         },
+        [getEntityAddressKey(0, PEOPLE_FQN, PERSON_RACE_FQN)]: {
+          type: 'string',
+          title: 'Race',
+          enum: RACE_VALUES
+        },
       },
     },
-    [getPageSectionKey(1, 2)]: {
-      type: 'object',
-      title: 'Physical Appearance',
-      properties: {
-        [getEntityAddressKey(0, PHYSICAL_APPEARANCE_FQN, HEIGHT_FQN)]: {
-          type: 'number',
-          title: 'Height'
-        },
-        [getEntityAddressKey(0, PHYSICAL_APPEARANCE_FQN, WEIGHT_FQN)]: {
-          type: 'number',
-          title: 'Weight'
-        },
-        [getEntityAddressKey(0, PHYSICAL_APPEARANCE_FQN, EYE_COLOR_FQN)]: {
-          type: 'string',
-          title: 'Eye Color',
-          enum: EYE_COLOR_VALUES
-        },
-        [getEntityAddressKey(0, PHYSICAL_APPEARANCE_FQN, HAIR_COLOR_FQN)]: {
-          type: 'string',
-          title: 'Hair Color',
-          enum: HAIR_COLOR_VALUES
-        },
-      }
-    }
+    // [getPageSectionKey(1, 2)]: {
+    //   type: 'object',
+    //   title: 'Physical Appearance',
+    //   properties: {
+    //     [getEntityAddressKey(0, PHYSICAL_APPEARANCE_FQN, HEIGHT_FQN)]: {
+    //       type: 'number',
+    //       title: 'Height'
+    //     },
+    //     [getEntityAddressKey(0, PHYSICAL_APPEARANCE_FQN, WEIGHT_FQN)]: {
+    //       type: 'number',
+    //       title: 'Weight'
+    //     },
+    //     [getEntityAddressKey(0, PHYSICAL_APPEARANCE_FQN, EYE_COLOR_FQN)]: {
+    //       type: 'string',
+    //       title: 'Eye Color',
+    //       enum: EYE_COLOR_VALUES
+    //     },
+    //     [getEntityAddressKey(0, PHYSICAL_APPEARANCE_FQN, HAIR_COLOR_FQN)]: {
+    //       type: 'string',
+    //       title: 'Hair Color',
+    //       enum: HAIR_COLOR_VALUES
+    //     },
+    //   }
+    // }
   }
 };
 
@@ -127,16 +126,18 @@ const uiSchema = {
     [getEntityAddressKey(0, PEOPLE_FQN, PERSON_DOB_FQN)]: {
       classNames: 'column-span-4'
     },
+    [getEntityAddressKey(0, PEOPLE_FQN, PERSON_SEX_FQN)]: {
+      classNames: 'column-span-4',
+    },
     [getEntityAddressKey(0, PEOPLE_FQN, PERSON_RACE_FQN)]: {
       classNames: 'column-span-4'
-    },
-    [getEntityAddressKey(0, PEOPLE_FQN, PERSON_SEX_FQN)]: {
-      classNames: 'column-span-12',
-      'ui:widget': 'radio'
     },
   },
   [getPageSectionKey(1, 2)]: {
     classNames: 'column-span-12 grid-container',
+    'ui:options': {
+      editable: true
+    },
     [getEntityAddressKey(0, PHYSICAL_APPEARANCE_FQN, HEIGHT_FQN)]: {
       classNames: 'column-span-3'
     },

@@ -4,9 +4,9 @@ import { RequestStates } from 'redux-reqseq';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
-  getBasicsAndPhysicals,
-  updateBasicsAndPhysicals,
-} from './BasicInformationActions';
+  getBasics,
+  updateBasics,
+} from '../actions/BasicInformationActions';
 
 const INITIAL_STATE :Map = fromJS({
   entityIndexToIdMap: Map(),
@@ -15,12 +15,12 @@ const INITIAL_STATE :Map = fromJS({
   updateState: RequestStates.STANDBY,
 });
 
-const basicInformationReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
+const basicsReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
 
   switch (action.type) {
 
-    case getBasicsAndPhysicals.case(action.type): {
-      return getBasicsAndPhysicals.reducer(state, action, {
+    case getBasics.case(action.type): {
+      return getBasics.reducer(state, action, {
         REQUEST: () => state.set('fetchState', RequestStates.PENDING),
         SUCCESS: () => {
           const {
@@ -28,6 +28,7 @@ const basicInformationReducer = (state :Map = INITIAL_STATE, action :SequenceAct
             formData,
           } = action.value;
           return state
+            .set('fetchState', RequestStates.SUCCESS)
             .set('entityIndexToIdMap', entityIndexToIdMap)
             .set('formData', formData);
         },
@@ -35,15 +36,15 @@ const basicInformationReducer = (state :Map = INITIAL_STATE, action :SequenceAct
       });
     }
 
-    case updateBasicsAndPhysicals.case(action.type): {
-      return updateBasicsAndPhysicals.reducer(state, action, {
-        REQUEST: () => state.set('updateState', RequestStates.PENDING),
-        SUCCESS: () => {
+    case updateBasics.case(action.type): {
+      return updateBasics.reducer(state, action, {
+        REQUEST: () => {
           const { path, properties } = action.value;
           return state
-            .set('updateState', RequestStates.SUCCESS)
+            .set('updateState', RequestStates.PENDING)
             .setIn(['formData', ...path], properties);
         },
+        SUCCESS: () => state.set('updateState', RequestStates.SUCCESS),
         FAILURE: () => state.set('updateState', RequestStates.FAILURE)
       });
     }
@@ -53,4 +54,4 @@ const basicInformationReducer = (state :Map = INITIAL_STATE, action :SequenceAct
   }
 };
 
-export default basicInformationReducer;
+export default basicsReducer;

@@ -17,6 +17,7 @@ import { faAddressCard, faEdit } from '@fortawesome/pro-solid-svg-icons';
 import LinkButton from '../../../components/buttons/LinkButton';
 import { RESPONSE_PLAN_PATH } from '../../../core/router/Routes';
 import { CONTEXT_FQN } from '../../../edm/DataModelFqns';
+import { isNonEmptyString, isEmptyString } from '../../../utils/LangUtils';
 
 const IconWrapper = styled.span`
   vertical-align: middle;
@@ -49,7 +50,7 @@ type Props = {
 };
 
 const BackgroundInformationCard = ({ backgroundInformation, isLoading, match } :Props) => {
-  const backgroundSummary = backgroundInformation.getIn([CONTEXT_FQN, 0]) || '';
+  const backgroundSummary :string = backgroundInformation.getIn([CONTEXT_FQN, 0]) || '';
   return (
     <Card>
       <CardHeader mode="primary" padding="sm">
@@ -65,8 +66,8 @@ const BackgroundInformationCard = ({ backgroundInformation, isLoading, match } :
       </CardHeader>
       <CardSegment vertical padding="sm">
         { isLoading && <Spinner size="2x" /> }
-        { (!isLoading && backgroundSummary.length) && <Text>{backgroundSummary}</Text> }
-        { (!isLoading && !backgroundSummary.length) && <IconSplash caption="No background information." /> }
+        { (!isLoading && isNonEmptyString(backgroundSummary)) && <Text>{backgroundSummary}</Text> }
+        { (!isLoading && isEmptyString(backgroundSummary)) && <IconSplash caption="No background information." /> }
       </CardSegment>
     </Card>
   );

@@ -1,15 +1,15 @@
 // @flow
-import { List, Map, fromJS } from 'immutable';
+import { Map, fromJS } from 'immutable';
 import { RequestStates } from 'redux-reqseq';
 import { DataProcessingUtils } from 'lattice-fabricate';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
-  deleteInteractionStrategies,
-  getResponsePlan,
-  submitResponsePlan,
-  updateResponsePlan,
-} from './ResponsePlanActions';
+  deleteOfficerSafetyConcerns,
+  getOfficerSafetyConcerns,
+  submitOfficerSafetyConcerns,
+  updateOfficerSafetyConcerns,
+} from '../OfficerSafetyActions';
 
 const { getPageSectionKey } = DataProcessingUtils;
 
@@ -19,45 +19,34 @@ const INITIAL_STATE :Map = fromJS({
   entityIndexToIdMap: Map(),
   fetchState: RequestStates.STANDBY,
   formData: {
-    [getPageSectionKey(1, 2)]: []
+    [getPageSectionKey(1, 1)]: [],
+    [getPageSectionKey(1, 2)]: [],
+    [getPageSectionKey(1, 3)]: []
   },
-  interactionStrategies: List(),
   updateState: RequestStates.STANDBY,
 });
 
-const responsePlanReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
+const officerSafetyConcernsReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
   switch (action.type) {
 
-    case getResponsePlan.case(action.type): {
-      return getResponsePlan.reducer(state, action, {
+    case getOfficerSafetyConcerns.case(action.type): {
+      return getOfficerSafetyConcerns.reducer(state, action, {
         REQUEST: () => state.set('fetchState', RequestStates.PENDING),
-        SUCCESS: () => {
-          const {
-            entityIndexToIdMap,
-            formData,
-            interactionStrategies,
-            responsePlan,
-          } = action.value;
-
-          return state
-            .set('data', responsePlan)
-            .set('entityIndexToIdMap', entityIndexToIdMap)
-            .set('fetchState', RequestStates.SUCCESS)
-            .set('formData', formData)
-            .set('interactionStrategies', interactionStrategies);
-        },
+        SUCCESS: () => state
+          .merge(action.value)
+          .set('fetchState', RequestStates.SUCCESS),
         FAILURE: () => state.set('fetchState', RequestStates.FAILURE)
       });
     }
 
-    case submitResponsePlan.case(action.type): {
-      return submitResponsePlan.reducer(state, action, {
+    case submitOfficerSafetyConcerns.case(action.type): {
+      return submitOfficerSafetyConcerns.reducer(state, action, {
         REQUEST: () => state.set('submitState', RequestStates.PENDING),
         SUCCESS: () => {
           const {
             entityIndexToIdMap,
             path,
-            properties,
+            properties
           } = action.value;
           return state
             .set('entityIndexToIdMap', entityIndexToIdMap)
@@ -68,8 +57,8 @@ const responsePlanReducer = (state :Map = INITIAL_STATE, action :SequenceAction)
       });
     }
 
-    case updateResponsePlan.case(action.type): {
-      return updateResponsePlan.reducer(state, action, {
+    case updateOfficerSafetyConcerns.case(action.type): {
+      return updateOfficerSafetyConcerns.reducer(state, action, {
         REQUEST: () => {
           const { path, properties } = action.value;
           return state
@@ -81,8 +70,8 @@ const responsePlanReducer = (state :Map = INITIAL_STATE, action :SequenceAction)
       });
     }
 
-    case deleteInteractionStrategies.case(action.type): {
-      return deleteInteractionStrategies.reducer(state, action, {
+    case deleteOfficerSafetyConcerns.case(action.type): {
+      return deleteOfficerSafetyConcerns.reducer(state, action, {
         REQUEST: () => state.set('deleteState', RequestStates.PENDING),
         SUCCESS: () => {
           const { path } = action.value;
@@ -99,4 +88,4 @@ const responsePlanReducer = (state :Map = INITIAL_STATE, action :SequenceAction)
   }
 };
 
-export default responsePlanReducer;
+export default officerSafetyConcernsReducer;

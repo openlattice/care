@@ -7,24 +7,22 @@ import type { Dispatch } from 'redux';
 import type { RequestSequence } from 'redux-reqseq';
 import type { Match } from 'react-router-dom';
 
-import BasicsForm from './BasicsForm';
-import AppearanceForm from './AppearanceForm';
-import AddressForm from './AddressForm';
-import { getBasicInformation } from './actions/BasicInformationActions';
+import OfficerSafetyConcernsForm from './OfficerSafetyConcernsForm';
+import { getOfficerSafety } from './OfficerSafetyActions';
 import { PROFILE_ID_PARAM } from '../../../../core/router/Routes';
 
 type Props = {
   actions :{
-    getBasicInformation :RequestSequence;
+    getOfficerSafety :RequestSequence;
   };
   match :Match;
 };
-class BasicInformationContainer extends Component<Props> {
+class OfficerSafetyContainer extends Component<Props> {
 
   componentDidMount() {
     const { actions, match } = this.props;
     const personEKID = match.params[PROFILE_ID_PARAM];
-    actions.getBasicInformation(personEKID);
+    actions.getOfficerSafety(personEKID);
   }
 
   componentDidUpdate(prevProps :Props) {
@@ -38,7 +36,7 @@ class BasicInformationContainer extends Component<Props> {
     const personEKID = match.params[PROFILE_ID_PARAM];
     const prevPersonEKID = prevMatch.params[PROFILE_ID_PARAM];
     if (personEKID !== prevPersonEKID) {
-      actions.getBasicInformation(personEKID);
+      actions.getOfficerSafety(personEKID);
     }
   }
 
@@ -48,9 +46,7 @@ class BasicInformationContainer extends Component<Props> {
 
     return (
       <CardStack>
-        <BasicsForm />
-        <AppearanceForm personEKID={personEKID} />
-        <AddressForm personEKID={personEKID} />
+        <OfficerSafetyConcernsForm personEKID={personEKID} />
       </CardStack>
     );
   }
@@ -58,9 +54,9 @@ class BasicInformationContainer extends Component<Props> {
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
-    getBasicInformation
+    getOfficerSafety
   }, dispatch)
 });
 
 // $FlowFixMe
-export default connect(null, mapDispatchToProps)(BasicInformationContainer);
+export default connect(null, mapDispatchToProps)(OfficerSafetyContainer);

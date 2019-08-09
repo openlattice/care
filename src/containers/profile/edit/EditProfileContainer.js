@@ -12,6 +12,7 @@ import type { Match } from 'react-router';
 import NavStep from './NavStep';
 import ResponsePlanForm from './responseplan/ResponsePlanForm';
 import BasicInformationContainer from './basicinformation/BasicInformationContainer';
+import OfficerSafetyContainer from './officersafety/OfficerSafetyContainer';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
 import {
   BASIC_PATH,
@@ -44,7 +45,7 @@ const EditProfileContainer = (props :Props) => {
           </Card>
           <Switch>
             <Route path={`${match.path}${BASIC_PATH}`} component={BasicInformationContainer} />
-            {/* <Route path={`${match.path}${OFFICER_SAFETY_PATH}`} /> */}
+            <Route path={`${match.path}${OFFICER_SAFETY_PATH}`} component={OfficerSafetyContainer} />
             <Route path={`${match.path}${RESPONSE_PLAN_PATH}`} component={ResponsePlanForm} />
             {/* <Route path={`${match.path}${CONTACTS_PATH}`} /> */}
             {/* <Route path={`${match.path}${ABOUT_PATH}`} /> */}

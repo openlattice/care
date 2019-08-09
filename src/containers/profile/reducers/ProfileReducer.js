@@ -7,11 +7,13 @@ import person from './PersonReducer';
 import physicalAppearance from './PhysicalAppearanceReducer';
 import reports from './ReportsReducer';
 import responsePlan from '../edit/responseplan/ResponsePlanReducer';
-import basicInformation from '../edit/basicinformation/BasicInformationReducer';
+import basicInformation from '../edit/basicinformation/reducers/BasicInformationReducer';
+import officerSafety from '../edit/officersafety/reducers/OfficerSafetyReducer';
 import { CLEAR_PROFILE } from '../ProfileActions';
 
 const subReducers = combineReducers({
   basicInformation,
+  officerSafety,
   person,
   physicalAppearance,
   reports,

@@ -7,13 +7,15 @@ import {
   Set,
 } from 'immutable';
 import { Constants, Models } from 'lattice';
+import { DataProcessingUtils } from 'lattice-fabricate';
 
+const { getEntityAddressKey } = DataProcessingUtils;
 const { FullyQualifiedName } = Models;
 const { OPENLATTICE_ID_FQN } = Constants;
 
-export const SEARCH_PREFIX = 'entity';
+const SEARCH_PREFIX = 'entity';
 
-export const getFqnObj = (fqnStr :string) => {
+const getFqnObj = (fqnStr :string) => {
   const splitStr = fqnStr.split('.');
   return {
     namespace: splitStr[0],
@@ -21,7 +23,7 @@ export const getFqnObj = (fqnStr :string) => {
   };
 };
 
-export const stripIdField = (entity :Object) => {
+const stripIdField = (entity :Object) => {
   if (isImmutable(entity)) {
     return entity.delete(OPENLATTICE_ID_FQN).delete('id');
   }
@@ -36,19 +38,19 @@ export const stripIdField = (entity :Object) => {
   return newEntity;
 };
 
-export const getSearchTerm = (propertyTypeId :UUID, searchString :string, exact :boolean = false) => {
+const getSearchTerm = (propertyTypeId :UUID, searchString :string, exact :boolean = false) => {
   const searchTerm = exact ? `"${searchString}"` : searchString;
   return `${SEARCH_PREFIX}.${propertyTypeId}:${searchTerm}`;
 };
 
 // https://github.com/immutable-js/immutable-js/wiki/Predicates#pick--omit
-export const keyIn = (keys :string[]) => {
+const keyIn = (keys :string[]) => {
   const keySet = Set(keys);
   return (v :any, k :string) => keySet.has(k);
 };
 
 // Help simulate response data from submitted data by replacing fqn with ids
-export const simulateResponseData = (properties :Map, entityKeyId :UUID, edm :Map) => {
+const simulateResponseData = (properties :Map, entityKeyId :UUID, edm :Map) => {
   const transformedIds = Map().withMutations((mutable :Map) => {
     properties.mapKeys((propertyTypeId :UUID, value :any) => {
       const fqnObj = edm.getIn(['propertyTypesById', propertyTypeId, 'type']);
@@ -64,10 +66,79 @@ export const simulateResponseData = (properties :Map, entityKeyId :UUID, edm :Ma
   return transformedIds;
 };
 
-export const inchesToFeetString = (inches :number) => {
+const inchesToFeetString = (inches :number) => {
   const remainder = inches % 12;
   const feet = Math.floor(inches / 12);
   return `${feet}'${remainder}"`;
 };
 
-export const getEntityKeyId = (entity :Map | Object) :string => getIn(entity, [OPENLATTICE_ID_FQN, 0], '');
+const getEntityKeyId = (entity :Map | Object) :string => getIn(entity, [OPENLATTICE_ID_FQN, 0], '');
+
+const getEntityKeyIdsFromList = (entityList :List) => entityList.map(entity => getIn(entity, [OPENLATTICE_ID_FQN, 0]));
+
+const getFormDataFromEntity = (
+  entity :Map | Object,
+  esn :string,
+  properties :List<FullyQualifiedName> | FullyQualifiedName[],
+  index :number
+) :Map => {
+  const entityFormData = Map().withMutations((entityMutator) => {
+    properties.forEach((fqn :FullyQualifiedName) => {
+      entityMutator.set(getEntityAddressKey(index, esn, fqn), getIn(entity, [fqn, 0]));
+    });
+  });
+
+  return entityFormData;
+};
+
+const getFormDataFromEntityArray = (
+  data :List<Map> | Object[],
+  esn :string,
+  properties :List<FullyQualifiedName> | FullyQualifiedName[],
+  index :number
+) :List<Map> => {
+  const entityFormDataList = List().withMutations((mutator :List) => {
+    data.forEach((entity :Map) => {
+      const entityFormData = getFormDataFromEntity(entity, esn, properties, index);
+      mutator.push(entityFormData);
+    });
+  });
+
+  return entityFormDataList;
+};
+
+const groupNeighborsByEntitySetIds = (neighbors :List<Map>) :Map => {
+  const neighborsByESID = Map().withMutations((mutable) => {
+    neighbors.forEach((neighbor) => {
+      const neighborESID = neighbor.getIn(['neighborEntitySet', 'id']);
+      const neighborDetails = neighbor.get('neighborDetails');
+
+      if (mutable.has(neighborESID)) {
+        const entitySetCount = mutable.get(neighborESID).count();
+        mutable.setIn([neighborESID, entitySetCount], neighborDetails);
+      }
+      else {
+        mutable.set(neighborESID, List([neighborDetails]));
+      }
+
+    });
+  });
+
+  return neighborsByESID;
+};
+
+
+export {
+  SEARCH_PREFIX,
+  getEntityKeyIdsFromList,
+  getEntityKeyId,
+  getFormDataFromEntity,
+  getFormDataFromEntityArray,
+  getFqnObj,
+  getSearchTerm,
+  inchesToFeetString,
+  keyIn,
+  simulateResponseData,
+  groupNeighborsByEntitySetIds,
+  stripIdField,
+};

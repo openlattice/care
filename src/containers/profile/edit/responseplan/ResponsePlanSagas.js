@@ -4,8 +4,8 @@ import {
   put,
   select,
   takeEvery,
+  takeLatest,
 } from '@redux-saga/core/effects';
-import isPlainObject from 'lodash/isPlainObject';
 import {
   List,
   Map,
@@ -45,7 +45,7 @@ import {
   submitDataGraphWorker,
   submitPartialReplaceWorker,
 } from '../../../../core/sagas/data/DataSagas';
-import { INDEX_FQN } from '../../../../edm/DataModelFqns';
+import { INDEX_FQN, TECHNIQUES_FQN } from '../../../../edm/DataModelFqns';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
@@ -64,7 +64,7 @@ const LOG = new Logger('ProfileSagas');
 export function* submitResponsePlanWorker(action :SequenceAction) :Generator<*, *, *> {
   try {
     const { value } = action;
-    if (value === null || value === undefined) throw ERR_ACTION_VALUE_NOT_DEFINED;
+    if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
 
     yield put(submitResponsePlan.request(action.id));
     const response = yield call(submitDataGraphWorker, submitDataGraph(value));
@@ -87,19 +87,14 @@ export function* submitResponsePlanWorker(action :SequenceAction) :Generator<*, 
 
     const { path, properties } = value;
 
-    const prevFormData = yield select(state => state.getIn(['profile', 'responsePlan', 'formData']));
-    let newFormData = prevFormData;
-    if (Array.isArray(path) && isPlainObject(properties)) {
-      newFormData = prevFormData.setIn(path, fromJS(properties));
-    }
-
     yield put(submitResponsePlan.success(action.id, {
       entityIndexToIdMap: newEntityIndexToIdMap,
-      formData: newFormData
+      path,
+      properties: fromJS(properties)
     }));
   }
   catch (error) {
-    LOG.error(error);
+    LOG.error('submitResponsePlanWorker', error);
     yield put(submitResponsePlan.failure(action.id, error));
   }
   finally {
@@ -112,9 +107,9 @@ export function* submitResponsePlanWatcher() :Generator<*, *, *> {
 }
 
 export function* getResponsePlanWorker(action :SequenceAction) :Generator<*, *, *> {
+  const response = {};
   try {
     const { value: entityKeyId } = action;
-    if (!isDefined(entityKeyId)) throw ERR_ACTION_VALUE_NOT_DEFINED;
     if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
 
     yield put(getResponsePlan.request(action.id));
@@ -147,7 +142,6 @@ export function* getResponsePlanWorker(action :SequenceAction) :Generator<*, *, 
       LOG.warn('more than one response plan found', entityKeyId);
     }
 
-
     const responsePlan = responsePlans
       .getIn([0, 'neighborDetails'], Map());
     const responsePlanEKID :UUID = responsePlan.getIn([OPENLATTICE_ID_FQN, 0]);
@@ -160,7 +154,7 @@ export function* getResponsePlanWorker(action :SequenceAction) :Generator<*, *, 
           entityKeyIds: [responsePlanEKID],
           edgeEntitySetIds: [includesESID],
           destinationEntitySetIds: [interactionStrategyESID],
-          sourcesEntitySetIds: []
+          sourceEntitySetIds: []
         }
       };
       const interactionStrategyResponse = yield call(
@@ -173,6 +167,7 @@ export function* getResponsePlanWorker(action :SequenceAction) :Generator<*, *, 
       interactionStrategies = fromJS(interactionStrategyResponse.data)
         .get(responsePlanEKID, List())
         .map(entity => entity.get('neighborDetails', Map()))
+        .filter(entity => !entity.has(TECHNIQUES_FQN))
         .sort((stratA, stratB) => {
           const indexA = stratA.getIn([INDEX_FQN, 0]);
           const indexB = stratB.getIn([INDEX_FQN, 0]);
@@ -190,6 +185,8 @@ export function* getResponsePlanWorker(action :SequenceAction) :Generator<*, *, 
     const formData = constructResponsePlanFormData(responsePlan, interactionStrategies);
     const entityIndexToIdMap = constructEntityIndexToIdMap(responsePlanEKID, interactionStrategyEKIDs);
 
+    response.data = responsePlan;
+
     yield put(getResponsePlan.success(action.id, {
       entityIndexToIdMap,
       formData,
@@ -198,22 +195,25 @@ export function* getResponsePlanWorker(action :SequenceAction) :Generator<*, *, 
     }));
   }
   catch (error) {
-    LOG.error(error);
+    LOG.error('getResponsePlanWorker', error);
+    response.error = error;
     yield put(getResponsePlan.failure(action.id, error));
   }
   finally {
     yield put(getResponsePlan.finally(action.id));
   }
+
+  return response;
 }
 
 export function* getResponsePlanWatcher() :Generator<*, *, *> {
-  yield takeEvery(GET_RESPONSE_PLAN, getResponsePlanWorker);
+  yield takeLatest(GET_RESPONSE_PLAN, getResponsePlanWorker);
 }
 
 export function* updateResponsePlanWorker(action :SequenceAction) :Generator<*, *, *> {
   try {
     const { value } = action;
-    if (value === null || value === undefined) throw ERR_ACTION_VALUE_NOT_DEFINED;
+    if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
 
     yield put(updateResponsePlan.request(action.id, value));
     const response = yield call(submitPartialReplaceWorker, submitPartialReplace(value));
@@ -223,7 +223,7 @@ export function* updateResponsePlanWorker(action :SequenceAction) :Generator<*, 
     yield put(updateResponsePlan.success(action.id));
   }
   catch (error) {
-    LOG.error(error);
+    LOG.error('updateResponsePlanWorker', error);
     yield put(updateResponsePlan.failure(action.id, error));
   }
   finally {
@@ -238,7 +238,7 @@ export function* updateResponsePlanWatcher() :Generator<*, *, *> {
 export function* deleteInteractionStrategiesWorker(action :SequenceAction) :Generator<*, *, *> {
   try {
     const { value } = action;
-    if (value === null || value === undefined) throw ERR_ACTION_VALUE_NOT_DEFINED;
+    if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
 
     yield put(deleteInteractionStrategies.request(action.id));
     const { entityData, path } = value;
@@ -249,7 +249,7 @@ export function* deleteInteractionStrategiesWorker(action :SequenceAction) :Gene
     yield put(deleteInteractionStrategies.success(action.id, { path }));
   }
   catch (error) {
-    LOG.error(error);
+    LOG.error('deleteInteraionStrategiesWorker', error);
     yield put(deleteInteractionStrategies.failure(action.id, error));
   }
   finally {

@@ -1,6 +1,7 @@
 // @flow
 import React, { Component } from 'react';
-import { Form, DataProcessingUtils } from 'lattice-fabricate';
+import { DateTime } from 'luxon';
+import { Form } from 'lattice-fabricate';
 import { Card, CardSegment, Spinner } from 'lattice-ui-kit';
 import { Map } from 'immutable';
 import { bindActionCreators } from 'redux';
@@ -11,21 +12,23 @@ import type { Dispatch } from 'redux';
 import type { Match } from 'react-router-dom';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
+import {
+  updateBasics,
+} from './actions/BasicInformationActions';
+import { schema, uiSchema } from './schemas/BasicInformationSchemas';
 import { PROFILE_ID_PARAM } from '../../../../core/router/Routes';
-import { schema, uiSchema } from './schemas/BasicsAndPhysicalSchemas';
-import { getBasicsAndPhysicals, updateBasicsAndPhysicals } from './BasicInformationActions';
+import { COMPLETED_DT_FQN } from '../../../../edm/DataModelFqns';
+import { APP_TYPES_FQNS } from '../../../../shared/Consts';
 
 const {
-  getPageSectionKey,
-  getEntityAddressKey,
-  processEntityData,
-  processAssociationEntityData
-} = DataProcessingUtils;
+  OBSERVED_IN_FQN,
+  PEOPLE_FQN,
+  PHYSICAL_APPEARANCE_FQN,
+} = APP_TYPES_FQNS;
 
 type Props = {
   actions :{
-    getBasicsAndPhysicals :RequestSequence;
-    updateBasicsAndPhysicals :RequestSequence;
+    updateBasics :RequestSequence;
   },
   entityIndexToIdMap :Map;
   entitySetIds :Map;
@@ -40,7 +43,7 @@ type State = {
   prepopulated :boolean;
 };
 
-class BasicsAndPhysicalsForm extends Component<Props, State> {
+class BasicInformationForm extends Component<Props, State> {
 
   state = {
     formData: {},
@@ -48,31 +51,12 @@ class BasicsAndPhysicalsForm extends Component<Props, State> {
   }
 
   componentDidMount() {
-    const { actions, formData, match } = this.props;
-    const personEKID = match.params[PROFILE_ID_PARAM];
-    if (formData.isEmpty()) {
-      actions.getBasicsAndPhysicals(personEKID);
-    }
-    else {
-      this.initializeFormData();
-    }
+    this.initializeFormData();
   }
 
   componentDidUpdate(prevProps :Props) {
-    const {
-      actions,
-      formData,
-      match,
-    } = this.props;
-    const {
-      formData: prevFormData,
-      match: prevMatch,
-    } = prevProps;
-    const personEKID = match.params[PROFILE_ID_PARAM];
-    const prevPersonEKID = prevMatch.params[PROFILE_ID_PARAM];
-    if (personEKID !== prevPersonEKID) {
-      actions.getBasicsAndPhysicals(personEKID);
-    }
+    const { formData } = this.props;
+    const { formData: prevFormData } = prevProps;
 
     if (!formData.equals(prevFormData)) {
       this.initializeFormData();
@@ -87,6 +71,17 @@ class BasicsAndPhysicalsForm extends Component<Props, State> {
     });
   }
 
+  getAssociations = () => {
+    const { match } = this.props;
+    const personEKID = match.params[PROFILE_ID_PARAM];
+    const nowAsIsoString :string = DateTime.local().toISO();
+    return [
+      [OBSERVED_IN_FQN, personEKID, PEOPLE_FQN, 0, PHYSICAL_APPEARANCE_FQN, {
+        [COMPLETED_DT_FQN.toString()]: [nowAsIsoString]
+      }],
+    ];
+  }
+
   render() {
     const {
       actions,
@@ -97,7 +92,7 @@ class BasicsAndPhysicalsForm extends Component<Props, State> {
     } = this.props;
     const { formData, prepopulated } = this.state;
     const formContext = {
-      editAction: actions.updateBasicsAndPhysicals,
+      editAction: actions.updateBasics,
       entityIndexToIdMap,
       entitySetIds,
       mappers: {},
@@ -126,20 +121,19 @@ class BasicsAndPhysicalsForm extends Component<Props, State> {
 }
 
 const mapStateToProps = state => ({
-  entityIndexToIdMap: state.getIn(['profile', 'basicsAndPhysicals', 'entityIndexToIdMap'], Map()),
+  entityIndexToIdMap: state.getIn(['profile', 'basicInformation', 'basics', 'entityIndexToIdMap'], Map()),
   entitySetIds: state.getIn(['app', 'selectedOrgEntitySetIds'], Map()),
-  fetchState: state.getIn(['profile', 'basicsAndPhysicals', 'fetchState'], RequestStates.STANDBY),
-  formData: state.getIn(['profile', 'basicsAndPhysicals', 'formData'], Map()),
+  fetchState: state.getIn(['profile', 'basicInformation', 'basics', 'fetchState'], RequestStates.STANDBY),
+  formData: state.getIn(['profile', 'basicInformation', 'basics', 'formData'], Map()),
   propertyTypeIds: state.getIn(['edm', 'fqnToIdMap'], Map()),
 });
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
-    getBasicsAndPhysicals,
-    updateBasicsAndPhysicals,
+    updateBasics,
   }, dispatch)
 });
 
 export default withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(BasicsAndPhysicalsForm)
+  connect(mapStateToProps, mapDispatchToProps)(BasicInformationForm)
 );

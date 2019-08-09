@@ -25,6 +25,7 @@ import {
   submitResponsePlan,
   updateResponsePlan,
 } from './ResponsePlanActions';
+import { isValidUuid } from '../../../../utils/Utils';
 
 const {
   INCLUDES_FQN,
@@ -70,9 +71,13 @@ class ResponsePlanForm extends Component<Props, State> {
   };
 
   componentDidMount() {
-    const { actions, formData, match } = this.props;
+    const {
+      actions,
+      match,
+      responsePlanEKID
+    } = this.props;
     const personEKID = match.params[PROFILE_ID_PARAM];
-    if (formData.isEmpty()) {
+    if (!isValidUuid(responsePlanEKID)) {
       actions.getResponsePlan(personEKID);
     }
     else {
@@ -103,9 +108,12 @@ class ResponsePlanForm extends Component<Props, State> {
 
   initializeFormData = () => {
     const { formData } = this.props;
+    const prepopulated = formData
+      .reduce((isPopulated, value) => isPopulated || !value.isEmpty(), false);
+
     this.setState({
       formData: formData.toJS(),
-      prepopulated: !formData.isEmpty()
+      prepopulated
     });
   }
 
@@ -149,9 +157,12 @@ class ResponsePlanForm extends Component<Props, State> {
     const indexKey = getEntityAddressKey(-1, INTERACTION_STRATEGY_FQN, INDEX_FQN);
     const interactionItems = get(formData, pageSection);
     let newFormData = formData;
-    interactionItems.forEach((item, index) => {
-      newFormData = setIn(newFormData, [pageSection, index, indexKey], index);
-    });
+
+    if (Array.isArray(interactionItems)) {
+      interactionItems.forEach((item, index) => {
+        newFormData = setIn(newFormData, [pageSection, index, indexKey], index);
+      });
+    }
 
     this.setState({ formData: newFormData });
   }
