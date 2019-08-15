@@ -4,6 +4,7 @@ import { DateTime } from 'luxon';
 import {
   Map,
   get,
+  isImmutable,
   setIn,
 } from 'immutable';
 import { Form, DataProcessingUtils } from 'lattice-fabricate';
@@ -26,6 +27,7 @@ import {
   updateResponsePlan,
 } from './ResponsePlanActions';
 import { isValidUuid } from '../../../../utils/Utils';
+import { isEmptyString } from '../../../../utils/LangUtils';
 
 const {
   INCLUDES_FQN,
@@ -106,10 +108,17 @@ class ResponsePlanForm extends Component<Props, State> {
     }
   }
 
+  // TODO: prepopulated flag is not set correctly for page1section1
   initializeFormData = () => {
     const { formData } = this.props;
     const prepopulated = formData
-      .reduce((isPopulated, value) => isPopulated || !value.isEmpty(), false);
+      .reduce((isPopulated, value) => {
+        let isEmpty = isEmptyString(value);
+        if (isImmutable(value)) {
+          isEmpty = value.isEmpty();
+        }
+        return isPopulated || !isEmpty;
+      }, false);
 
     this.setState({
       formData: formData.toJS(),

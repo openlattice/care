@@ -8,6 +8,7 @@ import {
 } from 'immutable';
 import { Constants, Models } from 'lattice';
 import { DataProcessingUtils } from 'lattice-fabricate';
+import { isDefined } from './LangUtils';
 
 const { getEntityAddressKey } = DataProcessingUtils;
 const { FullyQualifiedName } = Models;
@@ -84,7 +85,10 @@ const getFormDataFromEntity = (
 ) :Map => {
   const entityFormData = Map().withMutations((entityMutator) => {
     properties.forEach((fqn :FullyQualifiedName) => {
-      entityMutator.set(getEntityAddressKey(index, esn, fqn), getIn(entity, [fqn, 0]));
+      const value = getIn(entity, [fqn, 0]);
+      if (isDefined(value)) {
+        entityMutator.set(getEntityAddressKey(index, esn, fqn), value);
+      }
     });
   });
 

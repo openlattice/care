@@ -16,7 +16,8 @@ import {
   faUser,
   faVenusMars,
   faWeightHanging,
-  faEdit
+  faEdit,
+  faClawMarks
 } from '@fortawesome/pro-solid-svg-icons';
 import { faUserHardHat } from '@fortawesome/pro-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -63,14 +64,15 @@ const AboutGrid = styled.div`
   grid-template-columns: repeat(2, 1fr);
   grid-gap: 5px;
 
-  > div:nth-child(-n + 2) {
+  > div:nth-child(-n + 2),
+  > div:last-child {
     grid-column: auto / span 2;
   };
 `;
 
 type Props = {
   match :Match;
-  physicalAppearance :Map;
+  appearance :Map;
   selectedPerson :Map;
   isLoading :boolean;
 };
@@ -80,7 +82,7 @@ const AboutCard = (props :Props) => {
   const {
     isLoading,
     match,
-    physicalAppearance,
+    appearance,
     selectedPerson
   } = props;
 
@@ -95,6 +97,11 @@ const AboutCard = (props :Props) => {
   if (rawDob) {
     formattedDob = DateTime.fromISO(rawDob).toLocaleString(DateTime.DATE_SHORT);
   }
+
+  const physicalAppearance = appearance.get('physicalAppearance', Map());
+  const identifyingCharacteristics = appearance.get('identifyingCharacteristics', Map());
+
+  const scars = identifyingCharacteristics.getIn([FQN.DESCRIPTION_FQN], '');
 
   const hairColor = physicalAppearance.getIn([FQN.HAIR_COLOR_FQN, 0], '');
   const eyeColor = physicalAppearance.getIn([FQN.EYE_COLOR_FQN, 0], '');
@@ -153,6 +160,10 @@ const AboutCard = (props :Props) => {
               content={eyeColor}
               isLoading={isLoading}
               icon={faEye} />
+          <AboutDetail
+              content={scars}
+              isLoading={isLoading}
+              icon={faClawMarks} />
         </AboutGrid>
       </CardSegment>
     </Card>
