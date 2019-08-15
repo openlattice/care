@@ -1,5 +1,5 @@
 // @flow
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { Map } from 'immutable';
 import {
@@ -38,66 +38,45 @@ type Props = {
   selectedPerson :Map;
 };
 
-class EditProfileContainer extends Component<Props> {
-  componentDidMount() {
-    const {
-      actions,
-      match,
-      selectedPerson,
-    } = this.props;
-    const personEKID = match.params[PROFILE_ID_PARAM];
-    if (selectedPerson.isEmpty()) {
-      actions.getBasics(personEKID);
-    }
-  }
+const EditProfileContainer = (props :Props) => {
+  const { actions, match, selectedPerson } = props;
 
-  componentDidUpdate(prevProps :Props) {
-    const {
-      actions,
-      match
-    } = this.props;
-    const {
-      match: prevMatch,
-    } = prevProps;
-    const personEKID = match.params[PROFILE_ID_PARAM];
-    const prevPersonEKID = prevMatch.params[PROFILE_ID_PARAM];
-    if (personEKID !== prevPersonEKID) {
-      actions.getBasics(personEKID);
-    }
-  }
+  useEffect(
+    () => {
+      actions.getBasics(match.params[PROFILE_ID_PARAM]);
+    },
+    [match.params[PROFILE_ID_PARAM]]
+  );
 
-  render() {
-    const { match, selectedPerson } = this.props;
-    return (
-      <ContentOuterWrapper>
-        <ProfileBanner selectedPerson={selectedPerson} />
-        <ContentWrapper>
-          <CardStack>
-            <Card>
-              <CardSegment padding="sm">
-                <Stepper>
-                  <NavStep to={`${match.url}${BASIC_PATH}`}>Basic Information</NavStep>
-                  <NavStep to={`${match.url}${OFFICER_SAFETY_PATH}`}>Officer Safety</NavStep>
-                  <NavStep to={`${match.url}${RESPONSE_PLAN_PATH}`}>Background & Response Plan</NavStep>
-                  {/* <NavStep to={`${match.url}${CONTACTS_PATH}`}>Contacts</NavStep>
-                  <NavStep to={`${match.url}${ABOUT_PATH}`}>About</NavStep> */}
-                </Stepper>
-              </CardSegment>
-            </Card>
-            <Switch>
-              <Route path={`${match.path}${BASIC_PATH}`} component={BasicInformationContainer} />
-              <Route path={`${match.path}${OFFICER_SAFETY_PATH}`} component={OfficerSafetyContainer} />
-              <Route path={`${match.path}${RESPONSE_PLAN_PATH}`} component={ResponsePlanForm} />
-              {/* <Route path={`${match.path}${CONTACTS_PATH}`} /> */}
-              {/* <Route path={`${match.path}${ABOUT_PATH}`} /> */}
-              <Redirect to={`${match.path}${RESPONSE_PLAN_PATH}`} />
-            </Switch>
-          </CardStack>
-        </ContentWrapper>
-      </ContentOuterWrapper>
-    );
-  }
-}
+  return (
+    <ContentOuterWrapper>
+      <ProfileBanner selectedPerson={selectedPerson} />
+      <ContentWrapper>
+        <CardStack>
+          <Card>
+            <CardSegment padding="sm">
+              <Stepper>
+                <NavStep to={`${match.url}${BASIC_PATH}`}>Basic Information</NavStep>
+                <NavStep to={`${match.url}${OFFICER_SAFETY_PATH}`}>Officer Safety</NavStep>
+                <NavStep to={`${match.url}${RESPONSE_PLAN_PATH}`}>Background & Response Plan</NavStep>
+                {/* <NavStep to={`${match.url}${CONTACTS_PATH}`}>Contacts</NavStep>
+                <NavStep to={`${match.url}${ABOUT_PATH}`}>About</NavStep> */}
+              </Stepper>
+            </CardSegment>
+          </Card>
+          <Switch>
+            <Route path={`${match.path}${BASIC_PATH}`} component={BasicInformationContainer} />
+            <Route path={`${match.path}${OFFICER_SAFETY_PATH}`} component={OfficerSafetyContainer} />
+            <Route path={`${match.path}${RESPONSE_PLAN_PATH}`} component={ResponsePlanForm} />
+            {/* <Route path={`${match.path}${CONTACTS_PATH}`} /> */}
+            {/* <Route path={`${match.path}${ABOUT_PATH}`} /> */}
+            <Redirect to={`${match.path}${RESPONSE_PLAN_PATH}`} />
+          </Switch>
+        </CardStack>
+      </ContentWrapper>
+    </ContentOuterWrapper>
+  );
+};
 
 const mapStateToProps = (state :Map) => ({
   selectedPerson: state.getIn(['profile', 'basicInformation', 'basics', 'data'], Map()),
