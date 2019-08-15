@@ -108,7 +108,6 @@ class ResponsePlanForm extends Component<Props, State> {
     }
   }
 
-  // TODO: prepopulated flag is not set correctly for page1section1
   initializeFormData = () => {
     const { formData } = this.props;
     const prepopulated = formData
