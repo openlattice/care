@@ -1,5 +1,5 @@
 // @flow
-import React, { Component, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { Map } from 'immutable';
 import {
@@ -10,10 +10,13 @@ import {
 } from 'lattice-ui-kit';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft } from '@fortawesome/pro-regular-svg-icons';
 import type { Match } from 'react-router';
 import type { Dispatch } from 'redux';
 import type { RequestSequence } from 'redux-reqseq';
 
+import LinkButton from '../../../components/buttons/LinkButton';
 import NavStep from './NavStep';
 import ResponsePlanForm from './responseplan/ResponsePlanForm';
 import BasicInformationContainer from './basicinformation/BasicInformationContainer';
@@ -53,6 +56,10 @@ const EditProfileContainer = (props :Props) => {
       <ProfileBanner selectedPerson={selectedPerson} />
       <ContentWrapper>
         <CardStack>
+          <LinkButton mode="subtle" to={match.url}>
+            <FontAwesomeIcon icon={faArrowLeft} fixedWidth />
+              Back to Profile
+          </LinkButton>
           <Card>
             <CardSegment padding="sm">
               <Stepper>
