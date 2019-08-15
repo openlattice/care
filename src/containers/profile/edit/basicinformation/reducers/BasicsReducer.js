@@ -4,6 +4,7 @@ import { RequestStates } from 'redux-reqseq';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
+  SELECT_PERSON,
   getBasics,
   updateBasics,
 } from '../actions/BasicInformationActions';
@@ -22,16 +23,9 @@ const basicsReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
     case getBasics.case(action.type): {
       return getBasics.reducer(state, action, {
         REQUEST: () => state.set('fetchState', RequestStates.PENDING),
-        SUCCESS: () => {
-          const {
-            entityIndexToIdMap,
-            formData,
-          } = action.value;
-          return state
-            .set('fetchState', RequestStates.SUCCESS)
-            .set('entityIndexToIdMap', entityIndexToIdMap)
-            .set('formData', formData);
-        },
+        SUCCESS: () => state
+          .merge(action.value)
+          .set('fetchState', RequestStates.SUCCESS),
         FAILURE: () => state.set('fetchState', RequestStates.FAILURE)
       });
     }
@@ -48,6 +42,9 @@ const basicsReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
         FAILURE: () => state.set('updateState', RequestStates.FAILURE)
       });
     }
+
+    case SELECT_PERSON:
+      return state.set('data', fromJS(action.value));
 
     default:
       return state;
