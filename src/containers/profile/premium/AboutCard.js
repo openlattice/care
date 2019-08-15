@@ -91,7 +91,7 @@ const AboutCard = (props :Props) => {
   const rawDob = selectedPerson.getIn([FQN.PERSON_DOB_FQN, 0], '');
   const race = selectedPerson.getIn([FQN.PERSON_RACE_FQN, 0], '');
   const sex = selectedPerson.getIn([FQN.PERSON_SEX_FQN, 0], '');
-  const aliases = selectedPerson.getIn([FQN.PERSON_NICK_NAME_FQN], '');
+  const aliases = selectedPerson.get(FQN.PERSON_NICK_NAME_FQN, []).join(', ');
   let formattedDob = '';
 
   if (rawDob) {
