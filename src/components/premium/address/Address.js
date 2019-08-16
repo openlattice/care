@@ -2,7 +2,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { IconSplash } from 'lattice-ui-kit';
-import { isNonEmptyStringArray } from '../../../utils/LangUtils';
+import { isEmptyString } from '../../../utils/LangUtils';
 import { addressSkeleton } from '../../skeletons';
 
 const H2 = styled.h2`
@@ -32,7 +32,7 @@ const Address = (props :Props) => {
     street,
   } = props;
 
-  const emptyAddress = !isNonEmptyStringArray([name, street, line2, cityStateZip]);
+  const emptyAddress = [name, street, line2, cityStateZip].every(isEmptyString);
 
   if (isLoading) return <AddressSkeleton isLoading />;
   if (emptyAddress) return <IconSplash caption="No address." />;
