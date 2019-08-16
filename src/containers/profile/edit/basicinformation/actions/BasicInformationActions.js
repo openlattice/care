@@ -7,6 +7,9 @@ const getAppearance = newRequestSequence(GET_APPEARANCE);
 const GET_BASICS :'GET_BASICS' = 'GET_BASICS';
 const getBasics = newRequestSequence(GET_BASICS);
 
+const SELECT_PERSON :'SELECT_PERSON' = 'SELECT_PERSON';
+const selectPerson = newRequestSequence(SELECT_PERSON);
+
 const GET_BASIC_INFORMATION :'GET_BASIC_INFORMATION' = 'GET_BASIC_INFORMATION';
 const getBasicInformation = newRequestSequence(GET_BASIC_INFORMATION);
 
@@ -23,12 +26,14 @@ export {
   GET_APPEARANCE,
   GET_BASICS,
   GET_BASIC_INFORMATION,
+  SELECT_PERSON,
   SUBMIT_APPEARANCE,
   UPDATE_APPEARANCE,
   UPDATE_BASICS,
   getAppearance,
   getBasicInformation,
   getBasics,
+  selectPerson,
   submitAppearance,
   updateAppearance,
   updateBasics

@@ -22,6 +22,7 @@ import type { Match } from 'react-router';
 import AboutCard from './AboutCard';
 import BackgroundInformationCard from './BackgroundInformationCard';
 import BehaviorCard from './BehaviorCard';
+import AddressCard from '../../../components/premium/address/AddressCard';
 import DeescalationCard from './DeescalationCard';
 import OfficerSafetyCard from './OfficerSafetyCard';
 import ReportsSummary from './ReportsSummary';
@@ -33,12 +34,13 @@ import RecentIncidentCard from '../RecentIncidentCard';
 import { labelMapReport } from '../constants';
 import Portrait from '../styled/Portrait';
 import { ContentWrapper, ContentOuterWrapper } from '../../../components/layout';
+import { getProfileReports } from '../ProfileActions';
 import {
-  getPersonData,
-  getPhysicalAppearance,
-  getProfileReports,
-  updateProfileAbout
-} from '../ProfileActions';
+  getAppearance,
+  getBasicInformation,
+  getBasics,
+} from '../edit/basicinformation/actions/BasicInformationActions';
+import { getAddress } from '../edit/basicinformation/actions/AddressActions';
 import { getResponsePlan } from '../edit/responseplan/ResponsePlanActions';
 import { getOfficerSafety } from '../edit/officersafety/OfficerSafetyActions';
 import { DATE_TIME_OCCURRED_FQN } from '../../../edm/DataModelFqns';
@@ -74,23 +76,25 @@ const BehaviorAndSafetyGrid = styled.div`
 
 type Props = {
   actions :{
+    getAddress :RequestSequence;
+    getAppearance :RequestSequence;
+    getBasicInformation :RequestSequence;
+    getBasics :RequestSequence;
     getOfficerSafety :RequestSequence;
-    getPersonData :RequestSequence;
-    getPhysicalAppearance :RequestSequence;
     getProfileReports :RequestSequence;
     getResponsePlan :RequestSequence;
     goToPath :(path :string) => RoutingAction;
-    updateProfileAbout :RequestSequence;
   };
+  address :Map;
+  appearance :Map;
   fetchAboutState :RequestState;
   fetchReportsState :RequestState;
   fetchResponsePlanState :RequestState;
-  match :Match;
-  physicalAppearance :Map;
-  reports :List<Map>;
-  selectedPerson :Map;
-  responsePlan :Map;
   interactionStrategies :List<Map>;
+  match :Match;
+  reports :List<Map>;
+  responsePlan :Map;
+  selectedPerson :Map;
 };
 
 type State = {
@@ -103,19 +107,17 @@ class PremiumProfileContainer extends Component<Props, State> {
     const {
       actions,
       match,
-      physicalAppearance,
       reports,
       responsePlan,
       selectedPerson,
     } = this.props;
     const personEKID = match.params[PROFILE_ID_PARAM];
-    if (physicalAppearance.isEmpty()) {
-      if (selectedPerson.isEmpty()) {
-        actions.getPersonData(personEKID); // gets both person and physical appearance
-      }
-      else {
-        actions.getPhysicalAppearance(personEKID); // only get physical appearance
-      }
+    if (selectedPerson.isEmpty()) {
+      actions.getBasicInformation(personEKID);
+    }
+    else {
+      actions.getAppearance(personEKID); // only get physical appearance
+      actions.getAddress(personEKID); // only get address
     }
 
     if (responsePlan.isEmpty()) actions.getOfficerSafety(personEKID);
@@ -131,7 +133,7 @@ class PremiumProfileContainer extends Component<Props, State> {
     const personEKID = match.params[PROFILE_ID_PARAM];
     const prevPersonEKID = prevMatch.params[PROFILE_ID_PARAM];
     if (personEKID !== prevPersonEKID) {
-      actions.getPersonData(personEKID);
+      actions.getBasics(personEKID);
       actions.getProfileReports(personEKID);
       actions.getOfficerSafety(personEKID);
     }
@@ -171,13 +173,14 @@ class PremiumProfileContainer extends Component<Props, State> {
 
   render() {
     const {
-      responsePlan,
+      address,
+      appearance,
       fetchAboutState,
       fetchReportsState,
       fetchResponsePlanState,
       interactionStrategies,
-      physicalAppearance,
       reports,
+      responsePlan,
       selectedPerson,
     } = this.props;
     const { recent, total } = this.countCrisisCalls();
@@ -209,7 +212,10 @@ class PremiumProfileContainer extends Component<Props, State> {
                 <AboutCard
                     isLoading={isLoadingAbout}
                     selectedPerson={selectedPerson}
-                    physicalAppearance={physicalAppearance} />
+                    appearance={appearance} />
+                <AddressCard
+                    isLoading={isLoadingAbout}
+                    address={address} />
               </CardStack>
             </Aside>
             <CardStack>
@@ -250,31 +256,34 @@ class PremiumProfileContainer extends Component<Props, State> {
 
 const mapStateToProps = (state :Map) => {
   const fetchAboutStates = [
-    state.getIn(['profile', 'person', 'fetchState']),
-    state.getIn(['profile', 'physicalAppearance', 'fetchState']),
+    state.getIn(['profile', 'basicInformation', 'basics', 'fetchState']),
+    state.getIn(['profile', 'basicInformation', 'appearance', 'fetchState']),
+    state.getIn(['profile', 'basicInformation', 'address', 'fetchState']),
   ];
 
   return {
-    responsePlan: state.getIn(['profile', 'responsePlan', 'data'], Map()),
+    appearance: state.getIn(['profile', 'basicInformation', 'appearance', 'data'], Map()),
+    address: state.getIn(['profile', 'basicInformation', 'address', 'data'], Map()),
     fetchAboutState: reduceRequestStates(fetchAboutStates),
     fetchReportsState: state.getIn(['profile', 'reports', 'fetchState'], RequestStates.STANDBY),
     fetchResponsePlanState: state.getIn(['profile', 'responsePlan', 'fetchState'], RequestStates.STANDBY),
     interactionStrategies: state.getIn(['profile', 'responsePlan', 'interactionStrategies'], List()),
-    physicalAppearance: state.getIn(['profile', 'physicalAppearance', 'data'], Map()),
     reports: state.getIn(['profile', 'reports', 'data'], List()),
-    selectedPerson: state.getIn(['profile', 'person', 'data'], Map()),
+    responsePlan: state.getIn(['profile', 'responsePlan', 'data'], Map()),
+    selectedPerson: state.getIn(['profile', 'basicInformation', 'basics', 'data'], Map()),
   };
 };
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
+    getAddress,
+    getAppearance,
+    getBasics,
     getOfficerSafety,
-    getPersonData,
-    getPhysicalAppearance,
+    getBasicInformation,
     getProfileReports,
     getResponsePlan,
     goToPath,
-    updateProfileAbout,
   }, dispatch)
 });
 

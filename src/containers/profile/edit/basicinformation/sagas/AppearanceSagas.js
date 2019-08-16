@@ -113,7 +113,10 @@ function* getAppearanceWorker(action :SequenceAction) :Generator<any, any, any> 
       identifyingCharacteristicsData,
     );
 
-    response.data = appearanceData;
+    response.data = fromJS({
+      physicalAppearance: appearanceData,
+      identifyingCharacteristics: identifyingCharacteristicsData
+    });
 
     yield put(getAppearance.success(action.id, response));
   }
