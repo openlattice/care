@@ -56,18 +56,20 @@ const EditProfileContainer = (props :Props) => {
       <ProfileBanner selectedPerson={selectedPerson} />
       <ContentWrapper>
         <CardStack>
-          <LinkButton mode="subtle" to={match.url}>
-            <FontAwesomeIcon icon={faArrowLeft} fixedWidth />
+          <div>
+            <LinkButton mode="subtle" to={match.url}>
+              <FontAwesomeIcon icon={faArrowLeft} fixedWidth />
               Back to Profile
-          </LinkButton>
+            </LinkButton>
+          </div>
           <Card>
             <CardSegment padding="sm">
               <Stepper>
                 <NavStep to={`${match.url}${BASIC_PATH}`}>Basic Information</NavStep>
                 <NavStep to={`${match.url}${OFFICER_SAFETY_PATH}`}>Officer Safety</NavStep>
                 <NavStep to={`${match.url}${RESPONSE_PLAN_PATH}`}>Background & Response Plan</NavStep>
-                {/* <NavStep to={`${match.url}${CONTACTS_PATH}`}>Contacts</NavStep>
-                <NavStep to={`${match.url}${ABOUT_PATH}`}>About</NavStep> */}
+                <NavStep to={`${match.url}${CONTACTS_PATH}`}>Contacts</NavStep>
+                <NavStep to={`${match.url}${ABOUT_PATH}`}>About</NavStep>
               </Stepper>
             </CardSegment>
           </Card>
