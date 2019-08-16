@@ -22,6 +22,7 @@ import type { Match } from 'react-router';
 import AboutCard from './AboutCard';
 import BackgroundInformationCard from './BackgroundInformationCard';
 import BehaviorCard from './BehaviorCard';
+import AddressCard from '../../../components/premium/address/AddressCard';
 import DeescalationCard from './DeescalationCard';
 import OfficerSafetyCard from './OfficerSafetyCard';
 import ReportsSummary from './ReportsSummary';
@@ -84,15 +85,16 @@ type Props = {
     getResponsePlan :RequestSequence;
     goToPath :(path :string) => RoutingAction;
   };
+  address :Map;
+  appearance :Map;
   fetchAboutState :RequestState;
   fetchReportsState :RequestState;
   fetchResponsePlanState :RequestState;
-  match :Match;
-  appearance :Map;
-  reports :List<Map>;
-  selectedPerson :Map;
-  responsePlan :Map;
   interactionStrategies :List<Map>;
+  match :Match;
+  reports :List<Map>;
+  responsePlan :Map;
+  selectedPerson :Map;
 };
 
 type State = {
@@ -170,13 +172,14 @@ class PremiumProfileContainer extends Component<Props, State> {
 
   render() {
     const {
-      responsePlan,
+      address,
+      appearance,
       fetchAboutState,
       fetchReportsState,
       fetchResponsePlanState,
       interactionStrategies,
-      appearance,
       reports,
+      responsePlan,
       selectedPerson,
     } = this.props;
     const { recent, total } = this.countCrisisCalls();
@@ -209,6 +212,9 @@ class PremiumProfileContainer extends Component<Props, State> {
                     isLoading={isLoadingAbout}
                     selectedPerson={selectedPerson}
                     appearance={appearance} />
+                <AddressCard
+                    isLoading={false}
+                    address={address} />
               </CardStack>
             </Aside>
             <CardStack>
@@ -254,13 +260,14 @@ const mapStateToProps = (state :Map) => {
   ];
 
   return {
-    responsePlan: state.getIn(['profile', 'responsePlan', 'data'], Map()),
+    appearance: state.getIn(['profile', 'basicInformation', 'appearance', 'data'], Map()),
+    address: state.getIn(['profile', 'basicInformation', 'address', 'data'], Map()),
     fetchAboutState: reduceRequestStates(fetchAboutStates),
     fetchReportsState: state.getIn(['profile', 'reports', 'fetchState'], RequestStates.STANDBY),
     fetchResponsePlanState: state.getIn(['profile', 'responsePlan', 'fetchState'], RequestStates.STANDBY),
     interactionStrategies: state.getIn(['profile', 'responsePlan', 'interactionStrategies'], List()),
-    appearance: state.getIn(['profile', 'basicInformation', 'appearance', 'data'], Map()),
     reports: state.getIn(['profile', 'reports', 'data'], List()),
+    responsePlan: state.getIn(['profile', 'responsePlan', 'data'], Map()),
     selectedPerson: state.getIn(['profile', 'basicInformation', 'basics', 'data'], Map()),
   };
 };
