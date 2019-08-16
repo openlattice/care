@@ -19,6 +19,8 @@ import type { Match } from 'react-router-dom';
 import * as FQN from '../../../edm/DataModelFqns';
 import LinkButton from '../../buttons/LinkButton';
 import { BASIC_PATH } from '../../../core/router/Routes';
+import { formatCityStateZip } from './AddressUtils';
+import Address from './Address';
 
 const IconWrapper = styled.span`
   vertical-align: middle;
@@ -47,7 +49,15 @@ type Props = {
 
 const AddressCard = (props :Props) => {
 
-  const { match } = props;
+  const { address, isLoading, match } = props;
+
+  const name = address.getIn([FQN.LOCATION_NAME_FQN, 0]);
+  const street = address.getIn([FQN.LOCATION_STREET_FQN, 0]);
+  const line2 = address.getIn([FQN.LOCATION_ADDRESS_LINE_2_FQN, 0]);
+  const city = address.getIn([FQN.LOCATION_CITY_FQN, 0]);
+  const state = address.getIn([FQN.LOCATION_STATE_FQN, 0]);
+  const zip = address.getIn([FQN.LOCATION_ZIP_FQN, 0]);
+  const cityStateZip = formatCityStateZip(city, state, zip);
 
   return (
     <Card>
@@ -63,7 +73,12 @@ const AddressCard = (props :Props) => {
         </H1>
       </CardHeader>
       <CardSegment vertical padding="sm">
-        
+        <Address
+            cityStateZip={cityStateZip}
+            isLoading={isLoading}
+            line2={line2}
+            name={name}
+            street={street} />
       </CardSegment>
     </Card>
   );

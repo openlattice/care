@@ -117,6 +117,7 @@ class PremiumProfileContainer extends Component<Props, State> {
     }
     else {
       actions.getAppearance(personEKID); // only get physical appearance
+      actions.getAddress(personEKID); // only get address
     }
 
     if (responsePlan.isEmpty()) actions.getOfficerSafety(personEKID);
@@ -213,7 +214,7 @@ class PremiumProfileContainer extends Component<Props, State> {
                     selectedPerson={selectedPerson}
                     appearance={appearance} />
                 <AddressCard
-                    isLoading={false}
+                    isLoading={isLoadingAbout}
                     address={address} />
               </CardStack>
             </Aside>
@@ -257,6 +258,7 @@ const mapStateToProps = (state :Map) => {
   const fetchAboutStates = [
     state.getIn(['profile', 'basicInformation', 'basics', 'fetchState']),
     state.getIn(['profile', 'basicInformation', 'appearance', 'fetchState']),
+    state.getIn(['profile', 'basicInformation', 'address', 'fetchState']),
   ];
 
   return {
