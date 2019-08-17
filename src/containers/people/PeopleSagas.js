@@ -151,7 +151,7 @@ function* editPersonWorker(action :SequenceAction) :Generator<*, *, *> {
     }]);
 
     let idsByFqn = Map();
-    Object.values(propertyTypes).forEach((propertyType) => {
+    Object.values(propertyTypes).forEach((propertyType :any) => {
       const { namespace, name } = propertyType.type;
       idsByFqn = idsByFqn.set(`${namespace}.${name}`, propertyType.id);
     });

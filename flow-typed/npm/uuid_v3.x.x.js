@@ -100,3 +100,5 @@ declare module "uuid/v5" {
 
   declare module.exports: Class<v5>;
 }
+
+declare type UUID = string;

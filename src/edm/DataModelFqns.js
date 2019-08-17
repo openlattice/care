@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import { Models } from 'lattice';
 
 const { FullyQualifiedName } = Models;
