@@ -67,6 +67,4 @@ const behaviorItemSkeleton = css`
   animation: ${loading} 2s infinite;
 `;
 
-export {
-  behaviorItemSkeleton
-};
+export default behaviorItemSkeleton;

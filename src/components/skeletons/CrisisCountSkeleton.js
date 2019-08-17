@@ -47,6 +47,4 @@ const crisisCountSkeleton = css`
   animation: ${loading} 2s infinite;
 `;
 
-export {
-  crisisCountSkeleton
-};
+export default crisisCountSkeleton;

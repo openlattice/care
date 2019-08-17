@@ -42,6 +42,4 @@ const aboutDetailSkeleton = css`
   animation: ${loading} 2s infinite;
 `;
 
-export {
-  aboutDetailSkeleton
-};
+export default aboutDetailSkeleton;
