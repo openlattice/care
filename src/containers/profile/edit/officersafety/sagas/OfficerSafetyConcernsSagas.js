@@ -6,7 +6,12 @@ import {
   takeLatest,
   takeEvery,
 } from '@redux-saga/core/effects';
-import { List, Map, fromJS } from 'immutable';
+import {
+  List,
+  Map,
+  fromJS,
+  getIn
+} from 'immutable';
 import { Constants } from 'lattice';
 import {
   SearchApiActions,
@@ -16,14 +21,16 @@ import type { SequenceAction } from 'redux-reqseq';
 
 import Logger from '../../../../../utils/Logger';
 import {
+  DELETE_OFFICER_SAFETY_CONCERNS,
+  GET_OFFICER_SAFETY,
   GET_OFFICER_SAFETY_CONCERNS,
   SUBMIT_OFFICER_SAFETY_CONCERNS,
   UPDATE_OFFICER_SAFETY_CONCERNS,
+  deleteOfficerSafetyConcerns,
+  getOfficerSafety,
   getOfficerSafetyConcerns,
   submitOfficerSafetyConcerns,
   updateOfficerSafetyConcerns,
-  DELETE_OFFICER_SAFETY_CONCERNS,
-  deleteOfficerSafetyConcerns,
 } from '../OfficerSafetyActions';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../../../utils/Errors';
 import { isDefined } from '../../../../../utils/LangUtils';
@@ -41,6 +48,7 @@ import {
   submitPartialReplaceWorker,
 } from '../../../../../core/sagas/data/DataSagas';
 import { getResponsePlan } from '../../responseplan/ResponsePlanActions';
+import { getResponsePlanWorker } from '../../responseplan/ResponsePlanSagas';
 import { constructFormData, constructEntityIndexToIdMap } from '../utils/OfficerSafetyConcernsUtils';
 import { TECHNIQUES_FQN } from '../../../../../edm/DataModelFqns';
 import { getEntityKeyIdsFromList, groupNeighborsByEntitySetIds } from '../../../../../utils/DataUtils';
@@ -98,7 +106,7 @@ function* getOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<any,
 
     const neighborsByESID = groupNeighborsByEntitySetIds(neighbors);
 
-    const safetyConcerns = neighborsByESID.get(officerSafetyConcernsESID, List());
+    const officerSafetyConcerns = neighborsByESID.get(officerSafetyConcernsESID, List());
     const behaviors = neighborsByESID.get(behaviorESID, List());
 
     // only strategies with techniques should appear as a safety concern
@@ -106,12 +114,12 @@ function* getOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<any,
       .get(interactionStrategiesESID, List())
       .filter((strategy :Map) => strategy.has(TECHNIQUES_FQN));
 
-    const safetyConcernsEKIDs = getEntityKeyIdsFromList(safetyConcerns);
+    const safetyConcernsEKIDs = getEntityKeyIdsFromList(officerSafetyConcerns);
     const behaviorsEKIDs = getEntityKeyIdsFromList(behaviors);
     const interactionStrategiesEKIDs = getEntityKeyIdsFromList(interactionStrategies);
 
     const formData = constructFormData(
-      safetyConcerns,
+      officerSafetyConcerns,
       behaviors,
       interactionStrategies
     );
@@ -122,11 +130,13 @@ function* getOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<any,
     );
 
     yield put(getOfficerSafetyConcerns.success(action.id, {
-      data: safetyConcerns,
+      data: fromJS({
+        officerSafetyConcerns,
+        behaviors,
+        interactionStrategies,
+      }),
       entityIndexToIdMap,
       formData,
-      behaviors,
-      interactionStrategies,
     }));
   }
   catch (error) {
@@ -140,6 +150,45 @@ function* getOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<any,
 
 function* getOfficerSafetyConcernsWatcher() :Generator<any, any, any> {
   yield takeLatest(GET_OFFICER_SAFETY_CONCERNS, getOfficerSafetyConcernsWorker);
+}
+
+
+function* getOfficerSafetyWorker(action :SequenceAction) :Generator<any, any, any> {
+  try {
+    const { value: entityKeyId } = action;
+    if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
+
+    yield put(getOfficerSafety.request(action.id));
+
+    const responsePlanResponse = yield call(
+      getResponsePlanWorker,
+      getResponsePlan(entityKeyId)
+    );
+
+    if (responsePlanResponse.error) throw responsePlanResponse.error;
+
+    const responsePlanEKID = getIn(responsePlanResponse.data, [OPENLATTICE_ID_FQN, 0]);
+
+    if (responsePlanEKID) {
+      yield call(
+        getOfficerSafetyConcernsWorker,
+        getOfficerSafetyConcerns(responsePlanEKID)
+      );
+    }
+
+    yield put(getOfficerSafety.success(action.id));
+  }
+  catch (error) {
+    LOG.error('getOfficerSafetyWorker', error);
+    yield put(getOfficerSafety.failure(action.id));
+  }
+  finally {
+    yield put(getOfficerSafety.finally(action.id));
+  }
+}
+
+function* getOfficerSafetyWatcher() :Generator<any, any, any> {
+  yield takeEvery(GET_OFFICER_SAFETY, getOfficerSafetyWorker);
 }
 
 function* submitOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<any, any, any> {
@@ -196,7 +245,6 @@ function* submitOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<a
       state => state.getIn([
         'profile',
         'officerSafety',
-        'officerSafetyConcerns',
         'entityIndexToIdMap'
       ])
     );
@@ -279,8 +327,10 @@ export {
   deleteOfficerSafetyConcernsWorker,
   getOfficerSafetyConcernsWatcher,
   getOfficerSafetyConcernsWorker,
+  getOfficerSafetyWatcher,
+  getOfficerSafetyWorker,
   submitOfficerSafetyConcernsWatcher,
   submitOfficerSafetyConcernsWorker,
   updateOfficerSafetyConcernsWatcher,
-  updateOfficerSafetyConcernsWorker
+  updateOfficerSafetyConcernsWorker,
 };

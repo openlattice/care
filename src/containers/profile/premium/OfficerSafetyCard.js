@@ -52,15 +52,12 @@ const StyledCardSegment = styled(CardSegment)`
 `;
 
 type Props = {
-  isLoading ? :boolean;
-  reports ? :List<Map>;
+  isLoading :boolean;
+  reports :List<Map>;
+  triggers :List<Map>;
 };
 
 class OfficerSafetyCard extends PureComponent<Props> {
-  static defaultProps = {
-    isLoading: false,
-    reports: List()
-  }
 
   countSafetyIncidents = (reports :List) :Map => Map()
     .withMutations((mutable) => {
@@ -114,10 +111,9 @@ class OfficerSafetyCard extends PureComponent<Props> {
   }
 
   render() {
-    const { isLoading, reports } = this.props;
-    const total = reports ? reports.count() : 0;
-    const headerMode = total ? 'warning' : 'default';
-
+    const { isLoading, reports, triggers } = this.props;
+    const total = reports.count();
+    const headerMode = (total && !isLoading) ? 'warning' : 'default';
     return (
       <Card>
         <CardHeader mode={headerMode} padding="sm">
@@ -133,7 +129,9 @@ class OfficerSafetyCard extends PureComponent<Props> {
             { this.renderItems() }
           </DashedList>
         </StyledCardSegment>
-        <Triggers triggers={List()} />
+        <StyledCardSegment vertical padding="sm">
+          <Triggers triggers={triggers} isLoading={isLoading} />
+        </StyledCardSegment>
       </Card>
     );
   }

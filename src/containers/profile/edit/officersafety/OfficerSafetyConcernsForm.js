@@ -297,14 +297,14 @@ class OfficerSafetyConcernsForm extends Component<Props, State> {
 const mapStateToProps = (state :Map) => {
   const fetchSafetyStates = [
     state.getIn(['profile', 'responsePlan', 'fetchState']),
-    state.getIn(['profile', 'officerSafety', 'officerSafetyConcerns', 'fetchState'])
+    state.getIn(['profile', 'officerSafety', 'fetchState'])
   ];
 
   return {
-    entityIndexToIdMap: state.getIn(['profile', 'officerSafety', 'officerSafetyConcerns', 'entityIndexToIdMap'], Map()),
+    entityIndexToIdMap: state.getIn(['profile', 'officerSafety', 'entityIndexToIdMap'], Map()),
     entitySetIds: state.getIn(['app', 'selectedOrgEntitySetIds'], Map()),
     fetchState: reduceRequestStates(fetchSafetyStates),
-    formData: state.getIn(['profile', 'officerSafety', 'officerSafetyConcerns', 'formData'], Map()),
+    formData: state.getIn(['profile', 'officerSafety', 'formData'], Map()),
     propertyTypeIds: state.getIn(['edm', 'fqnToIdMap'], Map()),
     responsePlanEKID: state.getIn(['profile', 'responsePlan', 'data', OPENLATTICE_ID_FQN, 0])
   };
