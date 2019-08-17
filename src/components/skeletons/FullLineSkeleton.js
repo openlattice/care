@@ -18,7 +18,7 @@ const loading = keyframes`
   };
 `;
 
-const aboutDetailSkeleton = css`
+const fullLineSkeleton = css`
   min-height: 1.35em;
   background-repeat: no-repeat;
   background-image:
@@ -30,7 +30,7 @@ const aboutDetailSkeleton = css`
       ${rgba('white', 0)} 100%
     ),
     /* layer 1: list item 1*/
-    /* light rectangles with 20px height */
+    /* light rectangles with 1.35em height */
     linear-gradient(${PURPLES[6]} 1.35em, transparent 0);
   background-size:
     100% 100%, /* animation blur */
@@ -42,4 +42,4 @@ const aboutDetailSkeleton = css`
   animation: ${loading} 2s infinite;
 `;
 
-export default aboutDetailSkeleton;
+export default fullLineSkeleton;

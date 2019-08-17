@@ -4,12 +4,12 @@ import styled from 'styled-components';
 import isPlainObject from 'lodash/isPlainObject';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { aboutDetailSkeleton } from '../../../components/skeletons';
+import { fullLineSkeleton } from '../../../components/skeletons';
 
 const Detail = styled.div`
   display: flex;
   flex: 1 0 auto;
-  ${props => (props.isLoading ? aboutDetailSkeleton : null)}
+  ${props => (props.isLoading ? fullLineSkeleton : null)}
 `;
 
 const Content = styled.div`
