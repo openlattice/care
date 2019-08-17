@@ -12,7 +12,7 @@ const H2 = styled.h2`
 `;
 
 const AddressSkeleton = styled.div`
-  ${props => (props.isLoading ? addressSkeleton : null)};
+  ${addressSkeleton};
 `;
 
 type Props = {
@@ -34,7 +34,7 @@ const Address = (props :Props) => {
 
   const emptyAddress = [name, street, line2, cityStateZip].every(isEmptyString);
 
-  if (isLoading) return <AddressSkeleton isLoading />;
+  if (isLoading) return <AddressSkeleton />;
   if (emptyAddress) return <IconSplash caption="No address." />;
 
   return (
