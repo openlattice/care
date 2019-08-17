@@ -92,12 +92,13 @@ type Props = {
   fetchReportsState :RequestState;
   fetchResponsePlanState :RequestState;
   interactionStrategies :List<Map>;
-  triggers :List<Map>;
-  officerSafety :List<Map>;
   match :Match;
+  officerSafety :List<Map>;
   reports :List<Map>;
   responsePlan :Map;
   selectedPerson :Map;
+  techniques :List<Map>;
+  triggers :List<Map>;
 };
 
 type State = {
@@ -187,6 +188,7 @@ class PremiumProfileContainer extends Component<Props, State> {
       reports,
       responsePlan,
       selectedPerson,
+      techniques,
       triggers,
     } = this.props;
     const { recent, total } = this.countCrisisCalls();
@@ -240,7 +242,9 @@ class PremiumProfileContainer extends Component<Props, State> {
                     officerSafety={officerSafety}
                     isLoading={isLoadingOfficerSafety} />
               </BehaviorAndSafetyGrid>
-              <DeescalationCard />
+              <DeescalationCard
+                  techniques={techniques}
+                  isLoading={isLoadingOfficerSafety} />
               <ResponsePlanCard
                   interactionStrategies={interactionStrategies}
                   isLoading={isLoadingResponsePlan} />
