@@ -3,10 +3,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Constants } from 'lattice';
 import { List, Map } from 'immutable';
-import {
-  IconSplash,
-  Spinner,
-} from 'lattice-ui-kit';
+import { IconSplash } from 'lattice-ui-kit';
 import { withRouter } from 'react-router-dom';
 import type { Match } from 'react-router-dom';
 
@@ -40,7 +37,7 @@ const SpecificTechniques = (props :Props) => {
   if (isLoading) {
     return (
       <div>
-        <Spinner size="2x" />
+        <UL isLoading />
       </div>
     );
   }

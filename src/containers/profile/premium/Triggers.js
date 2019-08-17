@@ -2,10 +2,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Constants } from 'lattice';
-import {
-  IconSplash,
-  Spinner
-} from 'lattice-ui-kit';
+import { IconSplash } from 'lattice-ui-kit';
 import { List, Map } from 'immutable';
 import { withRouter } from 'react-router-dom';
 import type { Match } from 'react-router-dom';
@@ -39,7 +36,7 @@ const Triggers = (props :Props) => {
 
   const { isLoading, match, triggers } = props;
 
-  if (isLoading) return <Spinner size="2x" />;
+  if (isLoading) return <UL isLoading />;
 
   let content = <IconSplash caption="No triggers." />;
   if (!triggers.isEmpty()) {
