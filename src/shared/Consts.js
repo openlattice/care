@@ -6,13 +6,16 @@ export const APP_NAME = 'BehavioralHealthReport';
 
 export const APP_TYPES_FQNS = {
   APPEARS_IN_FQN: new FullyQualifiedName('app.appearsin'),
-  BEHAVIOR_FQN: new FullyQualifiedName('app.behavior'),
   APP_SETTINGS_FQN: new FullyQualifiedName('app.settings'),
   BEHAVIORAL_HEALTH_REPORT_FQN: new FullyQualifiedName('app.bhr'),
+  BEHAVIOR_FQN: new FullyQualifiedName('app.behavior'),
   HAS_FQN: new FullyQualifiedName('app.has'),
   HOSPITALS_FQN: new FullyQualifiedName('app.hospitals'),
+  IDENTIFYING_CHARACTERISTICS_FQN: new FullyQualifiedName('app.identifyingcharacteristics'),
+  IMAGES_FQN: new FullyQualifiedName('app.image'),
   INCLUDES_FQN: new FullyQualifiedName('app.includes'),
   INTERACTION_STRATEGY_FQN: new FullyQualifiedName('app.interactionstrategy'),
+  IS_PICTURE_OF_FQN: new FullyQualifiedName('app.ispictureof'),
   LOCATED_AT_FQN: new FullyQualifiedName('app.locatedat'),
   LOCATION_FQN: new FullyQualifiedName('app.location'),
   OBSERVED_IN_FQN: new FullyQualifiedName('app.observedin'),
@@ -23,7 +26,6 @@ export const APP_TYPES_FQNS = {
   RESPONSE_PLAN_FQN: new FullyQualifiedName('app.responseplan'),
   STAFF_FQN: new FullyQualifiedName('app.staff'),
   SUBJECT_OF_FQN: new FullyQualifiedName('app.subjectof'),
-  IDENTIFYING_CHARACTERISTICS_FQN: new FullyQualifiedName('app.identifyingcharacteristics'),
 };
 
 export const STRING_ID_FQN = 'general.stringid';

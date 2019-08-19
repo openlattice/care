@@ -2,6 +2,11 @@ import { Models } from 'lattice';
 
 const { FullyQualifiedName } = Models;
 
+/* Image Data */
+const IMAGE_DATA_FQN = new FullyQualifiedName('ol.imagedata');
+
+export { IMAGE_DATA_FQN };
+
 /*
  * Behavior
  */
