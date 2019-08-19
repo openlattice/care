@@ -12,7 +12,7 @@ export const APP_TYPES_FQNS = {
   HAS_FQN: new FullyQualifiedName('app.has'),
   HOSPITALS_FQN: new FullyQualifiedName('app.hospitals'),
   IDENTIFYING_CHARACTERISTICS_FQN: new FullyQualifiedName('app.identifyingcharacteristics'),
-  IMAGES_FQN: new FullyQualifiedName('app.image'),
+  IMAGE_FQN: new FullyQualifiedName('app.image'),
   INCLUDES_FQN: new FullyQualifiedName('app.includes'),
   INTERACTION_STRATEGY_FQN: new FullyQualifiedName('app.interactionstrategy'),
   IS_PICTURE_OF_FQN: new FullyQualifiedName('app.ispictureof'),
