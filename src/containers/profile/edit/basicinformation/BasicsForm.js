@@ -71,17 +71,6 @@ class BasicInformationForm extends Component<Props, State> {
     });
   }
 
-  getAssociations = () => {
-    const { match } = this.props;
-    const personEKID = match.params[PROFILE_ID_PARAM];
-    const nowAsIsoString :string = DateTime.local().toISO();
-    return [
-      [OBSERVED_IN_FQN, personEKID, PEOPLE_FQN, 0, PHYSICAL_APPEARANCE_FQN, {
-        [COMPLETED_DT_FQN.toString()]: [nowAsIsoString]
-      }],
-    ];
-  }
-
   render() {
     const {
       actions,
