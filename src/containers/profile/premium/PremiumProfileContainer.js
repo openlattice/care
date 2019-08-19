@@ -88,13 +88,17 @@ type Props = {
   address :Map;
   appearance :Map;
   fetchAboutState :RequestState;
+  fetchOfficerSafetyState :RequestState;
   fetchReportsState :RequestState;
   fetchResponsePlanState :RequestState;
   interactionStrategies :List<Map>;
   match :Match;
+  officerSafety :List<Map>;
   reports :List<Map>;
   responsePlan :Map;
   selectedPerson :Map;
+  techniques :List<Map>;
+  triggers :List<Map>;
 };
 
 type State = {
@@ -176,16 +180,21 @@ class PremiumProfileContainer extends Component<Props, State> {
       address,
       appearance,
       fetchAboutState,
+      fetchOfficerSafetyState,
       fetchReportsState,
       fetchResponsePlanState,
       interactionStrategies,
+      officerSafety,
       reports,
       responsePlan,
       selectedPerson,
+      techniques,
+      triggers,
     } = this.props;
     const { recent, total } = this.countCrisisCalls();
 
     const isLoadingReports = fetchReportsState === RequestStates.PENDING;
+    const isLoadingOfficerSafety = fetchOfficerSafetyState === RequestStates.PENDING;
     const isLoadingAbout = fetchAboutState === RequestStates.PENDING;
     const isLoadingResponsePlan = fetchResponsePlanState === RequestStates.PENDING;
 
@@ -229,9 +238,13 @@ class PremiumProfileContainer extends Component<Props, State> {
                     isLoading={isLoadingReports} />
                 <OfficerSafetyCard
                     reports={reports}
-                    isLoading={isLoadingReports} />
+                    triggers={triggers}
+                    officerSafety={officerSafety}
+                    isLoading={isLoadingOfficerSafety} />
               </BehaviorAndSafetyGrid>
-              <DeescalationCard />
+              <DeescalationCard
+                  techniques={techniques}
+                  isLoading={isLoadingOfficerSafety} />
               <ResponsePlanCard
                   interactionStrategies={interactionStrategies}
                   isLoading={isLoadingResponsePlan} />
@@ -261,10 +274,19 @@ const mapStateToProps = (state :Map) => {
     state.getIn(['profile', 'basicInformation', 'address', 'fetchState']),
   ];
 
+  const fetchOfficerSafetyStates = [
+    state.getIn(['profile', 'officerSafety', 'fetchState']),
+    state.getIn(['profile', 'reports', 'fetchState'])
+  ];
+
   return {
     appearance: state.getIn(['profile', 'basicInformation', 'appearance', 'data'], Map()),
     address: state.getIn(['profile', 'basicInformation', 'address', 'data'], Map()),
+    officerSafety: state.getIn(['profile', 'officerSafety', 'data', 'officerSafetyConcerns'], List()),
+    triggers: state.getIn(['profile', 'officerSafety', 'data', 'behaviors'], List()),
+    techniques: state.getIn(['profile', 'officerSafety', 'data', 'interactionStrategies'], List()),
     fetchAboutState: reduceRequestStates(fetchAboutStates),
+    fetchOfficerSafetyState: reduceRequestStates(fetchOfficerSafetyStates),
     fetchReportsState: state.getIn(['profile', 'reports', 'fetchState'], RequestStates.STANDBY),
     fetchResponsePlanState: state.getIn(['profile', 'responsePlan', 'fetchState'], RequestStates.STANDBY),
     interactionStrategies: state.getIn(['profile', 'responsePlan', 'interactionStrategies'], List()),

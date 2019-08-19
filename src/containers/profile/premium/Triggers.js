@@ -1,10 +1,19 @@
 // @flow
 import React from 'react';
 import styled from 'styled-components';
+import { Constants } from 'lattice';
+import { IconSplash } from 'lattice-ui-kit';
+import { List, Map } from 'immutable';
+import { withRouter } from 'react-router-dom';
+import type { Match } from 'react-router-dom';
 
-import { Button, CardSegment, IconSplash } from 'lattice-ui-kit';
-import { List } from 'immutable';
+import LinkButton from '../../../components/buttons/LinkButton';
+import { OFFICER_SAFETY_PATH } from '../../../core/router/Routes';
+
 import { UL } from '../../../components/layout';
+import { TRIGGER_FQN } from '../../../edm/DataModelFqns';
+
+const { OPENLATTICE_ID_FQN } = Constants;
 
 const H2 = styled.h2`
   font-size: 16px;
@@ -18,31 +27,43 @@ const ActionRow = styled.div`
 `;
 
 type Props = {
-  triggers :List;
+  isLoading :boolean;
+  match :Match;
+  triggers :List<Map>;
 };
 
 const Triggers = (props :Props) => {
 
-  const { triggers } = props;
+  const { isLoading, match, triggers } = props;
+
+  if (isLoading) return <UL isLoading />;
+
+  let content = <IconSplash caption="No triggers." />;
+  if (!triggers.isEmpty()) {
+    content = (
+      <UL>
+        {
+          triggers.map((trigger) => {
+            const value :string = trigger.getIn([TRIGGER_FQN, 0], '');
+            const triggerEKID :UUID = trigger.getIn([OPENLATTICE_ID_FQN, 0]);
+            return <li key={triggerEKID}>{value}</li>;
+          })
+        }
+      </UL>
+    );
+  }
+
   return (
-    <CardSegment padding="sm" vertical>
+    <>
       <H2>
         Triggers
       </H2>
-      {
-        triggers.count()
-          ? (
-            <UL>
-              <li>triggers</li>
-            </UL>
-          )
-          : <IconSplash caption="No known triggers." />
-      }
+      { content }
       <ActionRow>
-        <Button mode="subtle">Suggest a Trigger</Button>
+        <LinkButton mode="subtle" to={`${match.url}${OFFICER_SAFETY_PATH}`}>Suggest a Trigger</LinkButton>
       </ActionRow>
-    </CardSegment>
+    </>
   );
 };
 
-export default Triggers;
+export default withRouter(Triggers);

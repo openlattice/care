@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 import { APP_CONTAINER_WIDTH } from '../../core/style/Sizes';
+import { bulletsSkeleton } from '../skeletons';
 
 export const ContentOuterWrapper = styled.div`
   display: flex;
@@ -20,5 +21,6 @@ export const ContentWrapper = styled.div`
 `;
 
 export const UL = styled.ul`
-  padding-inline-start: inherit;
+  padding-inline-start: 20px;
+  ${props => (props.isLoading ? bulletsSkeleton : null)};
 `;

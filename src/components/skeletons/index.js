@@ -1,11 +1,5 @@
-import { aboutDetailSkeleton } from './AboutDetailSkeleton';
-import { addressSkeleton } from './AddressSkeleton';
-import { behaviorItemSkeleton } from './BehaviorItemSkeleton';
-import { crisisCountSkeleton } from './CrisisCountSkeleton';
-
-export {
-  aboutDetailSkeleton,
-  addressSkeleton,
-  behaviorItemSkeleton,
-  crisisCountSkeleton
-};
+export { default as fullLineSkeleton } from './FullLineSkeleton';
+export { default as addressSkeleton } from './AddressSkeleton';
+export { default as behaviorItemSkeleton } from './BehaviorItemSkeleton';
+export { default as crisisCountSkeleton } from './CrisisCountSkeleton';
+export { default as bulletsSkeleton } from './BulletsSkeleton';
