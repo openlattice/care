@@ -134,13 +134,15 @@ class AppearanceForm extends Component<Props, State> {
     }
 
     return (
-      <Form
-          formData={formData}
-          disabled={prepopulated}
-          schema={schema}
-          uiSchema={uiSchema}
-          onSubmit={this.handleSubmit}
-          formContext={formContext} />
+      <Card>
+        <Form
+            formData={formData}
+            disabled={prepopulated}
+            schema={schema}
+            uiSchema={uiSchema}
+            onSubmit={this.handleSubmit}
+            formContext={formContext} />
+      </Card>
     );
   }
 }

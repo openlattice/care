@@ -283,13 +283,15 @@ class OfficerSafetyConcernsForm extends Component<Props, State> {
     }
 
     return (
-      <Form
-          formData={formData}
-          disabled={prepopulated}
-          schema={schema}
-          uiSchema={uiSchema}
-          onSubmit={this.handleSubmit}
-          formContext={formContext} />
+      <Card>
+        <Form
+            disabled={prepopulated}
+            formContext={formContext}
+            formData={formData}
+            onSubmit={this.handleSubmit}
+            schema={schema}
+            uiSchema={uiSchema} />
+      </Card>
     );
   }
 }

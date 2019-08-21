@@ -1,6 +1,5 @@
 // @flow
 import React, { Component } from 'react';
-import { DateTime } from 'luxon';
 import { Form } from 'lattice-fabricate';
 import { Card, CardSegment, Spinner } from 'lattice-ui-kit';
 import { Map } from 'immutable';
@@ -9,22 +8,12 @@ import { connect } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 import { withRouter } from 'react-router-dom';
 import type { Dispatch } from 'redux';
-import type { Match } from 'react-router-dom';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import {
   updateBasics,
 } from './actions/BasicInformationActions';
 import { schema, uiSchema } from './schemas/BasicInformationSchemas';
-import { PROFILE_ID_PARAM } from '../../../../core/router/Routes';
-import { COMPLETED_DT_FQN } from '../../../../edm/DataModelFqns';
-import { APP_TYPES_FQNS } from '../../../../shared/Consts';
-
-const {
-  OBSERVED_IN_FQN,
-  PEOPLE_FQN,
-  PHYSICAL_APPEARANCE_FQN,
-} = APP_TYPES_FQNS;
 
 type Props = {
   actions :{
@@ -34,7 +23,6 @@ type Props = {
   entitySetIds :Map;
   fetchState :RequestState;
   formData :Map;
-  match :Match;
   propertyTypeIds :Map;
 };
 
@@ -99,12 +87,14 @@ class BasicInformationForm extends Component<Props, State> {
     }
 
     return (
-      <Form
-          formData={formData}
-          disabled={prepopulated}
-          schema={schema}
-          uiSchema={uiSchema}
-          formContext={formContext} />
+      <Card>
+        <Form
+            disabled={prepopulated}
+            formContext={formContext}
+            formData={formData}
+            schema={schema}
+            uiSchema={uiSchema} />
+      </Card>
     );
   }
 }

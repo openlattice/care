@@ -255,14 +255,16 @@ class ResponsePlanForm extends Component<Props, State> {
     }
 
     return (
-      <Form
-          disabled={prepopulated}
-          formContext={formContext}
-          formData={formData}
-          onChange={this.updateItemIndicies}
-          schema={schema}
-          uiSchema={uiSchema}
-          onSubmit={this.handleSubmit} />
+      <Card>
+        <Form
+            disabled={prepopulated}
+            formContext={formContext}
+            formData={formData}
+            onChange={this.updateItemIndicies}
+            onSubmit={this.handleSubmit}
+            schema={schema}
+            uiSchema={uiSchema} />
+      </Card>
     );
   }
 }
