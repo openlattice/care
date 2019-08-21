@@ -4,14 +4,10 @@ import React, { Component } from 'react';
 import isFunction from 'lodash/isFunction';
 import styled from 'styled-components';
 import { DateTime } from 'luxon';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPortrait } from '@fortawesome/pro-solid-svg-icons';
 import { Map } from 'immutable';
-import { Card, Label, Colors } from 'lattice-ui-kit';
+import { Card, Label } from 'lattice-ui-kit';
 import { PERSON_DOB_FQN, PERSON_FIRST_NAME_FQN } from '../../edm/DataModelFqns';
-import Portrait from '../profile/styled/Portrait';
-
-const { NEUTRALS } = Colors;
+import Portrait from '../../components/portrait/Portrait';
 
 const DetailsGrid = styled.div`
   display: grid;

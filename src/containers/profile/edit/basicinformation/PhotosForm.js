@@ -1,5 +1,6 @@
 // @flow
 import React, { Component } from 'react';
+import styled from 'styled-components';
 import { DateTime } from 'luxon';
 import { Form, DataProcessingUtils } from 'lattice-fabricate';
 import {
@@ -8,18 +9,16 @@ import {
   CardSegment,
   Spinner
 } from 'lattice-ui-kit';
-import { Map, updateIn } from 'immutable';
+import { Map, updateIn, getIn } from 'immutable';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
-import {
-  updatePhoto,
-  submitPhotos
-} from './actions/PhotosActions';
-import { removeDataUriPrefix } from '../../../../utils/BinaryUtils';
+import Portrait from '../../../../components/portrait/Portrait';
+import { updatePhoto, submitPhotos } from './actions/PhotosActions';
+import { removeDataUriPrefix, getImageDataFromEntity } from '../../../../utils/BinaryUtils';
 import { schema, uiSchema } from './schemas/PhotosSchemas';
 import { COMPLETED_DT_FQN, IMAGE_DATA_FQN } from '../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
@@ -43,6 +42,18 @@ const signatureValueMapper = (value :any, contentType :string = 'image/png') => 
   'content-type': contentType,
 });
 
+const mappers = {
+  [VALUE_MAPPERS]: {
+    [getEntityAddressKey(0, IMAGE_FQN, IMAGE_DATA_FQN)]: signatureValueMapper
+  }
+};
+
+const PortraitWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  padding: 30px 30px 0 30px;
+`;
+
 type Props = {
   actions :{
     submitPhotos :RequestSequence;
@@ -51,7 +62,7 @@ type Props = {
   entityIndexToIdMap :Map;
   entitySetIds :Map;
   fetchState :RequestState;
-  formData :Map;
+  imageURL :string;
   personEKID :UUID;
   propertyTypeIds :Map;
 };
@@ -73,19 +84,18 @@ class AddressForm extends Component<Props, State> {
   }
 
   componentDidUpdate(prevProps :Props) {
-    const { formData } = this.props;
-    const { formData: prevFormData } = prevProps;
+    const { entityIndexToIdMap } = this.props;
+    const { entityIndexToIdMap: prevEntityIndexToIdMap } = prevProps;
 
-    if (!formData.equals(prevFormData)) {
+    if (!entityIndexToIdMap.equals(prevEntityIndexToIdMap)) {
       this.initializeFormData();
     }
   }
 
   initializeFormData = () => {
-    const { formData } = this.props;
+    const { entityIndexToIdMap } = this.props;
     this.setState({
-      formData: formData.toJS(),
-      prepopulated: !formData.isEmpty()
+      prepopulated: !entityIndexToIdMap.isEmpty()
     });
   }
 
@@ -108,12 +118,6 @@ class AddressForm extends Component<Props, State> {
       removeDataUriPrefix
     );
 
-    const mappers = {
-      [VALUE_MAPPERS]: {
-        [getEntityAddressKey(0, IMAGE_FQN, IMAGE_DATA_FQN)]: signatureValueMapper
-      }
-    };
-
     const entityData = processEntityData(noDataUriFormData, entitySetIds, propertyTypeIds, mappers);
     const associationEntityData = processAssociationEntityData(
       this.getAssociations(),
@@ -129,21 +133,20 @@ class AddressForm extends Component<Props, State> {
     });
   }
 
+  handleOnChange = ({ formData } :any) => {
+    this.setState({ formData });
+  }
+
   render() {
     const {
       actions,
       entityIndexToIdMap,
       entitySetIds,
       fetchState,
+      imageURL,
       propertyTypeIds,
     } = this.props;
     const { formData, prepopulated } = this.state;
-
-    const mappers = {
-      [VALUE_MAPPERS]: {
-        [getEntityAddressKey(0, IMAGE_FQN, IMAGE_DATA_FQN)]: signatureValueMapper
-      }
-    };
 
     const formContext = {
       editAction: actions.updatePhoto,
@@ -152,6 +155,12 @@ class AddressForm extends Component<Props, State> {
       mappers,
       propertyTypeIds,
     };
+
+    const previewImageURL = getIn(formData,
+      [
+        getPageSectionKey(1, 1),
+        getEntityAddressKey(0, IMAGE_FQN, IMAGE_DATA_FQN)
+      ]) || imageURL;
 
     if (fetchState === RequestStates.PENDING) {
       return (
@@ -165,13 +174,17 @@ class AddressForm extends Component<Props, State> {
 
     return (
       <Card>
-        <CardHeader id="profile-picture" mode="primary" padding="sm">
+        <CardHeader mode="primary" padding="sm">
           Profile Picture
         </CardHeader>
+        <PortraitWrapper>
+          <Portrait imageUrl={previewImageURL} />
+        </PortraitWrapper>
         <Form
             formData={formData}
             disabled={prepopulated}
             schema={schema}
+            onChange={this.handleOnChange}
             uiSchema={uiSchema}
             onSubmit={this.handleSubmit}
             formContext={formContext} />
@@ -180,13 +193,20 @@ class AddressForm extends Component<Props, State> {
   }
 }
 
-const mapStateToProps = state => ({
-  entityIndexToIdMap: state.getIn(['profile', 'basicInformation', 'photos', 'entityIndexToIdMap'], Map()),
-  entitySetIds: state.getIn(['app', 'selectedOrgEntitySetIds'], Map()),
-  fetchState: state.getIn(['profile', 'basicInformation', 'photos', 'fetchState'], RequestStates.STANDBY),
-  formData: state.getIn(['profile', 'basicInformation', 'photos', 'formData'], Map()),
-  propertyTypeIds: state.getIn(['edm', 'fqnToIdMap'], Map()),
-});
+const mapStateToProps = (state) => {
+
+  const imageEntity = state.getIn(['profile', 'basicInformation', 'photos', 'data'], Map());
+  const imageURL = getImageDataFromEntity(imageEntity);
+
+  return {
+    entityIndexToIdMap: state.getIn(['profile', 'basicInformation', 'photos', 'entityIndexToIdMap'], Map()),
+    entitySetIds: state.getIn(['app', 'selectedOrgEntitySetIds'], Map()),
+    fetchState: state.getIn(['profile', 'basicInformation', 'photos', 'fetchState'], RequestStates.STANDBY),
+    formData: state.getIn(['profile', 'basicInformation', 'photos', 'formData'], Map()),
+    imageURL,
+    propertyTypeIds: state.getIn(['edm', 'fqnToIdMap'], Map()),
+  };
+};
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({

@@ -12,7 +12,6 @@ import {
 const INITIAL_STATE :Map = fromJS({
   entityIndexToIdMap: Map(),
   fetchState: RequestStates.STANDBY,
-  formData: Map(),
   updateState: RequestStates.STANDBY,
 });
 
@@ -36,12 +35,9 @@ const photosReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
         SUCCESS: () => {
           const {
             entityIndexToIdMap,
-            path,
-            properties,
           } = action.value;
           return state
             .set('entityIndexToIdMap', entityIndexToIdMap)
-            .setIn(['formData', ...path], properties)
             .set('submitState', RequestStates.SUCCESS);
         },
         FAILURE: () => state.set('submitState', RequestStates.FAILURE)
@@ -50,12 +46,7 @@ const photosReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
 
     case updatePhoto.case(action.type): {
       return updatePhoto.reducer(state, action, {
-        REQUEST: () => {
-          const { path, properties } = action.value;
-          return state
-            .set('updateState', RequestStates.PENDING)
-            .setIn(['formData', ...path], properties);
-        },
+        REQUEST: () => state.set('updateState', RequestStates.PENDING),
         SUCCESS: () => state.set('updateState', RequestStates.SUCCESS),
         FAILURE: () => state.set('updateState', RequestStates.FAILURE)
       });

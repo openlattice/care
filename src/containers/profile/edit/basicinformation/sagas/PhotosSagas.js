@@ -6,7 +6,6 @@ import {
   takeEvery,
   takeLatest,
 } from '@redux-saga/core/effects';
-import { DataProcessingUtils } from 'lattice-fabricate';
 import { List, Map, fromJS } from 'immutable';
 import type { SequenceAction } from 'redux-reqseq';
 import { Constants } from 'lattice';
@@ -38,11 +37,8 @@ import {
 
 import { getESIDFromApp } from '../../../../../utils/AppUtils';
 import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
-import { getFormDataFromEntity } from '../../../../../utils/DataUtils';
-import * as FQN from '../../../../../edm/DataModelFqns';
 
 const LOG = new Logger('BasicInformationSagas');
-const { getPageSectionKey } = DataProcessingUtils;
 const { OPENLATTICE_ID_FQN } = Constants;
 const {
   IMAGE_FQN,
@@ -92,19 +88,8 @@ function* getPhotosWorker(action :SequenceAction) :Generator<any, any, any> {
       .getIn([0, 'neighborDetails'], Map());
 
     if (!imageData.isEmpty()) {
-
-      const imageProperties = [FQN.IMAGE_DATA_FQN];
-
       const imageEKID = imageData.getIn([OPENLATTICE_ID_FQN, 0]);
-
-      const imageFormData = getFormDataFromEntity(
-        imageData,
-        IMAGE_FQN,
-        imageProperties,
-        0
-      );
       response.entityIndexToIdMap = Map().setIn([IMAGE_FQN, 0], imageEKID);
-      response.formData = Map().set(getPageSectionKey(1, 1), imageFormData);
     }
 
     response.data = imageData;

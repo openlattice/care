@@ -32,7 +32,7 @@ import ProfileBanner from '../ProfileBanner';
 import ProfileResult from '../ProfileResult';
 import RecentIncidentCard from '../RecentIncidentCard';
 import { labelMapReport } from '../constants';
-import Portrait from '../styled/Portrait';
+import Portrait from '../../../components/portrait/Portrait';
 import { ContentWrapper, ContentOuterWrapper } from '../../../components/layout';
 import { getProfileReports } from '../ProfileActions';
 import {
