@@ -24,6 +24,7 @@ import * as DownloadsSagas from '../../containers/downloads/DownloadsSagas';
 // eslint-disable-next-line max-len
 import * as OfficerSafetyConcernsSagas from '../../containers/profile/edit/officersafety/sagas/OfficerSafetyConcernsSagas';
 import * as PeopleSagas from '../../containers/people/PeopleSagas';
+import * as PhotosSagas from '../../containers/profile/edit/basicinformation/sagas/PhotosSagas';
 import * as ProfileSagas from '../../containers/profile/ProfileSagas';
 import * as ReportsSagas from '../../containers/reports/ReportsSagas';
 import * as ResponsePlanSagas from '../../containers/profile/edit/responseplan/ResponsePlanSagas';
@@ -113,6 +114,10 @@ export default function* sagas() :Generator<*, *, *> {
     fork(AddressSagas.getAddressWatcher),
     fork(AddressSagas.submitAddressWatcher),
     fork(AddressSagas.updateAddressWatcher),
+
+    fork(PhotosSagas.getPhotosWatcher),
+    fork(PhotosSagas.submitPhotosWatcher),
+    fork(PhotosSagas.updatePhotoWatcher),
 
     // OfficerSafetyConcernsSagas
     fork(OfficerSafetyConcernsSagas.getOfficerSafetyWatcher),

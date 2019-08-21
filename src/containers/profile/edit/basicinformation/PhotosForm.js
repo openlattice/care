@@ -2,8 +2,13 @@
 import React, { Component } from 'react';
 import { DateTime } from 'luxon';
 import { Form, DataProcessingUtils } from 'lattice-fabricate';
-import { Card, CardSegment, Spinner } from 'lattice-ui-kit';
-import { Map } from 'immutable';
+import {
+  Card,
+  CardHeader,
+  CardSegment,
+  Spinner
+} from 'lattice-ui-kit';
+import { Map, updateIn } from 'immutable';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
@@ -11,28 +16,37 @@ import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import {
-  updateAddress,
-  submitAddress
-} from './actions/AddressActions';
-import { schema, uiSchema } from './schemas/AddressSchemas';
-import { COMPLETED_DT_FQN } from '../../../../edm/DataModelFqns';
+  updatePhoto,
+  submitPhotos
+} from './actions/PhotosActions';
+import { removeDataUriPrefix } from '../../../../utils/BinaryUtils';
+import { schema, uiSchema } from './schemas/PhotosSchemas';
+import { COMPLETED_DT_FQN, IMAGE_DATA_FQN } from '../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
 
 const {
-  LOCATED_AT_FQN,
+  IMAGE_FQN,
+  IS_PICTURE_OF_FQN,
   PEOPLE_FQN,
-  LOCATION_FQN,
 } = APP_TYPES_FQNS;
 
 const {
   processEntityData,
-  processAssociationEntityData
+  processAssociationEntityData,
+  getPageSectionKey,
+  getEntityAddressKey,
+  VALUE_MAPPERS,
 } = DataProcessingUtils;
+
+const signatureValueMapper = (value :any, contentType :string = 'image/png') => ({
+  data: value,
+  'content-type': contentType,
+});
 
 type Props = {
   actions :{
-    submitAddress :RequestSequence;
-    updateAddress :RequestSequence;
+    submitPhotos :RequestSequence;
+    updatePhoto :RequestSequence;
   },
   entityIndexToIdMap :Map;
   entitySetIds :Map;
@@ -79,7 +93,7 @@ class AddressForm extends Component<Props, State> {
     const { personEKID } = this.props;
     const nowAsIsoString :string = DateTime.local().toISO();
     return [
-      [LOCATED_AT_FQN, personEKID, PEOPLE_FQN, 0, LOCATION_FQN, {
+      [IS_PICTURE_OF_FQN, 0, IMAGE_FQN, personEKID, PEOPLE_FQN, {
         [COMPLETED_DT_FQN.toString()]: [nowAsIsoString]
       }],
     ];
@@ -87,14 +101,27 @@ class AddressForm extends Component<Props, State> {
 
   handleSubmit = ({ formData } :Object) => {
     const { actions, entitySetIds, propertyTypeIds } = this.props;
-    const entityData = processEntityData(formData, entitySetIds, propertyTypeIds);
+
+    const noDataUriFormData = updateIn(
+      formData,
+      [getPageSectionKey(1, 1), getEntityAddressKey(0, IMAGE_FQN, IMAGE_DATA_FQN)],
+      removeDataUriPrefix
+    );
+
+    const mappers = {
+      [VALUE_MAPPERS]: {
+        [getEntityAddressKey(0, IMAGE_FQN, IMAGE_DATA_FQN)]: signatureValueMapper
+      }
+    };
+
+    const entityData = processEntityData(noDataUriFormData, entitySetIds, propertyTypeIds, mappers);
     const associationEntityData = processAssociationEntityData(
       this.getAssociations(),
       entitySetIds,
       propertyTypeIds
     );
 
-    actions.submitAddress({
+    actions.submitPhotos({
       associationEntityData,
       entityData,
       path: [],
@@ -111,11 +138,18 @@ class AddressForm extends Component<Props, State> {
       propertyTypeIds,
     } = this.props;
     const { formData, prepopulated } = this.state;
+
+    const mappers = {
+      [VALUE_MAPPERS]: {
+        [getEntityAddressKey(0, IMAGE_FQN, IMAGE_DATA_FQN)]: signatureValueMapper
+      }
+    };
+
     const formContext = {
-      editAction: actions.updateAddress,
+      editAction: actions.updatePhoto,
       entityIndexToIdMap,
       entitySetIds,
-      mappers: {},
+      mappers,
       propertyTypeIds,
     };
 
@@ -130,13 +164,18 @@ class AddressForm extends Component<Props, State> {
     }
 
     return (
-      <Form
-          formData={formData}
-          disabled={prepopulated}
-          schema={schema}
-          uiSchema={uiSchema}
-          onSubmit={this.handleSubmit}
-          formContext={formContext} />
+      <Card>
+        <CardHeader id="profile-picture" mode="primary" padding="sm">
+          Profile Picture
+        </CardHeader>
+        <Form
+            formData={formData}
+            disabled={prepopulated}
+            schema={schema}
+            uiSchema={uiSchema}
+            onSubmit={this.handleSubmit}
+            formContext={formContext} />
+      </Card>
     );
   }
 }
@@ -151,8 +190,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
-    updateAddress,
-    submitAddress,
+    updatePhoto,
+    submitPhotos,
   }, dispatch)
 });
 

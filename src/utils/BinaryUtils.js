@@ -1,5 +1,7 @@
 // @flow
+import type { Map } from 'immutable';
 import { isNonEmptyStringArray } from './LangUtils';
+import { IMAGE_DATA_FQN } from '../edm/DataModelFqns';
 
 const DATA_URL_PREFIX_REGEX = new RegExp(/^data:image\/.*base64,/);
 
@@ -25,8 +27,28 @@ const isValidBase64 = (value :string) :boolean => {
   }
 };
 
+const formatFileSource = (imageData :string, mimeType :string) :?string => {
+  // if not valid base 64, trust
+  if (isValidBase64(imageData)) {
+    return `data:${mimeType};base64,${imageData}`;
+  }
+
+  if (typeof imageData === 'string') {
+    return imageData;
+  }
+
+  return undefined;
+};
+
+const getImageDataFromEntity = (imageEntity :Map) => {
+  const imageDataValue = imageEntity.getIn([IMAGE_DATA_FQN, 0]);
+  return formatFileSource(imageDataValue, 'image/jpg');
+};
+
 export {
   DATA_URL_PREFIX_REGEX,
+  formatFileSource,
+  getImageDataFromEntity,
   isValidBase64,
   removeDataUriPrefix
 };

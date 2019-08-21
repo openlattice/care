@@ -47,6 +47,7 @@ import { DATE_TIME_OCCURRED_FQN } from '../../../edm/DataModelFqns';
 import { getEntityKeyId } from '../../../utils/DataUtils';
 import { reduceRequestStates } from '../../../utils/StateUtils';
 import { getNameFromPerson } from '../../../utils/PersonUtils';
+import { getImageDataFromEntity } from '../../../utils/BinaryUtils';
 import {
   PROFILE_ID_PARAM,
   REPORT_VIEW_PATH,
@@ -94,6 +95,7 @@ type Props = {
   interactionStrategies :List<Map>;
   match :Match;
   officerSafety :List<Map>;
+  photo :Map;
   reports :List<Map>;
   responsePlan :Map;
   selectedPerson :Map;
@@ -185,6 +187,7 @@ class PremiumProfileContainer extends Component<Props, State> {
       fetchResponsePlanState,
       interactionStrategies,
       officerSafety,
+      photo,
       reports,
       responsePlan,
       selectedPerson,
@@ -201,6 +204,8 @@ class PremiumProfileContainer extends Component<Props, State> {
     const formattedName = getNameFromPerson(selectedPerson);
     const isMalfoy = formattedName === 'Malfoy, Scorpius H.';
 
+    const imageURL :string = getImageDataFromEntity(photo);
+
     return (
       <ContentOuterWrapper>
         <ProfileBanner selectedPerson={selectedPerson} />
@@ -210,7 +215,7 @@ class PremiumProfileContainer extends Component<Props, State> {
               <CardStack>
                 <Card>
                   <CardSegment padding="sm">
-                    <Portrait isMalfoy={isMalfoy} />
+                    <Portrait isMalfoy={isMalfoy} imageUrl={imageURL} />
                   </CardSegment>
                   <CardSegment vertical padding="sm">
                     <Button mode="primary">
@@ -281,6 +286,7 @@ const mapStateToProps = (state :Map) => {
 
   return {
     appearance: state.getIn(['profile', 'basicInformation', 'appearance', 'data'], Map()),
+    photo: state.getIn(['profile', 'basicInformation', 'photos', 'data'], Map()),
     address: state.getIn(['profile', 'basicInformation', 'address', 'data'], Map()),
     officerSafety: state.getIn(['profile', 'officerSafety', 'data', 'officerSafetyConcerns'], List()),
     triggers: state.getIn(['profile', 'officerSafety', 'data', 'behaviors'], List()),
