@@ -109,39 +109,29 @@ type State = {
 class PremiumProfileContainer extends Component<Props, State> {
 
   componentDidMount() {
-    const {
-      actions,
-      match,
-      reports,
-      responsePlan,
-      selectedPerson,
-    } = this.props;
+    const { match } = this.props;
     const personEKID = match.params[PROFILE_ID_PARAM];
-    if (selectedPerson.isEmpty()) {
-      actions.getBasicInformation(personEKID);
-    }
-    else {
-      actions.getAppearance(personEKID); // only get physical appearance
-      actions.getAddress(personEKID); // only get address
-    }
-
-    if (responsePlan.isEmpty()) actions.getOfficerSafety(personEKID);
-    if (reports.isEmpty()) actions.getProfileReports(personEKID);
+    this.getProfileData(personEKID);
   }
 
   componentDidUpdate(prevProps :Props) {
-    const {
-      actions,
-      match,
-    } = this.props;
+    const { match } = this.props;
     const { match: prevMatch } = prevProps;
     const personEKID = match.params[PROFILE_ID_PARAM];
     const prevPersonEKID = prevMatch.params[PROFILE_ID_PARAM];
     if (personEKID !== prevPersonEKID) {
-      actions.getBasics(personEKID);
-      actions.getProfileReports(personEKID);
-      actions.getOfficerSafety(personEKID);
+      this.getProfileData(personEKID);
     }
+  }
+
+  getProfileData = (personEKID :UUID) => {
+    const { actions } = this.props;
+    actions.getAddress(personEKID);
+    actions.getAppearance(personEKID);
+    actions.getBasicInformation(personEKID);
+    actions.getBasics(personEKID);
+    actions.getOfficerSafety(personEKID);
+    actions.getProfileReports(personEKID);
   }
 
   countCrisisCalls = () => {
