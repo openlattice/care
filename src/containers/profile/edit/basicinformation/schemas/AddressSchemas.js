@@ -17,7 +17,7 @@ const {
 
 const schema = {
   type: 'object',
-  title: 'Address',
+  title: '',
   properties: {
     [getPageSectionKey(1, 1)]: {
       type: 'object',

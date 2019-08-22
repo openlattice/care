@@ -3,7 +3,12 @@ import React, { Component } from 'react';
 import { DateTime } from 'luxon';
 import { Constants } from 'lattice';
 import { Form, DataProcessingUtils } from 'lattice-fabricate';
-import { Card, CardSegment, Spinner } from 'lattice-ui-kit';
+import {
+  Card,
+  CardHeader,
+  CardSegment,
+  Spinner
+} from 'lattice-ui-kit';
 import { Map, get, setIn } from 'immutable';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -284,6 +289,9 @@ class OfficerSafetyConcernsForm extends Component<Props, State> {
 
     return (
       <Card>
+        <CardHeader mode="primary" padding="sm">
+          Officer Safety
+        </CardHeader>
         <Form
             disabled={prepopulated}
             formContext={formContext}

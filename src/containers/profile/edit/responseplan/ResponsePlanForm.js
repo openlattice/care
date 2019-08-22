@@ -8,7 +8,12 @@ import {
   setIn,
 } from 'immutable';
 import { Form, DataProcessingUtils } from 'lattice-fabricate';
-import { Card, CardSegment, Spinner } from 'lattice-ui-kit';
+import {
+  Card,
+  CardHeader,
+  CardSegment,
+  Spinner
+} from 'lattice-ui-kit';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { RequestStates } from 'redux-reqseq';
@@ -256,6 +261,9 @@ class ResponsePlanForm extends Component<Props, State> {
 
     return (
       <Card>
+        <CardHeader mode="primary" padding="sm">
+          Background & Response Plan
+        </CardHeader>
         <Form
             disabled={prepopulated}
             formContext={formContext}

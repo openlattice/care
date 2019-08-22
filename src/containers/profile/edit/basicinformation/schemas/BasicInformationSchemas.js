@@ -8,12 +8,7 @@ import {
   PERSON_LAST_NAME_FQN,
   PERSON_MIDDLE_NAME_FQN,
   PERSON_RACE_FQN,
-  PERSON_SEX_FQN,
-
-  HEIGHT_FQN,
-  WEIGHT_FQN,
-  EYE_COLOR_FQN,
-  HAIR_COLOR_FQN,
+  PERSON_SEX_FQN
 } from '../../../../../edm/DataModelFqns';
 import {
   SEX_VALUES,
@@ -21,14 +16,11 @@ import {
 } from '../../../constants';
 
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
-const {
-  PEOPLE_FQN,
-  PHYSICAL_APPEARANCE_FQN,
-} = APP_TYPES_FQNS;
+const { PEOPLE_FQN } = APP_TYPES_FQNS;
 
 const schema = {
   type: 'object',
-  title: 'Basics',
+  title: '',
   properties: {
     [getPageSectionKey(1, 1)]: {
       type: 'object',

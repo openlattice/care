@@ -52,7 +52,7 @@ const schema = {
     }
   },
   type: 'object',
-  title: 'Officer Safety',
+  title: '',
   properties: {
     [getPageSectionKey(1, 1)]: {
       type: 'array',
