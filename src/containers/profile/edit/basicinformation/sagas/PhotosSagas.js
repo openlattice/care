@@ -89,7 +89,7 @@ function* getPhotosWorker(action :SequenceAction) :Generator<any, any, any> {
 
     if (!imageData.isEmpty()) {
       const imageEKID = imageData.getIn([OPENLATTICE_ID_FQN, 0]);
-      response.entityIndexToIdMap = Map().setIn([IMAGE_FQN, 0], imageEKID);
+      response.entityIndexToIdMap = Map().setIn([IMAGE_FQN.toString(), 0], imageEKID);
     }
 
     response.data = imageData;

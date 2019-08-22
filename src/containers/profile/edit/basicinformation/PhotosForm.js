@@ -9,7 +9,7 @@ import {
   CardSegment,
   Spinner
 } from 'lattice-ui-kit';
-import { Map, updateIn, getIn } from 'immutable';
+import { Map, getIn } from 'immutable';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
@@ -30,21 +30,25 @@ const {
 } = APP_TYPES_FQNS;
 
 const {
-  processEntityData,
-  processAssociationEntityData,
-  getPageSectionKey,
-  getEntityAddressKey,
   VALUE_MAPPERS,
+  findEntityAddressKeyFromMap,
+  getEntityAddressKey,
+  getPageSectionKey,
+  parseIdSchemaPath,
+  processAssociationEntityData,
+  processEntityData,
+  processEntityDataForPartialReplace,
+  replaceEntityAddressKeys,
 } = DataProcessingUtils;
 
-const signatureValueMapper = (value :any, contentType :string = 'image/png') => ({
-  data: value,
+const imageValueMapper = (value :any, contentType :string = 'image/png') => ({
+  data: removeDataUriPrefix(value),
   'content-type': contentType,
 });
 
 const mappers = {
   [VALUE_MAPPERS]: {
-    [getEntityAddressKey(0, IMAGE_FQN, IMAGE_DATA_FQN)]: signatureValueMapper
+    [getEntityAddressKey(0, IMAGE_FQN, IMAGE_DATA_FQN)]: imageValueMapper
   }
 };
 
@@ -69,34 +73,12 @@ type Props = {
 
 type State = {
   formData :Object;
-  prepopulated :boolean;
 };
 
 class AddressForm extends Component<Props, State> {
 
   state = {
-    formData: {},
-    prepopulated: false
-  }
-
-  componentDidMount() {
-    this.initializeFormData();
-  }
-
-  componentDidUpdate(prevProps :Props) {
-    const { entityIndexToIdMap } = this.props;
-    const { entityIndexToIdMap: prevEntityIndexToIdMap } = prevProps;
-
-    if (!entityIndexToIdMap.equals(prevEntityIndexToIdMap)) {
-      this.initializeFormData();
-    }
-  }
-
-  initializeFormData = () => {
-    const { entityIndexToIdMap } = this.props;
-    this.setState({
-      prepopulated: !entityIndexToIdMap.isEmpty()
-    });
+    formData: {}
   }
 
   getAssociations = () => {
@@ -110,15 +92,13 @@ class AddressForm extends Component<Props, State> {
   }
 
   handleSubmit = ({ formData } :Object) => {
-    const { actions, entitySetIds, propertyTypeIds } = this.props;
+    const {
+      actions,
+      entitySetIds,
+      propertyTypeIds,
+    } = this.props;
 
-    const noDataUriFormData = updateIn(
-      formData,
-      [getPageSectionKey(1, 1), getEntityAddressKey(0, IMAGE_FQN, IMAGE_DATA_FQN)],
-      removeDataUriPrefix
-    );
-
-    const entityData = processEntityData(noDataUriFormData, entitySetIds, propertyTypeIds, mappers);
+    const entityData = processEntityData(formData, entitySetIds, propertyTypeIds, mappers);
     const associationEntityData = processAssociationEntityData(
       this.getAssociations(),
       entitySetIds,
@@ -133,28 +113,55 @@ class AddressForm extends Component<Props, State> {
     });
   }
 
+  handleUpdate = ({ formData, idSchema } :Object) => {
+    const {
+      actions,
+      entityIndexToIdMap,
+      entitySetIds,
+      propertyTypeIds
+    } = this.props;
+
+    const path = parseIdSchemaPath(idSchema);
+
+    // replace address keys with entityKeyId
+    const draftWithKeys = replaceEntityAddressKeys(
+      formData,
+      findEntityAddressKeyFromMap(entityIndexToIdMap)
+    );
+
+    const mappersWithKeys = replaceEntityAddressKeys(
+      mappers,
+      findEntityAddressKeyFromMap(entityIndexToIdMap)
+    );
+
+    // process for partial replace
+    const editedEntityData = processEntityDataForPartialReplace(
+      draftWithKeys,
+      {},
+      entitySetIds,
+      propertyTypeIds,
+      mappersWithKeys
+    );
+
+    actions.updatePhoto({
+      entityData: editedEntityData,
+      formData,
+      path,
+      properties: formData
+    });
+  }
+
   handleOnChange = ({ formData } :any) => {
     this.setState({ formData });
   }
 
   render() {
     const {
-      actions,
       entityIndexToIdMap,
-      entitySetIds,
       fetchState,
-      imageURL,
-      propertyTypeIds,
+      imageURL
     } = this.props;
-    const { formData, prepopulated } = this.state;
-
-    const formContext = {
-      editAction: actions.updatePhoto,
-      entityIndexToIdMap,
-      entitySetIds,
-      mappers,
-      propertyTypeIds,
-    };
+    const { formData } = this.state;
 
     const previewImageURL = getIn(formData,
       [
@@ -172,6 +179,11 @@ class AddressForm extends Component<Props, State> {
       );
     }
 
+    let submitAction = this.handleSubmit;
+    if (!entityIndexToIdMap.isEmpty()) {
+      submitAction = this.handleUpdate;
+    }
+
     return (
       <Card>
         <CardHeader mode="primary" padding="sm">
@@ -182,12 +194,10 @@ class AddressForm extends Component<Props, State> {
         </PortraitWrapper>
         <Form
             formData={formData}
-            disabled={prepopulated}
             schema={schema}
             onChange={this.handleOnChange}
             uiSchema={uiSchema}
-            onSubmit={this.handleSubmit}
-            formContext={formContext} />
+            onSubmit={submitAction} />
       </Card>
     );
   }

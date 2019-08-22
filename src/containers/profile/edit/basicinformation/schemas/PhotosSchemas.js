@@ -28,9 +28,6 @@ const schema = {
 const uiSchema = {
   [getPageSectionKey(1, 1)]: {
     classNames: 'column-span-12 grid-container',
-    'ui:options': {
-      editable: true
-    },
     [getEntityAddressKey(0, IMAGE_FQN, IMAGE_DATA_FQN)]: {
       classNames: 'column-span-12',
       'ui:options': {
