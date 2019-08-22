@@ -46,7 +46,6 @@ import { getOfficerSafety } from '../edit/officersafety/OfficerSafetyActions';
 import { DATE_TIME_OCCURRED_FQN } from '../../../edm/DataModelFqns';
 import { getEntityKeyId } from '../../../utils/DataUtils';
 import { reduceRequestStates } from '../../../utils/StateUtils';
-import { getNameFromPerson } from '../../../utils/PersonUtils';
 import { getImageDataFromEntity } from '../../../utils/BinaryUtils';
 import {
   PROFILE_ID_PARAM,
@@ -201,9 +200,6 @@ class PremiumProfileContainer extends Component<Props, State> {
     const isLoadingAbout = fetchAboutState === RequestStates.PENDING;
     const isLoadingResponsePlan = fetchResponsePlanState === RequestStates.PENDING;
 
-    const formattedName = getNameFromPerson(selectedPerson);
-    const isMalfoy = formattedName === 'Malfoy, Scorpius H.';
-
     const imageURL :string = getImageDataFromEntity(photo);
 
     return (
@@ -215,7 +211,7 @@ class PremiumProfileContainer extends Component<Props, State> {
               <CardStack>
                 <Card>
                   <CardSegment padding="sm">
-                    <Portrait isMalfoy={isMalfoy} imageUrl={imageURL} />
+                    <Portrait imageUrl={imageURL} />
                   </CardSegment>
                   <CardSegment vertical padding="sm">
                     <Button mode="primary">
