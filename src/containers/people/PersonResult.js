@@ -4,10 +4,16 @@ import React, { Component } from 'react';
 import isFunction from 'lodash/isFunction';
 import styled from 'styled-components';
 import { DateTime } from 'luxon';
-import { Map } from 'immutable';
+import { Constants } from 'lattice';
+import { Map, getIn } from 'immutable';
 import { Card, Label } from 'lattice-ui-kit';
-import { PERSON_DOB_FQN, PERSON_FIRST_NAME_FQN } from '../../edm/DataModelFqns';
+import { connect } from 'react-redux';
+
 import Portrait from '../../components/portrait/Portrait';
+import { getImageDataFromEntity } from '../../utils/BinaryUtils';
+import { PERSON_DOB_FQN } from '../../edm/DataModelFqns';
+
+const { OPENLATTICE_ID_FQN } = Constants;
 
 const DetailsGrid = styled.div`
   display: grid;
@@ -34,14 +40,16 @@ const Truncated = styled.div`
 `;
 
 type Props = {
+  imageUrl ? :string;
+  onClick ? :(result :Map) => void;
   result :Map;
   resultLabels ? :Map;
-  onClick ? :(result :Map) => void;
 }
 
 class PersonResult extends Component<Props> {
 
   static defaultProps = {
+    imageUrl: undefined,
     onClick: undefined,
     resultLabels: Map(),
   }
@@ -86,19 +94,14 @@ class PersonResult extends Component<Props> {
   }
 
   render() {
-    const { result } = this.props;
+    const { result, imageUrl } = this.props;
     const formattedResult = this.formatResult(result);
     const details = this.transformResultToDetailsList(formattedResult);
-
-    // REMOVE ME
-    const givenName = result.getIn([PERSON_FIRST_NAME_FQN, 0]);
-    const isMalfoy = givenName === 'Scorpius';
 
     return (
       <Card onClick={this.handleClick}>
         <ResultWrapper>
-          <Portrait isMalfoy={isMalfoy} height="128" width="96" />
-          {/* <FontAwesomeIcon icon={faPortrait} size="8x" color={NEUTRALS[5]} /> */}
+          <Portrait imageUrl={imageUrl} height="128" width="96" />
           <DetailsGrid>
             { details
               && details.map((detail :Map) => (
@@ -119,5 +122,15 @@ class PersonResult extends Component<Props> {
   }
 }
 
-export default PersonResult;
+const mapStateToProps = (state :Map, ownProps :any) => {
+  const { result } = ownProps;
+  const entityKeyId = getIn(result, [OPENLATTICE_ID_FQN, 0]);
+  const profilePic = state.getIn(['people', 'profilePicsByEKID', entityKeyId], Map());
+
+  return {
+    imageUrl: getImageDataFromEntity(profilePic)
+  };
+};
+
+export default connect(mapStateToProps)(PersonResult);
 export type { Props as ResultProps };
