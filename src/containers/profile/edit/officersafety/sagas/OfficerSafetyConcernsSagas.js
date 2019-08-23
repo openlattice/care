@@ -159,15 +159,25 @@ function* getOfficerSafetyWorker(action :SequenceAction) :Generator<any, any, an
     if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
 
     yield put(getOfficerSafety.request(action.id));
+    let responsePlanEKID :Map = yield select(state => state.getIn([
+      'profile',
+      'responsePlan',
+      'data',
+      OPENLATTICE_ID_FQN,
+      0
+    ]));
 
-    const responsePlanResponse = yield call(
-      getResponsePlanWorker,
-      getResponsePlan(entityKeyId)
-    );
+    if (!isValidUuid(responsePlanEKID)) {
+      const responsePlanResponse = yield call(
+        getResponsePlanWorker,
+        getResponsePlan(entityKeyId)
+      );
 
-    if (responsePlanResponse.error) throw responsePlanResponse.error;
+      if (responsePlanResponse.error) throw responsePlanResponse.error;
 
-    const responsePlanEKID = getIn(responsePlanResponse.data, [OPENLATTICE_ID_FQN, 0]);
+      responsePlanEKID = getIn(responsePlanResponse.data, [OPENLATTICE_ID_FQN, 0]);
+    }
+
 
     if (responsePlanEKID) {
       yield call(
@@ -227,8 +237,6 @@ function* submitOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<a
         type: getResponsePlan.SUCCESS,
         value: responsePlanPayload
       });
-
-      // yield put(getResponsePlan.success(action.id, responsePlanPayload));
     }
 
     const safetyConcernsEKIDs = newEntityKeyIdsByEntitySetName.get(OFFICER_SAFETY_CONCERNS_FQN, List());
