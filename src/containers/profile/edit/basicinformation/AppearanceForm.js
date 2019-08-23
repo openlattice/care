@@ -46,6 +46,7 @@ type Props = {
   formData :Map;
   personEKID :UUID;
   propertyTypeIds :Map;
+  submitState :RequestState;
 };
 
 type State = {
@@ -111,6 +112,10 @@ class AppearanceForm extends Component<Props, State> {
     });
   }
 
+  handleChange = ({ formData } :Object) => {
+    this.setState({ formData });
+  }
+
   render() {
     const {
       actions,
@@ -118,6 +123,7 @@ class AppearanceForm extends Component<Props, State> {
       entitySetIds,
       fetchState,
       propertyTypeIds,
+      submitState
     } = this.props;
     const { formData, prepopulated } = this.state;
     const formContext = {
@@ -144,9 +150,11 @@ class AppearanceForm extends Component<Props, State> {
           Appearance
         </CardHeader>
         <Form
+            isSubmitting={submitState === RequestStates.PENDING}
             formData={formData}
             disabled={prepopulated}
             schema={schema}
+            onChange={this.handleChange}
             uiSchema={uiSchema}
             onSubmit={this.handleSubmit}
             formContext={formContext} />
@@ -159,6 +167,7 @@ const mapStateToProps = state => ({
   entityIndexToIdMap: state.getIn(['profile', 'basicInformation', 'appearance', 'entityIndexToIdMap'], Map()),
   entitySetIds: state.getIn(['app', 'selectedOrgEntitySetIds'], Map()),
   fetchState: state.getIn(['profile', 'basicInformation', 'appearance', 'fetchState'], RequestStates.STANDBY),
+  submitState: state.getIn(['profile', 'basicInformation', 'appearance', 'submitState'], RequestStates.STANDBY),
   formData: state.getIn(['profile', 'basicInformation', 'appearance', 'formData'], Map()),
   propertyTypeIds: state.getIn(['edm', 'fqnToIdMap'], Map()),
 });

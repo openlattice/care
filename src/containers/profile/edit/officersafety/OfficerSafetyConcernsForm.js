@@ -59,6 +59,7 @@ type Props = {
   personEKID :UUID;
   responsePlanEKID :UUID;
   propertyTypeIds :Map;
+  submitState :RequestState;
 };
 
 type State = {
@@ -254,6 +255,10 @@ class OfficerSafetyConcernsForm extends Component<Props, State> {
     }
   }
 
+  handleChange = ({ formData } :Object) => {
+    this.setState({ formData });
+  }
+
   render() {
     const {
       actions,
@@ -261,6 +266,7 @@ class OfficerSafetyConcernsForm extends Component<Props, State> {
       entitySetIds,
       fetchState,
       propertyTypeIds,
+      submitState,
     } = this.props;
     const { formData, prepopulated } = this.state;
     const formContext = {
@@ -293,9 +299,11 @@ class OfficerSafetyConcernsForm extends Component<Props, State> {
           Officer Safety
         </CardHeader>
         <Form
+            isSubmitting={submitState === RequestStates.PENDING}
             disabled={prepopulated}
             formContext={formContext}
             formData={formData}
+            onChange={this.handleChange}
             onSubmit={this.handleSubmit}
             schema={schema}
             uiSchema={uiSchema} />
@@ -316,7 +324,8 @@ const mapStateToProps = (state :Map) => {
     fetchState: reduceRequestStates(fetchSafetyStates),
     formData: state.getIn(['profile', 'officerSafety', 'formData'], Map()),
     propertyTypeIds: state.getIn(['edm', 'fqnToIdMap'], Map()),
-    responsePlanEKID: state.getIn(['profile', 'responsePlan', 'data', OPENLATTICE_ID_FQN, 0])
+    responsePlanEKID: state.getIn(['profile', 'responsePlan', 'data', OPENLATTICE_ID_FQN, 0]),
+    submitState: state.getIn(['profile', 'officerSafety', 'submitState'], RequestStates.STANDBY),
   };
 };
 

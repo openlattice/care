@@ -45,6 +45,7 @@ type Props = {
   formData :Map;
   personEKID :UUID;
   propertyTypeIds :Map;
+  submitState :RequestState;
 };
 
 type State = {
@@ -66,7 +67,7 @@ class AddressForm extends Component<Props, State> {
   componentDidUpdate(prevProps :Props) {
     const { formData } = this.props;
     const { formData: prevFormData } = prevProps;
-
+    
     if (!formData.equals(prevFormData)) {
       this.initializeFormData();
     }
@@ -107,6 +108,10 @@ class AddressForm extends Component<Props, State> {
     });
   }
 
+  handleChange = ({ formData } :Object) => {
+    this.setState({ formData });
+  }
+
   render() {
     const {
       actions,
@@ -114,6 +119,7 @@ class AddressForm extends Component<Props, State> {
       entitySetIds,
       fetchState,
       propertyTypeIds,
+      submitState,
     } = this.props;
     const { formData, prepopulated } = this.state;
     const formContext = {
@@ -143,6 +149,8 @@ class AddressForm extends Component<Props, State> {
             disabled={prepopulated}
             formContext={formContext}
             formData={formData}
+            isSubmitting={submitState === RequestStates.PENDING}
+            onChange={this.handleChange}
             onSubmit={this.handleSubmit}
             schema={schema}
             uiSchema={uiSchema} />
@@ -157,6 +165,7 @@ const mapStateToProps = state => ({
   fetchState: state.getIn(['profile', 'basicInformation', 'address', 'fetchState'], RequestStates.STANDBY),
   formData: state.getIn(['profile', 'basicInformation', 'address', 'formData'], Map()),
   propertyTypeIds: state.getIn(['edm', 'fqnToIdMap'], Map()),
+  submitState: state.getIn(['profile', 'basicInformation', 'address', 'submitState'], RequestStates.STANDBY),
 });
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({

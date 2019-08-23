@@ -22,6 +22,7 @@ import { removeDataUriPrefix, getImageDataFromEntity } from '../../../../utils/B
 import { schema, uiSchema } from './schemas/PhotosSchemas';
 import { COMPLETED_DT_FQN, IMAGE_DATA_FQN } from '../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
+import { reduceRequestStates } from '../../../../utils/StateUtils';
 
 const {
   IMAGE_FQN,
@@ -66,9 +67,10 @@ type Props = {
   entityIndexToIdMap :Map;
   entitySetIds :Map;
   fetchState :RequestState;
-  imageURL :string;
+  imageUrl :string;
   personEKID :UUID;
   propertyTypeIds :Map;
+  upsertState :RequestState;
 };
 
 type State = {
@@ -159,7 +161,8 @@ class AddressForm extends Component<Props, State> {
     const {
       entityIndexToIdMap,
       fetchState,
-      imageURL
+      imageUrl,
+      upsertState,
     } = this.props;
     const { formData } = this.state;
 
@@ -167,7 +170,7 @@ class AddressForm extends Component<Props, State> {
       [
         getPageSectionKey(1, 1),
         getEntityAddressKey(0, IMAGE_FQN, IMAGE_DATA_FQN)
-      ]) || imageURL;
+      ]) || imageUrl;
 
     if (fetchState === RequestStates.PENDING) {
       return (
@@ -193,6 +196,7 @@ class AddressForm extends Component<Props, State> {
           <Portrait imageUrl={previewImageURL} />
         </PortraitWrapper>
         <Form
+            isSubmitting={upsertState === RequestStates.PENDING}
             formData={formData}
             schema={schema}
             onChange={this.handleOnChange}
@@ -206,14 +210,20 @@ class AddressForm extends Component<Props, State> {
 const mapStateToProps = (state) => {
 
   const imageEntity = state.getIn(['profile', 'basicInformation', 'photos', 'data'], Map());
-  const imageURL = getImageDataFromEntity(imageEntity);
+  const imageUrl = getImageDataFromEntity(imageEntity);
+
+  const upsertState = reduceRequestStates([
+    state.getIn(['profile', 'basicInformation', 'photos', 'updateState']),
+    state.getIn(['profile', 'basicInformation', 'photos', 'submitState']),
+  ]);
 
   return {
     entityIndexToIdMap: state.getIn(['profile', 'basicInformation', 'photos', 'entityIndexToIdMap'], Map()),
     entitySetIds: state.getIn(['app', 'selectedOrgEntitySetIds'], Map()),
     fetchState: state.getIn(['profile', 'basicInformation', 'photos', 'fetchState'], RequestStates.STANDBY),
     formData: state.getIn(['profile', 'basicInformation', 'photos', 'formData'], Map()),
-    imageURL,
+    imageUrl,
+    upsertState,
     propertyTypeIds: state.getIn(['edm', 'fqnToIdMap'], Map()),
   };
 };
