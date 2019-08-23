@@ -14,6 +14,7 @@ const Detail = styled.div`
 
 const Content = styled.div`
   flex: 1;
+  word-break: break-word;
 `;
 
 const IconWrapper = styled.span`
