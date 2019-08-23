@@ -126,11 +126,9 @@ class PremiumProfileContainer extends Component<Props, State> {
 
   getProfileData = (personEKID :UUID) => {
     const { actions } = this.props;
-    actions.getAddress(personEKID);
-    actions.getAppearance(personEKID);
     actions.getBasicInformation(personEKID);
-    actions.getBasics(personEKID);
     actions.getOfficerSafety(personEKID);
+    actions.getResponsePlan(personEKID);
     actions.getProfileReports(personEKID);
   }
 
