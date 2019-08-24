@@ -17,6 +17,8 @@ import type { Dispatch } from 'redux';
 import type { RequestSequence } from 'redux-reqseq';
 
 import LinkButton from '../../../components/buttons/LinkButton';
+import ProfileBanner from '../ProfileBanner';
+import ContactsForm from './contacts/ContactsForm';
 import NavStep from './NavStep';
 import ResponsePlanForm from './responseplan/ResponsePlanForm';
 import BasicInformationContainer from './basicinformation/BasicInformationContainer';
@@ -31,7 +33,6 @@ import {
   PROFILE_ID_PARAM,
   RESPONSE_PLAN_PATH,
 } from '../../../core/router/Routes';
-import ProfileBanner from '../ProfileBanner';
 
 type Props = {
   actions :{
@@ -77,7 +78,7 @@ const EditProfileContainer = (props :Props) => {
             <Route path={`${match.path}${BASIC_PATH}`} component={BasicInformationContainer} />
             <Route path={`${match.path}${OFFICER_SAFETY_PATH}`} component={OfficerSafetyContainer} />
             <Route path={`${match.path}${RESPONSE_PLAN_PATH}`} component={ResponsePlanForm} />
-            {/* <Route path={`${match.path}${CONTACTS_PATH}`} /> */}
+            <Route path={`${match.path}${CONTACTS_PATH}`} component={ContactsForm} />
             {/* <Route path={`${match.path}${ABOUT_PATH}`} /> */}
             <Redirect to={`${match.path}${RESPONSE_PLAN_PATH}`} />
           </Switch>

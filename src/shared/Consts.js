@@ -26,6 +26,10 @@ export const APP_TYPES_FQNS = {
   RESPONSE_PLAN_FQN: new FullyQualifiedName('app.responseplan'),
   STAFF_FQN: new FullyQualifiedName('app.staff'),
   SUBJECT_OF_FQN: new FullyQualifiedName('app.subjectof'),
+  EMERGENCY_CONTACT_FQN: new FullyQualifiedName('app.emergencycontact'),
+  IS_EMERGENCY_CONTACT_FOR_FQN: new FullyQualifiedName('app.isemergencycontactfor'),
+  CONTACT_INFORMATION_FQN: new FullyQualifiedName('app.contactinformation'),
+  CONTACTED_VIA_FQN: new FullyQualifiedName('app.contactedvia'),
 };
 
 export const STRING_ID_FQN = 'general.stringid';
