@@ -67,7 +67,6 @@ function* getPhysicalAppearanceWorker(action :SequenceAction) :Generator<any, an
   const response = {};
   try {
     const { value: entityKeyId } = action;
-    if (!isDefined(entityKeyId)) throw ERR_ACTION_VALUE_NOT_DEFINED;
     if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
 
     yield put(getPhysicalAppearance.request(action.id, entityKeyId));
@@ -118,20 +117,16 @@ function* getPhysicalApperanceWatcher() :Generator<any, any, any> {
 }
 
 function* getPersonDataWorker(action :SequenceAction) :Generator<any, any, any> {
+  const response = {};
   try {
     const { value: entityKeyId } = action;
-    if (!isDefined(entityKeyId)) throw ERR_ACTION_VALUE_NOT_DEFINED;
     if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getPersonData.request(action.id, entityKeyId));
 
     const app :Map = yield select(state => state.get('app', Map()));
     const entitySetId :UUID = getESIDFromApp(app, PEOPLE_FQN);
-    const appearanceRequest = call(
-      getPhysicalAppearanceWorker,
-      getPhysicalAppearance(entityKeyId)
-    );
 
-    const personRequest = call(
+    const personResponse = yield call(
       getEntityDataWorker,
       getEntityData({
         entitySetId,
@@ -139,24 +134,19 @@ function* getPersonDataWorker(action :SequenceAction) :Generator<any, any, any> 
       })
     );
 
-    const [personResponse, appearanceResponse] = yield all([
-      personRequest,
-      appearanceRequest,
-    ]);
-
     if (personResponse.error) throw personResponse.error;
-    if (appearanceResponse.error) throw appearanceResponse.error;
-
     const personData = fromJS(personResponse.data);
-
+    response.data = personData;
     yield put(getPersonData.success(action.id, personData));
   }
   catch (error) {
+    response.error = error;
     yield put(getPersonData.failure(action.id, error));
   }
   finally {
     yield put(getPersonData.finally(action.id));
   }
+  return response;
 }
 
 function* getPersonDataWatcher() :Generator<any, any, any> {
@@ -166,7 +156,6 @@ function* getPersonDataWatcher() :Generator<any, any, any> {
 function* getProfileReportsWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
     const { value: entityKeyId } = action;
-    if (!isDefined(entityKeyId)) throw ERR_ACTION_VALUE_NOT_DEFINED;
     if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
 
     yield put(getProfileReports.request(action.id, entityKeyId));

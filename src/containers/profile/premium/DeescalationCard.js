@@ -1,6 +1,7 @@
+// @flow
 import React from 'react';
 import styled from 'styled-components';
-import { List } from 'immutable';
+import { List, Map } from 'immutable';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTheaterMasks } from '@fortawesome/pro-solid-svg-icons';
 import {
@@ -53,7 +54,13 @@ const DeescalationContentWrapper = styled.div`
   }
 `;
 
-const DeescalationCard = () => {
+type Props = {
+  isLoading :boolean;
+  techniques :List<Map>;
+};
+
+const DeescalationCard = (props :Props) => {
+  const { isLoading, techniques } = props;
   return (
     <Card>
       <CardHeader mode="primary" padding="sm">
@@ -65,7 +72,7 @@ const DeescalationCard = () => {
         </H1>
       </CardHeader>
       <DeescalationContentWrapper>
-        <SpecificTechniques techniques={List()} />
+        <SpecificTechniques isLoading={isLoading} techniques={techniques} />
         <div>
           <H2>
             General Best Practices

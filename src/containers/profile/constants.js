@@ -1,3 +1,4 @@
+// @flow
 import { OrderedMap } from 'immutable';
 import * as FQN from '../../edm/DataModelFqns';
 
@@ -26,29 +27,31 @@ const labelMapAttributes = OrderedMap({
   [FQN.EYE_COLOR_FQN]: 'Eye Color',
 });
 
-const generateOptions = (list :string[]) => list.map(value => ({
+const generateOptions = (list :string[]) :Object[] => list.map(value => ({
   label: value,
   value
 }));
 
 // https://nief.org/attribute-registry/codesets/NCICSexCode/
-const sexOptions = generateOptions([
+const SEX_VALUES = [
   'Female',
   'Male',
   'Unknown'
-]);
+];
+const sexOptions = generateOptions(SEX_VALUES);
 
-const raceOptions = generateOptions([
+const RACE_VALUES = [
   'American Indian',
   'Asian / Pacific Islander',
   'Black / African American',
   'Hispanic (Non-White)',
   'White',
   'Unknown',
-]);
+];
+const raceOptions = generateOptions(RACE_VALUES);
 
 // https://nief.org/attribute-registry/codesets/NCICEyeColorCode/
-const eyeOptions = generateOptions([
+const EYE_COLOR_VALUES = [
   'Black',
   'Blue',
   'Brown',
@@ -59,10 +62,11 @@ const eyeOptions = generateOptions([
   'Multicolored',
   'Pink',
   'Unknown',
-]);
+];
+const eyeOptions = generateOptions(EYE_COLOR_VALUES);
 
 // https://nief.org/attribute-registry/codesets/NCICHairColorCode/
-const hairOptions = generateOptions([
+const HAIR_COLOR_VALUES = [
   'Bald',
   'Black',
   'Blond',
@@ -77,7 +81,8 @@ const hairOptions = generateOptions([
   'Sandy',
   'White',
   'Unknown',
-]);
+];
+const hairOptions = generateOptions(HAIR_COLOR_VALUES);
 
 const personFqnsByName = {
   aliases: FQN.PERSON_NICK_NAME_FQN,
@@ -97,6 +102,10 @@ const physicalAppearanceFqnsByName = {
 };
 
 export {
+  EYE_COLOR_VALUES,
+  HAIR_COLOR_VALUES,
+  RACE_VALUES,
+  SEX_VALUES,
   eyeOptions,
   hairOptions,
   labelMapAttributes,

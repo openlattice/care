@@ -12,11 +12,8 @@ import {
   Card,
   CardSegment,
   CardStack,
-  Colors,
   SearchResults
 } from 'lattice-ui-kit';
-import { faPortrait } from '@fortawesome/pro-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
@@ -25,6 +22,7 @@ import type { Match } from 'react-router';
 import AboutCard from './AboutCard';
 import BackgroundInformationCard from './BackgroundInformationCard';
 import BehaviorCard from './BehaviorCard';
+import AddressCard from '../../../components/premium/address/AddressCard';
 import DeescalationCard from './DeescalationCard';
 import OfficerSafetyCard from './OfficerSafetyCard';
 import ReportsSummary from './ReportsSummary';
@@ -34,15 +32,21 @@ import ProfileBanner from '../ProfileBanner';
 import ProfileResult from '../ProfileResult';
 import RecentIncidentCard from '../RecentIncidentCard';
 import { labelMapReport } from '../constants';
+import Portrait from '../styled/Portrait';
 import { ContentWrapper, ContentOuterWrapper } from '../../../components/layout';
+import { getProfileReports } from '../ProfileActions';
 import {
-  getPersonData,
-  getPhysicalAppearance,
-  getProfileReports,
-  updateProfileAbout
-} from '../ProfileActions';
+  getAppearance,
+  getBasicInformation,
+  getBasics,
+} from '../edit/basicinformation/actions/BasicInformationActions';
+import { getAddress } from '../edit/basicinformation/actions/AddressActions';
+import { getResponsePlan } from '../edit/responseplan/ResponsePlanActions';
+import { getOfficerSafety } from '../edit/officersafety/OfficerSafetyActions';
 import { DATE_TIME_OCCURRED_FQN } from '../../../edm/DataModelFqns';
 import { getEntityKeyId } from '../../../utils/DataUtils';
+import { reduceRequestStates } from '../../../utils/StateUtils';
+import { getNameFromPerson } from '../../../utils/PersonUtils';
 import {
   PROFILE_ID_PARAM,
   REPORT_VIEW_PATH,
@@ -50,14 +54,6 @@ import {
 } from '../../../core/router/Routes';
 import { goToPath } from '../../../core/router/RoutingActions';
 import type { RoutingAction } from '../../../core/router/RoutingActions';
-
-const { NEUTRALS } = Colors;
-
-// Fixed placeholder size
-const PlaceholderPortrait = styled(FontAwesomeIcon)`
-  height: 265px !important;
-  width: 200px !important;
-`;
 
 const Aside = styled.div`
   align-items: center;
@@ -80,19 +76,29 @@ const BehaviorAndSafetyGrid = styled.div`
 
 type Props = {
   actions :{
-    getPersonData :RequestSequence;
-    getPhysicalAppearance :RequestSequence;
+    getAddress :RequestSequence;
+    getAppearance :RequestSequence;
+    getBasicInformation :RequestSequence;
+    getBasics :RequestSequence;
+    getOfficerSafety :RequestSequence;
     getProfileReports :RequestSequence;
+    getResponsePlan :RequestSequence;
     goToPath :(path :string) => RoutingAction;
-    updateProfileAbout :RequestSequence;
   };
-  fetchAppearanceState :RequestState;
-  fetchPersonState :RequestState;
+  address :Map;
+  appearance :Map;
+  fetchAboutState :RequestState;
+  fetchOfficerSafetyState :RequestState;
   fetchReportsState :RequestState;
+  fetchResponsePlanState :RequestState;
+  interactionStrategies :List<Map>;
   match :Match;
-  physicalAppearance :Map;
+  officerSafety :List<Map>;
   reports :List<Map>;
+  responsePlan :Map;
   selectedPerson :Map;
+  techniques :List<Map>;
+  triggers :List<Map>;
 };
 
 type State = {
@@ -105,22 +111,21 @@ class PremiumProfileContainer extends Component<Props, State> {
     const {
       actions,
       match,
-      physicalAppearance,
       reports,
-      selectedPerson
+      responsePlan,
+      selectedPerson,
     } = this.props;
     const personEKID = match.params[PROFILE_ID_PARAM];
-    if (physicalAppearance.isEmpty()) {
-      if (selectedPerson.isEmpty()) {
-        actions.getPersonData(personEKID); // gets both person and physical appearance
-      }
-      else {
-        actions.getPhysicalAppearance(personEKID); // only get physical appearance
-      }
+    if (selectedPerson.isEmpty()) {
+      actions.getBasicInformation(personEKID);
     }
-    if (reports.isEmpty()) {
-      actions.getProfileReports(personEKID);
+    else {
+      actions.getAppearance(personEKID); // only get physical appearance
+      actions.getAddress(personEKID); // only get address
     }
+
+    if (responsePlan.isEmpty()) actions.getOfficerSafety(personEKID);
+    if (reports.isEmpty()) actions.getProfileReports(personEKID);
   }
 
   componentDidUpdate(prevProps :Props) {
@@ -132,8 +137,9 @@ class PremiumProfileContainer extends Component<Props, State> {
     const personEKID = match.params[PROFILE_ID_PARAM];
     const prevPersonEKID = prevMatch.params[PROFILE_ID_PARAM];
     if (personEKID !== prevPersonEKID) {
-      actions.getPersonData(personEKID);
+      actions.getBasics(personEKID);
       actions.getProfileReports(personEKID);
+      actions.getOfficerSafety(personEKID);
     }
   }
 
@@ -171,20 +177,29 @@ class PremiumProfileContainer extends Component<Props, State> {
 
   render() {
     const {
+      address,
+      appearance,
+      fetchAboutState,
+      fetchOfficerSafetyState,
       fetchReportsState,
-      fetchAppearanceState,
-      fetchPersonState,
-      physicalAppearance,
+      fetchResponsePlanState,
+      interactionStrategies,
+      officerSafety,
       reports,
-      selectedPerson
+      responsePlan,
+      selectedPerson,
+      techniques,
+      triggers,
     } = this.props;
     const { recent, total } = this.countCrisisCalls();
 
     const isLoadingReports = fetchReportsState === RequestStates.PENDING;
-    const isLoadingAbout = (
-      fetchPersonState === RequestStates.PENDING
-      || fetchAppearanceState === RequestStates.PENDING
-    );
+    const isLoadingOfficerSafety = fetchOfficerSafetyState === RequestStates.PENDING;
+    const isLoadingAbout = fetchAboutState === RequestStates.PENDING;
+    const isLoadingResponsePlan = fetchResponsePlanState === RequestStates.PENDING;
+
+    const formattedName = getNameFromPerson(selectedPerson);
+    const isMalfoy = formattedName === 'Malfoy, Scorpius H.';
 
     return (
       <ContentOuterWrapper>
@@ -195,7 +210,7 @@ class PremiumProfileContainer extends Component<Props, State> {
               <CardStack>
                 <Card>
                   <CardSegment padding="sm">
-                    <PlaceholderPortrait icon={faPortrait} color={NEUTRALS[5]} />
+                    <Portrait isMalfoy={isMalfoy} />
                   </CardSegment>
                   <CardSegment vertical padding="sm">
                     <Button mode="primary">
@@ -206,7 +221,10 @@ class PremiumProfileContainer extends Component<Props, State> {
                 <AboutCard
                     isLoading={isLoadingAbout}
                     selectedPerson={selectedPerson}
-                    physicalAppearance={physicalAppearance} />
+                    appearance={appearance} />
+                <AddressCard
+                    isLoading={isLoadingAbout}
+                    address={address} />
               </CardStack>
             </Aside>
             <CardStack>
@@ -220,11 +238,19 @@ class PremiumProfileContainer extends Component<Props, State> {
                     isLoading={isLoadingReports} />
                 <OfficerSafetyCard
                     reports={reports}
-                    isLoading={isLoadingReports} />
+                    triggers={triggers}
+                    officerSafety={officerSafety}
+                    isLoading={isLoadingOfficerSafety} />
               </BehaviorAndSafetyGrid>
-              <DeescalationCard />
-              <ResponsePlanCard />
-              <BackgroundInformationCard />
+              <DeescalationCard
+                  techniques={techniques}
+                  isLoading={isLoadingOfficerSafety} />
+              <ResponsePlanCard
+                  interactionStrategies={interactionStrategies}
+                  isLoading={isLoadingResponsePlan} />
+              <BackgroundInformationCard
+                  backgroundInformation={responsePlan}
+                  isLoading={isLoadingResponsePlan} />
               <SearchResults
                   hasSearched={fetchReportsState !== RequestStates.STANDBY}
                   isLoading={isLoadingReports}
@@ -241,22 +267,45 @@ class PremiumProfileContainer extends Component<Props, State> {
   }
 }
 
-const mapStateToProps = state => ({
-  fetchAppearanceState: state.getIn(['profile', 'fetchAppearanceState'], RequestStates.STANDBY),
-  fetchPersonState: state.getIn(['profile', 'fetchPersonState'], RequestStates.STANDBY),
-  fetchReportsState: state.getIn(['profile', 'fetchReportsState'], RequestStates.STANDBY),
-  physicalAppearance: state.getIn(['profile', 'physicalAppearance'], Map()),
-  reports: state.getIn(['profile', 'reports'], List()),
-  selectedPerson: state.getIn(['profile', 'selectedPerson'], Map()),
-});
+const mapStateToProps = (state :Map) => {
+  const fetchAboutStates = [
+    state.getIn(['profile', 'basicInformation', 'basics', 'fetchState']),
+    state.getIn(['profile', 'basicInformation', 'appearance', 'fetchState']),
+    state.getIn(['profile', 'basicInformation', 'address', 'fetchState']),
+  ];
+
+  const fetchOfficerSafetyStates = [
+    state.getIn(['profile', 'officerSafety', 'fetchState']),
+    state.getIn(['profile', 'reports', 'fetchState'])
+  ];
+
+  return {
+    appearance: state.getIn(['profile', 'basicInformation', 'appearance', 'data'], Map()),
+    address: state.getIn(['profile', 'basicInformation', 'address', 'data'], Map()),
+    officerSafety: state.getIn(['profile', 'officerSafety', 'data', 'officerSafetyConcerns'], List()),
+    triggers: state.getIn(['profile', 'officerSafety', 'data', 'behaviors'], List()),
+    techniques: state.getIn(['profile', 'officerSafety', 'data', 'interactionStrategies'], List()),
+    fetchAboutState: reduceRequestStates(fetchAboutStates),
+    fetchOfficerSafetyState: reduceRequestStates(fetchOfficerSafetyStates),
+    fetchReportsState: state.getIn(['profile', 'reports', 'fetchState'], RequestStates.STANDBY),
+    fetchResponsePlanState: state.getIn(['profile', 'responsePlan', 'fetchState'], RequestStates.STANDBY),
+    interactionStrategies: state.getIn(['profile', 'responsePlan', 'interactionStrategies'], List()),
+    reports: state.getIn(['profile', 'reports', 'data'], List()),
+    responsePlan: state.getIn(['profile', 'responsePlan', 'data'], Map()),
+    selectedPerson: state.getIn(['profile', 'basicInformation', 'basics', 'data'], Map()),
+  };
+};
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
-    getPersonData,
-    getPhysicalAppearance,
+    getAddress,
+    getAppearance,
+    getBasics,
+    getOfficerSafety,
+    getBasicInformation,
     getProfileReports,
+    getResponsePlan,
     goToPath,
-    updateProfileAbout,
   }, dispatch)
 });
 

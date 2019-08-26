@@ -1,10 +1,9 @@
 // @flow
 
-import React, { Component } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { DateTime } from 'luxon';
 import {
-  Button,
   Card,
   CardSegment,
   CardHeader,
@@ -17,15 +16,20 @@ import {
   faUser,
   faVenusMars,
   faWeightHanging,
+  faEdit,
+  faClawMarks
 } from '@fortawesome/pro-solid-svg-icons';
-import { faUserHardHat, faEdit } from '@fortawesome/pro-regular-svg-icons';
+import { faUserHardHat } from '@fortawesome/pro-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { withRouter } from 'react-router-dom';
+import type { Match } from 'react-router-dom';
 
 import AboutDetail from './AboutDetail';
-import EditAboutModal from './EditAboutModal';
 import * as FQN from '../../../edm/DataModelFqns';
 import { inchesToFeetString } from '../../../utils/DataUtils';
 import { getNameFromPerson } from '../../../utils/PersonUtils';
+import LinkButton from '../../../components/buttons/LinkButton';
+import { BASIC_PATH } from '../../../core/router/Routes';
 
 const IconWrapper = styled.span`
   vertical-align: middle;
@@ -41,7 +45,7 @@ const H1 = styled.h1`
   align-items: center;
 `;
 
-const EditButton = styled(Button)`
+const EditButton = styled(LinkButton)`
   margin-left: auto;
   padding: 2px;
 `;
@@ -60,123 +64,110 @@ const AboutGrid = styled.div`
   grid-template-columns: repeat(2, 1fr);
   grid-gap: 5px;
 
-  > div:nth-child(-n + 2) {
+  > div:nth-child(-n + 2),
+  > div:last-child {
     grid-column: auto / span 2;
   };
 `;
 
 type Props = {
-  physicalAppearance :Map;
+  match :Match;
+  appearance :Map;
   selectedPerson :Map;
   isLoading :boolean;
 };
 
-type State = {
-  showEdit :boolean;
+const AboutCard = (props :Props) => {
+
+  const {
+    isLoading,
+    match,
+    appearance,
+    selectedPerson
+  } = props;
+
+  const formattedName = getNameFromPerson(selectedPerson);
+
+  const rawDob = selectedPerson.getIn([FQN.PERSON_DOB_FQN, 0], '');
+  const race = selectedPerson.getIn([FQN.PERSON_RACE_FQN, 0], '');
+  const sex = selectedPerson.getIn([FQN.PERSON_SEX_FQN, 0], '');
+  const aliases = selectedPerson.get(FQN.PERSON_NICK_NAME_FQN, []).join(', ');
+  let formattedDob = '';
+
+  if (rawDob) {
+    formattedDob = DateTime.fromISO(rawDob).toLocaleString(DateTime.DATE_SHORT);
+  }
+
+  const physicalAppearance = appearance.get('physicalAppearance', Map());
+  const identifyingCharacteristics = appearance.get('identifyingCharacteristics', Map());
+
+  const scars = identifyingCharacteristics.getIn([FQN.DESCRIPTION_FQN], '');
+
+  const hairColor = physicalAppearance.getIn([FQN.HAIR_COLOR_FQN, 0], '');
+  const eyeColor = physicalAppearance.getIn([FQN.EYE_COLOR_FQN, 0], '');
+  const height = physicalAppearance.getIn([FQN.HEIGHT_FQN, 0]);
+  const weight = physicalAppearance.getIn([FQN.WEIGHT_FQN, 0]);
+
+  const formattedHeight = height ? inchesToFeetString(height) : '';
+  const formattedWeight = weight ? `${weight} lbs` : '';
+
+  return (
+    <Card>
+      <CardHeader mode="primary" padding="sm">
+        <H1>
+          <IconWrapper>
+            <FontAwesomeIcon icon={faUser} fixedWidth />
+          </IconWrapper>
+          About
+          <EditButton mode="primary" to={`${match.url}${BASIC_PATH}`}>
+            <FontAwesomeIcon icon={faEdit} fixedWidth />
+          </EditButton>
+        </H1>
+      </CardHeader>
+      <CardSegment vertical padding="sm">
+        <Name content={formattedName} isLoading={isLoading} />
+        <Birthdate content={formattedDob} isLoading={isLoading} />
+      </CardSegment>
+      <CardSegment vertical padding="sm">
+        <Label subtle>Aliases</Label>
+        <AboutDetail
+            content={aliases}
+            isLoading={isLoading} />
+      </CardSegment>
+      <CardSegment vertical padding="sm">
+        <AboutGrid>
+          <AboutDetail
+              content={race}
+              isLoading={isLoading}
+              icon={faUser} />
+          <AboutDetail
+              content={sex}
+              isLoading={isLoading}
+              icon={faVenusMars} />
+          <AboutDetail
+              content={formattedHeight}
+              isLoading={isLoading}
+              icon={faRulerVertical} />
+          <AboutDetail
+              content={formattedWeight}
+              isLoading={isLoading}
+              icon={faWeightHanging} />
+          <AboutDetail
+              content={hairColor}
+              isLoading={isLoading}
+              icon={faUserHardHat} />
+          <AboutDetail
+              content={eyeColor}
+              isLoading={isLoading}
+              icon={faEye} />
+          <AboutDetail
+              content={scars}
+              isLoading={isLoading}
+              icon={faClawMarks} />
+        </AboutGrid>
+      </CardSegment>
+    </Card>
+  );
 };
 
-class AboutCard extends Component<Props, State> {
-
-  state = {
-    showEdit: false
-  };
-
-  handleShowEdit = () => {
-    this.setState({
-      showEdit: true
-    });
-  }
-
-  handleHideEdit = () => {
-    this.setState({
-      showEdit: false
-    });
-  }
-
-  render() {
-
-    const {
-      isLoading,
-      physicalAppearance,
-      selectedPerson
-    } = this.props;
-    const { showEdit } = this.state;
-
-    const formattedName = getNameFromPerson(selectedPerson);
-
-    const rawDob = selectedPerson.getIn([FQN.PERSON_DOB_FQN, 0], '');
-    const race = selectedPerson.getIn([FQN.PERSON_RACE_FQN, 0], '');
-    const sex = selectedPerson.getIn([FQN.PERSON_SEX_FQN, 0], '');
-    const aliases = selectedPerson.getIn([FQN.PERSON_NICK_NAME_FQN], '');
-    let formattedDob = '';
-
-    if (rawDob) {
-      formattedDob = DateTime.fromISO(rawDob).toLocaleString(DateTime.DATE_SHORT);
-    }
-
-    const hairColor = physicalAppearance.getIn([FQN.HAIR_COLOR_FQN, 0], '');
-    const eyeColor = physicalAppearance.getIn([FQN.EYE_COLOR_FQN, 0], '');
-    const height = physicalAppearance.getIn([FQN.HEIGHT_FQN, 0]);
-    const weight = physicalAppearance.getIn([FQN.WEIGHT_FQN, 0]);
-
-    const formattedHeight = height ? inchesToFeetString(height) : '';
-    const formattedWeight = weight ? `${weight} lbs` : '';
-
-    return (
-      <Card>
-        <CardHeader mode="primary" padding="sm">
-          <H1>
-            <IconWrapper>
-              <FontAwesomeIcon icon={faUser} fixedWidth />
-            </IconWrapper>
-            About
-            <EditButton mode="primary" onClick={this.handleShowEdit}>
-              <FontAwesomeIcon icon={faEdit} fixedWidth />
-            </EditButton>
-          </H1>
-        </CardHeader>
-        <CardSegment vertical padding="sm">
-          <Name content={formattedName} isLoading={isLoading} />
-          <Birthdate content={formattedDob} isLoading={isLoading} />
-        </CardSegment>
-        <CardSegment vertical padding="sm">
-          <Label subtle>Aliases</Label>
-          <AboutDetail
-              content={aliases}
-              isLoading={isLoading} />
-        </CardSegment>
-        <CardSegment vertical padding="sm">
-          <AboutGrid>
-            <AboutDetail
-                content={race}
-                isLoading={isLoading}
-                icon={faUser} />
-            <AboutDetail
-                content={sex}
-                isLoading={isLoading}
-                icon={faVenusMars} />
-            <AboutDetail
-                content={formattedHeight}
-                isLoading={isLoading}
-                icon={faRulerVertical} />
-            <AboutDetail
-                content={formattedWeight}
-                isLoading={isLoading}
-                icon={faWeightHanging} />
-            <AboutDetail
-                content={hairColor}
-                isLoading={isLoading}
-                icon={faUserHardHat} />
-            <AboutDetail
-                content={eyeColor}
-                isLoading={isLoading}
-                icon={faEye} />
-          </AboutGrid>
-        </CardSegment>
-        <EditAboutModal isVisible={showEdit} onClose={this.handleHideEdit} />
-      </Card>
-    );
-  }
-}
-
-export default AboutCard;
+export default withRouter(AboutCard);

@@ -23,3 +23,10 @@ export const REPORT_VIEW_PATH :string = `${REPORTS_PATH}/${REPORT_ID_PATH}/view`
 export const PROFILE_ID_PARAM :string = 'profileId';
 export const PROFILE_ID_PATH :string = `:${PROFILE_ID_PARAM}`;
 export const PROFILE_PATH :string = `${PEOPLE_PATH}/${PROFILE_ID_PATH}`;
+export const PROFILE_EDIT_PATH :string = `${PROFILE_PATH}/edit`;
+
+export const BASIC_PATH :string = '/basic-information';
+export const OFFICER_SAFETY_PATH :string = '/officer-safety';
+export const RESPONSE_PLAN_PATH :string = '/response-plan';
+export const CONTACTS_PATH :string = '/contacts';
+export const ABOUT_PATH :string = '/about';

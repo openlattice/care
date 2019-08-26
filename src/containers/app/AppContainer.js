@@ -24,8 +24,6 @@ import DashboardContainer from '../dashboard/DashboardContainer';
 import SubscribeContainer from '../subscribe/SubscribeContainer';
 import {
   initializeApplication,
-  loadHospitals,
-  switchOrganization
 } from './AppActions';
 import {
   CRISIS_PATH,
@@ -100,8 +98,6 @@ const MissingOrgsWrapper = styled.div`
 type Props = {
   actions :{
     initializeApplication :RequestSequence;
-    loadHospitals :RequestSequence;
-    switchOrganization :(orgId :string) => Object;
   };
   organizations :Map;
   selectedOrganizationId :UUID;
@@ -185,8 +181,6 @@ function mapDispatchToProps(dispatch :Function) :Object {
 
   const actions = {
     initializeApplication,
-    loadHospitals,
-    switchOrganization
   };
 
   return {

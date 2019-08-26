@@ -16,7 +16,7 @@ import downloadsReducer from '../../containers/downloads/DownloadsReducer';
 import edmReducer from '../../edm/EdmReducer';
 import hospitalsReducer from '../../containers/form/HospitalsReducer';
 import peopleReducer from '../../containers/people/PeopleReducer';
-import profileReducer from '../../containers/profile/ProfileReducer';
+import profileReducer from '../../containers/profile/reducers/ProfileReducer';
 import reportsReducer from '../../containers/reports/ReportsReducer';
 import searchReducer from '../../containers/search/SearchReducer';
 import staffReducer from '../../containers/staff/StaffReducer';

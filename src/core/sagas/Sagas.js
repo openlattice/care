@@ -14,12 +14,19 @@ import {
 
 import * as RoutingSagas from '../router/RoutingSagas';
 
+import * as AddressSagas from '../../containers/profile/edit/basicinformation/sagas/AddressSagas';
+import * as AppearanceSagas from '../../containers/profile/edit/basicinformation/sagas/AppearanceSagas';
 import * as AppSagas from '../../containers/app/AppSagas';
+import * as BasicInformationSagas from '../../containers/profile/edit/basicinformation/sagas/BasicInformationSagas';
 import * as DashboardSagas from '../../containers/dashboard/DashboardSagas';
+import * as DataSagas from './data/DataSagas';
 import * as DownloadsSagas from '../../containers/downloads/DownloadsSagas';
+// eslint-disable-next-line max-len
+import * as OfficerSafetyConcernsSagas from '../../containers/profile/edit/officersafety/sagas/OfficerSafetyConcernsSagas';
 import * as PeopleSagas from '../../containers/people/PeopleSagas';
 import * as ProfileSagas from '../../containers/profile/ProfileSagas';
 import * as ReportsSagas from '../../containers/reports/ReportsSagas';
+import * as ResponsePlanSagas from '../../containers/profile/edit/responseplan/ResponsePlanSagas';
 import * as SearchSagas from '../../containers/search/SearchSagas';
 import * as StaffSagas from '../../containers/staff/StaffSagas';
 import * as SubmitSagas from '../../utils/submit/SubmitSagas';
@@ -53,6 +60,12 @@ export default function* sagas() :Generator<*, *, *> {
     fork(AppSagas.loadHospitalsWatcher),
     fork(AppSagas.switchOrganizationWatcher),
 
+    // DataSagas
+    fork(DataSagas.deleteBulkEntitiesWatcher),
+    fork(DataSagas.submitDataGraphWatcher),
+    fork(DataSagas.submitPartialReplaceWatcher),
+
+
     // StaffSagas
     fork(StaffSagas.getCurrentUserStaffMemberDataWatcher),
 
@@ -81,6 +94,32 @@ export default function* sagas() :Generator<*, *, *> {
     fork(ReportsSagas.getReportsByDateRangeWatcher),
     fork(ReportsSagas.updateReportWatcher),
     fork(ReportsSagas.getReportWatcher),
+
+    // ResponsePlanSagas
+    fork(ResponsePlanSagas.deleteInteractionStrategiesWatcher),
+    fork(ResponsePlanSagas.getResponsePlanWatcher),
+    fork(ResponsePlanSagas.submitResponsePlanWatcher),
+    fork(ResponsePlanSagas.updateResponsePlanWatcher),
+
+    // BasicInformationSagas
+    fork(BasicInformationSagas.getBasicInformationWatcher),
+    fork(BasicInformationSagas.getBasicsWatcher),
+    fork(BasicInformationSagas.updateBasicsWatcher),
+
+    fork(AppearanceSagas.getAppearanceWatcher),
+    fork(AppearanceSagas.submitAppearanceWatcher),
+    fork(AppearanceSagas.updateAppearanceWatcher),
+
+    fork(AddressSagas.getAddressWatcher),
+    fork(AddressSagas.submitAddressWatcher),
+    fork(AddressSagas.updateAddressWatcher),
+
+    // OfficerSafetyConcernsSagas
+    fork(OfficerSafetyConcernsSagas.getOfficerSafetyWatcher),
+    fork(OfficerSafetyConcernsSagas.getOfficerSafetyConcernsWatcher),
+    fork(OfficerSafetyConcernsSagas.submitOfficerSafetyConcernsWatcher),
+    fork(OfficerSafetyConcernsSagas.updateOfficerSafetyConcernsWatcher),
+    fork(OfficerSafetyConcernsSagas.deleteOfficerSafetyConcernsWatcher),
 
     // SearchSagas
     fork(SearchSagas.searchConsumersWatcher),

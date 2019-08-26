@@ -1,12 +1,18 @@
 // @flow
 import React from 'react';
 import styled from 'styled-components';
-import { List } from 'immutable';
-import {
-  Button,
-  IconSplash
-} from 'lattice-ui-kit';
+import { Constants } from 'lattice';
+import { List, Map } from 'immutable';
+import { IconSplash } from 'lattice-ui-kit';
+import { withRouter } from 'react-router-dom';
+import type { Match } from 'react-router-dom';
+
+import LinkButton from '../../../components/buttons/LinkButton';
 import { UL } from '../../../components/layout';
+import { TECHNIQUES_FQN } from '../../../edm/DataModelFqns';
+import { OFFICER_SAFETY_PATH } from '../../../core/router/Routes';
+
+const { OPENLATTICE_ID_FQN } = Constants;
 
 const H2 = styled.h2`
   font-size: 16px;
@@ -20,31 +26,48 @@ const ActionRow = styled.div`
 `;
 
 type Props = {
-  techniques :List;
+  isLoading :boolean;
+  match :Match;
+  techniques :List<Map>;
 }
 
 const SpecificTechniques = (props :Props) => {
-  const { techniques } = props;
+  const { isLoading, match, techniques } = props;
+
+  if (isLoading) {
+    return (
+      <div>
+        <UL isLoading />
+      </div>
+    );
+  }
+
+  let content = <IconSplash caption="No techniques." />;
+  if (!techniques.isEmpty()) {
+    content = (
+      <UL>
+        {
+          techniques.map((technique) => {
+            const value :string = technique.getIn([TECHNIQUES_FQN, 0], '');
+            const entityKeyId :UUID = technique.getIn([OPENLATTICE_ID_FQN, 0]);
+            return <li key={entityKeyId}>{value}</li>;
+          })
+        }
+      </UL>
+    );
+  }
 
   return (
     <div>
       <H2>
         Specific Techniques
       </H2>
-      {
-        techniques.count()
-          ? (
-            <UL>
-              <li>Techniques</li>
-            </UL>
-          )
-          : <IconSplash caption="No known techniques." />
-      }
+      { content }
       <ActionRow>
-        <Button mode="subtle">Suggest a Technique</Button>
+        <LinkButton mode="subtle" to={`${match.url}${OFFICER_SAFETY_PATH}`}>Suggest a Technique</LinkButton>
       </ActionRow>
     </div>
   );
 };
 
-export default SpecificTechniques;
+export default withRouter(SpecificTechniques);

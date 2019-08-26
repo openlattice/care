@@ -123,7 +123,7 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
     yield put(searchPeople.success(action.id, result));
   }
   catch (error) {
-    LOG.error(error);
+    LOG.error('searchPeopleWorker', error);
     yield put(searchPeople.failure(action.id, error));
   }
   finally {
@@ -151,7 +151,7 @@ function* editPersonWorker(action :SequenceAction) :Generator<*, *, *> {
     }]);
 
     let idsByFqn = Map();
-    Object.values(propertyTypes).forEach((propertyType) => {
+    Object.values(propertyTypes).forEach((propertyType :any) => {
       const { namespace, name } = propertyType.type;
       idsByFqn = idsByFqn.set(`${namespace}.${name}`, propertyType.id);
     });
@@ -174,6 +174,7 @@ function* editPersonWorker(action :SequenceAction) :Generator<*, *, *> {
     yield put(editPerson.success(id, { entityKeyId, person }));
   }
   catch (error) {
+    LOG.error('editPersonWorker', error);
     yield put(editPerson.failure(id, error));
   }
   finally {

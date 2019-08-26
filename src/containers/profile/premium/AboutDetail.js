@@ -4,16 +4,16 @@ import styled from 'styled-components';
 import isPlainObject from 'lodash/isPlainObject';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { aboutDetailSkeleton } from '../../../components/skeletons';
+import { fullLineSkeleton } from '../../../components/skeletons';
 
 const Detail = styled.div`
   display: flex;
   flex: 1 0 auto;
+  ${props => (props.isLoading ? fullLineSkeleton : null)}
 `;
 
 const Content = styled.div`
   flex: 1;
-  ${props => (props.isLoading ? aboutDetailSkeleton : null)}
 `;
 
 const IconWrapper = styled.span`
@@ -36,32 +36,34 @@ class AboutDetail extends Component<Props> {
     isLoading: false
   };
 
-  renderIcon = () => {
-    const { icon } = this.props;
-    if (isPlainObject(icon)) {
+  renderContent = () => {
+    const { content, icon, isLoading } = this.props;
+    if (!isLoading) {
+      const display = content || '---';
       return (
-        <IconWrapper>
-          <FontAwesomeIcon icon={icon} fixedWidth />
-        </IconWrapper>
+        <>
+          {
+            isPlainObject(icon) && (
+              <IconWrapper>
+                <FontAwesomeIcon icon={icon} fixedWidth />
+              </IconWrapper>
+            )
+          }
+          <Content>
+            {display}
+          </Content>
+        </>
       );
     }
     return null;
   }
 
   render() {
-    const { className, content, isLoading } = this.props;
-    let display = content || '---';
-    // if loading, hide content
-    if (isLoading) {
-      display = '';
-    }
+    const { className, isLoading } = this.props;
 
     return (
-      <Detail className={className}>
-        { this.renderIcon() }
-        <Content isLoading={isLoading}>
-          {display}
-        </Content>
+      <Detail className={className} isLoading={isLoading}>
+        { this.renderContent() }
       </Detail>
     );
   }
