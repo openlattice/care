@@ -53,7 +53,6 @@ function* getPhotosWorker(action :SequenceAction) :Generator<any, any, any> {
   const response = {};
   try {
     const { value: entityKeyId } = action;
-    if (!isDefined(entityKeyId)) throw ERR_ACTION_VALUE_NOT_DEFINED;
     if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
 
     yield put(getPhotos.request(action.id, entityKeyId));
@@ -155,7 +154,7 @@ function* submitPhotosWatcher() :Generator<any, any, any> {
 function* updatePhotoWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
     const { value } = action;
-    if (value === null || value === undefined) throw ERR_ACTION_VALUE_NOT_DEFINED;
+    if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
 
     yield put(updatePhoto.request(action.id, value));
     const response = yield call(submitPartialReplaceWorker, submitPartialReplace(value));
