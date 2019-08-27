@@ -67,7 +67,7 @@ class AddressForm extends Component<Props, State> {
   componentDidUpdate(prevProps :Props) {
     const { formData } = this.props;
     const { formData: prevFormData } = prevProps;
-    
+
     if (!formData.equals(prevFormData)) {
       this.initializeFormData();
     }
