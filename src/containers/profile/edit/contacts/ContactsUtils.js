@@ -6,11 +6,14 @@ import {
   remove,
   merge
 } from 'immutable';
+import { Constants } from 'lattice';
 import { DataProcessingUtils } from 'lattice-fabricate';
 
-import { getFormDataFromEntityArray } from '../../../../utils/DataUtils';
+import { getFormDataFromEntity, getFormDataFromEntityArray } from '../../../../utils/DataUtils';
 import * as FQN from '../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
+
+const { OPENLATTICE_ID_FQN } = Constants;
 
 const {
   CONTACTED_VIA_FQN,
@@ -64,6 +67,7 @@ const constructEntityIndexToIdMap = (
   isContactForEKIDs :List<UUID>,
   contactInfoEKIDs :List<UUID>
 ) => {
+
   const addressToIdMap = Map().withMutations((mutable) => {
     mutable.setIn([EMERGENCY_CONTACT_FQN.toString(), -1], contactsEKIDs);
     mutable.setIn([IS_EMERGENCY_CONTACT_FOR_FQN.toString(), -1], isContactForEKIDs);
@@ -73,7 +77,7 @@ const constructEntityIndexToIdMap = (
   return addressToIdMap;
 };
 
-const constructFormData = (contacts :List<Map>, isContactForList :List<Map>, contactInfo :List<Map>) => {
+const constructFormData = (contacts :List<Map>, isContactForList :List<Map>, contactInfoByContactsEKID :Map) => {
   const contactProperties = List([
     FQN.PERSON_FIRST_NAME_FQN,
     FQN.PERSON_LAST_NAME_FQN,
@@ -102,12 +106,17 @@ const constructFormData = (contacts :List<Map>, isContactForList :List<Map>, con
     -1
   );
 
-  const contactInfoFormData = getFormDataFromEntityArray(
-    contactInfo,
-    CONTACT_INFORMATION_FQN,
-    contactInfoProperties,
-    -1
-  );
+  // the order of contactInfo is not guaranteed to be same as contacts. Must match them by EKID
+  const contactInfoFormData = contacts.map((contact) => {
+    const contactEKID = contact.getIn([OPENLATTICE_ID_FQN, 0]);
+    const contactInfo = contactInfoByContactsEKID.get(contactEKID);
+    return getFormDataFromEntity(
+      contactInfo,
+      CONTACT_INFORMATION_FQN,
+      contactInfoProperties,
+      -1
+    );
+  });
 
   const mergedFormData = contactFormData
     .zipWith(merge, isContactForFormData)

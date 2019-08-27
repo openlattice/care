@@ -181,18 +181,19 @@ function* getContactsWorker(action :SequenceAction) :Generator<*, *, *> {
         return info.get('neighborDetails', Map());
       });
 
-    const contactInfoEKIDsByContactEKIDs = contactInfoByContactEKID.map(info => info.getIn([OPENLATTICE_ID_FQN, 0]));
+    const contactInfoEKIDs :List<UUID> = contactsEKIDs
+      .map(contactEKID => contactInfoByContactEKID.getIn([contactEKID, OPENLATTICE_ID_FQN, 0]));
 
     const isContactForList :List<Map> = contactsData
       .map(contact => contact.get('associationDetails', Map()));
 
     const isContactForEKIDs = getEntityKeyIdsFromList(isContactForList);
 
-    const formData = constructFormData(contacts, isContactForList, contactInfoByContactEKID.toList());
+    const formData = constructFormData(contacts, isContactForList, contactInfoByContactEKID);
     const entityIndexToIdMap = constructEntityIndexToIdMap(
       contactsEKIDs,
       isContactForEKIDs,
-      contactInfoEKIDsByContactEKIDs.toList()
+      contactInfoEKIDs
     );
 
     yield put(getContacts.success(action.id, {
