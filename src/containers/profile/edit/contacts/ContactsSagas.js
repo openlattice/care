@@ -259,7 +259,7 @@ function* deleteContactWorker(action :SequenceAction) :Generator<*, *, *> {
     yield put(deleteContact.success(action.id, { path }));
   }
   catch (error) {
-    LOG.error('deleteInteraionStrategiesWorker', error);
+    LOG.error('deleteContactWorker', error);
     yield put(deleteContact.failure(action.id, error));
   }
   finally {

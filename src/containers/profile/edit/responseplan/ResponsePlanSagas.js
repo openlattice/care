@@ -249,7 +249,7 @@ export function* deleteInteractionStrategiesWorker(action :SequenceAction) :Gene
     yield put(deleteInteractionStrategies.success(action.id, { path }));
   }
   catch (error) {
-    LOG.error('deleteInteraionStrategiesWorker', error);
+    LOG.error('deleteInteractionStrategiesWorker', error);
     yield put(deleteInteractionStrategies.failure(action.id, error));
   }
   finally {

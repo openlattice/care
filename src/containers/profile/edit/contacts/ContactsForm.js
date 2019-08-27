@@ -8,7 +8,7 @@ import {
   CardSegment,
   Spinner
 } from 'lattice-ui-kit';
-import { Map } from 'immutable';
+import { List, Map, get } from 'immutable';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
@@ -18,6 +18,7 @@ import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import {
   getContacts,
+  deleteContact,
   submitContacts,
   updateContact,
 } from './ContactsActions';
@@ -26,12 +27,15 @@ import { PROFILE_ID_PARAM } from '../../../../core/router/Routes';
 import { removeRelationshipData, getContactAssociations } from './ContactsUtils';
 
 const {
+  getPageSectionKey,
   processAssociationEntityData,
   processEntityData,
 } = DataProcessingUtils;
 
 type Props = {
   actions :{
+    getContacts :RequestSequence;
+    deleteContact :RequestSequence;
     submitContacts :RequestSequence;
     updateContact :RequestSequence;
   },
@@ -91,7 +95,7 @@ class ContactsForm extends Component<Props, State> {
     const { formData } = this.props;
     this.setState({
       formData: formData.toJS(),
-      prepopulated: !formData.isEmpty()
+      prepopulated: !get(formData, getPageSectionKey(1, 1), List()).isEmpty()
     });
   }
 
@@ -150,7 +154,7 @@ class ContactsForm extends Component<Props, State> {
       addActions: {
         addContact: this.handleSubmit
       },
-      deleteAction: () => {},
+      deleteAction: actions.deleteContact,
       editAction: actions.updateContact,
       entityIndexToIdMap,
       entitySetIds,
@@ -199,6 +203,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
     getContacts,
+    deleteContact,
     submitContacts,
     updateContact,
   }, dispatch)
