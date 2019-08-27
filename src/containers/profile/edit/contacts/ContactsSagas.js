@@ -44,6 +44,8 @@ import {
   submitDataGraphWorker,
   submitPartialReplaceWorker,
 } from '../../../../core/sagas/data/DataSagas';
+import { constructEntityIndexToIdMap, constructFormData } from './ContactsUtils';
+import { getEntityKeyIdsFromList } from '../../../../utils/DataUtils';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
@@ -68,12 +70,31 @@ function* submitContactsWorker(action :SequenceAction) :Generator<*, *, *> {
     const response = yield call(submitDataGraphWorker, submitDataGraph(value));
     if (response.error) throw response.error;
 
-    // TODO: create entityIndexToIdMap for submitted data.
+    const responseData = fromJS(response.data);
+    const newEntityKeyIdsByEntitySetId = responseData.get('entityKeyIds');
+    const newAssociationKeyIdsByEntitySetId = responseData.get('entitySetIds');
+
+    const selectedOrgEntitySetIds = yield select(state => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
+    const entitySetNamesByEntitySetId = selectedOrgEntitySetIds.flip();
+
+    const newEntityKeyIdsByEntitySetName = newEntityKeyIdsByEntitySetId
+      .mapKeys(entitySetId => entitySetNamesByEntitySetId.get(entitySetId));
+
+    const newAssociationKeyIdsByEntitySetName = newAssociationKeyIdsByEntitySetId
+      .mapKeys(entitySetId => entitySetNamesByEntitySetId.get(entitySetId));
+
+    const contactsEKIDs = newEntityKeyIdsByEntitySetName.get(EMERGENCY_CONTACT_FQN);
+    const contactInfoEKIDs = newEntityKeyIdsByEntitySetName.get(CONTACT_INFORMATION_FQN);
+    const isContactForEKIDs = newAssociationKeyIdsByEntitySetName.get(IS_EMERGENCY_CONTACT_FOR_FQN);
+
+    const newEntityIndexToIdMap = constructEntityIndexToIdMap(contactsEKIDs, contactInfoEKIDs, isContactForEKIDs);
+    const entityIndexToIdMap = yield select(state => state.getIn(['profile', 'contacts', 'entityIndexToIdMap']));
+    const mergedEntityIndexToIdMap = entityIndexToIdMap.mergeDeep(newEntityIndexToIdMap);
 
     const { path, properties } = value;
 
     yield put(submitContacts.success(action.id, {
-      entityIndexToIdMap: newEntityIndexToIdMap,
+      entityIndexToIdMap: mergedEntityIndexToIdMap,
       path,
       properties: fromJS(properties)
     }));
@@ -99,13 +120,88 @@ function* getContactsWorker(action :SequenceAction) :Generator<*, *, *> {
 
     yield put(getContacts.request(action.id));
 
-    // TODO: Get Emergency contact -> is emergency contact for -> person
-    //           Emergency contact -> contacted via -> contact information
+    const app :Map = yield select(state => state.get('app', Map()));
+    const peopleESID :UUID = getESIDFromApp(app, PEOPLE_FQN);
+    const contactedViaESID :UUID = getESIDFromApp(app, CONTACTED_VIA_FQN);
+    const contactInformationESID :UUID = getESIDFromApp(app, CONTACT_INFORMATION_FQN);
+    const emergencyContactESID :UUID = getESIDFromApp(app, EMERGENCY_CONTACT_FQN);
+    const isEmergencyContactESID :UUID = getESIDFromApp(app, IS_EMERGENCY_CONTACT_FOR_FQN);
+
+    const contactsSearchParams = {
+      entitySetId: peopleESID,
+      filter: {
+        entityKeyIds: [entityKeyId],
+        edgeEntitySetIds: [isEmergencyContactESID],
+        destinationEntitySetIds: [],
+        sourcesEntitySetIds: [emergencyContactESID],
+      }
+    };
+
+    const contactsResponse = yield call(
+      searchEntityNeighborsWithFilterWorker,
+      searchEntityNeighborsWithFilter(contactsSearchParams)
+    );
+
+    if (contactsResponse.error) throw contactsResponse.error;
+    const contactsData = fromJS(contactsResponse.data)
+      .get(entityKeyId, List());
+
+    const contacts :List<Map> = contactsData
+      .map(contact => contact.get('neighborDetails', Map()));
+
+    const contactsEKIDs = getEntityKeyIdsFromList(contacts);
+
+    let contactInfo = Map();
+    if (!contactsEKIDs.isEmpty()) {
+      const contactInfoSearchParams = {
+        entitySetId: emergencyContactESID,
+        filter: {
+          entityKeyIds: contactsEKIDs.toJS(),
+          edgeEntitySetIds: [contactedViaESID],
+          destinationEntitySetIds: [contactInformationESID],
+          sourcesEntitySetIds: []
+        }
+      };
+
+      const contactInfoResponse = yield call(
+        searchEntityNeighborsWithFilterWorker,
+        searchEntityNeighborsWithFilter(contactInfoSearchParams)
+      );
+
+      if (contactInfoResponse.error) throw contactInfoResponse.error;
+      contactInfo = fromJS(contactInfoResponse.data);
+    }
+
+    const contactInfoByContactEKID = contactInfo
+      .map((infos :list, contactEKID :UUID) => {
+        if (infos.count() > 1) {
+          LOG.warn('more than one contact info found', contactEKID);
+        }
+        const info = infos.first() || Map();
+        return info.get('neighborDetails', Map());
+      });
+
+    const contactInfoEKIDsByContactEKIDs = contactInfoByContactEKID.map(info => info.getIn([OPENLATTICE_ID_FQN, 0]));
+
+    const isContactForList :List<Map> = contactsData
+      .map(contact => contact.get('associationDetails', Map()));
+
+    const isContactForEKIDs = getEntityKeyIdsFromList(isContactForList);
+
+    const formData = constructFormData(contacts, isContactForList, contactInfoByContactEKID.toList());
+    const entityIndexToIdMap = constructEntityIndexToIdMap(
+      contactsEKIDs,
+      isContactForEKIDs,
+      contactInfoEKIDsByContactEKIDs.toList()
+    );
 
     yield put(getContacts.success(action.id, {
       entityIndexToIdMap,
       formData,
-      data
+      data: fromJS({
+        contacts,
+        contactInfoByContactEKID
+      })
     }));
   }
   catch (error) {

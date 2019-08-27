@@ -8,22 +8,23 @@ import {
   CardSegment,
   Spinner
 } from 'lattice-ui-kit';
-import { Constants } from 'lattice';
 import { Map } from 'immutable';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 import type { Dispatch } from 'redux';
+import type { Match } from 'react-router';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import {
+  getContacts,
+  submitContacts,
   updateContact,
-  submitContact
 } from './ContactsActions';
 import { schema, uiSchema } from './schemas/ContactsSchemas';
+import { PROFILE_ID_PARAM } from '../../../../core/router/Routes';
 import { removeRelationshipData, getContactAssociations } from './ContactsUtils';
 
-const { OPENLATTICE_ID_FQN } = Constants;
 const {
   processAssociationEntityData,
   processEntityData,
@@ -31,14 +32,14 @@ const {
 
 type Props = {
   actions :{
-    submitContact :RequestSequence;
+    submitContacts :RequestSequence;
     updateContact :RequestSequence;
   },
   entityIndexToIdMap :Map;
   entitySetIds :Map;
   fetchState :RequestState;
   formData :Map;
-  personEKID :UUID;
+  match :Match;
   propertyTypeIds :Map;
   submitState :RequestState;
 };
@@ -56,12 +57,31 @@ class ContactsForm extends Component<Props, State> {
   }
 
   componentDidMount() {
+    const {
+      actions,
+      match,
+    } = this.props;
+    const personEKID = match.params[PROFILE_ID_PARAM];
+    actions.getContacts(personEKID);
     this.initializeFormData();
   }
 
   componentDidUpdate(prevProps :Props) {
-    const { formData } = this.props;
-    const { formData: prevFormData } = prevProps;
+    const {
+      actions,
+      formData,
+      match,
+    } = this.props;
+    const {
+      formData: prevFormData,
+      match: prevMatch,
+    } = prevProps;
+    const personEKID = match.params[PROFILE_ID_PARAM];
+    const prevPersonEKID = prevMatch.params[PROFILE_ID_PARAM];
+    if (personEKID !== prevPersonEKID) {
+      actions.getContacts(personEKID);
+    }
+
     if (!formData.equals(prevFormData)) {
       this.initializeFormData();
     }
@@ -76,7 +96,8 @@ class ContactsForm extends Component<Props, State> {
   }
 
   getAssociations = (formData :Object) => {
-    const { personEKID } = this.props;
+    const { match } = this.props;
+    const personEKID = match.params[PROFILE_ID_PARAM];
     const nowAsIsoString :string = DateTime.local().toISO();
     return [
       ...getContactAssociations(
@@ -103,7 +124,7 @@ class ContactsForm extends Component<Props, State> {
     const withoutRelationships = removeRelationshipData(formData);
     const entityData = processEntityData(withoutRelationships, entitySetIds, propertyTypeIds);
 
-    actions.submitContact({
+    actions.submitContacts({
       associationEntityData,
       entityData,
       path,
@@ -167,19 +188,19 @@ class ContactsForm extends Component<Props, State> {
 }
 
 const mapStateToProps = state => ({
-  entityIndexToIdMap: state.getIn(['profile', 'basicInformation', 'address', 'entityIndexToIdMap'], Map()),
+  entityIndexToIdMap: state.getIn(['profile', 'contacts', 'entityIndexToIdMap'], Map()),
   entitySetIds: state.getIn(['app', 'selectedOrgEntitySetIds'], Map()),
-  fetchState: state.getIn(['profile', 'basicInformation', 'address', 'fetchState'], RequestStates.STANDBY),
-  formData: state.getIn(['profile', 'basicInformation', 'address', 'formData'], Map()),
+  fetchState: state.getIn(['profile', 'contacts', 'fetchState'], RequestStates.STANDBY),
+  formData: state.getIn(['profile', 'contacts', 'formData'], Map()),
   propertyTypeIds: state.getIn(['edm', 'fqnToIdMap'], Map()),
-  submitState: state.getIn(['profile', 'basicInformation', 'address', 'submitState'], RequestStates.STANDBY),
-  personEKID: state.getIn(['profile', 'basicInformation', 'basics', 'data', OPENLATTICE_ID_FQN, 0])
+  submitState: state.getIn(['profile', 'contacts', 'submitState'], RequestStates.STANDBY),
 });
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
+    getContacts,
+    submitContacts,
     updateContact,
-    submitContact,
   }, dispatch)
 });
 

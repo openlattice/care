@@ -30,19 +30,9 @@ const ContactsReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => 
     case getContacts.case(action.type): {
       return getContacts.reducer(state, action, {
         REQUEST: () => state.set('fetchState', RequestStates.PENDING),
-        SUCCESS: () => {
-          const {
-            entityIndexToIdMap,
-            formData,
-            data,
-          } = action.value;
-
-          return state
-            .set('data', data)
-            .set('entityIndexToIdMap', entityIndexToIdMap)
-            .set('fetchState', RequestStates.SUCCESS)
-            .set('formData', formData);
-        },
+        SUCCESS: () => state
+          .merge(action.value)
+          .set('fetchState', RequestStates.SUCCESS),
         FAILURE: () => state.set('fetchState', RequestStates.FAILURE)
       });
     }
