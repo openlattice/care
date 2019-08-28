@@ -52,7 +52,7 @@ const { searchEntityNeighborsWithFilter } = SearchApiActions;
 const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
 
 const {
-  INCLUDES_FQN,
+  PART_OF_FQN,
   INTERACTION_STRATEGY_FQN,
   PEOPLE_FQN,
   RESPONSE_PLAN_FQN,
@@ -119,7 +119,7 @@ export function* getResponsePlanWorker(action :SequenceAction) :Generator<*, *, 
     const subjectOfESID :UUID = getESIDFromApp(app, SUBJECT_OF_FQN);
     const responsePlanESID :UUID = getESIDFromApp(app, RESPONSE_PLAN_FQN);
     const interactionStrategyESID :UUID = getESIDFromApp(app, INTERACTION_STRATEGY_FQN);
-    const includesESID :UUID = getESIDFromApp(app, INCLUDES_FQN);
+    const partOfESID :UUID = getESIDFromApp(app, PART_OF_FQN);
 
     const responsePlanSearchParams = {
       entitySetId: peopleESID,
@@ -152,9 +152,9 @@ export function* getResponsePlanWorker(action :SequenceAction) :Generator<*, *, 
         entitySetId: responsePlanESID,
         filter: {
           entityKeyIds: [responsePlanEKID],
-          edgeEntitySetIds: [includesESID],
-          destinationEntitySetIds: [interactionStrategyESID],
-          sourceEntitySetIds: []
+          edgeEntitySetIds: [partOfESID],
+          destinationEntitySetIds: [],
+          sourceEntitySetIds: [interactionStrategyESID]
         }
       };
       const interactionStrategyResponse = yield call(
