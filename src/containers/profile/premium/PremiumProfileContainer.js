@@ -20,33 +20,30 @@ import type { RequestSequence, RequestState } from 'redux-reqseq';
 import type { Match } from 'react-router';
 
 import AboutCard from './AboutCard';
+import AddressCard from '../../../components/premium/address/AddressCard';
 import BackgroundInformationCard from './BackgroundInformationCard';
 import BehaviorCard from './BehaviorCard';
-import AddressCard from '../../../components/premium/address/AddressCard';
+import ContactCarousel from '../../../components/premium/contacts/ContactCarousel';
+import CrisisCountCard from '../CrisisCountCard';
 import DeescalationCard from './DeescalationCard';
 import OfficerSafetyCard from './OfficerSafetyCard';
-import ReportsSummary from './ReportsSummary';
-import ResponsePlanCard from './ResponsePlanCard';
-import CrisisCountCard from '../CrisisCountCard';
+import Portrait from '../../../components/portrait/Portrait';
 import ProfileBanner from '../ProfileBanner';
 import ProfileResult from '../ProfileResult';
 import RecentIncidentCard from '../RecentIncidentCard';
+import ReportsSummary from './ReportsSummary';
+import ResponsePlanCard from './ResponsePlanCard';
 import { labelMapReport } from '../constants';
-import Portrait from '../styled/Portrait';
 import { ContentWrapper, ContentOuterWrapper } from '../../../components/layout';
 import { getProfileReports } from '../ProfileActions';
-import {
-  getAppearance,
-  getBasicInformation,
-  getBasics,
-} from '../edit/basicinformation/actions/BasicInformationActions';
-import { getAddress } from '../edit/basicinformation/actions/AddressActions';
+import { getBasicInformation } from '../edit/basicinformation/actions/BasicInformationActions';
 import { getResponsePlan } from '../edit/responseplan/ResponsePlanActions';
+import { getContacts } from '../edit/contacts/ContactsActions';
 import { getOfficerSafety } from '../edit/officersafety/OfficerSafetyActions';
 import { DATE_TIME_OCCURRED_FQN } from '../../../edm/DataModelFqns';
 import { getEntityKeyId } from '../../../utils/DataUtils';
 import { reduceRequestStates } from '../../../utils/StateUtils';
-import { getNameFromPerson } from '../../../utils/PersonUtils';
+import { getImageDataFromEntity } from '../../../utils/BinaryUtils';
 import {
   PROFILE_ID_PARAM,
   REPORT_VIEW_PATH,
@@ -68,6 +65,10 @@ const ProfileGrid = styled.div`
   grid-gap: 20px;
 `;
 
+const StyledCardStack = styled(CardStack)`
+  overflow-x: hidden;
+`;
+
 const BehaviorAndSafetyGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -76,10 +77,7 @@ const BehaviorAndSafetyGrid = styled.div`
 
 type Props = {
   actions :{
-    getAddress :RequestSequence;
-    getAppearance :RequestSequence;
     getBasicInformation :RequestSequence;
-    getBasics :RequestSequence;
     getOfficerSafety :RequestSequence;
     getProfileReports :RequestSequence;
     getResponsePlan :RequestSequence;
@@ -94,6 +92,10 @@ type Props = {
   interactionStrategies :List<Map>;
   match :Match;
   officerSafety :List<Map>;
+  contacts :List<Map>;
+  contactInfoByContactEKID :Map;
+  isContactForByContactEKID :Map;
+  photo :Map;
   reports :List<Map>;
   responsePlan :Map;
   selectedPerson :Map;
@@ -108,39 +110,28 @@ type State = {
 class PremiumProfileContainer extends Component<Props, State> {
 
   componentDidMount() {
-    const {
-      actions,
-      match,
-      reports,
-      responsePlan,
-      selectedPerson,
-    } = this.props;
+    const { match } = this.props;
     const personEKID = match.params[PROFILE_ID_PARAM];
-    if (selectedPerson.isEmpty()) {
-      actions.getBasicInformation(personEKID);
-    }
-    else {
-      actions.getAppearance(personEKID); // only get physical appearance
-      actions.getAddress(personEKID); // only get address
-    }
-
-    if (responsePlan.isEmpty()) actions.getOfficerSafety(personEKID);
-    if (reports.isEmpty()) actions.getProfileReports(personEKID);
+    this.getProfileData(personEKID);
   }
 
   componentDidUpdate(prevProps :Props) {
-    const {
-      actions,
-      match,
-    } = this.props;
+    const { match } = this.props;
     const { match: prevMatch } = prevProps;
     const personEKID = match.params[PROFILE_ID_PARAM];
     const prevPersonEKID = prevMatch.params[PROFILE_ID_PARAM];
     if (personEKID !== prevPersonEKID) {
-      actions.getBasics(personEKID);
-      actions.getProfileReports(personEKID);
-      actions.getOfficerSafety(personEKID);
+      this.getProfileData(personEKID);
     }
+  }
+
+  getProfileData = (personEKID :UUID) => {
+    const { actions } = this.props;
+    actions.getBasicInformation(personEKID);
+    actions.getContacts(personEKID);
+    actions.getOfficerSafety(personEKID);
+    actions.getProfileReports(personEKID);
+    actions.getResponsePlan(personEKID);
   }
 
   countCrisisCalls = () => {
@@ -185,9 +176,13 @@ class PremiumProfileContainer extends Component<Props, State> {
       fetchResponsePlanState,
       interactionStrategies,
       officerSafety,
+      photo,
       reports,
       responsePlan,
       selectedPerson,
+      contacts,
+      contactInfoByContactEKID,
+      isContactForByContactEKID,
       techniques,
       triggers,
     } = this.props;
@@ -198,8 +193,7 @@ class PremiumProfileContainer extends Component<Props, State> {
     const isLoadingAbout = fetchAboutState === RequestStates.PENDING;
     const isLoadingResponsePlan = fetchResponsePlanState === RequestStates.PENDING;
 
-    const formattedName = getNameFromPerson(selectedPerson);
-    const isMalfoy = formattedName === 'Malfoy, Scorpius H.';
+    const imageURL :string = getImageDataFromEntity(photo);
 
     return (
       <ContentOuterWrapper>
@@ -207,10 +201,10 @@ class PremiumProfileContainer extends Component<Props, State> {
         <ContentWrapper>
           <ProfileGrid>
             <Aside>
-              <CardStack>
+              <StyledCardStack>
                 <Card>
                   <CardSegment padding="sm">
-                    <Portrait isMalfoy={isMalfoy} />
+                    <Portrait imageUrl={imageURL} />
                   </CardSegment>
                   <CardSegment vertical padding="sm">
                     <Button mode="primary">
@@ -225,9 +219,9 @@ class PremiumProfileContainer extends Component<Props, State> {
                 <AddressCard
                     isLoading={isLoadingAbout}
                     address={address} />
-              </CardStack>
+              </StyledCardStack>
             </Aside>
-            <CardStack>
+            <StyledCardStack>
               <CrisisCountCard
                   count={total}
                   isLoading={isLoadingReports} />
@@ -251,6 +245,10 @@ class PremiumProfileContainer extends Component<Props, State> {
               <BackgroundInformationCard
                   backgroundInformation={responsePlan}
                   isLoading={isLoadingResponsePlan} />
+              <ContactCarousel
+                  contacts={contacts}
+                  contactInfoByContactEKID={contactInfoByContactEKID}
+                  isContactForByContactEKID={isContactForByContactEKID} />
               <SearchResults
                   hasSearched={fetchReportsState !== RequestStates.STANDBY}
                   isLoading={isLoadingReports}
@@ -259,7 +257,7 @@ class PremiumProfileContainer extends Component<Props, State> {
                   resultLabels={labelMapReport}
                   resultComponent={ProfileResult} />
               <ReportsSummary reports={reports} />
-            </CardStack>
+            </StyledCardStack>
           </ProfileGrid>
         </ContentWrapper>
       </ContentOuterWrapper>
@@ -280,29 +278,31 @@ const mapStateToProps = (state :Map) => {
   ];
 
   return {
-    appearance: state.getIn(['profile', 'basicInformation', 'appearance', 'data'], Map()),
     address: state.getIn(['profile', 'basicInformation', 'address', 'data'], Map()),
-    officerSafety: state.getIn(['profile', 'officerSafety', 'data', 'officerSafetyConcerns'], List()),
-    triggers: state.getIn(['profile', 'officerSafety', 'data', 'behaviors'], List()),
-    techniques: state.getIn(['profile', 'officerSafety', 'data', 'interactionStrategies'], List()),
+    appearance: state.getIn(['profile', 'basicInformation', 'appearance', 'data'], Map()),
+    contacts: state.getIn(['profile', 'contacts', 'data', 'contacts'], List()),
+    contactInfoByContactEKID: state.getIn(['profile', 'contacts', 'data', 'contactInfoByContactEKID'], Map()),
+    isContactForByContactEKID: state.getIn(['profile', 'contacts', 'data', 'isContactForByContactEKID'], Map()),
     fetchAboutState: reduceRequestStates(fetchAboutStates),
     fetchOfficerSafetyState: reduceRequestStates(fetchOfficerSafetyStates),
     fetchReportsState: state.getIn(['profile', 'reports', 'fetchState'], RequestStates.STANDBY),
     fetchResponsePlanState: state.getIn(['profile', 'responsePlan', 'fetchState'], RequestStates.STANDBY),
     interactionStrategies: state.getIn(['profile', 'responsePlan', 'interactionStrategies'], List()),
+    officerSafety: state.getIn(['profile', 'officerSafety', 'data', 'officerSafetyConcerns'], List()),
+    photo: state.getIn(['profile', 'basicInformation', 'photos', 'data'], Map()),
     reports: state.getIn(['profile', 'reports', 'data'], List()),
     responsePlan: state.getIn(['profile', 'responsePlan', 'data'], Map()),
     selectedPerson: state.getIn(['profile', 'basicInformation', 'basics', 'data'], Map()),
+    techniques: state.getIn(['profile', 'officerSafety', 'data', 'interactionStrategies'], List()),
+    triggers: state.getIn(['profile', 'officerSafety', 'data', 'behaviors'], List()),
   };
 };
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
-    getAddress,
-    getAppearance,
-    getBasics,
     getOfficerSafety,
     getBasicInformation,
+    getContacts,
     getProfileReports,
     getResponsePlan,
     goToPath,

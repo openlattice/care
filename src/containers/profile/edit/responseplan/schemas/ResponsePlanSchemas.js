@@ -34,7 +34,7 @@ export const schema = {
     }
   },
   type: 'object',
-  title: 'Background & Response Plan',
+  title: '',
   properties: {
     [getPageSectionKey(1, 1)]: {
       type: 'object',

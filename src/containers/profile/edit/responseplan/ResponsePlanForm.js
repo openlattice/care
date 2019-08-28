@@ -4,11 +4,15 @@ import { DateTime } from 'luxon';
 import {
   Map,
   get,
-  isImmutable,
   setIn,
 } from 'immutable';
 import { Form, DataProcessingUtils } from 'lattice-fabricate';
-import { Card, CardSegment, Spinner } from 'lattice-ui-kit';
+import {
+  Card,
+  CardHeader,
+  CardSegment,
+  Spinner
+} from 'lattice-ui-kit';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { RequestStates } from 'redux-reqseq';
@@ -27,10 +31,9 @@ import {
   updateResponsePlan,
 } from './ResponsePlanActions';
 import { isValidUuid } from '../../../../utils/Utils';
-import { isEmptyString } from '../../../../utils/LangUtils';
 
 const {
-  INCLUDES_FQN,
+  PART_OF_FQN,
   SUBJECT_OF_FQN,
   INTERACTION_STRATEGY_FQN,
   RESPONSE_PLAN_FQN,
@@ -109,15 +112,12 @@ class ResponsePlanForm extends Component<Props, State> {
   }
 
   initializeFormData = () => {
-    const { formData } = this.props;
-    const prepopulated = formData
-      .reduce((isPopulated, value) => {
-        let isEmpty = isEmptyString(value);
-        if (isImmutable(value)) {
-          isEmpty = value.isEmpty();
-        }
-        return isPopulated || !isEmpty;
-      }, false);
+    const { formData, entityIndexToIdMap } = this.props;
+
+    let prepopulated = false;
+    if (isValidUuid(entityIndexToIdMap.getIn([RESPONSE_PLAN_FQN, 0]))) {
+      prepopulated = true;
+    }
 
     this.setState({
       formData: formData.toJS(),
@@ -151,7 +151,7 @@ class ResponsePlanForm extends Component<Props, State> {
     const strategySize :number = get(formData, pageSection, []).length;
     for (let i = 0; i < strategySize; i += 1) {
       strategyAssociations.push(
-        [INCLUDES_FQN, idOrIndex, RESPONSE_PLAN_FQN, i, INTERACTION_STRATEGY_FQN, {
+        [PART_OF_FQN, i, INTERACTION_STRATEGY_FQN, idOrIndex, RESPONSE_PLAN_FQN, {
           [COMPLETED_DT_FQN.toString()]: [nowAsIsoString]
         }]
       );
@@ -255,14 +255,19 @@ class ResponsePlanForm extends Component<Props, State> {
     }
 
     return (
-      <Form
-          disabled={prepopulated}
-          formContext={formContext}
-          formData={formData}
-          onChange={this.updateItemIndicies}
-          schema={schema}
-          uiSchema={uiSchema}
-          onSubmit={this.handleSubmit} />
+      <Card>
+        <CardHeader mode="primary" padding="sm">
+          Background & Response Plan
+        </CardHeader>
+        <Form
+            disabled={prepopulated}
+            formContext={formContext}
+            formData={formData}
+            onChange={this.updateItemIndicies}
+            onSubmit={this.handleSubmit}
+            schema={schema}
+            uiSchema={uiSchema} />
+      </Card>
     );
   }
 }

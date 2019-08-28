@@ -27,7 +27,7 @@ import type { Match } from 'react-router-dom';
 import AboutDetail from './AboutDetail';
 import * as FQN from '../../../edm/DataModelFqns';
 import { inchesToFeetString } from '../../../utils/DataUtils';
-import { getNameFromPerson } from '../../../utils/PersonUtils';
+import { getLastFirstMiFromPerson } from '../../../utils/PersonUtils';
 import LinkButton from '../../../components/buttons/LinkButton';
 import { BASIC_PATH } from '../../../core/router/Routes';
 
@@ -86,7 +86,7 @@ const AboutCard = (props :Props) => {
     selectedPerson
   } = props;
 
-  const formattedName = getNameFromPerson(selectedPerson);
+  const formattedName = getLastFirstMiFromPerson(selectedPerson);
 
   const rawDob = selectedPerson.getIn([FQN.PERSON_DOB_FQN, 0], '');
   const race = selectedPerson.getIn([FQN.PERSON_RACE_FQN, 0], '');

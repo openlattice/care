@@ -28,6 +28,8 @@ import {
 } from '../actions/BasicInformationActions';
 import { getAddress } from '../actions/AddressActions';
 import { getAddressWorker } from './AddressSagas';
+import { getPhotos } from '../actions/PhotosActions';
+import { getPhotosWorker } from './PhotosSagas';
 import { getAppearanceWorker } from './AppearanceSagas';
 import { submitPartialReplace } from '../../../../../core/sagas/data/DataActions';
 import { submitPartialReplaceWorker } from '../../../../../core/sagas/data/DataSagas';
@@ -161,14 +163,21 @@ function* getBasicInformationWorker(action :SequenceAction) :Generator<any, any,
       getAddress(personEKID)
     );
 
-    const [basicsResponse, appearanceResponse] = yield all([
+    const photosRequest = call(
+      getPhotosWorker,
+      getPhotos(personEKID)
+    );
+
+    const responses = yield all([
       addressRequest,
       appearanceRequest,
       basicsRequest,
+      photosRequest,
     ]);
 
-    if (basicsResponse.error) throw basicsResponse.error;
-    if (appearanceResponse.error) throw appearanceResponse.error;
+    responses.forEach((response) => {
+      if (response.error) throw response.error;
+    });
 
     yield put(getBasicInformation.success(action.id));
   }

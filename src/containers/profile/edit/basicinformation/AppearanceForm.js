@@ -2,7 +2,12 @@
 import React, { Component } from 'react';
 import { DateTime } from 'luxon';
 import { Form, DataProcessingUtils } from 'lattice-fabricate';
-import { Card, CardSegment, Spinner } from 'lattice-ui-kit';
+import {
+  Card,
+  CardHeader,
+  CardSegment,
+  Spinner
+} from 'lattice-ui-kit';
 import { Map } from 'immutable';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -41,6 +46,7 @@ type Props = {
   formData :Map;
   personEKID :UUID;
   propertyTypeIds :Map;
+  submitState :RequestState;
 };
 
 type State = {
@@ -106,6 +112,10 @@ class AppearanceForm extends Component<Props, State> {
     });
   }
 
+  handleChange = ({ formData } :Object) => {
+    this.setState({ formData });
+  }
+
   render() {
     const {
       actions,
@@ -113,6 +123,7 @@ class AppearanceForm extends Component<Props, State> {
       entitySetIds,
       fetchState,
       propertyTypeIds,
+      submitState
     } = this.props;
     const { formData, prepopulated } = this.state;
     const formContext = {
@@ -134,13 +145,20 @@ class AppearanceForm extends Component<Props, State> {
     }
 
     return (
-      <Form
-          formData={formData}
-          disabled={prepopulated}
-          schema={schema}
-          uiSchema={uiSchema}
-          onSubmit={this.handleSubmit}
-          formContext={formContext} />
+      <Card>
+        <CardHeader mode="primary" padding="sm">
+          Appearance
+        </CardHeader>
+        <Form
+            isSubmitting={submitState === RequestStates.PENDING}
+            formData={formData}
+            disabled={prepopulated}
+            schema={schema}
+            onChange={this.handleChange}
+            uiSchema={uiSchema}
+            onSubmit={this.handleSubmit}
+            formContext={formContext} />
+      </Card>
     );
   }
 }
@@ -149,6 +167,7 @@ const mapStateToProps = state => ({
   entityIndexToIdMap: state.getIn(['profile', 'basicInformation', 'appearance', 'entityIndexToIdMap'], Map()),
   entitySetIds: state.getIn(['app', 'selectedOrgEntitySetIds'], Map()),
   fetchState: state.getIn(['profile', 'basicInformation', 'appearance', 'fetchState'], RequestStates.STANDBY),
+  submitState: state.getIn(['profile', 'basicInformation', 'appearance', 'submitState'], RequestStates.STANDBY),
   formData: state.getIn(['profile', 'basicInformation', 'appearance', 'formData'], Map()),
   propertyTypeIds: state.getIn(['edm', 'fqnToIdMap'], Map()),
 });

@@ -61,7 +61,7 @@ const LOG = new Logger('OfficerSafetyConcernsSagas');
 
 const {
   BEHAVIOR_FQN,
-  INCLUDES_FQN,
+  PART_OF_FQN,
   INTERACTION_STRATEGY_FQN,
   OFFICER_SAFETY_CONCERNS_FQN,
   RESPONSE_PLAN_FQN,
@@ -75,7 +75,7 @@ function* getOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<any,
     yield put(getOfficerSafetyConcerns.request(action.id));
 
     const app :Map = yield select(state => state.get('app', Map()));
-    const includesESID :UUID = getESIDFromApp(app, INCLUDES_FQN);
+    const partOfESID :UUID = getESIDFromApp(app, PART_OF_FQN);
     const officerSafetyConcernsESID :UUID = getESIDFromApp(app, OFFICER_SAFETY_CONCERNS_FQN);
     const responsePlanESID :UUID = getESIDFromApp(app, RESPONSE_PLAN_FQN);
     const interactionStrategiesESID :UUID = getESIDFromApp(app, INTERACTION_STRATEGY_FQN);
@@ -85,13 +85,13 @@ function* getOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<any,
       entitySetId: responsePlanESID,
       filter: {
         entityKeyIds: [entityKeyId],
-        edgeEntitySetIds: [includesESID],
-        destinationEntitySetIds: [
+        edgeEntitySetIds: [partOfESID],
+        destinationEntitySetIds: [],
+        sourceEntitySetIds: [
           behaviorESID,
           interactionStrategiesESID,
           officerSafetyConcernsESID
         ],
-        sourceEntitySetIds: []
       }
     };
 
@@ -159,15 +159,25 @@ function* getOfficerSafetyWorker(action :SequenceAction) :Generator<any, any, an
     if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
 
     yield put(getOfficerSafety.request(action.id));
+    let responsePlanEKID :Map = yield select(state => state.getIn([
+      'profile',
+      'responsePlan',
+      'data',
+      OPENLATTICE_ID_FQN,
+      0
+    ]));
 
-    const responsePlanResponse = yield call(
-      getResponsePlanWorker,
-      getResponsePlan(entityKeyId)
-    );
+    if (!isValidUuid(responsePlanEKID)) {
+      const responsePlanResponse = yield call(
+        getResponsePlanWorker,
+        getResponsePlan(entityKeyId)
+      );
 
-    if (responsePlanResponse.error) throw responsePlanResponse.error;
+      if (responsePlanResponse.error) throw responsePlanResponse.error;
 
-    const responsePlanEKID = getIn(responsePlanResponse.data, [OPENLATTICE_ID_FQN, 0]);
+      responsePlanEKID = getIn(responsePlanResponse.data, [OPENLATTICE_ID_FQN, 0]);
+    }
+
 
     if (responsePlanEKID) {
       yield call(
@@ -227,8 +237,6 @@ function* submitOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<a
         type: getResponsePlan.SUCCESS,
         value: responsePlanPayload
       });
-
-      // yield put(getResponsePlan.success(action.id, responsePlanPayload));
     }
 
     const safetyConcernsEKIDs = newEntityKeyIdsByEntitySetName.get(OFFICER_SAFETY_CONCERNS_FQN, List());

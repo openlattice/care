@@ -2,6 +2,29 @@ import { Models } from 'lattice';
 
 const { FullyQualifiedName } = Models;
 
+/* Is Emergency Contact For */
+const RELATIONSHIP_FQN = new FullyQualifiedName('ol.relationship');
+
+export { RELATIONSHIP_FQN };
+
+/* Contact Information */
+const CONTACT_PHONE_NUMBER_FQN = new FullyQualifiedName('contact.phonenumber');
+const EXTENTION_FQN = new FullyQualifiedName('ol.extension');
+const GENERAL_NOTES_FQN = new FullyQualifiedName('general.notes');
+const PREFERRED_FQN = new FullyQualifiedName('ol.preferred');
+
+export {
+  CONTACT_PHONE_NUMBER_FQN,
+  EXTENTION_FQN,
+  GENERAL_NOTES_FQN,
+  PREFERRED_FQN,
+};
+
+/* Image Data */
+const IMAGE_DATA_FQN = new FullyQualifiedName('ol.imagedata');
+
+export { IMAGE_DATA_FQN };
+
 /*
  * Behavior
  */

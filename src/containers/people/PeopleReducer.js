@@ -10,7 +10,8 @@ import type { SequenceAction } from 'redux-reqseq';
 import {
   CLEAR_SEARCH_RESULTS,
   editPerson,
-  searchPeople
+  searchPeople,
+  getPeoplePhotos
 } from './PeopleActions';
 
 const { OPENLATTICE_ID_FQN } = Constants;
@@ -47,6 +48,16 @@ export default function peopleReducer(state :Map<*, *> = INITIAL_STATE, action :
           .set('fetchState', RequestStates.SUCCESS)
           .set('peopleSearchResults', fromJS(action.value)),
         FAILURE: () => state.set('fetchState', RequestStates.FAILURE)
+      });
+    }
+
+    case getPeoplePhotos.case(action.type): {
+      return getPeoplePhotos.reducer(state, action, {
+        REQUEST: () => state.set('fetchState', RequestStates.PENDING),
+        SUCCESS: () => state
+          .set('fetchState', RequestStates.SUCCESS)
+          .set('profilePicsByEKID', action.value),
+        FAILURE: () => state.set('fetchState', RequestStates.FAILURE),
       });
     }
 
