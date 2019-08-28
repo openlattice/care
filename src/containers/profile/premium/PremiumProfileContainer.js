@@ -27,13 +27,13 @@ import ContactCarousel from '../../../components/premium/contacts/ContactCarouse
 import CrisisCountCard from '../CrisisCountCard';
 import DeescalationCard from './DeescalationCard';
 import OfficerSafetyCard from './OfficerSafetyCard';
+import Portrait from '../../../components/portrait/Portrait';
 import ProfileBanner from '../ProfileBanner';
 import ProfileResult from '../ProfileResult';
 import RecentIncidentCard from '../RecentIncidentCard';
 import ReportsSummary from './ReportsSummary';
 import ResponsePlanCard from './ResponsePlanCard';
 import { labelMapReport } from '../constants';
-import Portrait from '../../../components/portrait/Portrait';
 import { ContentWrapper, ContentOuterWrapper } from '../../../components/layout';
 import { getProfileReports } from '../ProfileActions';
 import { getBasicInformation } from '../edit/basicinformation/actions/BasicInformationActions';
