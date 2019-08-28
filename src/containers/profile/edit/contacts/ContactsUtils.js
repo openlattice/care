@@ -54,8 +54,9 @@ const getContactAssociations = (
 const removeRelationshipData = (formData :Object) :Object => {
   const contacts = get(formData, getPageSectionKey(1, 1), []);
   const withoutRelationships = contacts
-    // eslint-disable-next-line max-len
-    .map((contact :Object) => remove(contact, getEntityAddressKey(-1, IS_EMERGENCY_CONTACT_FOR_FQN, FQN.RELATIONSHIP_FQN)));
+    .map((contact :Object) => (
+      remove(contact, getEntityAddressKey(-1, IS_EMERGENCY_CONTACT_FOR_FQN, FQN.RELATIONSHIP_FQN))
+    ));
 
   return {
     [getPageSectionKey(1, 1)]: withoutRelationships
