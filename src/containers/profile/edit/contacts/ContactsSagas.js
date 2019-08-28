@@ -187,6 +187,8 @@ function* getContactsWorker(action :SequenceAction) :Generator<*, *, *> {
     const isContactForList :List<Map> = contactsData
       .map(contact => contact.get('associationDetails', Map()));
 
+    const isContactForByContactEKID = Map(contactsEKIDs.zip(isContactForList));
+
     const isContactForEKIDs = getEntityKeyIdsFromList(isContactForList);
 
     const formData = constructFormData(contacts, isContactForList, contactInfoByContactEKID);
@@ -200,8 +202,9 @@ function* getContactsWorker(action :SequenceAction) :Generator<*, *, *> {
       entityIndexToIdMap,
       formData,
       data: fromJS({
+        contactInfoByContactEKID,
         contacts,
-        contactInfoByContactEKID
+        isContactForByContactEKID,
       })
     }));
   }

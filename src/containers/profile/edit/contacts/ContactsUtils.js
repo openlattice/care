@@ -77,7 +77,7 @@ const constructEntityIndexToIdMap = (
   return addressToIdMap;
 };
 
-const constructFormData = (contacts :List<Map>, isContactForList :List<Map>, contactInfoByContactsEKID :Map) => {
+const constructFormData = (contacts :List<Map>, isContactForList :List<Map>, contactInfoByContactEKID :Map) => {
   const contactProperties = List([
     FQN.PERSON_FIRST_NAME_FQN,
     FQN.PERSON_LAST_NAME_FQN,
@@ -109,7 +109,7 @@ const constructFormData = (contacts :List<Map>, isContactForList :List<Map>, con
   // the order of contactInfo is not guaranteed to be same as contacts. Must match them by EKID
   const contactInfoFormData = contacts.map((contact) => {
     const contactEKID = contact.getIn([OPENLATTICE_ID_FQN, 0]);
-    const contactInfo = contactInfoByContactsEKID.get(contactEKID);
+    const contactInfo = contactInfoByContactEKID.get(contactEKID);
     return getFormDataFromEntity(
       contactInfo,
       CONTACT_INFORMATION_FQN,
