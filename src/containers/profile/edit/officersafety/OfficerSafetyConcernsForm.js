@@ -31,7 +31,7 @@ const { OPENLATTICE_ID_FQN } = Constants;
 
 const {
   BEHAVIOR_FQN,
-  INCLUDES_FQN,
+  PART_OF_FQN,
   INTERACTION_STRATEGY_FQN,
   OFFICER_SAFETY_CONCERNS_FQN,
   PEOPLE_FQN,
@@ -150,7 +150,7 @@ class OfficerSafetyConcernsForm extends Component<Props, State> {
     const associations :any[][] = [];
     for (let i = 0; i < listSize; i += 1) {
       associations.push(
-        [INCLUDES_FQN, idOrIndex, RESPONSE_PLAN_FQN, i, OFFICER_SAFETY_CONCERNS_FQN, {
+        [PART_OF_FQN, i, OFFICER_SAFETY_CONCERNS_FQN, idOrIndex, RESPONSE_PLAN_FQN, {
           [COMPLETED_DT_FQN.toString()]: [nowAsIsoString]
         }]
       );
@@ -169,7 +169,7 @@ class OfficerSafetyConcernsForm extends Component<Props, State> {
     const associations :any[][] = [];
     for (let i = 0; i < listSize; i += 1) {
       associations.push(
-        [INCLUDES_FQN, idOrIndex, RESPONSE_PLAN_FQN, i, BEHAVIOR_FQN, {
+        [PART_OF_FQN, i, BEHAVIOR_FQN, idOrIndex, RESPONSE_PLAN_FQN, {
           [COMPLETED_DT_FQN.toString()]: [nowAsIsoString]
         }]
       );
@@ -188,7 +188,7 @@ class OfficerSafetyConcernsForm extends Component<Props, State> {
     const associations :any[][] = [];
     for (let i = 0; i < listSize; i += 1) {
       associations.push(
-        [INCLUDES_FQN, idOrIndex, RESPONSE_PLAN_FQN, i, INTERACTION_STRATEGY_FQN, {
+        [PART_OF_FQN, i, INTERACTION_STRATEGY_FQN, idOrIndex, RESPONSE_PLAN_FQN, {
           [COMPLETED_DT_FQN.toString()]: [nowAsIsoString]
         }]
       );

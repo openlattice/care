@@ -33,7 +33,7 @@ import {
 import { isValidUuid } from '../../../../utils/Utils';
 
 const {
-  INCLUDES_FQN,
+  PART_OF_FQN,
   SUBJECT_OF_FQN,
   INTERACTION_STRATEGY_FQN,
   RESPONSE_PLAN_FQN,
@@ -151,7 +151,7 @@ class ResponsePlanForm extends Component<Props, State> {
     const strategySize :number = get(formData, pageSection, []).length;
     for (let i = 0; i < strategySize; i += 1) {
       strategyAssociations.push(
-        [INCLUDES_FQN, idOrIndex, RESPONSE_PLAN_FQN, i, INTERACTION_STRATEGY_FQN, {
+        [PART_OF_FQN, i, INTERACTION_STRATEGY_FQN, idOrIndex, RESPONSE_PLAN_FQN, {
           [COMPLETED_DT_FQN.toString()]: [nowAsIsoString]
         }]
       );

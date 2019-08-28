@@ -3,7 +3,7 @@ import { DateTime } from 'luxon';
 import type { Map } from 'immutable';
 import * as FQN from '../edm/DataModelFqns';
 
-const getNameFromPerson = (person :Map) => {
+const getLastFirstMiFromPerson = (person :Map) => {
   const firstName = person.getIn([FQN.PERSON_FIRST_NAME_FQN, 0], '');
   const last = person.getIn([FQN.PERSON_LAST_NAME_FQN, 0], '');
   const middle = person.getIn([FQN.PERSON_MIDDLE_NAME_FQN, 0], '');
@@ -18,7 +18,14 @@ const getNameFromPerson = (person :Map) => {
     middleInitial = `${middle.charAt(0)}.`;
   }
 
-  return `${lastName} ${firstName} ${middleInitial}`;
+  return `${lastName} ${firstName} ${middleInitial}`.trim();
+};
+
+const getFirstLastFromPerson = (person :Map) => {
+  const firstName = person.getIn([FQN.PERSON_FIRST_NAME_FQN, 0], '');
+  const last = person.getIn([FQN.PERSON_LAST_NAME_FQN, 0], '');
+
+  return `${firstName} ${last}`.trim();
 };
 
 const getDobFromPerson = (person :Map) => {
@@ -33,5 +40,6 @@ const getDobFromPerson = (person :Map) => {
 
 export {
   getDobFromPerson,
-  getNameFromPerson
+  getFirstLastFromPerson,
+  getLastFirstMiFromPerson,
 };

@@ -3,7 +3,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Map } from 'immutable';
 import { Banner } from 'lattice-ui-kit';
-import { getDobFromPerson, getNameFromPerson } from '../../utils/PersonUtils';
+import { getDobFromPerson, getLastFirstMiFromPerson } from '../../utils/PersonUtils';
 
 const Content = styled.div`
   display: flex;
@@ -35,7 +35,7 @@ type Props = {
 
 const ProfileBanner = ({ selectedPerson } :Props) => {
   const dob = getDobFromPerson(selectedPerson);
-  const name = getNameFromPerson(selectedPerson);
+  const name = getLastFirstMiFromPerson(selectedPerson);
 
   return (
     <Banner mode="default" isOpen sticky>
