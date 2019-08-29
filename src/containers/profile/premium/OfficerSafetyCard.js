@@ -10,9 +10,9 @@ import {
   CardSegment
 } from 'lattice-ui-kit';
 
-import DashedList from './DashedList';
 import BehaviorItem from './BehaviorItem';
 import Triggers from './Triggers';
+import { DashedList } from '../../../components/layout';
 import {
   ARMED_WITH_WEAPON_FQN,
   INJURIES_FQN,
@@ -27,6 +27,7 @@ import {
   INJURED_PARTIES,
   THREATENED_VIOLENCE,
 } from './constants';
+import OfficerSafetyConcernsList from '../../../components/premium/officersafety/OfficerSafetyConcernsList';
 
 const IconWrapper = styled.div`
   vertical-align: middle;
@@ -53,6 +54,7 @@ const StyledCardSegment = styled(CardSegment)`
 
 type Props = {
   isLoading :boolean;
+  officerSafety :List<Map>;
   reports :List<Map>;
   triggers :List<Map>;
 };
@@ -86,7 +88,7 @@ class OfficerSafetyCard extends PureComponent<Props> {
     .toKeyedSeq()
     .toArray();
 
-  renderItems = () => {
+  renderIncidentCounts = () => {
     const { isLoading, reports } = this.props;
 
     if (!isLoading) {
@@ -111,7 +113,12 @@ class OfficerSafetyCard extends PureComponent<Props> {
   }
 
   render() {
-    const { isLoading, reports, triggers } = this.props;
+    const {
+      isLoading,
+      officerSafety,
+      reports,
+      triggers
+    } = this.props;
     const total = reports.count();
     const headerMode = (total && !isLoading) ? 'warning' : 'default';
     return (
@@ -124,9 +131,10 @@ class OfficerSafetyCard extends PureComponent<Props> {
             Officer Safety
           </H1>
         </CardHeader>
-        <StyledCardSegment padding="sm">
+        <StyledCardSegment padding="sm" vertical>
+          <OfficerSafetyConcernsList isLoading={isLoading} officerSafety={officerSafety} />
           <DashedList isLoading={isLoading}>
-            { this.renderItems() }
+            { this.renderIncidentCounts() }
           </DashedList>
         </StyledCardSegment>
         <StyledCardSegment vertical padding="sm">
