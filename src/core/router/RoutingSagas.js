@@ -31,14 +31,14 @@ const LOG = new Logger('RoutingSagas');
 
 function* goToPathWorker(action :RoutingAction) :Generator<*, *, *> {
 
-  const { path } = action;
+  const { path, state = Map() } = action;
   if (path === null || path === undefined || !path.startsWith('/', 0)) {
     LOG.error(ERR_INVALID_ROUTE, path);
     yield put(routingFailure(ERR_INVALID_ROUTE, path));
     return;
   }
 
-  yield put(push(path));
+  yield put(push({ state, pathname: path }));
 }
 
 function* goToPathWatcher() :Generator<*, *, *> {
