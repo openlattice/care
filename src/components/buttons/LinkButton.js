@@ -14,13 +14,14 @@ type Props = {
     goToPath :RequestSequence;
   };
   to :string;
+  state :Object;
 }
 
 class LinkButton extends Component<Props> {
 
   handleOnClick = () => {
-    const { to, actions } = this.props;
-    actions.goToPath(to);
+    const { to, actions, state } = this.props;
+    actions.goToPath(to, state);
   }
 
   render() {

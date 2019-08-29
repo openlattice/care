@@ -7,6 +7,7 @@ import * as Routes from './Routes';
 declare type RoutingAction = {
   type :string;
   path :string;
+  state ? :any;
 };
 
 const GO_TO_ROOT :'GO_TO_ROOT' = 'GO_TO_ROOT';
@@ -18,9 +19,10 @@ function goToRoot() :RoutingAction {
 }
 
 const GO_TO_PATH :'GO_TO_PATH' = 'GO_TO_PATH';
-function goToPath(path :string) :RoutingAction {
+function goToPath(path :string, state :any) :RoutingAction {
   return {
     path,
+    state,
     type: GO_TO_PATH,
   };
 }
