@@ -79,6 +79,7 @@ const BehaviorAndSafetyGrid = styled.div`
 type Props = {
   actions :{
     getBasicInformation :RequestSequence;
+    getContacts :RequestSequence;
     getOfficerSafety :RequestSequence;
     getProfileReports :RequestSequence;
     getResponsePlan :RequestSequence;
@@ -126,7 +127,7 @@ class PremiumProfileContainer extends Component<Props, State> {
     }
   }
 
-  getProfileData = (personEKID :UUID) => {
+  getProfileData = (personEKID :?UUID) => {
     const { actions } = this.props;
     actions.getBasicInformation(personEKID);
     actions.getContacts(personEKID);

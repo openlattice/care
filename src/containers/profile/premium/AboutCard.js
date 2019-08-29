@@ -16,7 +16,6 @@ import {
   faUser,
   faVenusMars,
   faWeightHanging,
-  faEdit,
   faClawMarks
 } from '@fortawesome/pro-solid-svg-icons';
 import { faUserHardHat } from '@fortawesome/pro-regular-svg-icons';
@@ -28,7 +27,7 @@ import AboutDetail from './AboutDetail';
 import * as FQN from '../../../edm/DataModelFqns';
 import { inchesToFeetString } from '../../../utils/DataUtils';
 import { getLastFirstMiFromPerson } from '../../../utils/PersonUtils';
-import LinkButton from '../../../components/buttons/LinkButton';
+import EditLinkButton from '../../../components/buttons/EditLinkButton';
 import { BASIC_PATH } from '../../../core/router/Routes';
 
 const IconWrapper = styled.span`
@@ -43,11 +42,6 @@ const H1 = styled.h1`
   font-size: 18px;
   font-weight: 600;
   align-items: center;
-`;
-
-const EditButton = styled(LinkButton)`
-  margin-left: auto;
-  padding: 2px;
 `;
 
 const Name = styled(AboutDetail)`
@@ -119,9 +113,7 @@ const AboutCard = (props :Props) => {
             <FontAwesomeIcon icon={faUser} fixedWidth />
           </IconWrapper>
           About
-          <EditButton mode="primary" to={`${match.url}${BASIC_PATH}`}>
-            <FontAwesomeIcon icon={faEdit} fixedWidth />
-          </EditButton>
+          <EditLinkButton mode="primary" to={`${match.url}${BASIC_PATH}`} />
         </H1>
       </CardHeader>
       <CardSegment vertical padding="sm">

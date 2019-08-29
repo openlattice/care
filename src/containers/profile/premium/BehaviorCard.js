@@ -10,7 +10,7 @@ import {
   CardSegment,
 } from 'lattice-ui-kit';
 
-import DashedList from './DashedList';
+import { DashedList } from '../../../components/layout';
 import BehaviorItem from './BehaviorItem';
 import { OBSERVED_BEHAVIORS_FQN } from '../../../edm/DataModelFqns';
 import { countPropertyOccurrance } from './Utils';

@@ -12,9 +12,9 @@ import { Map } from 'immutable';
 import { withRouter } from 'react-router-dom';
 import type { Match } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAddressCard, faEdit } from '@fortawesome/pro-solid-svg-icons';
+import { faAddressCard } from '@fortawesome/pro-solid-svg-icons';
 
-import LinkButton from '../../../components/buttons/LinkButton';
+import EditLinkButton from '../../../components/buttons/EditLinkButton';
 import { RESPONSE_PLAN_PATH } from '../../../core/router/Routes';
 import { CONTEXT_FQN } from '../../../edm/DataModelFqns';
 import { isNonEmptyString, isEmptyString } from '../../../utils/LangUtils';
@@ -38,11 +38,6 @@ const Text = styled.p`
   word-break: break-word;
 `;
 
-const EditButton = styled(LinkButton)`
-  margin-left: auto;
-  padding: 2px;
-`;
-
 type Props = {
   isLoading ? :boolean;
   backgroundInformation :Map;
@@ -59,9 +54,7 @@ const BackgroundInformationCard = ({ backgroundInformation, isLoading, match } :
             <FontAwesomeIcon icon={faAddressCard} fixedWidth />
           </IconWrapper>
           Background Information
-          <EditButton mode="primary" to={`${match.url}${RESPONSE_PLAN_PATH}`}>
-            <FontAwesomeIcon icon={faEdit} fixedWidth />
-          </EditButton>
+          <EditLinkButton mode="primary" to={`${match.url}${RESPONSE_PLAN_PATH}`} />
         </H1>
       </CardHeader>
       <CardSegment vertical padding="sm">
