@@ -26,7 +26,7 @@ import OfficerSafetyContainer from './officersafety/OfficerSafetyContainer';
 import { getBasics } from './basicinformation/actions/BasicInformationActions';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
 import {
-  ABOUT_PATH,
+  // ABOUT_PATH,
   BASIC_PATH,
   CONTACTS_PATH,
   OFFICER_SAFETY_PATH,
@@ -70,7 +70,7 @@ const EditProfileContainer = (props :Props) => {
                 <NavStep to={`${match.url}${OFFICER_SAFETY_PATH}`}>Officer Safety</NavStep>
                 <NavStep to={`${match.url}${RESPONSE_PLAN_PATH}`}>Background & Response Plan</NavStep>
                 <NavStep to={`${match.url}${CONTACTS_PATH}`}>Contacts</NavStep>
-                <NavStep to={`${match.url}${ABOUT_PATH}`}>About</NavStep>
+                {/* <NavStep to={`${match.url}${ABOUT_PATH}`}>About</NavStep> */}
               </Stepper>
             </CardSegment>
           </Card>
