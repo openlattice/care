@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { RequestStates } from 'redux-reqseq';
 import {
-  Button,
   Card,
   CardSegment,
   CardStack,
@@ -33,6 +32,7 @@ import ProfileResult from '../ProfileResult';
 import RecentIncidentCard from '../RecentIncidentCard';
 import ReportsSummary from './ReportsSummary';
 import ResponsePlanCard from './ResponsePlanCard';
+import LinkButton from '../../../components/buttons/LinkButton';
 import { labelMapReport } from '../constants';
 import { ContentWrapper, ContentOuterWrapper } from '../../../components/layout';
 import { getProfileReports } from '../ProfileActions';
@@ -45,9 +45,10 @@ import { getEntityKeyId } from '../../../utils/DataUtils';
 import { reduceRequestStates } from '../../../utils/StateUtils';
 import { getImageDataFromEntity } from '../../../utils/BinaryUtils';
 import {
+  CRISIS_PATH,
   PROFILE_ID_PARAM,
+  REPORT_ID_PATH,
   REPORT_VIEW_PATH,
-  REPORT_ID_PATH
 } from '../../../core/router/Routes';
 import { goToPath } from '../../../core/router/RoutingActions';
 import type { RoutingAction } from '../../../core/router/RoutingActions';
@@ -207,9 +208,9 @@ class PremiumProfileContainer extends Component<Props, State> {
                     <Portrait imageUrl={imageURL} />
                   </CardSegment>
                   <CardSegment vertical padding="sm">
-                    <Button mode="primary">
+                    <LinkButton mode="primary" to={`${CRISIS_PATH}/1`} state={selectedPerson}>
                       New Crisis Report
-                    </Button>
+                    </LinkButton>
                   </CardSegment>
                 </Card>
                 <AboutCard
