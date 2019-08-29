@@ -29,6 +29,7 @@ import EditProfileForm from './EditProfileForm';
 import ProfileBanner from './ProfileBanner';
 import ProfileDetails from './ProfileDetails';
 import ProfileResult from './ProfileResult';
+import LinkButton from '../../components/buttons/LinkButton';
 import { labelMapReport } from './constants';
 import { ContentWrapper, ContentOuterWrapper } from '../../components/layout';
 import {
@@ -40,9 +41,10 @@ import {
 } from './ProfileActions';
 import { DATE_TIME_OCCURRED_FQN } from '../../edm/DataModelFqns';
 import {
+  CRISIS_PATH,
   PROFILE_ID_PARAM,
+  REPORT_ID_PATH,
   REPORT_VIEW_PATH,
-  REPORT_ID_PATH
 } from '../../core/router/Routes';
 import { goToPath } from '../../core/router/RoutingActions';
 import { reduceRequestStates } from '../../utils/StateUtils';
@@ -262,9 +264,9 @@ class ProfileContainer extends Component<Props, State> {
                   <PlaceholderPortrait icon={faPortrait} color={NEUTRALS[5]} />
                 </CardSegment>
                 <CardSegment vertical padding="sm">
-                  <Button mode="primary">
+                  <LinkButton mode="primary" to={`${CRISIS_PATH}/1`} state={selectedPerson}>
                     New Crisis Report
-                  </Button>
+                  </LinkButton>
                 </CardSegment>
               </Card>
             </Aside>

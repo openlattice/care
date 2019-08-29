@@ -52,6 +52,7 @@ type Props = {
   isLoadingResults :boolean;
   noResults :boolean;
   options :OrderedMap;
+  preselectedPerson :Map;
 }
 
 type State = {
@@ -64,7 +65,12 @@ class SubjectQuickSearch extends Component<Props, State> {
     searchInput: ''
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    const { preselectedPerson } = this.props;
+    if (!preselectedPerson.isEmpty()) {
+      this.handleSelect(preselectedPerson);
+    }
+  }
 
   searchTimeout = null;
 
@@ -167,12 +173,14 @@ const mapStateToProps = (state) => {
   const consumers = state.getIn(['search', 'consumers'], Map());
   const searchResults = consumers.get('searchResults', List());
   const options = getPersonOptions(searchResults);
+  const preselectedPerson = state.getIn(['router', 'location', 'state']) || Map();
 
   return {
     app: state.get('app', Map()),
-    options,
     isLoadingResults: consumers.get('isSearching', false),
-    noResults: consumers.get('searchComplete', false) && searchResults.size === 0
+    noResults: consumers.get('searchComplete', false) && searchResults.size === 0,
+    options,
+    preselectedPerson,
   };
 };
 
