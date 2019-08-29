@@ -31,7 +31,7 @@ const LOG = new Logger('RoutingSagas');
 
 function* goToPathWorker(action :RoutingAction) :Generator<*, *, *> {
 
-  const { path, state = Map() } = action;
+  const { path, state } = action;
   if (path === null || path === undefined || !path.startsWith('/', 0)) {
     LOG.error(ERR_INVALID_ROUTE, path);
     yield put(routingFailure(ERR_INVALID_ROUTE, path));
