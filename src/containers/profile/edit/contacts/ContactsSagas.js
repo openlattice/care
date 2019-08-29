@@ -133,7 +133,7 @@ function* getContactsWorker(action :SequenceAction) :Generator<*, *, *> {
         entityKeyIds: [entityKeyId],
         edgeEntitySetIds: [isEmergencyContactESID],
         destinationEntitySetIds: [],
-        sourcesEntitySetIds: [emergencyContactESID],
+        sourceEntitySetIds: [emergencyContactESID],
       }
     };
 
@@ -159,7 +159,7 @@ function* getContactsWorker(action :SequenceAction) :Generator<*, *, *> {
           entityKeyIds: contactsEKIDs.toJS(),
           edgeEntitySetIds: [contactedViaESID],
           destinationEntitySetIds: [contactInformationESID],
-          sourcesEntitySetIds: []
+          sourceEntitySetIds: []
         }
       };
 
