@@ -10,9 +10,9 @@ import {
   CardSegment
 } from 'lattice-ui-kit';
 
-import { DashedList } from '../../../components/layout';
 import BehaviorItem from './BehaviorItem';
 import Triggers from './Triggers';
+import { DashedList } from '../../../components/layout';
 import {
   ARMED_WITH_WEAPON_FQN,
   INJURIES_FQN,
