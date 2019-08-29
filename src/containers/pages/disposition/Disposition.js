@@ -346,7 +346,7 @@ class Disposition extends React.Component<Props> {
           {renderRadio(
             DISPOSITION.HAS_REPORT_NUMBER,
             true,
-            'Incident has a report or CFS number',
+            'Incident has a report or case number',
             DISPOSITION.INCIDENT_DESCRIPTION
           )}
           {values.get(DISPOSITION.HAS_REPORT_NUMBER)
@@ -355,7 +355,7 @@ class Disposition extends React.Component<Props> {
                 <FormSectionWithValidation invalid={invalidFields.includes(DISPOSITION.REPORT_NUMBER)}>
                   <RequiredField>
                     <FormText gray noMargin>
-                      Report / CFS number
+                      Report / Case number
                     </FormText>
                   </RequiredField>
                   {renderInput(DISPOSITION.REPORT_NUMBER)}
@@ -363,7 +363,7 @@ class Disposition extends React.Component<Props> {
               </IndentWrapper>
             )
             : null}
-          {renderRadio(DISPOSITION.HAS_REPORT_NUMBER, false, 'No report or CFS number', DISPOSITION.REPORT_NUMBER)}
+          {renderRadio(DISPOSITION.HAS_REPORT_NUMBER, false, 'No report or case number', DISPOSITION.REPORT_NUMBER)}
           {values.get(DISPOSITION.HAS_REPORT_NUMBER) === false
             ? (
               <IndentWrapper extraIndent>

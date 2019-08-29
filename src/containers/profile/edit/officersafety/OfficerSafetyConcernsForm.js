@@ -3,7 +3,12 @@ import React, { Component } from 'react';
 import { DateTime } from 'luxon';
 import { Constants } from 'lattice';
 import { Form, DataProcessingUtils } from 'lattice-fabricate';
-import { Card, CardSegment, Spinner } from 'lattice-ui-kit';
+import {
+  Card,
+  CardHeader,
+  CardSegment,
+  Spinner
+} from 'lattice-ui-kit';
 import { Map, get, setIn } from 'immutable';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -26,7 +31,7 @@ const { OPENLATTICE_ID_FQN } = Constants;
 
 const {
   BEHAVIOR_FQN,
-  INCLUDES_FQN,
+  PART_OF_FQN,
   INTERACTION_STRATEGY_FQN,
   OFFICER_SAFETY_CONCERNS_FQN,
   PEOPLE_FQN,
@@ -54,6 +59,7 @@ type Props = {
   personEKID :UUID;
   responsePlanEKID :UUID;
   propertyTypeIds :Map;
+  submitState :RequestState;
 };
 
 type State = {
@@ -144,7 +150,7 @@ class OfficerSafetyConcernsForm extends Component<Props, State> {
     const associations :any[][] = [];
     for (let i = 0; i < listSize; i += 1) {
       associations.push(
-        [INCLUDES_FQN, idOrIndex, RESPONSE_PLAN_FQN, i, OFFICER_SAFETY_CONCERNS_FQN, {
+        [PART_OF_FQN, i, OFFICER_SAFETY_CONCERNS_FQN, idOrIndex, RESPONSE_PLAN_FQN, {
           [COMPLETED_DT_FQN.toString()]: [nowAsIsoString]
         }]
       );
@@ -163,7 +169,7 @@ class OfficerSafetyConcernsForm extends Component<Props, State> {
     const associations :any[][] = [];
     for (let i = 0; i < listSize; i += 1) {
       associations.push(
-        [INCLUDES_FQN, idOrIndex, RESPONSE_PLAN_FQN, i, BEHAVIOR_FQN, {
+        [PART_OF_FQN, i, BEHAVIOR_FQN, idOrIndex, RESPONSE_PLAN_FQN, {
           [COMPLETED_DT_FQN.toString()]: [nowAsIsoString]
         }]
       );
@@ -182,7 +188,7 @@ class OfficerSafetyConcernsForm extends Component<Props, State> {
     const associations :any[][] = [];
     for (let i = 0; i < listSize; i += 1) {
       associations.push(
-        [INCLUDES_FQN, idOrIndex, RESPONSE_PLAN_FQN, i, INTERACTION_STRATEGY_FQN, {
+        [PART_OF_FQN, i, INTERACTION_STRATEGY_FQN, idOrIndex, RESPONSE_PLAN_FQN, {
           [COMPLETED_DT_FQN.toString()]: [nowAsIsoString]
         }]
       );
@@ -249,6 +255,10 @@ class OfficerSafetyConcernsForm extends Component<Props, State> {
     }
   }
 
+  handleChange = ({ formData } :Object) => {
+    this.setState({ formData });
+  }
+
   render() {
     const {
       actions,
@@ -256,6 +266,7 @@ class OfficerSafetyConcernsForm extends Component<Props, State> {
       entitySetIds,
       fetchState,
       propertyTypeIds,
+      submitState,
     } = this.props;
     const { formData, prepopulated } = this.state;
     const formContext = {
@@ -283,13 +294,20 @@ class OfficerSafetyConcernsForm extends Component<Props, State> {
     }
 
     return (
-      <Form
-          formData={formData}
-          disabled={prepopulated}
-          schema={schema}
-          uiSchema={uiSchema}
-          onSubmit={this.handleSubmit}
-          formContext={formContext} />
+      <Card>
+        <CardHeader mode="primary" padding="sm">
+          Officer Safety
+        </CardHeader>
+        <Form
+            isSubmitting={submitState === RequestStates.PENDING}
+            disabled={prepopulated}
+            formContext={formContext}
+            formData={formData}
+            onChange={this.handleChange}
+            onSubmit={this.handleSubmit}
+            schema={schema}
+            uiSchema={uiSchema} />
+      </Card>
     );
   }
 }
@@ -306,7 +324,8 @@ const mapStateToProps = (state :Map) => {
     fetchState: reduceRequestStates(fetchSafetyStates),
     formData: state.getIn(['profile', 'officerSafety', 'formData'], Map()),
     propertyTypeIds: state.getIn(['edm', 'fqnToIdMap'], Map()),
-    responsePlanEKID: state.getIn(['profile', 'responsePlan', 'data', OPENLATTICE_ID_FQN, 0])
+    responsePlanEKID: state.getIn(['profile', 'responsePlan', 'data', OPENLATTICE_ID_FQN, 0]),
+    submitState: state.getIn(['profile', 'officerSafety', 'submitState'], RequestStates.STANDBY),
   };
 };
 

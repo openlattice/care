@@ -12,7 +12,6 @@ import {
 import {
   List,
   Map,
-  OrderedMap,
   fromJS
 } from 'immutable';
 import {
@@ -31,20 +30,75 @@ import * as FQN from '../../edm/DataModelFqns';
 import Logger from '../../utils/Logger';
 import {
   EDIT_PERSON,
+  GET_PEOPLE_PHOTOS,
   SEARCH_PEOPLE,
   editPerson,
-  searchPeople
+  getPeoplePhotos,
+  searchPeople,
 } from './PeopleActions';
 import {
   getPeopleESId,
+  getESIDFromApp,
 } from '../../utils/AppUtils';
 import { isDefined } from '../../utils/LangUtils';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
+import { APP_TYPES_FQNS } from '../../shared/Consts';
+
+const {
+  IMAGE_FQN,
+  IS_PICTURE_OF_FQN,
+  PEOPLE_FQN,
+} = APP_TYPES_FQNS;
 
 const { OPENLATTICE_ID_FQN } = Constants;
-const { searchEntitySetData } = SearchApiActions;
-const { searchEntitySetDataWorker } = SearchApiSagas;
+const { searchEntitySetData, searchEntityNeighborsWithFilter } = SearchApiActions;
+const { searchEntitySetDataWorker, searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
 const LOG = new Logger('PeopleSagas');
+
+
+export function* getPeoplePhotosWorker(action :SequenceAction) :Generator<*, *, *> {
+  try {
+    const { value: entityKeyIds } = action;
+    if (!List.isList(entityKeyIds)) throw ERR_ACTION_VALUE_TYPE;
+
+    yield put(getPeoplePhotos.request(action.id));
+
+    const app :Map = yield select(state => state.get('app', Map()));
+    const peopleESID :UUID = getESIDFromApp(app, PEOPLE_FQN);
+    const imageESID :UUID = getESIDFromApp(app, IMAGE_FQN);
+    const isPictureOfESID :UUID = getESIDFromApp(app, IS_PICTURE_OF_FQN);
+
+    const imageSearchParams = {
+      entitySetId: peopleESID,
+      filter: {
+        entityKeyIds: entityKeyIds.toJS(),
+        edgeEntitySetIds: [isPictureOfESID],
+        destinationEntitySetIds: [],
+        sourceEntitySetIds: [imageESID]
+      }
+    };
+
+    const imageResponse = yield call(
+      searchEntityNeighborsWithFilterWorker,
+      searchEntityNeighborsWithFilter(imageSearchParams)
+    );
+
+    const profilePicByEKID = fromJS(imageResponse.data)
+      .map(entity => entity.first().get('neighborDetails'));
+
+    yield put(getPeoplePhotos.success(action.id, profilePicByEKID));
+  }
+  catch (error) {
+    yield put(getPeoplePhotos.failure(action.id));
+  }
+  finally {
+    yield put(getPeoplePhotos.finally(action.id));
+  }
+}
+
+export function* getPeoplePhotosWatcher() :Generator<*, *, *> {
+  yield takeEvery(GET_PEOPLE_PHOTOS, getPeoplePhotosWorker);
+}
 
 function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
 
@@ -108,19 +162,10 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
     if (error) throw error;
 
     const hits = fromJS(data.hits);
-    const result :List<OrderedMap> = hits.map((person :Map) => {
-      const rawDob :string = person.getIn([FQN.PERSON_DOB_FQN, 0], '');
-      let formattedDob = '';
-      if (rawDob) {
-        formattedDob = DateTime.fromISO(
-          rawDob
-        ).toLocaleString(DateTime.DATE_SHORT);
-      }
+    const peopleEKIDs = hits.map(person => person.getIn([OPENLATTICE_ID_FQN, 0]));
 
-      return person.set(FQN.DOB_FQN, List([formattedDob]));
-    });
-
-    yield put(searchPeople.success(action.id, result));
+    yield put(searchPeople.success(action.id, hits));
+    yield call(getPeoplePhotosWorker, getPeoplePhotos(peopleEKIDs));
   }
   catch (error) {
     LOG.error('searchPeopleWorker', error);

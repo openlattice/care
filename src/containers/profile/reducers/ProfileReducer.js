@@ -9,10 +9,12 @@ import reports from './ReportsReducer';
 import responsePlan from '../edit/responseplan/ResponsePlanReducer';
 import basicInformation from '../edit/basicinformation/reducers/BasicInformationReducer';
 import officerSafety from '../edit/officersafety/reducers/OfficerSafetyReducer';
+import contacts from '../edit/contacts/ContactsReducer';
 import { CLEAR_PROFILE } from '../ProfileActions';
 
 const subReducers = combineReducers({
   basicInformation,
+  contacts,
   officerSafety,
   person,
   physicalAppearance,

@@ -12,6 +12,7 @@ import AppearanceForm from './AppearanceForm';
 import AddressForm from './AddressForm';
 import { getBasicInformation } from './actions/BasicInformationActions';
 import { PROFILE_ID_PARAM } from '../../../../core/router/Routes';
+import PhotosForm from './PhotosForm';
 
 type Props = {
   actions :{
@@ -50,6 +51,7 @@ class BasicInformationContainer extends Component<Props> {
       <CardStack>
         <BasicsForm />
         <AppearanceForm personEKID={personEKID} />
+        <PhotosForm personEKID={personEKID} />
         <AddressForm personEKID={personEKID} />
       </CardStack>
     );

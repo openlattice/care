@@ -1,30 +1,24 @@
 // @flow
 import React, { Component } from 'react';
-import { DateTime } from 'luxon';
 import { Form } from 'lattice-fabricate';
-import { Card, CardSegment, Spinner } from 'lattice-ui-kit';
+import {
+  Card,
+  CardHeader,
+  CardSegment,
+  Spinner
+} from 'lattice-ui-kit';
 import { Map } from 'immutable';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 import { withRouter } from 'react-router-dom';
 import type { Dispatch } from 'redux';
-import type { Match } from 'react-router-dom';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import {
   updateBasics,
 } from './actions/BasicInformationActions';
 import { schema, uiSchema } from './schemas/BasicInformationSchemas';
-import { PROFILE_ID_PARAM } from '../../../../core/router/Routes';
-import { COMPLETED_DT_FQN } from '../../../../edm/DataModelFqns';
-import { APP_TYPES_FQNS } from '../../../../shared/Consts';
-
-const {
-  OBSERVED_IN_FQN,
-  PEOPLE_FQN,
-  PHYSICAL_APPEARANCE_FQN,
-} = APP_TYPES_FQNS;
 
 type Props = {
   actions :{
@@ -34,7 +28,6 @@ type Props = {
   entitySetIds :Map;
   fetchState :RequestState;
   formData :Map;
-  match :Match;
   propertyTypeIds :Map;
 };
 
@@ -71,17 +64,6 @@ class BasicInformationForm extends Component<Props, State> {
     });
   }
 
-  getAssociations = () => {
-    const { match } = this.props;
-    const personEKID = match.params[PROFILE_ID_PARAM];
-    const nowAsIsoString :string = DateTime.local().toISO();
-    return [
-      [OBSERVED_IN_FQN, personEKID, PEOPLE_FQN, 0, PHYSICAL_APPEARANCE_FQN, {
-        [COMPLETED_DT_FQN.toString()]: [nowAsIsoString]
-      }],
-    ];
-  }
-
   render() {
     const {
       actions,
@@ -110,12 +92,17 @@ class BasicInformationForm extends Component<Props, State> {
     }
 
     return (
-      <Form
-          formData={formData}
-          disabled={prepopulated}
-          schema={schema}
-          uiSchema={uiSchema}
-          formContext={formContext} />
+      <Card>
+        <CardHeader mode="primary" padding="sm">
+          Basics
+        </CardHeader>
+        <Form
+            disabled={prepopulated}
+            formContext={formContext}
+            formData={formData}
+            schema={schema}
+            uiSchema={uiSchema} />
+      </Card>
     );
   }
 }
