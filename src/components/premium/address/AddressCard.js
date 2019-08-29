@@ -8,16 +8,13 @@ import {
   CardHeader,
 } from 'lattice-ui-kit';
 import { Map } from 'immutable';
-import {
-  faHome,
-  faEdit,
-} from '@fortawesome/pro-solid-svg-icons';
+import { faHome } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { withRouter } from 'react-router-dom';
 import type { Match } from 'react-router-dom';
 
 import * as FQN from '../../../edm/DataModelFqns';
-import LinkButton from '../../buttons/LinkButton';
+import EditLinkButton from '../../buttons/EditLinkButton';
 import { BASIC_PATH } from '../../../core/router/Routes';
 import { formatCityStateZip } from './AddressUtils';
 import Address from './Address';
@@ -34,11 +31,6 @@ const H1 = styled.h1`
   font-size: 18px;
   font-weight: 600;
   align-items: center;
-`;
-
-const EditButton = styled(LinkButton)`
-  margin-left: auto;
-  padding: 2px;
 `;
 
 type Props = {
@@ -67,9 +59,7 @@ const AddressCard = (props :Props) => {
             <FontAwesomeIcon icon={faHome} />
           </IconWrapper>
           Address
-          <EditButton mode="primary" to={`${match.url}${BASIC_PATH}`}>
-            <FontAwesomeIcon icon={faEdit} fixedWidth />
-          </EditButton>
+          <EditLinkButton mode="primary" to={`${match.url}${BASIC_PATH}`} />
         </H1>
       </CardHeader>
       <CardSegment vertical padding="sm">

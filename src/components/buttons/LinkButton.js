@@ -1,5 +1,6 @@
 // @flow
 import React, { Component } from 'react';
+import type { Node } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Button } from 'lattice-ui-kit';
@@ -13,11 +14,24 @@ type Props = {
   actions :{
     goToPath :RequestSequence;
   };
+  children :Node;
+  className ? :string;
+  disabled ? :boolean;
+  isLoading ? :boolean;
+  mode ? :string;
+  state ? :any;
   to :string;
-  state :Object;
 }
 
 class LinkButton extends Component<Props> {
+
+  static defaultProps = {
+    className: undefined,
+    disabled: false,
+    isLoading: false,
+    mode: undefined,
+    state: undefined,
+  };
 
   handleOnClick = () => {
     const { to, actions, state } = this.props;
@@ -25,8 +39,23 @@ class LinkButton extends Component<Props> {
   }
 
   render() {
-    const { to, ...rest } = this.props;
-    return <Button {...rest} onClick={this.handleOnClick} />;
+    const {
+      children,
+      className,
+      disabled,
+      isLoading,
+      mode,
+    } = this.props;
+    return (
+      <Button
+          className={className}
+          disabled={disabled}
+          isLoading={isLoading}
+          mode={mode}
+          onClick={this.handleOnClick}>
+        {children}
+      </Button>
+    );
   }
 }
 

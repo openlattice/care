@@ -10,12 +10,12 @@ import {
 } from 'lattice-ui-kit';
 import { Constants } from 'lattice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faClipboardListCheck, faEdit } from '@fortawesome/pro-solid-svg-icons';
+import { faClipboardListCheck } from '@fortawesome/pro-solid-svg-icons';
 import { List } from 'immutable';
 import { withRouter } from 'react-router-dom';
 import type { Match } from 'react-router-dom';
 
-import LinkButton from '../../../components/buttons/LinkButton';
+import EditLinkButton from '../../../components/buttons/EditLinkButton';
 import { RESPONSE_PLAN_PATH } from '../../../core/router/Routes';
 import { TITLE_FQN, DESCRIPTION_FQN } from '../../../edm/DataModelFqns';
 import InteractionStrategy from '../../../components/premium/responseplan/InteractionStrategy';
@@ -36,11 +36,6 @@ const H1 = styled.h1`
   align-items: center;
 `;
 
-const EditButton = styled(LinkButton)`
-  margin-left: auto;
-  padding: 2px;
-`;
-
 type Props = {
   isLoading ? :boolean;
   interactionStrategies :List;
@@ -55,9 +50,7 @@ const ResponsePlanCard = ({ isLoading, interactionStrategies, match } :Props) =>
           <FontAwesomeIcon icon={faClipboardListCheck} fixedWidth />
         </IconWrapper>
         Response Plan
-        <EditButton mode="primary" to={`${match.url}${RESPONSE_PLAN_PATH}`}>
-          <FontAwesomeIcon icon={faEdit} fixedWidth />
-        </EditButton>
+        <EditLinkButton mode="primary" to={`${match.url}${RESPONSE_PLAN_PATH}`} />
       </H1>
     </CardHeader>
     <CardSegment vertical padding="sm">
