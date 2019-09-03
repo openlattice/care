@@ -42,7 +42,7 @@ function* searchConsumersWorker(action :SequenceAction) :Generator<*, *, *> {
         searchOptions: {
           searchTerm: action.value.query,
           start: 0,
-          maxHits: 100
+          maxHits: 10000
         },
       })
     );
