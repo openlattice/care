@@ -2,14 +2,6 @@
  * @flow
  */
 
-import Lattice from 'lattice';
-import LatticeAuth from 'lattice-auth';
-
-// injected by Webpack.DefinePlugin
-declare var __ENV_DEV__ :boolean;
-
-const { AuthUtils } = LatticeAuth;
-
 const ORGANIZATION_ID :string = 'organization_id';
 
 /*
@@ -35,24 +27,6 @@ function randomStringId() :string {
   return Math.random().toString(36).slice(2) + (new Date()).getTime().toString(36);
 }
 
-function getLatticeConfigBaseUrl() :string {
-
-  // TODO: this probably doesn't belong here, also hardcoded strings == not great
-  let baseUrl = 'localhost';
-  if (!__ENV_DEV__) {
-    baseUrl = window.location.host.startsWith('staging') ? 'staging' : 'production';
-  }
-  return baseUrl;
-}
-
-function resetLatticeConfig() :void {
-
-  Lattice.configure({
-    authToken: AuthUtils.getAuthToken(),
-    baseUrl: getLatticeConfigBaseUrl(),
-  });
-}
-
 function storeOrganizationId(organizationId :?string) :void {
 
   if (!organizationId || !isValidUuid(organizationId)) {
@@ -62,9 +36,7 @@ function storeOrganizationId(organizationId :?string) :void {
 }
 
 export {
-  getLatticeConfigBaseUrl,
   isValidUuid,
   randomStringId,
-  resetLatticeConfig,
   storeOrganizationId,
 };
