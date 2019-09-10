@@ -14,6 +14,7 @@ import {
 
 import * as RoutingSagas from '../router/RoutingSagas';
 
+import * as AboutSagas from '../../containers/profile/edit/about/AboutSagas';
 import * as AddressSagas from '../../containers/profile/edit/basicinformation/sagas/AddressSagas';
 import * as AppearanceSagas from '../../containers/profile/edit/basicinformation/sagas/AppearanceSagas';
 import * as AppSagas from '../../containers/app/AppSagas';
@@ -132,6 +133,8 @@ export default function* sagas() :Generator<*, *, *> {
     fork(ContactsSagas.submitContactsWatcher),
     fork(ContactsSagas.updateContactWatcher),
     fork(ContactsSagas.deleteContactWatcher),
+
+    fork(AboutSagas.getResponsibleUserOptionsWatcher),
 
     // SearchSagas
     fork(SearchSagas.searchConsumersWatcher),
