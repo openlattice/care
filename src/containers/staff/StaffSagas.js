@@ -25,15 +25,17 @@ import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_WORKER_SAGA } from '../../utils/Error
 import {
   ADD_NEW_STAFF_MEMBER,
   GET_CURRENT_USER_STAFF_MEMBER_DATA,
+  GET_RESPONSIBLE_USER_OPTIONS,
   addNewStaffMember,
   getCurrentUserStaffMemberData,
+  getResponsibleUserOptions,
 } from './StaffActions';
-import { getStaffESId } from '../../utils/AppUtils';
+import { getStaffESId, getESIDFromApp } from '../../utils/AppUtils';
 import { getSearchTerm } from '../../utils/DataUtils';
+import { APP_TYPES_FQNS } from '../../shared/Consts';
 import * as FQN from '../../edm/DataModelFqns';
 
 const { OPENLATTICE_ID_FQN } = Constants;
-
 
 const LOG = new Logger('StaffSagas');
 
@@ -42,6 +44,8 @@ const { searchEntitySetDataWorker } = SearchApiSagas;
 
 const { createOrMergeEntityData } = DataApiActions;
 const { createOrMergeEntityDataWorker } = DataApiSagas;
+
+const { STAFF_FQN } = APP_TYPES_FQNS;
 
 /*
  *
@@ -172,9 +176,49 @@ function* getCurrentUserStaffMemberDataWatcher() :Generator<*, *, *> {
   yield takeEvery(GET_CURRENT_USER_STAFF_MEMBER_DATA, getCurrentUserStaffMemberDataWorker);
 }
 
+function* getResponsibleUserOptionsWorker(action :SequenceAction) :Generator<any, any, any> {
+  try {
+    yield put(getResponsibleUserOptions.request(action.id));
+    const app :Map = yield select(state => state.get('app', Map()));
+    const entitySetId :UUID = getESIDFromApp(app, STAFF_FQN);
+    const personIdPTId :UUID = yield select(state => state.getIn(['edm', 'fqnToIdMap', FQN.PERSON_ID_FQN]));
+    const searchOptions :Object = {
+      maxHits: 10000,
+      searchTerm: getSearchTerm(personIdPTId, '*'),
+      start: 0,
+    };
+
+    const response = yield call(
+      searchEntitySetDataWorker,
+      searchEntitySetData({
+        entitySetId,
+        searchOptions
+      })
+    );
+
+    if (response.error) throw response.error;
+
+    debugger;
+
+    yield put(getResponsibleUserOptions.success(action.id));
+  }
+  catch (error) {
+    yield put(getResponsibleUserOptions.failure(action.id));
+  }
+  finally {
+    yield put(getResponsibleUserOptions.finally(action.id));
+  }
+}
+
+function* getResponsibleUserOptionsWatcher() :Generator<any, any, any> {
+  yield takeEvery(GET_RESPONSIBLE_USER_OPTIONS, getResponsibleUserOptionsWorker);
+}
+
 export {
   addNewStaffMemberWatcher,
   addNewStaffMemberWorker,
   getCurrentUserStaffMemberDataWatcher,
   getCurrentUserStaffMemberDataWorker,
+  getResponsibleUserOptionsWatcher,
+  getResponsibleUserOptionsWorker,
 };

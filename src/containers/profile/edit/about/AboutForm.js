@@ -18,18 +18,26 @@ import type { Match } from 'react-router';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import { getResponsibleUser } from './AboutActions';
+import { getResponsibleUserOptions } from '../../../staff/StaffActions';
 import { schema, uiSchema } from './AboutSchemas';
+import { reduceRequestStates } from '../../../../utils/StateUtils';
 
 type Props = {
   actions :{
     getResponsibleUser :RequestSequence;
+    getResponsibleUserOptions :RequestSequence;
   };
   fetchState :RequestState;
   match :Match;
 };
 
 const AboutForm = (props :Props) => {
-  const { fetchState } = props;
+  const { actions, fetchState } = props;
+
+  useEffect(() => {
+    actions.getResponsibleUserOptions();
+  });
+
   return (
     <Card>
       <CardHeader mode="primary" padding="sm">
@@ -48,13 +56,21 @@ const AboutForm = (props :Props) => {
   );
 };
 
-const mapStateToProps = (state :Map) => ({
-  fetchState: state.getIn(['profile', 'about', 'fetchState'], RequestStates.STANDBY)
-});
+const mapStateToProps = (state :Map) => {
+
+  const fetchState = reduceRequestStates([
+    state.getIn(['profile', 'about', 'fetchState'], RequestStates.STANDBY),
+    state.getIn(['staff', 'responsibleUsers', 'fetchState'], RequestStates.STANDBY)
+  ]);
+
+  return {
+    fetchState
+  };
+};
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
-    getResponsibleUser
+    getResponsibleUserOptions
   }, dispatch)
 });
 

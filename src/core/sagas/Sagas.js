@@ -71,6 +71,7 @@ export default function* sagas() :Generator<*, *, *> {
 
     // StaffSagas
     fork(StaffSagas.getCurrentUserStaffMemberDataWatcher),
+    fork(StaffSagas.getResponsibleUserOptionsWatcher),
 
     // RoutingSagas
     fork(RoutingSagas.goToRootWatcher),
@@ -134,7 +135,7 @@ export default function* sagas() :Generator<*, *, *> {
     fork(ContactsSagas.updateContactWatcher),
     fork(ContactsSagas.deleteContactWatcher),
 
-    fork(AboutSagas.getResponsibleUserOptionsWatcher),
+    fork(AboutSagas.getResponsibleUserWatcher),
 
     // SearchSagas
     fork(SearchSagas.searchConsumersWatcher),

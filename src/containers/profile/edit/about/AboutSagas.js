@@ -18,51 +18,53 @@ import { getSearchTerm } from '../../../../utils/DataUtils';
 import * as FQN from '../../../../edm/DataModelFqns';
 
 import {
-  GET_RESPONSIBLE_USER_OPTIONS,
-  getResponsibleUserOptions,
+  GET_RESPONSIBLE_USER,
+  getResponsibleUser,
 } from './AboutActions';
 
 const { STAFF_FQN } = APP_TYPES_FQNS;
 const { searchEntitySetData } = SearchApiActions;
 const { searchEntitySetDataWorker } = SearchApiSagas;
 
-function* getResponsibleUserOptionsWorker(action :SequenceAction) :Generator<any, any, any> {
+function* getResponsibleUserWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
-    yield put(getResponsibleUserOptions.request(action.id));
-    const app :Map = yield select(state => state.get('app', Map()));
-    const entitySetId :UUID = getESIDFromApp(app, STAFF_FQN);
-    const personIdPTId :UUID = yield select(state => state.getIn(['edm', 'fqnToIdMap', FQN.PERSON_ID_FQN]));
-    const searchOptions :Object = {
-      maxHits: 10000,
-      searchTerm: getSearchTerm(personIdPTId, '*', true),
-      start: 0,
-    };
+    yield put(getResponsibleUser.request(action.id));
+    // const app :Map = yield select(state => state.get('app', Map()));
+    // const entitySetId :UUID = getESIDFromApp(app, STAFF_FQN);
+    // const personIdPTId :UUID = yield select(state => state.getIn(['edm', 'fqnToIdMap', FQN.PERSON_ID_FQN]));
+    // const searchOptions :Object = {
+    //   maxHits: 10000,
+    //   searchTerm: getSearchTerm(personIdPTId, '*'),
+    //   start: 0,
+    // };
 
-    const response = yield call(
-      searchEntitySetDataWorker,
-      searchEntitySetData({
-        entitySetId,
-        searchOptions
-      })
-    );
+    // const response = yield call(
+    //   searchEntitySetDataWorker,
+    //   searchEntitySetData({
+    //     entitySetId,
+    //     searchOptions
+    //   })
+    // );
+
+    debugger;
 
     if (response.error) throw response.error;
 
-    yield put(getResponsibleUserOptions.success(action.id));
+    yield put(getResponsibleUser.success(action.id));
   }
   catch (error) {
-    yield put(getResponsibleUserOptions.failure(action.id));
+    yield put(getResponsibleUser.failure(action.id));
   }
   finally {
-    yield put(getResponsibleUserOptions.finally(action.id));
+    yield put(getResponsibleUser.finally(action.id));
   }
 }
 
-function* getResponsibleUserOptionsWatcher() :Generator<any, any, any> {
-  yield takeEvery(GET_RESPONSIBLE_USER_OPTIONS, getResponsibleUserOptionsWorker);
+function* getResponsibleUserWatcher() :Generator<any, any, any> {
+  yield takeEvery(GET_RESPONSIBLE_USER, getResponsibleUserWorker);
 }
 
 export {
-  getResponsibleUserOptionsWatcher,
-  getResponsibleUserOptionsWorker,
+  getResponsibleUserWatcher,
+  getResponsibleUserWorker,
 };
