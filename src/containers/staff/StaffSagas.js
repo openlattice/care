@@ -177,6 +177,7 @@ function* getCurrentUserStaffMemberDataWatcher() :Generator<*, *, *> {
 }
 
 function* getResponsibleUserOptionsWorker(action :SequenceAction) :Generator<any, any, any> {
+
   try {
     yield put(getResponsibleUserOptions.request(action.id));
     const app :Map = yield select(state => state.get('app', Map()));
@@ -198,9 +199,10 @@ function* getResponsibleUserOptionsWorker(action :SequenceAction) :Generator<any
 
     if (response.error) throw response.error;
 
-    debugger;
+    const responseData = fromJS(response.data.hits);
+    // TODO: need to fetch officer data assocted to user
 
-    yield put(getResponsibleUserOptions.success(action.id));
+    yield put(getResponsibleUserOptions.success(action.id, responseData));
   }
   catch (error) {
     yield put(getResponsibleUserOptions.failure(action.id));
