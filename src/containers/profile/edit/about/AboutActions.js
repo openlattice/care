@@ -10,10 +10,15 @@ const getResponsibleUser = newRequestSequence(GET_RESPONSIBLE_USER);
 const UPDATE_RESPONSIBLE_USER :'UPDATE_RESPONSIBLE_USER' = 'UPDATE_RESPONSIBLE_USER';
 const updateResponsibleUser = newRequestSequence(UPDATE_RESPONSIBLE_USER);
 
+const GET_ABOUT_PLAN :'GET_ABOUT_PLAN' = 'GET_ABOUT_PLAN';
+const getAboutPlan = newRequestSequence(GET_ABOUT_PLAN);
+
 export {
+  GET_ABOUT_PLAN,
   GET_RESPONSIBLE_USER,
   SUBMIT_RESPONSIBLE_USER,
   UPDATE_RESPONSIBLE_USER,
+  getAboutPlan,
   getResponsibleUser,
   submitResponsibleUser,
   updateResponsibleUser,

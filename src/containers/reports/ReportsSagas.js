@@ -478,7 +478,7 @@ function* updateReportWorker(action :SequenceAction) :Generator<*, *, *> {
     const datetimePTID :UUID = edm.getIn(['fqnToIdMap', FQN.DATE_TIME_FQN]);
 
     const staffEKID :UUID = yield select(
-      state => state.getIn(['staff', 'currentUserStaffMemberData', OPENLATTICE_ID_FQN, 0], '')
+      state => state.getIn(['staff', 'currentUser', 'data', OPENLATTICE_ID_FQN, 0], '')
     );
 
     const associations = {
