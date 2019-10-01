@@ -1,7 +1,7 @@
 import { DataProcessingUtils } from 'lattice-fabricate';
 import { Constants } from 'lattice';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
-import { GENERAL_NOTES_FQN } from '../../../../edm/DataModelFqns';
+import { NOTES_FQN } from '../../../../edm/DataModelFqns';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
@@ -20,7 +20,7 @@ const schema = {
           title: 'Responsible Officer',
           enum: []
         },
-        [getEntityAddressKey(0, RESPONSE_PLAN_FQN, GENERAL_NOTES_FQN)]: {
+        [getEntityAddressKey(0, RESPONSE_PLAN_FQN, NOTES_FQN)]: {
           type: 'string',
           title: 'Internal Team Notes'
         }
@@ -39,7 +39,7 @@ const uiSchema = {
     [getEntityAddressKey(0, STAFF_FQN, OPENLATTICE_ID_FQN)]: {
       classNames: 'column-span-6'
     },
-    [getEntityAddressKey(0, RESPONSE_PLAN_FQN, GENERAL_NOTES_FQN)]: {
+    [getEntityAddressKey(0, RESPONSE_PLAN_FQN, NOTES_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'textarea'
     },

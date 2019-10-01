@@ -5,7 +5,7 @@ import { List, Map } from 'immutable';
 
 import { getFormDataFromEntity } from '../../../../utils/DataUtils';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
-import { GENERAL_NOTES_FQN } from '../../../../edm/DataModelFqns';
+import { NOTES_FQN } from '../../../../edm/DataModelFqns';
 import { isValidUuid } from '../../../../utils/Utils';
 
 const { ASSIGNED_TO_FQN, RESPONSE_PLAN_FQN, STAFF_FQN } = APP_TYPES_FQNS;
@@ -28,10 +28,11 @@ const getOptionsFromEntityList = (entities :List<Map>, property :string) => {
 };
 
 const constructFormData = (responsePlan :Map, responsibleUser :Map) => {
+  console.log(responsePlan);
   const responsePlanFormData = getFormDataFromEntity(
     responsePlan,
     RESPONSE_PLAN_FQN,
-    [GENERAL_NOTES_FQN],
+    [NOTES_FQN],
     0
   );
 
@@ -53,7 +54,6 @@ const constructEntityIndexToIdMap = (
   responsePlanEKID :UUID,
   assignedToEKID :UUID
 ) => {
-  debugger;
   const entityIndexToIdMap = Map().withMutations((mutable) => {
     if (isValidUuid(responsePlanEKID)) {
       mutable.setIn([RESPONSE_PLAN_FQN.toString(), 0], responsePlanEKID);
