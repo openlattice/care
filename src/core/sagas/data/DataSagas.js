@@ -13,27 +13,39 @@ import { DataApiActions, DataApiSagas } from 'lattice-sagas';
 import type { SequenceAction } from 'redux-reqseq';
 
 import Logger from '../../../utils/Logger';
-import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_WORKER_SAGA } from '../../../utils/Errors';
+import {
+  ERR_ACTION_VALUE_NOT_DEFINED,
+  ERR_ACTION_VALUE_TYPE,
+  ERR_WORKER_SAGA,
+} from '../../../utils/Errors';
 import {
   DELETE_BULK_ENTITIES,
   SUBMIT_DATA_GRAPH,
   SUBMIT_PARTIAL_REPLACE,
+  CREATE_OR_REPLACE_ASSOCIATION,
+  createOrReplaceAssociation,
   deleteBulkEntities,
   submitDataGraph,
   submitPartialReplace,
 } from './DataActions';
+import { isDefined } from '../../../utils/LangUtils';
+import { isValidUuid } from '../../../utils/Utils';
 
 const LOG = new Logger('DataSagas');
 const { DataGraphBuilder } = Models;
 const { UpdateTypes, DeleteTypes } = Types;
 const {
+  createAssociations,
   createEntityAndAssociationData,
   deleteEntitiesAndNeighbors,
+  deleteEntity,
   updateEntityData,
 } = DataApiActions;
 const {
+  createAssociationsWorker,
   createEntityAndAssociationDataWorker,
   deleteEntitiesAndNeighborsWorker,
+  deleteEntityWorker,
   updateEntityDataWorker,
 } = DataApiSagas;
 
@@ -208,7 +220,59 @@ function* deleteBulkEntitiesWatcher() :Generator<*, *, *> {
   yield takeEvery(DELETE_BULK_ENTITIES, deleteBulkEntitiesWorker);
 }
 
+function* createOrReplaceAssociationWorker(action :SequenceAction) :Generator<any, any, any> {
+
+  const response = {};
+  try {
+    const { value } = action;
+    if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
+    if (!isDefined(value.association)) throw ERR_ACTION_VALUE_TYPE;
+
+    yield put(createOrReplaceAssociation.request(action.id, value));
+
+    const { association, entityKeyId, entitySetId } = value;
+
+    if (isValidUuid(entityKeyId) && isValidUuid(entitySetId)) {
+      const deleteResponse = yield call(
+        deleteEntityWorker,
+        deleteEntity({
+          entityKeyId,
+          entitySetId,
+          deleteType: DeleteTypes.SOFT
+        })
+      );
+
+      if (deleteResponse.error) throw deleteResponse.error;
+    }
+
+    const createAssociationResponse = yield call(
+      createAssociationsWorker,
+      createAssociations(association)
+    );
+
+    if (createAssociationResponse.error) throw createAssociationResponse.error;
+    response.data = createAssociationResponse.data;
+
+    yield put(createOrReplaceAssociation.success(action.id, createAssociationResponse));
+  }
+  catch (error) {
+    response.error = error;
+    yield put(createOrReplaceAssociation.failure(action.id, error));
+  }
+  finally {
+    yield put(createOrReplaceAssociation.finally(action.id));
+  }
+
+  return response;
+}
+
+function* createOrReplaceAssociationWatcher() :Generator<any, any, any> {
+  yield takeEvery(CREATE_OR_REPLACE_ASSOCIATION, createOrReplaceAssociationWorker);
+}
+
 export {
+  createOrReplaceAssociationWatcher,
+  createOrReplaceAssociationWorker,
   deleteBulkEntitiesWatcher,
   deleteBulkEntitiesWorker,
   submitDataGraphWatcher,

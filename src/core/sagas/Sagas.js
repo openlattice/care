@@ -64,10 +64,10 @@ export default function* sagas() :Generator<*, *, *> {
     fork(AppSagas.switchOrganizationWatcher),
 
     // DataSagas
+    fork(DataSagas.createOrReplaceAssociationWatcher),
     fork(DataSagas.deleteBulkEntitiesWatcher),
     fork(DataSagas.submitDataGraphWatcher),
     fork(DataSagas.submitPartialReplaceWatcher),
-
 
     // StaffSagas
     fork(StaffSagas.getCurrentUserStaffMemberDataWatcher),
@@ -135,7 +135,9 @@ export default function* sagas() :Generator<*, *, *> {
     fork(ContactsSagas.updateContactWatcher),
     fork(ContactsSagas.deleteContactWatcher),
 
+    fork(AboutSagas.getAboutPlanWatcher),
     fork(AboutSagas.getResponsibleUserWatcher),
+    fork(AboutSagas.updateAboutPlanWatcher),
 
     // SearchSagas
     fork(SearchSagas.searchConsumersWatcher),
