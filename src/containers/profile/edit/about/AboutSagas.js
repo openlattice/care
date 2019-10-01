@@ -144,7 +144,7 @@ function* getAboutPlanWorker(action :SequenceAction) :Generator<any, any, any> {
     const responsibleUserData = fromJS(responsibleUser).getIn(['data', 'neighborDetails']) || Map();
     const responsePlanEKID = getIn(responsePlan, ['data', OPENLATTICE_ID_FQN, 0]);
     const assignedToEKID = getIn(responsibleUser, ['data', 'associationDetails', OPENLATTICE_ID_FQN, 0]);
-    const formData = constructFormData(responsePlan, responsibleUserData);
+    const formData = constructFormData(fromJS(responsePlan.data), responsibleUserData);
     const entityIndexToIdMap = constructEntityIndexToIdMap(responsePlanEKID, assignedToEKID);
 
     // create formData and entityIndexToIdMap
@@ -188,42 +188,42 @@ function* updateAboutPlanWorker(action :SequenceAction) :Generator<any, any, any
     // get association EKID from entityIndexToIdMap
     // call delete on existing association
 
-    const newStaffEKID = getIn(entityData, [staffESID, 0, reservedId, 0]);
-    const entityKeyId = yield select(state => state.getIn(
-      ['profile', 'about', 'entityIndexToIdMap', ASSIGNED_TO_FQN, 0]
-    ));
-    const personEKID = yield select(state => state.getIn(
-      ['profile', 'basicInformation', 'basics', 'data', OPENLATTICE_ID_FQN, 0]
-    ));
-
-    const association = {
-      [assignedToESID]: [{
-        data: {
-          [datetimePTID]: [DateTime.local().toISO()]
-        },
-        dst: {
-          entitySetId: staffESID,
-          entityKeyId: newStaffEKID
-        },
-        src: {
-          entitySetId: peopleESID,
-          entityKeyId: personEKID
-        }
-      }]
-    };
-
-    const associationResponse = yield call(
-      createOrReplaceAssociationWorker,
-      createOrReplaceAssociation({
-        association,
-        entityKeyId,
-        entitySetId: assignedToESID,
-      })
-    );
-
-    if (associationResponse.error) throw associationResponse.error;
-
     if (has(entityData, staffESID)) {
+      const newStaffEKID = getIn(entityData, [staffESID, 0, reservedId, 0]);
+      const entityKeyId = yield select(state => state.getIn(
+        ['profile', 'about', 'entityIndexToIdMap', ASSIGNED_TO_FQN, 0]
+      ));
+      const personEKID = yield select(state => state.getIn(
+        ['profile', 'basicInformation', 'basics', 'data', OPENLATTICE_ID_FQN, 0]
+      ));
+
+      const association = {
+        [assignedToESID]: [{
+          data: {
+            [datetimePTID]: [DateTime.local().toISO()]
+          },
+          dst: {
+            entitySetId: staffESID,
+            entityKeyId: newStaffEKID
+          },
+          src: {
+            entitySetId: peopleESID,
+            entityKeyId: personEKID
+          }
+        }]
+      };
+
+      const associationResponse = yield call(
+        createOrReplaceAssociationWorker,
+        createOrReplaceAssociation({
+          association,
+          entityKeyId,
+          entitySetId: assignedToESID,
+        })
+      );
+
+      if (associationResponse.error) throw associationResponse.error;
+
       // store updated value and remove from entityData,
       delete entityData[staffESID];
     }
