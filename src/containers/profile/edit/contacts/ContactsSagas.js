@@ -173,7 +173,7 @@ function* getContactsWorker(action :SequenceAction) :Generator<*, *, *> {
     }
 
     const contactInfoByContactEKID = contactInfo
-      .map((infos :list, contactEKID :UUID) => {
+      .map((infos :List, contactEKID :UUID) => {
         if (infos.count() > 1) {
           LOG.warn('more than one contact info found', contactEKID);
         }
