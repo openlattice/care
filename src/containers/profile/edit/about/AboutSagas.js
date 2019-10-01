@@ -33,9 +33,11 @@ import { isValidUuid } from '../../../../utils/Utils';
 import {
   GET_ABOUT_PLAN,
   GET_RESPONSIBLE_USER,
+  SUBMIT_ABOUT_PLAN,
   UPDATE_ABOUT_PLAN,
   getAboutPlan,
   getResponsibleUser,
+  submitAboutPlan,
   updateAboutPlan,
 } from './AboutActions';
 import { constructEntityIndexToIdMap, constructFormData } from './AboutUtils';
@@ -106,9 +108,6 @@ function* getResponsibleUserWorker(action :SequenceAction) :Generator<any, any, 
     response.error = error;
     yield put(getResponsibleUser.failure(action.id, error));
   }
-  finally {
-    yield put(getResponsibleUser.finally(action.id));
-  }
 
   return response;
 }
@@ -147,8 +146,6 @@ function* getAboutPlanWorker(action :SequenceAction) :Generator<any, any, any> {
     const formData = constructFormData(fromJS(responsePlan.data), responsibleUserData);
     const entityIndexToIdMap = constructEntityIndexToIdMap(responsePlanEKID, assignedToEKID);
 
-    // create formData and entityIndexToIdMap
-
     yield put(getAboutPlan.success(action.id, {
       data: responsibleUserData,
       entityIndexToIdMap,
@@ -157,9 +154,6 @@ function* getAboutPlanWorker(action :SequenceAction) :Generator<any, any, any> {
   }
   catch (error) {
     yield put(getAboutPlan.failure(action.id));
-  }
-  finally {
-    yield put(getAboutPlan.finally(action.id));
   }
 }
 
@@ -171,13 +165,8 @@ function* updateAboutPlanWorker(action :SequenceAction) :Generator<any, any, any
   try {
     const { value } = action;
     if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
-
-    // since you're changing associations, you have to delete the old association, and then create a new one
-
     yield put(updateAboutPlan.request(action.id, value));
 
-    // check to see if there is a change in the officer field
-    const { entityData, properties, path } = value;
     const app :Map = yield select(state => state.get('app', Map()));
     const reservedId = yield select(state => state.getIn(['edm', 'fqnToIdMap', OPENLATTICE_ID_FQN]));
     const staffESID = getESIDFromApp(app, STAFF_FQN);
@@ -185,9 +174,8 @@ function* updateAboutPlanWorker(action :SequenceAction) :Generator<any, any, any
     const peopleESID = getESIDFromApp(app, PEOPLE_FQN);
     const datetimePTID :UUID = yield select(state => state.getIn(['edm', 'fqnToIdMap', DATE_TIME_FQN]));
 
-    // get association EKID from entityIndexToIdMap
-    // call delete on existing association
-
+    let entityIndexToIdMap = Map();
+    const { entityData } = value;
     if (has(entityData, staffESID)) {
       const newStaffEKID = getIn(entityData, [staffESID, 0, reservedId, 0]);
       const entityKeyId = yield select(state => state.getIn(
@@ -223,30 +211,21 @@ function* updateAboutPlanWorker(action :SequenceAction) :Generator<any, any, any
       );
 
       if (associationResponse.error) throw associationResponse.error;
+      const newAssignedToEKID :UUID = getIn(associationResponse, ['data', assignedToESID, 0]);
+      entityIndexToIdMap = entityIndexToIdMap.setIn([ASSIGNED_TO_FQN.toString(), 0], newAssignedToEKID);
 
-      // store updated value and remove from entityData,
       delete entityData[staffESID];
     }
-
-
-    // if successful, submit new data graph between officer, person, and new association
-    // if sucessful, call partial replace on the general.notes on response plan.
-    // update formData with newly selected officer and notes
-    // update entityIndexToIdMap with new assignedTo association
-
 
     const response = yield call(submitPartialReplaceWorker, submitPartialReplace(value));
 
     if (response.error) throw response.error;
 
-    yield put(updateAboutPlan.success(action.id));
+    yield put(updateAboutPlan.success(action.id, { entityIndexToIdMap }));
   }
   catch (error) {
     LOG.error('updateAboutPlanWorker', error);
     yield put(updateAboutPlan.failure(action.id, error));
-  }
-  finally {
-    yield put(updateAboutPlan.finally(action.id));
   }
 }
 
@@ -254,11 +233,35 @@ function* updateAboutPlanWatcher() :Generator<any, any, any> {
   yield takeEvery(UPDATE_ABOUT_PLAN, updateAboutPlanWorker);
 }
 
+function* submitAboutPlanWorker(action :SequenceAction) :Generator<any, any, any> {
+  try {
+    const { value } = action;
+    if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
+
+    yield put(submitAboutPlan.request(action.id));
+    const response = yield call(submitDataGraphWorker, submitDataGraph(value));
+    if (response.error) throw response.error;
+
+    const newEntityKeyIdsByEntitySetId = fromJS(response.data).get('entityKeyIds');
+
+    yield put(submitAboutPlan.success(action.id));
+  }
+  catch (error) {
+    yield put(submitAboutPlan.failure(action.id));
+  }
+}
+
+function* submitAboutPlanWatcher() :Generator<any, any, any> {
+  yield takeEvery(SUBMIT_ABOUT_PLAN, submitAboutPlanWorker);
+}
+
 export {
   getAboutPlanWatcher,
   getAboutPlanWorker,
   getResponsibleUserWatcher,
   getResponsibleUserWorker,
+  submitAboutPlanWatcher,
+  submitAboutPlanWorker,
   updateAboutPlanWatcher,
   updateAboutPlanWorker,
 };

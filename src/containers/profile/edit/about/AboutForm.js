@@ -8,8 +8,13 @@ import {
   CardHeader,
   Spinner,
 } from 'lattice-ui-kit';
+import { DateTime } from 'luxon';
 import { Constants } from 'lattice';
-import { List, Map, setIn } from 'immutable';
+import {
+  List,
+  Map,
+  removeIn,
+} from 'immutable';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
@@ -18,24 +23,28 @@ import type { Match } from 'react-router';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import { useFormData } from '../../../../components/hooks';
-import { getResponsibleUser, getAboutPlan, updateAboutPlan } from './AboutActions';
+import { getAboutPlan, submitAboutPlan, updateAboutPlan } from './AboutActions';
 import { getResponsibleUserOptions } from '../../../staff/StaffActions';
 import { schema, uiSchema } from './AboutSchemas';
 import { reduceRequestStates } from '../../../../utils/StateUtils';
-import { getOptionsFromEntityList } from './AboutUtils';
-import { PERSON_ID_FQN } from '../../../../edm/DataModelFqns';
+import { getAboutPlanAssociations, hydrateAboutSchema } from './AboutUtils';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
 import { PROFILE_ID_PARAM } from '../../../../core/router/Routes';
 
 const { STAFF_FQN } = APP_TYPES_FQNS;
 const { OPENLATTICE_ID_FQN } = Constants;
-const { getPageSectionKey, getEntityAddressKey } = DataProcessingUtils;
+const {
+  getEntityAddressKey,
+  getPageSectionKey,
+  processAssociationEntityData,
+  processEntityData
+} = DataProcessingUtils;
 
 type Props = {
   actions :{
     getAboutPlan :RequestSequence;
-    getResponsibleUser :RequestSequence;
     getResponsibleUserOptions :RequestSequence;
+    submitAboutPlan :RequestSequence;
     updateAboutPlan :RequestSequence;
   };
   aboutFormData :Map;
@@ -63,43 +72,19 @@ const AboutForm = (props :Props) => {
   const [aboutSchema, setSchema] = useState(schema);
   const [prepopulated, setPrepopulated] = useState(false);
 
-  const personEKID = match.params[PROFILE_ID_PARAM];
+  const personEKID :string = match.params[PROFILE_ID_PARAM] || '';
   useEffect(() => {
     actions.getAboutPlan(personEKID);
     actions.getResponsibleUserOptions();
   }, [actions, personEKID]);
 
   useEffect(() => {
-    // when responsibleUsers changes, update schema to include enums
-    const [values, labels] = getOptionsFromEntityList(responsibleUsers, PERSON_ID_FQN.toString());
-    let newSchema = setIn(
-      schema,
-      [
-        'properties',
-        getPageSectionKey(1, 1),
-        'properties',
-        getEntityAddressKey(0, STAFF_FQN, OPENLATTICE_ID_FQN),
-        'enum'
-      ],
-      values
-    );
-    newSchema = setIn(
-      newSchema,
-      [
-        'properties',
-        getPageSectionKey(1, 1),
-        'properties',
-        getEntityAddressKey(0, STAFF_FQN, OPENLATTICE_ID_FQN),
-        'enumNames'
-      ],
-      labels
-    );
-
+    const newSchema = hydrateAboutSchema(schema, responsibleUsers);
     setSchema(newSchema);
   }, [responsibleUsers, setSchema]);
 
   useEffect(() => {
-    if (entityIndexToIdMap.isEmpty()) {
+    if (!entityIndexToIdMap.isEmpty()) {
       setPrepopulated(true);
     }
   }, [entityIndexToIdMap, setPrepopulated]);
@@ -117,8 +102,29 @@ const AboutForm = (props :Props) => {
     propertyTypeIds,
   ]);
 
-  const handleSubmit = (payload) => {
-    console.log(payload.formData);
+  const handleSubmit = (payload :any) => {
+    const { formData: newFormData } = payload;
+    const nowAsIsoString :string = DateTime.local().toISO();
+
+    const associationEntityData = processAssociationEntityData(
+      getAboutPlanAssociations(newFormData, personEKID, nowAsIsoString),
+      entitySetIds,
+      propertyTypeIds
+    );
+
+    const withoutResponsibleUser = removeIn(
+      newFormData,
+      [getPageSectionKey(1, 1), getEntityAddressKey(0, STAFF_FQN, OPENLATTICE_ID_FQN)]
+    );
+
+    const entityData = processEntityData(withoutResponsibleUser, entitySetIds, propertyTypeIds);
+
+    actions.submitAboutPlan({
+      associationEntityData,
+      entityData,
+      path: [],
+      properties: newFormData
+    });
   };
 
   if (fetchState === RequestStates.PENDING) {
@@ -169,8 +175,8 @@ const mapStateToProps = (state :Map) => {
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
     getAboutPlan,
-    getResponsibleUser,
     getResponsibleUserOptions,
+    submitAboutPlan,
     updateAboutPlan,
   }, dispatch)
 });

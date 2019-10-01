@@ -1,8 +1,8 @@
 // @flow
 import { newRequestSequence } from 'redux-reqseq';
 
-const SUBMIT_RESPONSIBLE_USER :'SUBMIT_RESPONSIBLE_USER' = 'SUBMIT_RESPONSIBLE_USER';
-const submitResponsibleUser = newRequestSequence(SUBMIT_RESPONSIBLE_USER);
+const SUBMIT_ABOUT_PLAN :'SUBMIT_ABOUT_PLAN' = 'SUBMIT_ABOUT_PLAN';
+const submitAboutPlan = newRequestSequence(SUBMIT_ABOUT_PLAN);
 
 const GET_RESPONSIBLE_USER :'GET_RESPONSIBLE_USER' = 'GET_RESPONSIBLE_USER';
 const getResponsibleUser = newRequestSequence(GET_RESPONSIBLE_USER);
@@ -19,12 +19,12 @@ const updateAboutPlan = newRequestSequence(UPDATE_ABOUT_PLAN);
 export {
   GET_ABOUT_PLAN,
   GET_RESPONSIBLE_USER,
-  SUBMIT_RESPONSIBLE_USER,
+  SUBMIT_ABOUT_PLAN,
   UPDATE_ABOUT_PLAN,
   UPDATE_RESPONSIBLE_USER,
   getAboutPlan,
   getResponsibleUser,
-  submitResponsibleUser,
+  submitAboutPlan,
   updateAboutPlan,
   updateResponsibleUser,
 };

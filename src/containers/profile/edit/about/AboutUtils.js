@@ -1,15 +1,31 @@
 // @flow
 import { Constants } from 'lattice';
 import { DataProcessingUtils } from 'lattice-fabricate';
-import { List, Map } from 'immutable';
+import {
+  List,
+  Map,
+  getIn,
+  setIn
+} from 'immutable';
 
 import { getFormDataFromEntity } from '../../../../utils/DataUtils';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
-import { NOTES_FQN } from '../../../../edm/DataModelFqns';
+import {
+  COMPLETED_DT_FQN,
+  DATE_TIME_FQN,
+  NOTES_FQN,
+  PERSON_ID_FQN,
+} from '../../../../edm/DataModelFqns';
 import { isValidUuid } from '../../../../utils/Utils';
 
-const { ASSIGNED_TO_FQN, RESPONSE_PLAN_FQN, STAFF_FQN } = APP_TYPES_FQNS;
-const { getPageSectionKey } = DataProcessingUtils;
+const {
+  ASSIGNED_TO_FQN,
+  RESPONSE_PLAN_FQN,
+  PEOPLE_FQN,
+  STAFF_FQN,
+  SUBJECT_OF_FQN
+} = APP_TYPES_FQNS;
+const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
 const { OPENLATTICE_ID_FQN } = Constants;
 
 const getOptionsFromEntityList = (entities :List<Map>, property :string) => {
@@ -28,7 +44,6 @@ const getOptionsFromEntityList = (entities :List<Map>, property :string) => {
 };
 
 const constructFormData = (responsePlan :Map, responsibleUser :Map) => {
-  console.log(responsePlan);
   const responsePlanFormData = getFormDataFromEntity(
     responsePlan,
     RESPONSE_PLAN_FQN,
@@ -66,8 +81,58 @@ const constructEntityIndexToIdMap = (
   return entityIndexToIdMap;
 };
 
+const getAboutPlanAssociations = (formData :any, personEKID :UUID, nowAsIsoString :string) => {
+  const selectedUserEKID = getIn(
+    formData,
+    [getPageSectionKey(1, 1), getEntityAddressKey(0, STAFF_FQN, OPENLATTICE_ID_FQN)]
+  );
+
+  const associations = [
+    // people -> assigned to -> staff (existing)
+    [ASSIGNED_TO_FQN, personEKID, PEOPLE_FQN, selectedUserEKID, STAFF_FQN, {
+      [DATE_TIME_FQN.toString()]: [nowAsIsoString]
+    }],
+    // person -> subject of -> reponse plan (new)
+    [SUBJECT_OF_FQN, personEKID, PEOPLE_FQN, 0, RESPONSE_PLAN_FQN, {
+      [COMPLETED_DT_FQN.toString()]: [nowAsIsoString]
+    }]
+  ];
+
+  return associations;
+};
+
+const hydrateAboutSchema = (schema, responsibleUsers) => {
+  const [values, labels] = getOptionsFromEntityList(responsibleUsers, PERSON_ID_FQN.toString());
+  let newSchema = setIn(
+    schema,
+    [
+      'properties',
+      getPageSectionKey(1, 1),
+      'properties',
+      getEntityAddressKey(0, STAFF_FQN, OPENLATTICE_ID_FQN),
+      'enum'
+    ],
+    values
+  );
+  newSchema = setIn(
+    newSchema,
+    [
+      'properties',
+      getPageSectionKey(1, 1),
+      'properties',
+      getEntityAddressKey(0, STAFF_FQN, OPENLATTICE_ID_FQN),
+      'enumNames'
+    ],
+    labels
+  );
+
+  return newSchema;
+};
+
 export {
   constructEntityIndexToIdMap,
   constructFormData,
-  getOptionsFromEntityList
+  getOptionsFromEntityList,
+  getAboutPlanAssociations,
+  hydrateAboutSchema,
 };

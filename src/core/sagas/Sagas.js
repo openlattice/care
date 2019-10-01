@@ -137,6 +137,7 @@ export default function* sagas() :Generator<*, *, *> {
 
     fork(AboutSagas.getAboutPlanWatcher),
     fork(AboutSagas.getResponsibleUserWatcher),
+    fork(AboutSagas.submitAboutPlanWatcher),
     fork(AboutSagas.updateAboutPlanWatcher),
 
     // SearchSagas

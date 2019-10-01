@@ -4,7 +4,7 @@ import { Map, fromJS } from 'immutable';
 import { RequestStates } from 'redux-reqseq';
 import type { SequenceAction } from 'redux-reqseq';
 
-import { getAboutPlan } from './AboutActions';
+import { getAboutPlan, updateAboutPlan } from './AboutActions';
 
 const INITIAL_STATE :Map = fromJS({
   data: Map(),
@@ -24,6 +24,21 @@ const AboutReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
           .merge(action.value)
           .set('fetchState', RequestStates.SUCCESS),
         FAILURE: () => state.set('fetchState', RequestStates.FAILURE)
+      });
+    }
+
+    case updateAboutPlan.case(action.type): {
+      return updateAboutPlan.reducer(state, action, {
+        REQUEST: () => {
+          const { path, properties } = action.value;
+          return state
+            .set('updateState', RequestStates.PENDING)
+            .setIn(['formData', ...path], properties);
+        },
+        SUCCESS: () => state
+          .mergeDeep(action.value)
+          .set('updateState', RequestStates.SUCCESS),
+        FAILURE: () => state.set('updateState', RequestStates.FAILURE)
       });
     }
 
