@@ -7,7 +7,8 @@
   "plugins": [
     "flowtype",
     "jest",
-    "react"
+    "react",
+    "react-hooks"
   ],
   "env": {
     "browser": true,
@@ -118,6 +119,8 @@
       }
     ],
     "react/forbid-prop-types": "warn",
+    "react-hooks/exhaustive-deps": "warn",
+    "react-hooks/rules-of-hooks": "error",
     "react/jsx-closing-bracket-location": [
       "error",
       {
