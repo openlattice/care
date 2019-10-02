@@ -21,7 +21,7 @@ import Spinner from '../../components/spinner/Spinner';
 import SupportButton from '../../components/buttons/SupportButton';
 import LegitReportsRouter from '../reports/LegitReportsRouter';
 import DashboardContainer from '../dashboard/DashboardContainer';
-import SubscribeContainer from '../subscribe/SubscribeContainer';
+// import SubscribeContainer from '../subscribe/SubscribeContainer';
 import {
   initializeApplication,
 } from './AppActions';
@@ -32,7 +32,7 @@ import {
   HOME_PATH,
   PEOPLE_PATH,
   REPORTS_PATH,
-  SUBSCRIBE_PATH
+  // SUBSCRIBE_PATH
 } from '../../core/router/Routes';
 import {
   APP_CONTAINER_MAX_WIDTH,
@@ -148,7 +148,7 @@ class AppContainer extends Component<Props> {
         <Route path={DASHBOARD_PATH} render={this.wrapComponent(DashboardContainer)} />
         <Route path={DOWNLOADS_PATH} render={this.wrapComponent(DownloadsContainer)} />
         <Route path={PEOPLE_PATH} component={PeopleRouter} />
-        <Route path={SUBSCRIBE_PATH} render={this.wrapComponent(SubscribeContainer)} />
+        {/* <Route path={SUBSCRIBE_PATH} render={this.wrapComponent(SubscribeContainer)} /> */}
         <Redirect to={HOME_PATH} />
       </Switch>
     );
