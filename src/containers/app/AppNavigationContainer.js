@@ -2,7 +2,7 @@
  * @flow
  */
 
-import React, { Component } from 'react';
+import React from 'react';
 
 import styled, { css } from 'styled-components';
 import { Colors } from 'lattice-ui-kit';
@@ -15,7 +15,6 @@ import {
   HOME_PATH,
   PEOPLE_PATH,
   REPORTS_PATH,
-  SUBSCRIBE_PATH
 } from '../../core/router/Routes';
 
 const { NEUTRALS, PURPLES } = Colors;
@@ -100,7 +99,6 @@ const AppNavigationContainer = ({ dropdown } :Props) => (
     <NavLinkWrapper to={DASHBOARD_PATH}>Dashboard</NavLinkWrapper>
     <NavLinkWrapper to={PEOPLE_PATH}>People</NavLinkWrapper>
     <NavLinkWrapper to={DOWNLOADS_PATH}>Downloads</NavLinkWrapper>
-    <NavLinkWrapper to={SUBSCRIBE_PATH}>Subscribe</NavLinkWrapper>
   </NavigationContentWrapper>
 );
 
