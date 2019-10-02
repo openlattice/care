@@ -14,7 +14,7 @@ import { AuthUtils } from 'lattice-auth';
 import {
   DataApiActions,
   DataApiSagas,
-  SearchApiActionFactory,
+  SearchApiActions,
   SearchApiSagas
 } from 'lattice-sagas';
 import type { SequenceAction } from 'redux-reqseq';
@@ -39,7 +39,7 @@ const { OPENLATTICE_ID_FQN } = Constants;
 
 const LOG = new Logger('StaffSagas');
 
-const { searchEntitySetData } = SearchApiActionFactory;
+const { searchEntitySetData } = SearchApiActions;
 const { searchEntitySetDataWorker } = SearchApiSagas;
 
 const { createOrMergeEntityData } = DataApiActions;
