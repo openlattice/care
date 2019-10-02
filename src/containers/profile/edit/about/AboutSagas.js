@@ -52,6 +52,7 @@ import {
   submitPartialReplaceWorker,
 } from '../../../../core/sagas/data/DataSagas';
 import { DATE_TIME_FQN } from '../../../../edm/DataModelFqns';
+import { formatDataGraphResponse } from '../../../../utils/DataUtils';
 
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
 const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
@@ -61,6 +62,7 @@ const {
   ASSIGNED_TO_FQN,
   PEOPLE_FQN,
   STAFF_FQN,
+  RESPONSE_PLAN_FQN,
 } = APP_TYPES_FQNS;
 
 const LOG = new Logger('AboutSagas');
@@ -242,9 +244,22 @@ function* submitAboutPlanWorker(action :SequenceAction) :Generator<any, any, any
     const response = yield call(submitDataGraphWorker, submitDataGraph(value));
     if (response.error) throw response.error;
 
-    const newEntityKeyIdsByEntitySetId = fromJS(response.data).get('entityKeyIds');
+    const responseData = fromJS(response.data);
+    const app = yield select(state => state.get('app'), Map());
 
-    yield put(submitAboutPlan.success(action.id));
+    const { entities, associations } = formatDataGraphResponse(responseData, app);
+
+    const responsePlanEKID = entities.get(RESPONSE_PLAN_FQN).first();
+    const assignedToEKID = associations.get(ASSIGNED_TO_FQN).first();
+
+    const entityIndexToIdMap = constructEntityIndexToIdMap(responsePlanEKID, assignedToEKID);
+
+    const { path, properties } = value;
+    yield put(submitAboutPlan.success(action.id, {
+      entityIndexToIdMap,
+      path,
+      properties: fromJS(properties)
+    }));
   }
   catch (error) {
     yield put(submitAboutPlan.failure(action.id));
