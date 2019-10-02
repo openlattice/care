@@ -131,10 +131,6 @@ const NatureOfCrisis = ({ values, actions, disabled } :Props) => {
           <RequiredField>Check all that apply.</RequiredField>
         </Header>
         {renderCheckboxList(CRISIS_NATURE.NATURE_OF_CRISIS, NATURE_OF_CRISIS, null, {
-          [BIOLOGICAL]: {
-            element: renderCheckboxList(CRISIS_NATURE.BIOLOGICAL_CAUSES, BIOLOGICAL_CAUSES),
-            field: CRISIS_NATURE.BIOLOGICAL_CAUSES
-          },
           [CHEMICAL]: {
             element: renderCheckboxList(CRISIS_NATURE.CHEMICAL_CAUSES, CHEMICAL_CAUSES),
             field: CRISIS_NATURE.CHEMICAL_CAUSES
