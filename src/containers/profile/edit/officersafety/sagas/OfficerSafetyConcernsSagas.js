@@ -143,9 +143,6 @@ function* getOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<any,
     LOG.error('getOfficerSafetyConcernsWorker', error);
     yield put(getOfficerSafetyConcerns.failure(action.id));
   }
-  finally {
-    yield put(getOfficerSafetyConcerns.finally(action.id));
-  }
 }
 
 function* getOfficerSafetyConcernsWatcher() :Generator<any, any, any> {
@@ -191,9 +188,6 @@ function* getOfficerSafetyWorker(action :SequenceAction) :Generator<any, any, an
   catch (error) {
     LOG.error('getOfficerSafetyWorker', error);
     yield put(getOfficerSafety.failure(action.id));
-  }
-  finally {
-    yield put(getOfficerSafety.finally(action.id));
   }
 }
 
@@ -270,9 +264,6 @@ function* submitOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<a
     LOG.error('submitOfficerSafetyConcernsWorker', error);
     yield put(submitOfficerSafetyConcerns.failure(action.id));
   }
-  finally {
-    yield put(submitOfficerSafetyConcerns.finally(action.id));
-  }
 }
 
 function* submitOfficerSafetyConcernsWatcher() :Generator<any, any, any> {
@@ -294,9 +285,6 @@ function* updateOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<*
   catch (error) {
     LOG.error('updateOfficerSafetyConcernsWorker', error);
     yield put(updateOfficerSafetyConcerns.failure(action.id, error));
-  }
-  finally {
-    yield put(updateOfficerSafetyConcerns.finally(action.id));
   }
 }
 
@@ -320,9 +308,6 @@ function* deleteOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<*
   catch (error) {
     LOG.error('deleteOfficerSafetyConcernsWorker', error);
     yield put(deleteOfficerSafetyConcerns.failure(action.id, error));
-  }
-  finally {
-    yield put(deleteOfficerSafetyConcerns.finally(action.id));
   }
 }
 

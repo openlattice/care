@@ -103,9 +103,6 @@ function* submitContactsWorker(action :SequenceAction) :Generator<*, *, *> {
     LOG.error('submitContactsWorker', error);
     yield put(submitContacts.failure(action.id, error));
   }
-  finally {
-    yield put(submitContacts.finally(action.id));
-  }
 }
 
 function* submitContactsWatcher() :Generator<*, *, *> {
@@ -213,9 +210,6 @@ function* getContactsWorker(action :SequenceAction) :Generator<*, *, *> {
     response.error = error;
     yield put(getContacts.failure(action.id, error));
   }
-  finally {
-    yield put(getContacts.finally(action.id));
-  }
 
   return response;
 }
@@ -240,9 +234,6 @@ function* updateContactWorker(action :SequenceAction) :Generator<*, *, *> {
     LOG.error('updateContactWorker', error);
     yield put(updateContact.failure(action.id, error));
   }
-  finally {
-    yield put(updateContact.finally(action.id));
-  }
 }
 
 function* updateContactWatcher() :Generator<*, *, *> {
@@ -265,9 +256,6 @@ function* deleteContactWorker(action :SequenceAction) :Generator<*, *, *> {
   catch (error) {
     LOG.error('deleteContactWorker', error);
     yield put(deleteContact.failure(action.id, error));
-  }
-  finally {
-    yield put(deleteContact.finally(action.id));
   }
 }
 

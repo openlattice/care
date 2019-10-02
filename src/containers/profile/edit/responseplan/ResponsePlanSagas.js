@@ -97,9 +97,6 @@ export function* submitResponsePlanWorker(action :SequenceAction) :Generator<*, 
     LOG.error('submitResponsePlanWorker', error);
     yield put(submitResponsePlan.failure(action.id, error));
   }
-  finally {
-    yield put(submitResponsePlan.finally(action.id));
-  }
 }
 
 export function* submitResponsePlanWatcher() :Generator<*, *, *> {
@@ -199,9 +196,6 @@ export function* getResponsePlanWorker(action :SequenceAction) :Generator<*, *, 
     response.error = error;
     yield put(getResponsePlan.failure(action.id, error));
   }
-  finally {
-    yield put(getResponsePlan.finally(action.id));
-  }
 
   return response;
 }
@@ -226,9 +220,6 @@ export function* updateResponsePlanWorker(action :SequenceAction) :Generator<*, 
     LOG.error('updateResponsePlanWorker', error);
     yield put(updateResponsePlan.failure(action.id, error));
   }
-  finally {
-    yield put(updateResponsePlan.finally(action.id));
-  }
 }
 
 export function* updateResponsePlanWatcher() :Generator<*, *, *> {
@@ -251,9 +242,6 @@ export function* deleteInteractionStrategiesWorker(action :SequenceAction) :Gene
   catch (error) {
     LOG.error('deleteInteractionStrategiesWorker', error);
     yield put(deleteInteractionStrategies.failure(action.id, error));
-  }
-  finally {
-    yield put(deleteInteractionStrategies.finally(action.id));
   }
 }
 
