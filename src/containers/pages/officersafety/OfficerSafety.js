@@ -19,7 +19,6 @@ import {
   WEAPONS,
   RELATIONSHIP_TYPES,
   PERSON_TYPES,
-  INJURY_TYPES
 } from './Constants';
 import {
   FormWrapper,
