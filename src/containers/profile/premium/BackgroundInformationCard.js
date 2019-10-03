@@ -18,20 +18,7 @@ import EditLinkButton from '../../../components/buttons/EditLinkButton';
 import { RESPONSE_PLAN_PATH } from '../../../core/router/Routes';
 import { CONTEXT_FQN } from '../../../edm/DataModelFqns';
 import { isNonEmptyString, isEmptyString } from '../../../utils/LangUtils';
-
-const IconWrapper = styled.span`
-  vertical-align: middle;
-  margin-right: 10px;
-`;
-
-const H1 = styled.h1`
-  display: flex;
-  flex: 1;
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-  align-items: center;
-`;
+import { H1, IconWrapper } from '../../../components/layout';
 
 const Text = styled.p`
   white-space: pre-wrap;

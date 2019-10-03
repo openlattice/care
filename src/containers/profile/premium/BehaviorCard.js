@@ -10,28 +10,10 @@ import {
   CardSegment,
 } from 'lattice-ui-kit';
 
-import { DashedList } from '../../../components/layout';
+import { DashedList, H1, IconWrapper } from '../../../components/layout';
 import BehaviorItem from './BehaviorItem';
 import { OBSERVED_BEHAVIORS_FQN } from '../../../edm/DataModelFqns';
 import { countPropertyOccurrance } from './Utils';
-
-const H1 = styled.h1`
-  display: flex;
-  flex: 1;
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-  align-items: center;
-`;
-
-const IconWrapper = styled.div`
-  vertical-align: middle;
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  flex: 0 0 auto;
-  margin-right: 10px;
-`;
 
 const StyledCardSegment = styled(CardSegment)`
   min-width: 300px;
@@ -42,7 +24,6 @@ type Props = {
   reports ? :List<Map>;
 };
 
-// Do not re-render when reports do not change
 class BehaviorCard extends PureComponent<Props> {
   static defaultProps = {
     isLoading: false,
