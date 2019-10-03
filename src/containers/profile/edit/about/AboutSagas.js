@@ -214,7 +214,7 @@ function* updateAboutPlanWorker(action :SequenceAction) :Generator<any, any, any
 
       if (associationResponse.error) throw associationResponse.error;
       const newAssignedToEKID :UUID = getIn(associationResponse, ['data', assignedToESID, 0]);
-      entityIndexToIdMap = entityIndexToIdMap.setIn([ASSIGNED_TO_FQN.toString(), 0], newAssignedToEKID);
+      entityIndexToIdMap = entityIndexToIdMap.setIn([ASSIGNED_TO_FQN, 0], newAssignedToEKID);
 
       delete entityData[staffESID];
     }
