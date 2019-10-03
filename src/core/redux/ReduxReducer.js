@@ -21,7 +21,6 @@ import reportsReducer from '../../containers/reports/ReportsReducer';
 import searchReducer from '../../containers/search/SearchReducer';
 import staffReducer from '../../containers/staff/StaffReducer';
 import submitReducer from '../../utils/submit/SubmitReducer';
-import subscribeReducer from '../../containers/subscribe/SubscribeReducer';
 
 // pages
 import dispositionReducer from '../../containers/pages/disposition/Reducer';
@@ -53,8 +52,7 @@ export default function reduxReducer(routerHistory :any) {
     [STATE.OFFICER_SAFETY]: officerSafetyReducer,
     [STATE.SUBJECT_INFORMATION]: subjectInformationReducer,
 
-    [STATE.SUBMIT]: submitReducer,
-    [STATE.SUBSCRIBE]: subscribeReducer
+    [STATE.SUBMIT]: submitReducer
   });
 
   const rootReducer = (state :Map, action :Object) => {

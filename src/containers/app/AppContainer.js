@@ -31,7 +31,6 @@ import {
   HOME_PATH,
   PEOPLE_PATH,
   REPORTS_PATH,
-  // SUBSCRIBE_PATH
 } from '../../core/router/Routes';
 import {
   APP_CONTAINER_MAX_WIDTH,
