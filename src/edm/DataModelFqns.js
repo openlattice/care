@@ -60,8 +60,10 @@ export {
  */
 
 const CONTEXT_FQN = new FullyQualifiedName('ol.context');
+const NOTES_FQN = new FullyQualifiedName('ol.notes');
 export {
-  CONTEXT_FQN
+  CONTEXT_FQN,
+  NOTES_FQN
 };
 
 /*

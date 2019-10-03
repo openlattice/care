@@ -9,9 +9,14 @@ const addNewStaffMember :RequestSequence = newRequestSequence(ADD_NEW_STAFF_MEMB
 const GET_CURRENT_USER_STAFF_MEMBER_DATA :'GET_CURRENT_USER_STAFF_MEMBER_DATA' = 'GET_CURRENT_USER_STAFF_MEMBER_DATA';
 const getCurrentUserStaffMemberData :RequestSequence = newRequestSequence(GET_CURRENT_USER_STAFF_MEMBER_DATA);
 
+const GET_RESPONSIBLE_USER_OPTIONS :'GET_RESPONSIBLE_USER_OPTIONS' = 'GET_RESPONSIBLE_USER_OPTIONS';
+const getResponsibleUserOptions = newRequestSequence(GET_RESPONSIBLE_USER_OPTIONS);
+
 export {
   ADD_NEW_STAFF_MEMBER,
   GET_CURRENT_USER_STAFF_MEMBER_DATA,
+  GET_RESPONSIBLE_USER_OPTIONS,
   addNewStaffMember,
   getCurrentUserStaffMemberData,
+  getResponsibleUserOptions,
 };

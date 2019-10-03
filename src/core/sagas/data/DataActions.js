@@ -12,10 +12,15 @@ const submitPartialReplace :RequestSequence = newRequestSequence(SUBMIT_PARTIAL_
 const DELETE_BULK_ENTITIES :'DELETE_BULK_ENTITIES' = 'DELETE_BULK_ENTITIES';
 const deleteBulkEntities :RequestSequence = newRequestSequence(DELETE_BULK_ENTITIES);
 
+const CREATE_OR_REPLACE_ASSOCIATION :'CREATE_OR_REPLACE_ASSOCIATION' = 'CREATE_OR_REPLACE_ASSOCIATION';
+const createOrReplaceAssociation :RequestSequence = newRequestSequence(CREATE_OR_REPLACE_ASSOCIATION);
+
 export {
+  CREATE_OR_REPLACE_ASSOCIATION,
   DELETE_BULK_ENTITIES,
   SUBMIT_DATA_GRAPH,
   SUBMIT_PARTIAL_REPLACE,
+  createOrReplaceAssociation,
   deleteBulkEntities,
   submitDataGraph,
   submitPartialReplace,

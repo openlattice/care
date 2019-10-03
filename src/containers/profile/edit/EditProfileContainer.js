@@ -17,8 +17,9 @@ import type { Dispatch } from 'redux';
 import type { RequestSequence } from 'redux-reqseq';
 
 import LinkButton from '../../../components/buttons/LinkButton';
-import ProfileBanner from '../ProfileBanner';
+import AboutForm from './about/AboutForm';
 import ContactsForm from './contacts/ContactsForm';
+import ProfileBanner from '../ProfileBanner';
 import NavStep from './NavStep';
 import ResponsePlanForm from './responseplan/ResponsePlanForm';
 import BasicInformationContainer from './basicinformation/BasicInformationContainer';
@@ -26,7 +27,7 @@ import OfficerSafetyContainer from './officersafety/OfficerSafetyContainer';
 import { getBasics } from './basicinformation/actions/BasicInformationActions';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
 import {
-  // ABOUT_PATH,
+  ABOUT_PATH,
   BASIC_PATH,
   CONTACTS_PATH,
   OFFICER_SAFETY_PATH,
@@ -70,7 +71,7 @@ const EditProfileContainer = (props :Props) => {
                 <NavStep to={`${match.url}${OFFICER_SAFETY_PATH}`}>Officer Safety</NavStep>
                 <NavStep to={`${match.url}${RESPONSE_PLAN_PATH}`}>Background & Response Plan</NavStep>
                 <NavStep to={`${match.url}${CONTACTS_PATH}`}>Contacts</NavStep>
-                {/* <NavStep to={`${match.url}${ABOUT_PATH}`}>About</NavStep> */}
+                <NavStep to={`${match.url}${ABOUT_PATH}`}>About</NavStep>
               </Stepper>
             </CardSegment>
           </Card>
@@ -79,7 +80,7 @@ const EditProfileContainer = (props :Props) => {
             <Route path={`${match.path}${OFFICER_SAFETY_PATH}`} component={OfficerSafetyContainer} />
             <Route path={`${match.path}${RESPONSE_PLAN_PATH}`} component={ResponsePlanForm} />
             <Route path={`${match.path}${CONTACTS_PATH}`} component={ContactsForm} />
-            {/* <Route path={`${match.path}${ABOUT_PATH}`} /> */}
+            <Route path={`${match.path}${ABOUT_PATH}`} component={AboutForm} />
             <Redirect to={`${match.path}${RESPONSE_PLAN_PATH}`} />
           </Switch>
         </CardStack>

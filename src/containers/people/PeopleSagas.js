@@ -91,9 +91,6 @@ export function* getPeoplePhotosWorker(action :SequenceAction) :Generator<*, *, 
   catch (error) {
     yield put(getPeoplePhotos.failure(action.id));
   }
-  finally {
-    yield put(getPeoplePhotos.finally(action.id));
-  }
 }
 
 export function* getPeoplePhotosWatcher() :Generator<*, *, *> {
@@ -169,9 +166,6 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
   catch (error) {
     LOG.error('searchPeopleWorker', error);
     yield put(searchPeople.failure(action.id, error));
-  }
-  finally {
-    yield put(searchPeople.finally(action.id));
   }
 }
 
