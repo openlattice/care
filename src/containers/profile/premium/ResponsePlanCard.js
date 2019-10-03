@@ -1,6 +1,5 @@
 // @flow
 import React from 'react';
-import styled from 'styled-components';
 import {
   Card,
   CardHeader,
@@ -19,22 +18,9 @@ import EditLinkButton from '../../../components/buttons/EditLinkButton';
 import { RESPONSE_PLAN_PATH } from '../../../core/router/Routes';
 import { TITLE_FQN, DESCRIPTION_FQN } from '../../../edm/DataModelFqns';
 import InteractionStrategy from '../../../components/premium/responseplan/InteractionStrategy';
+import { H1, IconWrapper } from '../../../components/layout';
 
 const { OPENLATTICE_ID_FQN } = Constants;
-
-const IconWrapper = styled.span`
-  vertical-align: middle;
-  margin-right: 10px;
-`;
-
-const H1 = styled.h1`
-  display: flex;
-  flex: 1;
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-  align-items: center;
-`;
 
 type Props = {
   isLoading ? :boolean;

@@ -12,7 +12,7 @@ import {
 
 import BehaviorItem from './BehaviorItem';
 import Triggers from './Triggers';
-import { DashedList } from '../../../components/layout';
+import { DashedList, H1, IconWrapper } from '../../../components/layout';
 import {
   ARMED_WITH_WEAPON_FQN,
   INJURIES_FQN,
@@ -28,24 +28,6 @@ import {
   THREATENED_VIOLENCE,
 } from './constants';
 import OfficerSafetyConcernsList from '../../../components/premium/officersafety/OfficerSafetyConcernsList';
-
-const IconWrapper = styled.div`
-  vertical-align: middle;
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  flex: 0 0 auto;
-  margin-right: 10px;
-`;
-
-const H1 = styled.h1`
-  display: flex;
-  flex: 1;
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-  align-items: center;
-`;
 
 const StyledCardSegment = styled(CardSegment)`
   min-height: 100px;

@@ -1,7 +1,6 @@
 // @flow
 
 import React from 'react';
-import styled from 'styled-components';
 import {
   Card,
   CardSegment,
@@ -17,21 +16,9 @@ import * as FQN from '../../../edm/DataModelFqns';
 import EditLinkButton from '../../buttons/EditLinkButton';
 import { BASIC_PATH } from '../../../core/router/Routes';
 import { formatCityStateZip } from './AddressUtils';
+import { H1, IconWrapper } from '../../layout';
 import Address from './Address';
 
-const IconWrapper = styled.span`
-  vertical-align: middle;
-  margin-right: 10px;
-`;
-
-const H1 = styled.h1`
-  display: flex;
-  flex: 1;
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-  align-items: center;
-`;
 
 type Props = {
   address :Map;
