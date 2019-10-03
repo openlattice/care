@@ -68,7 +68,7 @@ const AboutForm = (props :Props) => {
     responsibleUsers,
   } = props;
 
-  const [formData, setFormData] = useFormData(aboutFormData);
+  const [formData] = useFormData(aboutFormData);
   const [aboutSchema, setSchema] = useState(schema);
   const [prepopulated, setPrepopulated] = useState(false);
 
@@ -147,7 +147,6 @@ const AboutForm = (props :Props) => {
           formContext={formContext}
           formData={formData}
           // isSubmitting
-          onChange={setFormData}
           onSubmit={handleSubmit}
           schema={aboutSchema}
           uiSchema={uiSchema} />
