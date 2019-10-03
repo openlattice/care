@@ -4,9 +4,9 @@ import styled from 'styled-components';
 import isPlainObject from 'lodash/isPlainObject';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { fullLineSkeleton } from '../../../components/skeletons';
+import { fullLineSkeleton } from '../../skeletons';
 
-const Detail = styled.div`
+const DetailWrapper = styled.div`
   display: flex;
   flex: 1 0 auto;
   ${props => (props.isLoading ? fullLineSkeleton : null)}
@@ -29,7 +29,7 @@ type Props = {
   isLoading ? :boolean;
 }
 
-class IntroDetail extends Component<Props> {
+class Detail extends Component<Props> {
   static defaultProps = {
     className: undefined,
     content: '',
@@ -63,11 +63,11 @@ class IntroDetail extends Component<Props> {
     const { className, isLoading } = this.props;
 
     return (
-      <Detail className={className} isLoading={isLoading}>
+      <DetailWrapper className={className} isLoading={isLoading}>
         { this.renderContent() }
-      </Detail>
+      </DetailWrapper>
     );
   }
 }
 
-export default IntroDetail;
+export default Detail;

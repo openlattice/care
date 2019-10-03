@@ -23,33 +23,20 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { withRouter } from 'react-router-dom';
 import type { Match } from 'react-router-dom';
 
-import IntroDetail from './IntroDetail';
+import Detail from '../../../components/premium/styled/Detail';
 import * as FQN from '../../../edm/DataModelFqns';
 import { inchesToFeetString } from '../../../utils/DataUtils';
 import { getLastFirstMiFromPerson } from '../../../utils/PersonUtils';
 import EditLinkButton from '../../../components/buttons/EditLinkButton';
 import { BASIC_PATH } from '../../../core/router/Routes';
+import { H1, IconWrapper } from '../../../components/layout';
 
-const IconWrapper = styled.span`
-  vertical-align: middle;
-  margin-right: 10px;
-`;
-
-const H1 = styled.h1`
-  display: flex;
-  flex: 1;
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-  align-items: center;
-`;
-
-const Name = styled(IntroDetail)`
+const Name = styled(Detail)`
   text-transform: uppercase;
   font-weight: 600;
 `;
 
-const Birthdate = styled(IntroDetail)`
+const Birthdate = styled(Detail)`
   width: 50%;
 `;
 
@@ -122,37 +109,37 @@ const IntroCard = (props :Props) => {
       </CardSegment>
       <CardSegment vertical padding="sm">
         <Label subtle>Aliases</Label>
-        <IntroDetail
+        <Detail
             content={aliases}
             isLoading={isLoading} />
       </CardSegment>
       <CardSegment vertical padding="sm">
         <IntroGrid>
-          <IntroDetail
+          <Detail
               content={race}
               isLoading={isLoading}
               icon={faUser} />
-          <IntroDetail
+          <Detail
               content={sex}
               isLoading={isLoading}
               icon={faVenusMars} />
-          <IntroDetail
+          <Detail
               content={formattedHeight}
               isLoading={isLoading}
               icon={faRulerVertical} />
-          <IntroDetail
+          <Detail
               content={formattedWeight}
               isLoading={isLoading}
               icon={faWeightHanging} />
-          <IntroDetail
+          <Detail
               content={hairColor}
               isLoading={isLoading}
               icon={faUserHardHat} />
-          <IntroDetail
+          <Detail
               content={eyeColor}
               isLoading={isLoading}
               icon={faEye} />
-          <IntroDetail
+          <Detail
               content={scars}
               isLoading={isLoading}
               icon={faClawMarks} />

@@ -43,3 +43,17 @@ export const DashedList = styled.div`
 
   ${props => (props.isLoading ? behaviorItemSkeleton : null)};
 `;
+
+export const H1 = styled.h1`
+  display: flex;
+  flex: 1;
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  align-items: center;
+`;
+
+export const IconWrapper = styled.span`
+  vertical-align: middle;
+  margin-right: 10px;
+`;
