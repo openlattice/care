@@ -22,8 +22,8 @@ export const RELATIONSHIP_TYPES = [
 
 export const PERSON_TYPES = [
   'Officer',
-  'Co-responder',
-  'Subject',
+  'Family',
+  'Bystander',
   OTHER
 ];
 

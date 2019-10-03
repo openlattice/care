@@ -19,7 +19,6 @@ import {
   WEAPONS,
   RELATIONSHIP_TYPES,
   PERSON_TYPES,
-  INJURY_TYPES
 } from './Constants';
 import {
   FormWrapper,
@@ -177,8 +176,8 @@ const OfficerSafety = ({ values, actions, disabled } :Props) => {
 
         {renderYesNoToggle(
           OFFICER_SAFETY.HAD_INJURIES,
-          [OFFICER_SAFETY.INJURY_TYPE, OFFICER_SAFETY.INJURED_PARTIES],
-          [OFFICER_SAFETY.OTHER_INJURED_PERSON, OFFICER_SAFETY.OTHER_INJURY_TYPE]
+          [OFFICER_SAFETY.INJURY_TYPE],
+          [OFFICER_SAFETY.OTHER_INJURED_PERSON]
         )}
         {values.get(OFFICER_SAFETY.HAD_INJURIES)
           ? (
@@ -192,10 +191,6 @@ const OfficerSafety = ({ values, actions, disabled } :Props) => {
                   PERSON_TYPES,
                   OFFICER_SAFETY.OTHER_INJURED_PERSON
                 )}
-              </FormSectionWithValidation>
-              <FormSectionWithValidation invalid={invalidFields.includes(OFFICER_SAFETY.INJURY_TYPE)}>
-                <FormText>Injury type(s)</FormText>
-                {renderCheckboxList(OFFICER_SAFETY.INJURY_TYPE, INJURY_TYPES, OFFICER_SAFETY.OTHER_INJURY_TYPE)}
               </FormSectionWithValidation>
             </IndentWrapper>
           )
