@@ -18,7 +18,8 @@ import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 import type { Match } from 'react-router';
 
-import AboutCard from './AboutCard';
+import IntroCard from './IntroCard';
+import AboutPlanCard from '../../../components/premium/aboutplan/AboutPlanCard';
 import AddressCard from '../../../components/premium/address/AddressCard';
 import BackgroundInformationCard from './BackgroundInformationCard';
 import BehaviorCard from './BehaviorCard';
@@ -39,6 +40,7 @@ import { getProfileReports } from '../ProfileActions';
 import { getBasicInformation } from '../edit/basicinformation/actions/BasicInformationActions';
 import { getResponsePlan } from '../edit/responseplan/ResponsePlanActions';
 import { getContacts } from '../edit/contacts/ContactsActions';
+import { getAboutPlan } from '../edit/about/AboutActions';
 import { getOfficerSafety } from '../edit/officersafety/OfficerSafetyActions';
 import { DATE_TIME_OCCURRED_FQN } from '../../../edm/DataModelFqns';
 import { getEntityKeyId } from '../../../utils/DataUtils';
@@ -78,6 +80,7 @@ const BehaviorAndSafetyGrid = styled.div`
 
 type Props = {
   actions :{
+    getAboutPlan :RequestSequence;
     getBasicInformation :RequestSequence;
     getContacts :RequestSequence;
     getOfficerSafety :RequestSequence;
@@ -87,19 +90,21 @@ type Props = {
   };
   address :Map;
   appearance :Map;
+  contactInfoByContactEKID :Map;
+  contacts :List<Map>;
+  fetchAboutPlanState :RequestState;
   fetchAboutState :RequestState;
   fetchOfficerSafetyState :RequestState;
   fetchReportsState :RequestState;
   fetchResponsePlanState :RequestState;
   interactionStrategies :List<Map>;
+  isContactForByContactEKID :Map;
   match :Match;
   officerSafety :List<Map>;
-  contacts :List<Map>;
-  contactInfoByContactEKID :Map;
-  isContactForByContactEKID :Map;
   photo :Map;
   reports :List<Map>;
   responsePlan :Map;
+  responsibleUser :Map;
   selectedPerson :Map;
   techniques :List<Map>;
   triggers :List<Map>;
@@ -129,6 +134,7 @@ class PremiumProfileContainer extends Component<Props, State> {
 
   getProfileData = (personEKID :?UUID) => {
     const { actions } = this.props;
+    actions.getAboutPlan(personEKID);
     actions.getBasicInformation(personEKID);
     actions.getContacts(personEKID);
     actions.getOfficerSafety(personEKID);
@@ -172,19 +178,21 @@ class PremiumProfileContainer extends Component<Props, State> {
     const {
       address,
       appearance,
+      contactInfoByContactEKID,
+      contacts,
+      fetchAboutPlanState,
       fetchAboutState,
       fetchOfficerSafetyState,
       fetchReportsState,
       fetchResponsePlanState,
       interactionStrategies,
+      isContactForByContactEKID,
       officerSafety,
       photo,
       reports,
       responsePlan,
+      responsibleUser,
       selectedPerson,
-      contacts,
-      contactInfoByContactEKID,
-      isContactForByContactEKID,
       techniques,
       triggers,
     } = this.props;
@@ -192,8 +200,9 @@ class PremiumProfileContainer extends Component<Props, State> {
 
     const isLoadingReports = fetchReportsState === RequestStates.PENDING;
     const isLoadingOfficerSafety = fetchOfficerSafetyState === RequestStates.PENDING;
-    const isLoadingAbout = fetchAboutState === RequestStates.PENDING;
+    const isLoadingIntro = fetchAboutState === RequestStates.PENDING;
     const isLoadingResponsePlan = fetchResponsePlanState === RequestStates.PENDING;
+    const isLoadingAboutPlan = fetchAboutPlanState === RequestStates.PENDING;
 
     const imageURL :string = getImageDataFromEntity(photo);
 
@@ -214,13 +223,16 @@ class PremiumProfileContainer extends Component<Props, State> {
                     </LinkButton>
                   </CardSegment>
                 </Card>
-                <AboutCard
-                    isLoading={isLoadingAbout}
+                <IntroCard
+                    isLoading={isLoadingIntro}
                     selectedPerson={selectedPerson}
                     appearance={appearance} />
                 <AddressCard
-                    isLoading={isLoadingAbout}
+                    isLoading={isLoadingIntro}
                     address={address} />
+                <AboutPlanCard
+                    isLoading={isLoadingAboutPlan}
+                    responsibleUser={responsibleUser} />
               </StyledCardStack>
             </Aside>
             <StyledCardStack>
@@ -289,11 +301,13 @@ const mapStateToProps = (state :Map) => {
     fetchOfficerSafetyState: reduceRequestStates(fetchOfficerSafetyStates),
     fetchReportsState: state.getIn(['profile', 'reports', 'fetchState'], RequestStates.STANDBY),
     fetchResponsePlanState: state.getIn(['profile', 'responsePlan', 'fetchState'], RequestStates.STANDBY),
+    fetchAboutPlanState: state.getIn(['profile', 'about', 'fetchState'], RequestStates.STANDBY),
     interactionStrategies: state.getIn(['profile', 'responsePlan', 'interactionStrategies'], List()),
     officerSafety: state.getIn(['profile', 'officerSafety', 'data', 'officerSafetyConcerns'], List()),
     photo: state.getIn(['profile', 'basicInformation', 'photos', 'data'], Map()),
     reports: state.getIn(['profile', 'reports', 'data'], List()),
     responsePlan: state.getIn(['profile', 'responsePlan', 'data'], Map()),
+    responsibleUser: state.getIn(['profile', 'about', 'data'], Map()),
     selectedPerson: state.getIn(['profile', 'basicInformation', 'basics', 'data'], Map()),
     techniques: state.getIn(['profile', 'officerSafety', 'data', 'interactionStrategies'], List()),
     triggers: state.getIn(['profile', 'officerSafety', 'data', 'behaviors'], List()),
@@ -302,9 +316,10 @@ const mapStateToProps = (state :Map) => {
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
-    getOfficerSafety,
+    getAboutPlan,
     getBasicInformation,
     getContacts,
+    getOfficerSafety,
     getProfileReports,
     getResponsePlan,
     goToPath,

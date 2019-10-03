@@ -131,18 +131,38 @@ const groupNeighborsByEntitySetIds = (neighbors :List<Map>) :Map => {
   return neighborsByESID;
 };
 
+const formatDataGraphResponse = (responseData :Map, app :Map) => {
+  const newEntityKeyIdsByEntitySetId = responseData.get('entityKeyIds');
+  const newAssociationKeyIdsByEntitySetId = responseData.get('entitySetIds');
+
+  const selectedOrgEntitySetIds = app.get('selectedOrgEntitySetIds', Map());
+  const entitySetNamesByEntitySetId = selectedOrgEntitySetIds.flip();
+
+  const entities = newEntityKeyIdsByEntitySetId
+    .mapKeys(entitySetId => entitySetNamesByEntitySetId.get(entitySetId));
+
+  const associations = newAssociationKeyIdsByEntitySetId
+    .mapKeys(entitySetId => entitySetNamesByEntitySetId.get(entitySetId));
+
+  return {
+    entities,
+    associations,
+  };
+};
+
 
 export {
   SEARCH_PREFIX,
-  getEntityKeyIdsFromList,
+  formatDataGraphResponse,
   getEntityKeyId,
+  getEntityKeyIdsFromList,
   getFormDataFromEntity,
   getFormDataFromEntityArray,
   getFqnObj,
   getSearchTerm,
+  groupNeighborsByEntitySetIds,
   inchesToFeetString,
   keyIn,
   simulateResponseData,
-  groupNeighborsByEntitySetIds,
   stripIdField,
 };

@@ -23,37 +23,24 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { withRouter } from 'react-router-dom';
 import type { Match } from 'react-router-dom';
 
-import AboutDetail from './AboutDetail';
+import Detail from '../../../components/premium/styled/Detail';
 import * as FQN from '../../../edm/DataModelFqns';
 import { inchesToFeetString } from '../../../utils/DataUtils';
 import { getLastFirstMiFromPerson } from '../../../utils/PersonUtils';
 import EditLinkButton from '../../../components/buttons/EditLinkButton';
 import { BASIC_PATH } from '../../../core/router/Routes';
+import { H1, IconWrapper } from '../../../components/layout';
 
-const IconWrapper = styled.span`
-  vertical-align: middle;
-  margin-right: 10px;
-`;
-
-const H1 = styled.h1`
-  display: flex;
-  flex: 1;
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-  align-items: center;
-`;
-
-const Name = styled(AboutDetail)`
+const Name = styled(Detail)`
   text-transform: uppercase;
   font-weight: 600;
 `;
 
-const Birthdate = styled(AboutDetail)`
+const Birthdate = styled(Detail)`
   width: 50%;
 `;
 
-const AboutGrid = styled.div`
+const IntroGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-gap: 5px;
@@ -71,7 +58,7 @@ type Props = {
   isLoading :boolean;
 };
 
-const AboutCard = (props :Props) => {
+const IntroCard = (props :Props) => {
 
   const {
     isLoading,
@@ -112,7 +99,7 @@ const AboutCard = (props :Props) => {
           <IconWrapper>
             <FontAwesomeIcon icon={faUser} fixedWidth />
           </IconWrapper>
-          About
+          Intro
           <EditLinkButton mode="primary" to={`${match.url}${BASIC_PATH}`} />
         </H1>
       </CardHeader>
@@ -122,44 +109,44 @@ const AboutCard = (props :Props) => {
       </CardSegment>
       <CardSegment vertical padding="sm">
         <Label subtle>Aliases</Label>
-        <AboutDetail
+        <Detail
             content={aliases}
             isLoading={isLoading} />
       </CardSegment>
       <CardSegment vertical padding="sm">
-        <AboutGrid>
-          <AboutDetail
+        <IntroGrid>
+          <Detail
               content={race}
               isLoading={isLoading}
               icon={faUser} />
-          <AboutDetail
+          <Detail
               content={sex}
               isLoading={isLoading}
               icon={faVenusMars} />
-          <AboutDetail
+          <Detail
               content={formattedHeight}
               isLoading={isLoading}
               icon={faRulerVertical} />
-          <AboutDetail
+          <Detail
               content={formattedWeight}
               isLoading={isLoading}
               icon={faWeightHanging} />
-          <AboutDetail
+          <Detail
               content={hairColor}
               isLoading={isLoading}
               icon={faUserHardHat} />
-          <AboutDetail
+          <Detail
               content={eyeColor}
               isLoading={isLoading}
               icon={faEye} />
-          <AboutDetail
+          <Detail
               content={scars}
               isLoading={isLoading}
               icon={faClawMarks} />
-        </AboutGrid>
+        </IntroGrid>
       </CardSegment>
     </Card>
   );
 };
 
-export default withRouter(AboutCard);
+export default withRouter(IntroCard);

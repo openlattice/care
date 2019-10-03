@@ -14,6 +14,7 @@ import {
 
 import * as RoutingSagas from '../router/RoutingSagas';
 
+import * as AboutSagas from '../../containers/profile/edit/about/AboutSagas';
 import * as AddressSagas from '../../containers/profile/edit/basicinformation/sagas/AddressSagas';
 import * as AppearanceSagas from '../../containers/profile/edit/basicinformation/sagas/AppearanceSagas';
 import * as AppSagas from '../../containers/app/AppSagas';
@@ -32,7 +33,6 @@ import * as ResponsePlanSagas from '../../containers/profile/edit/responseplan/R
 import * as SearchSagas from '../../containers/search/SearchSagas';
 import * as StaffSagas from '../../containers/staff/StaffSagas';
 import * as SubmitSagas from '../../utils/submit/SubmitSagas';
-import * as SubscribeSagas from '../../containers/subscribe/SubscribeSagas';
 
 export default function* sagas() :Generator<*, *, *> {
 
@@ -63,13 +63,14 @@ export default function* sagas() :Generator<*, *, *> {
     fork(AppSagas.switchOrganizationWatcher),
 
     // DataSagas
+    fork(DataSagas.createOrReplaceAssociationWatcher),
     fork(DataSagas.deleteBulkEntitiesWatcher),
     fork(DataSagas.submitDataGraphWatcher),
     fork(DataSagas.submitPartialReplaceWatcher),
 
-
     // StaffSagas
     fork(StaffSagas.getCurrentUserStaffMemberDataWatcher),
+    fork(StaffSagas.getResponsibleUserOptionsWatcher),
 
     // RoutingSagas
     fork(RoutingSagas.goToRootWatcher),
@@ -133,16 +134,15 @@ export default function* sagas() :Generator<*, *, *> {
     fork(ContactsSagas.updateContactWatcher),
     fork(ContactsSagas.deleteContactWatcher),
 
+    fork(AboutSagas.getAboutPlanWatcher),
+    fork(AboutSagas.getResponsibleUserWatcher),
+    fork(AboutSagas.submitAboutPlanWatcher),
+    fork(AboutSagas.updateAboutPlanWatcher),
+
     // SearchSagas
     fork(SearchSagas.searchConsumersWatcher),
 
     // SubmitSagas
-    fork(SubmitSagas.submitWatcher),
-
-    // SubscribeSagas
-    fork(SubscribeSagas.getSubscriptionsWatcher),
-    fork(SubscribeSagas.createSubscriptionWatcher),
-    fork(SubscribeSagas.updateSubscriptionWatcher),
-    fork(SubscribeSagas.expireSubscriptionWatcher)
+    fork(SubmitSagas.submitWatcher)
   ]);
 }

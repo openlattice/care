@@ -143,9 +143,6 @@ function* getPersonDataWorker(action :SequenceAction) :Generator<any, any, any> 
     response.error = error;
     yield put(getPersonData.failure(action.id, error));
   }
-  finally {
-    yield put(getPersonData.finally(action.id));
-  }
   return response;
 }
 
@@ -203,10 +200,6 @@ function* getProfileReportsWorker(action :SequenceAction) :Generator<any, any, a
   }
   catch (error) {
     yield put(getProfileReports.failure(action.id));
-  }
-  finally {
-    yield put(getProfileReports.finally(action.id));
-
   }
 }
 
@@ -401,9 +394,6 @@ function* updateProfileAboutWorker(action :SequenceAction) :Generator<any, any, 
   }
   catch (error) {
     yield put(updateProfileAbout.failure(action.id, error));
-  }
-  finally {
-    yield put(updateProfileAbout.finally(action.id));
   }
 }
 

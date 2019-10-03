@@ -3,7 +3,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Constants } from 'lattice';
-import { Map } from 'immutable';
+import { List, Map } from 'immutable';
 
 import ContactCard from './ContactCard';
 import * as FQN from '../../../edm/DataModelFqns';

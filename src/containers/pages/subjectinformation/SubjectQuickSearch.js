@@ -97,7 +97,7 @@ class SubjectQuickSearch extends Component<Props, State> {
       if (value && value.length) {
         actions.searchConsumers({
           entitySetId: getPeopleESId(app),
-          query: value
+          query: `${value}*`
         });
       }
     }, 500);

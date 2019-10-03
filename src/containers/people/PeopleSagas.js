@@ -91,9 +91,6 @@ export function* getPeoplePhotosWorker(action :SequenceAction) :Generator<*, *, 
   catch (error) {
     yield put(getPeoplePhotos.failure(action.id));
   }
-  finally {
-    yield put(getPeoplePhotos.finally(action.id));
-  }
 }
 
 export function* getPeoplePhotosWatcher() :Generator<*, *, *> {
@@ -117,12 +114,11 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
     const dobPTID :UUID = edm.getIn(['fqnToIdMap', FQN.PERSON_DOB_FQN]);
 
     const searchFields = [];
-    const updateSearchField = (searchString :string, property :string, exact? :boolean) => {
-      const searchTerm = exact ? `"${searchString}"` : searchString;
+    const updateSearchField = (searchTerm :string, property :string) => {
       searchFields.push({
         searchTerm,
         property,
-        exact
+        exact: true
       });
     };
 
@@ -139,14 +135,14 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
     if (dob.length) {
       const dobDT = DateTime.fromISO(dob);
       if (dobDT.isValid) {
-        updateSearchField(dobDT.toISODate(), dobPTID, true);
+        updateSearchField(dobDT.toISODate(), dobPTID);
       }
     }
 
     const searchOptions = {
       searchFields,
       start: 0,
-      maxHits: 100
+      maxHits: 10000
     };
 
     const entitySetId = getPeopleESId(app);
@@ -170,9 +166,6 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
   catch (error) {
     LOG.error('searchPeopleWorker', error);
     yield put(searchPeople.failure(action.id, error));
-  }
-  finally {
-    yield put(searchPeople.finally(action.id));
   }
 }
 

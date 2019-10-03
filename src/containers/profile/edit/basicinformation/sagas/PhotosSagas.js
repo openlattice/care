@@ -99,9 +99,6 @@ function* getPhotosWorker(action :SequenceAction) :Generator<any, any, any> {
     response.error = error;
     yield put(getPhotos.failure(action.id, error));
   }
-  finally {
-    yield put(getPhotos.finally(action.id));
-  }
 
   return response;
 }
@@ -142,9 +139,6 @@ function* submitPhotosWorker(action :SequenceAction) :Generator<any, any, any> {
   catch (error) {
     yield put(submitPhotos.failure(action.id, error));
   }
-  finally {
-    yield put(submitPhotos.finally(action.id));
-  }
 }
 
 function* submitPhotosWatcher() :Generator<any, any, any> {
@@ -166,9 +160,6 @@ function* updatePhotoWorker(action :SequenceAction) :Generator<any, any, any> {
   catch (error) {
     LOG.error('updatePhotoWorker', error);
     yield put(updatePhoto.failure(action.id, error));
-  }
-  finally {
-    yield put(updatePhoto.finally(action.id));
   }
 }
 

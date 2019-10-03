@@ -47,7 +47,14 @@ const Address = (props :Props) => {
       <div>{cityStateZip}</div>
     </>
   );
+};
 
+Address.defaultProps = {
+  cityStateZip: '',
+  isLoading: false,
+  line2: '',
+  name: '',
+  street: '',
 };
 
 export default Address;
