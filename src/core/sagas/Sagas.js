@@ -33,7 +33,6 @@ import * as ResponsePlanSagas from '../../containers/profile/edit/responseplan/R
 import * as SearchSagas from '../../containers/search/SearchSagas';
 import * as StaffSagas from '../../containers/staff/StaffSagas';
 import * as SubmitSagas from '../../utils/submit/SubmitSagas';
-import * as SubscribeSagas from '../../containers/subscribe/SubscribeSagas';
 
 export default function* sagas() :Generator<*, *, *> {
 
@@ -144,12 +143,6 @@ export default function* sagas() :Generator<*, *, *> {
     fork(SearchSagas.searchConsumersWatcher),
 
     // SubmitSagas
-    fork(SubmitSagas.submitWatcher),
-
-    // SubscribeSagas
-    fork(SubscribeSagas.getSubscriptionsWatcher),
-    fork(SubscribeSagas.createSubscriptionWatcher),
-    fork(SubscribeSagas.updateSubscriptionWatcher),
-    fork(SubscribeSagas.expireSubscriptionWatcher)
+    fork(SubmitSagas.submitWatcher)
   ]);
 }
