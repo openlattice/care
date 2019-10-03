@@ -147,9 +147,6 @@ function* deleteReportWorker(action :SequenceAction) :Generator<*, *, *> {
     LOG.error('caught exception in worker saga', error);
     yield put(deleteReport.failure(action.id, error));
   }
-  finally {
-    yield put(deleteReport.finally(action.id));
-  }
 }
 
 function* deleteReportWatcher() :Generator<*, *, *> {
@@ -261,9 +258,6 @@ function* getReportWorker(action :SequenceAction) :Generator<*, *, *> {
   catch (error) {
     LOG.error('caught exception in worker saga', error);
     yield put(getReport.failure(action.id, error));
-  }
-  finally {
-    yield put(getReport.finally(action.id));
   }
 }
 
@@ -440,10 +434,6 @@ function* getReportsByDateRangeWorker(action :SequenceAction) :Generator<*, *, *
   catch (error) {
     yield put(getReportsByDateRange.failure(action.id, error));
   }
-  finally {
-    yield put(getReportsByDateRange.finally(action.id));
-
-  }
 }
 
 function* getReportsByDateRangeWatcher() :Generator<*, *, *> {
@@ -478,7 +468,7 @@ function* updateReportWorker(action :SequenceAction) :Generator<*, *, *> {
     const datetimePTID :UUID = edm.getIn(['fqnToIdMap', FQN.DATE_TIME_FQN]);
 
     const staffEKID :UUID = yield select(
-      state => state.getIn(['staff', 'currentUserStaffMemberData', OPENLATTICE_ID_FQN, 0], '')
+      state => state.getIn(['staff', 'currentUser', 'data', OPENLATTICE_ID_FQN, 0], '')
     );
 
     const associations = {
@@ -551,9 +541,6 @@ function* updateReportWorker(action :SequenceAction) :Generator<*, *, *> {
   catch (error) {
     LOG.error('caught exception in worker saga', error);
     yield put(updateReport.failure(action.id, error));
-  }
-  finally {
-    yield put(updateReport.finally(action.id));
   }
 }
 

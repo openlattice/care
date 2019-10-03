@@ -122,9 +122,6 @@ function* getAddressWorker(action :SequenceAction) :Generator<any, any, any> {
     response.error = error;
     yield put(getAddress.failure(action.id, error));
   }
-  finally {
-    yield put(getAddress.finally(action.id));
-  }
 
   return response;
 }
@@ -165,9 +162,6 @@ function* submitAddressWorker(action :SequenceAction) :Generator<any, any, any> 
   catch (error) {
     yield put(submitAddress.failure(action.id, error));
   }
-  finally {
-    yield put(submitAddress.finally(action.id));
-  }
 }
 
 function* submitAddressWatcher() :Generator<any, any, any> {
@@ -189,9 +183,6 @@ function* updateAddressWorker(action :SequenceAction) :Generator<any, any, any> 
   catch (error) {
     LOG.error('updateAddressWorker', error);
     yield put(updateAddress.failure(action.id, error));
-  }
-  finally {
-    yield put(updateAddress.finally(action.id));
   }
 }
 

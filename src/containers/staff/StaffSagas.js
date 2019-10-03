@@ -25,15 +25,17 @@ import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_WORKER_SAGA } from '../../utils/Error
 import {
   ADD_NEW_STAFF_MEMBER,
   GET_CURRENT_USER_STAFF_MEMBER_DATA,
+  GET_RESPONSIBLE_USER_OPTIONS,
   addNewStaffMember,
   getCurrentUserStaffMemberData,
+  getResponsibleUserOptions,
 } from './StaffActions';
-import { getStaffESId } from '../../utils/AppUtils';
+import { getStaffESId, getESIDFromApp } from '../../utils/AppUtils';
 import { getSearchTerm } from '../../utils/DataUtils';
+import { APP_TYPES_FQNS } from '../../shared/Consts';
 import * as FQN from '../../edm/DataModelFqns';
 
 const { OPENLATTICE_ID_FQN } = Constants;
-
 
 const LOG = new Logger('StaffSagas');
 
@@ -42,6 +44,8 @@ const { searchEntitySetDataWorker } = SearchApiSagas;
 
 const { createOrMergeEntityData } = DataApiActions;
 const { createOrMergeEntityDataWorker } = DataApiSagas;
+
+const { STAFF_FQN } = APP_TYPES_FQNS;
 
 /*
  *
@@ -93,9 +97,6 @@ function* addNewStaffMemberWorker(action :SequenceAction) :Generator<*, *, *> {
     LOG.error(ERR_WORKER_SAGA, error);
     workerResponse.error = error;
     yield put(addNewStaffMember.failure(action.id, workerResponse.error));
-  }
-  finally {
-    yield put(addNewStaffMember.finally(action.id));
   }
 
   return workerResponse;
@@ -160,9 +161,6 @@ function* getCurrentUserStaffMemberDataWorker(action :SequenceAction) :Generator
     workerResponse.error = error;
     yield put(getCurrentUserStaffMemberData.failure(action.id, workerResponse.error));
   }
-  finally {
-    yield put(getCurrentUserStaffMemberData.finally(action.id));
-  }
 
   return workerResponse;
 }
@@ -172,9 +170,48 @@ function* getCurrentUserStaffMemberDataWatcher() :Generator<*, *, *> {
   yield takeEvery(GET_CURRENT_USER_STAFF_MEMBER_DATA, getCurrentUserStaffMemberDataWorker);
 }
 
+function* getResponsibleUserOptionsWorker(action :SequenceAction) :Generator<any, any, any> {
+
+  try {
+    yield put(getResponsibleUserOptions.request(action.id));
+    const app :Map = yield select(state => state.get('app', Map()));
+    const entitySetId :UUID = getESIDFromApp(app, STAFF_FQN);
+    const personIdPTId :UUID = yield select(state => state.getIn(['edm', 'fqnToIdMap', FQN.PERSON_ID_FQN]));
+    const searchOptions :Object = {
+      maxHits: 10000,
+      searchTerm: getSearchTerm(personIdPTId, '*'),
+      start: 0,
+    };
+
+    const response = yield call(
+      searchEntitySetDataWorker,
+      searchEntitySetData({
+        entitySetId,
+        searchOptions
+      })
+    );
+
+    if (response.error) throw response.error;
+
+    const responseData = fromJS(response.data.hits);
+    // TODO: need to fetch officer data assocted to user
+
+    yield put(getResponsibleUserOptions.success(action.id, responseData));
+  }
+  catch (error) {
+    yield put(getResponsibleUserOptions.failure(action.id));
+  }
+}
+
+function* getResponsibleUserOptionsWatcher() :Generator<any, any, any> {
+  yield takeEvery(GET_RESPONSIBLE_USER_OPTIONS, getResponsibleUserOptionsWorker);
+}
+
 export {
   addNewStaffMemberWatcher,
   addNewStaffMemberWorker,
   getCurrentUserStaffMemberDataWatcher,
   getCurrentUserStaffMemberDataWorker,
+  getResponsibleUserOptionsWatcher,
+  getResponsibleUserOptionsWorker,
 };
