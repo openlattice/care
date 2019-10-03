@@ -18,7 +18,7 @@ import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 import type { Match } from 'react-router';
 
-import AboutCard from './AboutCard';
+import IntroCard from './IntroCard';
 import AddressCard from '../../../components/premium/address/AddressCard';
 import BackgroundInformationCard from './BackgroundInformationCard';
 import BehaviorCard from './BehaviorCard';
@@ -214,7 +214,7 @@ class PremiumProfileContainer extends Component<Props, State> {
                     </LinkButton>
                   </CardSegment>
                 </Card>
-                <AboutCard
+                <IntroCard
                     isLoading={isLoadingAbout}
                     selectedPerson={selectedPerson}
                     appearance={appearance} />

@@ -29,7 +29,7 @@ type Props = {
   isLoading ? :boolean;
 }
 
-class AboutDetail extends Component<Props> {
+class IntroDetail extends Component<Props> {
   static defaultProps = {
     className: undefined,
     content: '',
@@ -70,4 +70,4 @@ class AboutDetail extends Component<Props> {
   }
 }
 
-export default AboutDetail;
+export default IntroDetail;
