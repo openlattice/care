@@ -1,6 +1,7 @@
 // flow-typed signature: acc5dc484cf1c2c8e5ed444ee98a9513
 // flow-typed version: ad8465c97a/react-router_v5.x.x/flow_>=v0.104.x
 
+// https://github.com/flow-typed/flow-typed/pull/3570
 declare module "react-router" {
   // NOTE: many of these are re-exported by react-router-dom and
   // react-router-native, so when making changes, please be sure to update those
@@ -138,6 +139,11 @@ declare module "react-router" {
     pathname: string,
     options?: MatchPathOptions | string | string[]
   ): null | Match;
-  
+
+  declare export function useHistory(): $PropertyType<ContextRouter, 'history'>;
+  declare export function useLocation(): $PropertyType<ContextRouter, 'location'>;
+  declare export function useParams(): $PropertyType<$PropertyType<ContextRouter, 'match'>, 'params'>;
+  declare export function useRouteMatch(path?: string): $PropertyType<ContextRouter, 'match'>;
+
   declare export function generatePath(pattern?: string, params?: {...}): string;
 }
