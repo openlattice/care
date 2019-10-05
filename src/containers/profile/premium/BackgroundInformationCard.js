@@ -15,7 +15,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAddressCard } from '@fortawesome/pro-solid-svg-icons';
 
 import EditLinkButton from '../../../components/buttons/EditLinkButton';
-import { RESPONSE_PLAN_PATH } from '../../../core/router/Routes';
+import { RESPONSE_PLAN_PATH, EDIT_PATH } from '../../../core/router/Routes';
 import { CONTEXT_FQN } from '../../../edm/DataModelFqns';
 import { isNonEmptyString, isEmptyString } from '../../../utils/LangUtils';
 import { H1, IconWrapper } from '../../../components/layout';
@@ -41,7 +41,7 @@ const BackgroundInformationCard = ({ backgroundInformation, isLoading, match } :
             <FontAwesomeIcon icon={faAddressCard} fixedWidth />
           </IconWrapper>
           Background Information
-          <EditLinkButton mode="primary" to={`${match.url}${RESPONSE_PLAN_PATH}`} />
+          <EditLinkButton mode="primary" to={`${match.url}${EDIT_PATH}${RESPONSE_PLAN_PATH}`} />
         </H1>
       </CardHeader>
       <CardSegment vertical padding="sm">

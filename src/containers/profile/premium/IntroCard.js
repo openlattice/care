@@ -28,7 +28,7 @@ import * as FQN from '../../../edm/DataModelFqns';
 import { inchesToFeetString } from '../../../utils/DataUtils';
 import { getLastFirstMiFromPerson } from '../../../utils/PersonUtils';
 import EditLinkButton from '../../../components/buttons/EditLinkButton';
-import { BASIC_PATH } from '../../../core/router/Routes';
+import { BASIC_PATH, EDIT_PATH } from '../../../core/router/Routes';
 import { H1, IconWrapper } from '../../../components/layout';
 
 const Name = styled(Detail)`
@@ -100,7 +100,7 @@ const IntroCard = (props :Props) => {
             <FontAwesomeIcon icon={faUser} fixedWidth />
           </IconWrapper>
           Intro
-          <EditLinkButton mode="primary" to={`${match.url}${BASIC_PATH}`} />
+          <EditLinkButton mode="primary" to={`${match.url}${EDIT_PATH}${BASIC_PATH}`} />
         </H1>
       </CardHeader>
       <CardSegment vertical padding="sm">

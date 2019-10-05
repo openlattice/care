@@ -32,6 +32,7 @@ import {
   CONTACTS_PATH,
   OFFICER_SAFETY_PATH,
   PROFILE_ID_PARAM,
+  PROFILE_PATH,
   RESPONSE_PLAN_PATH,
 } from '../../../core/router/Routes';
 
@@ -81,7 +82,7 @@ const EditProfileContainer = (props :Props) => {
             <Route path={`${match.path}${RESPONSE_PLAN_PATH}`} component={ResponsePlanForm} />
             <Route path={`${match.path}${CONTACTS_PATH}`} component={ContactsForm} />
             <Route path={`${match.path}${ABOUT_PATH}`} component={AboutForm} />
-            <Redirect to={`${match.path}${RESPONSE_PLAN_PATH}`} />
+            <Redirect to={PROFILE_PATH} />
           </Switch>
         </CardStack>
       </ContentWrapper>

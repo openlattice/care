@@ -14,7 +14,7 @@ import type { Match } from 'react-router-dom';
 
 import * as FQN from '../../../edm/DataModelFqns';
 import EditLinkButton from '../../buttons/EditLinkButton';
-import { BASIC_PATH } from '../../../core/router/Routes';
+import { BASIC_PATH, EDIT_PATH } from '../../../core/router/Routes';
 import { formatCityStateZip } from './AddressUtils';
 import { H1, IconWrapper } from '../../layout';
 import Address from './Address';
@@ -46,7 +46,7 @@ const AddressCard = (props :Props) => {
             <FontAwesomeIcon icon={faHome} />
           </IconWrapper>
           Address
-          <EditLinkButton mode="primary" to={`${match.url}${BASIC_PATH}`} />
+          <EditLinkButton mode="primary" to={`${match.url}${EDIT_PATH}${BASIC_PATH}`} />
         </H1>
       </CardHeader>
       <CardSegment vertical padding="sm">

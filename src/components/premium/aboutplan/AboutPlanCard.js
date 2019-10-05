@@ -12,7 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfoSquare } from '@fortawesome/pro-solid-svg-icons';
 
 import EditLinkButton from '../../buttons/EditLinkButton';
-import { ABOUT_PATH } from '../../../core/router/Routes';
+import { ABOUT_PATH, EDIT_PATH } from '../../../core/router/Routes';
 import { PERSON_ID_FQN } from '../../../edm/DataModelFqns';
 import { H1, IconWrapper } from '../../layout';
 import Detail from '../styled/Detail';
@@ -34,7 +34,7 @@ const AboutPlanCard = (props :Props) => {
             <FontAwesomeIcon icon={faInfoSquare} fixedWidth />
           </IconWrapper>
           About Plan
-          <EditLinkButton mode="neutral" to={`${match.url}${ABOUT_PATH}`} />
+          <EditLinkButton mode="neutral" to={`${match.url}${EDIT_PATH}${ABOUT_PATH}`} />
         </H1>
       </CardHeader>
       <CardSegment vertical padding="sm">
