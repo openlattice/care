@@ -12,7 +12,7 @@ type Props = {
 const Unauthorized = (props :Props) => {
   const { isLoading } = props;
   return isLoading
-    ? <IconSplash icon={() => <Spinner size="2x" />} />
+    ? <IconSplash icon={() => <Spinner size="3x" />} />
     : <IconSplash caption={NOT_AUTHORIZED} icon={faLockAlt} />;
 };
 

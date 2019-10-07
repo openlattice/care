@@ -10,6 +10,7 @@ import { DateTime } from 'luxon';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
+import { Spinner } from 'lattice-ui-kit';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { AuthUtils } from 'lattice-auth';
 import { ModalTransition } from '@atlaskit/modal-dialog';
@@ -21,7 +22,6 @@ import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import NoResource from '../../components/NoResource';
 import FormRecordCard from '../../components/form/FormRecord';
-import Spinner from '../../components/spinner/Spinner';
 import ReviewContainer from '../crisis/ReviewContainer';
 import BackButton from '../../components/buttons/BackButton';
 import ProgressSidebar from '../../components/form/ProgressSidebar';
@@ -449,7 +449,7 @@ class CrisisReportView extends React.Component<Props, State> {
       || updateState === RequestStates.PENDING
       || deleteState === RequestStates.PENDING
     ) {
-      return <Spinner />;
+      return <Spinner size="3x" />;
     }
 
     if (fetchState === RequestStates.FAILURE) return <NoResource />;
