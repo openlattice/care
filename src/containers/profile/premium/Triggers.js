@@ -8,7 +8,7 @@ import { withRouter } from 'react-router-dom';
 import type { Match } from 'react-router-dom';
 
 import LinkButton from '../../../components/buttons/LinkButton';
-import { OFFICER_SAFETY_PATH } from '../../../core/router/Routes';
+import { EDIT_PATH, OFFICER_SAFETY_PATH } from '../../../core/router/Routes';
 
 import { UL } from '../../../components/layout';
 import { TRIGGER_FQN } from '../../../edm/DataModelFqns';
@@ -60,7 +60,7 @@ const Triggers = (props :Props) => {
       </H2>
       { content }
       <ActionRow>
-        <LinkButton mode="subtle" to={`${match.url}${OFFICER_SAFETY_PATH}`}>Suggest a Trigger</LinkButton>
+        <LinkButton mode="subtle" to={`${match.url}${EDIT_PATH}${OFFICER_SAFETY_PATH}`}>Suggest a Trigger</LinkButton>
       </ActionRow>
     </>
   );
