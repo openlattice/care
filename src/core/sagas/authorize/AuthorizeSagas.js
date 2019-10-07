@@ -1,9 +1,10 @@
 // @flow
 
-import { Map, fromJS } from 'immutable';
+import { fromJS } from 'immutable';
 import {
   call,
   put,
+  select,
   takeLatest,
 } from '@redux-saga/core/effects';
 
@@ -27,9 +28,11 @@ function* getAuthorizationWorker(action :SequenceAction) :Generator<any, any, an
     if (currentRolesResponse.error) throw currentRolesResponse.error;
 
     const currentRoles = fromJS(currentRolesResponse.data);
-    console.log(currentRoles);
-
-    yield put(getAuthorization.success(action.id));
+    
+    const selectedOrganizationID :UUID = yield select(state => state.getIn(['app', 'selectedOrganizationId']));
+    const rolesByOrganization = currentRoles.filter(role => role.get('organizationId') === selectedOrganizationID);
+    const principalIds = rolesByOrganization.map(role => role.getIn(['principal', 'id']));
+    yield put(getAuthorization.success(action.id, principalIds));
   }
   catch (error) {
     yield put(getAuthorization.finally(action.id));

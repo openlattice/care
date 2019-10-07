@@ -1,28 +1,24 @@
 // @flow
 import React from 'react';
 import { Route } from 'react-router-dom';
-import { faLockAlt } from '@fortawesome/pro-duotone-svg-icons';
-import type { ComponentType, ElementConfig } from 'react';
+import type { ComponentType } from 'react';
 
-import { IconSplash } from 'lattice-ui-kit';
+import { useAuthorization } from '../hooks';
+import Unauthorized from '../warnings/Unauthorized';
 
-const NOT_AUTHORIZED = 'You are not authorized to view this content. Please contact an administrator for access.';
-
-type Props = ElementConfig<typeof Route> & {
-  authorize :() => void;
+type Props = {
+  authorize :() => any;
   component :ComponentType<any>;
-  isAuthorized ? :boolean;
 };
 
 const PrivateRoute = (props :Props) => {
   const {
     authorize,
-    isAuthorized,
     component: Component,
     ...rest
   } = props;
 
-  authorize();
+  const isAuthorized = useAuthorization('profile', authorize);
 
   return (
     <Route
@@ -30,13 +26,9 @@ const PrivateRoute = (props :Props) => {
         render={(ownProps :any) => (
           isAuthorized
             ? <Component {...ownProps} />
-            : <IconSplash caption={NOT_AUTHORIZED} icon={faLockAlt} />
+            : <Unauthorized isLoading />
         )} />
   );
-};
-
-PrivateRoute.defaultProps = {
-  isAuthorized: false
 };
 
 export default PrivateRoute;
