@@ -11,6 +11,7 @@ import { STATE } from '../../utils/constants/StateConstants';
 import { INITIALIZE_APPLICATION } from '../../containers/app/AppActions';
 
 import appReducer from '../../containers/app/AppReducer';
+import authorizeReducer from '../sagas/authorize/AuthorizeReducer';
 import dashboardReducer from '../../containers/dashboard/DashboardReducer';
 import downloadsReducer from '../../containers/downloads/DownloadsReducer';
 import edmReducer from '../../edm/EdmReducer';
@@ -34,6 +35,7 @@ export default function reduxReducer(routerHistory :any) {
   const allReducers = combineReducers({
     app: appReducer,
     auth: AuthReducer,
+    authorization: authorizeReducer,
     dashboard: dashboardReducer,
     downloads: downloadsReducer,
     edm: edmReducer,

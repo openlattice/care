@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { RequestStates } from 'redux-reqseq';
+import { Spinner } from 'lattice-ui-kit';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import AppHeaderContainer from './AppHeaderContainer';
@@ -17,7 +18,6 @@ import CrisisReportContainer from '../crisis/CrisisReportContainer';
 import DownloadsContainer from '../downloads/DownloadsContainer';
 import HomeContainer from '../home/HomeContainer';
 import PeopleRouter from '../people/PeopleRouter';
-import Spinner from '../../components/spinner/Spinner';
 import SupportButton from '../../components/buttons/SupportButton';
 import LegitReportsRouter from '../reports/LegitReportsRouter';
 import DashboardContainer from '../dashboard/DashboardContainer';
@@ -126,9 +126,7 @@ class AppContainer extends Component<Props> {
     } = this.props;
 
     if (initializeState === RequestStates.PENDING) {
-      return (
-        <Spinner />
-      );
+      return <Spinner size="3x" />;
     }
     if (organizations.isEmpty() || !selectedOrganizationId) {
       return (

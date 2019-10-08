@@ -155,7 +155,7 @@ function* loadAppWorker(action :SequenceAction) :Generator<*, *, *> {
           const settingsEKID = settingsEntity.getIn([OPENLATTICE_ID_FQN, 0]);
           try {
             const parsedAppDetails = JSON.parse(appDetails);
-            const parsedAppSettings = Map(parsedAppDetails)
+            const parsedAppSettings = fromJS(parsedAppDetails)
               .set(OPENLATTICE_ID_FQN, settingsEKID);
             mutable.set(organizationId, parsedAppSettings);
           }
