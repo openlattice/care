@@ -9,16 +9,20 @@ import Unauthorized from '../warnings/Unauthorized';
 type Props = {
   authorize :() => any;
   component :ComponentType<any>;
+  feature :string;
+  unauthorizedComponent :ComponentType<any>;
 };
 
 const PrivateRoute = (props :Props) => {
   const {
     authorize,
+    feature,
     component: Component,
+    unauthorizedComponent: UnauthorizedComponent,
     ...rest
   } = props;
 
-  const [isAuthorized, isLoading] = useAuthorization('profile', authorize);
+  const [isAuthorized, isLoading] = useAuthorization(feature, authorize);
 
   return (
     <Route
@@ -26,9 +30,13 @@ const PrivateRoute = (props :Props) => {
         render={(ownProps :any) => (
           isAuthorized
             ? <Component {...ownProps} />
-            : <Unauthorized isLoading={isLoading} />
+            : <UnauthorizedComponent isLoading={isLoading} />
         )} />
   );
+};
+
+PrivateRoute.defaultProps = {
+  unauthorizedComponent: Unauthorized
 };
 
 export default PrivateRoute;
