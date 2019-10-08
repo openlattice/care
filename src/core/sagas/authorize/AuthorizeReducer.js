@@ -8,7 +8,7 @@ import { getAuthorization } from './AuthorizeActions';
 
 const INITIAL_STATE :Map = fromJS({
   currentPrincipalIds: List(),
-  fetchState: RequestStates.STANDBY
+  fetchState: RequestStates.PENDING
 });
 
 const AuthorizeReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {

@@ -18,7 +18,7 @@ const PrivateRoute = (props :Props) => {
     ...rest
   } = props;
 
-  const isAuthorized = useAuthorization('profile', authorize);
+  const [isAuthorized, isLoading] = useAuthorization('profile', authorize);
 
   return (
     <Route
@@ -26,7 +26,7 @@ const PrivateRoute = (props :Props) => {
         render={(ownProps :any) => (
           isAuthorized
             ? <Component {...ownProps} />
-            : <Unauthorized isLoading />
+            : <Unauthorized isLoading={isLoading} />
         )} />
   );
 };
