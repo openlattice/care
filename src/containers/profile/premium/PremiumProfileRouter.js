@@ -25,7 +25,6 @@ const PremiumProfileRouter = (props :Props) => {
     <Switch>
       <Redirect strict exact from={`${PROFILE_PATH}/`} to={PROFILE_PATH} />
       <PrivateRoute
-          isAuthorized
           authorize={actions.getAuthorization}
           component={PremiumProfileContainer}
           exact
