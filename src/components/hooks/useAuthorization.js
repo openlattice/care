@@ -30,7 +30,7 @@ const useAuthorization = (feature :string, callback :any) => {
     }
     else {
       const hasPrincipal = allowedPrincipals
-        .some(principalId => currentPrincipalIds.indexOf(principalId) !== -1);
+        .some(principalId => currentPrincipalIds.includes(principalId));
       setAuthorization(hasPrincipal);
       setLoading(loadState);
     }
