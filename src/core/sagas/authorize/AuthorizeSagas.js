@@ -14,10 +14,13 @@ import {
 } from 'lattice-sagas';
 import type { SequenceAction } from 'redux-reqseq';
 
+import Logger from '../../../utils/Logger';
 import { GET_AUTHORIZATION, getAuthorization } from './AuthorizeActions';
 
 const { getCurrentRolesWorker } = PrincipalsApiSagas;
 const { getCurrentRoles } = PrincipalsApiActions;
+
+const LOG = new Logger('AuthorizeSagas');
 
 function* getAuthorizationWorker(action :SequenceAction) :Generator<any, any, any> {
   const response = {};
@@ -28,14 +31,15 @@ function* getAuthorizationWorker(action :SequenceAction) :Generator<any, any, an
     if (currentRolesResponse.error) throw currentRolesResponse.error;
 
     const currentRoles = fromJS(currentRolesResponse.data);
-    
+
     const selectedOrganizationID :UUID = yield select(state => state.getIn(['app', 'selectedOrganizationId']));
     const rolesByOrganization = currentRoles.filter(role => role.get('organizationId') === selectedOrganizationID);
     const principalIds = rolesByOrganization.map(role => role.getIn(['principal', 'id']));
     yield put(getAuthorization.success(action.id, principalIds));
   }
   catch (error) {
-    yield put(getAuthorization.finally(action.id));
+    LOG.error(action.type, error);
+    yield put(getAuthorization.failure(action.id));
   }
   return response;
 }
