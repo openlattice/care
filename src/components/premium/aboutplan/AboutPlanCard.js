@@ -7,13 +7,12 @@ import {
   Label
 } from 'lattice-ui-kit';
 import { Map } from 'immutable';
-import { withRouter } from 'react-router-dom';
+import { useRouteMatch } from 'react-router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfoSquare } from '@fortawesome/pro-solid-svg-icons';
-import type { Match } from 'react-router-dom';
 
 import EditLinkButton from '../../buttons/EditLinkButton';
-import { ABOUT_PATH } from '../../../core/router/Routes';
+import { ABOUT_PATH, EDIT_PATH } from '../../../core/router/Routes';
 import { PERSON_ID_FQN } from '../../../edm/DataModelFqns';
 import { H1, IconWrapper } from '../../layout';
 import Detail from '../styled/Detail';
@@ -21,11 +20,11 @@ import Detail from '../styled/Detail';
 type Props = {
   isLoading :boolean;
   responsibleUser :Map;
-  match :Match;
 }
 
 const AboutPlanCard = (props :Props) => {
-  const { isLoading, match, responsibleUser } = props;
+  const match = useRouteMatch();
+  const { isLoading, responsibleUser } = props;
   const content = responsibleUser.getIn([PERSON_ID_FQN, 0]) || '---';
   return (
     <Card>
@@ -35,7 +34,7 @@ const AboutPlanCard = (props :Props) => {
             <FontAwesomeIcon icon={faInfoSquare} fixedWidth />
           </IconWrapper>
           About Plan
-          <EditLinkButton mode="neutral" to={`${match.url}${ABOUT_PATH}`} />
+          <EditLinkButton mode="neutral" to={`${match.url}${EDIT_PATH}${ABOUT_PATH}`} />
         </H1>
       </CardHeader>
       <CardSegment vertical padding="sm">
@@ -46,4 +45,4 @@ const AboutPlanCard = (props :Props) => {
   );
 };
 
-export default withRouter(AboutPlanCard);
+export default AboutPlanCard;

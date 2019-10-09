@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Map } from 'immutable';
+import { Spinner } from 'lattice-ui-kit';
 
 import ButtonToolbar from '../../components/buttons/ButtonToolbar';
 import DropdownButton from '../../components/buttons/DropdownButton';
@@ -14,7 +15,6 @@ import SummaryStats from '../../components/dashboard/SummaryStats';
 import OverviewCharts from '../../components/dashboard/OverviewCharts';
 import IncidentCharts from '../../components/dashboard/IncidentCharts';
 import OutcomeCharts from '../../components/dashboard/OutcomeCharts';
-import Spinner from '../../components/spinner/Spinner';
 import { loadDashboardData } from './DashboardActionFactory';
 import { SUBMISSION_STATES } from './DashboardReducer';
 import { SUMMARY_STATS } from '../../shared/Consts';
@@ -157,7 +157,7 @@ class DashboardContainer extends React.Component<Props, State> {
 
     return (
       <div>
-        {isLoading ? <Spinner /> : this.renderContent()}
+        {isLoading ? <Spinner size="3x" /> : this.renderContent()}
       </div>
     );
   }

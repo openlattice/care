@@ -25,6 +25,7 @@ import ResponsePlanForm from './responseplan/ResponsePlanForm';
 import BasicInformationContainer from './basicinformation/BasicInformationContainer';
 import OfficerSafetyContainer from './officersafety/OfficerSafetyContainer';
 import { getBasics } from './basicinformation/actions/BasicInformationActions';
+import { getAuthorization } from '../../../core/sagas/authorize/AuthorizeActions';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
 import {
   ABOUT_PATH,
@@ -32,11 +33,14 @@ import {
   CONTACTS_PATH,
   OFFICER_SAFETY_PATH,
   PROFILE_ID_PARAM,
+  PROFILE_PATH,
   RESPONSE_PLAN_PATH,
 } from '../../../core/router/Routes';
+import PrivateRoute from '../../../components/route/PrivateRoute';
 
 type Props = {
   actions :{
+    getAuthorization :RequestSequence;
     getBasics :RequestSequence;
   };
   match :Match;
@@ -45,12 +49,13 @@ type Props = {
 
 const EditProfileContainer = (props :Props) => {
   const { actions, match, selectedPerson } = props;
+  const personEKID = match.params[PROFILE_ID_PARAM];
 
   useEffect(
     () => {
-      actions.getBasics(match.params[PROFILE_ID_PARAM]);
+      actions.getBasics(personEKID);
     },
-    [match.params[PROFILE_ID_PARAM]]
+    [actions, personEKID]
   );
 
   return (
@@ -76,12 +81,32 @@ const EditProfileContainer = (props :Props) => {
             </CardSegment>
           </Card>
           <Switch>
-            <Route path={`${match.path}${BASIC_PATH}`} component={BasicInformationContainer} />
-            <Route path={`${match.path}${OFFICER_SAFETY_PATH}`} component={OfficerSafetyContainer} />
-            <Route path={`${match.path}${RESPONSE_PLAN_PATH}`} component={ResponsePlanForm} />
-            <Route path={`${match.path}${CONTACTS_PATH}`} component={ContactsForm} />
-            <Route path={`${match.path}${ABOUT_PATH}`} component={AboutForm} />
-            <Redirect to={`${match.path}${RESPONSE_PLAN_PATH}`} />
+            <PrivateRoute
+                authorize={actions.getAuthorization}
+                component={BasicInformationContainer}
+                feature="profile"
+                path={`${match.path}${BASIC_PATH}`} />
+            <PrivateRoute
+                authorize={actions.getAuthorization}
+                component={OfficerSafetyContainer}
+                feature="profile"
+                path={`${match.path}${OFFICER_SAFETY_PATH}`} />
+            <PrivateRoute
+                authorize={actions.getAuthorization}
+                component={ResponsePlanForm}
+                feature="profile"
+                path={`${match.path}${RESPONSE_PLAN_PATH}`} />
+            <PrivateRoute
+                authorize={actions.getAuthorization}
+                component={ContactsForm}
+                feature="profile"
+                path={`${match.path}${CONTACTS_PATH}`} />
+            <PrivateRoute
+                authorize={actions.getAuthorization}
+                component={AboutForm}
+                feature="profile"
+                path={`${match.path}${ABOUT_PATH}`} />
+            <Redirect to={PROFILE_PATH} />
           </Switch>
         </CardStack>
       </ContentWrapper>
@@ -95,7 +120,8 @@ const mapStateToProps = (state :Map) => ({
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
-    getBasics
+    getAuthorization,
+    getBasics,
   }, dispatch)
 });
 

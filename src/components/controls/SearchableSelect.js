@@ -9,9 +9,8 @@ import styled, { css } from 'styled-components';
 import { faTimes } from '@fortawesome/pro-regular-svg-icons';
 import { faSearch } from '@fortawesome/pro-light-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Input } from 'lattice-ui-kit';
+import { Input, Spinner } from 'lattice-ui-kit';
 
-import Spinner from '../spinner/Spinner';
 import downArrowIcon from '../../assets/svg/down-arrow.svg';
 import { BLACK } from '../../shared/Colors';
 
@@ -317,7 +316,7 @@ class SearchableSelect extends React.Component<Props, State> {
       return (
         <DataTableWrapper isVisible openAbove={openAbove}>
           <NoContentWrapper searching>
-            <Spinner />
+            <Spinner size="3x" />
           </NoContentWrapper>
         </DataTableWrapper>
       );

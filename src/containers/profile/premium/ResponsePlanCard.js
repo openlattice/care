@@ -15,7 +15,7 @@ import { withRouter } from 'react-router-dom';
 import type { Match } from 'react-router-dom';
 
 import EditLinkButton from '../../../components/buttons/EditLinkButton';
-import { RESPONSE_PLAN_PATH } from '../../../core/router/Routes';
+import { RESPONSE_PLAN_PATH, EDIT_PATH } from '../../../core/router/Routes';
 import { TITLE_FQN, DESCRIPTION_FQN } from '../../../edm/DataModelFqns';
 import InteractionStrategy from '../../../components/premium/responseplan/InteractionStrategy';
 import { H1, IconWrapper } from '../../../components/layout';
@@ -36,7 +36,7 @@ const ResponsePlanCard = ({ isLoading, interactionStrategies, match } :Props) =>
           <FontAwesomeIcon icon={faClipboardListCheck} fixedWidth />
         </IconWrapper>
         Response Plan
-        <EditLinkButton mode="primary" to={`${match.url}${RESPONSE_PLAN_PATH}`} />
+        <EditLinkButton mode="primary" to={`${match.url}${EDIT_PATH}${RESPONSE_PLAN_PATH}`} />
       </H1>
     </CardHeader>
     <CardSegment vertical padding="sm">

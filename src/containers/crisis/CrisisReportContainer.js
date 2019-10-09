@@ -13,10 +13,10 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { AuthUtils } from 'lattice-auth';
+import { Spinner } from 'lattice-ui-kit';
 
 import type { RouterHistory } from 'react-router';
 
-import Spinner from '../../components/spinner/Spinner';
 import ReviewContainer from './ReviewContainer';
 import BackButton from '../../components/buttons/BackButton';
 import ProgressSidebar from '../../components/form/ProgressSidebar';
@@ -450,7 +450,7 @@ class CrisisReportContainer extends React.Component<Props, State> {
           <StyledPageWrapper>
             <CrisisReportWrapper>
               <SubmittedView>
-                <Spinner />
+                <Spinner size="3x" />
               </SubmittedView>
             </CrisisReportWrapper>
           </StyledPageWrapper>

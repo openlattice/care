@@ -10,7 +10,7 @@ import type { Match } from 'react-router-dom';
 import LinkButton from '../../../components/buttons/LinkButton';
 import { UL } from '../../../components/layout';
 import { TECHNIQUES_FQN } from '../../../edm/DataModelFqns';
-import { OFFICER_SAFETY_PATH } from '../../../core/router/Routes';
+import { EDIT_PATH, OFFICER_SAFETY_PATH } from '../../../core/router/Routes';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 
@@ -64,7 +64,7 @@ const SpecificTechniques = (props :Props) => {
       </H2>
       { content }
       <ActionRow>
-        <LinkButton mode="subtle" to={`${match.url}${OFFICER_SAFETY_PATH}`}>Suggest a Technique</LinkButton>
+        <LinkButton mode="subtle" to={`${match.url}${EDIT_PATH}${OFFICER_SAFETY_PATH}`}>Suggest a Technique</LinkButton>
       </ActionRow>
     </div>
   );
