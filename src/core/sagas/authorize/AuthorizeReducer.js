@@ -1,13 +1,13 @@
 // @flow
 
 import { RequestStates } from 'redux-reqseq';
-import { List, Map, fromJS } from 'immutable';
+import { Set, Map, fromJS } from 'immutable';
 import type { SequenceAction } from 'redux-reqseq';
 
 import { getAuthorization } from './AuthorizeActions';
 
 const INITIAL_STATE :Map = fromJS({
-  currentPrincipalIds: List(),
+  currentPrincipalIds: Set(),
   fetchState: RequestStates.PENDING
 });
 

@@ -1,6 +1,6 @@
 // @flow
 
-import { List } from 'immutable';
+import { List, Set } from 'immutable';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { RequestStates } from 'redux-reqseq';
@@ -16,8 +16,8 @@ const useAuthorization = (feature :string, callback :any) => {
   const allowedPrincipals :List<string> = useSelector(state => state
     .getIn(['app', 'selectedOrganizationSettings', 'private', feature]));
 
-  const currentPrincipalIds :List<string> = useSelector(state => state
-    .getIn(['authorization', 'currentPrincipalIds'])) || List();
+  const currentPrincipalIds :Set<string> = useSelector(state => state
+    .getIn(['authorization', 'currentPrincipalIds'])) || Set();
 
   const fetchState = useSelector(state => state.getIn(['authorization', 'fetchState']));
 
@@ -29,8 +29,7 @@ const useAuthorization = (feature :string, callback :any) => {
       setLoading(loadState);
     }
     else {
-      const hasPrincipal = allowedPrincipals
-        .some(principalId => currentPrincipalIds.indexOf(principalId) !== -1);
+      const hasPrincipal = !!currentPrincipalIds.intersect(allowedPrincipals).count();
       setAuthorization(hasPrincipal);
       setLoading(loadState);
     }

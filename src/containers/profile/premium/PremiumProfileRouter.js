@@ -28,6 +28,7 @@ const PremiumProfileRouter = (props :Props) => {
           authorize={actions.getAuthorization}
           component={PremiumProfileContainer}
           exact
+          feature="profile"
           path={PROFILE_PATH} />
       <Route path={PROFILE_EDIT_PATH} component={EditProfileContainer} />
       <Redirect to={PROFILE_PATH} />

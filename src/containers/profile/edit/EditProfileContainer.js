@@ -83,24 +83,29 @@ const EditProfileContainer = (props :Props) => {
           <Switch>
             <PrivateRoute
                 authorize={actions.getAuthorization}
-                path={`${match.path}${BASIC_PATH}`}
-                component={BasicInformationContainer} />
+                component={BasicInformationContainer}
+                feature="profile"
+                path={`${match.path}${BASIC_PATH}`} />
             <PrivateRoute
                 authorize={actions.getAuthorization}
-                path={`${match.path}${OFFICER_SAFETY_PATH}`}
-                component={OfficerSafetyContainer} />
+                component={OfficerSafetyContainer}
+                feature="profile"
+                path={`${match.path}${OFFICER_SAFETY_PATH}`} />
             <PrivateRoute
                 authorize={actions.getAuthorization}
-                path={`${match.path}${RESPONSE_PLAN_PATH}`}
-                component={ResponsePlanForm} />
+                component={ResponsePlanForm}
+                feature="profile"
+                path={`${match.path}${RESPONSE_PLAN_PATH}`} />
             <PrivateRoute
                 authorize={actions.getAuthorization}
-                path={`${match.path}${CONTACTS_PATH}`}
-                component={ContactsForm} />
+                component={ContactsForm}
+                feature="profile"
+                path={`${match.path}${CONTACTS_PATH}`} />
             <PrivateRoute
                 authorize={actions.getAuthorization}
-                path={`${match.path}${ABOUT_PATH}`}
-                component={AboutForm} />
+                component={AboutForm}
+                feature="profile"
+                path={`${match.path}${ABOUT_PATH}`} />
             <Redirect to={PROFILE_PATH} />
           </Switch>
         </CardStack>
