@@ -16,9 +16,9 @@ export const PEOPLE_PATH :string = '/people';
 export const EDIT_PATH :string = '/edit';
 
 export const REPORT_ID_PARAM :string = 'reportId';
-export const REPORT_ID_PATH :string = `/:${REPORT_ID_PARAM}`;
-export const REPORT_EDIT_PATH :string = `${REPORTS_PATH}${REPORT_ID_PATH}${EDIT_PATH}`;
-export const REPORT_VIEW_PATH :string = `${REPORTS_PATH}${REPORT_ID_PATH}/view`;
+export const REPORT_ID_PATH :string = `:${REPORT_ID_PARAM}`;
+export const REPORT_EDIT_PATH :string = `${REPORTS_PATH}/${REPORT_ID_PATH}${EDIT_PATH}`;
+export const REPORT_VIEW_PATH :string = `${REPORTS_PATH}/${REPORT_ID_PATH}/view`;
 
 export const PROFILE_ID_PARAM :string = 'profileId';
 export const PROFILE_ID_PATH :string = `:${PROFILE_ID_PARAM}`;

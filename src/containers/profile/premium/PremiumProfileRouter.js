@@ -24,11 +24,11 @@ const PremiumProfileRouter = (props :Props) => {
   return (
     <Switch>
       <Redirect strict exact from={`${PROFILE_PATH}/`} to={PROFILE_PATH} />
-      <PrivateRoute
-          authorize={actions.getAuthorization}
+      <Route
+          // authorize={actions.getAuthorization}
           component={PremiumProfileContainer}
           exact
-          feature="profile"
+          // feature="profile"
           path={PROFILE_PATH} />
       <Route path={PROFILE_EDIT_PATH} component={EditProfileContainer} />
       <Redirect to={PROFILE_PATH} />
