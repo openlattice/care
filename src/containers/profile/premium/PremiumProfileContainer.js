@@ -41,6 +41,7 @@ import { getResponsePlan } from '../edit/responseplan/ResponsePlanActions';
 import { getContacts } from '../edit/contacts/ContactsActions';
 import { getAboutPlan } from '../edit/about/AboutActions';
 import { getOfficerSafety } from '../edit/officersafety/OfficerSafetyActions';
+import { getAuthorization } from '../../../core/sagas/authorize/AuthorizeActions';
 import { getEntityKeyId } from '../../../utils/DataUtils';
 import { reduceRequestStates } from '../../../utils/StateUtils';
 import { getImageDataFromEntity } from '../../../utils/BinaryUtils';
@@ -50,7 +51,7 @@ import {
   REPORT_VIEW_PATH,
 } from '../../../core/router/Routes';
 import { goToPath } from '../../../core/router/RoutingActions';
-import { usePeopleRoute } from '../../../components/hooks';
+import { usePeopleRoute, useAuthorization } from '../../../components/hooks';
 import type { RoutingAction } from '../../../core/router/RoutingActions';
 
 const Aside = styled.div`
@@ -79,6 +80,7 @@ const BehaviorAndSafetyGrid = styled.div`
 type Props = {
   actions :{
     getAboutPlan :RequestSequence;
+    getAuthorization :RequestSequence;
     getBasicInformation :RequestSequence;
     getContacts :RequestSequence;
     getOfficerSafety :RequestSequence;
@@ -139,6 +141,13 @@ const PremiumProfileContainer = (props :Props) => {
   usePeopleRoute(actions.getProfileReports);
   usePeopleRoute(actions.getResponsePlan);
 
+  const handleResultClick = useCallback((result :Map) => {
+    const reportEKID = getEntityKeyId(result);
+    actions.goToPath(REPORT_VIEW_PATH.replace(REPORT_ID_PATH, reportEKID));
+  }, [actions]);
+
+  const [isAuthorized] = useAuthorization('profile', actions.getAuthorization);
+
   const { recent, total } = countCrisisCalls(reports);
 
   const isLoadingReports = fetchReportsState === RequestStates.PENDING;
@@ -148,11 +157,6 @@ const PremiumProfileContainer = (props :Props) => {
   const isLoadingAboutPlan = fetchAboutPlanState === RequestStates.PENDING;
 
   const imageURL :string = getImageDataFromEntity(photo);
-
-  const handleResultClick = useCallback((result :Map) => {
-    const reportEKID = getEntityKeyId(result);
-    actions.goToPath(REPORT_VIEW_PATH.replace(REPORT_ID_PATH, reportEKID));
-  }, [actions]);
 
   return (
     <ContentOuterWrapper>
@@ -172,15 +176,18 @@ const PremiumProfileContainer = (props :Props) => {
                 </CardSegment>
               </Card>
               <IntroCard
+                  appearance={appearance}
                   isLoading={isLoadingIntro}
                   selectedPerson={selectedPerson}
-                  appearance={appearance} />
+                  showEdit={isAuthorized} />
               <AddressCard
+                  address={address}
                   isLoading={isLoadingIntro}
-                  address={address} />
+                  showEdit={isAuthorized} />
               <AboutPlanCard
                   isLoading={isLoadingAboutPlan}
-                  responsibleUser={responsibleUser} />
+                  responsibleUser={responsibleUser}
+                  showEdit={isAuthorized} />
             </StyledCardStack>
           </Aside>
           <StyledCardStack>
@@ -193,20 +200,24 @@ const PremiumProfileContainer = (props :Props) => {
                   reports={reports}
                   isLoading={isLoadingReports} />
               <OfficerSafetyCard
-                  reports={reports}
-                  triggers={triggers}
+                  isLoading={isLoadingOfficerSafety}
                   officerSafety={officerSafety}
-                  isLoading={isLoadingOfficerSafety} />
+                  reports={reports}
+                  showEdit={isAuthorized}
+                  triggers={triggers} />
             </BehaviorAndSafetyGrid>
             <DeescalationCard
-                techniques={techniques}
-                isLoading={isLoadingOfficerSafety} />
+                isLoading={isLoadingOfficerSafety}
+                showEdit={isAuthorized}
+                techniques={techniques} />
             <ResponsePlanCard
                 interactionStrategies={interactionStrategies}
-                isLoading={isLoadingResponsePlan} />
+                isLoading={isLoadingResponsePlan}
+                showEdit={isAuthorized} />
             <BackgroundInformationCard
                 backgroundInformation={responsePlan}
-                isLoading={isLoadingResponsePlan} />
+                isLoading={isLoadingResponsePlan}
+                showEdit={isAuthorized} />
             <ContactCarousel
                 contacts={contacts}
                 contactInfoByContactEKID={contactInfoByContactEKID}
@@ -264,6 +275,7 @@ const mapStateToProps = (state :Map) => {
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
     getAboutPlan,
+    getAuthorization,
     getBasicInformation,
     getContacts,
     getOfficerSafety,

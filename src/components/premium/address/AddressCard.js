@@ -24,11 +24,17 @@ type Props = {
   address :Map;
   isLoading :boolean;
   match :Match;
+  showEdit :boolean;
 };
 
 const AddressCard = (props :Props) => {
 
-  const { address, isLoading, match } = props;
+  const {
+    address,
+    isLoading,
+    match,
+    showEdit
+  } = props;
 
   const name = address.getIn([FQN.LOCATION_NAME_FQN, 0]);
   const street = address.getIn([FQN.LOCATION_STREET_FQN, 0]);
@@ -46,7 +52,7 @@ const AddressCard = (props :Props) => {
             <FontAwesomeIcon icon={faHome} />
           </IconWrapper>
           Address
-          <EditLinkButton mode="primary" to={`${match.url}${EDIT_PATH}${BASIC_PATH}`} />
+          { showEdit && <EditLinkButton mode="primary" to={`${match.url}${EDIT_PATH}${BASIC_PATH}`} /> }
         </H1>
       </CardHeader>
       <CardSegment vertical padding="sm">

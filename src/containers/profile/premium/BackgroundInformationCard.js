@@ -29,9 +29,16 @@ type Props = {
   isLoading ? :boolean;
   backgroundInformation :Map;
   match :Match;
+  showEdit :boolean;
 };
 
-const BackgroundInformationCard = ({ backgroundInformation, isLoading, match } :Props) => {
+const BackgroundInformationCard = (props :Props) => {
+  const {
+    backgroundInformation,
+    isLoading,
+    match,
+    showEdit
+  } = props;
   const backgroundSummary :string = backgroundInformation.getIn([CONTEXT_FQN, 0]) || '';
   return (
     <Card>
@@ -41,7 +48,7 @@ const BackgroundInformationCard = ({ backgroundInformation, isLoading, match } :
             <FontAwesomeIcon icon={faAddressCard} fixedWidth />
           </IconWrapper>
           Background Information
-          <EditLinkButton mode="primary" to={`${match.url}${EDIT_PATH}${RESPONSE_PLAN_PATH}`} />
+          { showEdit && <EditLinkButton mode="primary" to={`${match.url}${EDIT_PATH}${RESPONSE_PLAN_PATH}`} /> }
         </H1>
       </CardHeader>
       <CardSegment vertical padding="sm">
