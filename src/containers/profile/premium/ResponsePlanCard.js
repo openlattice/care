@@ -26,9 +26,15 @@ type Props = {
   isLoading ? :boolean;
   interactionStrategies :List;
   match :Match;
+  showEdit :boolean;
 };
 
-const ResponsePlanCard = ({ isLoading, interactionStrategies, match } :Props) => (
+const ResponsePlanCard = ({
+  isLoading,
+  interactionStrategies,
+  match,
+  showEdit
+} :Props) => (
   <Card>
     <CardHeader mode="primary" padding="sm">
       <H1>
@@ -36,7 +42,7 @@ const ResponsePlanCard = ({ isLoading, interactionStrategies, match } :Props) =>
           <FontAwesomeIcon icon={faClipboardListCheck} fixedWidth />
         </IconWrapper>
         Response Plan
-        <EditLinkButton mode="primary" to={`${match.url}${EDIT_PATH}${RESPONSE_PLAN_PATH}`} />
+        { showEdit && <EditLinkButton mode="primary" to={`${match.url}${EDIT_PATH}${RESPONSE_PLAN_PATH}`} /> }
       </H1>
     </CardHeader>
     <CardSegment vertical padding="sm">
@@ -51,8 +57,7 @@ const ResponsePlanCard = ({ isLoading, interactionStrategies, match } :Props) =>
               const ekid = strategy.getIn([OPENLATTICE_ID_FQN, 0]);
               return <InteractionStrategy key={ekid} description={description} index={step + 1} title={title} />;
             })
-        )
-      }
+        )}
     </CardSegment>
   </Card>
 );

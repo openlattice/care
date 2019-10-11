@@ -15,7 +15,7 @@ export const RadioInputContainer = styled.input.attrs({
 export const RadioContainer = styled.label`
   display: inline-block;
   position: relative;
-  color: ${props => (props.disabled ? '#8e929b' : '#2e2e34')};
+  color: ${(props) => (props.disabled ? '#8e929b' : '#2e2e34')};
   font-size: 16px;
   font-family: 'Open Sans', sans-serif;
   font-weight: normal;

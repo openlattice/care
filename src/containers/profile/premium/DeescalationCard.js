@@ -9,8 +9,13 @@ import {
   CardHeader,
   Colors
 } from 'lattice-ui-kit';
+import { withRouter } from 'react-router-dom';
+import type { Match } from 'react-router-dom';
+
 
 import SpecificTechniques from './SpecificTechniques';
+import EditLinkButton from '../../../components/buttons/EditLinkButton';
+import { OFFICER_SAFETY_PATH, EDIT_PATH } from '../../../core/router/Routes';
 import { H1, IconWrapper, UL } from '../../../components/layout';
 
 const { NEUTRALS } = Colors;
@@ -39,11 +44,19 @@ const DeescalationContentWrapper = styled.div`
 
 type Props = {
   isLoading :boolean;
+  match :Match;
+  showEdit :boolean;
   techniques :List<Map>;
 };
 
 const DeescalationCard = (props :Props) => {
-  const { isLoading, techniques } = props;
+  const {
+    isLoading,
+    match,
+    showEdit,
+    techniques
+  } = props;
+
   return (
     <Card>
       <CardHeader mode="primary" padding="sm">
@@ -52,6 +65,7 @@ const DeescalationCard = (props :Props) => {
             <FontAwesomeIcon icon={faTheaterMasks} fixedWidth />
           </IconWrapper>
           De-escalation
+          { showEdit && <EditLinkButton mode="primary" to={`${match.url}${EDIT_PATH}${OFFICER_SAFETY_PATH}`} /> }
         </H1>
       </CardHeader>
       <DeescalationContentWrapper>
@@ -70,4 +84,4 @@ const DeescalationCard = (props :Props) => {
   );
 };
 
-export default DeescalationCard;
+export default withRouter(DeescalationCard);

@@ -113,8 +113,7 @@ class PersonResult extends Component<Props> {
                     {detail.get('value', '')}
                   </Truncated>
                 </div>
-              ))
-            }
+              ))}
           </DetailsGrid>
         </ResultWrapper>
       </Card>

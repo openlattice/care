@@ -63,7 +63,7 @@ export function* getPeoplePhotosWorker(action :SequenceAction) :Generator<*, *, 
 
     yield put(getPeoplePhotos.request(action.id));
 
-    const app :Map = yield select(state => state.get('app', Map()));
+    const app :Map = yield select((state) => state.get('app', Map()));
     const peopleESID :UUID = getESIDFromApp(app, PEOPLE_FQN);
     const imageESID :UUID = getESIDFromApp(app, IMAGE_FQN);
     const isPictureOfESID :UUID = getESIDFromApp(app, IS_PICTURE_OF_FQN);
@@ -84,7 +84,7 @@ export function* getPeoplePhotosWorker(action :SequenceAction) :Generator<*, *, 
     );
 
     const profilePicByEKID = fromJS(imageResponse.data)
-      .map(entity => entity.first().get('neighborDetails'));
+      .map((entity) => entity.first().get('neighborDetails'));
 
     yield put(getPeoplePhotos.success(action.id, profilePicByEKID));
   }
@@ -106,8 +106,8 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
 
     yield put(searchPeople.request(action.id));
 
-    const edm :Map<*, *> = yield select(state => state.get('edm'));
-    const app = yield select(state => state.get('app', Map()));
+    const edm :Map<*, *> = yield select((state) => state.get('edm'));
+    const app = yield select((state) => state.get('app', Map()));
 
     const firstNamePTID :UUID = edm.getIn(['fqnToIdMap', FQN.PERSON_FIRST_NAME_FQN]);
     const lastNamePTID :UUID = edm.getIn(['fqnToIdMap', FQN.PERSON_LAST_NAME_FQN]);
@@ -158,7 +158,7 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
     if (error) throw error;
 
     const hits = fromJS(data.hits);
-    const peopleEKIDs = hits.map(person => person.getIn([OPENLATTICE_ID_FQN, 0]));
+    const peopleEKIDs = hits.map((person) => person.getIn([OPENLATTICE_ID_FQN, 0]));
 
     yield put(searchPeople.success(action.id, hits));
     yield call(getPeoplePhotosWorker, getPeoplePhotos(peopleEKIDs));

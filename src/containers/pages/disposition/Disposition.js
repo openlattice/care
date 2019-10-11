@@ -146,7 +146,7 @@ class Disposition extends React.Component<Props> {
         }
       };
 
-      const checkboxes = valueList.map(value => (
+      const checkboxes = valueList.map((value) => (
         <StyledCheckbox
             disabled={disabled}
             name={field}
@@ -221,7 +221,7 @@ class Disposition extends React.Component<Props> {
       });
     };
 
-    const hasDisposition = value => values.get(DISPOSITION.DISPOSITIONS).includes(value);
+    const hasDisposition = (value) => values.get(DISPOSITION.DISPOSITIONS).includes(value);
 
     const invalidFields = showInvalidFields(window.location) ? getInvalidFields(values) : [];
 
@@ -263,7 +263,11 @@ class Disposition extends React.Component<Props> {
             hasDisposition(DISPOSITIONS.VERBAL_REFERRAL) ? (
               <IndentWrapper extraIndent>
                 <FormSectionWithValidation invalid={invalidFields.includes(DISPOSITION.VERBAL_REFERRALS)}>
-                  {renderCheckboxList(DISPOSITION.VERBAL_REFERRALS, VERBAL_REFERRALS, DISPOSITION.OTHER_VERBAL_REFERRAL)}
+                  {renderCheckboxList(
+                    DISPOSITION.VERBAL_REFERRALS,
+                    VERBAL_REFERRALS,
+                    DISPOSITION.OTHER_VERBAL_REFERRAL
+                  )}
                 </FormSectionWithValidation>
               </IndentWrapper>
             ) : null

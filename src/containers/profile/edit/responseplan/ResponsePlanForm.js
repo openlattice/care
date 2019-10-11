@@ -272,7 +272,7 @@ class ResponsePlanForm extends Component<Props, State> {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   entityIndexToIdMap: state.getIn(['profile', 'responsePlan', 'entityIndexToIdMap']),
   entitySetIds: state.getIn(['app', 'selectedOrgEntitySetIds'], Map()),
   fetchState: state.getIn(['profile', 'responsePlan', 'fetchState']),

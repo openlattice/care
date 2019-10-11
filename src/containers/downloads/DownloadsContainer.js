@@ -87,8 +87,8 @@ class DownloadsContainer extends React.Component<Props, State> {
               label="BHR Downloads"
               startDate={startDate}
               endDate={endDate}
-              onStartChange={date => this.onDateChange('startDate', date)}
-              onEndChange={date => this.onDateChange('endDate', date)} />
+              onStartChange={(date) => this.onDateChange('startDate', date)}
+              onEndChange={(date) => this.onDateChange('endDate', date)} />
           <ButtonRow>
             <InfoDownloadButton onClick={this.download} disabled={downloading || !startDate || !endDate}>
               Download BHR Reports

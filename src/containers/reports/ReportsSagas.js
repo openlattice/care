@@ -133,7 +133,7 @@ function* deleteReportWorker(action :SequenceAction) :Generator<*, *, *> {
 
     yield put(deleteReport.request(action.id, entityKeyId));
 
-    const app = yield select(state => state.get('app', Map()));
+    const app = yield select((state) => state.get('app', Map()));
     const entitySetId :UUID = getReportESId(app);
 
     const response = yield call(
@@ -168,7 +168,7 @@ function* getReportWorker(action :SequenceAction) :Generator<*, *, *> {
 
     yield put(getReport.request(action.id, reportEKID));
 
-    const app = yield select(state => state.get('app', Map()));
+    const app = yield select((state) => state.get('app', Map()));
     const reportESID :UUID = getReportESId(app);
     const peopleESID :UUID = getPeopleESId(app);
     const appearsInESID :UUID = getAppearsInESId(app);
@@ -279,8 +279,8 @@ function* getReportsByDateRangeWorker(action :SequenceAction) :Generator<*, *, *
 
     yield put(getReportsByDateRange.request(action.id));
 
-    const edm :Map<*, *> = yield select(state => state.get('edm'));
-    const app = yield select(state => state.get('app', Map()));
+    const edm :Map<*, *> = yield select((state) => state.get('edm'));
+    const app = yield select((state) => state.get('app', Map()));
 
     const entitySetId :UUID = getReportESId(app);
     const peopleESID :UUID = getPeopleESId(app);
@@ -326,7 +326,7 @@ function* getReportsByDateRangeWorker(action :SequenceAction) :Generator<*, *, *
         return timeB.diff(timeA).toObject().milliseconds;
       });
 
-    const reportEKIDs = reportData.map(report => report.getIn([OPENLATTICE_ID_FQN, 0]));
+    const reportEKIDs = reportData.map((report) => report.getIn([OPENLATTICE_ID_FQN, 0]));
 
     const peopleSearchParams = {
       entitySetId,
@@ -460,15 +460,15 @@ function* updateReportWorker(action :SequenceAction) :Generator<*, *, *> {
 
     yield put(updateReport.request(action.id, value));
 
-    const edm :Map<*, *> = yield select(state => state.get('edm'));
-    const app = yield select(state => state.get('app', Map()));
+    const edm :Map<*, *> = yield select((state) => state.get('edm'));
+    const app = yield select((state) => state.get('app', Map()));
     const reportESID :UUID = getReportESId(app);
     const reportedESID :UUID = getReportedESId(app);
     const staffESID :UUID = getStaffESId(app);
     const datetimePTID :UUID = edm.getIn(['fqnToIdMap', FQN.DATE_TIME_FQN]);
 
     const staffEKID :UUID = yield select(
-      state => state.getIn(['staff', 'currentUser', 'data', OPENLATTICE_ID_FQN, 0], '')
+      (state) => state.getIn(['staff', 'currentUser', 'data', OPENLATTICE_ID_FQN, 0], '')
     );
 
     const associations = {

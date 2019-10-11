@@ -12,7 +12,7 @@ const Content = styled.div`
   min-width: 0;
   justify-content: center;
   transition: opacity 0.5s;
-  opacity: ${props => (props.hasContent ? 0 : 1)};
+  opacity: ${(props) => (props.hasContent ? 0 : 1)};
 `;
 
 const Name = styled.strong`

@@ -72,17 +72,17 @@ export function* submitResponsePlanWorker(action :SequenceAction) :Generator<*, 
 
     const newEntityKeyIdsByEntitySetId = fromJS(response.data).get('entityKeyIds');
 
-    const selectedOrgEntitySetIds = yield select(state => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
+    const selectedOrgEntitySetIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
     const entitySetNamesByEntitySetId = selectedOrgEntitySetIds.flip();
 
     const newEntityKeyIdsByEntitySetName = newEntityKeyIdsByEntitySetId
-      .mapKeys(entitySetId => entitySetNamesByEntitySetId.get(entitySetId));
+      .mapKeys((entitySetId) => entitySetNamesByEntitySetId.get(entitySetId));
 
     const responsePlanEKID = newEntityKeyIdsByEntitySetName.getIn([RESPONSE_PLAN_FQN, 0]);
     const interactionStrategyEKIDs = newEntityKeyIdsByEntitySetName.get(INTERACTION_STRATEGY_FQN);
 
     const newResponsePlanEAKIDMap = constructEntityIndexToIdMap(responsePlanEKID, interactionStrategyEKIDs);
-    const entityIndexToIdMap = yield select(state => state.getIn(['profile', 'responsePlan', 'entityIndexToIdMap']));
+    const entityIndexToIdMap = yield select((state) => state.getIn(['profile', 'responsePlan', 'entityIndexToIdMap']));
     const newEntityIndexToIdMap = entityIndexToIdMap.mergeDeep(newResponsePlanEAKIDMap);
 
     const { path, properties } = value;
@@ -111,7 +111,7 @@ export function* getResponsePlanWorker(action :SequenceAction) :Generator<*, *, 
 
     yield put(getResponsePlan.request(action.id));
 
-    const app :Map = yield select(state => state.get('app', Map()));
+    const app :Map = yield select((state) => state.get('app', Map()));
     const peopleESID :UUID = getESIDFromApp(app, PEOPLE_FQN);
     const subjectOfESID :UUID = getESIDFromApp(app, SUBJECT_OF_FQN);
     const responsePlanESID :UUID = getESIDFromApp(app, RESPONSE_PLAN_FQN);
@@ -163,8 +163,8 @@ export function* getResponsePlanWorker(action :SequenceAction) :Generator<*, *, 
 
       interactionStrategies = fromJS(interactionStrategyResponse.data)
         .get(responsePlanEKID, List())
-        .map(entity => entity.get('neighborDetails', Map()))
-        .filter(entity => !entity.has(TECHNIQUES_FQN))
+        .map((entity) => entity.get('neighborDetails', Map()))
+        .filter((entity) => !entity.has(TECHNIQUES_FQN))
         .sort((stratA, stratB) => {
           const indexA = stratA.getIn([INDEX_FQN, 0]);
           const indexB = stratB.getIn([INDEX_FQN, 0]);
@@ -177,7 +177,7 @@ export function* getResponsePlanWorker(action :SequenceAction) :Generator<*, *, 
     }
 
     const interactionStrategyEKIDs :UUID[] = interactionStrategies
-      .map(strategy => strategy.getIn([OPENLATTICE_ID_FQN, 0]));
+      .map((strategy) => strategy.getIn([OPENLATTICE_ID_FQN, 0]));
 
     const formData = constructResponsePlanFormData(responsePlan, interactionStrategies);
     const entityIndexToIdMap = constructEntityIndexToIdMap(responsePlanEKID, interactionStrategyEKIDs);

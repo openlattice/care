@@ -54,7 +54,7 @@ function* getBasicsWorker(action :SequenceAction) :Generator<any, any, any> {
     if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getBasics.request(action.id, entityKeyId));
 
-    const app :Map = yield select(state => state.get('app', Map()));
+    const app :Map = yield select((state) => state.get('app', Map()));
     const entitySetId :UUID = getESIDFromApp(app, PEOPLE_FQN);
 
     const personResponse = yield call(

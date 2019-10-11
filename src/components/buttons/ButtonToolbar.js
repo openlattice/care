@@ -8,36 +8,36 @@ import styled, { css } from 'styled-components';
 const ToolbarWrapper = styled.div`
   display: flex;
   flex-direction: row;
-  margin-bottom: ${props => (props.noPadding ? 0 : '20px')};
+  margin-bottom: ${(props) => (props.noPadding ? 0 : '20px')};
 `;
 
 const StyledButton = styled.button`
   display: flex;
   justify-content: center;
-  border-top: 1px solid ${props => props.styles.border};
-  border-bottom: 1px solid ${props => props.styles.border};
-  border-right: 1px solid ${props => props.styles.border};
+  border-top: 1px solid ${(props) => props.styles.border};
+  border-bottom: 1px solid ${(props) => props.styles.border};
+  border-right: 1px solid ${(props) => props.styles.border};
   text-decoration: none;
-  padding: ${props => props.styles.padding};
+  padding: ${(props) => props.styles.padding};
   min-width: 130px;
   font-family: 'Open Sans', sans-serif;
   font-size: 12px;
-  font-weight: ${props => (props.selected ? 600 : props.styles.defaultFontWeight)};
-  background-color: ${props => (props.selected ? props.styles.selectedBackgroundColor : 'transparent')};
-  color: ${props => (props.selected ? props.styles.selectedTextColor : '#8e929b')};
+  font-weight: ${(props) => (props.selected ? 600 : props.styles.defaultFontWeight)};
+  background-color: ${(props) => (props.selected ? props.styles.selectedBackgroundColor : 'transparent')};
+  color: ${(props) => (props.selected ? props.styles.selectedTextColor : '#8e929b')};
 
   &:hover {
     cursor: pointer;
 
     ${(props) => {
-      if (!props.selected) {
-        return css`
+    if (!props.selected) {
+      return css`
           color: ${props.styles.hoverColor};
           background-color: ${props.styles.hoverBackgroundColor};
         `;
-      }
-      return '';
-    }}
+    }
+    return '';
+  }}
   }
 
   &:focus {
@@ -46,7 +46,7 @@ const StyledButton = styled.button`
 
   &:first-child {
     border-radius: 4px 0 0 4px;
-    border-left: 1px solid ${props => props.styles.border};
+    border-left: 1px solid ${(props) => props.styles.border};
   }
 
   &:last-child {
@@ -108,7 +108,7 @@ const ButtonToolbar = ({
   const appearance = isBasic ? APPEARANCES.BASIC : APPEARANCES.DEFAULT;
   return (
     <ToolbarWrapper noPadding={noPadding} styles={getColors(appearance)}>
-      { options.map(option => (
+      { options.map((option) => (
         <StyledButton
             key={option.value}
             onClick={option.onClick}

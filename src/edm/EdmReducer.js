@@ -23,9 +23,7 @@ export default function edmReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
 
     case getAllPropertyTypes.case(action.type): {
       return getAllPropertyTypes.reducer(state, action, {
-        REQUEST: () => {
-          return state.set('isFetchingAllPropertyTypes', true);
-        },
+        REQUEST: () => state.set('isFetchingAllPropertyTypes', true),
         SUCCESS: () => {
           const seqAction :SequenceAction = (action :any);
           const propertyTypes :List<Map<*, *>> = fromJS(seqAction.value);
@@ -39,14 +37,10 @@ export default function edmReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
             .set('fqnToIdMap', fqnToIdMap.asImmutable())
             .set('propertyTypesById', propertyTypesById.asImmutable());
         },
-        FAILURE: () => {
-          return state
-            .set('fqnToIdMap', Map())
-            .set('propertyTypesById', Map());
-        },
-        FINALLY: () => {
-          return state.set('isFetchingAllPropertyTypes', false);
-        }
+        FAILURE: () => state
+          .set('fqnToIdMap', Map())
+          .set('propertyTypesById', Map()),
+        FINALLY: () => state.set('isFetchingAllPropertyTypes', false)
       });
     }
 

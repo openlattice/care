@@ -32,9 +32,9 @@ function* getAuthorizationWorker(action :SequenceAction) :Generator<any, any, an
 
     const currentRoles = fromJS(currentRolesResponse.data);
 
-    const selectedOrganizationID :UUID = yield select(state => state.getIn(['app', 'selectedOrganizationId']));
-    const rolesByOrganization = currentRoles.filter(role => role.get('organizationId') === selectedOrganizationID);
-    const principalIds = rolesByOrganization.map(role => role.getIn(['principal', 'id'])).toSet();
+    const selectedOrganizationID :UUID = yield select((state) => state.getIn(['app', 'selectedOrganizationId']));
+    const rolesByOrganization = currentRoles.filter((role) => role.get('organizationId') === selectedOrganizationID);
+    const principalIds = rolesByOrganization.map((role) => role.getIn(['principal', 'id'])).toSet();
     yield put(getAuthorization.success(action.id, principalIds));
   }
   catch (error) {

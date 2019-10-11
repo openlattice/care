@@ -56,15 +56,17 @@ type Props = {
   appearance :Map;
   selectedPerson :Map;
   isLoading :boolean;
+  showEdit :boolean;
 };
 
 const IntroCard = (props :Props) => {
 
   const {
+    appearance,
     isLoading,
     match,
-    appearance,
-    selectedPerson
+    selectedPerson,
+    showEdit,
   } = props;
 
   const formattedName = getLastFirstMiFromPerson(selectedPerson);
@@ -100,7 +102,7 @@ const IntroCard = (props :Props) => {
             <FontAwesomeIcon icon={faUser} fixedWidth />
           </IconWrapper>
           Intro
-          <EditLinkButton mode="primary" to={`${match.url}${EDIT_PATH}${BASIC_PATH}`} />
+          { showEdit && <EditLinkButton mode="primary" to={`${match.url}${EDIT_PATH}${BASIC_PATH}`} /> }
         </H1>
       </CardHeader>
       <CardSegment vertical padding="sm">

@@ -106,7 +106,7 @@ class SubjectInformation extends React.Component<Props> {
       });
     };
 
-    return valueList.map(value => (
+    return valueList.map((value) => (
       <StyledRadio
           key={`${field}-${value}`}
           disabled={!values.get(SUBJECT_INFORMATION.IS_NEW_PERSON)}
@@ -191,7 +191,7 @@ class SubjectInformation extends React.Component<Props> {
                 <DatePicker
                     value={values.get(SUBJECT_INFORMATION.DOB)}
                     isDisabled={!isCreatingNewPerson || disabled}
-                    onChange={value => actions.setInputValue({ field: SUBJECT_INFORMATION.DOB, value })} />
+                    onChange={(value) => actions.setInputValue({ field: SUBJECT_INFORMATION.DOB, value })} />
               </DatePickerWrapper>
             )
           }

@@ -17,7 +17,7 @@ const Centered = styled.div`
   flex: 1;
   font-size: 24px;
 
-  ${props => props.isLoading && crisisCountSkeleton};
+  ${(props) => props.isLoading && crisisCountSkeleton};
 `;
 
 const StrongWithSubtitle = styled.span`
@@ -36,23 +36,21 @@ type Props = {
   isLoading :boolean;
 }
 
-const CrisisCountCard = ({ count, isLoading } :Props) => {
-  return (
-    <Card>
-      <CardSegment padding="sm">
-        <Centered isLoading={isLoading}>
-          {
-            !isLoading
+const CrisisCountCard = ({ count, isLoading } :Props) => (
+  <Card>
+    <CardSegment padding="sm">
+      <Centered isLoading={isLoading}>
+        {
+          !isLoading
             && (
               <StrongWithSubtitle>
                 {`${count} CRISIS CALLS`}
               </StrongWithSubtitle>
             )
-          }
-        </Centered>
-      </CardSegment>
-    </Card>
-  );
-};
+        }
+      </Centered>
+    </CardSegment>
+  </Card>
+);
 
 export default CrisisCountCard;

@@ -64,7 +64,7 @@ import { isPortlandOrg } from '../../utils/Whitelist';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 
-const toLower = list => list.map(o => o.toLowerCase());
+const toLower = (list) => list.map((o) => o.toLowerCase());
 
 function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *> {
   try {
@@ -135,7 +135,7 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *> {
 
       const mapValues = (fqn, initMap, noFilter) => {
         let map = initMap;
-        bhr.get(fqn, List()).filter(val => (noFilter || !!val)).forEach((val) => {
+        bhr.get(fqn, List()).filter((val) => (noFilter || !!val)).forEach((val) => {
           map = map.set(val, map.get(val, 0) + 1);
         });
         return map;
@@ -197,12 +197,20 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *> {
 
       /* Incident counts */
 
-      bhr.get(PRESCRIBED_MEDICATION_FQN, List()).filter(val => !!val).map(val => val.toLowerCase()).forEach((isPrescribed) => {
-        bhr.get(TAKING_MEDICATION_FQN, List()).filter(val => !!val).map(val => val.toLowerCase()).forEach((isTaking) => {
-          medicationCounts = medicationCounts
-            .setIn([isPrescribed, isTaking], medicationCounts.getIn([isPrescribed, isTaking], 0) + 1);
+      bhr
+        .get(PRESCRIBED_MEDICATION_FQN, List())
+        .filter((val) => !!val)
+        .map((val) => val.toLowerCase())
+        .forEach((isPrescribed) => {
+          bhr
+            .get(TAKING_MEDICATION_FQN, List())
+            .filter((val) => !!val)
+            .map((val) => val.toLowerCase())
+            .forEach((isTaking) => {
+              medicationCounts = medicationCounts
+                .setIn([isPrescribed, isTaking], medicationCounts.getIn([isPrescribed, isTaking], 0) + 1);
+            });
         });
-      });
 
       emotionalStateCounts = mapValues(EMOTIONAL_STATE_FQN, emotionalStateCounts);
       behaviorCounts = mapValues(OBSERVED_BEHAVIORS_FQN, behaviorCounts);
@@ -223,8 +231,8 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *> {
       resourceCounts = mapValues(SPECIAL_RESOURCES_CALLED_FQN, resourceCounts);
       certificationCounts = mapValues(OFFICER_CERTIFICATION_FQN, certificationCounts);
 
-      bhr.get(DEESCALATION_TECHNIQUES_FQN, List()).filter(val => !!val).forEach((deescTechnique) => {
-        bhr.get(DISPOSITION_FQN, List()).filter(val => !!val).forEach((disp) => {
+      bhr.get(DEESCALATION_TECHNIQUES_FQN, List()).filter((val) => !!val).forEach((deescTechnique) => {
+        bhr.get(DISPOSITION_FQN, List()).filter((val) => !!val).forEach((disp) => {
           dispositionsByDeescalation = dispositionsByDeescalation.setIn([deescTechnique, disp],
             dispositionsByDeescalation.getIn([deescTechnique, disp], 0) + 1);
         });
@@ -280,6 +288,10 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *> {
   }
 }
 
-export function* loadDashboardDataWatcher() :Generator<*, *, *> {
+function* loadDashboardDataWatcher() :Generator<*, *, *> {
   yield takeEvery(LOAD_DASHBOARD_DATA, loadDashboardDataWorker);
 }
+
+export {
+  loadDashboardDataWatcher
+};

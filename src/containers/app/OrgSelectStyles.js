@@ -37,8 +37,8 @@ const orgSelectStyles = {
     };
     return { ...base, ...style };
   },
-  menuList: base => ({ ...base, borderRadius: '4px' }),
-  menuPortal: base => ({ ...base, zIndex: 550 }),
+  menuList: (base) => ({ ...base, borderRadius: '4px' }),
+  menuPortal: (base) => ({ ...base, zIndex: 550 }),
   menu: (base, state) => {
     const { selectProps } = state;
     const display = (selectProps && selectProps.hideMenu) ? 'none' : 'block';
@@ -72,8 +72,8 @@ const orgSelectStyles = {
     return { ...base, color: isDisabled ? '#8e929b' : '#2e2e34' };
   },
   indicatorSeparator: () => ({ display: 'none' }),
-  indicatorsContainer: base => ({ ...base, marginRight: '5px', color: '#b6bbc7' }),
-  clearIndicator: base => ({ ...base, padding: '0', margin: '5px' }),
+  indicatorsContainer: (base) => ({ ...base, marginRight: '5px', color: '#b6bbc7' }),
+  clearIndicator: (base) => ({ ...base, padding: '0', margin: '5px' }),
   dropdownIndicator: (base, state) => {
     const { selectProps } = state;
     const style = {
@@ -84,7 +84,7 @@ const orgSelectStyles = {
     };
     return { ...base, ...style };
   },
-  valueContainer: base => ({ ...base, padding: '0 10px' }),
+  valueContainer: (base) => ({ ...base, padding: '0 10px' }),
 };
 
 export { orgSelectStyles };

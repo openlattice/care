@@ -132,7 +132,7 @@ const ORDERED_FQNS = [
   FQN.COMPLAINANT_ADDRESS_FQN,
   FQN.COMPLAINANT_PHONE_FQN,
   FQN.COMPLAINANT_RELATIONSHIP_FQN
-].map(fqn => fqn.toString());
+].map((fqn) => fqn.toString());
 
 function* downloadFormsWorker(action :SequenceAction) :Generator<*, *, *> {
 
@@ -145,14 +145,14 @@ function* downloadFormsWorker(action :SequenceAction) :Generator<*, *, *> {
 
     const startDT = DateTime.fromISO(startDate);
     const endDT = DateTime.fromISO(endDate);
-    const edm :Map = yield select(state => state.get('edm'));
-    const app = yield select(state => state.get('app', Map()));
+    const edm :Map = yield select((state) => state.get('edm'));
+    const app = yield select((state) => state.get('app', Map()));
     const reportESID = getReportESId(app);
     const peopleESID = getPeopleESId(app);
     const appearsInESID = getAppearsInESId(app);
 
     const projection = yield call(EntityDataModelApi.getEntityDataModelProjection,
-      [reportESID, peopleESID, appearsInESID].map(id => ({
+      [reportESID, peopleESID, appearsInESID].map((id) => ({
         id,
         type: 'EntitySet',
         include: ['EntitySet', 'PropertyTypeInEntitySet']
@@ -256,10 +256,10 @@ function* downloadFormsWorker(action :SequenceAction) :Generator<*, *, *> {
       jsonResults = jsonResults.push(combinedEntity);
     });
 
-    const fieldsNotInList = allHeaders.filter(val => !ORDERED_FQNS.includes(titleToFqn.get(val)));
+    const fieldsNotInList = allHeaders.filter((val) => !ORDERED_FQNS.includes(titleToFqn.get(val)));
 
     const fields = allHeaders
-      .filter(val => ORDERED_FQNS.includes(titleToFqn.get(val)))
+      .filter((val) => ORDERED_FQNS.includes(titleToFqn.get(val)))
       .sort((h1, h2) => {
         const ind1 = ORDERED_FQNS.indexOf(titleToFqn.get(h1));
         const ind2 = ORDERED_FQNS.indexOf(titleToFqn.get(h2));

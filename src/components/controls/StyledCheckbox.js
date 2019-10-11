@@ -8,7 +8,7 @@ import styled from 'styled-components';
 const Control = styled.label`
   display: inline-block;
   position: relative;
-  color: ${props => (props.disabled ? '#8e929b' : '#2e2e34')};
+  color: ${(props) => (props.disabled ? '#8e929b' : '#2e2e34')};
   font-size: 16px;
   font-family: 'Open Sans', sans-serif;
   font-weight: normal;
@@ -96,7 +96,7 @@ const CheckboxIndicator = styled.div`
 
 const CheckboxLabel = styled.span`
   margin-left: 5px;
-  font-weight: ${props => (props.bold ? 600 : 400)};
+  font-weight: ${(props) => (props.bold ? 600 : 400)};
 `;
 
 type Props = {

@@ -13,13 +13,13 @@ const useAuthorization = (feature :string, callback :any) => {
     callback();
   }, [callback]);
 
-  const allowedPrincipals :List<string> = useSelector(state => state
+  const allowedPrincipals :List<string> = useSelector((state) => state
     .getIn(['app', 'selectedOrganizationSettings', 'private', feature]));
 
-  const currentPrincipalIds :Set<string> = useSelector(state => state
+  const currentPrincipalIds :Set<string> = useSelector((state) => state
     .getIn(['authorization', 'currentPrincipalIds'])) || Set();
 
-  const fetchState = useSelector(state => state.getIn(['authorization', 'fetchState']));
+  const fetchState = useSelector((state) => state.getIn(['authorization', 'fetchState']));
 
   useEffect(() => {
     const loadState = fetchState === RequestStates.PENDING;

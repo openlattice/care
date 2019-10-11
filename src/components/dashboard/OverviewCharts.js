@@ -37,7 +37,7 @@ const ChartRow = styled.div`
 `;
 
 const FractionWidthContainer = styled.div`
-  width: ${props => ((100 / props.items) - 1)}%;
+  width: ${(props) => ((100 / props.items) - 1)}%;
 `;
 
 const TooltipRow = styled.div`
@@ -63,20 +63,18 @@ type Props = {
 
 const OverviewCharts = ({ dashboardCounts, months } :Props) => {
 
-  const tooltip = (counted, { title, formatAsString }, { label, payload }) => {
-    return (
-      <ChartTooltip>
-        <TooltipRow>
-          <div>{`${title}: ${formatAsString(label)}`}</div>
+  const tooltip = (counted, { title, formatAsString }, { label, payload }) => (
+    <ChartTooltip>
+      <TooltipRow>
+        <div>{`${title}: ${formatAsString(label)}`}</div>
+      </TooltipRow>
+      {(payload && payload.length) ? payload.map((point) => (
+        <TooltipRow key={point.name}>
+          <div>{`Number of ${counted}: ${point.value}`}</div>
         </TooltipRow>
-        {(payload && payload.length) ? payload.map(point => (
-          <TooltipRow key={point.name}>
-            <div>{`Number of ${counted}: ${point.value}`}</div>
-          </TooltipRow>
-        )) : null}
-      </ChartTooltip>
-    );
-  };
+      )) : null}
+    </ChartTooltip>
+  );
 
   const getTimeAsNumber = (timeStr) => {
     const time = moment(timeStr, TIME_STR);
@@ -124,7 +122,7 @@ const OverviewCharts = ({ dashboardCounts, months } :Props) => {
     const data = countMap
       .keySeq()
       .sort((o1, o2) => (moment(o1, momentConversionKey).isBefore(moment(o2, momentConversionKey)) ? -1 : 1))
-      .map(o => ({
+      .map((o) => ({
         [title]: formatAsNumber(o),
         count: countMap.get(o)
       })).toJS();
@@ -137,7 +135,7 @@ const OverviewCharts = ({ dashboardCounts, months } :Props) => {
           <LineChart width={500} height={250} data={data}>
             <XAxis type="number" dataKey={title} tickFormatter={formatAsString} domain={[0, maxVal]} />
             <YAxis type="number" dataKey="count" />
-            <Tooltip content={pointData => tooltip('reports', chartType, pointData)} />
+            <Tooltip content={(pointData) => tooltip('reports', chartType, pointData)} />
             <Line type="monotone" dataKey="count" stroke={color} strokeWidth={2} dot={false} />
           </LineChart>
         </ChartWrapper>

@@ -29,7 +29,7 @@ const stripIdField = (entity :Object) => {
     return entity.delete(OPENLATTICE_ID_FQN).delete('id');
   }
 
-  const newEntity = Object.assign({}, entity);
+  const newEntity = { ...entity };
   if (newEntity[OPENLATTICE_ID_FQN]) {
     delete newEntity[OPENLATTICE_ID_FQN];
   }
@@ -75,7 +75,8 @@ const inchesToFeetString = (inches :number) => {
 
 const getEntityKeyId = (entity :Map | Object) :string => getIn(entity, [OPENLATTICE_ID_FQN, 0], '');
 
-const getEntityKeyIdsFromList = (entityList :List) => entityList.map(entity => getIn(entity, [OPENLATTICE_ID_FQN, 0]));
+const getEntityKeyIdsFromList = (entityList :List) => entityList
+  .map((entity) => getIn(entity, [OPENLATTICE_ID_FQN, 0]));
 
 const getFormDataFromEntity = (
   entity :Map | Object,
@@ -139,10 +140,10 @@ const formatDataGraphResponse = (responseData :Map, app :Map) => {
   const entitySetNamesByEntitySetId = selectedOrgEntitySetIds.flip();
 
   const entities = newEntityKeyIdsByEntitySetId
-    .mapKeys(entitySetId => entitySetNamesByEntitySetId.get(entitySetId));
+    .mapKeys((entitySetId) => entitySetNamesByEntitySetId.get(entitySetId));
 
   const associations = newAssociationKeyIdsByEntitySetId
-    .mapKeys(entitySetId => entitySetNamesByEntitySetId.get(entitySetId));
+    .mapKeys((entitySetId) => entitySetNamesByEntitySetId.get(entitySetId));
 
   return {
     entities,

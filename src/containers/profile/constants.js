@@ -27,7 +27,7 @@ const labelMapAttributes = OrderedMap({
   [FQN.EYE_COLOR_FQN]: 'Eye Color',
 });
 
-const generateOptions = (list :string[]) :Object[] => list.map(value => ({
+const generateOptions = (list :string[]) :Object[] => list.map((value) => ({
   label: value,
   value
 }));

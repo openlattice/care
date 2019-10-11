@@ -9,9 +9,14 @@ import {
   CardHeader,
   CardSegment
 } from 'lattice-ui-kit';
+import { withRouter } from 'react-router-dom';
+import type { Match } from 'react-router-dom';
 
+
+import EditLinkButton from '../../../components/buttons/EditLinkButton';
 import BehaviorItem from './BehaviorItem';
 import Triggers from './Triggers';
+import { OFFICER_SAFETY_PATH, EDIT_PATH } from '../../../core/router/Routes';
 import { DashedList, H1, IconWrapper } from '../../../components/layout';
 import {
   ARMED_WITH_WEAPON_FQN,
@@ -36,8 +41,10 @@ const StyledCardSegment = styled(CardSegment)`
 
 type Props = {
   isLoading :boolean;
+  match :Match;
   officerSafety :List<Map>;
   reports :List<Map>;
+  showEdit :boolean;
   triggers :List<Map>;
 };
 
@@ -66,7 +73,7 @@ class OfficerSafetyCard extends PureComponent<Props> {
         incrementValueAtKey(mutable, THREATENED_VIOLENCE, hadInjuries);
       });
     })
-    .sortBy(count => count, (valueA, valueB) => valueB - valueA)
+    .sortBy((count) => count, (valueA, valueB) => valueB - valueA)
     .toKeyedSeq()
     .toArray();
 
@@ -97,12 +104,12 @@ class OfficerSafetyCard extends PureComponent<Props> {
   render() {
     const {
       isLoading,
+      match,
       officerSafety,
-      reports,
+      showEdit,
       triggers
     } = this.props;
-    const total = reports.count();
-    const headerMode = (total && !isLoading) ? 'warning' : 'default';
+    const headerMode = 'warning';
     return (
       <Card>
         <CardHeader mode={headerMode} padding="sm">
@@ -111,6 +118,7 @@ class OfficerSafetyCard extends PureComponent<Props> {
               <FontAwesomeIcon icon={faExclamationTriangle} fixedWidth />
             </IconWrapper>
             Officer Safety
+            { showEdit && <EditLinkButton mode="subtle" to={`${match.url}${EDIT_PATH}${OFFICER_SAFETY_PATH}`} /> }
           </H1>
         </CardHeader>
         <StyledCardSegment padding="sm" vertical>
@@ -127,4 +135,4 @@ class OfficerSafetyCard extends PureComponent<Props> {
   }
 }
 
-export default OfficerSafetyCard;
+export default withRouter(OfficerSafetyCard);

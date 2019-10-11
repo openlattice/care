@@ -62,7 +62,7 @@ function* getAddressWorker(action :SequenceAction) :Generator<any, any, any> {
 
     yield put(getAddress.request(action.id, entityKeyId));
 
-    const app :Map = yield select(state => state.get('app', Map()));
+    const app :Map = yield select((state) => state.get('app', Map()));
     const entitySetId :UUID = getESIDFromApp(app, PEOPLE_FQN);
     const locationESID :UUID = getESIDFromApp(app, LOCATION_FQN);
     const locatedAtESID :UUID = getESIDFromApp(app, LOCATED_AT_FQN);
@@ -141,11 +141,11 @@ function* submitAddressWorker(action :SequenceAction) :Generator<any, any, any> 
 
     const newEntityKeyIdsByEntitySetId = fromJS(response.data).get('entityKeyIds');
 
-    const selectedOrgEntitySetIds = yield select(state => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
+    const selectedOrgEntitySetIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
     const entitySetNamesByEntitySetId = selectedOrgEntitySetIds.flip();
 
     const newEntityKeyIdsByEntitySetName = newEntityKeyIdsByEntitySetId
-      .mapKeys(entitySetId => entitySetNamesByEntitySetId.get(entitySetId));
+      .mapKeys((entitySetId) => entitySetNamesByEntitySetId.get(entitySetId));
 
     const locationEKID = newEntityKeyIdsByEntitySetName.getIn([LOCATION_FQN, 0]);
 
