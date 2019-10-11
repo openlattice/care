@@ -57,8 +57,7 @@ const ResponsePlanCard = ({
               const ekid = strategy.getIn([OPENLATTICE_ID_FQN, 0]);
               return <InteractionStrategy key={ekid} description={description} index={step + 1} title={title} />;
             })
-        )
-      }
+        )}
     </CardSegment>
   </Card>
 );

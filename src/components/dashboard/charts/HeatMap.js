@@ -48,8 +48,8 @@ const Row = styled.div`
 const BaseCell = styled.div`
   display: flex;
   border-radius: 5px;
-  width: ${props => (props.square ? `${props.size}px` : '100%')};
-  height: ${props => props.size}px;
+  width: ${(props) => (props.square ? `${props.size}px` : '100%')};
+  height: ${(props) => props.size}px;
   margin: 2px;
   display: flex;
   flex-direction: row;
@@ -196,26 +196,27 @@ const HeatMap = ({
       return 0;
     }
     return Math.round(max ** (index / heatmapColors.length));
-  }
-
-  const renderLegend = () => {
-    return (
-      <LegendWrapper>
-        {heatmapColors.map((color, index) => (
-          <LegendItem key={`legend|${index}`}>
-            <LegendColor color={color} />
-            <span>&ge; {getLegendValue(index)}</span>
-          </LegendItem>
-        ))}
-      </LegendWrapper>
-    );
   };
+
+  const renderLegend = () => (
+    <LegendWrapper>
+      {heatmapColors.map((color, index) => (
+        <LegendItem key={`legend|${index}`}>
+          <LegendColor color={color} />
+          <span>
+&ge;
+            {getLegendValue(index)}
+          </span>
+        </LegendItem>
+      ))}
+    </LegendWrapper>
+  );
 
   return (
     <Wrapper>
       <Title>{title}</Title>
       {renderHeaderRow()}
-      {rowHeaders.map(rowHeader => renderRow(rowHeader))}
+      {rowHeaders.map((rowHeader) => renderRow(rowHeader))}
       {renderLegend()}
     </Wrapper>
   );
@@ -223,8 +224,8 @@ const HeatMap = ({
 
 HeatMap.defaultProps = {
   withContent: false,
-  colHeaderFormatter: col => col,
-  rowHeaderFormatter: row => row,
+  colHeaderFormatter: (col) => col,
+  rowHeaderFormatter: (row) => row,
   square: false,
   exponential: false
 };

@@ -66,7 +66,7 @@ class SearchReportsContainer extends Component<Props> {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   searchResults: state.getIn(['reports', 'reportsByDateRange'], List()),
   fetchState: state.getIn(['reports', 'fetchState'])
 });

@@ -30,7 +30,7 @@ const DropdownButtonWrapper = styled.div`
     }
     return '';
   }}
-  width: ${props => (props.fullSize ? '100%' : 'auto')};
+  width: ${(props) => (props.fullSize ? '100%' : 'auto')};
   display: flex;
   flex: 0 auto;
   flex-direction: column;
@@ -50,12 +50,12 @@ const BaseButton = styled(BasicButton)`
     margin-left: 10px;
   }
 
-  background-color: ${props => (props.open ? '#8e929b' : '#f0f0f7')};
-  color: ${props => (props.open ? '#ffffff' : '#8e929b')};
+  background-color: ${(props) => (props.open ? '#8e929b' : '#f0f0f7')};
+  color: ${(props) => (props.open ? '#ffffff' : '#8e929b')};
 
   &:hover {
-    background-color: ${props => (props.open ? '#8e929b' : '#f0f0f7')} !important;
-    color: ${props => (props.open ? '#ffffff' : '#8e929b')} !important;
+    background-color: ${(props) => (props.open ? '#8e929b' : '#f0f0f7')} !important;
+    color: ${(props) => (props.open ? '#ffffff' : '#8e929b')} !important;
   }
 `;
 
@@ -66,14 +66,14 @@ const MenuContainer = styled.div`
   position: absolute;
   z-index: 1;
   min-width: max-content;
-  max-width: ${props => (props.fullSize ? '100%' : '400px')};
-  width: ${props => (props.fullSize ? '100%' : 'auto')};
-  visibility: ${props => (props.open ? 'visible' : 'hidden')}};
+  max-width: ${(props) => (props.fullSize ? '100%' : '400px')};
+  width: ${(props) => (props.fullSize ? '100%' : 'auto')};
+  visibility: ${(props) => (props.open ? 'visible' : 'hidden')}};
   box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.1);
-  top: ${props => (props.openAbove ? 'auto' : '45px')};
-  bottom: ${props => (props.openAbove ? '45px' : 'auto')};
-  right: ${props => (props.openAbove ? 'auto' : '0')};;
-  left: ${props => (props.openAbove ? '0' : 'auto')};;
+  top: ${(props) => (props.openAbove ? 'auto' : '45px')};
+  bottom: ${(props) => (props.openAbove ? '45px' : 'auto')};
+  right: ${(props) => (props.openAbove ? 'auto' : '0')};;
+  left: ${(props) => (props.openAbove ? '0' : 'auto')};;
   overflow: visible;
   display: flex;
   flex-direction: column;
@@ -113,11 +113,9 @@ export default class DropdownButton extends React.Component<Props, State> {
     this.setState({ open: !this.state.open });
   };
 
-  getOptionFn = (optionFn) => {
-    return (e) => {
-      e.stopPropagation();
-      optionFn(e);
-    }
+  getOptionFn = (optionFn) => (e) => {
+    e.stopPropagation();
+    optionFn(e);
   }
 
   handleOnClick = (e) => {
@@ -134,12 +132,11 @@ export default class DropdownButton extends React.Component<Props, State> {
           <img src={imgSrc} role="presentation" />
         </BaseButton>
         <MenuContainer open={this.state.open} {...this.props}>
-          {this.props.options.map(option =>
-            (
-              <button key={option.label} onClick={this.handleOnClick} onMouseDown={option.onClick}>
-                {option.label}
-              </button>))
-          }
+          {this.props.options.map((option) => (
+            <button key={option.label} onClick={this.handleOnClick} onMouseDown={option.onClick}>
+              {option.label}
+            </button>
+          ))}
         </MenuContainer>
       </DropdownButtonWrapper>
     );

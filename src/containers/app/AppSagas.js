@@ -133,7 +133,7 @@ function* loadAppWorker(action :SequenceAction) :Generator<*, *, *> {
 
     const appSettingsRequests = appSettingsESIDByOrgId
       .valueSeq()
-      .map(entitySetId => (
+      .map((entitySetId) => (
         call(searchEntitySetDataWorker, searchEntitySetData({ entitySetId, searchOptions }))
       ));
 
@@ -205,9 +205,9 @@ function* loadHospitalsWorker(action :SequenceAction) :Generator<*, *, *> {
   try {
     yield put(loadHospitals.request(action.id));
 
-    const organizationId :UUID = yield select(state => state.getIn(['app', 'selectedOrganizationId']));
+    const organizationId :UUID = yield select((state) => state.getIn(['app', 'selectedOrganizationId']));
     const entitySetId :UUID = yield select(
-      state => state.getIn(['app', HOSPITALS_FQN, 'entitySetsByOrganization', organizationId])
+      (state) => state.getIn(['app', HOSPITALS_FQN, 'entitySetsByOrganization', organizationId])
     );
 
     const response = yield call(getEntitySetDataWorker, getEntitySetData({ entitySetId }));
@@ -243,7 +243,7 @@ function* switchOrganizationWorker(action :Object) :Generator<*, *, *> {
     const { value } = action;
     if (!isValidUuid(value)) throw ERR_ACTION_VALUE_TYPE;
 
-    const currentOrgId = yield select(state => state.getIn(['app', 'selectedOrganizationId']));
+    const currentOrgId = yield select((state) => state.getIn(['app', 'selectedOrganizationId']));
     if (value !== currentOrgId) {
       AccountUtils.storeOrganizationId(value);
       yield put(push(Routes.HOME_PATH));

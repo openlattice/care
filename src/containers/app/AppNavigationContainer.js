@@ -34,7 +34,7 @@ const NavLinkWrapper = styled(NavLink).attrs({
   display: flex;
   font-size: 12px;
   letter-spacing: 0;
-  margin-right: ${props => (props.dropdown ? 0 : 30)}px;
+  margin-right: ${(props) => (props.dropdown ? 0 : 30)}px;
   outline: none;
   padding: 13px 2px 10px 2px;
   text-align: left;
@@ -59,10 +59,10 @@ const NavLinkWrapper = styled(NavLink).attrs({
 
 const NavigationContentWrapper = styled.nav`
   display: flex;
-  flex-direction: ${props => (props.dropdown ? 'column' : 'row')};
+  flex-direction: ${(props) => (props.dropdown ? 'column' : 'row')};
   flex: 0 0 auto;
   justify-content: flex-start;
-  margin-left: ${props => (props.dropdown ? 0 : 30)}px;
+  margin-left: ${(props) => (props.dropdown ? 0 : 30)}px;
 
   ${(props) => {
     if (props.dropdown) {

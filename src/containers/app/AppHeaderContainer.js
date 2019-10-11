@@ -102,19 +102,19 @@ const shouldDisplay = (size, props) => {
 };
 
 const DisplayControl = styled.div`
-  display: ${props => (shouldDisplay(0, props) ? 'inherit' : 'none')};
-  ${props => (props.fullWidth ? css`width: 100%;` : '')}
+  display: ${(props) => (shouldDisplay(0, props) ? 'inherit' : 'none')};
+  ${(props) => (props.fullWidth ? css`width: 100%;` : '')}
 
   @media only screen and (min-width: ${MEDIA_QUERY_TECH_SM}px) {
-    display: ${props => (shouldDisplay(MEDIA_QUERY_TECH_SM, props) ? 'inherit' : 'none')};
+    display: ${(props) => (shouldDisplay(MEDIA_QUERY_TECH_SM, props) ? 'inherit' : 'none')};
   }
 
   @media only screen and (min-width: ${MEDIA_QUERY_MD}px) {
-    display: ${props => (shouldDisplay(MEDIA_QUERY_MD, props) ? 'inherit' : 'none')};
+    display: ${(props) => (shouldDisplay(MEDIA_QUERY_MD, props) ? 'inherit' : 'none')};
   }
 
   @media only screen and (min-width: ${MEDIA_QUERY_LG}px) {
-    display: ${props => (shouldDisplay(MEDIA_QUERY_LG, props) ? 'inherit' : 'none')};
+    display: ${(props) => (shouldDisplay(MEDIA_QUERY_LG, props) ? 'inherit' : 'none')};
   }
 `;
 
@@ -240,7 +240,7 @@ class AppHeaderContainer extends Component<Props, {}> {
 
     return (
       <Select
-          value={organizationOptions.find(option => option.value === selectedOrganizationId)}
+          value={organizationOptions.find((option) => option.value === selectedOrganizationId)}
           isClearable={false}
           isLoading={isLoadingApp}
           isMulti={false}

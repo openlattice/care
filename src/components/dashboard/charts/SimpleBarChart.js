@@ -14,7 +14,7 @@ import ChartWrapper from './ChartWrapper';
 import CustomTick from './CustomTick';
 
 const FractionWidthContainer = styled.div`
-  width: ${props => ((100 / props.items) - 1)}%;
+  width: ${(props) => ((100 / props.items) - 1)}%;
 `;
 
 const TooltipRow = styled.div`
@@ -68,7 +68,7 @@ const SimpleBarChart = ({
       const v2 = isNumeric ? o2 : countMap.get(o2);
       return v1 > v2 ? -1 : 1;
     })
-    .map(o => ({
+    .map((o) => ({
       [title]: isNumeric ? o : `${o}`,
       count: countMap.get(o)
     })).toJS();
@@ -87,7 +87,7 @@ const SimpleBarChart = ({
         <BarChart layout={layout} width={width} height={chartHeight} data={data}>
           <KeyAxis type={isNumeric ? 'number' : 'category'} dataKey={title} {...tickProps} />
           <NumberAxis type="number" dataKey="count" />
-          <Tooltip content={pointData => tooltip('consumers', { title, formatAsString: i => `${i}` }, pointData)} />
+          <Tooltip content={(pointData) => tooltip('consumers', { title, formatAsString: (i) => `${i}` }, pointData)} />
           <Bar dataKey="count" fill={color} />
         </BarChart>
       </ChartWrapper>

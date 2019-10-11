@@ -59,7 +59,7 @@ function* getAppearanceWorker(action :SequenceAction) :Generator<any, any, any> 
 
     yield put(getAppearance.request(action.id, entityKeyId));
 
-    const app :Map = yield select(state => state.get('app', Map()));
+    const app :Map = yield select((state) => state.get('app', Map()));
     const entitySetId :UUID = getESIDFromApp(app, PEOPLE_FQN);
     const physicalAppearanceESID :UUID = getESIDFromApp(app, PHYSICAL_APPEARANCE_FQN);
     const observedInESID :UUID = getESIDFromApp(app, OBSERVED_IN_FQN);
@@ -144,11 +144,11 @@ function* submitAppearanceWorker(action :SequenceAction) :Generator<any, any, an
 
     const newEntityKeyIdsByEntitySetId = fromJS(response.data).get('entityKeyIds');
 
-    const selectedOrgEntitySetIds = yield select(state => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
+    const selectedOrgEntitySetIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
     const entitySetNamesByEntitySetId = selectedOrgEntitySetIds.flip();
 
     const newEntityKeyIdsByEntitySetName = newEntityKeyIdsByEntitySetId
-      .mapKeys(entitySetId => entitySetNamesByEntitySetId.get(entitySetId));
+      .mapKeys((entitySetId) => entitySetNamesByEntitySetId.get(entitySetId));
 
     const appearanceEKID = newEntityKeyIdsByEntitySetName.getIn([PHYSICAL_APPEARANCE_FQN, 0]);
     const marksEKID = newEntityKeyIdsByEntitySetName.getIn([IDENTIFYING_CHARACTERISTICS_FQN, 0]);

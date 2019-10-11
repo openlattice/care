@@ -99,7 +99,7 @@ class ReviewContainer extends React.Component<Props> {
       list = list.splice(list.indexOf(OTHER), 1, values.get(otherField, ''));
     }
 
-    return list.map(val => <span key={val}>{val}</span>);
+    return list.map((val) => <span key={val}>{val}</span>);
   }
 
   renderName = () => {
@@ -199,11 +199,11 @@ class ReviewContainer extends React.Component<Props> {
         weapons = weapons.splice(weapons.indexOf(OTHER), 1, officerSafety.get(OTHER_WEAPON, ''));
       }
 
-      violenceList = violenceList.concat(weapons.map(val => `Brandished weapon: ${val}`));
+      violenceList = violenceList.concat(weapons.map((val) => `Brandished weapon: ${val}`));
     }
 
     if (officerSafety.get(THREATENED_VIOLENCE)) {
-      violenceList = violenceList.concat(officerSafety.get(THREATENED_PERSON_RELATIONSHIP, List()).map(val => (
+      violenceList = violenceList.concat(officerSafety.get(THREATENED_PERSON_RELATIONSHIP, List()).map((val) => (
         `Threatened violence against: ${val}`
       )));
     }
@@ -217,14 +217,14 @@ class ReviewContainer extends React.Component<Props> {
           officerSafety.get(OTHER_INJURED_PERSON, '')
         );
       }
-      violenceList = violenceList.concat(injuredParties.map(val => `Injured party: ${val}`));
+      violenceList = violenceList.concat(injuredParties.map((val) => `Injured party: ${val}`));
 
       let injuryTypes = officerSafety.get(INJURY_TYPE, List());
       if (injuryTypes.includes(OTHER)) {
         injuryTypes = injuryTypes.splice(injuryTypes.indexOf(OTHER), 1, officerSafety.get(OTHER_INJURY_TYPE, ''));
       }
 
-      violenceList = violenceList.concat(injuryTypes.map(val => `Injury type: ${val}`));
+      violenceList = violenceList.concat(injuryTypes.map((val) => `Injury type: ${val}`));
     }
 
     return (
@@ -237,7 +237,7 @@ class ReviewContainer extends React.Component<Props> {
           violenceList.size ? (
             <Section>
               <h1>Threats / Violence / Weapons</h1>
-              <div>{violenceList.map(val => <span key={val}>{val}</span>)}</div>
+              <div>{violenceList.map((val) => <span key={val}>{val}</span>)}</div>
             </Section>
           ) : null
         }
@@ -266,7 +266,7 @@ class ReviewContainer extends React.Component<Props> {
       dispositionValues = dispositionValues.splice(
         dispositionValues.indexOf(fieldName),
         1,
-        ...list.map(val => `${fieldName}: ${val}`).toJS()
+        ...list.map((val) => `${fieldName}: ${val}`).toJS()
       );
     };
 
@@ -321,7 +321,7 @@ class ReviewContainer extends React.Component<Props> {
         }
         <Section>
           <h1>Disposition</h1>
-          <div>{dispositionValues.map(val => <span key={val}>{val}</span>)}</div>
+          <div>{dispositionValues.map((val) => <span key={val}>{val}</span>)}</div>
         </Section>
       </>
     );

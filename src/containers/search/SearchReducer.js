@@ -23,21 +23,13 @@ export default function searchReducer(state :Map<*, *> = INITIAL_STATE, action :
 
     case searchConsumers.case(action.type): {
       return searchConsumers.reducer(state, action, {
-        REQUEST: () => {
-          return state
-            .setIn(['consumers', 'isSearching'], true)
-            .setIn(['consumers', 'searchResults'], List())
-            .setIn(['consumers', 'searchComplete'], false);
-        },
-        SUCCESS: () => {
-          return state.setIn(['consumers', 'searchResults'], fromJS(action.value.hits));
-        },
-        FAILURE: () => {
-          return state.setIn(['consumers', 'searchResults'], List());
-        },
-        FINALLY: () => {
-          return state.setIn(['consumers', 'isSearching'], false).setIn(['consumers', 'searchComplete'], true);
-        }
+        REQUEST: () => state
+          .setIn(['consumers', 'isSearching'], true)
+          .setIn(['consumers', 'searchResults'], List())
+          .setIn(['consumers', 'searchComplete'], false),
+        SUCCESS: () => state.setIn(['consumers', 'searchResults'], fromJS(action.value.hits)),
+        FAILURE: () => state.setIn(['consumers', 'searchResults'], List()),
+        FINALLY: () => state.setIn(['consumers', 'isSearching'], false).setIn(['consumers', 'searchComplete'], true)
       });
     }
 

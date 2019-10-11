@@ -33,7 +33,7 @@ const ChartRow = styled.div`
 `;
 
 const FractionWidthContainer = styled.div`
-  width: ${props => ((100 / props.items) - 1)}%;
+  width: ${(props) => ((100 / props.items) - 1)}%;
 `;
 
 const TooltipRow = styled.div`
@@ -123,7 +123,7 @@ const IncidentCharts = ({ dashboardCounts } :Props) => {
           <BarChart width={width} height={250} data={data}>
             <XAxis type="category" dataKey={title} />
             <YAxis type="number" />
-            <Tooltip content={pointData => tooltip(null, { title, formatAsString: i => i }, pointData, headers)} />
+            <Tooltip content={(pointData) => tooltip(null, { title, formatAsString: (i) => i }, pointData, headers)} />
             {fields.toList().map((dataKey, index) => <Bar key={dataKey} dataKey={dataKey} fill={colors[index]} />)}
             <Legend />
           </BarChart>

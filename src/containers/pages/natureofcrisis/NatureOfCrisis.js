@@ -75,7 +75,7 @@ const NatureOfCrisis = ({ values, actions, disabled } :Props) => {
       }
     };
 
-    const checkboxes = valueList.map(value => (
+    const checkboxes = valueList.map((value) => (
       <>
         <StyledCheckbox
             disabled={disabled}
@@ -147,7 +147,7 @@ const NatureOfCrisis = ({ values, actions, disabled } :Props) => {
           <h1>Current Housing Situation</h1>
           <RequiredField>Select one.</RequiredField>
         </Header>
-        {HOUSING_SITUATIONS.map(housing => renderRadio(CRISIS_NATURE.HOUSING, housing, housing))}
+        {HOUSING_SITUATIONS.map((housing) => renderRadio(CRISIS_NATURE.HOUSING, housing, housing))}
       </FormSectionWithValidation>
     </FormWrapper>
   );

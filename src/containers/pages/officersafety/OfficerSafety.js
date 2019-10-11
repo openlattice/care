@@ -72,7 +72,7 @@ const OfficerSafety = ({ values, actions, disabled } :Props) => {
       }
     };
 
-    const checkboxes = valueList.map(value => (
+    const checkboxes = valueList.map((value) => (
       <StyledCheckbox
           disabled={disabled}
           name={field}

@@ -120,13 +120,13 @@ class DashboardContainer extends React.Component<Props, State> {
         break;
     }
 
-    const viewOptions = Object.values(LAYOUTS).map(value => ({
+    const viewOptions = Object.values(LAYOUTS).map((value) => ({
       label: value,
       value,
       onClick: () => this.setState({ layout: value })
     }));
 
-    const timeOptions = Object.values(TIME_LENGTHS).map(range => ({
+    const timeOptions = Object.values(TIME_LENGTHS).map((range) => ({
       label: range.label,
       onClick: () => {
         this.setState({ timeRange: range });

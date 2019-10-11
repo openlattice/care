@@ -31,7 +31,7 @@ class BehaviorCard extends PureComponent<Props> {
   }
 
   countBehaviors = (reports :List) :Map => countPropertyOccurrance(reports, OBSERVED_BEHAVIORS_FQN)
-    .sortBy(count => count, (valueA, valueB) => valueB - valueA)
+    .sortBy((count) => count, (valueA, valueB) => valueB - valueA)
     .toKeyedSeq()
     .toArray();
 

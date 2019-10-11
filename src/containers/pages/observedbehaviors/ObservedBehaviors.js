@@ -87,7 +87,7 @@ const ObservedBehaviors = ({ values, actions, disabled } :Props) => {
       }
     };
 
-    const checkboxes = valueList.map(value => (
+    const checkboxes = valueList.map((value) => (
       <>
         <StyledCheckbox
             disabled={disabled}
@@ -115,16 +115,14 @@ const ObservedBehaviors = ({ values, actions, disabled } :Props) => {
     );
   };
 
-  const renderSingleCheckbox = (field, label) => {
-    return (
-      <StyledCheckbox
-          disabled={disabled}
-          name={field}
-          checked={values.get(field)}
-          label={label}
-          onChange={({ target }) => actions.setInputValue({ field, value: target.checked })} />
-    );
-  };
+  const renderSingleCheckbox = (field, label) => (
+    <StyledCheckbox
+        disabled={disabled}
+        name={field}
+        checked={values.get(field)}
+        label={label}
+        onChange={({ target }) => actions.setInputValue({ field, value: target.checked })} />
+  );
 
   const renderRadio = (field, value, label, inverseDependentField) => {
     const checked = values.get(field) === value;
@@ -150,20 +148,18 @@ const ObservedBehaviors = ({ values, actions, disabled } :Props) => {
 
   const invalidFields = showInvalidFields(window.location) ? getInvalidFields(values) : [];
 
-  const suicideDetails = () => {
-    return (
-      <IndentWrapper extraIndent>
-        <Header noMargin><span>Suicide threat or attempt?</span></Header>
-        {SUICIDE_ACTION_TYPE.map(type => renderRadio(OBSERVED_BEHAVIORS.SUICIDE_ATTEMPT_TYPE, type, type))}
-        <Header><span>Suicide methods</span></Header>
-        {renderCheckboxList(
-          OBSERVED_BEHAVIORS.SUICIDE_METHODS,
-          SUICIDE_METHODS,
-          OBSERVED_BEHAVIORS.OTHER_SUICIDE_METHOD
-        )}
-      </IndentWrapper>
-    );
-  };
+  const suicideDetails = () => (
+    <IndentWrapper extraIndent>
+      <Header noMargin><span>Suicide threat or attempt?</span></Header>
+      {SUICIDE_ACTION_TYPE.map((type) => renderRadio(OBSERVED_BEHAVIORS.SUICIDE_ATTEMPT_TYPE, type, type))}
+      <Header><span>Suicide methods</span></Header>
+      {renderCheckboxList(
+        OBSERVED_BEHAVIORS.SUICIDE_METHODS,
+        SUICIDE_METHODS,
+        OBSERVED_BEHAVIORS.OTHER_SUICIDE_METHOD
+      )}
+    </IndentWrapper>
+  );
 
   return (
     <FormWrapper>

@@ -159,7 +159,7 @@ class AddressForm extends Component<Props, State> {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   entityIndexToIdMap: state.getIn(['profile', 'basicInformation', 'address', 'entityIndexToIdMap'], Map()),
   entitySetIds: state.getIn(['app', 'selectedOrgEntitySetIds'], Map()),
   fetchState: state.getIn(['profile', 'basicInformation', 'address', 'fetchState'], RequestStates.STANDBY),

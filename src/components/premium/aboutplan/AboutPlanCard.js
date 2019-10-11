@@ -35,7 +35,7 @@ const AboutPlanCard = (props :Props) => {
             <FontAwesomeIcon icon={faInfoSquare} fixedWidth />
           </IconWrapper>
           About Plan
-          { showEdit && <EditLinkButton mode="neutral" to={`${match.url}${EDIT_PATH}${ABOUT_PATH}`} /> }
+          { showEdit && <EditLinkButton mode="subtle" to={`${match.url}${EDIT_PATH}${ABOUT_PATH}`} /> }
         </H1>
       </CardHeader>
       <CardSegment vertical padding="sm">

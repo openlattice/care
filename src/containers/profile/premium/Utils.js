@@ -9,7 +9,7 @@ const { FullyQualifiedName } = Models;
 const incrementValueAtKey = (mutable :Map, key :string, value :boolean) => {
   if (value) {
     if (mutable.has(key)) {
-      mutable.update(key, count => count + 1);
+      mutable.update(key, (count) => count + 1);
     }
     else {
       mutable.set(key, 1);

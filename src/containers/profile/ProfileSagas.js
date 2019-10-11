@@ -71,7 +71,7 @@ function* getPhysicalAppearanceWorker(action :SequenceAction) :Generator<any, an
 
     yield put(getPhysicalAppearance.request(action.id, entityKeyId));
 
-    const app :Map = yield select(state => state.get('app', Map()));
+    const app :Map = yield select((state) => state.get('app', Map()));
     const entitySetId :UUID = getESIDFromApp(app, PEOPLE_FQN);
     const physicalAppearanceESID :UUID = getESIDFromApp(app, PHYSICAL_APPEARANCE_FQN);
     const observedInESID :UUID = getESIDFromApp(app, OBSERVED_IN_FQN);
@@ -123,7 +123,7 @@ function* getPersonDataWorker(action :SequenceAction) :Generator<any, any, any> 
     if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getPersonData.request(action.id, entityKeyId));
 
-    const app :Map = yield select(state => state.get('app', Map()));
+    const app :Map = yield select((state) => state.get('app', Map()));
     const entitySetId :UUID = getESIDFromApp(app, PEOPLE_FQN);
 
     const personResponse = yield call(
@@ -157,7 +157,7 @@ function* getProfileReportsWorker(action :SequenceAction) :Generator<any, any, a
 
     yield put(getProfileReports.request(action.id, entityKeyId));
 
-    const app :Map = yield select(state => state.get('app', Map()));
+    const app :Map = yield select((state) => state.get('app', Map()));
     const reportESID :UUID = getESIDFromApp(app, BEHAVIORAL_HEALTH_REPORT_FQN);
     const peopleESID :UUID = getESIDFromApp(app, PEOPLE_FQN);
     const appearsInESID :UUID = getESIDFromApp(app, APPEARS_IN_FQN);
@@ -217,8 +217,8 @@ function* createPhysicalAppearanceWorker(action :SequenceAction) :Generator<any,
     if (!isValidUuid(personEKID) || !isPlainObject(appearanceProperties)) throw ERR_ACTION_VALUE_TYPE;
     yield put(createPhysicalAppearance.request(action.id, personEKID));
 
-    const edm :Map<*, *> = yield select(state => state.get('edm'));
-    const app = yield select(state => state.get('app', Map()));
+    const edm :Map<*, *> = yield select((state) => state.get('edm'));
+    const app = yield select((state) => state.get('app', Map()));
     const peopleESID :UUID = getESIDFromApp(app, PEOPLE_FQN);
     const observedInESID :UUID = getESIDFromApp(app, OBSERVED_IN_FQN);
     const physicalAppearanceESID :UUID = getESIDFromApp(app, PHYSICAL_APPEARANCE_FQN);
@@ -281,8 +281,8 @@ function* updatePhysicalAppearanceWorker(action :SequenceAction) :Generator<any,
     if (!isValidUuid(appearanceEKID) || !isPlainObject(appearanceProperties)) throw ERR_ACTION_VALUE_TYPE;
     yield put(updatePhysicalAppearance.request(action.id));
 
-    const edm :Map<*, *> = yield select(state => state.get('edm'));
-    const app = yield select(state => state.get('app', Map()));
+    const edm :Map<*, *> = yield select((state) => state.get('edm'));
+    const app = yield select((state) => state.get('app', Map()));
     const physicalAppearanceESID :UUID = getESIDFromApp(app, PHYSICAL_APPEARANCE_FQN);
 
     const updateResponse = yield call(
@@ -339,8 +339,8 @@ function* updateProfileAboutWorker(action :SequenceAction) :Generator<any, any, 
     if (!isValidUuid(personEKID)) throw ERR_ACTION_VALUE_TYPE;
     yield put(updateProfileAbout.request(action.id, personEKID));
 
-    const edm :Map<*, *> = yield select(state => state.get('edm'));
-    const app = yield select(state => state.get('app', Map()));
+    const edm :Map<*, *> = yield select((state) => state.get('edm'));
+    const app = yield select((state) => state.get('app', Map()));
     const peopleESID :UUID = getESIDFromApp(app, PEOPLE_FQN);
 
     const newPersonProperties = getUpdatedPropertiesByName(

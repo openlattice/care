@@ -42,7 +42,7 @@ const SearchInputWrapper = styled.div`
   display: flex;
   flex: 0 0 auto;
   flex-direction: row;
-  height: ${props => (props.short ? '39px' : '45px')};
+  height: ${(props) => (props.short ? '39px' : '45px')};
   position: relative;
 `;
 
@@ -56,7 +56,7 @@ const inputStyle = css`
   letter-spacing: 0;
   line-height: 24px;
   outline: none;
-  padding: 0 ${props => (props.dropdownIcon ? 45 : 35)}px 0 ${props => (props.searchIcon ? 35 : 20)}px;
+  padding: 0 ${(props) => (props.dropdownIcon ? 45 : 35)}px 0 ${(props) => (props.searchIcon ? 35 : 20)}px;
   &:focus {
     border-color: #6124e2;
   }
@@ -70,8 +70,8 @@ const inputStyle = css`
 const SearchInput = styled(Input).attrs({
   type: 'text'
 })`
-  padding: 0 ${props => (props.dropdownIcon ? 45 : 35)}px 0 ${props => (props.searchIcon ? 35 : 20)}px;
-  width: ${props => (props.fullWidth ? '100%' : 'auto')};
+  padding: 0 ${(props) => (props.dropdownIcon ? 45 : 35)}px 0 ${(props) => (props.searchIcon ? 35 : 20)}px;
+  width: ${(props) => (props.fullWidth ? '100%' : 'auto')};
 `;
 
 const SearchIcon = styled.div`
@@ -93,7 +93,7 @@ const DropdownIcon = styled.div`
 const SearchButton = styled.button`
   ${inputStyle}
   text-align: left;
-  background-color: ${props => (props.transparent ? '#f9f9fd' : '#ffffff')};
+  background-color: ${(props) => (props.transparent ? '#f9f9fd' : '#ffffff')};
 `;
 
 const CloseIcon = styled.div`
@@ -114,10 +114,10 @@ const DataTableWrapper = styled.div`
   position: absolute;
   z-index: 1;
   width: 100%;
-  visibility: ${props => (props.isVisible ? 'visible' : 'hidden')}};
+  visibility: ${(props) => (props.isVisible ? 'visible' : 'hidden')}};
   box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.1);
-  margin: ${props => (props.openAbove ? '-303px 0 0 0' : '45px 0 0 0')};
-  bottom: ${props => (props.openAbove ? '45px' : 'auto')};
+  margin: ${(props) => (props.openAbove ? '-303px 0 0 0' : '45px 0 0 0')};
+  bottom: ${(props) => (props.openAbove ? '45px' : 'auto')};
 `;
 
 const NoContentWrapper = styled.div`
@@ -125,7 +125,7 @@ const NoContentWrapper = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
-  padding: ${props => (props.searching ? 50 : 30)}px;
+  padding: ${(props) => (props.searching ? 50 : 30)}px;
   font-size: 14px;
   font-weight: 600;
   font-style: italic;
@@ -141,7 +141,7 @@ const SearchOption = styled.div`
   color: ${BLACK};
 
   &:not(:last-child) {
-    border-bottom: ${props => (props.withBorders ? '1px solid #dcdce7' : 'none')};
+    border-bottom: ${(props) => (props.withBorders ? '1px solid #dcdce7' : 'none')};
   }
 
   &:hover {
@@ -291,7 +291,7 @@ class SearchableSelect extends React.Component<Props, State> {
     const { split, withBorders } = this.props;
     const { filteredTypes } = this.state;
 
-    const options = filteredTypes.map(type => (
+    const options = filteredTypes.map((type) => (
       <SearchOption
           withBorders={withBorders}
           key={type}

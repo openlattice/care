@@ -103,11 +103,11 @@ const ResetIcon = styled.div`
 `;
 
 const StyledVideoElement = styled.video`
-  display: ${props => (props.isVisible ? 'block' : 'none')};
+  display: ${(props) => (props.isVisible ? 'block' : 'none')};
 `;
 
 const StyledImageElement = styled.img`
-  display: ${props => (props.isVisible ? 'block' : 'none')};
+  display: ${(props) => (props.isVisible ? 'block' : 'none')};
 `;
 
 /*
@@ -224,7 +224,7 @@ class SelfieWebCam extends React.Component<Props, State> {
 
   handleOnClickCapture = () => {
 
-    const video :?HTMLVideoElement = this.video;
+    const { video } = this;
 
     if (!this.state.hasMedia || !video || this.state.selfieSource) {
       return;
@@ -239,8 +239,8 @@ class SelfieWebCam extends React.Component<Props, State> {
       this.canvasCtx = newCanvas.getContext('2d');
     }
 
-    const canvas :?HTMLCanvasElement = this.canvas;
-    const canvasCtx :?CanvasRenderingContext2D = this.canvasCtx;
+    const { canvas } = this;
+    const { canvasCtx } = this;
 
     if (canvas && canvasCtx) {
       canvasCtx.drawImage(video, 0, 0, canvas.width, canvas.height);

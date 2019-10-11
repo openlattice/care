@@ -18,4 +18,4 @@ const media = Object.keys(sizes).reduce((acc, label) => {
   return acc;
 }, {});
 
-export { media };
+export { media }; // eslint-disable-line import/prefer-default-export

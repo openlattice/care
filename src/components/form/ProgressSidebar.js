@@ -76,7 +76,7 @@ const Circle = styled.span`
   min-height: ${CIRCLE_RADIUS * 2}px;
   min-width: ${CIRCLE_RADIUS * 2}px;
   border-radius: 50%;
-  background-color: ${props => (props.selected || props.status === COMPLETED ? WHITE : OFF_WHITE)};
+  background-color: ${(props) => (props.selected || props.status === COMPLETED ? WHITE : OFF_WHITE)};
   color: ${PURPLE};
   display: flex;
   justify-content: center;
@@ -92,8 +92,8 @@ const StepItem = styled.div`
   div {
     margin-left: 4px;
     font-size: 12px;
-    font-weight: ${props => (props.selected ? 600 : 400)};
-    color: ${props => (props.selected ? WHITE : OFF_WHITE)};
+    font-weight: ${(props) => (props.selected ? 600 : 400)};
+    color: ${(props) => (props.selected ? WHITE : OFF_WHITE)};
 
     @media only screen and (min-width: ${MEDIA_QUERY_MD}px) {
       margin-left: 10px;
@@ -107,7 +107,7 @@ const StepItem = styled.div`
   }
 
   &:hover {
-    ${props => (props.isDisabled ? '' : css`
+    ${(props) => (props.isDisabled ? '' : css`
       cursor: pointer;
 
       div {

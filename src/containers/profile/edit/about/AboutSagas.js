@@ -74,7 +74,7 @@ function* getResponsibleUserWorker(action :SequenceAction) :Generator<any, any, 
     if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
 
     yield put(getResponsibleUser.request(action.id));
-    const app :Map = yield select(state => state.get('app', Map()));
+    const app :Map = yield select((state) => state.get('app', Map()));
     const peopleESID = getESIDFromApp(app, PEOPLE_FQN);
     const staffESID = getESIDFromApp(app, STAFF_FQN);
     const assignedToESID = getESIDFromApp(app, ASSIGNED_TO_FQN);
@@ -169,21 +169,21 @@ function* updateAboutPlanWorker(action :SequenceAction) :Generator<any, any, any
     if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
     yield put(updateAboutPlan.request(action.id, value));
 
-    const app :Map = yield select(state => state.get('app', Map()));
-    const reservedId = yield select(state => state.getIn(['edm', 'fqnToIdMap', OPENLATTICE_ID_FQN]));
+    const app :Map = yield select((state) => state.get('app', Map()));
+    const reservedId = yield select((state) => state.getIn(['edm', 'fqnToIdMap', OPENLATTICE_ID_FQN]));
     const staffESID = getESIDFromApp(app, STAFF_FQN);
     const assignedToESID = getESIDFromApp(app, ASSIGNED_TO_FQN);
     const peopleESID = getESIDFromApp(app, PEOPLE_FQN);
-    const datetimePTID :UUID = yield select(state => state.getIn(['edm', 'fqnToIdMap', DATE_TIME_FQN]));
+    const datetimePTID :UUID = yield select((state) => state.getIn(['edm', 'fqnToIdMap', DATE_TIME_FQN]));
 
     let entityIndexToIdMap = Map();
     const { entityData } = value;
     if (has(entityData, staffESID)) {
       const newStaffEKID = getIn(entityData, [staffESID, 0, reservedId, 0]);
-      const entityKeyId = yield select(state => state.getIn(
+      const entityKeyId = yield select((state) => state.getIn(
         ['profile', 'about', 'entityIndexToIdMap', ASSIGNED_TO_FQN, 0]
       ));
-      const personEKID = yield select(state => state.getIn(
+      const personEKID = yield select((state) => state.getIn(
         ['profile', 'basicInformation', 'basics', 'data', OPENLATTICE_ID_FQN, 0]
       ));
 
@@ -245,7 +245,7 @@ function* submitAboutPlanWorker(action :SequenceAction) :Generator<any, any, any
     if (response.error) throw response.error;
 
     const responseData = fromJS(response.data);
-    const app = yield select(state => state.get('app'), Map());
+    const app = yield select((state) => state.get('app'), Map());
 
     const { entities, associations } = formatDataGraphResponse(responseData, app);
 

@@ -32,7 +32,7 @@ class ReportsSummary extends PureComponent<Props> {
   countPropertyValues = (reports :List, propertyTypeFqn :FullyQualifiedName) :Map => {
     const total = reports.count();
     return countPropertyOccurrance(reports, propertyTypeFqn)
-      .sortBy(count => count, (valueA, valueB) => valueB - valueA)
+      .sortBy((count) => count, (valueA, valueB) => valueB - valueA)
       .toArray()
       .map(([name, count]) => {
         const percent = Math.round((count / total) * 100);

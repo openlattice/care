@@ -74,7 +74,7 @@ function* getOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<any,
 
     yield put(getOfficerSafetyConcerns.request(action.id));
 
-    const app :Map = yield select(state => state.get('app', Map()));
+    const app :Map = yield select((state) => state.get('app', Map()));
     const partOfESID :UUID = getESIDFromApp(app, PART_OF_FQN);
     const officerSafetyConcernsESID :UUID = getESIDFromApp(app, OFFICER_SAFETY_CONCERNS_FQN);
     const responsePlanESID :UUID = getESIDFromApp(app, RESPONSE_PLAN_FQN);
@@ -156,7 +156,7 @@ function* getOfficerSafetyWorker(action :SequenceAction) :Generator<any, any, an
     if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
 
     yield put(getOfficerSafety.request(action.id));
-    let responsePlanEKID :Map = yield select(state => state.getIn([
+    let responsePlanEKID :Map = yield select((state) => state.getIn([
       'profile',
       'responsePlan',
       'data',
@@ -207,11 +207,11 @@ function* submitOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<a
 
     const newEntityKeyIdsByEntitySetId = fromJS(submitSafetyConcernsResponse.data).get('entityKeyIds');
 
-    const selectedOrgEntitySetIds = yield select(state => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
+    const selectedOrgEntitySetIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
     const entitySetNamesByEntitySetId = selectedOrgEntitySetIds.flip();
 
     const newEntityKeyIdsByEntitySetName = newEntityKeyIdsByEntitySetId
-      .mapKeys(entitySetId => entitySetNamesByEntitySetId.get(entitySetId));
+      .mapKeys((entitySetId) => entitySetNamesByEntitySetId.get(entitySetId));
 
     // set blank response plan if created
     const responsePlanEKID = newEntityKeyIdsByEntitySetName.getIn([RESPONSE_PLAN_FQN, 0]);
@@ -244,7 +244,7 @@ function* submitOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<a
     );
 
     const entityIndexToIdMap = yield select(
-      state => state.getIn([
+      (state) => state.getIn([
         'profile',
         'officerSafety',
         'entityIndexToIdMap'
