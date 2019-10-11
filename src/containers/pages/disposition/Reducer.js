@@ -182,7 +182,8 @@ export function processForSubmit(state :Map<*, *>) :Object {
     ).set(
       POST_PROCESS_FIELDS.ARRESTABLE_OFFENSE,
       dispositions.includes(DISPOSITION_TYPES.ARRESTABLE_OFFENSE)
-    ).set(
+    )
+    .set(
       POST_PROCESS_FIELDS.TRANSPORT_INDICATOR,
       dispositions.includes(DISPOSITION_TYPES.COURTESY_TRANPORT)
     );

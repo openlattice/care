@@ -43,31 +43,28 @@ const ToggleTab = styled.div`
     if (selected) return WHITE;
     return (disabled) ? GRAY : PURPLE;
   }};
-  pointer-events: ${props => (props.disabled ? 'none' : 'auto')};
+  pointer-events: ${(props) => (props.disabled ? 'none' : 'auto')};
 
   &:hover {
     cursor: pointer;
-    background-color: ${props => (props.selected ? PURPLE : OFF_WHITE)};
+    background-color: ${(props) => (props.selected ? PURPLE : OFF_WHITE)};
   }
 
   &:first-child {
-    border-radius: ${props => (props.selected ? 0 : '3px 0 0 3px')};
+    border-radius: ${(props) => (props.selected ? 0 : '3px 0 0 3px')};
   }
 
   &:last-child {
-    border-radius: ${props => (props.selected ? 0 : '0 3px 3px 0')};
+    border-radius: ${(props) => (props.selected ? 0 : '0 3px 3px 0')};
   }
 
 `;
 
-const YesNoToggle = ({ value, onChange, disabled } :Props) => {
-
-  return (
-    <ToggleWrapper disabled={disabled}>
-      <ToggleTab disabled={disabled} selected={!value} onClick={() => onChange(false)}>No</ToggleTab>
-      <ToggleTab disabled={disabled} selected={value} onClick={() => onChange(true)}>Yes</ToggleTab>
-    </ToggleWrapper>
-  );
-};
+const YesNoToggle = ({ value, onChange, disabled } :Props) => (
+  <ToggleWrapper disabled={disabled}>
+    <ToggleTab disabled={disabled} selected={!value} onClick={() => onChange(false)}>No</ToggleTab>
+    <ToggleTab disabled={disabled} selected={value} onClick={() => onChange(true)}>Yes</ToggleTab>
+  </ToggleWrapper>
+);
 
 export default YesNoToggle;

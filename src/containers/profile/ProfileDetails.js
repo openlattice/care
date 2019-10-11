@@ -83,8 +83,7 @@ class ProfileDetails extends Component<Props> {
       <>
         { isLoading
           ? this.renderLoading()
-          : this.renderDetails()
-        }
+          : this.renderDetails()}
       </>
     );
   }

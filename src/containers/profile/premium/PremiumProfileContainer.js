@@ -1,8 +1,7 @@
 // @flow
 
-import React, { Component } from 'react';
+import React, { useCallback } from 'react';
 import styled from 'styled-components';
-import { DateTime } from 'luxon';
 import { List, Map } from 'immutable';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -16,7 +15,6 @@ import {
 
 import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
-import type { Match } from 'react-router';
 
 import IntroCard from './IntroCard';
 import AboutPlanCard from '../../../components/premium/aboutplan/AboutPlanCard';
@@ -34,6 +32,7 @@ import RecentIncidentCard from '../RecentIncidentCard';
 import ReportsSummary from './ReportsSummary';
 import ResponsePlanCard from './ResponsePlanCard';
 import LinkButton from '../../../components/buttons/LinkButton';
+import { countCrisisCalls } from './Utils';
 import { labelMapReport } from '../constants';
 import { ContentWrapper, ContentOuterWrapper } from '../../../components/layout';
 import { getProfileReports } from '../ProfileActions';
@@ -42,17 +41,17 @@ import { getResponsePlan } from '../edit/responseplan/ResponsePlanActions';
 import { getContacts } from '../edit/contacts/ContactsActions';
 import { getAboutPlan } from '../edit/about/AboutActions';
 import { getOfficerSafety } from '../edit/officersafety/OfficerSafetyActions';
-import { DATE_TIME_OCCURRED_FQN } from '../../../edm/DataModelFqns';
+import { getAuthorization } from '../../../core/sagas/authorize/AuthorizeActions';
 import { getEntityKeyId } from '../../../utils/DataUtils';
 import { reduceRequestStates } from '../../../utils/StateUtils';
 import { getImageDataFromEntity } from '../../../utils/BinaryUtils';
 import {
   CRISIS_PATH,
-  PROFILE_ID_PARAM,
   REPORT_ID_PATH,
   REPORT_VIEW_PATH,
 } from '../../../core/router/Routes';
 import { goToPath } from '../../../core/router/RoutingActions';
+import { usePeopleRoute, useAuthorization } from '../../../components/hooks';
 import type { RoutingAction } from '../../../core/router/RoutingActions';
 
 const Aside = styled.div`
@@ -81,6 +80,7 @@ const BehaviorAndSafetyGrid = styled.div`
 type Props = {
   actions :{
     getAboutPlan :RequestSequence;
+    getAuthorization :RequestSequence;
     getBasicInformation :RequestSequence;
     getContacts :RequestSequence;
     getOfficerSafety :RequestSequence;
@@ -99,7 +99,6 @@ type Props = {
   fetchResponsePlanState :RequestState;
   interactionStrategies :List<Map>;
   isContactForByContactEKID :Map;
-  match :Match;
   officerSafety :List<Map>;
   photo :Map;
   reports :List<Map>;
@@ -110,174 +109,133 @@ type Props = {
   triggers :List<Map>;
 };
 
-type State = {
-  showEdit :boolean;
-};
+const PremiumProfileContainer = (props :Props) => {
 
-class PremiumProfileContainer extends Component<Props, State> {
+  const {
+    actions,
+    address,
+    appearance,
+    contactInfoByContactEKID,
+    contacts,
+    fetchAboutPlanState,
+    fetchAboutState,
+    fetchOfficerSafetyState,
+    fetchReportsState,
+    fetchResponsePlanState,
+    interactionStrategies,
+    isContactForByContactEKID,
+    officerSafety,
+    photo,
+    reports,
+    responsePlan,
+    responsibleUser,
+    selectedPerson,
+    techniques,
+    triggers,
+  } = props;
 
-  componentDidMount() {
-    const { match } = this.props;
-    const personEKID = match.params[PROFILE_ID_PARAM];
-    this.getProfileData(personEKID);
-  }
+  usePeopleRoute(actions.getAboutPlan);
+  usePeopleRoute(actions.getBasicInformation);
+  usePeopleRoute(actions.getContacts);
+  usePeopleRoute(actions.getOfficerSafety);
+  usePeopleRoute(actions.getProfileReports);
+  usePeopleRoute(actions.getResponsePlan);
 
-  componentDidUpdate(prevProps :Props) {
-    const { match } = this.props;
-    const { match: prevMatch } = prevProps;
-    const personEKID = match.params[PROFILE_ID_PARAM];
-    const prevPersonEKID = prevMatch.params[PROFILE_ID_PARAM];
-    if (personEKID !== prevPersonEKID) {
-      this.getProfileData(personEKID);
-    }
-  }
-
-  getProfileData = (personEKID :?UUID) => {
-    const { actions } = this.props;
-    actions.getAboutPlan(personEKID);
-    actions.getBasicInformation(personEKID);
-    actions.getContacts(personEKID);
-    actions.getOfficerSafety(personEKID);
-    actions.getProfileReports(personEKID);
-    actions.getResponsePlan(personEKID);
-  }
-
-  countCrisisCalls = () => {
-    const { reports } = this.props;
-    let total = 0;
-    let recent = 0;
-    reports.forEach((report :Map) => {
-      const occurred = report.getIn([DATE_TIME_OCCURRED_FQN, 0], '');
-      const dtOccurred = DateTime.fromISO(occurred);
-      if (dtOccurred.isValid) {
-        const durationInYears = dtOccurred
-          .until(DateTime.local()).toDuration(['years'])
-          .toObject()
-          .years;
-
-        const durationInWeeks = dtOccurred
-          .until(DateTime.local()).toDuration(['weeks'])
-          .toObject()
-          .weeks;
-
-        if (durationInYears <= 1) total += 1;
-        if (durationInWeeks <= 1) recent += 1;
-      }
-    });
-
-    return { recent, total };
-  }
-
-  handleResultClick = (result :Map) => {
-    const { actions } = this.props;
+  const handleResultClick = useCallback((result :Map) => {
     const reportEKID = getEntityKeyId(result);
     actions.goToPath(REPORT_VIEW_PATH.replace(REPORT_ID_PATH, reportEKID));
-  }
+  }, [actions]);
 
-  render() {
-    const {
-      address,
-      appearance,
-      contactInfoByContactEKID,
-      contacts,
-      fetchAboutPlanState,
-      fetchAboutState,
-      fetchOfficerSafetyState,
-      fetchReportsState,
-      fetchResponsePlanState,
-      interactionStrategies,
-      isContactForByContactEKID,
-      officerSafety,
-      photo,
-      reports,
-      responsePlan,
-      responsibleUser,
-      selectedPerson,
-      techniques,
-      triggers,
-    } = this.props;
-    const { recent, total } = this.countCrisisCalls();
+  const [isAuthorized] = useAuthorization('profile', actions.getAuthorization);
 
-    const isLoadingReports = fetchReportsState === RequestStates.PENDING;
-    const isLoadingOfficerSafety = fetchOfficerSafetyState === RequestStates.PENDING;
-    const isLoadingIntro = fetchAboutState === RequestStates.PENDING;
-    const isLoadingResponsePlan = fetchResponsePlanState === RequestStates.PENDING;
-    const isLoadingAboutPlan = fetchAboutPlanState === RequestStates.PENDING;
+  const { recent, total } = countCrisisCalls(reports);
 
-    const imageURL :string = getImageDataFromEntity(photo);
+  const isLoadingReports = fetchReportsState === RequestStates.PENDING;
+  const isLoadingOfficerSafety = fetchOfficerSafetyState === RequestStates.PENDING;
+  const isLoadingIntro = fetchAboutState === RequestStates.PENDING;
+  const isLoadingResponsePlan = fetchResponsePlanState === RequestStates.PENDING;
+  const isLoadingAboutPlan = fetchAboutPlanState === RequestStates.PENDING;
 
-    return (
-      <ContentOuterWrapper>
-        <ProfileBanner selectedPerson={selectedPerson} />
-        <ContentWrapper>
-          <ProfileGrid>
-            <Aside>
-              <StyledCardStack>
-                <Card>
-                  <CardSegment padding="sm">
-                    <Portrait imageUrl={imageURL} />
-                  </CardSegment>
-                  <CardSegment vertical padding="sm">
-                    <LinkButton mode="primary" to={`${CRISIS_PATH}/1`} state={selectedPerson}>
-                      New Crisis Report
-                    </LinkButton>
-                  </CardSegment>
-                </Card>
-                <IntroCard
-                    isLoading={isLoadingIntro}
-                    selectedPerson={selectedPerson}
-                    appearance={appearance} />
-                <AddressCard
-                    isLoading={isLoadingIntro}
-                    address={address} />
-                <AboutPlanCard
-                    isLoading={isLoadingAboutPlan}
-                    responsibleUser={responsibleUser} />
-              </StyledCardStack>
-            </Aside>
+  const imageURL :string = getImageDataFromEntity(photo);
+
+  return (
+    <ContentOuterWrapper>
+      <ProfileBanner selectedPerson={selectedPerson} />
+      <ContentWrapper>
+        <ProfileGrid>
+          <Aside>
             <StyledCardStack>
-              <CrisisCountCard
-                  count={total}
-                  isLoading={isLoadingReports} />
-              <RecentIncidentCard count={recent} />
-              <BehaviorAndSafetyGrid>
-                <BehaviorCard
-                    reports={reports}
-                    isLoading={isLoadingReports} />
-                <OfficerSafetyCard
-                    reports={reports}
-                    triggers={triggers}
-                    officerSafety={officerSafety}
-                    isLoading={isLoadingOfficerSafety} />
-              </BehaviorAndSafetyGrid>
-              <DeescalationCard
-                  techniques={techniques}
-                  isLoading={isLoadingOfficerSafety} />
-              <ResponsePlanCard
-                  interactionStrategies={interactionStrategies}
-                  isLoading={isLoadingResponsePlan} />
-              <BackgroundInformationCard
-                  backgroundInformation={responsePlan}
-                  isLoading={isLoadingResponsePlan} />
-              <ContactCarousel
-                  contacts={contacts}
-                  contactInfoByContactEKID={contactInfoByContactEKID}
-                  isContactForByContactEKID={isContactForByContactEKID} />
-              <SearchResults
-                  hasSearched={fetchReportsState !== RequestStates.STANDBY}
-                  isLoading={isLoadingReports}
-                  onResultClick={this.handleResultClick}
-                  results={reports}
-                  resultLabels={labelMapReport}
-                  resultComponent={ProfileResult} />
-              <ReportsSummary reports={reports} />
+              <Card>
+                <CardSegment padding="sm">
+                  <Portrait imageUrl={imageURL} />
+                </CardSegment>
+                <CardSegment vertical padding="sm">
+                  <LinkButton mode="primary" to={`${CRISIS_PATH}/1`} state={selectedPerson}>
+                    New Crisis Report
+                  </LinkButton>
+                </CardSegment>
+              </Card>
+              <IntroCard
+                  appearance={appearance}
+                  isLoading={isLoadingIntro}
+                  selectedPerson={selectedPerson}
+                  showEdit={isAuthorized} />
+              <AddressCard
+                  address={address}
+                  isLoading={isLoadingIntro}
+                  showEdit={isAuthorized} />
+              <AboutPlanCard
+                  isLoading={isLoadingAboutPlan}
+                  responsibleUser={responsibleUser}
+                  showEdit={isAuthorized} />
             </StyledCardStack>
-          </ProfileGrid>
-        </ContentWrapper>
-      </ContentOuterWrapper>
-    );
-  }
-}
+          </Aside>
+          <StyledCardStack>
+            <CrisisCountCard
+                count={total}
+                isLoading={isLoadingReports} />
+            <RecentIncidentCard count={recent} />
+            <BehaviorAndSafetyGrid>
+              <BehaviorCard
+                  reports={reports}
+                  isLoading={isLoadingReports} />
+              <OfficerSafetyCard
+                  isLoading={isLoadingOfficerSafety}
+                  officerSafety={officerSafety}
+                  reports={reports}
+                  showEdit={isAuthorized}
+                  triggers={triggers} />
+            </BehaviorAndSafetyGrid>
+            <DeescalationCard
+                isLoading={isLoadingOfficerSafety}
+                showEdit={isAuthorized}
+                techniques={techniques} />
+            <ResponsePlanCard
+                interactionStrategies={interactionStrategies}
+                isLoading={isLoadingResponsePlan}
+                showEdit={isAuthorized} />
+            <BackgroundInformationCard
+                backgroundInformation={responsePlan}
+                isLoading={isLoadingResponsePlan}
+                showEdit={isAuthorized} />
+            <ContactCarousel
+                contacts={contacts}
+                contactInfoByContactEKID={contactInfoByContactEKID}
+                isContactForByContactEKID={isContactForByContactEKID} />
+            <SearchResults
+                hasSearched={fetchReportsState !== RequestStates.STANDBY}
+                isLoading={isLoadingReports}
+                onResultClick={handleResultClick}
+                results={reports}
+                resultLabels={labelMapReport}
+                resultComponent={ProfileResult} />
+            <ReportsSummary reports={reports} />
+          </StyledCardStack>
+        </ProfileGrid>
+      </ContentWrapper>
+    </ContentOuterWrapper>
+  );
+};
 
 const mapStateToProps = (state :Map) => {
   const fetchAboutStates = [
@@ -317,6 +275,7 @@ const mapStateToProps = (state :Map) => {
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
     getAboutPlan,
+    getAuthorization,
     getBasicInformation,
     getContacts,
     getOfficerSafety,

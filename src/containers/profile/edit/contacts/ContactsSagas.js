@@ -74,21 +74,21 @@ function* submitContactsWorker(action :SequenceAction) :Generator<*, *, *> {
     const newEntityKeyIdsByEntitySetId = responseData.get('entityKeyIds');
     const newAssociationKeyIdsByEntitySetId = responseData.get('entitySetIds');
 
-    const selectedOrgEntitySetIds = yield select(state => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
+    const selectedOrgEntitySetIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
     const entitySetNamesByEntitySetId = selectedOrgEntitySetIds.flip();
 
     const newEntityKeyIdsByEntitySetName = newEntityKeyIdsByEntitySetId
-      .mapKeys(entitySetId => entitySetNamesByEntitySetId.get(entitySetId));
+      .mapKeys((entitySetId) => entitySetNamesByEntitySetId.get(entitySetId));
 
     const newAssociationKeyIdsByEntitySetName = newAssociationKeyIdsByEntitySetId
-      .mapKeys(entitySetId => entitySetNamesByEntitySetId.get(entitySetId));
+      .mapKeys((entitySetId) => entitySetNamesByEntitySetId.get(entitySetId));
 
     const contactsEKIDs = newEntityKeyIdsByEntitySetName.get(EMERGENCY_CONTACT_FQN);
     const contactInfoEKIDs = newEntityKeyIdsByEntitySetName.get(CONTACT_INFORMATION_FQN);
     const isContactForEKIDs = newAssociationKeyIdsByEntitySetName.get(IS_EMERGENCY_CONTACT_FOR_FQN);
 
     const newEntityIndexToIdMap = constructEntityIndexToIdMap(contactsEKIDs, contactInfoEKIDs, isContactForEKIDs);
-    const entityIndexToIdMap = yield select(state => state.getIn(['profile', 'contacts', 'entityIndexToIdMap']));
+    const entityIndexToIdMap = yield select((state) => state.getIn(['profile', 'contacts', 'entityIndexToIdMap']));
     const mergedEntityIndexToIdMap = entityIndexToIdMap.mergeDeep(newEntityIndexToIdMap);
 
     const { path, properties } = value;
@@ -117,7 +117,7 @@ function* getContactsWorker(action :SequenceAction) :Generator<*, *, *> {
 
     yield put(getContacts.request(action.id));
 
-    const app :Map = yield select(state => state.get('app', Map()));
+    const app :Map = yield select((state) => state.get('app', Map()));
     const peopleESID :UUID = getESIDFromApp(app, PEOPLE_FQN);
     const contactedViaESID :UUID = getESIDFromApp(app, CONTACTED_VIA_FQN);
     const contactInformationESID :UUID = getESIDFromApp(app, CONTACT_INFORMATION_FQN);
@@ -144,7 +144,7 @@ function* getContactsWorker(action :SequenceAction) :Generator<*, *, *> {
       .get(entityKeyId, List());
 
     const contacts :List<Map> = contactsData
-      .map(contact => contact.get('neighborDetails', Map()));
+      .map((contact) => contact.get('neighborDetails', Map()));
 
     const contactsEKIDs = getEntityKeyIdsFromList(contacts);
 
@@ -179,10 +179,10 @@ function* getContactsWorker(action :SequenceAction) :Generator<*, *, *> {
       });
 
     const contactInfoEKIDs :List<UUID> = contactsEKIDs
-      .map(contactEKID => contactInfoByContactEKID.getIn([contactEKID, OPENLATTICE_ID_FQN, 0]));
+      .map((contactEKID) => contactInfoByContactEKID.getIn([contactEKID, OPENLATTICE_ID_FQN, 0]));
 
     const isContactForList :List<Map> = contactsData
-      .map(contact => contact.get('associationDetails', Map()));
+      .map((contact) => contact.get('associationDetails', Map()));
 
     const isContactForByContactEKID = Map(contactsEKIDs.zip(isContactForList));
 

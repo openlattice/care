@@ -118,8 +118,7 @@ const FormRecord = ({
                 label="Last Updated"
                 time={lastTime}
                 email={lastEmail} />
-          )
-        }
+          )}
       </RecordGrid>
       <ActionGrid>
         {

@@ -57,7 +57,7 @@ function* getPhotosWorker(action :SequenceAction) :Generator<any, any, any> {
 
     yield put(getPhotos.request(action.id, entityKeyId));
 
-    const app :Map = yield select(state => state.get('app', Map()));
+    const app :Map = yield select((state) => state.get('app', Map()));
     const entitySetId :UUID = getESIDFromApp(app, PEOPLE_FQN);
     const imageESID :UUID = getESIDFromApp(app, IMAGE_FQN);
     const isPictureOfESID :UUID = getESIDFromApp(app, IS_PICTURE_OF_FQN);
@@ -118,11 +118,11 @@ function* submitPhotosWorker(action :SequenceAction) :Generator<any, any, any> {
 
     const newEntityKeyIdsByEntitySetId = fromJS(response.data).get('entityKeyIds');
 
-    const selectedOrgEntitySetIds = yield select(state => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
+    const selectedOrgEntitySetIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
     const entitySetNamesByEntitySetId = selectedOrgEntitySetIds.flip();
 
     const newEntityKeyIdsByEntitySetName = newEntityKeyIdsByEntitySetId
-      .mapKeys(entitySetId => entitySetNamesByEntitySetId.get(entitySetId));
+      .mapKeys((entitySetId) => entitySetNamesByEntitySetId.get(entitySetId));
 
     const imageEKID = newEntityKeyIdsByEntitySetName.getIn([IMAGE_FQN, 0]);
 

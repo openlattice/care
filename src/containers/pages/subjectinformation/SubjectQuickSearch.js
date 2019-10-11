@@ -143,7 +143,7 @@ class SubjectQuickSearch extends Component<Props, State> {
           <Header>
             <h1>Quick Search</h1>
             <span>
-              {'Search by last name, first name, or alias. No results? Click "Create New Person" above'}
+              Search by last name, first name, or alias. No results? Click "Create New Person" above
             </span>
           </Header>
           <SearchableSelect

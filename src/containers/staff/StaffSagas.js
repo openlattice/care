@@ -68,9 +68,9 @@ function* addNewStaffMemberWorker(action :SequenceAction) :Generator<*, *, *> {
 
     yield put(addNewStaffMember.request(action.id));
 
-    const app = yield select(state => state.get('app', Map()));
+    const app = yield select((state) => state.get('app', Map()));
     const staffESId :UUID = getStaffESId(app);
-    const personIdPTId :UUID = yield select(state => state.getIn(['edm', 'fqnToIdMap', FQN.PERSON_ID_FQN]));
+    const personIdPTId :UUID = yield select((state) => state.getIn(['edm', 'fqnToIdMap', FQN.PERSON_ID_FQN]));
 
     staffMemberDataByPtId[personIdPTId] = [value.email];
 
@@ -128,9 +128,9 @@ function* getCurrentUserStaffMemberDataWorker(action :SequenceAction) :Generator
     let userData :?Object;
     const userInfo :Object = AuthUtils.getUserInfo();
 
-    const app = yield select(state => state.get('app', Map()));
+    const app = yield select((state) => state.get('app', Map()));
     const entitySetId :UUID = getStaffESId(app);
-    const personIdPTId :UUID = yield select(state => state.getIn(['edm', 'fqnToIdMap', FQN.PERSON_ID_FQN]));
+    const personIdPTId :UUID = yield select((state) => state.getIn(['edm', 'fqnToIdMap', FQN.PERSON_ID_FQN]));
     const searchOptions :Object = {
       maxHits: 1,
       searchTerm: getSearchTerm(personIdPTId, userInfo.email, true),
@@ -174,9 +174,9 @@ function* getResponsibleUserOptionsWorker(action :SequenceAction) :Generator<any
 
   try {
     yield put(getResponsibleUserOptions.request(action.id));
-    const app :Map = yield select(state => state.get('app', Map()));
+    const app :Map = yield select((state) => state.get('app', Map()));
     const entitySetId :UUID = getESIDFromApp(app, STAFF_FQN);
-    const personIdPTId :UUID = yield select(state => state.getIn(['edm', 'fqnToIdMap', FQN.PERSON_ID_FQN]));
+    const personIdPTId :UUID = yield select((state) => state.getIn(['edm', 'fqnToIdMap', FQN.PERSON_ID_FQN]));
     const searchOptions :Object = {
       maxHits: 10000,
       searchTerm: getSearchTerm(personIdPTId, '*'),

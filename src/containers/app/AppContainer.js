@@ -115,7 +115,7 @@ class AppContainer extends Component<Props> {
     </MissingOrgsWrapper>
   )
 
-  wrapComponent = AppComponent => () => <AppContentInnerWrapper><AppComponent /></AppContentInnerWrapper>;
+  wrapComponent = (AppComponent) => () => <AppContentInnerWrapper><AppComponent /></AppContentInnerWrapper>;
 
   renderAppContent = () => {
 

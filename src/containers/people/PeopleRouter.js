@@ -36,7 +36,7 @@ const PeopleRouter = ({ selectedOrganizationSettings } :Props) => {
   );
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   selectedOrganizationSettings: state.getIn(['app', 'selectedOrganizationSettings'], Map())
 });
 // $FlowFixMe

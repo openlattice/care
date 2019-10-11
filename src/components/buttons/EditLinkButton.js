@@ -8,6 +8,8 @@ import { faEdit } from '@fortawesome/pro-solid-svg-icons';
 import LinkButton from './LinkButton';
 
 const EditButton = styled(LinkButton)`
+  color: inherit;
+  background-color: inherit;
   margin-left: auto;
   padding: 2px;
 `;

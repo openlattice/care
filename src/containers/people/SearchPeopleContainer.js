@@ -72,7 +72,7 @@ class SearchPeopleContainer extends Component<Props> {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   searchResults: state.getIn(['people', 'peopleSearchResults'], List()),
   fetchState: state.getIn(['people', 'fetchState'])
 });

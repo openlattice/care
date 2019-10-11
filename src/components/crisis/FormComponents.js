@@ -34,11 +34,11 @@ export const FormSection = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: ${props => (props.invalid ? '5px 10px 5px 10px' : '0 10px')};
+  padding: ${(props) => (props.invalid ? '5px 10px 5px 10px' : '0 10px')};
   width: 100%;
-  margin: 0 -10px ${props => (props.invalid ? 10 : 0)}px -10px;
+  margin: 0 -10px ${(props) => (props.invalid ? 10 : 0)}px -10px;
 
-  background-color: ${props => (props.invalid ? `${INVALID_BACKGROUND}` : 'transparent')};
+  background-color: ${(props) => (props.invalid ? `${INVALID_BACKGROUND}` : 'transparent')};
 `;
 
 const ErrorMessage = styled.span`
@@ -54,7 +54,7 @@ export const Header = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  margin-bottom: ${props => (props.noMargin ? 0 : 15)}px;
+  margin-bottom: ${(props) => (props.noMargin ? 0 : 15)}px;
   color: ${BLACK};
 
   h1 {
@@ -71,19 +71,19 @@ export const Header = styled.div`
 
 export const FormText = styled.div`
   font-size: 14px;
-  color: ${props => (props.gray ? GRAY : BLACK)};
-  margin: ${props => (props.noMargin ? 0 : 10)}px 0;
+  color: ${(props) => (props.gray ? GRAY : BLACK)};
+  margin: ${(props) => (props.noMargin ? 0 : 10)}px 0;
 `;
 
 export const IndentWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: ${props => (props.extraIndent ? '5px 0 5px 15px' : '5px 0 5px 10px')};
+  padding: ${(props) => (props.extraIndent ? '5px 0 5px 15px' : '5px 0 5px 10px')};
   width: 100%;
 
   @media only screen and (min-width: ${MEDIA_QUERY_MD}px) {
-    padding: ${props => (props.extraIndent ? '5px 15px 5px 30px' : '5px 15px')};
+    padding: ${(props) => (props.extraIndent ? '5px 15px 5px 30px' : '5px 15px')};
   }
 `;
 

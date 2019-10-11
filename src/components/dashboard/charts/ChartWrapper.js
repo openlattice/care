@@ -104,7 +104,7 @@ const BodyWrapper = styled.div`
   flex-direction: row;
   width: 100%;
   align-items: center;
-  margin-left: ${props => (props.noOffset ? 0 : -40)}px;
+  margin-left: ${(props) => (props.noOffset ? 0 : -40)}px;
 `;
 
 const FooterWrapper = styled.div`
@@ -130,7 +130,7 @@ const YLabelWrapper = styled.div`
   height: 100%;
   width: 20px;
   max-width: 20px;
-  justify-self: ${props => (props.secondary ? 'flex-end' : 'flex-start')};
+  justify-self: ${(props) => (props.secondary ? 'flex-end' : 'flex-start')};
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -160,44 +160,41 @@ const ChartWrapper = ({
   xLabel,
   yLabel,
   yLabelRight
-} :Props) => {
-
-  return (
-    <Card>
-      <HeaderRow>
-        <h1>{title}</h1>
-        <Buttons>
-          {downloadFn ? <DownloadButton onClick={downloadFn}>Download</DownloadButton> : null}
-          {infoText ? (
-            <ExplainButton>
-              <span>?</span>
-              <ExplainTooltip>{infoText}</ExplainTooltip>
-            </ExplainButton>
-          ) : null}
-        </Buttons>
-      </HeaderRow>
-      <BodyWrapper noOffset={noOffset}>
-        {yLabel ? (
-          <YLabelWrapper>
-            <YLabel noMargin={noMargin}>{yLabel}</YLabel>
-          </YLabelWrapper>
+} :Props) => (
+  <Card>
+    <HeaderRow>
+      <h1>{title}</h1>
+      <Buttons>
+        {downloadFn ? <DownloadButton onClick={downloadFn}>Download</DownloadButton> : null}
+        {infoText ? (
+          <ExplainButton>
+            <span>?</span>
+            <ExplainTooltip>{infoText}</ExplainTooltip>
+          </ExplainButton>
         ) : null}
-        {children}
-        {yLabelRight ? (
-          <YLabelWrapper secondary>
-            <YLabel noMargin={noMargin} secondary>{yLabelRight}</YLabel>
-          </YLabelWrapper>
-        ) : null}
-      </BodyWrapper>
-      {
-        xLabel ? (
-          <FooterWrapper>
-            <XLabel>{xLabel}</XLabel>
-          </FooterWrapper>
-        ) : null
-      }
-    </Card>
-  );
-};
+      </Buttons>
+    </HeaderRow>
+    <BodyWrapper noOffset={noOffset}>
+      {yLabel ? (
+        <YLabelWrapper>
+          <YLabel noMargin={noMargin}>{yLabel}</YLabel>
+        </YLabelWrapper>
+      ) : null}
+      {children}
+      {yLabelRight ? (
+        <YLabelWrapper secondary>
+          <YLabel noMargin={noMargin} secondary>{yLabelRight}</YLabel>
+        </YLabelWrapper>
+      ) : null}
+    </BodyWrapper>
+    {
+      xLabel ? (
+        <FooterWrapper>
+          <XLabel>{xLabel}</XLabel>
+        </FooterWrapper>
+      ) : null
+    }
+  </Card>
+);
 
 export default ChartWrapper;

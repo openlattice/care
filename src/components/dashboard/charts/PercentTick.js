@@ -17,7 +17,7 @@ const splitText = (text) => {
     .replace(/\//g, ' / ')
     .replace(/-/g, ' - ')
     .split(' ')
-    .filter(val => val.length)
+    .filter((val) => val.length)
     .forEach((word) => {
       const optionalSpace = currStr.length ? ' ' : '';
 
@@ -56,7 +56,7 @@ const PercentTick = ({ payload, y } :Props) => {
 
   return (
     <Tick x={0} y={yInit} textAnchor="start">
-      {lines.map(line => <tspan x="0" dy={16} key={line}>{line}</tspan>)}
+      {lines.map((line) => <tspan x="0" dy={16} key={line}>{line}</tspan>)}
     </Tick>
   );
 };

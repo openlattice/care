@@ -132,11 +132,11 @@ const ForwardButton = styled.button.attrs({
   }
 
   &:last-child {
-    color: ${props => (props.canProgress ? '#f8f8fb' : '#aaafbc')};
-    background-color: ${props => (props.canProgress ? '#6124e2' : '#dcdce7')};
+    color: ${(props) => (props.canProgress ? '#f8f8fb' : '#aaafbc')};
+    background-color: ${(props) => (props.canProgress ? '#6124e2' : '#dcdce7')};
 
     &:hover:enabled {
-      background-color: ${props => (props.canProgress ? '#8045ff' : '#dcdce7')};
+      background-color: ${(props) => (props.canProgress ? '#8045ff' : '#dcdce7')};
     }
   }
 `;
@@ -301,7 +301,7 @@ class CrisisReportView extends React.Component<Props, State> {
 
     PAGES.forEach((page) => {
       const { postProcessor, stateField } = page;
-      submission = Object.assign({}, submission, postProcessor(state.get(stateField)));
+      submission = { ...submission, ...postProcessor(state.get(stateField)) };
     });
 
     actions.updateReport({
@@ -487,8 +487,7 @@ class CrisisReportView extends React.Component<Props, State> {
               <DiscardModal
                   actions={discardActions}
                   onClose={this.handleCloseDiscard} />
-            )
-          }
+            )}
         </ModalTransition>
         <ModalTransition>
           { showDelete
@@ -496,8 +495,7 @@ class CrisisReportView extends React.Component<Props, State> {
               <DeleteModal
                   actions={deleteActions}
                   onClose={this.handleCloseDelete} />
-            )
-          }
+            )}
         </ModalTransition>
       </CrisisReportWrapper>
     );

@@ -44,7 +44,7 @@ function getEntityId(primaryKey, propertyTypesById, values, fields) {
 }
 
 function getFormattedValue(value) {
-  const valueIsDefined = v => v !== null && v !== undefined && v !== '';
+  const valueIsDefined = (v) => v !== null && v !== undefined && v !== '';
 
   /* Value is already formatted as an array -- we should filter for undefined values */
   if (value instanceof Array) {
@@ -98,7 +98,7 @@ function* submitWorker(action :SequenceAction) :Generator<*, *, *> {
       selectedOrganizationId
     ]));
 
-    const edmDetailsRequest = allEntitySetIds.map(id => ({
+    const edmDetailsRequest = allEntitySetIds.map((id) => ({
       id,
       type: 'EntitySet',
       include: [
@@ -175,10 +175,11 @@ function* submitWorker(action :SequenceAction) :Generator<*, *, *> {
                 const srcKey = srcEntity.key;
                 const dstKey = dstEntity.key;
                 if (srcKey && dstKey) {
-                  const association = Object.assign({}, associationEntityDescription, {
+                  const association = {
+                    ...associationEntityDescription,
                     src: srcKey,
                     dst: dstKey
-                  });
+                  };
                   associations.push(association);
                 }
               });

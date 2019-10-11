@@ -168,11 +168,11 @@ const ForwardButton = styled.button.attrs({
   }
 
   &:last-child {
-    color: ${props => (props.canProgress ? '#f8f8fb' : '#aaafbc')};
-    background-color: ${props => (props.canProgress ? '#6124e2' : '#dcdce7')};
+    color: ${(props) => (props.canProgress ? '#f8f8fb' : '#aaafbc')};
+    background-color: ${(props) => (props.canProgress ? '#6124e2' : '#dcdce7')};
 
     &:hover:enabled {
-      background-color: ${props => (props.canProgress ? '#8045ff' : '#dcdce7')};
+      background-color: ${(props) => (props.canProgress ? '#8045ff' : '#dcdce7')};
     }
   }
 `;
@@ -304,7 +304,7 @@ class CrisisReportContainer extends React.Component<Props, State> {
 
     PAGES.forEach((page) => {
       const { postProcessor, stateField } = page;
-      submission = Object.assign({}, submission, postProcessor(state.get(stateField)));
+      submission = { ...submission, ...postProcessor(state.get(stateField)) };
     });
 
     actions.submit({
@@ -369,8 +369,7 @@ class CrisisReportContainer extends React.Component<Props, State> {
         <ButtonRow>
           { index === 0
             ? <BackButton onClick={() => this.setState({ confirmReset: true })}>Reset</BackButton>
-            : <BackButton onClick={() => this.handlePageChange(prevPath)}>Back</BackButton>
-          }
+            : <BackButton onClick={() => this.handlePageChange(prevPath)}>Back</BackButton>}
           {this.renderForwardButton(page, index)}
         </ButtonRow>
       </PageWrapper>
@@ -422,7 +421,7 @@ class CrisisReportContainer extends React.Component<Props, State> {
     return (
       <ResetModalBody>
         <h1>Close and delete report</h1>
-        <p>{'Warning! Clicking "Close and delete" will delete all data you have entered into this crisis report.'}</p>
+        <p>Warning! Clicking "Close and delete" will delete all data you have entered into this crisis report.</p>
         <p>Are you sure you want to exit the report and delete the content?</p>
         <ButtonRow>
           <BackButton onClick={doReset}>Close and Delete</BackButton>

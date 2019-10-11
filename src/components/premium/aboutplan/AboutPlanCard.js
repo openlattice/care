@@ -20,11 +20,12 @@ import Detail from '../styled/Detail';
 type Props = {
   isLoading :boolean;
   responsibleUser :Map;
+  showEdit :boolean;
 }
 
 const AboutPlanCard = (props :Props) => {
   const match = useRouteMatch();
-  const { isLoading, responsibleUser } = props;
+  const { isLoading, responsibleUser, showEdit } = props;
   const content = responsibleUser.getIn([PERSON_ID_FQN, 0]) || '---';
   return (
     <Card>
@@ -34,7 +35,7 @@ const AboutPlanCard = (props :Props) => {
             <FontAwesomeIcon icon={faInfoSquare} fixedWidth />
           </IconWrapper>
           About Plan
-          <EditLinkButton mode="neutral" to={`${match.url}${EDIT_PATH}${ABOUT_PATH}`} />
+          { showEdit && <EditLinkButton mode="subtle" to={`${match.url}${EDIT_PATH}${ABOUT_PATH}`} /> }
         </H1>
       </CardHeader>
       <CardSegment vertical padding="sm">

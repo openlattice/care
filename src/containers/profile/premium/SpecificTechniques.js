@@ -4,13 +4,9 @@ import styled from 'styled-components';
 import { Constants } from 'lattice';
 import { List, Map } from 'immutable';
 import { IconSplash } from 'lattice-ui-kit';
-import { withRouter } from 'react-router-dom';
-import type { Match } from 'react-router-dom';
 
-import LinkButton from '../../../components/buttons/LinkButton';
 import { UL } from '../../../components/layout';
 import { TECHNIQUES_FQN } from '../../../edm/DataModelFqns';
-import { EDIT_PATH, OFFICER_SAFETY_PATH } from '../../../core/router/Routes';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 
@@ -20,19 +16,13 @@ const H2 = styled.h2`
   margin: 0 0 10px 0;
 `;
 
-const ActionRow = styled.div`
-  display: flex;
-  justify-content: center;
-`;
-
 type Props = {
   isLoading :boolean;
-  match :Match;
   techniques :List<Map>;
 }
 
 const SpecificTechniques = (props :Props) => {
-  const { isLoading, match, techniques } = props;
+  const { isLoading, techniques } = props;
 
   if (isLoading) {
     return (
@@ -63,11 +53,8 @@ const SpecificTechniques = (props :Props) => {
         Specific Techniques
       </H2>
       { content }
-      <ActionRow>
-        <LinkButton mode="subtle" to={`${match.url}${EDIT_PATH}${OFFICER_SAFETY_PATH}`}>Suggest a Technique</LinkButton>
-      </ActionRow>
     </div>
   );
 };
 
-export default withRouter(SpecificTechniques);
+export default SpecificTechniques;

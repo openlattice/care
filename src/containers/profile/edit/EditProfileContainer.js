@@ -1,6 +1,6 @@
 // @flow
 import React, { useEffect } from 'react';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { Switch, Redirect } from 'react-router-dom';
 import { Map } from 'immutable';
 import {
   Card,
