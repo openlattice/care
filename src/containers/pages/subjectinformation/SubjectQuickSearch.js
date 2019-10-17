@@ -97,7 +97,7 @@ class SubjectQuickSearch extends Component<Props> {
     const { actions } = this.props;
     if (option) {
       const { value } = option;
-      const age :string = getPersonAge(value);
+      const age = getPersonAge(value);
 
       actions.setInputValues({
         [SUBJECT_INFORMATION.PERSON_ID]: getIn(value, [PERSON_ID_FQN, 0], ''),
@@ -162,7 +162,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-const mapDispatchToProps = (dispatch :Dispatch<*>) => ({
+const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
     searchConsumers,
     setInputValue,
@@ -170,4 +170,5 @@ const mapDispatchToProps = (dispatch :Dispatch<*>) => ({
   }, dispatch)
 });
 
+// $FlowFixMe
 export default connect(mapStateToProps, mapDispatchToProps)(SubjectQuickSearch);
