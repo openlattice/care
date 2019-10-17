@@ -1,7 +1,6 @@
 // @flow
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import moment from 'moment';
 import { List, Map, getIn } from 'immutable';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -33,6 +32,8 @@ import {
   PERSON_SSN_LAST_4_FQN,
 } from '../../../edm/DataModelFqns';
 
+const SEARCH_INSTRUCTIONS = 'Search by last name, first name, or alias. No results? Click "Create New Person" above';
+
 const StyledFormWrapper = styled(FormWrapper)`
   margin-bottom: 30px;
 `;
@@ -55,11 +56,7 @@ type Props = {
   preselectedPerson :Map;
 }
 
-type State = {
-  searchInput :string;
-}
-
-class SubjectQuickSearch extends Component<Props, State> {
+class SubjectQuickSearch extends Component<Props> {
 
   componentDidMount() {
     const { preselectedPerson } = this.props;
@@ -132,7 +129,7 @@ class SubjectQuickSearch extends Component<Props, State> {
           <Header>
             <h1>Quick Search</h1>
             <span>
-              Search by last name, first name, or alias. No results? Click "Create New Person" above
+              { SEARCH_INSTRUCTIONS }
             </span>
           </Header>
           <Select
@@ -166,7 +163,6 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch :Dispatch<*>) => ({
-  // $FlowFixMe
   actions: bindActionCreators({
     searchConsumers,
     setInputValue,
@@ -174,5 +170,4 @@ const mapDispatchToProps = (dispatch :Dispatch<*>) => ({
   }, dispatch)
 });
 
-// $FlowFixMe
 export default connect(mapStateToProps, mapDispatchToProps)(SubjectQuickSearch);
