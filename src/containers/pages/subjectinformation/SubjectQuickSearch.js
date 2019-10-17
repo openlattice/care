@@ -10,7 +10,7 @@ import type { Dispatch } from 'redux';
 import type { RequestSequence } from 'redux-reqseq';
 
 import SecondaryButton from '../../../components/buttons/SecondaryButton';
-import { getPersonOptions, formatPersonName, getPersonAge } from './SubjectInformationManagerUtils';
+import { getPersonOptions, getLastFirstMiFromPerson, getPersonAge } from '../../../utils/PersonUtils';
 import { setInputValue, setInputValues } from './ActionFactory';
 import { searchConsumers } from '../../search/SearchActionFactory';
 import {
@@ -101,7 +101,7 @@ class SubjectQuickSearch extends Component<Props> {
 
       actions.setInputValues({
         [SUBJECT_INFORMATION.PERSON_ID]: getIn(value, [PERSON_ID_FQN, 0], ''),
-        [SUBJECT_INFORMATION.FULL_NAME]: formatPersonName(value),
+        [SUBJECT_INFORMATION.FULL_NAME]: getLastFirstMiFromPerson(value),
         [SUBJECT_INFORMATION.FIRST]: getIn(value, [PERSON_FIRST_NAME_FQN, 0], ''),
         [SUBJECT_INFORMATION.LAST]: getIn(value, [PERSON_LAST_NAME_FQN, 0], ''),
         [SUBJECT_INFORMATION.MIDDLE]: getIn(value, [PERSON_MIDDLE_NAME_FQN, 0], ''),

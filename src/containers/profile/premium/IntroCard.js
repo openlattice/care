@@ -69,7 +69,7 @@ const IntroCard = (props :Props) => {
     showEdit,
   } = props;
 
-  const formattedName = getLastFirstMiFromPerson(selectedPerson);
+  const formattedName = getLastFirstMiFromPerson(selectedPerson, true);
 
   const rawDob = selectedPerson.getIn([FQN.PERSON_DOB_FQN, 0], '');
   const race = selectedPerson.getIn([FQN.PERSON_RACE_FQN, 0], '');
