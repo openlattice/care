@@ -1,6 +1,6 @@
 // @flow
-import { List, Map, OrderedMap } from 'immutable';
-import moment from 'moment';
+import { List, Map, getIn } from 'immutable';
+import { DateTime, Interval } from 'luxon';
 
 import {
   PERSON_DOB_FQN,
@@ -9,29 +9,39 @@ import {
   PERSON_MIDDLE_NAME_FQN,
 } from '../../../edm/DataModelFqns';
 
-const formatPersonName = (person :Map) => {
-  const firstName = person.getIn([PERSON_FIRST_NAME_FQN, 0], '');
-  const lastName = person.getIn([PERSON_LAST_NAME_FQN, 0], '');
-  const middleName = person.getIn([PERSON_MIDDLE_NAME_FQN, 0], '');
+const formatPersonName = (person :Map | Object) => {
+  const firstName = getIn(person, [PERSON_FIRST_NAME_FQN, 0], '');
+  const lastName = getIn(person, [PERSON_LAST_NAME_FQN, 0], '');
+  const middleName = getIn(person, [PERSON_MIDDLE_NAME_FQN, 0], '');
   return `${lastName}, ${firstName} ${middleName}`;
 };
 
-const getPersonOptions = (searchResults :List) => {
-  const options = OrderedMap().withMutations((mutable) => {
-    searchResults.forEach((person) => {
-      const dobStr = person.getIn([PERSON_DOB_FQN, 0], '');
-      const dobMoment = moment(dobStr);
-
-      const dob = dobMoment.isValid() ? dobMoment.format('MM-DD-YYYY') : dobStr;
-
-      mutable.set(List.of(formatPersonName(person), dob), person);
-    });
+const getPersonOptions = (searchResults :List = List()) => searchResults
+  .map((person) => {
+    const dobStr = getIn(person, [PERSON_DOB_FQN, 0], '');
+    const formattedDob = DateTime.fromISO(dobStr).toLocaleString(DateTime.DATE_SHORT);
+    const label = `${formatPersonName(person)} - ${formattedDob}`;
+    return {
+      label,
+      value: person
+    };
   });
 
-  return options;
+const getPersonAge = (person :Map | Object, asNumber :boolean = false, invalidValue :any = '') => {
+  const dobStr = getIn(person, [PERSON_DOB_FQN, 0], '');
+  const dobDT = DateTime.fromISO(dobStr);
+  if (dobDT.isValid) {
+    const now = DateTime.local();
+    const age = Math.floor(Interval.fromDateTimes(dobDT, now).length('years'));
+
+    return asNumber ? `${age}` : age;
+  }
+
+  return invalidValue;
 };
 
 export {
   formatPersonName,
-  getPersonOptions
+  getPersonAge,
+  getPersonOptions,
 };
