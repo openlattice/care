@@ -2,7 +2,7 @@
 import { DateTime } from 'luxon';
 import { List, Map } from 'immutable';
 import * as FQN from '../../edm/DataModelFqns';
-import { formatPersonName } from '../pages/subjectinformation/SubjectInformationManagerUtils';
+import { getLastFirstMiFromPerson } from '../../utils/PersonUtils';
 import {
   CRISIS_NATURE,
   DISPOSITION,
@@ -40,7 +40,7 @@ const compileSubjectData = (subjectData :Map, reportData :Map) => {
 
   return {
     [SUBJECT_INFORMATION.PERSON_ID]: subjectData.getIn([FQN.PERSON_ID_FQN, 0], ''),
-    [SUBJECT_INFORMATION.FULL_NAME]: formatPersonName(subjectData),
+    [SUBJECT_INFORMATION.FULL_NAME]: getLastFirstMiFromPerson(subjectData),
     [SUBJECT_INFORMATION.FIRST]: subjectData.getIn([FQN.PERSON_FIRST_NAME_FQN, 0], ''),
     [SUBJECT_INFORMATION.LAST]: subjectData.getIn([FQN.PERSON_LAST_NAME_FQN, 0], ''),
     [SUBJECT_INFORMATION.MIDDLE]: subjectData.getIn([FQN.PERSON_MIDDLE_NAME_FQN, 0], ''),

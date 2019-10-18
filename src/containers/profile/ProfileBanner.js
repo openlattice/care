@@ -35,7 +35,7 @@ type Props = {
 
 const ProfileBanner = ({ selectedPerson } :Props) => {
   const dob = getDobFromPerson(selectedPerson);
-  const name = getLastFirstMiFromPerson(selectedPerson);
+  const name = getLastFirstMiFromPerson(selectedPerson, true);
 
   return (
     <Banner mode="default" isOpen sticky>
