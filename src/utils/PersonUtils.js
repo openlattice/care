@@ -41,8 +41,11 @@ const getDobFromPerson = (person :Map | Object, asDate :boolean = false, invalid
 const getPersonOptions = (searchResults :List = List()) => searchResults
   .map((person) => {
     // $FlowFixMe
-    const formattedDob :string = getDobFromPerson(DateTime.DATE_SHORT);
-    const label = `${getLastFirstMiFromPerson(person)} - ${formattedDob}`;
+    const formattedDob :string = getDobFromPerson(person);
+    const formattedName :string = getLastFirstMiFromPerson(person);
+    const label = formattedDob.length
+      ? `${formattedName} - ${formattedDob}`
+      : `${formattedName}`;
     return {
       label,
       value: person
