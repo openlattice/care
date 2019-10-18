@@ -1,16 +1,16 @@
 // @flow
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import moment from 'moment';
-import { List, Map, OrderedMap } from 'immutable';
+import { List, Map, getIn } from 'immutable';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { Select } from 'lattice-ui-kit';
+import { faSearch } from '@fortawesome/pro-regular-svg-icons';
 import type { Dispatch } from 'redux';
 import type { RequestSequence } from 'redux-reqseq';
 
-import SearchableSelect from '../../../components/controls/SearchableSelect';
 import SecondaryButton from '../../../components/buttons/SecondaryButton';
-import { getPersonOptions, formatPersonName } from './SubjectInformationManagerUtils';
+import { getPersonOptions, getLastFirstMiFromPerson, getPersonAge } from '../../../utils/PersonUtils';
 import { setInputValue, setInputValues } from './ActionFactory';
 import { searchConsumers } from '../../search/SearchActionFactory';
 import {
@@ -32,6 +32,8 @@ import {
   PERSON_SSN_LAST_4_FQN,
 } from '../../../edm/DataModelFqns';
 
+const SEARCH_INSTRUCTIONS = 'Search by last name, first name, or alias. No results? Click "Create New Person" above';
+
 const StyledFormWrapper = styled(FormWrapper)`
   margin-bottom: 30px;
 `;
@@ -50,25 +52,18 @@ type Props = {
   };
   app :Map;
   isLoadingResults :boolean;
-  noResults :boolean;
-  options :OrderedMap;
+  options :List;
   preselectedPerson :Map;
 }
 
-type State = {
-  searchInput :string;
-}
-
-class SubjectQuickSearch extends Component<Props, State> {
-
-  state = {
-    searchInput: ''
-  }
+class SubjectQuickSearch extends Component<Props> {
 
   componentDidMount() {
     const { preselectedPerson } = this.props;
     if (!preselectedPerson.isEmpty()) {
-      this.handleSelect(preselectedPerson);
+      this.handleSelect({
+        value: preselectedPerson
+      });
     }
   }
 
@@ -83,13 +78,8 @@ class SubjectQuickSearch extends Component<Props, State> {
     });
   };
 
-  handleChange = (e :SyntheticInputEvent<*>) => {
+  handleChange = (value :string) => {
     const { actions, app } = this.props;
-    const { value } = e.target;
-
-    this.setState({
-      searchInput: value
-    });
 
     clearTimeout(this.searchTimeout);
 
@@ -103,38 +93,34 @@ class SubjectQuickSearch extends Component<Props, State> {
     }, 500);
   }
 
-  handleClear = () => {
-    this.setState({
-      searchInput: ''
-    });
-  }
-
-  handleSelect = (person :Map) => {
+  handleSelect = (option :any) => {
     const { actions } = this.props;
+    if (option) {
+      const { value } = option;
+      const age = getPersonAge(value);
 
-    actions.setInputValues({
-      [SUBJECT_INFORMATION.PERSON_ID]: person.getIn([PERSON_ID_FQN, 0], ''),
-      [SUBJECT_INFORMATION.FULL_NAME]: formatPersonName(person),
-      [SUBJECT_INFORMATION.FIRST]: person.getIn([PERSON_FIRST_NAME_FQN, 0], ''),
-      [SUBJECT_INFORMATION.LAST]: person.getIn([PERSON_LAST_NAME_FQN, 0], ''),
-      [SUBJECT_INFORMATION.MIDDLE]: person.getIn([PERSON_MIDDLE_NAME_FQN, 0], ''),
-      [SUBJECT_INFORMATION.AKA]: person.getIn([PERSON_NICK_NAME_FQN, 0], ''),
-      [SUBJECT_INFORMATION.DOB]: person.getIn([PERSON_DOB_FQN, 0], ''),
-      [SUBJECT_INFORMATION.RACE]: person.getIn([PERSON_RACE_FQN, 0], ''),
-      [SUBJECT_INFORMATION.GENDER]: person.getIn([PERSON_SEX_FQN, 0], ''),
-      [SUBJECT_INFORMATION.AGE]: moment().diff(moment(person.getIn([PERSON_DOB_FQN, 0], '')), 'years'),
-      [SUBJECT_INFORMATION.SSN_LAST_4]: person.getIn([PERSON_SSN_LAST_4_FQN, 0], ''),
-      [SUBJECT_INFORMATION.IS_NEW_PERSON]: false
-    });
+      actions.setInputValues({
+        [SUBJECT_INFORMATION.PERSON_ID]: getIn(value, [PERSON_ID_FQN, 0], ''),
+        [SUBJECT_INFORMATION.FULL_NAME]: getLastFirstMiFromPerson(value),
+        [SUBJECT_INFORMATION.FIRST]: getIn(value, [PERSON_FIRST_NAME_FQN, 0], ''),
+        [SUBJECT_INFORMATION.LAST]: getIn(value, [PERSON_LAST_NAME_FQN, 0], ''),
+        [SUBJECT_INFORMATION.MIDDLE]: getIn(value, [PERSON_MIDDLE_NAME_FQN, 0], ''),
+        [SUBJECT_INFORMATION.AKA]: getIn(value, [PERSON_NICK_NAME_FQN, 0], ''),
+        [SUBJECT_INFORMATION.DOB]: getIn(value, [PERSON_DOB_FQN, 0], ''),
+        [SUBJECT_INFORMATION.RACE]: getIn(value, [PERSON_RACE_FQN, 0], ''),
+        [SUBJECT_INFORMATION.GENDER]: getIn(value, [PERSON_SEX_FQN, 0], ''),
+        [SUBJECT_INFORMATION.AGE]: age,
+        [SUBJECT_INFORMATION.SSN_LAST_4]: getIn(value, [PERSON_SSN_LAST_4_FQN, 0], ''),
+        [SUBJECT_INFORMATION.IS_NEW_PERSON]: false
+      });
+    }
   }
 
   render() {
     const {
       isLoadingResults,
-      noResults,
-      options
+      options,
     } = this.props;
-    const { searchInput } = this.state;
 
     return (
       <StyledFormWrapper>
@@ -143,25 +129,18 @@ class SubjectQuickSearch extends Component<Props, State> {
           <Header>
             <h1>Quick Search</h1>
             <span>
-              Search by last name, first name, or alias. No results? Click "Create New Person" above
+              { SEARCH_INSTRUCTIONS }
             </span>
           </Header>
-          <SearchableSelect
-              dropdownIcon={false}
-              fullWidth
-              isLoadingResults={isLoadingResults}
-              noFilter
-              noResults={noResults}
-              onClear={this.handleClear}
+          <Select
+              inputId="subject-quick-search-input"
+              icon={faSearch}
+              isClearable
+              isLoading={isLoadingResults}
+              onChange={this.handleSelect}
               onInputChange={this.handleChange}
-              onSelect={this.handleSelect}
               options={options}
-              searchIcon
-              short
-              split
-              transparent
-              value={searchInput}
-              withBorders />
+              placeholder="Search..." />
         </FormSection>
       </StyledFormWrapper>
     );
@@ -178,14 +157,12 @@ const mapStateToProps = (state) => {
   return {
     app: state.get('app', Map()),
     isLoadingResults: consumers.get('isSearching', false),
-    noResults: consumers.get('searchComplete', false) && searchResults.size === 0,
     options,
     preselectedPerson,
   };
 };
 
-const mapDispatchToProps = (dispatch :Dispatch<*>) => ({
-  // $FlowFixMe
+const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
     searchConsumers,
     setInputValue,
