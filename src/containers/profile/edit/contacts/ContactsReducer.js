@@ -72,9 +72,10 @@ const ContactsReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => 
       return deleteContact.reducer(state, action, {
         REQUEST: () => state.set('deleteState', RequestStates.PENDING),
         SUCCESS: () => {
-          const { path } = action.value;
+          const { entityIndexToIdMap, path } = action.value;
           return state
             .set('deleteState', RequestStates.SUCCESS)
+            .set('entityIndexToIdMap', entityIndexToIdMap)
             .deleteIn(['formData', ...path]);
         },
         FAILURE: () => state.set('deleteState', RequestStates.FAILURE)

@@ -37,15 +37,13 @@ const { UpdateTypes, DeleteTypes } = Types;
 const {
   createAssociations,
   createEntityAndAssociationData,
-  deleteEntitiesAndNeighbors,
-  deleteEntity,
+  deleteEntityData,
   updateEntityData,
 } = DataApiActions;
 const {
   createAssociationsWorker,
   createEntityAndAssociationDataWorker,
-  deleteEntitiesAndNeighborsWorker,
-  deleteEntityWorker,
+  deleteEntityDataWorker,
   updateEntityDataWorker,
 } = DataApiSagas;
 
@@ -179,29 +177,25 @@ function* deleteBulkEntitiesWorker(action :SequenceAction) :Generator<*, *, *> {
     if (value === null || value === undefined) throw ERR_ACTION_VALUE_NOT_DEFINED;
 
     yield put(deleteBulkEntities.request(action.id));
-
     const deleteRequests = Object.keys(value).map((entitySetId) => {
       const entityKeyIds = Array.from(value[entitySetId]);
 
-      const filter = {
-        entityKeyIds,
-        destinationEntitySetIds: [],
-        sourceEntitySetIds: []
-      };
-
       return call(
-        deleteEntitiesAndNeighborsWorker,
-        deleteEntitiesAndNeighbors({
+        deleteEntityDataWorker,
+        deleteEntityData({
           entitySetId,
-          filter,
+          entityKeyIds,
           deleteType: DeleteTypes.SOFT
         })
       );
     });
 
     const deleteResponses = yield all(deleteRequests);
-    const reducedError = deleteResponses.reduce((acc, response) => acc.error || response.error, {});
-    if (reducedError) throw reducedError;
+    const reducedError = deleteResponses.reduce((acc, response) => {
+      acc.error = acc.error || response.error;
+      return acc;
+    }, {});
+    if (reducedError.error) throw reducedError;
 
     yield put(deleteBulkEntities.success(action.id));
   }
@@ -234,9 +228,9 @@ function* createOrReplaceAssociationWorker(action :SequenceAction) :Generator<an
 
     if (isValidUuid(entityKeyId) && isValidUuid(entitySetId)) {
       const deleteResponse = yield call(
-        deleteEntityWorker,
-        deleteEntity({
-          entityKeyId,
+        deleteEntityDataWorker,
+        deleteEntityData({
+          entityKeyIds: [entityKeyId],
           entitySetId,
           deleteType: DeleteTypes.SOFT
         })
