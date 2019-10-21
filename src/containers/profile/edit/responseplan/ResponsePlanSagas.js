@@ -46,6 +46,7 @@ import {
   submitPartialReplaceWorker,
 } from '../../../../core/sagas/data/DataSagas';
 import { INDEX_FQN, TECHNIQUES_FQN } from '../../../../edm/DataModelFqns';
+import { removeEntitiesFromEntityIndexToIdMap } from '../../../../utils/DataUtils';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
@@ -237,7 +238,10 @@ export function* deleteInteractionStrategiesWorker(action :SequenceAction) :Gene
 
     if (response.error) throw response.error;
 
-    yield put(deleteInteractionStrategies.success(action.id, { path }));
+    const entityIndexToIdMap = yield select((state) => state.getIn(['profile', 'responsePlan', 'entityIndexToIdMap']));
+    const newEntityIndexToIdMap = removeEntitiesFromEntityIndexToIdMap(entityData, entityIndexToIdMap);
+
+    yield put(deleteInteractionStrategies.success(action.id, { entityIndexToIdMap: newEntityIndexToIdMap, path }));
   }
   catch (error) {
     LOG.error('deleteInteractionStrategiesWorker', error);

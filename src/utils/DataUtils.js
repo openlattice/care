@@ -151,6 +151,23 @@ const formatDataGraphResponse = (responseData :Map, app :Map) => {
   };
 };
 
+const removeEntitiesFromEntityIndexToIdMap = (
+  deletedEntityData :Object,
+  entityIndexToIdMap :Map
+) => {
+  const newEntityIndexToIdMap = entityIndexToIdMap.map((entityType :Map) => {
+    const newEntityType = entityType.map((entityKeyIds) => {
+      const entityKeyIdSet = Set(entityKeyIds).asMutable();
+      Object.values(deletedEntityData).forEach((deletedEntityKeyIds) => {
+        entityKeyIdSet.subtract(deletedEntityKeyIds);
+      });
+      return entityKeyIdSet.toList();
+    });
+    return newEntityType;
+  });
+  return newEntityIndexToIdMap.asImmutable();
+};
+
 
 export {
   SEARCH_PREFIX,
@@ -166,4 +183,5 @@ export {
   keyIn,
   simulateResponseData,
   stripIdField,
+  removeEntitiesFromEntityIndexToIdMap,
 };

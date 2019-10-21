@@ -45,7 +45,7 @@ import {
   submitPartialReplaceWorker,
 } from '../../../../core/sagas/data/DataSagas';
 import { constructEntityIndexToIdMap, constructFormData } from './ContactsUtils';
-import { getEntityKeyIdsFromList } from '../../../../utils/DataUtils';
+import { getEntityKeyIdsFromList, removeEntitiesFromEntityIndexToIdMap } from '../../../../utils/DataUtils';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
@@ -87,7 +87,7 @@ function* submitContactsWorker(action :SequenceAction) :Generator<*, *, *> {
     const contactInfoEKIDs = newEntityKeyIdsByEntitySetName.get(CONTACT_INFORMATION_FQN);
     const isContactForEKIDs = newAssociationKeyIdsByEntitySetName.get(IS_EMERGENCY_CONTACT_FOR_FQN);
 
-    const newEntityIndexToIdMap = constructEntityIndexToIdMap(contactsEKIDs, contactInfoEKIDs, isContactForEKIDs);
+    const newEntityIndexToIdMap = constructEntityIndexToIdMap(contactsEKIDs, isContactForEKIDs, contactInfoEKIDs);
     const entityIndexToIdMap = yield select((state) => state.getIn(['profile', 'contacts', 'entityIndexToIdMap']));
     const mergedEntityIndexToIdMap = entityIndexToIdMap.mergeDeep(newEntityIndexToIdMap);
 
@@ -251,7 +251,10 @@ function* deleteContactWorker(action :SequenceAction) :Generator<*, *, *> {
 
     if (response.error) throw response.error;
 
-    yield put(deleteContact.success(action.id, { path }));
+    const entityIndexToIdMap = yield select((state) => state.getIn(['profile', 'contacts', 'entityIndexToIdMap']));
+    const newEntityIndexToIdMap = removeEntitiesFromEntityIndexToIdMap(entityData, entityIndexToIdMap);
+
+    yield put(deleteContact.success(action.id, { path, entityIndexToIdMap: newEntityIndexToIdMap }));
   }
   catch (error) {
     LOG.error('deleteContactWorker', error);
