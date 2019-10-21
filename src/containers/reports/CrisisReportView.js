@@ -21,7 +21,7 @@ import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import NoResource from '../../components/NoResource';
-import FormRecordCard from '../../components/form/FormRecord';
+import FormRecord from '../../components/form/FormRecord';
 import ReviewContainer from '../crisis/ReviewContainer';
 import BackButton from '../../components/buttons/BackButton';
 import ProgressSidebar from '../../components/form/ProgressSidebar';
@@ -35,6 +35,7 @@ import DeleteModal from '../../components/modals/DeleteModal';
 import SubmitSuccess from '../../components/crisis/SubmitSuccess';
 
 import { getReport, updateReport, deleteReport } from './ReportsActions';
+import { getAuthorization } from '../../core/sagas/authorize/AuthorizeActions';
 import { clearCrisisReport } from '../crisis/CrisisActionFactory';
 import {
   getCurrentPage,
@@ -192,6 +193,7 @@ type Props = {
       type :string;
     };
     deleteReport :RequestSequence;
+    getAuthorization :RequestSequence;
     getReport :RequestSequence;
     submit :(args :Object) => void;
     updateReport :RequestSequence;
@@ -408,6 +410,7 @@ class CrisisReportView extends React.Component<Props, State> {
 
   render() {
     const {
+      actions,
       deleteState,
       fetchState,
       lastUpdatedStaff,
@@ -469,12 +472,13 @@ class CrisisReportView extends React.Component<Props, State> {
         }
         <PageWrapper>
           <FormWrapper>
-            <FormRecordCard
+            <FormRecord
+                authorize={actions.getAuthorization}
+                lastUpdated={lastUpdatedStaff}
                 onClickPrimary={primaryClick}
                 onClickSecondary={this.handleShowDelete}
                 primaryText={edit ? 'Discard' : 'Edit'}
-                submitted={submittedStaff}
-                lastUpdated={lastUpdatedStaff} />
+                submitted={submittedStaff} />
             <Switch>
               {this.renderRoutes()}
               <Redirect to={baseUrl} />
@@ -519,6 +523,7 @@ function mapDispatchToProps(dispatch :Dispatch<*>) :Object {
   const actions = {
     clearCrisisReport,
     deleteReport,
+    getAuthorization,
     getReport,
     updateReport,
   };
