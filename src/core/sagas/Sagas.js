@@ -46,15 +46,15 @@ export default function* sagas() :Generator<*, *, *> {
     fork(AuthSagas.watchLogout),
 
     // "lattice-sagas" sagas
-    fork(AppApiSagas.getAppWatcher),
     fork(AppApiSagas.getAppConfigsWatcher),
     fork(AppApiSagas.getAppTypesWatcher),
-    fork(DataApiSagas.deleteEntityWatcher),
+    fork(AppApiSagas.getAppWatcher),
+    fork(DataApiSagas.deleteEntityDataWatcher),
     fork(DataApiSagas.getEntitySetDataWatcher),
     fork(DataApiSagas.updateEntityDataWatcher),
     fork(DataIntegrationApiSagas.createEntityAndAssociationDataWatcher),
-    fork(EntityDataModelApiSagas.getEntityDataModelProjectionWatcher),
     fork(EntityDataModelApiSagas.getAllPropertyTypesWatcher),
+    fork(EntityDataModelApiSagas.getEntityDataModelProjectionWatcher),
     fork(SearchApiSagas.searchEntitySetDataWatcher),
 
     // AppSagas

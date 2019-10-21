@@ -73,13 +73,13 @@ const { DeleteTypes, UpdateTypes } = Types;
 const { OPENLATTICE_ID_FQN } = Constants;
 const {
   createAssociations,
-  deleteEntity,
+  deleteEntityData,
   getEntityData,
   updateEntityData,
 } = DataApiActions;
 const {
   createAssociationsWorker,
-  deleteEntityWorker,
+  deleteEntityDataWorker,
   getEntityDataWorker,
   updateEntityDataWorker,
 } = DataApiSagas;
@@ -137,8 +137,12 @@ function* deleteReportWorker(action :SequenceAction) :Generator<*, *, *> {
     const entitySetId :UUID = getReportESId(app);
 
     const response = yield call(
-      deleteEntityWorker,
-      deleteEntity({ entityKeyId, entitySetId, deleteType: DeleteTypes.Soft })
+      deleteEntityDataWorker,
+      deleteEntityData({
+        entityKeyIds: [entityKeyId],
+        entitySetId,
+        deleteType: DeleteTypes.Soft
+      })
     );
     if (response.error) throw response.error;
     yield put(deleteReport.success(action.id));
