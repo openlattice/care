@@ -5,7 +5,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { DateTimePicker } from 'lattice-ui-kit';
+import { DateTimePicker, Label } from 'lattice-ui-kit';
 
 type Props = {
   startDate :?string,
@@ -34,17 +34,10 @@ const DateRangeContainer = styled.div`
   justify-content: center;
 `;
 
-const DatePickerGroupContainer = styled.div`
-  width: 100%;
-  max-width: 300px;
+const DatePickerWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
   margin: 10px;
-`;
-
-const DatePickerLabel = styled.div`
-  font-family: 'Open Sans', sans-serif;
-  font-size: 14px;
-  color: #555e6f;
-  margin-bottom: 10px;
 `;
 
 
@@ -58,18 +51,18 @@ const DateTimeRange = ({
   <WideWrapper>
     <DatePickerTitle>{label}</DatePickerTitle>
     <DateRangeContainer>
-      <DatePickerGroupContainer>
-        <DatePickerLabel>Start Date</DatePickerLabel>
+      <DatePickerWrapper>
+        <Label>Start Date</Label>
         <DateTimePicker
             onChange={onStartChange}
             value={startDate} />
-      </DatePickerGroupContainer>
-      <DatePickerGroupContainer>
-        <DatePickerLabel>End Date</DatePickerLabel>
+      </DatePickerWrapper>
+      <DatePickerWrapper>
+        <Label>End Date</Label>
         <DateTimePicker
             onChange={onEndChange}
             value={endDate} />
-      </DatePickerGroupContainer>
+      </DatePickerWrapper>
     </DateRangeContainer>
   </WideWrapper>
 );
