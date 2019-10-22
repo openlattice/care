@@ -5,12 +5,11 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { DateTimePicker } from '@atlaskit/datetime-picker';
+import { DateTimePicker } from 'lattice-ui-kit';
 
 type Props = {
   startDate :?string,
   endDate :?string,
-  format24HourClock? :boolean,
   onStartChange :(start :string) => void,
   onEndChange :(end :string) => void,
   label? :string
@@ -52,48 +51,30 @@ const DatePickerLabel = styled.div`
 const DateTimeRange = ({
   startDate,
   endDate,
-  format24HourClock,
   onStartChange,
   onEndChange,
   label
-} :Props) => {
-  const dateFormat = 'MM/DD/YYYY';
-  const timeFormat = format24HourClock ? 'HH:mm' : 'hh:mm A';
-  return (
-    <WideWrapper>
-      <DatePickerTitle>{label}</DatePickerTitle>
-      <DateRangeContainer>
-        <DatePickerGroupContainer>
-          <DatePickerLabel>Start Date</DatePickerLabel>
-          <DateTimePicker
-              dateFormat={dateFormat}
-              timeFormat={timeFormat}
-              value={startDate}
-              onChange={onStartChange}
-              timeIsEditable
-              datePickerSelectProps={{
-                placeholder: dateFormat,
-              }} />
-        </DatePickerGroupContainer>
-        <DatePickerGroupContainer>
-          <DatePickerLabel>End Date</DatePickerLabel>
-          <DateTimePicker
-              dateFormat={dateFormat}
-              timeFormat={timeFormat}
-              value={endDate}
-              onChange={onEndChange}
-              timeIsEditable
-              datePickerSelectProps={{
-                placeholder: dateFormat,
-              }} />
-        </DatePickerGroupContainer>
-      </DateRangeContainer>
-    </WideWrapper>
-  );
-};
+} :Props) => (
+  <WideWrapper>
+    <DatePickerTitle>{label}</DatePickerTitle>
+    <DateRangeContainer>
+      <DatePickerGroupContainer>
+        <DatePickerLabel>Start Date</DatePickerLabel>
+        <DateTimePicker
+            onChange={onStartChange}
+            value={startDate} />
+      </DatePickerGroupContainer>
+      <DatePickerGroupContainer>
+        <DatePickerLabel>End Date</DatePickerLabel>
+        <DateTimePicker
+            onChange={onEndChange}
+            value={endDate} />
+      </DatePickerGroupContainer>
+    </DateRangeContainer>
+  </WideWrapper>
+);
 
 DateTimeRange.defaultProps = {
-  format24HourClock: false,
   label: 'Choose a date range.'
 };
 

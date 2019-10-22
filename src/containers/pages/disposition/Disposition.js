@@ -4,13 +4,12 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import moment from 'moment';
+import { DateTime } from 'luxon';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router';
 import { List, Map } from 'immutable';
-import { DateTimePicker } from '@atlaskit/datetime-picker';
-import { Input, TextArea } from 'lattice-ui-kit';
+import { Input, TextArea, DateTimePicker } from 'lattice-ui-kit';
 
 import StyledCheckbox from '../../../components/controls/StyledCheckbox';
 import StyledRadio from '../../../components/controls/StyledRadio';
@@ -49,16 +48,12 @@ type Props = {
 }
 
 const DateTimePickerWrapper = styled.div`
-  min-width: 300px;
   margin-bottom: 10px;
 `;
 
 const InputWithMargin = styled(Input)`
   margin: 10px 0;
 `;
-
-const dateFormat = 'MM/DD/YYYY';
-const timeFormat = 'hh:mm A';
 
 class Disposition extends React.Component<Props> {
 
@@ -69,7 +64,7 @@ class Disposition extends React.Component<Props> {
     if (!values.get(DISPOSITION.INCIDENT_DATE_TIME)) {
       setInputValue({
         field: DISPOSITION.INCIDENT_DATE_TIME,
-        value: moment().toISOString(true)
+        value: DateTime.local().toISO()
       });
     }
 
@@ -211,10 +206,7 @@ class Disposition extends React.Component<Props> {
       );
     };
 
-    const onDateChange = (newDate) => {
-      const value = newDate.endsWith('T')
-        ? moment(newDate.slice(0, newDate.length - 1)).toISOString(true)
-        : newDate;
+    const onDateChange = (value) => {
       setInputValue({
         field: DISPOSITION.INCIDENT_DATE_TIME,
         value
@@ -334,15 +326,9 @@ class Disposition extends React.Component<Props> {
           </RequiredField>
           <DateTimePickerWrapper>
             <DateTimePicker
-                isDisabled={disabled}
-                dateFormat={dateFormat}
-                timeFormat={timeFormat}
-                timeIsEditable
+                disabled={disabled}
                 value={values.get(DISPOSITION.INCIDENT_DATE_TIME)}
-                onChange={onDateChange}
-                datePickerSelectProps={{
-                  placeholder: dateFormat,
-                }} />
+                onChange={onDateChange} />
           </DateTimePickerWrapper>
           <RequiredField>
             <FormText noMargin>Report info</FormText>
