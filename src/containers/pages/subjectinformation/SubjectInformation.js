@@ -190,7 +190,7 @@ class SubjectInformation extends React.Component<Props> {
                 <RequiredField><FormText noMargin>DOB</FormText></RequiredField>
                 <DatePicker
                     value={values.get(SUBJECT_INFORMATION.DOB)}
-                    isDisabled={!isCreatingNewPerson || disabled}
+                    disabled={!isCreatingNewPerson || disabled}
                     onChange={(value) => actions.setInputValue({ field: SUBJECT_INFORMATION.DOB, value })} />
               </DatePickerWrapper>
             )
