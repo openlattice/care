@@ -293,8 +293,8 @@ function* getReportsByDateRangeWorker(action :SequenceAction) :Generator<*, *, *
     const staffESID :UUID = getStaffESId(app);
 
     const datetimePTID :UUID = edm.getIn(['fqnToIdMap', FQN.DATE_TIME_OCCURRED_FQN]);
-    const startDT = DateTime.fromISO(value.get('dateStart', ''));
-    const endDT = DateTime.fromISO(value.get('dateEnd', ''));
+    const startDT = DateTime.fromISO(value.get('dateStart'));
+    const endDT = DateTime.fromISO(value.get('dateEnd'));
 
     const startTerm = startDT.isValid ? startDT.toISO() : '*';
     const endTerm = endDT.isValid ? endDT.endOf('day').toISO() : '*';

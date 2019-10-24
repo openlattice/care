@@ -4,7 +4,6 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import moment from 'moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Map } from 'immutable';
@@ -70,10 +69,7 @@ class DownloadsContainer extends React.Component<Props, State> {
   }
 
   onDateChange = (field, newDate) => {
-    const formattedDate = newDate.endsWith('T')
-      ? moment(newDate.slice(0, newDate.length - 1)).toISOString(true)
-      : newDate;
-    this.setState({ [field]: formattedDate });
+    this.setState({ [field]: newDate });
   }
 
   render() {
