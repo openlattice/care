@@ -180,8 +180,8 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *> {
       bhr.get(DATE_TIME_OCCURRED_FQN, List()).forEach((date) => {
         const dateDT = DateTime.fromISO(date);
         if (dateDT.isValid) {
-          const dateStr = dateDT.toLocaleString(DateTime.DATE_SHORT);
-          const timeStr = dateDT.toLocaleString(DateTime.TIME_SIMPLE);
+          const dateStr = dateDT.toISODate();
+          const timeStr = dateDT.toLocaleString(DateTime.TIME_24_SIMPLE);
           const dayOfWeek = dateDT.weekdayShort;
           const timeHr = `${dateDT.hour}`;
           dateCounts = dateCounts.set(dateStr, dateCounts.get(dateStr, 0) + 1);
