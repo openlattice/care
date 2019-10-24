@@ -4,7 +4,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import moment from 'moment';
+import { DateTime } from 'luxon';
 import { List, Map } from 'immutable';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
@@ -20,7 +20,6 @@ import {
   DISPOSITION
 } from '../../utils/constants/CrisisReportConstants';
 import { DISPOSITIONS as DISP_VALUES } from '../pages/disposition/Constants';
-import { MEDIA_QUERY_MD } from '../../core/style/Sizes';
 import { FormWrapper } from '../../components/crisis/FormComponents';
 
 
@@ -82,15 +81,6 @@ const Section = styled.div`
   }
 `;
 
-const ReviewHeader = styled.div`
-  font-size: 16px;
-  color: ${BLACK};
-
-  @media only screen and (min-width: ${MEDIA_QUERY_MD}px) {
-    font-size: 18px;
-  }
-`;
-
 class ReviewContainer extends React.Component<Props> {
 
   getValueList = (values, field, otherField) => {
@@ -114,14 +104,13 @@ class ReviewContainer extends React.Component<Props> {
     const first = subjectInformation.get(FIRST, '');
     const last = subjectInformation.get(LAST, '');
     const middle = subjectInformation.get(MIDDLE, '');
-
-    const dobMoment = moment(subjectInformation.get(DOB, ''));
-    const dob = dobMoment.isValid() ? dobMoment.format('MM-DD-YYYY') : '';
+    const dobDT = DateTime.fromISO(subjectInformation.get(DOB));
+    const dob = dobDT.isValid ? dobDT.toLocaleString(DateTime.DATE_SHORT) : '';
 
     return (
       <Name>
         <span>{`${last}, ${first} ${middle}`}</span>
-        <span>{dob}</span>
+        <span>{`DOB: ${dob}`}</span>
       </Name>
     );
   }
@@ -330,7 +319,6 @@ class ReviewContainer extends React.Component<Props> {
   render() {
     return (
       <FormWrapper>
-        <ReviewHeader>{`Crisis Report Narrative: ${moment().format('MM-DD-YYYY')}`}</ReviewHeader>
         <Wrapper>
           {this.renderName()}
           {this.renderBehaviors()}

@@ -1,6 +1,7 @@
 // @flow
-import { DateTime, Interval } from 'luxon';
 import { List, Map, getIn } from 'immutable';
+
+import { getAgeFromIsoDate, getDateShortFromIsoDate } from './DateUtils';
 import * as FQN from '../edm/DataModelFqns';
 
 const getLastFirstMiFromPerson = (person :Map | Object, middleInitialOnly :boolean = false) => {
@@ -30,12 +31,7 @@ const getFirstLastFromPerson = (person :Map | Object) => {
 
 const getDobFromPerson = (person :Map | Object, asDate :boolean = false, invalidValue :any = '') => {
   const dobStr = getIn(person, [FQN.PERSON_DOB_FQN, 0], '');
-  const dobDT = DateTime.fromISO(dobStr);
-  if (dobDT.isValid) {
-    return asDate ? dobDT : dobDT.toLocaleString(DateTime.DATE_SHORT);
-  }
-
-  return invalidValue;
+  return getDateShortFromIsoDate(dobStr, asDate, invalidValue);
 };
 
 const getPersonOptions = (searchResults :List = List()) => searchResults
@@ -54,15 +50,7 @@ const getPersonOptions = (searchResults :List = List()) => searchResults
 
 const getPersonAge = (person :Map | Object, asNumber :boolean = false, invalidValue :any = '') => {
   const dobStr = getIn(person, [FQN.PERSON_DOB_FQN, 0], '');
-  const dobDT = DateTime.fromISO(dobStr);
-  if (dobDT.isValid) {
-    const now = DateTime.local();
-    const age = Math.floor(Interval.fromDateTimes(dobDT, now).length('years'));
-
-    return asNumber ? `${age}` : age;
-  }
-
-  return invalidValue;
+  return getAgeFromIsoDate(dobStr, asNumber, invalidValue);
 };
 
 export {

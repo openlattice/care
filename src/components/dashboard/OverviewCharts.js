@@ -4,7 +4,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import moment from 'moment';
+import { DateTime } from 'luxon';
 import { Map } from 'immutable';
 
 import {
@@ -20,9 +20,6 @@ import ChartTooltip from './charts/ChartTooltip';
 import SimpleBarChart from './charts/SimpleBarChart';
 import DayAndTimeHeatMap from './charts/DayAndTimeHeatMap';
 import { DASHBOARD_COUNTS } from '../../shared/Consts';
-
-const DATE_STR = 'MM/DD/YYYY';
-const TIME_STR = 'hh:mm a';
 
 const OverviewChartsWrapper = styled.div`
   display: flex;
@@ -76,13 +73,14 @@ const OverviewCharts = ({ dashboardCounts, months } :Props) => {
     </ChartTooltip>
   );
 
-  const getTimeAsNumber = (timeStr) => {
-    const time = moment(timeStr, TIME_STR);
-    if (!time.isValid()) {
+  const getTimeAsNumber = (timeStr :string) :number => {
+    const timeDT = DateTime.fromISO(timeStr);
+
+    if (!timeDT.isValid) {
       return 0;
     }
-    const hr = Number.parseInt(time.format('HH'), 10);
-    const min = Number.parseInt(time.format('mm'), 10);
+    const hr = timeDT.hour;
+    const min = timeDT.minute;
     return (hr * 60) + min;
   };
 
@@ -91,41 +89,45 @@ const OverviewCharts = ({ dashboardCounts, months } :Props) => {
     hr = hr.length < 2 ? `0${hr}` : hr;
     let min = `${timeNum % 60}`;
     min = min.length < 2 ? `0${min}` : min;
-    return moment(`${hr}:${min}`, 'HH:mm').format(TIME_STR);
+    return DateTime.fromISO(`${hr}:${min}`).toLocaleString(DateTime.TIME_SIMPLE);
   };
 
   const getDateAsNumber = (dateStr) => {
-    const date = moment(dateStr, DATE_STR);
-    if (!date.isValid()) {
+    const date = DateTime.fromISO(dateStr).startOf('day');
+
+    if (!date.isValid) {
       return 0;
     }
-    const start = moment().subtract(months, 'month').startOf('day');
-    return date.diff(start, 'days');
+
+    const start = DateTime.local().minus({ months }).startOf('day');
+    return date.diff(start, 'days').days;
   };
 
   const getDateFromNumber = (dateNum) => {
-    const dateMoment = moment().subtract(months, 'month').add(dateNum, 'days');
-    return dateMoment.format('MMM D');
+    const date = DateTime.local().minus({ months }).plus({ days: dateNum });
+    return date.toLocaleString({ month: 'short', day: 'numeric' });
   };
 
   const renderTimelineChart = (chartType) => {
     const {
       formatAsNumber,
       formatAsString,
-      momentConversionKey,
       color,
       title,
       countKey,
       maxVal
     } = chartType;
+
     const countMap = dashboardCounts.get(countKey, Map());
     const data = countMap
       .keySeq()
-      .sort((o1, o2) => (moment(o1, momentConversionKey).isBefore(moment(o2, momentConversionKey)) ? -1 : 1))
-      .map((o) => ({
-        [title]: formatAsNumber(o),
-        count: countMap.get(o)
+      // coerce DateTime to epoch time
+      .sort((dateStr1, dateStr2) => +DateTime.fromISO(dateStr1) > +DateTime.fromISO(dateStr2))
+      .map((dateStr) => ({
+        [title]: formatAsNumber(dateStr),
+        count: countMap.get(dateStr)
       })).toJS();
+
     return (
       <FractionWidthContainer items={2}>
         <ChartWrapper
@@ -147,7 +149,6 @@ const OverviewCharts = ({ dashboardCounts, months } :Props) => {
     date: {
       formatAsNumber: getDateAsNumber,
       formatAsString: getDateFromNumber,
-      momentConversionKey: DATE_STR,
       color: '#6124e2',
       title: 'Date',
       countKey: DASHBOARD_COUNTS.REPORTS_BY_DATE,
@@ -156,7 +157,6 @@ const OverviewCharts = ({ dashboardCounts, months } :Props) => {
     time: {
       formatAsNumber: getTimeAsNumber,
       formatAsString: getTimeFromNumber,
-      momentConversionKey: TIME_STR,
       color: '#00be84',
       title: 'Time',
       countKey: DASHBOARD_COUNTS.REPORTS_BY_TIME,

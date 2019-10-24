@@ -2,13 +2,14 @@
  * @flow
  */
 
-import moment from 'moment';
 import randomUUID from 'uuid/v4';
 import { Map, fromJS } from 'immutable';
+import { DateTime } from 'luxon';
 
 import { CLEAR, SET_INPUT_VALUE, SET_INPUT_VALUES } from './ActionFactory';
 import { CLEAR_CRISIS_REPORT } from '../../crisis/CrisisActionFactory';
 import { SUBJECT_INFORMATION, POST_PROCESS_FIELDS } from '../../../utils/constants/CrisisReportConstants';
+import { getAgeFromIsoDate } from '../../../utils/DateUtils';
 import { FORM_STEP_STATUS } from '../../../utils/constants/FormConstants';
 
 const {
@@ -83,7 +84,7 @@ export function getInvalidFields(state :Map<*, *>) {
         invalidFields.push(AGE);
       }
     }
-    else if (!state.get(DOB, '').length || !moment(state.get(DOB, '')).isValid()) {
+    else if (!DateTime.fromISO(state.get(DOB)).isValid) {
       invalidFields.push(DOB);
     }
 
@@ -104,15 +105,15 @@ export function getStatus(state :Map<*, *>) :string {
 }
 
 export function processForSubmit(state :Map<*, *>) :Object {
-  const dobMoment = moment(state.get(DOB, ''));
-  const dob = dobMoment.isValid() ? dobMoment.format('YYYY-MM-DD') : '';
+  const dobDT = DateTime.fromISO(state.get(DOB));
+  const dob :string = dobDT.isValid ? dobDT.toISODate() : '';
 
   let preprocessedState = state.get(IS_NEW_PERSON)
     ? state.set(DOB, dob).set(PERSON_ID, randomUUID())
     : Map().set(PERSON_ID, state.get(PERSON_ID));
 
-  if (dobMoment.isValid() && !state.get(AGE)) {
-    preprocessedState = preprocessedState.set(AGE, moment().diff(dobMoment, 'years'));
+  if (dobDT.isValid && !state.get(AGE)) {
+    preprocessedState = preprocessedState.set(AGE, getAgeFromIsoDate(dob, true));
   }
 
   return preprocessedState
