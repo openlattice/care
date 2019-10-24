@@ -2,7 +2,7 @@
  * @flow
  */
 
-import moment from 'moment';
+import { DateTime } from 'luxon';
 import randomUUID from 'uuid/v4';
 import { List, Map, fromJS } from 'immutable';
 
@@ -139,7 +139,7 @@ export function getInvalidFields(state :Map<*, *>) {
 
   // INCIDENT DATETIME / REPORT NUMBER / DESCRIPTION
 
-  if (!moment(state.get(INCIDENT_DATE_TIME, '')).isValid()) {
+  if (!DateTime.fromISO(state.get(INCIDENT_DATE_TIME)).isValid) {
     invalidFields.push(INCIDENT_DATE_TIME);
   }
 
@@ -193,8 +193,8 @@ export function processForSubmit(state :Map<*, *>) :Object {
     formID = randomUUID();
   }
 
-  const incidentMoment = moment(state.get(INCIDENT_DATE_TIME, ''));
-  newState = newState.set(INCIDENT_DATE_TIME, incidentMoment.isValid() ? incidentMoment.toISOString(true) : '');
+  const incidentDT = DateTime.fromISO(state.get(INCIDENT_DATE_TIME));
+  newState = newState.set(INCIDENT_DATE_TIME, incidentDT.isValid ? incidentDT.toISO() : '');
 
   newState = newState.set(POST_PROCESS_FIELDS.FORM_ID, formID);
 
