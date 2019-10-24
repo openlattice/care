@@ -2,9 +2,7 @@
  * @flow
  */
 
-/* eslint-disable no-use-before-define */
-
-import moment from 'moment';
+import { DateTime } from 'luxon';
 import { call, put, takeEvery } from '@redux-saga/core/effects';
 import { List, Map, fromJS } from 'immutable';
 import { DataApi, EntityDataModelApi, SearchApi } from 'lattice';
@@ -62,8 +60,6 @@ import {
 
 import { isPortlandOrg } from '../../utils/Whitelist';
 
-const DATE_FORMAT = 'YYYY-MM-DD';
-
 const toLower = (list) => list.map((o) => o.toLowerCase());
 
 function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *> {
@@ -79,7 +75,7 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *> {
 
     const ceiling = yield call(DataApi.getEntitySetSize, reportESId);
     const datePropertyTypeId = yield call(EntityDataModelApi.getPropertyTypeId, DATE_TIME_OCCURRED_FQN);
-    const startDate = moment().subtract(months, 'month').format(DATE_FORMAT);
+    const startDate = DateTime.local().minus({ months }).toISODate();
     const bhrs = yield call(SearchApi.searchEntitySetData, reportESId, {
       searchTerm: getSearchTerm(datePropertyTypeId, `[${startDate} TO *]`),
       start: 0,
@@ -182,12 +178,12 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *> {
       ageCounts = mapValues(AGE_FQN, ageCounts);
 
       bhr.get(DATE_TIME_OCCURRED_FQN, List()).forEach((date) => {
-        const dateMoment = moment(date);
-        if (dateMoment.isValid()) {
-          const dateStr = dateMoment.format('MM/DD/YYYY');
-          const timeStr = dateMoment.format('hh:mm a');
-          const dayOfWeek = dateMoment.format('ddd');
-          const timeHr = dateMoment.format('H');
+        const dateDT = DateTime.fromISO(date);
+        if (dateDT.isValid) {
+          const dateStr = dateDT.toLocaleString(DateTime.DATE_SHORT);
+          const timeStr = dateDT.toLocaleString(DateTime.TIME_SIMPLE);
+          const dayOfWeek = dateDT.weekdayShort;
+          const timeHr = `${dateDT.hour}`;
           dateCounts = dateCounts.set(dateStr, dateCounts.get(dateStr, 0) + 1);
           timeCounts = timeCounts.set(timeStr, timeCounts.get(timeStr, 0) + 1);
           dayAndTimeCounts = dayAndTimeCounts
@@ -293,5 +289,6 @@ function* loadDashboardDataWatcher() :Generator<*, *, *> {
 }
 
 export {
+  // eslint-disable-next-line import/prefer-default-export
   loadDashboardDataWatcher
 };
