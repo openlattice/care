@@ -348,7 +348,7 @@ class CrisisReportView extends React.Component<Props, State> {
           <Component disabled={!edit} />
         </FormWrapper>
         <ButtonRow>
-          <Button mode="subtle" disabled={index} onClick={() => this.handlePageChange(prevPath)}>Back</Button>
+          <Button mode="subtle" disabled={!index} onClick={() => this.handlePageChange(prevPath)}>Back</Button>
           {this.renderForwardButton(page, index)}
         </ButtonRow>
       </>
