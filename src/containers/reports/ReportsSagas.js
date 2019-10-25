@@ -93,14 +93,9 @@ const {
 } = SearchApiSagas;
 
 const getStaffInteractions = (entities :List<Map>) => {
-  const sorted = entities.sort((staffA :Map, staffB :Map) :number => {
-    const timeA = DateTime.fromISO(staffA.getIn(['associationDetails', FQN.DATE_TIME_FQN, 0]));
-    const timeB = DateTime.fromISO(staffB.getIn(['associationDetails', FQN.DATE_TIME_FQN, 0]));
-
-    if (!timeA.isValid) return 1;
-    if (!timeB.isValid) return -1;
-
-    return timeB.diff(timeA).toObject().milliseconds;
+  const sorted = entities.sortBy((staff :Map) => {
+    const time = DateTime.fromISO(staff.getIn(['associationDetails', FQN.DATE_TIME_FQN, 0]));
+    return time.valueOf();
   });
 
   const submitted = sorted.first() || Map();
@@ -320,14 +315,10 @@ function* getReportsByDateRangeWorker(action :SequenceAction) :Generator<*, *, *
     // sort the reportData by time occurred DESC
 
     const reportData = fromJS(data.hits)
-      .sort((reportA :Map, reportB :Map) :number => {
-        const timeA = DateTime.fromISO(reportA.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0]));
-        const timeB = DateTime.fromISO(reportB.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0]));
+      .sortBy((report :Map,) :number => {
+        const time = DateTime.fromISO(report.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0]));
 
-        if (!timeA.isValid) return 1;
-        if (!timeB.isValid) return -1;
-
-        return timeB.diff(timeA).toObject().milliseconds;
+        return -time.valueOf();
       });
 
     const reportEKIDs = reportData.map((report) => report.getIn([OPENLATTICE_ID_FQN, 0]));
