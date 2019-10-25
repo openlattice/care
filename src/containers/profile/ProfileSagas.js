@@ -186,14 +186,10 @@ function* getProfileReportsWorker(action :SequenceAction) :Generator<any, any, a
       .map((report :Map) => report.get('neighborDetails'))
       .toSet()
       .toList()
-      .sort((reportA :Map, reportB :Map) :number => {
-        const timeA = DateTime.fromISO(reportA.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0]));
-        const timeB = DateTime.fromISO(reportB.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0]));
+      .sortBy((report :Map) :number => {
+        const time = DateTime.fromISO(report.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0]));
 
-        if (!timeA.isValid) return 1;
-        if (!timeB.isValid) return -1;
-
-        return timeB.diff(timeA).toObject().milliseconds;
+        return -time.valueOf();
       });
 
     yield put(getProfileReports.success(action.id, reportsData));
