@@ -31,7 +31,6 @@
   },
   "license": "UNLICENSED",
   "dependencies": {
-    "@atlaskit/modal-dialog": "^10.3.5",
     "@babel/polyfill": "~7.6.0",
     "@babel/runtime": "~7.6.0",
     "@fortawesome/fontawesome-svg-core": "~1.2.0",
@@ -49,6 +48,7 @@
     "lattice-auth": "0.16.0",
     "lattice-fabricate": "~0.6.0",
     "lattice-sagas": "~0.41.0",
+    "lattice-ui-kit": "~0.18.1",
     "lodash": "~4.17.10",
     "loglevel": "~1.6.0",
     "luxon": "~1.15.0",
