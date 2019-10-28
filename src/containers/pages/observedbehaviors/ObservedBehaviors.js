@@ -14,8 +14,6 @@ import {
   Radio
 } from 'lattice-ui-kit';
 
-// import StyledCheckbox from '../../../components/controls/StyledCheckbox';
-// import StyledRadio from '../../../components/controls/StyledRadio';
 import { showInvalidFields } from '../../../utils/NavigationUtils';
 import { STATE } from '../../../utils/constants/StateConstants';
 import { OBSERVED_BEHAVIORS, OTHER } from '../../../utils/constants/CrisisReportConstants';
