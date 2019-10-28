@@ -7,10 +7,13 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router';
 import { List, Map } from 'immutable';
-import { Input } from 'lattice-ui-kit';
+import {
+  Checkbox,
+  Input,
+  Label,
+  Radio,
+} from 'lattice-ui-kit';
 
-import StyledCheckbox from '../../../components/controls/StyledCheckbox';
-import StyledRadio from '../../../components/controls/StyledRadio';
 import { showInvalidFields } from '../../../utils/NavigationUtils';
 import { STATE } from '../../../utils/constants/StateConstants';
 import { CRISIS_NATURE, OTHER } from '../../../utils/constants/CrisisReportConstants';
@@ -28,6 +31,7 @@ import {
   IndentWrapper,
   RequiredField
 } from '../../../components/crisis/FormComponents';
+import { SELECT_ALL_THAT_APPLY } from '../constants';
 
 import { getInvalidFields } from './Reducer';
 import * as ActionFactory from './ActionFactory';
@@ -77,7 +81,7 @@ const NatureOfCrisis = ({ values, actions, disabled } :Props) => {
 
     const checkboxes = valueList.map((value) => (
       <>
-        <StyledCheckbox
+        <Checkbox
             disabled={disabled}
             name={field}
             value={value}
@@ -111,7 +115,7 @@ const NatureOfCrisis = ({ values, actions, disabled } :Props) => {
     const onChange = () => actions.setInputValue({ field, value });
 
     return (
-      <StyledRadio
+      <Radio
           disabled={disabled}
           label={label}
           checked={checked}
@@ -123,10 +127,12 @@ const NatureOfCrisis = ({ values, actions, disabled } :Props) => {
 
   return (
     <FormWrapper>
-      <FormSectionWithValidation invalid={invalidFields.includes(CRISIS_NATURE.NATURE_OF_CRISIS)}>
+      <FormSectionWithValidation noMargin invalid={invalidFields.includes(CRISIS_NATURE.NATURE_OF_CRISIS)}>
         <Header>
           <h1>Nature of Crisis</h1>
-          <RequiredField>Check all that apply.</RequiredField>
+          <RequiredField>
+            <Label>{SELECT_ALL_THAT_APPLY}</Label>
+          </RequiredField>
         </Header>
         {renderCheckboxList(CRISIS_NATURE.NATURE_OF_CRISIS, NATURE_OF_CRISIS, null, {
           [CHEMICAL]: {
@@ -135,17 +141,21 @@ const NatureOfCrisis = ({ values, actions, disabled } :Props) => {
           }
         })}
       </FormSectionWithValidation>
-      <FormSectionWithValidation invalid={invalidFields.includes(CRISIS_NATURE.ASSISTANCE)}>
+      <FormSectionWithValidation noMargin invalid={invalidFields.includes(CRISIS_NATURE.ASSISTANCE)}>
         <Header>
           <h1>Assistance on Scene for Subject</h1>
-          <RequiredField>Check all that apply.</RequiredField>
+          <RequiredField>
+            <Label>{SELECT_ALL_THAT_APPLY}</Label>
+          </RequiredField>
         </Header>
         {renderCheckboxList(CRISIS_NATURE.ASSISTANCE, ASSISTANCES, CRISIS_NATURE.OTHER_ASSISTANCE)}
       </FormSectionWithValidation>
-      <FormSectionWithValidation invalid={invalidFields.includes(CRISIS_NATURE.HOUSING)}>
+      <FormSectionWithValidation noMargin invalid={invalidFields.includes(CRISIS_NATURE.HOUSING)}>
         <Header>
           <h1>Current Housing Situation</h1>
-          <RequiredField>Select one.</RequiredField>
+          <RequiredField>
+            <Label>Select one.</Label>
+          </RequiredField>
         </Header>
         {HOUSING_SITUATIONS.map((housing) => renderRadio(CRISIS_NATURE.HOUSING, housing, housing))}
       </FormSectionWithValidation>

@@ -147,10 +147,10 @@ const ObservedBehaviors = ({ values, actions, disabled } :Props) => {
   const invalidFields = showInvalidFields(window.location) ? getInvalidFields(values) : [];
 
   const suicideDetails = () => (
-    <IndentWrapper extraIndent>
-      <Label>Suicide threat or attempt?</Label>
+    <IndentWrapper>
+      <Label bold>Suicide threat or attempt?</Label>
       {SUICIDE_ACTION_TYPE.map((type) => renderRadio(OBSERVED_BEHAVIORS.SUICIDE_ATTEMPT_TYPE, type, type))}
-      <Label>Suicide Methods</Label>
+      <Label bold>Suicide Methods</Label>
       {renderCheckboxList(
         OBSERVED_BEHAVIORS.SUICIDE_METHODS,
         SUICIDE_METHODS,
@@ -168,7 +168,7 @@ const ObservedBehaviors = ({ values, actions, disabled } :Props) => {
         </Header>
         {renderSingleCheckbox(OBSERVED_BEHAVIORS.VETERAN, 'Served in the military?')}
       </FormSection>
-      <FormSectionWithValidation invalid={invalidFields.includes(OBSERVED_BEHAVIORS.BEHAVIORS)}>
+      <FormSectionWithValidation noMargin invalid={invalidFields.includes(OBSERVED_BEHAVIORS.BEHAVIORS)}>
         <Header>
           <h1>Behaviors</h1>
           <RequiredField>
@@ -182,7 +182,7 @@ const ObservedBehaviors = ({ values, actions, disabled } :Props) => {
           suicideDetails()
         )}
       </FormSectionWithValidation>
-      <FormSectionWithValidation invalid={invalidFields.includes(OBSERVED_BEHAVIORS.DEMEANORS)}>
+      <FormSectionWithValidation noMargin invalid={invalidFields.includes(OBSERVED_BEHAVIORS.DEMEANORS)}>
         <Header>
           <h1>Demeanors Observed Around Law Enforcement</h1>
           <RequiredField>

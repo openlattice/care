@@ -157,19 +157,19 @@ class SubjectInformation extends Component<Props> {
           </Header>
         </PersonFormSection>
         <PersonFormSection>
-          <Label>Last</Label>
+          <Label bold>Last</Label>
           {this.renderInput(SUBJECT_INFORMATION.LAST, true)}
         </PersonFormSection>
         <PersonFormSection>
-          <Label>First</Label>
+          <Label bold>First</Label>
           {this.renderInput(SUBJECT_INFORMATION.FIRST, true)}
         </PersonFormSection>
         <PersonFormSection>
-          <Label>Mid.</Label>
+          <Label bold>Mid.</Label>
           {this.renderInput(SUBJECT_INFORMATION.MIDDLE, true, 80)}
         </PersonFormSection>
         <PersonFormSection>
-          <Label>AKA / Alias</Label>
+          <Label bold>AKA / Alias</Label>
           {this.renderInput(SUBJECT_INFORMATION.AKA, true)}
         </PersonFormSection>
         <Checkbox
@@ -181,13 +181,17 @@ class SubjectInformation extends Component<Props> {
         {
           values.get(SUBJECT_INFORMATION.DOB_UNKNOWN) ? (
             <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.AGE)}>
-              <RequiredField><Label>Age (approximate)</Label></RequiredField>
+              <RequiredField>
+                <Label bold>Age (approximate)</Label>
+              </RequiredField>
               {this.renderInput(SUBJECT_INFORMATION.AGE, false, 70)}
             </PersonFormSection>
           ) : (
             <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.DOB)}>
               <div>
-                <RequiredField><Label>DOB</Label></RequiredField>
+                <RequiredField>
+                  <Label bold>DOB</Label>
+                </RequiredField>
                 <DatePicker
                     value={values.get(SUBJECT_INFORMATION.DOB)}
                     disabled={!isCreatingNewPerson || disabled}
@@ -198,15 +202,19 @@ class SubjectInformation extends Component<Props> {
           )
         }
         <PersonFormSection>
-          <Label>SSN (last 4 digits)</Label>
+          <Label bold>SSN (last 4 digits)</Label>
           {this.renderInput(SUBJECT_INFORMATION.SSN_LAST_4, true, 85)}
         </PersonFormSection>
         <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.GENDER)}>
-          <RequiredField><Label>Gender</Label></RequiredField>
+          <RequiredField>
+            <Label bold>Gender</Label>
+          </RequiredField>
           {this.renderRadioButtons(SUBJECT_INFORMATION.GENDER, GENDERS)}
         </PersonFormSection>
         <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.RACE)}>
-          <RequiredField><Label>Race</Label></RequiredField>
+          <RequiredField>
+            <Label bold>Race</Label>
+          </RequiredField>
           {this.renderRadioButtons(SUBJECT_INFORMATION.RACE, RACES)}
         </PersonFormSection>
       </FormWrapper>
