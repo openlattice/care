@@ -77,12 +77,8 @@ export const IndentWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: ${(props) => (props.extraIndent ? '5px 0 5px 15px' : '5px 0 5px 10px')};
+  padding-left: 30px;
   width: 100%;
-
-  @media only screen and (min-width: ${MEDIA_QUERY_MD}px) {
-    padding: ${(props) => (props.extraIndent ? '5px 15px 5px 30px' : '5px 15px')};
-  }
 `;
 
 
