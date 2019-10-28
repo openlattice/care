@@ -7,13 +7,19 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router';
 import { List, Map } from 'immutable';
-import { Input } from 'lattice-ui-kit';
+import {
+  Checkbox,
+  Input,
+  Label,
+  Radio
+} from 'lattice-ui-kit';
 
-import StyledCheckbox from '../../../components/controls/StyledCheckbox';
-import StyledRadio from '../../../components/controls/StyledRadio';
+// import StyledCheckbox from '../../../components/controls/StyledCheckbox';
+// import StyledRadio from '../../../components/controls/StyledRadio';
 import { showInvalidFields } from '../../../utils/NavigationUtils';
 import { STATE } from '../../../utils/constants/StateConstants';
 import { OBSERVED_BEHAVIORS, OTHER } from '../../../utils/constants/CrisisReportConstants';
+import { SELECT_ALL_THAT_APPLY } from '../constants';
 import {
   BEHAVIORS,
   SUICIDE_BEHAVIORS,
@@ -89,7 +95,7 @@ const ObservedBehaviors = ({ values, actions, disabled } :Props) => {
 
     const checkboxes = valueList.map((value) => (
       <>
-        <StyledCheckbox
+        <Checkbox
             disabled={disabled}
             name={field}
             value={value}
@@ -116,7 +122,7 @@ const ObservedBehaviors = ({ values, actions, disabled } :Props) => {
   };
 
   const renderSingleCheckbox = (field, label) => (
-    <StyledCheckbox
+    <Checkbox
         disabled={disabled}
         name={field}
         checked={values.get(field)}
@@ -124,21 +130,15 @@ const ObservedBehaviors = ({ values, actions, disabled } :Props) => {
         onChange={({ target }) => actions.setInputValue({ field, value: target.checked })} />
   );
 
-  const renderRadio = (field, value, label, inverseDependentField) => {
+  const renderRadio = (field, value, label) => {
     const checked = values.get(field) === value;
 
     const onChange = () => {
-      if (inverseDependentField) {
-        actions.setInputValue({
-          field: inverseDependentField,
-          value: ''
-        });
-      }
       actions.setInputValue({ field, value });
     };
 
     return (
-      <StyledRadio
+      <Radio
           disabled={disabled}
           label={label}
           checked={checked}
@@ -150,9 +150,9 @@ const ObservedBehaviors = ({ values, actions, disabled } :Props) => {
 
   const suicideDetails = () => (
     <IndentWrapper extraIndent>
-      <Header noMargin><span>Suicide threat or attempt?</span></Header>
+      <Label>Suicide threat or attempt?</Label>
       {SUICIDE_ACTION_TYPE.map((type) => renderRadio(OBSERVED_BEHAVIORS.SUICIDE_ATTEMPT_TYPE, type, type))}
-      <Header><span>Suicide methods</span></Header>
+      <Label>Suicide Methods</Label>
       {renderCheckboxList(
         OBSERVED_BEHAVIORS.SUICIDE_METHODS,
         SUICIDE_METHODS,
@@ -166,14 +166,16 @@ const ObservedBehaviors = ({ values, actions, disabled } :Props) => {
       <FormSection>
         <Header>
           <h1>Additional Subject Information</h1>
-          <span>Check all that apply.</span>
+          <Label>{SELECT_ALL_THAT_APPLY}</Label>
         </Header>
         {renderSingleCheckbox(OBSERVED_BEHAVIORS.VETERAN, 'Served in the military?')}
       </FormSection>
       <FormSectionWithValidation invalid={invalidFields.includes(OBSERVED_BEHAVIORS.BEHAVIORS)}>
         <Header>
           <h1>Behaviors</h1>
-          <RequiredField>Check all that apply.</RequiredField>
+          <RequiredField>
+            <Label>{SELECT_ALL_THAT_APPLY}</Label>
+          </RequiredField>
         </Header>
         {renderCheckboxList(
           OBSERVED_BEHAVIORS.BEHAVIORS,
@@ -185,7 +187,9 @@ const ObservedBehaviors = ({ values, actions, disabled } :Props) => {
       <FormSectionWithValidation invalid={invalidFields.includes(OBSERVED_BEHAVIORS.DEMEANORS)}>
         <Header>
           <h1>Demeanors Observed Around Law Enforcement</h1>
-          <RequiredField>Check all that apply.</RequiredField>
+          <RequiredField>
+            <Label>{SELECT_ALL_THAT_APPLY}</Label>
+          </RequiredField>
         </Header>
         {renderCheckboxList(OBSERVED_BEHAVIORS.DEMEANORS, DEMEANORS, OBSERVED_BEHAVIORS.OTHER_DEMEANOR)}
       </FormSectionWithValidation>
