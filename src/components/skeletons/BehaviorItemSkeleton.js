@@ -37,25 +37,25 @@ const behaviorItemSkeleton = css`
     ),
     /* layer 1: list item 1*/
     /* grey rectangles with 20px height */
-    linear-gradient(${PURPLES[6]} 1.35em, transparent 0),
-    linear-gradient(${PURPLES[6]} 1.35em, transparent 0),
-    linear-gradient(${PURPLES[6]} 1.35em, transparent 0),
+    linear-gradient(${PURPLES[6]} 1.5em, transparent 0),
+    linear-gradient(${PURPLES[6]} 1.5em, transparent 0),
+    linear-gradient(${PURPLES[6]} 1.5em, transparent 0),
     /* layer 2: list item 2*/
-    linear-gradient(${PURPLES[6]} 1.35em, transparent 0),
-    linear-gradient(${PURPLES[6]} 1.35em, transparent 0),
-    linear-gradient(${PURPLES[6]} 1.35em, transparent 0),
+    linear-gradient(${PURPLES[6]} 1.5em, transparent 0),
+    linear-gradient(${PURPLES[6]} 1.5em, transparent 0),
+    linear-gradient(${PURPLES[6]} 1.5em, transparent 0),
     /* layer 3: list item 3*/
-    linear-gradient(${PURPLES[6]} 1.35em, transparent 0),
-    linear-gradient(${PURPLES[6]} 1.35em, transparent 0),
-    linear-gradient(${PURPLES[6]} 1.35em, transparent 0),
+    linear-gradient(${PURPLES[6]} 1.5em, transparent 0),
+    linear-gradient(${PURPLES[6]} 1.5em, transparent 0),
+    linear-gradient(${PURPLES[6]} 1.5em, transparent 0),
     /* layer 4: card bg */
     /* gray rectangle that covers whole element */
     linear-gradient(white 100%, transparent 0);
   background-size:
     100% 100%, /* animation blur */
-    66% 1.35em, 15% 1.35em, 15% 1.35em,
-    66% 1.35em, 15% 1.35em, 15% 1.35em,
-    66% 1.35em, 15% 1.35em, 15% 1.35em,
+    66% 1.5em, 15% 1.5em, 15% 1.5em,
+    66% 1.5em, 15% 1.5em, 15% 1.5em,
+    66% 1.5em, 15% 1.5em, 15% 1.5em,
     100% 100%; /* card bg */
   background-position:
     -10vw 0, /* animation blur */
