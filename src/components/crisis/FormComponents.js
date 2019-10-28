@@ -20,12 +20,10 @@ export const FormWrapper = styled.div`
   box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);
 
   @media only screen and (min-width: ${MEDIA_QUERY_MD}px) {
-    font-size: 16px;
     padding: 15px;
   }
 
   @media only screen and (min-width: ${MEDIA_QUERY_LG}px) {
-    font-size: 18px;
     padding: 20px;
   }
 `;
@@ -36,7 +34,7 @@ export const FormSection = styled.div`
   align-items: flex-start;
   padding: ${(props) => (props.invalid ? '5px 10px 5px 10px' : '0 10px')};
   width: 100%;
-  margin: 0 -10px ${(props) => (props.invalid ? 10 : 0)}px -10px;
+  margin: 10px -10px ${(props) => (props.invalid ? 10 : 0)}px -10px;
 
   background-color: ${(props) => (props.invalid ? `${INVALID_BACKGROUND}` : 'transparent')};
 `;
