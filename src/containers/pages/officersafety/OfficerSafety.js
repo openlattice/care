@@ -12,6 +12,7 @@ import {
   Input,
   Label,
 } from 'lattice-ui-kit';
+import type { Dispatch } from 'redux';
 
 import YesNoToggle from '../../../components/controls/YesNoToggle';
 import { showInvalidFields } from '../../../utils/NavigationUtils';
@@ -33,7 +34,7 @@ import {
 } from '../../../components/crisis/FormComponents';
 
 import { getInvalidFields } from './Reducer';
-import * as ActionFactory from './ActionFactory';
+import { setInputValue } from './ActionFactory';
 import { SELECT_ALL_THAT_APPLY } from '../constants';
 
 type Props = {
@@ -202,27 +203,13 @@ const OfficerSafety = ({ values, actions, disabled } :Props) => {
   );
 };
 
-function mapStateToProps(state) {
+const mapStateToProps = (state :Map) => ({
+  values: state.get(STATE.OFFICER_SAFETY)
+});
 
-  return {
-    values: state.get(STATE.OFFICER_SAFETY)
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-
-  const actions = {};
-
-  Object.keys(ActionFactory).forEach((action) => {
-    actions[action] = ActionFactory[action];
-  });
-
-  return {
-    actions: {
-      ...bindActionCreators(actions, dispatch)
-    }
-  };
-}
+const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
+  actions: bindActionCreators({ setInputValue }, dispatch)
+});
 
 // $FlowFixMe
 export default withRouter(

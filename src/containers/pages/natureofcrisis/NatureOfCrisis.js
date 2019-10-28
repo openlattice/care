@@ -13,6 +13,7 @@ import {
   Label,
   Radio,
 } from 'lattice-ui-kit';
+import type { Dispatch } from 'redux';
 
 import { showInvalidFields } from '../../../utils/NavigationUtils';
 import { STATE } from '../../../utils/constants/StateConstants';
@@ -34,7 +35,7 @@ import {
 import { SELECT_ALL_THAT_APPLY } from '../constants';
 
 import { getInvalidFields } from './Reducer';
-import * as ActionFactory from './ActionFactory';
+import { setInputValue } from './ActionFactory';
 
 type Props = {
   values :Map<*, *>,
@@ -163,27 +164,13 @@ const NatureOfCrisis = ({ values, actions, disabled } :Props) => {
   );
 };
 
-function mapStateToProps(state) {
+const mapStateToProps = (state :Map) => ({
+  values: state.get(STATE.NATURE_OF_CRISIS)
+});
 
-  return {
-    values: state.get(STATE.NATURE_OF_CRISIS)
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-
-  const actions = {};
-
-  Object.keys(ActionFactory).forEach((action) => {
-    actions[action] = ActionFactory[action];
-  });
-
-  return {
-    actions: {
-      ...bindActionCreators(actions, dispatch)
-    }
-  };
-}
+const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
+  actions: bindActionCreators({ setInputValue }, dispatch)
+});
 
 // $FlowFixMe
 export default withRouter(
