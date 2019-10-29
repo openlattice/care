@@ -318,10 +318,10 @@ class CrisisReportView extends React.Component<Props, State> {
     const complete = validator ? validator(state.get(stateField)) === FORM_STEP_STATUS.COMPLETED : true;
     const nextPath = getNextPath(window.location, PAGES.length + 1);
 
-    const disabled = (isSubmit || isReview) ? !this.isReadyToSubmit() : !complete;
+    const hasInvalidFields = (isSubmit || isReview) ? !this.isReadyToSubmit() : !complete;
     let onClick = () => this.handlePageChange(nextPath);
 
-    if (disabled) {
+    if (hasInvalidFields) {
       const showInvalidFieldsPath = setShowInvalidFields(window.location);
       onClick = () => this.handlePageChange(showInvalidFieldsPath);
     }
@@ -335,7 +335,7 @@ class CrisisReportView extends React.Component<Props, State> {
       onClick = this.handleSubmit;
     }
 
-    return <Button mode="primary" onClick={onClick} canProgress={!disabled}>{buttonText}</Button>;
+    return <Button mode="primary" onClick={onClick}>{buttonText}</Button>;
   }
 
   renderPage = (page, index) => {

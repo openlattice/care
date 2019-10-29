@@ -2,17 +2,22 @@
  * @flow
  */
 
-import React from 'react';
+import React, { Component } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router';
 import { List, Map } from 'immutable';
-import { DatePicker, Input } from 'lattice-ui-kit';
+import {
+  Button,
+  Checkbox,
+  DatePicker,
+  Input,
+  Label,
+  Radio,
+} from 'lattice-ui-kit';
+import type { Dispatch } from 'redux';
 
-import BackButton from '../../../components/buttons/BackButton';
-import StyledCheckbox from '../../../components/controls/StyledCheckbox';
-import StyledRadio from '../../../components/controls/StyledRadio';
 import { showInvalidFields } from '../../../utils/NavigationUtils';
 import { STATE } from '../../../utils/constants/StateConstants';
 import { SUBJECT_INFORMATION } from '../../../utils/constants/CrisisReportConstants';
@@ -21,13 +26,15 @@ import {
   FormWrapper,
   FormSection,
   FormSectionWithValidation,
-  FormText,
   Header,
   RequiredField
 } from '../../../components/crisis/FormComponents';
 
 import { getInvalidFields } from './Reducer';
-import * as ActionFactory from './ActionFactory';
+import {
+  setInputValue,
+  setInputValues
+} from './ActionFactory';
 
 
 type Props = {
@@ -36,13 +43,13 @@ type Props = {
     setInputValue :(value :{ field :string, value :Object }) => void,
     setInputValues :(values :{}) => void,
   },
-  app :Map<*, *>,
+  app :Map,
   className :string;
   disabled :boolean;
   isSearchingPeople :boolean,
   noResults :boolean,
-  searchResults :List<*>,
-  values :Map<*, *>,
+  searchResults :List,
+  values :Map,
 }
 
 const HeaderWithClearButton = styled.div`
@@ -56,12 +63,7 @@ const HeaderWithClearButton = styled.div`
   }
 `;
 
-const DatePickerWrapper = styled.div`
-  width: 160px;
-  margin-bottom: 20px;
-`;
-
-class SubjectInformation extends React.Component<Props> {
+class SubjectInformation extends Component<Props> {
 
   searchTimeout = null;
 
@@ -107,7 +109,7 @@ class SubjectInformation extends React.Component<Props> {
     };
 
     return valueList.map((value) => (
-      <StyledRadio
+      <Radio
           key={`${field}-${value}`}
           disabled={!values.get(SUBJECT_INFORMATION.IS_NEW_PERSON)}
           label={value}
@@ -147,65 +149,76 @@ class SubjectInformation extends React.Component<Props> {
     const PersonFormSection = isCreatingNewPerson ? FormSectionWithValidation : FormSection;
     return (
       <FormWrapper className={className}>
-        <Header>
-          <HeaderWithClearButton>
-            <h1>Person Information</h1>
-            {
-              (!disabled && isCreatingNewPerson)
-              && <BackButton onClick={actions.clear} noMargin>Clear Fields</BackButton>
-            }
-          </HeaderWithClearButton>
-        </Header>
         <PersonFormSection>
-          <FormText noMargin>Last</FormText>
+          <Header>
+            <HeaderWithClearButton>
+              <h1>Person Information</h1>
+              {
+                (!disabled && isCreatingNewPerson)
+                && <Button mode="subtle" onClick={actions.clear}>Clear Fields</Button>
+              }
+            </HeaderWithClearButton>
+          </Header>
+        </PersonFormSection>
+        <PersonFormSection>
+          <Label bold>Last</Label>
           {this.renderInput(SUBJECT_INFORMATION.LAST, true)}
         </PersonFormSection>
         <PersonFormSection>
-          <FormText noMargin>First</FormText>
+          <Label bold>First</Label>
           {this.renderInput(SUBJECT_INFORMATION.FIRST, true)}
         </PersonFormSection>
-        <FormSection>
-          <FormText noMargin>Mid.</FormText>
+        <PersonFormSection>
+          <Label bold>Mid.</Label>
           {this.renderInput(SUBJECT_INFORMATION.MIDDLE, true, 80)}
-        </FormSection>
-        <FormSection>
-          <FormText noMargin>AKA / Alias</FormText>
+        </PersonFormSection>
+        <PersonFormSection>
+          <Label bold>AKA / Alias</Label>
           {this.renderInput(SUBJECT_INFORMATION.AKA, true)}
-        </FormSection>
-        <StyledCheckbox
+        </PersonFormSection>
+        <Checkbox
             name="dobCheckbox"
             checked={values.get(SUBJECT_INFORMATION.DOB_UNKNOWN)}
             label="DOB Unknown"
             disabled={!isCreatingNewPerson}
             onChange={toggleDOBUnknown} />
-        <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.DOB)}>
-          {
-            values.get(SUBJECT_INFORMATION.DOB_UNKNOWN) ? (
-              <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.AGE)}>
-                <RequiredField><FormText noMargin>Age (approximate)</FormText></RequiredField>
-                {this.renderInput(SUBJECT_INFORMATION.AGE, false, 70)}
-              </PersonFormSection>
-            ) : (
-              <DatePickerWrapper>
-                <RequiredField><FormText noMargin>DOB</FormText></RequiredField>
+        {
+          values.get(SUBJECT_INFORMATION.DOB_UNKNOWN) ? (
+            <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.AGE)}>
+              <RequiredField>
+                <Label bold>Age (approximate)</Label>
+              </RequiredField>
+              {this.renderInput(SUBJECT_INFORMATION.AGE, false, 70)}
+            </PersonFormSection>
+          ) : (
+            <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.DOB)}>
+              <div>
+                <RequiredField>
+                  <Label bold>DOB</Label>
+                </RequiredField>
                 <DatePicker
                     value={values.get(SUBJECT_INFORMATION.DOB)}
                     disabled={!isCreatingNewPerson || disabled}
                     onChange={(value) => actions.setInputValue({ field: SUBJECT_INFORMATION.DOB, value })} />
-              </DatePickerWrapper>
-            )
-          }
-        </PersonFormSection>
+              </div>
+
+            </PersonFormSection>
+          )
+        }
         <PersonFormSection>
-          <FormText noMargin>SSN (last 4 digits)</FormText>
+          <Label bold>SSN (last 4 digits)</Label>
           {this.renderInput(SUBJECT_INFORMATION.SSN_LAST_4, true, 85)}
         </PersonFormSection>
         <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.GENDER)}>
-          <RequiredField><FormText noMargin>Gender</FormText></RequiredField>
+          <RequiredField>
+            <Label bold>Gender</Label>
+          </RequiredField>
           {this.renderRadioButtons(SUBJECT_INFORMATION.GENDER, GENDERS)}
         </PersonFormSection>
         <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.RACE)}>
-          <RequiredField><FormText noMargin>Race</FormText></RequiredField>
+          <RequiredField>
+            <Label bold>Race</Label>
+          </RequiredField>
           {this.renderRadioButtons(SUBJECT_INFORMATION.RACE, RACES)}
         </PersonFormSection>
       </FormWrapper>
@@ -213,7 +226,7 @@ class SubjectInformation extends React.Component<Props> {
   }
 }
 
-function mapStateToProps(state) {
+const mapStateToProps = (state :Map) => {
 
   const consumers = state.getIn(['search', 'consumers'], Map());
   const searchResults = consumers.get('searchResults', List());
@@ -227,20 +240,12 @@ function mapStateToProps(state) {
   };
 }
 
-function mapDispatchToProps(dispatch) {
-
-  const actions = {};
-
-  Object.keys(ActionFactory).forEach((action) => {
-    actions[action] = ActionFactory[action];
-  });
-
-  return {
-    actions: {
-      ...bindActionCreators(actions, dispatch)
-    }
-  };
-}
+const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
+  actions: bindActionCreators({
+    setInputValue,
+    setInputValues
+  }, dispatch)
+});
 
 // $FlowFixMe
 export default withRouter(

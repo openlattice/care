@@ -7,10 +7,11 @@ import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Map } from 'immutable';
+import type { Dispatch } from 'redux';
 
 import InfoButton from '../../components/buttons/InfoButton';
 import DateTimeRange from '../../components/controls/DateTimeRange';
-import * as DownloadsActionFactory from './DownloadsActionFactory';
+import { downloadForms } from './DownloadsActionFactory';
 
 type Props = {
   downloading :boolean,
@@ -68,7 +69,7 @@ class DownloadsContainer extends React.Component<Props, State> {
     actions.downloadForms({ endDate, startDate });
   }
 
-  onDateChange = (field, newDate) => {
+  onDateChange = (field :string, newDate :string) => {
     this.setState({ [field]: newDate });
   }
 
@@ -96,26 +97,13 @@ class DownloadsContainer extends React.Component<Props, State> {
   }
 }
 
-function mapStateToProps(state :Map) :Object {
+const mapStateToProps = (state :Map) => ({
+  downloading: state.getIn(['downloads', 'downloading'])
+});
 
-  return {
-    downloading: state.getIn(['downloads', 'downloading'])
-  };
-}
-
-function mapDispatchToProps(dispatch :Function) :Object {
-  const actions :{ [string] :Function } = {};
-
-  Object.keys(DownloadsActionFactory).forEach((action :string) => {
-    actions[action] = DownloadsActionFactory[action];
-  });
-
-  return {
-    actions: {
-      ...bindActionCreators(actions, dispatch)
-    }
-  };
-}
+const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
+  actions: bindActionCreators({ downloadForms }, dispatch)
+});
 
 // $FlowFixMe
 export default connect(mapStateToProps, mapDispatchToProps)(DownloadsContainer);

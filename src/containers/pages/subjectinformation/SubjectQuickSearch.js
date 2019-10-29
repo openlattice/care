@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { List, Map, getIn } from 'immutable';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Select } from 'lattice-ui-kit';
+import { Label, Select } from 'lattice-ui-kit';
 import { faSearch } from '@fortawesome/pro-regular-svg-icons';
 import type { Dispatch } from 'redux';
 import type { RequestSequence } from 'redux-reqseq';
@@ -128,9 +128,7 @@ class SubjectQuickSearch extends Component<Props> {
           <CreateNewPersonButton onClick={this.handleClick}>Create New Person</CreateNewPersonButton>
           <Header>
             <h1>Quick Search</h1>
-            <span>
-              { SEARCH_INSTRUCTIONS }
-            </span>
+            <Label>{ SEARCH_INSTRUCTIONS }</Label>
           </Header>
           <Select
               inputId="subject-quick-search-input"
