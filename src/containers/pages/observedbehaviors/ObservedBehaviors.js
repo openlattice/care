@@ -7,13 +7,18 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router';
 import { List, Map } from 'immutable';
-import { Input } from 'lattice-ui-kit';
+import {
+  Checkbox,
+  Input,
+  Label,
+  Radio
+} from 'lattice-ui-kit';
+import type { Dispatch } from 'redux';
 
-import StyledCheckbox from '../../../components/controls/StyledCheckbox';
-import StyledRadio from '../../../components/controls/StyledRadio';
 import { showInvalidFields } from '../../../utils/NavigationUtils';
 import { STATE } from '../../../utils/constants/StateConstants';
 import { OBSERVED_BEHAVIORS, OTHER } from '../../../utils/constants/CrisisReportConstants';
+import { SELECT_ALL_THAT_APPLY } from '../constants';
 import {
   BEHAVIORS,
   SUICIDE_BEHAVIORS,
@@ -31,7 +36,7 @@ import {
 } from '../../../components/crisis/FormComponents';
 
 import { getInvalidFields } from './Reducer';
-import * as ActionFactory from './ActionFactory';
+import { setInputValue } from './ActionFactory';
 
 type Props = {
   values :Map<*, *>,
@@ -89,7 +94,7 @@ const ObservedBehaviors = ({ values, actions, disabled } :Props) => {
 
     const checkboxes = valueList.map((value) => (
       <>
-        <StyledCheckbox
+        <Checkbox
             disabled={disabled}
             name={field}
             value={value}
@@ -116,7 +121,7 @@ const ObservedBehaviors = ({ values, actions, disabled } :Props) => {
   };
 
   const renderSingleCheckbox = (field, label) => (
-    <StyledCheckbox
+    <Checkbox
         disabled={disabled}
         name={field}
         checked={values.get(field)}
@@ -124,21 +129,15 @@ const ObservedBehaviors = ({ values, actions, disabled } :Props) => {
         onChange={({ target }) => actions.setInputValue({ field, value: target.checked })} />
   );
 
-  const renderRadio = (field, value, label, inverseDependentField) => {
+  const renderRadio = (field, value, label) => {
     const checked = values.get(field) === value;
 
     const onChange = () => {
-      if (inverseDependentField) {
-        actions.setInputValue({
-          field: inverseDependentField,
-          value: ''
-        });
-      }
       actions.setInputValue({ field, value });
     };
 
     return (
-      <StyledRadio
+      <Radio
           disabled={disabled}
           label={label}
           checked={checked}
@@ -149,10 +148,10 @@ const ObservedBehaviors = ({ values, actions, disabled } :Props) => {
   const invalidFields = showInvalidFields(window.location) ? getInvalidFields(values) : [];
 
   const suicideDetails = () => (
-    <IndentWrapper extraIndent>
-      <Header noMargin><span>Suicide threat or attempt?</span></Header>
+    <IndentWrapper>
+      <Label bold>Suicide threat or attempt?</Label>
       {SUICIDE_ACTION_TYPE.map((type) => renderRadio(OBSERVED_BEHAVIORS.SUICIDE_ATTEMPT_TYPE, type, type))}
-      <Header><span>Suicide methods</span></Header>
+      <Label bold>Suicide Methods</Label>
       {renderCheckboxList(
         OBSERVED_BEHAVIORS.SUICIDE_METHODS,
         SUICIDE_METHODS,
@@ -166,14 +165,16 @@ const ObservedBehaviors = ({ values, actions, disabled } :Props) => {
       <FormSection>
         <Header>
           <h1>Additional Subject Information</h1>
-          <span>Check all that apply.</span>
+          <Label>{SELECT_ALL_THAT_APPLY}</Label>
         </Header>
         {renderSingleCheckbox(OBSERVED_BEHAVIORS.VETERAN, 'Served in the military?')}
       </FormSection>
-      <FormSectionWithValidation invalid={invalidFields.includes(OBSERVED_BEHAVIORS.BEHAVIORS)}>
+      <FormSectionWithValidation noMargin invalid={invalidFields.includes(OBSERVED_BEHAVIORS.BEHAVIORS)}>
         <Header>
           <h1>Behaviors</h1>
-          <RequiredField>Check all that apply.</RequiredField>
+          <RequiredField>
+            <Label>{SELECT_ALL_THAT_APPLY}</Label>
+          </RequiredField>
         </Header>
         {renderCheckboxList(
           OBSERVED_BEHAVIORS.BEHAVIORS,
@@ -182,10 +183,12 @@ const ObservedBehaviors = ({ values, actions, disabled } :Props) => {
           suicideDetails()
         )}
       </FormSectionWithValidation>
-      <FormSectionWithValidation invalid={invalidFields.includes(OBSERVED_BEHAVIORS.DEMEANORS)}>
+      <FormSectionWithValidation noMargin invalid={invalidFields.includes(OBSERVED_BEHAVIORS.DEMEANORS)}>
         <Header>
           <h1>Demeanors Observed Around Law Enforcement</h1>
-          <RequiredField>Check all that apply.</RequiredField>
+          <RequiredField>
+            <Label>{SELECT_ALL_THAT_APPLY}</Label>
+          </RequiredField>
         </Header>
         {renderCheckboxList(OBSERVED_BEHAVIORS.DEMEANORS, DEMEANORS, OBSERVED_BEHAVIORS.OTHER_DEMEANOR)}
       </FormSectionWithValidation>
@@ -193,27 +196,13 @@ const ObservedBehaviors = ({ values, actions, disabled } :Props) => {
   );
 };
 
-function mapStateToProps(state) {
+const mapStateToProps = (state :Map) => ({
+  values: state.get(STATE.OBSERVED_BEHAVIORS)
+});
 
-  return {
-    values: state.get(STATE.OBSERVED_BEHAVIORS)
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-
-  const actions = {};
-
-  Object.keys(ActionFactory).forEach((action) => {
-    actions[action] = ActionFactory[action];
-  });
-
-  return {
-    actions: {
-      ...bindActionCreators(actions, dispatch)
-    }
-  };
-}
+const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
+  actions: bindActionCreators({ setInputValue }, dispatch)
+});
 
 // $FlowFixMe
 export default withRouter(
