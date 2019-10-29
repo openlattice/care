@@ -4,12 +4,11 @@ import styled from 'styled-components';
 import { List, Map, getIn } from 'immutable';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Label, Select } from 'lattice-ui-kit';
+import { Button, Label, Select } from 'lattice-ui-kit';
 import { faSearch } from '@fortawesome/pro-regular-svg-icons';
 import type { Dispatch } from 'redux';
 import type { RequestSequence } from 'redux-reqseq';
 
-import SecondaryButton from '../../../components/buttons/SecondaryButton';
 import { getPersonOptions, getLastFirstMiFromPerson, getPersonAge } from '../../../utils/PersonUtils';
 import { setInputValue, setInputValues } from './ActionFactory';
 import { searchConsumers } from '../../search/SearchActionFactory';
@@ -38,10 +37,8 @@ const StyledFormWrapper = styled(FormWrapper)`
   margin-bottom: 30px;
 `;
 
-const CreateNewPersonButton = styled(SecondaryButton)`
-  padding: 12px 20px;
-  width: fit-content;
-  align-self: flex-end;
+const EndButton = styled(Button)`
+  margin-left: auto;
 `;
 
 type Props = {
@@ -125,7 +122,7 @@ class SubjectQuickSearch extends Component<Props> {
     return (
       <StyledFormWrapper>
         <FormSection>
-          <CreateNewPersonButton onClick={this.handleClick}>Create New Person</CreateNewPersonButton>
+          <EndButton mode="secondary" onClick={this.handleClick}>Create New Person</EndButton>
           <Header>
             <h1>Quick Search</h1>
             <Label>{ SEARCH_INSTRUCTIONS }</Label>
