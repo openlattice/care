@@ -2,8 +2,9 @@
  * @flow
  */
 
-import { Map, fromJS } from 'immutable';
+import { List, Map, fromJS } from 'immutable';
 import {
+  all,
   call,
   put,
   select,
@@ -14,8 +15,10 @@ import { AuthUtils } from 'lattice-auth';
 import {
   DataApiActions,
   DataApiSagas,
+  OrganizationsApiActions,
+  OrganizationsApiSagas,
   SearchApiActions,
-  SearchApiSagas
+  SearchApiSagas,
 } from 'lattice-sagas';
 import type { SequenceAction } from 'redux-reqseq';
 
@@ -44,6 +47,9 @@ const { searchEntitySetDataWorker } = SearchApiSagas;
 
 const { createOrMergeEntityData } = DataApiActions;
 const { createOrMergeEntityDataWorker } = DataApiSagas;
+
+const { getAllUsersOfRole } = OrganizationsApiActions;
+const { getAllUsersOfRoleWorker } = OrganizationsApiSagas;
 
 const { STAFF_FQN } = APP_TYPES_FQNS;
 
@@ -177,6 +183,37 @@ function* getResponsibleUserOptionsWorker(action :SequenceAction) :Generator<any
     const app :Map = yield select((state) => state.get('app', Map()));
     const entitySetId :UUID = getESIDFromApp(app, STAFF_FQN);
     const personIdPTId :UUID = yield select((state) => state.getIn(['edm', 'fqnToIdMap', FQN.PERSON_ID_FQN]));
+    const organizationId :UUID = yield select((state) => state.getIn(['app', 'selectedOrganizationId']));
+    const roleIds :List<UUID> = yield select((state) => state.getIn(['app', 'selectedOrganizationSettings', 'private', 'profile']));
+    console.log(organizationId, roleIds);
+
+    const requestUsers = roleIds.map((roleId) => call(
+      getAllUsersOfRoleWorker,
+      getAllUsersOfRole({
+        organizationId,
+        roleId
+      })
+    )).toJS();
+    console.log(requestUsers);
+
+    const usersResponse = yield all(requestUsers);
+
+    const usersResponseData = fromJS(usersResponse);
+    const authorizedUsers = List().withMutations((mutable) => {
+      usersResponseData.forEach((roleResponse) => {
+        const data = roleResponse.get('data', List());
+        data.forEach((user) => {
+          mutable.push(user);
+        });
+      });
+    });
+
+    console.log(authorizedUsers);
+
+    // searching for staff members with matching emails may return duplicates.
+
+    // replace staff search with finding all users with profile role id
+    // then compile a list of staff members by matching emails
     const searchOptions :Object = {
       maxHits: 10000,
       searchTerm: getSearchTerm(personIdPTId, '*'),
