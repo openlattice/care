@@ -101,7 +101,7 @@ const getAboutPlanAssociations = (formData :any, personEKID :UUID, nowAsIsoStrin
   return associations;
 };
 
-const hydrateAboutSchema = (schema, responsibleUsers) => {
+const hydrateAboutSchema = (schema :Object, responsibleUsers :List<Map>) => {
   const [values, labels] = getOptionsFromEntityList(responsibleUsers, PERSON_ID_FQN.toString());
   let newSchema = setIn(
     schema,
