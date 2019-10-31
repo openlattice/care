@@ -121,8 +121,7 @@ const OverviewCharts = ({ dashboardCounts, months } :Props) => {
     const countMap = dashboardCounts.get(countKey, Map());
     const data = countMap
       .keySeq()
-      // coerce DateTime to epoch time
-      .sort((dateStr1, dateStr2) => +DateTime.fromISO(dateStr1) > +DateTime.fromISO(dateStr2))
+      .sortBy((dateStr1) => DateTime.fromISO(dateStr1).valueOf())
       .map((dateStr) => ({
         [title]: formatAsNumber(dateStr),
         count: countMap.get(dateStr)

@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Map } from 'immutable';
 import { Spinner } from 'lattice-ui-kit';
+import type { RequestSequence } from 'redux-reqseq';
 
 import ButtonToolbar from '../../components/buttons/ButtonToolbar';
 import DropdownButton from '../../components/buttons/DropdownButton';
@@ -19,24 +20,17 @@ import { loadDashboardData } from './DashboardActionFactory';
 import { SUBMISSION_STATES } from './DashboardReducer';
 import { SUMMARY_STATS } from '../../shared/Consts';
 
-type Props = {
-  app :Map,
-  dashboardCounts :Map,
-  isLoading :boolean,
-  summaryStats :Map,
-  actions :{
-    loadDashboardData :() => void
-  }
-};
-
-type State = {
-  layout :string
-};
-
 const OptionRow = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
+`;
+
+const Flex = styled.div`
+  display: flex;
+  flex: 1;
+  justify-content: center;
   align-items: center;
 `;
 
@@ -71,6 +65,21 @@ const TIME_LENGTHS = {
     label: 'Year',
     value: 12
   }
+};
+
+type Props = {
+  app :Map,
+  dashboardCounts :Map,
+  isLoading :boolean,
+  summaryStats :Map,
+  actions :{
+    loadDashboardData :RequestSequence;
+  }
+};
+
+type State = {
+  layout :string;
+  timeRange :any;
 };
 
 class DashboardContainer extends React.Component<Props, State> {
@@ -126,7 +135,7 @@ class DashboardContainer extends React.Component<Props, State> {
       onClick: () => this.setState({ layout: value })
     }));
 
-    const timeOptions = Object.values(TIME_LENGTHS).map((range) => ({
+    const timeOptions = Object.values(TIME_LENGTHS).map((range :any) => ({
       label: range.label,
       onClick: () => {
         this.setState({ timeRange: range });
@@ -154,11 +163,10 @@ class DashboardContainer extends React.Component<Props, State> {
   render() {
     const { isLoading } = this.props;
 
-
     return (
-      <div>
+      <Flex>
         {isLoading ? <Spinner size="3x" /> : this.renderContent()}
-      </div>
+      </Flex>
     );
   }
 }
