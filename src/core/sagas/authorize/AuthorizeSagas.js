@@ -34,8 +34,8 @@ function* getAuthorizationWorker(action :SequenceAction) :Generator<any, any, an
 
     const selectedOrganizationID :UUID = yield select((state) => state.getIn(['app', 'selectedOrganizationId']));
     const rolesByOrganization = currentRoles.filter((role) => role.get('organizationId') === selectedOrganizationID);
-    const principalIds = rolesByOrganization.map((role) => role.getIn(['principal', 'id'])).toSet();
-    yield put(getAuthorization.success(action.id, principalIds));
+    const roleIds = rolesByOrganization.map((role) => role.get('id')).toSet();
+    yield put(getAuthorization.success(action.id, roleIds));
   }
   catch (error) {
     LOG.error(action.type, error);
