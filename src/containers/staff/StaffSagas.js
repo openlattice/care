@@ -190,9 +190,26 @@ function* getResponsibleUserOptionsWorker(action :SequenceAction) :Generator<any
     const personIdPTId :UUID = yield select((state) => state.getIn(['edm', 'fqnToIdMap', FQN.PERSON_ID_FQN]));
     const organizationId :UUID = yield select((state) => state.getIn(['app', 'selectedOrganizationId']));
     const roleIds :List<UUID> = yield select(
-      (state) => state.getIn(['app', 'selectedOrganizationSettings', 'private', 'profile'])
+      (state) => state.getIn(['app', 'selectedOrganizationSettings', 'private', 'profile'], List())
     );
 
+    const searchOptions :Object = {
+      maxHits: 10000,
+      searchTerm: getSearchTerm(personIdPTId, '*'),
+      start: 0,
+    };
+
+    const staffResponse = yield call(
+      searchEntitySetDataWorker,
+      searchEntitySetData({
+        entitySetId,
+        searchOptions
+      })
+    );
+
+    if (staffResponse.error) throw staffResponse.error;
+
+    let responseData = fromJS(staffResponse.data.hits);
     const requestUsers = roleIds.map((roleId) => call(
       getAllUsersOfRoleWorker,
       getAllUsersOfRole({
@@ -201,9 +218,13 @@ function* getResponsibleUserOptionsWorker(action :SequenceAction) :Generator<any
       })
     )).toJS();
 
-    const usersResponse = yield all(requestUsers);
+    const usersResponses = yield all(requestUsers);
 
-    const usersResponseData = fromJS(usersResponse);
+    usersResponses.forEach((usersResponse) => {
+      if (usersResponse.error) throw usersResponse.error;
+    });
+
+    const usersResponseData = fromJS(usersResponses);
     const authorizedUsers = Set().withMutations((mutable) => {
       usersResponseData.forEach((roleResponse) => {
         const data = roleResponse.get('data', List());
@@ -213,27 +234,13 @@ function* getResponsibleUserOptionsWorker(action :SequenceAction) :Generator<any
       });
     });
 
-    const searchOptions :Object = {
-      maxHits: 10000,
-      searchTerm: getSearchTerm(personIdPTId, '*'),
-      start: 0,
-    };
-
-    const response = yield call(
-      searchEntitySetDataWorker,
-      searchEntitySetData({
-        entitySetId,
-        searchOptions
-      })
-    );
-
-    if (response.error) throw response.error;
-
-    const responseData = fromJS(response.data.hits)
-      .filter((staff) => {
-        const id = staff.getIn([FQN.PERSON_ID_FQN, 0]);
-        return authorizedUsers.has(id);
-      });
+    if (usersResponseData.size) {
+      responseData = responseData
+        .filter((staff) => {
+          const id = staff.getIn([FQN.PERSON_ID_FQN, 0]);
+          return authorizedUsers.has(id);
+        });
+    }
 
     yield put(getResponsibleUserOptions.success(action.id, responseData));
   }
