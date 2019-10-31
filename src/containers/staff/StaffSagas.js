@@ -2,7 +2,12 @@
  * @flow
  */
 
-import { List, Map, fromJS } from 'immutable';
+import {
+  List,
+  Map,
+  Set,
+  fromJS
+} from 'immutable';
 import {
   all,
   call,
@@ -184,8 +189,9 @@ function* getResponsibleUserOptionsWorker(action :SequenceAction) :Generator<any
     const entitySetId :UUID = getESIDFromApp(app, STAFF_FQN);
     const personIdPTId :UUID = yield select((state) => state.getIn(['edm', 'fqnToIdMap', FQN.PERSON_ID_FQN]));
     const organizationId :UUID = yield select((state) => state.getIn(['app', 'selectedOrganizationId']));
-    const roleIds :List<UUID> = yield select((state) => state.getIn(['app', 'selectedOrganizationSettings', 'private', 'profile']));
-    console.log(organizationId, roleIds);
+    const roleIds :List<UUID> = yield select(
+      (state) => state.getIn(['app', 'selectedOrganizationSettings', 'private', 'profile'])
+    );
 
     const requestUsers = roleIds.map((roleId) => call(
       getAllUsersOfRoleWorker,
@@ -194,26 +200,19 @@ function* getResponsibleUserOptionsWorker(action :SequenceAction) :Generator<any
         roleId
       })
     )).toJS();
-    console.log(requestUsers);
 
     const usersResponse = yield all(requestUsers);
 
     const usersResponseData = fromJS(usersResponse);
-    const authorizedUsers = List().withMutations((mutable) => {
+    const authorizedUsers = Set().withMutations((mutable) => {
       usersResponseData.forEach((roleResponse) => {
         const data = roleResponse.get('data', List());
         data.forEach((user) => {
-          mutable.push(user);
+          mutable.add(user.get('email'));
         });
       });
     });
 
-    console.log(authorizedUsers);
-
-    // searching for staff members with matching emails may return duplicates.
-
-    // replace staff search with finding all users with profile role id
-    // then compile a list of staff members by matching emails
     const searchOptions :Object = {
       maxHits: 10000,
       searchTerm: getSearchTerm(personIdPTId, '*'),
@@ -230,8 +229,11 @@ function* getResponsibleUserOptionsWorker(action :SequenceAction) :Generator<any
 
     if (response.error) throw response.error;
 
-    const responseData = fromJS(response.data.hits);
-    // TODO: need to fetch officer data assocted to user
+    const responseData = fromJS(response.data.hits)
+      .filter((staff) => {
+        const id = staff.getIn([FQN.PERSON_ID_FQN, 0]);
+        return authorizedUsers.has(id);
+      });
 
     yield put(getResponsibleUserOptions.success(action.id, responseData));
   }
