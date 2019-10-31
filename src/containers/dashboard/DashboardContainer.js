@@ -32,6 +32,11 @@ const Flex = styled.div`
   flex: 1;
   justify-content: center;
   align-items: center;
+  width: 100%;
+`;
+
+const DashboardWrapper = styled.div`
+  width: 100%;
 `;
 
 const NoReports = styled.div`
@@ -147,7 +152,7 @@ class DashboardContainer extends React.Component<Props, State> {
     }));
 
     return (
-      <div>
+      <DashboardWrapper>
         {resultsArePresent ? <SummaryStats summaryStats={summaryStats} interval={timeRange.label} /> : null}
         <OptionRow>
           <ButtonToolbar options={viewOptions} value={layout} noPadding />
@@ -156,7 +161,7 @@ class DashboardContainer extends React.Component<Props, State> {
         {resultsArePresent
           ? <ChartsComponent dashboardCounts={dashboardCounts} months={timeRange.value} />
           : <NoReports>No BHR reports were filed in this time period.</NoReports>}
-      </div>
+      </DashboardWrapper>
     );
   }
 
