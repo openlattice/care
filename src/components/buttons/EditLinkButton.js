@@ -3,7 +3,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit } from '@fortawesome/pro-solid-svg-icons';
+import { faEdit, faCommentAltPlus } from '@fortawesome/pro-solid-svg-icons';
 
 import LinkButton from './LinkButton';
 
@@ -37,7 +37,7 @@ const EditLinkButton = (props :Props) => {
         mode={mode}
         state={state}
         to={to}>
-      <FontAwesomeIcon icon={faEdit} fixedWidth />
+      <FontAwesomeIcon icon={faCommentAltPlus} fixedWidth />
     </EditButton>
   );
 };

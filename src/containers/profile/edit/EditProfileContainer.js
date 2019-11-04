@@ -1,5 +1,6 @@
 // @flow
 import React, { useEffect } from 'react';
+import styled from 'styled-components';
 import { Switch, Redirect } from 'react-router-dom';
 import { Map } from 'immutable';
 import {
@@ -38,6 +39,14 @@ import {
 } from '../../../core/router/Routes';
 import PrivateRoute from '../../../components/route/PrivateRoute';
 
+const StickyCard = styled(Card)`
+  position: sticky;
+  top: 66px;
+  z-index: 200;
+  box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.1), 0 -10px 0px 0 rgba(248, 248, 251, 0.7);
+  margin-bottom: 20px;
+`;
+
 type Props = {
   actions :{
     getAuthorization :RequestSequence;
@@ -62,6 +71,11 @@ const EditProfileContainer = (props :Props) => {
     <ContentOuterWrapper>
       <ProfileBanner selectedPerson={selectedPerson} />
       <ContentWrapper>
+        <StickyCard>
+          <CardSegment>
+            Request For Changes Placeholder
+          </CardSegment>
+        </StickyCard>
         <CardStack>
           <div>
             <LinkButton mode="subtle" to={match.url}>

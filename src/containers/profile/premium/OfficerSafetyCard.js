@@ -3,7 +3,7 @@ import React, { PureComponent } from 'react';
 import styled from 'styled-components';
 import { List, Map } from 'immutable';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExclamationTriangle } from '@fortawesome/pro-solid-svg-icons';
+import { faExclamationTriangle, faCommentAltPlus } from '@fortawesome/pro-solid-svg-icons';
 import {
   Card,
   CardHeader,
