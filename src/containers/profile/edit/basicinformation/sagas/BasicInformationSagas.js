@@ -31,6 +31,8 @@ import { getAddressWorker } from './AddressSagas';
 import { getPhotos } from '../actions/PhotosActions';
 import { getPhotosWorker } from './PhotosSagas';
 import { getAppearanceWorker } from './AppearanceSagas';
+import { getScarsMarksTatoos } from '../actions/ScarsMarksTatoosActions';
+import { getScarsMarksTatoosWorker } from './ScarsMarksTatoosSagas';
 import { submitPartialReplace } from '../../../../../core/sagas/data/DataActions';
 import { submitPartialReplaceWorker } from '../../../../../core/sagas/data/DataSagas';
 
@@ -162,11 +164,17 @@ function* getBasicInformationWorker(action :SequenceAction) :Generator<any, any,
       getPhotos(personEKID)
     );
 
+    const scarsRequest = call(
+      getScarsMarksTatoosWorker,
+      getScarsMarksTatoos(personEKID)
+    );
+
     const responses = yield all([
       addressRequest,
       appearanceRequest,
       basicsRequest,
       photosRequest,
+      scarsRequest,
     ]);
 
     responses.forEach((response) => {
