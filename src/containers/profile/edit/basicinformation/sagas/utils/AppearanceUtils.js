@@ -32,10 +32,10 @@ const constructFormData = (appearance :Map) => {
 
 };
 
-const constructEntityIndexToIdMap = (apperanceEKID :UUID) => {
+const constructEntityIndexToIdMap = (appearanceEKID :UUID) => {
   const entityIndexToIdMap = Map().withMutations((mutable) => {
-    if (isValidUuid(apperanceEKID)) {
-      mutable.setIn([PHYSICAL_APPEARANCE_FQN.toString(), 0], apperanceEKID);
+    if (isValidUuid(appearanceEKID)) {
+      mutable.setIn([PHYSICAL_APPEARANCE_FQN.toString(), 0], appearanceEKID);
     }
   });
 

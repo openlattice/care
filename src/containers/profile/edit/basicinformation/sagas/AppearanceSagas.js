@@ -97,7 +97,7 @@ function* getAppearanceWorker(action :SequenceAction) :Generator<any, any, any> 
 
     response.formData = constructFormData(appearanceData);
 
-    response.data = fromJS({ physicalAppearance: appearanceData });
+    response.data = fromJS(appearanceData);
 
     yield put(getAppearance.success(action.id, response));
   }
