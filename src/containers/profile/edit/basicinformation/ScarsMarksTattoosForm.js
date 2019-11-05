@@ -22,8 +22,8 @@ import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import { useFormData } from '../../../../components/hooks';
-import { schema, uiSchema } from './schemas/ScarsMarksTatoosSchemas';
-import { submitScarsMarksTatoos, updateScarsMarksTatoos } from './actions/ScarsMarksTatoosActions';
+import { schema, uiSchema } from './schemas/ScarsMarksTattoosSchemas';
+import { submitScarsMarksTattoos, updateScarsMarksTattoos } from './actions/ScarsMarksTattoosActions';
 
 import { COMPLETED_DT_FQN } from '../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
@@ -41,8 +41,8 @@ const {
 
 type Props = {
   actions :{
-    submitScarsMarksTatoos :RequestSequence;
-    updateScarsMarksTatoos :RequestSequence;
+    submitScarsMarksTattoos :RequestSequence;
+    updateScarsMarksTattoos :RequestSequence;
   };
   entityIndexToIdMap :Map;
   entitySetIds :Map;
@@ -75,7 +75,7 @@ const ScarsForm = (props :Props) => {
   }, [entityIndexToIdMap, setPrepopulated]);
 
   const formContext = useMemo(() => ({
-    editAction: actions.updateScarsMarksTatoos,
+    editAction: actions.updateScarsMarksTattoos,
     entityIndexToIdMap,
     entitySetIds,
     mappers: {},
@@ -104,7 +104,7 @@ const ScarsForm = (props :Props) => {
       propertyTypeIds
     );
 
-    actions.submitScarsMarksTatoos({
+    actions.submitScarsMarksTattoos({
       associationEntityData,
       entityData,
       path: [],
@@ -130,7 +130,7 @@ const ScarsForm = (props :Props) => {
   return (
     <Card>
       <CardHeader mode="primary" padding="sm">
-        Scars, Marks, & Tatoos
+        Scars, Marks, & Tattoos
       </CardHeader>
       <Form
           disabled={prepopulated}
@@ -156,8 +156,8 @@ const mapStateToProps = (state :Map) => ({
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
-    submitScarsMarksTatoos,
-    updateScarsMarksTatoos
+    submitScarsMarksTattoos,
+    updateScarsMarksTattoos
   }, dispatch)
 });
 

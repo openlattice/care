@@ -6,7 +6,7 @@ import address from './AddressReducer';
 import appearance from './AppearanceReducer';
 import basics from './BasicsReducer';
 import photos from './PhotosReducer';
-import scars from './ScarsMarksTatoosReducer';
+import scars from './ScarsMarksTattoosReducer';
 
 const basicInformationReducer = combineReducers({
   address,

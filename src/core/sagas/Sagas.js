@@ -34,7 +34,7 @@ import * as RoutingSagas from '../router/RoutingSagas';
 import * as SearchSagas from '../../containers/search/SearchSagas';
 import * as StaffSagas from '../../containers/staff/StaffSagas';
 import * as SubmitSagas from '../../utils/submit/SubmitSagas';
-import * as ScarsMarksTatoosSagas from '../../containers/profile/edit/basicinformation/sagas/ScarsMarksTatoosSagas';
+import * as ScarsMarksTattoosSagas from '../../containers/profile/edit/basicinformation/sagas/ScarsMarksTattoosSagas';
 
 export default function* sagas() :Generator<*, *, *> {
 
@@ -127,9 +127,9 @@ export default function* sagas() :Generator<*, *, *> {
     fork(PhotosSagas.submitPhotosWatcher),
     fork(PhotosSagas.updatePhotoWatcher),
 
-    fork(ScarsMarksTatoosSagas.getScarsMarksTatoosWatcher),
-    fork(ScarsMarksTatoosSagas.submitScarsMarksTatoosWatcher),
-    fork(ScarsMarksTatoosSagas.updateScarsMarksTatoosWatcher),
+    fork(ScarsMarksTattoosSagas.getScarsMarksTattoosWatcher),
+    fork(ScarsMarksTattoosSagas.submitScarsMarksTattoosWatcher),
+    fork(ScarsMarksTattoosSagas.updateScarsMarksTattoosWatcher),
 
     // OfficerSafetyConcernsSagas
     fork(OfficerSafetyConcernsSagas.getOfficerSafetyWatcher),

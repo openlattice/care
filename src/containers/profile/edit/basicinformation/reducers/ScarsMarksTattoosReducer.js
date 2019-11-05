@@ -4,10 +4,10 @@ import { RequestStates } from 'redux-reqseq';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
-  getScarsMarksTatoos,
-  updateScarsMarksTatoos,
-  submitScarsMarksTatoos,
-} from '../actions/ScarsMarksTatoosActions';
+  getScarsMarksTattoos,
+  updateScarsMarksTattoos,
+  submitScarsMarksTattoos,
+} from '../actions/ScarsMarksTattoosActions';
 
 const INITIAL_STATE :Map = fromJS({
   entityIndexToIdMap: Map(),
@@ -17,12 +17,12 @@ const INITIAL_STATE :Map = fromJS({
   updateState: RequestStates.STANDBY,
 });
 
-const scarsMarksTatoosReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
+const scarsMarksTattoosReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
 
   switch (action.type) {
 
-    case getScarsMarksTatoos.case(action.type): {
-      return getScarsMarksTatoos.reducer(state, action, {
+    case getScarsMarksTattoos.case(action.type): {
+      return getScarsMarksTattoos.reducer(state, action, {
         REQUEST: () => state.set('fetchState', RequestStates.PENDING),
         SUCCESS: () => state
           .merge(action.value)
@@ -31,8 +31,8 @@ const scarsMarksTatoosReducer = (state :Map = INITIAL_STATE, action :SequenceAct
       });
     }
 
-    case submitScarsMarksTatoos.case(action.type): {
-      return submitScarsMarksTatoos.reducer(state, action, {
+    case submitScarsMarksTattoos.case(action.type): {
+      return submitScarsMarksTattoos.reducer(state, action, {
         REQUEST: () => state.set('submitState', RequestStates.PENDING),
         SUCCESS: () => {
           const {
@@ -49,8 +49,8 @@ const scarsMarksTatoosReducer = (state :Map = INITIAL_STATE, action :SequenceAct
       });
     }
 
-    case updateScarsMarksTatoos.case(action.type): {
-      return updateScarsMarksTatoos.reducer(state, action, {
+    case updateScarsMarksTattoos.case(action.type): {
+      return updateScarsMarksTattoos.reducer(state, action, {
         REQUEST: () => {
           const { path, properties } = action.value;
           return state
@@ -67,4 +67,4 @@ const scarsMarksTatoosReducer = (state :Map = INITIAL_STATE, action :SequenceAct
   }
 };
 
-export default scarsMarksTatoosReducer;
+export default scarsMarksTattoosReducer;

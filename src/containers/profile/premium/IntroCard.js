@@ -83,7 +83,7 @@ const IntroCard = (props :Props) => {
     formattedDob = DateTime.fromISO(rawDob).toLocaleString(DateTime.DATE_SHORT);
   }
 
-  const scarsMarksTatoos = scars.getIn([FQN.DESCRIPTION_FQN], '');
+  const scarsMarksTattoos = scars.getIn([FQN.DESCRIPTION_FQN], '');
 
   const hairColor = appearance.getIn([FQN.HAIR_COLOR_FQN, 0], '');
   const eyeColor = appearance.getIn([FQN.EYE_COLOR_FQN, 0], '');
@@ -141,7 +141,7 @@ const IntroCard = (props :Props) => {
               isLoading={isLoading}
               icon={faEye} />
           <Detail
-              content={scarsMarksTatoos}
+              content={scarsMarksTattoos}
               isLoading={isLoading}
               icon={faClawMarks} />
         </IntroGrid>

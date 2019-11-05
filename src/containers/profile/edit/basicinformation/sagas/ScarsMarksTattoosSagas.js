@@ -23,10 +23,10 @@ import {
   GET_SCARS_MARKS_TATOOS,
   SUBMIT_SCARS_MARKS_TATOOS,
   UPDATE_SCARS_MARKS_TATOOS,
-  getScarsMarksTatoos,
-  submitScarsMarksTatoos,
-  updateScarsMarksTatoos,
-} from '../actions/ScarsMarksTatoosActions';
+  getScarsMarksTattoos,
+  submitScarsMarksTattoos,
+  updateScarsMarksTattoos,
+} from '../actions/ScarsMarksTattoosActions';
 import {
   submitDataGraph,
   submitPartialReplace,
@@ -41,7 +41,7 @@ import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
 import { getFormDataFromEntity } from '../../../../../utils/DataUtils';
 import * as FQN from '../../../../../edm/DataModelFqns';
 
-const LOG = new Logger('ScarsMarksTatoosSagas');
+const LOG = new Logger('ScarsMarksTattoosSagas');
 const { getPageSectionKey } = DataProcessingUtils;
 const { OPENLATTICE_ID_FQN } = Constants;
 const {
@@ -53,14 +53,14 @@ const {
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
 const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
 
-function* getScarsMarksTatoosWorker(action :SequenceAction) :Generator<any, any, any> {
+function* getScarsMarksTattoosWorker(action :SequenceAction) :Generator<any, any, any> {
   const response = {};
   try {
     const { value: entityKeyId } = action;
     if (!isDefined(entityKeyId)) throw ERR_ACTION_VALUE_NOT_DEFINED;
     if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
 
-    yield put(getScarsMarksTatoos.request(action.id, entityKeyId));
+    yield put(getScarsMarksTattoos.request(action.id, entityKeyId));
 
     const app :Map = yield select((state) => state.get('app', Map()));
     const entitySetId :UUID = getESIDFromApp(app, PEOPLE_FQN);
@@ -109,26 +109,26 @@ function* getScarsMarksTatoosWorker(action :SequenceAction) :Generator<any, any,
 
     response.data = characteristicsData;
 
-    yield put(getScarsMarksTatoos.success(action.id, response));
+    yield put(getScarsMarksTattoos.success(action.id, response));
   }
   catch (error) {
     response.error = error;
-    yield put(getScarsMarksTatoos.failure(action.id, error));
+    yield put(getScarsMarksTattoos.failure(action.id, error));
   }
 
   return response;
 }
 
-function* getScarsMarksTatoosWatcher() :Generator<any, any, any> {
-  yield takeLatest(GET_SCARS_MARKS_TATOOS, getScarsMarksTatoosWorker);
+function* getScarsMarksTattoosWatcher() :Generator<any, any, any> {
+  yield takeLatest(GET_SCARS_MARKS_TATOOS, getScarsMarksTattoosWorker);
 }
 
-function* submitScarsMarksTatoosWorker(action :SequenceAction) :Generator<any, any, any> {
+function* submitScarsMarksTattoosWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
     const { value } = action;
     if (value === null || value === undefined) throw ERR_ACTION_VALUE_NOT_DEFINED;
 
-    yield put(submitScarsMarksTatoos.request(action.id));
+    yield put(submitScarsMarksTattoos.request(action.id));
     const response = yield call(submitDataGraphWorker, submitDataGraph(value));
     if (response.error) throw response.error;
 
@@ -146,48 +146,48 @@ function* submitScarsMarksTatoosWorker(action :SequenceAction) :Generator<any, a
 
     const { path, properties } = value;
 
-    yield put(submitScarsMarksTatoos.success(action.id, {
+    yield put(submitScarsMarksTattoos.success(action.id, {
       entityIndexToIdMap,
       path,
       properties
     }));
   }
   catch (error) {
-    yield put(submitScarsMarksTatoos.failure(action.id, error));
+    yield put(submitScarsMarksTattoos.failure(action.id, error));
   }
 }
 
-function* submitScarsMarksTatoosWatcher() :Generator<any, any, any> {
-  yield takeEvery(SUBMIT_SCARS_MARKS_TATOOS, submitScarsMarksTatoosWorker);
+function* submitScarsMarksTattoosWatcher() :Generator<any, any, any> {
+  yield takeEvery(SUBMIT_SCARS_MARKS_TATOOS, submitScarsMarksTattoosWorker);
 }
 
-function* updateScarsMarksTatoosWorker(action :SequenceAction) :Generator<any, any, any> {
+function* updateScarsMarksTattoosWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
     const { value } = action;
     if (value === null || value === undefined) throw ERR_ACTION_VALUE_NOT_DEFINED;
 
-    yield put(updateScarsMarksTatoos.request(action.id, value));
+    yield put(updateScarsMarksTattoos.request(action.id, value));
     const response = yield call(submitPartialReplaceWorker, submitPartialReplace(value));
 
     if (response.error) throw response.error;
 
-    yield put(updateScarsMarksTatoos.success(action.id));
+    yield put(updateScarsMarksTattoos.success(action.id));
   }
   catch (error) {
-    LOG.error('updateScarsMarksTatoosWorker', error);
-    yield put(updateScarsMarksTatoos.failure(action.id, error));
+    LOG.error('updateScarsMarksTattoosWorker', error);
+    yield put(updateScarsMarksTattoos.failure(action.id, error));
   }
 }
 
-function* updateScarsMarksTatoosWatcher() :Generator<any, any, any> {
-  yield takeEvery(UPDATE_SCARS_MARKS_TATOOS, updateScarsMarksTatoosWorker);
+function* updateScarsMarksTattoosWatcher() :Generator<any, any, any> {
+  yield takeEvery(UPDATE_SCARS_MARKS_TATOOS, updateScarsMarksTattoosWorker);
 }
 
 export {
-  getScarsMarksTatoosWatcher,
-  getScarsMarksTatoosWorker,
-  submitScarsMarksTatoosWatcher,
-  submitScarsMarksTatoosWorker,
-  updateScarsMarksTatoosWatcher,
-  updateScarsMarksTatoosWorker,
+  getScarsMarksTattoosWatcher,
+  getScarsMarksTattoosWorker,
+  submitScarsMarksTattoosWatcher,
+  submitScarsMarksTattoosWorker,
+  updateScarsMarksTattoosWatcher,
+  updateScarsMarksTattoosWorker,
 };
