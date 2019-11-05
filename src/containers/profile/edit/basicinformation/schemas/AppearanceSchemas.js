@@ -6,7 +6,6 @@ import {
   WEIGHT_FQN,
   EYE_COLOR_FQN,
   HAIR_COLOR_FQN,
-  DESCRIPTION_FQN,
 } from '../../../../../edm/DataModelFqns';
 import {
   EYE_COLOR_VALUES,
@@ -14,10 +13,7 @@ import {
 } from '../../../constants';
 
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
-const {
-  IDENTIFYING_CHARACTERISTICS_FQN,
-  PHYSICAL_APPEARANCE_FQN,
-} = APP_TYPES_FQNS;
+const { PHYSICAL_APPEARANCE_FQN } = APP_TYPES_FQNS;
 
 const schema = {
   type: 'object',
@@ -44,10 +40,6 @@ const schema = {
           type: 'string',
           title: 'Hair Color',
           enum: HAIR_COLOR_VALUES
-        },
-        [getEntityAddressKey(0, IDENTIFYING_CHARACTERISTICS_FQN, DESCRIPTION_FQN)]: {
-          type: 'string',
-          title: 'Scars/Marks/Tattoos'
         }
       }
     }
@@ -71,9 +63,6 @@ const uiSchema = {
     },
     [getEntityAddressKey(0, PHYSICAL_APPEARANCE_FQN, HAIR_COLOR_FQN)]: {
       classNames: 'column-span-3'
-    },
-    [getEntityAddressKey(0, IDENTIFYING_CHARACTERISTICS_FQN, DESCRIPTION_FQN)]: {
-      classNames: 'column-span-12'
     }
   }
 };

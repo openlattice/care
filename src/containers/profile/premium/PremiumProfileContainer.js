@@ -104,6 +104,7 @@ type Props = {
   reports :List<Map>;
   responsePlan :Map;
   responsibleUser :Map;
+  scars :Map;
   selectedPerson :Map;
   techniques :List<Map>;
   triggers :List<Map>;
@@ -129,6 +130,7 @@ const PremiumProfileContainer = (props :Props) => {
     reports,
     responsePlan,
     responsibleUser,
+    scars,
     selectedPerson,
     techniques,
     triggers,
@@ -178,6 +180,7 @@ const PremiumProfileContainer = (props :Props) => {
               <IntroCard
                   appearance={appearance}
                   isLoading={isLoadingIntro}
+                  scars={scars}
                   selectedPerson={selectedPerson}
                   showEdit={isAuthorized} />
               <AddressCard
@@ -241,6 +244,7 @@ const mapStateToProps = (state :Map) => {
   const fetchAboutStates = [
     state.getIn(['profile', 'basicInformation', 'basics', 'fetchState']),
     state.getIn(['profile', 'basicInformation', 'appearance', 'fetchState']),
+    state.getIn(['profile', 'basicInformation', 'scars', 'fetchState']),
     state.getIn(['profile', 'basicInformation', 'address', 'fetchState']),
   ];
 
@@ -266,6 +270,7 @@ const mapStateToProps = (state :Map) => {
     reports: state.getIn(['profile', 'reports', 'data'], List()),
     responsePlan: state.getIn(['profile', 'responsePlan', 'data'], Map()),
     responsibleUser: state.getIn(['profile', 'about', 'data'], Map()),
+    scars: state.getIn(['profile', 'basicInformation', 'scars', 'data'], Map()),
     selectedPerson: state.getIn(['profile', 'basicInformation', 'basics', 'data'], Map()),
     techniques: state.getIn(['profile', 'officerSafety', 'data', 'interactionStrategies'], List()),
     triggers: state.getIn(['profile', 'officerSafety', 'data', 'behaviors'], List()),

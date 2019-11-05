@@ -52,10 +52,11 @@ const IntroGrid = styled.div`
 `;
 
 type Props = {
-  match :Match;
   appearance :Map;
-  selectedPerson :Map;
   isLoading :boolean;
+  match :Match;
+  scars :Map;
+  selectedPerson :Map;
   showEdit :boolean;
 };
 
@@ -65,6 +66,7 @@ const IntroCard = (props :Props) => {
     appearance,
     isLoading,
     match,
+    scars,
     selectedPerson,
     showEdit,
   } = props;
@@ -81,15 +83,12 @@ const IntroCard = (props :Props) => {
     formattedDob = DateTime.fromISO(rawDob).toLocaleString(DateTime.DATE_SHORT);
   }
 
-  const physicalAppearance = appearance.get('physicalAppearance', Map());
-  const identifyingCharacteristics = appearance.get('identifyingCharacteristics', Map());
+  const scarsMarksTattoos = scars.getIn([FQN.DESCRIPTION_FQN], '');
 
-  const scars = identifyingCharacteristics.getIn([FQN.DESCRIPTION_FQN], '');
-
-  const hairColor = physicalAppearance.getIn([FQN.HAIR_COLOR_FQN, 0], '');
-  const eyeColor = physicalAppearance.getIn([FQN.EYE_COLOR_FQN, 0], '');
-  const height = physicalAppearance.getIn([FQN.HEIGHT_FQN, 0]);
-  const weight = physicalAppearance.getIn([FQN.WEIGHT_FQN, 0]);
+  const hairColor = appearance.getIn([FQN.HAIR_COLOR_FQN, 0], '');
+  const eyeColor = appearance.getIn([FQN.EYE_COLOR_FQN, 0], '');
+  const height = appearance.getIn([FQN.HEIGHT_FQN, 0]);
+  const weight = appearance.getIn([FQN.WEIGHT_FQN, 0]);
 
   const formattedHeight = height ? inchesToFeetString(height) : '';
   const formattedWeight = weight ? `${weight} lbs` : '';
@@ -142,7 +141,7 @@ const IntroCard = (props :Props) => {
               isLoading={isLoading}
               icon={faEye} />
           <Detail
-              content={scars}
+              content={scarsMarksTattoos}
               isLoading={isLoading}
               icon={faClawMarks} />
         </IntroGrid>

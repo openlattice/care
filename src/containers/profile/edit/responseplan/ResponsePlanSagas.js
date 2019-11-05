@@ -91,7 +91,7 @@ export function* submitResponsePlanWorker(action :SequenceAction) :Generator<*, 
     yield put(submitResponsePlan.success(action.id, {
       entityIndexToIdMap: newEntityIndexToIdMap,
       path,
-      properties: fromJS(properties)
+      properties
     }));
   }
   catch (error) {
