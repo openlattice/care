@@ -72,8 +72,8 @@ function* getScarsMarksTatoosWorker(action :SequenceAction) :Generator<any, any,
       filter: {
         entityKeyIds: [entityKeyId],
         edgeEntitySetIds: [observedInESID],
-        destinationEntitySetIds: [identifyingCharacteristicsESID],
-        sourceEntitySetIds: [],
+        destinationEntitySetIds: [],
+        sourceEntitySetIds: [identifyingCharacteristicsESID],
       }
     };
 
