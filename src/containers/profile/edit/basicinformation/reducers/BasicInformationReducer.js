@@ -6,12 +6,14 @@ import address from './AddressReducer';
 import appearance from './AppearanceReducer';
 import basics from './BasicsReducer';
 import photos from './PhotosReducer';
+import scars from './ScarsMarksTatoosReducer';
 
 const basicInformationReducer = combineReducers({
   address,
   appearance,
   basics,
   photos,
+  scars,
 });
 
 export default basicInformationReducer;
