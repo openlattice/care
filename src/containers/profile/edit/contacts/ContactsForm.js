@@ -67,6 +67,7 @@ class ContactsForm extends Component<Props, State> {
     } = this.props;
     const personEKID = match.params[PROFILE_ID_PARAM];
     actions.getContacts(personEKID);
+    this.initializeFormData();
   }
 
   componentDidUpdate(prevProps :Props) {
