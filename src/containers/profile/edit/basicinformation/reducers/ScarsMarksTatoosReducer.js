@@ -42,7 +42,7 @@ const scarsMarksTatoosReducer = (state :Map = INITIAL_STATE, action :SequenceAct
           } = action.value;
           return state
             .set('entityIndexToIdMap', entityIndexToIdMap)
-            .setIn(['formData', ...path], properties)
+            .setIn(['formData', ...path], fromJS(properties))
             .set('submitState', RequestStates.SUCCESS);
         },
         FAILURE: () => state.set('submitState', RequestStates.FAILURE)
@@ -55,7 +55,7 @@ const scarsMarksTatoosReducer = (state :Map = INITIAL_STATE, action :SequenceAct
           const { path, properties } = action.value;
           return state
             .set('updateState', RequestStates.PENDING)
-            .setIn(['formData', ...path], properties);
+            .setIn(['formData', ...path], fromJS(properties));
         },
         SUCCESS: () => state.set('updateState', RequestStates.SUCCESS),
         FAILURE: () => state.set('updateState', RequestStates.FAILURE)

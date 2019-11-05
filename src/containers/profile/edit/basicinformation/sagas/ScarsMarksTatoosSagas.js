@@ -149,7 +149,7 @@ function* submitScarsMarksTatoosWorker(action :SequenceAction) :Generator<any, a
     yield put(submitScarsMarksTatoos.success(action.id, {
       entityIndexToIdMap,
       path,
-      properties: fromJS(properties)
+      properties
     }));
   }
   catch (error) {

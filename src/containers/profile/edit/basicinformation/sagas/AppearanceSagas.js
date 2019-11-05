@@ -140,7 +140,7 @@ function* submitAppearanceWorker(action :SequenceAction) :Generator<any, any, an
     yield put(submitAppearance.success(action.id, {
       entityIndexToIdMap,
       path,
-      properties: fromJS(properties),
+      properties
     }));
   }
   catch (error) {

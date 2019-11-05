@@ -59,7 +59,7 @@ const officerSafetyReducer = (state :Map = INITIAL_STATE, action :SequenceAction
           } = action.value;
           return state
             .set('entityIndexToIdMap', entityIndexToIdMap)
-            .setIn(['formData', ...path], properties)
+            .setIn(['formData', ...path], fromJS(properties))
             .set('submitState', RequestStates.SUCCESS);
         },
         FAILURE: () => state.set('submitState', RequestStates.FAILURE)
@@ -72,7 +72,7 @@ const officerSafetyReducer = (state :Map = INITIAL_STATE, action :SequenceAction
           const { path, properties } = action.value;
           return state
             .set('updateState', RequestStates.PENDING)
-            .setIn(['formData', ...path], properties);
+            .setIn(['formData', ...path], fromJS(properties));
         },
         SUCCESS: () => state.set('updateState', RequestStates.SUCCESS),
         FAILURE: () => state.set('updateState', RequestStates.FAILURE)

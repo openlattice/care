@@ -38,7 +38,7 @@ const AboutReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
           const { path, properties } = action.value;
           return state
             .set('updateState', RequestStates.PENDING)
-            .setIn(['formData', ...path], properties);
+            .setIn(['formData', ...path], fromJS(properties));
         },
         SUCCESS: () => state
           .mergeDeep(action.value)
@@ -49,7 +49,7 @@ const AboutReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
 
     case submitAboutPlan.case(action.type): {
       return submitAboutPlan.reducer(state, action, {
-        REQUEST: () => state,
+        REQUEST: () => state.set('submitState', RequestStates.PENDING),
         SUCCESS: () => {
           const {
             entityIndexToIdMap,
@@ -58,7 +58,7 @@ const AboutReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
           } = action.value;
           return state
             .set('entityIndexToIdMap', entityIndexToIdMap)
-            .setIn(['formData', ...path], properties)
+            .setIn(['formData', ...path], fromJS(properties))
             .set('submitState', RequestStates.SUCCESS);
         },
         FAILURE: () => state,

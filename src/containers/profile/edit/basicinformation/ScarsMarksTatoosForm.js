@@ -65,8 +65,8 @@ const ScarsForm = (props :Props) => {
     submitState,
   } = props;
 
-  const [formData] = useFormData(scarsFormData);
-  const [prepopulated, setPrepopulated] = useState();
+  const [formData, setFormData] = useFormData(scarsFormData);
+  const [prepopulated, setPrepopulated] = useState(false);
 
   useEffect(() => {
     if (!entityIndexToIdMap.isEmpty()) {
@@ -138,6 +138,7 @@ const ScarsForm = (props :Props) => {
           formData={formData}
           isSubmitting={submitState === RequestStates.PENDING}
           onSubmit={handleSubmit}
+          onChange={setFormData}
           schema={schema}
           uiSchema={uiSchema} />
     </Card>
