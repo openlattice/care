@@ -261,7 +261,7 @@ function* submitOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<a
     yield put(submitOfficerSafetyConcerns.success(action.id, {
       entityIndexToIdMap: newEntityIndexToIdMap,
       path,
-      properties: fromJS(properties)
+      properties
     }));
   }
   catch (error) {

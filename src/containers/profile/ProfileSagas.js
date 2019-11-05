@@ -112,7 +112,7 @@ function* getPhysicalAppearanceWorker(action :SequenceAction) :Generator<any, an
   return response;
 }
 
-function* getPhysicalApperanceWatcher() :Generator<any, any, any> {
+function* getPhysicalAppearanceWatcher() :Generator<any, any, any> {
   yield takeLatest(GET_PHYSICAL_APPEARANCE, getPhysicalAppearanceWorker);
 }
 
@@ -401,7 +401,7 @@ export {
   getPersonDataWatcher,
   getPersonDataWorker,
   getPhysicalAppearanceWorker,
-  getPhysicalApperanceWatcher,
+  getPhysicalAppearanceWatcher,
   getProfileReportsWatcher,
   getProfileReportsWorker,
   updateProfileAboutWatcher,

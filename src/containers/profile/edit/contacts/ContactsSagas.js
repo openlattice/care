@@ -96,7 +96,7 @@ function* submitContactsWorker(action :SequenceAction) :Generator<*, *, *> {
     yield put(submitContacts.success(action.id, {
       entityIndexToIdMap: mergedEntityIndexToIdMap,
       path,
-      properties: fromJS(properties)
+      properties
     }));
   }
   catch (error) {
