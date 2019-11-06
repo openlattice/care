@@ -9,7 +9,7 @@ import type { Dispatch } from 'redux';
 import { FormWrapper } from './FormComponents';
 import { BLACK } from '../../shared/Colors';
 import { CRISIS_PATH, HOME_PATH } from '../../core/router/Routes';
-import { clearCrisisReport } from '../../containers/crisis/CrisisActionFactory';
+import { clearCrisisReport } from '../../containers/crisis/CrisisReportActions';
 import { goToPath } from '../../core/router/RoutingActions';
 import type { RoutingAction } from '../../core/router/RoutingActions';
 

@@ -34,7 +34,7 @@ import SubmitSuccess from '../../components/crisis/SubmitSuccess';
 
 import { getReport, updateReport, deleteReport } from './ReportsActions';
 import { getAuthorization } from '../../core/sagas/authorize/AuthorizeActions';
-import { clearCrisisReport } from '../crisis/CrisisActionFactory';
+import { clearCrisisReport } from '../crisis/CrisisReportActions';
 import {
   getCurrentPage,
   getNextPath,

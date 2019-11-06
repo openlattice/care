@@ -11,7 +11,7 @@ import {
   updateReport,
   getReportsByDateRange,
 } from './ReportsActions';
-import { CLEAR_CRISIS_REPORT } from '../crisis/CrisisActionFactory';
+import { CLEAR_CRISIS_REPORT } from '../crisis/CrisisReportActions';
 
 const INITIAL_STATE :Map<*, *> = fromJS({
   deleteState: RequestStates.STANDBY,

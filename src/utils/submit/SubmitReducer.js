@@ -4,7 +4,7 @@
 
 import Immutable from 'immutable';
 
-import { CLEAR_CRISIS_REPORT } from '../../containers/crisis/CrisisActionFactory';
+import { CLEAR_CRISIS_REPORT } from '../../containers/crisis/CrisisReportActions';
 import { SUBMIT } from '../constants/StateConstants';
 import {
   submit

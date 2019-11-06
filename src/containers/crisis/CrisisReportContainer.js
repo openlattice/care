@@ -29,7 +29,7 @@ import submitConfig from '../../config/formconfig/CrisisReportConfig';
 import { FormWrapper as StyledPageWrapper } from '../../components/crisis/FormComponents';
 
 import { submit } from '../../utils/submit/SubmitActionFactory';
-import { clearCrisisReport } from './CrisisActionFactory';
+import { clearCrisisReport } from './CrisisReportActions';
 import {
   getCurrentPage,
   getNextPath,
@@ -258,6 +258,7 @@ class CrisisReportContainer extends React.Component<Props, State> {
       submission = { ...submission, ...postProcessor(state.get(stateField)) };
     });
 
+    console.log(submission);
     actions.submit({
       app,
       config: submitConfig,

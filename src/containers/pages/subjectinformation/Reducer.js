@@ -7,7 +7,7 @@ import { Map, fromJS } from 'immutable';
 import { DateTime } from 'luxon';
 
 import { CLEAR, SET_INPUT_VALUE, SET_INPUT_VALUES } from './ActionFactory';
-import { CLEAR_CRISIS_REPORT } from '../../crisis/CrisisActionFactory';
+import { CLEAR_CRISIS_REPORT } from '../../crisis/CrisisReportActions';
 import { SUBJECT_INFORMATION, POST_PROCESS_FIELDS } from '../../../utils/constants/CrisisReportConstants';
 import { getAgeFromIsoDate } from '../../../utils/DateUtils';
 import { FORM_STEP_STATUS } from '../../../utils/constants/FormConstants';
