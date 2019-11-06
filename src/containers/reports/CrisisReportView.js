@@ -194,10 +194,13 @@ type State = {
 
 class CrisisReportView extends React.Component<Props, State> {
 
-  state = {
-    edit: false,
-    showDelete: false,
-    showDiscard: false,
+  constructor(props :Props) {
+    super(props);
+    this.state = {
+      edit: false,
+      showDelete: false,
+      showDiscard: false,
+    };
   }
 
   componentDidMount() {
