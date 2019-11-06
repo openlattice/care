@@ -5,13 +5,15 @@ import isFunction from 'lodash/isFunction';
 import styled from 'styled-components';
 import { Constants } from 'lattice';
 import { Map, getIn } from 'immutable';
-import { Button, Card } from 'lattice-ui-kit';
+import { Button, Card, CardSegment } from 'lattice-ui-kit';
 import { connect } from 'react-redux';
 import {
   faUser,
   faVenusMars,
-  faBirthdayCake
+  faBirthdayCake,
 } from '@fortawesome/pro-solid-svg-icons';
+import { faChevronRight } from '@fortawesome/pro-light-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Portrait from '../../components/portrait/Portrait';
 import LinkButton from '../../components/buttons/LinkButton';
@@ -22,6 +24,10 @@ import { PERSON_SEX_FQN, PERSON_RACE_FQN } from '../../edm/DataModelFqns';
 import { CRISIS_PATH } from '../../core/router/Routes';
 
 const { OPENLATTICE_ID_FQN } = Constants;
+
+const Icon = styled(FontAwesomeIcon)`
+  margin-left: 8px;
+`;
 
 const Details = styled.div`
   display: flex;
@@ -42,15 +48,8 @@ const Text = styled.div`
   -webkit-box-orient: vertical;
 `;
 
-const ResultWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  padding: 30px;
-`;
-
 const Actions = styled.div`
   display: flex;
-  justify-content: space-around;
   flex-direction: column;
 `;
 
@@ -89,7 +88,7 @@ class PersonResult extends Component<Props> {
 
     return (
       <Card>
-        <ResultWrapper>
+        <CardSegment>
           <Portrait imageUrl={imageUrl} height="128" width="96" />
           <Details>
             <Text bold uppercase fontSize="24px">{fullName}</Text>
@@ -98,12 +97,15 @@ class PersonResult extends Component<Props> {
             <Detail content={race} icon={faUser} />
           </Details>
           <Actions>
-            <BigButton mode="secondary" onClick={this.handleClick}>View</BigButton>
+            <BigButton mode="secondary" onClick={this.handleClick}>
+              View Profile
+              <Icon icon={faChevronRight} />
+            </BigButton>
             <LinkButton to={`${CRISIS_PATH}/1`} state={result}>
               New Report
             </LinkButton>
           </Actions>
-        </ResultWrapper>
+        </CardSegment>
       </Card>
     );
   }
