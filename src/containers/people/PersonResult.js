@@ -75,7 +75,6 @@ const PersonResult = (props :Props) => {
   const personEKID = result.getIn([OPENLATTICE_ID_FQN, 0]);
   const imageUrl = useSelector((store) => {
     const profilePic = store.getIn(['people', 'profilePicsByEKID', personEKID], Map());
-
     return getImageDataFromEntity(profilePic);
   });
   const goToProfile = useGoToPath(PROFILE_PATH.replace(PROFILE_ID_PATH, personEKID));
@@ -117,4 +116,4 @@ const PersonResult = (props :Props) => {
   );
 };
 
-export default PersonResult;
+export default React.memo<Props>(PersonResult);
