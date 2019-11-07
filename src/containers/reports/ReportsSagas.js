@@ -33,7 +33,7 @@ import type { SequenceAction } from 'redux-reqseq';
 import Logger from '../../utils/Logger';
 import { submitDataGraph } from '../../core/sagas/data/DataActions';
 import { submitDataGraphWorker } from '../../core/sagas/data/DataSagas';
-import { BHR_CONFIG } from '../../config/formconfig/CrisisReportConfig';
+import { BHR_CONFIG, PEOPLE_CONFIG } from '../../config/formconfig/CrisisReportConfig';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
 import {
   DELETE_REPORT,
@@ -64,6 +64,7 @@ import {
   compileObservedBehaviorData,
   compileOfficerSafetyData,
   compileSubjectData,
+  getEntityDataFromFields
 } from './ReportsUtils';
 import { setInputValues as setDispositionData } from '../pages/disposition/ActionFactory';
 import { setInputValues as setNatureOfCrisisData } from '../pages/natureofcrisis/ActionFactory';
@@ -578,6 +579,7 @@ function* submitReportWorker(action :SequenceAction) :Generator<*, *, *> {
     const entitySetIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
     const propertyTypeIds = yield select((state) => state.getIn(['edm', 'fqnToIdMap'], Map()));
     const reportESID :UUID = getESIDFromApp(app, BEHAVIORAL_HEALTH_REPORT_FQN);
+    const peopleESID :UUID = getESIDFromApp(app, PEOPLE_FQN);
 
     const staffEKID :UUID = yield select(
       (state) => state.getIn(['staff', 'currentUser', 'data', OPENLATTICE_ID_FQN, 0], '')
@@ -599,24 +601,17 @@ function* submitReportWorker(action :SequenceAction) :Generator<*, *, *> {
     );
 
     const reportFields = BHR_CONFIG.fields;
-    const properties = {};
-    Object.keys(reportFields).forEach((field) => {
-      const fqn = reportFields[field];
-      const propertyTypeId = propertyTypeIds.get(fqn);
-      if (!propertyTypeId) LOG.error('propertyType id for fqn not found', fqn);
-      let updatedValue;
-      if (Array.isArray(formData[field])) {
-        updatedValue = formData[field];
-      }
-      else {
-        updatedValue = [formData[field]];
-      }
-      properties[propertyTypeId] = updatedValue;
-    });
+    const peopleFields = PEOPLE_CONFIG.fields;
+    const reportData = getEntityDataFromFields(formData, reportFields, propertyTypeIds);
 
     const entityData = {
-      [reportESID]: [properties]
+      [reportESID]: [reportData]
     };
+
+    if (personEKID === 0) {
+      const personData = getEntityDataFromFields(formData, peopleFields, propertyTypeIds);
+      entityData[peopleESID] = [personData];
+    }
 
     yield call(submitDataGraphWorker, submitDataGraph({
       associationEntityData,
