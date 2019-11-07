@@ -33,7 +33,6 @@ import * as ResponsePlanSagas from '../../containers/profile/edit/responseplan/R
 import * as RoutingSagas from '../router/RoutingSagas';
 import * as SearchSagas from '../../containers/search/SearchSagas';
 import * as StaffSagas from '../../containers/staff/StaffSagas';
-import * as SubmitSagas from '../../utils/submit/SubmitSagas';
 import * as ScarsMarksTattoosSagas from '../../containers/profile/edit/basicinformation/sagas/ScarsMarksTattoosSagas';
 
 export default function* sagas() :Generator<*, *, *> {
@@ -150,9 +149,6 @@ export default function* sagas() :Generator<*, *, *> {
     fork(AboutSagas.updateAboutPlanWatcher),
 
     // SearchSagas
-    fork(SearchSagas.searchConsumersWatcher),
-
-    // SubmitSagas
-    fork(SubmitSagas.submitWatcher)
+    fork(SearchSagas.searchConsumersWatcher)
   ]);
 }

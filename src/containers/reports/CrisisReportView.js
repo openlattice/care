@@ -177,7 +177,6 @@ type Props = {
     deleteReport :RequestSequence;
     getAuthorization :RequestSequence;
     getReport :RequestSequence;
-    submit :(args :Object) => void;
     updateReport :RequestSequence;
   };
   deleteState :RequestState;

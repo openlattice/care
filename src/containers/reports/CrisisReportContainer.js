@@ -57,7 +57,7 @@ import {
   processForSubmit as processDisposition
 } from '../pages/disposition/Reducer';
 import { FORM_STEP_STATUS } from '../../utils/constants/FormConstants';
-import { STATE, SUBMIT } from '../../utils/constants/StateConstants';
+import { STATE } from '../../utils/constants/StateConstants';
 import { POST_PROCESS_FIELDS } from '../../utils/constants/CrisisReportConstants';
 import { FORM_TYPE } from '../../utils/DataConstants';
 import { CRISIS_PATH, HOME_PATH } from '../../core/router/Routes';
@@ -178,7 +178,6 @@ type Props = {
   actions :{
     clearReport :() => void,
     submitReport :RequestSequence;
-    submit :(args :Object) => void
   },
   history :RouterHistory,
   location :Location,
