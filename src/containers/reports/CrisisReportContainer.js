@@ -28,7 +28,7 @@ import SubjectInformationManager from '../pages/subjectinformation/SubjectInform
 import SubmitSuccess from '../../components/crisis/SubmitSuccess';
 import { FormWrapper as StyledPageWrapper } from '../../components/crisis/FormComponents';
 
-import { clearCrisisReport, submitCrisisReport } from './CrisisReportActions';
+import { clearReport, submitReport } from './ReportsActions';
 import {
   getCurrentPage,
   getNextPath,
@@ -175,8 +175,8 @@ const START_PATH = `${CRISIS_PATH}/1`;
 
 type Props = {
   actions :{
-    clearCrisisReport :() => void,
-    submitCrisisReport :RequestSequence;
+    clearReport :() => void,
+    submitReport :RequestSequence;
     submit :(args :Object) => void
   },
   history :RouterHistory,
@@ -219,7 +219,7 @@ class CrisisReportContainer extends React.Component<Props, State> {
 
   componentWillUnmount() {
     const { actions } = this.props;
-    actions.clearCrisisReport();
+    actions.clearReport();
   }
 
   handleCloseDiscard = () => {
@@ -232,7 +232,7 @@ class CrisisReportContainer extends React.Component<Props, State> {
 
   handleDiscard = () => {
     const { actions, history } = this.props;
-    actions.clearCrisisReport();
+    actions.clearReport();
     history.push(HOME_PATH);
   }
 
@@ -266,7 +266,7 @@ class CrisisReportContainer extends React.Component<Props, State> {
       submission = { ...submission, ...postProcessor(state.get(stateField)) };
     });
 
-    actions.submitCrisisReport({
+    actions.submitReport({
       entityKeyId: personEKID,
       formData: submission
     });
@@ -432,8 +432,8 @@ function mapStateToProps(state :Map<*, *>) :Object {
 function mapDispatchToProps(dispatch :Function) :Object {
 
   const actions = {
-    clearCrisisReport,
-    submitCrisisReport,
+    clearReport,
+    submitReport,
   };
 
   return {

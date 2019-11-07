@@ -21,7 +21,7 @@ import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import NoResource from '../../components/NoResource';
 import FormRecord from '../../components/form/FormRecord';
-import ReviewContainer from '../crisis/ReviewContainer';
+import ReviewContainer from './ReviewContainer';
 import ProgressSidebar from '../../components/form/ProgressSidebar';
 import SubjectInformation from '../pages/subjectinformation/SubjectInformation';
 import ObservedBehaviors from '../pages/observedbehaviors/ObservedBehaviors';
@@ -32,9 +32,13 @@ import DiscardModal from '../../components/modals/DiscardModal';
 import DeleteModal from '../../components/modals/DeleteModal';
 import SubmitSuccess from '../../components/crisis/SubmitSuccess';
 
-import { getReport, updateReport, deleteReport } from './ReportsActions';
+import {
+  clearReport,
+  getReport,
+  updateReport,
+  deleteReport
+} from './ReportsActions';
 import { getAuthorization } from '../../core/sagas/authorize/AuthorizeActions';
-import { clearCrisisReport } from '../crisis/CrisisReportActions';
 import {
   getCurrentPage,
   getNextPath,
@@ -167,7 +171,7 @@ const PAGES = [
 
 type Props = {
   actions :{
-    clearCrisisReport :() => {
+    clearReport :() => {
       type :string;
     };
     deleteReport :RequestSequence;
@@ -212,7 +216,7 @@ class CrisisReportView extends React.Component<Props, State> {
 
   componentWillUnmount() {
     const { actions } = this.props;
-    actions.clearCrisisReport();
+    actions.clearReport();
   }
 
   handlePageChange = (path :string) => {
@@ -256,7 +260,7 @@ class CrisisReportView extends React.Component<Props, State> {
 
   handleDiscard = () => {
     const { actions, history } = this.props;
-    actions.clearCrisisReport();
+    actions.clearReport();
     history.push(HOME_PATH);
   }
 
@@ -472,7 +476,7 @@ function mapStateToProps(state :Map<*, *>) :Object {
 function mapDispatchToProps(dispatch :Dispatch<*>) :Object {
 
   const actions = {
-    clearCrisisReport,
+    clearReport,
     deleteReport,
     getAuthorization,
     getReport,

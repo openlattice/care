@@ -20,7 +20,6 @@ import * as AppearanceSagas from '../../containers/profile/edit/basicinformation
 import * as AuthorizeSagas from './authorize/AuthorizeSagas';
 import * as BasicInformationSagas from '../../containers/profile/edit/basicinformation/sagas/BasicInformationSagas';
 import * as ContactsSagas from '../../containers/profile/edit/contacts/ContactsSagas';
-import * as CrisisReportSagas from '../../containers/crisis/CrisisReportSagas';
 import * as DashboardSagas from '../../containers/dashboard/DashboardSagas';
 import * as DataSagas from './data/DataSagas';
 import * as DownloadsSagas from '../../containers/downloads/DownloadsSagas';
@@ -82,9 +81,6 @@ export default function* sagas() :Generator<*, *, *> {
     fork(RoutingSagas.goToRootWatcher),
     fork(RoutingSagas.goToPathWatcher),
 
-    // CrisisReport Sagas
-    fork(CrisisReportSagas.submitCrisisReportWatcher),
-
     // Dashboard Sagas
     fork(DashboardSagas.loadDashboardDataWatcher),
 
@@ -104,9 +100,10 @@ export default function* sagas() :Generator<*, *, *> {
 
     // ReportsSagas
     fork(ReportsSagas.deleteReportWatcher),
-    fork(ReportsSagas.getReportsByDateRangeWatcher),
-    fork(ReportsSagas.updateReportWatcher),
     fork(ReportsSagas.getReportWatcher),
+    fork(ReportsSagas.getReportsByDateRangeWatcher),
+    fork(ReportsSagas.submitReportWatcher),
+    fork(ReportsSagas.updateReportWatcher),
 
     // ResponsePlanSagas
     fork(ResponsePlanSagas.deleteInteractionStrategiesWatcher),

@@ -6,12 +6,12 @@ import { List, Map, fromJS } from 'immutable';
 import { RequestStates } from 'redux-reqseq';
 
 import {
+  CLEAR_REPORT,
   deleteReport,
   getReport,
   updateReport,
   getReportsByDateRange,
 } from './ReportsActions';
-import { CLEAR_CRISIS_REPORT } from '../crisis/CrisisReportActions';
 
 const INITIAL_STATE :Map<*, *> = fromJS({
   deleteState: RequestStates.STANDBY,
@@ -26,7 +26,7 @@ export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :
 
   switch (action.type) {
 
-    case CLEAR_CRISIS_REPORT: {
+    case CLEAR_REPORT: {
       return INITIAL_STATE;
     }
 
