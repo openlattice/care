@@ -154,15 +154,19 @@ const getEntityDataFromFields = (formData :Object, fields :Object, propertyTypeI
   Object.keys(fields).forEach((field) => {
     const fqn = fields[field];
     const propertyTypeId = propertyTypeIds.get(fqn);
-    if (!propertyTypeId) LOG.error('propertyType id for fqn not found', fqn);
-    let updatedValue;
-    if (Array.isArray(formData[field])) {
-      updatedValue = formData[field];
+    if (!propertyTypeId) {
+      LOG.error('propertyType id for fqn not found', fqn);
     }
     else {
-      updatedValue = [formData[field]];
+      let updatedValue;
+      if (Array.isArray(formData[field])) {
+        updatedValue = formData[field];
+      }
+      else {
+        updatedValue = [formData[field]];
+      }
+      entityData[propertyTypeId] = updatedValue;
     }
-    entityData[propertyTypeId] = updatedValue;
   });
 
   return entityData;
