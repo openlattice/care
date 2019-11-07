@@ -9,7 +9,6 @@ const resultLabels = OrderedMap({
   [FQN.PERSON_SEX_FQN]: 'Sex',
   [FQN.PERSON_RACE_FQN]: 'Race',
   [FQN.PERSON_DOB_FQN]: 'DOB',
-  [FQN.PERSON_ID_FQN]: 'Identifier',
 });
 
 const searchFields = [

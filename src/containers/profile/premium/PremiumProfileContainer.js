@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 import { List, Map } from 'immutable';
 import { connect } from 'react-redux';
@@ -158,7 +158,7 @@ const PremiumProfileContainer = (props :Props) => {
   const isLoadingResponsePlan = fetchResponsePlanState === RequestStates.PENDING;
   const isLoadingAboutPlan = fetchAboutPlanState === RequestStates.PENDING;
 
-  const imageURL :string = getImageDataFromEntity(photo);
+  const imageURL :string = useMemo(() => getImageDataFromEntity(photo), [photo]);
 
   return (
     <ContentOuterWrapper>
