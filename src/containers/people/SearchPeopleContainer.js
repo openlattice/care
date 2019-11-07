@@ -36,6 +36,7 @@ const NewPersonButton = styled(PlusButton).attrs(() => ({
 }))`
   margin-left: auto;
   margin-bottom: 10px;
+  padding: 5px 20px;
 `;
 
 const InputGrid = styled.div`
@@ -44,10 +45,11 @@ const InputGrid = styled.div`
   flex: 1;
   grid-auto-flow: column;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  align-items: flex-end;
+  align-items: flex-start;
 `;
 
 const Title = styled.h1`
+  display: flex;
   font-size: 18px;
   font-weight: normal;
   margin: 0;
@@ -92,11 +94,13 @@ const SearchPeopleContainer = () => {
   return (
     <ContentOuterWrapper>
       <ContentWrapper>
-        <NewPersonButton mode="positive" onClick={handleNewPerson}>New Person</NewPersonButton>
         <CardStack>
           <Card>
             <CardSegment vertical>
-              <Title>Search People</Title>
+              <Title>
+                Search People
+                <NewPersonButton mode="positive" onClick={handleNewPerson}>New Person</NewPersonButton>
+              </Title>
               <form>
                 <InputGrid>
                   <div>
@@ -117,13 +121,17 @@ const SearchPeopleContainer = () => {
                     <Label htmlFor="dob">Date of Birth</Label>
                     <DatePicker id="dob" value={dob} onChange={setDob} />
                   </div>
-                  <Button
-                      type="submit"
-                      isLoading={isLoading}
-                      mode="primary"
-                      onClick={handleOnSearch}>
-                    Search
-                  </Button>
+                  <div>
+                    <Label stealth>Submit</Label>
+                    <Button
+                        type="submit"
+                        fullWidth
+                        isLoading={isLoading}
+                        mode="primary"
+                        onClick={handleOnSearch}>
+                      Search
+                    </Button>
+                  </div>
                 </InputGrid>
               </form>
             </CardSegment>
