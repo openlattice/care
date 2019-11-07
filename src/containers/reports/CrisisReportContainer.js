@@ -176,7 +176,7 @@ const START_PATH = `${CRISIS_PATH}/1`;
 
 type Props = {
   actions :{
-    clearReport :() => void,
+    clearReport :() => { type :string };
     submitReport :RequestSequence;
   },
   history :RouterHistory,

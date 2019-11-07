@@ -171,9 +171,7 @@ const PAGES = [
 
 type Props = {
   actions :{
-    clearReport :() => {
-      type :string;
-    };
+    clearReport :() => { type :string };
     deleteReport :RequestSequence;
     getAuthorization :RequestSequence;
     getReport :RequestSequence;

@@ -44,9 +44,7 @@ const StyledButton = styled(Button)`
 
 type Props = {
   actions :{
-    clearReport :() => {
-      type :string;
-    };
+    clearReport :() => { type :string };
     goToPath :(path :string) => RoutingAction;
   };
   actionText :string;
@@ -77,7 +75,6 @@ class SubmitSuccess extends Component<Props> {
 }
 
 const mapDispatchToProps = (dispatch :Dispatch<*>) => ({
-  // $FlowFixMe
   actions: bindActionCreators({
     clearReport,
     goToPath,
