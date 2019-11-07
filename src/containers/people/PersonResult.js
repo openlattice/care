@@ -1,12 +1,12 @@
 // @flow
 
-import React, { Component } from 'react';
-import isFunction from 'lodash/isFunction';
+import React, { useCallback } from 'react';
+
 import styled from 'styled-components';
 import { Constants } from 'lattice';
-import { Map, getIn } from 'immutable';
+import { Map } from 'immutable';
 import { Button, Card, CardSegment } from 'lattice-ui-kit';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   faUser,
   faVenusMars,
@@ -18,10 +18,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Portrait from '../../components/portrait/Portrait';
 import LinkButton from '../../components/buttons/LinkButton';
 import Detail from '../../components/premium/styled/Detail';
+import { useGoToPath } from '../../components/hooks';
+import { selectPerson, clearProfile } from '../profile/ProfileActions';
 import { getImageDataFromEntity } from '../../utils/BinaryUtils';
 import { getDobFromPerson, getLastFirstMiFromPerson } from '../../utils/PersonUtils';
 import { PERSON_SEX_FQN, PERSON_RACE_FQN } from '../../edm/DataModelFqns';
-import { CRISIS_PATH } from '../../core/router/Routes';
+import {
+  CRISIS_PATH,
+  PROFILE_ID_PATH,
+  PROFILE_PATH,
+} from '../../core/router/Routes';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 
@@ -59,68 +65,56 @@ const BigButton = styled(Button)`
 `;
 
 type Props = {
-  imageUrl ? :string;
-  onClick ? :(result :Map) => void;
   result :Map;
 }
 
-class PersonResult extends Component<Props> {
+const PersonResult = (props :Props) => {
 
-  static defaultProps = {
-    imageUrl: undefined,
-    onClick: undefined,
-  }
+  const { result } = props;
 
-  handleClick = () => {
-    const { result, onClick } = this.props;
-    if (isFunction(onClick)) {
-      onClick(result);
-    }
-  }
+  const personEKID = result.getIn([OPENLATTICE_ID_FQN, 0]);
+  const imageUrl = useSelector((store) => {
+    const profilePic = store.getIn(['people', 'profilePicsByEKID', personEKID], Map());
 
-  render() {
-    const { result, imageUrl } = this.props;
-    const fullName = getLastFirstMiFromPerson(result, true);
-    // $FlowFixMe
-    const dob :string = getDobFromPerson(result, false, '---');
-    const sex = result.getIn([PERSON_SEX_FQN, 0]);
-    const race = result.getIn([PERSON_RACE_FQN, 0]);
+    return getImageDataFromEntity(profilePic);
+  });
+  const goToProfile = useGoToPath(PROFILE_PATH.replace(PROFILE_ID_PATH, personEKID));
+  const dispatch = useDispatch();
 
-    return (
-      <Card>
-        <CardSegment>
-          <Portrait imageUrl={imageUrl} height="128" width="96" />
-          <Details>
-            <Text bold uppercase fontSize="24px">{fullName}</Text>
-            <Detail content={dob} icon={faBirthdayCake} />
-            <Detail content={sex} icon={faVenusMars} />
-            <Detail content={race} icon={faUser} />
-          </Details>
-          <Actions>
-            <BigButton mode="secondary" onClick={this.handleClick}>
-              View Profile
-              <Icon icon={faChevronRight} />
-            </BigButton>
-            <LinkButton to={`${CRISIS_PATH}/1`} state={result}>
-              New Report
-            </LinkButton>
-          </Actions>
-        </CardSegment>
-      </Card>
-    );
-  }
-}
+  const handleResultClick = useCallback(() => {
+    dispatch(clearProfile());
+    dispatch(selectPerson(result));
+    goToProfile();
+  }, [dispatch, goToProfile, result]);
 
-const mapStateToProps = (state :Map, ownProps :any) => {
-  const { result } = ownProps;
-  const entityKeyId = getIn(result, [OPENLATTICE_ID_FQN, 0]);
-  const profilePic = state.getIn(['people', 'profilePicsByEKID', entityKeyId], Map());
+  const fullName = getLastFirstMiFromPerson(result, true);
+  // $FlowFixMe
+  const dob :string = getDobFromPerson(result, false, '---');
+  const sex = result.getIn([PERSON_SEX_FQN, 0]);
+  const race = result.getIn([PERSON_RACE_FQN, 0]);
 
-  return {
-    imageUrl: getImageDataFromEntity(profilePic)
-  };
+  return (
+    <Card>
+      <CardSegment>
+        <Portrait imageUrl={imageUrl} height="128" width="96" />
+        <Details>
+          <Text bold uppercase fontSize="24px">{fullName}</Text>
+          <Detail content={dob} icon={faBirthdayCake} />
+          <Detail content={sex} icon={faVenusMars} />
+          <Detail content={race} icon={faUser} />
+        </Details>
+        <Actions>
+          <BigButton mode="secondary" onClick={handleResultClick}>
+            View Profile
+            <Icon icon={faChevronRight} />
+          </BigButton>
+          <LinkButton to={`${CRISIS_PATH}/1`} state={result}>
+            New Report
+          </LinkButton>
+        </Actions>
+      </CardSegment>
+    </Card>
+  );
 };
 
-// $FlowFixMe
-export default connect(mapStateToProps)(PersonResult);
-export type { Props as ResultProps };
+export default PersonResult;
