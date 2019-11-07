@@ -1,13 +1,13 @@
 // @flow
 import { useCallback, useState } from 'react';
 
-const useInput = (defaultValue :any, numeric ? :boolean = false) => {
+const useInput = (defaultValue :any, isNumeric ? :boolean = false) => {
   const [inputValue, setValue] = useState(defaultValue);
   const setInput = useCallback((event :SyntheticEvent<HTMLInputElement>) => {
     const { value } = event.currentTarget;
-    const nextValue = numeric ? parseFloat(value) : value;
+    const nextValue = isNumeric ? parseFloat(value) : value;
     setValue(nextValue);
-  }, [numeric, setValue]);
+  }, [isNumeric, setValue]);
 
   return [inputValue, setInput];
 };
