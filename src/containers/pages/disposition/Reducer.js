@@ -7,7 +7,7 @@ import randomUUID from 'uuid/v4';
 import { List, Map, fromJS } from 'immutable';
 
 import { SET_INPUT_VALUE, SET_INPUT_VALUES } from './ActionFactory';
-import { CLEAR_CRISIS_REPORT } from '../../crisis/CrisisActionFactory';
+import { CLEAR_REPORT } from '../../reports/ReportsActions';
 import { DISPOSITION, OTHER, POST_PROCESS_FIELDS } from '../../../utils/constants/CrisisReportConstants';
 import { FORM_STEP_STATUS } from '../../../utils/constants/FormConstants';
 import {
@@ -72,7 +72,7 @@ export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :
     case SET_INPUT_VALUES:
       return state.merge(fromJS(action.value));
 
-    case CLEAR_CRISIS_REPORT:
+    case CLEAR_REPORT:
       return INITIAL_STATE;
 
     default:

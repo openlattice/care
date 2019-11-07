@@ -5,16 +5,18 @@
 import React from 'react';
 import styled from 'styled-components';
 
+import { Constants } from 'lattice';
 import { AuthUtils } from 'lattice-auth';
 import { DateTime } from 'luxon';
-import { Map } from 'immutable';
+import { Map, getIn } from 'immutable';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { Button, Spinner } from 'lattice-ui-kit';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-
-import type { RouterHistory } from 'react-router';
+import { RequestStates } from 'redux-reqseq';
+import type { RequestSequence, RequestState } from 'redux-reqseq';
+import type { RouterHistory, Location } from 'react-router';
 
 import DiscardModal from '../../components/modals/DiscardModal';
 import Disposition from '../pages/disposition/Disposition';
@@ -25,11 +27,9 @@ import ProgressSidebar from '../../components/form/ProgressSidebar';
 import ReviewContainer from './ReviewContainer';
 import SubjectInformationManager from '../pages/subjectinformation/SubjectInformationManager';
 import SubmitSuccess from '../../components/crisis/SubmitSuccess';
-import submitConfig from '../../config/formconfig/CrisisReportConfig';
 import { FormWrapper as StyledPageWrapper } from '../../components/crisis/FormComponents';
 
-import { submit } from '../../utils/submit/SubmitActionFactory';
-import { clearCrisisReport } from './CrisisActionFactory';
+import { clearReport, submitReport } from './ReportsActions';
 import {
   getCurrentPage,
   getNextPath,
@@ -57,28 +57,13 @@ import {
   processForSubmit as processDisposition
 } from '../pages/disposition/Reducer';
 import { FORM_STEP_STATUS } from '../../utils/constants/FormConstants';
-import { STATE, SUBMIT } from '../../utils/constants/StateConstants';
+import { STATE } from '../../utils/constants/StateConstants';
 import { POST_PROCESS_FIELDS } from '../../utils/constants/CrisisReportConstants';
 import { FORM_TYPE } from '../../utils/DataConstants';
 import { CRISIS_PATH, HOME_PATH } from '../../core/router/Routes';
 import { MEDIA_QUERY_MD, MEDIA_QUERY_LG } from '../../core/style/Sizes';
 
-type Props = {
-  actions :{
-    clearCrisisReport :() => void,
-    submit :(args :Object) => void
-  },
-  app :Map<*, *>,
-  history :RouterHistory,
-  state :Map<*, *>,
-  isSubmitting :boolean,
-  isSubmitted :boolean
-};
-
-type State = {
-  showDiscard :boolean,
-  formInProgress :boolean
-}
+const { OPENLATTICE_ID_FQN } = Constants;
 
 const CrisisReportWrapper = styled.div`
   width: 100%;
@@ -189,11 +174,33 @@ const PAGES = [
 
 const START_PATH = `${CRISIS_PATH}/1`;
 
+type Props = {
+  actions :{
+    clearReport :() => void,
+    submitReport :RequestSequence;
+  },
+  history :RouterHistory,
+  location :Location,
+  state :Map,
+  submitState :RequestState;
+};
+
+type State = {
+  showDiscard :boolean;
+  formInProgress :boolean;
+  personEKID ? :string;
+}
+
 class CrisisReportContainer extends React.Component<Props, State> {
 
   constructor(props) {
     super(props);
     this.state = {
+      personEKID: getIn(props.location, [
+        'state',
+        OPENLATTICE_ID_FQN,
+        0
+      ]),
       showDiscard: false,
       formInProgress: false
     };
@@ -211,7 +218,7 @@ class CrisisReportContainer extends React.Component<Props, State> {
 
   componentWillUnmount() {
     const { actions } = this.props;
-    actions.clearCrisisReport();
+    actions.clearReport();
   }
 
   handleCloseDiscard = () => {
@@ -224,7 +231,7 @@ class CrisisReportContainer extends React.Component<Props, State> {
 
   handleDiscard = () => {
     const { actions, history } = this.props;
-    actions.clearCrisisReport();
+    actions.clearReport();
     history.push(HOME_PATH);
   }
 
@@ -243,9 +250,9 @@ class CrisisReportContainer extends React.Component<Props, State> {
 
     const {
       actions,
-      app,
       state
     } = this.props;
+    const { personEKID } = this.state;
 
     let submission = {
       [POST_PROCESS_FIELDS.FORM_TYPE]: FORM_TYPE.CRISIS_REPORT,
@@ -258,10 +265,9 @@ class CrisisReportContainer extends React.Component<Props, State> {
       submission = { ...submission, ...postProcessor(state.get(stateField)) };
     });
 
-    actions.submit({
-      app,
-      config: submitConfig,
-      values: submission
+    actions.submitReport({
+      entityKeyId: personEKID,
+      formData: submission
     });
   }
 
@@ -363,16 +369,13 @@ class CrisisReportContainer extends React.Component<Props, State> {
   }
 
   render() {
-    const {
-      isSubmitting,
-      isSubmitted
-    } = this.props;
+    const { submitState } = this.props;
 
     const { showDiscard } = this.state;
 
     const currentPage = getCurrentPage(window.location);
 
-    if (isSubmitting) {
+    if (submitState === RequestStates.PENDING) {
       return (
         <PageWrapper>
           <StyledPageWrapper>
@@ -386,7 +389,7 @@ class CrisisReportContainer extends React.Component<Props, State> {
       );
     }
 
-    if (isSubmitted) {
+    if (submitState === RequestStates.SUCCESS) {
       return <SubmitSuccess actionText="submitted" />;
     }
 
@@ -416,18 +419,16 @@ class CrisisReportContainer extends React.Component<Props, State> {
 function mapStateToProps(state :Map<*, *>) :Object {
 
   return {
-    app: state.get('app', Map()),
     state,
-    isSubmitting: state.getIn([STATE.SUBMIT, SUBMIT.SUBMITTING], false),
-    isSubmitted: state.getIn([STATE.SUBMIT, SUBMIT.SUBMITTED], false),
+    submitState: state.getIn(['reports', 'submitState'], RequestStates.STANDBY),
   };
 }
 
 function mapDispatchToProps(dispatch :Function) :Object {
 
   const actions = {
-    clearCrisisReport,
-    submit,
+    clearReport,
+    submitReport,
   };
 
   return {

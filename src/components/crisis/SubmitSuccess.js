@@ -9,7 +9,7 @@ import type { Dispatch } from 'redux';
 import { FormWrapper } from './FormComponents';
 import { BLACK } from '../../shared/Colors';
 import { CRISIS_PATH, HOME_PATH } from '../../core/router/Routes';
-import { clearCrisisReport } from '../../containers/crisis/CrisisActionFactory';
+import { clearReport } from '../../containers/reports/ReportsActions';
 import { goToPath } from '../../core/router/RoutingActions';
 import type { RoutingAction } from '../../core/router/RoutingActions';
 
@@ -44,7 +44,7 @@ const StyledButton = styled(Button)`
 
 type Props = {
   actions :{
-    clearCrisisReport :() => {
+    clearReport :() => {
       type :string;
     };
     goToPath :(path :string) => RoutingAction;
@@ -56,7 +56,7 @@ class SubmitSuccess extends Component<Props> {
 
   clearAndNavigate = (path :string) => () => {
     const { actions } = this.props;
-    actions.clearCrisisReport();
+    actions.clearReport();
     actions.goToPath(path);
   };
 
@@ -79,7 +79,7 @@ class SubmitSuccess extends Component<Props> {
 const mapDispatchToProps = (dispatch :Dispatch<*>) => ({
   // $FlowFixMe
   actions: bindActionCreators({
-    clearCrisisReport,
+    clearReport,
     goToPath,
   }, dispatch)
 });
