@@ -484,6 +484,10 @@ function* updateReportWorker(action :SequenceAction) :Generator<*, *, *> {
       (state) => state.getIn(['staff', 'currentUser', 'data', OPENLATTICE_ID_FQN, 0], '')
     );
 
+    if (!isValidUuid(staffEKID)) {
+      throw Error('staff entityKeyId is invalid');
+    }
+
     const associations = {
       [reportedESID]: [{
         dst: {
