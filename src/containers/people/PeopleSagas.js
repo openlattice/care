@@ -127,10 +127,10 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
     const dob :string = value.get('dob');
 
     if (firstName.length) {
-      updateSearchField(firstName, firstNamePTID);
+      updateSearchField(`${firstName}*`, firstNamePTID);
     }
     if (lastName.length) {
-      updateSearchField(lastName, lastNamePTID);
+      updateSearchField(`${lastName}*`, lastNamePTID);
     }
     const dobDT = DateTime.fromISO(dob);
     if (dobDT.isValid) {
@@ -155,7 +155,9 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
 
     if (error) throw error;
 
-    const hits = fromJS(data.hits);
+    const hits = fromJS(data.hits)
+      .sortBy((entity) => entity.getIn([FQN.PERSON_LAST_NAME_FQN]));
+
     const peopleEKIDs = hits.map((person) => person.getIn([OPENLATTICE_ID_FQN, 0]));
 
     yield put(searchPeople.success(action.id, hits));
