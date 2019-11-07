@@ -14,7 +14,8 @@ import { Button, Spinner } from 'lattice-ui-kit';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import type { RequestSequence } from 'redux-reqseq';
+import { RequestStates } from 'redux-reqseq';
+import type { RequestSequence, RequestState } from 'redux-reqseq';
 import type { RouterHistory, Location } from 'react-router';
 
 import DiscardModal from '../../components/modals/DiscardModal';
@@ -182,8 +183,7 @@ type Props = {
   history :RouterHistory,
   location :Location,
   state :Map,
-  isSubmitting :boolean,
-  isSubmitted :boolean
+  submitState :RequestState;
 };
 
 type State = {
@@ -370,16 +370,13 @@ class CrisisReportContainer extends React.Component<Props, State> {
   }
 
   render() {
-    const {
-      isSubmitting,
-      isSubmitted
-    } = this.props;
+    const { submitState } = this.props;
 
     const { showDiscard } = this.state;
 
     const currentPage = getCurrentPage(window.location);
 
-    if (isSubmitting) {
+    if (submitState === RequestStates.PENDING) {
       return (
         <PageWrapper>
           <StyledPageWrapper>
@@ -393,7 +390,7 @@ class CrisisReportContainer extends React.Component<Props, State> {
       );
     }
 
-    if (isSubmitted) {
+    if (submitState === RequestStates.SUCCESS) {
       return <SubmitSuccess actionText="submitted" />;
     }
 
@@ -424,8 +421,7 @@ function mapStateToProps(state :Map<*, *>) :Object {
 
   return {
     state,
-    isSubmitting: state.getIn([STATE.SUBMIT, SUBMIT.SUBMITTING], false),
-    isSubmitted: state.getIn([STATE.SUBMIT, SUBMIT.SUBMITTED], false),
+    submitState: state.getIn(['reports', 'submitState'], RequestStates.STANDBY),
   };
 }
 

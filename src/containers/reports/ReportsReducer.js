@@ -11,6 +11,7 @@ import {
   getReport,
   updateReport,
   getReportsByDateRange,
+  submitReport,
 } from './ReportsActions';
 
 const INITIAL_STATE :Map<*, *> = fromJS({
@@ -19,6 +20,7 @@ const INITIAL_STATE :Map<*, *> = fromJS({
   lastUpdatedStaff: Map(),
   reportsByDateRange: List(),
   submittedStaff: Map(),
+  submitState: RequestStates.STANDBY,
   updateState: RequestStates.STANDBY,
 });
 
@@ -51,6 +53,14 @@ export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :
           .set('fetchState', RequestStates.SUCCESS)
           .set('reportsByDateRange', action.value),
         FAILURE: () => state.set('fetchState', RequestStates.FAILURE),
+      });
+    }
+
+    case submitReport.case(action.type): {
+      return submitReport.reducer(state, action, {
+        REQUEST: () => state.set('submitState', RequestStates.PENDING),
+        SUCCESS: () => state.set('submitState', RequestStates.SUCCESS),
+        FAILURE: () => state.set('submitState', RequestStates.FAILURE),
       });
     }
 
