@@ -94,7 +94,7 @@ const PersonResult = (props :Props) => {
 
   return (
     <Card>
-      <CardSegment>
+      <CardSegment padding="sm">
         <Portrait imageUrl={imageUrl} height="128" width="96" />
         <Details>
           <Text bold uppercase fontSize="24px">{fullName}</Text>
