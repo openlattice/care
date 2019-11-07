@@ -14,6 +14,7 @@ import { Spinner } from 'lattice-ui-kit';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import AppHeaderContainer from './AppHeaderContainer';
+import NewAppHeaderContainer from './NewAppHeaderContainer';
 import CrisisReportContainer from '../crisis/CrisisReportContainer';
 import DownloadsContainer from '../downloads/DownloadsContainer';
 import HomeContainer from '../home/HomeContainer';
@@ -150,10 +151,12 @@ class AppContainer extends Component<Props> {
   }
 
   render() {
+    const { organizations } = this.props;
 
     return (
       <AppContainerWrapper>
-        <AppHeaderContainer />
+        {/* <AppHeaderContainer /> */}
+        <NewAppHeaderContainer organizations={organizations} />
         <AppContentOuterWrapper>
           { this.renderAppContent() }
           <SupportButton />
