@@ -19,7 +19,7 @@ const loading = keyframes`
 `;
 
 const fullLineSkeleton = css`
-  min-height: 1.35em;
+  min-height: 1.5em;
   background-repeat: no-repeat;
   background-image:
     /* layer 0: animation blur */
@@ -30,11 +30,11 @@ const fullLineSkeleton = css`
       ${rgba('white', 0)} 100%
     ),
     /* layer 1: list item 1*/
-    /* light rectangles with 1.35em height */
-    linear-gradient(${PURPLES[6]} 1.35em, transparent 0);
+    /* light rectangles with 1.5em height */
+    linear-gradient(${PURPLES[6]} 1.5em, transparent 0);
   background-size:
     100% 100%, /* animation blur */
-    100% 1.35em;
+    100% 1.5em;
   background-position:
     -10vw 0, /* animation blur */
     0 0;

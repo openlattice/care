@@ -1,21 +1,25 @@
 // @flow
 import React from 'react';
-import Modal from '@atlaskit/modal-dialog';
+import { Modal } from 'lattice-ui-kit';
 
 type Props = {
+  isVisible :boolean;
+  onClickPrimary :() => void;
   onClose :() => void;
-  actions :Object[];
 };
 
-const DeleteModal = ({ actions, onClose } :Props) => {
+const DeleteModal = ({ isVisible, onClose, onClickPrimary } :Props) => {
 
-  const message = 'Clicking on "Delete Report" will delete the current Crisis Report and return to the home screen.';
+  const message = 'Clicking on "Delete" will delete the current Crisis Report and return to the home screen.';
   return (
     <Modal
-        actions={actions}
-        heading="Delete Report"
         appearance="danger"
-        onClose={onClose}>
+        isVisible={isVisible}
+        onClickPrimary={onClickPrimary}
+        onClose={onClose}
+        textPrimary="Delete"
+        textSecondary="Cancel"
+        textTitle="Delete Report">
       <div>
         <p>
           {message}

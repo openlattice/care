@@ -1,17 +1,15 @@
 // @flow
-
 import { Map, fromJS } from 'immutable';
 import { RequestStates } from 'redux-reqseq';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
-  getAboutPlan,
-  submitAboutPlan,
-  updateAboutPlan
-} from './AboutActions';
+  getScarsMarksTattoos,
+  updateScarsMarksTattoos,
+  submitScarsMarksTattoos,
+} from '../actions/ScarsMarksTattoosActions';
 
 const INITIAL_STATE :Map = fromJS({
-  data: Map(),
   entityIndexToIdMap: Map(),
   fetchState: RequestStates.STANDBY,
   formData: Map(),
@@ -19,11 +17,12 @@ const INITIAL_STATE :Map = fromJS({
   updateState: RequestStates.STANDBY,
 });
 
-const AboutReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
+const scarsMarksTattoosReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
+
   switch (action.type) {
 
-    case getAboutPlan.case(action.type): {
-      return getAboutPlan.reducer(state, action, {
+    case getScarsMarksTattoos.case(action.type): {
+      return getScarsMarksTattoos.reducer(state, action, {
         REQUEST: () => state.set('fetchState', RequestStates.PENDING),
         SUCCESS: () => state
           .merge(action.value)
@@ -32,23 +31,8 @@ const AboutReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
       });
     }
 
-    case updateAboutPlan.case(action.type): {
-      return updateAboutPlan.reducer(state, action, {
-        REQUEST: () => {
-          const { path, properties } = action.value;
-          return state
-            .set('updateState', RequestStates.PENDING)
-            .setIn(['formData', ...path], fromJS(properties));
-        },
-        SUCCESS: () => state
-          .mergeDeep(action.value)
-          .set('updateState', RequestStates.SUCCESS),
-        FAILURE: () => state.set('updateState', RequestStates.FAILURE)
-      });
-    }
-
-    case submitAboutPlan.case(action.type): {
-      return submitAboutPlan.reducer(state, action, {
+    case submitScarsMarksTattoos.case(action.type): {
+      return submitScarsMarksTattoos.reducer(state, action, {
         REQUEST: () => state.set('submitState', RequestStates.PENDING),
         SUCCESS: () => {
           const {
@@ -61,7 +45,20 @@ const AboutReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
             .setIn(['formData', ...path], fromJS(properties))
             .set('submitState', RequestStates.SUCCESS);
         },
-        FAILURE: () => state,
+        FAILURE: () => state.set('submitState', RequestStates.FAILURE)
+      });
+    }
+
+    case updateScarsMarksTattoos.case(action.type): {
+      return updateScarsMarksTattoos.reducer(state, action, {
+        REQUEST: () => {
+          const { path, properties } = action.value;
+          return state
+            .set('updateState', RequestStates.PENDING)
+            .setIn(['formData', ...path], fromJS(properties));
+        },
+        SUCCESS: () => state.set('updateState', RequestStates.SUCCESS),
+        FAILURE: () => state.set('updateState', RequestStates.FAILURE)
       });
     }
 
@@ -70,4 +67,4 @@ const AboutReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
   }
 };
 
-export default AboutReducer;
+export default scarsMarksTattoosReducer;

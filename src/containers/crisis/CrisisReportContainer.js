@@ -5,28 +5,27 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import Modal, { ModalTransition } from '@atlaskit/modal-dialog';
-import { Map } from 'immutable';
+import { AuthUtils } from 'lattice-auth';
 import { DateTime } from 'luxon';
+import { Map } from 'immutable';
+import { Redirect, Route, Switch } from 'react-router-dom';
+import { Button, Spinner } from 'lattice-ui-kit';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import { Redirect, Route, Switch } from 'react-router-dom';
-import { AuthUtils } from 'lattice-auth';
-import { Spinner } from 'lattice-ui-kit';
 
 import type { RouterHistory } from 'react-router';
 
-import ReviewContainer from './ReviewContainer';
-import BackButton from '../../components/buttons/BackButton';
-import ProgressSidebar from '../../components/form/ProgressSidebar';
-import SubjectInformationManager from '../pages/subjectinformation/SubjectInformationManager';
-import ObservedBehaviors from '../pages/observedbehaviors/ObservedBehaviors';
-import NatureOfCrisis from '../pages/natureofcrisis/NatureOfCrisis';
-import OfficerSafety from '../pages/officersafety/OfficerSafety';
+import DiscardModal from '../../components/modals/DiscardModal';
 import Disposition from '../pages/disposition/Disposition';
-import submitConfig from '../../config/formconfig/CrisisReportConfig';
+import NatureOfCrisis from '../pages/natureofcrisis/NatureOfCrisis';
+import ObservedBehaviors from '../pages/observedbehaviors/ObservedBehaviors';
+import OfficerSafety from '../pages/officersafety/OfficerSafety';
+import ProgressSidebar from '../../components/form/ProgressSidebar';
+import ReviewContainer from './ReviewContainer';
+import SubjectInformationManager from '../pages/subjectinformation/SubjectInformationManager';
 import SubmitSuccess from '../../components/crisis/SubmitSuccess';
+import submitConfig from '../../config/formconfig/CrisisReportConfig';
 import { FormWrapper as StyledPageWrapper } from '../../components/crisis/FormComponents';
 
 import { submit } from '../../utils/submit/SubmitActionFactory';
@@ -63,7 +62,6 @@ import { POST_PROCESS_FIELDS } from '../../utils/constants/CrisisReportConstants
 import { FORM_TYPE } from '../../utils/DataConstants';
 import { CRISIS_PATH, HOME_PATH } from '../../core/router/Routes';
 import { MEDIA_QUERY_MD, MEDIA_QUERY_LG } from '../../core/style/Sizes';
-import { BLACK, INVALID_TAG } from '../../shared/Colors';
 
 type Props = {
   actions :{
@@ -78,7 +76,7 @@ type Props = {
 };
 
 type State = {
-  confirmReset :boolean,
+  showDiscard :boolean,
   formInProgress :boolean
 }
 
@@ -94,7 +92,6 @@ const PageWrapper = styled.div`
   padding: 5px;
   margin: 0;
   width: 100%;
-  max-width: 65vw;
 
   @media only screen and (min-width: ${MEDIA_QUERY_MD}px) {
     padding: 10px;
@@ -119,61 +116,19 @@ const FormWrapper = styled.div`
   }
 `;
 
-
 const ButtonRow = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
-`;
-
-
-const ResetModalBody = styled.div`
-  padding: 10px;
+  padding: 0 5px;
 
   @media only screen and (min-width: ${MEDIA_QUERY_MD}px) {
-    padding: 20px;
+    padding: 0 10px;
   }
 
-  h1 {
-    color: ${INVALID_TAG};
-    font-size: 18px;
-    font-weight: 400;
-    margin-bottom: 20px;
-  }
-
-  p {
-    color: ${BLACK};
-    font-size: 14px;
-    padding-bottom: 10px;
-  }
-`;
-
-const ForwardButton = styled.button.attrs({
-  type: 'button'
-})`
-  padding: 10px 20px;
-  margin: 15px;
-  text-transform: uppercase;
-  font-size: 14px;
-  border-radius: 3px;
-  border: none;
-
-  &:focus {
-    outline: none;
-  }
-
-  &:hover:enabled {
-    cursor: pointer;
-  }
-
-  &:last-child {
-    color: ${(props) => (props.canProgress ? '#f8f8fb' : '#aaafbc')};
-    background-color: ${(props) => (props.canProgress ? '#6124e2' : '#dcdce7')};
-
-    &:hover:enabled {
-      background-color: ${(props) => (props.canProgress ? '#8045ff' : '#dcdce7')};
-    }
+  @media only screen and (min-width: ${MEDIA_QUERY_LG}px) {
+    padding: 0 15px;
   }
 `;
 
@@ -185,24 +140,6 @@ const SubmittedView = styled.div`
   padding: 20px;
   position: relative;
   min-height: 230px;
-
-  h1 {
-    color: ${BLACK};
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 30px;
-  }
-
-  ${ForwardButton} {
-    background-color: #6124e2;
-    color: #f8f8fb;
-    padding: 12px 20px;
-    margin-bottom: 5px;
-
-    &:hover {
-      background-color: #8045ff;
-    }
-  }
 `;
 
 const PAGES = [
@@ -257,7 +194,7 @@ class CrisisReportContainer extends React.Component<Props, State> {
   constructor(props) {
     super(props);
     this.state = {
-      confirmReset: false,
+      showDiscard: false,
       formInProgress: false
     };
   }
@@ -275,6 +212,20 @@ class CrisisReportContainer extends React.Component<Props, State> {
   componentWillUnmount() {
     const { actions } = this.props;
     actions.clearCrisisReport();
+  }
+
+  handleCloseDiscard = () => {
+    this.setState({ showDiscard: false });
+  }
+
+  handleShowDiscard = () => {
+    this.setState({ showDiscard: true });
+  }
+
+  handleDiscard = () => {
+    const { actions, history } = this.props;
+    actions.clearCrisisReport();
+    history.push(HOME_PATH);
   }
 
   handlePageChange = (path) => {
@@ -317,7 +268,7 @@ class CrisisReportContainer extends React.Component<Props, State> {
   isReadyToSubmit = () => {
     const { state } = this.props;
     let ready = true;
-    PAGES.forEach((page) => {
+    PAGES.forEach((page :any) => {
       const { validator, stateField } = page;
       if (validator && validator(state.get(stateField)) !== FORM_STEP_STATUS.COMPLETED) {
         ready = false;
@@ -327,7 +278,7 @@ class CrisisReportContainer extends React.Component<Props, State> {
     return ready;
   }
 
-  renderForwardButton = (page, index) => {
+  renderForwardButton = (page :any, index) => {
     const { state } = this.props;
 
     const isReview = index === PAGES.length - 2;
@@ -337,10 +288,10 @@ class CrisisReportContainer extends React.Component<Props, State> {
     const complete = validator ? validator(state.get(stateField)) === FORM_STEP_STATUS.COMPLETED : true;
     const nextPath = getNextPath(window.location, PAGES.length + 1);
 
-    const disabled = (isSubmit || isReview) ? !this.isReadyToSubmit() : !complete;
+    const hasInvalidFields = (isSubmit || isReview) ? !this.isReadyToSubmit() : !complete;
     let onClick = () => this.handlePageChange(nextPath);
 
-    if (disabled) {
+    if (hasInvalidFields) {
       const showInvalidFieldsPath = setShowInvalidFields(window.location);
       onClick = () => this.handlePageChange(showInvalidFieldsPath);
     }
@@ -354,7 +305,7 @@ class CrisisReportContainer extends React.Component<Props, State> {
       onClick = this.handleSubmit;
     }
 
-    return <ForwardButton onClick={onClick} canProgress={!disabled}>{buttonText}</ForwardButton>;
+    return <Button mode="primary" onClick={onClick}>{buttonText}</Button>;
   }
 
   renderPage = (page, index) => {
@@ -368,8 +319,8 @@ class CrisisReportContainer extends React.Component<Props, State> {
         </FormWrapper>
         <ButtonRow>
           { index === 0
-            ? <BackButton onClick={() => this.setState({ confirmReset: true })}>Reset</BackButton>
-            : <BackButton onClick={() => this.handlePageChange(prevPath)}>Back</BackButton>}
+            ? <Button mode="subtle" onClick={this.handleShowDiscard}>Discard</Button>
+            : <Button mode="subtle" onClick={() => this.handlePageChange(prevPath)}>Back</Button>}
           {this.renderForwardButton(page, index)}
         </ButtonRow>
       </PageWrapper>
@@ -384,7 +335,7 @@ class CrisisReportContainer extends React.Component<Props, State> {
   getSidebarSteps = () => {
     const { history, state } = this.props;
 
-    return PAGES.map((page, index) => {
+    return PAGES.map((page :any, index :number) => {
       const {
         title,
         validator,
@@ -411,35 +362,13 @@ class CrisisReportContainer extends React.Component<Props, State> {
     });
   }
 
-  renderResetModal = () => {
-    const { actions, history } = this.props;
-    const doReset = () => {
-      actions.clearCrisisReport();
-      history.push(HOME_PATH);
-    };
-
-    return (
-      <ResetModalBody>
-        <h1>Close and delete report</h1>
-        <p>Warning! Clicking "Close and delete" will delete all data you have entered into this crisis report.</p>
-        <p>Are you sure you want to exit the report and delete the content?</p>
-        <ButtonRow>
-          <BackButton onClick={doReset}>Close and Delete</BackButton>
-          <ForwardButton onClick={() => this.setState({ confirmReset: false })} canProgress>Stay on Page</ForwardButton>
-        </ButtonRow>
-      </ResetModalBody>
-    );
-  }
-
   render() {
     const {
-      actions,
-      history,
       isSubmitting,
       isSubmitted
     } = this.props;
 
-    const { confirmReset } = this.state;
+    const { showDiscard } = this.state;
 
     const currentPage = getCurrentPage(window.location);
 
@@ -471,17 +400,14 @@ class CrisisReportContainer extends React.Component<Props, State> {
                 steps={this.getSidebarSteps()} />
           )
         }
-        <ModalTransition>
-          {confirmReset && (
-            <Modal onClose={() => this.setState({ confirmReset: false })}>
-              {this.renderResetModal()}
-            </Modal>
-          )}
-        </ModalTransition>
         <Switch>
           {this.renderRoutes()}
           <Redirect to={START_PATH} />
         </Switch>
+        <DiscardModal
+            isVisible={showDiscard}
+            onClickPrimary={this.handleDiscard}
+            onClose={this.handleCloseDiscard} />
       </CrisisReportWrapper>
     );
   }

@@ -43,7 +43,6 @@ import { constructEntityIndexToIdMap, constructFormData } from './utils/Appearan
 const LOG = new Logger('BasicInformationSagas');
 const { OPENLATTICE_ID_FQN } = Constants;
 const {
-  IDENTIFYING_CHARACTERISTICS_FQN,
   OBSERVED_IN_FQN,
   PEOPLE_FQN,
   PHYSICAL_APPEARANCE_FQN,
@@ -63,7 +62,6 @@ function* getAppearanceWorker(action :SequenceAction) :Generator<any, any, any> 
     const entitySetId :UUID = getESIDFromApp(app, PEOPLE_FQN);
     const physicalAppearanceESID :UUID = getESIDFromApp(app, PHYSICAL_APPEARANCE_FQN);
     const observedInESID :UUID = getESIDFromApp(app, OBSERVED_IN_FQN);
-    const identifyingCharacteristicsESID :UUID = getESIDFromApp(app, IDENTIFYING_CHARACTERISTICS_FQN);
 
     const appearanceSearchParams = {
       entitySetId,
@@ -71,7 +69,7 @@ function* getAppearanceWorker(action :SequenceAction) :Generator<any, any, any> 
         entityKeyIds: [entityKeyId],
         edgeEntitySetIds: [observedInESID],
         destinationEntitySetIds: [],
-        sourceEntitySetIds: [physicalAppearanceESID, identifyingCharacteristicsESID],
+        sourceEntitySetIds: [physicalAppearanceESID],
       }
     };
 
@@ -91,32 +89,15 @@ function* getAppearanceWorker(action :SequenceAction) :Generator<any, any, any> 
     if (appearanceDataList.count() > 1) {
       LOG.warn('more than one appearance found in person', entityKeyId);
     }
-
-    const identifyingCharacteristicsList = neighborsByESID.get(identifyingCharacteristicsESID, List());
-    if (identifyingCharacteristicsList.count() > 1) {
-      LOG.warn('more than one identifying characteristic found in person', entityKeyId);
-    }
-
     const appearanceData = appearanceDataList.first() || Map();
-    const identifyingCharacteristicsData = identifyingCharacteristicsList.first() || Map();
 
     const appearanceEKID = appearanceData.getIn([OPENLATTICE_ID_FQN, 0]);
-    const identifyingCharacteristicsEKID = identifyingCharacteristicsData.getIn([OPENLATTICE_ID_FQN, 0]);
 
-    response.entityIndexToIdMap = constructEntityIndexToIdMap(
-      appearanceEKID,
-      identifyingCharacteristicsEKID
-    );
+    response.entityIndexToIdMap = constructEntityIndexToIdMap(appearanceEKID);
 
-    response.formData = constructFormData(
-      appearanceData,
-      identifyingCharacteristicsData,
-    );
+    response.formData = constructFormData(appearanceData);
 
-    response.data = fromJS({
-      physicalAppearance: appearanceData,
-      identifyingCharacteristics: identifyingCharacteristicsData
-    });
+    response.data = fromJS(appearanceData);
 
     yield put(getAppearance.success(action.id, response));
   }
@@ -151,16 +132,15 @@ function* submitAppearanceWorker(action :SequenceAction) :Generator<any, any, an
       .mapKeys((entitySetId) => entitySetNamesByEntitySetId.get(entitySetId));
 
     const appearanceEKID = newEntityKeyIdsByEntitySetName.getIn([PHYSICAL_APPEARANCE_FQN, 0]);
-    const marksEKID = newEntityKeyIdsByEntitySetName.getIn([IDENTIFYING_CHARACTERISTICS_FQN, 0]);
 
-    const entityIndexToIdMap = constructEntityIndexToIdMap(appearanceEKID, marksEKID);
+    const entityIndexToIdMap = constructEntityIndexToIdMap(appearanceEKID);
 
     const { path, properties } = value;
 
     yield put(submitAppearance.success(action.id, {
       entityIndexToIdMap,
       path,
-      properties: fromJS(properties),
+      properties
     }));
   }
   catch (error) {

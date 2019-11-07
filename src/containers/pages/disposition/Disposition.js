@@ -4,16 +4,21 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import moment from 'moment';
+import { DateTime } from 'luxon';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router';
 import { List, Map } from 'immutable';
-import { DateTimePicker } from '@atlaskit/datetime-picker';
-import { Input, TextArea } from 'lattice-ui-kit';
+import {
+  Checkbox,
+  DateTimePicker,
+  Input,
+  Label,
+  Radio,
+  TextArea
+} from 'lattice-ui-kit';
+import type { Dispatch } from 'redux';
 
-import StyledCheckbox from '../../../components/controls/StyledCheckbox';
-import StyledRadio from '../../../components/controls/StyledRadio';
 import { showInvalidFields } from '../../../utils/NavigationUtils';
 import { STATE } from '../../../utils/constants/StateConstants';
 import { DISPOSITION, OTHER } from '../../../utils/constants/CrisisReportConstants';
@@ -31,17 +36,17 @@ import {
   FormWrapper,
   FormSection,
   FormSectionWithValidation,
-  FormText,
   Header,
   IndentWrapper,
   RequiredField
 } from '../../../components/crisis/FormComponents';
 
 import { getInvalidFields } from './Reducer';
-import * as ActionFactory from './ActionFactory';
+import { setInputValue } from './ActionFactory';
+import { SELECT_ALL_THAT_APPLY } from '../constants';
 
 type Props = {
-  values :Map<*, *>,
+  values :Map,
   actions :{
     setInputValue :(value :{ field :string, value :Object }) => void
   };
@@ -49,16 +54,8 @@ type Props = {
 }
 
 const DateTimePickerWrapper = styled.div`
-  min-width: 300px;
   margin-bottom: 10px;
 `;
-
-const InputWithMargin = styled(Input)`
-  margin: 10px 0;
-`;
-
-const dateFormat = 'MM/DD/YYYY';
-const timeFormat = 'hh:mm A';
 
 class Disposition extends React.Component<Props> {
 
@@ -69,7 +66,7 @@ class Disposition extends React.Component<Props> {
     if (!values.get(DISPOSITION.INCIDENT_DATE_TIME)) {
       setInputValue({
         field: DISPOSITION.INCIDENT_DATE_TIME,
-        value: moment().toISOString(true)
+        value: DateTime.local().toISO()
       });
     }
 
@@ -147,7 +144,7 @@ class Disposition extends React.Component<Props> {
       };
 
       const checkboxes = valueList.map((value) => (
-        <StyledCheckbox
+        <Checkbox
             disabled={disabled}
             name={field}
             value={value}
@@ -160,13 +157,16 @@ class Disposition extends React.Component<Props> {
       return (
         <>
           {checkboxes}
-          { !!otherField && currentValues.includes(OTHER) ? (
-            <InputWithMargin
-                disabled={disabled}
-                key={`${field}-other-value`}
-                value={values.get(otherField, '')}
-                onChange={({ target }) => setInputValue({ field: otherField, value: target.value })} />
-          ) : null}
+          {
+            !!otherField && currentValues.includes(OTHER)
+            && (
+              <Input
+                  disabled={disabled}
+                  key={`${field}-other-value`}
+                  value={values.get(otherField, '')}
+                  onChange={({ target }) => setInputValue({ field: otherField, value: target.value })} />
+            )
+          }
         </>
       );
     };
@@ -178,7 +178,7 @@ class Disposition extends React.Component<Props> {
       };
 
       return (
-        <StyledCheckbox
+        <Checkbox
             disabled={disabled}
             name={DISPOSITION.DISPOSITIONS}
             checked={values.get(DISPOSITION.DISPOSITIONS).includes(value)}
@@ -203,7 +203,7 @@ class Disposition extends React.Component<Props> {
       };
 
       return (
-        <StyledRadio
+        <Radio
             disabled={disabled}
             label={label}
             checked={checked}
@@ -211,10 +211,7 @@ class Disposition extends React.Component<Props> {
       );
     };
 
-    const onDateChange = (newDate) => {
-      const value = newDate.endsWith('T')
-        ? moment(newDate.slice(0, newDate.length - 1)).toISOString(true)
-        : newDate;
+    const onDateChange = (value) => {
       setInputValue({
         field: DISPOSITION.INCIDENT_DATE_TIME,
         value
@@ -230,13 +227,16 @@ class Disposition extends React.Component<Props> {
         <FormSection>
           <Header>
             <h1>Specialists On Scene</h1>
+            <Label>{SELECT_ALL_THAT_APPLY}</Label>
           </Header>
           {renderCheckboxList(DISPOSITION.SPECIALISTS, OFFICER_TRAINING)}
         </FormSection>
-        <FormSectionWithValidation invalid={invalidFields.includes(DISPOSITION.DISPOSITIONS)}>
+        <FormSectionWithValidation noMargin invalid={invalidFields.includes(DISPOSITION.DISPOSITIONS)}>
           <Header>
             <h1>Disposition</h1>
-            <RequiredField>Check all that apply.</RequiredField>
+            <RequiredField>
+              <Label>{SELECT_ALL_THAT_APPLY}</Label>
+            </RequiredField>
           </Header>
 
           {renderDispositionCheckbox(
@@ -245,13 +245,14 @@ class Disposition extends React.Component<Props> {
             [DISPOSITION.OTHER_PEOPLE_NOTIFIED]
           )}
           {
-            hasDisposition(DISPOSITIONS.NOTIFIED_SOMEONE) ? (
-              <IndentWrapper extraIndent>
-                <FormSectionWithValidation invalid={invalidFields.includes(DISPOSITION.PEOPLE_NOTIFIED)}>
+            hasDisposition(DISPOSITIONS.NOTIFIED_SOMEONE)
+            && (
+              <IndentWrapper>
+                <FormSectionWithValidation noMargin invalid={invalidFields.includes(DISPOSITION.PEOPLE_NOTIFIED)}>
                   {renderCheckboxList(DISPOSITION.PEOPLE_NOTIFIED, PEOPLE_NOTIFIED, DISPOSITION.OTHER_PEOPLE_NOTIFIED)}
                 </FormSectionWithValidation>
               </IndentWrapper>
-            ) : null
+            )
           }
 
           {renderDispositionCheckbox(
@@ -260,9 +261,10 @@ class Disposition extends React.Component<Props> {
             [DISPOSITION.OTHER_VERBAL_REFERRAL]
           )}
           {
-            hasDisposition(DISPOSITIONS.VERBAL_REFERRAL) ? (
-              <IndentWrapper extraIndent>
-                <FormSectionWithValidation invalid={invalidFields.includes(DISPOSITION.VERBAL_REFERRALS)}>
+            hasDisposition(DISPOSITIONS.VERBAL_REFERRAL)
+            && (
+              <IndentWrapper>
+                <FormSectionWithValidation noMargin invalid={invalidFields.includes(DISPOSITION.VERBAL_REFERRALS)}>
                   {renderCheckboxList(
                     DISPOSITION.VERBAL_REFERRALS,
                     VERBAL_REFERRALS,
@@ -270,18 +272,19 @@ class Disposition extends React.Component<Props> {
                   )}
                 </FormSectionWithValidation>
               </IndentWrapper>
-            ) : null
+            )
           }
 
           {renderDispositionCheckbox(DISPOSITIONS.COURTESY_TRANPORT, [DISPOSITION.COURTESY_TRANSPORTS], [])}
           {
-            hasDisposition(DISPOSITIONS.COURTESY_TRANPORT) ? (
-              <IndentWrapper extraIndent>
-                <FormSectionWithValidation invalid={invalidFields.includes(DISPOSITION.COURTESY_TRANSPORTS)}>
+            hasDisposition(DISPOSITIONS.COURTESY_TRANPORT)
+            && (
+              <IndentWrapper>
+                <FormSectionWithValidation noMargin invalid={invalidFields.includes(DISPOSITION.COURTESY_TRANSPORTS)}>
                   {renderCheckboxList(DISPOSITION.COURTESY_TRANSPORTS, COURTESY_TRANSPORTS)}
                 </FormSectionWithValidation>
               </IndentWrapper>
-            ) : null
+            )
           }
 
           {renderDispositionCheckbox(
@@ -291,61 +294,58 @@ class Disposition extends React.Component<Props> {
             [DISPOSITION.WAS_VOLUNTARY_TRANSPORT]
           )}
           {
-            hasDisposition(DISPOSITIONS.HOSPITAL) ? (
-              <IndentWrapper extraIndent>
-                <FormSectionWithValidation invalid={invalidFields.includes(DISPOSITION.WAS_VOLUNTARY_TRANSPORT)}>
+            hasDisposition(DISPOSITIONS.HOSPITAL)
+            && (
+              <IndentWrapper>
+                <FormSectionWithValidation noMargin invalid={invalidFields.includes(DISPOSITION.WAS_VOLUNTARY_TRANSPORT)}>
                   {renderRadio(DISPOSITION.WAS_VOLUNTARY_TRANSPORT, true, 'Voluntary')}
                   {renderRadio(DISPOSITION.WAS_VOLUNTARY_TRANSPORT, false, 'Involuntary')}
                 </FormSectionWithValidation>
               </IndentWrapper>
-            ) : null
+            )
           }
 
           {renderDispositionCheckbox(DISPOSITIONS.ADMINISTERED_DRUG)}
 
           {renderDispositionCheckbox(DISPOSITIONS.ARRESTABLE_OFFENSE, [DISPOSITION.ARRESTABLE_OFFENSES], [])}
           {
-            hasDisposition(DISPOSITIONS.ARRESTABLE_OFFENSE) ? (
-              <IndentWrapper extraIndent>
-                <FormSectionWithValidation invalid={invalidFields.includes(DISPOSITION.ARRESTABLE_OFFENSES)}>
+            hasDisposition(DISPOSITIONS.ARRESTABLE_OFFENSE)
+            && (
+              <IndentWrapper>
+                <FormSectionWithValidation noMargin invalid={invalidFields.includes(DISPOSITION.ARRESTABLE_OFFENSES)}>
                   {renderCheckboxList(DISPOSITION.ARRESTABLE_OFFENSES, ARRESTABLE_OFFENSES)}
                 </FormSectionWithValidation>
               </IndentWrapper>
-            ) : null
+            )
           }
 
           {renderDispositionCheckbox(DISPOSITIONS.NO_ACTION_POSSIBLE, [DISPOSITION.NO_ACTION_VALUES], [])}
           {
-            hasDisposition(DISPOSITIONS.NO_ACTION_POSSIBLE) ? (
-              <IndentWrapper extraIndent>
-                <FormSectionWithValidation invalid={invalidFields.includes(DISPOSITION.NO_ACTION_VALUES)}>
+            hasDisposition(DISPOSITIONS.NO_ACTION_POSSIBLE)
+            && (
+              <IndentWrapper>
+                <FormSectionWithValidation noMargin invalid={invalidFields.includes(DISPOSITION.NO_ACTION_VALUES)}>
                   {renderCheckboxList(DISPOSITION.NO_ACTION_VALUES, NO_ACTION_VALUES)}
                 </FormSectionWithValidation>
               </IndentWrapper>
-            ) : null
+            )
           }
         </FormSectionWithValidation>
-        <FormSectionWithValidation invalid={invalidFields.includes(DISPOSITION.HAS_REPORT_NUMBER)}>
+        <FormSectionWithValidation noMargin invalid={invalidFields.includes(DISPOSITION.HAS_REPORT_NUMBER)}>
           <Header>
             <h1>Additional Details</h1>
           </Header>
           <RequiredField invalid={invalidFields.includes(DISPOSITION.INCIDENT_DATE_TIME)}>
-            <FormText noMargin>Incident date/time</FormText>
+            <Label bold>Incident date/time</Label>
           </RequiredField>
           <DateTimePickerWrapper>
             <DateTimePicker
-                isDisabled={disabled}
-                dateFormat={dateFormat}
-                timeFormat={timeFormat}
-                timeIsEditable
+                disabled={disabled}
                 value={values.get(DISPOSITION.INCIDENT_DATE_TIME)}
-                onChange={onDateChange}
-                datePickerSelectProps={{
-                  placeholder: dateFormat,
-                }} />
+                onChange={onDateChange} />
           </DateTimePickerWrapper>
           <RequiredField>
-            <FormText noMargin>Report info</FormText>
+            <Label bold>Report info</Label>
           </RequiredField>
           {renderRadio(
             DISPOSITION.HAS_REPORT_NUMBER,
@@ -353,62 +353,50 @@ class Disposition extends React.Component<Props> {
             'Incident has a report or case number',
             DISPOSITION.INCIDENT_DESCRIPTION
           )}
-          {values.get(DISPOSITION.HAS_REPORT_NUMBER)
-            ? (
-              <IndentWrapper extraIndent>
-                <FormSectionWithValidation invalid={invalidFields.includes(DISPOSITION.REPORT_NUMBER)}>
+          {
+            values.get(DISPOSITION.HAS_REPORT_NUMBER)
+            && (
+              <IndentWrapper>
+                <FormSectionWithValidation noMargin invalid={invalidFields.includes(DISPOSITION.REPORT_NUMBER)}>
                   <RequiredField>
-                    <FormText gray noMargin>
+                    <Label bold>
                       Report / Case number
-                    </FormText>
+                    </Label>
                   </RequiredField>
                   {renderInput(DISPOSITION.REPORT_NUMBER)}
                 </FormSectionWithValidation>
               </IndentWrapper>
             )
-            : null}
+          }
           {renderRadio(DISPOSITION.HAS_REPORT_NUMBER, false, 'No report or case number', DISPOSITION.REPORT_NUMBER)}
-          {values.get(DISPOSITION.HAS_REPORT_NUMBER) === false
-            ? (
-              <IndentWrapper extraIndent>
-                <FormSectionWithValidation invalid={invalidFields.includes(DISPOSITION.INCIDENT_DESCRIPTION)}>
+          {
+            values.get(DISPOSITION.HAS_REPORT_NUMBER) === false
+            && (
+              <IndentWrapper>
+                <FormSectionWithValidation noMargin invalid={invalidFields.includes(DISPOSITION.INCIDENT_DESCRIPTION)}>
                   <RequiredField>
-                    <FormText gray noMargin>
+                    <Label bold>
                       Describe the incident briefly below.
-                    </FormText>
+                    </Label>
                   </RequiredField>
                   {renderInput(DISPOSITION.INCIDENT_DESCRIPTION, true)}
                 </FormSectionWithValidation>
               </IndentWrapper>
             )
-            : null}
+          }
         </FormSectionWithValidation>
       </FormWrapper>
     );
   }
 }
 
-function mapStateToProps(state) {
+const mapStateToProps = (state :Map) => ({
+  values: state.get(STATE.DISPOSITION)
+});
 
-  return {
-    values: state.get(STATE.DISPOSITION)
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-
-  const actions = {};
-
-  Object.keys(ActionFactory).forEach((action) => {
-    actions[action] = ActionFactory[action];
+const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
+    actions: bindActionCreators({ setInputValue }, dispatch)
   });
-
-  return {
-    actions: {
-      ...bindActionCreators(actions, dispatch)
-    }
-  };
-}
 
 // $FlowFixMe
 export default withRouter(

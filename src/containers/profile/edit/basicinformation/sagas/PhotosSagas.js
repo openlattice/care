@@ -133,7 +133,7 @@ function* submitPhotosWorker(action :SequenceAction) :Generator<any, any, any> {
     yield put(submitPhotos.success(action.id, {
       entityIndexToIdMap,
       path,
-      properties: fromJS(properties)
+      properties
     }));
   }
   catch (error) {

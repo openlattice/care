@@ -34,6 +34,7 @@ import * as RoutingSagas from '../router/RoutingSagas';
 import * as SearchSagas from '../../containers/search/SearchSagas';
 import * as StaffSagas from '../../containers/staff/StaffSagas';
 import * as SubmitSagas from '../../utils/submit/SubmitSagas';
+import * as ScarsMarksTattoosSagas from '../../containers/profile/edit/basicinformation/sagas/ScarsMarksTattoosSagas';
 
 export default function* sagas() :Generator<*, *, *> {
 
@@ -46,15 +47,15 @@ export default function* sagas() :Generator<*, *, *> {
     fork(AuthSagas.watchLogout),
 
     // "lattice-sagas" sagas
-    fork(AppApiSagas.getAppWatcher),
     fork(AppApiSagas.getAppConfigsWatcher),
     fork(AppApiSagas.getAppTypesWatcher),
-    fork(DataApiSagas.deleteEntityWatcher),
+    fork(AppApiSagas.getAppWatcher),
+    fork(DataApiSagas.deleteEntityDataWatcher),
     fork(DataApiSagas.getEntitySetDataWatcher),
     fork(DataApiSagas.updateEntityDataWatcher),
     fork(DataIntegrationApiSagas.createEntityAndAssociationDataWatcher),
-    fork(EntityDataModelApiSagas.getEntityDataModelProjectionWatcher),
     fork(EntityDataModelApiSagas.getAllPropertyTypesWatcher),
+    fork(EntityDataModelApiSagas.getEntityDataModelProjectionWatcher),
     fork(SearchApiSagas.searchEntitySetDataWatcher),
 
     // AppSagas
@@ -93,7 +94,7 @@ export default function* sagas() :Generator<*, *, *> {
 
     // Profile Sagas
     fork(ProfileSagas.getPersonDataWatcher),
-    fork(ProfileSagas.getPhysicalApperanceWatcher),
+    fork(ProfileSagas.getPhysicalAppearanceWatcher),
     fork(ProfileSagas.getProfileReportsWatcher),
     fork(ProfileSagas.updateProfileAboutWatcher),
 
@@ -125,6 +126,10 @@ export default function* sagas() :Generator<*, *, *> {
     fork(PhotosSagas.getPhotosWatcher),
     fork(PhotosSagas.submitPhotosWatcher),
     fork(PhotosSagas.updatePhotoWatcher),
+
+    fork(ScarsMarksTattoosSagas.getScarsMarksTattoosWatcher),
+    fork(ScarsMarksTattoosSagas.submitScarsMarksTattoosWatcher),
+    fork(ScarsMarksTattoosSagas.updateScarsMarksTattoosWatcher),
 
     // OfficerSafetyConcernsSagas
     fork(OfficerSafetyConcernsSagas.getOfficerSafetyWatcher),

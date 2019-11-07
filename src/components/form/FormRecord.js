@@ -4,12 +4,14 @@ import styled from 'styled-components';
 import { DateTime } from 'luxon';
 import { Button } from 'lattice-ui-kit';
 import { Map } from 'immutable';
+import type { RequestSequence } from 'redux-reqseq';
 
+import { useAuthorization } from '../hooks';
 import {
   DATE_TIME_FQN,
   PERSON_ID_FQN,
 } from '../../edm/DataModelFqns';
-import { MEDIA_QUERY_MD, MEDIA_QUERY_LG } from '../../core/style/Sizes';
+import { MEDIA_QUERY_LG } from '../../core/style/Sizes';
 
 const StyledFormWrapper = styled.div`
   display: flex;
@@ -19,15 +21,9 @@ const StyledFormWrapper = styled.div`
   box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);
   flex-direction: row;
   font-size: 14px;
-  margin-bottom: 5px;
   padding: 20px;
 
-  @media only screen and (min-width: ${MEDIA_QUERY_MD}px) {
-    margin-bottom: 10px;
-  }
-
   @media only screen and (min-width: ${MEDIA_QUERY_LG}px) {
-    margin-bottom: 15px;
     font-size: 16px;
   }
 `;
@@ -66,6 +62,7 @@ type RecordProps = {
   time :string;
   email :string;
 };
+
 const Record = ({ label, time, email } :RecordProps) => (
   <div>
     <StyledDiv>
@@ -84,6 +81,7 @@ const Record = ({ label, time, email } :RecordProps) => (
 );
 
 type FormRecordProps = {
+  authorize :RequestSequence;
   lastUpdated :Map;
   onClickPrimary :() => void;
   onClickSecondary :() => void;
@@ -92,6 +90,7 @@ type FormRecordProps = {
   submitted :Map;
 }
 const FormRecord = ({
+  authorize,
   lastUpdated,
   onClickPrimary,
   onClickSecondary,
@@ -99,6 +98,8 @@ const FormRecord = ({
   secondaryText,
   submitted,
 } :FormRecordProps) => {
+
+  const [isAuthorized] = useAuthorization('profile', authorize);
 
   const submittedTime = submitted.getIn(['associationDetails', DATE_TIME_FQN, 0], '');
   const submittedEmail = submitted.getIn(['neighborDetails', PERSON_ID_FQN, 0], '');
@@ -120,28 +121,32 @@ const FormRecord = ({
                 email={lastEmail} />
           )}
       </RecordGrid>
-      <ActionGrid>
-        {
-          onClickPrimary
-          && (
-            <Button
-                onClick={onClickPrimary}
-                mode="primary">
-              {primaryText}
-            </Button>
-          )
-        }
-        {
-          onClickSecondary
-          && (
-            <Button
-                onClick={onClickSecondary}
-                mode="secondary">
-              {secondaryText}
-            </Button>
-          )
-        }
-      </ActionGrid>
+      {
+        isAuthorized && (
+          <ActionGrid>
+            {
+              onClickPrimary
+              && (
+                <Button
+                    onClick={onClickPrimary}
+                    mode="primary">
+                  {primaryText}
+                </Button>
+              )
+            }
+            {
+              onClickSecondary
+              && (
+                <Button
+                    onClick={onClickSecondary}
+                    mode="secondary">
+                  {secondaryText}
+                </Button>
+              )
+            }
+          </ActionGrid>
+        )
+      }
     </StyledFormWrapper>
   );
 };

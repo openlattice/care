@@ -21,7 +21,7 @@ const loading = keyframes`
 `;
 
 const crisisCountSkeleton = css`
-  min-height: 1.35em;
+  min-height: 1.5em;
   background-repeat: no-repeat;
   background-image:
     /* layer 0: animation blur */
@@ -33,11 +33,11 @@ const crisisCountSkeleton = css`
     ),
     /* layer 1: list item 1*/
     /* light rectangles with 20px height */
-    linear-gradient(${PURPLES[6]} 1.35em, transparent 0),
+    linear-gradient(${PURPLES[6]} 1.5em, transparent 0),
     linear-gradient(${PURPLES[6]} 1em, transparent 0);
   background-size:
     100% 100%, /* animation blur */
-    35% 1.35em,
+    35% 1.5em,
     25% 1em;
   background-position:
     -10vw 0, /* animation blur */

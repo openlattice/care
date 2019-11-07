@@ -73,13 +73,13 @@ const { DeleteTypes, UpdateTypes } = Types;
 const { OPENLATTICE_ID_FQN } = Constants;
 const {
   createAssociations,
-  deleteEntity,
+  deleteEntityData,
   getEntityData,
   updateEntityData,
 } = DataApiActions;
 const {
   createAssociationsWorker,
-  deleteEntityWorker,
+  deleteEntityDataWorker,
   getEntityDataWorker,
   updateEntityDataWorker,
 } = DataApiSagas;
@@ -93,14 +93,9 @@ const {
 } = SearchApiSagas;
 
 const getStaffInteractions = (entities :List<Map>) => {
-  const sorted = entities.sort((staffA :Map, staffB :Map) :number => {
-    const timeA = DateTime.fromISO(staffA.getIn(['associationDetails', FQN.DATE_TIME_FQN, 0]));
-    const timeB = DateTime.fromISO(staffB.getIn(['associationDetails', FQN.DATE_TIME_FQN, 0]));
-
-    if (!timeA.isValid) return 1;
-    if (!timeB.isValid) return -1;
-
-    return timeB.diff(timeA).toObject().milliseconds;
+  const sorted = entities.sortBy((staff :Map) => {
+    const time = DateTime.fromISO(staff.getIn(['associationDetails', FQN.DATE_TIME_FQN, 0]));
+    return time.valueOf();
   });
 
   const submitted = sorted.first() || Map();
@@ -137,8 +132,12 @@ function* deleteReportWorker(action :SequenceAction) :Generator<*, *, *> {
     const entitySetId :UUID = getReportESId(app);
 
     const response = yield call(
-      deleteEntityWorker,
-      deleteEntity({ entityKeyId, entitySetId, deleteType: DeleteTypes.Soft })
+      deleteEntityDataWorker,
+      deleteEntityData({
+        entityKeyIds: [entityKeyId],
+        entitySetId,
+        deleteType: DeleteTypes.Soft
+      })
     );
     if (response.error) throw response.error;
     yield put(deleteReport.success(action.id));
@@ -289,8 +288,8 @@ function* getReportsByDateRangeWorker(action :SequenceAction) :Generator<*, *, *
     const staffESID :UUID = getStaffESId(app);
 
     const datetimePTID :UUID = edm.getIn(['fqnToIdMap', FQN.DATE_TIME_OCCURRED_FQN]);
-    const startDT = DateTime.fromISO(value.get('dateStart', ''));
-    const endDT = DateTime.fromISO(value.get('dateEnd', ''));
+    const startDT = DateTime.fromISO(value.get('dateStart'));
+    const endDT = DateTime.fromISO(value.get('dateEnd'));
 
     const startTerm = startDT.isValid ? startDT.toISO() : '*';
     const endTerm = endDT.isValid ? endDT.endOf('day').toISO() : '*';
@@ -316,14 +315,10 @@ function* getReportsByDateRangeWorker(action :SequenceAction) :Generator<*, *, *
     // sort the reportData by time occurred DESC
 
     const reportData = fromJS(data.hits)
-      .sort((reportA :Map, reportB :Map) :number => {
-        const timeA = DateTime.fromISO(reportA.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0]));
-        const timeB = DateTime.fromISO(reportB.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0]));
+      .sortBy((report :Map,) :number => {
+        const time = DateTime.fromISO(report.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0]));
 
-        if (!timeA.isValid) return 1;
-        if (!timeB.isValid) return -1;
-
-        return timeB.diff(timeA).toObject().milliseconds;
+        return -time.valueOf();
       });
 
     const reportEKIDs = reportData.map((report) => report.getIn([OPENLATTICE_ID_FQN, 0]));

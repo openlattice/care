@@ -10,10 +10,9 @@ import { DateTime } from 'luxon';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import { Spinner } from 'lattice-ui-kit';
+import { Button, Spinner } from 'lattice-ui-kit';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { AuthUtils } from 'lattice-auth';
-import { ModalTransition } from '@atlaskit/modal-dialog';
 import { RequestStates } from 'redux-reqseq';
 
 import type { Match, RouterHistory } from 'react-router';
@@ -21,9 +20,8 @@ import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import NoResource from '../../components/NoResource';
-import FormRecordCard from '../../components/form/FormRecord';
+import FormRecord from '../../components/form/FormRecord';
 import ReviewContainer from '../crisis/ReviewContainer';
-import BackButton from '../../components/buttons/BackButton';
 import ProgressSidebar from '../../components/form/ProgressSidebar';
 import SubjectInformation from '../pages/subjectinformation/SubjectInformation';
 import ObservedBehaviors from '../pages/observedbehaviors/ObservedBehaviors';
@@ -35,6 +33,7 @@ import DeleteModal from '../../components/modals/DeleteModal';
 import SubmitSuccess from '../../components/crisis/SubmitSuccess';
 
 import { getReport, updateReport, deleteReport } from './ReportsActions';
+import { getAuthorization } from '../../core/sagas/authorize/AuthorizeActions';
 import { clearCrisisReport } from '../crisis/CrisisActionFactory';
 import {
   getCurrentPage,
@@ -81,7 +80,6 @@ const PageWrapper = styled.div`
   padding: 5px;
   margin: 0;
   width: 100%;
-  max-width: 65vw;
 
   @media only screen and (min-width: ${MEDIA_QUERY_MD}px) {
     padding: 10px;
@@ -94,6 +92,7 @@ const PageWrapper = styled.div`
 `;
 
 const FormWrapper = styled.div`
+  padding: 5px;
   width: 100%;
 
   @media only screen and (min-width: ${MEDIA_QUERY_MD}px) {
@@ -105,39 +104,19 @@ const FormWrapper = styled.div`
   }
 `;
 
-
 const ButtonRow = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
-`;
+  padding: 0 5px;
 
-const ForwardButton = styled.button.attrs({
-  type: 'button'
-})`
-  padding: 10px 20px;
-  margin: 15px;
-  text-transform: uppercase;
-  font-size: 14px;
-  border-radius: 3px;
-  border: none;
-
-  &:focus {
-    outline: none;
+  @media only screen and (min-width: ${MEDIA_QUERY_MD}px) {
+    padding: 0 10px;
   }
 
-  &:hover:enabled {
-    cursor: pointer;
-  }
-
-  &:last-child {
-    color: ${(props) => (props.canProgress ? '#f8f8fb' : '#aaafbc')};
-    background-color: ${(props) => (props.canProgress ? '#6124e2' : '#dcdce7')};
-
-    &:hover:enabled {
-      background-color: ${(props) => (props.canProgress ? '#8045ff' : '#dcdce7')};
-    }
+  @media only screen and (min-width: ${MEDIA_QUERY_LG}px) {
+    padding: 0 15px;
   }
 `;
 
@@ -192,6 +171,7 @@ type Props = {
       type :string;
     };
     deleteReport :RequestSequence;
+    getAuthorization :RequestSequence;
     getReport :RequestSequence;
     submit :(args :Object) => void;
     updateReport :RequestSequence;
@@ -232,7 +212,7 @@ class CrisisReportView extends React.Component<Props, State> {
     actions.clearCrisisReport();
   }
 
-  handlePageChange = (path) => {
+  handlePageChange = (path :string) => {
     const { history } = this.props;
     history.push(path);
     window.scrollTo({
@@ -299,7 +279,7 @@ class CrisisReportView extends React.Component<Props, State> {
       [POST_PROCESS_FIELDS.USER_EMAIL]: AuthUtils.getUserInfo().email
     };
 
-    PAGES.forEach((page) => {
+    PAGES.forEach((page :any) => {
       const { postProcessor, stateField } = page;
       submission = { ...submission, ...postProcessor(state.get(stateField)) };
     });
@@ -313,7 +293,7 @@ class CrisisReportView extends React.Component<Props, State> {
   isReadyToSubmit = () => {
     const { state } = this.props;
     let ready = true;
-    PAGES.forEach((page) => {
+    PAGES.forEach((page :any) => {
       const { validator, stateField } = page;
       if (validator && validator(state.get(stateField)) !== FORM_STEP_STATUS.COMPLETED) {
         ready = false;
@@ -323,7 +303,7 @@ class CrisisReportView extends React.Component<Props, State> {
     return ready;
   }
 
-  renderForwardButton = (page, index) => {
+  renderForwardButton = (page :any, index) => {
     const { state } = this.props;
     const { edit } = this.state;
 
@@ -338,10 +318,10 @@ class CrisisReportView extends React.Component<Props, State> {
     const complete = validator ? validator(state.get(stateField)) === FORM_STEP_STATUS.COMPLETED : true;
     const nextPath = getNextPath(window.location, PAGES.length + 1);
 
-    const disabled = (isSubmit || isReview) ? !this.isReadyToSubmit() : !complete;
+    const hasInvalidFields = (isSubmit || isReview) ? !this.isReadyToSubmit() : !complete;
     let onClick = () => this.handlePageChange(nextPath);
 
-    if (disabled) {
+    if (hasInvalidFields) {
       const showInvalidFieldsPath = setShowInvalidFields(window.location);
       onClick = () => this.handlePageChange(showInvalidFieldsPath);
     }
@@ -355,7 +335,7 @@ class CrisisReportView extends React.Component<Props, State> {
       onClick = this.handleSubmit;
     }
 
-    return <ForwardButton onClick={onClick} canProgress={!disabled}>{buttonText}</ForwardButton>;
+    return <Button mode="primary" onClick={onClick}>{buttonText}</Button>;
   }
 
   renderPage = (page, index) => {
@@ -364,11 +344,11 @@ class CrisisReportView extends React.Component<Props, State> {
     const prevPath = getPrevPath(window.location);
     return (
       <>
-        <div>
+        <FormWrapper>
           <Component disabled={!edit} />
-        </div>
+        </FormWrapper>
         <ButtonRow>
-          { (index !== 0) && <BackButton onClick={() => this.handlePageChange(prevPath)}>Back</BackButton> }
+          <Button mode="subtle" disabled={!index} onClick={() => this.handlePageChange(prevPath)}>Back</Button>
           {this.renderForwardButton(page, index)}
         </ButtonRow>
       </>
@@ -393,7 +373,7 @@ class CrisisReportView extends React.Component<Props, State> {
         title,
         validator,
         stateField,
-      } = page;
+      } :any = page;
       const status = validator ? validator(state.get(stateField)) : undefined;
       const onClick = () => history.push(`${currentPath}/${index + 1}`);
 
@@ -408,6 +388,7 @@ class CrisisReportView extends React.Component<Props, State> {
 
   render() {
     const {
+      actions,
       deleteState,
       fetchState,
       lastUpdatedStaff,
@@ -418,28 +399,6 @@ class CrisisReportView extends React.Component<Props, State> {
     const { edit, showDelete, showDiscard } = this.state;
     const baseUrl = `${match.url}/1`;
     const currentPage = getCurrentPage(window.location);
-
-    const discardActions = [
-      {
-        onClick: this.handleDiscard,
-        text: 'Discard Changes'
-      },
-      {
-        onClick: this.handleCloseDiscard,
-        text: 'Stay On Page'
-      }
-    ];
-
-    const deleteActions = [
-      {
-        onClick: this.handleDelete,
-        text: 'Delete Report'
-      },
-      {
-        onClick: this.handleCloseDelete,
-        text: 'Stay On Page'
-      },
-    ];
 
     let primaryClick = this.handleEditClick;
     if (edit) primaryClick = this.handleShowDiscard;
@@ -469,34 +428,27 @@ class CrisisReportView extends React.Component<Props, State> {
         }
         <PageWrapper>
           <FormWrapper>
-            <FormRecordCard
+            <FormRecord
+                authorize={actions.getAuthorization}
+                lastUpdated={lastUpdatedStaff}
                 onClickPrimary={primaryClick}
                 onClickSecondary={this.handleShowDelete}
                 primaryText={edit ? 'Discard' : 'Edit'}
-                submitted={submittedStaff}
-                lastUpdated={lastUpdatedStaff} />
-            <Switch>
-              {this.renderRoutes()}
-              <Redirect to={baseUrl} />
-            </Switch>
+                submitted={submittedStaff} />
           </FormWrapper>
+          <Switch>
+            {this.renderRoutes()}
+            <Redirect to={baseUrl} />
+          </Switch>
         </PageWrapper>
-        <ModalTransition>
-          { showDiscard
-            && (
-              <DiscardModal
-                  actions={discardActions}
-                  onClose={this.handleCloseDiscard} />
-            )}
-        </ModalTransition>
-        <ModalTransition>
-          { showDelete
-            && (
-              <DeleteModal
-                  actions={deleteActions}
-                  onClose={this.handleCloseDelete} />
-            )}
-        </ModalTransition>
+        <DiscardModal
+            isVisible={showDiscard}
+            onClickPrimary={this.handleDiscard}
+            onClose={this.handleCloseDiscard} />
+        <DeleteModal
+            isVisible={showDelete}
+            onClickPrimary={this.handleDelete}
+            onClose={this.handleCloseDelete} />
       </CrisisReportWrapper>
     );
   }
@@ -519,6 +471,7 @@ function mapDispatchToProps(dispatch :Dispatch<*>) :Object {
   const actions = {
     clearCrisisReport,
     deleteReport,
+    getAuthorization,
     getReport,
     updateReport,
   };

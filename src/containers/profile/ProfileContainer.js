@@ -132,7 +132,7 @@ class ProfileContainer extends Component<Props, State> {
     if (selectedPerson.isEmpty()) {
       actions.getPersonData(personEKID);
     }
-    else if (physicalAppearance.isEmpty()) {
+    if (physicalAppearance.isEmpty()) {
       actions.getPhysicalAppearance(personEKID);
     }
     actions.getProfileReports(personEKID);

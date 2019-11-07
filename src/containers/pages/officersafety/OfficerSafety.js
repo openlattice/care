@@ -7,9 +7,13 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router';
 import { List, Map } from 'immutable';
-import { Input } from 'lattice-ui-kit';
+import {
+  Checkbox,
+  Input,
+  Label,
+} from 'lattice-ui-kit';
+import type { Dispatch } from 'redux';
 
-import StyledCheckbox from '../../../components/controls/StyledCheckbox';
 import YesNoToggle from '../../../components/controls/YesNoToggle';
 import { showInvalidFields } from '../../../utils/NavigationUtils';
 import { STATE } from '../../../utils/constants/StateConstants';
@@ -24,14 +28,14 @@ import {
   FormWrapper,
   FormSection,
   FormSectionWithValidation,
-  FormText,
   Header,
   IndentWrapper,
   RequiredField
 } from '../../../components/crisis/FormComponents';
 
 import { getInvalidFields } from './Reducer';
-import * as ActionFactory from './ActionFactory';
+import { setInputValue } from './ActionFactory';
+import { SELECT_ALL_THAT_APPLY } from '../constants';
 
 type Props = {
   values :Map<*, *>,
@@ -73,7 +77,7 @@ const OfficerSafety = ({ values, actions, disabled } :Props) => {
     };
 
     const checkboxes = valueList.map((value) => (
-      <StyledCheckbox
+      <Checkbox
           disabled={disabled}
           name={field}
           value={value}
@@ -86,13 +90,13 @@ const OfficerSafety = ({ values, actions, disabled } :Props) => {
     return (
       <>
         {checkboxes}
-        { !!otherField && currentValues.includes(OTHER) ? (
+        { (!!otherField && currentValues.includes(OTHER)) && (
           <Input
               disabled={disabled}
               key={`${field}-other-value`}
               value={values.get(otherField, '')}
               onChange={({ target }) => actions.setInputValue({ field: otherField, value: target.value })} />
-        ) : null}
+        )}
       </>
     );
   };
@@ -133,95 +137,79 @@ const OfficerSafety = ({ values, actions, disabled } :Props) => {
       <FormSection>
         <Header>
           <h1>Techniques</h1>
-          <RequiredField>Check all that apply.</RequiredField>
+          <RequiredField>
+            <Label>{SELECT_ALL_THAT_APPLY}</Label>
+          </RequiredField>
         </Header>
         {renderCheckboxList(OFFICER_SAFETY.TECHNIQUES, TECHNIQUES)}
       </FormSection>
       <FormSection>
         <Header>
           <h1>Threats / Violence / Weapons</h1>
-          <RequiredField>Select all that apply.</RequiredField>
+          <RequiredField>
+            <Label>{SELECT_ALL_THAT_APPLY}</Label>
+          </RequiredField>
         </Header>
 
-        <FormText>Did subject use/brandish a weapon?</FormText>
+        <Label bold>Did subject use/brandish a weapon?</Label>
 
         {renderYesNoToggle(OFFICER_SAFETY.HAD_WEAPON, [OFFICER_SAFETY.WEAPONS], [OFFICER_SAFETY.OTHER_WEAPON])}
-        {values.get(OFFICER_SAFETY.HAD_WEAPON)
-          ? (
-            <IndentWrapper>
-              <FormSectionWithValidation invalid={invalidFields.includes(OFFICER_SAFETY.WEAPONS)}>
-                {renderCheckboxList(OFFICER_SAFETY.WEAPONS, WEAPONS, OFFICER_SAFETY.OTHER_WEAPON)}
-              </FormSectionWithValidation>
-            </IndentWrapper>
-          )
-          : null}
+        {values.get(OFFICER_SAFETY.HAD_WEAPON) && (
+          <IndentWrapper>
+            <FormSectionWithValidation noMargin invalid={invalidFields.includes(OFFICER_SAFETY.WEAPONS)}>
+              {renderCheckboxList(OFFICER_SAFETY.WEAPONS, WEAPONS, OFFICER_SAFETY.OTHER_WEAPON)}
+            </FormSectionWithValidation>
+          </IndentWrapper>
+        )}
 
-        <FormText>Did subject threaten violence toward another person?</FormText>
+        <Label bold>Did subject threaten violence toward another person?</Label>
 
         {renderYesNoToggle(
           OFFICER_SAFETY.THREATENED_VIOLENCE,
           [OFFICER_SAFETY.THREATENED_PERSON_RELATIONSHIP],
           []
         )}
-        {values.get(OFFICER_SAFETY.THREATENED_VIOLENCE)
-          ? (
-            <IndentWrapper>
-              <FormText>Threatened person relationship(s)</FormText>
-              {renderCheckboxList(OFFICER_SAFETY.THREATENED_PERSON_RELATIONSHIP, RELATIONSHIP_TYPES)}
-            </IndentWrapper>
-          )
-          : null}
+        {values.get(OFFICER_SAFETY.THREATENED_VIOLENCE) && (
+          <IndentWrapper>
+            <Label bold>Threatened person relationship(s)</Label>
+            {renderCheckboxList(OFFICER_SAFETY.THREATENED_PERSON_RELATIONSHIP, RELATIONSHIP_TYPES)}
+          </IndentWrapper>
+        )}
 
-        <FormText>Were there any injuries during the incident?</FormText>
+        <Label bold>Were there any injuries during the incident?</Label>
 
         {renderYesNoToggle(
           OFFICER_SAFETY.HAD_INJURIES,
           [OFFICER_SAFETY.INJURY_TYPE],
           [OFFICER_SAFETY.OTHER_INJURED_PERSON]
         )}
-        {values.get(OFFICER_SAFETY.HAD_INJURIES)
-          ? (
-            <IndentWrapper>
-              <FormSectionWithValidation invalid={invalidFields.includes(OFFICER_SAFETY.INJURED_PARTIES)}>
-                <FormText>
-                  <RequiredField>Injured Parties</RequiredField>
-                </FormText>
-                {renderCheckboxList(
-                  OFFICER_SAFETY.INJURED_PARTIES,
-                  PERSON_TYPES,
-                  OFFICER_SAFETY.OTHER_INJURED_PERSON
-                )}
-              </FormSectionWithValidation>
-            </IndentWrapper>
-          )
-          : null}
+        {values.get(OFFICER_SAFETY.HAD_INJURIES) && (
+          <IndentWrapper>
+            <FormSectionWithValidation noMargin invalid={invalidFields.includes(OFFICER_SAFETY.INJURED_PARTIES)}>
+              <RequiredField>
+                <Label bold>Injured Parties</Label>
+              </RequiredField>
+              {renderCheckboxList(
+                OFFICER_SAFETY.INJURED_PARTIES,
+                PERSON_TYPES,
+                OFFICER_SAFETY.OTHER_INJURED_PERSON
+              )}
+            </FormSectionWithValidation>
+          </IndentWrapper>
+        )}
 
       </FormSection>
     </FormWrapper>
   );
 };
 
-function mapStateToProps(state) {
+const mapStateToProps = (state :Map) => ({
+  values: state.get(STATE.OFFICER_SAFETY)
+});
 
-  return {
-    values: state.get(STATE.OFFICER_SAFETY)
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-
-  const actions = {};
-
-  Object.keys(ActionFactory).forEach((action) => {
-    actions[action] = ActionFactory[action];
-  });
-
-  return {
-    actions: {
-      ...bindActionCreators(actions, dispatch)
-    }
-  };
-}
+const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
+  actions: bindActionCreators({ setInputValue }, dispatch)
+});
 
 // $FlowFixMe
 export default withRouter(

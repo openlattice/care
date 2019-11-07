@@ -48,7 +48,7 @@ const ContactsReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => 
           } = action.value;
           return state
             .set('entityIndexToIdMap', entityIndexToIdMap)
-            .setIn(['formData', ...path], properties)
+            .setIn(['formData', ...path], fromJS(properties))
             .set('submitState', RequestStates.SUCCESS);
         },
         FAILURE: () => state.set('submitState', RequestStates.FAILURE)
@@ -61,7 +61,7 @@ const ContactsReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => 
           const { path, properties } = action.value;
           return state
             .set('updateState', RequestStates.PENDING)
-            .setIn(['formData', ...path], properties);
+            .setIn(['formData', ...path], fromJS(properties));
         },
         SUCCESS: () => state.set('updateState', RequestStates.SUCCESS),
         FAILURE: () => state.set('updateState', RequestStates.FAILURE)
@@ -72,9 +72,10 @@ const ContactsReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => 
       return deleteContact.reducer(state, action, {
         REQUEST: () => state.set('deleteState', RequestStates.PENDING),
         SUCCESS: () => {
-          const { path } = action.value;
+          const { entityIndexToIdMap, path } = action.value;
           return state
             .set('deleteState', RequestStates.SUCCESS)
+            .set('entityIndexToIdMap', entityIndexToIdMap)
             .deleteIn(['formData', ...path]);
         },
         FAILURE: () => state.set('deleteState', RequestStates.FAILURE)

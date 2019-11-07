@@ -51,7 +51,11 @@ import { getResponsePlan } from '../../responseplan/ResponsePlanActions';
 import { getResponsePlanWorker } from '../../responseplan/ResponsePlanSagas';
 import { constructFormData, constructEntityIndexToIdMap } from '../utils/OfficerSafetyConcernsUtils';
 import { TECHNIQUES_FQN } from '../../../../../edm/DataModelFqns';
-import { getEntityKeyIdsFromList, groupNeighborsByEntitySetIds } from '../../../../../utils/DataUtils';
+import {
+  getEntityKeyIdsFromList,
+  groupNeighborsByEntitySetIds,
+  removeEntitiesFromEntityIndexToIdMap
+} from '../../../../../utils/DataUtils';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
@@ -257,7 +261,7 @@ function* submitOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<a
     yield put(submitOfficerSafetyConcerns.success(action.id, {
       entityIndexToIdMap: newEntityIndexToIdMap,
       path,
-      properties: fromJS(properties)
+      properties
     }));
   }
   catch (error) {
@@ -303,7 +307,10 @@ function* deleteOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<*
 
     if (response.error) throw response.error;
 
-    yield put(deleteOfficerSafetyConcerns.success(action.id, { path }));
+    const entityIndexToIdMap = yield select((state) => state.getIn(['profile', 'officerSafety', 'entityIndexToIdMap']));
+    const newEntityIndexToIdMap = removeEntitiesFromEntityIndexToIdMap(entityData, entityIndexToIdMap);
+
+    yield put(deleteOfficerSafetyConcerns.success(action.id, { path, entityIndexToIdMap: newEntityIndexToIdMap }));
   }
   catch (error) {
     LOG.error('deleteOfficerSafetyConcernsWorker', error);
