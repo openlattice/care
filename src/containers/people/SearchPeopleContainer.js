@@ -61,6 +61,7 @@ const SearchPeopleContainer = () => {
   const searchResults = useSelector((store) => store.getIn(['people', 'peopleSearchResults'], List()));
   const fetchState = useSelector((store) => store.getIn(['people', 'fetchState']));
   const dispatch = useDispatch();
+  const isLoading = fetchState === RequestStates.PENDING;
 
   const handleNewPerson = () => {
     const person = fromJS({
@@ -116,14 +117,20 @@ const SearchPeopleContainer = () => {
                     <Label htmlFor="dob">Date of Birth</Label>
                     <DatePicker id="dob" value={dob} onChange={setDob} />
                   </div>
-                  <Button type="submit" mode="primary" onClick={handleOnSearch}>Search</Button>
+                  <Button
+                      type="submit"
+                      isLoading={isLoading}
+                      mode="primary"
+                      onClick={handleOnSearch}>
+                    Search
+                  </Button>
                 </InputGrid>
               </form>
             </CardSegment>
           </Card>
           <SearchResults
               hasSearched={fetchState !== RequestStates.STANDBY}
-              isLoading={fetchState === RequestStates.PENDING}
+              isLoading={isLoading}
               resultComponent={PersonResult}
               results={searchResults}
               title="Search People" />
