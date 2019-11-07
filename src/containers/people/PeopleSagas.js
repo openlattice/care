@@ -127,10 +127,10 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
     const dob :string = value.get('dob');
 
     if (firstName.length) {
-      updateSearchField(`${firstName}*`, firstNamePTID);
+      updateSearchField(firstName, firstNamePTID);
     }
     if (lastName.length) {
-      updateSearchField(`${lastName}*`, lastNamePTID);
+      updateSearchField(lastName, lastNamePTID);
     }
     const dobDT = DateTime.fromISO(dob);
     if (dobDT.isValid) {
