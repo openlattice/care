@@ -238,7 +238,7 @@ const mapStateToProps = (state :Map) => {
     isSearchingPeople: consumers.get('isSearching', false),
     noResults: consumers.get('searchComplete', false) && searchResults.size === 0
   };
-}
+};
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({

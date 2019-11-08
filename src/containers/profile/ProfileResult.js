@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import isFunction from 'lodash/isFunction';
 import { DateTime } from 'luxon';
-import { Map } from 'immutable';
+import { List, Map } from 'immutable';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileAlt } from '@fortawesome/pro-light-svg-icons';
 import {
@@ -54,7 +54,7 @@ class ReportResult extends Component<Props> {
     const rawDatetime :string = result.getIn([DATE_TIME_OCCURRED_FQN, 0]);
     if (rawDatetime) {
       const formattedDob = DateTime.fromISO(rawDatetime).toLocaleString(DateTime.DATE_SHORT);
-      return result.setIn([DATE_TIME_OCCURRED_FQN, 0], formattedDob);
+      return result.set(DATE_TIME_OCCURRED_FQN, List(formattedDob));
     }
 
     return result;

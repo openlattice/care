@@ -24,11 +24,11 @@ import { FormWrapper } from '../../components/crisis/FormComponents';
 
 
 type Props = {
-  subjectInformation :Map<*, *>,
-  observedBehaviors :Map<*, *>,
-  natureOfCrisis :Map<*, *>,
-  officerSafety :Map<*, *>,
-  disposition :Map<*, *>
+  subjectInformation :Map;
+  observedBehaviors :Map;
+  natureOfCrisis :Map;
+  officerSafety :Map;
+  disposition :Map;
 };
 
 const Wrapper = styled.div`

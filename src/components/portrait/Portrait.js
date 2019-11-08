@@ -2,9 +2,10 @@
 import React from 'react';
 import styled from 'styled-components';
 import PlaceholderPortrait from './PlaceholderPortrait';
+import { isEmptyString } from '../../utils/LangUtils';
 
 type Props = {
-  imageUrl ? :string;
+  imageUrl :string;
   height ? :string;
   width ? :string;
 }
@@ -14,12 +15,12 @@ const Image = styled.img`
 
 const Portrait = (props :Props) => {
   const {
-    height,
+    height = '265',
     imageUrl,
-    width
+    width = '200'
   } = props;
 
-  if (!imageUrl) {
+  if (isEmptyString(imageUrl)) {
     return (
       <PlaceholderPortrait
           height={height}
@@ -32,7 +33,6 @@ const Portrait = (props :Props) => {
 
 Portrait.defaultProps = {
   height: '265',
-  imageUrl: undefined,
   width: '200',
 };
 

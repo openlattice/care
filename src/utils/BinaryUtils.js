@@ -27,7 +27,7 @@ const isValidBase64 = (value :string) :boolean => {
   }
 };
 
-const formatFileSource = (imageData :string, mimeType :string) :?string => {
+const formatFileSource = (imageData :string, mimeType :string) :string => {
   // if not valid base 64, trust
   if (isValidBase64(imageData)) {
     return `data:${mimeType};base64,${imageData}`;
@@ -37,7 +37,7 @@ const formatFileSource = (imageData :string, mimeType :string) :?string => {
     return imageData;
   }
 
-  return undefined;
+  return '';
 };
 
 const getImageDataFromEntity = (imageEntity :Map) => {
