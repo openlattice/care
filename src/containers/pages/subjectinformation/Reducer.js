@@ -7,7 +7,7 @@ import { Map, fromJS } from 'immutable';
 import { DateTime } from 'luxon';
 
 import { CLEAR, SET_INPUT_VALUE, SET_INPUT_VALUES } from './ActionFactory';
-import { CLEAR_CRISIS_REPORT } from '../../crisis/CrisisActionFactory';
+import { CLEAR_REPORT } from '../../reports/ReportsActions';
 import { SUBJECT_INFORMATION, POST_PROCESS_FIELDS } from '../../../utils/constants/CrisisReportConstants';
 import { getAgeFromIsoDate } from '../../../utils/DateUtils';
 import { FORM_STEP_STATUS } from '../../../utils/constants/FormConstants';
@@ -57,7 +57,7 @@ export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :
       return state.merge(fromJS(action.value));
 
     case CLEAR:
-    case CLEAR_CRISIS_REPORT:
+    case CLEAR_REPORT:
       return INITIAL_STATE;
 
     default:
