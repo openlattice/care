@@ -16,7 +16,7 @@ import { NavLink } from 'react-router-dom';
 import { AppHeaderWrapper, AppNavigationWrapper } from 'lattice-ui-kit';
 
 import OpenLatticeLogo from '../../assets/images/logo_v2.png';
-import { useOrganization, useLogout } from '../../components/hooks';
+import { useOrganization } from '../../components/hooks';
 import { media } from '../../utils/StyleUtils';
 import {
   DASHBOARD_PATH,
@@ -51,7 +51,6 @@ type Props = {
 const AppHeaderContainer = (props :Props) => {
   const { organizations = Map() } = props;
   const [selectedOrganizationId, isLoading, switchOrganization] = useOrganization();
-  const logout = useLogout();
 
   const onChange = useCallback(({ value } :any) => {
     switchOrganization(value);
