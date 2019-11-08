@@ -48,7 +48,7 @@ type Props = {
   organizations :Map;
 };
 
-const NewAppHeaderContainer = (props :Props) => {
+const AppHeaderContainer = (props :Props) => {
   const { organizations = Map() } = props;
   const [selectedOrganizationId, isLoading, switchOrganization] = useOrganization();
   const logout = useLogout();
@@ -106,4 +106,4 @@ const NewAppHeaderContainer = (props :Props) => {
   );
 };
 
-export default NewAppHeaderContainer;
+export default AppHeaderContainer;

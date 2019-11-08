@@ -13,7 +13,7 @@ import { RequestStates } from 'redux-reqseq';
 import { Spinner } from 'lattice-ui-kit';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
-import NewAppHeaderContainer from './NewAppHeaderContainer';
+import AppHeaderContainer from './AppHeaderContainer';
 import CrisisReportContainer from '../reports/CrisisReportContainer';
 import DownloadsContainer from '../downloads/DownloadsContainer';
 import HomeContainer from '../home/HomeContainer';
@@ -153,7 +153,7 @@ class AppContainer extends Component<Props> {
 
     return (
       <AppContainerWrapper>
-        <NewAppHeaderContainer organizations={organizations} />
+        <AppHeaderContainer organizations={organizations} />
         <AppContentOuterWrapper>
           { this.renderAppContent() }
         </AppContentOuterWrapper>
