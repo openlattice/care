@@ -94,6 +94,7 @@ class SubjectQuickSearch extends Component<Props> {
     const { actions } = this.props;
     if (option) {
       const { value } = option;
+      const isNewPerson = getIn(value, ['isNewPerson', 0]) || false;
       const age = getPersonAge(value);
 
       actions.setInputValues({
@@ -108,7 +109,7 @@ class SubjectQuickSearch extends Component<Props> {
         [SUBJECT_INFORMATION.GENDER]: getIn(value, [PERSON_SEX_FQN, 0], ''),
         [SUBJECT_INFORMATION.AGE]: age,
         [SUBJECT_INFORMATION.SSN_LAST_4]: getIn(value, [PERSON_SSN_LAST_4_FQN, 0], ''),
-        [SUBJECT_INFORMATION.IS_NEW_PERSON]: false
+        [SUBJECT_INFORMATION.IS_NEW_PERSON]: isNewPerson
       });
     }
   }

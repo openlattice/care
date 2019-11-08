@@ -155,7 +155,9 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
 
     if (error) throw error;
 
-    const hits = fromJS(data.hits);
+    const hits = fromJS(data.hits)
+      .sortBy((entity) => entity.getIn([FQN.PERSON_LAST_NAME_FQN]));
+
     const peopleEKIDs = hits.map((person) => person.getIn([OPENLATTICE_ID_FQN, 0]));
 
     yield put(searchPeople.success(action.id, hits));

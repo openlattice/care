@@ -19,6 +19,9 @@ import {
   UNABLE_TO_CONTACT,
   NOT_ARRESTED,
 } from '../pages/disposition/Constants';
+import Logger from '../../utils/Logger';
+
+const LOG = new Logger('ReportsUtils');
 
 const compileSubjectData = (subjectData :Map, reportData :Map) => {
   const subjectDob = subjectData.getIn([FQN.PERSON_DOB_FQN, 0], '');
@@ -146,10 +149,34 @@ const compileDispositionData = (data :Map) => {
   };
 };
 
+const getEntityDataFromFields = (formData :Object, fields :Object, propertyTypeIds :Map) => {
+  const entityData = {};
+  Object.keys(fields).forEach((field) => {
+    const fqn = fields[field];
+    const propertyTypeId = propertyTypeIds.get(fqn);
+    if (!propertyTypeId) {
+      LOG.error('propertyType id for fqn not found', fqn);
+    }
+    else {
+      let updatedValue;
+      if (Array.isArray(formData[field])) {
+        updatedValue = formData[field];
+      }
+      else {
+        updatedValue = [formData[field]];
+      }
+      entityData[propertyTypeId] = updatedValue;
+    }
+  });
+
+  return entityData;
+};
+
 export {
   compileDispositionData,
   compileNatureOfCrisisData,
   compileObservedBehaviorData,
   compileOfficerSafetyData,
   compileSubjectData,
+  getEntityDataFromFields,
 };

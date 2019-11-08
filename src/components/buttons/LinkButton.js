@@ -1,19 +1,11 @@
 // @flow
-import React, { Component } from 'react';
+import React from 'react';
 import type { Node } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { Button } from 'lattice-ui-kit';
 
-import type { Dispatch } from 'redux';
-import type { RequestSequence } from 'redux-reqseq';
-
-import { goToPath } from '../../core/router/RoutingActions';
+import { useGoToPath } from '../hooks';
 
 type Props = {
-  actions :{
-    goToPath :RequestSequence;
-  };
   children :Node;
   className ? :string;
   disabled ? :boolean;
@@ -23,45 +15,37 @@ type Props = {
   to :string;
 }
 
-class LinkButton extends Component<Props> {
+const LinkButton = (props :Props) => {
+  const {
+    children,
+    className,
+    disabled,
+    isLoading,
+    mode,
+    state,
+    to,
+  } = props;
 
-  static defaultProps = {
-    className: undefined,
-    disabled: false,
-    isLoading: false,
-    mode: undefined,
-    state: undefined,
-  };
+  const onClick = useGoToPath(to, state);
 
-  handleOnClick = () => {
-    const { to, actions, state } = this.props;
-    actions.goToPath(to, state);
-  }
+  return (
+    <Button
+        className={className}
+        disabled={disabled}
+        isLoading={isLoading}
+        mode={mode}
+        onClick={onClick}>
+      {children}
+    </Button>
+  );
+};
 
-  render() {
-    const {
-      children,
-      className,
-      disabled,
-      isLoading,
-      mode,
-    } = this.props;
-    return (
-      <Button
-          className={className}
-          disabled={disabled}
-          isLoading={isLoading}
-          mode={mode}
-          onClick={this.handleOnClick}>
-        {children}
-      </Button>
-    );
-  }
-}
+LinkButton.defaultProps = {
+  className: undefined,
+  disabled: false,
+  isLoading: false,
+  mode: undefined,
+  state: undefined,
+};
 
-const mapDispatchToProps = (dispatch :Dispatch<*>) => ({
-  actions: bindActionCreators({ goToPath }, dispatch)
-});
-
-// $FlowFixMe
-export default connect(null, mapDispatchToProps)(LinkButton);
+export default LinkButton;

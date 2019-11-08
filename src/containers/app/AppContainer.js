@@ -15,7 +15,7 @@ import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import AppHeaderContainer from './AppHeaderContainer';
 import NewAppHeaderContainer from './NewAppHeaderContainer';
-import CrisisReportContainer from '../crisis/CrisisReportContainer';
+import CrisisReportContainer from '../reports/CrisisReportContainer';
 import DownloadsContainer from '../downloads/DownloadsContainer';
 import HomeContainer from '../home/HomeContainer';
 import PeopleRouter from '../people/PeopleRouter';
