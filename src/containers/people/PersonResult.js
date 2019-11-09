@@ -59,7 +59,7 @@ const Details = styled.div`
 const Name = styled.div`
   font-size: 24px
   font-weight: 600;
-  text-transform: uppercase,
+  text-transform: uppercase;
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;

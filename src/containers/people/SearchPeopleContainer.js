@@ -51,7 +51,7 @@ const InputGrid = styled.div`
   align-items: flex-start;
 
   ${media.phone(css`
-  grid-gap: 10px;
+    grid-gap: 10px;
     grid-auto-flow: row;
     grid-template-columns: none;
   `)}
