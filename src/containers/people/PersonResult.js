@@ -2,7 +2,7 @@
 
 import React, { useCallback } from 'react';
 
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Constants } from 'lattice';
 import { Map } from 'immutable';
 import { Button, Card, CardSegment } from 'lattice-ui-kit';
@@ -28,8 +28,15 @@ import {
   PROFILE_ID_PATH,
   PROFILE_PATH,
 } from '../../core/router/Routes';
+import { media } from '../../utils/StyleUtils';
 
 const { OPENLATTICE_ID_FQN } = Constants;
+
+const StyledSegment = styled(CardSegment)`
+  ${media.phone(css`
+    flex-direction: column;
+  `)}
+`;
 
 const Icon = styled(FontAwesomeIcon)`
   margin-left: 8px;
@@ -42,26 +49,47 @@ const Details = styled.div`
   min-width: 0;
   margin: 0 30px;
   font-size: 20px;
+
+  ${media.phone(css`
+    font-size: 16px;
+    margin: 0 10px;
+  `)}
 `;
 
-const Text = styled.div`
-  font-size: ${({ fontSize }) => fontSize};
-  font-weight: ${({ bold }) => (bold && '600')};
-  text-transform: ${({ uppercase }) => (uppercase && 'uppercase')};
+const Name = styled.div`
+  font-size: 24px
+  font-weight: 600;
+  text-transform: uppercase,
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+
+  ${media.phone(css`
+    font-size: 20px;
+  `)}
 `;
 
 const Actions = styled.div`
+  display: grid;
+  grid-gap: 10px;
+  grid-template-rows: 2fr 1fr;
+
+  ${media.phone(css`
+    grid-auto-flow: column;
+    grid-template-rows: none;
+    margin-top: 10px;
+  `)}
+`;
+
+const FlexRow = styled.div`
   display: flex;
-  flex-direction: column;
+  flex: 1;
+  flex-direction: row;
 `;
 
 const BigButton = styled(Button)`
-  height: 100%;
-  margin-bottom: 10px;
+  flex: 2;
 `;
 
 type Props = {
@@ -94,24 +122,25 @@ const PersonResult = (props :Props) => {
 
   return (
     <Card>
-      <CardSegment padding="sm">
-        <Portrait imageUrl={imageUrl} height="128" width="96" />
-        <Details>
-          <Text bold uppercase fontSize="24px">{fullName}</Text>
-          <Detail content={dob} icon={faBirthdayCake} />
-          <Detail content={sex} icon={faVenusMars} />
-          <Detail content={race} icon={faUser} />
-        </Details>
+      <StyledSegment padding="sm">
+        <FlexRow>
+          <Portrait imageUrl={imageUrl} height="128" width="96" />
+          <Details>
+            <Name bold uppercase fontSize="24px">{fullName}</Name>
+            <Detail content={dob} icon={faBirthdayCake} />
+            <Detail content={sex} icon={faVenusMars} />
+            <Detail content={race} icon={faUser} />
+          </Details>
+        </FlexRow>
         <Actions>
           <BigButton mode="secondary" onClick={handleResultClick}>
             View Profile
-            <Icon icon={faChevronRight} />
           </BigButton>
           <LinkButton to={`${CRISIS_PATH}/1`} state={result}>
             New Report
           </LinkButton>
         </Actions>
-      </CardSegment>
+      </StyledSegment>
     </Card>
   );
 };

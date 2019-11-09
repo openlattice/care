@@ -1,7 +1,7 @@
 // @flow
 
 import React, { useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { List, Map, fromJS } from 'immutable';
 import {
   Card,
@@ -29,10 +29,12 @@ import {
   PERSON_FIRST_NAME_FQN,
   PERSON_LAST_NAME_FQN,
 } from '../../edm/DataModelFqns';
+import { media } from '../../utils/StyleUtils';
 
 const NewPersonButton = styled(PlusButton).attrs(() => ({
   forwardedAs: 'a',
-  href: `/bhr/#${CRISIS_PATH}/1`
+  href: `/bhr/#${CRISIS_PATH}/1`,
+  type: null
 }))`
   margin-left: auto;
   margin-bottom: 10px;
@@ -43,9 +45,16 @@ const InputGrid = styled.div`
   display: grid;
   grid-gap: 20px 30px;
   flex: 1;
+
   grid-auto-flow: column;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   align-items: flex-start;
+
+  ${media.phone(css`
+  grid-gap: 10px;
+    grid-auto-flow: row;
+    grid-template-columns: none;
+  `)}
 `;
 
 const Title = styled.h1`
@@ -98,7 +107,7 @@ const SearchPeopleContainer = () => {
           <Card>
             <CardSegment vertical>
               <Title>
-                Search People
+                People
                 <NewPersonButton mode="positive" onClick={handleNewPerson}>New Person</NewPersonButton>
               </Title>
               <form>
@@ -122,14 +131,14 @@ const SearchPeopleContainer = () => {
                     <DatePicker id="dob" value={dob} onChange={setDob} />
                   </div>
                   <div>
-                    <Label stealth>Submit</Label>
+                    <Label stealth>Search People</Label>
                     <Button
                         type="submit"
                         fullWidth
                         isLoading={isLoading}
                         mode="primary"
                         onClick={handleOnSearch}>
-                      Search
+                      Search People
                     </Button>
                   </div>
                 </InputGrid>
