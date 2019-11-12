@@ -131,7 +131,7 @@ const SearchPeopleContainer = () => {
                     <DatePicker id="dob" value={dob} onChange={setDob} />
                   </div>
                   <div>
-                    <Label stealth>Search People</Label>
+                    <Label stealth>Submit</Label>
                     <Button
                         type="submit"
                         fullWidth
