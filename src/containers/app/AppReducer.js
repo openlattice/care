@@ -60,7 +60,7 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
     case loadApp.case(action.type): {
       return loadApp.reducer(state, action, {
         REQUEST: () => {
-          const seqAction :SequenceAction = (action :any);
+          const seqAction :SequenceAction = action;
           return state
             .set('isLoadingApp', true)
             .set('selectedOrganizationId', '')
@@ -68,7 +68,7 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
         },
         SUCCESS: () => {
 
-          const seqAction :SequenceAction = (action :any);
+          const seqAction :SequenceAction = action;
           if (!state.hasIn(['actions', 'loadApp', seqAction.id])) {
             return state;
           }
@@ -143,7 +143,7 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
           return newState;
         },
         FINALLY: () => {
-          const seqAction :SequenceAction = (action :any);
+          const seqAction :SequenceAction = action;
           return state
             .set('isLoadingApp', false)
             .deleteIn(['actions', 'loadApp', seqAction.id]);

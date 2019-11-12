@@ -6,6 +6,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import LatticeAuth from 'lattice-auth';
+import { Route } from 'react-router-dom';
 import { ConnectedRouter } from 'connected-react-router/immutable';
 import { Colors } from 'lattice-ui-kit';
 import { normalize } from 'polished';
@@ -15,6 +16,7 @@ import { createGlobalStyle } from 'styled-components';
 import AppContainer from './containers/app/AppContainer';
 import initializeReduxStore from './core/redux/ReduxStore';
 import initializeRouterHistory from './core/router/RouterHistory';
+import Logout from './core/router/Logout';
 import * as Routes from './core/router/Routes';
 
 // injected by Webpack.DefinePlugin
@@ -82,6 +84,7 @@ if (APP_ROOT_NODE) {
     <Provider store={reduxStore}>
       <>
         <ConnectedRouter history={routerHistory}>
+          <Route path={Routes.LOGOUT_PATH} component={Logout} />
           <AuthRoute path={Routes.ROOT} component={AppContainer} redirectToLogin />
         </ConnectedRouter>
         <NormalizeCSS />
