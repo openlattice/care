@@ -2,6 +2,10 @@ import { Models } from 'lattice';
 
 const { FullyQualifiedName } = Models;
 
+/* Issue */
+const PRIORITY_FQN = new FullyQualifiedName('ol.priority');
+export { PRIORITY_FQN };
+
 /* Is Emergency Contact For */
 const RELATIONSHIP_FQN = new FullyQualifiedName('ol.relationship');
 

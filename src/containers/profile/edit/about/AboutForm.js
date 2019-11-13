@@ -27,7 +27,7 @@ import { getAboutPlan, submitAboutPlan, updateAboutPlan } from './AboutActions';
 import { getResponsibleUserOptions } from '../../../staff/StaffActions';
 import { schema, uiSchema } from './AboutSchemas';
 import { reduceRequestStates } from '../../../../utils/StateUtils';
-import { getAboutPlanAssociations, hydrateAboutSchema } from './AboutUtils';
+import { getAboutPlanAssociations, hydrateSchemaWithStaff } from './AboutUtils';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
 import { PROFILE_ID_PARAM } from '../../../../core/router/Routes';
 
@@ -81,7 +81,7 @@ const AboutForm = (props :Props) => {
   }, [actions, personEKID]);
 
   useEffect(() => {
-    const newSchema = hydrateAboutSchema(schema, responsibleUsers);
+    const newSchema = hydrateSchemaWithStaff(schema, responsibleUsers);
     setSchema(newSchema);
   }, [responsibleUsers, setSchema]);
 
