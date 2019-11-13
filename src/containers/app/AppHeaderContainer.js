@@ -1,7 +1,7 @@
 // @flow
 import React, { useCallback } from 'react';
 import { Map } from 'immutable';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import {
   faDownload,
   faHome,
@@ -34,9 +34,9 @@ const StyledAppHeaderWrapper = styled(AppHeaderWrapper)`
 
   /* hide app title for smaller screens */
   .app-nav-root > h1 {
-    ${media.tablet(css`
+    ${media.tablet`
       display: none;
-    `)}
+    `}
   }
 `;
 

@@ -2,7 +2,7 @@
 
 import React, { useCallback } from 'react';
 
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { Constants } from 'lattice';
 import { Map } from 'immutable';
 import { Button, Card, CardSegment } from 'lattice-ui-kit';
@@ -12,7 +12,6 @@ import {
   faVenusMars,
   faBirthdayCake,
 } from '@fortawesome/pro-solid-svg-icons';
-import { faChevronRight } from '@fortawesome/pro-light-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Portrait from '../../components/portrait/Portrait';
@@ -33,13 +32,9 @@ import { media } from '../../utils/StyleUtils';
 const { OPENLATTICE_ID_FQN } = Constants;
 
 const StyledSegment = styled(CardSegment)`
-  ${media.phone(css`
+  ${media.phone`
     flex-direction: column;
-  `)}
-`;
-
-const Icon = styled(FontAwesomeIcon)`
-  margin-left: 8px;
+  `}
 `;
 
 const Details = styled.div`
@@ -50,10 +45,10 @@ const Details = styled.div`
   margin: 0 30px;
   font-size: 20px;
 
-  ${media.phone(css`
+  ${media.phone`
     font-size: 16px;
     margin: 0 10px;
-  `)}
+  `}
 `;
 
 const Name = styled.div`
@@ -65,9 +60,9 @@ const Name = styled.div`
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 
-  ${media.phone(css`
+  ${media.phone`
     font-size: 20px;
-  `)}
+  `}
 `;
 
 const Actions = styled.div`
@@ -75,11 +70,11 @@ const Actions = styled.div`
   grid-gap: 10px;
   grid-template-rows: 2fr 1fr;
 
-  ${media.phone(css`
+  ${media.phone`
     grid-auto-flow: column;
     grid-template-rows: none;
     margin-top: 10px;
-  `)}
+  `}
 `;
 
 const FlexRow = styled.div`
