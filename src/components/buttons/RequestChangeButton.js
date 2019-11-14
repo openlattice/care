@@ -19,7 +19,6 @@ const ChangeButton = styled(IconButton)`
 const ChangeIcon = <FontAwesomeIcon icon={faCommentAltPlus} fixedWidth />;
 
 type Props = {
-  defaultStaff :Map;
   mode :string;
   defaultComponent :any;
   selectedPerson :Map;
@@ -27,10 +26,9 @@ type Props = {
 
 const RequestChangeButton = (props :Props) => {
   const {
-    defaultStaff,
-    mode,
     defaultComponent,
-    selectedPerson
+    mode,
+    selectedPerson,
   } = props;
   const [isVisible, onOpen, onClose] = useBoolean();
 
@@ -40,11 +38,10 @@ const RequestChangeButton = (props :Props) => {
       <RequestChangeModal
           defaultComponent={defaultComponent}
           selectedPerson={selectedPerson}
-          defaultStaff={defaultStaff}
           isVisible={isVisible}
           onClose={onClose} />
     </>
   );
 };
 
-export default RequestChangeButton;
+export default React.memo<Props>(RequestChangeButton);

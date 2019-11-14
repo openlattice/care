@@ -17,7 +17,6 @@ const {
 
 const constructFormData = (responsibleUser :Map = Map(), defaultComponent :Map = Map()) => {
 
-  debugger;
   const responsibleUserFormData = getFormDataFromEntity(
     responsibleUser,
     STAFF_FQN,
@@ -25,13 +24,15 @@ const constructFormData = (responsibleUser :Map = Map(), defaultComponent :Map =
     0
   );
 
-  console.log(' construct form data', responsibleUserFormData);
-
   return Map().withMutations((mutable) => {
     const page = getPageSectionKey(1, 1);
     if (!responsibleUserFormData.isEmpty()) mutable.mergeIn([page], responsibleUserFormData);
   });
 };
+
+const handleSubmit = () => {
+  
+}
 
 export {
   constructFormData

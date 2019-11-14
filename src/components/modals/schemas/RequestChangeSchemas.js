@@ -55,7 +55,7 @@ const schema = {
       ]
     }
   }
-}
+};
 
 const uiSchema = {
   [getPageSectionKey(1, 1)]: {
