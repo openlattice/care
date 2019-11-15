@@ -31,21 +31,21 @@ const RequestChangeButton = (props :Props) => {
   } = props;
 
   const [isVisible, onOpen, onClose] = useBoolean();
+  const assignee :Map = useSelector((store :Map) => store.getIn(['profile', 'about', 'data']));
+  const currentUser :Map = useSelector((store :Map) => store.getIn(['staff', 'currentUser', 'data']));
   const person = useSelector((store :Map) => store
     .getIn(['profile', 'basicInformation', 'basics', 'data']));
-  const currentUser :Map = useSelector((store :Map) => store.getIn(['staff', 'currentUser', 'data']));
-  const assignee :Map = useSelector((store :Map) => store.getIn(['profile', 'about', 'data']));
 
   return (
     <>
       <ChangeButton mode={mode} onClick={onOpen} icon={ChangeIcon} />
       <RequestChangeModal
-          person={person}
-          currentUser={currentUser}
           assignee={assignee}
+          currentUser={currentUser}
           defaultComponent={defaultComponent}
           isVisible={isVisible}
-          onClose={onClose} />
+          onClose={onClose}
+          person={person} />
     </>
   );
 };

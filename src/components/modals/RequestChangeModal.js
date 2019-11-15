@@ -1,7 +1,8 @@
 // @flow
 import React, { useRef } from 'react';
-import { Modal } from 'lattice-ui-kit';
 import { Map } from 'immutable';
+import { Modal } from 'lattice-ui-kit';
+
 import RequestChangeForm from '../../containers/inbox/request/RequestChangesForm';
 
 type Props = {

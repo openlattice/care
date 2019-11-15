@@ -16,6 +16,7 @@ import dashboardReducer from '../../containers/dashboard/DashboardReducer';
 import downloadsReducer from '../../containers/downloads/DownloadsReducer';
 import edmReducer from '../../edm/EdmReducer';
 import hospitalsReducer from '../../containers/form/HospitalsReducer';
+import inboxReducer from '../../containers/inbox/InboxReducer';
 import peopleReducer from '../../containers/people/PeopleReducer';
 import profileReducer from '../../containers/profile/reducers/ProfileReducer';
 import reportsReducer from '../../containers/reports/ReportsReducer';
@@ -39,6 +40,7 @@ export default function reduxReducer(routerHistory :any) {
     downloads: downloadsReducer,
     edm: edmReducer,
     hospitals: hospitalsReducer,
+    inbox: inboxReducer,
     people: peopleReducer,
     profile: profileReducer,
     reports: reportsReducer,
