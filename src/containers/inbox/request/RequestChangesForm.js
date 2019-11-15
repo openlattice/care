@@ -16,7 +16,7 @@ import { schema, uiSchema } from './RequestChangeSchemas';
 import { getResponsibleUserOptions } from '../../staff/StaffActions';
 import { hydrateSchemaWithStaff } from '../../profile/edit/about/AboutUtils';
 import { constructFormData, getRequestChangesAssociations } from './RequestChangesUtils';
-import { submitRequestChanges } from './RequestChangesActions';
+import { submitRequestChanges, resetRequestChangesState } from './RequestChangesActions';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
 
 const { STAFF_FQN } = APP_TYPES_FQNS;
@@ -54,6 +54,13 @@ const RequestChangesForm = (props :Props, ref) => {
 
   const [changeSchema, setSchema] = useState(schema);
   const dispatch = useDispatch();
+
+  // clean up requestStates on mount/unmount
+  useEffect(() => {
+    dispatch(resetRequestChangesState());
+
+    return () => dispatch(resetRequestChangesState());
+  }, [dispatch]);
 
   useEffect(() => {
     dispatch(getResponsibleUserOptions());
@@ -111,4 +118,6 @@ const RequestChangesForm = (props :Props, ref) => {
   );
 };
 
-export default React.forwardRef<Props, typeof StyledForm>(RequestChangesForm);
+export default React.memo<Props, typeof StyledForm>(
+  React.forwardRef(RequestChangesForm)
+);

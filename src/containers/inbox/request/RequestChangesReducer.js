@@ -4,7 +4,7 @@ import { Map, fromJS } from 'immutable';
 import { RequestStates } from 'redux-reqseq';
 import type { SequenceAction } from 'redux-reqseq';
 
-import { submitRequestChanges } from './RequestChangesActions';
+import { RESET_REQUEST_CHANGES_STATE, submitRequestChanges } from './RequestChangesActions';
 
 const INITIAL_STATE :Map = fromJS({
   data: Map(),
@@ -24,6 +24,13 @@ const RequestChangesReducer = (state :Map = INITIAL_STATE, action :SequenceActio
         SUCCESS: () => state.set('submitState', RequestStates.SUCCESS),
         FAILURE: () => state.set('submitState', RequestStates.FAILURE),
       });
+    }
+
+    case RESET_REQUEST_CHANGES_STATE: {
+      return state
+        .set('submitState', RequestStates.STANDBY)
+        .set('updateState', RequestStates.STANDBY)
+        .set('fetchState', RequestStates.STANDBY);
     }
 
     default:

@@ -1,11 +1,14 @@
 // @flow
-import React from 'react';
+import React, { useEffect } from 'react';
+
 import styled from 'styled-components';
-import { Map } from 'immutable';
-import { useSelector } from 'react-redux';
-import { IconButton, Hooks } from 'lattice-ui-kit';
 import { faCommentAltPlus } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Map } from 'immutable';
+import { IconButton, Hooks } from 'lattice-ui-kit';
+import { useDispatch, useSelector } from 'react-redux';
+import { RequestStates } from 'redux-reqseq';
+import { resetRequestChangesState } from '../../containers/inbox/request/RequestChangesActions';
 
 import RequestChangeModal from '../modals/RequestChangeModal';
 
@@ -35,12 +38,20 @@ const RequestChangeButton = (props :Props) => {
   const currentUser :Map = useSelector((store :Map) => store.getIn(['staff', 'currentUser', 'data']));
   const person = useSelector((store :Map) => store
     .getIn(['profile', 'basicInformation', 'basics', 'data']));
+  const submitState = useSelector((store) => store.getIn(['inbox', 'requestChanges', 'submitState']));
+
+  useEffect(() => {
+    if (submitState === RequestStates.SUCCESS) {
+      onClose();
+    }
+  }, [onClose, submitState]);
 
   return (
     <>
       <ChangeButton mode={mode} onClick={onOpen} icon={ChangeIcon} />
       <RequestChangeModal
           assignee={assignee}
+          submitState={submitState}
           currentUser={currentUser}
           defaultComponent={defaultComponent}
           isVisible={isVisible}

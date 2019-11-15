@@ -1,9 +1,18 @@
 // @flow
 import React, { useRef } from 'react';
 import { Map } from 'immutable';
-import { Modal } from 'lattice-ui-kit';
+import { RequestStates } from 'redux-reqseq';
+import { ActionModal } from 'lattice-ui-kit';
+import type { RequestState } from 'redux-reqseq';
 
 import RequestChangeForm from '../../containers/inbox/request/RequestChangesForm';
+
+const emptyBody = {
+  [RequestStates.PENDING]: <></>,
+  [RequestStates.SUCCESS]: <></>,
+  [RequestStates.FAILURE]: <></>,
+  [RequestStates.STANDBY]: <></>,
+};
 
 type Props = {
   assignee :Map;
@@ -12,6 +21,7 @@ type Props = {
   isVisible :boolean;
   onClose :() => void;
   person :Map;
+  submitState :RequestState;
 };
 
 const RequestChangeModal = (props :Props) => {
@@ -22,6 +32,7 @@ const RequestChangeModal = (props :Props) => {
     isVisible,
     onClose,
     person,
+    submitState,
   } = props;
   const formRef = useRef();
 
@@ -32,7 +43,9 @@ const RequestChangeModal = (props :Props) => {
   };
 
   return (
-    <Modal
+    <ActionModal
+        requestState={submitState}
+        requestStateComponents={emptyBody}
         isVisible={isVisible}
         onClickPrimary={handleExternalSubmit}
         onClose={onClose}
@@ -47,7 +60,7 @@ const RequestChangeModal = (props :Props) => {
           defaultComponent={defaultComponent}
           person={person}
           ref={formRef} />
-    </Modal>
+    </ActionModal>
   );
 };
 
