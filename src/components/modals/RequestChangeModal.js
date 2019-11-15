@@ -1,77 +1,34 @@
 // @flow
-import React, {
-  useEffect,
-  useRef,
-  useState,
-  useMemo
-} from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import styled from 'styled-components';
-import { Map, List } from 'immutable';
-import { Modal, StyleUtils } from 'lattice-ui-kit';
-import { Form } from 'lattice-fabricate';
-
-import { useFormData } from '../hooks';
-import { schema, uiSchema } from './schemas/RequestChangeSchemas';
-import { getResponsibleUserOptions } from '../../containers/staff/StaffActions';
-import { hydrateSchemaWithStaff } from '../../containers/profile/edit/about/AboutUtils';
-import { constructFormData } from './utils/RequestChangesUtils';
-
-const { media } = StyleUtils;
-
-const StyledForm = styled(Form)`
-  width: 500px;
-  ${media.phone`
-    width: 300px;
-  `}
-`;
+import React, { useRef } from 'react';
+import { Modal } from 'lattice-ui-kit';
+import { Map } from 'immutable';
+import RequestChangeForm from '../../containers/inbox/request/RequestChangesForm';
 
 type Props = {
+  assignee :Map;
+  currentUser :Map;
+  defaultComponent :string;
   isVisible :boolean;
   onClose :() => void;
-  defaultComponent :any;
+  person :Map;
 };
 
 const RequestChangeModal = (props :Props) => {
   const {
+    assignee,
+    currentUser,
     defaultComponent,
     isVisible,
-    onClose
+    onClose,
+    person,
   } = props;
-  const formRef = useRef<typeof StyledForm>(null);
-  const [changeSchema, setSchema] = useState(schema);
-  const dispatch = useDispatch();
-
-  const responsibleUsers :List<Map> = useSelector((store :Map) => store
-    .getIn(['staff', 'responsibleUsers', 'data']));
-  const currentUser :Map = useSelector((store :Map) => store
-    .getIn(['staff', 'currentUser', 'data']));
-  const responsibleUser :Map = useSelector((store :Map) => store
-    .getIn(['profile', 'about', 'data']));
+  const formRef = useRef();
 
   const handleExternalSubmit = () => {
     if (formRef.current) {
       formRef.current.submit();
     }
   };
-
-  useEffect(() => {
-    if (isVisible) {
-      dispatch(getResponsibleUserOptions());
-    }
-  }, [dispatch, isVisible]);
-
-  useEffect(() => {
-    const newSchema = hydrateSchemaWithStaff(schema, responsibleUsers);
-    setSchema(newSchema);
-  }, [responsibleUsers]);
-
-  const defaultFormData = useMemo(() => constructFormData(
-    responsibleUser,
-    defaultComponent,
-  ), [responsibleUser, defaultComponent]);
-
-  const [formData, setFormData] = useFormData(defaultFormData);
 
   return (
     <Modal
@@ -82,14 +39,12 @@ const RequestChangeModal = (props :Props) => {
         textSecondary="Discard"
         onClickPrimary={handleExternalSubmit}
         textTitle="Request Changes">
-      <StyledForm
-          hideSubmit
-          noPadding
-          ref={formRef}
-          formData={formData}
-          onChange={setFormData}
-          schema={changeSchema}
-          uiSchema={uiSchema} />
+      <RequestChangeForm
+          assignee={assignee}
+          currentUser={currentUser}
+          defaultComponent={defaultComponent}
+          person={person}
+          ref={formRef} />
     </Modal>
   );
 };

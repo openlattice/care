@@ -17,10 +17,13 @@ import EditLinkButton from '../../../components/buttons/EditLinkButton';
 import RequestChangeButton from '../../../components/buttons/RequestChangeButton';
 import BehaviorItem from './BehaviorItem';
 import Triggers from './Triggers';
+import OfficerSafetyConcernsList from '../../../components/premium/officersafety/OfficerSafetyConcernsList';
 import { OFFICER_SAFETY_PATH, EDIT_PATH } from '../../../core/router/Routes';
 import { DashedList, H1, IconWrapper } from '../../../components/layout';
 import { countSafetyIncidents } from './Utils';
-import OfficerSafetyConcernsList from '../../../components/premium/officersafety/OfficerSafetyConcernsList';
+import { COMPONENTS } from '../../inbox/request/constants';
+
+const { OFFICER_SAFETY } = COMPONENTS;
 
 const StyledCardSegment = styled(CardSegment)`
   min-height: 100px;
@@ -44,7 +47,7 @@ const OfficerSafetyCard = (props :Props) => {
     officerSafety,
     reports,
     showEdit,
-    triggers
+    triggers,
   } = props;
 
   const safetyIncidentCounts = useMemo(() => countSafetyIncidents(reports), [reports]);
@@ -57,9 +60,11 @@ const OfficerSafetyCard = (props :Props) => {
           <IconWrapper>
             <FontAwesomeIcon icon={faExclamationTriangle} fixedWidth />
           </IconWrapper>
-          Officer Safety
+          { OFFICER_SAFETY }
           { showEdit && <EditLinkButton mode="subtle" to={`${match.url}${EDIT_PATH}${OFFICER_SAFETY_PATH}`} /> }
-          <RequestChangeButton mode="subtle" />
+          <RequestChangeButton
+              defaultComponent={OFFICER_SAFETY}
+              mode="subtle" />
         </H1>
       </CardHeader>
       <StyledCardSegment padding="sm" vertical>

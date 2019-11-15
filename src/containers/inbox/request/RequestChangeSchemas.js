@@ -8,7 +8,11 @@ import {
   PRIORITY_FQN,
   TITLE_FQN,
 } from '../../../edm/DataModelFqns';
-import { COMPONENTS, PRIORITIES } from './constants';
+import {
+  COMPONENTS_VALUES,
+  PRIORITIES,
+  PRIORITIES_VALUES,
+} from './constants';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
@@ -29,13 +33,13 @@ const schema = {
         [getEntityAddressKey(0, ISSUE_FQN, PRIORITY_FQN)]: {
           type: 'string',
           title: 'Priority',
-          enum: PRIORITIES,
-          default: PRIORITIES[2]
+          enum: PRIORITIES_VALUES,
+          default: PRIORITIES.MEDIUM
         },
         [getEntityAddressKey(0, ISSUE_FQN, CATEGORY_FQN)]: {
           type: 'string',
           title: 'Component',
-          enum: COMPONENTS
+          enum: COMPONENTS_VALUES
         },
         [getEntityAddressKey(0, ISSUE_FQN, DESCRIPTION_FQN)]: {
           type: 'string',
@@ -59,7 +63,7 @@ const schema = {
 
 const uiSchema = {
   [getPageSectionKey(1, 1)]: {
-    classNames: 'column-span-12',
+    classNames: 'column-span-12 grid-container',
     [getEntityAddressKey(0, STAFF_FQN, OPENLATTICE_ID_FQN)]: {
       classNames: 'column-span-12',
     },
