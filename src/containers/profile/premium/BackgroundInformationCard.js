@@ -15,10 +15,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAddressCard } from '@fortawesome/pro-solid-svg-icons';
 
 import EditLinkButton from '../../../components/buttons/EditLinkButton';
+import RequestChangeButton from '../../../components/buttons/RequestChangeButton';
 import { RESPONSE_PLAN_PATH, EDIT_PATH } from '../../../core/router/Routes';
 import { CONTEXT_FQN } from '../../../edm/DataModelFqns';
 import { isNonEmptyString, isEmptyString } from '../../../utils/LangUtils';
-import { H1, IconWrapper } from '../../../components/layout';
+import { H1, HeaderActions, IconWrapper } from '../../../components/layout';
+import { COMPONENTS } from '../../inbox/request/constants';
+
+const { RESPONSE_PLAN } = COMPONENTS;
 
 const Text = styled.p`
   white-space: pre-wrap;
@@ -48,7 +52,10 @@ const BackgroundInformationCard = (props :Props) => {
             <FontAwesomeIcon icon={faAddressCard} fixedWidth />
           </IconWrapper>
           Background Information
-          { showEdit && <EditLinkButton mode="primary" to={`${match.url}${EDIT_PATH}${RESPONSE_PLAN_PATH}`} /> }
+          <HeaderActions>
+            { showEdit && <EditLinkButton mode="primary" to={`${match.url}${EDIT_PATH}${RESPONSE_PLAN_PATH}`} /> }
+            <RequestChangeButton defaultComponent={RESPONSE_PLAN} mode="primary" />
+          </HeaderActions>
         </H1>
       </CardHeader>
       <CardSegment vertical padding="sm">

@@ -12,10 +12,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfoSquare } from '@fortawesome/pro-solid-svg-icons';
 
 import EditLinkButton from '../../buttons/EditLinkButton';
+import Detail from '../styled/Detail';
+import RequestChangeButton from '../../buttons/RequestChangeButton';
 import { ABOUT_PATH, EDIT_PATH } from '../../../core/router/Routes';
 import { PERSON_ID_FQN } from '../../../edm/DataModelFqns';
-import { H1, IconWrapper } from '../../layout';
-import Detail from '../styled/Detail';
+import { H1, HeaderActions, IconWrapper } from '../../layout';
+import { COMPONENTS } from '../../../containers/inbox/request/constants';
+
+const { ABOUT } = COMPONENTS;
 
 type Props = {
   isLoading :boolean;
@@ -35,7 +39,10 @@ const AboutPlanCard = (props :Props) => {
             <FontAwesomeIcon icon={faInfoSquare} fixedWidth />
           </IconWrapper>
           About Plan
-          { showEdit && <EditLinkButton mode="subtle" to={`${match.url}${EDIT_PATH}${ABOUT_PATH}`} /> }
+          <HeaderActions>
+            { showEdit && <EditLinkButton mode="subtle" to={`${match.url}${EDIT_PATH}${ABOUT_PATH}`} /> }
+            <RequestChangeButton defaultComponent={ABOUT} mode="subtle" />
+          </HeaderActions>
         </H1>
       </CardHeader>
       <CardSegment vertical padding="sm">

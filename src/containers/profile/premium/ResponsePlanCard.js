@@ -15,11 +15,14 @@ import { withRouter } from 'react-router-dom';
 import type { Match } from 'react-router-dom';
 
 import EditLinkButton from '../../../components/buttons/EditLinkButton';
+import InteractionStrategy from '../../../components/premium/responseplan/InteractionStrategy';
+import RequestChangeButton from '../../../components/buttons/RequestChangeButton';
 import { RESPONSE_PLAN_PATH, EDIT_PATH } from '../../../core/router/Routes';
 import { TITLE_FQN, DESCRIPTION_FQN } from '../../../edm/DataModelFqns';
-import InteractionStrategy from '../../../components/premium/responseplan/InteractionStrategy';
-import { H1, IconWrapper } from '../../../components/layout';
+import { H1, HeaderActions, IconWrapper } from '../../../components/layout';
+import { COMPONENTS } from '../../inbox/request/constants';
 
+const { RESPONSE_PLAN } = COMPONENTS;
 const { OPENLATTICE_ID_FQN } = Constants;
 
 type Props = {
@@ -42,7 +45,10 @@ const ResponsePlanCard = ({
           <FontAwesomeIcon icon={faClipboardListCheck} fixedWidth />
         </IconWrapper>
         Response Plan
-        { showEdit && <EditLinkButton mode="primary" to={`${match.url}${EDIT_PATH}${RESPONSE_PLAN_PATH}`} /> }
+        <HeaderActions>
+          { showEdit && <EditLinkButton mode="primary" to={`${match.url}${EDIT_PATH}${RESPONSE_PLAN_PATH}`} /> }
+          <RequestChangeButton defaultComponent={RESPONSE_PLAN} mode="primary" />
+        </HeaderActions>
       </H1>
     </CardHeader>
     <CardSegment vertical padding="sm">

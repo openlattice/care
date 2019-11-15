@@ -19,7 +19,12 @@ import BehaviorItem from './BehaviorItem';
 import Triggers from './Triggers';
 import OfficerSafetyConcernsList from '../../../components/premium/officersafety/OfficerSafetyConcernsList';
 import { OFFICER_SAFETY_PATH, EDIT_PATH } from '../../../core/router/Routes';
-import { DashedList, H1, IconWrapper } from '../../../components/layout';
+import {
+  DashedList,
+  H1,
+  HeaderActions,
+  IconWrapper,
+} from '../../../components/layout';
 import { countSafetyIncidents } from './Utils';
 import { COMPONENTS } from '../../inbox/request/constants';
 
@@ -61,10 +66,12 @@ const OfficerSafetyCard = (props :Props) => {
             <FontAwesomeIcon icon={faExclamationTriangle} fixedWidth />
           </IconWrapper>
           { OFFICER_SAFETY }
-          { showEdit && <EditLinkButton mode="subtle" to={`${match.url}${EDIT_PATH}${OFFICER_SAFETY_PATH}`} /> }
-          <RequestChangeButton
-              defaultComponent={OFFICER_SAFETY}
-              mode="subtle" />
+          <HeaderActions>
+            { showEdit && <EditLinkButton mode="subtle" to={`${match.url}${EDIT_PATH}${OFFICER_SAFETY_PATH}`} /> }
+            <RequestChangeButton
+                defaultComponent={OFFICER_SAFETY}
+                mode="subtle" />
+          </HeaderActions>
         </H1>
       </CardHeader>
       <StyledCardSegment padding="sm" vertical>

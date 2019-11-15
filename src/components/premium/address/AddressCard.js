@@ -12,13 +12,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { withRouter } from 'react-router-dom';
 import type { Match } from 'react-router-dom';
 
-import * as FQN from '../../../edm/DataModelFqns';
+import Address from './Address';
 import EditLinkButton from '../../buttons/EditLinkButton';
+import RequestChangeButton from '../../buttons/RequestChangeButton';
 import { BASIC_PATH, EDIT_PATH } from '../../../core/router/Routes';
 import { formatCityStateZip } from './AddressUtils';
-import { H1, IconWrapper } from '../../layout';
-import Address from './Address';
+import { H1, HeaderActions, IconWrapper } from '../../layout';
+import { COMPONENTS } from '../../../containers/inbox/request/constants';
+import * as FQN from '../../../edm/DataModelFqns';
 
+const { BASIC_INFORMATION } = COMPONENTS;
 
 type Props = {
   address :Map;
@@ -52,7 +55,10 @@ const AddressCard = (props :Props) => {
             <FontAwesomeIcon icon={faHome} />
           </IconWrapper>
           Address
-          { showEdit && <EditLinkButton mode="primary" to={`${match.url}${EDIT_PATH}${BASIC_PATH}`} /> }
+          <HeaderActions>
+            { showEdit && <EditLinkButton mode="primary" to={`${match.url}${EDIT_PATH}${BASIC_PATH}`} /> }
+            <RequestChangeButton defaultComponent={BASIC_INFORMATION} mode="primary" />
+          </HeaderActions>
         </H1>
       </CardHeader>
       <CardSegment vertical padding="sm">
