@@ -34,12 +34,13 @@ const RequestChangeModal = (props :Props) => {
   return (
     <Modal
         isVisible={isVisible}
+        onClickPrimary={handleExternalSubmit}
         onClose={onClose}
-        viewportScrolling
+        shouldCloseOnOutsideClick={false}
         textPrimary="Submit"
         textSecondary="Discard"
-        onClickPrimary={handleExternalSubmit}
-        textTitle="Request Changes">
+        textTitle="Request Changes"
+        viewportScrolling>
       <RequestChangeForm
           assignee={assignee}
           currentUser={currentUser}
