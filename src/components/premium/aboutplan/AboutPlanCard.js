@@ -17,7 +17,7 @@ import NewIssueButton from '../../buttons/CreateIssueButton';
 import { ABOUT_PATH, EDIT_PATH } from '../../../core/router/Routes';
 import { PERSON_ID_FQN } from '../../../edm/DataModelFqns';
 import { H1, HeaderActions, IconWrapper } from '../../layout';
-import { CATEGORIES } from '../../../containers/Issues/issue/constants';
+import { CATEGORIES } from '../../../containers/issues/issue/constants';
 
 const { ABOUT } = CATEGORIES;
 

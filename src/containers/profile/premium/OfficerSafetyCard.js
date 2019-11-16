@@ -26,7 +26,7 @@ import {
   IconWrapper,
 } from '../../../components/layout';
 import { countSafetyIncidents } from './Utils';
-import { CATEGORIES } from '../../Issues/issue/constants';
+import { CATEGORIES } from '../../issues/issue/constants';
 
 const { OFFICER_SAFETY } = CATEGORIES;
 

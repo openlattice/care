@@ -30,7 +30,7 @@ import { inchesToFeetString } from '../../../utils/DataUtils';
 import { getLastFirstMiFromPerson } from '../../../utils/PersonUtils';
 import { BASIC_PATH, EDIT_PATH } from '../../../core/router/Routes';
 import { H1, HeaderActions, IconWrapper } from '../../../components/layout';
-import { CATEGORIES } from '../../Issues/issue/constants';
+import { CATEGORIES } from '../../issues/issue/constants';
 import * as FQN from '../../../edm/DataModelFqns';
 
 const { BASIC_INFORMATION } = CATEGORIES;

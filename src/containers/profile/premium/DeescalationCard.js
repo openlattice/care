@@ -22,7 +22,7 @@ import {
   IconWrapper,
   UL
 } from '../../../components/layout';
-import { CATEGORIES } from '../../Issues/issue/constants';
+import { CATEGORIES } from '../../issues/issue/constants';
 import NewIssueButton from '../../../components/buttons/CreateIssueButton';
 
 const { NEUTRALS } = Colors;

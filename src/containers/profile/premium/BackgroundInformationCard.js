@@ -20,7 +20,7 @@ import { RESPONSE_PLAN_PATH, EDIT_PATH } from '../../../core/router/Routes';
 import { CONTEXT_FQN } from '../../../edm/DataModelFqns';
 import { isNonEmptyString, isEmptyString } from '../../../utils/LangUtils';
 import { H1, HeaderActions, IconWrapper } from '../../../components/layout';
-import { CATEGORIES } from '../../Issues/issue/constants';
+import { CATEGORIES } from '../../issues/issue/constants';
 
 const { RESPONSE_PLAN } = CATEGORIES;
 

@@ -18,7 +18,7 @@ import NewIssueButton from '../../buttons/CreateIssueButton';
 import { BASIC_PATH, EDIT_PATH } from '../../../core/router/Routes';
 import { formatCityStateZip } from './AddressUtils';
 import { H1, HeaderActions, IconWrapper } from '../../layout';
-import { CATEGORIES } from '../../../containers/Issues/issue/constants';
+import { CATEGORIES } from '../../../containers/issues/issue/constants';
 import * as FQN from '../../../edm/DataModelFqns';
 
 const { BASIC_INFORMATION } = CATEGORIES;

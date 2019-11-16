@@ -20,7 +20,7 @@ import NewIssueButton from '../../../components/buttons/CreateIssueButton';
 import { RESPONSE_PLAN_PATH, EDIT_PATH } from '../../../core/router/Routes';
 import { TITLE_FQN, DESCRIPTION_FQN } from '../../../edm/DataModelFqns';
 import { H1, HeaderActions, IconWrapper } from '../../../components/layout';
-import { CATEGORIES } from '../../Issues/issue/constants';
+import { CATEGORIES } from '../../issues/issue/constants';
 
 const { RESPONSE_PLAN } = CATEGORIES;
 const { OPENLATTICE_ID_FQN } = Constants;
