@@ -48,11 +48,11 @@ const SidebarWrapper = styled.div`
 
   @media only screen and (min-width: ${MEDIA_QUERY_MD}px) {
     width: 250px;
-  }
+  };
 
   @media only screen and (min-width: ${MEDIA_QUERY_LG}px) {
     width: 300px;
-  }
+  };
 
   h1 {
     color: ${WHITE};
@@ -62,7 +62,8 @@ const SidebarWrapper = styled.div`
 
     @media only screen and (min-width: ${MEDIA_QUERY_MD}px) {
       font-size: 18px;
-    }
+    };
+  };
 `;
 
 const Divider = styled.div`
