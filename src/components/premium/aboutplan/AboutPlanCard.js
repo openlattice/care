@@ -13,13 +13,13 @@ import { faInfoSquare } from '@fortawesome/pro-solid-svg-icons';
 
 import EditLinkButton from '../../buttons/EditLinkButton';
 import Detail from '../styled/Detail';
-import RequestChangeButton from '../../buttons/RequestChangeButton';
+import NewIssueButton from '../../buttons/CreateIssueButton';
 import { ABOUT_PATH, EDIT_PATH } from '../../../core/router/Routes';
 import { PERSON_ID_FQN } from '../../../edm/DataModelFqns';
 import { H1, HeaderActions, IconWrapper } from '../../layout';
-import { COMPONENTS } from '../../../containers/inbox/request/constants';
+import { CATEGORIES } from '../../../containers/Issues/issue/constants';
 
-const { ABOUT } = COMPONENTS;
+const { ABOUT } = CATEGORIES;
 
 type Props = {
   isLoading :boolean;
@@ -41,7 +41,7 @@ const AboutPlanCard = (props :Props) => {
           About Plan
           <HeaderActions>
             { showEdit && <EditLinkButton mode="subtle" to={`${match.url}${EDIT_PATH}${ABOUT_PATH}`} /> }
-            <RequestChangeButton defaultComponent={ABOUT} mode="subtle" />
+            <NewIssueButton defaultComponent={ABOUT} mode="subtle" />
           </HeaderActions>
         </H1>
       </CardHeader>

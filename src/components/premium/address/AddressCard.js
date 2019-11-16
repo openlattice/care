@@ -14,14 +14,14 @@ import type { Match } from 'react-router-dom';
 
 import Address from './Address';
 import EditLinkButton from '../../buttons/EditLinkButton';
-import RequestChangeButton from '../../buttons/RequestChangeButton';
+import NewIssueButton from '../../buttons/CreateIssueButton';
 import { BASIC_PATH, EDIT_PATH } from '../../../core/router/Routes';
 import { formatCityStateZip } from './AddressUtils';
 import { H1, HeaderActions, IconWrapper } from '../../layout';
-import { COMPONENTS } from '../../../containers/inbox/request/constants';
+import { CATEGORIES } from '../../../containers/Issues/issue/constants';
 import * as FQN from '../../../edm/DataModelFqns';
 
-const { BASIC_INFORMATION } = COMPONENTS;
+const { BASIC_INFORMATION } = CATEGORIES;
 
 type Props = {
   address :Map;
@@ -57,7 +57,7 @@ const AddressCard = (props :Props) => {
           Address
           <HeaderActions>
             { showEdit && <EditLinkButton mode="primary" to={`${match.url}${EDIT_PATH}${BASIC_PATH}`} /> }
-            <RequestChangeButton defaultComponent={BASIC_INFORMATION} mode="primary" />
+            <NewIssueButton defaultComponent={BASIC_INFORMATION} mode="primary" />
           </HeaderActions>
         </H1>
       </CardHeader>

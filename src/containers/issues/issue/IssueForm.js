@@ -12,11 +12,11 @@ import { Constants } from 'lattice';
 import { Form, DataProcessingUtils } from 'lattice-fabricate';
 
 import { useFormData } from '../../../components/hooks';
-import { schema, uiSchema } from './RequestChangeSchemas';
+import { schema, uiSchema } from './IssueSchemas';
 import { getResponsibleUserOptions } from '../../staff/StaffActions';
 import { hydrateSchemaWithStaff } from '../../profile/edit/about/AboutUtils';
-import { constructFormData, getRequestChangesAssociations } from './RequestChangesUtils';
-import { submitRequestChanges, resetRequestChangesState } from './RequestChangesActions';
+import { constructFormData, getIssueAssociations } from './IssueUtils';
+import { submitIssue, resetIssueState } from './IssueActions';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
 
 const { STAFF_FQN } = APP_TYPES_FQNS;
@@ -40,7 +40,7 @@ type Props = {
   person :Map;
 };
 
-const RequestChangesForm = (props :Props, ref) => {
+const IssueForm = (props :Props, ref) => {
   const {
     assignee,
     currentUser,
@@ -57,9 +57,9 @@ const RequestChangesForm = (props :Props, ref) => {
 
   // clean up requestStates on mount/unmount
   useEffect(() => {
-    dispatch(resetRequestChangesState());
+    dispatch(resetIssueState());
 
-    return () => dispatch(resetRequestChangesState());
+    return () => dispatch(resetIssueState());
   }, [dispatch]);
 
   useEffect(() => {
@@ -82,7 +82,7 @@ const RequestChangesForm = (props :Props, ref) => {
     const { formData: newFormData } = payload;
 
     const associationEntityData = processAssociationEntityData(
-      getRequestChangesAssociations(newFormData, person, currentUser),
+      getIssueAssociations(newFormData, person, currentUser),
       entitySetIds,
       propertyTypeIds
     );
@@ -94,7 +94,7 @@ const RequestChangesForm = (props :Props, ref) => {
 
     const entityData = processEntityData(withoutAssignee, entitySetIds, propertyTypeIds);
 
-    dispatch(submitRequestChanges({
+    dispatch(submitIssue({
       associationEntityData,
       entityData,
     }));
@@ -119,5 +119,5 @@ const RequestChangesForm = (props :Props, ref) => {
 };
 
 export default React.memo<Props, typeof StyledForm>(
-  React.forwardRef(RequestChangesForm)
+  React.forwardRef(IssueForm)
 );

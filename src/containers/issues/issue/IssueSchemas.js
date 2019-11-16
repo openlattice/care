@@ -9,7 +9,7 @@ import {
   TITLE_FQN,
 } from '../../../edm/DataModelFqns';
 import {
-  COMPONENTS_VALUES,
+  CATEGORY_VALUES,
   PRIORITIES,
   PRIORITIES_VALUES,
 } from './constants';
@@ -38,8 +38,8 @@ const schema = {
         },
         [getEntityAddressKey(0, ISSUE_FQN, CATEGORY_FQN)]: {
           type: 'string',
-          title: 'Component',
-          enum: COMPONENTS_VALUES
+          title: 'Category',
+          enum: CATEGORY_VALUES
         },
         [getEntityAddressKey(0, ISSUE_FQN, DESCRIPTION_FQN)]: {
           type: 'string',

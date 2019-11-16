@@ -22,11 +22,11 @@ import {
   IconWrapper,
   UL
 } from '../../../components/layout';
-import { COMPONENTS } from '../../inbox/request/constants';
-import RequestChangeButton from '../../../components/buttons/RequestChangeButton';
+import { CATEGORIES } from '../../Issues/issue/constants';
+import NewIssueButton from '../../../components/buttons/CreateIssueButton';
 
 const { NEUTRALS } = Colors;
-const { OFFICER_SAFETY } = COMPONENTS;
+const { OFFICER_SAFETY } = CATEGORIES;
 
 const H2 = styled.h2`
   font-size: 16px;
@@ -74,7 +74,7 @@ const DeescalationCard = (props :Props) => {
           De-escalation
           <HeaderActions>
             { showEdit && <EditLinkButton mode="primary" to={`${match.url}${EDIT_PATH}${OFFICER_SAFETY_PATH}`} /> }
-            <RequestChangeButton defaultComponent={OFFICER_SAFETY} mode="primary" />
+            <NewIssueButton defaultComponent={OFFICER_SAFETY} mode="primary" />
           </HeaderActions>
         </H1>
       </CardHeader>

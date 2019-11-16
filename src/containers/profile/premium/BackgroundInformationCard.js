@@ -15,14 +15,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAddressCard } from '@fortawesome/pro-solid-svg-icons';
 
 import EditLinkButton from '../../../components/buttons/EditLinkButton';
-import RequestChangeButton from '../../../components/buttons/RequestChangeButton';
+import NewIssueButton from '../../../components/buttons/CreateIssueButton';
 import { RESPONSE_PLAN_PATH, EDIT_PATH } from '../../../core/router/Routes';
 import { CONTEXT_FQN } from '../../../edm/DataModelFqns';
 import { isNonEmptyString, isEmptyString } from '../../../utils/LangUtils';
 import { H1, HeaderActions, IconWrapper } from '../../../components/layout';
-import { COMPONENTS } from '../../inbox/request/constants';
+import { CATEGORIES } from '../../Issues/issue/constants';
 
-const { RESPONSE_PLAN } = COMPONENTS;
+const { RESPONSE_PLAN } = CATEGORIES;
 
 const Text = styled.p`
   white-space: pre-wrap;
@@ -54,7 +54,7 @@ const BackgroundInformationCard = (props :Props) => {
           Background Information
           <HeaderActions>
             { showEdit && <EditLinkButton mode="primary" to={`${match.url}${EDIT_PATH}${RESPONSE_PLAN_PATH}`} /> }
-            <RequestChangeButton defaultComponent={RESPONSE_PLAN} mode="primary" />
+            <NewIssueButton defaultComponent={RESPONSE_PLAN} mode="primary" />
           </HeaderActions>
         </H1>
       </CardHeader>

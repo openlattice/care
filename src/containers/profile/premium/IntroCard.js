@@ -25,15 +25,15 @@ import type { Match } from 'react-router-dom';
 
 import Detail from '../../../components/premium/styled/Detail';
 import EditLinkButton from '../../../components/buttons/EditLinkButton';
-import RequestChangeButton from '../../../components/buttons/RequestChangeButton';
+import NewIssueButton from '../../../components/buttons/CreateIssueButton';
 import { inchesToFeetString } from '../../../utils/DataUtils';
 import { getLastFirstMiFromPerson } from '../../../utils/PersonUtils';
 import { BASIC_PATH, EDIT_PATH } from '../../../core/router/Routes';
 import { H1, HeaderActions, IconWrapper } from '../../../components/layout';
-import { COMPONENTS } from '../../inbox/request/constants';
+import { CATEGORIES } from '../../Issues/issue/constants';
 import * as FQN from '../../../edm/DataModelFqns';
 
-const { BASIC_INFORMATION } = COMPONENTS;
+const { BASIC_INFORMATION } = CATEGORIES;
 
 const Name = styled(Detail)`
   text-transform: uppercase;
@@ -107,7 +107,7 @@ const IntroCard = (props :Props) => {
           Intro
           <HeaderActions>
             { showEdit && <EditLinkButton mode="primary" to={`${match.url}${EDIT_PATH}${BASIC_PATH}`} /> }
-            <RequestChangeButton defaultComponent={BASIC_INFORMATION} mode="primary" />
+            <NewIssueButton defaultComponent={BASIC_INFORMATION} mode="primary" />
           </HeaderActions>
         </H1>
       </CardHeader>

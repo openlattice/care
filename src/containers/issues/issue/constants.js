@@ -8,7 +8,7 @@ const PRIORITIES = {
 
 const PRIORITIES_VALUES = Object.values(PRIORITIES);
 
-const COMPONENTS = {
+const CATEGORIES = {
   BASIC_INFORMATION: 'Basic Information',
   OFFICER_SAFETY: 'Officer Safety',
   RESPONSE_PLAN: 'Response Plan',
@@ -16,11 +16,11 @@ const COMPONENTS = {
   ABOUT: 'About'
 };
 
-const COMPONENTS_VALUES = Object.values(COMPONENTS);
+const CATEGORY_VALUES = Object.values(CATEGORIES);
 
 export {
-  COMPONENTS,
-  COMPONENTS_VALUES,
+  CATEGORIES,
+  CATEGORY_VALUES,
   PRIORITIES,
   PRIORITIES_VALUES,
 };

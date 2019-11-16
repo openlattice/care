@@ -14,7 +14,7 @@ import type { Match } from 'react-router-dom';
 
 
 import EditLinkButton from '../../../components/buttons/EditLinkButton';
-import RequestChangeButton from '../../../components/buttons/RequestChangeButton';
+import NewIssueButton from '../../../components/buttons/CreateIssueButton';
 import BehaviorItem from './BehaviorItem';
 import Triggers from './Triggers';
 import OfficerSafetyConcernsList from '../../../components/premium/officersafety/OfficerSafetyConcernsList';
@@ -26,9 +26,9 @@ import {
   IconWrapper,
 } from '../../../components/layout';
 import { countSafetyIncidents } from './Utils';
-import { COMPONENTS } from '../../inbox/request/constants';
+import { CATEGORIES } from '../../Issues/issue/constants';
 
-const { OFFICER_SAFETY } = COMPONENTS;
+const { OFFICER_SAFETY } = CATEGORIES;
 
 const StyledCardSegment = styled(CardSegment)`
   min-height: 100px;
@@ -68,7 +68,7 @@ const OfficerSafetyCard = (props :Props) => {
           { OFFICER_SAFETY }
           <HeaderActions>
             { showEdit && <EditLinkButton mode="subtle" to={`${match.url}${EDIT_PATH}${OFFICER_SAFETY_PATH}`} /> }
-            <RequestChangeButton
+            <NewIssueButton
                 defaultComponent={OFFICER_SAFETY}
                 mode="subtle" />
           </HeaderActions>

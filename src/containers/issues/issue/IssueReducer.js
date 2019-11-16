@@ -4,7 +4,7 @@ import { Map, fromJS } from 'immutable';
 import { RequestStates } from 'redux-reqseq';
 import type { SequenceAction } from 'redux-reqseq';
 
-import { RESET_REQUEST_CHANGES_STATE, submitRequestChanges } from './RequestChangesActions';
+import { RESET_ISSUE_STATE, submitIssue } from './IssueActions';
 
 const INITIAL_STATE :Map = fromJS({
   data: Map(),
@@ -15,18 +15,18 @@ const INITIAL_STATE :Map = fromJS({
   updateState: RequestStates.STANDBY,
 });
 
-const RequestChangesReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
+const IssueReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
   switch (action.type) {
 
-    case submitRequestChanges.case(action.type): {
-      return submitRequestChanges.reducer(state, action, {
+    case submitIssue.case(action.type): {
+      return submitIssue.reducer(state, action, {
         REQUEST: () => state.set('submitState', RequestStates.PENDING),
         SUCCESS: () => state.set('submitState', RequestStates.SUCCESS),
         FAILURE: () => state.set('submitState', RequestStates.FAILURE),
       });
     }
 
-    case RESET_REQUEST_CHANGES_STATE: {
+    case RESET_ISSUE_STATE: {
       return state
         .set('submitState', RequestStates.STANDBY)
         .set('updateState', RequestStates.STANDBY)
@@ -38,4 +38,4 @@ const RequestChangesReducer = (state :Map = INITIAL_STATE, action :SequenceActio
   }
 };
 
-export default RequestChangesReducer;
+export default IssueReducer;

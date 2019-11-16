@@ -3,14 +3,14 @@
 import { Map } from 'immutable';
 import { combineReducers } from 'redux-immutable';
 
-import requestChanges from './request/RequestChangesReducer';
-import { CLEAR_INBOX } from './InboxActions';
+import issue from './issue/IssueReducer';
+import { CLEAR_INBOX } from './IssuesActions';
 
 const subReducers = combineReducers({
-  requestChanges,
+  issue,
 });
 
-const inboxReducer = (state :Map, action :Object) => {
+const issuesReducer = (state :Map, action :Object) => {
   if (action.type === CLEAR_INBOX) {
     return subReducers(undefined, action);
   }
@@ -18,4 +18,4 @@ const inboxReducer = (state :Map, action :Object) => {
   return subReducers(state, action);
 };
 
-export default inboxReducer;
+export default issuesReducer;

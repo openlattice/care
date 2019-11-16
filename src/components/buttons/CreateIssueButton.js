@@ -8,9 +8,9 @@ import { Map } from 'immutable';
 import { IconButton, Hooks } from 'lattice-ui-kit';
 import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
-import { resetRequestChangesState } from '../../containers/inbox/request/RequestChangesActions';
+import { resetIssueState } from '../../containers/issues/issue/IssueActions';
 
-import RequestChangeModal from '../modals/RequestChangeModal';
+import CreateIssueModal from '../modals/CreateIssueModal';
 
 const { useBoolean } = Hooks;
 
@@ -27,7 +27,7 @@ type Props = {
   defaultComponent :string;
 };
 
-const RequestChangeButton = (props :Props) => {
+const NewIssueButton = (props :Props) => {
   const {
     defaultComponent,
     mode,
@@ -38,7 +38,7 @@ const RequestChangeButton = (props :Props) => {
   const currentUser :Map = useSelector((store :Map) => store.getIn(['staff', 'currentUser', 'data']));
   const person = useSelector((store :Map) => store
     .getIn(['profile', 'basicInformation', 'basics', 'data']));
-  const submitState = useSelector((store) => store.getIn(['inbox', 'requestChanges', 'submitState']));
+  const submitState = useSelector((store) => store.getIn(['issues', 'issue', 'submitState']));
 
   useEffect(() => {
     if (submitState === RequestStates.SUCCESS) {
@@ -49,7 +49,7 @@ const RequestChangeButton = (props :Props) => {
   return (
     <>
       <ChangeButton mode={mode} onClick={onOpen} icon={ChangeIcon} />
-      <RequestChangeModal
+      <CreateIssueModal
           assignee={assignee}
           submitState={submitState}
           currentUser={currentUser}
@@ -61,4 +61,4 @@ const RequestChangeButton = (props :Props) => {
   );
 };
 
-export default React.memo<Props>(RequestChangeButton);
+export default React.memo<Props>(NewIssueButton);

@@ -5,7 +5,7 @@ import { RequestStates } from 'redux-reqseq';
 import { ActionModal } from 'lattice-ui-kit';
 import type { RequestState } from 'redux-reqseq';
 
-import RequestChangeForm from '../../containers/inbox/request/RequestChangesForm';
+import IssueForm from '../../containers/issues/issue/IssueForm';
 
 const emptyBody = {
   [RequestStates.PENDING]: <></>,
@@ -24,7 +24,7 @@ type Props = {
   submitState :RequestState;
 };
 
-const RequestChangeModal = (props :Props) => {
+const NewIssueModal = (props :Props) => {
   const {
     assignee,
     currentUser,
@@ -52,9 +52,9 @@ const RequestChangeModal = (props :Props) => {
         shouldCloseOnOutsideClick={false}
         textPrimary="Submit"
         textSecondary="Discard"
-        textTitle="Request Changes"
+        textTitle="Create Issue"
         viewportScrolling>
-      <RequestChangeForm
+      <IssueForm
           assignee={assignee}
           currentUser={currentUser}
           defaultComponent={defaultComponent}
@@ -64,4 +64,4 @@ const RequestChangeModal = (props :Props) => {
   );
 };
 
-export default React.memo<Props>(RequestChangeModal);
+export default React.memo<Props>(NewIssueModal);

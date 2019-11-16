@@ -16,13 +16,13 @@ import type { Match } from 'react-router-dom';
 
 import EditLinkButton from '../../../components/buttons/EditLinkButton';
 import InteractionStrategy from '../../../components/premium/responseplan/InteractionStrategy';
-import RequestChangeButton from '../../../components/buttons/RequestChangeButton';
+import NewIssueButton from '../../../components/buttons/CreateIssueButton';
 import { RESPONSE_PLAN_PATH, EDIT_PATH } from '../../../core/router/Routes';
 import { TITLE_FQN, DESCRIPTION_FQN } from '../../../edm/DataModelFqns';
 import { H1, HeaderActions, IconWrapper } from '../../../components/layout';
-import { COMPONENTS } from '../../inbox/request/constants';
+import { CATEGORIES } from '../../Issues/issue/constants';
 
-const { RESPONSE_PLAN } = COMPONENTS;
+const { RESPONSE_PLAN } = CATEGORIES;
 const { OPENLATTICE_ID_FQN } = Constants;
 
 type Props = {
@@ -47,7 +47,7 @@ const ResponsePlanCard = ({
         Response Plan
         <HeaderActions>
           { showEdit && <EditLinkButton mode="primary" to={`${match.url}${EDIT_PATH}${RESPONSE_PLAN_PATH}`} /> }
-          <RequestChangeButton defaultComponent={RESPONSE_PLAN} mode="primary" />
+          <NewIssueButton defaultComponent={RESPONSE_PLAN} mode="primary" />
         </HeaderActions>
       </H1>
     </CardHeader>

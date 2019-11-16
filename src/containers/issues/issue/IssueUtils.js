@@ -42,7 +42,7 @@ const constructFormData = (responsibleUser :Map = Map(), defaultComponent :strin
   });
 };
 
-const getRequestChangesAssociations = (formData :any, person :Map, currentUser :Map) => {
+const getIssueAssociations = (formData :any, person :Map, currentUser :Map) => {
 
   const nowAsIsoString = DateTime.local().toISO();
   const personEKID = getEntityKeyId(person);
@@ -72,5 +72,5 @@ const getRequestChangesAssociations = (formData :any, person :Map, currentUser :
 
 export {
   constructFormData,
-  getRequestChangesAssociations,
+  getIssueAssociations,
 };
