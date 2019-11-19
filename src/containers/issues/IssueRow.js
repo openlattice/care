@@ -6,6 +6,8 @@ import { get } from 'immutable';
 import { Colors, StyleUtils, Tag } from 'lattice-ui-kit';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faChevronUp } from '@fortawesome/pro-regular-svg-icons';
+
+import IssueRowDetails from './IssueRowDetails';
 import {
   TITLE_FQN,
   PRIORITY_FQN,
@@ -30,21 +32,6 @@ const CellContent = styled.div`
 
 const StyledCell = styled.td`
   padding: 10px;
-  text-align: ${(props) => props.align || 'left'};
-  word-wrap: break-word;
-`;
-
-const ExpandedCell = styled.td.attrs(() => ({
-  colSpan: 5
-}))`
-  padding: 10px;
-  outline: none;
-`;
-
-const ExpandedCellContent = styled.div`
-  display: flex;
-  height: 200px;
-  flex: 1;
 `;
 
 type Props = {
@@ -82,12 +69,12 @@ const IssueRow = (props :Props) => {
       <CustomRowWrapper onClick={onClick} expanded={expanded}>
         <StyledCell>
           <CellContent>
-            {title}
+            { title }
           </CellContent>
         </StyledCell>
         <StyledCell>
           <CellContent>
-            {priority}
+            { priority }
           </CellContent>
         </StyledCell>
         <StyledCell>
@@ -97,7 +84,7 @@ const IssueRow = (props :Props) => {
         </StyledCell>
         <StyledCell>
           <CellContent>
-            {created}
+            { created }
           </CellContent>
         </StyledCell>
         <StyledCell>
@@ -105,13 +92,7 @@ const IssueRow = (props :Props) => {
         </StyledCell>
       </CustomRowWrapper>
       {
-        expanded && (
-          <CustomRowWrapper>
-            <ExpandedCell>
-              <ExpandedCellContent />
-            </ExpandedCell>
-          </CustomRowWrapper>
-        )
+        expanded && (<IssueRowDetails data={data} />)
       }
     </>
   );

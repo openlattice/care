@@ -8,7 +8,7 @@ import { Map } from 'immutable';
 import { IconButton, Hooks } from 'lattice-ui-kit';
 import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
-import { resetIssueState } from '../../containers/issues/issue/IssueActions';
+import { resetIssue } from '../../containers/issues/issue/IssueActions';
 
 import CreateIssueModal from '../modals/CreateIssueModal';
 

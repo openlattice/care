@@ -39,7 +39,7 @@ const H1 = styled.h1`
 
 const H2 = styled.h2`
   font-size: 18px;
-  font-weight: 600px;
+  font-weight: 600;
   margin: 0;
 `;
 
@@ -97,7 +97,7 @@ const IssueFilter = styled.div`
 `;
 
 const IssuesContainer = () => {
-  const [activeFilter, setActiveFilter] = useState(MY_OPEN_ISSUES);
+  const [activeFilter, setActiveFilter] = useState(REPORTED_BY_ME);
   const [data, setData] = useState([]);
   const [expandedRowId, setExpandedRowId] = useState();
 

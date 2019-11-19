@@ -12,7 +12,12 @@ import { submitDataGraph } from '../../../core/sagas/data/DataActions';
 import { submitDataGraphWorker } from '../../../core/sagas/data/DataSagas';
 import { isDefined } from '../../../utils/LangUtils';
 
-import { SUBMIT_ISSUE, submitIssue } from './IssueActions';
+import {
+  GET_ISSUE_NEIGHBORS,
+  SUBMIT_ISSUE,
+  getIssueNeighbors,
+  submitIssue
+} from './IssueActions';
 
 const LOG = new Logger('IssueSagas');
 
@@ -37,7 +42,24 @@ function* submitIssueWatcher() :Generator<any, any, any> {
   yield takeEvery(SUBMIT_ISSUE, submitIssueWorker);
 }
 
+function* getIssueNeighborsWorker(action :SequenceAction) :Generator<any, any, any> {
+  try {
+    yield put(getIssueNeighbors.request(action.id));
+    yield put(getIssueNeighbors.success(action.id));
+  }
+  catch (error) {
+    LOG.error('getIssueNeighborsWorker', error);
+    yield put(getIssueNeighbors.failure(action.id));
+  }
+}
+
+function* getIssueNeighborsWatcher() :Generator<any, any, any> {
+  yield takeEvery(GET_ISSUE_NEIGHBORS, getIssueNeighborsWorker);
+}
+
 export {
-  submitIssueWorker,
+  getIssueNeighborsWatcher,
+  getIssueNeighborsWorker,
   submitIssueWatcher,
+  submitIssueWorker,
 };

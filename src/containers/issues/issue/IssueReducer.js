@@ -4,7 +4,7 @@ import { Map, fromJS } from 'immutable';
 import { RequestStates } from 'redux-reqseq';
 import type { SequenceAction } from 'redux-reqseq';
 
-import { RESET_ISSUE_STATE, submitIssue } from './IssueActions';
+import { RESET_ISSUE, submitIssue } from './IssueActions';
 
 const INITIAL_STATE :Map = fromJS({
   data: Map(),
@@ -26,7 +26,7 @@ const IssueReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
       });
     }
 
-    case RESET_ISSUE_STATE: {
+    case RESET_ISSUE: {
       return state
         .set('submitState', RequestStates.STANDBY)
         .set('updateState', RequestStates.STANDBY)

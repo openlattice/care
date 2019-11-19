@@ -3,17 +3,30 @@
 import { newRequestSequence } from 'redux-reqseq';
 import type { RequestSequence } from 'redux-reqseq';
 
+const GET_ISSUE_NEIGHBORS :'GET_ISSUE_NEIGHBORS' = 'GET_ISSUE_NEIGHBORS';
+const getIssueNeighbors :RequestSequence = newRequestSequence(GET_ISSUE_NEIGHBORS);
+
 const SUBMIT_ISSUE :'SUBMIT_ISSUE' = 'SUBMIT_ISSUE';
 const submitIssue :RequestSequence = newRequestSequence(SUBMIT_ISSUE);
 
-const RESET_ISSUE_STATE :'RESET_ISSUE_STATE' = 'RESET_ISSUE_STATE';
-const resetIssueState = () => ({
-  type: RESET_ISSUE_STATE
+const SELECT_ISSUE :'SELECT_ISSUE' = 'SELECT_ISSUE';
+const selectIssue = (value :any) => ({
+  type: SELECT_ISSUE,
+  value
+});
+
+const RESET_ISSUE :'RESET_ISSUE' = 'RESET_ISSUE';
+const resetIssue = () => ({
+  type: RESET_ISSUE
 });
 
 export {
-  RESET_ISSUE_STATE,
+  GET_ISSUE_NEIGHBORS,
+  RESET_ISSUE,
   SUBMIT_ISSUE,
-  resetIssueState,
+  getIssueNeighbors,
+  resetIssue,
   submitIssue,
+  SELECT_ISSUE,
+  selectIssue,
 };

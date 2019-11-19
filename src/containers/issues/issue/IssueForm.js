@@ -16,7 +16,7 @@ import { schema, uiSchema } from './IssueSchemas';
 import { getResponsibleUserOptions } from '../../staff/StaffActions';
 import { hydrateSchemaWithStaff } from '../../profile/edit/about/AboutUtils';
 import { constructFormData, getIssueAssociations } from './IssueUtils';
-import { submitIssue, resetIssueState } from './IssueActions';
+import { submitIssue, resetIssue } from './IssueActions';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
 
 const { STAFF_FQN } = APP_TYPES_FQNS;
@@ -57,9 +57,9 @@ const IssueForm = (props :Props, ref) => {
 
   // clean up requestStates on mount/unmount
   useEffect(() => {
-    dispatch(resetIssueState());
+    dispatch(resetIssue());
 
-    return () => dispatch(resetIssueState());
+    return () => dispatch(resetIssue());
   }, [dispatch]);
 
   useEffect(() => {
