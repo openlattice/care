@@ -1,5 +1,5 @@
 // @flow
-import React, { useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { Map } from 'immutable';
 import { RequestStates } from 'redux-reqseq';
 import { ActionModal } from 'lattice-ui-kit';
@@ -36,11 +36,11 @@ const NewIssueModal = (props :Props) => {
   } = props;
   const formRef = useRef();
 
-  const handleExternalSubmit = () => {
+  const handleExternalSubmit = useCallback(() => {
     if (formRef.current) {
       formRef.current.submit();
     }
-  };
+  }, [formRef]);
 
   return (
     <ActionModal
