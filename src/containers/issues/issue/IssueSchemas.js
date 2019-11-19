@@ -7,6 +7,7 @@ import {
   DESCRIPTION_FQN,
   PRIORITY_FQN,
   TITLE_FQN,
+  STATUS_FQN,
 } from '../../../edm/DataModelFqns';
 import {
   CATEGORY_VALUES,
@@ -48,7 +49,12 @@ const schema = {
         [getEntityAddressKey(0, STAFF_FQN, OPENLATTICE_ID_FQN)]: {
           type: 'string',
           title: 'Assignee'
-        }
+        },
+        [getEntityAddressKey(0, ISSUE_FQN, STATUS_FQN)]: {
+          type: 'string',
+          title: 'Status',
+          default: 'Open',
+        },
       },
       required: [
         getEntityAddressKey(0, ISSUE_FQN, TITLE_FQN),
@@ -56,6 +62,7 @@ const schema = {
         getEntityAddressKey(0, ISSUE_FQN, CATEGORY_FQN),
         getEntityAddressKey(0, ISSUE_FQN, DESCRIPTION_FQN),
         getEntityAddressKey(0, STAFF_FQN, OPENLATTICE_ID_FQN),
+        getEntityAddressKey(0, ISSUE_FQN, STATUS_FQN),
       ]
     }
   }
@@ -79,6 +86,9 @@ const uiSchema = {
     [getEntityAddressKey(0, ISSUE_FQN, DESCRIPTION_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'textarea'
+    },
+    [getEntityAddressKey(0, ISSUE_FQN, STATUS_FQN)]: {
+      'ui:widget': 'hidden'
     }
   }
 };
