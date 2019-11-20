@@ -105,9 +105,9 @@ const IssueRowDetails = () => {
                 </LabelGroup>
                 <Title>{title}</Title>
                 <ButtonGroup>
-                  <Button>Edit</Button>
-                  <Button>Resolve</Button>
-                  <Button mode="primary">Take Action</Button>
+                  <Button size="sm">Edit</Button>
+                  <Button size="sm">Resolve</Button>
+                  <Button size="sm" mode="primary">Take Action</Button>
                 </ButtonGroup>
                 <LabelGrid>
                   <LabelGroup>

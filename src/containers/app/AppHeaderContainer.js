@@ -93,7 +93,7 @@ const AppHeaderContainer = (props :Props) => {
         <hr />
         <NavLink to={ISSUES_PATH}>
           <FontAwesomeIcon size="lg" fixedWidth icon={faFileExclamation} />
-          <NavLabel>Issues</NavLabel>
+          <NavLabel>Manage Issues</NavLabel>
         </NavLink>
         <a
             href="https://support.openlattice.com/servicedesk/customer/portal/1"

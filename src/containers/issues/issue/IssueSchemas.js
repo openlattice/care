@@ -31,6 +31,10 @@ const schema = {
           type: 'string',
           title: 'Title'
         },
+        [getEntityAddressKey(0, STAFF_FQN, OPENLATTICE_ID_FQN)]: {
+          type: 'string',
+          title: 'Assignee'
+        },
         [getEntityAddressKey(0, ISSUE_FQN, PRIORITY_FQN)]: {
           type: 'string',
           title: 'Priority',
@@ -45,10 +49,6 @@ const schema = {
         [getEntityAddressKey(0, ISSUE_FQN, DESCRIPTION_FQN)]: {
           type: 'string',
           title: 'Description'
-        },
-        [getEntityAddressKey(0, STAFF_FQN, OPENLATTICE_ID_FQN)]: {
-          type: 'string',
-          title: 'Assignee'
         },
         [getEntityAddressKey(0, ISSUE_FQN, STATUS_FQN)]: {
           type: 'string',
