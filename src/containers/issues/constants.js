@@ -13,7 +13,7 @@ const cellStyle = {
 const ISSUE_HEADERS = [
   {
     key: TITLE_FQN,
-    label: 'Subject',
+    label: 'Title',
     cellStyle: { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }
   },
   { key: PRIORITY_FQN, label: 'Priority', cellStyle },

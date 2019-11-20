@@ -6,7 +6,16 @@ import { DataProcessingUtils } from 'lattice-fabricate';
 
 import { getFormDataFromEntity, getEntityKeyId } from '../../../utils/DataUtils';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
-import { CATEGORY_FQN, DATE_TIME_FQN, COMPLETED_DT_FQN } from '../../../edm/DataModelFqns';
+import {
+  CATEGORY_FQN,
+  DATE_TIME_FQN,
+  COMPLETED_DT_FQN,
+  DESCRIPTION_FQN,
+  PRIORITY_FQN,
+  TITLE_FQN,
+  STATUS_FQN,
+} from '../../../edm/DataModelFqns';
+import { isValidUuid } from '../../../utils/Utils';
 
 const { getPageSectionKey, getEntityAddressKey } = DataProcessingUtils;
 
@@ -20,12 +29,49 @@ const {
   PEOPLE_FQN,
 } = APP_TYPES_FQNS;
 
-const constructFormData = (responsibleUser :Map = Map(), defaultComponent :string) => {
+const constructEntityIndexToIdMap = (
+  assignedToEKID :UUID,
+  assigneeEKID :UUID,
+  issueEKID :UUID
+) => {
+  const entityIndexToIdMap = Map().withMutations((mutable) => {
+    if (isValidUuid(assigneeEKID)) {
+      mutable.setIn([STAFF_FQN.toString(), 0], assigneeEKID);
+    }
+    if (isValidUuid(assignedToEKID)) {
+      mutable.setIn([ASSIGNED_TO_FQN.toString(), 0], assignedToEKID);
+    }
+    if (isValidUuid(issueEKID)) {
+      mutable.setIn([ISSUE_FQN.toString(), 0], issueEKID);
+    }
+  });
+
+  return entityIndexToIdMap;
+};
+
+const constructFormData = ({
+  assignee,
+  issue,
+  defaultComponent
+} :any) => {
 
   const responsibleUserFormData = getFormDataFromEntity(
-    responsibleUser,
+    assignee,
     STAFF_FQN,
     [OPENLATTICE_ID_FQN],
+    0
+  );
+
+  const issueFormData = getFormDataFromEntity(
+    issue,
+    ISSUE_FQN,
+    [
+      CATEGORY_FQN,
+      DESCRIPTION_FQN,
+      PRIORITY_FQN,
+      TITLE_FQN,
+      STATUS_FQN,
+    ],
     0
   );
 
@@ -39,6 +85,7 @@ const constructFormData = (responsibleUser :Map = Map(), defaultComponent :strin
     const page = getPageSectionKey(1, 1);
     if (!responsibleUserFormData.isEmpty()) mutable.mergeIn([page], responsibleUserFormData);
     if (!componentFormData.isEmpty()) mutable.mergeIn([page], componentFormData);
+    if (!issueFormData.isEmpty()) mutable.mergeIn([page], issueFormData);
   });
 };
 
@@ -71,6 +118,7 @@ const getIssueAssociations = (formData :any, person :Map, currentUser :Map) => {
 };
 
 export {
+  constructEntityIndexToIdMap,
   constructFormData,
   getIssueAssociations,
 };

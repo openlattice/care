@@ -14,6 +14,8 @@ import {
 
 const INITIAL_STATE :Map = fromJS({
   data: List(),
+  subjectsByEKID: Map(),
+  subjectEKIDsByIssueEKID: Map(),
   fetchState: RequestStates.STANDBY,
 });
 
@@ -25,7 +27,7 @@ const FilteredIssues = (state :Map = INITIAL_STATE, action :SequenceAction) => {
         REQUEST: () => state.set('fetchState', RequestStates.PENDING),
         SUCCESS: () => state
           .set('fetchState', RequestStates.SUCCESS)
-          .set('data', action.value),
+          .merge(action.value),
         FAILURE: () => state.set('fetchState', RequestStates.FAILURE),
       });
     }

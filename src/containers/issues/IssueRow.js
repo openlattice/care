@@ -1,12 +1,18 @@
 // @flow
 import React from 'react';
 import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux';
 import { DateTime } from 'luxon';
-import { get } from 'immutable';
+import { Map, get } from 'immutable';
 import { Colors, StyleUtils, Tag } from 'lattice-ui-kit';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faChevronUp } from '@fortawesome/pro-regular-svg-icons';
 
+import { getLastFirstMiFromPerson } from '../../utils/PersonUtils';
+import {
+  resetIssue,
+  selectIssue,
+} from './issue/IssueActions';
 import IssueRowDetails from './IssueRowDetails';
 import {
   TITLE_FQN,
@@ -46,6 +52,9 @@ const IssueRow = (props :Props) => {
     expanded,
     setExpandedRowId,
   } = props;
+
+  const dispatch = useDispatch();
+
   const id = get(data, 'id');
   const title = get(data, TITLE_FQN);
   const priority = get(data, PRIORITY_FQN);
@@ -53,13 +62,22 @@ const IssueRow = (props :Props) => {
   const created = DateTime.fromISO(get(data, DATE_TIME_FQN, ''))
     .toLocaleString(DateTime.DATE_SHORT);
 
+  // const subject = useSelector((store :Map) => {
+  //   const subjectEKID = store.getIn(['issues', 'filteredIssues', 'subjectEKIDsByIssueEKID', id]);
+  //   return store.getIn(['issues', 'filteredIssues', 'subjectsByEKID', subjectEKID]);
+  // }) || Map();
+
+  // const subjectName = getLastFirstMiFromPerson(subject, true);
+
   const icon = expanded ? faChevronUp : faChevronDown;
 
   const onClick = () => {
     if (expanded) {
+      dispatch(resetIssue());
       setExpandedRowId();
     }
     else {
+      dispatch(selectIssue(data));
       setExpandedRowId(id);
     }
   };
@@ -92,7 +110,7 @@ const IssueRow = (props :Props) => {
         </StyledCell>
       </CustomRowWrapper>
       {
-        expanded && (<IssueRowDetails data={data} />)
+        expanded && (<IssueRowDetails />)
       }
     </>
   );

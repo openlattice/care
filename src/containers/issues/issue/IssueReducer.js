@@ -4,7 +4,11 @@ import { Map, fromJS } from 'immutable';
 import { RequestStates } from 'redux-reqseq';
 import type { SequenceAction } from 'redux-reqseq';
 
-import { RESET_ISSUE, submitIssue } from './IssueActions';
+import {
+  RESET_ISSUE,
+  selectIssue,
+  submitIssue
+} from './IssueActions';
 
 const INITIAL_STATE :Map = fromJS({
   data: Map(),
@@ -17,6 +21,16 @@ const INITIAL_STATE :Map = fromJS({
 
 const IssueReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
   switch (action.type) {
+
+    case selectIssue.case(action.type): {
+      return selectIssue.reducer(state, action, {
+        REQUEST: () => state.set('fetchState', RequestStates.PENDING),
+        SUCCESS: () => state
+          .merge(action.value)
+          .set('fetchState', RequestStates.SUCCESS),
+        FAILURE: () => state.set('fetchState', RequestStates.FAILURE),
+      });
+    }
 
     case submitIssue.case(action.type): {
       return submitIssue.reducer(state, action, {

@@ -71,10 +71,10 @@ const IssueForm = (props :Props, ref) => {
     setSchema(newSchema);
   }, [responsibleUsers]);
 
-  const defaultFormData = useMemo(() => constructFormData(
+  const defaultFormData = useMemo(() => constructFormData({
     assignee,
     defaultComponent,
-  ), [assignee, defaultComponent]);
+  }), [assignee, defaultComponent]);
 
   const [formData] = useFormData(defaultFormData);
 

@@ -58,6 +58,7 @@ const {
   REPORTED_FQN,
   STAFF_FQN,
   PEOPLE_FQN,
+  SUBJECT_OF_FQN,
 } = APP_TYPES_FQNS;
 
 const LOG = new Logger('IssueSagas');
@@ -90,16 +91,18 @@ function* getReportedByMeWorker(action :SequenceAction) :Generator<any, any, any
     yield put(getReportedByMe.request(action.id));
 
     const app = yield select((state) => state.get('app', Map()));
-    const issuesESID = getESIDFromApp(app, ISSUE_FQN);
+    const issueESID = getESIDFromApp(app, ISSUE_FQN);
     const staffESID = getESIDFromApp(app, STAFF_FQN);
     const reportedESID = getESIDFromApp(app, REPORTED_FQN);
+    const peopleESID = getESIDFromApp(app, PEOPLE_FQN);
+    const subjectOfESID = getESIDFromApp(app, SUBJECT_OF_FQN);
 
     const issuesRequestParams = {
       entitySetId: staffESID,
       filter: {
         entityKeyIds: [currentUserEKID],
         edgeEntitySetIds: [reportedESID],
-        destinationEntitySetIds: [issuesESID],
+        destinationEntitySetIds: [issueESID],
         sourceEntitySetIds: []
       }
     };
@@ -111,8 +114,48 @@ function* getReportedByMeWorker(action :SequenceAction) :Generator<any, any, any
 
     if (issuesRequest.error) throw issuesRequest.error;
 
-    const reportedByMe = fromJS(issuesRequest.data)
-      .get(currentUserEKID)
+    const issuesData = fromJS(issuesRequest.data)
+      .get(currentUserEKID) || Map();
+
+    // const issuesEKIDs = issuesData.valueSeq().map((issue :Map) => issue.get('neighborId'));
+
+    // let subjectEKIDsByIssueEKID = Map();
+    // let subjectsByEKID = Map();
+    // if (!issuesEKIDs.isEmpty()) {
+    //   const subjectParams = {
+    //     entitySetId: issueESID,
+    //     filter: {
+    //       entityKeyIds: issuesEKIDs.toJS(),
+    //       edgeEntitySetIds: [subjectOfESID],
+    //       destinationEntitySetIds: [],
+    //       sourceEntitySetIds: [peopleESID]
+    //     }
+    //   };
+
+    //   const subjectResponse = yield call(
+    //     searchEntityNeighborsWithFilterWorker,
+    //     searchEntityNeighborsWithFilter(subjectParams)
+    //   );
+
+    //   if (subjectResponse.error) throw subjectResponse.error;
+
+    //   const subjectResponseData = fromJS(subjectResponse.data);
+
+    //   subjectEKIDsByIssueEKID = subjectResponseData
+    //     .map((entity) => entity.first().get('neighborId'));
+
+    //   subjectsByEKID = Map().withMutations((mutable) => {
+    //     subjectResponseData.forEach((subjects) => {
+    //       subjects.forEach((subject) => {
+    //         const subjectEKID = subject.get('neighborId');
+    //         const subjectDetails = subject.get('neighborDetails');
+    //         mutable.set(subjectEKID, subjectDetails);
+    //       });
+    //     });
+    //   });
+    // }
+
+    const reportedByMe = issuesData
       .map((neighbor) => {
         const datetime = neighbor.getIn(['associationDetails', DATE_TIME_FQN, 0]);
         const id = neighbor.get('neighborId');
@@ -128,7 +171,11 @@ function* getReportedByMeWorker(action :SequenceAction) :Generator<any, any, any
         return -time.valueOf();
       });
 
-    yield put(getReportedByMe.success(action.id, reportedByMe));
+    yield put(getReportedByMe.success(action.id, {
+      data: reportedByMe,
+      // subjectEKIDsByIssueEKID,
+      // subjectsByEKID
+    }));
   }
   catch (error) {
     LOG.error('getReportedByMeWorker', error);
@@ -145,7 +192,7 @@ function* getAllIssuesWorker(action :SequenceAction) :Generator<any, any, any> {
     yield put(getAllIssues.request(action.id));
 
     const app = yield select((state) => state.get('app', Map()));
-    const issuesESID = getESIDFromApp(app, ISSUE_FQN);
+    const issueESID = getESIDFromApp(app, ISSUE_FQN);
 
     // const response = yield call(submitDataGraphWorker, submitDataGraph(value));
     // if (response.error) throw response.error;

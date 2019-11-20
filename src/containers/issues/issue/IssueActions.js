@@ -10,10 +10,7 @@ const SUBMIT_ISSUE :'SUBMIT_ISSUE' = 'SUBMIT_ISSUE';
 const submitIssue :RequestSequence = newRequestSequence(SUBMIT_ISSUE);
 
 const SELECT_ISSUE :'SELECT_ISSUE' = 'SELECT_ISSUE';
-const selectIssue = (value :any) => ({
-  type: SELECT_ISSUE,
-  value
-});
+const selectIssue :RequestSequence = newRequestSequence(SELECT_ISSUE);
 
 const RESET_ISSUE :'RESET_ISSUE' = 'RESET_ISSUE';
 const resetIssue = () => ({
