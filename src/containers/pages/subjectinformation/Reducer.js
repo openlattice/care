@@ -28,7 +28,7 @@ const {
   SSN_LAST_4
 } = SUBJECT_INFORMATION;
 
-const INITIAL_STATE :Map<*, *> = fromJS({
+const INITIAL_STATE :Map = fromJS({
   [FULL_NAME]: '',
   [PERSON_ID]: '',
   [IS_NEW_PERSON]: false,
@@ -44,7 +44,7 @@ const INITIAL_STATE :Map<*, *> = fromJS({
   [SSN_LAST_4]: ''
 });
 
-export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :Object) {
+export default function reportReducer(state :Map = INITIAL_STATE, action :Object) {
 
   switch (action.type) {
 
@@ -65,7 +65,7 @@ export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :
   }
 }
 
-export function getInvalidFields(state :Map<*, *>) {
+export function getInvalidFields(state :Map) {
   const invalidFields = [];
 
   if (state.get(IS_NEW_PERSON)) {
@@ -79,8 +79,8 @@ export function getInvalidFields(state :Map<*, *>) {
     }
 
     if (state.get(DOB_UNKNOWN)) {
-      const age = state.get(AGE, '');
-      if (!(age > 0) && !age.length) {
+      const age = state.get(AGE);
+      if ((age < 0)) {
         invalidFields.push(AGE);
       }
     }
@@ -96,7 +96,7 @@ export function getInvalidFields(state :Map<*, *>) {
   return invalidFields;
 }
 
-export function getStatus(state :Map<*, *>) :string {
+export function getStatus(state :Map) :string {
   if (state === INITIAL_STATE) {
     return FORM_STEP_STATUS.INITIAL;
   }
@@ -104,9 +104,10 @@ export function getStatus(state :Map<*, *>) :string {
   return getInvalidFields(state).length ? FORM_STEP_STATUS.IN_PROGRESS : FORM_STEP_STATUS.COMPLETED;
 }
 
-export function processForSubmit(state :Map<*, *>) :Object {
+export function processForSubmit(state :Map) :Object {
   const dobDT = DateTime.fromISO(state.get(DOB));
-  const dob :string = dobDT.isValid ? dobDT.toISODate() : '';
+  const dob = dobDT.isValid ? dobDT.toISODate() : undefined;
+  const last4SSN = state.get(SSN_LAST_4) || undefined;
 
   let preprocessedState = state.get(IS_NEW_PERSON)
     ? state.set(DOB, dob).set(PERSON_ID, randomUUID())
@@ -120,5 +121,6 @@ export function processForSubmit(state :Map<*, *>) :Object {
     .set(POST_PROCESS_FIELDS.DOB, dob)
     .set(POST_PROCESS_FIELDS.RACE, state.get(RACE))
     .set(POST_PROCESS_FIELDS.GENDER, state.get(GENDER))
+    .set(SSN_LAST_4, last4SSN)
     .toJS();
 }
