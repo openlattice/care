@@ -617,10 +617,12 @@ function* submitReportWorker(action :SequenceAction) :Generator<*, *, *> {
       entityData[peopleESID] = [personData];
     }
 
-    yield call(submitDataGraphWorker, submitDataGraph({
+    const submitResponse = yield call(submitDataGraphWorker, submitDataGraph({
       associationEntityData,
       entityData
     }));
+
+    if (submitResponse.error) throw submitResponse.error;
 
     yield put(submitReport.success(action.id));
   }
