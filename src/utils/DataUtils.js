@@ -112,18 +112,23 @@ const getFormDataFromEntityArray = (
   return entityFormDataList;
 };
 
-const groupNeighborsByEntitySetIds = (neighbors :List<Map>) :Map => {
+const groupNeighborsByEntitySetIds = (
+  neighbors :List<Map>,
+  byAssociation :boolean = false,
+  withEdge :boolean = false
+) :Map => {
+  const entitySetType = byAssociation ? 'associationEntitySet' : 'neighborEntitySet';
   const neighborsByESID = Map().withMutations((mutable) => {
     neighbors.forEach((neighbor) => {
-      const neighborESID = neighbor.getIn(['neighborEntitySet', 'id']);
-      const neighborDetails = neighbor.get('neighborDetails');
+      const neighborESID = neighbor.getIn([entitySetType, 'id']);
+      const neighborData = withEdge ? neighbor : neighbor.get('neighborDetails');
 
       if (mutable.has(neighborESID)) {
         const entitySetCount = mutable.get(neighborESID).count();
-        mutable.setIn([neighborESID, entitySetCount], neighborDetails);
+        mutable.setIn([neighborESID, entitySetCount], neighborData);
       }
       else {
-        mutable.set(neighborESID, List([neighborDetails]));
+        mutable.set(neighborESID, List([neighborData]));
       }
 
     });

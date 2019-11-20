@@ -1,90 +1,160 @@
 // @flow
 
-import React, { Component } from 'react';
-import { List, Map } from 'immutable';
-import { Constants } from 'lattice';
-import { Search } from 'lattice-ui-kit';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import { List, Map, fromJS } from 'immutable';
+import {
+  Card,
+  CardSegment,
+  CardStack,
+  Label,
+  Input,
+  DatePicker,
+  Button,
+  PlusButton,
+  SearchResults,
+} from 'lattice-ui-kit';
+import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
-import type { Dispatch } from 'redux';
-import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import PersonResult from './PersonResult';
-import { resultLabels, searchFields } from './constants';
 import { ContentWrapper, ContentOuterWrapper } from '../../components/layout';
+import { useInput } from '../../components/hooks';
 import { searchPeople } from './PeopleActions';
-import { selectPerson, clearProfile } from '../profile/ProfileActions';
-import { PROFILE_PATH, PROFILE_ID_PATH } from '../../core/router/Routes';
 import { goToPath } from '../../core/router/RoutingActions';
-import type { RoutingAction } from '../../core/router/RoutingActions';
+import { CRISIS_PATH } from '../../core/router/Routes';
+import { isNonEmptyString } from '../../utils/LangUtils';
+import {
+  PERSON_DOB_FQN,
+  PERSON_FIRST_NAME_FQN,
+  PERSON_LAST_NAME_FQN,
+} from '../../edm/DataModelFqns';
+import { media } from '../../utils/StyleUtils';
 
-const { OPENLATTICE_ID_FQN } = Constants;
+const NewPersonButton = styled(PlusButton).attrs(() => ({
+  forwardedAs: 'a',
+  href: `/bhr/#${CRISIS_PATH}/1`,
+  type: null
+}))`
+  margin-left: auto;
+  margin-bottom: 10px;
+  padding: 5px 20px;
+`;
 
-type Props = {
-  actions :{
-    clearProfile :() => { type :string };
-    goToPath :(path :string) => RoutingAction;
-    searchPeople :RequestSequence;
-    selectPerson :RequestSequence;
+const InputGrid = styled.div`
+  display: grid;
+  grid-gap: 20px 30px;
+  flex: 1;
+
+  grid-auto-flow: column;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: flex-start;
+
+  ${media.phone`
+    grid-gap: 10px;
+    grid-auto-flow: row;
+    grid-template-columns: none;
+  `}
+`;
+
+const Title = styled.h1`
+  display: flex;
+  font-size: 18px;
+  font-weight: normal;
+  margin: 0;
+`;
+
+const SearchPeopleContainer = () => {
+
+  const [dob, setDob] = useState();
+  const [firstName, setFirstName] = useInput('');
+  const [lastName, setLastName] = useInput('');
+  const searchResults = useSelector((store) => store.getIn(['people', 'peopleSearchResults'], List()));
+  const fetchState = useSelector((store) => store.getIn(['people', 'fetchState']));
+  const dispatch = useDispatch();
+  const isLoading = fetchState === RequestStates.PENDING;
+
+  const handleNewPerson = () => {
+    const person = fromJS({
+      [PERSON_DOB_FQN]: [dob],
+      [PERSON_FIRST_NAME_FQN]: [firstName],
+      [PERSON_LAST_NAME_FQN]: [lastName],
+      isNewPerson: [true]
+    });
+
+    dispatch(goToPath(`${CRISIS_PATH}/1`, person));
   };
-  searchResults :List<Map>;
-  fetchState :RequestState;
-}
 
-class SearchPeopleContainer extends Component<Props> {
+  const handleOnSearch = (e :SyntheticEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    const searchFields = Map({
+      lastName,
+      firstName,
+      dob
+    });
 
-  handleOnSearch = (searchValues :Map) => {
-    const { actions } = this.props;
-    const hasValues = searchValues.reduce((notEmpty, value) => notEmpty || !!value, false);
+    const hasValues = searchFields.some(isNonEmptyString);
 
     if (hasValues) {
-      actions.searchPeople(searchValues);
+      dispatch(searchPeople(searchFields));
     }
-  }
+  };
 
-  handleResultClick = (person :Map) => {
-    const { actions } = this.props;
-    const personEKID = person.getIn([OPENLATTICE_ID_FQN, 0]);
-    actions.clearProfile();
-    actions.selectPerson(person);
-    actions.goToPath(PROFILE_PATH.replace(PROFILE_ID_PATH, personEKID));
-  }
-
-  render() {
-    const { fetchState, searchResults } = this.props;
-    return (
-      <ContentOuterWrapper>
-        <ContentWrapper>
-          <Search
+  return (
+    <ContentOuterWrapper>
+      <ContentWrapper>
+        <CardStack>
+          <Card>
+            <CardSegment vertical>
+              <Title>
+                People
+                <NewPersonButton mode="positive" onClick={handleNewPerson}>New Person</NewPersonButton>
+              </Title>
+              <form>
+                <InputGrid>
+                  <div>
+                    <Label htmlFor="last-name">Last Name</Label>
+                    <Input
+                        id="last-name"
+                        value={lastName}
+                        onChange={setLastName} />
+                  </div>
+                  <div>
+                    <Label htmlFor="first-name">First Name</Label>
+                    <Input
+                        id="first-name"
+                        value={firstName}
+                        onChange={setFirstName} />
+                  </div>
+                  <div>
+                    <Label htmlFor="dob">Date of Birth</Label>
+                    <DatePicker id="dob" value={dob} onChange={setDob} />
+                  </div>
+                  <div>
+                    <Label stealth>Submit</Label>
+                    <Button
+                        type="submit"
+                        fullWidth
+                        isLoading={isLoading}
+                        mode="primary"
+                        onClick={handleOnSearch}>
+                      Search People
+                    </Button>
+                  </div>
+                </InputGrid>
+              </form>
+            </CardSegment>
+          </Card>
+          <SearchResults
               hasSearched={fetchState !== RequestStates.STANDBY}
-              isLoading={fetchState === RequestStates.PENDING}
-              onResultClick={this.handleResultClick}
-              onSearch={this.handleOnSearch}
+              isLoading={isLoading}
               resultComponent={PersonResult}
-              resultLabels={resultLabels}
-              searchFields={searchFields}
-              searchResults={searchResults}
+              results={searchResults}
               title="Search People" />
-        </ContentWrapper>
-      </ContentOuterWrapper>
-    );
-  }
-}
+        </CardStack>
+      </ContentWrapper>
+    </ContentOuterWrapper>
+  );
+};
 
-const mapStateToProps = (state) => ({
-  searchResults: state.getIn(['people', 'peopleSearchResults'], List()),
-  fetchState: state.getIn(['people', 'fetchState'])
-});
-
-const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
-  actions: bindActionCreators({
-    clearProfile,
-    goToPath,
-    searchPeople,
-    selectPerson,
-  }, dispatch)
-});
-
-// $FlowFixMe
-export default connect(mapStateToProps, mapDispatchToProps)(SearchPeopleContainer);
+export default SearchPeopleContainer;

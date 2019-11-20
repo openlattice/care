@@ -1,6 +1,14 @@
-import { Models } from 'lattice';
+import { Constants, Models } from 'lattice';
 
 const { FullyQualifiedName } = Models;
+const { OPENLATTICE_ID_FQN } = Constants;
+
+export { OPENLATTICE_ID_FQN };
+
+/* Issue */
+const PRIORITY_FQN = new FullyQualifiedName('ol.priority');
+const STATUS_FQN = new FullyQualifiedName('ol.status');
+export { PRIORITY_FQN, STATUS_FQN };
 
 /* Is Emergency Contact For */
 const RELATIONSHIP_FQN = new FullyQualifiedName('ol.relationship');

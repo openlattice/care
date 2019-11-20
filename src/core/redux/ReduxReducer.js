@@ -16,12 +16,12 @@ import dashboardReducer from '../../containers/dashboard/DashboardReducer';
 import downloadsReducer from '../../containers/downloads/DownloadsReducer';
 import edmReducer from '../../edm/EdmReducer';
 import hospitalsReducer from '../../containers/form/HospitalsReducer';
+import issuesReducer from '../../containers/issues/IssuesReducer';
 import peopleReducer from '../../containers/people/PeopleReducer';
 import profileReducer from '../../containers/profile/reducers/ProfileReducer';
 import reportsReducer from '../../containers/reports/ReportsReducer';
 import searchReducer from '../../containers/search/SearchReducer';
 import staffReducer from '../../containers/staff/StaffReducer';
-import submitReducer from '../../utils/submit/SubmitReducer';
 
 // pages
 import dispositionReducer from '../../containers/pages/disposition/Reducer';
@@ -40,6 +40,7 @@ export default function reduxReducer(routerHistory :any) {
     downloads: downloadsReducer,
     edm: edmReducer,
     hospitals: hospitalsReducer,
+    issues: issuesReducer,
     people: peopleReducer,
     profile: profileReducer,
     reports: reportsReducer,
@@ -53,8 +54,6 @@ export default function reduxReducer(routerHistory :any) {
     [STATE.OBSERVED_BEHAVIORS]: observedBehaviorsReducer,
     [STATE.OFFICER_SAFETY]: officerSafetyReducer,
     [STATE.SUBJECT_INFORMATION]: subjectInformationReducer,
-
-    [STATE.SUBMIT]: submitReducer
   });
 
   const rootReducer = (state :Map, action :Object) => {

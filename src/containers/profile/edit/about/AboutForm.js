@@ -27,7 +27,7 @@ import { getAboutPlan, submitAboutPlan, updateAboutPlan } from './AboutActions';
 import { getResponsibleUserOptions } from '../../../staff/StaffActions';
 import { schema, uiSchema } from './AboutSchemas';
 import { reduceRequestStates } from '../../../../utils/StateUtils';
-import { getAboutPlanAssociations, hydrateAboutSchema } from './AboutUtils';
+import { getAboutPlanAssociations, hydrateSchemaWithStaff } from './AboutUtils';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
 import { PROFILE_ID_PARAM } from '../../../../core/router/Routes';
 
@@ -54,6 +54,7 @@ type Props = {
   match :Match;
   propertyTypeIds :Map;
   responsibleUsers :List;
+  submitState :RequestState;
 };
 
 const AboutForm = (props :Props) => {
@@ -66,9 +67,10 @@ const AboutForm = (props :Props) => {
     match,
     propertyTypeIds,
     responsibleUsers,
+    submitState,
   } = props;
 
-  const [formData] = useFormData(aboutFormData);
+  const [formData, setFormData] = useFormData(aboutFormData);
   const [aboutSchema, setSchema] = useState(schema);
   const [prepopulated, setPrepopulated] = useState(false);
 
@@ -79,7 +81,7 @@ const AboutForm = (props :Props) => {
   }, [actions, personEKID]);
 
   useEffect(() => {
-    const newSchema = hydrateAboutSchema(schema, responsibleUsers);
+    const newSchema = hydrateSchemaWithStaff(schema, responsibleUsers);
     setSchema(newSchema);
   }, [responsibleUsers, setSchema]);
 
@@ -146,7 +148,8 @@ const AboutForm = (props :Props) => {
           disabled={prepopulated}
           formContext={formContext}
           formData={formData}
-          // isSubmitting
+          isSubmitting={submitState === RequestStates.PENDING}
+          onChange={setFormData}
           onSubmit={handleSubmit}
           schema={aboutSchema}
           uiSchema={uiSchema} />
@@ -168,6 +171,7 @@ const mapStateToProps = (state :Map) => {
     fetchState,
     propertyTypeIds: state.getIn(['edm', 'fqnToIdMap'], Map()),
     responsibleUsers: state.getIn(['staff', 'responsibleUsers', 'data'], List()),
+    submitState: state.getIn(['profile', 'about', 'submitState'], RequestStates.STANDBY)
   };
 };
 

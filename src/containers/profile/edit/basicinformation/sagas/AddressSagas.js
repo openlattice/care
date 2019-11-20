@@ -156,7 +156,7 @@ function* submitAddressWorker(action :SequenceAction) :Generator<any, any, any> 
     yield put(submitAddress.success(action.id, {
       entityIndexToIdMap,
       path,
-      properties: fromJS(properties)
+      properties
     }));
   }
   catch (error) {

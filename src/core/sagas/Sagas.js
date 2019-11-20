@@ -33,7 +33,10 @@ import * as ResponsePlanSagas from '../../containers/profile/edit/responseplan/R
 import * as RoutingSagas from '../router/RoutingSagas';
 import * as SearchSagas from '../../containers/search/SearchSagas';
 import * as StaffSagas from '../../containers/staff/StaffSagas';
-import * as SubmitSagas from '../../utils/submit/SubmitSagas';
+import * as ScarsMarksTattoosSagas from '../../containers/profile/edit/basicinformation/sagas/ScarsMarksTattoosSagas';
+import * as IssueSagas from '../../containers/issues/issue/IssueSagas';
+import * as IssuesSagas from '../../containers/issues/IssuesSagas';
+
 
 export default function* sagas() :Generator<*, *, *> {
 
@@ -93,15 +96,16 @@ export default function* sagas() :Generator<*, *, *> {
 
     // Profile Sagas
     fork(ProfileSagas.getPersonDataWatcher),
-    fork(ProfileSagas.getPhysicalApperanceWatcher),
+    fork(ProfileSagas.getPhysicalAppearanceWatcher),
     fork(ProfileSagas.getProfileReportsWatcher),
     fork(ProfileSagas.updateProfileAboutWatcher),
 
     // ReportsSagas
     fork(ReportsSagas.deleteReportWatcher),
-    fork(ReportsSagas.getReportsByDateRangeWatcher),
-    fork(ReportsSagas.updateReportWatcher),
     fork(ReportsSagas.getReportWatcher),
+    fork(ReportsSagas.getReportsByDateRangeWatcher),
+    fork(ReportsSagas.submitReportWatcher),
+    fork(ReportsSagas.updateReportWatcher),
 
     // ResponsePlanSagas
     fork(ResponsePlanSagas.deleteInteractionStrategiesWatcher),
@@ -126,6 +130,10 @@ export default function* sagas() :Generator<*, *, *> {
     fork(PhotosSagas.submitPhotosWatcher),
     fork(PhotosSagas.updatePhotoWatcher),
 
+    fork(ScarsMarksTattoosSagas.getScarsMarksTattoosWatcher),
+    fork(ScarsMarksTattoosSagas.submitScarsMarksTattoosWatcher),
+    fork(ScarsMarksTattoosSagas.updateScarsMarksTattoosWatcher),
+
     // OfficerSafetyConcernsSagas
     fork(OfficerSafetyConcernsSagas.getOfficerSafetyWatcher),
     fork(OfficerSafetyConcernsSagas.getOfficerSafetyConcernsWatcher),
@@ -143,10 +151,16 @@ export default function* sagas() :Generator<*, *, *> {
     fork(AboutSagas.submitAboutPlanWatcher),
     fork(AboutSagas.updateAboutPlanWatcher),
 
-    // SearchSagas
-    fork(SearchSagas.searchConsumersWatcher),
+    // IssueSagas
+    fork(IssueSagas.submitIssueWatcher),
+    fork(IssueSagas.selectIssueWatcher),
 
-    // SubmitSagas
-    fork(SubmitSagas.submitWatcher)
+    // IssuesSagas
+    fork(IssuesSagas.getAllIssuesWatcher),
+    fork(IssuesSagas.getMyOpenIssuesWatcher),
+    fork(IssuesSagas.getReportedByMeWatcher),
+
+    // SearchSagas
+    fork(SearchSagas.searchConsumersWatcher)
   ]);
 }

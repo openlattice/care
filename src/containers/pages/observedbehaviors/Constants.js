@@ -15,6 +15,7 @@ export const BEHAVIORS = [
   'Out of touch with reality',
   'Paranoid',
   SUICIDE_BEHAVIORS,
+  'None',
   OTHER
 ];
 

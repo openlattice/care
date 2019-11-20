@@ -3,7 +3,7 @@ import { Map } from 'immutable';
 import { useCallback, useEffect, useState } from 'react';
 
 const useFormData = (defaultFormData :Map) => {
-  const [data, setValue] = useState();
+  const [data, setValue] = useState(defaultFormData.toJS());
 
   useEffect(() => {
     setValue(defaultFormData.toJS());

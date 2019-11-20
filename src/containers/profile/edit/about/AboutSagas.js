@@ -258,7 +258,7 @@ function* submitAboutPlanWorker(action :SequenceAction) :Generator<any, any, any
     yield put(submitAboutPlan.success(action.id, {
       entityIndexToIdMap,
       path,
-      properties: fromJS(properties)
+      properties
     }));
   }
   catch (error) {

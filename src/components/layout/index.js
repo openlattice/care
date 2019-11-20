@@ -57,3 +57,8 @@ export const IconWrapper = styled.span`
   vertical-align: middle;
   margin-right: 10px;
 `;
+
+export const HeaderActions = styled.div`
+  display: flex;
+  margin-left: auto;
+`;

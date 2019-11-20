@@ -2,7 +2,20 @@
 import { Models } from 'lattice';
 import { List, Map } from 'immutable';
 import { DateTime } from 'luxon';
-import { DATE_TIME_OCCURRED_FQN } from '../../../edm/DataModelFqns';
+import {
+  ARMED_WITH_WEAPON_FQN,
+  DATE_TIME_OCCURRED_FQN,
+  INJURIES_FQN,
+  INJURIES_OTHER_FQN,
+  OTHER_PERSON_INJURED_FQN,
+  PERSON_INJURED_FQN,
+  THREATENED_INDICATOR_FQN,
+} from '../../../edm/DataModelFqns';
+import {
+  ARMED_WITH_WEAPON,
+  INJURED_PARTIES,
+  THREATENED_VIOLENCE,
+} from './constants';
 
 const { FullyQualifiedName } = Models;
 
@@ -54,8 +67,36 @@ const countCrisisCalls = (reports :List<Map>) => {
   return { recent, total };
 };
 
+const countSafetyIncidents = (reports :List) :Map => Map()
+  .withMutations((mutable) => {
+    reports.forEach((report) => {
+      const injuryType = report.get(INJURIES_FQN, List());
+      const injuredParties = report.get(PERSON_INJURED_FQN, List());
+      const otherInjuryType = report.getIn([INJURIES_OTHER_FQN, 0], '');
+      const otherInjuredPerson = report.getIn([OTHER_PERSON_INJURED_FQN, 0], '');
+
+      const hadInjuries :boolean = (
+        injuryType.count() > 0
+        || injuredParties.count() > 0
+        || otherInjuryType.length > 0
+        || otherInjuredPerson.length > 0
+      );
+
+      const armedWithWeapon :boolean = report.getIn([ARMED_WITH_WEAPON_FQN, 0], false);
+      const threatenedViolence :boolean = report.getIn([THREATENED_INDICATOR_FQN, 0], false);
+
+      incrementValueAtKey(mutable, ARMED_WITH_WEAPON, armedWithWeapon);
+      incrementValueAtKey(mutable, INJURED_PARTIES, threatenedViolence);
+      incrementValueAtKey(mutable, THREATENED_VIOLENCE, hadInjuries);
+    });
+  })
+  .sortBy((count) => count, (valueA, valueB) => valueB - valueA)
+  .toKeyedSeq()
+  .toArray();
+
 export {
   countCrisisCalls,
   countPropertyOccurrance,
+  countSafetyIncidents,
   incrementValueAtKey,
 };

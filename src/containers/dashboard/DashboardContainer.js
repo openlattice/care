@@ -55,7 +55,7 @@ const LAYOUTS = {
 
 const TIME_LENGTHS = {
   MONTHS_1: {
-    label: 'Month',
+    label: '1 Month',
     value: 1
   },
   MONTHS_3: {
@@ -67,7 +67,7 @@ const TIME_LENGTHS = {
     value: 6
   },
   YEAR: {
-    label: 'Year',
+    label: '1 Year',
     value: 12
   }
 };

@@ -4,8 +4,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
-
-import BasicButton from '../../buttons/BasicButton';
+import { Button } from 'lattice-ui-kit';
 
 type Props = {
   noMargin? :boolean,
@@ -51,14 +50,6 @@ const Buttons = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: flex-end;
-`;
-
-const DownloadButton = styled(BasicButton)`
-  height: 28px;
-  width: 88px;
-  padding: 0;
-  font-size: 11px;
-  font-weight: 600;
 `;
 
 const ExplainTooltip = styled.div`
@@ -165,7 +156,7 @@ const ChartWrapper = ({
     <HeaderRow>
       <h1>{title}</h1>
       <Buttons>
-        {downloadFn ? <DownloadButton onClick={downloadFn}>Download</DownloadButton> : null}
+        {downloadFn ? <Button mode="secondary" onClick={downloadFn}>Download</Button> : null}
         {infoText ? (
           <ExplainButton>
             <span>?</span>

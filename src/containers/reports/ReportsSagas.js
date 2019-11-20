@@ -21,6 +21,7 @@ import {
   Constants,
   Types
 } from 'lattice';
+import { DataProcessingUtils } from 'lattice-fabricate';
 import {
   DataApiActions,
   DataApiSagas,
@@ -30,26 +31,31 @@ import {
 import type { SequenceAction } from 'redux-reqseq';
 
 import Logger from '../../utils/Logger';
-import { BHR_CONFIG } from '../../config/formconfig/CrisisReportConfig';
+import { submitDataGraph } from '../../core/sagas/data/DataActions';
+import { submitDataGraphWorker } from '../../core/sagas/data/DataSagas';
+import { BHR_CONFIG, PEOPLE_CONFIG } from '../../config/formconfig/CrisisReportConfig';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
 import {
   DELETE_REPORT,
   GET_REPORT,
   GET_REPORTS_BY_DATE_RANGE,
+  SUBMIT_REPORT,
   UPDATE_REPORT,
   deleteReport,
   getReport,
   getReportsByDateRange,
+  submitReport,
   updateReport,
 } from './ReportsActions';
 import { isValidUuid } from '../../utils/Utils';
 import { isDefined } from '../../utils/LangUtils';
 import {
   getAppearsInESId,
+  getESIDFromApp,
   getPeopleESId,
   getReportESId,
-  getStaffESId,
   getReportedESId,
+  getStaffESId,
 } from '../../utils/AppUtils';
 import { getSearchTerm } from '../../utils/DataUtils';
 import {
@@ -58,6 +64,7 @@ import {
   compileObservedBehaviorData,
   compileOfficerSafetyData,
   compileSubjectData,
+  getEntityDataFromFields
 } from './ReportsUtils';
 import { setInputValues as setDispositionData } from '../pages/disposition/ActionFactory';
 import { setInputValues as setNatureOfCrisisData } from '../pages/natureofcrisis/ActionFactory';
@@ -66,6 +73,17 @@ import { setInputValues as setOfficerSafetyData } from '../pages/officersafety/A
 import { setInputValues as setSubjectInformation } from '../pages/subjectinformation/ActionFactory';
 import * as FQN from '../../edm/DataModelFqns';
 import { POST_PROCESS_FIELDS } from '../../utils/constants/CrisisReportConstants';
+import { APP_TYPES_FQNS } from '../../shared/Consts';
+
+const { processAssociationEntityData } = DataProcessingUtils;
+
+const {
+  APPEARS_IN_FQN,
+  BEHAVIORAL_HEALTH_REPORT_FQN,
+  PEOPLE_FQN,
+  REPORTED_FQN,
+  STAFF_FQN,
+} = APP_TYPES_FQNS;
 
 const LOG = new Logger('ReportsSagas');
 
@@ -466,6 +484,10 @@ function* updateReportWorker(action :SequenceAction) :Generator<*, *, *> {
       (state) => state.getIn(['staff', 'currentUser', 'data', OPENLATTICE_ID_FQN, 0], '')
     );
 
+    if (!isValidUuid(staffEKID)) {
+      throw Error('staff entityKeyId is invalid');
+    }
+
     const associations = {
       [reportedESID]: [{
         dst: {
@@ -544,6 +566,77 @@ function* updateReportWatcher() :Generator<*, *, *> {
   yield takeEvery(UPDATE_REPORT, updateReportWorker);
 }
 
+function* submitReportWorker(action :SequenceAction) :Generator<*, *, *> {
+
+  try {
+    const { value } = action;
+    if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
+    const {
+      entityKeyId: personEKID = 0,
+      formData,
+    } = value;
+    if (!isPlainObject(formData)) throw ERR_ACTION_VALUE_TYPE;
+
+    yield put(submitReport.request(action.id, value));
+
+    const app = yield select((state) => state.get('app', Map()));
+    const entitySetIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
+    const propertyTypeIds = yield select((state) => state.getIn(['edm', 'fqnToIdMap'], Map()));
+    const reportESID :UUID = getESIDFromApp(app, BEHAVIORAL_HEALTH_REPORT_FQN);
+    const peopleESID :UUID = getESIDFromApp(app, PEOPLE_FQN);
+
+    const staffEKID :UUID = yield select(
+      (state) => state.getIn(['staff', 'currentUser', 'data', OPENLATTICE_ID_FQN, 0], '')
+    );
+
+    const associations = [
+      [REPORTED_FQN, staffEKID, STAFF_FQN, 0, BEHAVIORAL_HEALTH_REPORT_FQN, {
+        [FQN.DATE_TIME_FQN]: [formData[POST_PROCESS_FIELDS.TIMESTAMP]]
+      }],
+      [APPEARS_IN_FQN, personEKID, PEOPLE_FQN, 0, BEHAVIORAL_HEALTH_REPORT_FQN, {
+        [FQN.DATE_TIME_FQN]: [formData[POST_PROCESS_FIELDS.TIMESTAMP]]
+      }],
+    ];
+
+    const associationEntityData = processAssociationEntityData(
+      associations,
+      entitySetIds,
+      propertyTypeIds
+    );
+
+    const reportFields = BHR_CONFIG.fields;
+    const peopleFields = PEOPLE_CONFIG.fields;
+    const reportData = getEntityDataFromFields(formData, reportFields, propertyTypeIds);
+
+    const entityData = {
+      [reportESID]: [reportData]
+    };
+
+    if (personEKID === 0) {
+      const personData = getEntityDataFromFields(formData, peopleFields, propertyTypeIds);
+      entityData[peopleESID] = [personData];
+    }
+
+    const submitResponse = yield call(submitDataGraphWorker, submitDataGraph({
+      associationEntityData,
+      entityData
+    }));
+
+    if (submitResponse.error) throw submitResponse.error;
+
+    yield put(submitReport.success(action.id));
+  }
+  catch (error) {
+    LOG.error('caught exception in worker saga', error);
+    yield put(submitReport.failure(action.id, error));
+  }
+}
+
+function* submitReportWatcher() :Generator<*, *, *> {
+
+  yield takeEvery(SUBMIT_REPORT, submitReportWorker);
+}
+
 /*
  *
  * exports
@@ -557,6 +650,8 @@ export {
   getReportsByDateRangeWorker,
   getReportWatcher,
   getReportWorker,
+  submitReportWatcher,
+  submitReportWorker,
   updateReportWatcher,
   updateReportWorker,
 };

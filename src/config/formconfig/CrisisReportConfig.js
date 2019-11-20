@@ -10,11 +10,8 @@ import {
 } from '../../utils/constants/CrisisReportConstants';
 
 const {
-  APPEARS_IN_FQN,
   BEHAVIORAL_HEALTH_REPORT_FQN,
   PEOPLE_FQN,
-  REPORTED_FQN,
-  STAFF_FQN
 } = APP_TYPES_FQNS;
 
 export const BHR_CONFIG = {
@@ -84,60 +81,18 @@ export const BHR_CONFIG = {
   }
 };
 
-const config = {
-  entitySets: [
-    {
-      name: PEOPLE_FQN,
-      alias: 'person',
-      fields: {
-        [SUBJECT_INFORMATION.PERSON_ID]: FQN.PERSON_ID_FQN,
-        [SUBJECT_INFORMATION.LAST]: FQN.PERSON_LAST_NAME_FQN,
-        [SUBJECT_INFORMATION.FIRST]: FQN.PERSON_FIRST_NAME_FQN,
-        [SUBJECT_INFORMATION.MIDDLE]: FQN.PERSON_MIDDLE_NAME_FQN,
-        [SUBJECT_INFORMATION.AKA]: FQN.PERSON_NICK_NAME_FQN,
-        [SUBJECT_INFORMATION.DOB]: FQN.PERSON_DOB_FQN,
-        [SUBJECT_INFORMATION.GENDER]: FQN.PERSON_SEX_FQN,
-        [SUBJECT_INFORMATION.RACE]: FQN.PERSON_RACE_FQN,
-        [SUBJECT_INFORMATION.SSN_LAST_4]: FQN.PERSON_SSN_LAST_4_FQN,
-      }
-    },
-    BHR_CONFIG,
-    {
-      name: STAFF_FQN,
-      alias: 'staff',
-      fields: {
-        [POST_PROCESS_FIELDS.USER_EMAIL]: FQN.PERSON_ID_FQN
-      }
-    },
-    {
-      name: APPEARS_IN_FQN,
-      alias: 'appearsin',
-      entityId: POST_PROCESS_FIELDS.TIMESTAMP,
-      fields: {
-        [POST_PROCESS_FIELDS.TIMESTAMP]: FQN.DATE_TIME_FQN
-      }
-    },
-    {
-      name: REPORTED_FQN,
-      alias: 'reported',
-      entityId: POST_PROCESS_FIELDS.TIMESTAMP,
-      fields: {
-        [POST_PROCESS_FIELDS.TIMESTAMP]: FQN.DATE_TIME_FQN
-      }
-    }
-  ],
-  associations: [
-    {
-      src: 'person',
-      dst: 'report',
-      association: 'appearsin'
-    },
-    {
-      src: 'staff',
-      dst: 'report',
-      association: 'reported'
-    }
-  ]
+export const PEOPLE_CONFIG = {
+  name: PEOPLE_FQN,
+  alias: 'person',
+  fields: {
+    [SUBJECT_INFORMATION.PERSON_ID]: FQN.PERSON_ID_FQN,
+    [SUBJECT_INFORMATION.LAST]: FQN.PERSON_LAST_NAME_FQN,
+    [SUBJECT_INFORMATION.FIRST]: FQN.PERSON_FIRST_NAME_FQN,
+    [SUBJECT_INFORMATION.MIDDLE]: FQN.PERSON_MIDDLE_NAME_FQN,
+    [SUBJECT_INFORMATION.AKA]: FQN.PERSON_NICK_NAME_FQN,
+    [SUBJECT_INFORMATION.DOB]: FQN.PERSON_DOB_FQN,
+    [SUBJECT_INFORMATION.GENDER]: FQN.PERSON_SEX_FQN,
+    [SUBJECT_INFORMATION.RACE]: FQN.PERSON_RACE_FQN,
+    [SUBJECT_INFORMATION.SSN_LAST_4]: FQN.PERSON_SSN_LAST_4_FQN,
+  }
 };
-
-export default config;

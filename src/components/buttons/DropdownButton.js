@@ -4,10 +4,9 @@
 
 import React from 'react';
 import styled, { css } from 'styled-components';
-
-import downArrowIcon from '../../assets/svg/down-arrow.svg';
-import selectedDownArrowIcon from '../../assets/svg/down-arrow-white.svg';
-import BasicButton from './BasicButton';
+import { faChevronDown } from '@fortawesome/pro-light-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Button } from 'lattice-ui-kit';
 
 type Props = {
   title :string,
@@ -39,23 +38,15 @@ const DropdownButtonWrapper = styled.div`
   position: relative;
 `;
 
-const BaseButton = styled(BasicButton)`
+const BaseButton = styled(Button)`
   display: flex;
   flex-direction: row;
   align-items: center;
   font-weight: 600;
   position: relative;
 
-  img {
+  svg {
     margin-left: 10px;
-  }
-
-  background-color: ${(props) => (props.open ? '#8e929b' : '#f0f0f7')};
-  color: ${(props) => (props.open ? '#ffffff' : '#8e929b')};
-
-  &:hover {
-    background-color: ${(props) => (props.open ? '#8e929b' : '#f0f0f7')} !important;
-    color: ${(props) => (props.open ? '#ffffff' : '#8e929b')} !important;
   }
 `;
 
@@ -108,28 +99,22 @@ export default class DropdownButton extends React.Component<Props, State> {
     };
   }
 
-  toggleDropdown = (e) => {
+  toggleDropdown = (e :SyntheticEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     this.setState({ open: !this.state.open });
   };
 
-  getOptionFn = (optionFn) => (e) => {
-    e.stopPropagation();
-    optionFn(e);
-  }
-
-  handleOnClick = (e) => {
+  handleOnClick = (e :SyntheticEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     this.setState({ open: false });
   }
 
   render() {
-    const imgSrc = this.state.open ? selectedDownArrowIcon : downArrowIcon;
     return (
       <DropdownButtonWrapper open={this.state.open} {...this.props}>
         <BaseButton open={this.state.open} onClick={this.toggleDropdown} onBlur={this.toggleDropdown}>
           {this.props.title}
-          <img src={imgSrc} role="presentation" />
+          <FontAwesomeIcon icon={faChevronDown} fixedWidth/>
         </BaseButton>
         <MenuContainer open={this.state.open} {...this.props}>
           {this.props.options.map((option) => (
