@@ -1,11 +1,13 @@
 // @flow
-import * as React from 'react';
+import React, { Component } from 'react';
 import styled from 'styled-components';
 import { faChevronDown, faChevronUp } from '@fortawesome/pro-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, CardSegment } from 'lattice-ui-kit';
+import type { Node, ComponentType } from 'react';
 
 import AccordionHeader from './AccordionHeader';
+import { groupNeighborsByEntitySetIds } from '../../utils/DataUtils';
 
 const AccordionWrapper = styled(CardSegment)`
   display: flex;
@@ -35,22 +37,22 @@ const ToggleIcon = styled(FontAwesomeIcon).attrs({
 })``;
 
 const ToggleButton = styled(Button)`
-  color: inherit;
   margin-left: auto;
+  color: inherit;
 `;
 
 export type AccordionSectionProps = {
   alwaysOpen :boolean;
   caption :string;
-  children :React.Node;
+  children :Node;
   headline :string;
   index :number;
   isOpen :boolean;
   onClick :(index :number) => void;
-  titleComponent :React.ComponentType<*>;
+  titleComponent :ComponentType<any>;
 };
 
-class AccordionSection extends React.Component<AccordionSectionProps> {
+class AccordionSection extends Component<AccordionSectionProps> {
 
   static defaultProps = {
     alwaysOpen: false,
