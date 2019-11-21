@@ -29,7 +29,7 @@ const ExpandedCellContent = styled.div`
   flex-direction: column;
   flex: 1;
   justify-content: center;
-  min-height: 230px;
+  min-height: 200px;
   overflow-wrap: break-word;
 `;
 
@@ -54,6 +54,7 @@ const LabelGroup = styled.div`
 
 type Props = {
   assignee :Map;
+  hideTitle :boolean;
   issue :Map;
   match :Match;
   reporter :Map;
@@ -63,6 +64,7 @@ type Props = {
 const IssueDetails = (props :Props) => {
   const {
     assignee,
+    hideTitle,
     issue,
     match,
     reporter,
@@ -82,7 +84,7 @@ const IssueDetails = (props :Props) => {
   return (
 
     <ExpandedCellContent>
-      <Title>{title}</Title>
+      { !hideTitle && <Title>{title}</Title> }
       <LabelGroup>
         <Label subtle>Subject: </Label>
         <span>{subjectName}</span>
@@ -133,6 +135,7 @@ const IssueDetails = (props :Props) => {
 
 IssueDetails.defaultProps = {
   assignee: Map(),
+  hideTitle: false,
   issue: Map(),
   reporter: Map(),
   subject: Map(),

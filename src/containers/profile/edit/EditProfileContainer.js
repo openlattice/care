@@ -1,5 +1,5 @@
 // @flow
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Switch, Redirect } from 'react-router-dom';
 import { Map } from 'immutable';
@@ -17,6 +17,7 @@ import type { Match } from 'react-router';
 import type { Dispatch } from 'redux';
 import type { RequestSequence } from 'redux-reqseq';
 
+import Accordion from '../../../components/accordion';
 import LinkButton from '../../../components/buttons/LinkButton';
 import AboutForm from './about/AboutForm';
 import ContactsForm from './contacts/ContactsForm';
@@ -39,8 +40,9 @@ import {
 } from '../../../core/router/Routes';
 import PrivateRoute from '../../../components/route/PrivateRoute';
 import IssueDetails from '../../issues/IssueDetails';
+import { TITLE_FQN } from '../../../edm/DataModelFqns';
 
-const StickyCard = styled(Card)`
+const StickyAccordion = styled(Accordion)`
   position: sticky;
   top: 66px;
   z-index: 200;
@@ -55,7 +57,7 @@ type Props = {
   };
   match :Match;
   selectedPerson :Map;
-  selectedIssueData :Object;
+  selectedIssueData :Map;
 };
 
 const EditProfileContainer = (props :Props) => {
@@ -67,17 +69,16 @@ const EditProfileContainer = (props :Props) => {
   } = props;
   const personEKID = match.params[PROFILE_ID_PARAM];
 
-  useEffect(
-    () => {
+  useEffect(() => {
       actions.getBasics(personEKID);
-    },
-    [actions, personEKID]
-  );
+  }, [actions, personEKID]);
 
   const assignee = selectedIssueData.get('assignee');
-  const issue = selectedIssueData.get('issue');
+  const issue = selectedIssueData.get('issue') || Map();
   const reporter = selectedIssueData.get('reporter');
   const subject = selectedIssueData.get('subject');
+
+  const headline = issue.getIn([TITLE_FQN, 0]);
 
   return (
     <ContentOuterWrapper>
@@ -85,16 +86,17 @@ const EditProfileContainer = (props :Props) => {
       <ContentWrapper>
         {
           !selectedIssueData.isEmpty() && (
-            <StickyCard>
-              <CardSegment>
-                    <IssueDetails
-                        assignee={assignee}
-                        issue={issue}
-                        match={match}
-                        reporter={reporter}
-                        subject={subject} />
+            <StickyAccordion>
+              <CardSegment headline={headline} defaultOpen>
+                <IssueDetails
+                    assignee={assignee}
+                    hideTitle
+                    issue={issue}
+                    match={match}
+                    reporter={reporter}
+                    subject={subject} />
               </CardSegment>
-            </StickyCard>
+            </StickyAccordion>
           )
         }
         <CardStack>

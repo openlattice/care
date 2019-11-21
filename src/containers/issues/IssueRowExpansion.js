@@ -7,7 +7,6 @@ import { Map } from 'immutable';
 import {
   Button,
   Colors,
-  Label,
   Spinner
 } from 'lattice-ui-kit';
 import { RequestStates } from 'redux-reqseq';
