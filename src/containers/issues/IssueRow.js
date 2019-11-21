@@ -1,19 +1,18 @@
 // @flow
 import React from 'react';
 import styled from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { DateTime } from 'luxon';
-import { Map, get } from 'immutable';
+import { get } from 'immutable';
 import { Colors, StyleUtils, Tag } from 'lattice-ui-kit';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faChevronUp } from '@fortawesome/pro-regular-svg-icons';
 
-import { getLastFirstMiFromPerson } from '../../utils/PersonUtils';
 import {
   resetIssue,
   selectIssue,
 } from './issue/IssueActions';
-import IssueRowDetails from './IssueRowDetails';
+import IssueRowExpansion from './IssueRowExpansion';
 import {
   TITLE_FQN,
   PRIORITY_FQN,
@@ -110,7 +109,7 @@ const IssueRow = (props :Props) => {
         </StyledCell>
       </CustomRowWrapper>
       {
-        expanded && (<IssueRowDetails />)
+        expanded && (<IssueRowExpansion />)
       }
     </>
   );

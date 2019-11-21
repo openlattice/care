@@ -38,6 +38,7 @@ import {
   RESPONSE_PLAN_PATH,
 } from '../../../core/router/Routes';
 import PrivateRoute from '../../../components/route/PrivateRoute';
+import IssueDetails from '../../issues/IssueDetails';
 
 const StickyCard = styled(Card)`
   position: sticky;
@@ -54,10 +55,16 @@ type Props = {
   };
   match :Match;
   selectedPerson :Map;
+  selectedIssueData :Object;
 };
 
 const EditProfileContainer = (props :Props) => {
-  const { actions, match, selectedPerson } = props;
+  const {
+    actions,
+    match,
+    selectedIssueData,
+    selectedPerson
+  } = props;
   const personEKID = match.params[PROFILE_ID_PARAM];
 
   useEffect(
@@ -67,15 +74,29 @@ const EditProfileContainer = (props :Props) => {
     [actions, personEKID]
   );
 
+  const assignee = selectedIssueData.get('assignee');
+  const issue = selectedIssueData.get('issue');
+  const reporter = selectedIssueData.get('reporter');
+  const subject = selectedIssueData.get('subject');
+
   return (
     <ContentOuterWrapper>
       <ProfileBanner selectedPerson={selectedPerson} />
       <ContentWrapper>
-        <StickyCard>
-          <CardSegment>
-            Request For Changes Placeholder
-          </CardSegment>
-        </StickyCard>
+        {
+          !selectedIssueData.isEmpty() && (
+            <StickyCard>
+              <CardSegment>
+                    <IssueDetails
+                        assignee={assignee}
+                        issue={issue}
+                        match={match}
+                        reporter={reporter}
+                        subject={subject} />
+              </CardSegment>
+            </StickyCard>
+          )
+        }
         <CardStack>
           <div>
             <LinkButton mode="subtle" to={match.url}>
@@ -86,9 +107,9 @@ const EditProfileContainer = (props :Props) => {
           <Card>
             <CardSegment padding="sm">
               <Stepper>
-                <NavStep to={`${match.url}${BASIC_PATH}`}>Basic Information</NavStep>
+                <NavStep to={`${match.url}${BASIC_PATH}`}>Basics</NavStep>
                 <NavStep to={`${match.url}${OFFICER_SAFETY_PATH}`}>Officer Safety</NavStep>
-                <NavStep to={`${match.url}${RESPONSE_PLAN_PATH}`}>Background & Response Plan</NavStep>
+                <NavStep to={`${match.url}${RESPONSE_PLAN_PATH}`}>Response Plan</NavStep>
                 <NavStep to={`${match.url}${CONTACTS_PATH}`}>Contacts</NavStep>
                 <NavStep to={`${match.url}${ABOUT_PATH}`}>About</NavStep>
               </Stepper>
@@ -129,7 +150,8 @@ const EditProfileContainer = (props :Props) => {
 };
 
 const mapStateToProps = (state :Map) => ({
-  selectedPerson: state.getIn(['profile', 'basicInformation', 'basics', 'data'], Map()),
+  selectedPerson: state.getIn(['profile', 'basicInformation', 'basics', 'data']) || Map(),
+  selectedIssueData: state.getIn(['router', 'location', 'state']) || Map()
 });
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({

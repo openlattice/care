@@ -16,6 +16,8 @@ import {
   STATUS_FQN,
 } from '../../../edm/DataModelFqns';
 import { isValidUuid } from '../../../utils/Utils';
+import { CATEGORY_PATHS } from './constants';
+import { ISSUES_PATH, PROFILE_ID_PATH } from '../../../core/router/Routes';
 
 const { getPageSectionKey, getEntityAddressKey } = DataProcessingUtils;
 
@@ -117,8 +119,24 @@ const getIssueAssociations = (formData :any, person :Map, currentUser :Map) => {
   return associations;
 };
 
+const getTakeActionPath = (
+  person :Map,
+  component :string,
+  defaultPath :string = ISSUES_PATH
+) => {
+  const personEKID = getEntityKeyId(person);
+  const rawPath = CATEGORY_PATHS[component];
+
+  if (rawPath && personEKID) {
+    return CATEGORY_PATHS[component].replace(PROFILE_ID_PATH, personEKID);
+  }
+
+  return defaultPath;
+};
+
 export {
   constructEntityIndexToIdMap,
   constructFormData,
   getIssueAssociations,
+  getTakeActionPath,
 };
