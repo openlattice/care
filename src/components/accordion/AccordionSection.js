@@ -1,0 +1,105 @@
+// @flow
+import * as React from 'react';
+import styled from 'styled-components';
+import { faChevronDown, faChevronUp } from '@fortawesome/pro-regular-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Button, CardSegment } from 'lattice-ui-kit';
+
+import AccordionHeader from './AccordionHeader';
+
+const AccordionWrapper = styled(CardSegment)`
+  display: flex;
+  flex-direction: column;
+  padding: 15px 30px;
+`;
+
+const HeaderWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  cursor: pointer;
+`;
+
+const ChildWrapper = styled.div`
+  margin-top: 20px;
+`;
+
+const LabelWrapper = styled.div`
+  display: flex;
+  flex: 0 1 auto;
+  align-items: center;
+`;
+
+const ToggleIcon = styled(FontAwesomeIcon).attrs({
+  icon: (props :any) => (props.open ? faChevronUp : faChevronDown)
+})``;
+
+const ToggleButton = styled(Button)`
+  color: inherit;
+  margin-left: auto;
+`;
+
+export type AccordionSectionProps = {
+  alwaysOpen :boolean;
+  caption :string;
+  children :React.Node;
+  headline :string;
+  index :number;
+  isOpen :boolean;
+  onClick :(index :number) => void;
+  titleComponent :React.ComponentType<*>;
+};
+
+class AccordionSection extends React.Component<AccordionSectionProps> {
+
+  static defaultProps = {
+    alwaysOpen: false,
+    caption: undefined,
+    headline: undefined,
+    titleComponent: AccordionHeader,
+  };
+
+  onClick = () => {
+    const { index, onClick } = this.props;
+    onClick(index);
+  }
+
+  render() {
+    const {
+      alwaysOpen,
+      caption,
+      children,
+      headline,
+      isOpen,
+      titleComponent: TitleComponent,
+    } = this.props;
+    return (
+      <AccordionWrapper isOpen={isOpen}>
+        <HeaderWrapper onClick={this.onClick}>
+          <LabelWrapper>
+            <TitleComponent
+                caption={caption}
+                headline={headline}
+                isOpen={isOpen} />
+          </LabelWrapper>
+          {
+            !alwaysOpen && (
+              <ToggleButton mode="subtle">
+                <ToggleIcon open={isOpen} onClick={this.onClick} />
+              </ToggleButton>
+            )
+          }
+        </HeaderWrapper>
+        {
+          isOpen && (
+            <ChildWrapper>
+              {children}
+            </ChildWrapper>
+          )
+        }
+      </AccordionWrapper>
+    );
+  }
+}
+
+export default AccordionSection;
