@@ -5,28 +5,22 @@ import {
   STATUS_FQN,
   TITLE_FQN,
 } from '../../edm/DataModelFqns';
+import { PRIORITIES } from './issue/constants';
 
-const cellStyle = {
-  width: '105px'
+const PRIORITY_ORDER = {
+  [PRIORITIES.HIGHEST]: 5,
+  [PRIORITIES.HIGH]: 4,
+  [PRIORITIES.MEDIUM]: 3,
+  [PRIORITIES.LOW]: 2,
+  [PRIORITIES.LOWEST]: 1,
+}
+
+const comparator = (a, b) => {
+  const priorityA = PRIORITY_ORDER[a];
+  const priorityB = PRIORITY_ORDER[b];
+
+  return priorityA - priorityB;
 };
-
-const ISSUE_HEADERS = [
-  {
-    key: TITLE_FQN,
-    label: 'Title',
-    cellStyle: { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }
-  },
-  { key: PRIORITY_FQN, label: 'Priority', cellStyle },
-  { key: STATUS_FQN, label: 'Status', cellStyle },
-  { key: DATE_TIME_FQN, label: 'Created', cellStyle },
-  {
-    key: 'action',
-    label: '',
-    cellStyle: { width: '50px' },
-    sortable: false
-  },
-];
-
 
 const ISSUE_FILTERS :Object = {
   MY_OPEN_ISSUES: 'My Open Issues',
@@ -39,6 +33,27 @@ const STATUS = {
   COMPLETED: 'Completed',
   DECLINED: 'Declined',
 };
+
+const cellStyle = {
+  width: '105px'
+};
+
+const ISSUE_HEADERS = [
+  {
+    key: TITLE_FQN,
+    label: 'Title',
+    cellStyle: { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }
+  },
+  { key: PRIORITY_FQN, label: 'Priority', cellStyle, comparator },
+  { key: STATUS_FQN, label: 'Status', cellStyle },
+  { key: DATE_TIME_FQN, label: 'Created', cellStyle },
+  {
+    key: 'action',
+    label: '',
+    cellStyle: { width: '50px' },
+    sortable: false
+  },
+];
 
 export {
   ISSUE_HEADERS,
