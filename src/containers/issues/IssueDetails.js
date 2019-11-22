@@ -7,6 +7,9 @@ import { Button, Label, Hooks } from 'lattice-ui-kit';
 import type { Match } from 'react-router';
 
 import LinkButton from '../../components/buttons/LinkButton';
+import CreateIssueModal from '../../components/modals/CreateIssueModal';
+import DropdownButton from '../../components/buttons/DropdownButton';
+import { setIssueStatus } from './issue/IssueActions';
 import { getTakeActionPath } from './issue/IssueUtils';
 import { getLastFirstMiFromPerson } from '../../utils/PersonUtils';
 import {
@@ -16,9 +19,9 @@ import {
   CATEGORY_FQN,
   DESCRIPTION_FQN,
   PERSON_ID_FQN,
+  OPENLATTICE_ID_FQN,
 } from '../../edm/DataModelFqns';
-import CreateIssueModal from '../../components/modals/CreateIssueModal';
-import DropdownButton from '../../components/buttons/DropdownButton';
+import { STATUS_VALUES } from './issue/constants';
 
 const { useBoolean } = Hooks;
 
@@ -76,12 +79,6 @@ const IssueDetails = (props :Props) => {
   } = props;
 
   const [isVisible, open, close] = useBoolean();
-  const dispatch = useDispatch();
-  const resolveOptions = useMemo(() => ([
-    { label: 'Declined', onClick: () => console.log('clicking declined')},
-    { label: 'Done', onClick: () => console.log('clicking done')},
-    { label: 'Open', onClick: () => console.log('clicking open')},
-  ]), [dispatch]);
 
   const assigneeName = getIn(assignee, [PERSON_ID_FQN, 0]);
   const category = getIn(issue, [CATEGORY_FQN, 0]);
@@ -92,6 +89,16 @@ const IssueDetails = (props :Props) => {
   const title = getIn(issue, [TITLE_FQN, 0]);
   const subjectName = getLastFirstMiFromPerson(subject, true);
   const actionPath = getTakeActionPath(subject, category, match.url);
+  const issueEKID = getIn(issue, [OPENLATTICE_ID_FQN, 0])
+
+  const dispatch = useDispatch();
+  const resolveOptions = useMemo(() => STATUS_VALUES.map((status) => ({
+    label: status,
+    onClick: () => dispatch(setIssueStatus({
+      entityKeyId: issueEKID,
+      status
+    }))
+  })), [dispatch]);
 
   return (
     <IssueDetailsWrapper>
@@ -102,7 +109,7 @@ const IssueDetails = (props :Props) => {
       </LabelGroup>
       <ButtonGroup>
         <Button size="sm" onClick={open}>Edit</Button>
-        <DropdownButton title="Resolve" options={resolveOptions} size="sm" />
+        <DropdownButton title="Status" options={resolveOptions} size="sm" />
         <LinkButton
             to={actionPath}
             state={Map({

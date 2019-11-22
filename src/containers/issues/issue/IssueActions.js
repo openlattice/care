@@ -12,6 +12,9 @@ const submitIssue :RequestSequence = newRequestSequence(SUBMIT_ISSUE);
 const SELECT_ISSUE :'SELECT_ISSUE' = 'SELECT_ISSUE';
 const selectIssue :RequestSequence = newRequestSequence(SELECT_ISSUE);
 
+const SET_ISSUE_STATUS :'SET_ISSUE_STATUS' = 'SET_ISSUE_STATUS';
+const setIssueStatus :RequestSequence = newRequestSequence(SET_ISSUE_STATUS);
+
 const RESET_ISSUE :'RESET_ISSUE' = 'RESET_ISSUE';
 const resetIssue = () => ({
   type: RESET_ISSUE
@@ -20,10 +23,12 @@ const resetIssue = () => ({
 export {
   GET_ISSUE_NEIGHBORS,
   RESET_ISSUE,
+  SELECT_ISSUE,
+  SET_ISSUE_STATUS,
   SUBMIT_ISSUE,
   getIssueNeighbors,
   resetIssue,
-  submitIssue,
-  SELECT_ISSUE,
   selectIssue,
+  setIssueStatus,
+  submitIssue,
 };

@@ -30,7 +30,6 @@ const MenuContainer = styled.div`
   min-width: max-content;
   max-width: 400px;
   width: auto;
-  visibility: ${(props) => (props.open ? 'visible' : 'hidden')}};
   box-shadow: 0 2px 8px -2px rgba(0,0,0,0.15);
   top: ${(props) => (props.offset === 'sm' ? '33px' : '45px')};
   bottom: auto;
@@ -57,9 +56,10 @@ const MenuContainer = styled.div`
 `;
 
 type Props = {
-  title :string,
+  isLoading :boolean;
   options :{ label :string, onClick :() => void }[];
   size :string;
+  title :string;
 };
 
 type State = {
@@ -69,8 +69,8 @@ type State = {
 export default class DropdownButton extends Component<Props, State> {
 
   static defaultProps = {
-    openAbove: false,
-    fullSize: false,
+    size: undefined,
+    isLoading: false,
   };
 
   menuRef = React.createRef<MenuContainer>();
@@ -86,31 +86,39 @@ export default class DropdownButton extends Component<Props, State> {
     this.setState({ open: !this.state.open });
   };
 
-  handleOnClick = (e :SyntheticEvent<HTMLButtonElement>) => {
+  closeDropdown = (e :SyntheticEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     this.setState({ open: false });
   }
 
   render() {
     const { open } = this.state;
-    const { options, size, title } = this.props;
+    const {
+      isLoading,
+      options,
+      size,
+      title
+    } = this.props;
 
     return (
       <DropdownButtonWrapper>
         <BaseButton
-            size={size}
+            isLoading={isLoading}
+            onBlur={this.closeDropdown}
             onClick={this.toggleDropdown}
-            onBlur={this.toggleDropdown}>
+            size={size}>
           {title}
-          <FontAwesomeIcon icon={faChevronDown} fixedWidth/>
+          <FontAwesomeIcon icon={faChevronDown} fixedWidth />
         </BaseButton>
-        <MenuContainer open={open} offset={size}>
-          {options.map((option) => (
-            <button key={option.label} onClick={this.handleOnClick} onMouseDown={option.onClick}>
-              {option.label}
-            </button>
-          ))}
-        </MenuContainer>
+        { open && (
+          <MenuContainer offset={size}>
+            {options.map((option) => (
+              <button key={option.label} onClick={this.closeDropdown} onMouseDown={option.onClick}>
+                {option.label}
+              </button>
+            ))}
+          </MenuContainer>
+        )}
       </DropdownButtonWrapper>
     );
   }
