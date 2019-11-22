@@ -12,34 +12,50 @@ import {
   get
 } from 'immutable';
 import {
+  DataApiActions,
+  DataApiSagas,
   SearchApiActions,
-  SearchApiSagas
+  SearchApiSagas,
 } from 'lattice-sagas';
-import { Constants } from 'lattice';
+import { Constants, Types } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
 
 import Logger from '../../../utils/Logger';
-import { ERR_ACTION_VALUE_NOT_DEFINED } from '../../../utils/Errors';
+import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../utils/Errors';
 import { submitDataGraph } from '../../../core/sagas/data/DataActions';
 import { submitDataGraphWorker } from '../../../core/sagas/data/DataSagas';
-import { isDefined } from '../../../utils/LangUtils';
+import { isDefined, isEmptyString } from '../../../utils/LangUtils';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { constructFormData, constructEntityIndexToIdMap } from './IssueUtils';
+import { STATUS_FQN } from '../../../edm/DataModelFqns';
 
 import {
   SELECT_ISSUE,
+  SET_ISSUE_STATUS,
   SUBMIT_ISSUE,
   selectIssue,
+  setIssueStatus,
   submitIssue,
 } from './IssueActions';
 import { getESIDFromApp } from '../../../utils/AppUtils';
 import { groupNeighborsByEntitySetIds } from '../../../utils/DataUtils';
+import { isValidUuid } from '../../../utils/Utils';
 
 const LOG = new Logger('IssueSagas');
 
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
 const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
 const { OPENLATTICE_ID_FQN } = Constants;
+
+const { DeleteTypes, UpdateTypes } = Types;
+const {
+  createAssociations,
+  updateEntityData,
+} = DataApiActions;
+const {
+  createAssociationsWorker,
+  updateEntityDataWorker,
+} = DataApiSagas;
 
 const {
   ASSIGNED_TO_FQN,
@@ -144,9 +160,58 @@ function* selectIssueWatcher() :Generator<any, any, any> {
   yield takeEvery(SELECT_ISSUE, selectIssueWorker);
 }
 
+function* setIssueStatusWorker(action :SequenceAction) :Generator<any, any, any> {
+  try {
+    const { value } = action;
+    if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
+    const { entityKeyId, status } = value;
+
+    if (!isValidUuid(entityKeyId) || isEmptyString(status)) {
+      throw ERR_ACTION_VALUE_TYPE;
+    }
+
+    yield put(setIssueStatus.request(action.id));
+
+    const app :Map = yield select((state) => state.get('app'), Map());
+    const edm :Map = yield select((state) => state.get('edm'), Map());
+
+    const issueESID :UUID = getESIDFromApp(app, ISSUE_FQN);
+    const statusPTID :UUID = edm.getIn(['fqnToIdMap', STATUS_FQN]);
+
+    const entities = {
+      [entityKeyId]: {
+        [statusPTID]: [status]
+      }
+    };
+
+    const statusResponse = yield call(
+      updateEntityDataWorker,
+      updateEntityData({
+        entitySetId: issueESID,
+        entities,
+        updateType: UpdateTypes.PartialReplace
+      })
+    );
+
+    if (statusResponse.error) throw statusResponse.error;
+
+    yield put(setIssueStatus.success(action.id));
+  }
+  catch (error) {
+    LOG.error('setIssueStatus', error);
+    yield put(setIssueStatus.failure(action.id, error));
+  }
+}
+
+function* setIssueStatusWatcher() :Generator<any, any, any> {
+  yield takeEvery(SET_ISSUE_STATUS, setIssueStatusWorker);
+}
+
 export {
   selectIssueWatcher,
   selectIssueWorker,
+  setIssueStatusWatcher,
+  setIssueStatusWorker,
   submitIssueWatcher,
   submitIssueWorker,
 };

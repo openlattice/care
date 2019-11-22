@@ -154,6 +154,7 @@ export default function* sagas() :Generator<*, *, *> {
     // IssueSagas
     fork(IssueSagas.submitIssueWatcher),
     fork(IssueSagas.selectIssueWatcher),
+    fork(IssueSagas.setIssueStatusWatcher),
 
     // IssuesSagas
     fork(IssuesSagas.getAllIssuesWatcher),

@@ -1,9 +1,10 @@
 // @flow
 import React, { useMemo } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { Map, getIn } from 'immutable';
 import { Button, Label, Hooks } from 'lattice-ui-kit';
+import { RequestStates } from 'redux-reqseq';
 import type { Match } from 'react-router';
 
 import LinkButton from '../../components/buttons/LinkButton';
@@ -79,6 +80,7 @@ const IssueDetails = (props :Props) => {
   } = props;
 
   const [isVisible, open, close] = useBoolean();
+  const isLoading = useSelector((store :Map) => store.getIn(['issues', 'issue', 'updateState']) === RequestStates.PENDING);
 
   const assigneeName = getIn(assignee, [PERSON_ID_FQN, 0]);
   const category = getIn(issue, [CATEGORY_FQN, 0]);
@@ -89,16 +91,16 @@ const IssueDetails = (props :Props) => {
   const title = getIn(issue, [TITLE_FQN, 0]);
   const subjectName = getLastFirstMiFromPerson(subject, true);
   const actionPath = getTakeActionPath(subject, category, match.url);
-  const issueEKID = getIn(issue, [OPENLATTICE_ID_FQN, 0])
+  const issueEKID = getIn(issue, [OPENLATTICE_ID_FQN, 0]);
 
   const dispatch = useDispatch();
-  const resolveOptions = useMemo(() => STATUS_VALUES.map((status) => ({
-    label: status,
+  const resolveOptions = useMemo(() => STATUS_VALUES.map((statusValue) => ({
+    label: statusValue,
     onClick: () => dispatch(setIssueStatus({
       entityKeyId: issueEKID,
-      status
+      status: statusValue
     }))
-  })), [dispatch]);
+  })), [dispatch, issueEKID]);
 
   return (
     <IssueDetailsWrapper>
@@ -109,7 +111,11 @@ const IssueDetails = (props :Props) => {
       </LabelGroup>
       <ButtonGroup>
         <Button size="sm" onClick={open}>Edit</Button>
-        <DropdownButton title="Status" options={resolveOptions} size="sm" />
+        <DropdownButton
+            isLoading={isLoading}
+            options={resolveOptions}
+            size="sm"
+            title="Status" />
         <LinkButton
             to={actionPath}
             state={Map({

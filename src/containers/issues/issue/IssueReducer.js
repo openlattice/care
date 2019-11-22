@@ -7,7 +7,8 @@ import type { SequenceAction } from 'redux-reqseq';
 import {
   RESET_ISSUE,
   selectIssue,
-  submitIssue
+  submitIssue,
+  setIssueStatus
 } from './IssueActions';
 
 const INITIAL_STATE :Map = fromJS({
@@ -37,6 +38,14 @@ const IssueReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
         REQUEST: () => state.set('submitState', RequestStates.PENDING),
         SUCCESS: () => state.set('submitState', RequestStates.SUCCESS),
         FAILURE: () => state.set('submitState', RequestStates.FAILURE),
+      });
+    }
+
+    case setIssueStatus.case(action.type): {
+      return setIssueStatus.reducer(state, action, {
+        REQUEST: () => state.set('updateState', RequestStates.PENDING),
+        SUCCESS: () => state.set('updateState', RequestStates.SUCCESS),
+        FAILURE: () => state.set('updateState', RequestStates.FAILURE),
       });
     }
 
