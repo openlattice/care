@@ -36,7 +36,7 @@ const StyledForm = styled(Form)`
 type Props = {
   assignee :Map;
   currentUser :Map;
-  defaultComponent :string;
+  defaultComponent ? :string;
   person :Map;
 };
 
@@ -45,6 +45,7 @@ const IssueForm = (props :Props, ref) => {
     assignee,
     currentUser,
     defaultComponent,
+    edit,
     person,
   } = props;
 
@@ -116,6 +117,10 @@ const IssueForm = (props :Props, ref) => {
         schema={changeSchema}
         uiSchema={uiSchema} />
   );
+};
+
+IssueForm.defaultProps = {
+  defaultComponent: ''
 };
 
 export default React.memo<Props, typeof StyledForm>(

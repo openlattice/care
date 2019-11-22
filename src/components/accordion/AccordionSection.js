@@ -19,6 +19,7 @@ const HeaderWrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: space-between;
   cursor: pointer;
 `;
 
@@ -37,7 +38,6 @@ const ToggleIcon = styled(FontAwesomeIcon).attrs({
 })``;
 
 const ToggleButton = styled(Button)`
-  margin-left: auto;
   color: inherit;
 `;
 

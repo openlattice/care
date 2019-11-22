@@ -1,11 +1,13 @@
 // @flow
-import React from 'react';
+import React, { useMemo } from 'react';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { Map, getIn } from 'immutable';
-import { Button, Label } from 'lattice-ui-kit';
+import { Button, Label, Hooks } from 'lattice-ui-kit';
 import type { Match } from 'react-router';
 
 import LinkButton from '../../components/buttons/LinkButton';
+import { getTakeActionPath } from './issue/IssueUtils';
 import { getLastFirstMiFromPerson } from '../../utils/PersonUtils';
 import {
   TITLE_FQN,
@@ -15,16 +17,18 @@ import {
   DESCRIPTION_FQN,
   PERSON_ID_FQN,
 } from '../../edm/DataModelFqns';
-import { getTakeActionPath } from './issue/IssueUtils';
+import CreateIssueModal from '../../components/modals/CreateIssueModal';
+import DropdownButton from '../../components/buttons/DropdownButton';
 
+const { useBoolean } = Hooks;
 
 const ButtonGroup = styled.div`
-  > button:not(:first-of-type) {
+  > :not(:first-child) {
     margin-left: 10px;
   }
 `;
 
-const ExpandedCellContent = styled.div`
+const IssueDetailsWrapper = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -71,6 +75,14 @@ const IssueDetails = (props :Props) => {
     subject,
   } = props;
 
+  const [isVisible, open, close] = useBoolean();
+  const dispatch = useDispatch();
+  const resolveOptions = useMemo(() => ([
+    { label: 'Declined', onClick: () => console.log('clicking declined')},
+    { label: 'Done', onClick: () => console.log('clicking done')},
+    { label: 'Open', onClick: () => console.log('clicking open')},
+  ]), [dispatch]);
+
   const assigneeName = getIn(assignee, [PERSON_ID_FQN, 0]);
   const category = getIn(issue, [CATEGORY_FQN, 0]);
   const description = getIn(issue, [DESCRIPTION_FQN, 0]);
@@ -82,16 +94,15 @@ const IssueDetails = (props :Props) => {
   const actionPath = getTakeActionPath(subject, category, match.url);
 
   return (
-
-    <ExpandedCellContent>
+    <IssueDetailsWrapper>
       { !hideTitle && <Title>{title}</Title> }
       <LabelGroup>
         <Label subtle>Subject: </Label>
         <span>{subjectName}</span>
       </LabelGroup>
       <ButtonGroup>
-        <Button size="sm">Edit</Button>
-        <Button size="sm">Resolve</Button>
+        <Button size="sm" onClick={open}>Edit</Button>
+        <DropdownButton title="Resolve" options={resolveOptions} size="sm" />
         <LinkButton
             to={actionPath}
             state={Map({
@@ -129,7 +140,13 @@ const IssueDetails = (props :Props) => {
       </LabelGrid>
       <Label subtle>Description</Label>
       <div>{description}</div>
-    </ExpandedCellContent>
+      <CreateIssueModal
+          assignee={assignee}
+          currentUser={reporter}
+          isVisible={isVisible}
+          onClose={close}
+          person={subject} />
+    </IssueDetailsWrapper>
   );
 };
 

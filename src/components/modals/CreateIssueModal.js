@@ -1,5 +1,6 @@
 // @flow
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import { Map } from 'immutable';
 import { RequestStates } from 'redux-reqseq';
 import { ActionModal } from 'lattice-ui-kit';
@@ -17,14 +18,13 @@ const emptyBody = {
 type Props = {
   assignee :Map;
   currentUser :Map;
-  defaultComponent :string;
+  defaultComponent ? :string;
   isVisible :boolean;
   onClose :() => void;
   person :Map;
-  submitState :RequestState;
 };
 
-const NewIssueModal = (props :Props) => {
+const CreateIssueModal = (props :Props) => {
   const {
     assignee,
     currentUser,
@@ -32,9 +32,16 @@ const NewIssueModal = (props :Props) => {
     isVisible,
     onClose,
     person,
-    submitState,
   } = props;
   const formRef = useRef();
+
+  const submitState :RequestState = useSelector((store) => store.getIn(['issues', 'issue', 'submitState']));
+
+  useEffect(() => {
+    if (submitState === RequestStates.SUCCESS) {
+      onClose();
+    }
+  }, [onClose, submitState]);
 
   const handleExternalSubmit = useCallback(() => {
     if (formRef.current) {
@@ -64,4 +71,8 @@ const NewIssueModal = (props :Props) => {
   );
 };
 
-export default React.memo<Props>(NewIssueModal);
+CreateIssueModal.defaultProps = {
+  defaultComponent: '',
+};
+
+export default React.memo<Props>(CreateIssueModal);
