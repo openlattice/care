@@ -19,29 +19,36 @@ type Props = {
   assignee :Map;
   currentUser :Map;
   defaultComponent ? :string;
+  edit :boolean;
+  issue :Map;
   isVisible :boolean;
   onClose :() => void;
   person :Map;
 };
 
-const CreateIssueModal = (props :Props) => {
+const IssueModal = (props :Props) => {
   const {
     assignee,
     currentUser,
     defaultComponent,
+    edit,
+    issue,
     isVisible,
     onClose,
     person,
   } = props;
   const formRef = useRef();
 
-  const submitState :RequestState = useSelector((store) => store.getIn(['issues', 'issue', 'submitState']));
+  const requestState :RequestState = useSelector((store) => {
+    const stateName = edit ? 'updateState' : 'submitState';
+    return store.getIn(['issues', 'issue', stateName]);
+  });
 
   useEffect(() => {
-    if (submitState === RequestStates.SUCCESS) {
+    if (requestState === RequestStates.SUCCESS) {
       onClose();
     }
-  }, [onClose, submitState]);
+  }, [onClose, requestState]);
 
   const handleExternalSubmit = useCallback(() => {
     if (formRef.current) {
@@ -49,30 +56,35 @@ const CreateIssueModal = (props :Props) => {
     }
   }, [formRef]);
 
+  const textPrimary = edit ? 'Update' : 'Submit';
+  const textTitle = edit ? 'Edit Issue' : 'Create Issue';
+
   return (
     <ActionModal
-        requestState={submitState}
+        requestState={requestState}
         requestStateComponents={emptyBody}
         isVisible={isVisible}
         onClickPrimary={handleExternalSubmit}
         onClose={onClose}
         shouldCloseOnOutsideClick={false}
-        textPrimary="Submit"
+        textPrimary={textPrimary}
         textSecondary="Discard"
-        textTitle="Create Issue"
+        textTitle={textTitle}
         viewportScrolling>
       <IssueForm
           assignee={assignee}
           currentUser={currentUser}
           defaultComponent={defaultComponent}
+          edit={edit}
+          issue={issue}
           person={person}
           ref={formRef} />
     </ActionModal>
   );
 };
 
-CreateIssueModal.defaultProps = {
+IssueModal.defaultProps = {
   defaultComponent: '',
 };
 
-export default React.memo<Props>(CreateIssueModal);
+export default React.memo<Props>(IssueModal);

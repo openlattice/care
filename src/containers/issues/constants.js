@@ -28,12 +28,6 @@ const ISSUE_FILTERS :Object = {
   ALL_ISSUES: 'All Issues',
 };
 
-const STATUS = {
-  OPEN: 'Open',
-  COMPLETED: 'Completed',
-  DECLINED: 'Declined',
-};
-
 const cellStyle = {
   width: '105px'
 };
@@ -58,5 +52,4 @@ const ISSUE_HEADERS = [
 export {
   ISSUE_HEADERS,
   ISSUE_FILTERS,
-  STATUS,
 };

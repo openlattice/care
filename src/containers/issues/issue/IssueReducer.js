@@ -7,8 +7,9 @@ import type { SequenceAction } from 'redux-reqseq';
 import {
   RESET_ISSUE,
   selectIssue,
+  setIssueStatus,
   submitIssue,
-  setIssueStatus
+  updateIssue,
 } from './IssueActions';
 
 const INITIAL_STATE :Map = fromJS({
@@ -46,6 +47,25 @@ const IssueReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
         REQUEST: () => state.set('updateState', RequestStates.PENDING),
         SUCCESS: () => state.set('updateState', RequestStates.SUCCESS),
         FAILURE: () => state.set('updateState', RequestStates.FAILURE),
+      });
+    }
+
+    case updateIssue.case(action.type): {
+      return updateIssue.reducer(state, action, {
+        REQUEST: () => {
+          const { path, properties } = action.value;
+          return state
+            .set('updateState', RequestStates.PENDING);
+        },
+        SUCCESS: () => {
+          const { entityIndexToIdMap, issue } = action.value;
+          console.log(action.value);
+          return state
+            .mergeIn(['entityIndexToIdMap'], entityIndexToIdMap)
+            .mergeIn(['data', 'issue'], issue)
+            .set('updateState', RequestStates.SUCCESS);
+        },
+        FAILURE: () => state.set('updateState', RequestStates.FAILURE)
       });
     }
 

@@ -1,15 +1,18 @@
 // @flow
 import {
+  all,
   call,
   put,
   select,
   takeEvery,
 } from '@redux-saga/core/effects';
+import { DateTime } from 'luxon';
 import {
-  List,
   Map,
   fromJS,
-  get
+  get,
+  getIn,
+  has,
 } from 'immutable';
 import {
   DataApiActions,
@@ -22,23 +25,33 @@ import type { SequenceAction } from 'redux-reqseq';
 
 import Logger from '../../../utils/Logger';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../utils/Errors';
-import { submitDataGraph } from '../../../core/sagas/data/DataActions';
-import { submitDataGraphWorker } from '../../../core/sagas/data/DataSagas';
+import {
+  createOrReplaceAssociation,
+  submitDataGraph,
+  submitPartialReplace,
+} from '../../../core/sagas/data/DataActions';
+import {
+  createOrReplaceAssociationWorker,
+  submitDataGraphWorker,
+  submitPartialReplaceWorker,
+} from '../../../core/sagas/data/DataSagas';
 import { isDefined, isEmptyString } from '../../../utils/LangUtils';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
-import { constructFormData, constructEntityIndexToIdMap } from './IssueUtils';
-import { STATUS_FQN } from '../../../edm/DataModelFqns';
+import { constructEntityIndexToIdMap } from './IssueUtils';
+import { STATUS_FQN, DATE_TIME_FQN } from '../../../edm/DataModelFqns';
 
 import {
   SELECT_ISSUE,
   SET_ISSUE_STATUS,
   SUBMIT_ISSUE,
+  UPDATE_ISSUE,
   selectIssue,
   setIssueStatus,
   submitIssue,
+  updateIssue,
 } from './IssueActions';
 import { getESIDFromApp } from '../../../utils/AppUtils';
-import { groupNeighborsByEntitySetIds } from '../../../utils/DataUtils';
+import { groupNeighborsByEntitySetIds, simulateResponseData } from '../../../utils/DataUtils';
 import { isValidUuid } from '../../../utils/Utils';
 
 const LOG = new Logger('IssueSagas');
@@ -47,13 +60,13 @@ const { searchEntityNeighborsWithFilter } = SearchApiActions;
 const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
 const { OPENLATTICE_ID_FQN } = Constants;
 
-const { DeleteTypes, UpdateTypes } = Types;
+const { UpdateTypes } = Types;
 const {
-  createAssociations,
   updateEntityData,
+  getEntityData
 } = DataApiActions;
 const {
-  createAssociationsWorker,
+  getEntityDataWorker,
   updateEntityDataWorker,
 } = DataApiSagas;
 
@@ -87,6 +100,90 @@ function* submitIssueWatcher() :Generator<any, any, any> {
   yield takeEvery(SUBMIT_ISSUE, submitIssueWorker);
 }
 
+function* updateIssueWorker(action :SequenceAction) :Generator<any, any, any> {
+  try {
+    const { value } = action;
+    if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
+    yield put(updateIssue.request(action.id, value));
+
+    const app :Map = yield select((state) => state.get('app', Map()));
+    const propertyTypesById :Map = yield select((state) => state.getIn(['edm', 'propertyTypesById']), Map());
+    const reservedId = yield select((state) => state.getIn(['edm', 'fqnToIdMap', OPENLATTICE_ID_FQN]));
+    const staffESID = getESIDFromApp(app, STAFF_FQN);
+    const assignedToESID = getESIDFromApp(app, ASSIGNED_TO_FQN);
+    const issueESID = getESIDFromApp(app, ISSUE_FQN);
+    const datetimePTID :UUID = yield select((state) => state.getIn(['edm', 'fqnToIdMap', DATE_TIME_FQN]));
+
+    const { entityData, entityIndexToIdMap, responsibleUsers } = value;
+
+    const assignedToEKID = entityIndexToIdMap.getIn([ASSIGNED_TO_FQN, 0]);
+    const issueEKID = entityIndexToIdMap.getIn([ISSUE_FQN, 0]);
+    const staffEKID = entityIndexToIdMap.getIn([STAFF_FQN, 0]) || 0;
+
+    // you should only override staffEKID if a new one is assigned to.
+
+    let newEntityIndexToIdMap = Map();
+    let assignee;
+    if (has(entityData, staffESID)) {
+      const newStaffEKID = getIn(entityData, [staffESID, staffEKID, reservedId, 0]);
+
+      const association = {
+        [assignedToESID]: [{
+          data: {
+            [datetimePTID]: [DateTime.local().toISO()]
+          },
+          dst: {
+            entitySetId: staffESID,
+            entityKeyId: newStaffEKID
+          },
+          src: {
+            entitySetId: issueESID,
+            entityKeyId: issueEKID,
+          }
+        }]
+      };
+
+      const associationResponse = yield call(
+        createOrReplaceAssociationWorker,
+        createOrReplaceAssociation({
+          association,
+          entityKeyId: assignedToEKID,
+          entitySetId: assignedToESID,
+        })
+      );
+
+      if (associationResponse.error) throw associationResponse.error;
+      const newAssignedToEKID :UUID = getIn(associationResponse, ['data', assignedToESID, 0]);
+      newEntityIndexToIdMap = entityIndexToIdMap
+        .setIn([ASSIGNED_TO_FQN.toString(), 0], newAssignedToEKID)
+        .setIn([STAFF_FQN.toString(), 0], newStaffEKID);
+
+      assignee = responsibleUsers.find((user) => user.getIn([OPENLATTICE_ID_FQN, 0]) === newStaffEKID);
+      delete entityData[staffESID];
+    }
+
+    const updatedProperties = fromJS(entityData).getIn([issueESID, issueEKID], Map());
+    const simulatedData = simulateResponseData(updatedProperties, issueEKID, propertyTypesById);
+
+    const response = yield call(submitPartialReplaceWorker, submitPartialReplace(value));
+    if (response.error) throw response.error;
+
+    yield put(updateIssue.success(action.id, {
+      entityIndexToIdMap: newEntityIndexToIdMap,
+      issue: simulatedData,
+      assignee
+    }));
+  }
+  catch (error) {
+    LOG.error('updateIssueWorker', error);
+    yield put(updateIssue.failure(action.id));
+  }
+}
+
+function* updateIssueWatcher() :Generator<any, any, any> {
+  yield takeEvery(UPDATE_ISSUE, updateIssueWorker);
+}
+
 function* selectIssueWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
     const { value } = action;
@@ -103,7 +200,15 @@ function* selectIssueWorker(action :SequenceAction) :Generator<any, any, any> {
     const subjectOfESID :UUID = getESIDFromApp(app, SUBJECT_OF_FQN);
     const issueESID :UUID = getESIDFromApp(app, ISSUE_FQN);
 
-    const issueSearchParams = {
+    const issueRequest = call(
+      getEntityDataWorker,
+      getEntityData({
+        entitySetId: issueESID,
+        entityKeyId: issueEKID
+      })
+    );
+
+    const neighborSearchParams = {
       entitySetId: issueESID,
       filter: {
         entityKeyIds: [issueEKID],
@@ -113,28 +218,30 @@ function* selectIssueWorker(action :SequenceAction) :Generator<any, any, any> {
       }
     };
 
-    const issueResponse = yield call(
+    const neighborsRequest = call(
       searchEntityNeighborsWithFilterWorker,
-      searchEntityNeighborsWithFilter(issueSearchParams)
+      searchEntityNeighborsWithFilter(neighborSearchParams)
     );
 
-    if (issueResponse.error) throw issueResponse.error;
+    const [issueResponse, neighborResponse] = yield all([
+      issueRequest,
+      neighborsRequest,
+    ]);
 
-    const issueResponseData = fromJS(issueResponse.data).get(issueEKID);
-    const neighborsByEdge = groupNeighborsByEntitySetIds(issueResponseData, true, true);
+    if (issueResponse.error) throw neighborResponse.error;
+    if (neighborResponse.error) throw neighborResponse.error;
+
+    const neighborResponseData = fromJS(neighborResponse.data).get(issueEKID);
+    const neighborsByEdge = groupNeighborsByEntitySetIds(neighborResponseData, true, true);
 
     const assignee = neighborsByEdge.getIn([assignedToESID, 0, 'neighborDetails'], Map());
     const reporter = neighborsByEdge.getIn([reportedESID, 0, 'neighborDetails'], Map());
     const subject = neighborsByEdge.getIn([subjectOfESID, 0, 'neighborDetails'], Map());
-    const issue = fromJS(value).map((property :string) => List([property]));
+    const issue = fromJS(issueResponse.data);
+
     const assignedToEKID = neighborsByEdge
       .getIn([assignedToESID, 0, 'associationDetails', OPENLATTICE_ID_FQN, 0]);
     const assigneeEKID = assignee.getIn([OPENLATTICE_ID_FQN, 0]);
-
-    const formData = constructFormData({
-      assignee,
-      issue
-    });
     const entityIndexToIdMap = constructEntityIndexToIdMap(assignedToEKID, assigneeEKID, issueEKID);
 
     const data = fromJS({
@@ -146,7 +253,6 @@ function* selectIssueWorker(action :SequenceAction) :Generator<any, any, any> {
 
     yield put(selectIssue.success(action.id, {
       data,
-      formData,
       entityIndexToIdMap
     }));
   }
@@ -214,4 +320,6 @@ export {
   setIssueStatusWorker,
   submitIssueWatcher,
   submitIssueWorker,
+  updateIssueWatcher,
+  updateIssueWorker,
 };

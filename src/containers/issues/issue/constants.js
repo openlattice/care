@@ -37,7 +37,7 @@ const CATEGORY_PATHS = {
 
 const STATUS = {
   DECLINED: 'Declined',
-  COMPLETE: 'Complete',
+  RESOLVED: 'Resolved',
   OPEN: 'Open',
 };
 

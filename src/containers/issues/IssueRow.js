@@ -12,6 +12,7 @@ import {
   resetIssue,
   selectIssue,
 } from './issue/IssueActions';
+import { STATUS } from './issue/constants';
 import IssueRowExpansion from './IssueRowExpansion';
 import {
   TITLE_FQN,
@@ -22,6 +23,12 @@ import {
 
 const { NEUTRALS } = Colors;
 const { getHoverStyles } = StyleUtils;
+
+const STATUS_MODE = {
+  [STATUS.RESOLVED]: 'success',
+  [STATUS.DECLINED]: 'danger',
+  [STATUS.OPEN]: 'neutral',
+};
 
 const CustomRowWrapper = styled.tr.attrs(() => ({ tabIndex: '1' }))`
   border-bottom: ${(props) => (props.expanded ? null : `1px solid ${NEUTRALS[4]}`)};
@@ -37,6 +44,7 @@ const CellContent = styled.div`
 
 const StyledCell = styled.td`
   padding: 10px;
+  text-align: ${(props) => props.align ? 'center' : 'left'};
 `;
 
 type Props = {
@@ -96,7 +104,7 @@ const IssueRow = (props :Props) => {
         </StyledCell>
         <StyledCell>
           <CellContent>
-            { status && <Tag mode="neutral">{status}</Tag> }
+            { status && <Tag mode={STATUS_MODE[status]}>{status}</Tag> }
           </CellContent>
         </StyledCell>
         <StyledCell>

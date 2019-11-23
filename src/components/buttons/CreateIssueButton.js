@@ -8,7 +8,7 @@ import { Map } from 'immutable';
 import { IconButton, Hooks } from 'lattice-ui-kit';
 import { useSelector } from 'react-redux';
 
-import CreateIssueModal from '../modals/CreateIssueModal';
+import IssueModal from '../modals/IssueModal';
 
 const { useBoolean } = Hooks;
 
@@ -40,7 +40,7 @@ const CreateIssueButton = (props :Props) => {
   return (
     <>
       <ChangeButton mode={mode} onClick={onOpen} icon={ChangeIcon} />
-      <CreateIssueModal
+      <IssueModal
           assignee={assignee}
           currentUser={currentUser}
           defaultComponent={defaultComponent}

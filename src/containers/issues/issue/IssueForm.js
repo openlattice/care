@@ -16,16 +16,19 @@ import { schema, uiSchema } from './IssueSchemas';
 import { getResponsibleUserOptions } from '../../staff/StaffActions';
 import { hydrateSchemaWithStaff } from '../../profile/edit/about/AboutUtils';
 import { constructFormData, getIssueAssociations } from './IssueUtils';
-import { submitIssue, resetIssue } from './IssueActions';
+import { submitIssue, resetIssue, updateIssue } from './IssueActions';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
 
 const { STAFF_FQN } = APP_TYPES_FQNS;
 const { OPENLATTICE_ID_FQN } = Constants;
 const {
+  findEntityAddressKeyFromMap,
   getEntityAddressKey,
   getPageSectionKey,
   processAssociationEntityData,
-  processEntityData
+  processEntityData,
+  processEntityDataForPartialReplace,
+  replaceEntityAddressKeys,
 } = DataProcessingUtils;
 
 const StyledForm = styled(Form)`
@@ -37,6 +40,8 @@ type Props = {
   assignee :Map;
   currentUser :Map;
   defaultComponent ? :string;
+  edit :boolean;
+  issue :Map;
   person :Map;
 };
 
@@ -46,17 +51,18 @@ const IssueForm = (props :Props, ref) => {
     currentUser,
     defaultComponent,
     edit,
+    issue,
     person,
   } = props;
 
   const responsibleUsers :List<Map> = useSelector((store :Map) => store.getIn(['staff', 'responsibleUsers', 'data']));
   const entitySetIds :Map = useSelector((store :Map) => store.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
   const propertyTypeIds :Map = useSelector((store :Map) => store.getIn(['edm', 'fqnToIdMap'], Map()));
+  const entityIndexToIdMap :Map = useSelector((store :Map) => store.getIn(['issues', 'issue', 'entityIndexToIdMap'], Map()));
 
   const [changeSchema, setSchema] = useState(schema);
   const dispatch = useDispatch();
 
-  // clean up requestStates on mount/unmount
   useEffect(() => {
     dispatch(resetIssue());
 
@@ -75,7 +81,8 @@ const IssueForm = (props :Props, ref) => {
   const defaultFormData = useMemo(() => constructFormData({
     assignee,
     defaultComponent,
-  }), [assignee, defaultComponent]);
+    issue
+  }), [assignee, defaultComponent, issue]);
 
   const [formData] = useFormData(defaultFormData);
 
@@ -107,12 +114,48 @@ const IssueForm = (props :Props, ref) => {
     propertyTypeIds
   ]);
 
+  const handleEdit = useCallback((payload :any) => {
+    const { formData: newFormData } = payload;
+    const draftWithKeys = replaceEntityAddressKeys(
+      newFormData,
+      findEntityAddressKeyFromMap(entityIndexToIdMap)
+    );
+    const originalWithKeys = replaceEntityAddressKeys(
+      defaultFormData,
+      findEntityAddressKeyFromMap(entityIndexToIdMap)
+    );
+
+    const entityData = processEntityDataForPartialReplace(
+      draftWithKeys,
+      originalWithKeys,
+      entitySetIds,
+      propertyTypeIds
+    );
+
+    dispatch(updateIssue({
+      entityData,
+      path: [],
+      properties: newFormData,
+      entityIndexToIdMap,
+      responsibleUsers,
+    }));
+  }, [
+    defaultFormData,
+    dispatch,
+    entityIndexToIdMap,
+    entitySetIds,
+    propertyTypeIds,
+    responsibleUsers,
+  ]);
+
+  const onSubmit = edit ? handleEdit : handleSubmit;
+
   return (
     <StyledForm
         hideSubmit
         noPadding
         ref={ref}
-        onSubmit={handleSubmit}
+        onSubmit={onSubmit}
         formData={formData}
         schema={changeSchema}
         uiSchema={uiSchema} />
@@ -120,7 +163,8 @@ const IssueForm = (props :Props, ref) => {
 };
 
 IssueForm.defaultProps = {
-  defaultComponent: ''
+  defaultComponent: '',
+  edit: false
 };
 
 export default React.memo<Props, typeof StyledForm>(

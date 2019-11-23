@@ -8,7 +8,7 @@ import { RequestStates } from 'redux-reqseq';
 import type { Match } from 'react-router';
 
 import LinkButton from '../../components/buttons/LinkButton';
-import CreateIssueModal from '../../components/modals/CreateIssueModal';
+import IssueModal from '../../components/modals/IssueModal';
 import DropdownButton from '../../components/buttons/DropdownButton';
 import { setIssueStatus } from './issue/IssueActions';
 import { getTakeActionPath } from './issue/IssueUtils';
@@ -153,10 +153,12 @@ const IssueDetails = (props :Props) => {
       </LabelGrid>
       <Label subtle>Description</Label>
       <div>{description}</div>
-      <CreateIssueModal
+      <IssueModal
           assignee={assignee}
           currentUser={reporter}
+          edit
           isVisible={isVisible}
+          issue={issue}
           onClose={close}
           person={subject} />
     </IssueDetailsWrapper>

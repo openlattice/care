@@ -8,8 +8,6 @@ import {
 import { DateTime } from 'luxon';
 import { Map, fromJS } from 'immutable';
 import {
-  // DataApiActions,
-  // DataApiSagas,
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
@@ -30,19 +28,6 @@ import {
 import { getESIDFromApp } from '../../utils/AppUtils';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { DATE_TIME_FQN } from '../../edm/DataModelFqns';
-
-// const {
-//   createAssociations,
-//   deleteEntityData,
-//   getEntityData,
-//   updateEntityData,
-// } = DataApiActions;
-// const {
-//   createAssociationsWorker,
-//   deleteEntityDataWorker,
-//   getEntityDataWorker,
-//   updateEntityDataWorker,
-// } = DataApiSagas;
 const {
   searchEntitySetData,
   searchEntityNeighborsWithFilter,
