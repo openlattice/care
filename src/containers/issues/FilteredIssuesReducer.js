@@ -15,6 +15,7 @@ import {
 import {
   selectIssue,
   updateIssue,
+  setIssueStatus,
 } from './issue/IssueActions';
 import { OPENLATTICE_ID_FQN } from '../../edm/DataModelFqns';
 
@@ -53,6 +54,16 @@ const FilteredIssues = (state :Map = INITIAL_STATE, action :SequenceAction) => {
       });
     }
 
+    case setIssueStatus.case(action.type): {
+      return setIssueStatus.reducer(state, action, {
+        SUCCESS: () => {
+          const { issue } = action.value;
+
+          return updateIssueRow(state, issue);
+        },
+      });
+    }
+
     case selectIssue.case(action.type): {
       return selectIssue.reducer(state, action, {
         SUCCESS: () => {
@@ -64,12 +75,10 @@ const FilteredIssues = (state :Map = INITIAL_STATE, action :SequenceAction) => {
       });
     }
 
-    // update the issue with flatted entity
     case updateIssue.case(action.type): {
       return updateIssue.reducer(state, action, {
         SUCCESS: () => {
           const { issue } = action.value;
-          console.log(action.value);
 
           return updateIssueRow(state, issue);
         },

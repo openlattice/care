@@ -279,10 +279,9 @@ function* setIssueStatusWorker(action :SequenceAction) :Generator<any, any, any>
     yield put(setIssueStatus.request(action.id));
 
     const app :Map = yield select((state) => state.get('app'), Map());
-    const edm :Map = yield select((state) => state.get('edm'), Map());
-
+    const propertyTypesById = yield select((state) => state.getIn(['edm', 'propertyTypesById']), Map());
     const issueESID :UUID = getESIDFromApp(app, ISSUE_FQN);
-    const statusPTID :UUID = edm.getIn(['fqnToIdMap', STATUS_FQN]);
+    const statusPTID :UUID = yield select((state) => state.getIn(['edm', 'fqnToIdMap', STATUS_FQN]));
 
     const entities = {
       [entityKeyId]: {
@@ -300,8 +299,12 @@ function* setIssueStatusWorker(action :SequenceAction) :Generator<any, any, any>
     );
 
     if (statusResponse.error) throw statusResponse.error;
+    const updatedProperties = fromJS(entities).get(entityKeyId, Map());
+    const simulatedData = simulateResponseData(updatedProperties, entityKeyId, propertyTypesById);
 
-    yield put(setIssueStatus.success(action.id));
+    yield put(setIssueStatus.success(action.id, {
+      issue: simulatedData
+    }));
   }
   catch (error) {
     LOG.error('setIssueStatus', error);

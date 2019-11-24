@@ -45,7 +45,12 @@ const IssueReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
     case setIssueStatus.case(action.type): {
       return setIssueStatus.reducer(state, action, {
         REQUEST: () => state.set('updateState', RequestStates.PENDING),
-        SUCCESS: () => state.set('updateState', RequestStates.SUCCESS),
+        SUCCESS: () => {
+          const { issue } = action.value;
+          return state
+            .mergeIn(['data', 'issue'], issue)
+            .set('updateState', RequestStates.SUCCESS);
+        },
         FAILURE: () => state.set('updateState', RequestStates.FAILURE),
       });
     }
