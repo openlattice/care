@@ -52,17 +52,13 @@ const IssueReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
 
     case updateIssue.case(action.type): {
       return updateIssue.reducer(state, action, {
-        REQUEST: () => {
-          const { path, properties } = action.value;
-          return state
-            .set('updateState', RequestStates.PENDING);
-        },
+        REQUEST: () => state.set('updateState', RequestStates.PENDING),
         SUCCESS: () => {
-          const { entityIndexToIdMap, issue } = action.value;
-          console.log(action.value);
+          const { assignee, entityIndexToIdMap, issue } = action.value;
           return state
             .mergeIn(['entityIndexToIdMap'], entityIndexToIdMap)
             .mergeIn(['data', 'issue'], issue)
+            .mergeIn(['data', 'assignee'], assignee)
             .set('updateState', RequestStates.SUCCESS);
         },
         FAILURE: () => state.set('updateState', RequestStates.FAILURE)

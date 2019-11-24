@@ -13,7 +13,8 @@ import {
 } from './IssuesActions';
 
 import {
-  selectIssue
+  selectIssue,
+  updateIssue,
 } from './issue/IssueActions';
 import { OPENLATTICE_ID_FQN } from '../../edm/DataModelFqns';
 
@@ -24,10 +25,13 @@ const INITIAL_STATE :Map = fromJS({
   fetchState: RequestStates.STANDBY,
 });
 
-const updateIssueRow = (state :Map, issueEKID :UUID, rowData :Map) => {
+const updateIssueRow = (state :Map, issue :Map) => {
+  const issueEKID = issue.getIn([OPENLATTICE_ID_FQN, 0]);
   const issueIndex = state
     .get('data')
     .findIndex((issueRow) => issueRow.get(OPENLATTICE_ID_FQN) === issueEKID);
+
+  const rowData = issue.map((details) => details.get(0));
 
   if (issueIndex > -1) {
     return state.mergeDeepIn(['data', issueIndex], rowData);
@@ -54,10 +58,20 @@ const FilteredIssues = (state :Map = INITIAL_STATE, action :SequenceAction) => {
         SUCCESS: () => {
           const { data } = action.value;
           const issue :Map = data.get('issue');
-          const issueEKID :UUID = issue.getIn([OPENLATTICE_ID_FQN, 0]);
-          const issueRowData :Map = issue.map((details) => details.get(0));
-          
-          return updateIssueRow(state, issueEKID, issueRowData);
+
+          return updateIssueRow(state, issue);
+        },
+      });
+    }
+
+    // update the issue with flatted entity
+    case updateIssue.case(action.type): {
+      return updateIssue.reducer(state, action, {
+        SUCCESS: () => {
+          const { issue } = action.value;
+          console.log(action.value);
+
+          return updateIssueRow(state, issue);
         },
       });
     }
