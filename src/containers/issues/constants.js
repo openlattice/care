@@ -15,7 +15,7 @@ const PRIORITY_ORDER = {
   [PRIORITIES.LOWEST]: 1,
 }
 
-const comparator = (a, b) => {
+const comparator = (a :string, b :string) => {
   const priorityA = PRIORITY_ORDER[a];
   const priorityB = PRIORITY_ORDER[b];
 
