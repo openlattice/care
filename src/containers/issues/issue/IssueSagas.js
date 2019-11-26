@@ -91,7 +91,7 @@ function* submitIssueWorker(action :SequenceAction) :Generator<any, any, any> {
     yield put(submitIssue.success(action.id));
   }
   catch (error) {
-    LOG.error('submitIssueWorker', error);
+    LOG.error(action.type, error);
     yield put(submitIssue.failure(action.id));
   }
 }
@@ -257,7 +257,7 @@ function* selectIssueWorker(action :SequenceAction) :Generator<any, any, any> {
     }));
   }
   catch (error) {
-    LOG.error('selectIssueWorker', error);
+    LOG.error(action.type, error);
     yield put(selectIssue.failure(action.id));
   }
 }
