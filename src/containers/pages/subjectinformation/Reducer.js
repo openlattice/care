@@ -44,7 +44,7 @@ const INITIAL_STATE :Map = fromJS({
   [SSN_LAST_4]: ''
 });
 
-export default function reportReducer(state :Map = INITIAL_STATE, action :Object) {
+export default function reducer(state :Map = INITIAL_STATE, action :Object) {
 
   switch (action.type) {
 
