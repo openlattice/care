@@ -8,7 +8,7 @@ import { Map } from 'immutable';
 import { IconButton, Hooks } from 'lattice-ui-kit';
 import { useSelector } from 'react-redux';
 
-import IssueModal from '../modals/IssueModal';
+import IssueModal from '../../containers/issues/issue/IssueModal';
 
 const { useBoolean } = Hooks;
 

@@ -8,7 +8,7 @@ import { RequestStates } from 'redux-reqseq';
 import type { Match } from 'react-router';
 
 import LinkButton from '../../components/buttons/LinkButton';
-import IssueModal from '../../components/modals/IssueModal';
+import IssueModal from './issue/IssueModal';
 import DropdownButton from '../../components/buttons/DropdownButton';
 import { setIssueStatus } from './issue/IssueActions';
 import { getTakeActionPath } from './issue/IssueUtils';

@@ -6,7 +6,7 @@ import { RequestStates } from 'redux-reqseq';
 import { ActionModal } from 'lattice-ui-kit';
 import type { RequestState } from 'redux-reqseq';
 
-import IssueForm from '../../containers/issues/issue/IssueForm';
+import IssueForm from './IssueForm';
 
 const emptyBody = {
   [RequestStates.PENDING]: <></>,
