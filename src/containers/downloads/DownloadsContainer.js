@@ -9,7 +9,7 @@ import { bindActionCreators } from 'redux';
 import { Map } from 'immutable';
 import type { Dispatch } from 'redux';
 
-import InfoButton from '../../components/buttons/InfoButton';
+import { Button } from 'lattice-ui-kit';
 import DateTimeRange from '../../components/controls/DateTimeRange';
 import { downloadForms } from './DownloadsActionFactory';
 
@@ -40,11 +40,6 @@ export const FormWrapper = styled.div`
   align-items: center;
   width: 100%;
   border: solid 1px #e1e1eb;
-`;
-
-const InfoDownloadButton = styled(InfoButton)`
-  margin: 0 6px;
-  padding: 10px 46px;
 `;
 
 const ButtonRow = styled.div`
@@ -87,9 +82,9 @@ class DownloadsContainer extends React.Component<Props, State> {
               onStartChange={(date) => this.onDateChange('startDate', date)}
               onEndChange={(date) => this.onDateChange('endDate', date)} />
           <ButtonRow>
-            <InfoDownloadButton onClick={this.download} disabled={downloading || !startDate || !endDate}>
+            <Button mode="primary" onClick={this.download} disabled={downloading || !startDate || !endDate}>
               Download BHR Reports
-            </InfoDownloadButton>
+            </Button>
           </ButtonRow>
         </FormWrapper>
       </DownloadsWrapper>

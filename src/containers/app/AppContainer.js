@@ -18,7 +18,6 @@ import CrisisReportContainer from '../reports/CrisisReportContainer';
 import DownloadsContainer from '../downloads/DownloadsContainer';
 import HomeContainer from '../home/HomeContainer';
 import PeopleRouter from '../people/PeopleRouter';
-import SupportButton from '../../components/buttons/SupportButton';
 import LegitReportsRouter from '../reports/LegitReportsRouter';
 import DashboardContainer from '../dashboard/DashboardContainer';
 import {
@@ -150,13 +149,13 @@ class AppContainer extends Component<Props> {
   }
 
   render() {
+    const { organizations } = this.props;
 
     return (
       <AppContainerWrapper>
-        <AppHeaderContainer />
+        <AppHeaderContainer organizations={organizations} />
         <AppContentOuterWrapper>
           { this.renderAppContent() }
-          <SupportButton />
         </AppContentOuterWrapper>
       </AppContainerWrapper>
     );

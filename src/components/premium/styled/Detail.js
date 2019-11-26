@@ -8,7 +8,6 @@ import { fullLineSkeleton } from '../../skeletons';
 
 const DetailWrapper = styled.div`
   display: flex;
-  flex: 1 0 auto;
   ${(props) => (props.isLoading ? fullLineSkeleton : null)}
 `;
 
