@@ -25,20 +25,20 @@ const MenuContainer = styled.div`
   background-color: white;
   border-radius: 3px;
   border: 1px solid ${NEUTRALS[4]};
-  position: absolute;
-  z-index: 1;
-  min-width: max-content;
-  max-width: 400px;
-  width: auto;
-  box-shadow: 0 2px 8px -2px rgba(0,0,0,0.15);
-  top: ${(props) => (props.offset === 'sm' ? '33px' : '45px')};
   bottom: auto;
-  right: 0;
-  left: auto;
-  padding: 4px 0;
-  overflow: visible;
+  box-shadow: 0 2px 8px -2px rgba(0,0,0,0.15);
   display: flex;
   flex-direction: column;
+  left: auto;
+  max-width: 400px;
+  min-width: max-content;
+  overflow: visible;
+  padding: 4px 0;
+  position: absolute;
+  right: 0;
+  top: ${(props) => (props.offset === 'sm' ? '33px' : '45px')};
+  width: auto;
+  z-index: 1;
 
   button {
     padding: 8px 12px;

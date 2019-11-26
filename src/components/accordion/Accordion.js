@@ -11,14 +11,14 @@ import { isDefined } from '../../utils/LangUtils';
 
 type ChildProps = {
   defaultOpen :boolean;
-  children? :Node;
+  children ?:Node;
   props :ElementProps<any>;
   titleComponent :ComponentType<any>;
 }
 
 type Props = {
   children :Node;
-  className ? :string;
+  className ?:string;
 };
 
 type State = {
