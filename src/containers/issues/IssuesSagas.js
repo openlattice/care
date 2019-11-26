@@ -75,7 +75,7 @@ function* getMyOpenIssuesWorker(action :SequenceAction) :Generator<any, any, any
     yield put(getMyOpenIssues.success(action.id));
   }
   catch (error) {
-    LOG.error('getMyOpenIssuesWorker', error);
+    LOG.error(action.type, error);
     yield put(getMyOpenIssues.failure(action.id));
   }
 }
@@ -138,7 +138,7 @@ function* getReportedByMeWorker(action :SequenceAction) :Generator<any, any, any
     }));
   }
   catch (error) {
-    LOG.error('getReportedByMeWorker', error);
+    LOG.error(action.type, error);
     yield put(getReportedByMe.failure(action.id));
   }
 }
@@ -157,7 +157,7 @@ function* getAllIssuesWorker(action :SequenceAction) :Generator<any, any, any> {
     yield put(getAllIssues.success(action.id));
   }
   catch (error) {
-    LOG.error('getAllIssuesWorker', error);
+    LOG.error(action.type, error);
     yield put(getAllIssues.failure(action.id));
   }
 }
