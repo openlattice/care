@@ -11,7 +11,7 @@ import {
 import {
   CATEGORY_VALUES,
   PRIORITIES,
-  PRIORITIES_VALUES,
+  PRIORITY_VALUES,
 } from './constants';
 
 const { OPENLATTICE_ID_FQN } = Constants;
@@ -33,7 +33,7 @@ const schema = {
         [getEntityAddressKey(0, ISSUE_FQN, PRIORITY_FQN)]: {
           type: 'string',
           title: 'Priority',
-          enum: PRIORITIES_VALUES,
+          enum: PRIORITY_VALUES,
           default: PRIORITIES.MEDIUM
         },
         [getEntityAddressKey(0, ISSUE_FQN, CATEGORY_FQN)]: {
