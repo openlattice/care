@@ -179,7 +179,7 @@ function* loadAppWorker(action :SequenceAction) :Generator<*, *, *> {
     yield put(loadApp.success(action.id, workerResponse.data));
   }
   catch (error) {
-    LOG.error('caught exception in loadAppWorker()', error);
+    LOG.error(action.type, error);
     workerResponse.error = error;
     yield put(loadApp.failure(action.id, error));
   }

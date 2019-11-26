@@ -226,7 +226,7 @@ function* updateAboutPlanWorker(action :SequenceAction) :Generator<any, any, any
     yield put(updateAboutPlan.success(action.id, { entityIndexToIdMap }));
   }
   catch (error) {
-    LOG.error('updateAboutPlanWorker', error);
+    LOG.error(action.type, error);
     yield put(updateAboutPlan.failure(action.id, error));
   }
 }

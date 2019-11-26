@@ -18,7 +18,7 @@ const emptyBody = {
 type Props = {
   assignee :Map;
   currentUser :Map;
-  defaultComponent ? :string;
+  defaultComponent ?:string;
   edit :boolean;
   issue :Map;
   isVisible :boolean;

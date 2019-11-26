@@ -100,7 +100,7 @@ function* submitContactsWorker(action :SequenceAction) :Generator<*, *, *> {
     }));
   }
   catch (error) {
-    LOG.error('submitContactsWorker', error);
+    LOG.error(action.type, error);
     yield put(submitContacts.failure(action.id, error));
   }
 }
@@ -206,7 +206,7 @@ function* getContactsWorker(action :SequenceAction) :Generator<*, *, *> {
     }));
   }
   catch (error) {
-    LOG.error('getContactsWorker', error);
+    LOG.error(action.type, error);
     response.error = error;
     yield put(getContacts.failure(action.id, error));
   }
@@ -231,7 +231,7 @@ function* updateContactWorker(action :SequenceAction) :Generator<*, *, *> {
     yield put(updateContact.success(action.id));
   }
   catch (error) {
-    LOG.error('updateContactWorker', error);
+    LOG.error(action.type, error);
     yield put(updateContact.failure(action.id, error));
   }
 }
@@ -257,7 +257,7 @@ function* deleteContactWorker(action :SequenceAction) :Generator<*, *, *> {
     yield put(deleteContact.success(action.id, { path, entityIndexToIdMap: newEntityIndexToIdMap }));
   }
   catch (error) {
-    LOG.error('deleteContactWorker', error);
+    LOG.error(action.type, error);
     yield put(deleteContact.failure(action.id, error));
   }
 }

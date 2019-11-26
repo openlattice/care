@@ -175,7 +175,7 @@ function* updateIssueWorker(action :SequenceAction) :Generator<any, any, any> {
     }));
   }
   catch (error) {
-    LOG.error('updateIssueWorker', error);
+    LOG.error(action.type, error);
     yield put(updateIssue.failure(action.id));
   }
 }
@@ -307,7 +307,7 @@ function* setIssueStatusWorker(action :SequenceAction) :Generator<any, any, any>
     }));
   }
   catch (error) {
-    LOG.error('setIssueStatus', error);
+    LOG.error(action.type, error);
     yield put(setIssueStatus.failure(action.id, error));
   }
 }

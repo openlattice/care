@@ -164,7 +164,7 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
     yield call(getPeoplePhotosWorker, getPeoplePhotos(peopleEKIDs));
   }
   catch (error) {
-    LOG.error('searchPeopleWorker', error);
+    LOG.error(action.type, error);
     yield put(searchPeople.failure(action.id, error));
   }
 }
@@ -212,7 +212,7 @@ function* editPersonWorker(action :SequenceAction) :Generator<*, *, *> {
     yield put(editPerson.success(id, { entityKeyId, person }));
   }
   catch (error) {
-    LOG.error('editPersonWorker', error);
+    LOG.error(action.type, error);
     yield put(editPerson.failure(id, error));
   }
   finally {
