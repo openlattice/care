@@ -90,7 +90,7 @@ const countSafetyIncidents = (reports :List) :Map => Map()
       incrementValueAtKey(mutable, THREATENED_VIOLENCE, hadInjuries);
     });
   })
-  .sortBy((count) => count, (valueA, valueB) => valueB - valueA)
+  .sortBy((count) => -count)
   .toKeyedSeq()
   .toArray();
 
