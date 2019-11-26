@@ -15,7 +15,7 @@ const PRIORITIES = {
   LOWEST: 'Lowest'
 };
 
-const PRIORITIES_VALUES = Object.values(PRIORITIES);
+const PRIORITY_VALUES = Object.values(PRIORITIES);
 
 const CATEGORIES = {
   BASIC_INFORMATION: 'Basic Information',
@@ -48,7 +48,5 @@ export {
   CATEGORY_PATHS,
   CATEGORY_VALUES,
   PRIORITIES,
-  PRIORITIES_VALUES,
-  STATUS,
-  STATUS_VALUES,
+  PRIORITY_VALUES,
 };
