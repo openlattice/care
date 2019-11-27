@@ -19,8 +19,8 @@ type Props = {
   assignee :Map;
   currentUser :Map;
   defaultComponent ?:string;
-  edit :boolean;
-  issue :Map;
+  edit ?:boolean;
+  issue ?:Map;
   isVisible :boolean;
   onClose :() => void;
   person :Map;
