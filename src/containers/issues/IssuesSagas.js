@@ -6,7 +6,8 @@ import {
   takeEvery,
 } from '@redux-saga/core/effects';
 import { DateTime } from 'luxon';
-import { Map, fromJS } from 'immutable';
+import { List, Map, fromJS } from 'immutable';
+import { Constants, Types } from 'lattice';
 import {
   SearchApiActions,
   SearchApiSagas,
@@ -27,12 +28,18 @@ import {
 } from './IssuesActions';
 import { getESIDFromApp } from '../../utils/AppUtils';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
-import { DATE_TIME_FQN } from '../../edm/DataModelFqns';
+import { DATE_TIME_FQN, STATUS_FQN } from '../../edm/DataModelFqns';
+import { STATUS } from './issue/constants';
+
+const { OPENLATTICE_ID_FQN, OPENLATTICE_LAST_WRITE_FQN } = Constants;
+const { SortTypes } = Types;
 const {
+  executeSearch,
   searchEntitySetData,
   searchEntityNeighborsWithFilter,
 } = SearchApiActions;
 const {
+  executeSearchWorker,
   searchEntitySetDataWorker,
   searchEntityNeighborsWithFilterWorker,
 } = SearchApiSagas;
@@ -50,14 +57,61 @@ const LOG = new Logger('IssueSagas');
 
 function* getMyOpenIssuesWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
-    const { value } = action;
-    if (!isValidUuid(value)) throw ERR_ACTION_VALUE_TYPE;
+    const { value: currentUserEKID } = action;
+    if (!isValidUuid(currentUserEKID)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getMyOpenIssues.request(action.id));
 
-    // const response = yield call(submitDataGraphWorker, submitDataGraph(value));
-    // if (response.error) throw response.error;
+    const app = yield select((state) => state.get('app', Map()));
+    const issueESID = getESIDFromApp(app, ISSUE_FQN);
+    const staffESID = getESIDFromApp(app, STAFF_FQN);
+    const reportedESID = getESIDFromApp(app, REPORTED_FQN);
+    const peopleESID = getESIDFromApp(app, PEOPLE_FQN);
+    const assignedToESID = getESIDFromApp(app, ASSIGNED_TO_FQN);
 
-    yield put(getMyOpenIssues.success(action.id));
+    const statusPTID :UUID = yield select((state) => state.getIn(['edm', 'fqnToIdMap', STATUS_FQN]));
+    const lastWritePTID :UUID = yield select((state) => state.getIn(['edm', 'fqnToIdMap', OPENLATTICE_LAST_WRITE_FQN]));
+    const openlatticeIDPTID :UUID = yield select((state) => state.getIn(['edm', 'fqnToIdMap', OPENLATTICE_ID_FQN]));
+
+    const issuesRequestParams = {
+      entitySetId: staffESID,
+      filter: {
+        entityKeyIds: [currentUserEKID],
+        edgeEntitySetIds: [assignedToESID],
+        destinationEntitySetIds: [],
+        sourceEntitySetIds: [issueESID]
+      },
+    };
+
+    const issuesRequest = yield call(
+      searchEntityNeighborsWithFilterWorker,
+      searchEntityNeighborsWithFilter(issuesRequestParams)
+    );
+
+    if (issuesRequest.error) throw issuesRequest.error;
+
+    const issuesData = fromJS(issuesRequest.data)
+      .get(currentUserEKID) || List();
+
+    const myOpenIssues = issuesData
+      .filter((neighbor) => neighbor.getIn(['neighborDetails', STATUS_FQN, 0]) === STATUS.OPEN)
+      .map((neighbor) => {
+        const datetime = neighbor.getIn(['associationDetails', DATE_TIME_FQN, 0]);
+        const id = neighbor.get('neighborId');
+        return neighbor
+          .get('neighborDetails')
+          .map((details) => details.get(0))
+          .set(DATE_TIME_FQN.toString(), datetime)
+          .set('id', id);
+      })
+      .sortBy((issue :Map,) :number => {
+        const time = DateTime.fromISO(issue.get(DATE_TIME_FQN));
+
+        return -time.valueOf();
+      });
+
+    yield put(getMyOpenIssues.success(action.id, {
+      data: myOpenIssues
+    }));
   }
   catch (error) {
     LOG.error(action.type, error);
@@ -80,7 +134,6 @@ function* getReportedByMeWorker(action :SequenceAction) :Generator<any, any, any
     const staffESID = getESIDFromApp(app, STAFF_FQN);
     const reportedESID = getESIDFromApp(app, REPORTED_FQN);
     const peopleESID = getESIDFromApp(app, PEOPLE_FQN);
-    const subjectOfESID = getESIDFromApp(app, SUBJECT_OF_FQN);
 
     const issuesRequestParams = {
       entitySetId: staffESID,
@@ -100,7 +153,7 @@ function* getReportedByMeWorker(action :SequenceAction) :Generator<any, any, any
     if (issuesRequest.error) throw issuesRequest.error;
 
     const issuesData = fromJS(issuesRequest.data)
-      .get(currentUserEKID) || Map();
+      .get(currentUserEKID) || List();
 
     const reportedByMe = issuesData
       .map((neighbor) => {

@@ -54,6 +54,26 @@ const FilteredIssues = (state :Map = INITIAL_STATE, action :SequenceAction) => {
       });
     }
 
+    case getMyOpenIssues.case(action.type): {
+      return getMyOpenIssues.reducer(state, action, {
+        REQUEST: () => state.set('fetchState', RequestStates.PENDING),
+        SUCCESS: () => state
+          .set('fetchState', RequestStates.SUCCESS)
+          .merge(action.value),
+        FAILURE: () => state.set('fetchState', RequestStates.FAILURE),
+      });
+    }
+
+    case getAllIssues.case(action.type): {
+      return getAllIssues.reducer(state, action, {
+        REQUEST: () => state.set('fetchState', RequestStates.PENDING),
+        SUCCESS: () => state
+          .set('fetchState', RequestStates.SUCCESS)
+          .merge(action.value),
+        FAILURE: () => state.set('fetchState', RequestStates.FAILURE),
+      });
+    }
+
     case setIssueStatus.case(action.type): {
       return setIssueStatus.reducer(state, action, {
         SUCCESS: () => {
