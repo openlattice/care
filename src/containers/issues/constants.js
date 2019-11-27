@@ -4,6 +4,7 @@ import {
   PRIORITY_FQN,
   STATUS_FQN,
   TITLE_FQN,
+  COMPLETED_DT_FQN
 } from '../../edm/DataModelFqns';
 import { PRIORITIES } from './issue/constants';
 
@@ -45,7 +46,7 @@ const ISSUE_HEADERS = [
     comparator
   },
   { key: STATUS_FQN, label: 'Status', cellStyle },
-  { key: DATE_TIME_FQN, label: 'Created', cellStyle },
+  { key: COMPLETED_DT_FQN, label: 'Created', cellStyle },
   {
     key: 'action',
     label: '',

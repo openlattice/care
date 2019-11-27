@@ -18,7 +18,7 @@ import {
   TITLE_FQN,
   PRIORITY_FQN,
   STATUS_FQN,
-  DATE_TIME_FQN,
+  COMPLETED_DT_FQN,
 } from '../../edm/DataModelFqns';
 
 const { NEUTRALS } = Colors;
@@ -66,15 +66,8 @@ const IssueRow = (props :Props) => {
   const title = get(data, TITLE_FQN);
   const priority = get(data, PRIORITY_FQN);
   const status = get(data, STATUS_FQN) || 'Open';
-  const created = DateTime.fromISO(get(data, DATE_TIME_FQN, ''))
+  const created = DateTime.fromISO(get(data, COMPLETED_DT_FQN, ''))
     .toLocaleString(DateTime.DATE_SHORT);
-
-  // const subject = useSelector((store :Map) => {
-  //   const subjectEKID = store.getIn(['issues', 'filteredIssues', 'subjectEKIDsByIssueEKID', id]);
-  //   return store.getIn(['issues', 'filteredIssues', 'subjectsByEKID', subjectEKID]);
-  // }) || Map();
-
-  // const subjectName = getLastFirstMiFromPerson(subject, true);
 
   const icon = expanded ? faChevronUp : faChevronDown;
 

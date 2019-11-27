@@ -7,7 +7,6 @@ import {
 } from '@redux-saga/core/effects';
 import { DateTime } from 'luxon';
 import { List, Map, fromJS } from 'immutable';
-import { Constants, Types } from 'lattice';
 import {
   SearchApiActions,
   SearchApiSagas,
@@ -28,11 +27,8 @@ import {
 } from './IssuesActions';
 import { getESIDFromApp } from '../../utils/AppUtils';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
-import { DATE_TIME_FQN, STATUS_FQN } from '../../edm/DataModelFqns';
+import { COMPLETED_DT_FQN, STATUS_FQN, OPENLATTICE_ID_FQN } from '../../edm/DataModelFqns';
 import { STATUS } from './issue/constants';
-
-const { OPENLATTICE_ID_FQN, OPENLATTICE_LAST_WRITE_FQN } = Constants;
-const { SortTypes } = Types;
 const {
   executeSearch,
   searchEntitySetData,
@@ -95,16 +91,14 @@ function* getMyOpenIssuesWorker(action :SequenceAction) :Generator<any, any, any
     const myOpenIssues = issuesData
       .filter((neighbor) => neighbor.getIn(['neighborDetails', STATUS_FQN, 0]) === STATUS.OPEN)
       .map((neighbor) => {
-        const datetime = neighbor.getIn(['associationDetails', DATE_TIME_FQN, 0]);
         const id = neighbor.get('neighborId');
         return neighbor
           .get('neighborDetails')
           .map((details) => details.get(0))
-          .set(DATE_TIME_FQN.toString(), datetime)
           .set('id', id);
       })
       .sortBy((issue :Map,) :number => {
-        const time = DateTime.fromISO(issue.get(DATE_TIME_FQN));
+        const time = DateTime.fromISO(issue.get(COMPLETED_DT_FQN));
 
         return -time.valueOf();
       });
@@ -157,16 +151,14 @@ function* getReportedByMeWorker(action :SequenceAction) :Generator<any, any, any
 
     const reportedByMe = issuesData
       .map((neighbor) => {
-        const datetime = neighbor.getIn(['associationDetails', DATE_TIME_FQN, 0]);
         const id = neighbor.get('neighborId');
         return neighbor
           .get('neighborDetails')
           .map((details) => details.get(0))
-          .set(DATE_TIME_FQN.toString(), datetime)
           .set('id', id);
       })
       .sortBy((issue :Map,) :number => {
-        const time = DateTime.fromISO(issue.get(DATE_TIME_FQN));
+        const time = DateTime.fromISO(issue.get(COMPLETED_DT_FQN));
 
         return -time.valueOf();
       });

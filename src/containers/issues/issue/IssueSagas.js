@@ -38,7 +38,7 @@ import {
 import { isDefined, isEmptyString } from '../../../utils/LangUtils';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { constructEntityIndexToIdMap } from './IssueUtils';
-import { STATUS_FQN, DATE_TIME_FQN } from '../../../edm/DataModelFqns';
+import { STATUS_FQN, DATE_TIME_FQN, ENTRY_UPDATED_FQN } from '../../../edm/DataModelFqns';
 
 import {
   SELECT_ISSUE,
@@ -113,6 +113,7 @@ function* updateIssueWorker(action :SequenceAction) :Generator<any, any, any> {
     const assignedToESID = getESIDFromApp(app, ASSIGNED_TO_FQN);
     const issueESID = getESIDFromApp(app, ISSUE_FQN);
     const datetimePTID :UUID = yield select((state) => state.getIn(['edm', 'fqnToIdMap', DATE_TIME_FQN]));
+    const entryUpdatedPTID :UUID = yield select((state) => state.getIn(['edm', 'fqnToIdMap', ENTRY_UPDATED_FQN]));
 
     const { entityData, entityIndexToIdMap, responsibleUsers } = value;
 
@@ -120,17 +121,16 @@ function* updateIssueWorker(action :SequenceAction) :Generator<any, any, any> {
     const issueEKID = entityIndexToIdMap.getIn([ISSUE_FQN, 0]);
     const staffEKID = entityIndexToIdMap.getIn([STAFF_FQN, 0]) || 0;
 
-    // you should only override staffEKID if a new one is assigned to.
-
     let newEntityIndexToIdMap = Map();
     let assignee;
     if (has(entityData, staffESID)) {
       const newStaffEKID = getIn(entityData, [staffESID, staffEKID, reservedId, 0]);
+      const nowAsIsoString = getIn(entityData, [issueESID, issueEKID, entryUpdatedPTID, 0]);
 
       const association = {
         [assignedToESID]: [{
           data: {
-            [datetimePTID]: [DateTime.local().toISO()]
+            [datetimePTID]: [nowAsIsoString]
           },
           dst: {
             entitySetId: staffESID,
