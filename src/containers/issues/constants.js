@@ -4,6 +4,7 @@ import {
   PRIORITY_FQN,
   STATUS_FQN,
   TITLE_FQN,
+  COMPLETED_DT_FQN
 } from '../../edm/DataModelFqns';
 import { PRIORITIES } from './issue/constants';
 
@@ -13,7 +14,7 @@ const PRIORITY_ORDER = {
   [PRIORITIES.MEDIUM]: 3,
   [PRIORITIES.LOW]: 2,
   [PRIORITIES.LOWEST]: 1,
-}
+};
 
 const comparator = (a :string, b :string) => {
   const priorityA = PRIORITY_ORDER[a];
@@ -38,9 +39,14 @@ const ISSUE_HEADERS = [
     label: 'Title',
     cellStyle: { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }
   },
-  { key: PRIORITY_FQN, label: 'Priority', cellStyle, comparator },
+  {
+    key: PRIORITY_FQN,
+    label: 'Priority',
+    cellStyle,
+    comparator
+  },
   { key: STATUS_FQN, label: 'Status', cellStyle },
-  { key: DATE_TIME_FQN, label: 'Created', cellStyle },
+  { key: COMPLETED_DT_FQN, label: 'Created', cellStyle },
   {
     key: 'action',
     label: '',

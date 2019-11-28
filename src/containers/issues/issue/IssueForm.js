@@ -5,22 +5,22 @@ import React, {
   useState,
   useMemo
 } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { Map, List, removeIn } from 'immutable';
-import { Constants } from 'lattice';
+import { DateTime } from 'luxon';
+import { useDispatch, useSelector } from 'react-redux';
+import { Map, List, removeIn, setIn } from 'immutable';
 import { Form, DataProcessingUtils } from 'lattice-fabricate';
 
 import { useFormData } from '../../../components/hooks';
 import { schema, uiSchema } from './IssueSchemas';
 import { getResponsibleUserOptions } from '../../staff/StaffActions';
 import { hydrateSchemaWithStaff } from '../../profile/edit/about/AboutUtils';
-import { constructFormData, getIssueAssociations } from './IssueUtils';
+import { addIssueTimestamps, constructFormData, getIssueAssociations } from './IssueUtils';
 import { submitIssue, resetIssue, updateIssue } from './IssueActions';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
+import { OPENLATTICE_ID_FQN, COMPLETED_DT_FQN, ENTRY_UPDATED_FQN } from '../../../edm/DataModelFqns';
 
-const { STAFF_FQN } = APP_TYPES_FQNS;
-const { OPENLATTICE_ID_FQN } = Constants;
+const { STAFF_FQN, ISSUE_FQN } = APP_TYPES_FQNS;
 const {
   findEntityAddressKeyFromMap,
   getEntityAddressKey,
@@ -40,8 +40,8 @@ type Props = {
   assignee :Map;
   currentUser :Map;
   defaultComponent ? :string;
-  edit :boolean;
-  issue :Map;
+  edit ?:boolean;
+  issue ?:Map;
   person :Map;
 };
 
@@ -89,8 +89,10 @@ const IssueForm = (props :Props, ref) => {
   const handleSubmit = useCallback((payload :any) => {
     const { formData: newFormData } = payload;
 
+    const now = DateTime.local();
+
     const associationEntityData = processAssociationEntityData(
-      getIssueAssociations(newFormData, person, currentUser),
+      getIssueAssociations(newFormData, person, currentUser, now),
       entitySetIds,
       propertyTypeIds
     );
@@ -100,7 +102,9 @@ const IssueForm = (props :Props, ref) => {
       [getPageSectionKey(1, 1), getEntityAddressKey(0, STAFF_FQN, OPENLATTICE_ID_FQN)]
     );
 
-    const entityData = processEntityData(withoutAssignee, entitySetIds, propertyTypeIds);
+    const withTimestamps = addIssueTimestamps(withoutAssignee, now);
+
+    const entityData = processEntityData(withTimestamps, entitySetIds, propertyTypeIds);
 
     dispatch(submitIssue({
       associationEntityData,
@@ -116,10 +120,14 @@ const IssueForm = (props :Props, ref) => {
 
   const handleEdit = useCallback((payload :any) => {
     const { formData: newFormData } = payload;
+
+    const now = DateTime.local();
+    const withTimestamps = addIssueTimestamps(newFormData, now, true);
     const draftWithKeys = replaceEntityAddressKeys(
-      newFormData,
+      withTimestamps,
       findEntityAddressKeyFromMap(entityIndexToIdMap)
     );
+
     const originalWithKeys = replaceEntityAddressKeys(
       defaultFormData,
       findEntityAddressKeyFromMap(entityIndexToIdMap)

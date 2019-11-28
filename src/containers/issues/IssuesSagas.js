@@ -6,7 +6,7 @@ import {
   takeEvery,
 } from '@redux-saga/core/effects';
 import { DateTime } from 'luxon';
-import { Map, fromJS } from 'immutable';
+import { List, Map, fromJS } from 'immutable';
 import {
   SearchApiActions,
   SearchApiSagas,
@@ -27,13 +27,15 @@ import {
 } from './IssuesActions';
 import { getESIDFromApp } from '../../utils/AppUtils';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
-import { DATE_TIME_FQN } from '../../edm/DataModelFqns';
+import { COMPLETED_DT_FQN, STATUS_FQN, OPENLATTICE_ID_FQN } from '../../edm/DataModelFqns';
+import { STATUS } from './issue/constants';
+
 const {
-  searchEntitySetData,
+  executeSearch,
   searchEntityNeighborsWithFilter,
 } = SearchApiActions;
 const {
-  searchEntitySetDataWorker,
+  executeSearchWorker,
   searchEntityNeighborsWithFilterWorker,
 } = SearchApiSagas;
 
@@ -42,22 +44,61 @@ const {
   ISSUE_FQN,
   REPORTED_FQN,
   STAFF_FQN,
-  PEOPLE_FQN,
-  SUBJECT_OF_FQN,
 } = APP_TYPES_FQNS;
 
 const LOG = new Logger('IssueSagas');
 
+const formatIssueRowData = (entityData :List<Map>) :List<Map> => entityData
+  .map((neighbor) => {
+    const id = neighbor.getIn([OPENLATTICE_ID_FQN, 0]);
+    return neighbor
+      .map((details) => details.get(0))
+      .set('id', id);
+  })
+  .sortBy((issue :Map,) :number => {
+    const time = DateTime.fromISO(issue.get(COMPLETED_DT_FQN));
+
+    return -time.valueOf();
+  });
+
 function* getMyOpenIssuesWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
-    const { value } = action;
-    if (!isValidUuid(value)) throw ERR_ACTION_VALUE_TYPE;
+    const { value: currentUserEKID } = action;
+    if (!isValidUuid(currentUserEKID)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getMyOpenIssues.request(action.id));
 
-    // const response = yield call(submitDataGraphWorker, submitDataGraph(value));
-    // if (response.error) throw response.error;
+    const app = yield select((state) => state.get('app', Map()));
+    const issueESID = getESIDFromApp(app, ISSUE_FQN);
+    const staffESID = getESIDFromApp(app, STAFF_FQN);
+    const assignedToESID = getESIDFromApp(app, ASSIGNED_TO_FQN);
 
-    yield put(getMyOpenIssues.success(action.id));
+
+    const issuesRequestParams = {
+      entitySetId: staffESID,
+      filter: {
+        entityKeyIds: [currentUserEKID],
+        edgeEntitySetIds: [assignedToESID],
+        destinationEntitySetIds: [],
+        sourceEntitySetIds: [issueESID]
+      },
+    };
+
+    const issuesRequest = yield call(
+      searchEntityNeighborsWithFilterWorker,
+      searchEntityNeighborsWithFilter(issuesRequestParams)
+    );
+
+    if (issuesRequest.error) throw issuesRequest.error;
+
+    const issuesData = fromJS(issuesRequest.data)
+      .get(currentUserEKID) || List();
+
+    const myOpenIssues = issuesData
+      .map((neighbor) => neighbor.get('neighborDetails') || Map())
+      .filter((neighbor) => neighbor.getIn([STATUS_FQN, 0]) === STATUS.OPEN);
+    const data = formatIssueRowData(myOpenIssues);
+
+    yield put(getMyOpenIssues.success(action.id, { data }));
   }
   catch (error) {
     LOG.error(action.type, error);
@@ -79,8 +120,6 @@ function* getReportedByMeWorker(action :SequenceAction) :Generator<any, any, any
     const issueESID = getESIDFromApp(app, ISSUE_FQN);
     const staffESID = getESIDFromApp(app, STAFF_FQN);
     const reportedESID = getESIDFromApp(app, REPORTED_FQN);
-    const peopleESID = getESIDFromApp(app, PEOPLE_FQN);
-    const subjectOfESID = getESIDFromApp(app, SUBJECT_OF_FQN);
 
     const issuesRequestParams = {
       entitySetId: staffESID,
@@ -100,23 +139,10 @@ function* getReportedByMeWorker(action :SequenceAction) :Generator<any, any, any
     if (issuesRequest.error) throw issuesRequest.error;
 
     const issuesData = fromJS(issuesRequest.data)
-      .get(currentUserEKID) || Map();
+      .get(currentUserEKID, List())
+      .map((neighbor) => neighbor.get('neighborDetails') || Map());
 
-    const reportedByMe = issuesData
-      .map((neighbor) => {
-        const datetime = neighbor.getIn(['associationDetails', DATE_TIME_FQN, 0]);
-        const id = neighbor.get('neighborId');
-        return neighbor
-          .get('neighborDetails')
-          .map((details) => details.get(0))
-          .set(DATE_TIME_FQN.toString(), datetime)
-          .set('id', id);
-      })
-      .sortBy((issue :Map,) :number => {
-        const time = DateTime.fromISO(issue.get(DATE_TIME_FQN));
-
-        return -time.valueOf();
-      });
+    const reportedByMe = formatIssueRowData(issuesData);
 
     yield put(getReportedByMe.success(action.id, {
       data: reportedByMe
@@ -138,8 +164,33 @@ function* getAllIssuesWorker(action :SequenceAction) :Generator<any, any, any> {
 
     const app = yield select((state) => state.get('app', Map()));
     const issueESID = getESIDFromApp(app, ISSUE_FQN);
+    const completedPTID :UUID = yield select((state) => state.getIn(['edm', 'fqnToIdMap', COMPLETED_DT_FQN]));
 
-    yield put(getAllIssues.success(action.id));
+    const searchOptions = {
+      start: 0,
+      entitySetIds: [issueESID],
+      maxHits: 10000,
+      constraints: [{
+        constraints: [{
+          searchTerm: '*'
+        }]
+      }],
+      sort: {
+        propertyTypeId: completedPTID,
+        type: 'field'
+      }
+    };
+
+    const issuesResponse = yield call(
+      executeSearchWorker,
+      executeSearch({ searchOptions })
+    );
+
+    if (issuesResponse.error) throw issuesResponse.error;
+    const allIssues = fromJS(issuesResponse.data);
+    const data = formatIssueRowData(allIssues.get('hits'));
+
+    yield put(getAllIssues.success(action.id, { data }));
   }
   catch (error) {
     LOG.error(action.type, error);
