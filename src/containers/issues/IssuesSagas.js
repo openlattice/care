@@ -139,8 +139,8 @@ function* getReportedByMeWorker(action :SequenceAction) :Generator<any, any, any
     if (issuesRequest.error) throw issuesRequest.error;
 
     const issuesData = fromJS(issuesRequest.data)
-      .get(currentUserEKID) || List()
-      .map((neighbor) => neighbor.get('neighborDetails') || Map()) ;
+      .get(currentUserEKID, List())
+      .map((neighbor) => neighbor.get('neighborDetails') || Map());
 
     const reportedByMe = formatIssueRowData(issuesData);
 
