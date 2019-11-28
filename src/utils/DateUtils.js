@@ -1,19 +1,19 @@
 // @flow
 import { DateTime, Interval } from 'luxon';
 
-const getAgeFromIsoDate = (dob :string, asNumber :boolean = false, invalidValue :any = '') => {
+const getAgeFromIsoDate = (dob :string = '', asNumber :boolean = false, invalidValue :any = '') => {
   const dobDT = DateTime.fromISO(dob);
   if (dobDT.isValid) {
     const now = DateTime.local();
     const age = Math.floor(Interval.fromDateTimes(dobDT, now).length('years'));
 
-    return asNumber ? `${age}` : age;
+    return asNumber ? age : `${age}`;
   }
 
   return invalidValue;
 };
 
-const getDateShortFromIsoDate = (dob :string, asDate :boolean = false, invalidValue :any = '') => {
+const getDateShortFromIsoDate = (dob :string = '', asDate :boolean = false, invalidValue :any = '') => {
   const dobDT = DateTime.fromISO(dob);
   if (dobDT.isValid) {
     return asDate ? dobDT : dobDT.toLocaleString(DateTime.DATE_SHORT);

@@ -2,7 +2,7 @@
  * @flow
  */
 
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router';
@@ -93,17 +93,16 @@ const ObservedBehaviors = ({ values, actions, disabled } :Props) => {
     };
 
     const checkboxes = valueList.map((value) => (
-      <>
+      <Fragment key={`${field}-${value}`}>
         <Checkbox
             disabled={disabled}
             name={field}
             value={value}
             label={value}
-            key={`${field}-${value}`}
             checked={currentValues.includes(value)}
             onChange={onChange} />
         { value === SUICIDE_BEHAVIORS && currentValues.includes(SUICIDE_BEHAVIORS) ? suicideDetailsElements : null }
-      </>
+      </Fragment>
     ));
 
     return (
@@ -138,6 +137,7 @@ const ObservedBehaviors = ({ values, actions, disabled } :Props) => {
 
     return (
       <Radio
+          key={`${field}-${value}`}
           disabled={disabled}
           label={label}
           checked={checked}

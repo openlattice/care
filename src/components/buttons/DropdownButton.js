@@ -2,96 +2,78 @@
  * @flow
  */
 
-import React from 'react';
-import styled, { css } from 'styled-components';
+import React, { Component } from 'react';
+import styled from 'styled-components';
 import { faChevronDown } from '@fortawesome/pro-light-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button } from 'lattice-ui-kit';
+import { Button, Colors } from 'lattice-ui-kit';
 
-type Props = {
-  title :string,
-  options :{ label :string, onClick :() => void }[],
-  openAbove? :boolean,
-  fullSize? :boolean
-}
-
-type State = {
-  open :boolean
-}
+const { NEUTRALS } = Colors;
 
 const DropdownButtonWrapper = styled.div`
-  border: none;
-  ${(props) => {
-    if (props.open) {
-      return css`
-        box-shadow: 0 2px 8px -2px rgba(17, 51, 85, 0.15);
-      `;
-    }
-    return '';
-  }}
-  width: ${(props) => (props.fullSize ? '100%' : 'auto')};
-  display: flex;
-  flex: 0 auto;
-  flex-direction: column;
-  margin: 0;
-  padding: 0;
+  display: inline-flex;
   position: relative;
 `;
 
 const BaseButton = styled(Button)`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  font-weight: 600;
-  position: relative;
-
   svg {
     margin-left: 10px;
   }
 `;
 
 const MenuContainer = styled.div`
-  background-color: #fefefe;
-  border-radius: 5px;
-  border: 1px solid #e1e1eb;
-  position: absolute;
-  z-index: 1;
-  min-width: max-content;
-  max-width: ${(props) => (props.fullSize ? '100%' : '400px')};
-  width: ${(props) => (props.fullSize ? '100%' : 'auto')};
-  visibility: ${(props) => (props.open ? 'visible' : 'hidden')}};
-  box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.1);
-  top: ${(props) => (props.openAbove ? 'auto' : '45px')};
-  bottom: ${(props) => (props.openAbove ? '45px' : 'auto')};
-  right: ${(props) => (props.openAbove ? 'auto' : '0')};;
-  left: ${(props) => (props.openAbove ? '0' : 'auto')};;
-  overflow: visible;
+  background-color: white;
+  border-radius: 3px;
+  border: 1px solid ${NEUTRALS[4]};
+  bottom: auto;
+  box-shadow: 0 2px 8px -2px rgba(0,0,0,0.15);
   display: flex;
   flex-direction: column;
+  left: auto;
+  max-width: 400px;
+  min-width: max-content;
+  overflow: visible;
+  padding: 4px 0;
+  position: absolute;
+  right: 0;
+  top: ${(props) => (props.offset === 'sm' ? '33px' : '45px')};
+  width: auto;
+  z-index: 1;
 
   button {
-    width: 100%;
-    padding: 15px 20px;
+    padding: 8px 12px;
     text-transform: none;
     font-family: 'Open Sans', sans-serif;
     font-size: 14px;
-    color: #2e2e34;
+    color: ${NEUTRALS[0]};
     border: none;
-    min-width: fit-content !important;
+    min-width: fit-content;
 
     &:hover {
-      background-color: #e6e6f7;
+      background-color: ${NEUTRALS[6]};
     }
   }
 `;
 
-export default class DropdownButton extends React.Component<Props, State> {
+type Props = {
+  isLoading :boolean;
+  options :{ label :string, onClick :() => void }[];
+  size :string;
+  title :string;
+};
+
+type State = {
+  open :boolean
+};
+
+export default class DropdownButton extends Component<Props, State> {
 
   static defaultProps = {
-    openAbove: false,
-    fullSize: false
+    size: undefined,
+    isLoading: false,
   };
 
+  menuRef = React.createRef<MenuContainer>();
   constructor(props :Props) {
     super(props);
     this.state = {
@@ -104,26 +86,40 @@ export default class DropdownButton extends React.Component<Props, State> {
     this.setState({ open: !this.state.open });
   };
 
-  handleOnClick = (e :SyntheticEvent<HTMLButtonElement>) => {
+  closeDropdown = (e :SyntheticEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     this.setState({ open: false });
   }
 
   render() {
+    const { open } = this.state;
+    const {
+      isLoading,
+      options,
+      size,
+      title
+    } = this.props;
+
     return (
-      <DropdownButtonWrapper open={this.state.open} {...this.props}>
-        <BaseButton open={this.state.open} onClick={this.toggleDropdown} onBlur={this.toggleDropdown}>
-          {this.props.title}
-          <FontAwesomeIcon icon={faChevronDown} fixedWidth/>
+      <DropdownButtonWrapper>
+        <BaseButton
+            isLoading={isLoading}
+            onBlur={this.closeDropdown}
+            onClick={this.toggleDropdown}
+            size={size}>
+          {title}
+          <FontAwesomeIcon icon={faChevronDown} fixedWidth />
         </BaseButton>
-        <MenuContainer open={this.state.open} {...this.props}>
-          {this.props.options.map((option) => (
-            <button key={option.label} onClick={this.handleOnClick} onMouseDown={option.onClick}>
-              {option.label}
-            </button>
-          ))}
-        </MenuContainer>
+        { open && (
+          <MenuContainer offset={size}>
+            {options.map((option) => (
+              <button key={option.label} onClick={this.closeDropdown} onMouseDown={option.onClick}>
+                {option.label}
+              </button>
+            ))}
+          </MenuContainer>
+        )}
       </DropdownButtonWrapper>
     );
   }
-}
+};

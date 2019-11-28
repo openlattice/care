@@ -102,7 +102,7 @@ function* getAppearanceWorker(action :SequenceAction) :Generator<any, any, any> 
     yield put(getAppearance.success(action.id, response));
   }
   catch (error) {
-    LOG.error('getAppearanceWorker', error);
+    LOG.error(action.type, error);
     response.error = error;
     yield put(getAppearance.failure(action.id, error));
   }
@@ -144,7 +144,7 @@ function* submitAppearanceWorker(action :SequenceAction) :Generator<any, any, an
     }));
   }
   catch (error) {
-    LOG.error('submitAppearanceWorker', error);
+    LOG.error(action.type, error);
     yield put(submitAppearance.failure(action.id, error));
   }
 }
@@ -166,7 +166,7 @@ function* updateAppearanceWorker(action :SequenceAction) :Generator<any, any, an
     yield put(updateAppearance.success(action.id));
   }
   catch (error) {
-    LOG.error('updateAppearanceWorker', error);
+    LOG.error(action.type, error);
     yield put(updateAppearance.failure(action.id, error));
   }
 }

@@ -20,6 +20,7 @@ import HomeContainer from '../home/HomeContainer';
 import PeopleRouter from '../people/PeopleRouter';
 import LegitReportsRouter from '../reports/LegitReportsRouter';
 import DashboardContainer from '../dashboard/DashboardContainer';
+import IssuesContainer from '../issues/IssuesContainer';
 import {
   initializeApplication,
 } from './AppActions';
@@ -28,6 +29,7 @@ import {
   DASHBOARD_PATH,
   DOWNLOADS_PATH,
   HOME_PATH,
+  ISSUES_PATH,
   PEOPLE_PATH,
   REPORTS_PATH,
 } from '../../core/router/Routes';
@@ -143,6 +145,7 @@ class AppContainer extends Component<Props> {
         <Route path={DASHBOARD_PATH} render={this.wrapComponent(DashboardContainer)} />
         <Route path={DOWNLOADS_PATH} render={this.wrapComponent(DownloadsContainer)} />
         <Route path={PEOPLE_PATH} component={PeopleRouter} />
+        <Route path={ISSUES_PATH} component={IssuesContainer} />
         <Redirect to={HOME_PATH} />
       </Switch>
     );
