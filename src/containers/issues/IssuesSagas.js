@@ -29,6 +29,7 @@ import { getESIDFromApp } from '../../utils/AppUtils';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { COMPLETED_DT_FQN, STATUS_FQN, OPENLATTICE_ID_FQN } from '../../edm/DataModelFqns';
 import { STATUS } from './issue/constants';
+
 const {
   executeSearch,
   searchEntityNeighborsWithFilter,
@@ -43,16 +44,13 @@ const {
   ISSUE_FQN,
   REPORTED_FQN,
   STAFF_FQN,
-  PEOPLE_FQN,
 } = APP_TYPES_FQNS;
 
 const LOG = new Logger('IssueSagas');
 
 const formatIssueRowData = (entityData :List<Map>) :List<Map> => entityData
   .map((neighbor) => {
-    console.log(neighbor);
     const id = neighbor.getIn([OPENLATTICE_ID_FQN, 0]);
-    console.log(id);
     return neighbor
       .map((details) => details.get(0))
       .set('id', id);
@@ -97,7 +95,7 @@ function* getMyOpenIssuesWorker(action :SequenceAction) :Generator<any, any, any
 
     const myOpenIssues = issuesData
       .map((neighbor) => neighbor.get('neighborDetails') || Map())
-      .filter((neighbor) => neighbor.getIn([STATUS_FQN, 0]) === STATUS.OPEN)
+      .filter((neighbor) => neighbor.getIn([STATUS_FQN, 0]) === STATUS.OPEN);
     const data = formatIssueRowData(myOpenIssues);
 
     yield put(getMyOpenIssues.success(action.id, { data }));
@@ -122,7 +120,6 @@ function* getReportedByMeWorker(action :SequenceAction) :Generator<any, any, any
     const issueESID = getESIDFromApp(app, ISSUE_FQN);
     const staffESID = getESIDFromApp(app, STAFF_FQN);
     const reportedESID = getESIDFromApp(app, REPORTED_FQN);
-    const peopleESID = getESIDFromApp(app, PEOPLE_FQN);
 
     const issuesRequestParams = {
       entitySetId: staffESID,
@@ -182,7 +179,7 @@ function* getAllIssuesWorker(action :SequenceAction) :Generator<any, any, any> {
         propertyTypeId: completedPTID,
         type: 'field'
       }
-    }
+    };
 
     const issuesResponse = yield call(
       executeSearchWorker,
@@ -191,10 +188,7 @@ function* getAllIssuesWorker(action :SequenceAction) :Generator<any, any, any> {
 
     if (issuesResponse.error) throw issuesResponse.error;
     const allIssues = fromJS(issuesResponse.data);
-    console.log(allIssues);
-    console.log(allIssues.get('hits'));
     const data = formatIssueRowData(allIssues.get('hits'));
-    console.log(data);
 
     yield put(getAllIssues.success(action.id, { data }));
   }
