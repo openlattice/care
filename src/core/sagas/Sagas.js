@@ -34,6 +34,9 @@ import * as RoutingSagas from '../router/RoutingSagas';
 import * as SearchSagas from '../../containers/search/SearchSagas';
 import * as StaffSagas from '../../containers/staff/StaffSagas';
 import * as ScarsMarksTattoosSagas from '../../containers/profile/edit/basicinformation/sagas/ScarsMarksTattoosSagas';
+import * as IssueSagas from '../../containers/issues/issue/IssueSagas';
+import * as IssuesSagas from '../../containers/issues/IssuesSagas';
+
 
 export default function* sagas() :Generator<*, *, *> {
 
@@ -147,6 +150,17 @@ export default function* sagas() :Generator<*, *, *> {
     fork(AboutSagas.getResponsibleUserWatcher),
     fork(AboutSagas.submitAboutPlanWatcher),
     fork(AboutSagas.updateAboutPlanWatcher),
+
+    // IssueSagas
+    fork(IssueSagas.selectIssueWatcher),
+    fork(IssueSagas.setIssueStatusWatcher),
+    fork(IssueSagas.submitIssueWatcher),
+    fork(IssueSagas.updateIssueWatcher),
+
+    // IssuesSagas
+    fork(IssuesSagas.getAllIssuesWatcher),
+    fork(IssuesSagas.getMyOpenIssuesWatcher),
+    fork(IssuesSagas.getReportedByMeWatcher),
 
     // SearchSagas
     fork(SearchSagas.searchConsumersWatcher)
