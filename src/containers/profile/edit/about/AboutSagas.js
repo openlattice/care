@@ -108,6 +108,7 @@ function* getResponsibleUserWorker(action :SequenceAction) :Generator<any, any, 
   }
   catch (error) {
     response.error = error;
+    LOG.error(action.type, error);
     yield put(getResponsibleUser.failure(action.id, error));
   }
 
@@ -155,6 +156,7 @@ function* getAboutPlanWorker(action :SequenceAction) :Generator<any, any, any> {
     }));
   }
   catch (error) {
+    LOG.error(action.type, error);
     yield put(getAboutPlan.failure(action.id));
   }
 }
@@ -226,7 +228,7 @@ function* updateAboutPlanWorker(action :SequenceAction) :Generator<any, any, any
     yield put(updateAboutPlan.success(action.id, { entityIndexToIdMap }));
   }
   catch (error) {
-    LOG.error('updateAboutPlanWorker', error);
+    LOG.error(action.type, error);
     yield put(updateAboutPlan.failure(action.id, error));
   }
 }
@@ -262,6 +264,7 @@ function* submitAboutPlanWorker(action :SequenceAction) :Generator<any, any, any
     }));
   }
   catch (error) {
+    LOG.error(action.type, error);
     yield put(submitAboutPlan.failure(action.id));
   }
 }

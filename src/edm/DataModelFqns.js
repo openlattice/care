@@ -8,7 +8,13 @@ export { OPENLATTICE_ID_FQN };
 /* Issue */
 const PRIORITY_FQN = new FullyQualifiedName('ol.priority');
 const STATUS_FQN = new FullyQualifiedName('ol.status');
-export { PRIORITY_FQN, STATUS_FQN };
+const ENTRY_UPDATED_FQN = new FullyQualifiedName('general.entryupdated');
+
+export {
+  ENTRY_UPDATED_FQN,
+  PRIORITY_FQN,
+  STATUS_FQN
+};
 
 /* Is Emergency Contact For */
 const RELATIONSHIP_FQN = new FullyQualifiedName('ol.relationship');

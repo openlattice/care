@@ -1,5 +1,6 @@
 // @flow
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
 import { Switch, Redirect } from 'react-router-dom';
 import { Map } from 'immutable';
 import {
@@ -16,6 +17,7 @@ import type { Match } from 'react-router';
 import type { Dispatch } from 'redux';
 import type { RequestSequence } from 'redux-reqseq';
 
+import Accordion from '../../../components/accordion';
 import LinkButton from '../../../components/buttons/LinkButton';
 import AboutForm from './about/AboutForm';
 import ContactsForm from './contacts/ContactsForm';
@@ -37,6 +39,16 @@ import {
   RESPONSE_PLAN_PATH,
 } from '../../../core/router/Routes';
 import PrivateRoute from '../../../components/route/PrivateRoute';
+import IssueDetails from '../../issues/IssueDetails';
+import { TITLE_FQN } from '../../../edm/DataModelFqns';
+
+const StickyAccordion = styled(Accordion)`
+  position: sticky;
+  top: 66px;
+  z-index: 200;
+  box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.1), 0 -10px 0px 0 rgba(248, 248, 251, 0.7);
+  margin-bottom: 20px;
+`;
 
 type Props = {
   actions :{
@@ -45,23 +57,48 @@ type Props = {
   };
   match :Match;
   selectedPerson :Map;
+  selectedIssueData :Map;
 };
 
 const EditProfileContainer = (props :Props) => {
-  const { actions, match, selectedPerson } = props;
+  const {
+    actions,
+    match,
+    selectedIssueData,
+    selectedPerson
+  } = props;
   const personEKID = match.params[PROFILE_ID_PARAM];
 
-  useEffect(
-    () => {
+  useEffect(() => {
       actions.getBasics(personEKID);
-    },
-    [actions, personEKID]
-  );
+  }, [actions, personEKID]);
+
+  const assignee = selectedIssueData.get('assignee');
+  const issue = selectedIssueData.get('issue') || Map();
+  const reporter = selectedIssueData.get('reporter');
+  const subject = selectedIssueData.get('subject');
+
+  const headline = issue.getIn([TITLE_FQN, 0]);
 
   return (
     <ContentOuterWrapper>
       <ProfileBanner selectedPerson={selectedPerson} />
       <ContentWrapper>
+        {
+          !selectedIssueData.isEmpty() && (
+            <StickyAccordion>
+              <CardSegment headline={headline} defaultOpen>
+                <IssueDetails
+                    assignee={assignee}
+                    hideTitle
+                    issue={issue}
+                    match={match}
+                    reporter={reporter}
+                    subject={subject} />
+              </CardSegment>
+            </StickyAccordion>
+          )
+        }
         <CardStack>
           <div>
             <LinkButton mode="subtle" to={match.url}>
@@ -72,9 +109,9 @@ const EditProfileContainer = (props :Props) => {
           <Card>
             <CardSegment padding="sm">
               <Stepper>
-                <NavStep to={`${match.url}${BASIC_PATH}`}>Basic Information</NavStep>
+                <NavStep to={`${match.url}${BASIC_PATH}`}>Basics</NavStep>
                 <NavStep to={`${match.url}${OFFICER_SAFETY_PATH}`}>Officer Safety</NavStep>
-                <NavStep to={`${match.url}${RESPONSE_PLAN_PATH}`}>Background & Response Plan</NavStep>
+                <NavStep to={`${match.url}${RESPONSE_PLAN_PATH}`}>Response Plan</NavStep>
                 <NavStep to={`${match.url}${CONTACTS_PATH}`}>Contacts</NavStep>
                 <NavStep to={`${match.url}${ABOUT_PATH}`}>About</NavStep>
               </Stepper>
@@ -115,7 +152,8 @@ const EditProfileContainer = (props :Props) => {
 };
 
 const mapStateToProps = (state :Map) => ({
-  selectedPerson: state.getIn(['profile', 'basicInformation', 'basics', 'data'], Map()),
+  selectedPerson: state.getIn(['profile', 'basicInformation', 'basics', 'data']) || Map(),
+  selectedIssueData: state.getIn(['router', 'location', 'state']) || Map()
 });
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({

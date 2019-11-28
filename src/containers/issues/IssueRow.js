@@ -1,28 +1,34 @@
 // @flow
 import React from 'react';
 import styled from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { DateTime } from 'luxon';
-import { Map, get } from 'immutable';
+import { get } from 'immutable';
 import { Colors, StyleUtils, Tag } from 'lattice-ui-kit';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faChevronUp } from '@fortawesome/pro-regular-svg-icons';
 
-import { getLastFirstMiFromPerson } from '../../utils/PersonUtils';
 import {
   resetIssue,
   selectIssue,
 } from './issue/IssueActions';
-import IssueRowDetails from './IssueRowDetails';
+import { STATUS } from './issue/constants';
+import IssueRowExpansion from './IssueRowExpansion';
 import {
   TITLE_FQN,
   PRIORITY_FQN,
   STATUS_FQN,
-  DATE_TIME_FQN,
+  COMPLETED_DT_FQN,
 } from '../../edm/DataModelFqns';
 
 const { NEUTRALS } = Colors;
 const { getHoverStyles } = StyleUtils;
+
+const STATUS_MODE = {
+  [STATUS.RESOLVED]: 'success',
+  [STATUS.DECLINED]: 'danger',
+  [STATUS.OPEN]: 'neutral',
+};
 
 const CustomRowWrapper = styled.tr.attrs(() => ({ tabIndex: '1' }))`
   border-bottom: ${(props) => (props.expanded ? null : `1px solid ${NEUTRALS[4]}`)};
@@ -38,6 +44,7 @@ const CellContent = styled.div`
 
 const StyledCell = styled.td`
   padding: 10px;
+  text-align: ${(props) => props.align ? 'center' : 'left'};
 `;
 
 type Props = {
@@ -59,15 +66,8 @@ const IssueRow = (props :Props) => {
   const title = get(data, TITLE_FQN);
   const priority = get(data, PRIORITY_FQN);
   const status = get(data, STATUS_FQN) || 'Open';
-  const created = DateTime.fromISO(get(data, DATE_TIME_FQN, ''))
+  const created = DateTime.fromISO(get(data, COMPLETED_DT_FQN, ''))
     .toLocaleString(DateTime.DATE_SHORT);
-
-  // const subject = useSelector((store :Map) => {
-  //   const subjectEKID = store.getIn(['issues', 'filteredIssues', 'subjectEKIDsByIssueEKID', id]);
-  //   return store.getIn(['issues', 'filteredIssues', 'subjectsByEKID', subjectEKID]);
-  // }) || Map();
-
-  // const subjectName = getLastFirstMiFromPerson(subject, true);
 
   const icon = expanded ? faChevronUp : faChevronDown;
 
@@ -97,7 +97,7 @@ const IssueRow = (props :Props) => {
         </StyledCell>
         <StyledCell>
           <CellContent>
-            { status && <Tag mode="neutral">{status}</Tag> }
+            { status && <Tag mode={STATUS_MODE[status]}>{status}</Tag> }
           </CellContent>
         </StyledCell>
         <StyledCell>
@@ -110,7 +110,7 @@ const IssueRow = (props :Props) => {
         </StyledCell>
       </CustomRowWrapper>
       {
-        expanded && (<IssueRowDetails />)
+        expanded && (<IssueRowExpansion />)
       }
     </>
   );

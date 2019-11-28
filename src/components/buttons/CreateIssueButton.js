@@ -1,16 +1,14 @@
 // @flow
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import styled from 'styled-components';
 import { faCommentAltPlus } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Map } from 'immutable';
 import { IconButton, Hooks } from 'lattice-ui-kit';
-import { useDispatch, useSelector } from 'react-redux';
-import { RequestStates } from 'redux-reqseq';
-import { resetIssue } from '../../containers/issues/issue/IssueActions';
+import { useSelector } from 'react-redux';
 
-import CreateIssueModal from '../modals/CreateIssueModal';
+import IssueModal from '../../containers/issues/issue/IssueModal';
 
 const { useBoolean } = Hooks;
 
@@ -27,7 +25,7 @@ type Props = {
   defaultComponent :string;
 };
 
-const NewIssueButton = (props :Props) => {
+const CreateIssueButton = (props :Props) => {
   const {
     defaultComponent,
     mode,
@@ -38,20 +36,12 @@ const NewIssueButton = (props :Props) => {
   const currentUser :Map = useSelector((store :Map) => store.getIn(['staff', 'currentUser', 'data']));
   const person = useSelector((store :Map) => store
     .getIn(['profile', 'basicInformation', 'basics', 'data']));
-  const submitState = useSelector((store) => store.getIn(['issues', 'issue', 'submitState']));
-
-  useEffect(() => {
-    if (submitState === RequestStates.SUCCESS) {
-      onClose();
-    }
-  }, [onClose, submitState]);
 
   return (
     <>
       <ChangeButton mode={mode} onClick={onOpen} icon={ChangeIcon} />
-      <CreateIssueModal
+      <IssueModal
           assignee={assignee}
-          submitState={submitState}
           currentUser={currentUser}
           defaultComponent={defaultComponent}
           isVisible={isVisible}
@@ -61,4 +51,4 @@ const NewIssueButton = (props :Props) => {
   );
 };
 
-export default React.memo<Props>(NewIssueButton);
+export default React.memo<Props>(CreateIssueButton);

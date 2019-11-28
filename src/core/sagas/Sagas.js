@@ -152,8 +152,10 @@ export default function* sagas() :Generator<*, *, *> {
     fork(AboutSagas.updateAboutPlanWatcher),
 
     // IssueSagas
-    fork(IssueSagas.submitIssueWatcher),
     fork(IssueSagas.selectIssueWatcher),
+    fork(IssueSagas.setIssueStatusWatcher),
+    fork(IssueSagas.submitIssueWatcher),
+    fork(IssueSagas.updateIssueWatcher),
 
     // IssuesSagas
     fork(IssuesSagas.getAllIssuesWatcher),

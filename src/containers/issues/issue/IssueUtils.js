@@ -1,5 +1,5 @@
 // @flow
-import { Map, getIn } from 'immutable';
+import { Map, getIn, setIn } from 'immutable';
 import { Constants } from 'lattice';
 import { DateTime } from 'luxon';
 import { DataProcessingUtils } from 'lattice-fabricate';
@@ -14,8 +14,11 @@ import {
   PRIORITY_FQN,
   TITLE_FQN,
   STATUS_FQN,
+  ENTRY_UPDATED_FQN,
 } from '../../../edm/DataModelFqns';
 import { isValidUuid } from '../../../utils/Utils';
+import { CATEGORY_PATHS } from './constants';
+import { ISSUES_PATH, PROFILE_ID_PATH } from '../../../core/router/Routes';
 
 const { getPageSectionKey, getEntityAddressKey } = DataProcessingUtils;
 
@@ -89,9 +92,9 @@ const constructFormData = ({
   });
 };
 
-const getIssueAssociations = (formData :any, person :Map, currentUser :Map) => {
+const getIssueAssociations = (formData :any, person :Map, currentUser :Map, timestamp :DateTime) => {
 
-  const nowAsIsoString = DateTime.local().toISO();
+  const nowAsIsoString = timestamp.isValid ? timestamp.toISO() : DateTime.local().toISO();
   const personEKID = getEntityKeyId(person);
   const currentUserEKID = getEntityKeyId(currentUser);
   const assigneeEKID = getIn(
@@ -117,8 +120,43 @@ const getIssueAssociations = (formData :any, person :Map, currentUser :Map) => {
   return associations;
 };
 
+const addIssueTimestamps = (formData :any, timestamp :DateTime, isUpdate :boolean = false) => {
+  const nowAsIsoString = timestamp.isValid ? timestamp.toISO() : DateTime.local().toISO();
+
+  const withUpdatedOnly = setIn(
+    formData,
+    [getPageSectionKey(1, 1), getEntityAddressKey(0, ISSUE_FQN, ENTRY_UPDATED_FQN)],
+    nowAsIsoString
+  );
+
+  const withTimestamps = setIn(
+    withUpdatedOnly,
+    [getPageSectionKey(1, 1), getEntityAddressKey(0, ISSUE_FQN, COMPLETED_DT_FQN)],
+    nowAsIsoString
+  );
+
+  return isUpdate ? withUpdatedOnly : withTimestamps;
+}
+
+const getTakeActionPath = (
+  person :Map,
+  component :string,
+  defaultPath :string = ISSUES_PATH
+) => {
+  const personEKID = getEntityKeyId(person);
+  const rawPath = CATEGORY_PATHS[component];
+
+  if (rawPath && personEKID) {
+    return CATEGORY_PATHS[component].replace(PROFILE_ID_PATH, personEKID);
+  }
+
+  return defaultPath;
+};
+
 export {
+  addIssueTimestamps,
   constructEntityIndexToIdMap,
   constructFormData,
   getIssueAssociations,
+  getTakeActionPath,
 };

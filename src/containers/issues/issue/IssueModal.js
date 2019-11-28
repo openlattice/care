@@ -1,11 +1,12 @@
 // @flow
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import { Map } from 'immutable';
 import { RequestStates } from 'redux-reqseq';
 import { ActionModal } from 'lattice-ui-kit';
 import type { RequestState } from 'redux-reqseq';
 
-import IssueForm from '../../containers/issues/issue/IssueForm';
+import IssueForm from './IssueForm';
 
 const emptyBody = {
   [RequestStates.PENDING]: <></>,
@@ -17,24 +18,37 @@ const emptyBody = {
 type Props = {
   assignee :Map;
   currentUser :Map;
-  defaultComponent :string;
+  defaultComponent ?:string;
+  edit ?:boolean;
+  issue ?:Map;
   isVisible :boolean;
   onClose :() => void;
   person :Map;
-  submitState :RequestState;
 };
 
-const NewIssueModal = (props :Props) => {
+const IssueModal = (props :Props) => {
   const {
     assignee,
     currentUser,
     defaultComponent,
+    edit,
+    issue,
     isVisible,
     onClose,
     person,
-    submitState,
   } = props;
   const formRef = useRef();
+
+  const requestState :RequestState = useSelector((store) => {
+    const stateName = edit ? 'updateState' : 'submitState';
+    return store.getIn(['issues', 'issue', stateName]);
+  });
+
+  useEffect(() => {
+    if (requestState === RequestStates.SUCCESS) {
+      onClose();
+    }
+  }, [onClose, requestState]);
 
   const handleExternalSubmit = useCallback(() => {
     if (formRef.current) {
@@ -42,26 +56,35 @@ const NewIssueModal = (props :Props) => {
     }
   }, [formRef]);
 
+  const textPrimary = edit ? 'Update' : 'Submit';
+  const textTitle = edit ? 'Edit Issue' : 'Create Issue';
+
   return (
     <ActionModal
-        requestState={submitState}
+        requestState={requestState}
         requestStateComponents={emptyBody}
         isVisible={isVisible}
         onClickPrimary={handleExternalSubmit}
         onClose={onClose}
         shouldCloseOnOutsideClick={false}
-        textPrimary="Submit"
+        textPrimary={textPrimary}
         textSecondary="Discard"
-        textTitle="Create Issue"
+        textTitle={textTitle}
         viewportScrolling>
       <IssueForm
           assignee={assignee}
           currentUser={currentUser}
           defaultComponent={defaultComponent}
+          edit={edit}
+          issue={issue}
           person={person}
           ref={formRef} />
     </ActionModal>
   );
 };
 
-export default React.memo<Props>(NewIssueModal);
+IssueModal.defaultProps = {
+  defaultComponent: '',
+};
+
+export default React.memo<Props>(IssueModal);
