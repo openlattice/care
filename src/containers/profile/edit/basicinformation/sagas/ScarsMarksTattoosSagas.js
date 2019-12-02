@@ -174,7 +174,7 @@ function* updateScarsMarksTattoosWorker(action :SequenceAction) :Generator<any, 
     yield put(updateScarsMarksTattoos.success(action.id));
   }
   catch (error) {
-    LOG.error('updateScarsMarksTattoosWorker', error);
+    LOG.error(action.type, error);
     yield put(updateScarsMarksTattoos.failure(action.id, error));
   }
 }

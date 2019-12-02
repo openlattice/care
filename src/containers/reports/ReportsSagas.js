@@ -161,7 +161,7 @@ function* deleteReportWorker(action :SequenceAction) :Generator<*, *, *> {
     yield put(deleteReport.success(action.id));
   }
   catch (error) {
-    LOG.error('caught exception in worker saga', error);
+    LOG.error(action.type, error);
     yield put(deleteReport.failure(action.id, error));
   }
 }
@@ -273,7 +273,7 @@ function* getReportWorker(action :SequenceAction) :Generator<*, *, *> {
     yield put(getReport.success(action.id, { submitted, lastUpdated }));
   }
   catch (error) {
-    LOG.error('caught exception in worker saga', error);
+    LOG.error(action.type, error);
     yield put(getReport.failure(action.id, error));
   }
 }
@@ -445,6 +445,7 @@ function* getReportsByDateRangeWorker(action :SequenceAction) :Generator<*, *, *
     yield put(getReportsByDateRange.success(action.id, results));
   }
   catch (error) {
+    LOG.error(action.type, error);
     yield put(getReportsByDateRange.failure(action.id, error));
   }
 }
@@ -556,7 +557,7 @@ function* updateReportWorker(action :SequenceAction) :Generator<*, *, *> {
     yield put(updateReport.success(action.id));
   }
   catch (error) {
-    LOG.error('caught exception in worker saga', error);
+    LOG.error(action.type, error);
     yield put(updateReport.failure(action.id, error));
   }
 }
@@ -627,7 +628,7 @@ function* submitReportWorker(action :SequenceAction) :Generator<*, *, *> {
     yield put(submitReport.success(action.id));
   }
   catch (error) {
-    LOG.error('caught exception in worker saga', error);
+    LOG.error(action.type, error);
     yield put(submitReport.failure(action.id, error));
   }
 }

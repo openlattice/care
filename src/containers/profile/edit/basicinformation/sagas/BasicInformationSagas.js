@@ -105,7 +105,7 @@ function* getBasicsWorker(action :SequenceAction) :Generator<any, any, any> {
     yield put(getBasics.success(action.id, response));
   }
   catch (error) {
-    LOG.error('getBasicsWorker', error);
+    LOG.error(action.type, error);
     response.error = error;
     yield put(getBasics.failure(action.id, error));
   }
@@ -129,7 +129,7 @@ function* updateBasicsWorker(action :SequenceAction) :Generator<any, any, any> {
     yield put(updateBasics.success(action.id));
   }
   catch (error) {
-    LOG.error('updateBasicsWorker', error);
+    LOG.error(action.type, error);
     yield put(updateBasics.failure(action.id, error));
   }
 }
@@ -184,7 +184,7 @@ function* getBasicInformationWorker(action :SequenceAction) :Generator<any, any,
     yield put(getBasicInformation.success(action.id));
   }
   catch (error) {
-    LOG.error('getBasicInformationWorker', error);
+    LOG.error(action.type, error);
     yield put(getBasicInformation.failure(action.id, error));
   }
 }

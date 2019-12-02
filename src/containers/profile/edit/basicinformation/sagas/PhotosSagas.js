@@ -97,6 +97,7 @@ function* getPhotosWorker(action :SequenceAction) :Generator<any, any, any> {
   }
   catch (error) {
     response.error = error;
+    LOG.error(action.type, error);
     yield put(getPhotos.failure(action.id, error));
   }
 
@@ -137,6 +138,7 @@ function* submitPhotosWorker(action :SequenceAction) :Generator<any, any, any> {
     }));
   }
   catch (error) {
+    LOG.error(action.type, error);
     yield put(submitPhotos.failure(action.id, error));
   }
 }
@@ -158,7 +160,7 @@ function* updatePhotoWorker(action :SequenceAction) :Generator<any, any, any> {
     yield put(updatePhoto.success(action.id));
   }
   catch (error) {
-    LOG.error('updatePhotoWorker', error);
+    LOG.error(action.type, error);
     yield put(updatePhoto.failure(action.id, error));
   }
 }

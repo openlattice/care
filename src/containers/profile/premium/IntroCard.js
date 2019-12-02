@@ -24,12 +24,16 @@ import { withRouter } from 'react-router-dom';
 import type { Match } from 'react-router-dom';
 
 import Detail from '../../../components/premium/styled/Detail';
-import * as FQN from '../../../edm/DataModelFqns';
+import EditLinkButton from '../../../components/buttons/EditLinkButton';
+import NewIssueButton from '../../../components/buttons/CreateIssueButton';
 import { inchesToFeetString } from '../../../utils/DataUtils';
 import { getLastFirstMiFromPerson } from '../../../utils/PersonUtils';
-import EditLinkButton from '../../../components/buttons/EditLinkButton';
 import { BASIC_PATH, EDIT_PATH } from '../../../core/router/Routes';
-import { H1, IconWrapper } from '../../../components/layout';
+import { H1, HeaderActions, IconWrapper } from '../../../components/layout';
+import { CATEGORIES } from '../../issues/issue/constants';
+import * as FQN from '../../../edm/DataModelFqns';
+
+const { BASIC_INFORMATION } = CATEGORIES;
 
 const Name = styled(Detail)`
   text-transform: uppercase;
@@ -101,7 +105,10 @@ const IntroCard = (props :Props) => {
             <FontAwesomeIcon icon={faUser} fixedWidth />
           </IconWrapper>
           Intro
-          { showEdit && <EditLinkButton mode="primary" to={`${match.url}${EDIT_PATH}${BASIC_PATH}`} /> }
+          <HeaderActions>
+            { showEdit && <EditLinkButton mode="primary" to={`${match.url}${EDIT_PATH}${BASIC_PATH}`} /> }
+            <NewIssueButton defaultComponent={BASIC_INFORMATION} mode="primary" />
+          </HeaderActions>
         </H1>
       </CardHeader>
       <CardSegment vertical padding="sm">

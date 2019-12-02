@@ -1,7 +1,7 @@
 // @flow
 
 import React, { useState } from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { List, Map, fromJS } from 'immutable';
 import {
   Card,
@@ -50,11 +50,11 @@ const InputGrid = styled.div`
   grid-template-columns: repeat(4, minmax(0, 1fr));
   align-items: flex-start;
 
-  ${media.phone(css`
+  ${media.phone`
     grid-gap: 10px;
     grid-auto-flow: row;
     grid-template-columns: none;
-  `)}
+  `}
 `;
 
 const Title = styled.h1`

@@ -6,7 +6,7 @@ export const BEHAVIORS = [
   'Belligerent / Uncooperative',
   'Bizzare, unusual behavior',
   'Disorientation / Confusion',
-  'Disorganized speed / Communication',
+  'Disorganized speech / Communication',
   'Disorderly / Disruptive',
   'Hallucinations / Delusions',
   'Hopeless / Depressed',

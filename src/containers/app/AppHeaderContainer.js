@@ -1,15 +1,16 @@
 // @flow
 import React, { useCallback } from 'react';
 import { Map } from 'immutable';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import {
   faDownload,
-  faHome,
   faFileAlt,
-  faUsers,
-  faUserChart,
+  faFileExclamation,
+  faHome,
   faQuestionCircle,
-  faSignOut
+  faSignOut,
+  faUserChart,
+  faUsers,
 } from '@fortawesome/pro-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { NavLink } from 'react-router-dom';
@@ -25,6 +26,7 @@ import {
   LOGOUT_PATH,
   PEOPLE_PATH,
   REPORTS_PATH,
+  ISSUES_PATH,
 } from '../../core/router/Routes';
 
 const StyledAppHeaderWrapper = styled(AppHeaderWrapper)`
@@ -34,9 +36,9 @@ const StyledAppHeaderWrapper = styled(AppHeaderWrapper)`
 
   /* hide app title for smaller screens */
   .app-nav-root > h1 {
-    ${media.tablet(css`
+    ${media.tablet`
       display: none;
-    `)}
+    `}
   }
 `;
 
@@ -89,6 +91,10 @@ const AppHeaderContainer = (props :Props) => {
           <NavLabel>Downloads</NavLabel>
         </NavLink>
         <hr />
+        <NavLink to={ISSUES_PATH}>
+          <FontAwesomeIcon size="lg" fixedWidth icon={faFileExclamation} />
+          <NavLabel>Manage Issues</NavLabel>
+        </NavLink>
         <a
             href="https://support.openlattice.com/servicedesk/customer/portal/1"
             rel="noopener noreferrer"

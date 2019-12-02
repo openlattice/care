@@ -144,7 +144,7 @@ function* getOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<any,
     }));
   }
   catch (error) {
-    LOG.error('getOfficerSafetyConcernsWorker', error);
+    LOG.error(action.type, error);
     yield put(getOfficerSafetyConcerns.failure(action.id));
   }
 }
@@ -190,7 +190,7 @@ function* getOfficerSafetyWorker(action :SequenceAction) :Generator<any, any, an
     yield put(getOfficerSafety.success(action.id));
   }
   catch (error) {
-    LOG.error('getOfficerSafetyWorker', error);
+    LOG.error(action.type, error);
     yield put(getOfficerSafety.failure(action.id));
   }
 }
@@ -265,7 +265,7 @@ function* submitOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<a
     }));
   }
   catch (error) {
-    LOG.error('submitOfficerSafetyConcernsWorker', error);
+    LOG.error(action.type, error);
     yield put(submitOfficerSafetyConcerns.failure(action.id));
   }
 }
@@ -287,7 +287,7 @@ function* updateOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<*
     yield put(updateOfficerSafetyConcerns.success(action.id));
   }
   catch (error) {
-    LOG.error('updateOfficerSafetyConcernsWorker', error);
+    LOG.error(action.type, error);
     yield put(updateOfficerSafetyConcerns.failure(action.id, error));
   }
 }
@@ -313,7 +313,7 @@ function* deleteOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<*
     yield put(deleteOfficerSafetyConcerns.success(action.id, { path, entityIndexToIdMap: newEntityIndexToIdMap }));
   }
   catch (error) {
-    LOG.error('deleteOfficerSafetyConcernsWorker', error);
+    LOG.error(action.type, error);
     yield put(deleteOfficerSafetyConcerns.failure(action.id, error));
   }
 }

@@ -11,6 +11,7 @@ type Props = {
   disabled ? :boolean;
   isLoading ? :boolean;
   mode ? :string;
+  size ? :string;
   state ? :any;
   to :string;
 }
@@ -22,6 +23,7 @@ const LinkButton = (props :Props) => {
     disabled,
     isLoading,
     mode,
+    size,
     state,
     to,
   } = props;
@@ -34,7 +36,8 @@ const LinkButton = (props :Props) => {
         disabled={disabled}
         isLoading={isLoading}
         mode={mode}
-        onClick={onClick}>
+        onClick={onClick}
+        size={size}>
       {children}
     </Button>
   );
@@ -45,6 +48,7 @@ LinkButton.defaultProps = {
   disabled: false,
   isLoading: false,
   mode: undefined,
+  size: undefined,
   state: undefined,
 };
 

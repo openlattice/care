@@ -16,10 +16,17 @@ import type { Match } from 'react-router-dom';
 import SpecificTechniques from './SpecificTechniques';
 import EditLinkButton from '../../../components/buttons/EditLinkButton';
 import { OFFICER_SAFETY_PATH, EDIT_PATH } from '../../../core/router/Routes';
-import { H1, IconWrapper, UL } from '../../../components/layout';
+import {
+  H1,
+  HeaderActions,
+  IconWrapper,
+  UL
+} from '../../../components/layout';
+import { CATEGORIES } from '../../issues/issue/constants';
+import NewIssueButton from '../../../components/buttons/CreateIssueButton';
 
 const { NEUTRALS } = Colors;
-
+const { OFFICER_SAFETY } = CATEGORIES;
 
 const H2 = styled.h2`
   font-size: 16px;
@@ -65,7 +72,10 @@ const DeescalationCard = (props :Props) => {
             <FontAwesomeIcon icon={faTheaterMasks} fixedWidth />
           </IconWrapper>
           De-escalation
-          { showEdit && <EditLinkButton mode="primary" to={`${match.url}${EDIT_PATH}${OFFICER_SAFETY_PATH}`} /> }
+          <HeaderActions>
+            { showEdit && <EditLinkButton mode="primary" to={`${match.url}${EDIT_PATH}${OFFICER_SAFETY_PATH}`} /> }
+            <NewIssueButton defaultComponent={OFFICER_SAFETY} mode="primary" />
+          </HeaderActions>
         </H1>
       </CardHeader>
       <DeescalationContentWrapper>
