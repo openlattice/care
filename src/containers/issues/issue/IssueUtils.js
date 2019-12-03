@@ -3,6 +3,7 @@ import { Map, getIn, setIn } from 'immutable';
 import { Constants } from 'lattice';
 import { DateTime } from 'luxon';
 import { DataProcessingUtils } from 'lattice-fabricate';
+import type { Match } from 'react-router';
 
 import { getFormDataFromEntity, getEntityKeyId } from '../../../utils/DataUtils';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
@@ -18,7 +19,12 @@ import {
 } from '../../../edm/DataModelFqns';
 import { isValidUuid } from '../../../utils/Utils';
 import { CATEGORY_PATHS } from './constants';
-import { ISSUES_PATH, PROFILE_ID_PATH } from '../../../core/router/Routes';
+import {
+  ISSUES_PATH,
+  ISSUE_ID_PARAM,
+  ISSUE_PATH,
+  PROFILE_ID_PATH,
+} from '../../../core/router/Routes';
 
 const { getPageSectionKey, getEntityAddressKey } = DataProcessingUtils;
 
@@ -136,9 +142,9 @@ const addIssueTimestamps = (formData :any, timestamp :DateTime, isUpdate :boolea
   );
 
   return isUpdate ? withUpdatedOnly : withTimestamps;
-}
+};
 
-const getTakeActionPath = (
+const getJumpToActionPath = (
   person :Map,
   component :string,
   defaultPath :string = ISSUES_PATH
@@ -153,10 +159,18 @@ const getTakeActionPath = (
   return defaultPath;
 };
 
+const getIssueUrl = (id :UUID, match :Match) => {
+  const { location } = window;
+  const appUrl = match.url;
+  const baseUrl = location.href.split(appUrl)[0];
+  return `${baseUrl}${ISSUE_PATH}`.replace(`:${ISSUE_ID_PARAM}`, id);
+};
+
 export {
   addIssueTimestamps,
   constructEntityIndexToIdMap,
   constructFormData,
   getIssueAssociations,
-  getTakeActionPath,
+  getIssueUrl,
+  getJumpToActionPath,
 };

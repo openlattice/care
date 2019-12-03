@@ -44,7 +44,7 @@ const CellContent = styled.div`
 
 const StyledCell = styled.td`
   padding: 10px;
-  text-align: ${(props) => props.align ? 'center' : 'left'};
+  text-align: ${(props) => (props.align ? 'center' : 'left')};
 `;
 
 type Props = {
