@@ -5,7 +5,6 @@ import { useRouteMatch } from 'react-router';
 import styled from 'styled-components';
 import { Map } from 'immutable';
 import {
-  Button,
   Colors,
   Spinner
 } from 'lattice-ui-kit';

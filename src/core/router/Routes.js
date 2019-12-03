@@ -17,6 +17,8 @@ export const LOGOUT_PATH :string = '/logout';
 export const PEOPLE_PATH :string = '/people';
 export const REPORTS_PATH :string = '/reports';
 export const ISSUES_PATH :string = '/issues';
+export const ISSUE_ID_PARAM :string = 'issueId';
+export const ISSUE_PATH :string = `${ISSUES_PATH}/:${ISSUE_ID_PARAM}`;
 
 export const REPORT_ID_PARAM :string = 'reportId';
 export const REPORT_ID_PATH :string = `:${REPORT_ID_PARAM}`;

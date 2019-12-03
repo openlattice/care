@@ -11,7 +11,7 @@ import LinkButton from '../../components/buttons/LinkButton';
 import IssueModal from './issue/IssueModal';
 import DropdownButton from '../../components/buttons/DropdownButton';
 import { setIssueStatus } from './issue/IssueActions';
-import { getTakeActionPath } from './issue/IssueUtils';
+import { getJumpToActionPath, getIssueUrl } from './issue/IssueUtils';
 import { getLastFirstMiFromPerson } from '../../utils/PersonUtils';
 import {
   TITLE_FQN,
@@ -80,6 +80,7 @@ const IssueDetails = (props :Props) => {
   } = props;
 
   const [isVisible, open, close] = useBoolean();
+  const [hasCopied, copy] = useBoolean();
   const isLoading = useSelector((store :Map) => store.getIn(['issues', 'issue', 'updateState']) === RequestStates.PENDING);
 
   const assigneeName = getIn(assignee, [PERSON_ID_FQN, 0]);
@@ -90,7 +91,7 @@ const IssueDetails = (props :Props) => {
   const status = getIn(issue, [STATUS_FQN, 0]) || 'Open';
   const title = getIn(issue, [TITLE_FQN, 0]);
   const subjectName = getLastFirstMiFromPerson(subject, true);
-  const actionPath = getTakeActionPath(subject, category, match.url);
+  const actionPath = getJumpToActionPath(subject, category, match.url);
   const issueEKID = getIn(issue, [OPENLATTICE_ID_FQN, 0]);
 
   const dispatch = useDispatch();
@@ -101,6 +102,12 @@ const IssueDetails = (props :Props) => {
       status: statusValue
     }))
   })), [dispatch, issueEKID]);
+
+  const copyLink = () => {
+    const issueURL = getIssueUrl(issueEKID, match);
+    navigator.clipboard.writeText(issueURL);
+    copy();
+  };
 
   return (
     <IssueDetailsWrapper>
@@ -116,6 +123,16 @@ const IssueDetails = (props :Props) => {
             options={resolveOptions}
             size="sm"
             title="Status" />
+        {
+          navigator.clipboard.writeText && (
+            <Button
+                size="sm"
+                mode={hasCopied ? 'positive' : 'default'}
+                onClick={copyLink}>
+              {hasCopied ? 'Copied URL' : 'Copy URL'}
+            </Button>
+          )
+        }
         <LinkButton
             to={actionPath}
             state={Map({
