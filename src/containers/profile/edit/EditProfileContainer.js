@@ -1,5 +1,5 @@
 // @flow
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { Switch, Redirect } from 'react-router-dom';
 import { Map } from 'immutable';
@@ -70,7 +70,7 @@ const EditProfileContainer = (props :Props) => {
   const personEKID = match.params[PROFILE_ID_PARAM];
 
   useEffect(() => {
-      actions.getBasics(personEKID);
+    actions.getBasics(personEKID);
   }, [actions, personEKID]);
 
   const assignee = selectedIssueData.get('assignee');
