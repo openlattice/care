@@ -14,17 +14,16 @@ import { bindActionCreators } from 'redux';
 import type { Dispatch } from 'redux';
 import type { RequestSequence } from 'redux-reqseq';
 
-import SearchPeopleContainer from './SearchPeopleContainer';
 import ProfileContainer from '../profile/ProfileContainer';
 import PremiumProfileRouter from '../profile/premium/PremiumProfileRouter';
 import { clearSearchResults } from './PeopleActions';
 import {
-  PEOPLE_PATH,
-  PROFILE_PATH
+  PROFILE_VIEW_PATH,
+  HOME_PATH
 } from '../../core/router/Routes';
 
 type Props = {
-  actions: {
+  actions :{
     clearSearchResults :RequestSequence;
   };
   selectedOrganizationSettings :Map;
@@ -37,14 +36,13 @@ const PeopleRouter = ({ actions, selectedOrganizationSettings } :Props) => {
   useEffect(() => {
     return () => {
       actions.clearSearchResults();
-    }
+    };
   }, [actions]);
 
   return (
     <Switch>
-      <Route exact path={PEOPLE_PATH} component={SearchPeopleContainer} />
-      <Route path={PROFILE_PATH} component={profileComponent} />
-      <Redirect to={PEOPLE_PATH} />
+      <Route strict path={PROFILE_VIEW_PATH} component={profileComponent} />
+      <Redirect to={HOME_PATH} />
     </Switch>
   );
 };
@@ -57,6 +55,7 @@ const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
     clearSearchResults
   }, dispatch)
-})
+});
+
 // $FlowFixMe
 export default connect(mapStateToProps, mapDispatchToProps)(PeopleRouter);

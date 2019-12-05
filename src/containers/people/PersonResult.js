@@ -25,7 +25,7 @@ import { PERSON_SEX_FQN, PERSON_RACE_FQN } from '../../edm/DataModelFqns';
 import {
   CRISIS_PATH,
   PROFILE_ID_PATH,
-  PROFILE_PATH,
+  PROFILE_VIEW_PATH,
 } from '../../core/router/Routes';
 import { media } from '../../utils/StyleUtils';
 
@@ -100,7 +100,7 @@ const PersonResult = (props :Props) => {
     const profilePic = store.getIn(['people', 'profilePicsByEKID', personEKID], Map());
     return getImageDataFromEntity(profilePic);
   });
-  const goToProfile = useGoToPath(PROFILE_PATH.replace(PROFILE_ID_PATH, personEKID));
+  const goToProfile = useGoToPath(PROFILE_VIEW_PATH.replace(PROFILE_ID_PATH, personEKID));
   const dispatch = useDispatch();
 
   const handleResultClick = useCallback(() => {

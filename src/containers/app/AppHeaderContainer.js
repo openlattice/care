@@ -24,7 +24,7 @@ import {
   DOWNLOADS_PATH,
   HOME_PATH,
   LOGOUT_PATH,
-  PEOPLE_PATH,
+  PROFILE_PATH,
   REPORTS_PATH,
   ISSUES_PATH,
 } from '../../core/router/Routes';
@@ -81,10 +81,6 @@ const AppHeaderContainer = (props :Props) => {
         <NavLink to={DASHBOARD_PATH}>
           <FontAwesomeIcon size="lg" fixedWidth icon={faUserChart} />
           <NavLabel>Dashboard</NavLabel>
-        </NavLink>
-        <NavLink to={PEOPLE_PATH}>
-          <FontAwesomeIcon size="lg" fixedWidth icon={faUsers} />
-          <NavLabel>People</NavLabel>
         </NavLink>
         <NavLink to={DOWNLOADS_PATH}>
           <FontAwesomeIcon size="lg" fixedWidth icon={faDownload} />

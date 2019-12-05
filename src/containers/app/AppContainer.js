@@ -30,7 +30,7 @@ import {
   DOWNLOADS_PATH,
   HOME_PATH,
   ISSUES_PATH,
-  PEOPLE_PATH,
+  PROFILE_PATH,
   REPORTS_PATH,
 } from '../../core/router/Routes';
 import {
@@ -40,6 +40,7 @@ import {
   MEDIA_QUERY_MD,
   MEDIA_QUERY_LG
 } from '../../core/style/Sizes';
+import SearchPeopleContainer from '../people/SearchPeopleContainer';
 
 // TODO: this should come from lattice-ui-kit, maybe after the next release. current version v0.1.1
 const APP_BG :string = '#f8f8fb';
@@ -139,12 +140,12 @@ class AppContainer extends Component<Props> {
 
     return (
       <Switch>
-        <Route exact strict path={HOME_PATH} render={this.wrapComponent(HomeContainer)} />
+        <Route exact strict path={HOME_PATH} component={SearchPeopleContainer} />
         <Route path={CRISIS_PATH} component={CrisisReportContainer} />
         <Route path={REPORTS_PATH} component={LegitReportsRouter} />
         <Route path={DASHBOARD_PATH} render={this.wrapComponent(DashboardContainer)} />
         <Route path={DOWNLOADS_PATH} render={this.wrapComponent(DownloadsContainer)} />
-        <Route path={PEOPLE_PATH} component={PeopleRouter} />
+        <Route path={PROFILE_PATH} component={PeopleRouter} />
         <Route path={ISSUES_PATH} component={IssuesContainer} />
         <Redirect to={HOME_PATH} />
       </Switch>

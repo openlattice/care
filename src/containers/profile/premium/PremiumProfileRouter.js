@@ -5,7 +5,7 @@ import { Switch, Route, Redirect } from 'react-router-dom';
 
 import PremiumProfileContainer from './PremiumProfileContainer';
 import EditProfileContainer from '../edit/EditProfileContainer';
-import { PROFILE_PATH, PROFILE_EDIT_PATH } from '../../../core/router/Routes';
+import { PROFILE_VIEW_PATH, PROFILE_EDIT_PATH } from '../../../core/router/Routes';
 import { clearProfile } from '../ProfileActions';
 
 
@@ -19,15 +19,15 @@ const PremiumProfileRouter = () => {
 
   return (
     <Switch>
-      <Redirect strict exact from={`${PROFILE_PATH}/`} to={PROFILE_PATH} />
+      <Redirect strict exact from={`${PROFILE_VIEW_PATH}/`} to={PROFILE_VIEW_PATH} />
       <Route
           component={PremiumProfileContainer}
           exact
-          path={PROFILE_PATH} />
+          path={PROFILE_VIEW_PATH} />
       <Route path={PROFILE_EDIT_PATH} component={EditProfileContainer} />
-      <Redirect to={PROFILE_PATH} />
+      <Redirect to={PROFILE_VIEW_PATH} />
     </Switch>
-  )
+  );
 };
 
 export default PremiumProfileRouter;
