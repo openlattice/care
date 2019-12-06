@@ -2,7 +2,7 @@
  * @flow
  */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
   Redirect,
   Route,
@@ -10,13 +10,10 @@ import {
 } from 'react-router';
 import { Map } from 'immutable';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import type { Dispatch } from 'redux';
 import type { RequestSequence } from 'redux-reqseq';
 
 import ProfileContainer from './ProfileContainer';
 import PremiumProfileRouter from './premium/PremiumProfileRouter';
-import { clearSearchResults } from '../people/PeopleActions';
 import {
   PROFILE_VIEW_PATH,
   HOME_PATH
@@ -29,15 +26,9 @@ type Props = {
   selectedOrganizationSettings :Map;
 };
 
-const PeopleRouter = ({ actions, selectedOrganizationSettings } :Props) => {
+const ProfileRouter = ({ selectedOrganizationSettings } :Props) => {
   const premium = selectedOrganizationSettings.get('premium', false);
   const profileComponent = premium ? PremiumProfileRouter : ProfileContainer;
-
-  // useEffect(() => {
-  //   return () => {
-  //     actions.clearSearchResults();
-  //   };
-  // }, [actions]);
 
   return (
     <Switch>
@@ -51,11 +42,5 @@ const mapStateToProps = (state) => ({
   selectedOrganizationSettings: state.getIn(['app', 'selectedOrganizationSettings'], Map())
 });
 
-const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
-  actions: bindActionCreators({
-    clearSearchResults
-  }, dispatch)
-});
-
 // $FlowFixMe
-export default connect(mapStateToProps, mapDispatchToProps)(PeopleRouter);
+export default connect(mapStateToProps)(ProfileRouter);
