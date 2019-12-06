@@ -107,7 +107,6 @@ const SearchPeopleContainer = () => {
                 Search People
                 <NewPersonButton
                     disabled={fetchState !== RequestStates.SUCCESS}
-                    mode="positive"
                     onClick={handleNewPerson}>
                   New Person
                 </NewPersonButton>
