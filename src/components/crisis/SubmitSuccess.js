@@ -10,7 +10,6 @@ import { FormWrapper } from './FormComponents';
 import { BLACK } from '../../shared/Colors';
 import { HOME_PATH } from '../../core/router/Routes';
 import { clearReport } from '../../containers/reports/ReportsActions';
-import { clearSearchResults } from '../../containers/people/PeopleActions';
 import { goToPath } from '../../core/router/RoutingActions';
 import type { RoutingAction } from '../../core/router/RoutingActions';
 
@@ -46,7 +45,6 @@ const StyledButton = styled(Button)`
 type Props = {
   actions :{
     clearReport :() => { type :string };
-    clearSearchResults :() => { type :string };
     goToPath :(path :string) => RoutingAction;
   };
   actionText :string;
@@ -57,7 +55,6 @@ class SubmitSuccess extends Component<Props> {
   clearAndNavigate = (path :string) => () => {
     const { actions } = this.props;
     actions.clearReport();
-    actions.clearSearchResults();
     actions.goToPath(path);
   };
 
@@ -79,7 +76,6 @@ class SubmitSuccess extends Component<Props> {
 const mapDispatchToProps = (dispatch :Dispatch<*>) => ({
   actions: bindActionCreators({
     clearReport,
-    clearSearchResults,
     goToPath,
   }, dispatch)
 });

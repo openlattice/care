@@ -13,7 +13,7 @@ import {
   searchPeople,
 } from './PeopleActions';
 import { DELETE_REPORT, UPDATE_REPORT, SUBMIT_REPORT } from '../reports/ReportsActions';
-import { CRISIS_PATH, HOME_PATH, PROFILE_PATH } from '../../core/router/Routes';
+import { HOME_PATH } from '../../core/router/Routes';
 
 const INITIAL_STATE :Map<*, *> = fromJS({
   fetchState: RequestStates.STANDBY,
@@ -51,9 +51,6 @@ export default function peopleReducer(state :Map<*, *> = INITIAL_STATE, action :
       });
     }
 
-    case DELETE_REPORT:
-    case UPDATE_REPORT:
-    case SUBMIT_REPORT:
     case CLEAR_SEARCH_RESULTS: {
       return INITIAL_STATE;
     }
@@ -64,16 +61,13 @@ export default function peopleReducer(state :Map<*, *> = INITIAL_STATE, action :
         payload: {
           location: {
             pathname
-          }
+          },
+          action: routingAction
         }
       } = action;
 
-      // clear search results only routing away from /crisis, /home, or /profile
-      if (!(
-        pathname.startsWith(CRISIS_PATH)
-        || pathname.startsWith(HOME_PATH))
-        || pathname.startsWith(PROFILE_PATH)
-      ) {
+      // clear search results when pushing directly to /home
+      if (pathname.startsWith(HOME_PATH) && routingAction === 'PUSH') {
         return INITIAL_STATE;
       }
       return state;
