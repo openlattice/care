@@ -14,11 +14,7 @@ import {
   Map,
   fromJS
 } from 'immutable';
-import {
-  EntityDataModelApi,
-  Constants,
-  DataApi,
-} from 'lattice';
+import { Constants } from 'lattice';
 import {
   SearchApiActions,
   SearchApiSagas,
@@ -29,10 +25,8 @@ import type { SequenceAction } from 'redux-reqseq';
 import * as FQN from '../../edm/DataModelFqns';
 import Logger from '../../utils/Logger';
 import {
-  EDIT_PERSON,
   GET_PEOPLE_PHOTOS,
   SEARCH_PEOPLE,
-  editPerson,
   getPeoplePhotos,
   searchPeople,
 } from './PeopleActions';
@@ -173,55 +167,4 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
 
 export function* searchPeopleWatcher() :Generator<*, *, *> {
   yield takeEvery(SEARCH_PEOPLE, searchPeopleWorker);
-}
-
-function* editPersonWorker(action :SequenceAction) :Generator<*, *, *> {
-  const { id, value } = action;
-
-  const { app, entity } = value;
-  try {
-    yield put(editPerson.request(id));
-    const entityKeyId = entity.getIn([OPENLATTICE_ID_FQN, 0], '');
-    const entitySetId = getPeopleESId(app);
-
-    const { propertyTypes } = yield call(EntityDataModelApi.getEntityDataModelProjection, [{
-      id: entitySetId,
-      type: 'EntitySet',
-      include: ['PropertyTypeInEntitySet']
-    }]);
-
-    let idsByFqn = Map();
-    Object.values(propertyTypes).forEach((propertyType :any) => {
-      const { namespace, name } = propertyType.type;
-      idsByFqn = idsByFqn.set(`${namespace}.${name}`, propertyType.id);
-    });
-
-    let entityWithIds = Map();
-    entity.entrySeq().forEach(([fqn, values]) => {
-      const ptId = idsByFqn.get(fqn);
-      if (ptId) {
-        entityWithIds = entityWithIds.set(ptId, values);
-      }
-    });
-
-    const updates = {
-      [entityKeyId]: entityWithIds.toJS()
-    };
-
-    yield call(DataApi.updateEntityData, entitySetId, updates, 'Replace');
-    const person = yield call(DataApi.getEntityData, entitySetId, entityKeyId);
-
-    yield put(editPerson.success(id, { entityKeyId, person }));
-  }
-  catch (error) {
-    LOG.error(action.type, error);
-    yield put(editPerson.failure(id, error));
-  }
-  finally {
-    yield put(editPerson.finally(id));
-  }
-}
-
-export function* editPersonWatcher() :Generator<*, *, *> {
-  yield takeEvery(EDIT_PERSON, editPersonWorker);
 }
