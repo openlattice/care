@@ -18,18 +18,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
 import PersonResult from './PersonResult';
-import { ContentWrapper, ContentOuterWrapper } from '../../components/layout';
-import { useInput } from '../../components/hooks';
-import { searchPeople } from './PeopleActions';
-import { goToPath } from '../../core/router/RoutingActions';
 import { CRISIS_PATH } from '../../core/router/Routes';
+import { ContentWrapper, ContentOuterWrapper } from '../../components/layout';
+import { SUBJECT_INFORMATION } from '../../utils/constants/CrisisReportConstants';
+import { goToPath } from '../../core/router/RoutingActions';
 import { isNonEmptyString } from '../../utils/LangUtils';
-import {
-  PERSON_DOB_FQN,
-  PERSON_FIRST_NAME_FQN,
-  PERSON_LAST_NAME_FQN,
-} from '../../edm/DataModelFqns';
 import { media } from '../../utils/StyleUtils';
+import { searchPeople } from './PeopleActions';
+import { setInputValues } from '../pages/subjectinformation/ActionFactory';
+import { useInput } from '../../components/hooks';
 
 const NewPersonButton = styled(PlusButton)`
   margin-left: auto;
@@ -75,13 +72,14 @@ const SearchPeopleContainer = () => {
 
   const handleNewPerson = () => {
     const person = fromJS({
-      [PERSON_DOB_FQN]: [dob],
-      [PERSON_FIRST_NAME_FQN]: [firstName],
-      [PERSON_LAST_NAME_FQN]: [lastName],
-      isNewPerson: [true]
+      [SUBJECT_INFORMATION.DOB]: dob,
+      [SUBJECT_INFORMATION.FIRST]: firstName,
+      [SUBJECT_INFORMATION.LAST]: lastName,
+      [SUBJECT_INFORMATION.IS_NEW_PERSON]: true
     });
 
-    dispatch(goToPath(`${CRISIS_PATH}/1`, person));
+    dispatch(setInputValues(person));
+    dispatch(goToPath(`${CRISIS_PATH}/1`));
   };
 
   const handleOnSearch = (e :SyntheticEvent<HTMLButtonElement>) => {

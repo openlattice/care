@@ -25,7 +25,7 @@ import ObservedBehaviors from '../pages/observedbehaviors/ObservedBehaviors';
 import OfficerSafety from '../pages/officersafety/OfficerSafety';
 import ProgressSidebar from '../../components/form/ProgressSidebar';
 import ReviewContainer from './ReviewContainer';
-import SubjectInformationManager from '../pages/subjectinformation/SubjectInformationManager';
+import SubjectInformation from '../pages/subjectinformation/SubjectInformation';
 import SubmitSuccess from '../../components/crisis/SubmitSuccess';
 import { FormWrapper as StyledPageWrapper } from '../../components/crisis/FormComponents';
 
@@ -129,7 +129,7 @@ const SubmittedView = styled.div`
 
 const PAGES = [
   {
-    Component: SubjectInformationManager,
+    Component: SubjectInformation,
     validator: validateSubjectInformation,
     title: 'Person Information',
     stateField: STATE.SUBJECT_INFORMATION,

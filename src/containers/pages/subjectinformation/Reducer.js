@@ -31,7 +31,7 @@ const {
 const INITIAL_STATE :Map = fromJS({
   [FULL_NAME]: '',
   [PERSON_ID]: '',
-  [IS_NEW_PERSON]: false,
+  [IS_NEW_PERSON]: true,
   [LAST]: '',
   [FIRST]: '',
   [MIDDLE]: '',

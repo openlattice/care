@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router';
-import { List, Map } from 'immutable';
+import { Map } from 'immutable';
 import {
   Button,
   Checkbox,
@@ -46,9 +46,6 @@ type Props = {
   app :Map,
   className :string;
   disabled :boolean;
-  isSearchingPeople :boolean,
-  noResults :boolean,
-  searchResults :List,
   values :Map,
 }
 
@@ -64,8 +61,6 @@ const HeaderWithClearButton = styled.div`
 `;
 
 class SubjectInformation extends Component<Props> {
-
-  searchTimeout = null;
 
   renderInput = (field, disabledIfSelected, width) => {
     const { values, actions } = this.props;
@@ -228,15 +223,9 @@ class SubjectInformation extends Component<Props> {
 
 const mapStateToProps = (state :Map) => {
 
-  const consumers = state.getIn(['search', 'consumers'], Map());
-  const searchResults = consumers.get('searchResults', List());
-
   return {
     app: state.get('app', Map()),
     values: state.get(STATE.SUBJECT_INFORMATION),
-    searchResults,
-    isSearchingPeople: consumers.get('isSearching', false),
-    noResults: consumers.get('searchComplete', false) && searchResults.size === 0
   };
 };
 
