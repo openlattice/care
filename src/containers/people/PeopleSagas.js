@@ -161,7 +161,9 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
     const peopleEKIDs = hits.map((person) => person.getIn([OPENLATTICE_ID_FQN, 0]));
 
     yield put(searchPeople.success(action.id, { peopleSearchResults: hits }));
-    yield call(getPeoplePhotosWorker, getPeoplePhotos(peopleEKIDs));
+    if (!peopleEKIDs.isEmpty()) {
+      yield call(getPeoplePhotosWorker, getPeoplePhotos(peopleEKIDs));
+    }
   }
   catch (error) {
     LOG.error(action.type, error);
