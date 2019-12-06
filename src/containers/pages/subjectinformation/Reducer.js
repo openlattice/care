@@ -6,7 +6,7 @@ import randomUUID from 'uuid/v4';
 import { Map, fromJS } from 'immutable';
 import { DateTime } from 'luxon';
 
-import { CLEAR, SET_INPUT_VALUE, SET_INPUT_VALUES } from './ActionFactory';
+import { CLEAR_SUBJECT_INFORMATION, SET_INPUT_VALUE, SET_INPUT_VALUES } from './ActionFactory';
 import { CLEAR_REPORT } from '../../reports/ReportsActions';
 import { SUBJECT_INFORMATION, POST_PROCESS_FIELDS } from '../../../utils/constants/CrisisReportConstants';
 import { getAgeFromIsoDate } from '../../../utils/DateUtils';
@@ -56,7 +56,7 @@ export default function reducer(state :Map = INITIAL_STATE, action :Object) {
     case SET_INPUT_VALUES:
       return state.merge(fromJS(action.value));
 
-    case CLEAR:
+    case CLEAR_SUBJECT_INFORMATION:
     case CLEAR_REPORT:
       return INITIAL_STATE;
 

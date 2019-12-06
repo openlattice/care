@@ -32,6 +32,7 @@ import {
 
 import { getInvalidFields } from './Reducer';
 import {
+  clearSubjectInformation,
   setInputValue,
   setInputValues
 } from './ActionFactory';
@@ -39,7 +40,7 @@ import {
 
 type Props = {
   actions :{
-    clear :() => void,
+    clearSubjectInformation :() => { type :string },
     setInputValue :(value :{ field :string, value :Object }) => void,
     setInputValues :(values :{}) => void,
   },
@@ -150,7 +151,7 @@ class SubjectInformation extends Component<Props> {
               <h1>Person Information</h1>
               {
                 (!disabled && isCreatingNewPerson)
-                && <Button mode="subtle" onClick={actions.clear}>Clear Fields</Button>
+                && <Button mode="subtle" onClick={actions.clearSubjectInformation}>Clear Fields</Button>
               }
             </HeaderWithClearButton>
           </Header>
@@ -231,6 +232,7 @@ const mapStateToProps = (state :Map) => {
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
+    clearSubjectInformation,
     setInputValue,
     setInputValues
   }, dispatch)
