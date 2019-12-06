@@ -33,11 +33,11 @@ const PeopleRouter = ({ actions, selectedOrganizationSettings } :Props) => {
   const premium = selectedOrganizationSettings.get('premium', false);
   const profileComponent = premium ? PremiumProfileRouter : ProfileContainer;
 
-  useEffect(() => {
-    return () => {
-      actions.clearSearchResults();
-    };
-  }, [actions]);
+  // useEffect(() => {
+  //   return () => {
+  //     actions.clearSearchResults();
+  //   };
+  // }, [actions]);
 
   return (
     <Switch>

@@ -17,10 +17,15 @@ import {
 const { OPENLATTICE_ID_FQN } = Constants;
 
 const INITIAL_STATE :Map<*, *> = fromJS({
+  fetchState: RequestStates.STANDBY,
   isEditingPerson: false,
   peopleSearchResults: List(),
+  searchFields: Map({
+    firstName: '',
+    lastName: '',
+    dob: undefined,
+  }),
   selectedPerson: Map(),
-  fetchState: RequestStates.STANDBY,
 });
 
 export default function peopleReducer(state :Map<*, *> = INITIAL_STATE, action :SequenceAction) {
@@ -43,10 +48,12 @@ export default function peopleReducer(state :Map<*, *> = INITIAL_STATE, action :
 
     case searchPeople.case(action.type): {
       return searchPeople.reducer(state, action, {
-        REQUEST: () => state.set('fetchState', RequestStates.PENDING),
+        REQUEST: () => state
+          .set('fetchState', RequestStates.PENDING)
+          .merge(action.value),
         SUCCESS: () => state
           .set('fetchState', RequestStates.SUCCESS)
-          .set('peopleSearchResults', fromJS(action.value)),
+          .merge(action.value),
         FAILURE: () => state.set('fetchState', RequestStates.FAILURE)
       });
     }

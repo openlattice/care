@@ -4,13 +4,13 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { List, Map, fromJS } from 'immutable';
 import {
+  Button,
   Card,
   CardSegment,
   CardStack,
-  Label,
-  Input,
   DatePicker,
-  Button,
+  Input,
+  Label,
   PlusButton,
   SearchResults,
 } from 'lattice-ui-kit';
@@ -31,11 +31,7 @@ import {
 } from '../../edm/DataModelFqns';
 import { media } from '../../utils/StyleUtils';
 
-const NewPersonButton = styled(PlusButton).attrs(() => ({
-  forwardedAs: 'a',
-  href: `/bhr/#${CRISIS_PATH}/1`,
-  type: null
-}))`
+const NewPersonButton = styled(PlusButton)`
   margin-left: auto;
   margin-bottom: 10px;
   padding: 5px 20px;
@@ -66,12 +62,15 @@ const Title = styled.h1`
 
 const SearchPeopleContainer = () => {
 
-  const [dob, setDob] = useState();
-  const [firstName, setFirstName] = useInput('');
-  const [lastName, setLastName] = useInput('');
   const searchResults = useSelector((store) => store.getIn(['people', 'peopleSearchResults'], List()));
   const fetchState = useSelector((store) => store.getIn(['people', 'fetchState']));
+  const searchFields = useSelector((store) => store.getIn(['people', 'searchFields']));
   const dispatch = useDispatch();
+
+  const [dob, setDob] = useState(searchFields.get('dob'));
+  const [firstName, setFirstName] = useInput(searchFields.get('firstName'));
+  const [lastName, setLastName] = useInput(searchFields.get('lastName'));
+
   const isLoading = fetchState === RequestStates.PENDING;
 
   const handleNewPerson = () => {
@@ -87,16 +86,16 @@ const SearchPeopleContainer = () => {
 
   const handleOnSearch = (e :SyntheticEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const searchFields = Map({
+    const searchInputs = Map({
       lastName,
       firstName,
       dob
     });
 
-    const hasValues = searchFields.some(isNonEmptyString);
+    const hasValues = searchInputs.some(isNonEmptyString);
 
     if (hasValues) {
-      dispatch(searchPeople(searchFields));
+      dispatch(searchPeople(searchInputs));
     }
   };
 
@@ -107,8 +106,13 @@ const SearchPeopleContainer = () => {
           <Card>
             <CardSegment vertical>
               <Title>
-                People
-                <NewPersonButton mode="positive" onClick={handleNewPerson}>New Person</NewPersonButton>
+                Search People
+                <NewPersonButton
+                    disabled={fetchState !== RequestStates.SUCCESS}
+                    mode="positive"
+                    onClick={handleNewPerson}>
+                  New Person
+                </NewPersonButton>
               </Title>
               <form>
                 <InputGrid>

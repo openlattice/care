@@ -104,7 +104,7 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
     if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
     if (!Map.isMap(value)) throw ERR_ACTION_VALUE_TYPE;
 
-    yield put(searchPeople.request(action.id));
+    yield put(searchPeople.request(action.id, { searchFields: value }));
 
     const edm :Map<*, *> = yield select((state) => state.get('edm'));
     const app = yield select((state) => state.get('app', Map()));
@@ -160,7 +160,7 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
 
     const peopleEKIDs = hits.map((person) => person.getIn([OPENLATTICE_ID_FQN, 0]));
 
-    yield put(searchPeople.success(action.id, hits));
+    yield put(searchPeople.success(action.id, { peopleSearchResults: hits }));
     yield call(getPeoplePhotosWorker, getPeoplePhotos(peopleEKIDs));
   }
   catch (error) {
