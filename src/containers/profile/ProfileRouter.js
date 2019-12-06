@@ -14,9 +14,9 @@ import { bindActionCreators } from 'redux';
 import type { Dispatch } from 'redux';
 import type { RequestSequence } from 'redux-reqseq';
 
-import ProfileContainer from '../profile/ProfileContainer';
-import PremiumProfileRouter from '../profile/premium/PremiumProfileRouter';
-import { clearSearchResults } from './PeopleActions';
+import ProfileContainer from './ProfileContainer';
+import PremiumProfileRouter from './premium/PremiumProfileRouter';
+import { clearSearchResults } from '../people/PeopleActions';
 import {
   PROFILE_VIEW_PATH,
   HOME_PATH

@@ -16,8 +16,7 @@ import type { RequestSequence, RequestState } from 'redux-reqseq';
 import AppHeaderContainer from './AppHeaderContainer';
 import CrisisReportContainer from '../reports/CrisisReportContainer';
 import DownloadsContainer from '../downloads/DownloadsContainer';
-import HomeContainer from '../home/HomeContainer';
-import PeopleRouter from '../people/PeopleRouter';
+import ProfileRouter from '../profile/ProfileRouter';
 import LegitReportsRouter from '../reports/LegitReportsRouter';
 import DashboardContainer from '../dashboard/DashboardContainer';
 import IssuesContainer from '../issues/IssuesContainer';
@@ -145,7 +144,7 @@ class AppContainer extends Component<Props> {
         <Route path={REPORTS_PATH} component={LegitReportsRouter} />
         <Route path={DASHBOARD_PATH} render={this.wrapComponent(DashboardContainer)} />
         <Route path={DOWNLOADS_PATH} render={this.wrapComponent(DownloadsContainer)} />
-        <Route path={PROFILE_PATH} component={PeopleRouter} />
+        <Route path={PROFILE_PATH} component={ProfileRouter} />
         <Route path={ISSUES_PATH} component={IssuesContainer} />
         <Redirect to={HOME_PATH} />
       </Switch>
