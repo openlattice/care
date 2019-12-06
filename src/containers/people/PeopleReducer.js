@@ -12,7 +12,6 @@ import {
   getPeoplePhotos,
   searchPeople,
 } from './PeopleActions';
-import { DELETE_REPORT, UPDATE_REPORT, SUBMIT_REPORT } from '../reports/ReportsActions';
 import { HOME_PATH } from '../../core/router/Routes';
 
 const INITIAL_STATE :Map<*, *> = fromJS({
