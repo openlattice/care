@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import { Constants } from 'lattice';
 import { AuthUtils } from 'lattice-auth';
 import { DateTime } from 'luxon';
-import { Map, getIn } from 'immutable';
+import { Map } from 'immutable';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { Button, Spinner } from 'lattice-ui-kit';
 import { bindActionCreators } from 'redux';
@@ -16,7 +16,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { RequestStates } from 'redux-reqseq';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
-import type { RouterHistory, Location } from 'react-router';
+import type { RouterHistory } from 'react-router';
 
 import DiscardModal from '../../components/modals/DiscardModal';
 import Disposition from '../pages/disposition/Disposition';
@@ -180,7 +180,7 @@ type Props = {
     submitReport :RequestSequence;
   },
   history :RouterHistory,
-  location :Location,
+  personEKID ? :UUID;
   state :Map,
   submitState :RequestState;
 };
@@ -188,19 +188,17 @@ type Props = {
 type State = {
   showDiscard :boolean;
   formInProgress :boolean;
-  personEKID ? :string;
 }
 
 class CrisisReportContainer extends React.Component<Props, State> {
 
+  static defaultProps = {
+    personEKID: undefined,
+  };
+
   constructor(props) {
     super(props);
     this.state = {
-      personEKID: getIn(props.location, [
-        'state',
-        OPENLATTICE_ID_FQN,
-        0
-      ]),
       showDiscard: false,
       formInProgress: false
     };
@@ -250,9 +248,9 @@ class CrisisReportContainer extends React.Component<Props, State> {
 
     const {
       actions,
+      personEKID,
       state
     } = this.props;
-    const { personEKID } = this.state;
 
     let submission = {
       [POST_PROCESS_FIELDS.FORM_TYPE]: FORM_TYPE.CRISIS_REPORT,
@@ -416,25 +414,18 @@ class CrisisReportContainer extends React.Component<Props, State> {
   }
 }
 
-function mapStateToProps(state :Map<*, *>) :Object {
+const mapStateToProps = (state :Map) :Object => ({
+  personEKID: state.getIn(['profile', 'person', 'data', OPENLATTICE_ID_FQN, 0]),
+  state,
+  submitState: state.getIn(['reports', 'submitState'], RequestStates.STANDBY),
+});
 
-  return {
-    state,
-    submitState: state.getIn(['reports', 'submitState'], RequestStates.STANDBY),
-  };
-}
-
-function mapDispatchToProps(dispatch :Function) :Object {
-
-  const actions = {
+const mapDispatchToProps = (dispatch :Function) :Object => ({
+  actions: bindActionCreators({
     clearReport,
     submitReport,
-  };
-
-  return {
-    actions: bindActionCreators(actions, dispatch)
-  };
-}
+  }, dispatch)
+});
 
 // $FlowFixMe
 export default withRouter(

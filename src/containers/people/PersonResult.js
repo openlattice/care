@@ -138,6 +138,7 @@ const PersonResult = (props :Props) => {
       [SUBJECT_INFORMATION.SSN_LAST_4]: getIn(result, [PERSON_SSN_LAST_4_FQN, 0], ''),
       [SUBJECT_INFORMATION.IS_NEW_PERSON]: isNewPerson
     }));
+    dispatch(selectPerson(result));
     goToReport();
   }, [dispatch, goToReport, result]);
 
