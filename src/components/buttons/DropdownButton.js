@@ -1,6 +1,4 @@
-/*
- * @flow
- */
+// @flow
 
 import React, { Component } from 'react';
 import styled from 'styled-components';
@@ -58,7 +56,7 @@ const MenuContainer = styled.div`
 type Props = {
   isLoading :boolean;
   options :{ label :string, onClick :() => void }[];
-  size :string;
+  size ? :string;
   title :string;
 };
 
@@ -66,7 +64,7 @@ type State = {
   open :boolean
 };
 
-export default class DropdownButton extends Component<Props, State> {
+class DropdownButton extends Component<Props, State> {
 
   static defaultProps = {
     size: undefined,
@@ -123,3 +121,5 @@ export default class DropdownButton extends Component<Props, State> {
     );
   }
 };
+
+export default DropdownButton;
