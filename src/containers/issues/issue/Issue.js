@@ -1,5 +1,5 @@
 // @flow
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router';
@@ -19,6 +19,8 @@ import IssueDetails from '../IssueDetails';
 import LinkButton from '../../../components/buttons/LinkButton';
 import { resetIssue, selectIssue } from './IssueActions';
 import { ISSUES_PATH } from '../../../core/router/Routes';
+import { getAuthorization } from '../../../core/sagas/authorize/AuthorizeActions';
+import { useAuthorization } from '../../../components/hooks';
 
 const Centered = styled.div`
   display: flex;
@@ -31,8 +33,12 @@ const Centered = styled.div`
 
 const Issue = () => {
 
-  const match = useRouteMatch();
   const dispatch = useDispatch();
+
+  const authorize = useCallback(() => dispatch(getAuthorization()), [dispatch]);
+  const [authorized, isAuthorizing] = useAuthorization('profile', authorize);
+
+  const match = useRouteMatch();
   const { issueId } = match.params;
 
   useEffect(() => {
@@ -58,7 +64,7 @@ const Issue = () => {
       <Card>
         <CardSegment>
           {
-            fetchState === RequestStates.PENDING
+            ((fetchState === RequestStates.PENDING) || isAuthorizing)
               ? (
                 <Centered>
                   <Spinner size="2x" />
@@ -66,6 +72,7 @@ const Issue = () => {
               )
               : (
                 <IssueDetails
+                    authorized={authorized}
                     issue={issue}
                     reporter={reporter}
                     subject={subject}

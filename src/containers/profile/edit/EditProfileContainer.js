@@ -90,6 +90,7 @@ const EditProfileContainer = (props :Props) => {
               <CardSegment headline={headline} defaultOpen>
                 <IssueDetails
                     assignee={assignee}
+                    authorized
                     hideTitle
                     issue={issue}
                     match={match}

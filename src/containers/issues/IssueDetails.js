@@ -62,6 +62,7 @@ const LabelGroup = styled.div`
 
 type Props = {
   assignee :Map;
+  authorized :boolean;
   hideTitle :boolean;
   issue :Map;
   match :Match;
@@ -72,6 +73,7 @@ type Props = {
 const IssueDetails = (props :Props) => {
   const {
     assignee,
+    authorized,
     hideTitle,
     issue,
     match,
@@ -81,7 +83,9 @@ const IssueDetails = (props :Props) => {
 
   const [isVisible, open, close] = useBoolean();
   const [hasCopied, copy] = useBoolean();
-  const isLoading = useSelector((store :Map) => store.getIn(['issues', 'issue', 'updateState']) === RequestStates.PENDING);
+  const dispatch = useDispatch();
+  const isLoading = useSelector((store :Map) => store
+    .getIn(['issues', 'issue', 'updateState']) === RequestStates.PENDING);
 
   const assigneeName = getIn(assignee, [PERSON_ID_FQN, 0]);
   const category = getIn(issue, [CATEGORY_FQN, 0]);
@@ -94,7 +98,6 @@ const IssueDetails = (props :Props) => {
   const actionPath = getJumpToActionPath(subject, category, match.url);
   const issueEKID = getIn(issue, [OPENLATTICE_ID_FQN, 0]);
 
-  const dispatch = useDispatch();
   const resolveOptions = useMemo(() => STATUS_VALUES.map((statusValue) => ({
     label: statusValue,
     onClick: () => dispatch(setIssueStatus({
@@ -117,12 +120,34 @@ const IssueDetails = (props :Props) => {
         <span>{subjectName}</span>
       </LabelGroup>
       <ButtonGroup>
-        <Button size="sm" onClick={open}>Edit</Button>
-        <DropdownButton
-            isLoading={isLoading}
-            options={resolveOptions}
-            size="sm"
-            title="Status" />
+        {
+          authorized && (
+            <>
+              <Button
+                  size="sm"
+                  onClick={open}>
+                Edit
+              </Button>
+              <DropdownButton
+                  isLoading={isLoading}
+                  options={resolveOptions}
+                  size="sm"
+                  title="Status" />
+              <LinkButton
+                  to={actionPath}
+                  state={Map({
+                    issue,
+                    reporter,
+                    subject,
+                    assignee,
+                  })}
+                  size="sm"
+                  mode="primary">
+                Jump to Action
+              </LinkButton>
+            </>
+          )
+        }
         {
           navigator.clipboard.writeText && (
             <Button
@@ -133,18 +158,6 @@ const IssueDetails = (props :Props) => {
             </Button>
           )
         }
-        <LinkButton
-            to={actionPath}
-            state={Map({
-              issue,
-              reporter,
-              subject,
-              assignee,
-            })}
-            size="sm"
-            mode="primary">
-          Jump to Action
-        </LinkButton>
       </ButtonGroup>
       <LabelGrid>
         <LabelGroup>

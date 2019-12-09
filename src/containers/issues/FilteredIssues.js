@@ -1,5 +1,9 @@
 // @flow
-import React, { useEffect, useMemo, useState } from 'react';
+import React, {
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
 import styled, { css } from 'styled-components';
 import { Constants } from 'lattice';
 import { List, Map } from 'immutable';
