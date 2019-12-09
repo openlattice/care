@@ -2,19 +2,19 @@
  * @flow
  */
 
+import { LOCATION_CHANGE } from 'connected-react-router';
 import { List, Map, fromJS } from 'immutable';
 import { RequestStates } from 'redux-reqseq';
-import { LOCATION_CHANGE } from 'connected-react-router';
-import type { SequenceAction } from 'redux-reqseq';
 
 import {
   CLEAR_SEARCH_RESULTS,
   getPeoplePhotos,
   searchPeople,
 } from './PeopleActions';
+
 import { HOME_PATH } from '../../core/router/Routes';
 
-const INITIAL_STATE :Map<*, *> = fromJS({
+const INITIAL_STATE :Map = fromJS({
   fetchState: RequestStates.STANDBY,
   peopleSearchResults: List(),
   searchFields: Map({
@@ -24,7 +24,7 @@ const INITIAL_STATE :Map<*, *> = fromJS({
   })
 });
 
-export default function peopleReducer(state :Map<*, *> = INITIAL_STATE, action :SequenceAction) {
+export default function peopleReducer(state :Map = INITIAL_STATE, action :Object) {
 
   switch (action.type) {
 
@@ -56,13 +56,12 @@ export default function peopleReducer(state :Map<*, *> = INITIAL_STATE, action :
 
     case LOCATION_CHANGE: {
       const {
-        // $FlowFixMe SequenceAction does not support 'payload' property
         payload: {
+          action: routingAction,
           location: {
             pathname
-          },
-          action: routingAction
-        }
+          } = {}
+        } = {}
       } = action;
 
       // clear search results when pushing directly to /home
