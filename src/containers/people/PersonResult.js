@@ -4,7 +4,7 @@ import React, { useCallback } from 'react';
 
 import styled from 'styled-components';
 import { Constants } from 'lattice';
-import { Map } from 'immutable';
+import { Map, getIn } from 'immutable';
 import { Button, Card, CardSegment } from 'lattice-ui-kit';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -12,20 +12,30 @@ import {
   faVenusMars,
   faBirthdayCake,
 } from '@fortawesome/pro-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Portrait from '../../components/portrait/Portrait';
-import LinkButton from '../../components/buttons/LinkButton';
 import Detail from '../../components/premium/styled/Detail';
-import { useGoToPath } from '../../components/hooks';
-import { selectPerson, clearProfile } from '../profile/ProfileActions';
+import { SUBJECT_INFORMATION } from '../../utils/constants/CrisisReportConstants';
 import { getImageDataFromEntity } from '../../utils/BinaryUtils';
-import { getDobFromPerson, getLastFirstMiFromPerson } from '../../utils/PersonUtils';
-import { PERSON_SEX_FQN, PERSON_RACE_FQN } from '../../edm/DataModelFqns';
+import { getPersonAge, getDobFromPerson, getLastFirstMiFromPerson } from '../../utils/PersonUtils';
+import { selectPerson, clearProfile } from '../profile/ProfileActions';
+import { setInputValues } from '../pages/subjectinformation/ActionFactory';
+import { useGoToPath } from '../../components/hooks';
+import {
+  PERSON_DOB_FQN,
+  PERSON_FIRST_NAME_FQN,
+  PERSON_ID_FQN,
+  PERSON_LAST_NAME_FQN,
+  PERSON_MIDDLE_NAME_FQN,
+  PERSON_NICK_NAME_FQN,
+  PERSON_RACE_FQN,
+  PERSON_SEX_FQN,
+  PERSON_SSN_LAST_4_FQN,
+} from '../../edm/DataModelFqns';
 import {
   CRISIS_PATH,
   PROFILE_ID_PATH,
-  PROFILE_PATH,
+  PROFILE_VIEW_PATH,
 } from '../../core/router/Routes';
 import { media } from '../../utils/StyleUtils';
 
@@ -100,14 +110,37 @@ const PersonResult = (props :Props) => {
     const profilePic = store.getIn(['people', 'profilePicsByEKID', personEKID], Map());
     return getImageDataFromEntity(profilePic);
   });
-  const goToProfile = useGoToPath(PROFILE_PATH.replace(PROFILE_ID_PATH, personEKID));
+  const goToProfile = useGoToPath(PROFILE_VIEW_PATH.replace(PROFILE_ID_PATH, personEKID));
+  const goToReport = useGoToPath(`${CRISIS_PATH}/1`);
   const dispatch = useDispatch();
 
-  const handleResultClick = useCallback(() => {
+  const handleViewProfile = useCallback(() => {
     dispatch(clearProfile());
     dispatch(selectPerson(result));
     goToProfile();
   }, [dispatch, goToProfile, result]);
+
+  const handleNewReport = useCallback(() => {
+    const isNewPerson = getIn(result, ['isNewPerson', 0]) || false;
+    const age = getPersonAge(result);
+
+    dispatch(setInputValues({
+      [SUBJECT_INFORMATION.PERSON_ID]: getIn(result, [PERSON_ID_FQN, 0], ''),
+      [SUBJECT_INFORMATION.FULL_NAME]: getLastFirstMiFromPerson(result),
+      [SUBJECT_INFORMATION.FIRST]: getIn(result, [PERSON_FIRST_NAME_FQN, 0], ''),
+      [SUBJECT_INFORMATION.LAST]: getIn(result, [PERSON_LAST_NAME_FQN, 0], ''),
+      [SUBJECT_INFORMATION.MIDDLE]: getIn(result, [PERSON_MIDDLE_NAME_FQN, 0], ''),
+      [SUBJECT_INFORMATION.AKA]: getIn(result, [PERSON_NICK_NAME_FQN, 0], ''),
+      [SUBJECT_INFORMATION.DOB]: getIn(result, [PERSON_DOB_FQN, 0], ''),
+      [SUBJECT_INFORMATION.RACE]: getIn(result, [PERSON_RACE_FQN, 0], ''),
+      [SUBJECT_INFORMATION.GENDER]: getIn(result, [PERSON_SEX_FQN, 0], ''),
+      [SUBJECT_INFORMATION.AGE]: age,
+      [SUBJECT_INFORMATION.SSN_LAST_4]: getIn(result, [PERSON_SSN_LAST_4_FQN, 0], ''),
+      [SUBJECT_INFORMATION.IS_NEW_PERSON]: isNewPerson
+    }));
+    dispatch(selectPerson(result));
+    goToReport();
+  }, [dispatch, goToReport, result]);
 
   const fullName = getLastFirstMiFromPerson(result, true);
   // $FlowFixMe
@@ -128,12 +161,12 @@ const PersonResult = (props :Props) => {
           </Details>
         </FlexRow>
         <Actions>
-          <BigButton mode="secondary" onClick={handleResultClick}>
+          <BigButton mode="secondary" onClick={handleViewProfile}>
             View Profile
           </BigButton>
-          <LinkButton to={`${CRISIS_PATH}/1`} state={result}>
+          <Button mode="positive" onClick={handleNewReport}>
             New Report
-          </LinkButton>
+          </Button>
         </Actions>
       </StyledSegment>
     </Card>

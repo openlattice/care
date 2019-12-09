@@ -90,7 +90,6 @@ export default function* sagas() :Generator<*, *, *> {
     fork(DownloadsSagas.downloadFormsWatcher),
 
     // People Sagas
-    fork(PeopleSagas.editPersonWatcher),
     fork(PeopleSagas.searchPeopleWatcher),
     fork(PeopleSagas.getPeoplePhotosWatcher),
 
