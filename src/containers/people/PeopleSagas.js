@@ -2,7 +2,6 @@
  * @flow
  */
 
-import { DateTime } from 'luxon';
 import {
   call,
   put,
@@ -14,35 +13,30 @@ import {
   Map,
   fromJS
 } from 'immutable';
-import {
-  EntityDataModelApi,
-  Constants,
-  DataApi,
-} from 'lattice';
+import { Constants } from 'lattice';
 import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
+import { DateTime } from 'luxon';
 import type { SequenceAction } from 'redux-reqseq';
 
-
-import * as FQN from '../../edm/DataModelFqns';
-import Logger from '../../utils/Logger';
 import {
-  EDIT_PERSON,
   GET_PEOPLE_PHOTOS,
   SEARCH_PEOPLE,
-  editPerson,
   getPeoplePhotos,
   searchPeople,
 } from './PeopleActions';
-import {
-  getPeopleESId,
-  getESIDFromApp,
-} from '../../utils/AppUtils';
-import { isDefined } from '../../utils/LangUtils';
-import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
+
+import Logger from '../../utils/Logger';
+import * as FQN from '../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
+import {
+  getESIDFromApp,
+  getPeopleESId,
+} from '../../utils/AppUtils';
+import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
+import { isDefined } from '../../utils/LangUtils';
 
 const {
   IMAGE_FQN,
@@ -104,7 +98,7 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
     if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
     if (!Map.isMap(value)) throw ERR_ACTION_VALUE_TYPE;
 
-    yield put(searchPeople.request(action.id));
+    yield put(searchPeople.request(action.id, { searchFields: value }));
 
     const edm :Map<*, *> = yield select((state) => state.get('edm'));
     const app = yield select((state) => state.get('app', Map()));
@@ -160,8 +154,10 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
 
     const peopleEKIDs = hits.map((person) => person.getIn([OPENLATTICE_ID_FQN, 0]));
 
-    yield put(searchPeople.success(action.id, hits));
-    yield call(getPeoplePhotosWorker, getPeoplePhotos(peopleEKIDs));
+    yield put(searchPeople.success(action.id, { peopleSearchResults: hits }));
+    if (!peopleEKIDs.isEmpty()) {
+      yield put(getPeoplePhotos(peopleEKIDs));
+    }
   }
   catch (error) {
     LOG.error(action.type, error);
@@ -171,55 +167,4 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
 
 export function* searchPeopleWatcher() :Generator<*, *, *> {
   yield takeEvery(SEARCH_PEOPLE, searchPeopleWorker);
-}
-
-function* editPersonWorker(action :SequenceAction) :Generator<*, *, *> {
-  const { id, value } = action;
-
-  const { app, entity } = value;
-  try {
-    yield put(editPerson.request(id));
-    const entityKeyId = entity.getIn([OPENLATTICE_ID_FQN, 0], '');
-    const entitySetId = getPeopleESId(app);
-
-    const { propertyTypes } = yield call(EntityDataModelApi.getEntityDataModelProjection, [{
-      id: entitySetId,
-      type: 'EntitySet',
-      include: ['PropertyTypeInEntitySet']
-    }]);
-
-    let idsByFqn = Map();
-    Object.values(propertyTypes).forEach((propertyType :any) => {
-      const { namespace, name } = propertyType.type;
-      idsByFqn = idsByFqn.set(`${namespace}.${name}`, propertyType.id);
-    });
-
-    let entityWithIds = Map();
-    entity.entrySeq().forEach(([fqn, values]) => {
-      const ptId = idsByFqn.get(fqn);
-      if (ptId) {
-        entityWithIds = entityWithIds.set(ptId, values);
-      }
-    });
-
-    const updates = {
-      [entityKeyId]: entityWithIds.toJS()
-    };
-
-    yield call(DataApi.updateEntityData, entitySetId, updates, 'Replace');
-    const person = yield call(DataApi.getEntityData, entitySetId, entityKeyId);
-
-    yield put(editPerson.success(id, { entityKeyId, person }));
-  }
-  catch (error) {
-    LOG.error(action.type, error);
-    yield put(editPerson.failure(id, error));
-  }
-  finally {
-    yield put(editPerson.finally(id));
-  }
-}
-
-export function* editPersonWatcher() :Generator<*, *, *> {
-  yield takeEvery(EDIT_PERSON, editPersonWorker);
 }

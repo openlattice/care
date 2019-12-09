@@ -8,7 +8,7 @@ import type { Dispatch } from 'redux';
 
 import { FormWrapper } from './FormComponents';
 import { BLACK } from '../../shared/Colors';
-import { CRISIS_PATH, HOME_PATH } from '../../core/router/Routes';
+import { HOME_PATH } from '../../core/router/Routes';
 import { clearReport } from '../../containers/reports/ReportsActions';
 import { goToPath } from '../../core/router/RoutingActions';
 import type { RoutingAction } from '../../core/router/RoutingActions';
@@ -66,7 +66,6 @@ class SubmitSuccess extends Component<Props> {
           <SubmittedView>
             <h1>{`Your report has been ${actionText}!`}</h1>
             <StyledButton mode="primary" onClick={this.clearAndNavigate(HOME_PATH)}>Return to Home</StyledButton>
-            <StyledButton onClick={this.clearAndNavigate(CRISIS_PATH)}>New Crisis Report</StyledButton>
           </SubmittedView>
         </FormWrapper>
       </PageWrapper>

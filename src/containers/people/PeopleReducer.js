@@ -2,58 +2,47 @@
  * @flow
  */
 
+import { LOCATION_CHANGE } from 'connected-react-router';
 import { List, Map, fromJS } from 'immutable';
-import { Constants } from 'lattice';
 import { RequestStates } from 'redux-reqseq';
-import type { SequenceAction } from 'redux-reqseq';
 
 import {
   CLEAR_SEARCH_RESULTS,
-  editPerson,
+  getPeoplePhotos,
   searchPeople,
-  getPeoplePhotos
 } from './PeopleActions';
 
-const { OPENLATTICE_ID_FQN } = Constants;
+import { HOME_PATH } from '../../core/router/Routes';
 
-const INITIAL_STATE :Map<*, *> = fromJS({
-  isEditingPerson: false,
-  peopleSearchResults: List(),
-  selectedPerson: Map(),
+const INITIAL_STATE :Map = fromJS({
   fetchState: RequestStates.STANDBY,
+  peopleSearchResults: List(),
+  profilePicsByEKID: Map(),
+  searchFields: Map({
+    firstName: '',
+    lastName: '',
+    dob: undefined,
+  })
 });
 
-export default function peopleReducer(state :Map<*, *> = INITIAL_STATE, action :SequenceAction) {
+export default function peopleReducer(state :Map = INITIAL_STATE, action :Object) {
 
   switch (action.type) {
 
-    case editPerson.case(action.type): {
-      return editPerson.reducer(state, action, {
-        REQUEST: () => state.set('isEditingPerson', true),
-        SUCCESS: () => {
-          const { person, entityKeyId } = action.value;
-          if (state.get('selectedPerson', Map()).getIn([OPENLATTICE_ID_FQN, 0]) === entityKeyId) {
-            return state.set('selectedPerson', fromJS(person));
-          }
-          return state;
-        },
-        FINALLY: () => state.set('isEditingPerson', false)
-      });
-    }
-
     case searchPeople.case(action.type): {
       return searchPeople.reducer(state, action, {
-        REQUEST: () => state.set('fetchState', RequestStates.PENDING),
+        REQUEST: () => state
+          .set('fetchState', RequestStates.PENDING)
+          .merge(action.value),
         SUCCESS: () => state
           .set('fetchState', RequestStates.SUCCESS)
-          .set('peopleSearchResults', fromJS(action.value)),
+          .merge(action.value),
         FAILURE: () => state.set('fetchState', RequestStates.FAILURE)
       });
     }
 
     case getPeoplePhotos.case(action.type): {
       return getPeoplePhotos.reducer(state, action, {
-        REQUEST: () => state.set('fetchState', RequestStates.PENDING),
         SUCCESS: () => state
           .set('fetchState', RequestStates.SUCCESS)
           .set('profilePicsByEKID', action.value),
@@ -61,8 +50,26 @@ export default function peopleReducer(state :Map<*, *> = INITIAL_STATE, action :
       });
     }
 
-    case CLEAR_SEARCH_RESULTS:
+    case CLEAR_SEARCH_RESULTS: {
       return INITIAL_STATE;
+    }
+
+    case LOCATION_CHANGE: {
+      const {
+        payload: {
+          action: routingAction,
+          location: {
+            pathname
+          } = {}
+        } = {}
+      } = action;
+
+      // clear search results when pushing directly to /home
+      if (pathname.startsWith(HOME_PATH) && routingAction === 'PUSH') {
+        return INITIAL_STATE;
+      }
+      return state;
+    }
 
     default:
       return state;

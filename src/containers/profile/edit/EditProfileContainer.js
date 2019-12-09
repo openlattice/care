@@ -35,7 +35,7 @@ import {
   CONTACTS_PATH,
   OFFICER_SAFETY_PATH,
   PROFILE_ID_PARAM,
-  PROFILE_PATH,
+  PROFILE_VIEW_PATH,
   RESPONSE_PLAN_PATH,
 } from '../../../core/router/Routes';
 import PrivateRoute from '../../../components/route/PrivateRoute';
@@ -90,6 +90,7 @@ const EditProfileContainer = (props :Props) => {
               <CardSegment headline={headline} defaultOpen>
                 <IssueDetails
                     assignee={assignee}
+                    authorized
                     hideTitle
                     issue={issue}
                     match={match}
@@ -143,7 +144,7 @@ const EditProfileContainer = (props :Props) => {
                 component={AboutForm}
                 feature="profile"
                 path={`${match.path}${ABOUT_PATH}`} />
-            <Redirect to={PROFILE_PATH} />
+            <Redirect to={PROFILE_VIEW_PATH} />
           </Switch>
         </CardStack>
       </ContentWrapper>

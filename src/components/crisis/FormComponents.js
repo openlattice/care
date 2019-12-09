@@ -6,7 +6,6 @@ import { Colors } from 'lattice-ui-kit';
 import { MEDIA_QUERY_MD, MEDIA_QUERY_LG } from '../../core/style/Sizes';
 import {
   BLACK,
-  GRAY,
   INVALID_BACKGROUND,
   INVALID_TAG,
 } from '../../shared/Colors';

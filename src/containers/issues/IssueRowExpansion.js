@@ -1,8 +1,8 @@
 // @flow
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { useRouteMatch } from 'react-router';
+import React, { useCallback } from 'react';
 import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux';
+import { useRouteMatch } from 'react-router';
 import { Map } from 'immutable';
 import {
   Colors,
@@ -12,6 +12,8 @@ import { RequestStates } from 'redux-reqseq';
 import type { RequestState } from 'redux-reqseq';
 
 import IssueDetails from './IssueDetails';
+import { useAuthorization } from '../../components/hooks';
+import { getAuthorization } from '../../core/sagas/authorize/AuthorizeActions';
 
 const { NEUTRALS } = Colors;
 
@@ -38,7 +40,13 @@ const ExpandedCellContent = styled.div`
 
 const IssueRowExpansion = () => {
 
+  const dispatch = useDispatch();
+
+  const authorize = useCallback(() => dispatch(getAuthorization()), [dispatch]);
+  const [authorized, isAuthorizing] = useAuthorization('profile', authorize);
+
   const match = useRouteMatch();
+
   const fetchState :RequestState = useSelector((store :Map) => store.getIn(['issues', 'issue', 'fetchState']));
   const assignee = useSelector((store :Map) => store.getIn(['issues', 'issue', 'data', 'assignee']));
   const issue = useSelector((store :Map) => store.getIn(['issues', 'issue', 'data', 'issue']));
@@ -49,7 +57,7 @@ const IssueRowExpansion = () => {
     <RowDetailsWrapper>
       <ExpandedCell>
         {
-          fetchState === RequestStates.PENDING
+          ((fetchState === RequestStates.PENDING) || isAuthorizing)
             ? (
               <ExpandedCellContent>
                 <Spinner size="2x" />
@@ -57,6 +65,7 @@ const IssueRowExpansion = () => {
             )
             : (
               <IssueDetails
+                  authorized={authorized}
                   issue={issue}
                   reporter={reporter}
                   subject={subject}
