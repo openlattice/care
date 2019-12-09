@@ -2,7 +2,6 @@
  * @flow
  */
 
-import { DateTime } from 'luxon';
 import {
   call,
   put,
@@ -19,24 +18,25 @@ import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
+import { DateTime } from 'luxon';
 import type { SequenceAction } from 'redux-reqseq';
 
-
-import * as FQN from '../../edm/DataModelFqns';
-import Logger from '../../utils/Logger';
 import {
   GET_PEOPLE_PHOTOS,
   SEARCH_PEOPLE,
   getPeoplePhotos,
   searchPeople,
 } from './PeopleActions';
-import {
-  getPeopleESId,
-  getESIDFromApp,
-} from '../../utils/AppUtils';
-import { isDefined } from '../../utils/LangUtils';
-import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
+
+import Logger from '../../utils/Logger';
+import * as FQN from '../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
+import {
+  getESIDFromApp,
+  getPeopleESId,
+} from '../../utils/AppUtils';
+import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
+import { isDefined } from '../../utils/LangUtils';
 
 const {
   IMAGE_FQN,
@@ -156,7 +156,7 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
 
     yield put(searchPeople.success(action.id, { peopleSearchResults: hits }));
     if (!peopleEKIDs.isEmpty()) {
-      yield call(getPeoplePhotosWorker, getPeoplePhotos(peopleEKIDs));
+      yield put(getPeoplePhotos(peopleEKIDs));
     }
   }
   catch (error) {

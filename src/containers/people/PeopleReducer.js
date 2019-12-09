@@ -17,6 +17,7 @@ import { HOME_PATH } from '../../core/router/Routes';
 const INITIAL_STATE :Map = fromJS({
   fetchState: RequestStates.STANDBY,
   peopleSearchResults: List(),
+  profilePicsByEKID: Map(),
   searchFields: Map({
     firstName: '',
     lastName: '',
@@ -42,7 +43,6 @@ export default function peopleReducer(state :Map = INITIAL_STATE, action :Object
 
     case getPeoplePhotos.case(action.type): {
       return getPeoplePhotos.reducer(state, action, {
-        REQUEST: () => state.set('fetchState', RequestStates.PENDING),
         SUCCESS: () => state
           .set('fetchState', RequestStates.SUCCESS)
           .set('profilePicsByEKID', action.value),
