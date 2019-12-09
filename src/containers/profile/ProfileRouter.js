@@ -1,28 +1,23 @@
-/*
- * @flow
- */
-
+// @flow
 import React from 'react';
+
+import { Map } from 'immutable';
+import { connect } from 'react-redux';
 import {
   Redirect,
   Route,
   Switch,
 } from 'react-router';
-import { Map } from 'immutable';
-import { connect } from 'react-redux';
-import type { RequestSequence } from 'redux-reqseq';
 
-import ProfileContainer from './ProfileContainer';
 import PremiumProfileRouter from './premium/PremiumProfileRouter';
+import ProfileContainer from './ProfileContainer';
+
 import {
-  PROFILE_VIEW_PATH,
-  HOME_PATH
+  HOME_PATH,
+  PROFILE_VIEW_PATH
 } from '../../core/router/Routes';
 
 type Props = {
-  actions :{
-    clearSearchResults :RequestSequence;
-  };
   selectedOrganizationSettings :Map;
 };
 
