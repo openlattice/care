@@ -23,7 +23,7 @@ import {
   clearSubjectInformation,
   setInputValue,
   setInputValues
-} from './ActionFactory';
+} from './Actions';
 import { getInvalidFields } from './Reducer';
 
 import {
