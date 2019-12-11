@@ -9,8 +9,6 @@ import {
   select,
   takeEvery,
 } from '@redux-saga/core/effects';
-import { DateTime } from 'luxon';
-import { isPlainObject } from 'lodash';
 import {
   List,
   Map,
@@ -28,13 +26,10 @@ import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
+import { isPlainObject } from 'lodash';
+import { DateTime } from 'luxon';
 import type { SequenceAction } from 'redux-reqseq';
 
-import Logger from '../../utils/Logger';
-import { submitDataGraph } from '../../core/sagas/data/DataActions';
-import { submitDataGraphWorker } from '../../core/sagas/data/DataSagas';
-import { BHR_CONFIG, PEOPLE_CONFIG } from '../../config/formconfig/CrisisReportConfig';
-import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
 import {
   DELETE_REPORT,
   GET_REPORT,
@@ -47,8 +42,21 @@ import {
   submitReport,
   updateReport,
 } from './ReportsActions';
-import { isValidUuid } from '../../utils/Utils';
-import { isDefined } from '../../utils/LangUtils';
+import {
+  compileDispositionData,
+  compileNatureOfCrisisData,
+  compileObservedBehaviorData,
+  compileOfficerSafetyData,
+  compileSubjectData,
+  getEntityDataFromFields
+} from './ReportsUtils';
+
+import Logger from '../../utils/Logger';
+import * as FQN from '../../edm/DataModelFqns';
+import { BHR_CONFIG, PEOPLE_CONFIG } from '../../config/formconfig/CrisisReportConfig';
+import { submitDataGraph } from '../../core/sagas/data/DataActions';
+import { submitDataGraphWorker } from '../../core/sagas/data/DataSagas';
+import { APP_TYPES_FQNS } from '../../shared/Consts';
 import {
   getAppearsInESId,
   getESIDFromApp,
@@ -58,22 +66,15 @@ import {
   getStaffESId,
 } from '../../utils/AppUtils';
 import { getSearchTerm } from '../../utils/DataUtils';
-import {
-  compileDispositionData,
-  compileNatureOfCrisisData,
-  compileObservedBehaviorData,
-  compileOfficerSafetyData,
-  compileSubjectData,
-  getEntityDataFromFields
-} from './ReportsUtils';
+import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
+import { isDefined } from '../../utils/LangUtils';
+import { isValidUuid } from '../../utils/Utils';
+import { POST_PROCESS_FIELDS } from '../../utils/constants/CrisisReportConstants';
 import { setInputValues as setDispositionData } from '../pages/disposition/ActionFactory';
 import { setInputValues as setNatureOfCrisisData } from '../pages/natureofcrisis/ActionFactory';
 import { setInputValues as setObservedBehaviors } from '../pages/observedbehaviors/ActionFactory';
 import { setInputValues as setOfficerSafetyData } from '../pages/officersafety/ActionFactory';
-import { setInputValues as setSubjectInformation } from '../pages/subjectinformation/ActionFactory';
-import * as FQN from '../../edm/DataModelFqns';
-import { POST_PROCESS_FIELDS } from '../../utils/constants/CrisisReportConstants';
-import { APP_TYPES_FQNS } from '../../shared/Consts';
+import { setInputValues as setSubjectInformation } from '../pages/subjectinformation/Actions';
 
 const { processAssociationEntityData } = DataProcessingUtils;
 

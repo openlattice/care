@@ -3,20 +3,24 @@
  */
 
 import React from 'react';
-import styled from 'styled-components';
 
+import styled from 'styled-components';
+import { Map, getIn } from 'immutable';
 import { Constants } from 'lattice';
 import { AuthUtils } from 'lattice-auth';
-import { DateTime } from 'luxon';
-import { Map } from 'immutable';
-import { Redirect, Route, Switch } from 'react-router-dom';
 import { Button, Spinner } from 'lattice-ui-kit';
-import { bindActionCreators } from 'redux';
+import { DateTime } from 'luxon';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
+import { Redirect, Route, Switch } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
 import { RequestStates } from 'redux-reqseq';
+import type { Location, RouterHistory } from 'react-router';
+import type { Action } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
-import type { RouterHistory } from 'react-router';
+
+import ReviewContainer from './ReviewContainer';
+import { clearReport, submitReport } from './ReportsActions';
 
 import DiscardModal from '../../components/modals/DiscardModal';
 import Disposition from '../pages/disposition/Disposition';
@@ -24,44 +28,55 @@ import NatureOfCrisis from '../pages/natureofcrisis/NatureOfCrisis';
 import ObservedBehaviors from '../pages/observedbehaviors/ObservedBehaviors';
 import OfficerSafety from '../pages/officersafety/OfficerSafety';
 import ProgressSidebar from '../../components/form/ProgressSidebar';
-import ReviewContainer from './ReviewContainer';
 import SubjectInformation from '../pages/subjectinformation/SubjectInformation';
 import SubmitSuccess from '../../components/crisis/SubmitSuccess';
 import { FormWrapper as StyledPageWrapper } from '../../components/crisis/FormComponents';
-
-import { clearReport, submitReport } from './ReportsActions';
+import { CRISIS_PATH, HOME_PATH } from '../../core/router/Routes';
+import { MEDIA_QUERY_LG, MEDIA_QUERY_MD } from '../../core/style/Sizes';
+import {
+  PERSON_DOB_FQN,
+  PERSON_FIRST_NAME_FQN,
+  PERSON_ID_FQN,
+  PERSON_LAST_NAME_FQN,
+  PERSON_MIDDLE_NAME_FQN,
+  PERSON_NICK_NAME_FQN,
+  PERSON_RACE_FQN,
+  PERSON_SEX_FQN,
+  PERSON_SSN_LAST_4_FQN,
+} from '../../edm/DataModelFqns';
+import { FORM_TYPE } from '../../utils/DataConstants';
 import {
   getCurrentPage,
   getNextPath,
   getPrevPath,
   setShowInvalidFields
 } from '../../utils/NavigationUtils';
+import { getLastFirstMiFromPerson, getPersonAge } from '../../utils/PersonUtils';
+import { isValidUuid } from '../../utils/Utils';
+import { POST_PROCESS_FIELDS, SUBJECT_INFORMATION } from '../../utils/constants/CrisisReportConstants';
+import { FORM_STEP_STATUS } from '../../utils/constants/FormConstants';
+import { STATE } from '../../utils/constants/StateConstants';
 import {
-  getStatus as validateSubjectInformation,
-  processForSubmit as processSubjectInformation
-} from '../pages/subjectinformation/Reducer';
-import {
-  getStatus as validateObservedBehaviors,
-  processForSubmit as processObservedBehaviors
-} from '../pages/observedbehaviors/Reducer';
+  getStatus as validateDisposition,
+  processForSubmit as processDisposition
+} from '../pages/disposition/Reducer';
 import {
   getStatus as validateNatureOfCrisis,
   processForSubmit as processNatureOfCrisis
 } from '../pages/natureofcrisis/Reducer';
 import {
+  getStatus as validateObservedBehaviors,
+  processForSubmit as processObservedBehaviors
+} from '../pages/observedbehaviors/Reducer';
+import {
   getStatus as validateOfficerSafety,
   processForSubmit as processOfficerSafety
 } from '../pages/officersafety/Reducer';
+import { SET_INPUT_VALUES, setInputValues } from '../pages/subjectinformation/Actions';
 import {
-  getStatus as validateDisposition,
-  processForSubmit as processDisposition
-} from '../pages/disposition/Reducer';
-import { FORM_STEP_STATUS } from '../../utils/constants/FormConstants';
-import { STATE } from '../../utils/constants/StateConstants';
-import { POST_PROCESS_FIELDS } from '../../utils/constants/CrisisReportConstants';
-import { FORM_TYPE } from '../../utils/DataConstants';
-import { CRISIS_PATH, HOME_PATH } from '../../core/router/Routes';
-import { MEDIA_QUERY_MD, MEDIA_QUERY_LG } from '../../core/style/Sizes';
+  getStatus as validateSubjectInformation,
+  processForSubmit as processSubjectInformation
+} from '../pages/subjectinformation/Reducer';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 
@@ -178,35 +193,41 @@ type Props = {
   actions :{
     clearReport :() => { type :string };
     submitReport :RequestSequence;
-  },
-  history :RouterHistory,
-  personEKID ? :UUID;
-  state :Map,
+    setInputValues :(value :any) => Action<typeof SET_INPUT_VALUES>;
+    personEKID ? :UUID;
+  };
+  history :RouterHistory;
+  location :Location;
+  state :Map;
   submitState :RequestState;
 };
 
 type State = {
   showDiscard :boolean;
   formInProgress :boolean;
+  personEKID :UUID;
 }
 
 class CrisisReportContainer extends React.Component<Props, State> {
-
-  static defaultProps = {
-    personEKID: undefined,
-  };
 
   constructor(props) {
     super(props);
     this.state = {
       showDiscard: false,
-      formInProgress: false
+      formInProgress: false,
+      personEKID: getIn(props.location, [
+        'state',
+        OPENLATTICE_ID_FQN,
+        0
+      ]),
     };
   }
 
   componentDidMount() {
     const { history } = this.props;
     const { formInProgress } = this.state;
+
+    this.initializePerson();
 
     if (!formInProgress && !window.location.href.endsWith(START_PATH)) {
       history.push(START_PATH);
@@ -217,6 +238,28 @@ class CrisisReportContainer extends React.Component<Props, State> {
   componentWillUnmount() {
     const { actions } = this.props;
     actions.clearReport();
+  }
+
+  initializePerson() {
+    const { actions, location } = this.props;
+    const { state: result = Map() } = location;
+    const isNewPerson = !isValidUuid(getIn(result, [OPENLATTICE_ID_FQN, 0]));
+    const age = getPersonAge(result);
+
+    actions.setInputValues({
+      [SUBJECT_INFORMATION.PERSON_ID]: getIn(result, [PERSON_ID_FQN, 0], ''),
+      [SUBJECT_INFORMATION.FULL_NAME]: getLastFirstMiFromPerson(result),
+      [SUBJECT_INFORMATION.FIRST]: getIn(result, [PERSON_FIRST_NAME_FQN, 0], ''),
+      [SUBJECT_INFORMATION.LAST]: getIn(result, [PERSON_LAST_NAME_FQN, 0], ''),
+      [SUBJECT_INFORMATION.MIDDLE]: getIn(result, [PERSON_MIDDLE_NAME_FQN, 0], ''),
+      [SUBJECT_INFORMATION.AKA]: getIn(result, [PERSON_NICK_NAME_FQN, 0], ''),
+      [SUBJECT_INFORMATION.DOB]: getIn(result, [PERSON_DOB_FQN, 0], ''),
+      [SUBJECT_INFORMATION.RACE]: getIn(result, [PERSON_RACE_FQN, 0], ''),
+      [SUBJECT_INFORMATION.GENDER]: getIn(result, [PERSON_SEX_FQN, 0], ''),
+      [SUBJECT_INFORMATION.AGE]: age,
+      [SUBJECT_INFORMATION.SSN_LAST_4]: getIn(result, [PERSON_SSN_LAST_4_FQN, 0], ''),
+      [SUBJECT_INFORMATION.IS_NEW_PERSON]: isNewPerson
+    });
   }
 
   handleCloseDiscard = () => {
@@ -248,9 +291,10 @@ class CrisisReportContainer extends React.Component<Props, State> {
 
     const {
       actions,
-      personEKID,
       state
     } = this.props;
+
+    const { personEKID } = this.state;
 
     let submission = {
       [POST_PROCESS_FIELDS.FORM_TYPE]: FORM_TYPE.CRISIS_REPORT,
@@ -415,7 +459,6 @@ class CrisisReportContainer extends React.Component<Props, State> {
 }
 
 const mapStateToProps = (state :Map) :Object => ({
-  personEKID: state.getIn(['profile', 'person', 'data', OPENLATTICE_ID_FQN, 0]),
   state,
   submitState: state.getIn(['reports', 'submitState'], RequestStates.STANDBY),
 });
@@ -423,6 +466,7 @@ const mapStateToProps = (state :Map) :Object => ({
 const mapDispatchToProps = (dispatch :Function) :Object => ({
   actions: bindActionCreators({
     clearReport,
+    setInputValues,
     submitReport,
   }, dispatch)
 });

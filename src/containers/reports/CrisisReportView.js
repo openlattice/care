@@ -3,74 +3,73 @@
  */
 
 import React from 'react';
-import styled from 'styled-components';
 
+import styled from 'styled-components';
 import { Map } from 'immutable';
+import { AuthUtils } from 'lattice-auth';
+import { Button, Spinner } from 'lattice-ui-kit';
 import { DateTime } from 'luxon';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import { Button, Spinner } from 'lattice-ui-kit';
 import { Redirect, Route, Switch } from 'react-router-dom';
-import { AuthUtils } from 'lattice-auth';
+import { bindActionCreators } from 'redux';
 import { RequestStates } from 'redux-reqseq';
-
 import type { Match, RouterHistory } from 'react-router';
 import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
-import NoResource from '../../components/NoResource';
-import FormRecord from '../../components/form/FormRecord';
 import ReviewContainer from './ReviewContainer';
-import ProgressSidebar from '../../components/form/ProgressSidebar';
-import SubjectInformation from '../pages/subjectinformation/SubjectInformation';
-import ObservedBehaviors from '../pages/observedbehaviors/ObservedBehaviors';
-import NatureOfCrisis from '../pages/natureofcrisis/NatureOfCrisis';
-import OfficerSafety from '../pages/officersafety/OfficerSafety';
-import Disposition from '../pages/disposition/Disposition';
-import DiscardModal from '../../components/modals/DiscardModal';
-import DeleteModal from '../../components/modals/DeleteModal';
-import SubmitSuccess from '../../components/crisis/SubmitSuccess';
-
 import {
   clearReport,
+  deleteReport,
   getReport,
-  updateReport,
-  deleteReport
+  updateReport
 } from './ReportsActions';
+
+import DeleteModal from '../../components/modals/DeleteModal';
+import DiscardModal from '../../components/modals/DiscardModal';
+import Disposition from '../pages/disposition/Disposition';
+import FormRecord from '../../components/form/FormRecord';
+import NatureOfCrisis from '../pages/natureofcrisis/NatureOfCrisis';
+import NoResource from '../../components/NoResource';
+import ObservedBehaviors from '../pages/observedbehaviors/ObservedBehaviors';
+import OfficerSafety from '../pages/officersafety/OfficerSafety';
+import ProgressSidebar from '../../components/form/ProgressSidebar';
+import SubjectInformation from '../pages/subjectinformation/SubjectInformation';
+import SubmitSuccess from '../../components/crisis/SubmitSuccess';
+import { HOME_PATH, REPORT_ID_PARAM } from '../../core/router/Routes';
 import { getAuthorization } from '../../core/sagas/authorize/AuthorizeActions';
+import { MEDIA_QUERY_LG, MEDIA_QUERY_MD } from '../../core/style/Sizes';
+import { FORM_TYPE } from '../../utils/DataConstants';
 import {
   getCurrentPage,
   getNextPath,
   getPrevPath,
   setShowInvalidFields
 } from '../../utils/NavigationUtils';
+import { POST_PROCESS_FIELDS } from '../../utils/constants/CrisisReportConstants';
+import { FORM_STEP_STATUS } from '../../utils/constants/FormConstants';
+import { STATE } from '../../utils/constants/StateConstants';
 import {
-  getStatus as validateSubjectInformation,
-  processForSubmit as processSubjectInformation
-} from '../pages/subjectinformation/Reducer';
-import {
-  getStatus as validateObservedBehaviors,
-  processForSubmit as processObservedBehaviors
-} from '../pages/observedbehaviors/Reducer';
+  getStatus as validateDisposition,
+  processForSubmit as processDisposition
+} from '../pages/disposition/Reducer';
 import {
   getStatus as validateNatureOfCrisis,
   processForSubmit as processNatureOfCrisis
 } from '../pages/natureofcrisis/Reducer';
 import {
+  getStatus as validateObservedBehaviors,
+  processForSubmit as processObservedBehaviors
+} from '../pages/observedbehaviors/Reducer';
+import {
   getStatus as validateOfficerSafety,
   processForSubmit as processOfficerSafety
 } from '../pages/officersafety/Reducer';
 import {
-  getStatus as validateDisposition,
-  processForSubmit as processDisposition
-} from '../pages/disposition/Reducer';
-import { FORM_STEP_STATUS } from '../../utils/constants/FormConstants';
-import { STATE } from '../../utils/constants/StateConstants';
-import { POST_PROCESS_FIELDS } from '../../utils/constants/CrisisReportConstants';
-import { FORM_TYPE } from '../../utils/DataConstants';
-import { REPORT_ID_PARAM, HOME_PATH } from '../../core/router/Routes';
-import { MEDIA_QUERY_MD, MEDIA_QUERY_LG } from '../../core/style/Sizes';
+  getStatus as validateSubjectInformation,
+  processForSubmit as processSubjectInformation
+} from '../pages/subjectinformation/Reducer';
 
 const CrisisReportWrapper = styled.div`
   width: 100%;

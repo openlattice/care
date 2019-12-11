@@ -1,6 +1,7 @@
 // @flow
 
 import React, { useState } from 'react';
+
 import styled from 'styled-components';
 import { List, Map, fromJS } from 'immutable';
 import {
@@ -18,15 +19,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
 import PersonResult from './PersonResult';
+import { searchPeople } from './PeopleActions';
+
+import { useInput } from '../../components/hooks';
+import { ContentOuterWrapper, ContentWrapper } from '../../components/layout';
 import { CRISIS_PATH } from '../../core/router/Routes';
-import { ContentWrapper, ContentOuterWrapper } from '../../components/layout';
-import { SUBJECT_INFORMATION } from '../../utils/constants/CrisisReportConstants';
 import { goToPath } from '../../core/router/RoutingActions';
 import { isNonEmptyString } from '../../utils/LangUtils';
 import { media } from '../../utils/StyleUtils';
-import { searchPeople } from './PeopleActions';
-import { setInputValues } from '../pages/subjectinformation/ActionFactory';
-import { useInput } from '../../components/hooks';
+import { SUBJECT_INFORMATION } from '../../utils/constants/CrisisReportConstants';
+import { setInputValues } from '../pages/subjectinformation/Actions';
 
 const NewPersonButton = styled(PlusButton)`
   margin-left: auto;
