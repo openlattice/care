@@ -3,10 +3,8 @@
  */
 
 import React, { Component } from 'react';
+
 import styled from 'styled-components';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { withRouter } from 'react-router';
 import { Map } from 'immutable';
 import {
   Button,
@@ -16,27 +14,29 @@ import {
   Label,
   Radio,
 } from 'lattice-ui-kit';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router';
+import { bindActionCreators } from 'redux';
 import type { Dispatch } from 'redux';
 
-import { showInvalidFields } from '../../../utils/NavigationUtils';
-import { STATE } from '../../../utils/constants/StateConstants';
-import { SUBJECT_INFORMATION } from '../../../utils/constants/CrisisReportConstants';
-import { GENDERS, RACES } from './Constants';
-import {
-  FormWrapper,
-  FormSection,
-  FormSectionWithValidation,
-  Header,
-  RequiredField
-} from '../../../components/crisis/FormComponents';
-
-import { getInvalidFields } from './Reducer';
 import {
   clearSubjectInformation,
   setInputValue,
   setInputValues
-} from './ActionFactory';
+} from './Actions';
+import { GENDERS, RACES } from './Constants';
+import { getInvalidFields } from './Reducer';
 
+import {
+  FormSection,
+  FormSectionWithValidation,
+  FormWrapper,
+  Header,
+  RequiredField
+} from '../../../components/crisis/FormComponents';
+import { showInvalidFields } from '../../../utils/NavigationUtils';
+import { SUBJECT_INFORMATION } from '../../../utils/constants/CrisisReportConstants';
+import { STATE } from '../../../utils/constants/StateConstants';
 
 type Props = {
   actions :{
