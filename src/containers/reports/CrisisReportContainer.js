@@ -30,20 +30,10 @@ import OfficerSafety from '../pages/officersafety/OfficerSafety';
 import ProgressSidebar from '../../components/form/ProgressSidebar';
 import SubjectInformation from '../pages/subjectinformation/SubjectInformation';
 import SubmitSuccess from '../../components/crisis/SubmitSuccess';
+import * as FQN from '../../edm/DataModelFqns';
 import { FormWrapper as StyledPageWrapper } from '../../components/crisis/FormComponents';
 import { CRISIS_PATH, HOME_PATH } from '../../core/router/Routes';
 import { MEDIA_QUERY_LG, MEDIA_QUERY_MD } from '../../core/style/Sizes';
-import {
-  PERSON_DOB_FQN,
-  PERSON_FIRST_NAME_FQN,
-  PERSON_ID_FQN,
-  PERSON_LAST_NAME_FQN,
-  PERSON_MIDDLE_NAME_FQN,
-  PERSON_NICK_NAME_FQN,
-  PERSON_RACE_FQN,
-  PERSON_SEX_FQN,
-  PERSON_SSN_LAST_4_FQN,
-} from '../../edm/DataModelFqns';
 import { FORM_TYPE } from '../../utils/DataConstants';
 import {
   getCurrentPage,
@@ -247,17 +237,17 @@ class CrisisReportContainer extends React.Component<Props, State> {
     const age = getPersonAge(result);
 
     actions.setInputValues({
-      [SUBJECT_INFORMATION.PERSON_ID]: getIn(result, [PERSON_ID_FQN, 0], ''),
+      [SUBJECT_INFORMATION.PERSON_ID]: getIn(result, [FQN.PERSON_ID_FQN, 0], ''),
       [SUBJECT_INFORMATION.FULL_NAME]: getLastFirstMiFromPerson(result),
-      [SUBJECT_INFORMATION.FIRST]: getIn(result, [PERSON_FIRST_NAME_FQN, 0], ''),
-      [SUBJECT_INFORMATION.LAST]: getIn(result, [PERSON_LAST_NAME_FQN, 0], ''),
-      [SUBJECT_INFORMATION.MIDDLE]: getIn(result, [PERSON_MIDDLE_NAME_FQN, 0], ''),
-      [SUBJECT_INFORMATION.AKA]: getIn(result, [PERSON_NICK_NAME_FQN, 0], ''),
-      [SUBJECT_INFORMATION.DOB]: getIn(result, [PERSON_DOB_FQN, 0], ''),
-      [SUBJECT_INFORMATION.RACE]: getIn(result, [PERSON_RACE_FQN, 0], ''),
-      [SUBJECT_INFORMATION.GENDER]: getIn(result, [PERSON_SEX_FQN, 0], ''),
+      [SUBJECT_INFORMATION.FIRST]: getIn(result, [FQN.PERSON_FIRST_NAME_FQN, 0], ''),
+      [SUBJECT_INFORMATION.LAST]: getIn(result, [FQN.PERSON_LAST_NAME_FQN, 0], ''),
+      [SUBJECT_INFORMATION.MIDDLE]: getIn(result, [FQN.PERSON_MIDDLE_NAME_FQN, 0], ''),
+      [SUBJECT_INFORMATION.AKA]: getIn(result, [FQN.PERSON_NICK_NAME_FQN, 0], ''),
+      [SUBJECT_INFORMATION.DOB]: getIn(result, [FQN.PERSON_DOB_FQN, 0], ''),
+      [SUBJECT_INFORMATION.RACE]: getIn(result, [FQN.PERSON_RACE_FQN, 0], ''),
+      [SUBJECT_INFORMATION.GENDER]: getIn(result, [FQN.PERSON_SEX_FQN, 0], ''),
       [SUBJECT_INFORMATION.AGE]: age,
-      [SUBJECT_INFORMATION.SSN_LAST_4]: getIn(result, [PERSON_SSN_LAST_4_FQN, 0], ''),
+      [SUBJECT_INFORMATION.SSN_LAST_4]: getIn(result, [FQN.PERSON_SSN_LAST_4_FQN, 0], ''),
       [SUBJECT_INFORMATION.IS_NEW_PERSON]: isNewPerson
     });
   }
