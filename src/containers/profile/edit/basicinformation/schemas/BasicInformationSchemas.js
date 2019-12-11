@@ -1,18 +1,21 @@
 // @flow
 import { DataProcessingUtils } from 'lattice-fabricate';
-import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
+
 import {
-  PERSON_NICK_NAME_FQN,
   PERSON_DOB_FQN,
+  PERSON_ETHNICITY_FQN,
   PERSON_FIRST_NAME_FQN,
   PERSON_LAST_NAME_FQN,
   PERSON_MIDDLE_NAME_FQN,
+  PERSON_NICK_NAME_FQN,
   PERSON_RACE_FQN,
   PERSON_SEX_FQN
 } from '../../../../../edm/DataModelFqns';
+import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
 import {
-  SEX_VALUES,
-  RACE_VALUES
+  ETHNICITY_VALUES,
+  RACE_VALUES,
+  SEX_VALUES
 } from '../../../constants';
 
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
@@ -63,6 +66,11 @@ const schema = {
           title: 'Race',
           enum: RACE_VALUES
         },
+        [getEntityAddressKey(0, PEOPLE_FQN, PERSON_ETHNICITY_FQN)]: {
+          type: 'string',
+          title: 'Ethnicity',
+          enum: ETHNICITY_VALUES
+        },
       },
     }
   }
@@ -84,7 +92,7 @@ const uiSchema = {
       classNames: 'column-span-4'
     },
     [getEntityAddressKey(0, PEOPLE_FQN, PERSON_NICK_NAME_FQN)]: {
-      classNames: 'column-span-12',
+      classNames: 'column-span-8',
       'ui:options': {
         creatable: true,
         hideMenu: true,
@@ -98,6 +106,9 @@ const uiSchema = {
       classNames: 'column-span-4',
     },
     [getEntityAddressKey(0, PEOPLE_FQN, PERSON_RACE_FQN)]: {
+      classNames: 'column-span-4'
+    },
+    [getEntityAddressKey(0, PEOPLE_FQN, PERSON_ETHNICITY_FQN)]: {
       classNames: 'column-span-4'
     },
   }
