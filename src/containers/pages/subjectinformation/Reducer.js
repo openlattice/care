@@ -6,11 +6,12 @@ import randomUUID from 'uuid/v4';
 import { Map, fromJS } from 'immutable';
 import { DateTime } from 'luxon';
 
-import { CLEAR_SUBJECT_INFORMATION, SET_INPUT_VALUE, SET_INPUT_VALUES } from './ActionFactory';
-import { CLEAR_REPORT } from '../../reports/ReportsActions';
-import { SUBJECT_INFORMATION, POST_PROCESS_FIELDS } from '../../../utils/constants/CrisisReportConstants';
+import { CLEAR_SUBJECT_INFORMATION, SET_INPUT_VALUE, SET_INPUT_VALUES } from './Actions';
+
 import { getAgeFromIsoDate } from '../../../utils/DateUtils';
+import { POST_PROCESS_FIELDS, SUBJECT_INFORMATION } from '../../../utils/constants/CrisisReportConstants';
 import { FORM_STEP_STATUS } from '../../../utils/constants/FormConstants';
+import { CLEAR_REPORT } from '../../reports/ReportsActions';
 
 const {
   FULL_NAME,
