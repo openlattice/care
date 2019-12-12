@@ -2,25 +2,27 @@
 import React, {
   useCallback,
   useEffect,
-  useState,
-  useMemo
+  useMemo,
+  useState
 } from 'react';
+
 import styled from 'styled-components';
+import { List, Map, removeIn } from 'immutable';
+import { DataProcessingUtils, Form } from 'lattice-fabricate';
 import { DateTime } from 'luxon';
 import { useDispatch, useSelector } from 'react-redux';
-import { Map, List, removeIn, setIn } from 'immutable';
-import { Form, DataProcessingUtils } from 'lattice-fabricate';
+
+import { resetIssue, submitIssue, updateIssue } from './IssueActions';
+import { schema, uiSchema } from './IssueSchemas';
+import { addIssueTimestamps, constructFormData, getIssueAssociations } from './IssueUtils';
 
 import { useFormData } from '../../../components/hooks';
-import { schema, uiSchema } from './IssueSchemas';
-import { getResponsibleUserOptions } from '../../staff/StaffActions';
-import { hydrateSchemaWithStaff } from '../../profile/edit/about/AboutUtils';
-import { addIssueTimestamps, constructFormData, getIssueAssociations } from './IssueUtils';
-import { submitIssue, resetIssue, updateIssue } from './IssueActions';
+import { OPENLATTICE_ID_FQN } from '../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
-import { OPENLATTICE_ID_FQN, COMPLETED_DT_FQN, ENTRY_UPDATED_FQN } from '../../../edm/DataModelFqns';
+import { hydrateSchemaWithStaff } from '../../profile/edit/about/AboutUtils';
+import { getResponsibleUserOptions } from '../../staff/StaffActions';
 
-const { STAFF_FQN, ISSUE_FQN } = APP_TYPES_FQNS;
+const { STAFF_FQN } = APP_TYPES_FQNS;
 const {
   findEntityAddressKeyFromMap,
   getEntityAddressKey,

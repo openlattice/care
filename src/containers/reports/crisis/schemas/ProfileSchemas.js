@@ -14,7 +14,7 @@ const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
 
 const schema = {
   type: 'object',
-  title: '',
+  title: 'Profile',
   properties: {
     [getPageSectionKey(1, 1)]: {
       type: 'object',
@@ -63,6 +63,14 @@ const schema = {
           enum: ETHNICITY_VALUES
         },
       },
+      required: [
+        getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN),
+        getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_FIRST_NAME_FQN),
+        getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_DOB_FQN),
+        getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_SEX_FQN),
+        getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_RACE_FQN),
+        getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_ETHNICITY_FQN),
+      ]
     }
   }
 };
