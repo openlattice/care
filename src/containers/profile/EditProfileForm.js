@@ -1,5 +1,6 @@
 // @flow
 import React, { Component } from 'react';
+
 import styled from 'styled-components';
 import { Map } from 'immutable';
 import { Constants } from 'lattice';
@@ -8,10 +9,9 @@ import {
   CardSegment,
   DatePicker,
   Input,
-  Select,
-  Label
+  Label,
+  Select
 } from 'lattice-ui-kit';
-import * as FQN from '../../edm/DataModelFqns';
 
 import {
   eyeOptions,
@@ -19,6 +19,8 @@ import {
   raceOptions,
   sexOptions,
 } from './constants';
+
+import * as FQN from '../../edm/DataModelFqns';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 

@@ -1,9 +1,10 @@
 // @flow
 import React from 'react';
-import styled from 'styled-components';
-import { Link, matchPath, withRouter } from 'react-router-dom';
-import { Step } from 'lattice-ui-kit';
 import type { ChildrenArray } from 'react';
+
+import styled from 'styled-components';
+import { Step } from 'lattice-ui-kit';
+import { Link, matchPath, withRouter } from 'react-router-dom';
 import type { Location } from 'react-router-dom';
 
 const StyledLink = styled(Link)`
@@ -15,7 +16,7 @@ const StyledLink = styled(Link)`
 `;
 
 type Props = {
-  children :ChildrenArray<any>;
+  children ? :ChildrenArray<any>;
   index ? :number;
   to :string;
   location :Location;
@@ -39,7 +40,8 @@ const NavStep = (props :Props) => {
 };
 
 NavStep.defaultProps = {
-  index: 0
+  children: null,
+  index: 0,
 };
 
 export default withRouter(NavStep);

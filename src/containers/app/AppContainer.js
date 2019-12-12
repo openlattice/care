@@ -6,23 +6,26 @@ import React, { Component } from 'react';
 
 import styled from 'styled-components';
 import { Map } from 'immutable';
+import { Spinner } from 'lattice-ui-kit';
 import { connect } from 'react-redux';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { RequestStates } from 'redux-reqseq';
-import { Spinner } from 'lattice-ui-kit';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import AppHeaderContainer from './AppHeaderContainer';
-import CrisisReportContainer from '../reports/CrisisReportContainer';
-import DownloadsContainer from '../downloads/DownloadsContainer';
-import ProfileRouter from '../profile/ProfileRouter';
-import LegitReportsRouter from '../reports/LegitReportsRouter';
-import DashboardContainer from '../dashboard/DashboardContainer';
-import IssuesContainer from '../issues/IssuesContainer';
 import {
   initializeApplication,
 } from './AppActions';
+
+import CrisisReportContainer from '../reports/CrisisReportContainer';
+import DashboardContainer from '../dashboard/DashboardContainer';
+import DownloadsContainer from '../downloads/DownloadsContainer';
+import IssuesContainer from '../issues/IssuesContainer';
+import LegitReportsRouter from '../reports/LegitReportsRouter';
+import NewCrisisReportContainer from '../reports/crisis/NewCrisisReportContainer';
+import ProfileRouter from '../profile/ProfileRouter';
+import SearchPeopleContainer from '../people/SearchPeopleContainer';
 import {
   CRISIS_PATH,
   DASHBOARD_PATH,
@@ -35,11 +38,10 @@ import {
 import {
   APP_CONTAINER_MAX_WIDTH,
   APP_CONTENT_PADDING,
-  MEDIA_QUERY_TECH_SM,
+  MEDIA_QUERY_LG,
   MEDIA_QUERY_MD,
-  MEDIA_QUERY_LG
+  MEDIA_QUERY_TECH_SM
 } from '../../core/style/Sizes';
-import SearchPeopleContainer from '../people/SearchPeopleContainer';
 
 // TODO: this should come from lattice-ui-kit, maybe after the next release. current version v0.1.1
 const APP_BG :string = '#f8f8fb';
@@ -141,6 +143,7 @@ class AppContainer extends Component<Props> {
       <Switch>
         <Route exact strict path={HOME_PATH} component={SearchPeopleContainer} />
         <Route path={CRISIS_PATH} component={CrisisReportContainer} />
+        <Route path="/new-crisis" component={NewCrisisReportContainer} />
         <Route path={REPORTS_PATH} component={LegitReportsRouter} />
         <Route path={DASHBOARD_PATH} render={this.wrapComponent(DashboardContainer)} />
         <Route path={DOWNLOADS_PATH} render={this.wrapComponent(DownloadsContainer)} />
