@@ -46,7 +46,7 @@
     "immutable": "4.0.0-rc.9",
     "lattice": "~0.71.0",
     "lattice-auth": "0.16.0",
-    "lattice-fabricate": "~0.7.0",
+    "lattice-fabricate": "~0.8.2",
     "lattice-sagas": "~0.47.0",
     "lattice-ui-kit": "~0.21.0",
     "lodash": "~4.17.10",
