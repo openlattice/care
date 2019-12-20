@@ -1,13 +1,14 @@
 import { DataProcessingUtils } from 'lattice-fabricate';
-import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
-import {
-  DESCRIPTION_FQN,
-  CATEGORY_FQN,
-  TRIGGER_FQN,
-  TECHNIQUES_FQN,
-} from '../../../../../edm/DataModelFqns';
 
 import { SAFETY_TYPES } from './constants';
+
+import {
+  CATEGORY_FQN,
+  DESCRIPTION_FQN,
+  TECHNIQUES_FQN,
+  TRIGGER_FQN,
+} from '../../../../../edm/DataModelFqns';
+import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
 
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
 const {

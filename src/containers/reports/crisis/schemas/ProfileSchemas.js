@@ -1,5 +1,7 @@
 import { DataProcessingUtils } from 'lattice-fabricate';
 
+import { YES_NO_UNKNOWN } from './constants';
+
 import * as FQN from '../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
 import {
@@ -8,7 +10,7 @@ import {
   SEX_VALUES
 } from '../../../profile/constants';
 
-const { PEOPLE_FQN } = APP_TYPES_FQNS;
+const { PEOPLE_FQN, PERSON_DETAILS_FQN } = APP_TYPES_FQNS;
 
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
 
@@ -47,6 +49,10 @@ const schema = {
           title: 'Date of Birth',
           format: 'date'
         },
+        [getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_SSN_LAST_4_FQN)]: {
+          type: 'number',
+          title: 'Last 4 SSN'
+        },
         [getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_SEX_FQN)]: {
           type: 'string',
           title: 'Sex',
@@ -62,15 +68,20 @@ const schema = {
           title: 'Ethnicity',
           enum: ETHNICITY_VALUES
         },
+        [getEntityAddressKey(0, PERSON_DETAILS_FQN, FQN.VETERAN_STATUS_FQN)]: {
+          type: 'string',
+          title: 'Served in the military?',
+          enum: YES_NO_UNKNOWN
+        },
       },
-      required: [
-        getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN),
-        getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_FIRST_NAME_FQN),
-        getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_DOB_FQN),
-        getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_SEX_FQN),
-        getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_RACE_FQN),
-        getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_ETHNICITY_FQN),
-      ]
+      // required: [
+      //   getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN),
+      //   getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_FIRST_NAME_FQN),
+      //   getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_DOB_FQN),
+      //   getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_SEX_FQN),
+      //   getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_RACE_FQN),
+      //   getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_ETHNICITY_FQN),
+      // ]
     }
   }
 };
@@ -94,12 +105,16 @@ const uiSchema = {
       classNames: 'column-span-12',
       'ui:options': {
         creatable: true,
-        hideMenu: true,
-        placeholder: 'Press “Enter” or “Tab” after each item',
+        multiple: true,
+        placeholder: '',
+        noOptionsMessage: 'Type to Create'
       }
     },
     [getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_DOB_FQN)]: {
-      classNames: 'column-span-3'
+      classNames: 'column-span-12'
+    },
+    [getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_SSN_LAST_4_FQN)]: {
+      classNames: 'column-span-6',
     },
     [getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_SEX_FQN)]: {
       classNames: 'column-span-12',
@@ -110,12 +125,15 @@ const uiSchema = {
     },
     [getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_RACE_FQN)]: {
       classNames: 'column-span-12',
+    },
+    [getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_ETHNICITY_FQN)]: {
+      classNames: 'column-span-12',
       'ui:widget': 'radio',
       'ui:options': {
         inline: false
       }
     },
-    [getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_ETHNICITY_FQN)]: {
+    [getEntityAddressKey(0, PERSON_DETAILS_FQN, FQN.VETERAN_STATUS_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'radio',
       'ui:options': {

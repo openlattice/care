@@ -29,6 +29,7 @@ export const APP_TYPES_FQNS = {
   OFFICER_SAFETY_CONCERNS_FQN: new FullyQualifiedName('app.officersafetyconcerns'),
   PART_OF_FQN: new FullyQualifiedName('app.partof'),
   PEOPLE_FQN: new FullyQualifiedName('app.people'),
+  PERSON_DETAILS_FQN: new FullyQualifiedName('app.persondetails'),
   PHYSICAL_APPEARANCE_FQN: new FullyQualifiedName('app.physicalappearance'),
   REPORTED_FQN: new FullyQualifiedName('app.reported'),
   RESPONSE_PLAN_FQN: new FullyQualifiedName('app.responseplan'),

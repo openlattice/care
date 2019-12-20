@@ -1,40 +1,104 @@
 // @flow
-import React, { useRef } from 'react';
+import React from 'react';
 
-import { Form } from 'lattice-fabricate';
+import styled from 'styled-components';
+import { Form, Paged } from 'lattice-fabricate';
 import {
+  Button,
   Card,
-  CardStack,
-  Stepper,
+  CardStack
 } from 'lattice-ui-kit';
-import { useRouteMatch } from 'react-router';
 
-import { schema, uiSchema } from './schemas/ProfileSchemas';
+import { schemas, uiSchemas } from './schemas';
 
-import NavStep from '../../profile/edit/NavStep';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
+
+const initialFormData = {
+  page3section1: {
+    '0__@@__app.people__@@__nc.PersonSurName': [
+      'Homicidal thoughts'
+    ],
+    '1__@@__app.people__@@__nc.PersonSurName': [
+      'Mania'
+    ]
+  },
+  page2section1: {
+    '0__@@__app.people__@@__nc.PersonSurName': '2019-12-19T13:37:58.493-08:00'
+  },
+  page1section1: {
+    '0__@@__app.people__@@__im.PersonNickName': [],
+    '0__@@__app.people__@@__nc.PersonSurName': 'fdsa',
+    '0__@@__app.people__@@__nc.PersonGivenName': 'fdsada',
+    '0__@@__app.people__@@__nc.PersonBirthDate': '2019-12-05',
+    '0__@@__app.people__@@__nc.PersonSex': 'Male',
+    '0__@@__app.people__@@__nc.PersonRace': 'White',
+    '0__@@__app.people__@@__nc.PersonEthnicity': 'Non-Hispanic'
+  }
+};
+
+
+const ActionRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 30px 30px 30px;
+`;
+
+const onPageChange = (page, formData) => console.log(page, formData);
 
 type Props = {
 
 };
 
 const NewCrisisReportContainer = (props :Props) => {
-  const formRef = useRef();
-  const match = useRouteMatch();
   return (
     <ContentOuterWrapper>
       <ContentWrapper>
         <CardStack>
-          <Stepper>
-            <NavStep to={`${match.url}/1`} />
-            <NavStep to={`${match.url}/2`} />
-            <NavStep to={`${match.url}/3`} />
-            <NavStep to={`${match.url}/4`} />
-            <NavStep to={`${match.url}/5`} />
-            <NavStep to={`${match.url}/6`} />
-          </Stepper>
           <Card>
-            <Form ref={formRef} schema={schema} uiSchema={uiSchema} />
+            <Paged
+                // initialFormData={initialFormData}
+                onPageChange={onPageChange}
+                render={({
+                  formRef,
+                  pagedData,
+                  page,
+                  onBack,
+                  onNext,
+                  validateAndSubmit,
+                }) => {
+                  const totalPages = 6;
+                  const isLastPage = page === totalPages - 1;
+
+                  const handleNext = isLastPage
+                    ? () => console.log(pagedData)
+                    : validateAndSubmit;
+
+                  return (
+                    <>
+                      <Form
+                          formData={pagedData}
+                          hideSubmit
+                          onSubmit={onNext}
+                          ref={formRef}
+                          schema={schemas[page]}
+                          uiSchema={uiSchemas[page]} />
+                      <ActionRow>
+                        <Button
+                            disabled={!(page > 0)}
+                            onClick={onBack}>
+                            Back
+                        </Button>
+                        <span>{`${page + 1} of ${totalPages}`}</span>
+                        <Button
+                            mode="primary"
+                            onClick={handleNext}>
+                          { isLastPage ? 'Submit' : 'Next' }
+                        </Button>
+                      </ActionRow>
+                    </>
+                  );
+                }} />
           </Card>
         </CardStack>
       </ContentWrapper>
