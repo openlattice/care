@@ -36,7 +36,6 @@ const initialFormData = {
   }
 };
 
-
 const ActionRow = styled.div`
   display: flex;
   justify-content: space-between;
@@ -46,11 +45,7 @@ const ActionRow = styled.div`
 
 const onPageChange = (page, formData) => console.log(page, formData);
 
-type Props = {
-
-};
-
-const NewCrisisReportContainer = (props :Props) => {
+const NewCrisisReportContainer = () => {
   return (
     <ContentOuterWrapper>
       <ContentWrapper>
