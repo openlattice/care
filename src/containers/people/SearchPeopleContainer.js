@@ -113,8 +113,8 @@ const SearchPeopleContainer = () => {
     dispatchSearch();
   };
 
-  const onPageChange = (newPage :number) => {
-    dispatchSearch(newPage * MAX_HITS);
+  const onPageChange = ({ page: newPage, start }) => {
+    dispatchSearch(start);
     setPage(newPage);
   };
 
@@ -177,7 +177,7 @@ const SearchPeopleContainer = () => {
               <PaginationToolbar
                   page={page}
                   count={numHits}
-                  setPage={onPageChange}
+                  onPageChange={onPageChange}
                   rowsPerPage={MAX_HITS} />
             )
           }
