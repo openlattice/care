@@ -67,7 +67,7 @@ const NewCrisisReportContainer = (props :Props) => {
                   onNext,
                   validateAndSubmit,
                 }) => {
-                  const totalPages = 6;
+                  const totalPages = 7;
                   const isLastPage = page === totalPages - 1;
 
                   const handleNext = isLastPage

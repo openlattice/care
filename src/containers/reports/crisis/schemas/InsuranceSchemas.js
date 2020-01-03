@@ -13,7 +13,7 @@ const schema = {
   type: 'object',
   title: 'Insurance',
   properties: {
-    [getPageSectionKey(6, 1)]: {
+    [getPageSectionKey(7, 1)]: {
       type: 'object',
       title: '',
       properties: {
@@ -43,7 +43,7 @@ const schema = {
 };
 
 const uiSchema = {
-  [getPageSectionKey(6, 1)]: {
+  [getPageSectionKey(7, 1)]: {
     classNames: 'column-span-12 grid-container',
     'ui:options': {
       editable: true
