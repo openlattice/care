@@ -12,17 +12,19 @@ import {
   SearchApiSagas,
 } from 'lattice-sagas';
 
+import * as AuthorizeSagas from './authorize/AuthorizeSagas';
+import * as DataSagas from './data/DataSagas';
 
 import * as AboutSagas from '../../containers/profile/edit/about/AboutSagas';
 import * as AddressSagas from '../../containers/profile/edit/basicinformation/sagas/AddressSagas';
 import * as AppSagas from '../../containers/app/AppSagas';
 import * as AppearanceSagas from '../../containers/profile/edit/basicinformation/sagas/AppearanceSagas';
-import * as AuthorizeSagas from './authorize/AuthorizeSagas';
 import * as BasicInformationSagas from '../../containers/profile/edit/basicinformation/sagas/BasicInformationSagas';
 import * as ContactsSagas from '../../containers/profile/edit/contacts/ContactsSagas';
 import * as DashboardSagas from '../../containers/dashboard/DashboardSagas';
-import * as DataSagas from './data/DataSagas';
 import * as DownloadsSagas from '../../containers/downloads/DownloadsSagas';
+import * as IssueSagas from '../../containers/issues/issue/IssueSagas';
+import * as IssuesSagas from '../../containers/issues/IssuesSagas';
 // eslint-disable-next-line max-len
 import * as OfficerSafetyConcernsSagas from '../../containers/profile/edit/officersafety/sagas/OfficerSafetyConcernsSagas';
 import * as PeopleSagas from '../../containers/people/PeopleSagas';
@@ -31,12 +33,9 @@ import * as ProfileSagas from '../../containers/profile/ProfileSagas';
 import * as ReportsSagas from '../../containers/reports/ReportsSagas';
 import * as ResponsePlanSagas from '../../containers/profile/edit/responseplan/ResponsePlanSagas';
 import * as RoutingSagas from '../router/RoutingSagas';
+import * as ScarsMarksTattoosSagas from '../../containers/profile/edit/basicinformation/sagas/ScarsMarksTattoosSagas';
 import * as SearchSagas from '../../containers/search/SearchSagas';
 import * as StaffSagas from '../../containers/staff/StaffSagas';
-import * as ScarsMarksTattoosSagas from '../../containers/profile/edit/basicinformation/sagas/ScarsMarksTattoosSagas';
-import * as IssueSagas from '../../containers/issues/issue/IssueSagas';
-import * as IssuesSagas from '../../containers/issues/IssuesSagas';
-
 
 export default function* sagas() :Generator<*, *, *> {
 
@@ -92,6 +91,7 @@ export default function* sagas() :Generator<*, *, *> {
     // People Sagas
     fork(PeopleSagas.searchPeopleWatcher),
     fork(PeopleSagas.getPeoplePhotosWatcher),
+    fork(PeopleSagas.getRecentIncidentsWatcher),
 
     // Profile Sagas
     fork(ProfileSagas.getPersonDataWatcher),
