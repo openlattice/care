@@ -129,7 +129,8 @@ export function* getRecentIncidentsWorker(action :SequenceAction) :Generator<any
     // get most recent incident per EKID
     const recentIncidentsByEKID = fromJS(incidentsResponse.data)
       .map((reports) => {
-        const recentIncident = reports.map((report :Map) => report.get('neighborDetails'))
+        const recentIncident = reports
+          .map((report :Map) => report.get('neighborDetails'))
           .toSet()
           .toList()
           .sortBy((report :Map) :number => {
@@ -221,7 +222,7 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
 
     const peopleEKIDs = hits.map((person) => person.getIn([OPENLATTICE_ID_FQN, 0]));
 
-    yield put(searchPeople.success(action.id, { hits, numHits: data.numHits }));
+    yield put(searchPeople.success(action.id, { hits, totalHits: data.numHits }));
     if (!peopleEKIDs.isEmpty()) {
       yield put(getPeoplePhotos(peopleEKIDs));
       yield put(getRecentIncidents(peopleEKIDs));

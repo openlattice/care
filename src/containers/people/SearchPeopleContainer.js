@@ -65,7 +65,7 @@ const MAX_HITS = 20;
 const SearchPeopleContainer = () => {
 
   const searchResults = useSelector((store) => store.getIn(['people', 'hits'], List()));
-  const numHits = useSelector((store) => store.getIn(['people', 'numHits'], 0));
+  const totalHits = useSelector((store) => store.getIn(['people', 'totalHits'], 0));
   const fetchState = useSelector((store) => store.getIn(['people', 'fetchState']));
   const searchInputs = useSelector((store) => store.getIn(['people', 'searchInputs']));
   const dispatch = useDispatch();
@@ -168,7 +168,7 @@ const SearchPeopleContainer = () => {
             </CardSegment>
           </Card>
           <SearchResults
-              hasSearched={fetchState !== RequestStates.STANDBY}
+              hasSearched={hasSearched}
               isLoading={isLoading}
               resultComponent={PersonResult}
               results={searchResults} />
@@ -176,7 +176,7 @@ const SearchPeopleContainer = () => {
             hasSearched && (
               <PaginationToolbar
                   page={page}
-                  count={numHits}
+                  count={totalHits}
                   onPageChange={onPageChange}
                   rowsPerPage={MAX_HITS} />
             )

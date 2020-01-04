@@ -18,7 +18,7 @@ import { HOME_PATH } from '../../core/router/Routes';
 const INITIAL_STATE :Map = fromJS({
   fetchState: RequestStates.STANDBY,
   hits: List(),
-  numHits: 0,
+  totalHits: 0,
   profilePicsByEKID: Map(),
   recentIncidentsByEKID: Map({
     data: Map(),
