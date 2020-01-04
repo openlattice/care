@@ -2,11 +2,13 @@
  * @flow
  */
 
+import isPlainObject from 'lodash/isPlainObject';
 import {
   call,
   put,
   select,
-  takeEvery
+  takeEvery,
+  takeLatest
 } from '@redux-saga/core/effects';
 import {
   List,
@@ -23,8 +25,10 @@ import type { SequenceAction } from 'redux-reqseq';
 
 import {
   GET_PEOPLE_PHOTOS,
+  GET_RECENT_INCIDENTS,
   SEARCH_PEOPLE,
   getPeoplePhotos,
+  getRecentIncidents,
   searchPeople,
 } from './PeopleActions';
 
@@ -35,10 +39,11 @@ import {
   getESIDFromApp,
   getPeopleESId,
 } from '../../utils/AppUtils';
-import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
-import { isDefined } from '../../utils/LangUtils';
+import { ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
 
 const {
+  APPEARS_IN_FQN,
+  BEHAVIORAL_HEALTH_REPORT_FQN,
   IMAGE_FQN,
   IS_PICTURE_OF_FQN,
   PEOPLE_FQN,
@@ -48,7 +53,6 @@ const { OPENLATTICE_ID_FQN } = Constants;
 const { searchEntitySetData, searchEntityNeighborsWithFilter } = SearchApiActions;
 const { searchEntitySetDataWorker, searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
 const LOG = new Logger('PeopleSagas');
-
 
 export function* getPeoplePhotosWorker(action :SequenceAction) :Generator<*, *, *> {
   try {
@@ -83,6 +87,7 @@ export function* getPeoplePhotosWorker(action :SequenceAction) :Generator<*, *, 
     yield put(getPeoplePhotos.success(action.id, profilePicByEKID));
   }
   catch (error) {
+    LOG.error(action.type, error);
     yield put(getPeoplePhotos.failure(action.id));
   }
 }
@@ -91,14 +96,77 @@ export function* getPeoplePhotosWatcher() :Generator<*, *, *> {
   yield takeEvery(GET_PEOPLE_PHOTOS, getPeoplePhotosWorker);
 }
 
+export function* getRecentIncidentsWorker(action :SequenceAction) :Generator<any, any, any> {
+  try {
+    const { value: entityKeyIds } = action;
+    if (!List.isList(entityKeyIds)) throw ERR_ACTION_VALUE_TYPE;
+
+    yield put(getRecentIncidents.request(action.id, entityKeyIds));
+
+    const app :Map = yield select((state) => state.get('app', Map()));
+    const reportESID :UUID = getESIDFromApp(app, BEHAVIORAL_HEALTH_REPORT_FQN);
+    const peopleESID :UUID = getESIDFromApp(app, PEOPLE_FQN);
+    const appearsInESID :UUID = getESIDFromApp(app, APPEARS_IN_FQN);
+
+    // all reports for each person
+    const reportsSearchParams = {
+      entitySetId: peopleESID,
+      filter: {
+        entityKeyIds: entityKeyIds.toJS(),
+        edgeEntitySetIds: [appearsInESID],
+        destinationEntitySetIds: [reportESID],
+        sourceEntitySetIds: [],
+      }
+    };
+
+    const incidentsResponse = yield call(
+      searchEntityNeighborsWithFilterWorker,
+      searchEntityNeighborsWithFilter(reportsSearchParams)
+    );
+
+    if (incidentsResponse.error) throw incidentsResponse.error;
+
+    // get most recent incident per EKID
+    const recentIncidentsByEKID = fromJS(incidentsResponse.data)
+      .map((reports) => {
+        const recentIncident = reports
+          .map((report :Map) => report.get('neighborDetails'))
+          .toSet()
+          .toList()
+          .sortBy((report :Map) :number => {
+            const time = DateTime.fromISO(report.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0]));
+
+            return -time.valueOf();
+          })
+          .first();
+
+        const recentIncidentDT = DateTime.fromISO(recentIncident.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0]));
+        const totalIncidents = reports.count();
+
+        return Map({
+          recentIncidentDT,
+          totalIncidents,
+        });
+      });
+
+    yield put(getRecentIncidents.success(action.id, recentIncidentsByEKID));
+  }
+  catch (error) {
+    yield put(getRecentIncidents.failure(action.id));
+  }
+}
+
+export function* getRecentIncidentsWatcher() :Generator<any, any, any> {
+  yield takeLatest(GET_RECENT_INCIDENTS, getRecentIncidentsWorker);
+}
+
 function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
 
   try {
     const { value } = action;
-    if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
-    if (!Map.isMap(value)) throw ERR_ACTION_VALUE_TYPE;
-
-    yield put(searchPeople.request(action.id, { searchFields: value }));
+    if (!isPlainObject(value)) throw ERR_ACTION_VALUE_TYPE;
+    const { searchInputs, start = 0, maxHits = 20 } = value;
+    yield put(searchPeople.request(action.id, { searchInputs }));
 
     const edm :Map<*, *> = yield select((state) => state.get('edm'));
     const app = yield select((state) => state.get('app', Map()));
@@ -116,9 +184,9 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
       });
     };
 
-    const firstName :string = value.get('firstName', '').trim();
-    const lastName :string = value.get('lastName', '').trim();
-    const dob :string = value.get('dob');
+    const firstName :string = searchInputs.get('firstName', '').trim();
+    const lastName :string = searchInputs.get('lastName', '').trim();
+    const dob :string = searchInputs.get('dob');
 
     if (firstName.length) {
       updateSearchField(firstName, firstNamePTID);
@@ -133,8 +201,8 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
 
     const searchOptions = {
       searchFields,
-      start: 0,
-      maxHits: 10000
+      start,
+      maxHits
     };
 
     const entitySetId = getPeopleESId(app);
@@ -154,9 +222,10 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
 
     const peopleEKIDs = hits.map((person) => person.getIn([OPENLATTICE_ID_FQN, 0]));
 
-    yield put(searchPeople.success(action.id, { peopleSearchResults: hits }));
+    yield put(searchPeople.success(action.id, { hits, totalHits: data.numHits }));
     if (!peopleEKIDs.isEmpty()) {
       yield put(getPeoplePhotos(peopleEKIDs));
+      yield put(getRecentIncidents(peopleEKIDs));
     }
   }
   catch (error) {

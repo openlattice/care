@@ -1,6 +1,6 @@
-import { css, keyframes } from 'styled-components';
 import { Colors } from 'lattice-ui-kit';
 import { rgba } from 'polished';
+import { css, keyframes } from 'styled-components';
 
 const { PURPLES } = Colors;
 
@@ -8,13 +8,13 @@ const loading = keyframes`
   0% {
     background-position:
       -10vw 0, /* animation blur */
-      0 0;
+      0 0.25em;
   };
 
   100% {
     background-position:
       100vw 0, /* animation blur */
-      0 0;
+      0 0.25em;
   };
 `;
 
@@ -37,7 +37,7 @@ const fullLineSkeleton = css`
     100% 1.5em;
   background-position:
     -10vw 0, /* animation blur */
-    0 0;
+    0 0.25em;
 
   animation: ${loading} 2s infinite;
 `;

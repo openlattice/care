@@ -5,13 +5,16 @@ import React from 'react';
 import styled from 'styled-components';
 import {
   faBirthdayCake,
+  faHistory,
   faUser,
   faVenusMars,
 } from '@fortawesome/pro-solid-svg-icons';
 import { Map } from 'immutable';
 import { Constants } from 'lattice';
 import { Button, Card, CardSegment } from 'lattice-ui-kit';
+import { DateTime } from 'luxon';
 import { useDispatch, useSelector } from 'react-redux';
+import { RequestStates } from 'redux-reqseq';
 
 import Detail from '../../components/premium/styled/Detail';
 import Portrait from '../../components/portrait/Portrait';
@@ -42,18 +45,18 @@ const Details = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
-  min-width: 0;
+  font-size: 16px;
   margin: 0 30px;
-  font-size: 20px;
+  min-width: 0;
 
   ${media.phone`
-    font-size: 16px;
+    font-size: 12px;
     margin: 0 10px;
   `}
 `;
 
 const Name = styled.div`
-  font-size: 24px
+  font-size: 24px;
   font-weight: 600;
   text-transform: uppercase;
   overflow: hidden;
@@ -62,7 +65,7 @@ const Name = styled.div`
   -webkit-box-orient: vertical;
 
   ${media.phone`
-    font-size: 20px;
+    font-size: 18px;
   `}
 `;
 
@@ -101,6 +104,14 @@ const PersonResult = (props :Props) => {
     const profilePic = store.getIn(['people', 'profilePicsByEKID', personEKID], Map());
     return getImageDataFromEntity(profilePic);
   });
+  const recentIncident = useSelector((store) => store
+    .getIn(['people', 'recentIncidentsByEKID', 'data', personEKID, 'recentIncidentDT']));
+
+  const recentDate = (recentIncident && recentIncident.isValid) && recentIncident.toLocaleString(DateTime.DATE_SHORT);
+
+  const isLoading = useSelector((store) => store
+    .getIn(['people', 'recentIncidentsByEKID', 'fetchState']) !== RequestStates.SUCCESS);
+
   const goToProfile = useGoToPath(PROFILE_VIEW_PATH.replace(PROFILE_ID_PATH, personEKID));
   const goToReport = useGoToPath(`${CRISIS_PATH}/1`, result);
   const dispatch = useDispatch();
@@ -124,9 +135,10 @@ const PersonResult = (props :Props) => {
           <Portrait imageUrl={imageUrl} height="128" width="96" />
           <Details>
             <Name bold uppercase fontSize="24px">{fullName}</Name>
-            <Detail content={dob} icon={faBirthdayCake} />
-            <Detail content={sex} icon={faVenusMars} />
-            <Detail content={race} icon={faUser} />
+            <Detail content={dob} icon={faBirthdayCake} isLoading={isLoading} />
+            <Detail content={sex} icon={faVenusMars} isLoading={isLoading} />
+            <Detail content={race} icon={faUser} isLoading={isLoading} />
+            <Detail content={recentDate} icon={faHistory} isLoading={isLoading} />
           </Details>
         </FlexRow>
         <Actions>
