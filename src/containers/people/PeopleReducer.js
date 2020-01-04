@@ -9,6 +9,7 @@ import { RequestStates } from 'redux-reqseq';
 import {
   CLEAR_SEARCH_RESULTS,
   getPeoplePhotos,
+  getRecentIncidents,
   searchPeople,
 } from './PeopleActions';
 
@@ -16,13 +17,18 @@ import { HOME_PATH } from '../../core/router/Routes';
 
 const INITIAL_STATE :Map = fromJS({
   fetchState: RequestStates.STANDBY,
-  peopleSearchResults: List(),
+  hits: List(),
+  totalHits: 0,
   profilePicsByEKID: Map(),
-  searchFields: Map({
+  recentIncidentsByEKID: Map({
+    data: Map(),
+    fetchState: RequestStates.STANDBY,
+  }),
+  searchInputs: Map({
+    dob: undefined,
     firstName: '',
     lastName: '',
-    dob: undefined,
-  })
+  }),
 });
 
 export default function peopleReducer(state :Map = INITIAL_STATE, action :Object) {
@@ -47,6 +53,18 @@ export default function peopleReducer(state :Map = INITIAL_STATE, action :Object
           .set('fetchState', RequestStates.SUCCESS)
           .set('profilePicsByEKID', action.value),
         FAILURE: () => state.set('fetchState', RequestStates.FAILURE),
+      });
+    }
+
+    case getRecentIncidents.case(action.type): {
+      return getRecentIncidents.reducer(state, action, {
+        REQUEST: () => state
+          .setIn(['recentIncidentsByEKID', 'fetchState'], RequestStates.PENDING),
+        SUCCESS: () => state
+          .setIn(['recentIncidentsByEKID', 'fetchState'], RequestStates.SUCCESS)
+          .setIn(['recentIncidentsByEKID', 'data'], action.value),
+        FAILURE: () => state
+          .setIn(['recentIncidentsByEKID', 'fetchState'], RequestStates.FAILURE),
       });
     }
 

@@ -12,6 +12,7 @@ import {
   DatePicker,
   Input,
   Label,
+  PaginationToolbar,
   PlusButton,
   SearchResults,
 } from 'lattice-ui-kit';
@@ -59,17 +60,22 @@ const Title = styled.h1`
   margin: 0;
 `;
 
+const MAX_HITS = 20;
+
 const SearchPeopleContainer = () => {
 
-  const searchResults = useSelector((store) => store.getIn(['people', 'peopleSearchResults'], List()));
+  const searchResults = useSelector((store) => store.getIn(['people', 'hits'], List()));
+  const totalHits = useSelector((store) => store.getIn(['people', 'totalHits'], 0));
   const fetchState = useSelector((store) => store.getIn(['people', 'fetchState']));
-  const searchFields = useSelector((store) => store.getIn(['people', 'searchFields']));
+  const searchInputs = useSelector((store) => store.getIn(['people', 'searchInputs']));
   const dispatch = useDispatch();
 
-  const [dob, setDob] = useState(searchFields.get('dob'));
-  const [firstName, setFirstName] = useInput(searchFields.get('firstName'));
-  const [lastName, setLastName] = useInput(searchFields.get('lastName'));
+  const [dob, setDob] = useState(searchInputs.get('dob'));
+  const [page, setPage] = useState(0);
+  const [firstName, setFirstName] = useInput(searchInputs.get('firstName'));
+  const [lastName, setLastName] = useInput(searchInputs.get('lastName'));
 
+  const hasSearched = fetchState !== RequestStates.STANDBY;
   const isLoading = fetchState === RequestStates.PENDING;
 
   const handleNewPerson = () => {
@@ -84,19 +90,32 @@ const SearchPeopleContainer = () => {
     dispatch(goToPath(`${CRISIS_PATH}/1`));
   };
 
-  const handleOnSearch = (e :SyntheticEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    const searchInputs = Map({
+  const dispatchSearch = (start = 0) => {
+    const newSearchInputs = Map({
       lastName,
       firstName,
       dob
     });
 
-    const hasValues = searchInputs.some(isNonEmptyString);
+    const hasValues = newSearchInputs.some(isNonEmptyString);
 
     if (hasValues) {
-      dispatch(searchPeople(searchInputs));
+      dispatch(searchPeople({
+        searchInputs: newSearchInputs,
+        start,
+        maxHits: MAX_HITS
+      }));
     }
+  };
+
+  const handleOnSearch = (e :SyntheticEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    dispatchSearch();
+  };
+
+  const onPageChange = ({ page: newPage, start }) => {
+    dispatchSearch(start);
+    setPage(newPage);
   };
 
   return (
@@ -149,11 +168,19 @@ const SearchPeopleContainer = () => {
             </CardSegment>
           </Card>
           <SearchResults
-              hasSearched={fetchState !== RequestStates.STANDBY}
+              hasSearched={hasSearched}
               isLoading={isLoading}
               resultComponent={PersonResult}
-              results={searchResults}
-              title="Search People" />
+              results={searchResults} />
+          {
+            hasSearched && (
+              <PaginationToolbar
+                  page={page}
+                  count={totalHits}
+                  onPageChange={onPageChange}
+                  rowsPerPage={MAX_HITS} />
+            )
+          }
         </CardStack>
       </ContentWrapper>
     </ContentOuterWrapper>
