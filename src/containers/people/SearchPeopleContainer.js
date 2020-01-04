@@ -111,6 +111,7 @@ const SearchPeopleContainer = () => {
   const handleOnSearch = (e :SyntheticEvent<HTMLButtonElement>) => {
     e.preventDefault();
     dispatchSearch();
+    setPage(0);
   };
 
   const onPageChange = ({ page: newPage, start }) => {
