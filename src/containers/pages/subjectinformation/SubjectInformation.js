@@ -65,7 +65,6 @@ class SubjectInformation extends Component<Props> {
 
   renderInput = (field, disabledIfSelected, width) => {
     const { values, actions } = this.props;
-    const extraProps = width ? { width: `${width}px` } : {};
 
     const onChange = ({ target }) => {
       const { value } = target;
@@ -89,7 +88,7 @@ class SubjectInformation extends Component<Props> {
           disabled={!values.get(SUBJECT_INFORMATION.IS_NEW_PERSON)}
           value={values.get(field)}
           onChange={onChange}
-          {...extraProps} />
+          width={width && `${width}px`} />
     );
   };
 
