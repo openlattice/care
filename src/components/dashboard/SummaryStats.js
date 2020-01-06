@@ -38,32 +38,31 @@ const StatCardRow = styled.div`
 `;
 
 const StatCard = styled.div`
-  height: 100%;
-  width: ${(props) => (props.large ? '300px' : '200px')};
-  margin: 0 10px;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 5px;
+  border: 1px solid #e1e1eb;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  border-radius: 5px;
-  background-color: #ffffff;
-  border: 1px solid #e1e1eb;
-  padding: 30px 0;
-  font-family: 'Open Sans', sans-serif;
   flex-grow: 1;
+  font-family: 'Open Sans', sans-serif;
+  height: 100%;
+  justify-content: center;
+  margin: 0 10px;
+  padding: 30px 0;
+  width: ${(props) => (props.large ? '300px' : '200px')};
 
   h1 {
-    font-size: 24px;
     color: #2e2e34;
-    margin-bottom: 20px;
+    font-size: 24px;
     font-weight: normal;
     margin: 0 0 10px 0;
   }
 
   span:last-child {
+    color: #8e929b;
     font-size: 13px;
     font-weight: 600;
-    color: #8e929b;
     padding: 5px;
     text-align: center;
     text-transform: lowercase;

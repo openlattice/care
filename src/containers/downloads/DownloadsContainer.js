@@ -3,15 +3,17 @@
  */
 
 import React from 'react';
+
 import styled from 'styled-components';
+import { Map } from 'immutable';
+import { Button } from 'lattice-ui-kit';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Map } from 'immutable';
 import type { Dispatch } from 'redux';
 
-import { Button } from 'lattice-ui-kit';
-import DateTimeRange from '../../components/controls/DateTimeRange';
 import { downloadForms } from './DownloadsActionFactory';
+
+import DateTimeRange from '../../components/controls/DateTimeRange';
 
 type Props = {
   downloading :boolean,
@@ -31,15 +33,14 @@ export const DownloadsWrapper = styled.div`
 `;
 
 export const FormWrapper = styled.div`
+  align-items: center;
+  background: #fff;
+  border: solid 1px #e1e1eb;
   display: flex;
   flex-direction: column;
   margin: 30px auto;
   padding: 30px 0;
   width: 100%;
-  background: #fff;
-  align-items: center;
-  width: 100%;
-  border: solid 1px #e1e1eb;
 `;
 
 const ButtonRow = styled.div`

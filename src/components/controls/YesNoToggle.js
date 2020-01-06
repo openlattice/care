@@ -3,12 +3,14 @@
  */
 
 import React from 'react';
-import styled from 'styled-components';
+
+import styled, { css } from 'styled-components';
+
 import {
-  WHITE,
+  GRAY,
   OFF_WHITE,
   PURPLE,
-  GRAY,
+  WHITE,
 } from '../../shared/Colors';
 
 type Props = {
@@ -34,7 +36,6 @@ const ToggleTab = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-
   background-color: ${({ disabled, selected }) => {
     if (disabled && selected) return GRAY;
     return selected ? PURPLE : WHITE;
@@ -57,7 +58,6 @@ const ToggleTab = styled.div`
   &:last-child {
     border-radius: ${(props) => (props.selected ? 0 : '0 3px 3px 0')};
   }
-
 `;
 
 const YesNoToggle = ({ value, onChange, disabled } :Props) => (

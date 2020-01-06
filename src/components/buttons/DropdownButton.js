@@ -24,7 +24,7 @@ const MenuContainer = styled.div`
   border-radius: 3px;
   border: 1px solid ${NEUTRALS[4]};
   bottom: auto;
-  box-shadow: 0 2px 8px -2px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.15);
   display: flex;
   flex-direction: column;
   left: auto;

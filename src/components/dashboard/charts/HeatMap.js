@@ -26,7 +26,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   border-radius: 5px;
-  background-color: #ffffff;
+  background-color: #fff;
   border: 1px solid #e1e1eb;
   padding: 30px;
   margin-top: 20px;
@@ -46,16 +46,15 @@ const Row = styled.div`
 `;
 
 const BaseCell = styled.div`
-  display: flex;
+  align-items: center;
   border-radius: 5px;
-  width: ${(props) => (props.square ? `${props.size}px` : '100%')};
-  height: ${(props) => props.size}px;
-  margin: 2px;
   display: flex;
   flex-direction: row;
+  height: ${(props) => props.size}px;
   justify-content: center;
-  align-items: center;
+  margin: 2px;
   text-align: center;
+  width: ${(props) => (props.square ? `${props.size}px` : '100%')};
 `;
 
 const Label = styled(BaseCell)`

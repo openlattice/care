@@ -1,7 +1,9 @@
 // @flow
 import React, { useEffect } from 'react';
+
 import styled from 'styled-components';
-import { Switch, Redirect } from 'react-router-dom';
+import { faArrowLeft } from '@fortawesome/pro-regular-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Map } from 'immutable';
 import {
   Card,
@@ -9,25 +11,26 @@ import {
   CardStack,
   Stepper,
 } from 'lattice-ui-kit';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft } from '@fortawesome/pro-regular-svg-icons';
+import { Redirect, Switch } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
 import type { Match } from 'react-router';
 import type { Dispatch } from 'redux';
 import type { RequestSequence } from 'redux-reqseq';
 
-import Accordion from '../../../components/accordion';
-import LinkButton from '../../../components/buttons/LinkButton';
 import AboutForm from './about/AboutForm';
-import ContactsForm from './contacts/ContactsForm';
-import ProfileBanner from '../ProfileBanner';
-import NavStep from './NavStep';
-import ResponsePlanForm from './responseplan/ResponsePlanForm';
 import BasicInformationContainer from './basicinformation/BasicInformationContainer';
+import ContactsForm from './contacts/ContactsForm';
+import NavStep from './NavStep';
 import OfficerSafetyContainer from './officersafety/OfficerSafetyContainer';
+import ResponsePlanForm from './responseplan/ResponsePlanForm';
 import { getBasics } from './basicinformation/actions/BasicInformationActions';
-import { getAuthorization } from '../../../core/sagas/authorize/AuthorizeActions';
+
+import Accordion from '../../../components/accordion';
+import IssueDetails from '../../issues/IssueDetails';
+import LinkButton from '../../../components/buttons/LinkButton';
+import PrivateRoute from '../../../components/route/PrivateRoute';
+import ProfileBanner from '../ProfileBanner';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
 import {
   ABOUT_PATH,
@@ -38,15 +41,14 @@ import {
   PROFILE_VIEW_PATH,
   RESPONSE_PLAN_PATH,
 } from '../../../core/router/Routes';
-import PrivateRoute from '../../../components/route/PrivateRoute';
-import IssueDetails from '../../issues/IssueDetails';
+import { getAuthorization } from '../../../core/sagas/authorize/AuthorizeActions';
 import { TITLE_FQN } from '../../../edm/DataModelFqns';
 
 const StickyAccordion = styled(Accordion)`
   position: sticky;
   top: 66px;
   z-index: 200;
-  box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.1), 0 -10px 0px 0 rgba(248, 248, 251, 0.7);
+  box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.1), 0 -10px 0 0 rgba(248, 248, 251, 0.7);
   margin-bottom: 20px;
 `;
 

@@ -22,7 +22,7 @@ const Card = styled.div`
   position: relative;
   width: 100%;
   border-radius: 5px;
-  background-color: #ffffff;
+  background-color: #fff;
   border: 1px solid #e1e1eb;
   padding: 30px;
   margin-top: 20px;
@@ -65,7 +65,7 @@ const ExplainTooltip = styled.div`
   font-family: 'Open Sans', sans-serif;
   font-size: 12px;
   font-weight: 400;
-  color: #ffffff;
+  color: #fff;
   line-height: normal;
   visibility: hidden;
 `;
@@ -130,12 +130,12 @@ const YLabelWrapper = styled.div`
 const YLabel = styled(XLabel)`
   transform: rotate(270deg);
   white-space: nowrap;
-  margin-left: -${(props) => {
+  margin-left: ${(props) => {
     if (props.withMargin) {
-      return 200;
+      return -200;
     }
     if (props.secondary) {
-      return 400;
+      return -400;
     }
     return 0;
   }}%;
