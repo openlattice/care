@@ -3,20 +3,10 @@
  */
 
 import React from 'react';
+import type { Node } from 'react';
+
 import styled from 'styled-components';
 import { Button } from 'lattice-ui-kit';
-
-type Props = {
-  noMargin? :boolean,
-  noOffset? :boolean,
-  title :string,
-  xLabel? :string,
-  yLabel? :string,
-  yLabelRight? :string,
-  downloadFn? :() => void,
-  infoText? :string,
-  children :React.Node
-};
 
 const Card = styled.div`
   position: relative;
@@ -141,6 +131,18 @@ const YLabel = styled(XLabel)`
   }}%;
 `;
 
+type Props = {
+  children :Node;
+  downloadFn ?:() => void;
+  infoText ?:string;
+  noMargin ?:boolean;
+  noOffset ?:boolean;
+  title :string;
+  xLabel ?:string;
+  yLabel ?:string;
+  yLabelRight ?:string;
+};
+
 const ChartWrapper = ({
   downloadFn,
   infoText,
@@ -187,5 +189,15 @@ const ChartWrapper = ({
     }
   </Card>
 );
+
+ChartWrapper.defaultProps = {
+  downloadFn: undefined,
+  infoText: undefined,
+  noMargin: undefined,
+  noOffset: undefined,
+  xLabel: undefined,
+  yLabel: undefined,
+  yLabelRight: undefined,
+};
 
 export default ChartWrapper;

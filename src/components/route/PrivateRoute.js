@@ -1,10 +1,11 @@
 // @flow
 import React from 'react';
-import { Route } from 'react-router-dom';
 import type { ComponentType } from 'react';
 
-import { useAuthorization } from '../hooks';
+import { Route } from 'react-router-dom';
+
 import Unauthorized from '../warnings/Unauthorized';
+import { useAuthorization } from '../hooks';
 
 type Props = {
   authorize :() => any;
@@ -25,6 +26,7 @@ const PrivateRoute = (props :Props) => {
   const [isAuthorized, isLoading] = useAuthorization(feature, authorize);
 
   return (
+    /* eslint-disable react/jsx-props-no-spreading */
     <Route
         {...rest} // eslint-disable-line indent
         render={(ownProps :any) => (
@@ -32,6 +34,7 @@ const PrivateRoute = (props :Props) => {
             ? <Component {...ownProps} />
             : <UnauthorizedComponent isLoading={isLoading} />
         )} />
+    /* eslint-enable */
   );
 };
 

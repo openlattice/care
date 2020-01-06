@@ -3,11 +3,8 @@
  */
 
 import React from 'react';
+
 import styled from 'styled-components';
-import { DateTime } from 'luxon';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { withRouter } from 'react-router';
 import { List, Map } from 'immutable';
 import {
   Checkbox,
@@ -17,32 +14,35 @@ import {
   Radio,
   TextArea
 } from 'lattice-ui-kit';
+import { DateTime } from 'luxon';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router';
+import { bindActionCreators } from 'redux';
 import type { Dispatch } from 'redux';
 
-import { showInvalidFields } from '../../../utils/NavigationUtils';
-import { STATE } from '../../../utils/constants/StateConstants';
-import { DISPOSITION, OTHER } from '../../../utils/constants/CrisisReportConstants';
+import { setInputValue } from './ActionFactory';
 import {
-  OFFICER_TRAINING,
-  DISPOSITIONS,
-  PEOPLE_NOTIFIED,
-  VERBAL_REFERRALS,
-  COURTESY_TRANSPORTS,
   ARRESTABLE_OFFENSES,
-  NO_ACTION_VALUES
+  COURTESY_TRANSPORTS,
+  DISPOSITIONS,
+  NO_ACTION_VALUES,
+  OFFICER_TRAINING,
+  PEOPLE_NOTIFIED,
+  VERBAL_REFERRALS
 } from './Constants';
+import { getInvalidFields } from './Reducer';
 
 import {
-  FormWrapper,
   FormSection,
   FormSectionWithValidation,
+  FormWrapper,
   Header,
   IndentWrapper,
   RequiredField
 } from '../../../components/crisis/FormComponents';
-
-import { getInvalidFields } from './Reducer';
-import { setInputValue } from './ActionFactory';
+import { showInvalidFields } from '../../../utils/NavigationUtils';
+import { DISPOSITION, OTHER } from '../../../utils/constants/CrisisReportConstants';
+import { STATE } from '../../../utils/constants/StateConstants';
 import { SELECT_ALL_THAT_APPLY } from '../constants';
 
 type Props = {
@@ -61,10 +61,9 @@ class Disposition extends React.Component<Props> {
 
   componentDidMount() {
     const { values, actions } = this.props;
-    const { setInputValue } = actions;
 
     if (!values.get(DISPOSITION.INCIDENT_DATE_TIME)) {
-      setInputValue({
+      actions.setInputValue({
         field: DISPOSITION.INCIDENT_DATE_TIME,
         value: DateTime.local().toISO()
       });
@@ -74,12 +73,11 @@ class Disposition extends React.Component<Props> {
 
   render() {
     const { values, actions, disabled } = this.props;
-    const { setInputValue } = actions;
 
     const clearDependentFields = (dependentListFields, dependentStringFields, dependentBoolFields) => {
       if (dependentListFields) {
         dependentListFields.forEach((dependentListField) => {
-          setInputValue({
+          actions.setInputValue({
             field: dependentListField,
             value: List()
           });
@@ -297,7 +295,9 @@ class Disposition extends React.Component<Props> {
             hasDisposition(DISPOSITIONS.HOSPITAL)
             && (
               <IndentWrapper>
-                <FormSectionWithValidation noMargin invalid={invalidFields.includes(DISPOSITION.WAS_VOLUNTARY_TRANSPORT)}>
+                <FormSectionWithValidation
+                    noMargin
+                    invalid={invalidFields.includes(DISPOSITION.WAS_VOLUNTARY_TRANSPORT)}>
                   {renderRadio(DISPOSITION.WAS_VOLUNTARY_TRANSPORT, true, 'Voluntary')}
                   {renderRadio(DISPOSITION.WAS_VOLUNTARY_TRANSPORT, false, 'Involuntary')}
                 </FormSectionWithValidation>
@@ -395,8 +395,8 @@ const mapStateToProps = (state :Map) => ({
 });
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
-    actions: bindActionCreators({ setInputValue }, dispatch)
-  });
+  actions: bindActionCreators({ setInputValue }, dispatch)
+});
 
 // $FlowFixMe
 export default withRouter(

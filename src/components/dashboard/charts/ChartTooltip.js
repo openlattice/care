@@ -1,4 +1,8 @@
+// @flow
+
 import React from 'react';
+import type { Node } from 'react';
+
 import styled from 'styled-components';
 
 const TooltipCard = styled.div`
@@ -20,7 +24,11 @@ const TooltipCard = styled.div`
   }
 `;
 
-const ChartTooltip = ({ children }) => (
+type Props = {
+  children :Node;
+}
+
+const ChartTooltip = ({ children } :Props) => (
   <TooltipCard>
     {children}
   </TooltipCard>

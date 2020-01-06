@@ -5,18 +5,16 @@ import { RequestStates } from 'redux-reqseq';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
-  CLEAR_ISSUES,
-  clearIssues,
   getAllIssues,
   getMyOpenIssues,
   getReportedByMe,
 } from './IssuesActions';
-
 import {
   selectIssue,
-  updateIssue,
   setIssueStatus,
+  updateIssue,
 } from './issue/IssueActions';
+
 import { OPENLATTICE_ID_FQN } from '../../edm/DataModelFqns';
 
 const INITIAL_STATE :Map = fromJS({

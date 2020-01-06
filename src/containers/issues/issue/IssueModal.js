@@ -1,9 +1,10 @@
 // @flow
 import React, { useCallback, useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
+
 import { Map } from 'immutable';
-import { RequestStates } from 'redux-reqseq';
 import { ActionModal } from 'lattice-ui-kit';
+import { useSelector } from 'react-redux';
+import { RequestStates } from 'redux-reqseq';
 import type { RequestState } from 'redux-reqseq';
 
 import IssueForm from './IssueForm';
@@ -85,6 +86,8 @@ const IssueModal = (props :Props) => {
 
 IssueModal.defaultProps = {
   defaultComponent: '',
+  edit: false,
+  issue: Map()
 };
 
 export default React.memo<Props>(IssueModal);
