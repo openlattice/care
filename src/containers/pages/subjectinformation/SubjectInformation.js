@@ -222,13 +222,10 @@ class SubjectInformation extends Component<Props> {
   }
 }
 
-const mapStateToProps = (state :Map) => {
-
-  return {
-    app: state.get('app', Map()),
-    values: state.get(STATE.SUBJECT_INFORMATION),
-  };
-};
+const mapStateToProps = (state :Map) => ({
+  app: state.get('app', Map()),
+  values: state.get(STATE.SUBJECT_INFORMATION),
+});
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({

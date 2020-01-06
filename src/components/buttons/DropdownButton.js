@@ -1,6 +1,7 @@
 // @flow
 
 import React, { Component } from 'react';
+
 import styled from 'styled-components';
 import { faChevronDown } from '@fortawesome/pro-light-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -111,7 +112,11 @@ class DropdownButton extends Component<Props, State> {
         { open && (
           <MenuContainer offset={size}>
             {options.map((option) => (
-              <button key={option.label} onClick={this.closeDropdown} onMouseDown={option.onClick}>
+              <button
+                  type="button"
+                  key={option.label}
+                  onClick={this.closeDropdown}
+                  onMouseDown={option.onClick}>
                 {option.label}
               </button>
             ))}
@@ -120,6 +125,6 @@ class DropdownButton extends Component<Props, State> {
       </DropdownButtonWrapper>
     );
   }
-};
+}
 
 export default DropdownButton;

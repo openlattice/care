@@ -13,9 +13,7 @@ const PremiumProfileRouter = () => {
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    return () => dispatch(clearProfile());
-  }, [dispatch]);
+  useEffect(() => () => dispatch(clearProfile()), [dispatch]);
 
   return (
     <Switch>
