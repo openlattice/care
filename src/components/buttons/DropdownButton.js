@@ -82,7 +82,8 @@ class DropdownButton extends Component<Props, State> {
 
   toggleDropdown = (e :SyntheticEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    this.setState({ open: !this.state.open });
+    const { open } = this.state;
+    this.setState({ open: !open });
   };
 
   closeDropdown = (e :SyntheticEvent<HTMLButtonElement>) => {

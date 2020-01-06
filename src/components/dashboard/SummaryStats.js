@@ -3,6 +3,7 @@
  */
 
 import React from 'react';
+
 import styled from 'styled-components';
 import { Map } from 'immutable';
 
@@ -86,7 +87,7 @@ const SummaryStats = ({ interval, summaryStats } :Props) => {
 
   const formattedAge = Math.floor(summaryStats.get(SUMMARY_STATS.AVG_AGE) * 100) / 100;
 
-  const formatLabel = (num) => `${num} (${Math.floor(num / numReports * 1000) / 10}%)`;
+  const formatLabel = (num) => `${num} (${Math.floor((num / numReports) * 1000) / 10}%)`;
 
   return (
     <SummaryStatsWrapper>

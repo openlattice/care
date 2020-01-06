@@ -1,4 +1,7 @@
+// @flow
+
 import React from 'react';
+
 import styled from 'styled-components';
 import { Map } from 'immutable';
 import {
@@ -48,6 +51,17 @@ const tooltip = (counted, { title, formatAsString }, { label, payload }, optiona
   );
 };
 
+type Props = {
+  dashboardCounts :Map;
+  height ?:number;
+  title :string;
+  color :string;
+  countKey :string;
+  numItems :any;
+  isNumeric ?:boolean;
+  vertical ?:boolean;
+};
+
 const SimpleBarChart = ({
   dashboardCounts,
   height,
@@ -57,7 +71,7 @@ const SimpleBarChart = ({
   numItems,
   isNumeric,
   vertical
-}) => {
+} :Props) => {
   const countMap = dashboardCounts.get(countKey, Map());
   const items = numItems || 3;
   const width = 1080 / items;
@@ -81,6 +95,7 @@ const SimpleBarChart = ({
   const yLabel = vertical ? '' : '#consumers';
   const xLabel = vertical ? '#consumers' : '';
 
+  /* eslint-disable react/jsx-props-no-spreading */
   return (
     <FractionWidthContainer items={items}>
       <ChartWrapper title={title} yLabel={yLabel} xLabel={xLabel} noOffset={vertical}>
@@ -93,6 +108,12 @@ const SimpleBarChart = ({
       </ChartWrapper>
     </FractionWidthContainer>
   );
+};
+
+SimpleBarChart.defaultProps = {
+  height: undefined,
+  isNumeric: false,
+  vertical: false,
 };
 
 export default SimpleBarChart;

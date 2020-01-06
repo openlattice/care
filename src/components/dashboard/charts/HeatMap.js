@@ -3,6 +3,7 @@
  */
 
 import React from 'react';
+
 import styled from 'styled-components';
 import { Map } from 'immutable';
 
@@ -11,9 +12,9 @@ import { HEATMAP_COLORS } from '../../../utils/Colors';
 type Props = {
   title :string,
   colValues :string[],
-  colHeaderFormatter? :(colValue :Object) => string,
+  colHeaderFormatter :(colValue :Object) => string,
   rowHeaders :string[],
-  rowHeaderFormatter? :(colValue :Object) => string,
+  rowHeaderFormatter :(colValue :Object) => string,
   cellSize :number,
   counts :Map,
   withContent? :boolean,
@@ -204,7 +205,7 @@ const HeatMap = ({
         <LegendItem key={`legend|${index}`}>
           <LegendColor color={color} />
           <span>
-&ge;
+            &ge;
             {getLegendValue(index)}
           </span>
         </LegendItem>

@@ -1,13 +1,13 @@
 // @flow
 import React, { Component } from 'react';
+import type { ComponentType, Node } from 'react';
+
 import styled from 'styled-components';
 import { faChevronDown, faChevronUp } from '@fortawesome/pro-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, CardSegment } from 'lattice-ui-kit';
-import type { Node, ComponentType } from 'react';
 
 import AccordionHeader from './AccordionHeader';
-import { groupNeighborsByEntitySetIds } from '../../utils/DataUtils';
 
 const AccordionWrapper = styled(CardSegment)`
   display: flex;
