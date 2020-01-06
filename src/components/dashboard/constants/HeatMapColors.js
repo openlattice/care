@@ -1,4 +1,4 @@
-export const HEATMAP_COLORS = [
+export default [
   '#feffd9',
   '#edf8b1',
   '#c7e9b4',
