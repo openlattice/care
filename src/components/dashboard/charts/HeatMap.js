@@ -3,17 +3,18 @@
  */
 
 import React from 'react';
-import styled from 'styled-components';
+
+import styled, { css } from 'styled-components';
 import { Map } from 'immutable';
 
-import { HEATMAP_COLORS } from '../../../utils/Colors';
+import HEATMAP_COLORS from '../constants/HeatMapColors';
 
 type Props = {
   title :string,
   colValues :string[],
-  colHeaderFormatter? :(colValue :Object) => string,
+  colHeaderFormatter :(colValue :Object) => string,
   rowHeaders :string[],
-  rowHeaderFormatter? :(colValue :Object) => string,
+  rowHeaderFormatter :(colValue :Object) => string,
   cellSize :number,
   counts :Map,
   withContent? :boolean,
@@ -65,11 +66,13 @@ const Label = styled(BaseCell)`
   word-break: break-word;
 `;
 
-const Cell = styled(BaseCell).attrs({
-  style: ({ color }) => ({
-    backgroundColor: color
-  })
-})``;
+const backgroundColorStyle = css`
+  background-color: ${(props) => props.color};
+`;
+
+const Cell = styled(BaseCell)`
+  ${backgroundColorStyle}
+`;
 
 const LegendWrapper = styled.div`
   margin: 20px 0;
@@ -95,13 +98,10 @@ const LegendItem = styled.div`
   }
 `;
 
-const LegendColor = styled.div.attrs({
-  style: ({ color }) => ({
-    backgroundColor: color
-  })
-})`
+const LegendColor = styled.div`
   width: 100%;
   height: 20px;
+  ${backgroundColorStyle}
 `;
 
 const getNHeatmapColors = (num) => {
@@ -201,10 +201,10 @@ const HeatMap = ({
   const renderLegend = () => (
     <LegendWrapper>
       {heatmapColors.map((color, index) => (
-        <LegendItem key={`legend|${index}`}>
+        <LegendItem key={`legend|${color}`}>
           <LegendColor color={color} />
           <span>
-&ge;
+            &ge;
             {getLegendValue(index)}
           </span>
         </LegendItem>

@@ -42,8 +42,8 @@ type Props = {
   assignee :Map;
   currentUser :Map;
   defaultComponent ? :string;
-  edit ?:boolean;
-  issue ?:Map;
+  edit ? :boolean;
+  issue :Map;
   person :Map;
 };
 
@@ -60,7 +60,8 @@ const IssueForm = (props :Props, ref) => {
   const responsibleUsers :List<Map> = useSelector((store :Map) => store.getIn(['staff', 'responsibleUsers', 'data']));
   const entitySetIds :Map = useSelector((store :Map) => store.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
   const propertyTypeIds :Map = useSelector((store :Map) => store.getIn(['edm', 'fqnToIdMap'], Map()));
-  const entityIndexToIdMap :Map = useSelector((store :Map) => store.getIn(['issues', 'issue', 'entityIndexToIdMap'], Map()));
+  const entityIndexToIdMap :Map = useSelector((store :Map) => store
+    .getIn(['issues', 'issue', 'entityIndexToIdMap'], Map()));
 
   const [changeSchema, setSchema] = useState(schema);
   const dispatch = useDispatch();

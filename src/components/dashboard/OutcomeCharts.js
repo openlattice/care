@@ -3,11 +3,13 @@
  */
 
 import React from 'react';
+
 import styled from 'styled-components';
 import { List, Map } from 'immutable';
 
-import SimpleBarChart from './charts/SimpleBarChart';
 import HeatMap from './charts/HeatMap';
+import SimpleBarChart from './charts/SimpleBarChart';
+
 import { DASHBOARD_COUNTS } from '../../shared/Consts';
 
 const OutcomeChartsWrapper = styled.div`

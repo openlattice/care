@@ -1,9 +1,11 @@
 // @flow
 import React, { Component } from 'react';
-import styled from 'styled-components';
+
 import isPlainObject from 'lodash/isPlainObject';
+import styled from 'styled-components';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 import { fullLineSkeleton } from '../../skeletons';
 
 const DetailWrapper = styled.div`

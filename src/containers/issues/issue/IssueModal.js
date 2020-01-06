@@ -86,6 +86,8 @@ const IssueModal = (props :Props) => {
 
 IssueModal.defaultProps = {
   defaultComponent: '',
+  edit: false,
+  issue: Map()
 };
 
 export default React.memo<Props>(IssueModal);

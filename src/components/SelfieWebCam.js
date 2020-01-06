@@ -148,6 +148,8 @@ class SelfieWebCam extends React.Component<Props, State> {
 
   componentDidMount() {
 
+    const { hasMedia } = this.state;
+
     const mediaSupport :boolean = !!(
       navigator.getUserMedia
       || navigator.webkitGetUserMedia
@@ -160,7 +162,7 @@ class SelfieWebCam extends React.Component<Props, State> {
       return;
     }
 
-    if (!this.state.hasMedia) {
+    if (!hasMedia) {
       this.requestUserMedia();
     }
   }
@@ -225,8 +227,10 @@ class SelfieWebCam extends React.Component<Props, State> {
   handleOnClickCapture = () => {
 
     const { video } = this;
+    const { hasMedia, selfieSource } = this.state;
+    const { onSelfieCapture } = this.props;
 
-    if (!this.state.hasMedia || !video || this.state.selfieSource) {
+    if (!hasMedia || !video || selfieSource) {
       return;
     }
 
@@ -244,11 +248,11 @@ class SelfieWebCam extends React.Component<Props, State> {
 
     if (canvas && canvasCtx) {
       canvasCtx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      const selfieSource :string = canvas.toDataURL();
-      this.setState({ selfieSource });
+      const canvasDataUrl :string = canvas.toDataURL();
+      this.setState({ selfieSource: canvasDataUrl });
 
       // TODO: there's probably a better way of stripping the beginning of the data url
-      this.props.onSelfieCapture(selfieSource.slice(DATA_URL_PREFIX.length));
+      onSelfieCapture(canvasDataUrl.slice(DATA_URL_PREFIX.length));
     }
   }
 
@@ -260,12 +264,17 @@ class SelfieWebCam extends React.Component<Props, State> {
   }
 
   render() {
+    const {
+      hasMedia,
+      selfieSource,
+      videoSource,
+    } = this.state;
 
-    if (!this.state.hasMedia) {
+    if (!hasMedia) {
       return null;
     }
 
-    const selfieCaptured :boolean = !!this.state.selfieSource;
+    const selfieCaptured :boolean = !!selfieSource;
 
     return (
       <OuterWrapper>
@@ -276,14 +285,14 @@ class SelfieWebCam extends React.Component<Props, State> {
               height={450}
               width={600}
               isVisible={!selfieCaptured}
-              src={this.state.videoSource}
+              src={videoSource}
               ref={(element) => {
                 this.video = element;
               }} />
           <StyledImageElement
               alt="selfie"
               isVisible={selfieCaptured}
-              src={this.state.selfieSource} />
+              src={selfieSource} />
           <ControlsWrapper>
             <ResetIcon isActive={selfieCaptured} onClick={this.handleOnClickReset}>
               <FontAwesomeIcon icon={faSyncAlt} />

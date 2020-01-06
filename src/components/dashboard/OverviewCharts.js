@@ -3,10 +3,10 @@
  */
 
 import React from 'react';
-import styled from 'styled-components';
-import { DateTime } from 'luxon';
-import { Map } from 'immutable';
 
+import styled from 'styled-components';
+import { Map } from 'immutable';
+import { DateTime } from 'luxon';
 import {
   Line,
   LineChart,
@@ -15,10 +15,11 @@ import {
   YAxis
 } from 'recharts';
 
-import ChartWrapper from './charts/ChartWrapper';
 import ChartTooltip from './charts/ChartTooltip';
-import SimpleBarChart from './charts/SimpleBarChart';
+import ChartWrapper from './charts/ChartWrapper';
 import DayAndTimeHeatMap from './charts/DayAndTimeHeatMap';
+import SimpleBarChart from './charts/SimpleBarChart';
+
 import { DASHBOARD_COUNTS } from '../../shared/Consts';
 
 const OverviewChartsWrapper = styled.div`
@@ -163,7 +164,7 @@ const OverviewCharts = ({ dashboardCounts, months } :Props) => {
     }
   };
 
-  const renderBarChart = (title, color, countKey, isNumeric, isVertical) => (
+  const renderBarChart = (title, color, countKey, isNumeric = false, isVertical = false) => (
     <SimpleBarChart
         vertical={isVertical}
         isNumeric={isNumeric}

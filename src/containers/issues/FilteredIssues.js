@@ -144,16 +144,14 @@ const FilteredIssues = () => {
         <Aside>
           <StyledLabel subtle>Filters</StyledLabel>
           {
-            Object.values(ISSUE_FILTERS).map((filterValue :any) => {
-              return (
-                <IssueFilter
-                    key={filterValue}
-                    active={activeFilter === filterValue}
-                    onClick={() => setActiveFilter(filterValue)}>
-                  {filterValue}
-                </IssueFilter>
-              );
-            })
+            Object.values(ISSUE_FILTERS).map((filterValue :any) => (
+              <IssueFilter
+                  key={filterValue}
+                  active={activeFilter === filterValue}
+                  onClick={() => setActiveFilter(filterValue)}>
+                {filterValue}
+              </IssueFilter>
+            ))
           }
         </Aside>
         <Main>
