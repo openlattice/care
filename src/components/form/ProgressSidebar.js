@@ -3,19 +3,19 @@
  */
 
 import React from 'react';
+
 import styled, { css } from 'styled-components';
 
-import { FORM_STEP_STATUS } from '../../utils/constants/FormConstants';
+import { MEDIA_QUERY_LG, MEDIA_QUERY_MD } from '../../core/style/Sizes';
 import {
-  WHITE,
+  GREEN,
   OFF_WHITE,
   PURPLE,
-  GREEN
+  WHITE
 } from '../../shared/Colors';
-import { APP_CONTAINER_WIDTH, MEDIA_QUERY_MD, MEDIA_QUERY_LG } from '../../core/style/Sizes';
+import { FORM_STEP_STATUS } from '../../utils/constants/FormConstants';
 
 const {
-  INITIAL,
   IN_PROGRESS,
   COMPLETED
 } = FORM_STEP_STATUS;

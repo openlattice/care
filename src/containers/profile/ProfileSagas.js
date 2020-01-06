@@ -1,6 +1,5 @@
 // @flow
 import isPlainObject from 'lodash/isPlainObject';
-import { DateTime } from 'luxon';
 import {
   all,
   call,
@@ -14,18 +13,16 @@ import {
   Map,
   fromJS
 } from 'immutable';
+import { Models, Types } from 'lattice';
 import {
-  SearchApiActions,
-  SearchApiSagas,
   DataApiActions,
   DataApiSagas,
+  SearchApiActions,
+  SearchApiSagas,
 } from 'lattice-sagas';
-import { Models, Types } from 'lattice';
-
+import { DateTime } from 'luxon';
 import type { SequenceAction } from 'redux-reqseq';
 
-import Logger from '../../utils/Logger';
-import { personFqnsByName, physicalAppearanceFqnsByName } from './constants';
 import {
   GET_PERSON_DATA,
   GET_PHYSICAL_APPEARANCE,
@@ -38,13 +35,16 @@ import {
   updatePhysicalAppearance,
   updateProfileAbout,
 } from './ProfileActions';
-import { getESIDFromApp } from '../../utils/AppUtils';
+import { personFqnsByName, physicalAppearanceFqnsByName } from './constants';
+
+import Logger from '../../utils/Logger';
+import * as FQN from '../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
+import { getESIDFromApp } from '../../utils/AppUtils';
+import { simulateResponseData } from '../../utils/DataUtils';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
 import { isDefined } from '../../utils/LangUtils';
 import { isValidUuid } from '../../utils/Utils';
-import { simulateResponseData } from '../../utils/DataUtils';
-import * as FQN from '../../edm/DataModelFqns';
 
 const LOG = new Logger('ProfileSagas');
 
@@ -255,7 +255,11 @@ function* createPhysicalAppearanceWorker(action :SequenceAction) :Generator<any,
       0
     ]);
 
-    const newPhysicalAppearance = simulateResponseData(fromJS(appearanceProperties), createdAppearanceEKID, propertyTypesById);
+    const newPhysicalAppearance = simulateResponseData(
+      fromJS(appearanceProperties),
+      createdAppearanceEKID,
+      propertyTypesById
+    );
     response.data = newPhysicalAppearance;
 
     yield put(createPhysicalAppearance.success(action.id, newPhysicalAppearance));
@@ -294,7 +298,11 @@ function* updatePhysicalAppearanceWorker(action :SequenceAction) :Generator<any,
 
     if (updateResponse.error) throw updateResponse.error;
 
-    const updatedPhysicalAppearance = simulateResponseData(fromJS(appearanceProperties), appearanceEKID, propertyTypesById);
+    const updatedPhysicalAppearance = simulateResponseData(
+      fromJS(appearanceProperties),
+      appearanceEKID,
+      propertyTypesById
+    );
     response.data = updatedPhysicalAppearance;
 
     yield put(updatePhysicalAppearance.success(action.id, updatedPhysicalAppearance));
@@ -307,7 +315,7 @@ function* updatePhysicalAppearanceWorker(action :SequenceAction) :Generator<any,
   return response;
 }
 
-const getUpdatedPropertiesByName = (data, fqnsByName, fqnToIdMap) :Object => {
+const getUpdatedPropertiesByName = (data, fqnsByName :any, fqnToIdMap) :Object => {
   const updatedProperties = {};
   Object.keys(fqnsByName).forEach((name) => {
     const fqn = fqnsByName[name];

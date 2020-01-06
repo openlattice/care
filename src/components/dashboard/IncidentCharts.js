@@ -3,9 +3,9 @@
  */
 
 import React from 'react';
+
 import styled from 'styled-components';
 import { Map, Set } from 'immutable';
-
 import {
   Bar,
   BarChart,
@@ -15,9 +15,10 @@ import {
   YAxis
 } from 'recharts';
 
-import ChartWrapper from './charts/ChartWrapper';
 import ChartTooltip from './charts/ChartTooltip';
+import ChartWrapper from './charts/ChartWrapper';
 import SimpleBarChart from './charts/SimpleBarChart';
+
 import { DASHBOARD_COUNTS } from '../../shared/Consts';
 
 const Wrapper = styled.div`

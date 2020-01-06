@@ -1,4 +1,6 @@
+// @flow
 import React from 'react';
+
 import styled from 'styled-components';
 
 const Tick = styled.text`
@@ -11,7 +13,7 @@ const Tick = styled.text`
 
 const MAX_CHARS_PER_LINE = 11;
 
-const splitText = (text) => {
+const splitText = (text :string) => {
   const lines = [];
   let currStr = '';
   text
@@ -44,7 +46,12 @@ const splitText = (text) => {
   return lines;
 };
 
-const CustomTick = ({ payload, y, index }) => {
+type Props = {
+  payload :{ value :string };
+  y :number;
+};
+
+const CustomTick = ({ payload, y } :Props) => {
   const { value } = payload;
 
   const lines = splitText(value);

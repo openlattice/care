@@ -1,6 +1,6 @@
 // @flow
 import React, { useCallback } from 'react';
-import { Map } from 'immutable';
+
 import styled from 'styled-components';
 import {
   faDownload,
@@ -10,24 +10,23 @@ import {
   faQuestionCircle,
   faSignOut,
   faUserChart,
-  faUsers,
 } from '@fortawesome/pro-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { NavLink } from 'react-router-dom';
+import { Map } from 'immutable';
 import { AppHeaderWrapper, AppNavigationWrapper } from 'lattice-ui-kit';
+import { NavLink } from 'react-router-dom';
 
 import OpenLatticeLogo from '../../assets/images/logo_v2.png';
 import { useOrganization } from '../../components/hooks';
-import { media } from '../../utils/StyleUtils';
 import {
   DASHBOARD_PATH,
   DOWNLOADS_PATH,
   HOME_PATH,
-  LOGOUT_PATH,
-  PROFILE_PATH,
-  REPORTS_PATH,
   ISSUES_PATH,
+  LOGOUT_PATH,
+  REPORTS_PATH,
 } from '../../core/router/Routes';
+import { media } from '../../utils/StyleUtils';
 
 const StyledAppHeaderWrapper = styled(AppHeaderWrapper)`
   > div {
