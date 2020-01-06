@@ -226,7 +226,7 @@ class SelfieWebCam extends React.Component<Props, State> {
 
   handleOnClickCapture = () => {
 
-    const { video } = this;
+    const { canvas, canvasCtx, video } = this;
     const { hasMedia, selfieSource } = this.state;
     const { onSelfieCapture } = this.props;
 
@@ -242,9 +242,6 @@ class SelfieWebCam extends React.Component<Props, State> {
       this.canvas = newCanvas;
       this.canvasCtx = newCanvas.getContext('2d');
     }
-
-    const { canvas } = this;
-    const { canvasCtx } = this;
 
     if (canvas && canvasCtx) {
       canvasCtx.drawImage(video, 0, 0, canvas.width, canvas.height);
