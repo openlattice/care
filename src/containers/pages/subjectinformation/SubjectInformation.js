@@ -44,7 +44,6 @@ type Props = {
     setInputValue :(value :{ field :string, value :Object }) => void,
     setInputValues :(values :{}) => void,
   },
-  app :Map,
   className :string;
   disabled :boolean;
   values :Map,
