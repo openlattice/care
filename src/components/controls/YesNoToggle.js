@@ -4,7 +4,7 @@
 
 import React from 'react';
 
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import {
   GRAY,
@@ -28,6 +28,16 @@ const ToggleWrapper = styled.div`
   width: 130px;
 `;
 
+const getBackgroundColor = ({ disabled, selected } :any) => {
+  if (disabled && selected) return GRAY;
+  return selected ? PURPLE : WHITE;
+};
+
+const getColor = ({ disabled, selected } :any) => {
+  if (selected) return WHITE;
+  return (disabled) ? GRAY : PURPLE;
+};
+
 const ToggleTab = styled.div`
   width: 50%;
   height: 100%;
@@ -36,14 +46,8 @@ const ToggleTab = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  background-color: ${({ disabled, selected }) => {
-    if (disabled && selected) return GRAY;
-    return selected ? PURPLE : WHITE;
-  }};
-  color: ${({ disabled, selected }) => {
-    if (selected) return WHITE;
-    return (disabled) ? GRAY : PURPLE;
-  }};
+  background-color: ${getBackgroundColor};
+  color: ${getColor};
   pointer-events: ${(props) => (props.disabled ? 'none' : 'auto')};
 
   &:hover {

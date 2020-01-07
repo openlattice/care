@@ -117,18 +117,20 @@ const YLabelWrapper = styled.div`
   align-items: center;
 `;
 
+const getMarginLeft = ({ secondary, withMargin } :any) => {
+  if (withMargin) {
+    return '-200%';
+  }
+  if (secondary) {
+    return '-400%';
+  }
+  return '0%';
+};
+
 const YLabel = styled(XLabel)`
   transform: rotate(270deg);
   white-space: nowrap;
-  margin-left: ${(props) => {
-    if (props.withMargin) {
-      return -200;
-    }
-    if (props.secondary) {
-      return -400;
-    }
-    return 0;
-  }}%;
+  margin-left: ${getMarginLeft};
 `;
 
 type Props = {
