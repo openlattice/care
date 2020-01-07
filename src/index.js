@@ -32,7 +32,6 @@ const NormalizeCSS = createGlobalStyle`
 `;
 
 const GlobalStyle = createGlobalStyle`
-
   html,
   body {
     background-color: ${WHITE};

@@ -1,37 +1,38 @@
 // @flow
 
 import React from 'react';
+
 import styled from 'styled-components';
-import { DateTime } from 'luxon';
+import { faUserHardHat } from '@fortawesome/pro-regular-svg-icons';
 import {
-  Card,
-  CardSegment,
-  CardHeader,
-  Label,
-} from 'lattice-ui-kit';
-import { Map } from 'immutable';
-import {
+  faClawMarks,
   faEye,
   faRulerVertical,
   faUser,
   faVenusMars,
-  faWeightHanging,
-  faClawMarks
+  faWeightHanging
 } from '@fortawesome/pro-solid-svg-icons';
-import { faUserHardHat } from '@fortawesome/pro-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Map } from 'immutable';
+import {
+  Card,
+  CardHeader,
+  CardSegment,
+  Label,
+} from 'lattice-ui-kit';
+import { DateTime } from 'luxon';
 import { withRouter } from 'react-router-dom';
 import type { Match } from 'react-router-dom';
 
 import Detail from '../../../components/premium/styled/Detail';
 import EditLinkButton from '../../../components/buttons/EditLinkButton';
 import NewIssueButton from '../../../components/buttons/CreateIssueButton';
+import * as FQN from '../../../edm/DataModelFqns';
+import { H1, HeaderActions, IconWrapper } from '../../../components/layout';
+import { BASIC_PATH, EDIT_PATH } from '../../../core/router/Routes';
 import { inchesToFeetString } from '../../../utils/DataUtils';
 import { getLastFirstMiFromPerson } from '../../../utils/PersonUtils';
-import { BASIC_PATH, EDIT_PATH } from '../../../core/router/Routes';
-import { H1, HeaderActions, IconWrapper } from '../../../components/layout';
 import { CATEGORIES } from '../../issues/issue/constants';
-import * as FQN from '../../../edm/DataModelFqns';
 
 const { BASIC_INFORMATION } = CATEGORIES;
 
@@ -52,7 +53,7 @@ const IntroGrid = styled.div`
   > div:nth-child(-n + 2),
   > div:last-child {
     grid-column: auto / span 2;
-  };
+  }
 `;
 
 type Props = {

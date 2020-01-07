@@ -8,11 +8,16 @@ import { Link, matchPath, withRouter } from 'react-router-dom';
 import type { Location } from 'react-router-dom';
 
 const StyledLink = styled(Link)`
+  color: inherit;
   text-decoration: none;
-  &:focus, &:hover, &:visited, &:link, &:active {
+
+  &:focus,
+  &:hover,
+  &:visited,
+  &:link,
+  &:active {
     text-decoration: none;
   }
-  color: inherit;
 `;
 
 type Props = {
