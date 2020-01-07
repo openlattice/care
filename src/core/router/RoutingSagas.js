@@ -5,15 +5,15 @@
 import { put, takeEvery } from '@redux-saga/core/effects';
 import { push } from 'connected-react-router';
 
-import Logger from '../../utils/Logger';
-import { ERR_INVALID_ROUTE } from '../../utils/Errors';
 import {
-  GO_TO_ROOT,
   GO_TO_PATH,
+  GO_TO_ROOT,
   routingFailure,
 } from './RoutingActions';
-
 import type { RoutingAction } from './RoutingActions';
+
+import Logger from '../../utils/Logger';
+import { ERR_INVALID_ROUTE } from '../../utils/Errors';
 
 const LOG = new Logger('RoutingSagas');
 
