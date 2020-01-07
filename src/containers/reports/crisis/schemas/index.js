@@ -1,4 +1,5 @@
 import { schema as behaviorSchema, uiSchema as behaviorUiSchema } from './BehaviorSchemas';
+import { schema as dispositionSchema, uiSchema as dispositionUiSchema } from './DispositionSchemas';
 import {
   schema as housingAndEmploymentSchema,
   uiSchema as housingAndEmploymentUiSchema
@@ -17,6 +18,7 @@ const schemas = [
   threatSchema,
   housingAndEmploymentSchema,
   insuranceSchema,
+  dispositionSchema,
 ];
 
 const uiSchemas = [
@@ -27,6 +29,7 @@ const uiSchemas = [
   threatUiSchema,
   housingAndEmploymentUiSchema,
   insuranceUiSchema,
+  dispositionUiSchema,
 ];
 
 const xSchemas = {
@@ -37,6 +40,7 @@ const xSchemas = {
   threat: threatSchema,
   housingAndEmployment: housingAndEmploymentSchema,
   insurance: insuranceSchema,
+  disposition: dispositionSchema,
 };
 
 const xUiSchemas = {
@@ -47,6 +51,7 @@ const xUiSchemas = {
   threat: threatUiSchema,
   housingAndEmployment: housingAndEmploymentUiSchema,
   insurance: insuranceUiSchema,
+  disposition: dispositionUiSchema,
 };
 
 export {

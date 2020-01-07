@@ -44,6 +44,10 @@ const ActionRow = styled.div`
   padding: 0 30px 30px 30px;
 `;
 
+const ReviewBody = styled.div`
+  padding: 30px 30px 30px;
+`;
+
 const onPageChange = (page, formData) => console.log(page, formData);
 
 const XStateCrisisReportContainer = () => {
@@ -58,35 +62,42 @@ const XStateCrisisReportContainer = () => {
                 onPageChange={onPageChange}
                 render={({
                   formRef,
-                  machineState,
                   pagedData,
                   page,
                   onBack,
                   onNext,
                   validateAndSubmit,
                 }) => {
-                  const { context } = machineState;
-                  console.log(context);
-
-                  const totalPages = 6;
-                  const isLastPage = page === totalPages - 1;
 
                   const isInitialPage = page === crisisMachine.initialState.value;
                   const isReviewPage = page === 'review';
 
-                  const handleNext = isLastPage
+                  const handleNext = isReviewPage
                     ? () => console.log(pagedData)
                     : validateAndSubmit;
 
                   return (
                     <>
-                      <Form
+                      {
+                        isReviewPage
+                          ? <ReviewBody>{JSON.stringify(pagedData, true, 2)}</ReviewBody>
+                          : (
+                            <Form
+                                formData={pagedData}
+                                hideSubmit
+                                onSubmit={onNext}
+                                ref={formRef}
+                                schema={xSchemas[page]}
+                                uiSchema={xUiSchemas[page]} />
+                          )
+                      }
+                      {/* <Form
                           formData={pagedData}
                           hideSubmit
                           onSubmit={onNext}
                           ref={formRef}
                           schema={xSchemas[page]}
-                          uiSchema={xUiSchemas[page]} />
+                          uiSchema={xUiSchemas[page]} /> */}
                       <ActionRow>
                         <Button
                             disabled={isInitialPage}

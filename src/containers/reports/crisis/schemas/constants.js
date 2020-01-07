@@ -1,11 +1,12 @@
 const BEHAVIORS = [
-  'Belligerent / Uncooperative',
+  'Belligerent',
   'Bizzare, unusual behavior',
-  'Disorientation / Confusion',
-  'Disorganized speech / Communication',
-  'Disorderly / Disruptive',
-  'Hallucinations / Delusions',
-  'Hopeless / Depressed',
+  'Disorientation',
+  'Disorganized speech',
+  'Disorderly',
+  'Delusions',
+  'Hallucinations',
+  'Depressed',
   'Mania',
   'Neglect of self care',
   'Out of touch with reality',
@@ -34,10 +35,22 @@ const DRUGS_ALCOHOL = [
   'Unknown',
 ];
 
+const YES = 'Yes';
+const NO = 'No';
+const UNKNOWN = 'Unknown';
+const NA = 'N/A';
+
+
 const YES_NO_UNKNOWN = [
-  'Yes',
-  'No',
-  'Unknown'
+  YES,
+  NO,
+  UNKNOWN,
+];
+
+const YES_NO_NA = [
+  YES,
+  NO,
+  NA
 ];
 
 const HOUSING = [
@@ -83,6 +96,28 @@ const KNOWN_CLIENT = [
   'Unknown'
 ];
 
+const WEAPON_TYPE = [
+  'Gun',
+  'Knife',
+];
+
+const VIOLENCE_TARGET = [
+  'Bystander',
+  'Co-worker',
+  'Family Member',
+  'Frequent Contact',
+  'Friend',
+  'Neighbor',
+  'Officer',
+];
+
+const SELF_INJURY = [
+  'Suicide Attempt',
+  'Suicidal Ideation',
+  'Self-harm',
+  'Self-harm attempt'
+];
+
 const INSURANCE = [
   'Medicare',
   'Medicaid',
@@ -91,14 +126,57 @@ const INSURANCE = [
   'Unknown'
 ];
 
+const TECHNIQUES = [
+  'Verbal',
+  'Handcuffs',
+  'Force'
+];
+
+const DISPOSITION = [
+  'Inpatient',
+  'Day Treatment',
+  'Detox',
+  'New Outpatient',
+  'PsychoPharm Referral',
+  'CCS',
+  'ESP / Mobile',
+  'CBAT',
+  'Refer to Current Providers',
+];
+
+const PURPOSE_OF_JDP = [
+  'Agency Assistance',
+  'CCIT Case Conference',
+  'Community Outreach',
+  'Death Notification',
+  'Family Support',
+  'Psych Eval',
+  'Return Visit',
+  'Safety Check',
+  'Victim Assitance'
+];
+
+const BILLED_SERVICES = [
+  'Community Evaluation',
+  'ER Evaluation',
+];
+
 export {
   BEHAVIORS,
+  BILLED_SERVICES,
+  DISPOSITION,
   DRUGS_ALCOHOL,
   EMPLOYMENT,
   HOUSING,
   INSURANCE,
   KNOWN_CLIENT,
   NATURE_OF_CRISIS,
+  PURPOSE_OF_JDP,
   RESIDES_WITH,
+  SELF_INJURY,
+  TECHNIQUES,
+  VIOLENCE_TARGET,
+  WEAPON_TYPE,
+  YES_NO_NA,
   YES_NO_UNKNOWN,
 };

@@ -1,32 +1,12 @@
-import { Machine, assign } from 'xstate';
+import { Machine } from 'xstate';
 
-function isPatrol(context) {
+const isPatrol = (context) => {
   return (context.role === 'patrol');
-}
+};
 
-const stackIsNotEmpty = (ctx) => ctx.stack.length > 0;
-
-const pushToStack = assign({
-  stack: (ctx, e, action) => {
-    return ctx.stack.concat(ctx.question);
-  }
-});
-
-const nextPage = assign({
-  question: (ctx, e) => e.question,
-  stack: (ctx) => ctx.stack.concat(ctx.question)
-});
-
-const prevPage = assign((ctx) => {
-  const { stack } = ctx;
-  const newStack = stack.slice(0, stack.length - 1);
-  const prev = stack[stack.length - 1];
-
-  return {
-    question: prev,
-    stack: newStack
-  };
-});
+const isClinician = (context) => {
+  return (context.role === 'clinician');
+};
 
 const crisisMachine = Machine(
   {
@@ -34,12 +14,9 @@ const crisisMachine = Machine(
     initial: 'profile',
     context: {
       role: 'clinician',
-      stack: [],
-      question: 'profile'
     },
     states: {
       profile: {
-        entry: 'pushToStack',
         on: {
           NEXT: 'incident',
         }
@@ -52,16 +29,15 @@ const crisisMachine = Machine(
       },
       behavior: {
         on: {
-          NEXT: 'medical',
+          NEXT: [
+            { target: 'medical', cond: 'isClinician' },
+            { target: 'threat' },
+          ],
           PREV: 'incident'
         }
       },
       medical: {
         on: {
-          '': {
-            target: 'threat',
-            cond: 'isPatrol'
-          },
           NEXT: 'threat',
           PREV: 'behavior'
         }
@@ -69,7 +45,10 @@ const crisisMachine = Machine(
       threat: {
         on: {
           NEXT: 'housingAndEmployment',
-          PREV: 'medical'
+          PREV: [
+            { target: 'medical', cond: 'isClinician' },
+            { target: 'behavior' },
+          ]
         }
       },
       housingAndEmployment: {
@@ -79,20 +58,28 @@ const crisisMachine = Machine(
         }
       },
       insurance: {
-        // type: 'final',
-        on: { PREV: 'housingAndEmployment' }
+        on: {
+          NEXT: 'disposition',
+          PREV: 'housingAndEmployment'
+        }
+      },
+      disposition: {
+        on: {
+          NEXT: 'review',
+          PREV: 'insurance'
+        }
+      },
+      review: {
+        on: {
+          PREV: 'disposition'
+        }
       }
-    },
+    }
   },
   {
-    actions: {
-      nextPage,
-      prevPage,
-      pushToStack,
-    },
     guards: {
-      isPatrol,
-      stackIsNotEmpty
+      isClinician,
+      isPatrol
     }
   }
 );

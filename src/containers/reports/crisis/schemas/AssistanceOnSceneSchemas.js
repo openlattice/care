@@ -1,6 +1,12 @@
 import { DataProcessingUtils } from 'lattice-fabricate';
 
-import { SELF_INJURY, VIOLENCE_TARGET, WEAPON_TYPE } from './constants';
+import {
+  BILLED_SERVICES,
+  DISPOSITION,
+  TECHNIQUES,
+  YES_NO_NA,
+  YES_NO_UNKNOWN
+} from './constants';
 
 import * as FQN from '../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
@@ -11,58 +17,63 @@ const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
 
 const schema = {
   type: 'object',
-  title: 'Threats, Violence, & Weapons',
+  title: 'Assistance On Scene',
   properties: {
-    [getPageSectionKey(5, 1)]: {
+    [getPageSectionKey(6, 1)]: {
       type: 'object',
       title: '',
       properties: {
         [getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
           type: 'array',
-          title: 'Brandished weapon(s):',
+          title: 'Techniques Used During Interaction',
           items: {
             type: 'string',
-            enum: WEAPON_TYPE
+            enum: TECHNIQUES
           },
           // minItems: 1,
           uniqueItems: true
         },
         [getEntityAddressKey(1, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
           type: 'array',
-          title: 'Violence threatened toward:',
+          title: 'Disposition',
           items: {
             type: 'string',
-            enum: VIOLENCE_TARGET
+            enum: DISPOSITION
           },
           // minItems: 1,
           uniqueItems: true
         },
         [getEntityAddressKey(2, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
-          type: 'array',
-          title: 'Violence engaged with:',
-          items: {
-            type: 'string',
-            enum: VIOLENCE_TARGET
-          },
-          // minItems: 1,
-          uniqueItems: true
+          type: 'string',
+          title: 'Was custody diverted?',
+          enum: YES_NO_UNKNOWN
         },
         [getEntityAddressKey(3, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
-          type: 'array',
-          title: 'Injured parties:',
-          items: {
-            type: 'string',
-            enum: VIOLENCE_TARGET
-          },
-          // minItems: 1,
-          uniqueItems: true
+          type: 'string',
+          title: 'Was jail diversion an option?',
+          enum: YES_NO_NA
         },
         [getEntityAddressKey(4, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
           type: 'array',
-          title: 'Self-harm:',
+          title: 'Purpose of JDP intervention if diversion was not an option',
           items: {
             type: 'string',
-            enum: SELF_INJURY
+            enum: DISPOSITION
+          },
+          // minItems: 1,
+          uniqueItems: true
+        },
+        [getEntityAddressKey(5, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+          type: 'string',
+          title: 'Did JDP intevention prevent ER visit?',
+          enum: YES_NO_NA
+        },
+        [getEntityAddressKey(6, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+          type: 'array',
+          title: 'Billed services',
+          items: {
+            type: 'string',
+            enum: BILLED_SERVICES
           },
           // minItems: 1,
           uniqueItems: true
@@ -73,7 +84,7 @@ const schema = {
 };
 
 const uiSchema = {
-  [getPageSectionKey(5, 1)]: {
+  [getPageSectionKey(6, 1)]: {
     classNames: 'column-span-12 grid-container',
     'ui:options': {
       editable: true
@@ -81,36 +92,34 @@ const uiSchema = {
     [getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
-      'ui:options': {
-        withNone: true,
-        withOther: true,
-      }
     },
     [getEntityAddressKey(1, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
       'ui:options': {
-        withNone: true,
         withOther: true,
       }
     },
     [getEntityAddressKey(2, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
       classNames: 'column-span-12',
-      'ui:widget': 'checkboxes',
-      'ui:options': {
-        withNone: true,
-        withOther: true,
-      }
+      'ui:widget': 'radio'
     },
     [getEntityAddressKey(3, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
       classNames: 'column-span-12',
+      'ui:widget': 'radio'
+    },
+    [getEntityAddressKey(4, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+      classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
       'ui:options': {
-        withNone: true,
         withOther: true,
       }
     },
-    [getEntityAddressKey(4, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+    [getEntityAddressKey(5, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+      classNames: 'column-span-12',
+      'ui:widget': 'radio'
+    },
+    [getEntityAddressKey(6, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
       'ui:options': {
