@@ -1,9 +1,10 @@
 // @flow
 import React from 'react';
+
 import styled from 'styled-components';
 import { Colors } from 'lattice-ui-kit';
 
-import { MEDIA_QUERY_MD, MEDIA_QUERY_LG } from '../../core/style/Sizes';
+import { MEDIA_QUERY_LG, MEDIA_QUERY_MD } from '../../core/style/Sizes';
 import {
   BLACK,
   INVALID_BACKGROUND,
@@ -18,7 +19,7 @@ export const FormWrapper = styled.div`
   flex-direction: column;
   align-items: flex-start;
   width: 100%;
-  background: #ffffff;
+  background: #fff;
   padding: 10px;
   box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);
 
@@ -82,7 +83,7 @@ const RequiredFieldWrapper = styled.div`
   justify-content: flex-spart;
   align-items: flex-start;
 
-  :after {
+  ::after {
     content: '*';
     color: ${RED_1};
   }

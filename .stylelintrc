@@ -6,5 +6,19 @@
   "processors": [
     "stylelint-processor-styled-components"
   ],
-  "syntax": "scss"
+  "syntax": "scss",
+  "rules": {
+    "value-no-vendor-prefix": [
+      true,
+      "ignoreValues": [
+        "box"
+      ]
+    ],
+    "property-no-vendor-prefix": [
+      true,
+      "ignoreProperties": [
+        "box-orient"
+      ]
+    ],
+  }
 }

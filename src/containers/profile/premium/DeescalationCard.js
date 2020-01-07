@@ -1,9 +1,10 @@
 // @flow
 import React from 'react';
+
 import styled from 'styled-components';
-import { List, Map } from 'immutable';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTheaterMasks } from '@fortawesome/pro-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { List, Map } from 'immutable';
 import {
   Card,
   CardHeader,
@@ -12,18 +13,18 @@ import {
 import { withRouter } from 'react-router-dom';
 import type { Match } from 'react-router-dom';
 
-
 import SpecificTechniques from './SpecificTechniques';
+
 import EditLinkButton from '../../../components/buttons/EditLinkButton';
-import { OFFICER_SAFETY_PATH, EDIT_PATH } from '../../../core/router/Routes';
+import NewIssueButton from '../../../components/buttons/CreateIssueButton';
 import {
   H1,
   HeaderActions,
   IconWrapper,
   UL
 } from '../../../components/layout';
+import { EDIT_PATH, OFFICER_SAFETY_PATH } from '../../../core/router/Routes';
 import { CATEGORIES } from '../../issues/issue/constants';
-import NewIssueButton from '../../../components/buttons/CreateIssueButton';
 
 const { NEUTRALS } = Colors;
 const { OFFICER_SAFETY } = CATEGORIES;
@@ -45,7 +46,7 @@ const DeescalationContentWrapper = styled.div`
   }
 
   > div:last-child {
-    border-left: 1px solid ${NEUTRALS[4]}
+    border-left: 1px solid ${NEUTRALS[4]};
   }
 `;
 
