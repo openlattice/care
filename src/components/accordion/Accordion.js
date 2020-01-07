@@ -3,10 +3,12 @@
  */
 
 import React, { Component } from 'react';
-import { Card } from 'lattice-ui-kit';
 import type { ComponentType, ElementProps, Node } from 'react';
 
+import { Card } from 'lattice-ui-kit';
+
 import AccordionSection from './AccordionSection';
+
 import { isDefined } from '../../utils/LangUtils';
 
 type ChildProps = {
@@ -26,6 +28,10 @@ type State = {
 };
 
 class Accordion extends Component<Props, State> {
+
+  static defaultProps = {
+    className: undefined
+  };
 
   constructor(props :Props) {
     super(props);
@@ -69,6 +75,7 @@ class Accordion extends Component<Props, State> {
         return null;
       }
       const { children: innerChildren, titleComponent, ...rest } = child.props;
+      /* eslint-disable react/jsx-props-no-spreading */
       return (
         <AccordionSection
             isOpen={!!openSections[index]}
@@ -79,6 +86,7 @@ class Accordion extends Component<Props, State> {
           {innerChildren}
         </AccordionSection>
       );
+      /* eslint-enable */
     });
 
     return sections;

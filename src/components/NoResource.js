@@ -1,9 +1,10 @@
 // @flow
 
 import React from 'react';
+
 import styled from 'styled-components';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileTimes } from '@fortawesome/pro-light-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { PURPLE } from '../shared/Colors';
 
@@ -16,6 +17,7 @@ const ErrorWrapper = styled.div`
   align-items: center;
   font-size: 24px;
   font-weight: normal;
+
   div {
     max-width: 750px;
     text-align: center;

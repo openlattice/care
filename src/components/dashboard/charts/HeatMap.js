@@ -3,17 +3,18 @@
  */
 
 import React from 'react';
-import styled from 'styled-components';
+
+import styled, { css } from 'styled-components';
 import { Map } from 'immutable';
 
-import { HEATMAP_COLORS } from '../../../utils/Colors';
+import HEATMAP_COLORS from '../constants/HeatMapColors';
 
 type Props = {
   title :string,
   colValues :string[],
-  colHeaderFormatter? :(colValue :Object) => string,
+  colHeaderFormatter :(colValue :Object) => string,
   rowHeaders :string[],
-  rowHeaderFormatter? :(colValue :Object) => string,
+  rowHeaderFormatter :(colValue :Object) => string,
   cellSize :number,
   counts :Map,
   withContent? :boolean,
@@ -26,7 +27,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   border-radius: 5px;
-  background-color: #ffffff;
+  background-color: #fff;
   border: 1px solid #e1e1eb;
   padding: 30px;
   margin-top: 20px;
@@ -46,16 +47,15 @@ const Row = styled.div`
 `;
 
 const BaseCell = styled.div`
-  display: flex;
+  align-items: center;
   border-radius: 5px;
-  width: ${(props) => (props.square ? `${props.size}px` : '100%')};
-  height: ${(props) => props.size}px;
-  margin: 2px;
   display: flex;
   flex-direction: row;
+  height: ${(props) => props.size}px;
   justify-content: center;
-  align-items: center;
+  margin: 2px;
   text-align: center;
+  width: ${(props) => (props.square ? `${props.size}px` : '100%')};
 `;
 
 const Label = styled(BaseCell)`
@@ -65,11 +65,13 @@ const Label = styled(BaseCell)`
   word-break: break-word;
 `;
 
-const Cell = styled(BaseCell).attrs({
-  style: ({ color }) => ({
-    backgroundColor: color
-  })
-})``;
+const backgroundColorStyle = css`
+  background-color: ${(props) => props.color};
+`;
+
+const Cell = styled(BaseCell)`
+  ${backgroundColorStyle}
+`;
 
 const LegendWrapper = styled.div`
   margin: 20px 0;
@@ -95,13 +97,10 @@ const LegendItem = styled.div`
   }
 `;
 
-const LegendColor = styled.div.attrs({
-  style: ({ color }) => ({
-    backgroundColor: color
-  })
-})`
+const LegendColor = styled.div`
   width: 100%;
   height: 20px;
+  ${backgroundColorStyle}
 `;
 
 const getNHeatmapColors = (num) => {
@@ -201,10 +200,10 @@ const HeatMap = ({
   const renderLegend = () => (
     <LegendWrapper>
       {heatmapColors.map((color, index) => (
-        <LegendItem key={`legend|${index}`}>
+        <LegendItem key={`legend|${color}`}>
           <LegendColor color={color} />
           <span>
-&ge;
+            &ge;
             {getLegendValue(index)}
           </span>
         </LegendItem>

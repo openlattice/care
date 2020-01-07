@@ -1,6 +1,7 @@
 // @flow
 
 import React, { Component } from 'react';
+
 import styled from 'styled-components';
 import { faChevronDown } from '@fortawesome/pro-light-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -24,7 +25,7 @@ const MenuContainer = styled.div`
   border-radius: 3px;
   border: 1px solid ${NEUTRALS[4]};
   bottom: auto;
-  box-shadow: 0 2px 8px -2px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.15);
   display: flex;
   flex-direction: column;
   left: auto;
@@ -81,7 +82,8 @@ class DropdownButton extends Component<Props, State> {
 
   toggleDropdown = (e :SyntheticEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    this.setState({ open: !this.state.open });
+    const { open } = this.state;
+    this.setState({ open: !open });
   };
 
   closeDropdown = (e :SyntheticEvent<HTMLButtonElement>) => {
@@ -111,7 +113,11 @@ class DropdownButton extends Component<Props, State> {
         { open && (
           <MenuContainer offset={size}>
             {options.map((option) => (
-              <button key={option.label} onClick={this.closeDropdown} onMouseDown={option.onClick}>
+              <button
+                  type="button"
+                  key={option.label}
+                  onClick={this.closeDropdown}
+                  onMouseDown={option.onClick}>
                 {option.label}
               </button>
             ))}
@@ -120,6 +126,6 @@ class DropdownButton extends Component<Props, State> {
       </DropdownButtonWrapper>
     );
   }
-};
+}
 
 export default DropdownButton;

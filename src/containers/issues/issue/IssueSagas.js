@@ -6,7 +6,6 @@ import {
   select,
   takeEvery,
 } from '@redux-saga/core/effects';
-import { DateTime } from 'luxon';
 import {
   Map,
   fromJS,
@@ -14,31 +13,14 @@ import {
   getIn,
   has,
 } from 'immutable';
+import { Constants, Types } from 'lattice';
 import {
   DataApiActions,
   DataApiSagas,
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
-import { Constants, Types } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
-
-import Logger from '../../../utils/Logger';
-import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../utils/Errors';
-import {
-  createOrReplaceAssociation,
-  submitDataGraph,
-  submitPartialReplace,
-} from '../../../core/sagas/data/DataActions';
-import {
-  createOrReplaceAssociationWorker,
-  submitDataGraphWorker,
-  submitPartialReplaceWorker,
-} from '../../../core/sagas/data/DataSagas';
-import { isDefined, isEmptyString } from '../../../utils/LangUtils';
-import { APP_TYPES_FQNS } from '../../../shared/Consts';
-import { constructEntityIndexToIdMap } from './IssueUtils';
-import { STATUS_FQN, DATE_TIME_FQN, ENTRY_UPDATED_FQN } from '../../../edm/DataModelFqns';
 
 import {
   SELECT_ISSUE,
@@ -50,8 +32,25 @@ import {
   submitIssue,
   updateIssue,
 } from './IssueActions';
+import { constructEntityIndexToIdMap } from './IssueUtils';
+
+import Logger from '../../../utils/Logger';
+import {
+  createOrReplaceAssociation,
+  submitDataGraph,
+  submitPartialReplace,
+} from '../../../core/sagas/data/DataActions';
+import {
+  createOrReplaceAssociationWorker,
+  submitDataGraphWorker,
+  submitPartialReplaceWorker,
+} from '../../../core/sagas/data/DataSagas';
+import { DATE_TIME_FQN, ENTRY_UPDATED_FQN, STATUS_FQN } from '../../../edm/DataModelFqns';
+import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { getESIDFromApp } from '../../../utils/AppUtils';
 import { groupNeighborsByEntitySetIds, simulateResponseData } from '../../../utils/DataUtils';
+import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../utils/Errors';
+import { isDefined, isEmptyString } from '../../../utils/LangUtils';
 import { isValidUuid } from '../../../utils/Utils';
 
 const LOG = new Logger('IssueSagas');

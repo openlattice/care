@@ -1,23 +1,24 @@
 // @flow
 import React from 'react';
+
 import styled from 'styled-components';
-import { DateTime } from 'luxon';
-import { Button } from 'lattice-ui-kit';
 import { Map } from 'immutable';
+import { Button } from 'lattice-ui-kit';
+import { DateTime } from 'luxon';
 import type { RequestSequence } from 'redux-reqseq';
 
-import { useAuthorization } from '../hooks';
+import { MEDIA_QUERY_LG } from '../../core/style/Sizes';
 import {
   DATE_TIME_FQN,
   PERSON_ID_FQN,
 } from '../../edm/DataModelFqns';
-import { MEDIA_QUERY_LG } from '../../core/style/Sizes';
+import { useAuthorization } from '../hooks';
 
 const StyledFormWrapper = styled.div`
   display: flex;
   flex: 1 1 auto;
   align-items: flex-start;
-  background: #ffffff;
+  background: #fff;
   box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);
   flex-direction: row;
   font-size: 14px;

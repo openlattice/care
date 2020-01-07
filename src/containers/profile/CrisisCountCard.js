@@ -1,11 +1,13 @@
 // @flow
 import React from 'react';
+
 import styled from 'styled-components';
 import {
   Card,
   CardSegment,
   Colors
 } from 'lattice-ui-kit';
+
 import { crisisCountSkeleton } from '../../components/skeletons';
 
 const { NEUTRALS } = Colors;
@@ -16,14 +18,13 @@ const Centered = styled.div`
   align-items: center;
   flex: 1;
   font-size: 24px;
-
   ${(props) => props.isLoading && crisisCountSkeleton};
 `;
 
 const StrongWithSubtitle = styled.span`
   font-weight: 600;
 
-  :after {
+  ::after {
     content: 'IN THE LAST YEAR';
     color: ${NEUTRALS[1]};
     font-size: 16px;

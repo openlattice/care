@@ -38,14 +38,12 @@ const NewPersonButton = styled(PlusButton)`
 `;
 
 const InputGrid = styled.div`
-  display: grid;
-  grid-gap: 20px 30px;
-  flex: 1;
-
-  grid-auto-flow: column;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
   align-items: flex-start;
-
+  display: grid;
+  flex: 1;
+  grid-auto-flow: column;
+  grid-gap: 20px 30px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   ${media.phone`
     grid-gap: 10px;
     grid-auto-flow: row;

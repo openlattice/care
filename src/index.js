@@ -6,17 +6,17 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import LatticeAuth from 'lattice-auth';
-import { Route } from 'react-router-dom';
 import { ConnectedRouter } from 'connected-react-router/immutable';
 import { Colors } from 'lattice-ui-kit';
 import { normalize } from 'polished';
 import { Provider } from 'react-redux';
+import { Route } from 'react-router-dom';
 import { createGlobalStyle } from 'styled-components';
 
 import AppContainer from './containers/app/AppContainer';
+import Logout from './core/router/Logout';
 import initializeReduxStore from './core/redux/ReduxStore';
 import initializeRouterHistory from './core/router/RouterHistory';
-import Logout from './core/router/Logout';
 import * as Routes from './core/router/Routes';
 
 // injected by Webpack.DefinePlugin
@@ -32,7 +32,6 @@ const NormalizeCSS = createGlobalStyle`
 `;
 
 const GlobalStyle = createGlobalStyle`
-
   html,
   body {
     background-color: ${WHITE};

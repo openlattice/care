@@ -1,12 +1,12 @@
+import { PRIORITIES } from './issue/constants';
+
 // @flow
 import {
-  DATE_TIME_FQN,
+  COMPLETED_DT_FQN,
   PRIORITY_FQN,
   STATUS_FQN,
-  TITLE_FQN,
-  COMPLETED_DT_FQN
+  TITLE_FQN
 } from '../../edm/DataModelFqns';
-import { PRIORITIES } from './issue/constants';
 
 const PRIORITY_ORDER = {
   [PRIORITIES.HIGHEST]: 5,
