@@ -2,14 +2,15 @@
 import React from 'react';
 
 import styled from 'styled-components';
-import { Form, Paged } from 'lattice-fabricate';
+import { Form, XPage } from 'lattice-fabricate';
 import {
   Button,
   Card,
   CardStack
 } from 'lattice-ui-kit';
 
-import { schemas, uiSchemas } from './schemas';
+import { crisisMachine } from './machine/crisisMachine';
+import { xSchemas, xUiSchemas } from './schemas';
 
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
 
@@ -45,25 +46,33 @@ const ActionRow = styled.div`
 
 const onPageChange = (page, formData) => console.log(page, formData);
 
-const NewCrisisReportContainer = () => {
+const XStateCrisisReportContainer = () => {
   return (
     <ContentOuterWrapper>
       <ContentWrapper>
         <CardStack>
           <Card>
-            <Paged
+            <XPage
                 initialFormData={initialFormData}
+                machine={crisisMachine}
                 onPageChange={onPageChange}
                 render={({
                   formRef,
+                  machineState,
                   pagedData,
                   page,
                   onBack,
                   onNext,
                   validateAndSubmit,
                 }) => {
+                  const { context } = machineState;
+                  console.log(context);
+
                   const totalPages = 6;
                   const isLastPage = page === totalPages - 1;
+
+                  const isInitialPage = page === crisisMachine.initialState.value;
+                  const isReviewPage = page === 'review';
 
                   const handleNext = isLastPage
                     ? () => console.log(pagedData)
@@ -76,19 +85,18 @@ const NewCrisisReportContainer = () => {
                           hideSubmit
                           onSubmit={onNext}
                           ref={formRef}
-                          schema={schemas[page]}
-                          uiSchema={uiSchemas[page]} />
+                          schema={xSchemas[page]}
+                          uiSchema={xUiSchemas[page]} />
                       <ActionRow>
                         <Button
-                            disabled={!(page > 0)}
+                            disabled={isInitialPage}
                             onClick={onBack}>
                             Back
                         </Button>
-                        <span>{`${page + 1} of ${totalPages}`}</span>
                         <Button
                             mode="primary"
                             onClick={handleNext}>
-                          { isLastPage ? 'Submit' : 'Next' }
+                          { isReviewPage ? 'Submit' : 'Next' }
                         </Button>
                       </ActionRow>
                     </>
@@ -102,4 +110,4 @@ const NewCrisisReportContainer = () => {
 
 };
 
-export default NewCrisisReportContainer;
+export default XStateCrisisReportContainer;
