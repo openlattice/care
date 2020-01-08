@@ -2,24 +2,25 @@
  * @flow
  */
 
-import { DateTime } from 'luxon';
 import randomUUID from 'uuid/v4';
 import { List, Map, fromJS } from 'immutable';
+import { DateTime } from 'luxon';
 
 import { SET_INPUT_VALUE, SET_INPUT_VALUES } from './ActionFactory';
-import { CLEAR_REPORT } from '../../reports/ReportsActions';
-import { DISPOSITION, OTHER, POST_PROCESS_FIELDS } from '../../../utils/constants/CrisisReportConstants';
-import { FORM_STEP_STATUS } from '../../../utils/constants/FormConstants';
 import {
-  NOT_ARRESTED,
   ARRESTED,
   CRIMES_AGAINST_PERSON,
+  DISPOSITIONS as DISPOSITION_TYPES,
   FELONY,
-  UNABLE_TO_CONTACT,
+  NOT_ARRESTED,
   NO_ACTION_NECESSARY,
   RESOURCES_DECLINED,
-  DISPOSITIONS as DISPOSITION_TYPES
+  UNABLE_TO_CONTACT
 } from './Constants';
+
+import { DISPOSITION, OTHER, POST_PROCESS_FIELDS } from '../../../utils/constants/CrisisReportConstants';
+import { FORM_STEP_STATUS } from '../../../utils/constants/FormConstants';
+import { CLEAR_REPORT } from '../../reports/ReportsActions';
 
 const {
   SPECIALISTS,

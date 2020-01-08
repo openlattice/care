@@ -3,38 +3,39 @@
  */
 
 import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { withRouter } from 'react-router';
+
 import { List, Map } from 'immutable';
 import {
   Checkbox,
   Input,
   Label,
 } from 'lattice-ui-kit';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router';
+import { bindActionCreators } from 'redux';
 import type { Dispatch } from 'redux';
 
-import YesNoToggle from '../../../components/controls/YesNoToggle';
-import { showInvalidFields } from '../../../utils/NavigationUtils';
-import { STATE } from '../../../utils/constants/StateConstants';
-import { OFFICER_SAFETY, OTHER } from '../../../utils/constants/CrisisReportConstants';
+import { setInputValue } from './ActionFactory';
 import {
+  PERSON_TYPES,
+  RELATIONSHIP_TYPES,
   TECHNIQUES,
   WEAPONS,
-  RELATIONSHIP_TYPES,
-  PERSON_TYPES,
 } from './Constants';
+import { getInvalidFields } from './Reducer';
+
+import YesNoToggle from '../../../components/controls/YesNoToggle';
 import {
-  FormWrapper,
   FormSection,
   FormSectionWithValidation,
+  FormWrapper,
   Header,
   IndentWrapper,
   RequiredField
 } from '../../../components/crisis/FormComponents';
-
-import { getInvalidFields } from './Reducer';
-import { setInputValue } from './ActionFactory';
+import { showInvalidFields } from '../../../utils/NavigationUtils';
+import { OFFICER_SAFETY, OTHER } from '../../../utils/constants/CrisisReportConstants';
+import { STATE } from '../../../utils/constants/StateConstants';
 import { SELECT_ALL_THAT_APPLY } from '../constants';
 
 type Props = {
