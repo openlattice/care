@@ -3,18 +3,18 @@
  */
 
 import {
-  List,
-  Map,
-  Set,
-  fromJS
-} from 'immutable';
-import {
   all,
   call,
   put,
   select,
   takeEvery,
 } from '@redux-saga/core/effects';
+import {
+  List,
+  Map,
+  Set,
+  fromJS
+} from 'immutable';
 import { Constants } from 'lattice';
 import { AuthUtils } from 'lattice-auth';
 import {
@@ -27,9 +27,6 @@ import {
 } from 'lattice-sagas';
 import type { SequenceAction } from 'redux-reqseq';
 
-import Logger from '../../utils/Logger';
-import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_WORKER_SAGA } from '../../utils/Errors';
-
 import {
   ADD_NEW_STAFF_MEMBER,
   GET_CURRENT_USER_STAFF_MEMBER_DATA,
@@ -38,10 +35,13 @@ import {
   getCurrentUserStaffMemberData,
   getResponsibleUserOptions,
 } from './StaffActions';
-import { getStaffESId, getESIDFromApp } from '../../utils/AppUtils';
-import { getSearchTerm } from '../../utils/DataUtils';
-import { APP_TYPES_FQNS } from '../../shared/Consts';
+
+import Logger from '../../utils/Logger';
 import * as FQN from '../../edm/DataModelFqns';
+import { APP_TYPES_FQNS } from '../../shared/Consts';
+import { getESIDFromApp, getStaffESId } from '../../utils/AppUtils';
+import { getSearchTerm } from '../../utils/DataUtils';
+import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_WORKER_SAGA } from '../../utils/Errors';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 
@@ -96,7 +96,7 @@ function* addNewStaffMemberWorker(action :SequenceAction) :Generator<*, *, *> {
     if (createStaffResponse.error) throw createStaffResponse.error;
 
     const staffMemberDataByFQN :Object = {
-      [OPENLATTICE_ID_FQN]: fromJS(createStaffResponse.data).getIn([OPENLATTICE_ID_FQN, 0]),
+      [OPENLATTICE_ID_FQN]: fromJS(createStaffResponse).first(),
       [FQN.PERSON_ID_FQN.toString()]: [value.email]
     };
 
@@ -143,7 +143,7 @@ function* getCurrentUserStaffMemberDataWorker(action :SequenceAction) :Generator
     const entitySetId :UUID = getStaffESId(app);
     const personIdPTId :UUID = yield select((state) => state.getIn(['edm', 'fqnToIdMap', FQN.PERSON_ID_FQN]));
     const searchOptions :Object = {
-      maxHits: 1,
+      maxHits: 10000,
       searchTerm: getSearchTerm(personIdPTId, userInfo.email, true),
       start: 0,
     };
@@ -155,7 +155,9 @@ function* getCurrentUserStaffMemberDataWorker(action :SequenceAction) :Generator
     if (!searchResult) {
       // current user is not a member of the staff entity set. try adding.
       if (value.createIfNotExists) {
-        userData = yield call(addNewStaffMemberWorker, addNewStaffMember(userInfo));
+        const newStaff = yield call(addNewStaffMemberWorker, addNewStaffMember(userInfo));
+        if (newStaff.error) throw newStaff.error;
+        userData = newStaff.data;
         // TODO: retry / schedule another search in the future
       }
     }
@@ -195,7 +197,7 @@ function* getResponsibleUserOptionsWorker(action :SequenceAction) :Generator<any
 
     const searchOptions :Object = {
       maxHits: 10000,
-      searchTerm: getSearchTerm(personIdPTId, '*'),
+      searchTerm: getSearchTerm(personIdPTId, '*', true),
       start: 0,
     };
 
