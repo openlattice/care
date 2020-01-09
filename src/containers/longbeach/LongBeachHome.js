@@ -27,7 +27,7 @@ const MegaLinkButton = styled(LinkButton)`
   justify-content: center;
   font-size: 4em;
   height: 100%;
-  max-height: 3em;
+  max-height: 4em;
 `;
 
 const Grid = styled.div`
@@ -37,10 +37,11 @@ const Grid = styled.div`
   grid-auto-flow: column;
   ${media.phone`
     grid-auto-flow: row;
+
+    @media screen and (orientation:landscape) {
+      grid-auto-flow: column;
+    }
   `}
-  @media screen and (orientation:landscape) {
-    grid-auto-flow: column;
-  }
   align-items: center;
 `;
 
