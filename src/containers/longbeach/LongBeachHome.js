@@ -14,6 +14,7 @@ import { Card, CardSegment } from 'lattice-ui-kit';
 
 import LinkButton from '../../components/buttons/LinkButton';
 import { ContentOuterWrapper, ContentWrapper } from '../../components/layout';
+import { LOCATION_PATH, PEOPLE_PATH, PROVIDER_PATH } from '../../core/router/Routes';
 import { media } from '../../utils/StyleUtils';
 
 const StyledCard = styled(Card)`
@@ -52,13 +53,13 @@ const LongBeachHome = () => (
       <StyledCard>
         <CardSegment>
           <Grid>
-            <MegaLinkButton>
+            <MegaLinkButton to={PEOPLE_PATH}>
               <FontAwesomeIcon icon={faUser} fixedWidth />
             </MegaLinkButton>
-            <MegaLinkButton>
+            <MegaLinkButton to={LOCATION_PATH}>
               <FontAwesomeIcon icon={faMapMarkedAlt} fixedWidth />
             </MegaLinkButton>
-            <MegaLinkButton>
+            <MegaLinkButton to={PROVIDER_PATH}>
               <span className="fa-layers fa-fw">
                 <FontAwesomeIcon icon={faUserMd} transform="shrink-1.5" />
                 <FontAwesomeIcon icon={faUserNurse} transform="shrink-8 left-7 up-1.5" />

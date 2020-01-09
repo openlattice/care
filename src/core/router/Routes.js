@@ -20,6 +20,12 @@ export const ISSUES_PATH :string = '/issues';
 export const ISSUE_ID_PARAM :string = 'issueId';
 export const ISSUE_PATH :string = `${ISSUES_PATH}/:${ISSUE_ID_PARAM}`;
 
+/* <===== BEGIN LONG BEACH HACK =====> */
+export const PEOPLE_PATH :string = '/people';
+export const LOCATION_PATH :string = '/location';
+export const PROVIDER_PATH :string = '/provider';
+/* <===== END LONG BEACH HACK =====> */
+
 export const REPORT_ID_PARAM :string = 'reportId';
 export const REPORT_ID_PATH :string = `:${REPORT_ID_PARAM}`;
 export const REPORT_EDIT_PATH :string = `${REPORTS_PATH}/${REPORT_ID_PATH}${EDIT_PATH}`;

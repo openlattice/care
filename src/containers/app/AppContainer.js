@@ -32,7 +32,10 @@ import {
   DOWNLOADS_PATH,
   HOME_PATH,
   ISSUES_PATH,
+  LOCATION_PATH,
+  PEOPLE_PATH,
   PROFILE_PATH,
+  PROVIDER_PATH,
   REPORTS_PATH,
 } from '../../core/router/Routes';
 import {
@@ -146,6 +149,9 @@ class AppContainer extends Component<Props> {
       return (
         <Switch>
           <Route exact strict path={HOME_PATH} component={LongBeachHome} />
+          <Route path={PEOPLE_PATH} component={LongBeachHome} />
+          <Route path={LOCATION_PATH} component={LongBeachHome} />
+          <Route path={PROVIDER_PATH} component={LongBeachHome} />
           <Redirect to={HOME_PATH} />
         </Switch>
       );
