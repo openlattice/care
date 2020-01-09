@@ -1,4 +1,5 @@
 // @flow
+/* <===== BEGIN LONG BEACH HACK =====> */
 import React from 'react';
 
 import styled from 'styled-components';
@@ -46,7 +47,6 @@ const Grid = styled.div`
   align-items: center;
 `;
 
-/* <===== BEGIN LONG BEACH HACK =====> */
 const LongBeachHome = () => (
   <ContentOuterWrapper>
     <ContentWrapper>
