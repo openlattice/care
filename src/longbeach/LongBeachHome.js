@@ -13,10 +13,10 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Card, CardSegment } from 'lattice-ui-kit';
 
-import LinkButton from '../../components/buttons/LinkButton';
-import { ContentOuterWrapper, ContentWrapper } from '../../components/layout';
-import { LOCATION_PATH, PEOPLE_PATH, PROVIDER_PATH } from '../../core/router/Routes';
-import { media } from '../../utils/StyleUtils';
+import LinkButton from '../components/buttons/LinkButton';
+import { ContentOuterWrapper, ContentWrapper } from '../components/layout';
+import { LOCATION_PATH, PEOPLE_PATH, PROVIDER_PATH } from '../core/router/Routes';
+import { media } from '../utils/StyleUtils';
 
 const StyledCard = styled(Card)`
   flex: 1 1 auto;

@@ -10,7 +10,7 @@ import {
   PEOPLE_PATH,
   PROFILE_PATH,
   PROVIDER_PATH,
-} from '../../core/router/Routes';
+} from '../core/router/Routes';
 
 const LongBeachRouter = () => (
   <Switch>

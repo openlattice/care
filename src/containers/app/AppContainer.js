@@ -23,7 +23,7 @@ import DashboardContainer from '../dashboard/DashboardContainer';
 import DownloadsContainer from '../downloads/DownloadsContainer';
 import IssuesContainer from '../issues/IssuesContainer';
 import LegitReportsRouter from '../reports/LegitReportsRouter';
-import LongBeachRouter from '../longbeach/LongBeachRouter';
+import LongBeachRouter from '../../longbeach/LongBeachRouter';
 import ProfileRouter from '../profile/ProfileRouter';
 import SearchPeopleContainer from '../people/SearchPeopleContainer';
 import {
