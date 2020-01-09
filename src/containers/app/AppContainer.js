@@ -23,7 +23,7 @@ import DashboardContainer from '../dashboard/DashboardContainer';
 import DownloadsContainer from '../downloads/DownloadsContainer';
 import IssuesContainer from '../issues/IssuesContainer';
 import LegitReportsRouter from '../reports/LegitReportsRouter';
-import LongBeachHome from '../longbeach/LongBeachHome';
+import LongBeachRouter from '../longbeach/LongBeachRouter';
 import ProfileRouter from '../profile/ProfileRouter';
 import SearchPeopleContainer from '../people/SearchPeopleContainer';
 import {
@@ -32,10 +32,7 @@ import {
   DOWNLOADS_PATH,
   HOME_PATH,
   ISSUES_PATH,
-  LOCATION_PATH,
-  PEOPLE_PATH,
   PROFILE_PATH,
-  PROVIDER_PATH,
   REPORTS_PATH,
 } from '../../core/router/Routes';
 import {
@@ -146,15 +143,7 @@ class AppContainer extends Component<Props> {
 
     /* <===== BEGIN LONG BEACH HACK =====> */
     if (selectedOrganizationSettings.get('longBeach', false)) {
-      return (
-        <Switch>
-          <Route exact strict path={HOME_PATH} component={LongBeachHome} />
-          <Route path={PEOPLE_PATH} component={LongBeachHome} />
-          <Route path={LOCATION_PATH} component={LongBeachHome} />
-          <Route path={PROVIDER_PATH} component={LongBeachHome} />
-          <Redirect to={HOME_PATH} />
-        </Switch>
-      );
+      return (<LongBeachRouter />);
     }
     /* <===== END LONG BEACH HACK =====> */
 
