@@ -5,18 +5,17 @@ import React from 'react';
 import styled from 'styled-components';
 import {
   faBirthdayCake,
+  faHome,
   faUser,
   faVenusMars,
 } from '@fortawesome/pro-solid-svg-icons';
 import { Map } from 'immutable';
 import { Constants } from 'lattice';
 import {
-  Button,
   Card,
   CardSegment,
   Tag,
 } from 'lattice-ui-kit';
-import { DateTime } from 'luxon';
 import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
@@ -41,6 +40,7 @@ const { OPENLATTICE_ID_FQN } = Constants;
 const StyledSegment = styled(CardSegment)`
   ${media.phone`
     flex-direction: column;
+    padding: 10px 15px;
   `}
 `;
 
@@ -58,7 +58,7 @@ const Details = styled.div`
 `;
 
 const Name = styled.div`
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 600;
   text-transform: uppercase;
   overflow: hidden;
@@ -66,18 +66,7 @@ const Name = styled.div`
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   ${media.phone`
-    font-size: 18px;
-  `}
-`;
-
-const Actions = styled.div`
-  display: grid;
-  grid-gap: 10px;
-  grid-template-rows: 2fr 1fr;
-  ${media.phone`
-    grid-auto-flow: column;
-    grid-template-rows: none;
-    margin-top: 10px;
+    font-size: 16px;
   `}
 `;
 
@@ -87,8 +76,10 @@ const FlexRow = styled.div`
   flex-direction: row;
 `;
 
-const BigButton = styled(Button)`
-  flex: 2;
+const TagGroup = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 type Props = {
@@ -104,13 +95,9 @@ const PersonResult = (props :Props) => {
     const profilePic = store.getIn(['people', 'profilePicsByEKID', personEKID], Map());
     return getImageDataFromEntity(profilePic);
   });
-  const recentIncident = useSelector((store) => store
-    .getIn(['people', 'recentIncidentsByEKID', 'data', personEKID, 'recentIncidentDT']));
 
-  const recentDate = (recentIncident && recentIncident.isValid) && recentIncident.toLocaleString(DateTime.DATE_SHORT);
-
-  const isLoading = useSelector((store) => store
-    .getIn(['people', 'recentIncidentsByEKID', 'fetchState']) !== RequestStates.SUCCESS);
+  // const isLoading = useSelector((store) => store
+  //   .getIn(['people', 'recentIncidentsByEKID', 'fetchState']) !== RequestStates.SUCCESS);
 
   const goToProfile = useGoToPath(PROFILE_VIEW_PATH.replace(PROFILE_ID_PATH, personEKID));
   const dispatch = useDispatch();
@@ -128,27 +115,23 @@ const PersonResult = (props :Props) => {
   const race = result.getIn([PERSON_RACE_FQN, 0]);
 
   return (
-    <Card>
-      <StyledSegment padding="sm">
+    <Card onClick={handleViewProfile}>
+      <StyledSegment padding="sm" vertical>
+        <Name bold uppercase>{fullName}</Name>
+        {/* <TagGroup>
+          <Tag mode="warning">Stay Away</Tag>
+          <Tag mode="danger">Warrant</Tag>
+        </TagGroup> */}
         <FlexRow>
-          <Portrait imageUrl={imageUrl} height="128" width="96" />
+          <Portrait imageUrl={imageUrl} height="72" width="54" />
           <Details>
-            <Name bold uppercase fontSize="24px">{fullName}</Name>
             {/* TODO: Fetch stayAway and warrant flags */}
-            <span>
-              <Tag mode="warning">Stay Away</Tag>
-              <Tag mode="danger">Warrant</Tag>
-            </span>
-            <Detail content={dob} icon={faBirthdayCake} isLoading={isLoading} />
-            <Detail content={sex} icon={faVenusMars} isLoading={isLoading} />
-            <Detail content={race} icon={faUser} isLoading={isLoading} />
+            <Detail content={dob} icon={faBirthdayCake} isLoading={false} />
+            <Detail content={race} icon={faUser} isLoading={false} />
+            <Detail content={sex} icon={faVenusMars} isLoading={false} />
+            {/* <Detail content={address} icon={faHome} isLoading={isLoading} /> */}
           </Details>
         </FlexRow>
-        {/* <Actions>
-          <BigButton mode="secondary" onClick={handleViewProfile}>
-            View Profile
-          </BigButton>
-        </Actions> */}
       </StyledSegment>
     </Card>
   );

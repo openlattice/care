@@ -4,6 +4,7 @@ import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 
 import LongBeachHome from './LongBeachHome';
+import LongBeachLocationsContainer from './location/LongBeachLocationsContainer';
 import LongBeachPeopleContainer from './people/LongBeachPeopleContainer';
 import {
   HOME_PATH,
@@ -16,7 +17,7 @@ import {
 const LongBeachRouter = () => (
   <Switch>
     <Route exact strict path={HOME_PATH} component={LongBeachHome} />
-    <Route path={LOCATION_PATH} component={LongBeachHome} />
+    <Route path={LOCATION_PATH} component={LongBeachLocationsContainer} />
     <Route path={PEOPLE_PATH} component={LongBeachPeopleContainer} />
     <Route path={PROFILE_PATH} component={LongBeachHome} />
     <Route path={PROVIDER_PATH} component={LongBeachHome} />

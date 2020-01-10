@@ -9,7 +9,6 @@ import {
   Card,
   CardSegment,
   CardStack,
-  DatePicker,
   Input,
   Label,
   PaginationToolbar,
@@ -18,11 +17,10 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
-import PersonResult from './LongBeachPersonResult';
-import { searchLBPeople } from './LongBeachPeopleActions';
-
+import PersonResult from '../people/LongBeachPersonResult';
 import { useInput } from '../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../components/layout';
+import { searchPeople } from '../../containers/people/PeopleActions';
 import { isNonEmptyString } from '../../utils/LangUtils';
 import { media } from '../../utils/StyleUtils';
 
@@ -49,33 +47,39 @@ const Title = styled.h1`
 
 const MAX_HITS = 20;
 
-const LongBeachPeopleContainer = () => {
+const LongBeachLocationContainer = () => {
 
-  const searchResults = useSelector((store) => store.getIn(['longBeach', 'people', 'hits'], List()));
-  const totalHits = useSelector((store) => store.getIn(['longBeach', 'people', 'totalHits'], 0));
-  const fetchState = useSelector((store) => store.getIn(['longBeach', 'people', 'fetchState']));
-  const searchInputs = useSelector((store) => store.getIn(['longBeach', 'people', 'searchInputs']));
+  const searchResults = useSelector((store) => store.getIn(['location', 'hits'], List()));
+  const totalHits = useSelector((store) => store.getIn(['location', 'totalHits'], 0));
+  const fetchState = useSelector((store) => store.getIn(['location', 'fetchState']));
+  const searchInputs = useSelector((store) => store.getIn(['location', 'searchInputs']));
   const dispatch = useDispatch();
 
-  const [dob, setDob] = useState(searchInputs.get('dob'));
   const [page, setPage] = useState(0);
-  const [firstName, setFirstName] = useInput(searchInputs.get('firstName'));
-  const [lastName, setLastName] = useInput(searchInputs.get('lastName'));
+  const [locationName, setLocationName] = useInput(searchInputs.get('locationName'));
+  const [address, setAddress] = useInput(searchInputs.get('address'));
+  const [address2, setAddress2] = useInput(searchInputs.get('address2'));
+  const [city, setCity] = useInput(searchInputs.get('city'));
+  const [stateInitials, setStateInitials] = useInput(searchInputs.get('stateInitials'));
+  const [zip, setZip] = useInput(searchInputs.get('zip'));
 
   const hasSearched = fetchState !== RequestStates.STANDBY;
   const isLoading = fetchState === RequestStates.PENDING;
 
   const dispatchSearch = (start = 0) => {
     const newSearchInputs = Map({
-      lastName,
-      firstName,
-      dob
+      address,
+      address2,
+      city,
+      locationName,
+      stateInitials,
+      zip,
     });
 
     const hasValues = newSearchInputs.some(isNonEmptyString);
 
     if (hasValues) {
-      dispatch(searchLBPeople({
+      dispatch(searchPeople({
         searchInputs: newSearchInputs,
         start,
         maxHits: MAX_HITS
@@ -106,22 +110,46 @@ const LongBeachPeopleContainer = () => {
               <form>
                 <InputGrid>
                   <div>
-                    <Label htmlFor="last-name">Last Name</Label>
+                    <Label htmlFor="location-name">Location Name</Label>
                     <Input
-                        id="last-name"
-                        value={lastName}
-                        onChange={setLastName} />
+                        id="location-name"
+                        value={locationName}
+                        onChange={setLocationName} />
                   </div>
                   <div>
-                    <Label htmlFor="first-name">First Name</Label>
+                    <Label htmlFor="address-line-1">Address Line 1</Label>
                     <Input
-                        id="first-name"
-                        value={firstName}
-                        onChange={setFirstName} />
+                        id="address-line-1"
+                        value={address}
+                        onChange={setAddress} />
                   </div>
                   <div>
-                    <Label htmlFor="dob">Date of Birth</Label>
-                    <DatePicker id="dob" value={dob} onChange={setDob} />
+                    <Label htmlFor="address-line-2">Address Line 2</Label>
+                    <Input
+                        id="address-line-2"
+                        value={address2}
+                        onChange={setAddress2} />
+                  </div>
+                  <div>
+                    <Label htmlFor="city">City</Label>
+                    <Input
+                        id="city"
+                        value={city}
+                        onChange={setCity} />
+                  </div>
+                  <div>
+                    <Label htmlFor="state">State</Label>
+                    <Input
+                        id="state"
+                        value={stateInitials}
+                        onChange={setStateInitials} />
+                  </div>
+                  <div>
+                    <Label htmlFor="zip">Zip</Label>
+                    <Input
+                        id="zip"
+                        value={zip}
+                        onChange={setZip} />
                   </div>
                   <div>
                     <Label stealth>Submit</Label>
@@ -158,4 +186,4 @@ const LongBeachPeopleContainer = () => {
   );
 };
 
-export default LongBeachPeopleContainer;
+export default LongBeachLocationContainer;
