@@ -1,5 +1,4 @@
 // @flow
-/* <===== BEGIN LONG BEACH HACK =====> */
 import React from 'react';
 
 import styled from 'styled-components';
@@ -75,4 +74,3 @@ const LongBeachHome = () => (
 );
 
 export default LongBeachHome;
-/* <===== END LONG BEACH HACK =====> */
