@@ -49,10 +49,10 @@ const MAX_HITS = 20;
 
 const LongBeachLocationContainer = () => {
 
-  const searchResults = useSelector((store) => store.getIn(['location', 'hits'], List()));
-  const totalHits = useSelector((store) => store.getIn(['location', 'totalHits'], 0));
-  const fetchState = useSelector((store) => store.getIn(['location', 'fetchState']));
-  const searchInputs = useSelector((store) => store.getIn(['location', 'searchInputs']));
+  const searchResults = useSelector((store) => store.getIn(['longBeach', 'locations', 'hits'], List()));
+  const totalHits = useSelector((store) => store.getIn(['longBeach', 'locations', 'totalHits'], 0));
+  const fetchState = useSelector((store) => store.getIn(['longBeach', 'locations', 'fetchState']));
+  const searchInputs = useSelector((store) => store.getIn(['longBeach', 'locations', 'searchInputs']));
   const dispatch = useDispatch();
 
   const [page, setPage] = useState(0);
@@ -105,7 +105,7 @@ const LongBeachLocationContainer = () => {
           <Card>
             <CardSegment vertical>
               <Title>
-                Search People
+                Search Locations
               </Title>
               <form>
                 <InputGrid>

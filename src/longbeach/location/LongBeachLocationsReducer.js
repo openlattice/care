@@ -17,7 +17,7 @@ const INITIAL_STATE :Map = fromJS({
   fetchState: RequestStates.STANDBY,
   hits: List(),
   totalHits: 0,
-  profilePicsByEKID: Map(),
+  profilePictures: Map(),
   searchInputs: Map({
     address: '',
     address2: '',
@@ -26,6 +26,8 @@ const INITIAL_STATE :Map = fromJS({
     stateInitials: '',
     zip: '',
   }),
+  stayAway: Map(),
+  stayAwayLocations: Map(),
 });
 
 const longBeachLocationsReducer = (state :Map = INITIAL_STATE, action :Object) => {
