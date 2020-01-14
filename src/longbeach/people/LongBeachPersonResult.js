@@ -5,19 +5,17 @@ import React from 'react';
 import styled from 'styled-components';
 import {
   faBirthdayCake,
-  faHome,
+  faMapMarkerAltSlash,
   faUser,
-  faVenusMars,
+  faVenusMars
 } from '@fortawesome/pro-solid-svg-icons';
 import { Map } from 'immutable';
 import { Constants } from 'lattice';
 import {
   Card,
   CardSegment,
-  Tag,
 } from 'lattice-ui-kit';
 import { useDispatch, useSelector } from 'react-redux';
-import { RequestStates } from 'redux-reqseq';
 
 import Detail from '../../components/premium/styled/Detail';
 import Portrait from '../../components/portrait/Portrait';
@@ -31,6 +29,7 @@ import {
   PERSON_RACE_FQN,
   PERSON_SEX_FQN
 } from '../../edm/DataModelFqns';
+import { getAddressFromLocation } from '../../utils/AddressUtils';
 import { getImageDataFromEntity } from '../../utils/BinaryUtils';
 import { getDobFromPerson, getLastFirstMiFromPerson } from '../../utils/PersonUtils';
 import { media } from '../../utils/StyleUtils';
@@ -76,12 +75,6 @@ const FlexRow = styled.div`
   flex-direction: row;
 `;
 
-const TagGroup = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
 type Props = {
   result :Map;
 }
@@ -91,13 +84,15 @@ const PersonResult = (props :Props) => {
   const { result } = props;
 
   const personEKID = result.getIn([OPENLATTICE_ID_FQN, 0]);
+  const stayAwayLocation = useSelector((store) => {
+    const stayAwayEKID = store.getIn(['longBeach', 'people', 'stayAway', personEKID, OPENLATTICE_ID_FQN, 0]);
+    return store.getIn(['longBeach', 'people', 'stayAwayLocations', stayAwayEKID]);
+  }) || Map();
+
   const imageUrl = useSelector((store) => {
-    const profilePic = store.getIn(['people', 'profilePicsByEKID', personEKID], Map());
+    const profilePic = store.getIn(['longBeach', 'people', 'profilePictures', personEKID], Map());
     return getImageDataFromEntity(profilePic);
   });
-
-  // const isLoading = useSelector((store) => store
-  //   .getIn(['people', 'recentIncidentsByEKID', 'fetchState']) !== RequestStates.SUCCESS);
 
   const goToProfile = useGoToPath(PROFILE_VIEW_PATH.replace(PROFILE_ID_PATH, personEKID));
   const dispatch = useDispatch();
@@ -113,23 +108,24 @@ const PersonResult = (props :Props) => {
   const dob :string = getDobFromPerson(result, false, '---');
   const sex = result.getIn([PERSON_SEX_FQN, 0]);
   const race = result.getIn([PERSON_RACE_FQN, 0]);
+  const { name, address } = getAddressFromLocation(stayAwayLocation);
+  let nameAndAddress = address;
+  if (name && address) {
+    nameAndAddress = `${name}\n${address}`;
+  }
 
   return (
     <Card onClick={handleViewProfile}>
       <StyledSegment padding="sm" vertical>
         <Name bold uppercase>{fullName}</Name>
-        {/* <TagGroup>
-          <Tag mode="warning">Stay Away</Tag>
-          <Tag mode="danger">Warrant</Tag>
-        </TagGroup> */}
         <FlexRow>
-          <Portrait imageUrl={imageUrl} height="72" width="54" />
+          <Portrait imageUrl={imageUrl} height="90" width="72" />
           <Details>
             {/* TODO: Fetch stayAway and warrant flags */}
-            <Detail content={dob} icon={faBirthdayCake} isLoading={false} />
-            <Detail content={race} icon={faUser} isLoading={false} />
-            <Detail content={sex} icon={faVenusMars} isLoading={false} />
-            {/* <Detail content={address} icon={faHome} isLoading={isLoading} /> */}
+            <Detail content={dob} icon={faBirthdayCake} />
+            <Detail content={race} icon={faUser} />
+            <Detail content={sex} icon={faVenusMars} />
+            <Detail content={nameAndAddress} icon={faMapMarkerAltSlash} />
           </Details>
         </FlexRow>
       </StyledSegment>

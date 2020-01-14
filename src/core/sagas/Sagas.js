@@ -168,6 +168,8 @@ export default function* sagas() :Generator<*, *, *> {
 
     /* <===== BEGIN LONG BEACH HACK =====> */
     fork(LongBeachPeopleSagas.searchLBPeopleWatcher),
+    fork(LongBeachPeopleSagas.getLBPeopleStayAwayWatcher),
+    fork(LongBeachPeopleSagas.getLBStayAwayLocationsWatcher),
     fork(LongBeachPeopleSagas.getLBPeoplePhotosWatcher),
 
     // fork(LongBeachLocationsSagas.),

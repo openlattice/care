@@ -2,17 +2,20 @@
  * @flow
  */
 
+import isArray from 'lodash/isArray';
 import isPlainObject from 'lodash/isPlainObject';
 import {
+  all,
   call,
   put,
   select,
-  takeEvery
+  takeEvery,
+  takeLatest,
 } from '@redux-saga/core/effects';
 import {
-  List,
   Map,
-  fromJS
+  fromJS,
+  getIn
 } from 'immutable';
 import { Constants } from 'lattice';
 import {
@@ -24,26 +27,29 @@ import type { SequenceAction } from 'redux-reqseq';
 
 import {
   GET_LB_PEOPLE_PHOTOS,
+  GET_LB_PEOPLE_STAY_AWAY,
+  GET_LB_STAY_AWAY_LOCATIONS,
   SEARCH_LB_PEOPLE,
   getLBPeoplePhotos,
+  getLBPeopleStayAway,
+  getLBStayAwayLocations,
   searchLBPeople,
 } from './LongBeachPeopleActions';
 
 import Logger from '../../utils/Logger';
 import * as FQN from '../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
-import {
-  getESIDFromApp,
-  getPeopleESId,
-} from '../../utils/AppUtils';
+import { getESIDFromApp, getESIDsFromApp } from '../../utils/AppUtils';
 import { ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
 
 const {
-  // APPEARS_IN_FQN,
-  // BEHAVIORAL_HEALTH_REPORT_FQN,
+  FILED_FOR_FQN,
   IMAGE_FQN,
   IS_PICTURE_OF_FQN,
+  LOCATION_FQN,
   PEOPLE_FQN,
+  SERVED_WITH_FQN,
+  SERVICE_OF_PROCESS_FQN,
 } = APP_TYPES_FQNS;
 
 const { OPENLATTICE_ID_FQN } = Constants;
@@ -52,9 +58,10 @@ const { searchEntitySetDataWorker, searchEntityNeighborsWithFilterWorker } = Sea
 const LOG = new Logger('PeopleSagas');
 
 export function* getLBPeoplePhotosWorker(action :SequenceAction) :Generator<*, *, *> {
+  const response :Object = {};
   try {
     const { value: entityKeyIds } = action;
-    if (!List.isList(entityKeyIds)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isArray(entityKeyIds)) throw ERR_ACTION_VALUE_TYPE;
 
     yield put(getLBPeoplePhotos.request(action.id));
 
@@ -66,7 +73,7 @@ export function* getLBPeoplePhotosWorker(action :SequenceAction) :Generator<*, *
     const imageSearchParams = {
       entitySetId: peopleESID,
       filter: {
-        entityKeyIds: entityKeyIds.toJS(),
+        entityKeyIds,
         edgeEntitySetIds: [isPictureOfESID],
         destinationEntitySetIds: [],
         sourceEntitySetIds: [imageESID]
@@ -78,87 +85,168 @@ export function* getLBPeoplePhotosWorker(action :SequenceAction) :Generator<*, *
       searchEntityNeighborsWithFilter(imageSearchParams)
     );
 
-    const profilePicByEKID = fromJS(imageResponse.data)
+    const profilePictures = fromJS(imageResponse.data)
       .map((entity) => entity.first().get('neighborDetails'));
 
-    yield put(getLBPeoplePhotos.success(action.id, profilePicByEKID));
+    response.data = {
+      profilePictures
+    };
+
+    yield put(getLBPeoplePhotos.success(action.id, profilePictures));
   }
   catch (error) {
-    LOG.error(action.type, error);
-    yield put(getLBPeoplePhotos.failure(action.id));
+    response.error = error;
+    yield put(getLBPeoplePhotos.failure(action.id, error));
   }
+
+  return response;
 }
 
 export function* getLBPeoplePhotosWatcher() :Generator<*, *, *> {
-  yield takeEvery(GET_LB_PEOPLE_PHOTOS, getLBPeoplePhotosWorker);
+  yield takeLatest(GET_LB_PEOPLE_PHOTOS, getLBPeoplePhotosWorker);
 }
 
-// export function* getRecentIncidentsWorker(action :SequenceAction) :Generator<any, any, any> {
-//   try {
-//     const { value: entityKeyIds } = action;
-//     if (!List.isList(entityKeyIds)) throw ERR_ACTION_VALUE_TYPE;
+export function* getLBStayAwayLocationsWorker(action :SequenceAction) :Generator<any, any, any> {
+  const response :Object = {
+    data: {}
+  };
 
-//     yield put(getRecentIncidents.request(action.id, entityKeyIds));
+  try {
+    const { value: entityKeyIds } = action;
+    if (!isArray(entityKeyIds)) throw ERR_ACTION_VALUE_TYPE;
 
-//     const app :Map = yield select((state) => state.get('app', Map()));
-//     const reportESID :UUID = getESIDFromApp(app, BEHAVIORAL_HEALTH_REPORT_FQN);
-//     const peopleESID :UUID = getESIDFromApp(app, PEOPLE_FQN);
-//     const appearsInESID :UUID = getESIDFromApp(app, APPEARS_IN_FQN);
+    yield put(getLBStayAwayLocations.request(action.id));
 
-//     // all reports for each person
-//     const reportsSearchParams = {
-//       entitySetId: peopleESID,
-//       filter: {
-//         entityKeyIds: entityKeyIds.toJS(),
-//         edgeEntitySetIds: [appearsInESID],
-//         destinationEntitySetIds: [reportESID],
-//         sourceEntitySetIds: [],
-//       }
-//     };
+    const app :Map = yield select((state) => state.get('app', Map()));
+    const [
+      filedForESID,
+      locationESID,
+      serviceOfProcessESID
+    ] = getESIDsFromApp(app, [
+      FILED_FOR_FQN,
+      LOCATION_FQN,
+      SERVICE_OF_PROCESS_FQN
+    ]);
 
-//     const incidentsResponse = yield call(
-//       searchEntityNeighborsWithFilterWorker,
-//       searchEntityNeighborsWithFilter(reportsSearchParams)
-//     );
+    const locationSearchParams = {
+      entitySetId: serviceOfProcessESID,
+      filter: {
+        entityKeyIds,
+        edgeEntitySetIds: [filedForESID],
+        destinationEntitySetIds: [locationESID],
+        sourceEntitySetIds: [],
+      }
+    };
 
-//     if (incidentsResponse.error) throw incidentsResponse.error;
+    const locationResponse = yield call(
+      searchEntityNeighborsWithFilterWorker,
+      searchEntityNeighborsWithFilter(locationSearchParams)
+    );
 
-//     // get most recent incident per EKID
-//     const recentIncidentsByEKID = fromJS(incidentsResponse.data)
-//       .map((reports) => {
-//         const recentIncident = reports
-//           .map((report :Map) => report.get('neighborDetails'))
-//           .toSet()
-//           .toList()
-//           .sortBy((report :Map) :number => {
-//             const time = DateTime.fromISO(report.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0]));
+    if (locationResponse.error) throw locationResponse.error;
 
-//             return -time.valueOf();
-//           })
-//           .first();
+    const locationData = fromJS(locationResponse.data)
+      .map((entityNeighbors) => {
+        const stayAwayOrder = entityNeighbors
+          .map((neighbor) => neighbor.get('neighborDetails'))
+          .first();
+        return stayAwayOrder;
+      });
 
-//         const recentIncidentDT = DateTime.fromISO(recentIncident.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0]));
-//         const totalIncidents = reports.count();
+    response.data = locationData;
 
-//         return Map({
-//           recentIncidentDT,
-//           totalIncidents,
-//         });
-//       });
+    yield put(getLBStayAwayLocations.success(action.id, locationData));
+  }
+  catch (error) {
+    response.error = error;
+    yield put(getLBStayAwayLocations.failure(action.id, error));
+  }
 
-//     yield put(getRecentIncidents.success(action.id, recentIncidentsByEKID));
-//   }
-//   catch (error) {
-//     yield put(getRecentIncidents.failure(action.id));
-//   }
-// }
+  return response;
+}
 
-// export function* getRecentIncidentsWatcher() :Generator<any, any, any> {
-//   yield takeLatest(GET_RECENT_INCIDENTS, getRecentIncidentsWorker);
-// }
+export function* getLBStayAwayLocationsWatcher() :Generator<any, any, any> {
+  yield takeLatest(GET_LB_STAY_AWAY_LOCATIONS, getLBStayAwayLocationsWorker);
+}
 
-function* searchLBPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
+export function* getLBPeopleStayAwayWorker(action :SequenceAction) :Generator<any, any, any> {
+  const response :Object = {
+    data: {}
+  };
 
+  try {
+    const { value: entityKeyIds } = action;
+    if (!isArray(entityKeyIds)) throw ERR_ACTION_VALUE_TYPE;
+
+    yield put(getLBPeopleStayAway.request(action.id, entityKeyIds));
+
+    const app :Map = yield select((state) => state.get('app', Map()));
+    const [
+      peopleESID,
+      servedWithESID,
+      serviceOfProcessESID
+    ] = getESIDsFromApp(app, [
+      PEOPLE_FQN,
+      SERVED_WITH_FQN,
+      SERVICE_OF_PROCESS_FQN
+    ]);
+
+    const stayAwaySearchParams = {
+      entitySetId: peopleESID,
+      filter: {
+        entityKeyIds,
+        edgeEntitySetIds: [servedWithESID],
+        destinationEntitySetIds: [serviceOfProcessESID],
+        sourceEntitySetIds: [],
+      }
+    };
+
+    const stayAwayResponse = yield call(
+      searchEntityNeighborsWithFilterWorker,
+      searchEntityNeighborsWithFilter(stayAwaySearchParams)
+    );
+
+    if (stayAwayResponse.error) throw stayAwayResponse.error;
+    const locationsEKIDs = [];
+    const stayAway = fromJS(stayAwayResponse.data)
+      .map((entityNeighbors) => {
+        const stayAwayOrder = entityNeighbors
+          .map((neighbor) => neighbor.get('neighborDetails'))
+          .first();
+        locationsEKIDs.push(stayAwayOrder.getIn([OPENLATTICE_ID_FQN, 0]));
+        return stayAwayOrder;
+      });
+
+    response.data = {
+      stayAway
+    };
+
+    if (locationsEKIDs.length) {
+      const { data, error } = yield call(
+        getLBStayAwayLocationsWorker,
+        getLBStayAwayLocations(locationsEKIDs)
+      );
+
+      if (error) throw error;
+      response.data.stayAwayLocations = data;
+    }
+
+    yield put(getLBPeopleStayAway.success(action.id, response.data));
+  }
+  catch (error) {
+    response.error = error;
+    yield put(getLBPeopleStayAway.failure(action.id, error));
+  }
+
+  return response;
+}
+
+export function* getLBPeopleStayAwayWatcher() :Generator<any, any, any> {
+  yield takeLatest(GET_LB_PEOPLE_STAY_AWAY, getLBPeopleStayAwayWorker);
+}
+
+export function* searchLBPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
+  const response :Object = {};
   try {
     const { value } = action;
     if (!isPlainObject(value)) throw ERR_ACTION_VALUE_TYPE;
@@ -202,7 +290,7 @@ function* searchLBPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
       maxHits
     };
 
-    const entitySetId = getPeopleESId(app);
+    const entitySetId = getESIDFromApp(app, PEOPLE_FQN);
 
     const { data, error } = yield call(
       searchEntitySetDataWorker,
@@ -214,21 +302,54 @@ function* searchLBPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
 
     if (error) throw error;
 
-    const hits = fromJS(data.hits)
-      .sortBy((entity) => entity.getIn([FQN.PERSON_LAST_NAME_FQN]));
+    const { hits } = data;
 
-    const peopleEKIDs = hits.map((person) => person.getIn([OPENLATTICE_ID_FQN, 0]));
+    const peopleEKIDs = hits.map((person) => getIn(person, [OPENLATTICE_ID_FQN, 0]));
 
-    yield put(searchLBPeople.success(action.id, { hits, totalHits: data.numHits }));
-    if (!peopleEKIDs.isEmpty()) {
-      yield put(getLBPeoplePhotos(peopleEKIDs));
-      // yield put(getRecentIncidents(peopleEKIDs));
+    if (peopleEKIDs.length) {
+      const profilePicturesRequest = call(
+        getLBPeoplePhotosWorker,
+        getLBPeoplePhotos(peopleEKIDs)
+      );
+      const stayAwayRequest = call(
+        getLBPeopleStayAwayWorker,
+        getLBPeopleStayAway(peopleEKIDs)
+      );
+
+      const neighborsResponse = yield all([
+        profilePicturesRequest,
+        stayAwayRequest
+      ]);
+
+      const neighborsError = neighborsResponse.reduce((acc, neighborResponse) => {
+        if (neighborResponse.error) {
+          acc.push(neighborResponse.error);
+        }
+        return acc;
+      }, []);
+
+      if (neighborsError.length) throw neighborsError;
+
+      const [profilePicturesResponse, stayAwayResponse] = neighborsResponse;
+
+      const { stayAway, stayAwayLocations } = stayAwayResponse.data;
+      const { profilePictures } = profilePicturesResponse.data;
+
+      response.profilePictures = profilePictures;
+      response.stayAway = stayAway;
+      response.stayAwayLocations = stayAwayLocations;
     }
+
+    response.hits = fromJS(hits);
+    response.totalHits = data.numHits;
+    yield put(searchLBPeople.success(action.id, response));
   }
   catch (error) {
     LOG.error(action.type, error);
     yield put(searchLBPeople.failure(action.id, error));
   }
+
+  return response;
 }
 
 export function* searchLBPeopleWatcher() :Generator<*, *, *> {

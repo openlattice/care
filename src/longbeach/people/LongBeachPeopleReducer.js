@@ -8,7 +8,6 @@ import { RequestStates } from 'redux-reqseq';
 
 import {
   CLEAR_LB_PEOPLE,
-  getLBPeoplePhotos,
   searchLBPeople,
 } from './LongBeachPeopleActions';
 
@@ -19,15 +18,13 @@ const INITIAL_STATE :Map = fromJS({
   hits: List(),
   totalHits: 0,
   profilePictures: Map(),
-  // recentIncidentsByEKID: Map({
-  //   data: Map(),
-  //   fetchState: RequestStates.STANDBY,
-  // }),
   searchInputs: Map({
     dob: undefined,
     firstName: '',
     lastName: '',
   }),
+  stayAway: Map(),
+  stayAwayLocations: Map(),
 });
 
 const longBeachPeopleReducer = (state :Map = INITIAL_STATE, action :Object) => {
@@ -46,24 +43,10 @@ const longBeachPeopleReducer = (state :Map = INITIAL_STATE, action :Object) => {
       });
     }
 
-    case getLBPeoplePhotos.case(action.type): {
-      return getLBPeoplePhotos.reducer(state, action, {
-        SUCCESS: () => state
-          .set('fetchState', RequestStates.SUCCESS)
-          .set('profilePictures', action.value),
-        FAILURE: () => state.set('fetchState', RequestStates.FAILURE),
-      });
-    }
-
-    // case getRecentIncidents.case(action.type): {
-    //   return getRecentIncidents.reducer(state, action, {
-    //     REQUEST: () => state
-    //       .setIn(['recentIncidentsByEKID', 'fetchState'], RequestStates.PENDING),
-    //     SUCCESS: () => state
-    //       .setIn(['recentIncidentsByEKID', 'fetchState'], RequestStates.SUCCESS)
-    //       .setIn(['recentIncidentsByEKID', 'data'], action.value),
-    //     FAILURE: () => state
-    //       .setIn(['recentIncidentsByEKID', 'fetchState'], RequestStates.FAILURE),
+    // case getLBPeoplePhotos.case(action.type): {
+    //   return getLBPeoplePhotos.reducer(state, action, {
+    //     SUCCESS: () => state.set('profilePictures', action.value),
+    //     FAILURE: () => state.set('fetchState', RequestStates.FAILURE),
     //   });
     // }
 

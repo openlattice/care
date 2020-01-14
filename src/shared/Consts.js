@@ -36,7 +36,9 @@ export const APP_TYPES_FQNS = {
   SUBJECT_OF_FQN: new FullyQualifiedName('app.subjectof'),
 
   /* <===== BEGIN LONG BEACH HACK =====> */
-  HOUSING_FQN: new FullyQualifiedName('app.housing')
+  SERVED_WITH_FQN: new FullyQualifiedName('app.servedwith'),
+  SERVICE_OF_PROCESS_FQN: new FullyQualifiedName('app.serviceofprocess'),
+  FILED_FOR_FQN: new FullyQualifiedName('app.filedfor')
   /* <===== END LONG BEACH HACK =====> */
 };
 
