@@ -108,6 +108,7 @@ const LongBeachPeopleContainer = () => {
                   <div>
                     <Label htmlFor="last-name">Last Name</Label>
                     <Input
+                        autoFocus
                         id="last-name"
                         value={lastName}
                         onChange={setLastName} />
