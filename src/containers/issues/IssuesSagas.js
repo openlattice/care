@@ -5,17 +5,13 @@ import {
   select,
   takeEvery,
 } from '@redux-saga/core/effects';
-import { DateTime } from 'luxon';
 import { List, Map, fromJS } from 'immutable';
 import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
+import { DateTime } from 'luxon';
 import type { SequenceAction } from 'redux-reqseq';
-
-import Logger from '../../utils/Logger';
-import { ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
-import { isValidUuid } from '../../utils/Utils';
 
 import {
   GET_ALL_ISSUES,
@@ -25,10 +21,14 @@ import {
   getMyOpenIssues,
   getReportedByMe,
 } from './IssuesActions';
-import { getESIDFromApp } from '../../utils/AppUtils';
-import { APP_TYPES_FQNS } from '../../shared/Consts';
-import { COMPLETED_DT_FQN, STATUS_FQN, OPENLATTICE_ID_FQN } from '../../edm/DataModelFqns';
 import { STATUS } from './issue/constants';
+
+import Logger from '../../utils/Logger';
+import { COMPLETED_DT_FQN, OPENLATTICE_ID_FQN, STATUS_FQN } from '../../edm/DataModelFqns';
+import { APP_TYPES_FQNS } from '../../shared/Consts';
+import { getESIDFromApp } from '../../utils/AppUtils';
+import { ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
+import { isValidUuid } from '../../utils/Utils';
 
 const {
   executeSearch,

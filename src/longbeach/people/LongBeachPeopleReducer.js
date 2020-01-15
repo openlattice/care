@@ -43,13 +43,6 @@ const longBeachPeopleReducer = (state :Map = INITIAL_STATE, action :Object) => {
       });
     }
 
-    // case getLBPeoplePhotos.case(action.type): {
-    //   return getLBPeoplePhotos.reducer(state, action, {
-    //     SUCCESS: () => state.set('profilePictures', action.value),
-    //     FAILURE: () => state.set('fetchState', RequestStates.FAILURE),
-    //   });
-    // }
-
     case CLEAR_LB_PEOPLE: {
       return INITIAL_STATE;
     }

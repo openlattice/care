@@ -40,6 +40,7 @@ import Logger from '../../utils/Logger';
 import * as FQN from '../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { getESIDFromApp, getESIDsFromApp } from '../../utils/AppUtils';
+import { getEKIDsFromEntryValues, mapFirstEntityDataFromNeighbors } from '../../utils/DataUtils';
 import { ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
 
 const {
@@ -145,14 +146,7 @@ export function* getLBStayAwayLocationsWorker(action :SequenceAction) :Generator
 
     if (locationResponse.error) throw locationResponse.error;
 
-    const locationData = fromJS(locationResponse.data)
-      .map((entityNeighbors) => {
-        const stayAwayOrder = entityNeighbors
-          .map((neighbor) => neighbor.get('neighborDetails'))
-          .first();
-        return stayAwayOrder;
-      });
-
+    const locationData = mapFirstEntityDataFromNeighbors(fromJS(locationResponse.data));
     response.data = locationData;
 
     yield put(getLBStayAwayLocations.success(action.id, locationData));
@@ -207,24 +201,18 @@ export function* getLBPeopleStayAwayWorker(action :SequenceAction) :Generator<an
     );
 
     if (stayAwayResponse.error) throw stayAwayResponse.error;
-    const locationsEKIDs = [];
-    const stayAway = fromJS(stayAwayResponse.data)
-      .map((entityNeighbors) => {
-        const stayAwayOrder = entityNeighbors
-          .map((neighbor) => neighbor.get('neighborDetails'))
-          .first();
-        locationsEKIDs.push(stayAwayOrder.getIn([OPENLATTICE_ID_FQN, 0]));
-        return stayAwayOrder;
-      });
+
+    const stayAway = mapFirstEntityDataFromNeighbors(fromJS(stayAwayResponse.data));
+    const stayAwayEKIDs = getEKIDsFromEntryValues(stayAway).toJS();
 
     response.data = {
       stayAway
     };
 
-    if (locationsEKIDs.length) {
+    if (stayAwayEKIDs.length) {
       const { data, error } = yield call(
         getLBStayAwayLocationsWorker,
-        getLBStayAwayLocations(locationsEKIDs)
+        getLBStayAwayLocations(stayAwayEKIDs)
       );
 
       if (error) throw error;
@@ -246,7 +234,10 @@ export function* getLBPeopleStayAwayWatcher() :Generator<any, any, any> {
 }
 
 export function* searchLBPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
-  const response :Object = {};
+  const response :Object = {
+    data: {}
+  };
+
   try {
     const { value } = action;
     if (!isPlainObject(value)) throw ERR_ACTION_VALUE_TYPE;
@@ -302,7 +293,9 @@ export function* searchLBPeopleWorker(action :SequenceAction) :Generator<*, *, *
 
     if (error) throw error;
 
-    const { hits } = data;
+    const { hits, numHits } = data;
+    response.data.hits = fromJS(hits);
+    response.data.totalHits = numHits;
 
     const peopleEKIDs = hits.map((person) => getIn(person, [OPENLATTICE_ID_FQN, 0]));
 
@@ -332,17 +325,14 @@ export function* searchLBPeopleWorker(action :SequenceAction) :Generator<*, *, *
 
       const [profilePicturesResponse, stayAwayResponse] = neighborsResponse;
 
-      const { stayAway, stayAwayLocations } = stayAwayResponse.data;
-      const { profilePictures } = profilePicturesResponse.data;
-
-      response.profilePictures = profilePictures;
-      response.stayAway = stayAway;
-      response.stayAwayLocations = stayAwayLocations;
+      response.data = {
+        ...response.data,
+        ...stayAwayResponse.data,
+        ...profilePicturesResponse.data
+      };
     }
 
-    response.hits = fromJS(hits);
-    response.totalHits = data.numHits;
-    yield put(searchLBPeople.success(action.id, response));
+    yield put(searchLBPeople.success(action.id, response.data));
   }
   catch (error) {
     LOG.error(action.type, error);

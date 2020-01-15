@@ -41,18 +41,19 @@ type Props = {
   result :Map;
 }
 
-const LongBeachPersonResult = (props :Props) => {
+const LongBeachLocationResult = (props :Props) => {
 
   const { result } = props;
 
-  const personEKID = result.getIn([OPENLATTICE_ID_FQN, 0]);
-  const stayAwayLocation = useSelector((store) => {
-    const stayAwayEKID = store.getIn(['longBeach', 'people', 'stayAway', personEKID, OPENLATTICE_ID_FQN, 0]);
-    return store.getIn(['longBeach', 'people', 'stayAwayLocations', stayAwayEKID]);
+  const locationEKID = result.getIn([OPENLATTICE_ID_FQN, 0]);
+  const person = useSelector((store) => {
+    const stayAwayEKID = store.getIn(['longBeach', 'locations', 'stayAway', locationEKID, OPENLATTICE_ID_FQN, 0]);
+    return store.getIn(['longBeach', 'locations', 'people', stayAwayEKID]);
   }) || Map();
+  const personEKID = person.getIn([OPENLATTICE_ID_FQN, 0]);
 
   const imageUrl = useSelector((store) => {
-    const profilePic = store.getIn(['longBeach', 'people', 'profilePictures', personEKID], Map());
+    const profilePic = store.getIn(['longBeach', 'locations', 'profilePictures', personEKID], Map());
     return getImageDataFromEntity(profilePic);
   });
 
@@ -61,16 +62,16 @@ const LongBeachPersonResult = (props :Props) => {
 
   const handleViewProfile = () => {
     dispatch(clearProfile());
-    dispatch(selectPerson(result));
+    dispatch(selectPerson(person));
     goToProfile();
   };
 
-  const fullName = getLastFirstMiFromPerson(result, true);
+  const fullName = getLastFirstMiFromPerson(person, true);
   // $FlowFixMe
-  const dob :string = getDobFromPerson(result, false, '---');
-  const sex = result.getIn([PERSON_SEX_FQN, 0]);
-  const race = result.getIn([PERSON_RACE_FQN, 0]);
-  const { name, address } = getAddressFromLocation(stayAwayLocation);
+  const dob :string = getDobFromPerson(person, false, '---');
+  const sex = person.getIn([PERSON_SEX_FQN, 0]);
+  const race = person.getIn([PERSON_RACE_FQN, 0]);
+  const { name, address } = getAddressFromLocation(result);
   let nameAndAddress = address;
   if (name && address) {
     nameAndAddress = `${name}\n${address}`;
@@ -94,4 +95,4 @@ const LongBeachPersonResult = (props :Props) => {
   );
 };
 
-export default React.memo<Props>(LongBeachPersonResult);
+export default React.memo<Props>(LongBeachLocationResult);
