@@ -8,6 +8,7 @@ import { RequestStates } from 'redux-reqseq';
 
 import {
   CLEAR_LB_LOCATIONS,
+  getGeoOptions,
   searchLBLocations
 } from './LongBeachLocationsActions';
 
@@ -17,17 +18,17 @@ const INITIAL_STATE :Map = fromJS({
   fetchState: RequestStates.STANDBY,
   hits: List(),
   totalHits: 0,
+  options: Map({
+    fetchState: RequestStates.STANDBY,
+    data: List()
+  }),
   profilePictures: Map(),
   searchInputs: Map({
     address: '',
-    address2: '',
-    city: '',
-    locationName: '',
-    stateInitials: '',
-    zip: '',
+    currentLocation: false,
   }),
   stayAway: Map(),
-  stayAwayLocations: Map(),
+  people: Map(),
 });
 
 const longBeachLocationsReducer = (state :Map = INITIAL_STATE, action :Object) => {
@@ -38,11 +39,21 @@ const longBeachLocationsReducer = (state :Map = INITIAL_STATE, action :Object) =
       return searchLBLocations.reducer(state, action, {
         REQUEST: () => state
           .set('fetchState', RequestStates.PENDING)
-          .merge(action.value),
+          .set('searchInputs', action.value),
         SUCCESS: () => state
           .set('fetchState', RequestStates.SUCCESS)
           .merge(action.value),
         FAILURE: () => state.set('fetchState', RequestStates.FAILURE)
+      });
+    }
+
+    case getGeoOptions.case(action.type): {
+      return getGeoOptions.reducer(state, action, {
+        REQUEST: () => state.setIn(['options', 'fetchState'], RequestStates.PENDING),
+        SUCCESS: () => state
+          .setIn(['options', 'fetchState'], RequestStates.SUCCESS)
+          .setIn(['options', 'data'], action.value),
+        FAILURE: () => state.setIn(['options', 'fetchState'], RequestStates.FAILURE),
       });
     }
 

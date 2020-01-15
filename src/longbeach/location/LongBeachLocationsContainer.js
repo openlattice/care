@@ -1,7 +1,8 @@
 // @flow
 
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
+import isPlainObject from 'lodash/isPlainObject';
 import styled from 'styled-components';
 import { List, Map } from 'immutable';
 import {
@@ -9,18 +10,19 @@ import {
   Card,
   CardSegment,
   CardStack,
-  Input,
   Label,
   PaginationToolbar,
   SearchResults,
+  Select,
 } from 'lattice-ui-kit';
 import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
-import PersonResult from '../people/LongBeachPersonResult';
-import { useInput } from '../../components/hooks';
+import LongBeachLocationResult from './LongBeachLocationResult';
+import { getGeoOptions, searchLBLocations } from './LongBeachLocationsActions';
+
+import { useTimeout } from '../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../components/layout';
-import { searchPeople } from '../../containers/people/PeopleActions';
 import { isNonEmptyString } from '../../utils/LangUtils';
 import { media } from '../../utils/StyleUtils';
 
@@ -30,7 +32,7 @@ const InputGrid = styled.div`
   flex: 1;
   grid-auto-flow: column;
   grid-gap: 10px;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: 3fr 1fr;
   ${media.phone`
     grid-gap: 5px;
     grid-auto-flow: row;
@@ -53,33 +55,39 @@ const LongBeachLocationContainer = () => {
   const totalHits = useSelector((store) => store.getIn(['longBeach', 'locations', 'totalHits'], 0));
   const fetchState = useSelector((store) => store.getIn(['longBeach', 'locations', 'fetchState']));
   const searchInputs = useSelector((store) => store.getIn(['longBeach', 'locations', 'searchInputs']));
+  const optionsFetchState = useSelector((store) => store.getIn(['longBeach', 'locations', 'options', 'fetchState']));
+  const options = useSelector((store) => store.getIn(['longBeach', 'locations', 'options', 'data']));
   const dispatch = useDispatch();
 
   const [page, setPage] = useState(0);
-  const [locationName, setLocationName] = useInput(searchInputs.get('locationName'));
-  const [address, setAddress] = useInput(searchInputs.get('address'));
-  const [address2, setAddress2] = useInput(searchInputs.get('address2'));
-  const [city, setCity] = useInput(searchInputs.get('city'));
-  const [stateInitials, setStateInitials] = useInput(searchInputs.get('stateInitials'));
-  const [zip, setZip] = useInput(searchInputs.get('zip'));
+  const [address, setAddress] = useState();
+  const [selectedOption, setSelectedOption] = useState(searchInputs.get('selectedOption'));
+  const [currentLocation, setCurrentLocation] = useState(searchInputs.get('currentLocation'));
+
+  const fetchGeoOptions = useCallback(() => {
+    if (isNonEmptyString(address)) {
+      dispatch(getGeoOptions(address));
+    }
+  }, [dispatch, address]);
+
+  useTimeout(fetchGeoOptions, 500);
 
   const hasSearched = fetchState !== RequestStates.STANDBY;
   const isLoading = fetchState === RequestStates.PENDING;
+  const isFetchingOptions = optionsFetchState === RequestStates.PENDING;
+
+  const filterOption = () => true;
 
   const dispatchSearch = (start = 0) => {
     const newSearchInputs = Map({
-      address,
-      address2,
-      city,
-      locationName,
-      stateInitials,
-      zip,
+      selectedOption,
+      currentLocation
     });
 
-    const hasValues = newSearchInputs.some(isNonEmptyString);
+    const hasValues = isPlainObject(selectedOption) || isNonEmptyString(currentLocation);
 
     if (hasValues) {
-      dispatch(searchPeople({
+      dispatch(searchLBLocations({
         searchInputs: newSearchInputs,
         start,
         maxHits: MAX_HITS
@@ -105,51 +113,23 @@ const LongBeachLocationContainer = () => {
           <Card>
             <CardSegment vertical>
               <Title>
-                Search Locations
+                Search By Location
               </Title>
               <form>
                 <InputGrid>
                   <div>
-                    <Label htmlFor="location-name">Location Name</Label>
-                    <Input
-                        id="location-name"
-                        value={locationName}
-                        onChange={setLocationName} />
-                  </div>
-                  <div>
-                    <Label htmlFor="address-line-1">Address Line 1</Label>
-                    <Input
-                        id="address-line-1"
-                        value={address}
-                        onChange={setAddress} />
-                  </div>
-                  <div>
-                    <Label htmlFor="address-line-2">Address Line 2</Label>
-                    <Input
-                        id="address-line-2"
-                        value={address2}
-                        onChange={setAddress2} />
-                  </div>
-                  <div>
-                    <Label htmlFor="city">City</Label>
-                    <Input
-                        id="city"
-                        value={city}
-                        onChange={setCity} />
-                  </div>
-                  <div>
-                    <Label htmlFor="state">State</Label>
-                    <Input
-                        id="state"
-                        value={stateInitials}
-                        onChange={setStateInitials} />
-                  </div>
-                  <div>
-                    <Label htmlFor="zip">Zip</Label>
-                    <Input
-                        id="zip"
-                        value={zip}
-                        onChange={setZip} />
+                    <Label htmlFor="address">Address</Label>
+                    <Select
+                        autoFocus
+                        filterOption={filterOption}
+                        inputId="address"
+                        inputValue={address}
+                        isClearable
+                        isLoading={isFetchingOptions}
+                        onChange={setSelectedOption}
+                        onInputChange={setAddress}
+                        options={options.toJS()}
+                        value={selectedOption} />
                   </div>
                   <div>
                     <Label stealth>Submit</Label>
@@ -169,7 +149,7 @@ const LongBeachLocationContainer = () => {
           <SearchResults
               hasSearched={hasSearched}
               isLoading={isLoading}
-              resultComponent={PersonResult}
+              resultComponent={LongBeachLocationResult}
               results={searchResults} />
           {
             hasSearched && (

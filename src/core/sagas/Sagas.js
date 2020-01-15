@@ -25,7 +25,7 @@ import * as DashboardSagas from '../../containers/dashboard/DashboardSagas';
 import * as DownloadsSagas from '../../containers/downloads/DownloadsSagas';
 import * as IssueSagas from '../../containers/issues/issue/IssueSagas';
 import * as IssuesSagas from '../../containers/issues/IssuesSagas';
-// import * as LongBeachLocationsSagas from '../../longbeach/location/LongBeachLocationsSagas';
+import * as LongBeachLocationsSagas from '../../longbeach/location/LongBeachLocationsSagas';
 import * as LongBeachPeopleSagas from '../../longbeach/people/LongBeachPeopleSagas';
 // eslint-disable-next-line max-len
 import * as OfficerSafetyConcernsSagas from '../../containers/profile/edit/officersafety/sagas/OfficerSafetyConcernsSagas';
@@ -172,7 +172,8 @@ export default function* sagas() :Generator<*, *, *> {
     fork(LongBeachPeopleSagas.getLBStayAwayLocationsWatcher),
     fork(LongBeachPeopleSagas.getLBPeoplePhotosWatcher),
 
-    // fork(LongBeachLocationsSagas.),
+    fork(LongBeachLocationsSagas.getGeoOptionsWatcher),
+    fork(LongBeachLocationsSagas.searchLBLocationsWatcher),
     /* <===== END LONG BEACH HACK =====> */
   ]);
 }
