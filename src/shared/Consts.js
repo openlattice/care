@@ -34,6 +34,12 @@ export const APP_TYPES_FQNS = {
   RESPONSE_PLAN_FQN: new FullyQualifiedName('app.responseplan'),
   STAFF_FQN: new FullyQualifiedName('app.staff'),
   SUBJECT_OF_FQN: new FullyQualifiedName('app.subjectof'),
+
+  /* <===== BEGIN LONG BEACH HACK =====> */
+  SERVED_WITH_FQN: new FullyQualifiedName('app.servedwith'),
+  SERVICE_OF_PROCESS_FQN: new FullyQualifiedName('app.serviceofprocess'),
+  FILED_FOR_FQN: new FullyQualifiedName('app.filedfor')
+  /* <===== END LONG BEACH HACK =====> */
 };
 
 export const STRING_ID_FQN = 'general.stringid';

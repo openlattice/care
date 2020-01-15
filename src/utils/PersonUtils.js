@@ -2,6 +2,7 @@
 import { List, Map, getIn } from 'immutable';
 
 import { getAgeFromIsoDate, getDateShortFromIsoDate } from './DateUtils';
+
 import * as FQN from '../edm/DataModelFqns';
 
 const getLastFirstMiFromPerson = (person :Map | Object, middleInitialOnly :boolean = false) => {

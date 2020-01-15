@@ -1,13 +1,14 @@
 // @flow
 import {
-  getIn,
-  isImmutable,
   List,
   Map,
   Set,
+  getIn,
+  isImmutable,
 } from 'immutable';
 import { Constants, Models } from 'lattice';
 import { DataProcessingUtils } from 'lattice-fabricate';
+
 import { isDefined } from './LangUtils';
 
 const { getEntityAddressKey } = DataProcessingUtils;
@@ -172,7 +173,6 @@ const removeEntitiesFromEntityIndexToIdMap = (
   });
   return newEntityIndexToIdMap.asImmutable();
 };
-
 
 export {
   SEARCH_PREFIX,
