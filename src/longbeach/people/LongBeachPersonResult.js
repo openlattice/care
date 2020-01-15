@@ -79,7 +79,7 @@ type Props = {
   result :Map;
 }
 
-const PersonResult = (props :Props) => {
+const LongBeachPersonResult = (props :Props) => {
 
   const { result } = props;
 
@@ -133,4 +133,4 @@ const PersonResult = (props :Props) => {
   );
 };
 
-export default React.memo<Props>(PersonResult);
+export default React.memo<Props>(LongBeachPersonResult);
