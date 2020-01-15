@@ -34,6 +34,7 @@ import Logger from '../../utils/Logger';
 import * as FQN from '../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { getESIDFromApp, getESIDsFromApp } from '../../utils/AppUtils';
+import { getEKIDsFromEntryValues, mapFirstEntityDataFromNeighbors } from '../../utils/DataUtils';
 import { ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
 import { getLBPeoplePhotos } from '../people/LongBeachPeopleActions';
 import { getLBPeoplePhotosWorker } from '../people/LongBeachPeopleSagas';
@@ -122,15 +123,9 @@ function* getLBStayAwayPeopleWorker(action :SequenceAction) :Generator<any, any,
     );
 
     if (peopleResponse.error) throw peopleResponse.error;
-    const peopleEKIDs = [];
-    const people = fromJS(peopleResponse.data)
-      .map((entityNeighbors) => {
-        const stayAwayOrder = entityNeighbors
-          .map((neighbor) => neighbor.get('neighborDetails'))
-          .first();
-        peopleEKIDs.push(stayAwayOrder.getIn([FQN.OPENLATTICE_ID_FQN, 0]));
-        return stayAwayOrder;
-      });
+
+    const people = mapFirstEntityDataFromNeighbors(fromJS(peopleResponse.data));
+    const peopleEKIDs = getEKIDsFromEntryValues(people).toJS();
 
     response.data = {
       people
@@ -154,6 +149,7 @@ function* getLBStayAwayPeopleWorker(action :SequenceAction) :Generator<any, any,
     LOG.error(action.type, error);
     yield put(getLBStayAwayPeople.request(action.id));
   }
+
   return response;
 }
 
@@ -199,15 +195,8 @@ function* getLBLocationsNeighborsWorker(action :SequenceAction) :Generator<any, 
 
     if (stayAwayResponse.error) throw stayAwayResponse.error;
 
-    const stayAwayEKIDs = [];
-    const stayAway = fromJS(stayAwayResponse.data)
-      .map((entityNeighbors) => {
-        const stayAwayOrder = entityNeighbors
-          .map((neighbor) => neighbor.get('neighborDetails'))
-          .first();
-        stayAwayEKIDs.push(stayAwayOrder.getIn([FQN.OPENLATTICE_ID_FQN, 0]));
-        return stayAwayOrder;
-      });
+    const stayAway = mapFirstEntityDataFromNeighbors(fromJS(stayAwayResponse.data));
+    const stayAwayEKIDs = getEKIDsFromEntryValues(stayAway).toJS();
 
     response.data = {
       stayAway

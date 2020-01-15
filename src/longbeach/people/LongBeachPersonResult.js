@@ -29,10 +29,10 @@ import { getAddressFromLocation } from '../../utils/AddressUtils';
 import { getImageDataFromEntity } from '../../utils/BinaryUtils';
 import { getDobFromPerson, getLastFirstMiFromPerson } from '../../utils/PersonUtils';
 import {
-  Details,
   FlexRow,
-  Name,
-  StyledSegment,
+  ResultDetails,
+  ResultName,
+  ResultSegment,
 } from '../styled';
 
 const { OPENLATTICE_ID_FQN } = Constants;
@@ -78,18 +78,18 @@ const LongBeachPersonResult = (props :Props) => {
 
   return (
     <Card onClick={handleViewProfile}>
-      <StyledSegment padding="sm" vertical>
-        <Name bold uppercase>{fullName}</Name>
+      <ResultSegment padding="sm" vertical>
+        <ResultName bold uppercase>{fullName}</ResultName>
         <FlexRow>
           <Portrait imageUrl={imageUrl} height="90" width="72" />
-          <Details>
+          <ResultDetails>
             <Detail content={dob} icon={faBirthdayCake} />
             <Detail content={race} icon={faUser} />
             <Detail content={sex} icon={faVenusMars} />
             <Detail content={nameAndAddress} icon={faMapMarkerAltSlash} />
-          </Details>
+          </ResultDetails>
         </FlexRow>
-      </StyledSegment>
+      </ResultSegment>
     </Card>
   );
 };

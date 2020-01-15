@@ -3,14 +3,21 @@ import { CardSegment, StyleUtils } from 'lattice-ui-kit';
 
 const { media } = StyleUtils;
 
-const StyledSegment = styled(CardSegment)`
+const SearchTitle = styled.h1`
+  display: flex;
+  font-size: 18px;
+  font-weight: normal;
+  margin: 0;
+`;
+
+const ResultSegment = styled(CardSegment)`
   ${media.phone`
     flex-direction: column;
     padding: 10px 15px;
   `}
 `;
 
-const Details = styled.div`
+const ResultDetails = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -23,7 +30,7 @@ const Details = styled.div`
   `}
 `;
 
-const Name = styled.div`
+const ResultName = styled.div`
   font-size: 20px;
   font-weight: 600;
   text-transform: uppercase;
@@ -42,8 +49,9 @@ const FlexRow = styled.div`
 `;
 
 export {
-  StyledSegment,
-  Details,
-  Name,
+  SearchTitle,
+  ResultSegment,
+  ResultDetails,
+  ResultName,
   FlexRow,
 };

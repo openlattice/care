@@ -174,6 +174,13 @@ const removeEntitiesFromEntityIndexToIdMap = (
   return newEntityIndexToIdMap.asImmutable();
 };
 
+const mapFirstEntityDataFromNeighbors = (entityNeighbors :Map) => entityNeighbors
+  .map((neighbors) => neighbors.first(Map()).get('neighborDetails'));
+
+const getEKIDsFromEntryValues = (neighborMap :Map) => neighborMap
+  .valueSeq()
+  .map((neighbor) => neighbor.getIn([OPENLATTICE_ID_FQN, 0]));
+
 export {
   SEARCH_PREFIX,
   formatDataGraphResponse,
@@ -182,11 +189,13 @@ export {
   getFormDataFromEntity,
   getFormDataFromEntityArray,
   getFqnObj,
+  getEKIDsFromEntryValues,
   getSearchTerm,
   groupNeighborsByEntitySetIds,
   inchesToFeetString,
   keyIn,
+  mapFirstEntityDataFromNeighbors,
+  removeEntitiesFromEntityIndexToIdMap,
   simulateResponseData,
   stripIdField,
-  removeEntitiesFromEntityIndexToIdMap,
 };
