@@ -3,10 +3,12 @@ import { combineReducers } from 'redux-immutable';
 
 import locations from './location/LongBeachLocationsReducer';
 import people from './people/LongBeachPeopleReducer';
+import profile from './profile/LongBeachProfileReducer';
 
 const subReducers = combineReducers({
-  people,
   locations,
+  people,
+  profile,
   // providers
 });
 
