@@ -47,7 +47,7 @@ const LongBeachProviderCard = ({ provider } :Props) => {
   const operatingHours = provider.getIn([FQN.HOURS_OF_OPERATION_FQN, 0], '---');
   const availableSpaces = provider.getIn([FQN.NUMBER_OF_SPACES_AVAILABLE_FQN, 0], 0);
   const totalSpaces = provider.getIn([FQN.NUMBER_OF_SPACES_TOTAL_FQN, 0], 0);
-  const capacity = `${totalSpaces - availableSpaces} / ${totalSpaces}`;
+  const capacity = `${availableSpaces} Available / ${totalSpaces} Total`;
 
   const telTag = <a href={`tel:${phoneNumber}`}>{phoneNumber}</a>;
 
