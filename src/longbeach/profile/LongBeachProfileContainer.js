@@ -1,5 +1,5 @@
 // @flow
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import styled from 'styled-components';
 import {
@@ -37,7 +37,7 @@ const StyledFlexColumn = styled(FlexColumn)`
 
 const LongBeachProfileContainer = () => {
   const selectedPerson = useSelector((store) => store.getIn(['longBeach', 'profile', 'person']));
-  const stayAway = useSelector((store) => store.getIn(['longBeach', 'profile', 'stayAway']));
+  const stayAwayLocation = useSelector((store) => store.getIn(['longBeach', 'profile', 'stayAwayLocation']));
   const profilePicture = useSelector((store) => store.getIn(['longBeach', 'profile', 'profilePicture']));
   const probation = useSelector((store) => store.getIn(['longBeach', 'profile', 'probation']));
   const warrant = useSelector((store) => store.getIn(['longBeach', 'profile', 'warrant']));
@@ -49,7 +49,7 @@ const LongBeachProfileContainer = () => {
 
   const imageURL = useMemo(() => getImageDataFromEntity(profilePicture), [profilePicture]);
 
-  const { name, address } = getAddressFromLocation(stayAway);
+  const { name, address } = getAddressFromLocation(stayAwayLocation);
 
   // $FlowFixMe
   const probationStart :string = getDateShortFromIsoDate(probation.getIn([FQN.RECOGNIZED_START_DATE, 0]));
@@ -105,7 +105,7 @@ const LongBeachProfileContainer = () => {
                 <Grid>
                   <div>
                     <Label subtle>
-                      Name
+                      Location Name
                     </Label>
                     <Detail content={name} isLoading={false} />
                   </div>

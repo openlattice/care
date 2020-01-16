@@ -294,10 +294,14 @@ export function* searchLBPeopleWorker(action :SequenceAction) :Generator<*, *, *
     if (error) throw error;
 
     const { hits, numHits } = data;
-    response.data.hits = fromJS(hits);
-    response.data.totalHits = numHits;
-
     const peopleEKIDs = hits.map((person) => getIn(person, [OPENLATTICE_ID_FQN, 0]));
+    const peopleByEKIDs = Map(
+      hits.map((entityData) => [getIn(entityData, [OPENLATTICE_ID_FQN, 0]), fromJS(entityData)])
+    );
+
+    response.data.hits = fromJS(peopleEKIDs);
+    response.data.totalHits = numHits;
+    response.data.people = peopleByEKIDs;
 
     if (peopleEKIDs.length) {
       const profilePicturesRequest = call(

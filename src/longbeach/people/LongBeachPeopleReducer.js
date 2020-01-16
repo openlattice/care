@@ -17,6 +17,7 @@ const INITIAL_STATE :Map = fromJS({
   fetchState: RequestStates.STANDBY,
   hits: List(),
   totalHits: 0,
+  people: Map(),
   profilePictures: Map(),
   searchInputs: Map({
     dob: undefined,

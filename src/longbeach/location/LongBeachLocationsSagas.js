@@ -272,14 +272,16 @@ function* searchLBLocationsWorker(action :SequenceAction) :Generator<any, any, a
     if (error) throw error;
 
     const { hits, numHits } = data;
-    response.data.hits = fromJS(hits);
+    const locationsEKIDs = hits.map((location) => getIn(location, [FQN.OPENLATTICE_ID_FQN, 0]));
+    const locationsByEKID = Map(hits.map((entity) => [getIn(entity, [FQN.OPENLATTICE_ID_FQN, 0]), fromJS(entity)]));
+    response.data.hits = fromJS(locationsEKIDs);
     response.data.totalHits = numHits;
+    response.data.stayAwayLocations = locationsByEKID;
 
-    const locationEKIDs = hits.map((location) => getIn(location, [FQN.OPENLATTICE_ID_FQN, 0]));
-    if (locationEKIDs.length) {
+    if (locationsEKIDs.length) {
       const neighborsResponse = yield call(
         getLBLocationsNeighborsWorker,
-        getLBLocationsNeighbors(locationEKIDs)
+        getLBLocationsNeighbors(locationsEKIDs)
       );
 
       if (neighborsResponse.error) throw neighborsResponse.error;

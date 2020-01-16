@@ -64,7 +64,6 @@ const LongBeachLocationContainer = () => {
   const [selectedOption, setSelectedOption] = useState(searchInputs.get('selectedOption'));
   const [currentLocation, setCurrentLocation] = useState(searchInputs.get('currentLocation'));
   const position = usePosition();
-  console.log(position);
 
   const fetchGeoOptions = useCallback(() => {
     if (isNonEmptyString(address)) {
@@ -72,7 +71,7 @@ const LongBeachLocationContainer = () => {
     }
   }, [dispatch, address]);
 
-  useTimeout(fetchGeoOptions, 500);
+  useTimeout(fetchGeoOptions, 300);
 
   const hasSearched = fetchState !== RequestStates.STANDBY;
   const isLoading = fetchState === RequestStates.PENDING;

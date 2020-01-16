@@ -22,13 +22,14 @@ const INITIAL_STATE :Map = fromJS({
     fetchState: RequestStates.STANDBY,
     data: List()
   }),
+  people: Map(),
   profilePictures: Map(),
   searchInputs: Map({
     address: '',
     currentLocation: false,
   }),
   stayAway: Map(),
-  people: Map(),
+  stayAwayLocations: Map(),
 });
 
 const longBeachLocationsReducer = (state :Map = INITIAL_STATE, action :Object) => {
