@@ -3,7 +3,6 @@
  */
 
 import Papa from 'papaparse';
-import { DateTime } from 'luxon';
 import {
   call,
   put,
@@ -21,18 +20,23 @@ import {
   EntityDataModelApi,
 } from 'lattice';
 import { SearchApiActions, SearchApiSagas } from 'lattice-sagas';
+import { DateTime } from 'luxon';
 import type { SequenceAction } from 'redux-reqseq';
 
-import FileSaver from '../../utils/FileSaver';
 import {
   DOWNLOAD_FORMS,
   downloadForms
 } from './DownloadsActionFactory';
-import { getReportESId, getPeopleESId, getAppearsInESId } from '../../utils/AppUtils';
-import { getSearchTerm } from '../../utils/DataUtils';
+
+import FileSaver from '../../utils/FileSaver';
+import Logger from '../../utils/Logger';
 import * as FQN from '../../edm/DataModelFqns';
+import { getAppearsInESId, getPeopleESId, getReportESId } from '../../utils/AppUtils';
+import { getSearchTerm } from '../../utils/DataUtils';
 
 const { OPENLATTICE_ID_FQN } = Constants;
+
+const LOG = new Logger('DownloadsSagas');
 
 const {
   searchEntitySetDataWorker,
@@ -160,7 +164,7 @@ function* downloadFormsWorker(action :SequenceAction) :Generator<*, *, *> {
 
     let propertyTypesByFqn = Map();
     let titleToFqn = Map();
-    Object.values(projection.propertyTypes).forEach((propertyType) => {
+    Object.values(projection.propertyTypes).forEach((propertyType :any) => {
       const { type, title } = propertyType;
       const { name, namespace } = type;
       const fqn = `${namespace}.${name}`;
@@ -281,7 +285,7 @@ function* downloadFormsWorker(action :SequenceAction) :Generator<*, *, *> {
     yield put(downloadForms.success(action.id));
   }
   catch (error) {
-    console.error(error);
+    LOG.error(action.type, error);
     yield put(downloadForms.failure(action.id, { error }));
   }
   finally {

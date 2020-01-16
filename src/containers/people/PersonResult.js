@@ -48,7 +48,6 @@ const Details = styled.div`
   font-size: 16px;
   margin: 0 30px;
   min-width: 0;
-
   ${media.phone`
     font-size: 12px;
     margin: 0 10px;
@@ -63,7 +62,6 @@ const Name = styled.div`
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
-
   ${media.phone`
     font-size: 18px;
   `}
@@ -73,7 +71,6 @@ const Actions = styled.div`
   display: grid;
   grid-gap: 10px;
   grid-template-rows: 2fr 1fr;
-
   ${media.phone`
     grid-auto-flow: column;
     grid-template-rows: none;

@@ -3,25 +3,25 @@
  */
 
 import React from 'react';
+
 import styled from 'styled-components';
-import { DateTime } from 'luxon';
 import { List, Map } from 'immutable';
+import { DateTime } from 'luxon';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 
-import { STATE } from '../../utils/constants/StateConstants';
+import { FormWrapper } from '../../components/crisis/FormComponents';
 import { BLACK, TAG_GRAY } from '../../shared/Colors';
 import {
-  OTHER,
-  SUBJECT_INFORMATION,
-  OBSERVED_BEHAVIORS,
   CRISIS_NATURE,
+  DISPOSITION,
+  OBSERVED_BEHAVIORS,
   OFFICER_SAFETY,
-  DISPOSITION
+  OTHER,
+  SUBJECT_INFORMATION
 } from '../../utils/constants/CrisisReportConstants';
+import { STATE } from '../../utils/constants/StateConstants';
 import { DISPOSITIONS as DISP_VALUES } from '../pages/disposition/Constants';
-import { FormWrapper } from '../../components/crisis/FormComponents';
-
 
 type Props = {
   subjectInformation :Map;
@@ -42,13 +42,10 @@ const Name = styled.div`
   flex-direction: column;
   font-weight: bold;
   margin: 10px 0 20px 0;
+  font-size: 20px;
+  text-transform: uppercase;
 
-  span:first-child {
-    font-size: 20px;
-    text-transform: uppercase;
-  }
-
-  span:last-child {
+  span {
     font-size: 16px;
     margin-top: 10px;
   }
@@ -62,6 +59,7 @@ const Section = styled.div`
   h1 {
     font-weight: bold;
     font-size: 18px;
+    margin: 0;
   }
 
   div {
@@ -72,11 +70,7 @@ const Section = styled.div`
     span {
       padding: 7px 10px;
       background-color: ${TAG_GRAY};
-      margin: 10px 10px 10px 0;
-
-      &:last-child {
-        margin-right: 0;
-      }
+      margin: 10px;
     }
   }
 `;
@@ -109,7 +103,7 @@ class ReviewContainer extends React.Component<Props> {
 
     return (
       <Name>
-        <span>{`${last}, ${first} ${middle}`}</span>
+        <div>{`${last}, ${first} ${middle}`}</div>
         <span>{`DOB: ${dob}`}</span>
       </Name>
     );

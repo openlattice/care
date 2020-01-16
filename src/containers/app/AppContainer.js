@@ -6,23 +6,26 @@ import React, { Component } from 'react';
 
 import styled from 'styled-components';
 import { Map } from 'immutable';
+import { Spinner } from 'lattice-ui-kit';
 import { connect } from 'react-redux';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { RequestStates } from 'redux-reqseq';
-import { Spinner } from 'lattice-ui-kit';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import AppHeaderContainer from './AppHeaderContainer';
-import CrisisReportContainer from '../reports/CrisisReportContainer';
-import DownloadsContainer from '../downloads/DownloadsContainer';
-import ProfileRouter from '../profile/ProfileRouter';
-import LegitReportsRouter from '../reports/LegitReportsRouter';
-import DashboardContainer from '../dashboard/DashboardContainer';
-import IssuesContainer from '../issues/IssuesContainer';
 import {
   initializeApplication,
 } from './AppActions';
+
+import CrisisReportContainer from '../reports/CrisisReportContainer';
+import DashboardContainer from '../dashboard/DashboardContainer';
+import DownloadsContainer from '../downloads/DownloadsContainer';
+import IssuesContainer from '../issues/IssuesContainer';
+import LegitReportsRouter from '../reports/LegitReportsRouter';
+import LongBeachRouter from '../../longbeach/LongBeachRouter';
+import ProfileRouter from '../profile/ProfileRouter';
+import SearchPeopleContainer from '../people/SearchPeopleContainer';
 import {
   CRISIS_PATH,
   DASHBOARD_PATH,
@@ -35,11 +38,10 @@ import {
 import {
   APP_CONTAINER_MAX_WIDTH,
   APP_CONTENT_PADDING,
-  MEDIA_QUERY_TECH_SM,
+  MEDIA_QUERY_LG,
   MEDIA_QUERY_MD,
-  MEDIA_QUERY_LG
+  MEDIA_QUERY_TECH_SM
 } from '../../core/style/Sizes';
-import SearchPeopleContainer from '../people/SearchPeopleContainer';
 
 // TODO: this should come from lattice-ui-kit, maybe after the next release. current version v0.1.1
 const APP_BG :string = '#f8f8fb';
@@ -98,9 +100,10 @@ type Props = {
   actions :{
     initializeApplication :RequestSequence;
   };
+  initializeState :RequestState;
   organizations :Map;
   selectedOrganizationId :UUID;
-  initializeState :RequestState;
+  selectedOrganizationSettings :Map;
 };
 
 class AppContainer extends Component<Props> {
@@ -122,6 +125,7 @@ class AppContainer extends Component<Props> {
 
     const {
       organizations,
+      selectedOrganizationSettings,
       selectedOrganizationId,
       initializeState
     } = this.props;
@@ -136,6 +140,12 @@ class AppContainer extends Component<Props> {
         </Switch>
       );
     }
+
+    /* <===== BEGIN LONG BEACH HACK =====> */
+    if (selectedOrganizationSettings.get('longBeach', false)) {
+      return (<LongBeachRouter />);
+    }
+    /* <===== END LONG BEACH HACK =====> */
 
     return (
       <Switch>
@@ -168,9 +178,10 @@ class AppContainer extends Component<Props> {
 function mapStateToProps(state :Map<*, *>) :Object {
 
   return {
+    initializeState: state.getIn(['app', 'initializeState']),
     organizations: state.getIn(['app', 'organizations'], Map()),
     selectedOrganizationId: state.getIn(['app', 'selectedOrganizationId'], ''),
-    initializeState: state.getIn(['app', 'initializeState']),
+    selectedOrganizationSettings: state.getIn(['app', 'selectedOrganizationSettings'], Map()),
   };
 }
 

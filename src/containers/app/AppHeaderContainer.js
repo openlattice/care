@@ -1,6 +1,6 @@
 // @flow
 import React, { useCallback } from 'react';
-import { Map } from 'immutable';
+
 import styled from 'styled-components';
 import {
   faDownload,
@@ -10,28 +10,28 @@ import {
   faQuestionCircle,
   faSignOut,
   faUserChart,
-  faUsers,
 } from '@fortawesome/pro-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { NavLink } from 'react-router-dom';
+import { Map } from 'immutable';
 import { AppHeaderWrapper, AppNavigationWrapper } from 'lattice-ui-kit';
+import { useSelector } from 'react-redux';
+import { NavLink } from 'react-router-dom';
 
 import OpenLatticeLogo from '../../assets/images/logo_v2.png';
 import { useOrganization } from '../../components/hooks';
-import { media } from '../../utils/StyleUtils';
 import {
   DASHBOARD_PATH,
   DOWNLOADS_PATH,
   HOME_PATH,
-  LOGOUT_PATH,
-  PROFILE_PATH,
-  REPORTS_PATH,
   ISSUES_PATH,
+  LOGOUT_PATH,
+  REPORTS_PATH,
 } from '../../core/router/Routes';
+import { media } from '../../utils/StyleUtils';
 
 const StyledAppHeaderWrapper = styled(AppHeaderWrapper)`
   > div {
-    min-width: 375px;
+    min-width: 100vw;
   }
 
   /* hide app title for smaller screens */
@@ -54,6 +54,14 @@ const AppHeaderContainer = (props :Props) => {
   const { organizations = Map() } = props;
   const [selectedOrganizationId, isLoading, switchOrganization] = useOrganization();
 
+  /* <===== BEGIN LONG BEACH HACK =====> */
+  const selectedOrganizationSettings :Map = useSelector((store) => store
+    .getIn(['app', 'selectedOrganizationSettings'], Map()));
+
+  const isLongBeach = selectedOrganizationSettings.get('longBeach', false);
+  // TODO: Remove conditional isLongBeach rendering
+  /* <===== END LONG BEACH HACK =====> */
+
   const onChange = useCallback(({ value } :any) => {
     switchOrganization(value);
   }, [switchOrganization]);
@@ -74,23 +82,37 @@ const AppHeaderContainer = (props :Props) => {
           <FontAwesomeIcon size="lg" fixedWidth icon={faHome} />
           <NavLabel>Home</NavLabel>
         </NavLink>
-        <NavLink to={REPORTS_PATH}>
-          <FontAwesomeIcon size="lg" fixedWidth icon={faFileAlt} />
-          <NavLabel>Reports</NavLabel>
-        </NavLink>
-        <NavLink to={DASHBOARD_PATH}>
-          <FontAwesomeIcon size="lg" fixedWidth icon={faUserChart} />
-          <NavLabel>Dashboard</NavLabel>
-        </NavLink>
-        <NavLink to={DOWNLOADS_PATH}>
-          <FontAwesomeIcon size="lg" fixedWidth icon={faDownload} />
-          <NavLabel>Downloads</NavLabel>
-        </NavLink>
+        {
+          isLongBeach
+            ? <div />
+            : (
+              <>
+                <NavLink to={REPORTS_PATH}>
+                  <FontAwesomeIcon size="lg" fixedWidth icon={faFileAlt} />
+                  <NavLabel>Reports</NavLabel>
+                </NavLink>
+                <NavLink to={DASHBOARD_PATH}>
+                  <FontAwesomeIcon size="lg" fixedWidth icon={faUserChart} />
+                  <NavLabel>Dashboard</NavLabel>
+                </NavLink>
+                <NavLink to={DOWNLOADS_PATH}>
+                  <FontAwesomeIcon size="lg" fixedWidth icon={faDownload} />
+                  <NavLabel>Downloads</NavLabel>
+                </NavLink>
+              </>
+            )
+        }
         <hr />
-        <NavLink to={ISSUES_PATH}>
-          <FontAwesomeIcon size="lg" fixedWidth icon={faFileExclamation} />
-          <NavLabel>Manage Issues</NavLabel>
-        </NavLink>
+        {
+          isLongBeach
+            ? <div />
+            : (
+              <NavLink to={ISSUES_PATH}>
+                <FontAwesomeIcon size="lg" fixedWidth icon={faFileExclamation} />
+                <NavLabel>Manage Issues</NavLabel>
+              </NavLink>
+            )
+        }
         <a
             href="https://support.openlattice.com/servicedesk/customer/portal/1"
             rel="noopener noreferrer"

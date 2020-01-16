@@ -3,6 +3,7 @@
  */
 
 import React from 'react';
+
 import styled, { css } from 'styled-components';
 
 const ToolbarWrapper = styled.div`
@@ -10,6 +11,17 @@ const ToolbarWrapper = styled.div`
   flex-direction: row;
   margin-bottom: ${(props) => (props.noPadding ? 0 : '20px')};
 `;
+
+const hoverStyles = ({ selected, styles } :any) => {
+
+  if (!selected) {
+    return css`
+        color: ${styles.hoverColor};
+        background-color: ${styles.hoverBackgroundColor};
+      `;
+  }
+  return '';
+};
 
 const StyledButton = styled.button`
   display: flex;
@@ -28,16 +40,7 @@ const StyledButton = styled.button`
 
   &:hover {
     cursor: pointer;
-
-    ${(props) => {
-    if (!props.selected) {
-      return css`
-          color: ${props.styles.hoverColor};
-          background-color: ${props.styles.hoverBackgroundColor};
-        `;
-    }
-    return '';
-  }}
+    ${hoverStyles};
   }
 
   &:focus {
@@ -90,7 +93,7 @@ const getColors = (appearance) => {
       return {
         border: '#ceced9',
         padding: '10px 50px',
-        selectedTextColor: '#ffffff',
+        selectedTextColor: '#fff',
         selectedBackgroundColor: '#6124e2',
         defaultFontWeight: '600',
         hoverColor: '#6124e2',

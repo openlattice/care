@@ -1,13 +1,14 @@
 // @flow
 import {
-  getIn,
-  isImmutable,
   List,
   Map,
   Set,
+  getIn,
+  isImmutable,
 } from 'immutable';
 import { Constants, Models } from 'lattice';
 import { DataProcessingUtils } from 'lattice-fabricate';
+
 import { isDefined } from './LangUtils';
 
 const { getEntityAddressKey } = DataProcessingUtils;
@@ -173,6 +174,12 @@ const removeEntitiesFromEntityIndexToIdMap = (
   return newEntityIndexToIdMap.asImmutable();
 };
 
+const mapFirstEntityDataFromNeighbors = (entityNeighbors :Map) => entityNeighbors
+  .map((neighbors) => neighbors.first(Map()).get('neighborDetails'));
+
+const getEKIDsFromEntryValues = (neighborMap :Map) => neighborMap
+  .valueSeq()
+  .map((neighbor) => neighbor.getIn([OPENLATTICE_ID_FQN, 0]));
 
 export {
   SEARCH_PREFIX,
@@ -182,11 +189,13 @@ export {
   getFormDataFromEntity,
   getFormDataFromEntityArray,
   getFqnObj,
+  getEKIDsFromEntryValues,
   getSearchTerm,
   groupNeighborsByEntitySetIds,
   inchesToFeetString,
   keyIn,
+  mapFirstEntityDataFromNeighbors,
+  removeEntitiesFromEntityIndexToIdMap,
   simulateResponseData,
   stripIdField,
-  removeEntitiesFromEntityIndexToIdMap,
 };

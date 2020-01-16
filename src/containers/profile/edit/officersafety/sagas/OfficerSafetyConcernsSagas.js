@@ -3,8 +3,8 @@ import {
   call,
   put,
   select,
-  takeLatest,
   takeEvery,
+  takeLatest,
 } from '@redux-saga/core/effects';
 import {
   List,
@@ -21,6 +21,29 @@ import type { SequenceAction } from 'redux-reqseq';
 
 import Logger from '../../../../../utils/Logger';
 import {
+  deleteBulkEntities,
+  submitDataGraph,
+  submitPartialReplace,
+} from '../../../../../core/sagas/data/DataActions';
+import {
+  deleteBulkEntitiesWorker,
+  submitDataGraphWorker,
+  submitPartialReplaceWorker,
+} from '../../../../../core/sagas/data/DataSagas';
+import { TECHNIQUES_FQN } from '../../../../../edm/DataModelFqns';
+import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
+import { getESIDFromApp } from '../../../../../utils/AppUtils';
+import {
+  getEntityKeyIdsFromList,
+  groupNeighborsByEntitySetIds,
+  removeEntitiesFromEntityIndexToIdMap
+} from '../../../../../utils/DataUtils';
+import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../../../utils/Errors';
+import { isDefined } from '../../../../../utils/LangUtils';
+import { isValidUuid } from '../../../../../utils/Utils';
+import { getResponsePlan } from '../../responseplan/ResponsePlanActions';
+import { getResponsePlanWorker } from '../../responseplan/ResponsePlanSagas';
+import {
   DELETE_OFFICER_SAFETY_CONCERNS,
   GET_OFFICER_SAFETY,
   GET_OFFICER_SAFETY_CONCERNS,
@@ -32,30 +55,7 @@ import {
   submitOfficerSafetyConcerns,
   updateOfficerSafetyConcerns,
 } from '../OfficerSafetyActions';
-import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../../../utils/Errors';
-import { isDefined } from '../../../../../utils/LangUtils';
-import { isValidUuid } from '../../../../../utils/Utils';
-import { getESIDFromApp } from '../../../../../utils/AppUtils';
-import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
-import {
-  deleteBulkEntities,
-  submitDataGraph,
-  submitPartialReplace,
-} from '../../../../../core/sagas/data/DataActions';
-import {
-  deleteBulkEntitiesWorker,
-  submitDataGraphWorker,
-  submitPartialReplaceWorker,
-} from '../../../../../core/sagas/data/DataSagas';
-import { getResponsePlan } from '../../responseplan/ResponsePlanActions';
-import { getResponsePlanWorker } from '../../responseplan/ResponsePlanSagas';
-import { constructFormData, constructEntityIndexToIdMap } from '../utils/OfficerSafetyConcernsUtils';
-import { TECHNIQUES_FQN } from '../../../../../edm/DataModelFqns';
-import {
-  getEntityKeyIdsFromList,
-  groupNeighborsByEntitySetIds,
-  removeEntitiesFromEntityIndexToIdMap
-} from '../../../../../utils/DataUtils';
+import { constructEntityIndexToIdMap, constructFormData } from '../utils/OfficerSafetyConcernsUtils';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 const { searchEntityNeighborsWithFilter } = SearchApiActions;

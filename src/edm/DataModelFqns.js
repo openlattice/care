@@ -5,6 +5,17 @@ const { OPENLATTICE_ID_FQN } = Constants;
 
 export { OPENLATTICE_ID_FQN };
 
+/* <===== BEGIN LONG BEACH HACK =====> */
+const WARRANT_NUMBER_FQN = new FullyQualifiedName('ol.warrantnumber');
+const RECOGNIZED_START_DATE_FQN = new FullyQualifiedName('ol.recognizedstartdate');
+const RECOGNIZED_END_DATE_FQN = new FullyQualifiedName('ol.recognizedenddate');
+export {
+  RECOGNIZED_START_DATE_FQN,
+  RECOGNIZED_END_DATE_FQN,
+  WARRANT_NUMBER_FQN
+};
+/* <===== END LONG BEACH HACK =====> */
+
 /* Issue */
 const PRIORITY_FQN = new FullyQualifiedName('ol.priority');
 const STATUS_FQN = new FullyQualifiedName('ol.status');
@@ -55,6 +66,7 @@ export {
 
 const LOCATION_ADDRESS_LINE_2_FQN = new FullyQualifiedName('location.addressline2');
 const LOCATION_CITY_FQN = new FullyQualifiedName('location.city');
+const LOCATION_COORDINATES_FQN = new FullyQualifiedName('ol.locationcoordinates');
 const LOCATION_NAME_FQN = new FullyQualifiedName('location.name');
 const LOCATION_STATE_FQN = new FullyQualifiedName('location.state');
 const LOCATION_STREET_FQN = new FullyQualifiedName('location.street');
@@ -63,6 +75,7 @@ const LOCATION_ZIP_FQN = new FullyQualifiedName('location.zip');
 export {
   LOCATION_ADDRESS_LINE_2_FQN,
   LOCATION_CITY_FQN,
+  LOCATION_COORDINATES_FQN,
   LOCATION_NAME_FQN,
   LOCATION_STATE_FQN,
   LOCATION_STREET_FQN,

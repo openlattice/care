@@ -2,34 +2,29 @@
  * @flow
  */
 
-import { DateTime } from 'luxon';
 import { call, put, takeEvery } from '@redux-saga/core/effects';
 import { List, Map, fromJS } from 'immutable';
 import { DataApi, EntityDataModelApi, SearchApi } from 'lattice';
+import { DateTime } from 'luxon';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
-  DASHBOARD_COUNTS,
-  SUMMARY_STATS
-} from '../../shared/Consts';
+  LOAD_DASHBOARD_DATA,
+  loadDashboardData
+} from './DashboardActionFactory';
 
+import Logger from '../../utils/Logger';
 import {
-  DEESCALATION_TECHNIQUES,
-  DISPOSITIONS,
-  DISPOSITIONS_PORTLAND
-} from '../../utils/DataConstants';
-
-import {
-  ACCESS_TO_WEAPONS_FQN,
   ACCESSIBLE_WEAPON_TYPE_FQN,
+  ACCESS_TO_WEAPONS_FQN,
   AGE_FQN,
   ARMED_WEAPON_TYPE_FQN,
   ARMED_WITH_WEAPON_FQN,
   DATE_TIME_OCCURRED_FQN,
   DEESCALATION_TECHNIQUES_FQN,
   DISPOSITION_FQN,
-  EMOTIONAL_STATE_FQN,
   DRUGS_ALCOHOL_FQN,
+  EMOTIONAL_STATE_FQN,
   GENDER_FQN,
   HOMELESS_FQN,
   INJURIES_FQN,
@@ -40,25 +35,28 @@ import {
   RACE_FQN,
   SELF_DIAGNOSIS_FQN,
   SPECIAL_RESOURCES_CALLED_FQN,
-  SUICIDAL_FQN,
   SUICIDAL_ACTIONS_FQN,
+  SUICIDAL_FQN,
   SUICIDE_ATTEMPT_METHOD_FQN,
   TAKING_MEDICATION_FQN
 } from '../../edm/DataModelFqns';
-
-import { getSearchTerm } from '../../utils/DataUtils';
-
 import {
-  LOAD_DASHBOARD_DATA,
-  loadDashboardData
-} from './DashboardActionFactory';
-
+  DASHBOARD_COUNTS,
+  SUMMARY_STATS
+} from '../../shared/Consts';
 import {
   getReportESId,
   getSelectedOrganizationId
 } from '../../utils/AppUtils';
-
+import {
+  DEESCALATION_TECHNIQUES,
+  DISPOSITIONS,
+  DISPOSITIONS_PORTLAND
+} from '../../utils/DataConstants';
+import { getSearchTerm } from '../../utils/DataUtils';
 import { isPortlandOrg } from '../../utils/Whitelist';
+
+const LOG = new Logger('DashboardSagas');
 
 const toLower = (list) => list.map((o) => o.toLowerCase());
 
@@ -276,7 +274,7 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *> {
     yield put(loadDashboardData.success(action.id, { summaryStats, dashboardCounts }));
   }
   catch (error) {
-    console.error(error);
+    LOG.error(action.type, error);
     yield put(loadDashboardData.failure(action.id, error));
   }
   finally {

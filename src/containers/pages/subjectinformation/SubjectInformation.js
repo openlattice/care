@@ -44,7 +44,6 @@ type Props = {
     setInputValue :(value :{ field :string, value :Object }) => void,
     setInputValues :(values :{}) => void,
   },
-  app :Map,
   className :string;
   disabled :boolean;
   values :Map,
@@ -65,7 +64,6 @@ class SubjectInformation extends Component<Props> {
 
   renderInput = (field, disabledIfSelected, width) => {
     const { values, actions } = this.props;
-    const extraProps = width ? { width: `${width}px` } : {};
 
     const onChange = ({ target }) => {
       const { value } = target;
@@ -89,7 +87,7 @@ class SubjectInformation extends Component<Props> {
           disabled={!values.get(SUBJECT_INFORMATION.IS_NEW_PERSON)}
           value={values.get(field)}
           onChange={onChange}
-          {...extraProps} />
+          width={width && `${width}px`} />
     );
   };
 
@@ -222,13 +220,10 @@ class SubjectInformation extends Component<Props> {
   }
 }
 
-const mapStateToProps = (state :Map) => {
-
-  return {
-    app: state.get('app', Map()),
-    values: state.get(STATE.SUBJECT_INFORMATION),
-  };
-};
+const mapStateToProps = (state :Map) => ({
+  app: state.get('app', Map()),
+  values: state.get(STATE.SUBJECT_INFORMATION),
+});
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({

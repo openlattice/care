@@ -1,9 +1,13 @@
 // @flow
 import React from 'react';
+
 import styled from 'styled-components';
 import { Map } from 'immutable';
-import { Banner } from 'lattice-ui-kit';
+import { Banner, StyleUtils } from 'lattice-ui-kit';
+
 import { getDobFromPerson, getLastFirstMiFromPerson } from '../../utils/PersonUtils';
+
+const { media } = StyleUtils;
 
 const Content = styled.div`
   display: flex;
@@ -13,6 +17,9 @@ const Content = styled.div`
   justify-content: center;
   transition: opacity 0.5s;
   opacity: ${(props) => (props.hasContent ? 0 : 1)};
+  ${media.phone`
+    font-size: 20px;
+  `}
 `;
 
 const Name = styled.strong`
@@ -31,9 +38,10 @@ const Birthdate = styled.span`
 
 type Props = {
   selectedPerson :Map;
+  noDob :boolean;
 }
 
-const ProfileBanner = ({ selectedPerson } :Props) => {
+const ProfileBanner = ({ selectedPerson, noDob = false } :Props) => {
   const dob = getDobFromPerson(selectedPerson);
   const name = getLastFirstMiFromPerson(selectedPerson, true);
 
@@ -41,7 +49,7 @@ const ProfileBanner = ({ selectedPerson } :Props) => {
     <Banner mode="default" isOpen sticky>
       <Content hasContent={selectedPerson.isEmpty()}>
         <Name>{name}</Name>
-        <Birthdate>{`DOB: ${dob}`}</Birthdate>
+        { !noDob && <Birthdate>{`DOB: ${dob}`}</Birthdate> }
       </Content>
     </Banner>
   );

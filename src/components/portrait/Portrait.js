@@ -1,7 +1,10 @@
 // @flow
 import React from 'react';
+
 import styled from 'styled-components';
+
 import PlaceholderPortrait from './PlaceholderPortrait';
+
 import { isEmptyString } from '../../utils/LangUtils';
 
 type Props = {
@@ -11,6 +14,8 @@ type Props = {
 }
 const Image = styled.img`
   border-radius: 10%;
+  object-fit: cover;
+  object-position: 50% 50%;
 `;
 
 const Portrait = (props :Props) => {
