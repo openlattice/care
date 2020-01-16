@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import {
   faBirthdayCake,
@@ -16,7 +16,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import Detail from '../../components/premium/styled/Detail';
 import Portrait from '../../components/portrait/Portrait';
 import { useGoToPath } from '../../components/hooks';
-import { clearProfile, selectPerson } from '../../containers/profile/ProfileActions';
 import {
   PROFILE_ID_PATH,
   PROFILE_VIEW_PATH,
@@ -28,6 +27,7 @@ import {
 import { getAddressFromLocation } from '../../utils/AddressUtils';
 import { getImageDataFromEntity } from '../../utils/BinaryUtils';
 import { getDobFromPerson, getLastFirstMiFromPerson } from '../../utils/PersonUtils';
+import { clearLBProfile, selectLBProfile } from '../profile/LongBeachProfileActions';
 import {
   FlexRow,
   ResultDetails,
@@ -50,18 +50,20 @@ const LongBeachPersonResult = (props :Props) => {
     const stayAwayEKID = store.getIn(['longBeach', 'people', 'stayAway', personEKID, OPENLATTICE_ID_FQN, 0]);
     return store.getIn(['longBeach', 'people', 'stayAwayLocations', stayAwayEKID]);
   }) || Map();
-
-  const imageUrl = useSelector((store) => {
-    const profilePic = store.getIn(['longBeach', 'people', 'profilePictures', personEKID], Map());
-    return getImageDataFromEntity(profilePic);
-  });
+  const profilePicture = useSelector((store) => store
+    .getIn(['longBeach', 'people', 'profilePictures', personEKID])) || Map();
 
   const goToProfile = useGoToPath(PROFILE_VIEW_PATH.replace(PROFILE_ID_PATH, personEKID));
   const dispatch = useDispatch();
+  const imageUrl = useMemo(() => getImageDataFromEntity(profilePicture), [profilePicture]);
 
   const handleViewProfile = () => {
-    dispatch(clearProfile());
-    dispatch(selectPerson(result));
+    dispatch(clearLBProfile());
+    dispatch(selectLBProfile({
+      person: result,
+      stayAway: stayAwayLocation,
+      profilePicture
+    }));
     goToProfile();
   };
 
