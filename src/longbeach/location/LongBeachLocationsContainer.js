@@ -4,12 +4,15 @@ import React, { useCallback, useState } from 'react';
 
 import isPlainObject from 'lodash/isPlainObject';
 import styled from 'styled-components';
+import { faLocation } from '@fortawesome/pro-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { List, Map } from 'immutable';
 import {
   Button,
   Card,
   CardSegment,
   CardStack,
+  IconButton,
   Label,
   PaginationToolbar,
   SearchResults,
@@ -25,6 +28,7 @@ import { usePosition, useTimeout } from '../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../components/layout';
 import { isNonEmptyString } from '../../utils/LangUtils';
 import { media } from '../../utils/StyleUtils';
+import { FlexRow } from '../styled';
 
 const InputGrid = styled.div`
   align-items: flex-start;
@@ -48,6 +52,8 @@ const Title = styled.h1`
 `;
 
 const MAX_HITS = 20;
+
+const LocationIcon = <FontAwesomeIcon icon={faLocation} fixedWidth />;
 
 const LongBeachLocationContainer = () => {
 
@@ -96,6 +102,19 @@ const LongBeachLocationContainer = () => {
     }
   };
 
+  const handleCurrentLocation = () => {
+    const { latitude, longitude } = position;
+    if (latitude && longitude) {
+      setSelectedOption({
+        label: 'Current Location',
+        value: `${latitude},${longitude}`,
+        lat: latitude,
+        lon: longitude
+      });
+      dispatchSearch();
+    }
+  };
+
   const handleOnSearch = (e :SyntheticEvent<HTMLButtonElement>) => {
     e.preventDefault();
     dispatchSearch();
@@ -120,17 +139,23 @@ const LongBeachLocationContainer = () => {
                 <InputGrid>
                   <div>
                     <Label htmlFor="address">Address</Label>
-                    <Select
-                        autoFocus
-                        filterOption={filterOption}
-                        inputId="address"
-                        inputValue={address}
-                        isClearable
-                        isLoading={isFetchingOptions}
-                        onChange={setSelectedOption}
-                        onInputChange={setAddress}
-                        options={options.toJS()}
-                        value={selectedOption} />
+                    <FlexRow>
+                      <Select
+                          autoFocus
+                          filterOption={filterOption}
+                          inputId="address"
+                          inputValue={address}
+                          isClearable
+                          isLoading={isFetchingOptions}
+                          onChange={setSelectedOption}
+                          onInputChange={setAddress}
+                          options={options.toJS()}
+                          value={selectedOption} />
+                      <IconButton
+                          disabled={!!position.error}
+                          icon={LocationIcon}
+                          onClick={handleCurrentLocation} />
+                    </FlexRow>
                   </div>
                   <div>
                     <Label stealth>Submit</Label>
