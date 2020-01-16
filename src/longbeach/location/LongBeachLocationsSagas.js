@@ -66,10 +66,11 @@ function* getGeoOptionsWorker(action :SequenceAction) :Generator<*, *, *> {
 
     const formattedOptions = response.data.map((option) => {
       // eslint-disable-next-line camelcase
-      const { display_name } = option;
+      const { display_name, lat, lon } = option;
       return {
         ...option,
-        label: display_name
+        label: display_name,
+        value: `${lat},${lon}`
       };
     });
 
