@@ -5,6 +5,15 @@ const { OPENLATTICE_ID_FQN } = Constants;
 
 export { OPENLATTICE_ID_FQN };
 
+/* <===== BEGIN LONG BEACH HACK =====> */
+const RECOGNIZED_START_DATE_FQN = new FullyQualifiedName('ol.recognizedstartdate');
+const RECOGNIZED_END_DATE_FQN = new FullyQualifiedName('ol.recognizedenddate');
+export {
+  RECOGNIZED_START_DATE_FQN,
+  RECOGNIZED_END_DATE_FQN,
+};
+/* <===== END LONG BEACH HACK =====> */
+
 /* Issue */
 const PRIORITY_FQN = new FullyQualifiedName('ol.priority');
 const STATUS_FQN = new FullyQualifiedName('ol.status');
