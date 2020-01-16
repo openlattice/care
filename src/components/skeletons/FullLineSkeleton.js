@@ -8,7 +8,7 @@ const loading = keyframes`
   0% {
     background-position:
       /* animation blur */
-      -10vw 0,
+      -50vw 0,
       0 0.25em;
   }
 
@@ -40,7 +40,7 @@ const fullLineSkeleton = css`
     100% 1.5em;
   background-position:
     /* animation blur */
-    -10vw 0,
+    -50vw 0,
     0 0.25em;
   animation: ${loading} 2s infinite;
 `;

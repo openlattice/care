@@ -8,7 +8,7 @@ const loading = keyframes`
   0% {
     background-position:
       /* animation blur */
-      -10vw 0,
+      -50vw 0,
       /* list item 1*/
       0 5px,
       80% 5px,
@@ -92,7 +92,7 @@ const behaviorItemSkeleton = css`
     100% 100%;
   background-position:
     /* animation blur */
-    -10vw 0,
+    -50vw 0,
     /* list item 1*/
     0 5px,
     80% 5px,
