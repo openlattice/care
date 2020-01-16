@@ -12,7 +12,6 @@ const SearchTitle = styled.h1`
 
 const ResultSegment = styled(CardSegment)`
   ${media.phone`
-    flex-direction: column;
     padding: 10px 15px;
   `}
 `;
@@ -22,11 +21,10 @@ const ResultDetails = styled.div`
   flex-direction: column;
   flex: 1;
   font-size: 16px;
-  margin: 0 30px;
+  margin: 0 10px;
   min-width: 0;
   ${media.phone`
     font-size: 12px;
-    margin: 0 10px;
   `}
 `;
 
@@ -48,10 +46,16 @@ const FlexRow = styled.div`
   flex: 1;
 `;
 
+const FlexColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 export {
   SearchTitle,
   ResultSegment,
   ResultDetails,
   ResultName,
   FlexRow,
+  FlexColumn,
 };

@@ -22,7 +22,15 @@ const getDateShortFromIsoDate = (dob :string = '', asDate :boolean = false, inva
   return invalidValue;
 };
 
+const isNowValid = (start :string, end :string) => {
+  const startDT = DateTime.fromISO(start);
+  const endDT = DateTime.fromISO(end);
+  const now = DateTime.local();
+  return (startDT < now) && (now < endDT);
+};
+
 export {
   getAgeFromIsoDate,
-  getDateShortFromIsoDate
+  getDateShortFromIsoDate,
+  isNowValid
 };

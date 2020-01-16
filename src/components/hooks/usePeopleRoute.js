@@ -1,6 +1,8 @@
 // @flow
 import { useEffect } from 'react';
+
 import { useRouteMatch } from 'react-router';
+
 import { PROFILE_ID_PARAM } from '../../core/router/Routes';
 
 type Callback = (entityKeyId :?UUID) => void;

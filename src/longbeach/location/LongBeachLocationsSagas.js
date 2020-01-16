@@ -47,7 +47,7 @@ const {
   LOCATION_FQN,
   PEOPLE_FQN,
   SERVED_WITH_FQN,
-  SERVICE_OF_PROCESS_FQN,
+  SERVICES_OF_PROCESS_FQN,
 } = APP_TYPES_FQNS;
 
 const LOG = new Logger('LongBeachLocationsSagas');
@@ -104,7 +104,7 @@ function* getLBStayAwayPeopleWorker(action :SequenceAction) :Generator<any, any,
     ] = getESIDsFromApp(app, [
       PEOPLE_FQN,
       SERVED_WITH_FQN,
-      SERVICE_OF_PROCESS_FQN
+      SERVICES_OF_PROCESS_FQN
     ]);
 
     const peopleSearchParams = {
@@ -175,7 +175,7 @@ function* getLBLocationsNeighborsWorker(action :SequenceAction) :Generator<any, 
     ] = getESIDsFromApp(app, [
       FILED_FOR_FQN,
       LOCATION_FQN,
-      SERVICE_OF_PROCESS_FQN
+      SERVICES_OF_PROCESS_FQN
     ]);
 
     const stayAwayParams = {
@@ -272,14 +272,16 @@ function* searchLBLocationsWorker(action :SequenceAction) :Generator<any, any, a
     if (error) throw error;
 
     const { hits, numHits } = data;
-    response.data.hits = fromJS(hits);
+    const locationsEKIDs = hits.map((location) => getIn(location, [FQN.OPENLATTICE_ID_FQN, 0]));
+    const locationsByEKID = Map(hits.map((entity) => [getIn(entity, [FQN.OPENLATTICE_ID_FQN, 0]), fromJS(entity)]));
+    response.data.hits = fromJS(locationsEKIDs);
     response.data.totalHits = numHits;
+    response.data.stayAwayLocations = locationsByEKID;
 
-    const locationEKIDs = hits.map((location) => getIn(location, [FQN.OPENLATTICE_ID_FQN, 0]));
-    if (locationEKIDs.length) {
+    if (locationsEKIDs.length) {
       const neighborsResponse = yield call(
         getLBLocationsNeighborsWorker,
-        getLBLocationsNeighbors(locationEKIDs)
+        getLBLocationsNeighbors(locationsEKIDs)
       );
 
       if (neighborsResponse.error) throw neighborsResponse.error;

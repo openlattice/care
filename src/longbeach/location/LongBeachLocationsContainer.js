@@ -21,7 +21,7 @@ import { RequestStates } from 'redux-reqseq';
 import LongBeachLocationResult from './LongBeachLocationResult';
 import { getGeoOptions, searchLBLocations } from './LongBeachLocationsActions';
 
-import { useTimeout } from '../../components/hooks';
+import { usePosition, useTimeout } from '../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../components/layout';
 import { isNonEmptyString } from '../../utils/LangUtils';
 import { media } from '../../utils/StyleUtils';
@@ -63,6 +63,7 @@ const LongBeachLocationContainer = () => {
   const [address, setAddress] = useState();
   const [selectedOption, setSelectedOption] = useState(searchInputs.get('selectedOption'));
   const [currentLocation, setCurrentLocation] = useState(searchInputs.get('currentLocation'));
+  const position = usePosition();
 
   const fetchGeoOptions = useCallback(() => {
     if (isNonEmptyString(address)) {
@@ -70,7 +71,7 @@ const LongBeachLocationContainer = () => {
     }
   }, [dispatch, address]);
 
-  useTimeout(fetchGeoOptions, 500);
+  useTimeout(fetchGeoOptions, 300);
 
   const hasSearched = fetchState !== RequestStates.STANDBY;
   const isLoading = fetchState === RequestStates.PENDING;
