@@ -8,7 +8,7 @@ const loading = keyframes`
   0% {
     background-position:
       /* animation blur */
-      -10vw 0,
+      -50vw 0,
       25% 0,
       72% 0.35em;
   }
@@ -44,7 +44,7 @@ const crisisCountSkeleton = css`
     25% 1em;
   background-position:
     /* animation blur */
-    -10vw 0,
+    -50vw 0,
     25% 0,
     72% 0.35em;
   animation: ${loading} 2s infinite;
