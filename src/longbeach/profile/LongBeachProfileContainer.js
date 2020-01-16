@@ -1,23 +1,29 @@
 // @flow
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import styled from 'styled-components';
 import {
   Card,
   CardStack,
   Label,
-  PlusButton
+  PlusButton,
+  Tag,
 } from 'lattice-ui-kit';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useRouteMatch } from 'react-router';
+import { RequestStates } from 'redux-reqseq';
+
+import { getLBProfile } from './LongBeachProfileActions';
 
 import Detail from '../../components/premium/styled/Detail';
 import Portrait from '../../components/portrait/Portrait';
 import ProfileBanner from '../../containers/profile/ProfileBanner';
 import * as FQN from '../../edm/DataModelFqns';
 import { ContentOuterWrapper, ContentWrapper } from '../../components/layout';
+import { PROFILE_ID_PARAM } from '../../core/router/Routes';
 import { getAddressFromLocation } from '../../utils/AddressUtils';
 import { getImageDataFromEntity } from '../../utils/BinaryUtils';
-import { getDateShortFromIsoDate } from '../../utils/DateUtils';
+import { getDateShortFromIsoDate, isNowValid } from '../../utils/DateUtils';
 import { getDobFromPerson } from '../../utils/PersonUtils';
 import {
   FlexColumn,
@@ -35,29 +41,46 @@ const StyledFlexColumn = styled(FlexColumn)`
   margin-left: 10px;
 `;
 
+const Center = styled.div`
+  display: flex;
+  flex: 1;
+  align-items: center;
+`;
+
 const LongBeachProfileContainer = () => {
+  const isLoading = useSelector((store) => store
+    .getIn(['longBeach', 'profile', 'fetchState']) === RequestStates.PENDING);
+  const probation = useSelector((store) => store.getIn(['longBeach', 'profile', 'probation']));
+  const profilePicture = useSelector((store) => store.getIn(['longBeach', 'profile', 'profilePicture']));
   const selectedPerson = useSelector((store) => store.getIn(['longBeach', 'profile', 'person']));
   const stayAwayLocation = useSelector((store) => store.getIn(['longBeach', 'profile', 'stayAwayLocation']));
-  const profilePicture = useSelector((store) => store.getIn(['longBeach', 'profile', 'profilePicture']));
-  const probation = useSelector((store) => store.getIn(['longBeach', 'profile', 'probation']));
   const warrant = useSelector((store) => store.getIn(['longBeach', 'profile', 'warrant']));
+  const imageURL = useMemo(() => getImageDataFromEntity(profilePicture), [profilePicture]);
+  const dispatch = useDispatch();
+
+  const match = useRouteMatch();
+  const { [PROFILE_ID_PARAM]: profileId } = match.params;
+  useEffect(() => {
+    dispatch(getLBProfile(profileId));
+  }, [dispatch, profileId]);
 
   // $FlowFixMe
   const dob :string = getDobFromPerson(selectedPerson);
   const race = selectedPerson.getIn([FQN.PERSON_RACE_FQN, 0], '');
   const sex = selectedPerson.getIn([FQN.PERSON_SEX_FQN, 0], '');
 
-  const imageURL = useMemo(() => getImageDataFromEntity(profilePicture), [profilePicture]);
-
   const { name, address } = getAddressFromLocation(stayAwayLocation);
 
   // $FlowFixMe
-  const probationStart :string = getDateShortFromIsoDate(probation.getIn([FQN.RECOGNIZED_START_DATE, 0]));
+  const startDT = probation.getIn([FQN.RECOGNIZED_START_DATE_FQN, 0]);
+  const endDT = probation.getIn([FQN.RECOGNIZED_END_DATE_FQN, 0]);
+  const probationStart :string = getDateShortFromIsoDate(startDT);
   // $FlowFixMe
-  const probationEnd :string = getDateShortFromIsoDate(probation.getIn([FQN.RECOGNIZED_END_DATE, 0]));
-  const probationStatus = '';
-
-  const warrantType = warrant.getIn([FQN.TYPE_FQN, 0]);
+  const probationEnd :string = getDateShortFromIsoDate(endDT);
+  const isActive = isNowValid(startDT, endDT);
+  const probationStatus = isActive ? 'Active' : 'Inactive';
+  const warrantNumber = warrant.getIn([FQN.WARRANT_NUMBER_FQN, 0]);
+  const probationTag = <Tag mode={isActive ? 'danger' : 'default'}>{probationStatus}</Tag>;
 
   return (
     <ContentOuterWrapper>
@@ -68,10 +91,10 @@ const LongBeachProfileContainer = () => {
             <ResultSegment padding="sm">
               <FlexRow>
                 <FlexColumn>
-                  <Grid>
+                  <Center>
                     <Portrait imageUrl={imageURL} height="128" width="96" />
-                    <PlusButton mode="primary">Photo</PlusButton>
-                  </Grid>
+                    {/* <PlusButton mode="primary">Photo</PlusButton> */}
+                  </Center>
                 </FlexColumn>
                 <StyledFlexColumn>
                   <Grid>
@@ -79,19 +102,19 @@ const LongBeachProfileContainer = () => {
                       <Label subtle>
                         DOB
                       </Label>
-                      <Detail content={dob} isLoading={false} />
+                      <Detail content={dob} isLoading={isLoading} />
                     </div>
                     <div>
                       <Label subtle>
                         Race
                       </Label>
-                      <Detail content={race} isLoading={false} />
+                      <Detail content={race} isLoading={isLoading} />
                     </div>
                     <div>
                       <Label subtle>
                         Sex
                       </Label>
-                      <Detail content={sex} isLoading={false} />
+                      <Detail content={sex} isLoading={isLoading} />
                     </div>
                   </Grid>
                 </StyledFlexColumn>
@@ -99,28 +122,28 @@ const LongBeachProfileContainer = () => {
             </ResultSegment>
           </Card>
           <div>
-            Stay Away Order
+            <strong>Stay Away Order</strong>
             <Card>
-              <ResultSegment padding="sm">
+              <ResultSegment padding="sm" vertical>
                 <Grid>
                   <div>
                     <Label subtle>
                       Location Name
                     </Label>
-                    <Detail content={name} isLoading={false} />
+                    <Detail content={name} isLoading={isLoading} />
                   </div>
                   <div>
                     <Label subtle>
                       Location
                     </Label>
-                    <Detail content={address} isLoading={false} />
+                    <Detail content={address} isLoading={isLoading} />
                   </div>
                 </Grid>
               </ResultSegment>
             </Card>
           </div>
           <div>
-            Probation
+            <strong>Probation</strong>
             <Card>
               <ResultSegment padding="sm">
                 <Grid>
@@ -128,28 +151,28 @@ const LongBeachProfileContainer = () => {
                     <Label subtle>
                       Status
                     </Label>
-                    <Detail content={probationStatus} isLoading={false} />
+                    <Detail content={probationTag} isLoading={isLoading} />
                   </div>
                   <div>
                     <Label subtle>
                       Period
                     </Label>
-                    <Detail content={`${probationStart} - ${probationEnd}`} isLoading={false} />
+                    <Detail content={`${probationStart} - ${probationEnd}`} isLoading={isLoading} />
                   </div>
                 </Grid>
               </ResultSegment>
             </Card>
           </div>
           <div>
-            Warrant
+            <strong>Warrant</strong>
             <Card>
               <ResultSegment padding="sm">
                 <Grid>
                   <div>
                     <Label subtle>
-                      Type
+                      Warrant #
                     </Label>
-                    <Detail content={warrantType} isLoading={false} />
+                    <Detail content={warrantNumber} isLoading={isLoading} />
                   </div>
                 </Grid>
               </ResultSegment>

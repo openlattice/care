@@ -18,7 +18,7 @@ const Content = styled.div`
   transition: opacity 0.5s;
   opacity: ${(props) => (props.hasContent ? 0 : 1)};
   ${media.phone`
-    font-size: 16px;
+    font-size: 20px;
   `}
 `;
 

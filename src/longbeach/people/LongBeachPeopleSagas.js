@@ -50,13 +50,13 @@ const {
   LOCATION_FQN,
   PEOPLE_FQN,
   SERVED_WITH_FQN,
-  SERVICE_OF_PROCESS_FQN,
+  SERVICES_OF_PROCESS_FQN,
 } = APP_TYPES_FQNS;
 
 const { OPENLATTICE_ID_FQN } = Constants;
 const { searchEntitySetData, searchEntityNeighborsWithFilter } = SearchApiActions;
 const { searchEntitySetDataWorker, searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
-const LOG = new Logger('PeopleSagas');
+const LOG = new Logger('LongBeachPeopleSagas');
 
 export function* getLBPeoplePhotosWorker(action :SequenceAction) :Generator<*, *, *> {
   const response :Object = {};
@@ -126,7 +126,7 @@ export function* getLBStayAwayLocationsWorker(action :SequenceAction) :Generator
     ] = getESIDsFromApp(app, [
       FILED_FOR_FQN,
       LOCATION_FQN,
-      SERVICE_OF_PROCESS_FQN
+      SERVICES_OF_PROCESS_FQN
     ]);
 
     const locationSearchParams = {
@@ -182,7 +182,7 @@ export function* getLBPeopleStayAwayWorker(action :SequenceAction) :Generator<an
     ] = getESIDsFromApp(app, [
       PEOPLE_FQN,
       SERVED_WITH_FQN,
-      SERVICE_OF_PROCESS_FQN
+      SERVICES_OF_PROCESS_FQN
     ]);
 
     const stayAwaySearchParams = {

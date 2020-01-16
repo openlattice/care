@@ -14,6 +14,7 @@ const INITIAL_STATE :Map = fromJS({
   probation: Map(),
   profilePicture: Map(),
   stayAway: Map(),
+  stayAwayLocation: Map(),
   submitState: RequestStates.STANDBY,
   warrant: Map()
 });

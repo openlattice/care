@@ -11,7 +11,7 @@ import {
   HOME_PATH,
   LOCATION_PATH,
   PEOPLE_PATH,
-  PROFILE_PATH,
+  PROFILE_VIEW_PATH,
   PROVIDER_PATH,
 } from './routes';
 
@@ -20,8 +20,8 @@ const LongBeachRouter = () => (
     <Route exact strict path={HOME_PATH} component={LongBeachHome} />
     <Route path={LOCATION_PATH} component={LongBeachLocationsContainer} />
     <Route path={PEOPLE_PATH} component={LongBeachPeopleContainer} />
-    <Route path={PROFILE_PATH} component={LongBeachProfileContainer} />
     <Route path={PROVIDER_PATH} component={LongBeachHome} />
+    <Route strict path={PROFILE_VIEW_PATH} component={LongBeachProfileContainer} />
     <Redirect to={HOME_PATH} />
   </Switch>
 );

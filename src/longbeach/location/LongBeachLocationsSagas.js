@@ -47,7 +47,7 @@ const {
   LOCATION_FQN,
   PEOPLE_FQN,
   SERVED_WITH_FQN,
-  SERVICE_OF_PROCESS_FQN,
+  SERVICES_OF_PROCESS_FQN,
 } = APP_TYPES_FQNS;
 
 const LOG = new Logger('LongBeachLocationsSagas');
@@ -104,7 +104,7 @@ function* getLBStayAwayPeopleWorker(action :SequenceAction) :Generator<any, any,
     ] = getESIDsFromApp(app, [
       PEOPLE_FQN,
       SERVED_WITH_FQN,
-      SERVICE_OF_PROCESS_FQN
+      SERVICES_OF_PROCESS_FQN
     ]);
 
     const peopleSearchParams = {
@@ -175,7 +175,7 @@ function* getLBLocationsNeighborsWorker(action :SequenceAction) :Generator<any, 
     ] = getESIDsFromApp(app, [
       FILED_FOR_FQN,
       LOCATION_FQN,
-      SERVICE_OF_PROCESS_FQN
+      SERVICES_OF_PROCESS_FQN
     ]);
 
     const stayAwayParams = {
