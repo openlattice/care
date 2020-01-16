@@ -1,57 +1,58 @@
 // @flow
 
 import React, { useCallback, useMemo } from 'react';
+
 import styled from 'styled-components';
 import { List, Map } from 'immutable';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { RequestStates } from 'redux-reqseq';
 import {
   Card,
   CardSegment,
   CardStack,
   SearchResults
 } from 'lattice-ui-kit';
-
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { RequestStates } from 'redux-reqseq';
 import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
-import IntroCard from './IntroCard';
-import AboutPlanCard from '../../../components/premium/aboutplan/AboutPlanCard';
-import AddressCard from '../../../components/premium/address/AddressCard';
 import BackgroundInformationCard from './BackgroundInformationCard';
 import BehaviorCard from './BehaviorCard';
+import DeescalationCard from './DeescalationCard';
+import IntroCard from './IntroCard';
+import OfficerSafetyCard from './OfficerSafetyCard';
+import ReportsSummary from './ReportsSummary';
+import ResponsePlanCard from './ResponsePlanCard';
+import { countCrisisCalls } from './Utils';
+
+import AboutPlanCard from '../../../components/premium/aboutplan/AboutPlanCard';
+import AddressCard from '../../../components/premium/address/AddressCard';
 import ContactCarousel from '../../../components/premium/contacts/ContactCarousel';
 import CrisisCountCard from '../CrisisCountCard';
-import DeescalationCard from './DeescalationCard';
-import OfficerSafetyCard from './OfficerSafetyCard';
+import LinkButton from '../../../components/buttons/LinkButton';
 import Portrait from '../../../components/portrait/Portrait';
 import ProfileBanner from '../ProfileBanner';
 import ProfileResult from '../ProfileResult';
 import RecentIncidentCard from '../RecentIncidentCard';
-import ReportsSummary from './ReportsSummary';
-import ResponsePlanCard from './ResponsePlanCard';
-import LinkButton from '../../../components/buttons/LinkButton';
-import { countCrisisCalls } from './Utils';
-import { labelMapReport } from '../constants';
-import { ContentWrapper, ContentOuterWrapper } from '../../../components/layout';
-import { getProfileReports } from '../ProfileActions';
-import { getBasicInformation } from '../edit/basicinformation/actions/BasicInformationActions';
-import { getResponsePlan } from '../edit/responseplan/ResponsePlanActions';
-import { getContacts } from '../edit/contacts/ContactsActions';
-import { getAboutPlan } from '../edit/about/AboutActions';
-import { getOfficerSafety } from '../edit/officersafety/OfficerSafetyActions';
-import { getAuthorization } from '../../../core/sagas/authorize/AuthorizeActions';
-import { getEntityKeyId } from '../../../utils/DataUtils';
-import { reduceRequestStates } from '../../../utils/StateUtils';
-import { getImageDataFromEntity } from '../../../utils/BinaryUtils';
+import { useAuthorization, usePeopleRoute } from '../../../components/hooks';
+import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
 import {
   CRISIS_PATH,
   REPORT_ID_PATH,
   REPORT_VIEW_PATH,
 } from '../../../core/router/Routes';
 import { goToPath } from '../../../core/router/RoutingActions';
-import { usePeopleRoute, useAuthorization } from '../../../components/hooks';
+import { getAuthorization } from '../../../core/sagas/authorize/AuthorizeActions';
+import { getImageDataFromEntity } from '../../../utils/BinaryUtils';
+import { getEntityKeyId } from '../../../utils/DataUtils';
+import { reduceRequestStates } from '../../../utils/StateUtils';
+import { getProfileReports } from '../ProfileActions';
+import { labelMapReport } from '../constants';
+import { getAboutPlan } from '../edit/about/AboutActions';
+import { getBasicInformation } from '../edit/basicinformation/actions/BasicInformationActions';
+import { getContacts } from '../edit/contacts/ContactsActions';
+import { getOfficerSafety } from '../edit/officersafety/OfficerSafetyActions';
+import { getResponsePlan } from '../edit/responseplan/ResponsePlanActions';
 import type { RoutingAction } from '../../../core/router/RoutingActions';
 
 const Aside = styled.div`
