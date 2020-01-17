@@ -25,6 +25,7 @@ import { useInput } from '../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../components/layout';
 import { isNonEmptyString } from '../../utils/LangUtils';
 import { media } from '../../utils/StyleUtils';
+import { ResultSegment } from '../styled';
 
 const InputGrid = styled.div`
   align-items: flex-start;
@@ -99,7 +100,7 @@ const LongBeachPeopleContainer = () => {
       <ContentWrapper>
         <CardStack>
           <Card>
-            <CardSegment vertical>
+            <ResultSegment vertical>
               <Title>
                 Search People
               </Title>
@@ -137,7 +138,7 @@ const LongBeachPeopleContainer = () => {
                   </div>
                 </InputGrid>
               </form>
-            </CardSegment>
+            </ResultSegment>
           </Card>
           <SearchResults
               hasSearched={hasSearched}

@@ -1,10 +1,11 @@
 import styled from 'styled-components';
-import { Colors } from 'lattice-ui-kit';
+import { Colors, StyleUtils } from 'lattice-ui-kit';
 
 import { APP_CONTAINER_WIDTH } from '../../core/style/Sizes';
-import { bulletsSkeleton, behaviorItemSkeleton } from '../skeletons';
+import { behaviorItemSkeleton, bulletsSkeleton } from '../skeletons';
 
 const { NEUTRALS } = Colors;
+const { media } = StyleUtils;
 
 export const ContentOuterWrapper = styled.div`
   display: flex;
@@ -21,6 +22,9 @@ export const ContentWrapper = styled.div`
   max-width: ${APP_CONTAINER_WIDTH}px;
   padding: 30px;
   width: 100vw;
+  ${media.phone`
+    padding: 15px;
+  `}
 `;
 
 export const UL = styled.ul`

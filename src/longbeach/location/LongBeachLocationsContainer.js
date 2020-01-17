@@ -1,6 +1,11 @@
 // @flow
 
-import React, { useCallback, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useReducer,
+  useState
+} from 'react';
 
 import isPlainObject from 'lodash/isPlainObject';
 import styled from 'styled-components';
@@ -8,12 +13,9 @@ import { faLocation } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { List, Map } from 'immutable';
 import {
-  Button,
   Card,
-  CardSegment,
   CardStack,
   IconButton,
-  Label,
   PaginationToolbar,
   SearchResults,
   Select,
@@ -27,48 +29,43 @@ import { getGeoOptions, searchLBLocations } from './LongBeachLocationsActions';
 import { usePosition, useTimeout } from '../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../components/layout';
 import { isNonEmptyString } from '../../utils/LangUtils';
-import { media } from '../../utils/StyleUtils';
-import { FlexRow } from '../styled';
-
-const InputGrid = styled.div`
-  align-items: flex-start;
-  display: grid;
-  flex: 1;
-  grid-auto-flow: column;
-  grid-gap: 10px;
-  grid-template-columns: 3fr 1fr;
-  ${media.phone`
-    grid-gap: 5px;
-    grid-auto-flow: row;
-    grid-template-columns: none;
-  `}
-`;
-
-const Title = styled.h1`
-  display: flex;
-  font-size: 18px;
-  font-weight: normal;
-  margin: 0;
-`;
+import { FlexRow, ResultSegment } from '../styled';
 
 const MAX_HITS = 20;
+const INITIAL_STATE = {
+  page: 0,
+  start: 0,
+  selectedOption: undefined,
+};
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'location':
+      return { page: 0, start: 0, selectedOption: action.payload };
+    case 'page':
+      return { ...state, page: action.payload };
+    default:
+      throw new Error();
+  }
+};
 
 const LocationIcon = <FontAwesomeIcon icon={faLocation} fixedWidth />;
+const MarginButton = styled(IconButton)`
+  margin-left: 5px;
+`;
 
 const LongBeachLocationContainer = () => {
 
   const searchResults = useSelector((store) => store.getIn(['longBeach', 'locations', 'hits'], List()));
   const totalHits = useSelector((store) => store.getIn(['longBeach', 'locations', 'totalHits'], 0));
   const fetchState = useSelector((store) => store.getIn(['longBeach', 'locations', 'fetchState']));
-  const searchInputs = useSelector((store) => store.getIn(['longBeach', 'locations', 'searchInputs']));
   const optionsFetchState = useSelector((store) => store.getIn(['longBeach', 'locations', 'options', 'fetchState']));
   const options = useSelector((store) => store.getIn(['longBeach', 'locations', 'options', 'data']));
   const dispatch = useDispatch();
+  const [state, stateDispatch] = useReducer(reducer, INITIAL_STATE);
 
-  const [page, setPage] = useState(0);
+  const { page, start, selectedOption } = state;
   const [address, setAddress] = useState();
-  const [selectedOption, setSelectedOption] = useState(searchInputs.get('selectedOption'));
-  const [currentLocation, setCurrentLocation] = useState(searchInputs.get('currentLocation'));
   const position = usePosition();
 
   const fetchGeoOptions = useCallback(() => {
@@ -79,19 +76,11 @@ const LongBeachLocationContainer = () => {
 
   useTimeout(fetchGeoOptions, 300);
 
-  const hasSearched = fetchState !== RequestStates.STANDBY;
-  const isLoading = fetchState === RequestStates.PENDING;
-  const isFetchingOptions = optionsFetchState === RequestStates.PENDING;
-
-  const filterOption = () => true;
-
-  const dispatchSearch = (start = 0) => {
+  useEffect(() => {
     const newSearchInputs = Map({
-      selectedOption,
-      currentLocation
+      selectedOption
     });
-
-    const hasValues = isPlainObject(selectedOption) || isNonEmptyString(currentLocation);
+    const hasValues = isPlainObject(selectedOption);
 
     if (hasValues) {
       dispatch(searchLBLocations({
@@ -100,30 +89,38 @@ const LongBeachLocationContainer = () => {
         maxHits: MAX_HITS
       }));
     }
-  };
+  }, [dispatch, selectedOption, start]);
+
+  const hasSearched = fetchState !== RequestStates.STANDBY;
+  const isLoading = fetchState === RequestStates.PENDING;
+  const isFetchingOptions = optionsFetchState === RequestStates.PENDING;
+
+  const filterOption = () => true;
 
   const handleCurrentLocation = () => {
     const { latitude, longitude } = position;
     if (latitude && longitude) {
-      setSelectedOption({
-        label: 'Current Location',
-        value: `${latitude},${longitude}`,
-        lat: latitude,
-        lon: longitude
+      stateDispatch({
+        type: 'location',
+        payload: {
+          label: 'Current Location',
+          value: `${latitude},${longitude}`,
+          lat: latitude,
+          lon: longitude
+        }
       });
-      dispatchSearch();
     }
   };
 
-  const handleOnSearch = (e :SyntheticEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    dispatchSearch();
-    setPage(0);
+  const handleChange = (payload) => {
+    stateDispatch({ type: 'location', payload });
   };
 
-  const onPageChange = ({ page: newPage, start }) => {
-    dispatchSearch(start);
-    setPage(newPage);
+  const onPageChange = ({ page: newPage, start: startRow }) => {
+    stateDispatch({
+      type: 'page',
+      payload: { page: newPage, start: startRow }
+    });
   };
 
   return (
@@ -131,46 +128,34 @@ const LongBeachLocationContainer = () => {
       <ContentWrapper>
         <CardStack>
           <Card>
-            <CardSegment vertical>
-              <Title>
+            <ResultSegment vertical>
+              {/* <Title>
                 Search By Location
-              </Title>
+              </Title> */}
               <form>
-                <InputGrid>
-                  <div>
-                    <Label htmlFor="address">Address</Label>
-                    <FlexRow>
-                      <Select
-                          autoFocus
-                          filterOption={filterOption}
-                          inputId="address"
-                          inputValue={address}
-                          isClearable
-                          isLoading={isFetchingOptions}
-                          onChange={setSelectedOption}
-                          onInputChange={setAddress}
-                          options={options.toJS()}
-                          value={selectedOption} />
-                      <IconButton
-                          disabled={!!position.error}
-                          icon={LocationIcon}
-                          onClick={handleCurrentLocation} />
-                    </FlexRow>
-                  </div>
-                  <div>
-                    <Label stealth>Submit</Label>
-                    <Button
-                        type="submit"
-                        fullWidth
-                        isLoading={isLoading}
-                        mode="primary"
-                        onClick={handleOnSearch}>
-                      Search
-                    </Button>
-                  </div>
-                </InputGrid>
+                <div>
+                  {/* <Label htmlFor="address">Address</Label> */}
+                  <FlexRow>
+                    <Select
+                        autoFocus
+                        filterOption={filterOption}
+                        inputId="address"
+                        inputValue={address}
+                        isClearable
+                        isLoading={isFetchingOptions}
+                        onChange={handleChange}
+                        onInputChange={setAddress}
+                        options={options.toJS()}
+                        placeholder="Search Locations"
+                        value={selectedOption} />
+                    <MarginButton
+                        disabled={!!position.error}
+                        icon={LocationIcon}
+                        onClick={handleCurrentLocation} />
+                  </FlexRow>
+                </div>
               </form>
-            </CardSegment>
+            </ResultSegment>
           </Card>
           <SearchResults
               hasSearched={hasSearched}
