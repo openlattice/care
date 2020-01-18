@@ -1,7 +1,16 @@
 import styled from 'styled-components';
 import { CardSegment, StyleUtils } from 'lattice-ui-kit';
 
+import { APP_CONTAINER_WIDTH } from '../../core/style/Sizes';
+
 const { media } = StyleUtils;
+
+const MapWrapper = styled.div`
+  display: flex;
+  min-height: 400px;
+  height: 40vh;
+  max-width: ${APP_CONTAINER_WIDTH}px;
+`;
 
 const SearchTitle = styled.h1`
   display: flex;
@@ -52,10 +61,11 @@ const FlexColumn = styled.div`
 `;
 
 export {
-  SearchTitle,
-  ResultSegment,
+  FlexColumn,
+  FlexRow,
+  MapWrapper,
   ResultDetails,
   ResultName,
-  FlexRow,
-  FlexColumn,
+  ResultSegment,
+  SearchTitle,
 };

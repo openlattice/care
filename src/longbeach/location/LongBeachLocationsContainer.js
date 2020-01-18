@@ -14,7 +14,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { List, Map } from 'immutable';
 import {
   Card,
-  CardStack,
   IconButton,
   PaginationToolbar,
   SearchResults,
@@ -26,10 +25,11 @@ import { RequestStates } from 'redux-reqseq';
 import LongBeachLocationResult from './LongBeachLocationResult';
 import { getGeoOptions, searchLBLocations } from './LongBeachLocationsActions';
 
+import StayAwayMap from '../map/StayAwayMap';
 import { usePosition, useTimeout } from '../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../components/layout';
 import { isNonEmptyString } from '../../utils/LangUtils';
-import { FlexRow, ResultSegment } from '../styled';
+import { FlexRow, MapWrapper, ResultSegment } from '../styled';
 
 const MAX_HITS = 20;
 const INITIAL_STATE = {
@@ -37,6 +37,16 @@ const INITIAL_STATE = {
   start: 0,
   selectedOption: undefined,
 };
+
+const LocationIcon = <FontAwesomeIcon icon={faLocation} fixedWidth />;
+const MarginButton = styled(IconButton)`
+  margin-left: 5px;
+`;
+
+const AbsoluteWrapper = styled.div`
+  position: absolute;
+  top: 0;
+`;
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -48,11 +58,6 @@ const reducer = (state, action) => {
       throw new Error();
   }
 };
-
-const LocationIcon = <FontAwesomeIcon icon={faLocation} fixedWidth />;
-const MarginButton = styled(IconButton)`
-  margin-left: 5px;
-`;
 
 const LongBeachLocationContainer = () => {
 
@@ -66,7 +71,7 @@ const LongBeachLocationContainer = () => {
 
   const { page, start, selectedOption } = state;
   const [address, setAddress] = useState();
-  const position = usePosition();
+  const [currentPosition, posError] = usePosition();
 
   const fetchGeoOptions = useCallback(() => {
     if (isNonEmptyString(address)) {
@@ -97,9 +102,9 @@ const LongBeachLocationContainer = () => {
 
   const filterOption = () => true;
 
-  const handleCurrentLocation = () => {
-    const { latitude, longitude } = position;
-    if (latitude && longitude) {
+  const handleCurrentLocationClick = () => {
+    if (currentPosition.coords) {
+      const { latitude, longitude } = currentPosition.coords;
       stateDispatch({
         type: 'location',
         payload: {
@@ -125,38 +130,45 @@ const LongBeachLocationContainer = () => {
 
   return (
     <ContentOuterWrapper>
-      <ContentWrapper>
-        <CardStack>
-          <Card>
-            <ResultSegment vertical>
-              {/* <Title>
-                Search By Location
-              </Title> */}
-              <form>
-                <div>
-                  {/* <Label htmlFor="address">Address</Label> */}
-                  <FlexRow>
-                    <Select
-                        autoFocus
-                        filterOption={filterOption}
-                        inputId="address"
-                        inputValue={address}
-                        isClearable
-                        isLoading={isFetchingOptions}
-                        onChange={handleChange}
-                        onInputChange={setAddress}
-                        options={options.toJS()}
-                        placeholder="Search Locations"
-                        value={selectedOption} />
-                    <MarginButton
-                        disabled={!!position.error}
-                        icon={LocationIcon}
-                        onClick={handleCurrentLocation} />
-                  </FlexRow>
-                </div>
-              </form>
-            </ResultSegment>
-          </Card>
+      <ContentWrapper padding="none">
+        <MapWrapper>
+          <StayAwayMap currentPosition={currentPosition} />
+        </MapWrapper>
+        <AbsoluteWrapper>
+          <ContentWrapper>
+            <Card>
+              <ResultSegment vertical>
+                {/* <Title>
+                  Search By Location
+                </Title> */}
+                <form>
+                  <div>
+                    {/* <Label htmlFor="address">Address</Label> */}
+                    <FlexRow>
+                      <Select
+                          autoFocus
+                          filterOption={filterOption}
+                          inputId="address"
+                          inputValue={address}
+                          isClearable
+                          isLoading={isFetchingOptions}
+                          onChange={handleChange}
+                          onInputChange={setAddress}
+                          options={options.toJS()}
+                          placeholder="Search Locations"
+                          value={selectedOption} />
+                      <MarginButton
+                          disabled={!!posError}
+                          icon={LocationIcon}
+                          onClick={handleCurrentLocationClick} />
+                    </FlexRow>
+                  </div>
+                </form>
+              </ResultSegment>
+            </Card>
+          </ContentWrapper>
+        </AbsoluteWrapper>
+        <ContentWrapper>
           <SearchResults
               hasSearched={hasSearched}
               isLoading={isLoading}
@@ -171,7 +183,7 @@ const LongBeachLocationContainer = () => {
                   rowsPerPage={MAX_HITS} />
             )
           }
-        </CardStack>
+        </ContentWrapper>
       </ContentWrapper>
     </ContentOuterWrapper>
   );

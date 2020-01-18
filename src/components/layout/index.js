@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Colors, StyleUtils } from 'lattice-ui-kit';
 
 import { APP_CONTAINER_WIDTH } from '../../core/style/Sizes';
@@ -13,6 +13,18 @@ export const ContentOuterWrapper = styled.div`
   flex: 1 0 auto;
 `;
 
+const getContentPadding = ({ padding }) => {
+  if (padding === 'none') {
+    return null;
+  }
+  return css`
+    padding: 30px;
+    ${media.phone`
+      padding: 15px;
+    `}
+  `;
+};
+
 export const ContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -20,11 +32,8 @@ export const ContentWrapper = styled.div`
   align-self: center;
   justify-content: flex-start;
   max-width: ${APP_CONTAINER_WIDTH}px;
-  padding: 30px;
   width: 100vw;
-  ${media.phone`
-    padding: 15px;
-  `}
+  ${getContentPadding}
 `;
 
 export const UL = styled.ul`

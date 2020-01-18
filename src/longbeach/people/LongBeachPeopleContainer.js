@@ -7,7 +7,6 @@ import { List, Map } from 'immutable';
 import {
   Button,
   Card,
-  CardSegment,
   CardStack,
   DatePicker,
   Input,
