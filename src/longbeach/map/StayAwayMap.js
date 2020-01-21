@@ -49,6 +49,12 @@ const reducer = (state, action) => {
         center: undefined,
         selectedLocation: undefined,
       };
+    case 'dismiss': {
+      return {
+        ...state,
+        selectedLocation: undefined,
+      };
+    }
     default:
       return state;
   }
@@ -124,6 +130,10 @@ const StayAwayMap = (props :Props) => {
         selectedLocation: location
       }
     });
+  };
+
+  const closeFeature = () => {
+    stateDispatch({ type: 'dismiss' });
   };
 
   return (
