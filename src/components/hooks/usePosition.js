@@ -20,9 +20,7 @@ const usePosition = () :[Position, PositionError] => {
       return;
     }
 
-    const watcher = geo.watchPosition(onChange, onError);
-    // eslint-disable-next-line consistent-return
-    return () => geo.clearWatch(watcher);
+    geo.getCurrentPosition(onChange, onError);
   }, []);
 
   return [position, error];
