@@ -1,14 +1,15 @@
 // @flow
 import React, { useEffect, useMemo, useReducer } from 'react';
 
-import ReactMapboxGl, { ScaleControl } from 'react-mapbox-gl';
+import ReactMapboxGl, { Popup, ScaleControl } from 'react-mapbox-gl';
 import { List } from 'immutable';
 import { useSelector } from 'react-redux';
+import { RequestStates } from 'redux-reqseq';
 
 import CurrentPositionLayer from './CurrentPositionLayer';
 import RadiusLayer from './RadiusLayer';
 import StayAwayLocationLayer from './StayAwayLocationLayer';
-import { getBoundsFromPointsOfInterest } from './MapUtils';
+import { getBoundsFromPointsOfInterest, getCoordinates } from './MapUtils';
 import { COORDS, MAP_STYLE } from './constants';
 
 declare var __MAPBOX_TOKEN__;
@@ -17,6 +18,10 @@ declare var __MAPBOX_TOKEN__;
 const Mapbox = ReactMapboxGl({
   accessToken: __MAPBOX_TOKEN__
 });
+
+const flyToOptions = {
+  speed: 0.8
+};
 
 const INITIAL_STATE = {
   bounds: COORDS.BAY_AREA,
@@ -62,6 +67,8 @@ const StayAwayMap = (props :Props) => {
     useCurrentPosition,
   } = props;
   const stayAwayLocations = useSelector((store) => store.getIn(['longBeach', 'locations', 'stayAwayLocations']));
+  const isLoading = useSelector((store) => store
+    .getIn(['longBeach', 'locations', 'fetchState']) === RequestStates.PENDING);
   const [state, stateDispatch] = useReducer(reducer, INITIAL_STATE);
   const {
     bounds,
@@ -75,31 +82,38 @@ const StayAwayMap = (props :Props) => {
   [searchResults, stayAwayLocations]);
 
   useEffect(() => {
-    // first, use bounds whenever possible
-    const newBounds = getBoundsFromPointsOfInterest(locationData);
-    if (newBounds) {
-      stateDispatch({ type: 'bounds', payload: newBounds });
+    if (!isLoading) {
+      // first, use bounds whenever possible
+      const newBounds = getBoundsFromPointsOfInterest(locationData);
+      if (newBounds) {
+        stateDispatch({ type: 'bounds', payload: newBounds });
+      }
+      // then, try to center to current position without bounds
+      else if (currentPosition.coords && useCurrentPosition) {
+        const { latitude, longitude } = currentPosition.coords;
+        stateDispatch({
+          type: 'center',
+          payload: {
+            center: [longitude, latitude],
+            selectedLocation: undefined
+          }
+        });
+      }
+      // TODO: fall back to app.settings default bounds
+      // fall back to bay area bounds
+      else {
+        stateDispatch({
+          type: 'bounds',
+          payload: COORDS.BAY_AREA
+        });
+      }
     }
-    // then, try to center to current position without bounds
-    else if (currentPosition.coords && useCurrentPosition) {
-      const { latitude, longitude } = currentPosition.coords;
-      stateDispatch({
-        type: 'center',
-        payload: {
-          center: [longitude, latitude],
-          selectedLocation: undefined
-        }
-      });
-    }
-    // TODO: fall back to app.settings default bounds
-    // fall back to bay area bounds
-    else {
-      stateDispatch({
-        type: 'bounds',
-        payload: COORDS.BAY_AREA
-      });
-    }
-  }, [locationData, currentPosition, useCurrentPosition]);
+  }, [
+    isLoading,
+    locationData,
+    currentPosition,
+    useCurrentPosition
+  ]);
 
   const handleFeatureClick = (location, feature) => {
     const { lng, lat } = feature.lngLat;
@@ -118,6 +132,7 @@ const StayAwayMap = (props :Props) => {
         containerStyle={{ flex: 1 }}
         fitBounds={bounds}
         movingMethod="flyTo"
+        flyToOptions={flyToOptions}
         style={MAP_STYLE.LIGHT}
         zoom={zoom}>
       <ScaleControl
@@ -126,7 +141,12 @@ const StayAwayMap = (props :Props) => {
       <CurrentPositionLayer position={currentPosition} />
       {
         selectedLocation && (
-          <RadiusLayer location={selectedLocation} radius={100} unit="yd" />
+          <>
+            <RadiusLayer location={selectedLocation} radius={100} unit="yd" />
+            <Popup coordinates={getCoordinates(selectedLocation)}>
+              <div>popup</div>
+            </Popup>
+          </>
         )
       }
       <StayAwayLocationLayer
@@ -140,4 +160,12 @@ StayAwayMap.defaultProps = {
   searchResults: List()
 };
 
-export default StayAwayMap;
+export default React.memo((props :Props) => {
+  const { currentPosition, searchResults, useCurrentPosition } = props;
+  return (
+    <StayAwayMap
+        currentPosition={currentPosition}
+        searchResults={searchResults}
+        useCurrentPosition={useCurrentPosition} />
+  );
+});
