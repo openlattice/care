@@ -5,11 +5,14 @@ export const MAP_STYLE = {
 };
 
 export const LAYERS = {
-  ALL_SOURCE_FEATURES: 'allsourcefeatures',
-  SELECTED_SOURCE_FEATURES: 'selectedsourcefeatures',
-  SELECTED_READ: 'selectedread',
-  SEARCH_RADIUS: 'searchradius',
-  DATA_POINTS: 'datapoints'
+  RADIUS: 'radius',
+  CURRENT_POSITION: 'currentPosition'
+};
+
+export const UNIT_CONVERSION = {
+  m: 1,
+  mi: 1609.34,
+  yd: 0.9144
 };
 
 export const COORDS = {
