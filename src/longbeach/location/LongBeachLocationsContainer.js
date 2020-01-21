@@ -36,6 +36,7 @@ const INITIAL_STATE = {
   page: 0,
   start: 0,
   selectedOption: undefined,
+  useCurrentPosition: true
 };
 
 const LocationIcon = <FontAwesomeIcon icon={faLocation} fixedWidth />;
@@ -50,10 +51,24 @@ const AbsoluteWrapper = styled.div`
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case 'location':
-      return { page: 0, start: 0, selectedOption: action.payload };
-    case 'page':
-      return { ...state, page: action.payload };
+    case 'currentPosition':
+      return {
+        page: 0,
+        selectedOption: action.payload,
+        start: 0,
+        useCurrentPosition: true,
+      };
+    case 'selectLocation':
+      return {
+        page: 0,
+        start: 0,
+        selectedOption: action.payload,
+        useCurrentPosition: false
+      };
+    case 'page': {
+      const { page, start } = action.payload;
+      return { ...state, page, start };
+    }
     default:
       throw new Error();
   }
@@ -69,7 +84,12 @@ const LongBeachLocationContainer = () => {
   const dispatch = useDispatch();
   const [state, stateDispatch] = useReducer(reducer, INITIAL_STATE);
 
-  const { page, start, selectedOption } = state;
+  const {
+    page,
+    start,
+    selectedOption,
+    useCurrentPosition
+  } = state;
   const [address, setAddress] = useState();
   const [currentPosition, posError] = usePosition();
 
@@ -80,6 +100,26 @@ const LongBeachLocationContainer = () => {
   }, [dispatch, address]);
 
   useTimeout(fetchGeoOptions, 300);
+
+  useEffect(() => {
+    if (!posError && currentPosition.coords && !selectedOption && useCurrentPosition) {
+      const { latitude, longitude } = currentPosition.coords;
+      stateDispatch({
+        type: 'currentPosition',
+        payload: {
+          label: 'Current Location',
+          value: `${latitude},${longitude}`,
+          lat: latitude,
+          lon: longitude
+        }
+      });
+    }
+  }, [
+    currentPosition,
+    posError,
+    selectedOption,
+    useCurrentPosition,
+  ]);
 
   useEffect(() => {
     const newSearchInputs = Map({
@@ -106,7 +146,7 @@ const LongBeachLocationContainer = () => {
     if (currentPosition.coords) {
       const { latitude, longitude } = currentPosition.coords;
       stateDispatch({
-        type: 'location',
+        type: 'currentPosition',
         payload: {
           label: 'Current Location',
           value: `${latitude},${longitude}`,
@@ -118,7 +158,7 @@ const LongBeachLocationContainer = () => {
   };
 
   const handleChange = (payload) => {
-    stateDispatch({ type: 'location', payload });
+    stateDispatch({ type: 'selectLocation', payload });
   };
 
   const onPageChange = ({ page: newPage, start: startRow }) => {
@@ -132,18 +172,17 @@ const LongBeachLocationContainer = () => {
     <ContentOuterWrapper>
       <ContentWrapper padding="none">
         <MapWrapper>
-          <StayAwayMap currentPosition={currentPosition} />
+          <StayAwayMap
+              useCurrentPosition={useCurrentPosition}
+              currentPosition={currentPosition}
+              searchResults={searchResults} />
         </MapWrapper>
         <AbsoluteWrapper>
           <ContentWrapper>
             <Card>
               <ResultSegment vertical>
-                {/* <Title>
-                  Search By Location
-                </Title> */}
                 <form>
                   <div>
-                    {/* <Label htmlFor="address">Address</Label> */}
                     <FlexRow>
                       <Select
                           autoFocus
@@ -158,7 +197,7 @@ const LongBeachLocationContainer = () => {
                           placeholder="Search Locations"
                           value={selectedOption} />
                       <MarginButton
-                          disabled={!!posError}
+                          disabled={!!posError || !currentPosition.coords}
                           icon={LocationIcon}
                           onClick={handleCurrentLocationClick} />
                     </FlexRow>
