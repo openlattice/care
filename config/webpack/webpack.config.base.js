@@ -56,7 +56,7 @@ module.exports = (env) => {
 
   const CSS_LOADER = {
     test: /\.css$/i,
-    use: ['style-loader', 'css-loader'],
+    use: ['css-loader']
   };
 
   /*
