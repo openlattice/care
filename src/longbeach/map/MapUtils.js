@@ -5,7 +5,7 @@ import { UNIT_CONVERSION } from './constants';
 
 import * as FQN from '../../edm/DataModelFqns';
 
-const getCoordinates = (entity :Map) :GeoJSON.Position => {
+const getCoordinates = (entity :Map) :[number, number] => {
   const [latStr, lonStr] = entity.getIn([FQN.LOCATION_COORDINATES_FQN, 0], '').split(',');
   const latitude = Number.parseFloat(latStr);
   const longitude = Number.parseFloat(lonStr);
@@ -45,9 +45,9 @@ const metersToPixelsAtMaxZoom = (
 ) => meters / 0.075 / Math.cos((coordinate * Math.PI) / 180);
 
 const distanceToPixelsAtMaxZoom = (
-  scalar,
-  coordinate,
-  unit = 'm'
+  scalar :number,
+  coordinate :number,
+  unit :string = 'm'
 ) => {
 
   const meters = scalar * UNIT_CONVERSION[unit];
