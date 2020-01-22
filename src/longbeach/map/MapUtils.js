@@ -5,7 +5,7 @@ import { UNIT_CONVERSION } from './constants';
 
 import * as FQN from '../../edm/DataModelFqns';
 
-const getCoordinates = (entity :Map) :number[] => {
+const getCoordinates = (entity :Map) :GeoJSON.Position => {
   const [latStr, lonStr] = entity.getIn([FQN.LOCATION_COORDINATES_FQN, 0], '').split(',');
   const latitude = Number.parseFloat(latStr);
   const longitude = Number.parseFloat(lonStr);

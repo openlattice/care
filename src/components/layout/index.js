@@ -20,7 +20,7 @@ const getContentPadding = ({ padding }) => {
   return css`
     padding: 30px;
     ${media.phone`
-      padding: 15px;
+      padding: 10px;
     `}
   `;
 };
