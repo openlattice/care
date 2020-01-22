@@ -39,7 +39,7 @@ const CloseButton = styled(IconButton)`
 const CloseIcon = <FontAwesomeIcon icon={faTimes} fixedWidth />;
 
 type Props = {
-  coordinates :GeoJSON.Position;
+  coordinates :[number, number];
   isOpen :boolean;
   stayAwayLocation :Map;
   onClose :() => void;
