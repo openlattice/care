@@ -9,6 +9,7 @@ import { RequestStates } from 'redux-reqseq';
 import CurrentPositionLayer from './CurrentPositionLayer';
 import RadiusLayer from './RadiusLayer';
 import StayAwayLocationLayer from './StayAwayLocationLayer';
+import StayAwayPopup from './StayAwayPopup';
 import { getBoundsFromPointsOfInterest, getCoordinates } from './MapUtils';
 import { COORDS, MAP_STYLE } from './constants';
 
@@ -23,22 +24,35 @@ const flyToOptions = {
   speed: 0.8
 };
 
+const fitBoundsOptions = {
+  padding: {
+    bottom: 30,
+    left: 30,
+    right: 30,
+    top: 90,
+  }
+};
+
+const containerStyle = { flex: 1 };
+
 const INITIAL_STATE = {
   bounds: COORDS.BAY_AREA,
   center: undefined,
+  isPopupOpen: false,
+  selectedFeature: undefined,
   zoom: [16],
-  selectedLocation: undefined
 };
 
 const reducer = (state, action) => {
   switch (action.type) {
     case 'center': {
-      const { center, selectedLocation } = action.payload;
+      const { center, isPopupOpen, selectedFeature } = action.payload;
       return {
         ...state,
         bounds: undefined,
         center,
-        selectedLocation,
+        isPopupOpen,
+        selectedFeature,
         zoom: [16],
       };
     }
@@ -46,13 +60,12 @@ const reducer = (state, action) => {
       return {
         ...state,
         bounds: action.payload,
-        center: undefined,
-        selectedLocation: undefined,
+        selectedFeature: undefined,
       };
     case 'dismiss': {
       return {
         ...state,
-        selectedLocation: undefined,
+        isPopupOpen: false,
       };
     }
     default:
@@ -61,8 +74,8 @@ const reducer = (state, action) => {
 };
 
 type Props = {
-  useCurrentPosition :boolean;
   currentPosition :Position;
+  selectedOption :Object;
   searchResults ?:List;
 };
 
@@ -70,7 +83,7 @@ const StayAwayMap = (props :Props) => {
   const {
     currentPosition,
     searchResults,
-    useCurrentPosition,
+    selectedOption
   } = props;
   const stayAwayLocations = useSelector((store) => store.getIn(['longBeach', 'locations', 'stayAwayLocations']));
   const isLoading = useSelector((store) => store
@@ -79,29 +92,31 @@ const StayAwayMap = (props :Props) => {
   const {
     bounds,
     center,
-    selectedLocation,
+    isPopupOpen,
+    selectedFeature,
     zoom,
   } = state;
 
-  const locationData = useMemo(() => searchResults
+  const stayAwayData = useMemo(() => searchResults
     .map((resultEKID) => stayAwayLocations.get(resultEKID)),
   [searchResults, stayAwayLocations]);
 
   useEffect(() => {
     if (!isLoading) {
       // first, use bounds whenever possible
-      const newBounds = getBoundsFromPointsOfInterest(locationData);
+      const newBounds = getBoundsFromPointsOfInterest(stayAwayData);
       if (newBounds) {
         stateDispatch({ type: 'bounds', payload: newBounds });
       }
-      // then, try to center to current position without bounds
-      else if (currentPosition.coords && useCurrentPosition) {
-        const { latitude, longitude } = currentPosition.coords;
+      // then, try to center to position without bounds
+      else if (selectedOption) {
+        const { lat, lon } = selectedOption;
         stateDispatch({
           type: 'center',
           payload: {
-            center: [longitude, latitude],
-            selectedLocation: undefined
+            center: [parseFloat(lon), parseFloat(lat)],
+            selectedFeature: undefined,
+            isPopupOpen: false
           }
         });
       }
@@ -116,9 +131,8 @@ const StayAwayMap = (props :Props) => {
     }
   }, [
     isLoading,
-    locationData,
-    currentPosition,
-    useCurrentPosition
+    stayAwayData,
+    selectedOption
   ]);
 
   const handleFeatureClick = (location, feature) => {
@@ -127,7 +141,8 @@ const StayAwayMap = (props :Props) => {
       type: 'center',
       payload: {
         center: [lng, lat],
-        selectedLocation: location
+        selectedFeature: location,
+        isPopupOpen: true
       }
     });
   };
@@ -139,10 +154,11 @@ const StayAwayMap = (props :Props) => {
   return (
     <Mapbox
         center={center}
-        containerStyle={{ flex: 1 }}
+        containerStyle={containerStyle}
         fitBounds={bounds}
         movingMethod="flyTo"
         flyToOptions={flyToOptions}
+        fitBoundsOptions={fitBoundsOptions}
         style={MAP_STYLE.LIGHT}
         zoom={zoom}>
       <ScaleControl
@@ -150,17 +166,19 @@ const StayAwayMap = (props :Props) => {
           measurement="mi" />
       <CurrentPositionLayer position={currentPosition} />
       {
-        selectedLocation && (
+        selectedFeature && (
           <>
-            <RadiusLayer location={selectedLocation} radius={100} unit="yd" />
-            <Popup coordinates={getCoordinates(selectedLocation)}>
-              <div>popup</div>
-            </Popup>
+            <RadiusLayer location={selectedFeature} radius={100} unit="yd" />
+            <StayAwayPopup
+                isOpen={isPopupOpen}
+                coordinates={getCoordinates(selectedFeature)}
+                stayAwayLocation={selectedFeature}
+                onClose={closeFeature} />
           </>
         )
       }
       <StayAwayLocationLayer
-          stayAwayLocations={locationData}
+          stayAwayLocations={stayAwayData}
           onFeatureClick={handleFeatureClick} />
     </Mapbox>
   );
@@ -170,12 +188,7 @@ StayAwayMap.defaultProps = {
   searchResults: List()
 };
 
-export default React.memo((props :Props) => {
-  const { currentPosition, searchResults, useCurrentPosition } = props;
-  return (
-    <StayAwayMap
-        currentPosition={currentPosition}
-        searchResults={searchResults}
-        useCurrentPosition={useCurrentPosition} />
-  );
-});
+export default React.memo((props :Props) => (
+  /* eslint-disable-next-line react/jsx-props-no-spreading */
+  <StayAwayMap {...props} />
+));

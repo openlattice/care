@@ -35,8 +35,7 @@ const MAX_HITS = 20;
 const INITIAL_STATE = {
   page: 0,
   start: 0,
-  selectedOption: undefined,
-  useCurrentPosition: true
+  selectedOption: undefined
 };
 
 const LocationIcon = <FontAwesomeIcon icon={faLocation} fixedWidth />;
@@ -51,20 +50,13 @@ const AbsoluteWrapper = styled.div`
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case 'currentPosition':
+    case 'selectLocation': {
       return {
         page: 0,
         selectedOption: action.payload,
-        start: 0,
-        useCurrentPosition: true,
+        start: 0
       };
-    case 'selectLocation':
-      return {
-        page: 0,
-        start: 0,
-        selectedOption: action.payload,
-        useCurrentPosition: false
-      };
+    }
     case 'page': {
       const { page, start } = action.payload;
       return { ...state, page, start };
@@ -87,8 +79,7 @@ const LongBeachLocationContainer = () => {
   const {
     page,
     start,
-    selectedOption,
-    useCurrentPosition
+    selectedOption
   } = state;
   const [address, setAddress] = useState();
   const [currentPosition, posError] = usePosition();
@@ -102,10 +93,10 @@ const LongBeachLocationContainer = () => {
   useTimeout(fetchGeoOptions, 300);
 
   useEffect(() => {
-    if (!posError && currentPosition.coords && !selectedOption && useCurrentPosition) {
+    if (!posError && currentPosition.coords && !selectedOption) {
       const { latitude, longitude } = currentPosition.coords;
       stateDispatch({
-        type: 'currentPosition',
+        type: 'selectLocation',
         payload: {
           label: 'Current Location',
           value: `${latitude},${longitude}`,
@@ -117,8 +108,7 @@ const LongBeachLocationContainer = () => {
   }, [
     currentPosition,
     posError,
-    selectedOption,
-    useCurrentPosition,
+    selectedOption
   ]);
 
   useEffect(() => {
@@ -142,11 +132,11 @@ const LongBeachLocationContainer = () => {
 
   const filterOption = () => true;
 
-  const handleCurrentLocationClick = () => {
+  const handleCurrentPositionClick = () => {
     if (currentPosition.coords) {
       const { latitude, longitude } = currentPosition.coords;
       stateDispatch({
-        type: 'currentPosition',
+        type: 'selectLocation',
         payload: {
           label: 'Current Location',
           value: `${latitude},${longitude}`,
@@ -167,14 +157,13 @@ const LongBeachLocationContainer = () => {
       payload: { page: newPage, start: startRow }
     });
   };
-
   return (
     <ContentOuterWrapper>
       <ContentWrapper padding="none">
         <MapWrapper>
           <StayAwayMap
-              useCurrentPosition={useCurrentPosition}
               currentPosition={currentPosition}
+              selectedOption={selectedOption}
               searchResults={searchResults} />
         </MapWrapper>
         <AbsoluteWrapper>
@@ -189,7 +178,6 @@ const LongBeachLocationContainer = () => {
                           filterOption={filterOption}
                           inputId="address"
                           inputValue={address}
-                          isClearable
                           isLoading={isFetchingOptions}
                           onChange={handleChange}
                           onInputChange={setAddress}
@@ -199,7 +187,7 @@ const LongBeachLocationContainer = () => {
                       <MarginButton
                           disabled={!!posError || !currentPosition.coords}
                           icon={LocationIcon}
-                          onClick={handleCurrentLocationClick} />
+                          onClick={handleCurrentPositionClick} />
                     </FlexRow>
                   </div>
                 </form>
