@@ -188,7 +188,7 @@ StayAwayMap.defaultProps = {
   searchResults: List()
 };
 
-export default React.memo((props :Props) => (
+export default React.memo<Props>((props :Props) => (
   /* eslint-disable-next-line react/jsx-props-no-spreading */
   <StayAwayMap {...props} />
 ));
