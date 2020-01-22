@@ -9,7 +9,7 @@ import React, {
 
 import isPlainObject from 'lodash/isPlainObject';
 import styled from 'styled-components';
-import { faLocation } from '@fortawesome/pro-solid-svg-icons';
+import { faLocation, faLocationSlash } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { List, Map } from 'immutable';
 import {
@@ -22,6 +22,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
+import FindingLocationSplash from './FindingLocationSplash';
 import LongBeachLocationResult from './LongBeachLocationResult';
 import { getGeoOptions, searchLBLocations } from './LongBeachLocationsActions';
 
@@ -38,9 +39,18 @@ const INITIAL_STATE = {
   selectedOption: undefined
 };
 
-const LocationIcon = <FontAwesomeIcon icon={faLocation} fixedWidth />;
+const PositionIcon = <FontAwesomeIcon icon={faLocation} fixedWidth />;
+const noPositionIcon = <FontAwesomeIcon icon={faLocationSlash} fixedWidth />;
 const MarginButton = styled(IconButton)`
   margin-left: 5px;
+`;
+
+const StyledContentWrapper = styled(ContentWrapper)`
+  justify-content: space-between;
+`;
+
+const StyledSearchResults = styled(SearchResults)`
+  margin: auto;
 `;
 
 const AbsoluteWrapper = styled.div`
@@ -129,6 +139,7 @@ const LongBeachLocationContainer = () => {
   const hasSearched = fetchState !== RequestStates.STANDBY;
   const isLoading = fetchState === RequestStates.PENDING;
   const isFetchingOptions = optionsFetchState === RequestStates.PENDING;
+  const hasPosition = !posError && currentPosition.coords;
 
   const filterOption = () => true;
 
@@ -185,8 +196,8 @@ const LongBeachLocationContainer = () => {
                           placeholder="Search Locations"
                           value={selectedOption} />
                       <MarginButton
-                          disabled={!!posError || !currentPosition.coords}
-                          icon={LocationIcon}
+                          disabled={!hasPosition}
+                          icon={hasPosition ? PositionIcon : noPositionIcon}
                           onClick={handleCurrentPositionClick} />
                     </FlexRow>
                   </div>
@@ -195,8 +206,13 @@ const LongBeachLocationContainer = () => {
             </Card>
           </ContentWrapper>
         </AbsoluteWrapper>
-        <ContentWrapper>
-          <SearchResults
+        <StyledContentWrapper>
+          {
+            (!hasPosition && !hasSearched) && (
+              <FindingLocationSplash />
+            )
+          }
+          <StyledSearchResults
               hasSearched={hasSearched}
               isLoading={isLoading}
               resultComponent={LongBeachLocationResult}
@@ -210,7 +226,7 @@ const LongBeachLocationContainer = () => {
                   rowsPerPage={MAX_HITS} />
             )
           }
-        </ContentWrapper>
+        </StyledContentWrapper>
       </ContentWrapper>
     </ContentOuterWrapper>
   );

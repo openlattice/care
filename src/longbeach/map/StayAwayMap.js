@@ -1,7 +1,7 @@
 // @flow
 import React, { useEffect, useMemo, useReducer } from 'react';
 
-import ReactMapboxGl, { Popup, ScaleControl } from 'react-mapbox-gl';
+import ReactMapboxGl, { ScaleControl } from 'react-mapbox-gl';
 import { List } from 'immutable';
 import { useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
@@ -21,7 +21,7 @@ const Mapbox = ReactMapboxGl({
 });
 
 const flyToOptions = {
-  speed: 0.8
+  speed: 1.5
 };
 
 const fitBoundsOptions = {
@@ -159,7 +159,7 @@ const StayAwayMap = (props :Props) => {
         movingMethod="flyTo"
         flyToOptions={flyToOptions}
         fitBoundsOptions={fitBoundsOptions}
-        style={MAP_STYLE.LIGHT}
+        style={MAP_STYLE.DEFAULT}
         zoom={zoom}>
       <ScaleControl
           position="bottom-right"

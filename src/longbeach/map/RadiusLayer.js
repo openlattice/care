@@ -25,7 +25,7 @@ const RadiusLayer = (props :Props) => {
     unit,
   } = props;
 
-  const color = mapMode === MAP_STYLE.LIGHT ? PURPLES[4] : PURPLES[6];
+  const color = mapMode === MAP_STYLE.DEFAULT ? PURPLES[2] : PURPLES[6];
   const [longitude, latitude] = getCoordinates(location);
   if (radius && latitude && longitude) {
     return (
@@ -54,7 +54,7 @@ const RadiusLayer = (props :Props) => {
 };
 
 RadiusLayer.defaultProps = {
-  mapMode: MAP_STYLE.LIGHT,
+  mapMode: MAP_STYLE.DEFAULT,
   radius: 100,
   unit: 'yd'
 };
