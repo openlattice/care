@@ -8,7 +8,7 @@ const loading = keyframes`
   0% {
     background-position:
       /* animation blur */
-      -10vw 0,
+      -50vw 0,
       0 0,
       0 30px,
       0 52px,
@@ -59,7 +59,7 @@ const addressSkeleton = css`
     100% 100%;
   background-position:
     /* animation blur */
-    -10vw 0,
+    -50vw 0,
     0 0,
     0 30px,
     0 52px,

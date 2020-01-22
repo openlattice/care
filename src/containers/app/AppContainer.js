@@ -23,6 +23,7 @@ import DashboardContainer from '../dashboard/DashboardContainer';
 import DownloadsContainer from '../downloads/DownloadsContainer';
 import IssuesContainer from '../issues/IssuesContainer';
 import LegitReportsRouter from '../reports/LegitReportsRouter';
+import LongBeachRouter from '../../longbeach/LongBeachRouter';
 import NewCrisisReportContainer from '../reports/crisis/NewCrisisReportContainer';
 import ProfileRouter from '../profile/ProfileRouter';
 import SearchPeopleContainer from '../people/SearchPeopleContainer';
@@ -101,9 +102,10 @@ type Props = {
   actions :{
     initializeApplication :RequestSequence;
   };
+  initializeState :RequestState;
   organizations :Map;
   selectedOrganizationId :UUID;
-  initializeState :RequestState;
+  selectedOrganizationSettings :Map;
 };
 
 class AppContainer extends Component<Props> {
@@ -125,6 +127,7 @@ class AppContainer extends Component<Props> {
 
     const {
       organizations,
+      selectedOrganizationSettings,
       selectedOrganizationId,
       initializeState
     } = this.props;
@@ -139,6 +142,12 @@ class AppContainer extends Component<Props> {
         </Switch>
       );
     }
+
+    /* <===== BEGIN LONG BEACH HACK =====> */
+    if (selectedOrganizationSettings.get('longBeach', false)) {
+      return (<LongBeachRouter />);
+    }
+    /* <===== END LONG BEACH HACK =====> */
 
     return (
       <Switch>
@@ -173,9 +182,10 @@ class AppContainer extends Component<Props> {
 function mapStateToProps(state :Map<*, *>) :Object {
 
   return {
+    initializeState: state.getIn(['app', 'initializeState']),
     organizations: state.getIn(['app', 'organizations'], Map()),
     selectedOrganizationId: state.getIn(['app', 'selectedOrganizationId'], ''),
-    initializeState: state.getIn(['app', 'initializeState']),
+    selectedOrganizationSettings: state.getIn(['app', 'selectedOrganizationSettings'], Map()),
   };
 }
 

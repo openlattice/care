@@ -54,6 +54,11 @@ module.exports = (env) => {
     }]
   };
 
+  const CSS_LOADER = {
+    test: /\.css$/i,
+    use: ['style-loader', 'css-loader'],
+  };
+
   /*
    * plugins
    */
@@ -69,6 +74,7 @@ module.exports = (env) => {
     __BASE_PATH__: JSON.stringify(BASE_PATH),
     __ENV_DEV__: JSON.stringify(!!env.development),
     __ENV_PROD__: JSON.stringify(!!env.production),
+    __MAPBOX_TOKEN__: JSON.stringify(env.MAPBOX_TOKEN),
     __PACKAGE__: JSON.stringify(PACKAGE.name),
     __VERSION__: JSON.stringify(`v${PACKAGE.version}`),
   });
@@ -93,6 +99,7 @@ module.exports = (env) => {
       rules: [
         BABEL_LOADER,
         FILE_LOADER_ASSETS_IMAGES,
+        CSS_LOADER,
       ],
     },
     node: {

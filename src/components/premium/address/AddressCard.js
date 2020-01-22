@@ -1,25 +1,27 @@
 // @flow
 
 import React from 'react';
-import {
-  Card,
-  CardSegment,
-  CardHeader,
-} from 'lattice-ui-kit';
-import { Map } from 'immutable';
+
 import { faHome } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Map } from 'immutable';
+import {
+  Card,
+  CardHeader,
+  CardSegment,
+} from 'lattice-ui-kit';
 import { withRouter } from 'react-router-dom';
 import type { Match } from 'react-router-dom';
 
 import Address from './Address';
+
 import EditLinkButton from '../../buttons/EditLinkButton';
 import NewIssueButton from '../../buttons/CreateIssueButton';
-import { BASIC_PATH, EDIT_PATH } from '../../../core/router/Routes';
-import { formatCityStateZip } from './AddressUtils';
-import { H1, HeaderActions, IconWrapper } from '../../layout';
-import { CATEGORIES } from '../../../containers/issues/issue/constants';
 import * as FQN from '../../../edm/DataModelFqns';
+import { CATEGORIES } from '../../../containers/issues/issue/constants';
+import { BASIC_PATH, EDIT_PATH } from '../../../core/router/Routes';
+import { formatCityStateZip } from '../../../utils/AddressUtils';
+import { H1, HeaderActions, IconWrapper } from '../../layout';
 
 const { BASIC_INFORMATION } = CATEGORIES;
 

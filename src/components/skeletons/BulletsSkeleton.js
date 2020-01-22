@@ -8,7 +8,7 @@ const loading = keyframes`
   0% {
     background-position:
       /* animation blur */
-      -10vw 0,
+      -50vw 0,
       /* bulleted item 1 */
       3px 5px,
       20px 0,
@@ -79,7 +79,7 @@ const bulletsSkeleton = css`
     100% 100%;
   background-position:
     /* animation blur */
-    -10vw 0,
+    -50vw 0,
     /* bulleted item 1 */
     3px 5px,
     20px 0,

@@ -11,6 +11,7 @@ import {
   takeEvery
 } from '@redux-saga/core/effects';
 import { push } from 'connected-react-router';
+import { Map, fromJS } from 'immutable';
 import { Constants, Types } from 'lattice';
 import { AccountUtils } from 'lattice-auth';
 import {
@@ -23,15 +24,8 @@ import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
-import { Map, fromJS } from 'immutable';
 import type { SequenceAction } from 'redux-reqseq';
 
-import Logger from '../../utils/Logger';
-import * as Routes from '../../core/router/Routes';
-import { getCurrentUserStaffMemberDataWorker } from '../staff/StaffSagas';
-import { getCurrentUserStaffMemberData } from '../staff/StaffActions';
-import { APP_NAME, APP_TYPES_FQNS } from '../../shared/Consts';
-import { ERR_WORKER_SAGA, ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
 import {
   INITIALIZE_APPLICATION,
   LOAD_APP,
@@ -41,8 +35,15 @@ import {
   loadApp,
   loadHospitals,
 } from './AppActions';
-import { isValidUuid } from '../../utils/Utils';
+
+import Logger from '../../utils/Logger';
+import * as Routes from '../../core/router/Routes';
 import { APP_DETAILS_FQN } from '../../edm/DataModelFqns';
+import { APP_NAME, APP_TYPES_FQNS } from '../../shared/Consts';
+import { ERR_ACTION_VALUE_TYPE, ERR_WORKER_SAGA } from '../../utils/Errors';
+import { isValidUuid } from '../../utils/Utils';
+import { getCurrentUserStaffMemberData } from '../staff/StaffActions';
+import { getCurrentUserStaffMemberDataWorker } from '../staff/StaffSagas';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 const { SecurableTypes } = Types;
