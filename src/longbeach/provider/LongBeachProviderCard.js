@@ -28,7 +28,7 @@ const AddressSkeleton = styled.div`
 `;
 
 const ProviderContent = styled.div`
-    ${media.phone`
+  ${media.phone`
     font-size: 12px;
   `}
 `;

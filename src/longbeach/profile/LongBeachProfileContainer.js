@@ -6,7 +6,6 @@ import {
   Card,
   CardStack,
   Label,
-  PlusButton,
   Tag,
 } from 'lattice-ui-kit';
 import { useDispatch, useSelector } from 'react-redux';
