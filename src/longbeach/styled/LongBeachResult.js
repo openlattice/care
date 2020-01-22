@@ -4,9 +4,10 @@ import React, { useMemo } from 'react';
 
 import {
   faBirthdayCake,
+  faDraftingCompass,
   faMapMarkerAltSlash,
   faUser,
-  faVenusMars
+  faVenusMars,
 } from '@fortawesome/pro-solid-svg-icons';
 import { Map } from 'immutable';
 import { Card } from 'lattice-ui-kit';
@@ -71,6 +72,8 @@ const LongBeachResult = ({
   if (name && address) {
     nameAndAddress = `${name}\n${address}`;
   }
+  // TODO: Replace with true radius
+  const radius = '100 yd';
 
   return (
     <Card onClick={handleViewProfile}>
@@ -83,6 +86,7 @@ const LongBeachResult = ({
             <Detail content={race} icon={faUser} />
             <Detail content={sex} icon={faVenusMars} />
             <Detail content={nameAndAddress} icon={faMapMarkerAltSlash} />
+            <Detail content={radius} icon={faDraftingCompass} />
           </ResultDetails>
         </FlexRow>
       </ResultSegment>
