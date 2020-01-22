@@ -8,6 +8,7 @@ import LongBeachProviderCard from './LongBeachProviderCard';
 import { getLBProviders } from './LongBeachProviderActions';
 
 import { ContentOuterWrapper, ContentWrapper } from '../../components/layout';
+import { OPENLATTICE_ID_FQN } from '../../edm/DataModelFqns';
 
 const LongBeachProviderContainer = () => {
   const providers = useSelector((store) => store.getIn(['longBeach', 'providers', 'providers']));
@@ -22,9 +23,10 @@ const LongBeachProviderContainer = () => {
       <ContentWrapper>
         <CardStack>
           {
-            providers.map((provider, idx) => {
+            providers.map((provider) => {
+              const key = provider.getIn([OPENLATTICE_ID_FQN, 0]);
               return (
-                <LongBeachProviderCard key={idx} provider={provider} />
+                <LongBeachProviderCard key={key} provider={provider} />
               );
             }).valueSeq()
           }

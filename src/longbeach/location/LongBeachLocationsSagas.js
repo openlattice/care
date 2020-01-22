@@ -259,8 +259,8 @@ function* searchLBLocationsWorker(action :SequenceAction) :Generator<any, any, a
           latitude,
           longitude,
           propertyTypeId: locationCoordinatesPTID,
-          radius: 1,
-          unit: 'mi'
+          radius: 400,
+          unit: 'yd'
         }]
       }],
     };

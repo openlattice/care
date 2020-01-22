@@ -1,19 +1,16 @@
 // @flow
 import { useEffect, useState } from 'react';
 
-const usePosition = () => {
+const usePosition = () :[Position, PositionError] => {
   const [position, setPosition] = useState({});
   const [error, setError] = useState(null);
 
-  const onChange = ({ coords } :Position) => {
-    setPosition({
-      latitude: coords.latitude,
-      longitude: coords.longitude,
-    });
+  const onChange = (pos :Position) => {
+    setPosition(pos);
   };
 
   const onError = (posError :PositionError) => {
-    setError(posError.message);
+    setError(posError);
   };
 
   useEffect(() => {
@@ -23,12 +20,10 @@ const usePosition = () => {
       return;
     }
 
-    const watcher = geo.watchPosition(onChange, onError);
-    // eslint-disable-next-line consistent-return
-    return () => geo.clearWatch(watcher);
+    geo.getCurrentPosition(onChange, onError);
   }, []);
 
-  return { ...position, error };
+  return [position, error];
 };
 
 export default usePosition;
