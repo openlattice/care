@@ -70,9 +70,9 @@ const LongBeachProfileContainer = () => {
 
   const { name, address } = getAddressFromLocation(stayAwayLocation);
 
-  // $FlowFixMe
   const startDT = probation.getIn([FQN.RECOGNIZED_START_DATE_FQN, 0]);
   const endDT = probation.getIn([FQN.RECOGNIZED_END_DATE_FQN, 0]);
+  // $FlowFixMe
   const probationStart :string = getDateShortFromIsoDate(startDT);
   // $FlowFixMe
   const probationEnd :string = getDateShortFromIsoDate(endDT);
