@@ -11,7 +11,7 @@ const isClinician = (context) => {
 const crisisMachine = Machine(
   {
     id: 'step',
-    initial: 'profile',
+    initial: 'incident',
     context: {
       role: 'clinician',
     },

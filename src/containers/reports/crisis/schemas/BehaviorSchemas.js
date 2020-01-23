@@ -5,7 +5,7 @@ import { BEHAVIORS, NATURE_OF_CRISIS } from './constants';
 import * as FQN from '../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
 
-const { PEOPLE_FQN } = APP_TYPES_FQNS;
+const { BEHAVIOR_FQN, NATURE_OF_CRISIS_FQN } = APP_TYPES_FQNS;
 
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
 
@@ -17,7 +17,7 @@ const schema = {
       type: 'object',
       title: '',
       properties: {
-        [getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+        [getEntityAddressKey(0, NATURE_OF_CRISIS_FQN, FQN.DESCRIPTION_FQN)]: {
           title: 'Nature of Crisis',
           type: 'array',
           items: {
@@ -27,7 +27,7 @@ const schema = {
           // minItems: 1,
           uniqueItems: true
         },
-        [getEntityAddressKey(1, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+        [getEntityAddressKey(0, BEHAVIOR_FQN, FQN.OBSERVED_BEHAVIOR_FQN)]: {
           title: 'Behavior',
           type: 'array',
           items: {
@@ -39,8 +39,8 @@ const schema = {
         },
       },
       // required: [
-      //   getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN),
-      //   getEntityAddressKey(1, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN),
+      //   getEntityAddressKey(0, NATURE_OF_CRISIS_FQN, FQN.DESCRIPTION_FQN),
+      //   getEntityAddressKey(0, BEHAVIOR_FQN, FQN.OBSERVED_BEHAVIOR_FQN),
       // ]
     }
   }
@@ -52,7 +52,7 @@ const uiSchema = {
     'ui:options': {
       editable: true
     },
-    [getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+    [getEntityAddressKey(0, NATURE_OF_CRISIS_FQN, FQN.DESCRIPTION_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
       'ui:options': {
@@ -60,7 +60,7 @@ const uiSchema = {
         withOther: true,
       }
     },
-    [getEntityAddressKey(1, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+    [getEntityAddressKey(0, BEHAVIOR_FQN, FQN.OBSERVED_BEHAVIOR_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
       'ui:options': {

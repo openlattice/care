@@ -1,7 +1,8 @@
 // @flow
-import React from 'react';
+import React, { useRef } from 'react';
 
 import styled from 'styled-components';
+import { Map } from 'immutable';
 import { Form, XPage } from 'lattice-fabricate';
 import {
   Button,
@@ -12,6 +13,7 @@ import {
 import { crisisMachine } from './machine/crisisMachine';
 import { xSchemas, xUiSchemas } from './schemas';
 
+import ProfileBanner from '../../profile/ProfileBanner';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
 
 const initialFormData = {
@@ -48,11 +50,15 @@ const ReviewBody = styled.div`
   padding: 30px 30px 30px;
 `;
 
+const mockPerson = Map();
+
 const onPageChange = (page, formData) => console.log(page, formData);
 
 const XStateCrisisReportContainer = () => {
+  const pageRef = useRef();
   return (
-    <ContentOuterWrapper>
+    <ContentOuterWrapper ref={pageRef}>
+      <ProfileBanner selectedPerson={mockPerson} />
       <ContentWrapper>
         <CardStack>
           <Card>
@@ -72,9 +78,23 @@ const XStateCrisisReportContainer = () => {
                   const isInitialPage = page === crisisMachine.initialState.value;
                   const isReviewPage = page === 'review';
 
-                  const handleNext = isReviewPage
+                  const validate = isReviewPage
                     ? () => console.log(pagedData)
                     : validateAndSubmit;
+
+                  const handleNext = () => {
+                    if (pageRef.current) {
+                      pageRef.current.scrollIntoView();
+                    }
+                    onNext();
+                  };
+
+                  const handleBack = () => {
+                    if (pageRef.current) {
+                      pageRef.current.scrollIntoView();
+                    }
+                    onBack();
+                  };
 
                   return (
                     <>
@@ -85,28 +105,21 @@ const XStateCrisisReportContainer = () => {
                             <Form
                                 formData={pagedData}
                                 hideSubmit
-                                onSubmit={onNext}
+                                onSubmit={handleNext}
                                 ref={formRef}
                                 schema={xSchemas[page]}
                                 uiSchema={xUiSchemas[page]} />
                           )
                       }
-                      {/* <Form
-                          formData={pagedData}
-                          hideSubmit
-                          onSubmit={onNext}
-                          ref={formRef}
-                          schema={xSchemas[page]}
-                          uiSchema={xUiSchemas[page]} /> */}
                       <ActionRow>
                         <Button
                             disabled={isInitialPage}
-                            onClick={onBack}>
+                            onClick={handleBack}>
                             Back
                         </Button>
                         <Button
                             mode="primary"
-                            onClick={handleNext}>
+                            onClick={validate}>
                           { isReviewPage ? 'Submit' : 'Next' }
                         </Button>
                       </ActionRow>

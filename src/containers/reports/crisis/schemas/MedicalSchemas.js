@@ -5,7 +5,11 @@ import { DRUGS_ALCOHOL, YES_NO_UNKNOWN } from './constants';
 import * as FQN from '../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
 
-const { PEOPLE_FQN } = APP_TYPES_FQNS;
+const {
+  DIAGNOSIS_FQN,
+  MEDICATION_STATEMENT_FQN,
+  SUBSTANCE_FQN
+} = APP_TYPES_FQNS;
 
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
 
@@ -14,7 +18,7 @@ const schema = {
     diagnosis: {
       type: 'object',
       properties: {
-        [getEntityAddressKey(-1, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+        [getEntityAddressKey(-1, DIAGNOSIS_FQN, FQN.NAME_FQN)]: {
           type: 'string',
           title: 'Diagnosis'
         }
@@ -23,15 +27,11 @@ const schema = {
     medication: {
       type: 'object',
       properties: {
-        [getEntityAddressKey(-2, PEOPLE_FQN, FQN.PERSON_FIRST_NAME_FQN)]: {
+        [getEntityAddressKey(-1, MEDICATION_STATEMENT_FQN, FQN.NAME_FQN)]: {
           type: 'string',
           title: 'Medication',
         },
-        [getEntityAddressKey(-2, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
-          type: 'string',
-          title: 'Condition',
-        },
-        [getEntityAddressKey(-2, PEOPLE_FQN, FQN.PERSON_MIDDLE_NAME_FQN)]: {
+        [getEntityAddressKey(-1, MEDICATION_STATEMENT_FQN, FQN.TAKEN_AS_PRESCRIBED_FQN)]: {
           type: 'string',
           title: 'Compliance',
           enum: YES_NO_UNKNOWN
@@ -62,7 +62,7 @@ const schema = {
       type: 'object',
       title: 'Drugs & Alcohol Involvement',
       properties: {
-        [getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+        [getEntityAddressKey(0, SUBSTANCE_FQN, FQN.TYPE_FQN)]: {
           title: 'Substance use during incident',
           type: 'array',
           items: {
@@ -72,7 +72,7 @@ const schema = {
           // minItems: 1,
           uniqueItems: true
         },
-        [getEntityAddressKey(1, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+        [getEntityAddressKey(1, SUBSTANCE_FQN, FQN.TYPE_FQN)]: {
           title: 'History of substance abuse or treatment',
           type: 'array',
           items: {
@@ -99,7 +99,7 @@ const uiSchema = {
       'ui:options': {
         editable: true
       },
-      [getEntityAddressKey(-1, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+      [getEntityAddressKey(-1, DIAGNOSIS_FQN, FQN.NAME_FQN)]: {
         classNames: 'column-span-12',
       }
     },
@@ -112,13 +112,10 @@ const uiSchema = {
     },
     items: {
       classNames: 'grid-container',
-      [getEntityAddressKey(-2, PEOPLE_FQN, FQN.PERSON_FIRST_NAME_FQN)]: {
+      [getEntityAddressKey(-1, MEDICATION_STATEMENT_FQN, FQN.NAME_FQN)]: {
         classNames: 'column-span-12'
       },
-      [getEntityAddressKey(-2, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
-        classNames: 'column-span-12'
-      },
-      [getEntityAddressKey(-2, PEOPLE_FQN, FQN.PERSON_MIDDLE_NAME_FQN)]: {
+      [getEntityAddressKey(-1, MEDICATION_STATEMENT_FQN, FQN.TAKEN_AS_PRESCRIBED_FQN)]: {
         classNames: 'column-span-12',
         'ui:widget': 'radio',
 
@@ -127,7 +124,7 @@ const uiSchema = {
   },
   [getPageSectionKey(4, 3)]: {
     classNames: 'column-span-12 grid-container',
-    [getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+    [getEntityAddressKey(0, SUBSTANCE_FQN, FQN.TYPE_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
       'ui:options': {
@@ -135,7 +132,7 @@ const uiSchema = {
         withOther: true,
       }
     },
-    [getEntityAddressKey(1, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+    [getEntityAddressKey(1, SUBSTANCE_FQN, FQN.TYPE_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
       'ui:options': {
