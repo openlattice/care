@@ -22,7 +22,7 @@ const schema = {
           title: 'Primary Insurance',
           enum: INSURANCE
         },
-        [getEntityAddressKey(0, INSURANCE_FQN, FQN.TYPE_FQN)]: {
+        [getEntityAddressKey(0, INSURANCE_FQN, FQN.GENERAL_STATUS_FQN)]: {
           type: 'string',
           title: 'Type',
           default: 'Primary'
@@ -32,7 +32,7 @@ const schema = {
           title: 'Secondary Insurance',
           enum: INSURANCE
         },
-        [getEntityAddressKey(1, INSURANCE_FQN, FQN.TYPE_FQN)]: {
+        [getEntityAddressKey(1, INSURANCE_FQN, FQN.GENERAL_STATUS_FQN)]: {
           type: 'string',
           title: 'Type',
           default: 'Secondary'
@@ -55,7 +55,7 @@ const uiSchema = {
         withOther: true,
       }
     },
-    [getEntityAddressKey(0, INSURANCE_FQN, FQN.TYPE_FQN)]: {
+    [getEntityAddressKey(0, INSURANCE_FQN, FQN.GENERAL_STATUS_FQN)]: {
       'ui:widget': 'hidden'
     },
     [getEntityAddressKey(1, INSURANCE_FQN, FQN.ORGANIZATION_NAME_FQN)]: {
@@ -65,7 +65,7 @@ const uiSchema = {
         withOther: true,
       }
     },
-    [getEntityAddressKey(1, INSURANCE_FQN, FQN.TYPE_FQN)]: {
+    [getEntityAddressKey(1, INSURANCE_FQN, FQN.GENERAL_STATUS_FQN)]: {
       'ui:widget': 'hidden'
     },
   }

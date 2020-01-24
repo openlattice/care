@@ -334,6 +334,7 @@ const PERSON_SSN_LAST_4_FQN = new FullyQualifiedName('general.ssnlast4');
 const PERSON_SUFFIX_FQN = new FullyQualifiedName('nc.PersonSuffix');
 const PERSON_WEIGHT_FQN = new FullyQualifiedName('nc.PersonWeightMeasure');
 
+
 export {
   PERSON_DOB_FQN,
   PERSON_ETHNICITY_FQN,
@@ -425,12 +426,14 @@ export {
  * Other
  */
 
-const DATE_TIME_FQN = new FullyQualifiedName('general.datetime');
 const COMPLETED_DT_FQN = new FullyQualifiedName('date.completeddatetime');
+const DATE_TIME_FQN = new FullyQualifiedName('general.datetime');
+const GENERAL_STATUS_FQN = new FullyQualifiedName('general.status');
 
 export {
   COMPLETED_DT_FQN,
-  DATE_TIME_FQN
+  DATE_TIME_FQN,
+  GENERAL_STATUS_FQN
 };
 
 /*

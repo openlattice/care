@@ -48,6 +48,7 @@ const ActionRow = styled.div`
 
 const ReviewBody = styled.div`
   padding: 30px 30px 30px;
+  white-space: pre;
 `;
 
 const mockPerson = Map();
