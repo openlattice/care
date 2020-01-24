@@ -24,7 +24,6 @@ import {
   setInputValue,
   setInputValues
 } from './Actions';
-import { GENDERS, RACES } from './Constants';
 import { getInvalidFields } from './Reducer';
 
 import {
@@ -37,6 +36,7 @@ import {
 import { showInvalidFields } from '../../../utils/NavigationUtils';
 import { SUBJECT_INFORMATION } from '../../../utils/constants/CrisisReportConstants';
 import { STATE } from '../../../utils/constants/StateConstants';
+import { ETHNICITY_VALUES, RACE_VALUES, SEX_VALUES } from '../../profile/constants';
 
 type Props = {
   actions :{
@@ -205,15 +205,21 @@ class SubjectInformation extends Component<Props> {
         </PersonFormSection>
         <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.GENDER)}>
           <RequiredField>
-            <Label bold>Gender</Label>
+            <Label bold>Sex</Label>
           </RequiredField>
-          {this.renderRadioButtons(SUBJECT_INFORMATION.GENDER, GENDERS)}
+          {this.renderRadioButtons(SUBJECT_INFORMATION.GENDER, SEX_VALUES)}
         </PersonFormSection>
         <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.RACE)}>
           <RequiredField>
             <Label bold>Race</Label>
           </RequiredField>
-          {this.renderRadioButtons(SUBJECT_INFORMATION.RACE, RACES)}
+          {this.renderRadioButtons(SUBJECT_INFORMATION.RACE, RACE_VALUES)}
+        </PersonFormSection>
+        <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.ETHNICITY)}>
+          <RequiredField>
+            <Label bold>Ethnicity</Label>
+          </RequiredField>
+          {this.renderRadioButtons(SUBJECT_INFORMATION.ETHNICITY, ETHNICITY_VALUES)}
         </PersonFormSection>
       </FormWrapper>
     );
