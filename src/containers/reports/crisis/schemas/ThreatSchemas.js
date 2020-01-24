@@ -5,7 +5,12 @@ import { SELF_INJURY, VIOLENCE_TARGET, WEAPON_TYPE } from './constants';
 import * as FQN from '../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
 
-const { PEOPLE_FQN } = APP_TYPES_FQNS;
+const {
+  INJURY_FQN,
+  SELF_HARM_FQN,
+  VIOLENT_BEHAVIOR_FQN,
+  WEAPON_FQN,
+} = APP_TYPES_FQNS;
 
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
 
@@ -17,7 +22,7 @@ const schema = {
       type: 'object',
       title: '',
       properties: {
-        [getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+        [getEntityAddressKey(0, WEAPON_FQN, FQN.TYPE_FQN)]: {
           type: 'array',
           title: 'Brandished weapon(s):',
           items: {
@@ -27,7 +32,7 @@ const schema = {
           // minItems: 1,
           uniqueItems: true
         },
-        [getEntityAddressKey(1, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+        [getEntityAddressKey(0, VIOLENT_BEHAVIOR_FQN, FQN.DIRECTED_AGAINST_RELATION_FQN)]: {
           type: 'array',
           title: 'Violence threatened toward:',
           items: {
@@ -37,7 +42,7 @@ const schema = {
           // minItems: 1,
           uniqueItems: true
         },
-        [getEntityAddressKey(2, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+        [getEntityAddressKey(1, VIOLENT_BEHAVIOR_FQN, FQN.DIRECTED_AGAINST_RELATION_FQN)]: {
           type: 'array',
           title: 'Violence engaged with:',
           items: {
@@ -47,7 +52,7 @@ const schema = {
           // minItems: 1,
           uniqueItems: true
         },
-        [getEntityAddressKey(3, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+        [getEntityAddressKey(0, INJURY_FQN, FQN.PERSON_INJURED_FQN)]: {
           type: 'array',
           title: 'Injured parties:',
           items: {
@@ -57,7 +62,7 @@ const schema = {
           // minItems: 1,
           uniqueItems: true
         },
-        [getEntityAddressKey(4, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+        [getEntityAddressKey(0, SELF_HARM_FQN, FQN.ACTION_FQN)]: {
           type: 'array',
           title: 'Self-harm:',
           items: {
@@ -78,7 +83,7 @@ const uiSchema = {
     'ui:options': {
       editable: true
     },
-    [getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+    [getEntityAddressKey(0, WEAPON_FQN, FQN.TYPE_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
       'ui:options': {
@@ -86,7 +91,7 @@ const uiSchema = {
         withOther: true,
       }
     },
-    [getEntityAddressKey(1, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+    [getEntityAddressKey(0, VIOLENT_BEHAVIOR_FQN, FQN.DIRECTED_AGAINST_RELATION_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
       'ui:options': {
@@ -94,7 +99,7 @@ const uiSchema = {
         withOther: true,
       }
     },
-    [getEntityAddressKey(2, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+    [getEntityAddressKey(1, VIOLENT_BEHAVIOR_FQN, FQN.DIRECTED_AGAINST_RELATION_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
       'ui:options': {
@@ -102,7 +107,7 @@ const uiSchema = {
         withOther: true,
       }
     },
-    [getEntityAddressKey(3, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+    [getEntityAddressKey(0, INJURY_FQN, FQN.PERSON_INJURED_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
       'ui:options': {
@@ -110,7 +115,7 @@ const uiSchema = {
         withOther: true,
       }
     },
-    [getEntityAddressKey(4, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+    [getEntityAddressKey(0, SELF_HARM_FQN, FQN.ACTION_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
       'ui:options': {

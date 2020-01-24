@@ -5,7 +5,7 @@ import { INSURANCE } from './constants';
 import * as FQN from '../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
 
-const { PEOPLE_FQN } = APP_TYPES_FQNS;
+const { INSURANCE_FQN } = APP_TYPES_FQNS;
 
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
 
@@ -17,25 +17,25 @@ const schema = {
       type: 'object',
       title: '',
       properties: {
-        [getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
-          type: 'array',
+        [getEntityAddressKey(0, INSURANCE_FQN, FQN.ORGANIZATION_NAME_FQN)]: {
+          type: 'string',
           title: 'Primary Insurance',
-          items: {
-            type: 'string',
-            enum: INSURANCE
-          },
-          // minItems: 1,
-          uniqueItems: true
+          enum: INSURANCE
         },
-        [getEntityAddressKey(1, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
-          type: 'array',
+        [getEntityAddressKey(0, INSURANCE_FQN, FQN.TYPE_FQN)]: {
+          type: 'string',
+          title: 'Type',
+          default: 'Primary'
+        },
+        [getEntityAddressKey(1, INSURANCE_FQN, FQN.ORGANIZATION_NAME_FQN)]: {
+          type: 'string',
           title: 'Secondary Insurance',
-          items: {
-            type: 'string',
-            enum: INSURANCE
-          },
-          // minItems: 1,
-          uniqueItems: true
+          enum: INSURANCE
+        },
+        [getEntityAddressKey(1, INSURANCE_FQN, FQN.TYPE_FQN)]: {
+          type: 'string',
+          title: 'Type',
+          default: 'Secondary'
         },
       }
     }
@@ -48,21 +48,25 @@ const uiSchema = {
     'ui:options': {
       editable: true
     },
-    [getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+    [getEntityAddressKey(0, INSURANCE_FQN, FQN.ORGANIZATION_NAME_FQN)]: {
       classNames: 'column-span-12',
-      'ui:widget': 'checkboxes',
+      'ui:widget': 'radio',
       'ui:options': {
-        withNone: true,
         withOther: true,
       }
     },
-    [getEntityAddressKey(1, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+    [getEntityAddressKey(0, INSURANCE_FQN, FQN.TYPE_FQN)]: {
+      'ui:widget': 'hidden'
+    },
+    [getEntityAddressKey(1, INSURANCE_FQN, FQN.ORGANIZATION_NAME_FQN)]: {
       classNames: 'column-span-12',
-      'ui:widget': 'checkboxes',
+      'ui:widget': 'radio',
       'ui:options': {
-        withNone: true,
         withOther: true,
       }
+    },
+    [getEntityAddressKey(1, INSURANCE_FQN, FQN.TYPE_FQN)]: {
+      'ui:widget': 'hidden'
     },
   }
 };

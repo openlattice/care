@@ -11,7 +11,11 @@ import {
 import * as FQN from '../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
 
-const { PEOPLE_FQN } = APP_TYPES_FQNS;
+const {
+  DISPOSITION_FQN,
+  PEOPLE_FQN,
+  INTERACTION_STRATEGY_FQN,
+} = APP_TYPES_FQNS;
 
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
 
@@ -23,7 +27,7 @@ const schema = {
       type: 'object',
       title: '',
       properties: {
-        [getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+        [getEntityAddressKey(0, INTERACTION_STRATEGY_FQN, FQN.TECHNIQUES_FQN)]: {
           type: 'array',
           title: 'Techniques Used During Interaction',
           items: {
@@ -89,7 +93,7 @@ const uiSchema = {
     'ui:options': {
       editable: true
     },
-    [getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+    [getEntityAddressKey(0, INTERACTION_STRATEGY_FQN, FQN.TECHNIQUES_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
     },

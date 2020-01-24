@@ -35,13 +35,22 @@ export const APP_TYPES_FQNS = {
   RESPONSE_PLAN_FQN: new FullyQualifiedName('app.responseplan'),
   STAFF_FQN: new FullyQualifiedName('app.staff'),
   SUBJECT_OF_FQN: new FullyQualifiedName('app.subjectof'),
+
   INCIDENT_FQN: new FullyQualifiedName('app.incident'),
   CALL_FOR_SERVICE_FQN: new FullyQualifiedName('app.callforservice'),
   NATURE_OF_CRISIS_FQN: new FullyQualifiedName('app.natureofcrisis'),
   DIAGNOSIS_FQN: new FullyQualifiedName('app.diagnosis'),
   MEDICATION_STATEMENT_FQN: new FullyQualifiedName('app.medicationstatement'),
   SUBSTANCE_FQN: new FullyQualifiedName('app.substance'),
-
+  WEAPON_FQN: new FullyQualifiedName('app.weapon'),
+  VIOLENT_BEHAVIOR_FQN: new FullyQualifiedName('app.violentbehavior'),
+  INJURY_FQN: new FullyQualifiedName('app.injury'),
+  SELF_HARM_FQN: new FullyQualifiedName('app.selfharm'),
+  HOUSING_FQN: new FullyQualifiedName('app.housing'),
+  OCCUPATION_FQN: new FullyQualifiedName('app.occupation'),
+  INCOME_FQN: new FullyQualifiedName('app.income'),
+  INSURANCE_FQN: new FullyQualifiedName('app.insurance'),
+  
   /* <===== BEGIN LONG BEACH HACK =====> */
   FILED_FOR_FQN: new FullyQualifiedName('app.filed_for'),
   PROBATION_FQN: new FullyQualifiedName('app.probation'),

@@ -4,13 +4,17 @@ import {
   EMPLOYMENT,
   HOUSING,
   KNOWN_CLIENT,
-  RESIDES_WITH
+  RESIDES_WITH,
 } from './constants';
 
 import * as FQN from '../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
 
-const { PEOPLE_FQN } = APP_TYPES_FQNS;
+const {
+  HOUSING_FQN,
+  OCCUPATION_FQN,
+  INCOME_FQN
+} = APP_TYPES_FQNS;
 
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
 
@@ -22,7 +26,7 @@ const schema = {
       type: 'object',
       title: '',
       properties: {
-        [getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+        [getEntityAddressKey(0, HOUSING_FQN, FQN.TYPE_FQN)]: {
           title: 'Current Housing Situation',
           type: 'array',
           items: {
@@ -32,7 +36,7 @@ const schema = {
           // minItems: 1,
           uniqueItems: true
         },
-        [getEntityAddressKey(1, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+        [getEntityAddressKey(1, HOUSING_FQN, FQN.DESCRIPTION_FQN)]: {
           title: 'Resides With',
           type: 'array',
           items: {
@@ -42,7 +46,7 @@ const schema = {
           // minItems: 1,
           uniqueItems: true
         },
-        [getEntityAddressKey(2, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+        [getEntityAddressKey(2, OCCUPATION_FQN, FQN.TYPE_FQN)]: {
           title: 'Employment',
           type: 'array',
           items: {
@@ -52,7 +56,7 @@ const schema = {
           // minItems: 1,
           uniqueItems: true
         },
-        [getEntityAddressKey(3, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+        [getEntityAddressKey(3, INCOME_FQN, FQN.TYPE_FQN)]: {
           title: 'Client of State Service',
           type: 'array',
           items: {
@@ -73,14 +77,14 @@ const uiSchema = {
     'ui:options': {
       editable: true
     },
-    [getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+    [getEntityAddressKey(0, HOUSING_FQN, FQN.TYPE_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
       'ui:options': {
         withOther: true,
       }
     },
-    [getEntityAddressKey(1, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+    [getEntityAddressKey(1, HOUSING_FQN, FQN.DESCRIPTION_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
       'ui:options': {
@@ -88,14 +92,14 @@ const uiSchema = {
         withOther: true,
       }
     },
-    [getEntityAddressKey(2, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+    [getEntityAddressKey(2, OCCUPATION_FQN, FQN.TYPE_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
       'ui:options': {
         withOther: true,
       }
     },
-    [getEntityAddressKey(3, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+    [getEntityAddressKey(3, INCOME_FQN, FQN.TYPE_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
       'ui:options': {

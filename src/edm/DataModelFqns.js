@@ -5,8 +5,17 @@ const { OPENLATTICE_ID_FQN } = Constants;
 
 export { OPENLATTICE_ID_FQN };
 
-/* medication */
+/* disposition */
+const CJ_DISPOSITION_FQN = new FullyQualifiedName('criminaljustice.disposition');
+export { CJ_DISPOSITION_FQN };
 
+/* self harm */
+const ACTION_FQN = new FullyQualifiedName('ol.action');
+export {
+  ACTION_FQN
+};
+
+/* medication */
 const TAKEN_AS_PRESCRIBED_FQN = new FullyQualifiedName('ol.takenasprescribed');
 export {
   TAKEN_AS_PRESCRIBED_FQN
