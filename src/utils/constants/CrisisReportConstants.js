@@ -17,7 +17,8 @@ export const SUBJECT_INFORMATION = {
   GENDER: 'gender',
   RACE: 'race',
   AGE: 'age',
-  SSN_LAST_4: 'last4SSN'
+  SSN_LAST_4: 'last4SSN',
+  ETHNICITY: 'ethnicity',
 };
 
 export const OBSERVED_BEHAVIORS = {

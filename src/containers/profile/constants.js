@@ -1,5 +1,6 @@
 // @flow
 import { OrderedMap } from 'immutable';
+
 import * as FQN from '../../edm/DataModelFqns';
 
 const labelMapReport = OrderedMap({
@@ -34,19 +35,23 @@ const generateOptions = (list :string[]) :Object[] => list.map((value) => ({
 
 // https://nief.org/attribute-registry/codesets/NCICSexCode/
 const SEX_VALUES = [
-  'Female',
   'Male',
-  'Unknown'
+  'Female',
+  'Unknown',
+  'Other'
 ];
 const sexOptions = generateOptions(SEX_VALUES);
 
 const RACE_VALUES = [
-  'American Indian',
-  'Asian / Pacific Islander',
-  'Black / African American',
-  'Hispanic (Non-White)',
   'White',
+  'Black',
+  'Native American',
+  'Asian',
+  'Pacific Islander',
+  'Other',
+  'Multiracial',
   'Unknown',
+  'Declined'
 ];
 const raceOptions = generateOptions(RACE_VALUES);
 
@@ -69,24 +74,33 @@ const eyeOptions = generateOptions(EYE_COLOR_VALUES);
 const HAIR_COLOR_VALUES = [
   'Bald',
   'Black',
-  'Blond',
+  'Blond or Strawberry',
   'Blue',
   'Brown',
-  'Gray',
+  'Gray or Partially Gray',
   'Green',
   'Orange',
   'Pink',
   'Purple',
-  'Red',
+  'Red or Auburn',
   'Sandy',
   'White',
   'Unknown',
 ];
 const hairOptions = generateOptions(HAIR_COLOR_VALUES);
 
+const ETHNICITY_VALUES = [
+  'Non-Hispanic',
+  'Hispanic',
+  'Unknown',
+  'Declined'
+];
+const ethnicityOptions = generateOptions(ETHNICITY_VALUES);
+
 const personFqnsByName = {
   aliases: FQN.PERSON_NICK_NAME_FQN,
   dob: FQN.PERSON_DOB_FQN,
+  ethnicity: FQN.PERSON_ETHNICITY_FQN,
   firstName: FQN.PERSON_FIRST_NAME_FQN,
   lastName: FQN.PERSON_LAST_NAME_FQN,
   middleName: FQN.PERSON_MIDDLE_NAME_FQN,
@@ -102,10 +116,12 @@ const physicalAppearanceFqnsByName = {
 };
 
 export {
+  ETHNICITY_VALUES,
   EYE_COLOR_VALUES,
   HAIR_COLOR_VALUES,
   RACE_VALUES,
   SEX_VALUES,
+  ethnicityOptions,
   eyeOptions,
   hairOptions,
   labelMapAttributes,
