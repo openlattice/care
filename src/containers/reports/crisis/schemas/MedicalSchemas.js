@@ -128,6 +128,8 @@ const uiSchema = {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
       'ui:options': {
+        mode: 'button',
+        row: true,
         withNone: true,
         withOther: true,
       }
@@ -136,6 +138,8 @@ const uiSchema = {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
       'ui:options': {
+        mode: 'button',
+        row: true,
         withNone: true,
         withOther: true,
       }
