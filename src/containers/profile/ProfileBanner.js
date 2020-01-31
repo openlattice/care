@@ -38,10 +38,10 @@ const Birthdate = styled.span`
 
 type Props = {
   selectedPerson :Map;
-  noDob :boolean;
+  noDob ?:boolean;
 }
 
-const ProfileBanner = ({ selectedPerson, noDob = false } :Props) => {
+const ProfileBanner = ({ selectedPerson, noDob } :Props) => {
   const dob = getDobFromPerson(selectedPerson);
   const name = getLastFirstMiFromPerson(selectedPerson, true);
 
@@ -53,6 +53,10 @@ const ProfileBanner = ({ selectedPerson, noDob = false } :Props) => {
       </Content>
     </Banner>
   );
+};
+
+ProfileBanner.defaultProps = {
+  noDob: false
 };
 
 export default ProfileBanner;

@@ -1,9 +1,10 @@
 // @flow
 
 import React from 'react';
+
 import styled from 'styled-components';
-import { Constants } from 'lattice';
 import { List, Map } from 'immutable';
+import { Constants } from 'lattice';
 
 import * as FQN from '../../../edm/DataModelFqns';
 import { DashedList } from '../../layout';
@@ -18,7 +19,7 @@ const H2 = styled.h2`
 
 type Props = {
   officerSafety :List<Map>;
-  isLoading :boolean;
+  isLoading ?:boolean;
 };
 
 const OfficerSafetyConcernsList = (props :Props) => {

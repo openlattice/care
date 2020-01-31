@@ -1,6 +1,10 @@
 // @flow
 import React from 'react';
+
 import styled from 'styled-components';
+import { faAddressCard } from '@fortawesome/pro-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Map } from 'immutable';
 import {
   Card,
   CardHeader,
@@ -8,18 +12,16 @@ import {
   IconSplash,
   Spinner
 } from 'lattice-ui-kit';
-import { Map } from 'immutable';
 import { withRouter } from 'react-router-dom';
 import type { Match } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAddressCard } from '@fortawesome/pro-solid-svg-icons';
 
 import EditLinkButton from '../../../components/buttons/EditLinkButton';
 import NewIssueButton from '../../../components/buttons/CreateIssueButton';
-import { RESPONSE_PLAN_PATH, EDIT_PATH } from '../../../core/router/Routes';
-import { CONTEXT_FQN } from '../../../edm/DataModelFqns';
-import { isNonEmptyString, isEmptyString } from '../../../utils/LangUtils';
 import { H1, HeaderActions, IconWrapper } from '../../../components/layout';
+import { CardSkeleton } from '../../../components/skeletons';
+import { EDIT_PATH, RESPONSE_PLAN_PATH } from '../../../core/router/Routes';
+import { CONTEXT_FQN } from '../../../edm/DataModelFqns';
+import { isEmptyString, isNonEmptyString } from '../../../utils/LangUtils';
 import { CATEGORIES } from '../../issues/issue/constants';
 
 const { RESPONSE_PLAN } = CATEGORIES;
@@ -43,6 +45,9 @@ const BackgroundInformationCard = (props :Props) => {
     match,
     showEdit
   } = props;
+  if (isLoading) {
+    return <CardSkeleton />;
+  }
   const backgroundSummary :string = backgroundInformation.getIn([CONTEXT_FQN, 0]) || '';
   return (
     <Card>

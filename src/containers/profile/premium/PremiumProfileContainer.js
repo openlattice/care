@@ -3,11 +3,13 @@
 import React, { useCallback, useMemo } from 'react';
 
 import styled from 'styled-components';
+import { faFolderOpen } from '@fortawesome/pro-duotone-svg-icons';
 import { List, Map } from 'immutable';
 import {
   Card,
   CardSegment,
   CardStack,
+  IconSplash,
   SearchResults
 } from 'lattice-ui-kit';
 import { connect } from 'react-redux';
@@ -152,15 +154,16 @@ const PremiumProfileContainer = (props :Props) => {
   const [isAuthorized] = useAuthorization('profile', actions.getAuthorization);
 
   const { recent, total } = countCrisisCalls(reports);
+  const isLoadingIntro = fetchAboutState !== RequestStates.SUCCESS;
+  const isLoadingAboutPlan = fetchAboutPlanState !== RequestStates.SUCCESS;
 
-  const isLoadingReports = fetchReportsState === RequestStates.PENDING;
-  const isLoadingOfficerSafety = fetchOfficerSafetyState === RequestStates.PENDING;
-  const isLoadingIntro = fetchAboutState === RequestStates.PENDING;
-  const isLoadingResponsePlan = fetchResponsePlanState === RequestStates.PENDING;
-  const isLoadingAboutPlan = fetchAboutPlanState === RequestStates.PENDING;
+  const isLoadingBody = reduceRequestStates([
+    fetchOfficerSafetyState,
+    fetchReportsState,
+    fetchResponsePlanState,
+  ]) === RequestStates.PENDING;
 
   const imageURL :string = useMemo(() => getImageDataFromEntity(photo), [photo]);
-
   return (
     <ContentOuterWrapper>
       <ProfileBanner selectedPerson={selectedPerson} />
@@ -172,11 +175,15 @@ const PremiumProfileContainer = (props :Props) => {
                 <CardSegment padding="sm">
                   <Portrait imageUrl={imageURL} />
                 </CardSegment>
-                <CardSegment vertical padding="sm">
-                  <LinkButton mode="primary" to={`${CRISIS_PATH}/1`} state={selectedPerson}>
-                    New Crisis Report
-                  </LinkButton>
-                </CardSegment>
+                {
+                  !isLoadingIntro && (
+                    <CardSegment vertical padding="sm">
+                      <LinkButton mode="primary" to={`${CRISIS_PATH}/1`} state={selectedPerson}>
+                        New Crisis Report
+                      </LinkButton>
+                    </CardSegment>
+                  )
+                }
               </Card>
               <IntroCard
                   appearance={appearance}
@@ -195,45 +202,54 @@ const PremiumProfileContainer = (props :Props) => {
             </StyledCardStack>
           </Aside>
           <StyledCardStack>
-            <CrisisCountCard
-                count={total}
-                isLoading={isLoadingReports} />
-            <RecentIncidentCard count={recent} />
-            <BehaviorAndSafetyGrid>
-              <BehaviorCard
-                  reports={reports}
-                  isLoading={isLoadingReports} />
-              <OfficerSafetyCard
-                  isLoading={isLoadingOfficerSafety}
-                  officerSafety={officerSafety}
-                  reports={reports}
-                  showEdit={isAuthorized}
-                  triggers={triggers} />
-            </BehaviorAndSafetyGrid>
-            <DeescalationCard
-                isLoading={isLoadingOfficerSafety}
-                showEdit={isAuthorized}
-                techniques={techniques} />
-            <ResponsePlanCard
-                interactionStrategies={interactionStrategies}
-                isLoading={isLoadingResponsePlan}
-                showEdit={isAuthorized} />
-            <BackgroundInformationCard
-                backgroundInformation={responsePlan}
-                isLoading={isLoadingResponsePlan}
-                showEdit={isAuthorized} />
-            <ContactCarousel
-                contacts={contacts}
-                contactInfoByContactEKID={contactInfoByContactEKID}
-                isContactForByContactEKID={isContactForByContactEKID} />
-            <SearchResults
-                hasSearched={fetchReportsState !== RequestStates.STANDBY}
-                isLoading={isLoadingReports}
-                onResultClick={handleResultClick}
-                results={reports}
-                resultLabels={labelMapReport}
-                resultComponent={ProfileResult} />
-            <ReportsSummary reports={reports} />
+            {
+              reports.isEmpty() && !isLoadingBody
+                ? <IconSplash icon={faFolderOpen} caption="No reports have been filed." />
+                : (
+                  <>
+                    <CrisisCountCard
+                        count={total}
+                        isLoading={isLoadingBody} />
+                    <RecentIncidentCard
+                        count={recent}
+                        isLoading={isLoadingBody}/>
+                    <BehaviorAndSafetyGrid>
+                      <BehaviorCard
+                          reports={reports}
+                          isLoading={isLoadingBody} />
+                      <OfficerSafetyCard
+                          isLoading={isLoadingBody}
+                          officerSafety={officerSafety}
+                          reports={reports}
+                          showEdit={isAuthorized}
+                          triggers={triggers} />
+                    </BehaviorAndSafetyGrid>
+                    <DeescalationCard
+                        isLoading={isLoadingBody}
+                        showEdit={isAuthorized}
+                        techniques={techniques} />
+                    <ResponsePlanCard
+                        interactionStrategies={interactionStrategies}
+                        isLoading={isLoadingBody}
+                        showEdit={isAuthorized} />
+                    <BackgroundInformationCard
+                        backgroundInformation={responsePlan}
+                        isLoading={isLoadingBody}
+                        showEdit={isAuthorized} />
+                    <ContactCarousel
+                        contacts={contacts}
+                        contactInfoByContactEKID={contactInfoByContactEKID}
+                        isContactForByContactEKID={isContactForByContactEKID} />
+                    <SearchResults
+                        hasSearched={false}
+                        onResultClick={handleResultClick}
+                        results={reports}
+                        resultLabels={labelMapReport}
+                        resultComponent={ProfileResult} />
+                    <ReportsSummary isLoading={isLoadingBody} reports={reports} />
+                  </>
+                )
+            }
           </StyledCardStack>
         </ProfileGrid>
       </ContentWrapper>
