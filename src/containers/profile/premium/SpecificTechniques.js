@@ -1,8 +1,9 @@
 // @flow
 import React from 'react';
+
 import styled from 'styled-components';
-import { Constants } from 'lattice';
 import { List, Map } from 'immutable';
+import { Constants } from 'lattice';
 import { IconSplash } from 'lattice-ui-kit';
 
 import { UL } from '../../../components/layout';
@@ -17,7 +18,7 @@ const H2 = styled.h2`
 `;
 
 type Props = {
-  isLoading :boolean;
+  isLoading ?:boolean;
   techniques :List<Map>;
 }
 
@@ -55,6 +56,10 @@ const SpecificTechniques = (props :Props) => {
       { content }
     </div>
   );
+};
+
+SpecificTechniques.defaultProps = {
+  isLoading: false
 };
 
 export default SpecificTechniques;
