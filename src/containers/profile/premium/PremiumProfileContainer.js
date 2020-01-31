@@ -176,11 +176,15 @@ const PremiumProfileContainer = (props :Props) => {
                 <CardSegment padding="sm">
                   <Portrait imageUrl={imageURL} />
                 </CardSegment>
-                <CardSegment vertical padding="sm">
-                  <LinkButton mode="primary" to={`${CRISIS_PATH}/1`} state={selectedPerson}>
-                    New Crisis Report
-                  </LinkButton>
-                </CardSegment>
+                {
+                  !isLoadingIntro && (
+                    <CardSegment vertical padding="sm">
+                      <LinkButton mode="primary" to={`${CRISIS_PATH}/1`} state={selectedPerson}>
+                        New Crisis Report
+                      </LinkButton>
+                    </CardSegment>
+                  )
+                }
               </Card>
               <IntroCard
                   appearance={appearance}
@@ -207,7 +211,9 @@ const PremiumProfileContainer = (props :Props) => {
                     <CrisisCountCard
                         count={total}
                         isLoading={isLoadingBody} />
-                    <RecentIncidentCard count={recent} />
+                    <RecentIncidentCard
+                        count={recent}
+                        isLoading={isLoadingBody}/>
                     <BehaviorAndSafetyGrid>
                       <BehaviorCard
                           reports={reports}
@@ -236,7 +242,6 @@ const PremiumProfileContainer = (props :Props) => {
                         contactInfoByContactEKID={contactInfoByContactEKID}
                         isContactForByContactEKID={isContactForByContactEKID} />
                     <SearchResults
-                        hasSearched={fetchReportsState !== RequestStates.STANDBY}
                         hasSearched={false}
                         onResultClick={handleResultClick}
                         results={reports}

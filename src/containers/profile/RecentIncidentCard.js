@@ -1,14 +1,16 @@
 // @flow
 import React, { Component } from 'react';
+
+import { faBullhorn } from '@fortawesome/pro-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   Banner,
   Card,
 } from 'lattice-ui-kit';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBullhorn } from '@fortawesome/pro-solid-svg-icons';
 
 type Props = {
   count :number;
+  isLoading ?:boolean;
 }
 
 class RecentIncidentCard extends Component<Props> {
@@ -16,9 +18,9 @@ class RecentIncidentCard extends Component<Props> {
   renderIcon = () => <FontAwesomeIcon icon={faBullhorn} fixedWidth />;
 
   render() {
-    const { count } = this.props;
+    const { count, isLoading } = this.props;
 
-    if (!count) return null;
+    if (!count || isLoading) return null;
 
     return (
       <Card>
