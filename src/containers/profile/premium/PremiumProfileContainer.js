@@ -164,7 +164,6 @@ const PremiumProfileContainer = (props :Props) => {
   ]) === RequestStates.PENDING;
 
   const imageURL :string = useMemo(() => getImageDataFromEntity(photo), [photo]);
-  debugger;
   return (
     <ContentOuterWrapper>
       <ProfileBanner selectedPerson={selectedPerson} />

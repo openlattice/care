@@ -32,7 +32,7 @@ const StrongWithSubtitle = styled.span`
 
 type Props = {
   count :number;
-  isLoading :boolean;
+  isLoading ?:boolean;
 }
 
 const CrisisCountCard = ({ count, isLoading } :Props) => (
@@ -52,5 +52,9 @@ const CrisisCountCard = ({ count, isLoading } :Props) => (
     </CardSegment>
   </Card>
 );
+
+CrisisCountCard.defaultProps = {
+  isLoading: false,
+};
 
 export default CrisisCountCard;

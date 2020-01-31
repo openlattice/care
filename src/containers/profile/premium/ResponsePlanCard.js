@@ -75,7 +75,7 @@ const ResponsePlanCard = ({
       </CardSegment>
     </Card>
   );
-}
+};
 
 ResponsePlanCard.defaultProps = {
   isLoading: false,

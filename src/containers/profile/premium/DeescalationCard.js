@@ -52,7 +52,7 @@ const DeescalationContentWrapper = styled.div`
 `;
 
 type Props = {
-  isLoading :boolean;
+  isLoading ?:boolean;
   match :Match;
   showEdit :boolean;
   techniques :List<Map>;
@@ -98,6 +98,10 @@ const DeescalationCard = (props :Props) => {
       </DeescalationContentWrapper>
     </Card>
   );
+};
+
+DeescalationCard.defaultProps = {
+  isLoading: false,
 };
 
 export default withRouter(DeescalationCard);

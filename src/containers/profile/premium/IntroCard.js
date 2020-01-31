@@ -163,4 +163,8 @@ const IntroCard = (props :Props) => {
   );
 };
 
+IntroCard.defaultProps = {
+  isLoading: false,
+};
+
 export default withRouter(IntroCard);

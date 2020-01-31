@@ -24,7 +24,7 @@ import { CardSkeleton } from '../../skeletons';
 const { ABOUT } = CATEGORIES;
 
 type Props = {
-  isLoading :boolean;
+  isLoading ?:boolean;
   responsibleUser :Map;
   showEdit :boolean;
 }
@@ -58,6 +58,10 @@ const AboutPlanCard = (props :Props) => {
       </CardSegment>
     </Card>
   );
+};
+
+AboutPlanCard.defaultProps = {
+  isLoading: false,
 };
 
 export default AboutPlanCard;
