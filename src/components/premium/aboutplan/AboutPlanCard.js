@@ -1,23 +1,25 @@
 // @flow
 import React from 'react';
+
+import { faInfoSquare } from '@fortawesome/pro-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Map } from 'immutable';
 import {
   Card,
-  CardSegment,
   CardHeader,
+  CardSegment,
   Label
 } from 'lattice-ui-kit';
-import { Map } from 'immutable';
 import { useRouteMatch } from 'react-router';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faInfoSquare } from '@fortawesome/pro-solid-svg-icons';
 
-import EditLinkButton from '../../buttons/EditLinkButton';
 import Detail from '../styled/Detail';
+import EditLinkButton from '../../buttons/EditLinkButton';
 import NewIssueButton from '../../buttons/CreateIssueButton';
+import { CATEGORIES } from '../../../containers/issues/issue/constants';
 import { ABOUT_PATH, EDIT_PATH } from '../../../core/router/Routes';
 import { PERSON_ID_FQN } from '../../../edm/DataModelFqns';
 import { H1, HeaderActions, IconWrapper } from '../../layout';
-import { CATEGORIES } from '../../../containers/issues/issue/constants';
+import { CardSkeleton } from '../../skeletons';
 
 const { ABOUT } = CATEGORIES;
 
@@ -30,6 +32,11 @@ type Props = {
 const AboutPlanCard = (props :Props) => {
   const match = useRouteMatch();
   const { isLoading, responsibleUser, showEdit } = props;
+
+  if (isLoading) {
+    return <CardSkeleton />;
+  }
+
   const content = responsibleUser.getIn([PERSON_ID_FQN, 0]) || '---';
   return (
     <Card>

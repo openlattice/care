@@ -1,19 +1,22 @@
 // @flow
 import React, { PureComponent } from 'react';
+
 import styled from 'styled-components';
-import { List, Map } from 'immutable';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeadSideBrain } from '@fortawesome/pro-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { List, Map } from 'immutable';
 import {
   Card,
   CardHeader,
   CardSegment,
 } from 'lattice-ui-kit';
 
-import { DashedList, H1, IconWrapper } from '../../../components/layout';
 import BehaviorItem from './BehaviorItem';
-import { OBSERVED_BEHAVIORS_FQN } from '../../../edm/DataModelFqns';
 import { countPropertyOccurrance } from './Utils';
+
+import { DashedList, H1, IconWrapper } from '../../../components/layout';
+import { CardSkeleton } from '../../../components/skeletons';
+import { OBSERVED_BEHAVIORS_FQN } from '../../../edm/DataModelFqns';
 
 const StyledCardSegment = styled(CardSegment)`
   min-width: 300px;
@@ -36,31 +39,31 @@ class BehaviorCard extends PureComponent<Props> {
     .toArray();
 
   renderItems = () => {
-    const { isLoading, reports } = this.props;
+    const { reports } = this.props;
 
-    if (!isLoading) {
-      const behaviorCounts = this.countBehaviors(reports);
-      const total = reports ? reports.count() : 0;
-      return (
-        <>
-          {
-            behaviorCounts.map(([name, count]) => (
-              <BehaviorItem
-                  key={name}
-                  name={name}
-                  count={count}
-                  total={total} />
-            ))
-          }
-        </>
-      );
-    }
-
-    return null;
+    const behaviorCounts = this.countBehaviors(reports);
+    const total = reports ? reports.count() : 0;
+    return (
+      <>
+        {
+          behaviorCounts.map(([name, count]) => (
+            <BehaviorItem
+                key={name}
+                name={name}
+                count={count}
+                total={total} />
+          ))
+        }
+      </>
+    );
   }
 
   render() {
     const { isLoading } = this.props;
+
+    if (isLoading) {
+      return <CardSkeleton />;
+    }
 
     return (
       <Card>
@@ -73,7 +76,7 @@ class BehaviorCard extends PureComponent<Props> {
           </H1>
         </CardHeader>
         <StyledCardSegment padding="sm">
-          <DashedList isLoading={isLoading}>
+          <DashedList>
             { this.renderItems() }
           </DashedList>
         </StyledCardSegment>

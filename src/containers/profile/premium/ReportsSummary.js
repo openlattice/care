@@ -1,15 +1,18 @@
 // @flow
 import React, { PureComponent } from 'react';
+
 import styled from 'styled-components';
-import { Models } from 'lattice';
 import { List, Map } from 'immutable';
+import { Models } from 'lattice';
 import { Card, CardSegment } from 'lattice-ui-kit';
-import PercentBarChart from '../../../components/dashboard/charts/PercentBarChart';
+
 import { countPropertyOccurrance } from './Utils';
+
+import PercentBarChart from '../../../components/dashboard/charts/PercentBarChart';
 import {
-  OBSERVED_BEHAVIORS_FQN,
   DISPATCH_REASON_FQN,
   DISPOSITION_FQN,
+  OBSERVED_BEHAVIORS_FQN,
 } from '../../../edm/DataModelFqns';
 
 const { FullyQualifiedName } = Models;
@@ -25,6 +28,7 @@ const H1 = styled.h1`
 
 type Props = {
   reports :List<Map>;
+  isLoading ?:boolean;
 };
 
 class ReportsSummary extends PureComponent<Props> {
@@ -77,13 +81,16 @@ class ReportsSummary extends PureComponent<Props> {
   }
 
   render() {
-    return (
-      <Card>
-        { this.renderBehaviorChart() }
-        { this.renderNatureOfCrisisChart() }
-        { this.renderDispositionChart() }
-      </Card>
-    );
+    const { isLoading } = this.props;
+    return isLoading
+      ? null :
+      (
+        <Card>
+          { this.renderBehaviorChart() }
+          { this.renderNatureOfCrisisChart() }
+          { this.renderDispositionChart() }
+        </Card>
+      );
   }
 }
 
