@@ -23,6 +23,7 @@ import {
   IconWrapper,
   UL
 } from '../../../components/layout';
+import { CardSkeleton } from '../../../components/skeletons';
 import { EDIT_PATH, OFFICER_SAFETY_PATH } from '../../../core/router/Routes';
 import { CATEGORIES } from '../../issues/issue/constants';
 
@@ -51,7 +52,7 @@ const DeescalationContentWrapper = styled.div`
 `;
 
 type Props = {
-  isLoading :boolean;
+  isLoading ?:boolean;
   match :Match;
   showEdit :boolean;
   techniques :List<Map>;
@@ -64,6 +65,10 @@ const DeescalationCard = (props :Props) => {
     showEdit,
     techniques
   } = props;
+
+  if (isLoading) {
+    return <CardSkeleton />;
+  }
 
   return (
     <Card>
@@ -93,6 +98,10 @@ const DeescalationCard = (props :Props) => {
       </DeescalationContentWrapper>
     </Card>
   );
+};
+
+DeescalationCard.defaultProps = {
+  isLoading: false,
 };
 
 export default withRouter(DeescalationCard);

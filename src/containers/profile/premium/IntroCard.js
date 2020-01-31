@@ -13,7 +13,7 @@ import {
   faWeightHanging
 } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Map } from 'immutable';
+import { Map, is } from 'immutable';
 import {
   Card,
   CardHeader,
@@ -29,6 +29,7 @@ import EditLinkButton from '../../../components/buttons/EditLinkButton';
 import NewIssueButton from '../../../components/buttons/CreateIssueButton';
 import * as FQN from '../../../edm/DataModelFqns';
 import { H1, HeaderActions, IconWrapper } from '../../../components/layout';
+import { IntroCardSkeleton } from '../../../components/skeletons';
 import { BASIC_PATH, EDIT_PATH } from '../../../core/router/Routes';
 import { inchesToFeetString } from '../../../utils/DataUtils';
 import { getLastFirstMiFromPerson } from '../../../utils/PersonUtils';
@@ -75,6 +76,10 @@ const IntroCard = (props :Props) => {
     selectedPerson,
     showEdit,
   } = props;
+
+  if (isLoading) {
+    return <IntroCardSkeleton />;
+  }
 
   const formattedName = getLastFirstMiFromPerson(selectedPerson, true);
 
@@ -156,6 +161,10 @@ const IntroCard = (props :Props) => {
       </CardSegment>
     </Card>
   );
+};
+
+IntroCard.defaultProps = {
+  isLoading: false,
 };
 
 export default withRouter(IntroCard);

@@ -1,9 +1,10 @@
 // @flow
 import React from 'react';
+
 import styled from 'styled-components';
+import { List, Map } from 'immutable';
 import { Constants } from 'lattice';
 import { IconSplash } from 'lattice-ui-kit';
-import { List, Map } from 'immutable';
 
 import { UL } from '../../../components/layout';
 import { TRIGGER_FQN } from '../../../edm/DataModelFqns';
@@ -17,7 +18,7 @@ const H2 = styled.h2`
 `;
 
 type Props = {
-  isLoading :boolean;
+  isLoading ?:boolean;
   triggers :List<Map>;
 };
 

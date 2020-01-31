@@ -5,10 +5,9 @@ import styled from 'styled-components';
 import {
   Card,
   CardSegment,
-  Colors
+  Colors,
+  Skeleton
 } from 'lattice-ui-kit';
-
-import { crisisCountSkeleton } from '../../components/skeletons';
 
 const { NEUTRALS } = Colors;
 
@@ -18,7 +17,6 @@ const Centered = styled.div`
   align-items: center;
   flex: 1;
   font-size: 24px;
-  ${(props) => props.isLoading && crisisCountSkeleton};
 `;
 
 const StrongWithSubtitle = styled.span`
@@ -34,16 +32,17 @@ const StrongWithSubtitle = styled.span`
 
 type Props = {
   count :number;
-  isLoading :boolean;
+  isLoading ?:boolean;
 }
 
 const CrisisCountCard = ({ count, isLoading } :Props) => (
   <Card>
     <CardSegment padding="sm">
-      <Centered isLoading={isLoading}>
+      <Centered>
         {
-          !isLoading
-            && (
+          isLoading
+            ? <Skeleton width="50%" height={36} />
+            : (
               <StrongWithSubtitle>
                 {`${count} CRISIS CALLS`}
               </StrongWithSubtitle>
@@ -53,5 +52,9 @@ const CrisisCountCard = ({ count, isLoading } :Props) => (
     </CardSegment>
   </Card>
 );
+
+CrisisCountCard.defaultProps = {
+  isLoading: false,
+};
 
 export default CrisisCountCard;

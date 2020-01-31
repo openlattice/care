@@ -1,37 +1,38 @@
 // @flow
-import React, { Component } from 'react';
+import React from 'react';
+
+import { faBullhorn } from '@fortawesome/pro-solid-svg-icons';
 import {
   Banner,
   Card,
 } from 'lattice-ui-kit';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBullhorn } from '@fortawesome/pro-solid-svg-icons';
 
 type Props = {
   count :number;
-}
+  isLoading ?:boolean;
+};
 
-class RecentIncidentCard extends Component<Props> {
+const RecentIncidentCard = (props :Props) => {
 
-  renderIcon = () => <FontAwesomeIcon icon={faBullhorn} fixedWidth />;
+  const { count, isLoading } = props;
 
-  render() {
-    const { count } = this.props;
+  if (!count || isLoading) return null;
 
-    if (!count) return null;
+  return (
+    <Card>
+      <Banner
+          isOpen
+          icon={faBullhorn}>
+        <span>
+          {`${count} incident(s) within the last 7 days.`}
+        </span>
+      </Banner>
+    </Card>
+  );
+};
 
-    return (
-      <Card>
-        <Banner
-            isOpen
-            icon={() => <FontAwesomeIcon icon={faBullhorn} fixedWidth />}>
-          <span>
-            {`${count} incident(s) within the last 7 days.`}
-          </span>
-        </Banner>
-      </Card>
-    );
-  }
-}
+RecentIncidentCard.defaultProps = {
+  isLoading: false
+};
 
 export default RecentIncidentCard;

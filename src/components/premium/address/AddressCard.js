@@ -22,6 +22,7 @@ import { CATEGORIES } from '../../../containers/issues/issue/constants';
 import { BASIC_PATH, EDIT_PATH } from '../../../core/router/Routes';
 import { formatCityStateZip } from '../../../utils/AddressUtils';
 import { H1, HeaderActions, IconWrapper } from '../../layout';
+import { CardSkeleton } from '../../skeletons';
 
 const { BASIC_INFORMATION } = CATEGORIES;
 
@@ -40,6 +41,10 @@ const AddressCard = (props :Props) => {
     match,
     showEdit
   } = props;
+
+  if (isLoading) {
+    return <CardSkeleton />;
+  }
 
   const name = address.getIn([FQN.LOCATION_NAME_FQN, 0]);
   const street = address.getIn([FQN.LOCATION_STREET_FQN, 0]);
