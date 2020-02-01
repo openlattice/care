@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 
 import styled from 'styled-components';
 import { faFolderOpen } from '@fortawesome/pro-duotone-svg-icons';
@@ -10,7 +10,8 @@ import {
   CardSegment,
   CardStack,
   IconSplash,
-  SearchResults
+  SearchResults,
+  StyleUtils
 } from 'lattice-ui-kit';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -57,27 +58,41 @@ import { getOfficerSafety } from '../edit/officersafety/OfficerSafetyActions';
 import { getResponsePlan } from '../edit/responseplan/ResponsePlanActions';
 import type { RoutingAction } from '../../../core/router/RoutingActions';
 
-const Aside = styled.div`
-  align-items: center;
+const { media } = StyleUtils;
+
+const Aside = styled.aside`
   display: flex;
   flex-direction: column;
   flex: 1 1 100%;
+`;
+
+const CenteredSegment = styled(CardSegment)`
+  align-items: center;
 `;
 
 const ProfileGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 3fr;
   grid-gap: 20px;
-`;
-
-const StyledCardStack = styled(CardStack)`
-  overflow-x: hidden;
+  ${media.phone`
+    grid-template-columns: 1fr;
+    grid-gap: 10px;
+  `}
 `;
 
 const BehaviorAndSafetyGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-gap: 20px;
+  overflow-x: auto;
+  ${media.tablet`
+    grid-template-columns: 1fr;
+    grid-gap: 10px;
+  `}
+`;
+
+const ScrollStack = styled(CardStack)`
+  overflow-x: auto;
 `;
 
 type Props = {
@@ -114,6 +129,12 @@ type Props = {
 };
 
 const PremiumProfileContainer = (props :Props) => {
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0
+    })
+  }, []);
 
   const {
     actions,
@@ -170,14 +191,14 @@ const PremiumProfileContainer = (props :Props) => {
       <ContentWrapper>
         <ProfileGrid>
           <Aside>
-            <StyledCardStack>
+            <CardStack>
               <Card>
-                <CardSegment padding="sm">
+                <CenteredSegment padding="sm" vertical>
                   <Portrait imageUrl={imageURL} />
-                </CardSegment>
+                </CenteredSegment>
                 {
                   !isLoadingIntro && (
-                    <CardSegment vertical padding="sm">
+                    <CardSegment padding="sm" vertical>
                       <LinkButton mode="primary" to={`${CRISIS_PATH}/1`} state={selectedPerson}>
                         New Crisis Report
                       </LinkButton>
@@ -199,9 +220,9 @@ const PremiumProfileContainer = (props :Props) => {
                   isLoading={isLoadingAboutPlan}
                   responsibleUser={responsibleUser}
                   showEdit={isAuthorized} />
-            </StyledCardStack>
+            </CardStack>
           </Aside>
-          <StyledCardStack>
+          <ScrollStack>
             {
               reports.isEmpty() && !isLoadingBody
                 ? <IconSplash icon={faFolderOpen} caption="No reports have been filed." />
@@ -246,11 +267,11 @@ const PremiumProfileContainer = (props :Props) => {
                         results={reports}
                         resultLabels={labelMapReport}
                         resultComponent={ProfileResult} />
-                    <ReportsSummary isLoading={isLoadingBody} reports={reports} />
+                    {/* <ReportsSummary isLoading={isLoadingBody} reports={reports} /> */}
                   </>
                 )
             }
-          </StyledCardStack>
+          </ScrollStack>
         </ProfileGrid>
       </ContentWrapper>
     </ContentOuterWrapper>

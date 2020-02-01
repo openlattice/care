@@ -1,14 +1,15 @@
 // @flow
 import React from 'react';
+
 import styled from 'styled-components';
+import { faPhoneAlt, faPhoneOffice } from '@fortawesome/pro-duotone-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   Card,
   CardHeader,
   CardSegment,
   Label,
 } from 'lattice-ui-kit';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPhoneOffice, faPhoneAlt } from '@fortawesome/pro-duotone-svg-icons';
 
 const H2 = styled.h2`
   display: flex;
@@ -32,6 +33,8 @@ const ContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
   margin: 10px 0;
+  margin-top: ${(props) => (props.bottom ? 'auto' : 0)};
+  word-break: break-word;
 `;
 
 const StyledCard = styled(Card)`
@@ -76,7 +79,7 @@ const ContactCard = (props :Props) => {
           <Label subtle>Notes</Label>
           {notes}
         </ContentWrapper>
-        <ContentWrapper>
+        <ContentWrapper bottom>
           <Label subtle>{phoneType}</Label>
           <Telephone href={telHref}>
             <IconWrapper>

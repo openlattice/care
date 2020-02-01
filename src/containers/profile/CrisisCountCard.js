@@ -6,9 +6,11 @@ import {
   Card,
   CardSegment,
   Colors,
-  Skeleton
+  Skeleton,
+  StyleUtils
 } from 'lattice-ui-kit';
 
+const { media } = StyleUtils;
 const { NEUTRALS } = Colors;
 
 const Centered = styled.div`
@@ -17,6 +19,9 @@ const Centered = styled.div`
   align-items: center;
   flex: 1;
   font-size: 24px;
+  ${media.tablet`
+    font-size: 16px;
+  `}
 `;
 
 const StrongWithSubtitle = styled.span`
