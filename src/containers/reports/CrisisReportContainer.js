@@ -270,8 +270,7 @@ class CrisisReportContainer extends React.Component<Props, State> {
     const { history } = this.props;
     history.push(path);
     window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
+      top: 0
     });
   }
 
