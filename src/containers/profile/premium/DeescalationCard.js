@@ -8,7 +8,8 @@ import { List, Map } from 'immutable';
 import {
   Card,
   CardHeader,
-  Colors
+  Colors,
+  StyleUtils,
 } from 'lattice-ui-kit';
 import { withRouter } from 'react-router-dom';
 import type { Match } from 'react-router-dom';
@@ -29,6 +30,7 @@ import { CATEGORIES } from '../../issues/issue/constants';
 
 const { NEUTRALS } = Colors;
 const { OFFICER_SAFETY } = CATEGORIES;
+const { media } = StyleUtils;
 
 const H2 = styled.h2`
   font-size: 16px;
@@ -49,6 +51,14 @@ const DeescalationContentWrapper = styled.div`
   > div:last-child {
     border-left: 1px solid ${NEUTRALS[4]};
   }
+
+  ${media.phone`
+    flex-direction: column;
+    > div:last-child {
+      border-left: 0;
+      border-top: 1px solid ${NEUTRALS[4]};
+    }
+  `}
 `;
 
 type Props = {
