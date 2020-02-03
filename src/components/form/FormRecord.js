@@ -23,6 +23,7 @@ const StyledFormWrapper = styled.div`
   flex-direction: row;
   font-size: 14px;
   padding: 20px;
+  flex-wrap: wrap;
 
   @media only screen and (min-width: ${MEDIA_QUERY_LG}px) {
     font-size: 16px;
@@ -33,13 +34,14 @@ const RecordGrid = styled.div`
   display: grid;
   width: 100%;
   grid-gap: 10px;
-  grid-template-columns: repeat(auto-fit, minmax(245px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
 `;
 
 const ActionGrid = styled.div`
   display: grid;
   grid-gap: 10px;
   grid-template-columns: 1fr 1fr;
+  margin-left: auto;
 `;
 
 const Bold = styled.b`

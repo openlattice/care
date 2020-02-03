@@ -45,9 +45,6 @@ import {
   MEDIA_QUERY_TECH_SM
 } from '../../core/style/Sizes';
 
-// TODO: this should come from lattice-ui-kit, maybe after the next release. current version v0.1.1
-const APP_BG :string = '#f8f8fb';
-
 /*
  * styled components
  */
@@ -74,7 +71,6 @@ const AppContainerWrapper = styled.div`
 `;
 
 const AppContentOuterWrapper = styled.main`
-  background-color: ${APP_BG};
   display: flex;
   flex: 1 0 auto;
   justify-content: center;
