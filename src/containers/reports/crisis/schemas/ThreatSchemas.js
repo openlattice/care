@@ -1,6 +1,11 @@
 import { DataProcessingUtils } from 'lattice-fabricate';
 
-import { SELF_INJURY, VIOLENCE_TARGET, WEAPON_TYPE } from './constants';
+import {
+  SELECT_ALL_THAT_APPLY,
+  SELF_INJURY,
+  VIOLENCE_TARGET,
+  WEAPON_TYPE
+} from './constants';
 
 import * as FQN from '../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
@@ -25,6 +30,7 @@ const schema = {
         [getEntityAddressKey(0, WEAPON_FQN, FQN.TYPE_FQN)]: {
           type: 'array',
           title: 'Brandished weapon(s):',
+          description: SELECT_ALL_THAT_APPLY,
           items: {
             type: 'string',
             enum: WEAPON_TYPE
@@ -35,6 +41,7 @@ const schema = {
         [getEntityAddressKey(0, VIOLENT_BEHAVIOR_FQN, FQN.DIRECTED_AGAINST_RELATION_FQN)]: {
           type: 'array',
           title: 'Violence threatened toward:',
+          description: SELECT_ALL_THAT_APPLY,
           items: {
             type: 'string',
             enum: VIOLENCE_TARGET
@@ -45,6 +52,7 @@ const schema = {
         [getEntityAddressKey(1, VIOLENT_BEHAVIOR_FQN, FQN.DIRECTED_AGAINST_RELATION_FQN)]: {
           type: 'array',
           title: 'Violence engaged with:',
+          description: SELECT_ALL_THAT_APPLY,
           items: {
             type: 'string',
             enum: VIOLENCE_TARGET
@@ -55,6 +63,7 @@ const schema = {
         [getEntityAddressKey(0, INJURY_FQN, FQN.PERSON_INJURED_FQN)]: {
           type: 'array',
           title: 'Injured parties:',
+          description: SELECT_ALL_THAT_APPLY,
           items: {
             type: 'string',
             enum: VIOLENCE_TARGET
@@ -65,6 +74,7 @@ const schema = {
         [getEntityAddressKey(0, SELF_HARM_FQN, FQN.ACTION_FQN)]: {
           type: 'array',
           title: 'Self-harm:',
+          description: SELECT_ALL_THAT_APPLY,
           items: {
             type: 'string',
             enum: SELF_INJURY

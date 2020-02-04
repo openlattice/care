@@ -1,6 +1,11 @@
 import { DataProcessingUtils } from 'lattice-fabricate';
 
-import { DRUGS_ALCOHOL, YES_NO_UNKNOWN } from './constants';
+import {
+  DRUGS_ALCOHOL,
+  SELECT_ALL_THAT_APPLY,
+  SELECT_ONLY_ONE,
+  YES_NO_UNKNOWN
+} from './constants';
 
 import * as FQN from '../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
@@ -33,6 +38,7 @@ const schema = {
         },
         [getEntityAddressKey(-1, MEDICATION_STATEMENT_FQN, FQN.TAKEN_AS_PRESCRIBED_FQN)]: {
           type: 'string',
+          description: SELECT_ONLY_ONE,
           title: 'Compliance',
           enum: YES_NO_UNKNOWN
         }
@@ -65,6 +71,7 @@ const schema = {
         [getEntityAddressKey(0, SUBSTANCE_FQN, FQN.TYPE_FQN)]: {
           title: 'Substance use during incident',
           type: 'array',
+          description: SELECT_ALL_THAT_APPLY,
           items: {
             type: 'string',
             enum: DRUGS_ALCOHOL,
@@ -75,6 +82,7 @@ const schema = {
         [getEntityAddressKey(1, SUBSTANCE_FQN, FQN.TYPE_FQN)]: {
           title: 'History of substance abuse or treatment',
           type: 'array',
+          description: SELECT_ALL_THAT_APPLY,
           items: {
             type: 'string',
             enum: DRUGS_ALCOHOL,
@@ -118,7 +126,10 @@ const uiSchema = {
       [getEntityAddressKey(-1, MEDICATION_STATEMENT_FQN, FQN.TAKEN_AS_PRESCRIBED_FQN)]: {
         classNames: 'column-span-12',
         'ui:widget': 'radio',
-
+        'ui:options': {
+          mode: 'button',
+          row: true,
+        }
       },
     }
   },

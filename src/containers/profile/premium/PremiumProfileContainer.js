@@ -24,7 +24,7 @@ import BehaviorCard from './BehaviorCard';
 import DeescalationCard from './DeescalationCard';
 import IntroCard from './IntroCard';
 import OfficerSafetyCard from './OfficerSafetyCard';
-import ReportsSummary from './ReportsSummary';
+// import ReportsSummary from './ReportsSummary';
 import ResponsePlanCard from './ResponsePlanCard';
 import { countCrisisCalls } from './Utils';
 
@@ -133,7 +133,7 @@ const PremiumProfileContainer = (props :Props) => {
   useEffect(() => {
     window.scrollTo({
       top: 0
-    })
+    });
   }, []);
 
   const {
@@ -233,7 +233,7 @@ const PremiumProfileContainer = (props :Props) => {
                         isLoading={isLoadingBody} />
                     <RecentIncidentCard
                         count={recent}
-                        isLoading={isLoadingBody}/>
+                        isLoading={isLoadingBody} />
                     <BehaviorAndSafetyGrid>
                       <BehaviorCard
                           reports={reports}

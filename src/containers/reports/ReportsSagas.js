@@ -334,7 +334,7 @@ function* getReportsByDateRangeWorker(action :SequenceAction) :Generator<*, *, *
     // sort the reportData by time occurred DESC
 
     const reportData = fromJS(data.hits)
-      .sortBy((report :Map,) :number => {
+      .sortBy((report :Map) :number => {
         const time = DateTime.fromISO(report.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0]));
 
         return -time.valueOf();

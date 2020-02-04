@@ -50,7 +50,7 @@ export const APP_TYPES_FQNS = {
   OCCUPATION_FQN: new FullyQualifiedName('app.occupation'),
   INCOME_FQN: new FullyQualifiedName('app.income'),
   INSURANCE_FQN: new FullyQualifiedName('app.insurance'),
-  
+
   /* <===== BEGIN LONG BEACH HACK =====> */
   FILED_FOR_FQN: new FullyQualifiedName('app.filed_for'),
   PROBATION_FQN: new FullyQualifiedName('app.probation'),

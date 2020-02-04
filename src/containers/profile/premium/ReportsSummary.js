@@ -32,6 +32,9 @@ type Props = {
 };
 
 class ReportsSummary extends PureComponent<Props> {
+  static defaultProps = {
+    isLoading: false
+  };
 
   countPropertyValues = (reports :List, propertyTypeFqn :FullyQualifiedName) :Map => {
     const total = reports.count();
@@ -83,8 +86,8 @@ class ReportsSummary extends PureComponent<Props> {
   render() {
     const { isLoading } = this.props;
     return isLoading
-      ? null :
-      (
+      ? null
+      : (
         <Card>
           { this.renderBehaviorChart() }
           { this.renderNatureOfCrisisChart() }

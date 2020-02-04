@@ -1,12 +1,8 @@
 import { Machine } from 'xstate';
 
-const isPatrol = (context) => {
-  return (context.role === 'patrol');
-};
+const isPatrol = (context) => (context.role === 'patrol');
 
-const isClinician = (context) => {
-  return (context.role === 'clinician');
-};
+const isClinician = (context) => (context.role === 'clinician');
 
 const crisisMachine = Machine(
   {
@@ -59,19 +55,19 @@ const crisisMachine = Machine(
       },
       insurance: {
         on: {
-          NEXT: 'disposition',
+          NEXT: 'review',
           PREV: 'housingAndEmployment'
         }
       },
-      disposition: {
-        on: {
-          NEXT: 'review',
-          PREV: 'insurance'
-        }
-      },
+      // disposition: {
+      //   on: {
+      //     NEXT: 'review',
+      //     PREV: 'insurance'
+      //   }
+      // },
       review: {
         on: {
-          PREV: 'disposition'
+          PREV: 'insurance'
         }
       }
     }

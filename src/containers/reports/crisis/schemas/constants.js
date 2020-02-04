@@ -53,6 +53,9 @@ const YES_NO_NA = [
   NA
 ];
 
+const SELECT_ALL_THAT_APPLY = 'Select all that apply';
+const SELECT_ONLY_ONE = 'Select only one';
+
 const HOUSING = [
   'Permanent Residence',
   'Stable Housing',
@@ -173,6 +176,8 @@ export {
   NATURE_OF_CRISIS,
   PURPOSE_OF_JDP,
   RESIDES_WITH,
+  SELECT_ALL_THAT_APPLY,
+  SELECT_ONLY_ONE,
   SELF_INJURY,
   TECHNIQUES,
   VIOLENCE_TARGET,

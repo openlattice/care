@@ -116,7 +116,7 @@ const XStateCrisisReportContainer = () => {
                         <Button
                             disabled={isInitialPage}
                             onClick={handleBack}>
-                            Back
+                          Back
                         </Button>
                         <Button
                             mode="primary"

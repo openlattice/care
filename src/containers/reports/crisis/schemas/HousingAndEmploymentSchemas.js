@@ -5,6 +5,7 @@ import {
   HOUSING,
   KNOWN_CLIENT,
   RESIDES_WITH,
+  SELECT_ALL_THAT_APPLY,
 } from './constants';
 
 import * as FQN from '../../../../edm/DataModelFqns';
@@ -29,6 +30,7 @@ const schema = {
         [getEntityAddressKey(0, HOUSING_FQN, FQN.TYPE_FQN)]: {
           title: 'Current Housing Situation',
           type: 'array',
+          description: SELECT_ALL_THAT_APPLY,
           items: {
             type: 'string',
             enum: HOUSING,
@@ -39,6 +41,7 @@ const schema = {
         [getEntityAddressKey(1, HOUSING_FQN, FQN.DESCRIPTION_FQN)]: {
           title: 'Resides With',
           type: 'array',
+          description: SELECT_ALL_THAT_APPLY,
           items: {
             type: 'string',
             enum: RESIDES_WITH,
@@ -49,6 +52,7 @@ const schema = {
         [getEntityAddressKey(2, OCCUPATION_FQN, FQN.TYPE_FQN)]: {
           title: 'Employment',
           type: 'array',
+          description: SELECT_ALL_THAT_APPLY,
           items: {
             type: 'string',
             enum: EMPLOYMENT,
@@ -59,6 +63,7 @@ const schema = {
         [getEntityAddressKey(3, INCOME_FQN, FQN.TYPE_FQN)]: {
           title: 'Client of State Service',
           type: 'array',
+          description: SELECT_ALL_THAT_APPLY,
           items: {
             type: 'string',
             enum: KNOWN_CLIENT,

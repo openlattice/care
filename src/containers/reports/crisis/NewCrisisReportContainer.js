@@ -46,65 +46,58 @@ const ActionRow = styled.div`
 
 const onPageChange = (page, formData) => console.log(page, formData);
 
-type Props = {
+const NewCrisisReportContainer = () => (
+  <ContentOuterWrapper>
+    <ContentWrapper>
+      <CardStack>
+        <Card>
+          <Paged
+              initialFormData={initialFormData}
+              onPageChange={onPageChange}
+              render={({
+                formRef,
+                pagedData,
+                page,
+                onBack,
+                onNext,
+                validateAndSubmit,
+              }) => {
+                const totalPages = 7;
+                const isLastPage = page === totalPages - 1;
 
-};
+                const handleNext = isLastPage
+                  ? () => console.log(pagedData)
+                  : validateAndSubmit;
 
-const NewCrisisReportContainer = (props :Props) => {
-  return (
-    <ContentOuterWrapper>
-      <ContentWrapper>
-        <CardStack>
-          <Card>
-            <Paged
-                initialFormData={initialFormData}
-                onPageChange={onPageChange}
-                render={({
-                  formRef,
-                  pagedData,
-                  page,
-                  onBack,
-                  onNext,
-                  validateAndSubmit,
-                }) => {
-                  const totalPages = 7;
-                  const isLastPage = page === totalPages - 1;
-
-                  const handleNext = isLastPage
-                    ? () => console.log(pagedData)
-                    : validateAndSubmit;
-
-                  return (
-                    <>
-                      <Form
-                          formData={pagedData}
-                          hideSubmit
-                          onSubmit={onNext}
-                          ref={formRef}
-                          schema={schemas[page]}
-                          uiSchema={uiSchemas[page]} />
-                      <ActionRow>
-                        <Button
-                            disabled={!(page > 0)}
-                            onClick={onBack}>
-                            Back
-                        </Button>
-                        <span>{`${page + 1} of ${totalPages}`}</span>
-                        <Button
-                            mode="primary"
-                            onClick={handleNext}>
-                          { isLastPage ? 'Submit' : 'Next' }
-                        </Button>
-                      </ActionRow>
-                    </>
-                  );
-                }} />
-          </Card>
-        </CardStack>
-      </ContentWrapper>
-    </ContentOuterWrapper>
-  );
-
-};
+                return (
+                  <>
+                    <Form
+                        formData={pagedData}
+                        hideSubmit
+                        onSubmit={onNext}
+                        ref={formRef}
+                        schema={schemas[page]}
+                        uiSchema={uiSchemas[page]} />
+                    <ActionRow>
+                      <Button
+                          disabled={!(page > 0)}
+                          onClick={onBack}>
+                        Back
+                      </Button>
+                      <span>{`${page + 1} of ${totalPages}`}</span>
+                      <Button
+                          mode="primary"
+                          onClick={handleNext}>
+                        { isLastPage ? 'Submit' : 'Next' }
+                      </Button>
+                    </ActionRow>
+                  </>
+                );
+              }} />
+        </Card>
+      </CardStack>
+    </ContentWrapper>
+  </ContentOuterWrapper>
+);
 
 export default NewCrisisReportContainer;

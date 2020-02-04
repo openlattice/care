@@ -1,6 +1,6 @@
 import { DataProcessingUtils } from 'lattice-fabricate';
 
-import { INSURANCE } from './constants';
+import { INSURANCE, SELECT_ONLY_ONE } from './constants';
 
 import * as FQN from '../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
@@ -20,6 +20,7 @@ const schema = {
         [getEntityAddressKey(0, INSURANCE_FQN, FQN.ORGANIZATION_NAME_FQN)]: {
           type: 'string',
           title: 'Primary Insurance',
+          description: SELECT_ONLY_ONE,
           enum: INSURANCE
         },
         [getEntityAddressKey(0, INSURANCE_FQN, FQN.GENERAL_STATUS_FQN)]: {
@@ -30,6 +31,7 @@ const schema = {
         [getEntityAddressKey(1, INSURANCE_FQN, FQN.ORGANIZATION_NAME_FQN)]: {
           type: 'string',
           title: 'Secondary Insurance',
+          description: SELECT_ONLY_ONE,
           enum: INSURANCE
         },
         [getEntityAddressKey(1, INSURANCE_FQN, FQN.GENERAL_STATUS_FQN)]: {
@@ -52,6 +54,8 @@ const uiSchema = {
       classNames: 'column-span-12',
       'ui:widget': 'radio',
       'ui:options': {
+        mode: 'button',
+        row: true,
         withOther: true,
       }
     },
@@ -62,6 +66,8 @@ const uiSchema = {
       classNames: 'column-span-12',
       'ui:widget': 'radio',
       'ui:options': {
+        mode: 'button',
+        row: true,
         withOther: true,
       }
     },

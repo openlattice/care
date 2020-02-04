@@ -1,6 +1,6 @@
 import { DataProcessingUtils } from 'lattice-fabricate';
 
-import { BEHAVIORS, NATURE_OF_CRISIS } from './constants';
+import { BEHAVIORS, NATURE_OF_CRISIS, SELECT_ALL_THAT_APPLY } from './constants';
 
 import * as FQN from '../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
@@ -20,6 +20,7 @@ const schema = {
         [getEntityAddressKey(0, NATURE_OF_CRISIS_FQN, FQN.DESCRIPTION_FQN)]: {
           title: 'Nature of Crisis',
           type: 'array',
+          description: SELECT_ALL_THAT_APPLY,
           items: {
             type: 'string',
             enum: NATURE_OF_CRISIS,
@@ -30,6 +31,7 @@ const schema = {
         [getEntityAddressKey(0, BEHAVIOR_FQN, FQN.OBSERVED_BEHAVIOR_FQN)]: {
           title: 'Behavior',
           type: 'array',
+          description: SELECT_ALL_THAT_APPLY,
           items: {
             type: 'string',
             enum: BEHAVIORS,

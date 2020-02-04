@@ -53,4 +53,8 @@ const Triggers = (props :Props) => {
   );
 };
 
+Triggers.defaultProps = {
+  isLoading: false
+};
+
 export default Triggers;
