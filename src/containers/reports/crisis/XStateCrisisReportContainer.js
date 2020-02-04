@@ -3,7 +3,7 @@ import React, { useRef } from 'react';
 
 import styled from 'styled-components';
 import { Map } from 'immutable';
-import { Form, XPage } from 'lattice-fabricate';
+import { Form, PagedByMachine } from 'lattice-fabricate';
 import {
   Button,
   Card,
@@ -63,7 +63,7 @@ const XStateCrisisReportContainer = () => {
       <ContentWrapper>
         <CardStack>
           <Card>
-            <XPage
+            <PagedByMachine
                 initialFormData={initialFormData}
                 machine={crisisMachine}
                 onPageChange={onPageChange}
