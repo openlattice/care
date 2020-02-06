@@ -54,8 +54,8 @@ const {
 } = APP_TYPES_FQNS;
 
 const { OPENLATTICE_ID_FQN } = Constants;
-const { searchEntitySetData, searchEntityNeighborsWithFilter } = SearchApiActions;
-const { searchEntitySetDataWorker, searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
+const { executeSearch, searchEntitySetData, searchEntityNeighborsWithFilter } = SearchApiActions;
+const { executeSearchWorker, searchEntitySetDataWorker, searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
 const LOG = new Logger('LongBeachPeopleSagas');
 
 export function* getLBPeoplePhotosWorker(action :SequenceAction) :Generator<*, *, *> {
@@ -246,15 +246,19 @@ export function* searchLBPeopleWorker(action :SequenceAction) :Generator<*, *, *
 
     const edm :Map<*, *> = yield select((state) => state.get('edm'));
     const app = yield select((state) => state.get('app', Map()));
-
+    const peopleESID = getESIDFromApp(app, PEOPLE_FQN);
+    
     const firstNamePTID :UUID = edm.getIn(['fqnToIdMap', FQN.PERSON_FIRST_NAME_FQN]);
     const lastNamePTID :UUID = edm.getIn(['fqnToIdMap', FQN.PERSON_LAST_NAME_FQN]);
     const dobPTID :UUID = edm.getIn(['fqnToIdMap', FQN.PERSON_DOB_FQN]);
+    const ethnicityPTID :UUID = edm.getIn(['fqnToIdMap', FQN.PERSON_ETHNICITY_FQN]);
+    const racePTID :UUID = edm.getIn(['fqnToIdMap', FQN.PERSON_RACE_FQN]);
+    const sexPTID :UUID = edm.getIn(['fqnToIdMap', FQN.PERSON_SEX_FQN]);
 
     const searchFields = [];
-    const updateSearchField = (searchTerm :string, property :string) => {
+    const updateSearchField = (searchTerm :string, property :string, metaphone :boolean = false) => {
       searchFields.push({
-        searchTerm,
+        searchTerm: metaphone ? searchTerm : `${searchTerm}*`,
         property,
         exact: true
       });
@@ -263,32 +267,46 @@ export function* searchLBPeopleWorker(action :SequenceAction) :Generator<*, *, *
     const firstName :string = searchInputs.get('firstName', '').trim();
     const lastName :string = searchInputs.get('lastName', '').trim();
     const dob :string = searchInputs.get('dob');
+    const race :Object = searchInputs.get('race');
+    const sex :Object = searchInputs.get('sex');
+    const ethnicity :Object = searchInputs.get('ethnicity');
+    const metaphone :boolean = searchInputs.get('metaphone');
 
     if (firstName.length) {
-      updateSearchField(firstName, firstNamePTID);
+      updateSearchField(firstName, firstNamePTID, metaphone);
     }
     if (lastName.length) {
-      updateSearchField(lastName, lastNamePTID);
+      updateSearchField(lastName, lastNamePTID, metaphone);
     }
     const dobDT = DateTime.fromISO(dob);
     if (dobDT.isValid) {
       updateSearchField(dobDT.toISODate(), dobPTID);
     }
+    if (isPlainObject(race)) {
+      updateSearchField(race.value, racePTID, true);
+    }
+    if (isPlainObject(sex)) {
+      updateSearchField(sex.value, sexPTID, true);
+    }
+    if (isPlainObject(ethnicity)) {
+      updateSearchField(ethnicity.value, ethnicityPTID, true);
+    }
 
     const searchOptions = {
-      searchFields,
+      entitySetIds: [peopleESID],
+      maxHits,
       start,
-      maxHits
+      constraints: [{
+        constraints: [{
+          type: 'advanced',
+          searchFields,
+        }]
+      }],
     };
 
-    const entitySetId = getESIDFromApp(app, PEOPLE_FQN);
-
     const { data, error } = yield call(
-      searchEntitySetDataWorker,
-      searchEntitySetData({
-        entitySetId,
-        searchOptions
-      })
+      executeSearchWorker,
+      executeSearch({ searchOptions })
     );
 
     if (error) throw error;

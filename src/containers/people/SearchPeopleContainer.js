@@ -23,11 +23,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
 import AdvancedHeader from './AdvancedHeader';
+import MetaphoneLabel from './MetaphoneLabel';
 import PersonResult from './PersonResult';
 import { searchPeople } from './PeopleActions';
 
 import Accordion from '../../components/accordion';
-import TooltipIcon from '../../components/icons/TooltipIcon';
 import { useInput } from '../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../components/layout';
 import { CRISIS_PATH } from '../../core/router/Routes';
@@ -40,7 +40,6 @@ import { ethnicityOptions, raceOptions, sexOptions } from '../profile/constants'
 
 const NewPersonButton = styled(PlusButton)`
   margin-left: auto;
-  margin-bottom: 10px;
   padding: 5px 20px;
 `;
 
@@ -74,13 +73,6 @@ const FlexEnd = styled.div`
   align-self: flex-end;
 `;
 
-const metaphoneLabel = (
-  <span>
-    Metaphone Analysis
-    <TooltipIcon />
-  </span>
-);
-
 const MAX_HITS = 20;
 
 const SearchPeopleContainer = () => {
@@ -91,14 +83,14 @@ const SearchPeopleContainer = () => {
   const searchInputs = useSelector((store) => store.getIn(['people', 'searchInputs']));
   const dispatch = useDispatch();
 
-  const [metaphone, setSimilar] = useState(searchInputs.get('metaphone', false));
   const [dob, setDob] = useState(searchInputs.get('dob'));
+  const [ethnicity, setEthnicity] = useState(searchInputs.get('ethnicity'));
   const [firstName, setFirstName] = useInput(searchInputs.get('firstName'));
   const [lastName, setLastName] = useInput(searchInputs.get('lastName'));
+  const [metaphone, setSimilar] = useState(searchInputs.get('metaphone', false));
   const [page, setPage] = useState(0);
   const [race, setRace] = useState(searchInputs.get('race'));
   const [sex, setSex] = useState(searchInputs.get('sex'));
-  const [ethnicity, setEthnicity] = useState(searchInputs.get('ethnicity'));
 
   const hasSearched = fetchState !== RequestStates.STANDBY;
   const isLoading = fetchState === RequestStates.PENDING;
@@ -191,7 +183,6 @@ const SearchPeopleContainer = () => {
                     <Label stealth>Submit</Label>
                     <Button
                         type="submit"
-                        fullWidth
                         isLoading={isLoading}
                         mode="primary"
                         onClick={handleOnSearch}>
@@ -236,7 +227,7 @@ const SearchPeopleContainer = () => {
                         id="similar"
                         checked={metaphone}
                         onChange={handleOnSimilar}
-                        label={metaphoneLabel} />
+                        label={MetaphoneLabel} />
                   </FlexEnd>
                 </InputGrid>
               </div>

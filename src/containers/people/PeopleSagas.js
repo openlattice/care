@@ -50,8 +50,8 @@ const {
 } = APP_TYPES_FQNS;
 
 const { OPENLATTICE_ID_FQN } = Constants;
-const { executeSearch, searchEntitySetData, searchEntityNeighborsWithFilter } = SearchApiActions;
-const { executeSearchWorker, searchEntitySetDataWorker, searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
+const { executeSearch, searchEntityNeighborsWithFilter } = SearchApiActions;
+const { executeSearchWorker, searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
 const LOG = new Logger('PeopleSagas');
 
 export function* getPeoplePhotosWorker(action :SequenceAction) :Generator<*, *, *> {
@@ -170,7 +170,7 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
 
     const edm :Map<*, *> = yield select((state) => state.get('edm'));
     const app = yield select((state) => state.get('app', Map()));
-    
+
     const peopleESID = getPeopleESId(app);
     const dobPTID :UUID = edm.getIn(['fqnToIdMap', FQN.PERSON_DOB_FQN]);
     const ethnicityPTID :UUID = edm.getIn(['fqnToIdMap', FQN.PERSON_ETHNICITY_FQN]);
@@ -240,8 +240,7 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
 
     if (error) throw error;
 
-    const hits = fromJS(data.hits)
-      // .sortBy((entity) => entity.getIn([FQN.PERSON_LAST_NAME_FQN]));
+    const hits = fromJS(data.hits);
 
     const peopleEKIDs = hits.map((person) => person.getIn([OPENLATTICE_ID_FQN, 0]));
 
