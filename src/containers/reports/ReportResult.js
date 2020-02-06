@@ -1,16 +1,23 @@
 // @flow
-import React, { Component } from 'react';
+import React from 'react';
+
 import styled from 'styled-components';
-import isFunction from 'lodash/isFunction';
-import { Map } from 'immutable';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileAlt } from '@fortawesome/pro-light-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Map } from 'immutable';
+import { Constants } from 'lattice';
 import {
   Card,
   CardSegment,
   Colors,
   DataGrid,
 } from 'lattice-ui-kit';
+import { useDispatch } from 'react-redux';
+
+import { REPORT_ID_PATH, REPORT_VIEW_PATH } from '../../core/router/Routes';
+import { goToPath } from '../../core/router/RoutingActions';
+
+const { OPENLATTICE_ID_FQN } = Constants;
 
 const { NEUTRALS } = Colors;
 
@@ -37,53 +44,47 @@ const Subheading = styled.span`
 `;
 
 type Props = {
-  onClick ? :(result :Map) => void;
   resultLabels ? :Map;
   result :Map;
 }
 
-class ReportResult extends Component<Props> {
+const ReportResult = (props :Props) => {
+  const dispatch = useDispatch();
+  const { result, resultLabels } = props;
 
-  static defaultProps = {
-    onClick: undefined,
-    resultLabels: Map(),
-  }
 
-  handleClick = () => {
-    const { onClick, result } = this.props;
-    if (isFunction(onClick)) {
-      onClick(result);
-    }
-  }
+  const handleResultClick = () => {
+    const reportEKID = result.get(OPENLATTICE_ID_FQN);
+    dispatch(goToPath(REPORT_VIEW_PATH.replace(REPORT_ID_PATH, reportEKID)));
+  };
 
-  render() {
+  const reportType = result.get('reportType', '');
+  const occurred = result.get('occurred', '');
+  const reporter = result.get('reporter', '');
 
-    const { result, resultLabels } = this.props;
-
-    const reportType = result.get('reportType', '');
-    const occurred = result.get('occurred', '');
-    const reporter = result.get('reporter', '');
-
-    return (
-      <Card onClick={this.handleClick}>
-        <CardSegment vertical>
-          <ReportHeader>
-            <FontAwesomeIcon icon={faFileAlt} color="black" fixedWidth />
-            <ReportType>
-              { reportType }
-            </ReportType>
-            <Subheading>
-              {`${occurred} · ${reporter}`}
-            </Subheading>
-          </ReportHeader>
-          <DataGrid
-              columns={4}
-              data={result}
-              labelMap={resultLabels} />
-        </CardSegment>
-      </Card>
-    );
-  }
+  return (
+    <Card onClick={handleResultClick}>
+      <CardSegment vertical>
+        <ReportHeader>
+          <FontAwesomeIcon icon={faFileAlt} fixedWidth />
+          <ReportType>
+            { reportType }
+          </ReportType>
+          <Subheading>
+            {`${occurred} · ${reporter}`}
+          </Subheading>
+        </ReportHeader>
+        <DataGrid
+            columns={4}
+            data={result}
+            labelMap={resultLabels} />
+      </CardSegment>
+    </Card>
+  );
 }
+
+ReportResult.defaultProps = {
+  resultLabels: Map(),
+};
 
 export default ReportResult;
