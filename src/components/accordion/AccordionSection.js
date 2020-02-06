@@ -5,14 +5,16 @@ import type { ComponentType, Node } from 'react';
 import styled from 'styled-components';
 import { faChevronDown, faChevronUp } from '@fortawesome/pro-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, CardSegment } from 'lattice-ui-kit';
+import { Button, CardSegment, StyleUtils } from 'lattice-ui-kit';
 
 import AccordionHeader from './AccordionHeader';
+
+const { media } = StyleUtils;
 
 const AccordionWrapper = styled(CardSegment)`
   display: flex;
   flex-direction: column;
-  padding: 15px 30px;
+  padding: 0;
 `;
 
 const HeaderWrapper = styled.div`
@@ -21,10 +23,6 @@ const HeaderWrapper = styled.div`
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
-`;
-
-const ChildWrapper = styled.div`
-  margin-top: 20px;
 `;
 
 const LabelWrapper = styled.div`
@@ -75,6 +73,7 @@ class AccordionSection extends Component<AccordionSectionProps> {
       isOpen,
       titleComponent: TitleComponent,
     } = this.props;
+
     return (
       <AccordionWrapper isOpen={isOpen}>
         <HeaderWrapper onClick={this.onClick}>
@@ -93,11 +92,7 @@ class AccordionSection extends Component<AccordionSectionProps> {
           }
         </HeaderWrapper>
         {
-          isOpen && (
-            <ChildWrapper>
-              {children}
-            </ChildWrapper>
-          )
+          isOpen && children
         }
       </AccordionWrapper>
     );

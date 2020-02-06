@@ -9,19 +9,25 @@ import {
   Card,
   CardSegment,
   CardStack,
+  Checkbox,
   DatePicker,
   Input,
   Label,
   PaginationToolbar,
   PlusButton,
   SearchResults,
+  Select,
+  Tooltip
 } from 'lattice-ui-kit';
 import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
+import AdvancedHeader from './AdvancedHeader';
 import PersonResult from './PersonResult';
 import { searchPeople } from './PeopleActions';
 
+import Accordion from '../../components/accordion';
+import TooltipIcon from '../../components/icons/TooltipIcon';
 import { useInput } from '../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../components/layout';
 import { CRISIS_PATH } from '../../core/router/Routes';
@@ -30,6 +36,7 @@ import { isNonEmptyString } from '../../utils/LangUtils';
 import { media } from '../../utils/StyleUtils';
 import { SUBJECT_INFORMATION } from '../../utils/constants/CrisisReportConstants';
 import { setInputValues } from '../pages/subjectinformation/Actions';
+import { ethnicityOptions, raceOptions, sexOptions } from '../profile/constants';
 
 const NewPersonButton = styled(PlusButton)`
   margin-left: auto;
@@ -42,10 +49,10 @@ const InputGrid = styled.div`
   display: grid;
   flex: 1;
   grid-auto-flow: column;
-  grid-gap: 20px 30px;
+  grid-gap: 10px;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   ${media.phone`
-    grid-gap: 10px;
+    grid-gap: 5px;
     grid-auto-flow: row;
     grid-template-columns: none;
   `}
@@ -58,6 +65,22 @@ const Title = styled.h1`
   margin: 0;
 `;
 
+const FlexColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const FlexEnd = styled.div`
+  align-self: flex-end;
+`;
+
+const metaphoneLabel = (
+  <span>
+    Metaphone Analysis
+    <TooltipIcon />
+  </span>
+);
+
 const MAX_HITS = 20;
 
 const SearchPeopleContainer = () => {
@@ -68,10 +91,14 @@ const SearchPeopleContainer = () => {
   const searchInputs = useSelector((store) => store.getIn(['people', 'searchInputs']));
   const dispatch = useDispatch();
 
+  const [metaphone, setSimilar] = useState(searchInputs.get('metaphone', false));
   const [dob, setDob] = useState(searchInputs.get('dob'));
-  const [page, setPage] = useState(0);
   const [firstName, setFirstName] = useInput(searchInputs.get('firstName'));
   const [lastName, setLastName] = useInput(searchInputs.get('lastName'));
+  const [page, setPage] = useState(0);
+  const [race, setRace] = useState(searchInputs.get('race'));
+  const [sex, setSex] = useState(searchInputs.get('sex'));
+  const [ethnicity, setEthnicity] = useState(searchInputs.get('ethnicity'));
 
   const hasSearched = fetchState !== RequestStates.STANDBY;
   const isLoading = fetchState === RequestStates.PENDING;
@@ -90,9 +117,13 @@ const SearchPeopleContainer = () => {
 
   const dispatchSearch = (start = 0) => {
     const newSearchInputs = Map({
-      lastName,
+      dob,
+      ethnicity,
       firstName,
-      dob
+      lastName,
+      metaphone,
+      race,
+      sex,
     });
 
     const hasValues = newSearchInputs.some(isNonEmptyString);
@@ -110,6 +141,11 @@ const SearchPeopleContainer = () => {
     e.preventDefault();
     dispatchSearch();
     setPage(0);
+  };
+
+  const handleOnSimilar = (e :SyntheticEvent<HTMLInputElement>) => {
+    const { currentTarget } = e;
+    setSimilar(currentTarget.checked);
   };
 
   const onPageChange = ({ page: newPage, start }) => {
@@ -133,25 +169,25 @@ const SearchPeopleContainer = () => {
               </Title>
               <form>
                 <InputGrid>
-                  <div>
+                  <FlexColumn>
                     <Label htmlFor="last-name">Last Name</Label>
                     <Input
                         id="last-name"
                         value={lastName}
                         onChange={setLastName} />
-                  </div>
-                  <div>
+                  </FlexColumn>
+                  <FlexColumn>
                     <Label htmlFor="first-name">First Name</Label>
                     <Input
                         id="first-name"
                         value={firstName}
                         onChange={setFirstName} />
-                  </div>
-                  <div>
+                  </FlexColumn>
+                  <FlexColumn>
                     <Label htmlFor="dob">Date of Birth</Label>
                     <DatePicker id="dob" value={dob} onChange={setDob} />
-                  </div>
-                  <div>
+                  </FlexColumn>
+                  <FlexColumn>
                     <Label stealth>Submit</Label>
                     <Button
                         type="submit"
@@ -161,10 +197,50 @@ const SearchPeopleContainer = () => {
                         onClick={handleOnSearch}>
                       Search People
                     </Button>
-                  </div>
+                  </FlexColumn>
                 </InputGrid>
               </form>
             </CardSegment>
+            <Accordion>
+              <div headline="Additional Fields" titleComponent={AdvancedHeader}>
+                <InputGrid>
+                  <FlexColumn>
+                    <Label htmlFor="sex">Sex</Label>
+                    <Select
+                        id="sex"
+                        isClearable
+                        onChange={(option) => setSex(option)}
+                        value={sex}
+                        options={sexOptions} />
+                  </FlexColumn>
+                  <FlexColumn>
+                    <Label htmlFor="race">Race</Label>
+                    <Select
+                        id="race"
+                        isClearable
+                        onChange={(option) => setRace(option)}
+                        value={race}
+                        options={raceOptions} />
+                  </FlexColumn>
+                  <FlexColumn>
+                    <Label htmlFor="ethnicity">Ethnicity</Label>
+                    <Select
+                        id="ethnicity"
+                        isClearable
+                        onChange={(option) => setEthnicity(option)}
+                        value={ethnicity}
+                        options={ethnicityOptions} />
+                  </FlexColumn>
+                  <FlexEnd>
+                    <Checkbox
+                        id="similar"
+                        checked={metaphone}
+                        onChange={handleOnSimilar}
+                        label={metaphoneLabel} />
+                  </FlexEnd>
+                </InputGrid>
+              </div>
+            </Accordion>
           </Card>
           <SearchResults
               hasSearched={hasSearched}

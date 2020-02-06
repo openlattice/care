@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import type { ComponentType, ElementProps, Node } from 'react';
 
-import { Card } from 'lattice-ui-kit';
+import { CardSegment } from 'lattice-ui-kit';
 
 import AccordionSection from './AccordionSection';
 
@@ -95,9 +95,9 @@ class Accordion extends Component<Props, State> {
   render() {
     const { className } = this.props;
     return (
-      <Card className={className}>
+      <CardSegment className={className} vertical padding="sm">
         { this.renderAccordionSections() }
-      </Card>
+      </CardSegment>
     );
   }
 }
