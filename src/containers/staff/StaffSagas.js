@@ -194,54 +194,58 @@ function* getResponsibleUserOptionsWorker(action :SequenceAction) :Generator<any
     const roleIds :List<UUID> = yield select(
       (state) => state.getIn(['app', 'selectedOrganizationSettings', 'private', 'profile'], List())
     );
+    const responsibleUserOptions = yield select((state) => state.getIn(['staff', 'responsibleUsers', 'data'], List()));
 
     const searchOptions :Object = {
       maxHits: 10000,
-      searchTerm: getSearchTerm(personIdPTId, '*', true),
+      searchTerm: getSearchTerm(personIdPTId, '*', false),
       start: 0,
     };
 
-    const staffResponse = yield call(
-      searchEntitySetDataWorker,
-      searchEntitySetData({
-        entitySetId,
-        searchOptions
-      })
-    );
-
-    if (staffResponse.error) throw staffResponse.error;
-
-    let responseData = fromJS(staffResponse.data.hits);
-    const requestUsers = roleIds.map((roleId) => call(
-      getAllUsersOfRoleWorker,
-      getAllUsersOfRole({
-        organizationId,
-        roleId
-      })
-    )).toJS();
-
-    const usersResponses = yield all(requestUsers);
-
-    usersResponses.forEach((usersResponse) => {
-      if (usersResponse.error) throw usersResponse.error;
-    });
-
-    const usersResponseData = fromJS(usersResponses);
-    const authorizedUsers = Set().withMutations((mutable) => {
-      usersResponseData.forEach((roleResponse) => {
-        const data = roleResponse.get('data', List());
-        data.forEach((user) => {
-          mutable.add(user.get('email'));
+    let responseData = responsibleUserOptions;
+    if (responsibleUserOptions.isEmpty()){
+      const staffResponse = yield call(
+        searchEntitySetDataWorker,
+        searchEntitySetData({
+          entitySetId,
+          searchOptions
+        })
+      );
+  
+      if (staffResponse.error) throw staffResponse.error;
+  
+      responseData = fromJS(staffResponse.data.hits);
+      const requestUsers = roleIds.map((roleId) => call(
+        getAllUsersOfRoleWorker,
+        getAllUsersOfRole({
+          organizationId,
+          roleId
+        })
+      )).toJS();
+  
+      const usersResponses = yield all(requestUsers);
+  
+      usersResponses.forEach((usersResponse) => {
+        if (usersResponse.error) throw usersResponse.error;
+      });
+  
+      const usersResponseData = fromJS(usersResponses);
+      const authorizedUsers = Set().withMutations((mutable) => {
+        usersResponseData.forEach((roleResponse) => {
+          const data = roleResponse.get('data', List());
+          data.forEach((user) => {
+            mutable.add(user.get('email'));
+          });
         });
       });
-    });
-
-    if (usersResponseData.size) {
-      responseData = responseData
-        .filter((staff) => {
-          const id = staff.getIn([FQN.PERSON_ID_FQN, 0]);
-          return authorizedUsers.has(id);
-        });
+  
+      if (usersResponseData.size) {
+        responseData = responseData
+          .filter((staff) => {
+            const id = staff.getIn([FQN.PERSON_ID_FQN, 0]);
+            return authorizedUsers.has(id);
+          });
+      }
     }
 
     yield put(getResponsibleUserOptions.success(action.id, responseData));

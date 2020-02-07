@@ -5,6 +5,9 @@ const { OPENLATTICE_ID_FQN } = Constants;
 
 export { OPENLATTICE_ID_FQN };
 
+const NUM_SOURCES_FOUND_IN_FQN = new FullyQualifiedName('ol.numsourcesfoundin');
+export { NUM_SOURCES_FOUND_IN_FQN };
+
 /* disposition */
 const CJ_DISPOSITION_FQN = new FullyQualifiedName('criminaljustice.disposition');
 export { CJ_DISPOSITION_FQN };

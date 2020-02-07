@@ -9,9 +9,9 @@ import {
   CLEAR_REPORT,
   deleteReport,
   getReport,
-  updateReport,
   getReportsByDateRange,
   submitReport,
+  updateReport,
 } from './ReportsActions';
 
 const INITIAL_STATE :Map<*, *> = fromJS({
@@ -22,6 +22,7 @@ const INITIAL_STATE :Map<*, *> = fromJS({
   submittedStaff: Map(),
   submitState: RequestStates.STANDBY,
   updateState: RequestStates.STANDBY,
+  totalHits: 0,
 });
 
 export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :Object) {
@@ -51,7 +52,7 @@ export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :
         REQUEST: () => state.set('fetchState', RequestStates.PENDING),
         SUCCESS: () => state
           .set('fetchState', RequestStates.SUCCESS)
-          .set('reportsByDateRange', action.value),
+          .merge(action.value),
         FAILURE: () => state.set('fetchState', RequestStates.FAILURE),
       });
     }

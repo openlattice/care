@@ -44,7 +44,7 @@ import {
 import { getAuthorization } from '../../../core/sagas/authorize/AuthorizeActions';
 import { TITLE_FQN } from '../../../edm/DataModelFqns';
 
-const StickyAccordion = styled(Accordion)`
+const StickyCard = styled(Card)`
   position: sticky;
   top: 66px;
   z-index: 200;
@@ -88,18 +88,20 @@ const EditProfileContainer = (props :Props) => {
       <ContentWrapper>
         {
           !selectedIssueData.isEmpty() && (
-            <StickyAccordion>
-              <CardSegment headline={headline} defaultOpen>
-                <IssueDetails
-                    assignee={assignee}
-                    authorized
-                    hideTitle
-                    issue={issue}
-                    match={match}
-                    reporter={reporter}
-                    subject={subject} />
-              </CardSegment>
-            </StickyAccordion>
+            <StickyCard>
+              <Accordion>
+                <CardSegment headline={headline} defaultOpen>
+                  <IssueDetails
+                      assignee={assignee}
+                      authorized
+                      hideTitle
+                      issue={issue}
+                      match={match}
+                      reporter={reporter}
+                      subject={subject} />
+                </CardSegment>
+              </Accordion>
+            </StickyCard>
           )
         }
         <CardStack>

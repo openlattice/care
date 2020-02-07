@@ -8,11 +8,13 @@ import {
   Button,
   Card,
   CardStack,
+  Checkbox,
   DatePicker,
   Input,
   Label,
   PaginationToolbar,
   SearchResults,
+  Select,
 } from 'lattice-ui-kit';
 import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
@@ -20,8 +22,12 @@ import { RequestStates } from 'redux-reqseq';
 import PersonResult from './LongBeachPersonResult';
 import { searchLBPeople } from './LongBeachPeopleActions';
 
+import Accordion from '../../components/accordion';
+import AdvancedHeader from '../../containers/people/AdvancedHeader';
+import MetaphoneLabel from '../../containers/people/MetaphoneLabel';
 import { useInput } from '../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../components/layout';
+import { ethnicityOptions, raceOptions, sexOptions } from '../../containers/profile/constants';
 import { isNonEmptyString } from '../../utils/LangUtils';
 import { media } from '../../utils/StyleUtils';
 import { ResultSegment } from '../styled';
@@ -47,6 +53,15 @@ const Title = styled.h1`
   margin: 0;
 `;
 
+const FlexColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const FlexEnd = styled.div`
+  align-self: flex-end;
+`;
+
 const MAX_HITS = 20;
 
 const LongBeachPeopleContainer = () => {
@@ -58,18 +73,26 @@ const LongBeachPeopleContainer = () => {
   const dispatch = useDispatch();
 
   const [dob, setDob] = useState(searchInputs.get('dob'));
-  const [page, setPage] = useState(0);
+  const [ethnicity, setEthnicity] = useState(searchInputs.get('ethnicity'));
   const [firstName, setFirstName] = useInput(searchInputs.get('firstName'));
   const [lastName, setLastName] = useInput(searchInputs.get('lastName'));
+  const [metaphone, setSimilar] = useState(searchInputs.get('metaphone', false));
+  const [page, setPage] = useState(0);
+  const [race, setRace] = useState(searchInputs.get('race'));
+  const [sex, setSex] = useState(searchInputs.get('sex'));
 
   const hasSearched = fetchState !== RequestStates.STANDBY;
   const isLoading = fetchState === RequestStates.PENDING;
 
   const dispatchSearch = (start = 0) => {
     const newSearchInputs = Map({
-      lastName,
+      dob,
+      ethnicity,
       firstName,
-      dob
+      lastName,
+      metaphone,
+      race,
+      sex,
     });
 
     const hasValues = newSearchInputs.some(isNonEmptyString);
@@ -89,6 +112,11 @@ const LongBeachPeopleContainer = () => {
     setPage(0);
   };
 
+  const handleOnSimilar = (e :SyntheticEvent<HTMLInputElement>) => {
+    const { currentTarget } = e;
+    setSimilar(currentTarget.checked);
+  };
+
   const onPageChange = ({ page: newPage, start }) => {
     dispatchSearch(start);
     setPage(newPage);
@@ -105,26 +133,26 @@ const LongBeachPeopleContainer = () => {
               </Title>
               <form>
                 <InputGrid>
-                  <div>
+                  <FlexColumn>
                     <Label htmlFor="last-name">Last Name</Label>
                     <Input
                         autoFocus
                         id="last-name"
                         value={lastName}
                         onChange={setLastName} />
-                  </div>
-                  <div>
+                  </FlexColumn>
+                  <FlexColumn>
                     <Label htmlFor="first-name">First Name</Label>
                     <Input
                         id="first-name"
                         value={firstName}
                         onChange={setFirstName} />
-                  </div>
-                  <div>
+                  </FlexColumn>
+                  <FlexColumn>
                     <Label htmlFor="dob">Date of Birth</Label>
                     <DatePicker id="dob" value={dob} onChange={setDob} />
-                  </div>
-                  <div>
+                  </FlexColumn>
+                  <FlexColumn>
                     <Label stealth>Submit</Label>
                     <Button
                         type="submit"
@@ -134,10 +162,50 @@ const LongBeachPeopleContainer = () => {
                         onClick={handleOnSearch}>
                       Search
                     </Button>
-                  </div>
+                  </FlexColumn>
                 </InputGrid>
               </form>
             </ResultSegment>
+            <Accordion>
+              <div headline="Additional Fields" titleComponent={AdvancedHeader}>
+                <InputGrid>
+                  <FlexColumn>
+                    <Label htmlFor="sex">Sex</Label>
+                    <Select
+                        id="sex"
+                        isClearable
+                        onChange={(option) => setSex(option)}
+                        value={sex}
+                        options={sexOptions} />
+                  </FlexColumn>
+                  <FlexColumn>
+                    <Label htmlFor="race">Race</Label>
+                    <Select
+                        id="race"
+                        isClearable
+                        onChange={(option) => setRace(option)}
+                        value={race}
+                        options={raceOptions} />
+                  </FlexColumn>
+                  <FlexColumn>
+                    <Label htmlFor="ethnicity">Ethnicity</Label>
+                    <Select
+                        id="ethnicity"
+                        isClearable
+                        onChange={(option) => setEthnicity(option)}
+                        value={ethnicity}
+                        options={ethnicityOptions} />
+                  </FlexColumn>
+                  <FlexEnd>
+                    <Checkbox
+                        id="similar"
+                        checked={metaphone}
+                        onChange={handleOnSimilar}
+                        label={MetaphoneLabel} />
+                  </FlexEnd>
+                </InputGrid>
+              </div>
+            </Accordion>
           </Card>
           <SearchResults
               hasSearched={hasSearched}
