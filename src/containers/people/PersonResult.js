@@ -5,6 +5,7 @@ import React from 'react';
 import styled from 'styled-components';
 import {
   faBirthdayCake,
+  faFileExclamation,
   faHistory,
   faUser,
   faVenusMars,
@@ -25,6 +26,7 @@ import {
   PROFILE_VIEW_PATH,
 } from '../../core/router/Routes';
 import {
+  NUM_SOURCES_FOUND_IN_FQN,
   PERSON_RACE_FQN,
   PERSON_SEX_FQN
 } from '../../edm/DataModelFqns';
@@ -124,6 +126,7 @@ const PersonResult = (props :Props) => {
   const dob :string = getDobFromPerson(result, false, '---');
   const sex = result.getIn([PERSON_SEX_FQN, 0]);
   const race = result.getIn([PERSON_RACE_FQN, 0]);
+  const numSources = result.getIn([NUM_SOURCES_FOUND_IN_FQN, 0]);
 
   return (
     <Card>
@@ -136,6 +139,7 @@ const PersonResult = (props :Props) => {
             <Detail content={sex} icon={faVenusMars} isLoading={isLoading} />
             <Detail content={race} icon={faUser} isLoading={isLoading} />
             <Detail content={recentDate} icon={faHistory} isLoading={isLoading} />
+            <Detail content={numSources} icon={faFileExclamation} isLoading={isLoading} />
           </Details>
         </FlexRow>
         <Actions>

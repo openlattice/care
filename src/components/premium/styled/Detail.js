@@ -5,12 +5,10 @@ import isPlainObject from 'lodash/isPlainObject';
 import styled from 'styled-components';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-import { fullLineSkeleton } from '../../skeletons';
+import { Skeleton } from 'lattice-ui-kit';
 
 const DetailWrapper = styled.div`
   display: flex;
-  ${(props) => (props.isLoading ? fullLineSkeleton : null)}
 `;
 
 const Content = styled.div`
@@ -40,32 +38,33 @@ class Detail extends Component<Props> {
   };
 
   renderContent = () => {
-    const { content, icon, isLoading } = this.props;
-    if (!isLoading) {
-      const display = content || '---';
-      return (
-        <>
-          {
-            isPlainObject(icon) && (
-              <IconWrapper>
-                <FontAwesomeIcon icon={icon} fixedWidth />
-              </IconWrapper>
-            )
-          }
-          <Content>
-            {display}
-          </Content>
-        </>
-      );
-    }
-    return null;
+    const { content, icon } = this.props;
+    const display = content || '---';
+    return (
+      <>
+        {
+          isPlainObject(icon) && (
+            <IconWrapper>
+              <FontAwesomeIcon icon={icon} fixedWidth />
+            </IconWrapper>
+          )
+        }
+        <Content>
+          {display}
+        </Content>
+      </>
+    );
   }
 
   render() {
     const { className, isLoading } = this.props;
 
+    if (isLoading) {
+      return <Skeleton />;
+    }
+
     return (
-      <DetailWrapper className={className} isLoading={isLoading}>
+      <DetailWrapper className={className}>
         { this.renderContent() }
       </DetailWrapper>
     );
