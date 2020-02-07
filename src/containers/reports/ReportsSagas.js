@@ -103,11 +103,11 @@ const {
   updateEntityDataWorker,
 } = DataApiSagas;
 const {
-  searchEntitySetData,
+  executeSearch,
   searchEntityNeighborsWithFilter,
 } = SearchApiActions;
 const {
-  searchEntitySetDataWorker,
+  executeSearchWorker,
   searchEntityNeighborsWithFilterWorker,
 } = SearchApiSagas;
 
@@ -126,12 +126,6 @@ const getStaffInteractions = (entities :List<Map>) => {
     lastUpdated
   };
 };
-
-/*
- *
- * sagas
- *
- */
 
 /*
 *
@@ -292,8 +286,8 @@ function* getReportWatcher() :Generator<*, *, *> {
 function* getReportsByDateRangeWorker(action :SequenceAction) :Generator<*, *, *> {
   try {
     const { value } = action;
-    if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
-    if (!Map.isMap(value)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isPlainObject(value)) throw ERR_ACTION_VALUE_TYPE;
+    const { searchInputs, start = 0, maxHits = 20 } = value;
 
     yield put(getReportsByDateRange.request(action.id));
 
@@ -307,38 +301,44 @@ function* getReportsByDateRangeWorker(action :SequenceAction) :Generator<*, *, *
     const staffESID :UUID = getStaffESId(app);
 
     const datetimePTID :UUID = edm.getIn(['fqnToIdMap', FQN.DATE_TIME_OCCURRED_FQN]);
-    const startDT = DateTime.fromISO(value.get('dateStart'));
-    const endDT = DateTime.fromISO(value.get('dateEnd'));
+    const startDT = DateTime.fromISO(searchInputs.get('dateStart'));
+    const endDT = DateTime.fromISO(searchInputs.get('dateEnd'));
 
     const startTerm = startDT.isValid ? startDT.toISO() : '*';
     const endTerm = endDT.isValid ? endDT.endOf('day').toISO() : '*';
+    const searchTerm = getSearchTerm(datetimePTID, `[${startTerm} TO ${endTerm}]`);
 
     // search for reports within date range
     const searchOptions = {
-      searchTerm: getSearchTerm(datetimePTID, `[${startTerm} TO ${endTerm}]`),
-      start: 0,
-      maxHits: 10000,
-      fuzzy: false
+      entitySetIds: [entitySetId],
+      start,
+      maxHits,
+      constraints: [{
+        constraints: [{
+          type: 'advanced',
+          searchFields: [
+            {
+              searchTerm,
+              property: datetimePTID
+            }
+          ]
+        }]
+      }],
+      sort: {
+        propertyTypeId: datetimePTID,
+        type: 'field'
+      }
     };
 
     const { data, error } = yield call(
-      searchEntitySetDataWorker,
-      searchEntitySetData({
-        entitySetId,
-        searchOptions
-      })
+      executeSearchWorker,
+      executeSearch({ searchOptions })
     );
 
     if (error) throw error;
 
-    // sort the reportData by time occurred DESC
-
-    const reportData = fromJS(data.hits)
-      .sortBy((report :Map,) :number => {
-        const time = DateTime.fromISO(report.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0]));
-
-        return -time.valueOf();
-      });
+    const { hits, numHits } = data;
+    const reportData = fromJS(hits);
 
     const reportEKIDs = reportData.map((report) => report.getIn([OPENLATTICE_ID_FQN, 0]));
 
@@ -391,7 +391,7 @@ function* getReportsByDateRangeWorker(action :SequenceAction) :Generator<*, *, *
     const peopleResponseData = fromJS(peopleResponse.data);
     const staffResponseData = fromJS(staffResponse.data);
 
-    const results = List().withMutations((mutable) => {
+    const reportsByDateRange = List().withMutations((mutable) => {
 
       reportData.forEach((report) => {
         const entityKeyId = report.getIn([OPENLATTICE_ID_FQN, 0]);
@@ -443,7 +443,7 @@ function* getReportsByDateRangeWorker(action :SequenceAction) :Generator<*, *, *
       });
     });
 
-    yield put(getReportsByDateRange.success(action.id, results));
+    yield put(getReportsByDateRange.success(action.id, { reportsByDateRange, totalHits: numHits }));
   }
   catch (error) {
     LOG.error(action.type, error);
@@ -638,12 +638,6 @@ function* submitReportWatcher() :Generator<*, *, *> {
 
   yield takeEvery(SUBMIT_REPORT, submitReportWorker);
 }
-
-/*
- *
- * exports
- *
- */
 
 export {
   deleteReportWatcher,

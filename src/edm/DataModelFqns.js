@@ -5,6 +5,50 @@ const { OPENLATTICE_ID_FQN } = Constants;
 
 export { OPENLATTICE_ID_FQN };
 
+const NUM_SOURCES_FOUND_IN_FQN = new FullyQualifiedName('ol.numsourcesfoundin');
+export { NUM_SOURCES_FOUND_IN_FQN };
+
+/* disposition */
+const CJ_DISPOSITION_FQN = new FullyQualifiedName('criminaljustice.disposition');
+export { CJ_DISPOSITION_FQN };
+
+/* self harm */
+const ACTION_FQN = new FullyQualifiedName('ol.action');
+export {
+  ACTION_FQN
+};
+
+/* medication */
+const TAKEN_AS_PRESCRIBED_FQN = new FullyQualifiedName('ol.takenasprescribed');
+export {
+  TAKEN_AS_PRESCRIBED_FQN
+};
+
+/* call for service */
+const HOW_REPORTED_FQN = new FullyQualifiedName('ol.howreported');
+export {
+  HOW_REPORTED_FQN
+};
+
+/* incident */
+const DATETIME_START_FQN = new FullyQualifiedName('ol.datetimestart');
+const DATETIME_END_FQN = new FullyQualifiedName('ol.datetimeend');
+const CRIMINALJUSTICE_CASE_NUMBER_FQN = new FullyQualifiedName('criminaljustice.casenumber');
+export {
+  CRIMINALJUSTICE_CASE_NUMBER_FQN,
+  DATETIME_END_FQN,
+  DATETIME_START_FQN,
+};
+
+/* Person Details */
+const SPECIAL_NEEDS_FQN = new FullyQualifiedName('ol.specialneeds');
+const VETERAN_STATUS_FQN = new FullyQualifiedName('person.veteranstatus');
+
+export {
+  SPECIAL_NEEDS_FQN,
+  VETERAN_STATUS_FQN,
+};
+
 /* <===== BEGIN LONG BEACH HACK =====> */
 const NAME_FQN = new FullyQualifiedName('ol.name');
 const NUMBER_OF_SPACES_AVAILABLE_FQN = new FullyQualifiedName('ol.numberofspacesavailable');
