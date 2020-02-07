@@ -17,7 +17,6 @@ import {
   PlusButton,
   SearchResults,
   Select,
-  Tooltip
 } from 'lattice-ui-kit';
 import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
