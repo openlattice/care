@@ -5,11 +5,9 @@ import type { ComponentType, Node } from 'react';
 import styled from 'styled-components';
 import { faChevronDown, faChevronUp } from '@fortawesome/pro-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, CardSegment, StyleUtils } from 'lattice-ui-kit';
+import { Button, CardSegment } from 'lattice-ui-kit';
 
 import AccordionHeader from './AccordionHeader';
-
-const { media } = StyleUtils;
 
 const AccordionWrapper = styled(CardSegment)`
   display: flex;
