@@ -38,7 +38,7 @@ const schema = {
           // minItems: 1,
           uniqueItems: true
         },
-        [getEntityAddressKey(1, HOUSING_FQN, FQN.DESCRIPTION_FQN)]: {
+        [getEntityAddressKey(0, HOUSING_FQN, FQN.DESCRIPTION_FQN)]: {
           title: 'Resides With',
           type: 'array',
           description: SELECT_ALL_THAT_APPLY,
@@ -49,7 +49,7 @@ const schema = {
           // minItems: 1,
           uniqueItems: true
         },
-        [getEntityAddressKey(2, OCCUPATION_FQN, FQN.TYPE_FQN)]: {
+        [getEntityAddressKey(0, OCCUPATION_FQN, FQN.TYPE_FQN)]: {
           title: 'Employment',
           type: 'array',
           description: SELECT_ALL_THAT_APPLY,
@@ -60,7 +60,7 @@ const schema = {
           // minItems: 1,
           uniqueItems: true
         },
-        [getEntityAddressKey(3, INCOME_FQN, FQN.TYPE_FQN)]: {
+        [getEntityAddressKey(0, INCOME_FQN, FQN.TYPE_FQN)]: {
           title: 'Client of State Service',
           type: 'array',
           description: SELECT_ALL_THAT_APPLY,
@@ -91,7 +91,7 @@ const uiSchema = {
         withOther: true,
       }
     },
-    [getEntityAddressKey(1, HOUSING_FQN, FQN.DESCRIPTION_FQN)]: {
+    [getEntityAddressKey(0, HOUSING_FQN, FQN.DESCRIPTION_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
       'ui:options': {
@@ -101,7 +101,7 @@ const uiSchema = {
         withOther: true,
       }
     },
-    [getEntityAddressKey(2, OCCUPATION_FQN, FQN.TYPE_FQN)]: {
+    [getEntityAddressKey(0, OCCUPATION_FQN, FQN.TYPE_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
       'ui:options': {
@@ -110,7 +110,7 @@ const uiSchema = {
         withOther: true,
       }
     },
-    [getEntityAddressKey(3, INCOME_FQN, FQN.TYPE_FQN)]: {
+    [getEntityAddressKey(0, INCOME_FQN, FQN.TYPE_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
       'ui:options': {

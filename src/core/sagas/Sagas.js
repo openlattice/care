@@ -40,6 +40,7 @@ import * as RoutingSagas from '../router/RoutingSagas';
 import * as ScarsMarksTattoosSagas from '../../containers/profile/edit/basicinformation/sagas/ScarsMarksTattoosSagas';
 import * as SearchSagas from '../../containers/search/SearchSagas';
 import * as StaffSagas from '../../containers/staff/StaffSagas';
+import * as XStateCrisisReportSagas from '../../containers/reports/crisis/XStateCrisisReportSagas';
 
 export default function* sagas() :Generator<*, *, *> {
 
@@ -182,5 +183,7 @@ export default function* sagas() :Generator<*, *, *> {
 
     fork(LongBeachProviderSagas.getLBProvidersWatcher),
     /* <===== END LONG BEACH HACK =====> */
+
+    fork(XStateCrisisReportSagas.submitCrisisReportWatcher),
   ]);
 }

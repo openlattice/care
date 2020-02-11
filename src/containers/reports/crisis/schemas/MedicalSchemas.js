@@ -13,7 +13,8 @@ import { APP_TYPES_FQNS } from '../../../../shared/Consts';
 const {
   DIAGNOSIS_FQN,
   MEDICATION_STATEMENT_FQN,
-  SUBSTANCE_FQN
+  SUBSTANCE_FQN,
+  SUBSTANCE_HISTORY_FQN
 } = APP_TYPES_FQNS;
 
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
@@ -79,7 +80,7 @@ const schema = {
           // minItems: 1,
           uniqueItems: true
         },
-        [getEntityAddressKey(1, SUBSTANCE_FQN, FQN.TYPE_FQN)]: {
+        [getEntityAddressKey(0, SUBSTANCE_HISTORY_FQN, FQN.TYPE_FQN)]: {
           title: 'History of substance abuse or treatment',
           type: 'array',
           description: SELECT_ALL_THAT_APPLY,
@@ -145,7 +146,7 @@ const uiSchema = {
         withOther: true,
       }
     },
-    [getEntityAddressKey(1, SUBSTANCE_FQN, FQN.TYPE_FQN)]: {
+    [getEntityAddressKey(0, SUBSTANCE_HISTORY_FQN, FQN.TYPE_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
       'ui:options': {

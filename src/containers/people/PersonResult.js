@@ -24,6 +24,7 @@ import {
   CRISIS_PATH,
   PROFILE_ID_PATH,
   PROFILE_VIEW_PATH,
+  X_CRISIS_PATH,
 } from '../../core/router/Routes';
 import {
   NUM_SOURCES_FOUND_IN_FQN,
@@ -112,7 +113,7 @@ const PersonResult = (props :Props) => {
     .getIn(['people', 'recentIncidentsByEKID', 'fetchState']) !== RequestStates.SUCCESS);
 
   const goToProfile = useGoToPath(PROFILE_VIEW_PATH.replace(PROFILE_ID_PATH, personEKID));
-  const goToReport = useGoToPath(`${CRISIS_PATH}/1`, result);
+  const goToReport = useGoToPath(`${X_CRISIS_PATH}/1`, result);
   const dispatch = useDispatch();
 
   const handleViewProfile = () => {

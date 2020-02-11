@@ -32,11 +32,11 @@ const schema = {
           title: 'Summary',
           type: 'string',
         },
-        [getEntityAddressKey(0, CALL_FOR_SERVICE_FQN, FQN.HOW_REPORTED_FQN)]: {
-          title: 'Dispatch',
-          type: 'string',
-          enum: ['Call dispatched', 'Self-initiated']
-        },
+        // [getEntityAddressKey(0, CALL_FOR_SERVICE_FQN, FQN.HOW_REPORTED_FQN)]: {
+        //   title: 'Dispatch',
+        //   type: 'string',
+        //   enum: ['Call dispatched', 'Self-initiated']
+        // },
       },
       // required: [
       //   getEntityAddressKey(0, INCIDENT_FQN, FQN.PERSON_LAST_NAME_FQN),
@@ -64,9 +64,9 @@ const uiSchema = {
       classNames: 'column-span-12',
       'ui:widget': 'textarea'
     },
-    [getEntityAddressKey(0, CALL_FOR_SERVICE_FQN, FQN.HOW_REPORTED_FQN)]: {
-      classNames: 'column-span-12',
-    },
+    // [getEntityAddressKey(0, CALL_FOR_SERVICE_FQN, FQN.HOW_REPORTED_FQN)]: {
+    //   classNames: 'column-span-12',
+    // },
   }
 };
 

@@ -9,35 +9,40 @@ import {
   Card,
   CardStack
 } from 'lattice-ui-kit';
+import { useDispatch } from 'react-redux';
+import { useLocation } from 'react-router';
+import { Redirect } from 'react-router-dom';
 
+import { submitCrisisReport } from './CrisisActions';
 import { crisisMachine } from './machine/crisisMachine';
 import { xSchemas, xUiSchemas } from './schemas';
 
 import ProfileBanner from '../../profile/ProfileBanner';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
+import { HOME_PATH } from '../../../core/router/Routes';
 
-const initialFormData = {
-  page3section1: {
-    '0__@@__app.people__@@__nc.PersonSurName': [
-      'Homicidal thoughts'
-    ],
-    '1__@@__app.people__@@__nc.PersonSurName': [
-      'Mania'
-    ]
-  },
-  page2section1: {
-    '0__@@__app.people__@@__nc.PersonSurName': '2019-12-19T13:37:58.493-08:00'
-  },
-  page1section1: {
-    '0__@@__app.people__@@__im.PersonNickName': [],
-    '0__@@__app.people__@@__nc.PersonSurName': 'fdsa',
-    '0__@@__app.people__@@__nc.PersonGivenName': 'fdsada',
-    '0__@@__app.people__@@__nc.PersonBirthDate': '2019-12-05',
-    '0__@@__app.people__@@__nc.PersonSex': 'Male',
-    '0__@@__app.people__@@__nc.PersonRace': 'White',
-    '0__@@__app.people__@@__nc.PersonEthnicity': 'Non-Hispanic'
-  }
-};
+// const initialFormData = {
+//   page3section1: {
+//     '0__@@__app.people__@@__nc.PersonSurName': [
+//       'Homicidal thoughts'
+//     ],
+//     '1__@@__app.people__@@__nc.PersonSurName': [
+//       'Mania'
+//     ]
+//   },
+//   page2section1: {
+//     '0__@@__app.people__@@__nc.PersonSurName': '2019-12-19T13:37:58.493-08:00'
+//   },
+//   page1section1: {
+//     '0__@@__app.people__@@__im.PersonNickName': [],
+//     '0__@@__app.people__@@__nc.PersonSurName': 'fdsa',
+//     '0__@@__app.people__@@__nc.PersonGivenName': 'fdsada',
+//     '0__@@__app.people__@@__nc.PersonBirthDate': '2019-12-05',
+//     '0__@@__app.people__@@__nc.PersonSex': 'Male',
+//     '0__@@__app.people__@@__nc.PersonRace': 'White',
+//     '0__@@__app.people__@@__nc.PersonEthnicity': 'Non-Hispanic'
+//   }
+// };
 
 const ActionRow = styled.div`
   display: flex;
@@ -51,20 +56,24 @@ const ReviewBody = styled.div`
   white-space: pre;
 `;
 
-const mockPerson = Map();
-
 const onPageChange = (page, formData) => console.log(page, formData);
 
 const XStateCrisisReportContainer = () => {
+  const location = useLocation();
   const pageRef = useRef();
+  const dispatch = useDispatch();
+
+  const { state: selectedPerson = Map() } = location;
+  if (!Map.isMap(selectedPerson) || selectedPerson.isEmpty()) return <Redirect to={HOME_PATH} />;
+
   return (
     <ContentOuterWrapper ref={pageRef}>
-      <ProfileBanner selectedPerson={mockPerson} />
+      <ProfileBanner selectedPerson={selectedPerson} />
       <ContentWrapper>
         <CardStack>
           <Card>
             <PagedByMachine
-                initialFormData={initialFormData}
+                // initialFormData={initialFormData}
                 machine={crisisMachine}
                 onPageChange={onPageChange}
                 render={({
@@ -80,7 +89,9 @@ const XStateCrisisReportContainer = () => {
                   const isReviewPage = page === 'review';
 
                   const validate = isReviewPage
-                    ? () => console.log(pagedData)
+                    ? () => {
+                      dispatch(submitCrisisReport({ formData: pagedData, selectedPerson }));
+                    }
                     : validateAndSubmit;
 
                   const handleNext = () => {
