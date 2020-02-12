@@ -77,7 +77,7 @@ const reducer = (state, action) => {
   }
 };
 
-const LongBeachLocationContainer = () => {
+const EncampmentsContainer = () => {
 
   const searchResults = useSelector((store) => store.getIn([...ENCAMPMENT_STORE_PATH, 'hits'], List()));
   const totalHits = useSelector((store) => store.getIn([...ENCAMPMENT_STORE_PATH, 'totalHits'], 0));
@@ -233,4 +233,4 @@ const LongBeachLocationContainer = () => {
   );
 };
 
-export default LongBeachLocationContainer;
+export default EncampmentsContainer;

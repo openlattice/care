@@ -10,7 +10,7 @@ import styled from 'styled-components';
 import ReactMapboxGl, { ScaleControl } from 'react-mapbox-gl';
 import { faCheckCircle, faMapPin } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { List } from 'immutable';
+import { List, fromJS } from 'immutable';
 import {
   Colors,
   Hooks,
@@ -22,10 +22,12 @@ import { useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
 import EncampmentLayer from './EncampmentLayer';
+import EncampmentModal from './EncampmentModal';
 import EncampmentPopup from './EncampmentPopup';
 import { ENCAMPMENT_STORE_PATH } from './constants';
 
 import CurrentPositionLayer from '../../map/CurrentPositionLayer';
+import { LOCATION_COORDINATES_FQN } from '../../../edm/DataModelFqns';
 import { getBoundsFromPointsOfInterest, getCoordinates } from '../../map/MapUtils';
 import { COORDS, MAP_STYLE } from '../../map/constants';
 
@@ -69,6 +71,7 @@ const StyledSpeedDial = styled(SpeedDial)`
   position: absolute;
   bottom: 1em;
   right: 1em;
+  z-index: 2 !important;
 `;
 
 const containerStyle = { flex: 1 };
@@ -123,7 +126,8 @@ const EncampmentMap = (props :Props) => {
     searchResults,
     selectedOption
   } = props;
-  const [isOpen, setOpen, setClose] = useBoolean(false);
+  const [isSpeedDialOpen, openSpeedDial, closeSpeedDial] = useBoolean(false);
+  const [isModalOpen, openModal, closeModal] = useBoolean(false);
   const [currentCenter, setCurrentCenter] = useState();
   const stayAwayLocations = useSelector((store) => store.getIn([...ENCAMPMENT_STORE_PATH, 'stayAwayLocations']));
   const isLoading = useSelector((store) => store
@@ -143,8 +147,12 @@ const EncampmentMap = (props :Props) => {
 
   const handleMoveEnd = (map :any) => {
     const { _center } = map.transform;
-    console.log(_center);
-    setCurrentCenter(_center);
+    const { lng, lat } = _center;
+    const latLngEntity = fromJS({
+      [LOCATION_COORDINATES_FQN]: [`${lat},${lng}`]
+    });
+    console.log(latLngEntity);
+    setCurrentCenter(latLngEntity);
   };
 
   useEffect(() => {
@@ -228,20 +236,25 @@ const EncampmentMap = (props :Props) => {
       <StyledSpeedDial
           ariaLabel="Speed Dial Actions"
           icon={<SpeedDialIcon />}
-          open={isOpen}
-          onOpen={setOpen}
-          onClose={setClose}>
+          open={isSpeedDialOpen}
+          onOpen={openSpeedDial}
+          onClose={closeSpeedDial}>
         <SpeedDialAction
+            onClick={openModal}
             tooltipTitle="Done"
             icon={DoneIcon} />
       </StyledSpeedDial>
       {
-        (isOpen && currentCenter) && (
+        (isSpeedDialOpen && currentCenter) && (
           <CenteredPinWrapper>
             <FontAwesomeIcon icon={faMapPin} fixedWidth size="2x" color={REDS[5]} />
           </CenteredPinWrapper>
         )
       }
+      <EncampmentModal
+          isVisible={isModalOpen}
+          onClose={closeModal}
+          encampmentLocation={currentCenter} />
     </Mapbox>
   );
 };

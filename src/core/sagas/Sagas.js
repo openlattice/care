@@ -186,5 +186,6 @@ export default function* sagas() :Generator<*, *, *> {
 
     fork(EncampmentSagas.searchEncampmentLocationsWatcher),
     fork(EncampmentSagas.getGeoOptionsWatcher),
+    fork(EncampmentSagas.submitEncampmentWatcher),
   ]);
 }

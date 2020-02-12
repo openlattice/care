@@ -23,17 +23,28 @@ import {
   GET_ENCAMPMENT_LOCATIONS_NEIGHBORS,
   GET_GEO_OPTIONS,
   SEARCH_ENCAMPMENT_LOCATIONS,
+  SUBMIT_ENCAMPMENT,
   getEncampmentLocationsNeighbors,
   getGeoOptions,
   searchEncampmentLocations,
+  submitEncampment,
 } from './EncampmentActions';
 
 import Logger from '../../../utils/Logger';
 import * as FQN from '../../../edm/DataModelFqns';
+import {
+  submitDataGraph,
+  submitPartialReplace,
+} from '../../../core/sagas/data/DataActions';
+import {
+  submitDataGraphWorker,
+  submitPartialReplaceWorker,
+} from '../../../core/sagas/data/DataSagas';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { getESIDFromApp, getESIDsFromApp } from '../../../utils/AppUtils';
 import { mapFirstEntityDataFromNeighbors } from '../../../utils/DataUtils';
 import { ERR_ACTION_VALUE_TYPE } from '../../../utils/Errors';
+import { isDefined } from '../../../utils/LangUtils';
 
 const { executeSearch, searchEntityNeighborsWithFilter } = SearchApiActions;
 const { executeSearchWorker, searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
@@ -44,7 +55,7 @@ const {
   SERVICES_OF_PROCESS_FQN,
 } = APP_TYPES_FQNS;
 
-const LOG = new Logger('EncampmentSagas');
+const LOG = new Logger('EncampmentsSagas');
 
 const GEOCODER_URL_PREFIX = 'https://osm.openlattice.com/nominatim/search/';
 const GEOCODER_URL_SUFFIX = '?format=json';
@@ -216,11 +227,34 @@ function* searchEncampmentLocationsWatcher() :Generator<any, any, any> {
   yield takeEvery(SEARCH_ENCAMPMENT_LOCATIONS, searchEncampmentLocationsWorker);
 }
 
+function* submitEncampmentWorker(action :SequenceAction) :Generator<any, any, any> {
+  try {
+    const { value } = action;
+    if (!isDefined(value)) throw ERR_ACTION_VALUE_TYPE;
+    yield put(submitEncampment.request(action.id));
+
+    const response = yield call(submitDataGraphWorker, submitDataGraph(value));
+    if (response.error) throw response.error;
+
+    yield put(submitEncampment.success(action.id));
+  }
+  catch (error) {
+    LOG.error(action.type, error);
+    yield put(submitEncampment.failure(action.id));
+  }
+}
+
+function* submitEncampmentWatcher() :Generator<any, any, any> {
+  yield takeEvery(SUBMIT_ENCAMPMENT, submitEncampmentWorker);
+}
+
 export {
-  getGeoOptionsWatcher,
-  getGeoOptionsWorker,
   getEncampmentLocationsNeighborsWatcher,
   getEncampmentLocationsNeighborsWorker,
+  getGeoOptionsWatcher,
+  getGeoOptionsWorker,
   searchEncampmentLocationsWatcher,
   searchEncampmentLocationsWorker,
+  submitEncampmentWatcher,
+  submitEncampmentWorker,
 };
