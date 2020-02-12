@@ -9,13 +9,16 @@ import { RequestStates } from 'redux-reqseq';
 import {
   CLEAR_ENCAMPMENT_LOCATIONS,
   getGeoOptions,
-  searchEncampmentLocations
+  searchEncampmentLocations,
+  submitEncampment,
 } from './EncampmentActions';
 
 import { HOME_PATH } from '../../../core/router/Routes';
 
 const INITIAL_STATE :Map = fromJS({
   fetchState: RequestStates.STANDBY,
+  submitState: RequestStates.STANDBY,
+  updateState: RequestStates.STANDBY,
   hits: List(),
   totalHits: 0,
   options: Map({
@@ -57,6 +60,14 @@ const encampmentsReducer = (state :Map = INITIAL_STATE, action :Object) => {
           .setIn(['options', 'fetchState'], RequestStates.SUCCESS)
           .setIn(['options', 'data'], action.value),
         FAILURE: () => state.setIn(['options', 'fetchState'], RequestStates.FAILURE),
+      });
+    }
+
+    case submitEncampment.case(action.type): {
+      return submitEncampment.reducer(state, action, {
+        REQUEST: () => state.set('submitState', RequestStates.PENDING),
+        SUCCESS: () => state.set('submitState', RequestStates.SUCCESS),
+        FAILURE: () => state.set('submitState', RequestStates.FAILURE),
       });
     }
 
