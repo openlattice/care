@@ -2,24 +2,26 @@
 import React from 'react';
 
 import { icon } from '@fortawesome/fontawesome-svg-core';
-import { faMapMarkerAlt } from '@fortawesome/pro-solid-svg-icons';
+import { faCampground } from '@fortawesome/pro-solid-svg-icons';
 import { List } from 'immutable';
 import { Feature, Layer } from 'react-mapbox-gl';
 
 import { OPENLATTICE_ID_FQN } from '../../../edm/DataModelFqns';
 import { getCoordinates } from '../../map/MapUtils';
 
-const MapPin = new Image(12, 16);
-MapPin.src = `data:image/svg+xml;utf8,${icon(faMapMarkerAlt).html[0]}`;
+const MapPin = new Image(20, 16);
+MapPin.src = `data:image/svg+xml;utf8,${icon(faCampground).html[0]}`;
 const images = ['mapPin', MapPin];
-const layout = { 'icon-image': 'mapPin' };
+const layout = {
+  'icon-image': 'mapPin',
+};
 
 type Props = {
   stayAwayLocations :List;
   onFeatureClick ? :(data, feature) => void;
 };
 
-const StayAwayLocationLayer = (props :Props) => {
+const EncampmentLayer = (props :Props) => {
   const { onFeatureClick, stayAwayLocations } = props;
   if (stayAwayLocations.isEmpty()) return null;
 
@@ -61,8 +63,8 @@ const StayAwayLocationLayer = (props :Props) => {
   );
 };
 
-StayAwayLocationLayer.defaultProps = {
+EncampmentLayer.defaultProps = {
   onFeatureClick: () => {}
 };
 
-export default StayAwayLocationLayer;
+export default EncampmentLayer;

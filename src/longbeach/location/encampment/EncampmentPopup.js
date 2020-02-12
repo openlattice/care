@@ -47,7 +47,7 @@ type Props = {
   onClose :() => void;
 };
 
-const StayAwayPopup = ({
+const EncampmentPopup = ({
   coordinates,
   isOpen,
   onClose,
@@ -88,4 +88,4 @@ const StayAwayPopup = ({
   );
 };
 
-export default StayAwayPopup;
+export default EncampmentPopup;

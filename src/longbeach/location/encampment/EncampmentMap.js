@@ -1,22 +1,40 @@
 // @flow
-import React, { useEffect, useMemo, useReducer } from 'react';
+import React, {
+  useEffect,
+  useMemo,
+  useReducer,
+  useState
+} from 'react';
 
+import styled from 'styled-components';
 import ReactMapboxGl, { ScaleControl } from 'react-mapbox-gl';
+import { faCheckCircle, faMapPin } from '@fortawesome/pro-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { List } from 'immutable';
+import {
+  Colors,
+  Hooks,
+  SpeedDial,
+  SpeedDialAction,
+  SpeedDialIcon
+} from 'lattice-ui-kit';
 import { useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
-import StayAwayLocationLayer from './StayAwayLocationLayer';
-import StayAwayPopup from './StayAwayPopup';
+import EncampmentLayer from './EncampmentLayer';
+import EncampmentPopup from './EncampmentPopup';
 import { ENCAMPMENT_STORE_PATH } from './constants';
 
 import CurrentPositionLayer from '../../map/CurrentPositionLayer';
-import RadiusLayer from '../../map/RadiusLayer';
 import { getBoundsFromPointsOfInterest, getCoordinates } from '../../map/MapUtils';
 import { COORDS, MAP_STYLE } from '../../map/constants';
 
+const { GREENS, REDS } = Colors;
+
+
 declare var __MAPBOX_TOKEN__;
 
+const { useBoolean } = Hooks;
 // eslint-disable-next-line new-cap
 const Mapbox = ReactMapboxGl({
   accessToken: __MAPBOX_TOKEN__
@@ -34,6 +52,24 @@ const fitBoundsOptions = {
     top: 90,
   }
 };
+
+const DoneIcon = <FontAwesomeIcon icon={faCheckCircle} fixedWidth size="lg" color={GREENS[4]} />;
+const CenteredPinWrapper = styled.div`
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    z-index: 1;
+  }
+`;
+
+const StyledSpeedDial = styled(SpeedDial)`
+  position: absolute;
+  bottom: 1em;
+  right: 1em;
+`;
 
 const containerStyle = { flex: 1 };
 
@@ -81,12 +117,14 @@ type Props = {
   searchResults ?:List;
 };
 
-const StayAwayMap = (props :Props) => {
+const EncampmentMap = (props :Props) => {
   const {
     currentPosition,
     searchResults,
     selectedOption
   } = props;
+  const [isOpen, setOpen, setClose] = useBoolean(false);
+  const [currentCenter, setCurrentCenter] = useState();
   const stayAwayLocations = useSelector((store) => store.getIn([...ENCAMPMENT_STORE_PATH, 'stayAwayLocations']));
   const isLoading = useSelector((store) => store
     .getIn([...ENCAMPMENT_STORE_PATH, 'fetchState']) === RequestStates.PENDING);
@@ -102,6 +140,12 @@ const StayAwayMap = (props :Props) => {
   const stayAwayData = useMemo(() => searchResults
     .map((resultEKID) => stayAwayLocations.get(resultEKID)),
   [searchResults, stayAwayLocations]);
+
+  const handleMoveEnd = (map :any) => {
+    const { _center } = map.transform;
+    console.log(_center);
+    setCurrentCenter(_center);
+  };
 
   useEffect(() => {
     if (!isLoading) {
@@ -162,35 +206,51 @@ const StayAwayMap = (props :Props) => {
         flyToOptions={flyToOptions}
         fitBoundsOptions={fitBoundsOptions}
         style={MAP_STYLE.DEFAULT}
+        onMoveEnd={handleMoveEnd}
         zoom={zoom}>
       <ScaleControl
-          position="bottom-right"
+          style={{ maxWidth: '55%' }}
+          position="bottom-left"
           measurement="mi" />
       <CurrentPositionLayer position={currentPosition} />
       {
         selectedFeature && (
-          <>
-            <RadiusLayer location={selectedFeature} radius={100} unit="yd" />
-            <StayAwayPopup
-                isOpen={isPopupOpen}
-                coordinates={getCoordinates(selectedFeature)}
-                stayAwayLocation={selectedFeature}
-                onClose={closeFeature} />
-          </>
+          <EncampmentPopup
+              isOpen={isPopupOpen}
+              coordinates={getCoordinates(selectedFeature)}
+              stayAwayLocation={selectedFeature}
+              onClose={closeFeature} />
         )
       }
-      <StayAwayLocationLayer
+      <EncampmentLayer
           stayAwayLocations={stayAwayData}
           onFeatureClick={handleFeatureClick} />
+      <StyledSpeedDial
+          ariaLabel="Speed Dial Actions"
+          icon={<SpeedDialIcon />}
+          open={isOpen}
+          onOpen={setOpen}
+          onClose={setClose}>
+        <SpeedDialAction
+            tooltipTitle="Done"
+            icon={DoneIcon} />
+      </StyledSpeedDial>
+      {
+        (isOpen && currentCenter) && (
+          <CenteredPinWrapper>
+            <FontAwesomeIcon icon={faMapPin} fixedWidth size="2x" color={REDS[5]} />
+          </CenteredPinWrapper>
+        )
+      }
     </Mapbox>
   );
 };
 
-StayAwayMap.defaultProps = {
+EncampmentMap.defaultProps = {
   searchResults: List()
 };
 
 export default React.memo<Props>((props :Props) => (
   /* eslint-disable-next-line react/jsx-props-no-spreading */
-  <StayAwayMap {...props} />
+  <EncampmentMap {...props} />
 ));

@@ -22,8 +22,8 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
-import LongBeachLocationResult from './LongBeachLocationResult';
-import StayAwayMap from './StayAwayMap';
+import EncampmentMap from './EncampmentMap';
+import EncampmentResult from './EncampmentResult';
 import { getGeoOptions, searchEncampmentLocations } from './EncampmentActions';
 import { ENCAMPMENT_STORE_PATH } from './constants';
 
@@ -173,7 +173,7 @@ const LongBeachLocationContainer = () => {
     <ContentOuterWrapper>
       <ContentWrapper padding="none">
         <MapWrapper>
-          <StayAwayMap
+          <EncampmentMap
               currentPosition={currentPosition}
               selectedOption={selectedOption}
               searchResults={searchResults} />
@@ -216,7 +216,7 @@ const LongBeachLocationContainer = () => {
           <StyledSearchResults
               hasSearched={hasSearched}
               isLoading={isLoading}
-              resultComponent={LongBeachLocationResult}
+              resultComponent={EncampmentResult}
               results={searchResults} />
           {
             hasSearched && (
