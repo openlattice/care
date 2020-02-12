@@ -8,6 +8,7 @@ import { RequestStates } from 'redux-reqseq';
 
 import {
   CLEAR_ENCAMPMENT_LOCATIONS,
+  RESET_ENCAMPMENT,
   getGeoOptions,
   searchEncampmentLocations,
   submitEncampment,
@@ -73,6 +74,10 @@ const encampmentsReducer = (state :Map = INITIAL_STATE, action :Object) => {
 
     case CLEAR_ENCAMPMENT_LOCATIONS: {
       return INITIAL_STATE;
+    }
+
+    case RESET_ENCAMPMENT: {
+      return state.set('submitState', INITIAL_STATE.get('submitState'));
     }
 
     case LOCATION_CHANGE: {

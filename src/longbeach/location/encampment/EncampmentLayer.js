@@ -17,13 +17,13 @@ const layout = {
 };
 
 type Props = {
-  stayAwayLocations :List;
+  encampmentLocations :List;
   onFeatureClick ? :(data, feature) => void;
 };
 
 const EncampmentLayer = (props :Props) => {
-  const { onFeatureClick, stayAwayLocations } = props;
-  if (stayAwayLocations.isEmpty()) return null;
+  const { onFeatureClick, encampmentLocations } = props;
+  if (encampmentLocations.isEmpty()) return null;
 
   return (
     <Layer
@@ -31,7 +31,7 @@ const EncampmentLayer = (props :Props) => {
         layout={layout}
         images={images}>
       {
-        stayAwayLocations.map((location) => {
+        encampmentLocations.map((location) => {
           const key = location.getIn([OPENLATTICE_ID_FQN, 0]);
           const coordinates = getCoordinates(location);
           const handleMouseEnter = (payload) => {

@@ -2,17 +2,11 @@
 import React from 'react';
 
 import styled from 'styled-components';
-import {
-  faBirthdayCake,
-  faDraftingCompass,
-  faMapMarkerAltSlash,
-  faTimes,
-  faUser,
-  faVenusMars
-} from '@fortawesome/pro-solid-svg-icons';
+import { faHistory, faTimes, faUsers } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Map } from 'immutable';
 import { IconButton } from 'lattice-ui-kit';
+import { DateTime } from 'luxon';
 import { Popup } from 'react-mapbox-gl';
 import { useSelector } from 'react-redux';
 
@@ -20,12 +14,12 @@ import { ENCAMPMENT_STORE_PATH } from './constants';
 
 import Detail from '../../../components/premium/styled/Detail';
 import {
+  DESCRIPTION_FQN,
+  ENTRY_UPDATED_FQN,
+  NUMBER_OF_PEOPLE_FQN,
   OPENLATTICE_ID_FQN,
-  PERSON_RACE_FQN,
-  PERSON_SEX_FQN
 } from '../../../edm/DataModelFqns';
-import { getAddressFromLocation } from '../../../utils/AddressUtils';
-import { getDobFromPerson, getLastFirstMiFromPerson } from '../../../utils/PersonUtils';
+import { getCoordinates } from '../../map/MapUtils';
 
 const ActionBar = styled.div`
   display: flex;
@@ -41,49 +35,37 @@ const CloseButton = styled(IconButton)`
 const CloseIcon = <FontAwesomeIcon icon={faTimes} fixedWidth />;
 
 type Props = {
-  coordinates :[number, number];
   isOpen :boolean;
-  stayAwayLocation :Map;
+  selectedFeature :Map;
   onClose :() => void;
 };
 
 const EncampmentPopup = ({
-  coordinates,
   isOpen,
   onClose,
-  stayAwayLocation
+  selectedFeature
 } :Props) => {
 
-  const locationEKID = stayAwayLocation.getIn([OPENLATTICE_ID_FQN, 0]);
-  const stayAway = useSelector((store) => store.getIn([...ENCAMPMENT_STORE_PATH, 'stayAway', locationEKID])) || Map();
-  const stayAwayEKID = stayAway.getIn([OPENLATTICE_ID_FQN, 0]);
-  const person = useSelector((store) => store.getIn([...ENCAMPMENT_STORE_PATH, 'people', stayAwayEKID])) || Map();
+  const locationEKID = selectedFeature.getIn([OPENLATTICE_ID_FQN, 0]);
+  const encampment = useSelector((store) => store.getIn([...ENCAMPMENT_STORE_PATH, 'encampments', locationEKID])) || Map();
+  const occupants = encampment.getIn([NUMBER_OF_PEOPLE_FQN, 0]);
+  const description = encampment.getIn([DESCRIPTION_FQN, 0]);
+  const rawUpdated = encampment.getIn([ENTRY_UPDATED_FQN, 0]);
+  const lastUpdated = DateTime.fromISO(rawUpdated).toLocaleString(DateTime.DATETIME_SHORT);
+
   if (!isOpen) return null;
 
-  const fullName = getLastFirstMiFromPerson(person, true);
-  // $FlowFixMe
-  const dob :string = getDobFromPerson(person, false, '---');
-  const sex = person.getIn([PERSON_SEX_FQN, 0]);
-  const race = person.getIn([PERSON_RACE_FQN, 0]);
-  const { name, address } = getAddressFromLocation(stayAwayLocation);
-  let nameAndAddress = address;
-  if (name && address) {
-    nameAndAddress = `${name}\n${address}`;
-  }
-  // TODO: Replace with true radius
-  const radius = '100 yd';
+  const coordinates = getCoordinates(selectedFeature);
 
   return (
     <Popup coordinates={coordinates}>
       <ActionBar>
-        <strong>{fullName}</strong>
+        <strong>Encampment</strong>
         <CloseButton size="sm" mode="subtle" icon={CloseIcon} onClick={onClose} />
       </ActionBar>
-      <Detail content={dob} icon={faBirthdayCake} />
-      <Detail content={race} icon={faUser} />
-      <Detail content={sex} icon={faVenusMars} />
-      <Detail content={nameAndAddress} icon={faMapMarkerAltSlash} />
-      <Detail content={radius} icon={faDraftingCompass} />
+      <Detail content={occupants} icon={faUsers} />
+      <Detail content={lastUpdated} icon={faHistory} />
+      <Detail content={description} />
     </Popup>
   );
 };

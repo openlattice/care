@@ -50,9 +50,9 @@ const { executeSearch, searchEntityNeighborsWithFilter } = SearchApiActions;
 const { executeSearchWorker, searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
 
 const {
-  FILED_FOR_FQN,
-  LOCATION_FQN,
-  SERVICES_OF_PROCESS_FQN,
+  LOCATED_AT_FQN,
+  ENCAMPMENT_FQN,
+  ENCAMPMENT_LOCATION_FQN,
 } = APP_TYPES_FQNS;
 
 const LOG = new Logger('EncampmentsSagas');
@@ -105,36 +105,36 @@ function* getEncampmentLocationsNeighborsWorker(action :SequenceAction) :Generat
 
     const app :Map = yield select((state) => state.get('app', Map()));
     const [
-      filedForESID,
-      locationESID,
-      serviceOfProcessESID
+      encampmentsESID,
+      locatedAtESID,
+      encampmentLocationsESID,
     ] = getESIDsFromApp(app, [
-      FILED_FOR_FQN,
-      LOCATION_FQN,
-      SERVICES_OF_PROCESS_FQN
+      ENCAMPMENT_FQN,
+      LOCATED_AT_FQN,
+      ENCAMPMENT_LOCATION_FQN,
     ]);
 
-    const stayAwayParams = {
-      entitySetId: locationESID,
+    const encampmentsParams = {
+      entitySetId: encampmentLocationsESID,
       filter: {
         entityKeyIds,
-        edgeEntitySetIds: [filedForESID],
+        edgeEntitySetIds: [locatedAtESID],
         destinationEntitySetIds: [],
-        sourceEntitySetIds: [serviceOfProcessESID],
+        sourceEntitySetIds: [encampmentsESID],
       }
     };
 
-    const stayAwayResponse = yield call(
+    const encampmentsResponse = yield call(
       searchEntityNeighborsWithFilterWorker,
-      searchEntityNeighborsWithFilter(stayAwayParams)
+      searchEntityNeighborsWithFilter(encampmentsParams)
     );
 
-    if (stayAwayResponse.error) throw stayAwayResponse.error;
+    if (encampmentsResponse.error) throw encampmentsResponse.error;
 
-    const stayAway = mapFirstEntityDataFromNeighbors(fromJS(stayAwayResponse.data));
+    const encampments = mapFirstEntityDataFromNeighbors(fromJS(encampmentsResponse.data));
 
     response.data = {
-      stayAway
+      encampments
     };
 
     yield put(getEncampmentLocationsNeighbors.success(action.id, response));
@@ -166,13 +166,13 @@ function* searchEncampmentLocationsWorker(action :SequenceAction) :Generator<any
     yield put(searchEncampmentLocations.request(action.id, searchInputs));
 
     const app = yield select((state) => state.get('app', Map()));
-    const issueESID = getESIDFromApp(app, LOCATION_FQN);
+    const encampmentLocationESID = getESIDFromApp(app, ENCAMPMENT_LOCATION_FQN);
     const locationCoordinatesPTID :UUID = yield select((state) => state
       .getIn(['edm', 'fqnToIdMap', FQN.LOCATION_COORDINATES_FQN]));
 
     const searchOptions = {
       start,
-      entitySetIds: [issueESID],
+      entitySetIds: [encampmentLocationESID],
       maxHits,
       constraints: [{
         constraints: [{
@@ -183,7 +183,7 @@ function* searchEncampmentLocationsWorker(action :SequenceAction) :Generator<any
           radius: 400,
           unit: 'yd'
         }]
-      }],
+      }]
     };
 
     const { data, error } = yield call(
@@ -198,7 +198,7 @@ function* searchEncampmentLocationsWorker(action :SequenceAction) :Generator<any
     const locationsByEKID = Map(hits.map((entity) => [getIn(entity, [FQN.OPENLATTICE_ID_FQN, 0]), fromJS(entity)]));
     response.data.hits = fromJS(locationsEKIDs);
     response.data.totalHits = numHits;
-    response.data.stayAwayLocations = locationsByEKID;
+    response.data.encampmentLocations = locationsByEKID;
 
     if (locationsEKIDs.length) {
       const neighborsResponse = yield call(

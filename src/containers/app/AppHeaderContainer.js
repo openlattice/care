@@ -3,6 +3,7 @@ import React, { useCallback } from 'react';
 
 import styled from 'styled-components';
 import {
+  faCampground,
   faDownload,
   faFileAlt,
   faFileExclamation,
@@ -31,6 +32,7 @@ import {
   REPORTS_PATH,
 } from '../../core/router/Routes';
 import {
+  ENCAMPMENTS_PATH,
   LOCATION_PATH,
   PEOPLE_PATH,
   PROVIDER_PATH
@@ -101,7 +103,11 @@ const AppHeaderContainer = (props :Props) => {
         </StyledNavLink>
         <StyledNavLink to={LOCATION_PATH} hidden={!isLongBeach}>
           <FontAwesomeIcon size="lg" fixedWidth icon={faMapMarkedAlt} />
-          <NavLabel>Locations</NavLabel>
+          <NavLabel>Stay Away</NavLabel>
+        </StyledNavLink>
+        <StyledNavLink to={ENCAMPMENTS_PATH} hidden={!isLongBeach}>
+          <FontAwesomeIcon size="lg" fixedWidth icon={faCampground} />
+          <NavLabel>Encampments</NavLabel>
         </StyledNavLink>
         <StyledNavLink to={PROVIDER_PATH} hidden={!isLongBeach}>
           <FontAwesomeIcon size="lg" fixedWidth icon={faUserNurse} />

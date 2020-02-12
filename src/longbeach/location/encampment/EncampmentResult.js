@@ -2,39 +2,51 @@
 
 import React from 'react';
 
+import { faHistory, faUsers } from '@fortawesome/pro-solid-svg-icons';
 import { Map } from 'immutable';
-import { Constants } from 'lattice';
+import { Card, StepIcon } from 'lattice-ui-kit';
+import { DateTime } from 'luxon';
 import { useSelector } from 'react-redux';
 
 import { ENCAMPMENT_STORE_PATH } from './constants';
 
-import LongBeachResult from '../../styled/LongBeachResult';
-
-const { OPENLATTICE_ID_FQN } = Constants;
+import Detail from '../../../components/premium/styled/Detail';
+import {
+  DESCRIPTION_FQN,
+  ENTRY_UPDATED_FQN,
+  LOCATION_COORDINATES_FQN,
+  NUMBER_OF_PEOPLE_FQN,
+} from '../../../edm/DataModelFqns';
+import { getCoordinates } from '../../map/MapUtils';
+import { ResultSegment } from '../../styled';
 
 type Props = {
   result :Map;
+  index :number;
 }
 
 const EncampmentResult = (props :Props) => {
 
-  const { result: locationEKID } = props;
+  const { index, result: locationEKID } = props;
 
-  const person = useSelector((store) => {
-    const stayAwayEKID = store.getIn([...ENCAMPMENT_STORE_PATH, 'stayAway', locationEKID, OPENLATTICE_ID_FQN, 0]);
-    return store.getIn([...ENCAMPMENT_STORE_PATH, 'people', stayAwayEKID], Map());
-  });
-  const personEKID = person.getIn([OPENLATTICE_ID_FQN, 0]);
-  const profilePicture = useSelector((store) => store
-    .getIn([...ENCAMPMENT_STORE_PATH, 'profilePictures', personEKID], Map()));
-  const stayAwayLocation = useSelector((store) => store
-    .getIn([...ENCAMPMENT_STORE_PATH, 'stayAwayLocations', locationEKID], Map()));
+  const encampmentLocation = useSelector((store) => store.getIn([...ENCAMPMENT_STORE_PATH, 'encampmentLocations', locationEKID]));
+  const encampment = useSelector((store) => store.getIn([...ENCAMPMENT_STORE_PATH, 'encampments', locationEKID])) || Map();
+  const occupants = encampment.getIn([NUMBER_OF_PEOPLE_FQN, 0]);
+  const description = encampment.getIn([DESCRIPTION_FQN, 0]);
+  const rawUpdated = encampment.getIn([ENTRY_UPDATED_FQN, 0]);
+
+  const coordinates = getCoordinates(encampmentLocation);
+  const lastUpdated = DateTime.fromISO(rawUpdated).toLocaleString(DateTime.DATETIME_SHORT);
 
   return (
-    <LongBeachResult
-        person={person}
-        stayAwayLocation={stayAwayLocation}
-        profilePicture={profilePicture} />
+    <Card>
+      <ResultSegment vertical padding="sm">
+        <StepIcon active index={index + 1} />
+        <Detail content={occupants} icon={faUsers} />
+        <Detail content={lastUpdated} icon={faHistory} />
+        <Detail content={description} />
+      </ResultSegment>
+    </Card>
   );
 };
 

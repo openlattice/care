@@ -8,9 +8,9 @@ import React, {
 
 import styled from 'styled-components';
 import ReactMapboxGl, { ScaleControl } from 'react-mapbox-gl';
-import { faCheckCircle, faMapPin } from '@fortawesome/pro-solid-svg-icons';
+import { faCheckCircle } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { List, fromJS } from 'immutable';
+import { List, Map, fromJS } from 'immutable';
 import {
   Colors,
   Hooks,
@@ -27,11 +27,12 @@ import EncampmentPopup from './EncampmentPopup';
 import { ENCAMPMENT_STORE_PATH } from './constants';
 
 import CurrentPositionLayer from '../../map/CurrentPositionLayer';
+import pinSolid from '../../../assets/svg/pin-solid.svg';
 import { LOCATION_COORDINATES_FQN } from '../../../edm/DataModelFqns';
-import { getBoundsFromPointsOfInterest, getCoordinates } from '../../map/MapUtils';
+import { getBoundsFromPointsOfInterest } from '../../map/MapUtils';
 import { COORDS, MAP_STYLE } from '../../map/constants';
 
-const { GREENS, REDS } = Colors;
+const { GREENS } = Colors;
 
 
 declare var __MAPBOX_TOKEN__;
@@ -62,7 +63,8 @@ const CenteredPinWrapper = styled.div`
   align-items: center;
   justify-content: center;
 
-  svg {
+  
+  svg, img {
     z-index: 1;
   }
 `;
@@ -81,7 +83,7 @@ const INITIAL_STATE = {
   center: undefined,
   isPopupOpen: false,
   selectedFeature: undefined,
-  zoom: [16],
+  zoom: [18],
 };
 
 const reducer = (state, action) => {
@@ -94,7 +96,7 @@ const reducer = (state, action) => {
         center,
         isPopupOpen,
         selectedFeature,
-        zoom: [16],
+        zoom: [18],
       };
     }
     case 'bounds':
@@ -129,7 +131,8 @@ const EncampmentMap = (props :Props) => {
   const [isSpeedDialOpen, openSpeedDial, closeSpeedDial] = useBoolean(false);
   const [isModalOpen, openModal, closeModal] = useBoolean(false);
   const [currentCenter, setCurrentCenter] = useState();
-  const stayAwayLocations = useSelector((store) => store.getIn([...ENCAMPMENT_STORE_PATH, 'stayAwayLocations']));
+  const [confirmedLocation, setConfirmedLocation] = useState();
+  const encampmentLocations = useSelector((store) => store.getIn([...ENCAMPMENT_STORE_PATH, 'encampmentLocations']));
   const isLoading = useSelector((store) => store
     .getIn([...ENCAMPMENT_STORE_PATH, 'fetchState']) === RequestStates.PENDING);
   const [state, stateDispatch] = useReducer(reducer, INITIAL_STATE);
@@ -141,9 +144,14 @@ const EncampmentMap = (props :Props) => {
     zoom,
   } = state;
 
-  const stayAwayData = useMemo(() => searchResults
-    .map((resultEKID) => stayAwayLocations.get(resultEKID)),
-  [searchResults, stayAwayLocations]);
+  const locationData = useMemo(() => searchResults
+    .map((resultEKID) => encampmentLocations.get(resultEKID, Map())),
+  [searchResults, encampmentLocations]);
+
+  const confirmLocation = () => {
+    setConfirmedLocation(currentCenter);
+    openModal();
+  }
 
   const handleMoveEnd = (map :any) => {
     const { _center } = map.transform;
@@ -151,14 +159,13 @@ const EncampmentMap = (props :Props) => {
     const latLngEntity = fromJS({
       [LOCATION_COORDINATES_FQN]: [`${lat},${lng}`]
     });
-    console.log(latLngEntity);
     setCurrentCenter(latLngEntity);
   };
 
   useEffect(() => {
     if (!isLoading) {
       // first, use bounds whenever possible
-      const newBounds = getBoundsFromPointsOfInterest(stayAwayData);
+      const newBounds = getBoundsFromPointsOfInterest(locationData);
       if (newBounds) {
         stateDispatch({ type: 'bounds', payload: newBounds });
       }
@@ -185,7 +192,7 @@ const EncampmentMap = (props :Props) => {
     }
   }, [
     isLoading,
-    stayAwayData,
+    locationData,
     selectedOption
   ]);
 
@@ -225,13 +232,12 @@ const EncampmentMap = (props :Props) => {
         selectedFeature && (
           <EncampmentPopup
               isOpen={isPopupOpen}
-              coordinates={getCoordinates(selectedFeature)}
-              stayAwayLocation={selectedFeature}
+              selectedFeature={selectedFeature}
               onClose={closeFeature} />
         )
       }
       <EncampmentLayer
-          stayAwayLocations={stayAwayData}
+          encampmentLocations={locationData}
           onFeatureClick={handleFeatureClick} />
       <StyledSpeedDial
           ariaLabel="Speed Dial Actions"
@@ -240,21 +246,21 @@ const EncampmentMap = (props :Props) => {
           onOpen={openSpeedDial}
           onClose={closeSpeedDial}>
         <SpeedDialAction
-            onClick={openModal}
+            onClick={confirmLocation}
             tooltipTitle="Done"
             icon={DoneIcon} />
       </StyledSpeedDial>
       {
         (isSpeedDialOpen && currentCenter) && (
           <CenteredPinWrapper>
-            <FontAwesomeIcon icon={faMapPin} fixedWidth size="2x" color={REDS[5]} />
+            <img src={pinSolid} alt="pin-solid" height="20px" width="12px" />
           </CenteredPinWrapper>
         )
       }
       <EncampmentModal
           isVisible={isModalOpen}
           onClose={closeModal}
-          encampmentLocation={currentCenter} />
+          encampmentLocation={confirmedLocation} />
     </Mapbox>
   );
 };

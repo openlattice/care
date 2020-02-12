@@ -82,7 +82,7 @@ const EncampmentModal = (props :Props) => {
 EncampmentModal.defaultProps = {
   edit: false,
   encampment: Map(),
-  encampmentLocation :Map(),
+  encampmentLocation: Map(),
 };
 
 export default React.memo<Props>(EncampmentModal);
