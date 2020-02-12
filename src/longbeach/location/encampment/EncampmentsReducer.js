@@ -7,12 +7,12 @@ import { List, Map, fromJS } from 'immutable';
 import { RequestStates } from 'redux-reqseq';
 
 import {
-  CLEAR_LB_LOCATIONS,
+  CLEAR_ENCAMPMENT_LOCATIONS,
   getGeoOptions,
-  searchLBLocations
-} from './LongBeachLocationsActions';
+  searchEncampmentLocations
+} from './EncampmentActions';
 
-import { HOME_PATH } from '../../core/router/Routes';
+import { HOME_PATH } from '../../../core/router/Routes';
 
 const INITIAL_STATE :Map = fromJS({
   fetchState: RequestStates.STANDBY,
@@ -30,14 +30,16 @@ const INITIAL_STATE :Map = fromJS({
   }),
   stayAway: Map(),
   stayAwayLocations: Map(),
+  encampments: Map(),
+  encampmentLocations: Map(),
 });
 
-const longBeachLocationsReducer = (state :Map = INITIAL_STATE, action :Object) => {
+const encampmentsReducer = (state :Map = INITIAL_STATE, action :Object) => {
 
   switch (action.type) {
 
-    case searchLBLocations.case(action.type): {
-      return searchLBLocations.reducer(state, action, {
+    case searchEncampmentLocations.case(action.type): {
+      return searchEncampmentLocations.reducer(state, action, {
         REQUEST: () => state
           .set('fetchState', RequestStates.PENDING)
           .set('searchInputs', action.value),
@@ -58,7 +60,7 @@ const longBeachLocationsReducer = (state :Map = INITIAL_STATE, action :Object) =
       });
     }
 
-    case CLEAR_LB_LOCATIONS: {
+    case CLEAR_ENCAMPMENT_LOCATIONS: {
       return INITIAL_STATE;
     }
 
@@ -85,4 +87,4 @@ const longBeachLocationsReducer = (state :Map = INITIAL_STATE, action :Object) =
 
 };
 
-export default longBeachLocationsReducer;
+export default encampmentsReducer;

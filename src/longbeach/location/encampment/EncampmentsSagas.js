@@ -20,24 +20,20 @@ import {
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
+  GET_ENCAMPMENT_LOCATIONS_NEIGHBORS,
   GET_GEO_OPTIONS,
-  GET_LB_LOCATIONS_NEIGHBORS,
-  GET_LB_STAY_AWAY_PEOPLE,
-  SEARCH_LB_LOCATIONS,
+  SEARCH_ENCAMPMENT_LOCATIONS,
+  getEncampmentLocationsNeighbors,
   getGeoOptions,
-  getLBLocationsNeighbors,
-  getLBStayAwayPeople,
-  searchLBLocations,
-} from './LongBeachLocationsActions';
+  searchEncampmentLocations,
+} from './EncampmentActions';
 
-import Logger from '../../utils/Logger';
-import * as FQN from '../../edm/DataModelFqns';
-import { APP_TYPES_FQNS } from '../../shared/Consts';
-import { getESIDFromApp, getESIDsFromApp } from '../../utils/AppUtils';
-import { getEKIDsFromEntryValues, mapFirstEntityDataFromNeighbors } from '../../utils/DataUtils';
-import { ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
-import { getLBPeoplePhotos } from '../people/LongBeachPeopleActions';
-import { getLBPeoplePhotosWorker } from '../people/LongBeachPeopleSagas';
+import Logger from '../../../utils/Logger';
+import * as FQN from '../../../edm/DataModelFqns';
+import { APP_TYPES_FQNS } from '../../../shared/Consts';
+import { getESIDFromApp, getESIDsFromApp } from '../../../utils/AppUtils';
+import { mapFirstEntityDataFromNeighbors } from '../../../utils/DataUtils';
+import { ERR_ACTION_VALUE_TYPE } from '../../../utils/Errors';
 
 const { executeSearch, searchEntityNeighborsWithFilter } = SearchApiActions;
 const { executeSearchWorker, searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
@@ -45,12 +41,10 @@ const { executeSearchWorker, searchEntityNeighborsWithFilterWorker } = SearchApi
 const {
   FILED_FOR_FQN,
   LOCATION_FQN,
-  PEOPLE_FQN,
-  SERVED_WITH_FQN,
   SERVICES_OF_PROCESS_FQN,
 } = APP_TYPES_FQNS;
 
-const LOG = new Logger('LongBeachLocationsSagas');
+const LOG = new Logger('EncampmentSagas');
 
 const GEOCODER_URL_PREFIX = 'https://osm.openlattice.com/nominatim/search/';
 const GEOCODER_URL_SUFFIX = '?format=json';
@@ -88,77 +82,7 @@ function* getGeoOptionsWatcher() :Generator<*, *, *> {
   yield takeEvery(GET_GEO_OPTIONS, getGeoOptionsWorker);
 }
 
-function* getLBStayAwayPeopleWorker(action :SequenceAction) :Generator<any, any, any> {
-  const response :Object = {
-    data: {}
-  };
-  try {
-    const { value: entityKeyIds } = action;
-    if (!isArray(entityKeyIds)) throw ERR_ACTION_VALUE_TYPE;
-    yield put(getLBStayAwayPeople.request(action.id));
-
-    const app :Map = yield select((state) => state.get('app', Map()));
-    const [
-      peopleESID,
-      servedWithESID,
-      serviceOfProcessESID
-    ] = getESIDsFromApp(app, [
-      PEOPLE_FQN,
-      SERVED_WITH_FQN,
-      SERVICES_OF_PROCESS_FQN
-    ]);
-
-    const peopleSearchParams = {
-      entitySetId: serviceOfProcessESID,
-      filter: {
-        entityKeyIds,
-        edgeEntitySetIds: [servedWithESID],
-        destinationEntitySetIds: [],
-        sourceEntitySetIds: [peopleESID],
-      }
-    };
-
-    const peopleResponse = yield call(
-      searchEntityNeighborsWithFilterWorker,
-      searchEntityNeighborsWithFilter(peopleSearchParams)
-    );
-
-    if (peopleResponse.error) throw peopleResponse.error;
-
-    const people = mapFirstEntityDataFromNeighbors(fromJS(peopleResponse.data));
-    const peopleEKIDs = getEKIDsFromEntryValues(people).toJS();
-
-    response.data = {
-      people
-    };
-
-    if (peopleEKIDs.length) {
-      const profilePicturesResponse = yield call(
-        getLBPeoplePhotosWorker,
-        getLBPeoplePhotos(peopleEKIDs)
-      );
-
-      if (profilePicturesResponse.error) throw profilePicturesResponse.error;
-      const { profilePictures } = profilePicturesResponse.data;
-
-      response.data.profilePictures = profilePictures;
-    }
-
-    yield put(getLBStayAwayPeople.success(action.id, response));
-  }
-  catch (error) {
-    LOG.error(action.type, error);
-    yield put(getLBStayAwayPeople.request(action.id));
-  }
-
-  return response;
-}
-
-function* getLBStayAwayPeopleWatcher() :Generator<any, any, any> {
-  yield takeEvery(GET_LB_STAY_AWAY_PEOPLE, getLBStayAwayPeopleWorker);
-}
-
-function* getLBLocationsNeighborsWorker(action :SequenceAction) :Generator<any, any, any> {
+function* getEncampmentLocationsNeighborsWorker(action :SequenceAction) :Generator<any, any, any> {
   const response :Object = {
     data: {}
   };
@@ -166,7 +90,7 @@ function* getLBLocationsNeighborsWorker(action :SequenceAction) :Generator<any, 
   try {
     const { value: entityKeyIds } = action;
     if (!isArray(entityKeyIds)) throw ERR_ACTION_VALUE_TYPE;
-    yield put(getLBLocationsNeighbors.request(action.id));
+    yield put(getEncampmentLocationsNeighbors.request(action.id));
 
     const app :Map = yield select((state) => state.get('app', Map()));
     const [
@@ -197,40 +121,26 @@ function* getLBLocationsNeighborsWorker(action :SequenceAction) :Generator<any, 
     if (stayAwayResponse.error) throw stayAwayResponse.error;
 
     const stayAway = mapFirstEntityDataFromNeighbors(fromJS(stayAwayResponse.data));
-    const stayAwayEKIDs = getEKIDsFromEntryValues(stayAway).toJS();
 
     response.data = {
       stayAway
     };
 
-    if (stayAwayEKIDs.length) {
-      const peopleResponse = yield call(
-        getLBStayAwayPeopleWorker,
-        getLBStayAwayPeople(stayAwayEKIDs)
-      );
-      if (peopleResponse.error) throw peopleResponse.error;
-
-      response.data = {
-        ...response.data,
-        ...peopleResponse.data
-      };
-    }
-
-    yield put(getLBLocationsNeighbors.success(action.id, response));
+    yield put(getEncampmentLocationsNeighbors.success(action.id, response));
   }
   catch (error) {
     LOG.error(action.type, error);
-    yield put(getLBLocationsNeighbors.failure(action.id));
+    yield put(getEncampmentLocationsNeighbors.failure(action.id));
   }
 
   return response;
 }
 
-function* getLBLocationsNeighborsWatcher() :Generator<any, any, any> {
-  yield takeEvery(GET_LB_LOCATIONS_NEIGHBORS, getLBLocationsNeighborsWorker);
+function* getEncampmentLocationsNeighborsWatcher() :Generator<any, any, any> {
+  yield takeEvery(GET_ENCAMPMENT_LOCATIONS_NEIGHBORS, getEncampmentLocationsNeighborsWorker);
 }
 
-function* searchLBLocationsWorker(action :SequenceAction) :Generator<any, any, any> {
+function* searchEncampmentLocationsWorker(action :SequenceAction) :Generator<any, any, any> {
   const response = {
     data: {}
   };
@@ -242,7 +152,7 @@ function* searchLBLocationsWorker(action :SequenceAction) :Generator<any, any, a
     const latitude :string = searchInputs.getIn(['selectedOption', 'lat']);
     const longitude :string = searchInputs.getIn(['selectedOption', 'lon']);
 
-    yield put(searchLBLocations.request(action.id, searchInputs));
+    yield put(searchEncampmentLocations.request(action.id, searchInputs));
 
     const app = yield select((state) => state.get('app', Map()));
     const issueESID = getESIDFromApp(app, LOCATION_FQN);
@@ -281,8 +191,8 @@ function* searchLBLocationsWorker(action :SequenceAction) :Generator<any, any, a
 
     if (locationsEKIDs.length) {
       const neighborsResponse = yield call(
-        getLBLocationsNeighborsWorker,
-        getLBLocationsNeighbors(locationsEKIDs)
+        getEncampmentLocationsNeighborsWorker,
+        getEncampmentLocationsNeighbors(locationsEKIDs)
       );
 
       if (neighborsResponse.error) throw neighborsResponse.error;
@@ -292,27 +202,25 @@ function* searchLBLocationsWorker(action :SequenceAction) :Generator<any, any, a
       };
     }
 
-    yield put(searchLBLocations.success(action.id, response.data));
+    yield put(searchEncampmentLocations.success(action.id, response.data));
   }
   catch (error) {
     LOG.error(action.type, error);
-    yield put(searchLBLocations.failure(action.id));
+    yield put(searchEncampmentLocations.failure(action.id));
   }
 
   return response;
 }
 
-function* searchLBLocationsWatcher() :Generator<any, any, any> {
-  yield takeEvery(SEARCH_LB_LOCATIONS, searchLBLocationsWorker);
+function* searchEncampmentLocationsWatcher() :Generator<any, any, any> {
+  yield takeEvery(SEARCH_ENCAMPMENT_LOCATIONS, searchEncampmentLocationsWorker);
 }
 
 export {
   getGeoOptionsWatcher,
   getGeoOptionsWorker,
-  getLBLocationsNeighborsWatcher,
-  getLBLocationsNeighborsWorker,
-  getLBStayAwayPeopleWatcher,
-  getLBStayAwayPeopleWorker,
-  searchLBLocationsWatcher,
-  searchLBLocationsWorker,
+  getEncampmentLocationsNeighborsWatcher,
+  getEncampmentLocationsNeighborsWorker,
+  searchEncampmentLocationsWatcher,
+  searchEncampmentLocationsWorker,
 };

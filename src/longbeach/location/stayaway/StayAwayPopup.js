@@ -16,14 +16,16 @@ import { IconButton } from 'lattice-ui-kit';
 import { Popup } from 'react-mapbox-gl';
 import { useSelector } from 'react-redux';
 
-import Detail from '../../components/premium/styled/Detail';
+import { STAY_AWAY_STORE_PATH } from './constants';
+
+import Detail from '../../../components/premium/styled/Detail';
 import {
   OPENLATTICE_ID_FQN,
   PERSON_RACE_FQN,
   PERSON_SEX_FQN
-} from '../../edm/DataModelFqns';
-import { getAddressFromLocation } from '../../utils/AddressUtils';
-import { getDobFromPerson, getLastFirstMiFromPerson } from '../../utils/PersonUtils';
+} from '../../../edm/DataModelFqns';
+import { getAddressFromLocation } from '../../../utils/AddressUtils';
+import { getDobFromPerson, getLastFirstMiFromPerson } from '../../../utils/PersonUtils';
 
 const ActionBar = styled.div`
   display: flex;
@@ -53,9 +55,9 @@ const StayAwayPopup = ({
 } :Props) => {
 
   const locationEKID = stayAwayLocation.getIn([OPENLATTICE_ID_FQN, 0]);
-  const stayAway = useSelector((store) => store.getIn(['longBeach', 'locations', 'stayAway', locationEKID])) || Map();
+  const stayAway = useSelector((store) => store.getIn([...STAY_AWAY_STORE_PATH, 'stayAway', locationEKID])) || Map();
   const stayAwayEKID = stayAway.getIn([OPENLATTICE_ID_FQN, 0]);
-  const person = useSelector((store) => store.getIn(['longBeach', 'locations', 'people', stayAwayEKID])) || Map();
+  const person = useSelector((store) => store.getIn([...STAY_AWAY_STORE_PATH, 'people', stayAwayEKID])) || Map();
   if (!isOpen) return null;
 
   const fullName = getLastFirstMiFromPerson(person, true);

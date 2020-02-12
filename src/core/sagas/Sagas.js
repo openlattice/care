@@ -23,9 +23,10 @@ import * as BasicInformationSagas from '../../containers/profile/edit/basicinfor
 import * as ContactsSagas from '../../containers/profile/edit/contacts/ContactsSagas';
 import * as DashboardSagas from '../../containers/dashboard/DashboardSagas';
 import * as DownloadsSagas from '../../containers/downloads/DownloadsSagas';
+import * as EncampmentSagas from '../../longbeach/location/encampment/EncampmentsSagas';
 import * as IssueSagas from '../../containers/issues/issue/IssueSagas';
 import * as IssuesSagas from '../../containers/issues/IssuesSagas';
-import * as LongBeachLocationsSagas from '../../longbeach/location/LongBeachLocationsSagas';
+import * as LongBeachLocationsSagas from '../../longbeach/location/stayaway/LongBeachLocationsSagas';
 import * as LongBeachPeopleSagas from '../../longbeach/people/LongBeachPeopleSagas';
 import * as LongBeachProfileSagas from '../../longbeach/profile/LongBeachProfileSagas';
 import * as LongBeachProviderSagas from '../../longbeach/provider/LongBeachProviderSagas';
@@ -182,5 +183,8 @@ export default function* sagas() :Generator<*, *, *> {
 
     fork(LongBeachProviderSagas.getLBProvidersWatcher),
     /* <===== END LONG BEACH HACK =====> */
+
+    fork(EncampmentSagas.searchEncampmentLocationsWatcher),
+    fork(EncampmentSagas.getGeoOptionsWatcher),
   ]);
 }

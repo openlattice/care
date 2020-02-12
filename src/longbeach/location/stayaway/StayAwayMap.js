@@ -6,12 +6,14 @@ import { List } from 'immutable';
 import { useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
-import CurrentPositionLayer from './CurrentPositionLayer';
-import RadiusLayer from './RadiusLayer';
 import StayAwayLocationLayer from './StayAwayLocationLayer';
 import StayAwayPopup from './StayAwayPopup';
-import { getBoundsFromPointsOfInterest, getCoordinates } from './MapUtils';
-import { COORDS, MAP_STYLE } from './constants';
+import { STAY_AWAY_STORE_PATH } from './constants';
+
+import CurrentPositionLayer from '../../map/CurrentPositionLayer';
+import RadiusLayer from '../../map/RadiusLayer';
+import { getBoundsFromPointsOfInterest, getCoordinates } from '../../map/MapUtils';
+import { COORDS, MAP_STYLE } from '../../map/constants';
 
 declare var __MAPBOX_TOKEN__;
 
@@ -85,9 +87,9 @@ const StayAwayMap = (props :Props) => {
     searchResults,
     selectedOption
   } = props;
-  const stayAwayLocations = useSelector((store) => store.getIn(['longBeach', 'locations', 'stayAwayLocations']));
+  const stayAwayLocations = useSelector((store) => store.getIn([...STAY_AWAY_STORE_PATH, 'stayAwayLocations']));
   const isLoading = useSelector((store) => store
-    .getIn(['longBeach', 'locations', 'fetchState']) === RequestStates.PENDING);
+    .getIn([...STAY_AWAY_STORE_PATH, 'fetchState']) === RequestStates.PENDING);
   const [state, stateDispatch] = useReducer(reducer, INITIAL_STATE);
   const {
     bounds,
