@@ -5,6 +5,7 @@ import {
   Set,
   getIn,
   isImmutable,
+  setIn,
 } from 'immutable';
 import { Constants, Models } from 'lattice';
 import { DataProcessingUtils } from 'lattice-fabricate';
@@ -66,6 +67,48 @@ const simulateResponseData = (properties :Map, entityKeyId :UUID, propertyTypesB
   });
 
   return transformedIds;
+};
+
+const replacePropertyTypeIdsWithFqns = (
+  entity :Object,
+  propertyTypesById :Map
+) => Object.fromEntries(Object.entries(entity).map(([propertyTypeId, value]) => {
+  const fqnObj = propertyTypesById.getIn([propertyTypeId, 'type']);
+  const fqn = new FullyQualifiedName(fqnObj);
+  return [fqn.toString(), value];
+}));
+
+const indexSubmittedDataGraph = (dataGraph :Object, response :Object, propertyTypesById) :Object => {
+  const { associationEntityData, entityData } = dataGraph;
+  // for each array of data in entityData keyed by ESID
+  // find the matching EKID from response
+  const indexedEntityEntries = Object.entries(entityData).map(([entitySetId, entities]) => {
+    const indexedEntities = entities.map((entity, index) => {
+      const { entityKeyIds } = response.data;
+      const entityKeyId = getIn(entityKeyIds, [entitySetId, index]);
+      const entityWithFqns = replacePropertyTypeIdsWithFqns(entity, propertyTypesById);
+      return setIn(entityWithFqns, [OPENLATTICE_ID_FQN], [entityKeyId]);
+    });
+    return [entitySetId, indexedEntities];
+  });
+
+  const indexedAssociationEntityEntries = Object.entries(associationEntityData).map(([entitySetId, entities]) => {
+    const indexedEntities = entities.map((entity, index) => {
+      const { entitySetIds } = response.data;
+      const entityKeyId = getIn(entitySetIds, [entitySetId, index]);
+      const entityWithFqns = replacePropertyTypeIdsWithFqns(entity.data, propertyTypesById);
+      return setIn(entityWithFqns, [OPENLATTICE_ID_FQN], [entityKeyId]);
+    });
+    return [entitySetId, indexedEntities];
+  });
+
+  const indexedEntities = Object.fromEntries(indexedEntityEntries);
+  const indexedAssociations = Object.fromEntries(indexedAssociationEntityEntries);
+
+  return {
+    entities: indexedEntities,
+    associations: indexedAssociations
+  };
 };
 
 const inchesToFeetString = (inches :number) => {
@@ -184,15 +227,16 @@ const getEKIDsFromEntryValues = (neighborMap :Map) => neighborMap
 export {
   SEARCH_PREFIX,
   formatDataGraphResponse,
+  getEKIDsFromEntryValues,
   getEntityKeyId,
   getEntityKeyIdsFromList,
   getFormDataFromEntity,
   getFormDataFromEntityArray,
   getFqnObj,
-  getEKIDsFromEntryValues,
   getSearchTerm,
   groupNeighborsByEntitySetIds,
   inchesToFeetString,
+  indexSubmittedDataGraph,
   keyIn,
   mapFirstEntityDataFromNeighbors,
   removeEntitiesFromEntityIndexToIdMap,

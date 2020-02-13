@@ -151,7 +151,7 @@ const EncampmentMap = (props :Props) => {
   const confirmLocation = () => {
     setConfirmedLocation(currentCenter);
     openModal();
-  }
+  };
 
   const handleMoveEnd = (map :any) => {
     const { _center } = map.transform;

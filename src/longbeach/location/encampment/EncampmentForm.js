@@ -87,6 +87,7 @@ const EncampmentForm = (props :Props, ref) => {
     dispatch(submitEncampment({
       associationEntityData,
       entityData,
+      formData: newFormData
     }));
   }, [
     currentUser,

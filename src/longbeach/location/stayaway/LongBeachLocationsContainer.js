@@ -93,7 +93,7 @@ const LongBeachLocationContainer = () => {
     selectedOption
   } = state;
   const [address, setAddress] = useState();
-  const [currentPosition, posError] = usePosition();
+  const [currentPosition] = usePosition();
 
   const fetchGeoOptions = useCallback(() => {
     if (isNonEmptyString(address)) {
@@ -104,7 +104,7 @@ const LongBeachLocationContainer = () => {
   useTimeout(fetchGeoOptions, 300);
 
   useEffect(() => {
-    if (!posError && currentPosition.coords && !selectedOption) {
+    if (currentPosition.coords && !selectedOption) {
       const { latitude, longitude } = currentPosition.coords;
       stateDispatch({
         type: 'selectLocation',
@@ -118,7 +118,6 @@ const LongBeachLocationContainer = () => {
     }
   }, [
     currentPosition,
-    posError,
     selectedOption
   ]);
 
@@ -140,7 +139,7 @@ const LongBeachLocationContainer = () => {
   const hasSearched = fetchState !== RequestStates.STANDBY;
   const isLoading = fetchState === RequestStates.PENDING;
   const isFetchingOptions = optionsFetchState === RequestStates.PENDING;
-  const hasPosition = !posError && currentPosition.coords;
+  const hasPosition = !!currentPosition.coords;
 
   const filterOption = () => true;
 

@@ -32,14 +32,8 @@ import {
 
 import Logger from '../../../utils/Logger';
 import * as FQN from '../../../edm/DataModelFqns';
-import {
-  submitDataGraph,
-  submitPartialReplace,
-} from '../../../core/sagas/data/DataActions';
-import {
-  submitDataGraphWorker,
-  submitPartialReplaceWorker,
-} from '../../../core/sagas/data/DataSagas';
+import { submitDataGraph } from '../../../core/sagas/data/DataActions';
+import { submitDataGraphWorker } from '../../../core/sagas/data/DataSagas';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { getESIDFromApp, getESIDsFromApp } from '../../../utils/AppUtils';
 import { mapFirstEntityDataFromNeighbors } from '../../../utils/DataUtils';
