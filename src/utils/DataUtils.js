@@ -5,6 +5,7 @@ import {
   Set,
   getIn,
   isImmutable,
+  setIn,
 } from 'immutable';
 import { Constants, Models } from 'lattice';
 import { DataProcessingUtils } from 'lattice-fabricate';
@@ -66,6 +67,80 @@ const simulateResponseData = (properties :Map, entityKeyId :UUID, propertyTypesB
   });
 
   return transformedIds;
+};
+
+const replacePropertyTypeIdsWithFqns = (
+  entity :Object,
+  propertyTypesById :Map
+) => Object.fromEntries<string, Object>(Object.entries(entity).map(([propertyTypeId, value]) => {
+  const fqnObj = propertyTypesById.getIn([propertyTypeId, 'type']);
+  const fqn = new FullyQualifiedName(fqnObj);
+  return [fqn.toString(), value];
+}));
+
+type Entity = {
+  [key :string] :any[]
+};
+
+type DataGraph = {|
+  associationEntityData :{
+    [key :string] :Entity[]
+  };
+  entityData :{
+    [key :string] :Entity[]
+  };
+|};
+
+type SubmitDataGraphResponse = {|
+  data :{
+    entityKeyIds :{ [key :string] :string[] },
+    entitySetIds :{ [key :string] :string[] },
+   };
+  error ?:Object;
+|};
+
+const indexSubmittedDataGraph = (
+  dataGraph :DataGraph,
+  response :SubmitDataGraphResponse,
+  propertyTypesById :Map
+) :Object => {
+  const { associationEntityData, entityData } = dataGraph;
+
+  const indexedEntityEntries = Object.entries(entityData).map(([entitySetId, entities]) => {
+    if (Array.isArray(entities)) {
+      const indexedEntities :Object[] = entities.map((entity :Object, index :number) => {
+        const { entityKeyIds } = response.data;
+        const entityKeyId :UUID = getIn(entityKeyIds, [entitySetId, index]);
+        const entityWithFqns = replacePropertyTypeIdsWithFqns(entity, propertyTypesById);
+        return setIn(entityWithFqns, [OPENLATTICE_ID_FQN], [entityKeyId]);
+      });
+      return [entitySetId, indexedEntities];
+    }
+
+    throw new Error("entityData 'entities' is not an array");
+  });
+
+  const indexedAssociationEntityEntries = Object.entries(associationEntityData).map(([entitySetId, entities]) => {
+    if (Array.isArray(entities)) {
+      const indexedEntities = entities.map((entity :Object, index :number) => {
+        const { entitySetIds } = response.data;
+        const entityKeyId = getIn(entitySetIds, [entitySetId, index]);
+        const entityWithFqns = replacePropertyTypeIdsWithFqns(entity.data, propertyTypesById);
+        return setIn(entityWithFqns, [OPENLATTICE_ID_FQN], [entityKeyId]);
+      });
+      return [entitySetId, indexedEntities];
+    }
+
+    throw new Error("associationEntitiyData 'entities' is not an array");
+  });
+
+  const indexedEntities = Object.fromEntries(indexedEntityEntries);
+  const indexedAssociations = Object.fromEntries(indexedAssociationEntityEntries);
+
+  return {
+    entities: indexedEntities,
+    associations: indexedAssociations
+  };
 };
 
 const inchesToFeetString = (inches :number) => {
@@ -184,18 +259,20 @@ const getEKIDsFromEntryValues = (neighborMap :Map) => neighborMap
 export {
   SEARCH_PREFIX,
   formatDataGraphResponse,
+  getEKIDsFromEntryValues,
   getEntityKeyId,
   getEntityKeyIdsFromList,
   getFormDataFromEntity,
   getFormDataFromEntityArray,
   getFqnObj,
-  getEKIDsFromEntryValues,
   getSearchTerm,
   groupNeighborsByEntitySetIds,
   inchesToFeetString,
+  indexSubmittedDataGraph,
   keyIn,
   mapFirstEntityDataFromNeighbors,
   removeEntitiesFromEntityIndexToIdMap,
+  replacePropertyTypeIdsWithFqns,
   simulateResponseData,
   stripIdField,
 };
