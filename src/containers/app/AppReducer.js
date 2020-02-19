@@ -3,20 +3,19 @@
  */
 
 import {
+  Map,
   fromJS,
   get,
   getIn,
-  Map,
 } from 'immutable';
 import { Models } from 'lattice';
 import { AccountUtils } from 'lattice-auth';
 import { RequestStates } from 'redux-reqseq';
-
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
-  loadApp,
   initializeApplication,
+  loadApp,
 } from './AppActions';
 
 const { FullyQualifiedName } = Models;
@@ -111,25 +110,6 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
                   mutable.setIn(['selectedOrgEntitySetIds', appTypeFqn], appTypeESID);
                 });
               }
-
-              appTypes.forEach((appType) => {
-                const type = get(appType, 'type');
-                // .toString() is necessary when using setIn as immutable attempts to set the FQN instance as the key
-                const appTypeFqn = new FullyQualifiedName(type).toString();
-                const appTypeESID = getIn(appConfig, ['config', appTypeFqn, 'entitySetId']);
-                mutable.setIn([appTypeFqn, 'entitySetsByOrganization', orgId], appTypeESID);
-              });
-
-            });
-
-            appTypes.forEach((appType :Object) => {
-              const type = get(appType, 'type');
-              const appTypeFqn = new FullyQualifiedName(type).toString();
-              const propertyTypes = getEntityTypePropertyTypes(edm, appType.entityTypeId);
-              const primaryKeys = edm.entityTypes[appType.entityTypeId].key;
-              mutable
-                .setIn([appTypeFqn, 'propertyTypes'], fromJS(propertyTypes))
-                .setIn([appTypeFqn, 'primaryKeys'], fromJS(primaryKeys));
             });
 
             const appSettings = appSettingsByOrgId.get(selectedOrganizationId, Map());

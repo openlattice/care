@@ -92,6 +92,7 @@ function* loadAppWorker(action :SequenceAction) :Generator<*, *, *> {
      */
 
     const app = response.data;
+    console.log(app);
     const [appConfigsResponse, appTypesResponse] = yield all([
       call(getAppConfigsWorker, getAppConfigs(app.id)),
       call(getAppTypesWorker, getAppTypes(app.appTypeIds)),
@@ -288,11 +289,11 @@ function* initializeApplicationWorker(action :SequenceAction) :Generator<*, *, *
     );
 
     // Get hospitals if necessary
-    const hospitalRequest = yield call(loadHospitalsWorker, loadHospitals());
+    // const hospitalRequest = yield call(loadHospitalsWorker, loadHospitals());
 
     const phaseTwoResponse = yield all([
       staffRequest,
-      hospitalRequest
+      // hospitalRequest
     ]);
 
     const phaseTwo = phaseTwoResponse.reduce((acc, response) => {

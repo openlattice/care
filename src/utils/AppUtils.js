@@ -17,9 +17,8 @@ const {
 export const getSelectedOrganizationId = (app :Map) => app.get('selectedOrganizationId');
 
 export const getESIDFromApp = (app :Map, fqn :FullyQualifiedName) :string => app.getIn([
+  'selectedOrgEntitySetIds',
   fqn.toString(),
-  'entitySetsByOrganization',
-  getSelectedOrganizationId(app)
 ]);
 
 export const getAppearsInESId = (app :Map) :string => getESIDFromApp(app, APPEARS_IN_FQN);
