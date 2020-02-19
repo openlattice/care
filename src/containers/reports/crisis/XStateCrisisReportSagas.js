@@ -1,49 +1,36 @@
 // @flow
 import isPlainObject from 'lodash/isPlainObject';
 import {
-  all,
   call,
   put,
   select,
   takeEvery,
-  takeLatest,
 } from '@redux-saga/core/effects';
 import {
-  List,
   Map,
-  fromJS,
-  getIn,
-  has,
 } from 'immutable';
-import { Constants } from 'lattice';
 import { DataProcessingUtils } from 'lattice-fabricate';
-import {
-  DataApiActions,
-  DataApiSagas
-} from 'lattice-sagas';
-import { DateTime } from 'luxon';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
   SUBMIT_CRISIS_REPORT,
   submitCrisisReport
 } from './CrisisActions';
+import { getCrisisReportAssociations } from './XStateCrisisReportUtils';
 
 import Logger from '../../../utils/Logger';
-import { LOGIN_PATH } from '../../../core/router/Routes';
 import {
-  createOrReplaceAssociation,
   submitDataGraph,
-  submitPartialReplace,
 } from '../../../core/sagas/data/DataActions';
 import {
-  createOrReplaceAssociationWorker,
   submitDataGraphWorker,
-  submitPartialReplaceWorker,
 } from '../../../core/sagas/data/DataSagas';
+import { APP_TYPES_FQNS } from '../../../shared/Consts';
+import { getEntityKeyId } from '../../../utils/DataUtils';
 import { ERR_ACTION_VALUE_TYPE } from '../../../utils/Errors';
 
 const { processEntityData, processAssociationEntityData } = DataProcessingUtils;
+const { PEOPLE_FQN, STAFF_FQN } = APP_TYPES_FQNS;
 
 const LOG = new Logger('XCrisisReportSagas');
 
@@ -54,14 +41,33 @@ function* submitCrisisReportWorker(action :SequenceAction) :Generator<any, any, 
     if (!isPlainObject(value)) throw ERR_ACTION_VALUE_TYPE;
     yield put(submitCrisisReport.request(action.id));
     const { formData, selectedPerson } = value;
-    const now = DateTime.local().toISO();
 
     const entitySetIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
     const propertyTypeIds = yield select((state) => state.getIn(['edm', 'fqnToIdMap'], Map()));
-    
+    const currentStaff = yield select((state) => state.getIn(['staff', 'currentUser', 'data'], Map()));
+
     const entityData = processEntityData(formData, entitySetIds, propertyTypeIds);
-    console.log(entityData);
-    
+    const existingEKIDs = {
+      [PEOPLE_FQN]: getEntityKeyId(selectedPerson),
+      [STAFF_FQN]: getEntityKeyId(currentStaff)
+      // add incidentEKID
+    };
+
+    const associationEntityData = processAssociationEntityData(
+      getCrisisReportAssociations(formData, existingEKIDs),
+      entitySetIds,
+      propertyTypeIds
+    );
+
+    const dataGraphResponse = yield call(
+      submitDataGraphWorker,
+      submitDataGraph({
+        entityData,
+        associationEntityData,
+      })
+    );
+    if (dataGraphResponse.error) throw dataGraphResponse.error;
+
     yield put(submitCrisisReport.success(action.id));
   }
   catch (error) {
@@ -79,4 +85,4 @@ function* submitCrisisReportWatcher() :Generator<any, any, any> {
 export {
   submitCrisisReportWorker,
   submitCrisisReportWatcher,
-}
+};

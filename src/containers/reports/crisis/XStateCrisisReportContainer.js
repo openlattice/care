@@ -21,28 +21,97 @@ import ProfileBanner from '../../profile/ProfileBanner';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
 import { HOME_PATH } from '../../../core/router/Routes';
 
-// const initialFormData = {
-//   page3section1: {
-//     '0__@@__app.people__@@__nc.PersonSurName': [
-//       'Homicidal thoughts'
-//     ],
-//     '1__@@__app.people__@@__nc.PersonSurName': [
-//       'Mania'
-//     ]
-//   },
-//   page2section1: {
-//     '0__@@__app.people__@@__nc.PersonSurName': '2019-12-19T13:37:58.493-08:00'
-//   },
-//   page1section1: {
-//     '0__@@__app.people__@@__im.PersonNickName': [],
-//     '0__@@__app.people__@@__nc.PersonSurName': 'fdsa',
-//     '0__@@__app.people__@@__nc.PersonGivenName': 'fdsada',
-//     '0__@@__app.people__@@__nc.PersonBirthDate': '2019-12-05',
-//     '0__@@__app.people__@@__nc.PersonSex': 'Male',
-//     '0__@@__app.people__@@__nc.PersonRace': 'White',
-//     '0__@@__app.people__@@__nc.PersonEthnicity': 'Non-Hispanic'
-//   }
-// };
+const initialFormData = {
+  page7section1: {
+    '0__@@__app.insurance__@@__general.status': 'Primary',
+    '1__@@__app.insurance__@@__general.status': 'Secondary',
+    '0__@@__app.insurance__@@__ol.organizationname': 'Private',
+    '1__@@__app.insurance__@@__ol.organizationname': 'Medicare'
+  },
+  page6section1: {
+    '0__@@__app.housing__@@__ol.type': [
+      'Permanent Residence',
+      'Stable Housing'
+    ],
+    '0__@@__app.housing__@@__ol.description': [
+      'Caregiver',
+      'Children'
+    ],
+    '0__@@__app.income__@@__ol.type': [
+      'DCF',
+      'DDS'
+    ]
+  },
+  page5section1: {
+    '0__@@__app.weapon__@@__ol.type': [
+      'Gun',
+      'Knife'
+    ],
+    '0__@@__app.violentbehavior__@@__ol.directedrelation': [
+      'Bystander',
+      'Co-worker',
+      'Family Member'
+    ],
+    '0__@@__app.injury__@@__ol.personinjured': [
+      'Bystander',
+      'Co-worker',
+      'Family Member'
+    ],
+    '0__@@__app.selfharm__@@__ol.action': [
+      'Suicide Attempt',
+      'Suicidal Ideation'
+    ]
+  },
+  page4section1: [
+    {
+      '-1__@@__app.diagnosis__@@__ol.name': 'asdfas'
+    },
+    {
+      '-1__@@__app.diagnosis__@@__ol.name': 'fdsafdsa'
+    }
+  ],
+  page4section2: [
+    {
+      '-1__@@__app.medicationstatement__@@__ol.name': 'afsda',
+      '-1__@@__app.medicationstatement__@@__ol.takenasprescribed': 'Yes'
+    },
+    {
+      '-1__@@__app.medicationstatement__@@__ol.name': 'fdsa',
+      '-1__@@__app.medicationstatement__@@__ol.takenasprescribed': 'No'
+    }
+  ],
+  page4section3: {
+    '0__@@__app.substance__@@__ol.type': [
+      'Unknown',
+      'Prescription',
+      'Opioids'
+    ],
+    '0__@@__app.substancehistory__@@__ol.type': [
+      'Alcohol',
+      'Cocaine',
+      'Opioids'
+    ]
+  },
+  page3section1: {
+    '0__@@__app.natureofcrisis__@@__ol.description': [
+      'Acute stress',
+      'Self-harm',
+      'Homicidal thoughts'
+    ],
+    '0__@@__app.behavior__@@__ol.observedbehavior': [
+      'Belligerent',
+      'Bizzare, unusual behavior',
+      'Disorientation'
+    ]
+  },
+  page2section1: {
+    '0__@@__app.incident_new__@@__ol.datetimestart': '2020-02-14T11:00:15.802-08:00',
+    '0__@@__app.incident_new__@@__criminaljustice.casenumber': '123',
+    '0__@@__app.location__@@__location.address': '123',
+    '0__@@__app.incident_new__@@__ol.description': 'summary\n'
+  },
+
+};
 
 const ActionRow = styled.div`
   display: flex;
@@ -73,7 +142,7 @@ const XStateCrisisReportContainer = () => {
         <CardStack>
           <Card>
             <PagedByMachine
-                // initialFormData={initialFormData}
+                initialFormData={initialFormData}
                 machine={crisisMachine}
                 onPageChange={onPageChange}
                 render={({
