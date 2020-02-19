@@ -92,7 +92,6 @@ function* loadAppWorker(action :SequenceAction) :Generator<*, *, *> {
      */
 
     const app = response.data;
-    console.log(app);
     const [appConfigsResponse, appTypesResponse] = yield all([
       call(getAppConfigsWorker, getAppConfigs(app.id)),
       call(getAppTypesWorker, getAppTypes(app.appTypeIds)),
