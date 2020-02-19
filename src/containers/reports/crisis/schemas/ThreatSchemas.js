@@ -40,18 +40,7 @@ const schema = {
         },
         [getEntityAddressKey(0, VIOLENT_BEHAVIOR_FQN, FQN.DIRECTED_AGAINST_RELATION_FQN)]: {
           type: 'array',
-          title: 'Violence threatened toward:',
-          description: SELECT_ALL_THAT_APPLY,
-          items: {
-            type: 'string',
-            enum: VIOLENCE_TARGET
-          },
-          // minItems: 1,
-          uniqueItems: true
-        },
-        [getEntityAddressKey(1, VIOLENT_BEHAVIOR_FQN, FQN.DIRECTED_AGAINST_RELATION_FQN)]: {
-          type: 'array',
-          title: 'Violence engaged with:',
+          title: 'Violence threatened toward or engaged with',
           description: SELECT_ALL_THAT_APPLY,
           items: {
             type: 'string',
@@ -104,16 +93,6 @@ const uiSchema = {
       }
     },
     [getEntityAddressKey(0, VIOLENT_BEHAVIOR_FQN, FQN.DIRECTED_AGAINST_RELATION_FQN)]: {
-      classNames: 'column-span-12',
-      'ui:widget': 'checkboxes',
-      'ui:options': {
-        mode: 'button',
-        row: true,
-        withNone: true,
-        withOther: true,
-      }
-    },
-    [getEntityAddressKey(1, VIOLENT_BEHAVIOR_FQN, FQN.DIRECTED_AGAINST_RELATION_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
       'ui:options': {
