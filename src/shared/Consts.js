@@ -51,6 +51,9 @@ export const APP_TYPES_FQNS = {
   OCCUPATION_FQN: new FullyQualifiedName('app.occupation'),
   INCOME_FQN: new FullyQualifiedName('app.income'),
   INSURANCE_FQN: new FullyQualifiedName('app.insurance'),
+  INVOLVED_IN_FQN: new FullyQualifiedName('app.involvedin'),
+  CLINICIAN_REPORT_FQN: new FullyQualifiedName('app.cliniciancrisisreport'),
+  PATROL_REPORT_FQN: new FullyQualifiedName('app.patrolcrisisreport'),
 
   /* <===== BEGIN LONG BEACH HACK =====> */
   FILED_FOR_FQN: new FullyQualifiedName('app.filed_for'),

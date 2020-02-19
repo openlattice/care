@@ -3,7 +3,11 @@ import { DataProcessingUtils } from 'lattice-fabricate';
 import * as FQN from '../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
 
-const { CALL_FOR_SERVICE_FQN, INCIDENT_FQN, LOCATION_FQN } = APP_TYPES_FQNS;
+const {
+  CLINICIAN_REPORT_FQN,
+  INCIDENT_FQN,
+  LOCATION_FQN
+} = APP_TYPES_FQNS;
 
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
 
@@ -12,13 +16,16 @@ const schema = {
   title: 'Incident',
   properties: {
     [getPageSectionKey(2, 1)]: {
+      associations: [
+        'hello'
+      ],
       type: 'object',
       title: '',
       properties: {
         [getEntityAddressKey(0, INCIDENT_FQN, FQN.DATETIME_START_FQN)]: {
           title: 'Date & Time',
           type: 'string',
-          format: 'date-time'
+          format: 'date-time',
         },
         [getEntityAddressKey(0, INCIDENT_FQN, FQN.CRIMINALJUSTICE_CASE_NUMBER_FQN)]: {
           title: 'Incident #',
@@ -32,6 +39,11 @@ const schema = {
           title: 'Summary',
           type: 'string',
         },
+        [getEntityAddressKey(0, CLINICIAN_REPORT_FQN, FQN.TYPE_FQN)]: {
+          title: 'Report Type',
+          type: 'string',
+          default: 'Crisis Report',
+        },
         // [getEntityAddressKey(0, CALL_FOR_SERVICE_FQN, FQN.HOW_REPORTED_FQN)]: {
         //   title: 'Dispatch',
         //   type: 'string',
@@ -42,7 +54,7 @@ const schema = {
       //   getEntityAddressKey(0, INCIDENT_FQN, FQN.PERSON_LAST_NAME_FQN),
       // ]
     }
-  }
+  },
 };
 
 const uiSchema = {
@@ -64,6 +76,9 @@ const uiSchema = {
       classNames: 'column-span-12',
       'ui:widget': 'textarea'
     },
+    [getEntityAddressKey(0, CLINICIAN_REPORT_FQN, FQN.TYPE_FQN)]: {
+      'ui:widget': 'hidden'
+    }
     // [getEntityAddressKey(0, CALL_FOR_SERVICE_FQN, FQN.HOW_REPORTED_FQN)]: {
     //   classNames: 'column-span-12',
     // },
