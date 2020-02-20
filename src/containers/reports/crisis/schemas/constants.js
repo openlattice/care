@@ -140,11 +140,14 @@ const DISPOSITION = [
   'Day Treatment',
   'Detox',
   'New Outpatient',
-  'PsychoPharm Referral',
   'CCS',
   'ESP / Mobile',
   'CBAT',
-  'Refer to Current Providers',
+];
+
+const CLINICIAN_REFERRALS = [
+  'Current Providers',
+  'PsychoPharm',
 ];
 
 const PURPOSE_OF_JDP = [
@@ -167,6 +170,7 @@ const BILLED_SERVICES = [
 export {
   BEHAVIORS,
   BILLED_SERVICES,
+  CLINICIAN_REFERRALS,
   DISPOSITION,
   DRUGS_ALCOHOL,
   EMPLOYMENT,

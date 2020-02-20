@@ -5,6 +5,29 @@ const { OPENLATTICE_ID_FQN } = Constants;
 
 export { OPENLATTICE_ID_FQN };
 
+/* referral request */
+const SERVICE_TYPE_FQN = new FullyQualifiedName('ol.servicetype');
+export { SERVICE_TYPE_FQN };
+
+/* encounter */
+const SERVICE_SETTING_FQN = new FullyQualifiedName('ol.servicesetting');
+export { SERVICE_SETTING_FQN };
+
+/* encounter details */
+const LAW_ENFORCEMENT_INVOLVEMENT_FQN = new FullyQualifiedName('ol.lawenforcementinvolvement');
+const REASON_FQN = new FullyQualifiedName('ol.reason');
+const LEVEL_OF_CARE_FQN = new FullyQualifiedName('ol.levelofcare');
+
+export {
+  LAW_ENFORCEMENT_INVOLVEMENT_FQN,
+  LEVEL_OF_CARE_FQN,
+  REASON_FQN,
+};
+
+/* invoice */
+const LINE_ITEM_FQN = new FullyQualifiedName('ol.lineitem');
+export { LINE_ITEM_FQN };
+
 const NUM_SOURCES_FOUND_IN_FQN = new FullyQualifiedName('ol.numsourcesfoundin');
 export { NUM_SOURCES_FOUND_IN_FQN };
 

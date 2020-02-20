@@ -2,21 +2,25 @@ import { DataProcessingUtils } from 'lattice-fabricate';
 
 import {
   BILLED_SERVICES,
+  CLINICIAN_REFERRALS,
   DISPOSITION,
+  PURPOSE_OF_JDP,
   SELECT_ALL_THAT_APPLY,
   SELECT_ONLY_ONE,
   TECHNIQUES,
   YES_NO_NA,
-  YES_NO_UNKNOWN
+  YES_NO_UNKNOWN,
 } from './constants';
 
 import * as FQN from '../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
 
 const {
-  // DISPOSITION_FQN,
-  PEOPLE_FQN,
+  ENCOUNTER_FQN,
+  ENCOUNTER_DETAILS_FQN,
+  INVOICE_FQN,
   INTERACTION_STRATEGY_FQN,
+  REFERRAL_REQUEST_FQN,
 } = APP_TYPES_FQNS;
 
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
@@ -40,7 +44,7 @@ const schema = {
           // minItems: 1,
           uniqueItems: true
         },
-        [getEntityAddressKey(1, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+        [getEntityAddressKey(0, ENCOUNTER_FQN, FQN.SERVICE_TYPE_FQN)]: {
           type: 'array',
           description: SELECT_ALL_THAT_APPLY,
           title: 'Disposition',
@@ -51,36 +55,40 @@ const schema = {
           // minItems: 1,
           uniqueItems: true
         },
-        [getEntityAddressKey(2, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
-          type: 'string',
-          title: 'Was custody diverted?',
-          description: SELECT_ONLY_ONE,
-          enum: YES_NO_UNKNOWN
-        },
-        [getEntityAddressKey(3, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
-          type: 'string',
-          title: 'Was jail diversion an option?',
-          description: SELECT_ONLY_ONE,
-          enum: YES_NO_NA
-        },
-        [getEntityAddressKey(4, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+        [getEntityAddressKey(0, REFERRAL_REQUEST_FQN, FQN.SERVICE_TYPE_FQN)]: {
           type: 'array',
+          title: 'Referred to:',
           description: SELECT_ALL_THAT_APPLY,
-          title: 'Purpose of JDP intervention if diversion was not an option',
           items: {
             type: 'string',
-            enum: DISPOSITION
+            enum: CLINICIAN_REFERRALS
+          },
+          uniqueItems: true
+        },
+        [getEntityAddressKey(0, ENCOUNTER_DETAILS_FQN, FQN.LAW_ENFORCEMENT_INVOLVEMENT_FQN)]: {
+          type: 'boolean',
+          title: 'Was jail diversion an option?',
+          description: SELECT_ONLY_ONE,
+          enumNames: ['Yes', 'No']
+        },
+        [getEntityAddressKey(0, ENCOUNTER_DETAILS_FQN, FQN.REASON_FQN)]: {
+          type: 'array',
+          description: SELECT_ALL_THAT_APPLY,
+          title: 'JDP intervention',
+          items: {
+            type: 'string',
+            enum: PURPOSE_OF_JDP
           },
           // minItems: 1,
           uniqueItems: true
         },
-        [getEntityAddressKey(5, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+        [getEntityAddressKey(0, ENCOUNTER_DETAILS_FQN, FQN.LEVEL_OF_CARE_FQN)]: {
           type: 'string',
-          title: 'Did JDP intevention prevent ER visit?',
+          title: 'Did JDP intervention prevent ER visit?',
           description: SELECT_ONLY_ONE,
           enum: YES_NO_NA
         },
-        [getEntityAddressKey(6, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+        [getEntityAddressKey(0, INVOICE_FQN, FQN.LINE_ITEM_FQN)]: {
           type: 'array',
           description: SELECT_ALL_THAT_APPLY,
           title: 'Billed services',
@@ -110,7 +118,35 @@ const uiSchema = {
         row: true,
       }
     },
-    [getEntityAddressKey(1, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+    [getEntityAddressKey(0, ENCOUNTER_FQN, FQN.SERVICE_TYPE_FQN)]: {
+      classNames: 'column-span-12',
+      'ui:widget': 'checkboxes',
+      'ui:options': {
+        mode: 'button',
+        row: true,
+        withOther: true,
+        withNone: true,
+      }
+    },
+    [getEntityAddressKey(0, REFERRAL_REQUEST_FQN, FQN.SERVICE_TYPE_FQN)]: {
+      classNames: 'column-span-12',
+      'ui:widget': 'checkboxes',
+      'ui:options': {
+        mode: 'button',
+        row: true,
+        withOther: true,
+        withNone: true,
+      }
+    },
+    [getEntityAddressKey(0, ENCOUNTER_DETAILS_FQN, FQN.LAW_ENFORCEMENT_INVOLVEMENT_FQN)]: {
+      classNames: 'column-span-12',
+      'ui:widget': 'radio',
+      'ui:options': {
+        mode: 'button',
+        row: true,
+      }
+    },
+    [getEntityAddressKey(0, ENCOUNTER_DETAILS_FQN, FQN.REASON_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
       'ui:options': {
@@ -119,7 +155,7 @@ const uiSchema = {
         withOther: true,
       }
     },
-    [getEntityAddressKey(2, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+    [getEntityAddressKey(0, ENCOUNTER_DETAILS_FQN, FQN.LEVEL_OF_CARE_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'radio',
       'ui:options': {
@@ -127,32 +163,7 @@ const uiSchema = {
         row: true,
       }
     },
-    [getEntityAddressKey(3, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
-      classNames: 'column-span-12',
-      'ui:widget': 'radio',
-      'ui:options': {
-        mode: 'button',
-        row: true,
-      }
-    },
-    [getEntityAddressKey(4, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
-      classNames: 'column-span-12',
-      'ui:widget': 'checkboxes',
-      'ui:options': {
-        mode: 'button',
-        row: true,
-        withOther: true,
-      }
-    },
-    [getEntityAddressKey(5, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
-      classNames: 'column-span-12',
-      'ui:widget': 'radio',
-      'ui:options': {
-        mode: 'button',
-        row: true,
-      }
-    },
-    [getEntityAddressKey(6, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+    [getEntityAddressKey(0, INVOICE_FQN, FQN.LINE_ITEM_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
       'ui:options': {

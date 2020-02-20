@@ -54,6 +54,10 @@ export const APP_TYPES_FQNS = {
   INVOLVED_IN_FQN: new FullyQualifiedName('app.involvedin'),
   CLINICIAN_REPORT_FQN: new FullyQualifiedName('app.cliniciancrisisreport'),
   PATROL_REPORT_FQN: new FullyQualifiedName('app.patrolcrisisreport'),
+  ENCOUNTER_FQN: new FullyQualifiedName('app.encounters'),
+  ENCOUNTER_DETAILS_FQN: new FullyQualifiedName('app.encounterdetails'),
+  INVOICE_FQN: new FullyQualifiedName('app.invoice'),
+  REFERRAL_REQUEST_FQN: new FullyQualifiedName('app.referralrequest'),
 
   /* <===== BEGIN LONG BEACH HACK =====> */
   FILED_FOR_FQN: new FullyQualifiedName('app.filed_for'),

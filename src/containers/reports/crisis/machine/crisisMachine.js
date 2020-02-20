@@ -55,19 +55,19 @@ const crisisMachine = Machine(
       },
       insurance: {
         on: {
-          NEXT: 'review',
+          NEXT: 'disposition',
           PREV: 'housingAndEmployment'
         }
       },
-      // disposition: {
-      //   on: {
-      //     NEXT: 'review',
-      //     PREV: 'insurance'
-      //   }
-      // },
+      disposition: {
+        on: {
+          NEXT: 'review',
+          PREV: 'insurance'
+        }
+      },
       review: {
         on: {
-          PREV: 'insurance'
+          PREV: 'disposition'
         }
       }
     }
