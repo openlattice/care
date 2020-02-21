@@ -46,7 +46,6 @@ const StatCard = styled.div`
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  font-family: 'Open Sans', sans-serif;
   height: 100%;
   justify-content: center;
   margin: 0 10px;

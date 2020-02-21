@@ -23,7 +23,6 @@ const HeaderRow = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  font-family: 'Open Sans', sans-serif;
   margin-bottom: 30px;
 
   h1 {
@@ -52,7 +51,6 @@ const ExplainTooltip = styled.div`
   border-radius: 3px;
   background-color: #555e6f;
   box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.1);
-  font-family: 'Open Sans', sans-serif;
   font-size: 12px;
   font-weight: 400;
   color: #fff;
@@ -97,7 +95,6 @@ const FooterWrapper = styled.div`
 `;
 
 const XLabel = styled.div`
-  font-family: 'Open Sans', sans-serif;
   font-size: 12px;
   font-weight: 600;
   color: #8e929b;

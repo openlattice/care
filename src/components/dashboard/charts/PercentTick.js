@@ -1,9 +1,9 @@
 // @flow
 import React from 'react';
+
 import styled from 'styled-components';
 
 const Tick = styled.text`
-  font-family: 'Open Sans', sans-serif;
   font-size: 12px;
   min-height: 20px;
 `;
