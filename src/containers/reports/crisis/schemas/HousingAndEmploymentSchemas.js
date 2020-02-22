@@ -21,11 +21,10 @@ const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
 
 const schema = {
   type: 'object',
-  title: 'Housing & Employment',
   properties: {
     [getPageSectionKey(6, 1)]: {
       type: 'object',
-      title: '',
+      title: 'Housing & Employment',
       properties: {
         [getEntityAddressKey(0, HOUSING_FQN, FQN.TYPE_FQN)]: {
           title: 'Current Housing Situation',

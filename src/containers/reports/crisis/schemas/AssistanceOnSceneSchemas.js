@@ -17,11 +17,10 @@ const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
 
 const schema = {
   type: 'object',
-  title: 'Assistance On Scene',
   properties: {
     [getPageSectionKey(6, 1)]: {
       type: 'object',
-      title: '',
+      title: 'Assistance On Scene',
       properties: {
         [getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
           type: 'array',

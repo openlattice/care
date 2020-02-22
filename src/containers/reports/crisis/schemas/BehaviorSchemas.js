@@ -11,11 +11,10 @@ const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
 
 const schema = {
   type: 'object',
-  title: 'Observations',
   properties: {
     [getPageSectionKey(3, 1)]: {
       type: 'object',
-      title: '',
+      title: 'Observations',
       properties: {
         [getEntityAddressKey(0, NATURE_OF_CRISIS_FQN, FQN.DESCRIPTION_FQN)]: {
           title: 'Nature of Crisis',

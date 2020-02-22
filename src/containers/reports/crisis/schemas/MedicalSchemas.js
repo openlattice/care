@@ -47,7 +47,6 @@ const schema = {
     }
   },
   type: 'object',
-  title: 'Medical',
   properties: {
     [getPageSectionKey(4, 1)]: {
       type: 'array',

@@ -21,11 +21,10 @@ const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
 
 const schema = {
   type: 'object',
-  title: 'Threats, Violence, & Weapons',
   properties: {
     [getPageSectionKey(5, 1)]: {
       type: 'object',
-      title: '',
+      title: 'Threats, Violence, & Weapons',
       properties: {
         [getEntityAddressKey(0, WEAPON_FQN, FQN.TYPE_FQN)]: {
           type: 'array',

@@ -16,6 +16,7 @@ import { Redirect } from 'react-router-dom';
 import { submitCrisisReport } from './CrisisActions';
 import { crisisMachine } from './machine/crisisMachine';
 import { xSchemas, xUiSchemas } from './schemas';
+import { mergeSchemas } from './schemas/schemaUtils';
 
 import ProfileBanner from '../../profile/ProfileBanner';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
@@ -120,17 +121,29 @@ const ActionRow = styled.div`
   padding: 0 30px 30px 30px;
 `;
 
-const ReviewBody = styled.div`
-  padding: 30px 30px 30px;
-  white-space: pre;
-`;
-
-const onPageChange = (page, formData) => console.log(page, formData);
-
 const XStateCrisisReportContainer = () => {
   const location = useLocation();
   const pageRef = useRef();
   const dispatch = useDispatch();
+  const reviewSchemas = {
+    schema: {
+      properties: {}
+    },
+    uiSchema: {}
+  };
+
+  const onPageChange = (page, formData) => {
+    console.log(page, formData);
+    if (xSchemas[page] && xUiSchemas[page]) {
+      mergeSchemas(
+        reviewSchemas,
+        {
+          schema: xSchemas[page],
+          uiSchema: xUiSchemas[page]
+        }
+      );
+    }
+  };
 
   const { state: selectedPerson = Map() } = location;
   if (!Map.isMap(selectedPerson) || selectedPerson.isEmpty()) return <Redirect to={HOME_PATH} />;
@@ -165,33 +178,31 @@ const XStateCrisisReportContainer = () => {
 
                   const handleNext = () => {
                     if (pageRef.current) {
-                      pageRef.current.scrollIntoView();
+                      pageRef.current.scrollIntoView({
+                        behavior: 'smooth'
+                      });
                     }
                     onNext();
                   };
 
                   const handleBack = () => {
                     if (pageRef.current) {
-                      pageRef.current.scrollIntoView();
+                      pageRef.current.scrollIntoView({
+                        behavior: 'smooth'
+                      });
                     }
                     onBack();
                   };
 
                   return (
                     <>
-                      {
-                        isReviewPage
-                          ? <ReviewBody>{JSON.stringify(pagedData, true, 2)}</ReviewBody>
-                          : (
-                            <Form
-                                formData={pagedData}
-                                hideSubmit
-                                onSubmit={handleNext}
-                                ref={formRef}
-                                schema={xSchemas[page]}
-                                uiSchema={xUiSchemas[page]} />
-                          )
-                      }
+                      <Form
+                          formData={pagedData}
+                          hideSubmit
+                          onSubmit={handleNext}
+                          ref={formRef}
+                          schema={isReviewPage ? reviewSchemas.schema : xSchemas[page]}
+                          uiSchema={isReviewPage ? reviewSchemas.uiSchema : xUiSchemas[page]} />
                       <ActionRow>
                         <Button
                             disabled={isInitialPage}

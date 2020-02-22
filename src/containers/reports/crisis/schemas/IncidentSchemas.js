@@ -13,14 +13,13 @@ const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
 
 const schema = {
   type: 'object',
-  title: 'Incident',
   properties: {
     [getPageSectionKey(2, 1)]: {
       associations: [
         'hello'
       ],
       type: 'object',
-      title: '',
+      title: 'Incident',
       properties: {
         [getEntityAddressKey(0, INCIDENT_FQN, FQN.DATETIME_START_FQN)]: {
           title: 'Date & Time',

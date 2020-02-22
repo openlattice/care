@@ -9,7 +9,6 @@ import {
   SELECT_ONLY_ONE,
   TECHNIQUES,
   YES_NO_NA,
-  YES_NO_UNKNOWN,
 } from './constants';
 
 import * as FQN from '../../../../edm/DataModelFqns';
@@ -27,11 +26,10 @@ const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
 
 const schema = {
   type: 'object',
-  title: 'Disposition',
   properties: {
     [getPageSectionKey(8, 1)]: {
       type: 'object',
-      title: '',
+      title: 'Disposition',
       properties: {
         [getEntityAddressKey(0, INTERACTION_STRATEGY_FQN, FQN.TECHNIQUES_FQN)]: {
           type: 'array',

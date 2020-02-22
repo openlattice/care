@@ -11,11 +11,10 @@ const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
 
 const schema = {
   type: 'object',
-  title: 'Insurance',
   properties: {
     [getPageSectionKey(7, 1)]: {
       type: 'object',
-      title: '',
+      title: 'Insurance',
       properties: {
         [getEntityAddressKey(0, INSURANCE_FQN, FQN.ORGANIZATION_NAME_FQN)]: {
           type: 'string',
