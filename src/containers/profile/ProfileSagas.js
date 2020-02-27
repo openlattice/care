@@ -409,8 +409,8 @@ function* updateProfileAboutWatcher() :Generator<any, any, any> {
 export {
   getPersonDataWatcher,
   getPersonDataWorker,
-  getPhysicalAppearanceWorker,
   getPhysicalAppearanceWatcher,
+  getPhysicalAppearanceWorker,
   getProfileReportsWatcher,
   getProfileReportsWorker,
   updateProfileAboutWatcher,

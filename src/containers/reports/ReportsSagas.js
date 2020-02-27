@@ -8,6 +8,7 @@ import {
   put,
   select,
   takeEvery,
+  takeLatest,
 } from '@redux-saga/core/effects';
 import {
   List,
@@ -60,6 +61,7 @@ import { APP_TYPES_FQNS } from '../../shared/Consts';
 import {
   getAppearsInESId,
   getESIDFromApp,
+  getESIDsFromApp,
   getPeopleESId,
   getReportESId,
   getReportedESId,
@@ -75,12 +77,28 @@ import { setInputValues as setNatureOfCrisisData } from '../pages/natureofcrisis
 import { setInputValues as setObservedBehaviors } from '../pages/observedbehaviors/ActionFactory';
 import { setInputValues as setOfficerSafetyData } from '../pages/officersafety/ActionFactory';
 import { setInputValues as setSubjectInformation } from '../pages/subjectinformation/Actions';
+import {
+  GET_INCIDENT_REPORTS,
+  GET_INCIDENT_REPORTS_SUMMARY,
+  GET_PROFILE_INCIDENTS,
+  GET_REPORTS_BEHAVIORS,
+  getIncidentReports,
+  getIncidentReportsSummary,
+  getProfileIncidents,
+  getReportsBehaviors,
+} from '../profile/actions/ReportActions';
+import { countCrisisCalls, countPropertyOccurrance } from '../profile/premium/Utils';
 
 const { processAssociationEntityData } = DataProcessingUtils;
 
 const {
   APPEARS_IN_FQN,
   BEHAVIORAL_HEALTH_REPORT_FQN,
+  BEHAVIOR_FQN,
+  CLINICIAN_REPORT_FQN,
+  INCIDENT_FQN,
+  INVOLVED_IN_FQN,
+  PART_OF_FQN,
   PEOPLE_FQN,
   REPORTED_FQN,
   STAFF_FQN,
@@ -639,13 +657,257 @@ function* submitReportWatcher() :Generator<*, *, *> {
   yield takeEvery(SUBMIT_REPORT, submitReportWorker);
 }
 
+function* getProfileIncidentsWorker(action :SequenceAction) :Generator<any, any, any> {
+  const response = {};
+  try {
+    const { value: entityKeyId } = action;
+    if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
+    yield put(getProfileIncidents.request(action.id, entityKeyId));
+
+    const app :Map = yield select((state) => state.get('app', Map()));
+    const [
+      peopleESID,
+      incidentESID,
+      involvedInESID
+    ] = getESIDsFromApp(app, [
+      PEOPLE_FQN,
+      INCIDENT_FQN,
+      INVOLVED_IN_FQN,
+    ]);
+
+    const incidentsSearchParam = {
+      entitySetId: peopleESID,
+      filter: {
+        entityKeyIds: [entityKeyId],
+        edgeEntitySetIds: [involvedInESID],
+        destinationEntitySetIds: [incidentESID],
+        sourceEntitySetIds: [],
+      },
+    };
+
+    const incidentsRequest = yield call(
+      searchEntityNeighborsWithFilterWorker,
+      searchEntityNeighborsWithFilter(incidentsSearchParam)
+    );
+
+    if (incidentsRequest.error) throw incidentsRequest.error;
+
+    const incidentsData = fromJS(incidentsRequest.data)
+      .get(entityKeyId, List())
+      .toSet()
+      .toList()
+      .sortBy((incident :Map) :number => {
+        const time = DateTime.fromISO(incident.getIn(['neighborDetails', FQN.DATETIME_START_FQN, 0]));
+
+        return -time.valueOf();
+      });
+
+    response.data = incidentsData;
+    yield put(getProfileIncidents.success(action.id, response.data));
+  }
+  catch (error) {
+    response.error = error;
+    LOG.error(action.type, error);
+    yield put(getProfileIncidents.failure(action.id, error));
+  }
+  return response;
+}
+
+function* getProfileIncidentsWatcher() :Generator<any, any, any> {
+  yield takeEvery(GET_PROFILE_INCIDENTS, getProfileIncidentsWorker);
+}
+
+// fetch all reports for each incident
+function* getIncidentReportsWorker(action :SequenceAction) :Generator<any, any, any> {
+  const response = {};
+  try {
+    const { value: incidentEKIDs } = action;
+    if (Array.isArray(incidentEKIDs) && !incidentEKIDs.every(isValidUuid)) throw ERR_ACTION_VALUE_TYPE;
+    yield put(getIncidentReports.request(action.id));
+
+    const app :Map = yield select((state) => state.get('app', Map()));
+    const [
+      partOfESID,
+      incidentESID,
+      clinicianReportESID,
+    ] = getESIDsFromApp(app, [
+      PART_OF_FQN,
+      INCIDENT_FQN,
+      CLINICIAN_REPORT_FQN,
+    ]);
+
+    const reportsSearchParam = {
+      entitySetId: incidentESID,
+      filter: {
+        entityKeyIds: incidentEKIDs,
+        edgeEntitySetIds: [partOfESID],
+        destinationEntitySetIds: [clinicianReportESID],
+        sourceEntitySetIds: [],
+      },
+    };
+
+    const reportsResponse = yield call(
+      searchEntityNeighborsWithFilterWorker,
+      searchEntityNeighborsWithFilter(reportsSearchParam)
+    );
+
+    if (reportsResponse.error) throw reportsResponse.error;
+    response.data = fromJS(reportsResponse.data);
+
+    yield put(getIncidentReports.success(action.id, response.data));
+  }
+  catch (error) {
+    response.error = error;
+    LOG.error(action.type, error);
+    yield put(getIncidentReports.failure(action.id), error);
+  }
+  return response;
+}
+
+function* getIncidentReportsWatcher() :Generator<any, any, any> {
+  yield takeEvery(GET_INCIDENT_REPORTS, getIncidentReportsWorker);
+}
+
+function* getReportsBehaviorsWorker(action :SequenceAction) :Generator<any, any, any> {
+  const response = {};
+  try {
+    const { value: reportsEKIDs } = action;
+    if (Array.isArray(reportsEKIDs) && !reportsEKIDs.every(isValidUuid)) throw ERR_ACTION_VALUE_TYPE;
+    yield put(getReportsBehaviors.request(action.id));
+
+    const app :Map = yield select((state) => state.get('app', Map()));
+    const [
+      partOfESID,
+      reportESID,
+      behaviorESID,
+    ] = getESIDsFromApp(app, [
+      PART_OF_FQN,
+      CLINICIAN_REPORT_FQN,
+      BEHAVIOR_FQN,
+    ]);
+
+    const behaviorsSearchParam = {
+      entitySetId: reportESID,
+      filter: {
+        entityKeyIds: reportsEKIDs,
+        edgeEntitySetIds: [partOfESID],
+        destinationEntitySetIds: [],
+        sourceEntitySetIds: [behaviorESID],
+      },
+    };
+
+    const behaviorsResponse = yield call(
+      searchEntityNeighborsWithFilterWorker,
+      searchEntityNeighborsWithFilter(behaviorsSearchParam)
+    );
+
+    if (behaviorsResponse.error) throw behaviorsResponse.error;
+    response.data = fromJS(behaviorsResponse.data);
+
+    yield put(getReportsBehaviors.success(action.id, response.data));
+  }
+  catch (error) {
+    response.error = error;
+    LOG.error(action.type, error);
+    yield put(getReportsBehaviors.failure(action.id, error));
+  }
+  return response;
+}
+
+function* getReportsBehaviorsWatcher() :Generator<any, any, any> {
+  yield takeEvery(GET_REPORTS_BEHAVIORS, getReportsBehaviorsWorker);
+}
+
+// after getting all incidents, get reports and then count behavior summaries.
+function* getIncidentReportsSummaryWorker(action :SequenceAction) :Generator<any, any, any> {
+  const response = {};
+  try {
+    const { value: personEKID } = action;
+    if (!isValidUuid(personEKID)) throw ERR_ACTION_VALUE_TYPE;
+    yield put(getIncidentReportsSummary.request(action.id));
+
+    const incidents = yield call(
+      getProfileIncidentsWorker,
+      getProfileIncidents(personEKID)
+    );
+    if (incidents.error) throw incidents.error;
+
+    const incidentsData = incidents.data
+      .map((incident) => incident.get('neighborDetails'));
+
+    const incidentsEKIDs = incidentsData
+      .map((incident) => incident.getIn([FQN.OPENLATTICE_ID_FQN, 0]));
+
+    let allReportsEKID = List();
+    if (incidentsEKIDs.size) {
+      const reportsResponse = yield call(getIncidentReportsWorker, getIncidentReports(incidentsEKIDs.toJS()));
+      if (reportsResponse.error) throw reportsResponse.error;
+      const reportsData = reportsResponse.data;
+      allReportsEKID = List().withMutations((mutable) => {
+        reportsData.forEach((reports) => {
+          reports.forEach((report) => {
+            mutable.push(report.getIn(['neighborDetails', FQN.OPENLATTICE_ID_FQN, 0]));
+          });
+        });
+      });
+    }
+
+    let allBehaviors = List();
+    if (allReportsEKID.size) {
+      const behaviorsResponse = yield call(
+        getReportsBehaviorsWorker,
+        getReportsBehaviors(allReportsEKID.toJS())
+      );
+
+      if (behaviorsResponse.error) throw behaviorsResponse.error;
+
+      const behaviorsData = behaviorsResponse.data;
+      allBehaviors = List().withMutations((mutable) => {
+        behaviorsData.forEach((behaviors) => {
+          behaviors.forEach((behavior) => {
+            mutable.push(behavior.get('neighborDetails'));
+          });
+        });
+      });
+    }
+
+    const behaviorSummary = countPropertyOccurrance(allBehaviors, FQN.OBSERVED_BEHAVIOR_FQN);
+    const crisisSummary = countCrisisCalls(incidentsData, FQN.DATETIME_START_FQN);
+    const reportSummary = fromJS({
+      behaviorSummary,
+      crisisSummary
+    });
+
+    yield put(getIncidentReportsSummary.success(action.id, reportSummary));
+  }
+  catch (error) {
+    response.error = error;
+    LOG.error(action.type, error);
+    yield put(getIncidentReportsSummary.failure(action.id));
+  }
+  return response;
+}
+
+function* getIncidentReportsSummaryWatcher() :Generator<any, any, any> {
+  yield takeLatest(GET_INCIDENT_REPORTS_SUMMARY, getIncidentReportsSummaryWorker);
+}
+
+
 export {
   deleteReportWatcher,
   deleteReportWorker,
-  getReportsByDateRangeWatcher,
-  getReportsByDateRangeWorker,
+  getIncidentReportsSummaryWatcher,
+  getIncidentReportsSummaryWorker,
+  getIncidentReportsWatcher,
+  getIncidentReportsWorker,
+  getProfileIncidentsWatcher,
+  getProfileIncidentsWorker,
   getReportWatcher,
   getReportWorker,
+  getReportsBehaviorsWatcher,
+  getReportsBehaviorsWorker,
+  getReportsByDateRangeWatcher,
+  getReportsByDateRangeWorker,
   submitReportWatcher,
   submitReportWorker,
   updateReportWatcher,

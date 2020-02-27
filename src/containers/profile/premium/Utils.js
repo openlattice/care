@@ -1,7 +1,14 @@
+import { List, Map } from 'immutable';
 // @flow
 import { Models } from 'lattice';
-import { List, Map } from 'immutable';
 import { DateTime } from 'luxon';
+
+import {
+  ARMED_WITH_WEAPON,
+  INJURED_PARTIES,
+  THREATENED_VIOLENCE,
+} from './constants';
+
 import {
   ARMED_WITH_WEAPON_FQN,
   DATE_TIME_OCCURRED_FQN,
@@ -11,11 +18,6 @@ import {
   PERSON_INJURED_FQN,
   THREATENED_INDICATOR_FQN,
 } from '../../../edm/DataModelFqns';
-import {
-  ARMED_WITH_WEAPON,
-  INJURED_PARTIES,
-  THREATENED_VIOLENCE,
-} from './constants';
 
 const { FullyQualifiedName } = Models;
 
@@ -42,11 +44,11 @@ const countPropertyOccurrance = (reports :List<Map>, propertyTypeFqn :FullyQuali
     });
   });
 
-const countCrisisCalls = (reports :List<Map>) => {
+const countCrisisCalls = (reports :List<Map>, timeFQN = DATE_TIME_OCCURRED_FQN) => {
   let total = 0;
   let recent = 0;
   reports.forEach((report :Map) => {
-    const occurred = report.getIn([DATE_TIME_OCCURRED_FQN, 0], '');
+    const occurred = report.getIn([timeFQN, 0], '');
     const dtOccurred = DateTime.fromISO(occurred);
     if (dtOccurred.isValid) {
       const durationInYears = dtOccurred

@@ -110,6 +110,10 @@ export default function* sagas() :Generator<*, *, *> {
     fork(ReportsSagas.getReportsByDateRangeWatcher),
     fork(ReportsSagas.submitReportWatcher),
     fork(ReportsSagas.updateReportWatcher),
+    fork(ReportsSagas.getIncidentReportsWatcher),
+    fork(ReportsSagas.getProfileIncidentsWatcher),
+    fork(ReportsSagas.getIncidentReportsSummaryWatcher),
+    fork(ReportsSagas.getReportsBehaviorsWatcher),
 
     // ResponsePlanSagas
     fork(ResponsePlanSagas.deleteInteractionStrategiesWatcher),
