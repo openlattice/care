@@ -301,7 +301,7 @@ const mapStateToProps = (state :Map) => {
     address: state.getIn(['profile', 'basicInformation', 'address', 'data'], Map()),
     appearance: state.getIn(['profile', 'basicInformation', 'appearance', 'data'], Map()),
     crisisSummary: state.getIn(['profile', 'reports', 'crisisSummary'], Map()),
-    behaviorSummary: state.getIn(['profile', 'reports', 'crisisSummary'], Map()),
+    behaviorSummary: state.getIn(['profile', 'reports', 'behaviorSummary'], Map()),
     contacts: state.getIn(['profile', 'contacts', 'data', 'contacts'], List()),
     contactInfoByContactEKID: state.getIn(['profile', 'contacts', 'data', 'contactInfoByContactEKID'], Map()),
     isContactForByContactEKID: state.getIn(['profile', 'contacts', 'data', 'isContactForByContactEKID'], Map()),

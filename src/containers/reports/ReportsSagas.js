@@ -81,11 +81,11 @@ import {
   GET_INCIDENT_REPORTS,
   GET_INCIDENT_REPORTS_SUMMARY,
   GET_PROFILE_INCIDENTS,
-  GET_REPORTS_BEHAVIORS,
+  GET_REPORTS_NEIGHBORS,
   getIncidentReports,
   getIncidentReportsSummary,
   getProfileIncidents,
-  getReportsBehaviors,
+  getReportsNeighbors,
 } from '../profile/actions/ReportActions';
 import { countCrisisCalls, countPropertyOccurrance } from '../profile/premium/Utils';
 
@@ -97,11 +97,15 @@ const {
   BEHAVIOR_FQN,
   CLINICIAN_REPORT_FQN,
   INCIDENT_FQN,
+  INJURY_FQN,
   INVOLVED_IN_FQN,
   PART_OF_FQN,
   PEOPLE_FQN,
   REPORTED_FQN,
+  SELF_HARM_FQN,
   STAFF_FQN,
+  VIOLENT_BEHAVIOR_FQN,
+  WEAPON_FQN,
 } = APP_TYPES_FQNS;
 
 const LOG = new Logger('ReportsSagas');
@@ -768,57 +772,67 @@ function* getIncidentReportsWatcher() :Generator<any, any, any> {
   yield takeEvery(GET_INCIDENT_REPORTS, getIncidentReportsWorker);
 }
 
-function* getReportsBehaviorsWorker(action :SequenceAction) :Generator<any, any, any> {
+function* getReportsNeighborsWorker(action :SequenceAction) :Generator<any, any, any> {
   const response = {};
   try {
     const { value: reportsEKIDs } = action;
     if (Array.isArray(reportsEKIDs) && !reportsEKIDs.every(isValidUuid)) throw ERR_ACTION_VALUE_TYPE;
-    yield put(getReportsBehaviors.request(action.id));
+    yield put(getReportsNeighbors.request(action.id, reportsEKIDs));
 
     const app :Map = yield select((state) => state.get('app', Map()));
     const [
-      partOfESID,
-      reportESID,
       behaviorESID,
+      clinicianReportESID,
+      injuryESID,
+      partOfESID,
+      selfHarmESID,
+      violentBehaviorESID,
+      weaponESID,
     ] = getESIDsFromApp(app, [
-      PART_OF_FQN,
-      CLINICIAN_REPORT_FQN,
       BEHAVIOR_FQN,
+      CLINICIAN_REPORT_FQN,
+      INJURY_FQN,
+      PART_OF_FQN,
+      SELF_HARM_FQN,
+      VIOLENT_BEHAVIOR_FQN,
+      WEAPON_FQN,
     ]);
 
     const behaviorsSearchParam = {
-      entitySetId: reportESID,
+      entitySetId: clinicianReportESID,
       filter: {
         entityKeyIds: reportsEKIDs,
         edgeEntitySetIds: [partOfESID],
         destinationEntitySetIds: [],
-        sourceEntitySetIds: [behaviorESID],
+        sourceEntitySetIds: [behaviorESID, injuryESID, selfHarmESID, violentBehaviorESID, weaponESID],
       },
     };
 
-    const behaviorsResponse = yield call(
+    const neighborsResponse = yield call(
       searchEntityNeighborsWithFilterWorker,
       searchEntityNeighborsWithFilter(behaviorsSearchParam)
     );
 
-    if (behaviorsResponse.error) throw behaviorsResponse.error;
-    response.data = fromJS(behaviorsResponse.data);
+    if (neighborsResponse.error) throw neighborsResponse.error;
+    const behaviorData = fromJS(neighborsResponse.data);
 
-    yield put(getReportsBehaviors.success(action.id, response.data));
+    response.data = behaviorData;
+
+    yield put(getReportsNeighbors.success(action.id, response.data));
   }
   catch (error) {
     response.error = error;
     LOG.error(action.type, error);
-    yield put(getReportsBehaviors.failure(action.id, error));
+    yield put(getReportsNeighbors.failure(action.id, error));
   }
   return response;
 }
 
-function* getReportsBehaviorsWatcher() :Generator<any, any, any> {
-  yield takeEvery(GET_REPORTS_BEHAVIORS, getReportsBehaviorsWorker);
+function* getReportsNeighborsWatcher() :Generator<any, any, any> {
+  yield takeEvery(GET_REPORTS_NEIGHBORS, getReportsNeighborsWorker);
 }
 
-// after getting all incidents, get reports and then count behavior summaries.
+// after getting all incidents, get reports => behavior/officer safety summaries.
 function* getIncidentReportsSummaryWorker(action :SequenceAction) :Generator<any, any, any> {
   const response = {};
   try {
@@ -852,30 +866,53 @@ function* getIncidentReportsSummaryWorker(action :SequenceAction) :Generator<any
       });
     }
 
-    let allBehaviors = List();
+    const appTypeFqnsByIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds']).flip());
+    let groupedNeighborsByType = Map();
     if (allReportsEKID.size) {
-      const behaviorsResponse = yield call(
-        getReportsBehaviorsWorker,
-        getReportsBehaviors(allReportsEKID.toJS())
+      const neighborsResponse = yield call(
+        getReportsNeighborsWorker,
+        getReportsNeighbors(allReportsEKID.toJS())
       );
 
-      if (behaviorsResponse.error) throw behaviorsResponse.error;
+      if (neighborsResponse.error) throw neighborsResponse.error;
 
-      const behaviorsData = behaviorsResponse.data;
-      allBehaviors = List().withMutations((mutable) => {
-        behaviorsData.forEach((behaviors) => {
-          behaviors.forEach((behavior) => {
-            mutable.push(behavior.get('neighborDetails'));
+      const neighborsData = neighborsResponse.data;
+      const tempGroupedData = Map().withMutations((mutable) => {
+        neighborsData.forEach((neighbors) => {
+          neighbors.forEach((neighbor) => {
+            const entitySetId = neighbor.getIn(['neighborEntitySet', 'id']);
+            const appTypeFqn = appTypeFqnsByIds.get(entitySetId);
+            if (mutable.has(appTypeFqn)) {
+              const entitySetCount = mutable.get(appTypeFqn).count();
+              mutable.setIn([appTypeFqn, entitySetCount], neighbor.get('neighborDetails'));
+            }
+            else {
+              mutable.set(appTypeFqn, List([neighbor.get('neighborDetails')]));
+            }
           });
         });
       });
+      groupedNeighborsByType = tempGroupedData;
     }
 
-    const behaviorSummary = countPropertyOccurrance(allBehaviors, FQN.OBSERVED_BEHAVIOR_FQN);
+    const behaviors = groupedNeighborsByType.get(BEHAVIOR_FQN);
+    const injuries = groupedNeighborsByType.get(INJURY_FQN);
+    const selfharms = groupedNeighborsByType.get(SELF_HARM_FQN);
+    const violentBehaviors = groupedNeighborsByType.get(VIOLENT_BEHAVIOR_FQN);
+    const weapons = groupedNeighborsByType.get(WEAPON_FQN);
+
+    const behaviorSummary = countPropertyOccurrance(behaviors, FQN.OBSERVED_BEHAVIOR_FQN);
     const crisisSummary = countCrisisCalls(incidentsData, FQN.DATETIME_START_FQN);
+    const safetySummary = fromJS({
+      injuries,
+      selfharms,
+      violentBehaviors,
+      weapons,
+    });
     const reportSummary = fromJS({
       behaviorSummary,
-      crisisSummary
+      crisisSummary,
+      safetySummary
     });
 
     yield put(getIncidentReportsSummary.success(action.id, reportSummary));
@@ -904,8 +941,8 @@ export {
   getProfileIncidentsWorker,
   getReportWatcher,
   getReportWorker,
-  getReportsBehaviorsWatcher,
-  getReportsBehaviorsWorker,
+  getReportsNeighborsWatcher,
+  getReportsNeighborsWorker,
   getReportsByDateRangeWatcher,
   getReportsByDateRangeWorker,
   submitReportWatcher,

@@ -15,18 +15,18 @@ const getIncidentReportsSummary :RequestSequence = newRequestSequence(GET_INCIDE
 const GET_INCIDENT_REPORTS :'GET_INCIDENT_REPORTS' = 'GET_INCIDENT_REPORTS';
 const getIncidentReports :RequestSequence = newRequestSequence(GET_INCIDENT_REPORTS);
 
-const GET_REPORTS_BEHAVIORS :'GET_REPORTS_BEHAVIORS' = 'GET_REPORTS_BEHAVIORS';
-const getReportsBehaviors :RequestSequence = newRequestSequence(GET_REPORTS_BEHAVIORS);
+const GET_REPORTS_NEIGHBORS :'GET_REPORTS_NEIGHBORS' = 'GET_REPORTS_NEIGHBORS';
+const getReportsNeighbors :RequestSequence = newRequestSequence(GET_REPORTS_NEIGHBORS);
 
 export {
   GET_INCIDENT_REPORTS,
   GET_INCIDENT_REPORTS_SUMMARY,
   GET_PROFILE_INCIDENTS,
   GET_PROFILE_REPORTS,
-  GET_REPORTS_BEHAVIORS,
+  GET_REPORTS_NEIGHBORS,
   getIncidentReports,
   getIncidentReportsSummary,
   getProfileIncidents,
   getProfileReports,
-  getReportsBehaviors,
+  getReportsNeighbors,
 };
