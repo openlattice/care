@@ -897,7 +897,7 @@ function* getIncidentReportsSummaryWorker(action :SequenceAction) :Generator<any
 
     const behaviors = groupedNeighborsByType.get(BEHAVIOR_FQN);
     const injuries = groupedNeighborsByType.get(INJURY_FQN);
-    const selfharms = groupedNeighborsByType.get(SELF_HARM_FQN);
+    const selfHarms = groupedNeighborsByType.get(SELF_HARM_FQN);
     const violentBehaviors = groupedNeighborsByType.get(VIOLENT_BEHAVIOR_FQN);
     const weapons = groupedNeighborsByType.get(WEAPON_FQN);
 
@@ -905,7 +905,7 @@ function* getIncidentReportsSummaryWorker(action :SequenceAction) :Generator<any
     const crisisSummary = countCrisisCalls(incidentsData, FQN.DATETIME_START_FQN);
     const safetySummary = fromJS({
       injuries,
-      selfharms,
+      selfHarms,
       violentBehaviors,
       weapons,
     });
