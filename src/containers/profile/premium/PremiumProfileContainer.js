@@ -23,6 +23,7 @@ import BackgroundInformationCard from './BackgroundInformationCard';
 import BehaviorCard from './BehaviorCard';
 import DeescalationCard from './DeescalationCard';
 import IntroCard from './IntroCard';
+import LastIncident from './LastIncident';
 import OfficerSafetyCard from './OfficerSafetyCard';
 import ResponsePlanCard from './ResponsePlanCard';
 
@@ -119,6 +120,7 @@ type Props = {
   fetchResponsePlanState :RequestState;
   interactionStrategies :List<Map>;
   isContactForByContactEKID :Map;
+  lastIncident :Map;
   officerSafety :List<Map>;
   photo :Map;
   reports :List<Map>;
@@ -155,6 +157,7 @@ const PremiumProfileContainer = (props :Props) => {
     isContactForByContactEKID,
     officerSafety,
     photo,
+    lastIncident,
     reports,
     responsePlan,
     responsibleUser,
@@ -229,8 +232,7 @@ const PremiumProfileContainer = (props :Props) => {
           </Aside>
           <ScrollStack>
             {
-              // reports.isEmpty() && !isLoadingBody
-              false
+              lastIncident.isEmpty() && !isLoadingBody
                 ? <IconSplash icon={faFolderOpen} caption="No reports have been filed." />
                 : (
                   <>
@@ -243,7 +245,6 @@ const PremiumProfileContainer = (props :Props) => {
                     <BehaviorAndSafetyGrid>
                       <BehaviorCard
                           behaviorSummary={behaviorSummary}
-                          reports={reports}
                           isLoading={isLoadingBody} />
                       <OfficerSafetyCard
                           isLoading={isLoadingBody}
@@ -268,6 +269,7 @@ const PremiumProfileContainer = (props :Props) => {
                         contacts={contacts}
                         contactInfoByContactEKID={contactInfoByContactEKID}
                         isContactForByContactEKID={isContactForByContactEKID} />
+                    <LastIncident />
                     <SearchResults
                         hasSearched={false}
                         onResultClick={handleResultClick}
@@ -314,6 +316,7 @@ const mapStateToProps = (state :Map) => {
     officerSafety: state.getIn(['profile', 'officerSafety', 'data', 'officerSafetyConcerns'], List()),
     photo: state.getIn(['profile', 'basicInformation', 'photos', 'data'], Map()),
     reports: state.getIn(['profile', 'reports', 'data'], List()),
+    lastIncident: state.getIn(['profile', 'reports', 'lastIncident'], Map()),
     responsePlan: state.getIn(['profile', 'responsePlan', 'data'], Map()),
     responsibleUser: state.getIn(['profile', 'about', 'data'], Map()),
     scars: state.getIn(['profile', 'basicInformation', 'scars', 'data'], Map()),

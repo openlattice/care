@@ -81,11 +81,13 @@ import {
   GET_INCIDENT_REPORTS,
   GET_INCIDENT_REPORTS_SUMMARY,
   GET_PROFILE_INCIDENTS,
-  GET_REPORTS_NEIGHBORS,
+  GET_REPORTERS_FOR_REPORTS,
+  GET_REPORTS_BEHAVIOR_AND_SAFETY,
   getIncidentReports,
   getIncidentReportsSummary,
   getProfileIncidents,
-  getReportsNeighbors,
+  getReportersForReports,
+  getReportsBehaviorAndSafety,
 } from '../profile/actions/ReportActions';
 import { countCrisisCalls, countPropertyOccurrance } from '../profile/premium/Utils';
 
@@ -729,6 +731,8 @@ function* getIncidentReportsWorker(action :SequenceAction) :Generator<any, any, 
     if (Array.isArray(incidentEKIDs) && !incidentEKIDs.every(isValidUuid)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getIncidentReports.request(action.id));
 
+    // TODO: handle both clinician and patrol views separately.
+    // TODO: follow up reports
     const app :Map = yield select((state) => state.get('app', Map()));
     const [
       partOfESID,
@@ -772,12 +776,14 @@ function* getIncidentReportsWatcher() :Generator<any, any, any> {
   yield takeEvery(GET_INCIDENT_REPORTS, getIncidentReportsWorker);
 }
 
-function* getReportsNeighborsWorker(action :SequenceAction) :Generator<any, any, any> {
+// looks like you want a saga to get whatever neighbors you want from a
+
+function* getReportsBehaviorAndSafetyWorker(action :SequenceAction) :Generator<any, any, any> {
   const response = {};
   try {
     const { value: reportsEKIDs } = action;
     if (Array.isArray(reportsEKIDs) && !reportsEKIDs.every(isValidUuid)) throw ERR_ACTION_VALUE_TYPE;
-    yield put(getReportsNeighbors.request(action.id, reportsEKIDs));
+    yield put(getReportsBehaviorAndSafety.request(action.id, reportsEKIDs));
 
     const app :Map = yield select((state) => state.get('app', Map()));
     const [
@@ -818,18 +824,62 @@ function* getReportsNeighborsWorker(action :SequenceAction) :Generator<any, any,
 
     response.data = behaviorData;
 
-    yield put(getReportsNeighbors.success(action.id, response.data));
+    yield put(getReportsBehaviorAndSafety.success(action.id, response.data));
   }
   catch (error) {
     response.error = error;
     LOG.error(action.type, error);
-    yield put(getReportsNeighbors.failure(action.id, error));
+    yield put(getReportsBehaviorAndSafety.failure(action.id, error));
   }
   return response;
 }
 
-function* getReportsNeighborsWatcher() :Generator<any, any, any> {
-  yield takeEvery(GET_REPORTS_NEIGHBORS, getReportsNeighborsWorker);
+function* getReportsBehaviorAndSafetyWatcher() :Generator<any, any, any> {
+  yield takeEvery(GET_REPORTS_BEHAVIOR_AND_SAFETY, getReportsBehaviorAndSafetyWorker);
+}
+
+function* getReportersForReportsWorker(action :SequenceAction) :Generator<any, any, any> {
+  const response = {};
+  try {
+    const { value: entityKeyIds } = action;
+    if (Array.isArray(entityKeyIds) && !entityKeyIds.every(isValidUuid)) throw ERR_ACTION_VALUE_TYPE;
+    yield getReportersForReports.request(action.id);
+
+    const app :Map = yield select((state) => state.get('app', Map()));
+    const [reportedESID, staffESID, clinicianReportESID] = getESIDsFromApp(app, [
+      REPORTED_FQN, STAFF_FQN, CLINICIAN_REPORT_FQN
+    ]);
+
+    const reportersSearchParam = {
+      entitySetId: clinicianReportESID,
+      filter: {
+        entityKeyIds,
+        edgeEntitySetIds: [reportedESID],
+        destinationEntitySetIds: [],
+        sourceEntitySetIds: [staffESID]
+      }
+    };
+
+    const reportersResponse = yield call(
+      searchEntityNeighborsWithFilterWorker,
+      searchEntityNeighborsWithFilter(reportersSearchParam)
+    );
+
+    if (reportersResponse.error) throw reportersResponse.error;
+    const reportersData = fromJS(reportersResponse.data);
+    response.data = reportersData;
+    yield getReportersForReports.success(action.id, reportersData);
+  }
+  catch (error) {
+    response.error = error;
+    LOG.error(action.type, error);
+    yield getReportersForReports.failure(action.id, error);
+  }
+  return response;
+}
+
+function* getReportersForReportsWatcher() :Generator<any, any, any> {
+  yield takeEvery(GET_REPORTERS_FOR_REPORTS, getReportersForReportsWorker);
 }
 
 // after getting all incidents, get reports => behavior/officer safety summaries.
@@ -852,6 +902,10 @@ function* getIncidentReportsSummaryWorker(action :SequenceAction) :Generator<any
     const incidentsEKIDs = incidentsData
       .map((incident) => incident.getIn([FQN.OPENLATTICE_ID_FQN, 0]));
 
+    const lastIncident = incidentsData.first();
+    const lastIncidentEKID = incidentsEKIDs.first();
+    let lastIncidentReports = List();
+
     let allReportsEKID = List();
     if (incidentsEKIDs.size) {
       const reportsResponse = yield call(getIncidentReportsWorker, getIncidentReports(incidentsEKIDs.toJS()));
@@ -864,14 +918,22 @@ function* getIncidentReportsSummaryWorker(action :SequenceAction) :Generator<any
           });
         });
       });
+
+      lastIncidentReports = reportsData.get(lastIncidentEKID);
     }
+
+    const recentReportsEKIDs = lastIncidentReports.map((report) => report.get('neighborId')).toJS();
+    const { data: lastReporters = Map() } = yield call(
+      getReportersForReportsWorker,
+      getReportersForReports(recentReportsEKIDs)
+    );
 
     const appTypeFqnsByIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds']).flip());
     let groupedNeighborsByType = Map();
     if (allReportsEKID.size) {
       const neighborsResponse = yield call(
-        getReportsNeighborsWorker,
-        getReportsNeighbors(allReportsEKID.toJS())
+        getReportsBehaviorAndSafetyWorker,
+        getReportsBehaviorAndSafety(allReportsEKID.toJS())
       );
 
       if (neighborsResponse.error) throw neighborsResponse.error;
@@ -912,7 +974,10 @@ function* getIncidentReportsSummaryWorker(action :SequenceAction) :Generator<any
     const reportSummary = fromJS({
       behaviorSummary,
       crisisSummary,
-      safetySummary
+      lastIncident,
+      lastIncidentReports,
+      lastReporters,
+      safetySummary,
     });
 
     yield put(getIncidentReportsSummary.success(action.id, reportSummary));
@@ -941,8 +1006,9 @@ export {
   getProfileIncidentsWorker,
   getReportWatcher,
   getReportWorker,
-  getReportsNeighborsWatcher,
-  getReportsNeighborsWorker,
+  getReportersForReportsWatcher,
+  getReportsBehaviorAndSafetyWatcher,
+  getReportsBehaviorAndSafetyWorker,
   getReportsByDateRangeWatcher,
   getReportsByDateRangeWorker,
   submitReportWatcher,

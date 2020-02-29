@@ -1,7 +1,7 @@
 const BEHAVIORS = [
   'Belligerent',
   'Bizzare',
-  'Disoriented',
+  'Disorientation',
   'Disorganized speech',
   'Disorderly',
   'Delusions',

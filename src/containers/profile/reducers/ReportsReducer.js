@@ -11,6 +11,9 @@ const INITIAL_STATE :Map = fromJS({
   crisisSummary: Map(),
   data: List(),
   fetchState: RequestStates.STANDBY,
+  lastIncidentReports: List(),
+  lastInicdent: Map(),
+  lastReporters: Map(),
 });
 
 const reportsReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
