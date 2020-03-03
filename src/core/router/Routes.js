@@ -9,6 +9,7 @@ export const ROOT :string = '/';
 export const LOGIN_PATH :string = '/login';
 
 export const X_CRISIS_PATH :string = '/x-crisis';
+export const NEW_CRISIS_PATH :string = '/new-crisis';
 export const CRISIS_PATH :string = '/crisis';
 export const DASHBOARD_PATH :string = '/dashboard';
 export const DOWNLOADS_PATH :string = '/downloads';

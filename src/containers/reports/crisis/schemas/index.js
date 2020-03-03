@@ -9,6 +9,26 @@ import { schema as insuranceSchema, uiSchema as insuranceUiSchema } from './Insu
 import { schema as medicalSchema, uiSchema as medicalUiSchema } from './MedicalSchemas';
 import { schema as threatSchema, uiSchema as threatUiSchema } from './ThreatSchemas';
 
+const schemas = [
+  incidentSchema,
+  behaviorSchema,
+  medicalSchema,
+  threatSchema,
+  housingAndEmploymentSchema,
+  insuranceSchema,
+  dispositionSchema,
+];
+
+const uiSchemas = [
+  incidentUiSchema,
+  behaviorUiSchema,
+  medicalUiSchema,
+  threatUiSchema,
+  housingAndEmploymentUiSchema,
+  insuranceUiSchema,
+  dispositionUiSchema,
+];
+
 const xSchemas = {
   incident: incidentSchema,
   behavior: behaviorSchema,
@@ -30,6 +50,8 @@ const xUiSchemas = {
 };
 
 export {
+  schemas,
+  uiSchemas,
   xSchemas,
   xUiSchemas,
 };
