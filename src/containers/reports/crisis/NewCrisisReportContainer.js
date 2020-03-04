@@ -73,11 +73,11 @@ const initialFormData = {
   page4section2: [
     {
       '-1__@@__app.medicationstatement__@@__ol.name': 'afsda',
-      '-1__@@__app.medicationstatement__@@__ol.takenasprescribed': 'Yes'
+      '-1__@@__app.medicationstatement__@@__ol.takenasprescribed': true
     },
     {
       '-1__@@__app.medicationstatement__@@__ol.name': 'fdsa',
-      '-1__@@__app.medicationstatement__@@__ol.takenasprescribed': 'No'
+      '-1__@@__app.medicationstatement__@@__ol.takenasprescribed': false
     }
   ],
   page4section3: {
