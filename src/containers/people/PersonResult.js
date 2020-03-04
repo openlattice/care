@@ -112,7 +112,7 @@ const PersonResult = (props :Props) => {
     .getIn(['people', 'recentIncidentsByEKID', 'fetchState']) !== RequestStates.SUCCESS);
 
   const goToProfile = useGoToPath(PROFILE_VIEW_PATH.replace(PROFILE_ID_PATH, personEKID));
-  const goToReport = useGoToPath(`${NEW_CRISIS_PATH}/1`, result);
+  const goToReport = useGoToPath(`${NEW_CRISIS_PATH}`, result);
   const dispatch = useDispatch();
 
   const handleViewProfile = () => {
