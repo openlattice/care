@@ -1,12 +1,18 @@
 // @flow
-import { get } from 'immutable';
+import {
+  List,
+  Map,
+  get,
+  getIn,
+  setIn,
+} from 'immutable';
 import { DataProcessingUtils } from 'lattice-fabricate';
 import { DateTime } from 'luxon';
 
 import { COMPLETED_DT_FQN } from '../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS as APP } from '../../../shared/Consts';
 
-const { getPageSectionKey } = DataProcessingUtils;
+const { getPageSectionKey, parseEntityAddressKey } = DataProcessingUtils;
 
 const getCrisisReportAssociations = (formData :Object, existingEntityKeyIds :Object) => {
   const personEKID = existingEntityKeyIds[APP.PEOPLE_FQN];
@@ -54,4 +60,64 @@ const getCrisisReportAssociations = (formData :Object, existingEntityKeyIds :Obj
   return associations;
 };
 
-export { getCrisisReportAssociations };
+// parses a schema and generates formData from a map of neighbors keyed by their FQN
+// does not respect edges, only entity set names
+const constructFormDataFromNeighbors = (neighborsByFQN :Map, schema :Object) :Map => {
+  const { properties } = schema;
+  return Object.fromEntries(Object.entries(properties).map(([pageSectionKey, sectionSchema]) => {
+    // $FlowFixMe destructure from mixed type
+    const { type: sectionType } = sectionSchema;
+    let path;
+
+    // sectionValue should have type that matches type specified in schema type
+    let sectionValue = {};
+    if (sectionType === 'array') {
+      path = ['items', 'properties'];
+      sectionValue = [];
+    }
+    else if (sectionType === 'object') {
+      path = ['properties'];
+    }
+    else {
+      throw Error('schema is incorrectly formatted');
+    }
+
+    const sectionProperties = getIn(sectionSchema, path);
+
+    Object.entries(sectionProperties).forEach(([entityAddressKey, propertySchema]) => {
+      // $FlowFixMe destructure from mixed type
+      const { type: propertyType } = propertySchema;
+
+      const propertyMultiplicity = propertyType === 'array';
+
+      const {
+        entityIndex,
+        entitySetName,
+        propertyTypeFQN,
+      } = parseEntityAddressKey(entityAddressKey);
+
+      // if sectionType is an array, iterate over neighbors of matching type
+      if (sectionType === 'array' && entityIndex < 0) {
+        const neighbors = neighborsByFQN.get(entitySetName);
+        neighbors.forEach((neighbor, index) => {
+          let value = neighbor.get(propertyTypeFQN, List()).toJS();
+          if (!propertyMultiplicity) {
+            value = value.pop();
+          }
+          sectionValue = setIn(sectionValue, [index, entityAddressKey], value);
+        });
+      }
+      // otherwise schema only expects a single entity per section as object
+      else {
+        let value = neighborsByFQN.getIn([entitySetName, entityIndex, propertyTypeFQN], List()).toJS();
+        if (!propertyMultiplicity) {
+          value = value.pop();
+        }
+        sectionValue = setIn(sectionValue, [entityAddressKey], value);
+      }
+    });
+    return [pageSectionKey, sectionValue];
+  }));
+};
+
+export { constructFormDataFromNeighbors, getCrisisReportAssociations };

@@ -776,8 +776,6 @@ function* getIncidentReportsWatcher() :Generator<any, any, any> {
   yield takeEvery(GET_INCIDENT_REPORTS, getIncidentReportsWorker);
 }
 
-// looks like you want a saga to get whatever neighbors you want from a
-
 function* getReportsBehaviorAndSafetyWorker(action :SequenceAction) :Generator<any, any, any> {
   const response = {};
   try {
