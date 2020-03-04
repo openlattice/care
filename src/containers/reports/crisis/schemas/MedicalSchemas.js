@@ -4,7 +4,6 @@ import {
   DRUGS_ALCOHOL,
   SELECT_ALL_THAT_APPLY,
   SELECT_ONLY_ONE,
-  YES_NO_UNKNOWN
 } from './constants';
 
 import * as FQN from '../../../../edm/DataModelFqns';
@@ -20,39 +19,19 @@ const {
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
 
 const schema = {
-  definitions: {
-    diagnosis: {
-      type: 'object',
-      properties: {
-        [getEntityAddressKey(-1, DIAGNOSIS_FQN, FQN.NAME_FQN)]: {
-          type: 'string',
-          title: 'Diagnosis'
-        }
-      }
-    },
-    medication: {
-      type: 'object',
-      properties: {
-        [getEntityAddressKey(-1, MEDICATION_STATEMENT_FQN, FQN.NAME_FQN)]: {
-          type: 'string',
-          title: 'Medication',
-        },
-        [getEntityAddressKey(-1, MEDICATION_STATEMENT_FQN, FQN.TAKEN_AS_PRESCRIBED_FQN)]: {
-          type: 'string',
-          description: SELECT_ONLY_ONE,
-          title: 'Compliance',
-          enum: YES_NO_UNKNOWN
-        }
-      }
-    }
-  },
   type: 'object',
   properties: {
     [getPageSectionKey(4, 1)]: {
       type: 'array',
       title: 'Diagnoses',
       items: {
-        $ref: '#/definitions/diagnosis'
+        type: 'object',
+        properties: {
+          [getEntityAddressKey(-1, DIAGNOSIS_FQN, FQN.NAME_FQN)]: {
+            type: 'string',
+            title: 'Diagnosis'
+          }
+        }
       },
       default: [{}],
     },
@@ -60,7 +39,19 @@ const schema = {
       type: 'array',
       title: 'Prescribed Medication',
       items: {
-        $ref: '#/definitions/medication'
+        type: 'object',
+        properties: {
+          [getEntityAddressKey(-1, MEDICATION_STATEMENT_FQN, FQN.NAME_FQN)]: {
+            type: 'string',
+            title: 'Medication',
+          },
+          [getEntityAddressKey(-1, MEDICATION_STATEMENT_FQN, FQN.TAKEN_AS_PRESCRIBED_FQN)]: {
+            type: 'boolean',
+            description: SELECT_ONLY_ONE,
+            title: 'Compliance',
+            enumNames: ['Yes', 'No']
+          }
+        }
       },
       default: [{}],
     },
