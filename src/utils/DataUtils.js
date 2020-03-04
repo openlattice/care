@@ -213,6 +213,33 @@ const groupNeighborsByEntitySetIds = (
   return neighborsByESID;
 };
 
+const groupNeighborsByFQNs = (
+  neighbors :List<Map>,
+  appTypeFqnsByIds :Map = Map(),
+  byAssociation :boolean = false,
+  withEdge :boolean = false
+) :Map => {
+  const entitySetType = byAssociation ? 'associationEntitySet' : 'neighborEntitySet';
+  const neighborsByFQN = Map().withMutations((mutable) => {
+    neighbors.forEach((neighbor) => {
+      const neighborESID = neighbor.getIn([entitySetType, 'id']);
+      const neighborData = withEdge ? neighbor : neighbor.get('neighborDetails');
+      const appTypeFqn = appTypeFqnsByIds.get(neighborESID);
+
+      if (mutable.has(appTypeFqn)) {
+        const entitySetCount = mutable.get(appTypeFqn).count();
+        mutable.setIn([appTypeFqn, entitySetCount], neighborData);
+      }
+      else {
+        mutable.set(appTypeFqn, List([neighborData]));
+      }
+
+    });
+  });
+
+  return neighborsByFQN;
+};
+
 const formatDataGraphResponse = (responseData :Map, app :Map) => {
   const newEntityKeyIdsByEntitySetId = responseData.get('entityKeyIds');
   const newAssociationKeyIdsByEntitySetId = responseData.get('entitySetIds');
@@ -267,6 +294,7 @@ export {
   getFqnObj,
   getSearchTerm,
   groupNeighborsByEntitySetIds,
+  groupNeighborsByFQNs,
   inchesToFeetString,
   indexSubmittedDataGraph,
   keyIn,
