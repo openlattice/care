@@ -24,12 +24,14 @@ import {
   GET_REPORTS_NEIGHBORS,
   GET_SUBJECT_OF_INCIDENT,
   SUBMIT_CRISIS_REPORT,
+  UPDATE_CRISIS_REPORT,
   getCrisisReport,
   getReportsNeighbors,
   getSubjectOfIncident,
   submitCrisisReport,
+  updateCrisisReport,
 } from './CrisisActions';
-import { constructFormDataFromNeighbors, getCrisisReportAssociations } from './XStateCrisisReportUtils';
+import { constructFormDataFromNeighbors, getCrisisReportAssociations, getEntityIndexToIdMap } from './XStateCrisisReportUtils';
 import { schemas, uiSchemas } from './schemas';
 import { generateReviewSchema } from './schemas/schemaUtils';
 
@@ -37,14 +39,17 @@ import Logger from '../../../utils/Logger';
 import * as FQN from '../../../edm/DataModelFqns';
 import {
   submitDataGraph,
+  submitPartialReplace,
 } from '../../../core/sagas/data/DataActions';
 import {
   submitDataGraphWorker,
+  submitPartialReplaceWorker,
 } from '../../../core/sagas/data/DataSagas';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { getESIDsFromApp } from '../../../utils/AppUtils';
 import { getEntityKeyId, groupNeighborsByFQNs } from '../../../utils/DataUtils';
-import { ERR_ACTION_VALUE_TYPE } from '../../../utils/Errors';
+import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../utils/Errors';
+import { isDefined } from '../../../utils/LangUtils';
 import { isValidUuid } from '../../../utils/Utils';
 
 const { FullyQualifiedName } = Models;
@@ -72,6 +77,7 @@ const {
   INVOLVED_IN_FQN,
   MEDICATION_STATEMENT_FQN,
   NATURE_OF_CRISIS_FQN,
+  OCCUPATION_FQN,
   PART_OF_FQN,
   PEOPLE_FQN,
   REFERRAL_REQUEST_FQN,
@@ -171,6 +177,7 @@ function* getReportsNeighborsWorker(action :SequenceAction) :Generator<any, any,
       INTERACTION_STRATEGY_FQN,
       INVOICE_FQN,
       NATURE_OF_CRISIS_FQN,
+      OCCUPATION_FQN,
       REFERRAL_REQUEST_FQN,
       SELF_HARM_FQN,
       STAFF_FQN,
@@ -196,9 +203,9 @@ function* getReportsNeighborsWorker(action :SequenceAction) :Generator<any, any,
     );
 
     if (neighborsResponse.error) throw neighborsResponse.error;
-    const behaviorData = fromJS(neighborsResponse.data);
+    const neighborsData = fromJS(neighborsResponse.data);
 
-    response.data = behaviorData;
+    response.data = neighborsData;
 
     yield put(getReportsNeighbors.success(action.id, response.data));
   }
@@ -300,14 +307,9 @@ function* getCrisisReportWorker(action :SequenceAction) :Generator<any, any, any
     if (subjectResponse.error) throw subjectResponse.error;
     const subjectData = subjectResponse.data.getIn([incidentEKID, 0, 'neighborDetails'], Map());
 
-    const entityIndexToIdMap = neighborsByFQN.toSeq().map((entities) => Map().withMutations((mutable) => {
-      entities.forEach((entity, index) => {
-        mutable.set(index, entity.getIn([FQN.OPENLATTICE_ID_FQN, 0]));
-      });
-    })).toMap();
-
-    const { schema } = generateReviewSchema(schemas, uiSchemas);
-    const formData = constructFormDataFromNeighbors(neighborsByFQN, schema);
+    const { schema } = generateReviewSchema(schemas, uiSchemas, true);
+    const formData = fromJS(constructFormDataFromNeighbors(neighborsByFQN, schema));
+    const entityIndexToIdMap = getEntityIndexToIdMap(neighborsByFQN, schema);
 
     yield put(getCrisisReport.success(action.id, {
       formData,
@@ -327,6 +329,30 @@ function* getCrisisReportWatcher() :Generator<any, any, any> {
   yield takeLatest(GET_CRISIS_REPORT, getCrisisReportWorker);
 }
 
+function* updateCrisisReportWorker(action :SequenceAction) :Generator<any, any, any> {
+  const response = {};
+
+  try {
+    const { value } = action;
+    if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
+    yield put(updateCrisisReport.request(action.id, value));
+
+    const updateResponse = yield call(submitPartialReplaceWorker, submitPartialReplace(value));
+    if (updateResponse.error) throw updateResponse.error;
+    yield put(updateCrisisReport.failure(action.id));
+  }
+  catch (error) {
+    response.error = error;
+    LOG.error(action.type, error);
+    yield put(updateCrisisReport.failure(action.id, error));
+  }
+  return response;
+}
+
+function* updateCrisisReportWatcher() :Generator<any, any, any> {
+  yield takeEvery(UPDATE_CRISIS_REPORT, updateCrisisReportWorker);
+}
+
 export {
   getCrisisReportWatcher,
   getCrisisReportWorker,
@@ -336,4 +362,6 @@ export {
   getSubjectOfIncidentWorker,
   submitCrisisReportWatcher,
   submitCrisisReportWorker,
+  updateCrisisReportWatcher,
+  updateCrisisReportWorker,
 };

@@ -8,6 +8,9 @@ const submitCrisisReport :RequestSequence = newRequestSequence(SUBMIT_CRISIS_REP
 const GET_CRISIS_REPORT :'GET_CRISIS_REPORT' = 'GET_CRISIS_REPORT';
 const getCrisisReport :RequestSequence = newRequestSequence(GET_CRISIS_REPORT);
 
+const UPDATE_CRISIS_REPORT :'UPDATE_CRISIS_REPORT' = 'UPDATE_CRISIS_REPORT';
+const updateCrisisReport :RequestSequence = newRequestSequence(UPDATE_CRISIS_REPORT);
+
 const GET_REPORTS_NEIGHBORS :'GET_REPORTS_NEIGHBORS' = 'GET_REPORTS_NEIGHBORS';
 const getReportsNeighbors :RequestSequence = newRequestSequence(GET_REPORTS_NEIGHBORS);
 
@@ -19,8 +22,10 @@ export {
   GET_REPORTS_NEIGHBORS,
   GET_SUBJECT_OF_INCIDENT,
   SUBMIT_CRISIS_REPORT,
+  UPDATE_CRISIS_REPORT,
   getCrisisReport,
   getReportsNeighbors,
   getSubjectOfIncident,
   submitCrisisReport,
+  updateCrisisReport,
 };

@@ -14,21 +14,15 @@ const mergeSchemas = (prevSchemas :ReviewSchemas, newSchemas :ReviewSchemas) :Re
   const { schema, uiSchema } = newSchemas;
   const { schema: prevSchema = {}, uiSchema: prevUiSchema = {} } = prevSchemas;
 
-  const reviewOrder = {
-    'ui:disabled': true,
-    'ui:readonly': true,
-  };
-
   return {
     schema: merge(prevSchema, schema),
-    uiSchema: merge(prevUiSchema, uiSchema, reviewOrder)
+    uiSchema: merge(prevUiSchema, uiSchema)
   };
 };
 
-
 // Merges all schemas and uiSchemas together into a single disabled, readonly pair of schemas.
 // issues warning if schemas and uiSchemas have mismatching lengths
-const generateReviewSchema = (schemas :Object[], uiSchemas :Object[]) => {
+const generateReviewSchema = (schemas :Object[], uiSchemas :Object[], readOnly :boolean = false) => {
   const reviewSchemas = {
     schema: {},
     uiSchema: {}
@@ -45,7 +39,12 @@ const generateReviewSchema = (schemas :Object[], uiSchemas :Object[]) => {
     });
   });
 
-  return reviewSchemas;
+  return readOnly
+    ? merge(reviewSchemas, {
+      'ui:disabled': true,
+      'ui:readonly': true,
+    })
+    : reviewSchemas;
 };
 
 export { generateReviewSchema, mergeSchemas };

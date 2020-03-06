@@ -124,7 +124,7 @@ const NewCrisisReportContainer = () => {
   const location = useLocation();
   const pageRef = useRef();
   const dispatch = useDispatch();
-  const reviewSchemas = generateReviewSchema(schemas, uiSchemas);
+  const reviewSchemas = generateReviewSchema(schemas, uiSchemas, true);
 
   const { state: selectedPerson = Map() } = location;
   if (!Map.isMap(selectedPerson) || selectedPerson.isEmpty()) return <Redirect to={HOME_PATH} />;
@@ -154,21 +154,21 @@ const NewCrisisReportContainer = () => {
                     }
                     : validateAndSubmit;
 
-                  const handleNext = () => {
+                  const scrollToContentTop = () => {
                     if (pageRef.current) {
                       pageRef.current.scrollIntoView({
                         behavior: 'smooth'
                       });
                     }
+                  };
+
+                  const handleNext = () => {
+                    scrollToContentTop();
                     onNext();
                   };
 
                   const handleBack = () => {
-                    if (pageRef.current) {
-                      pageRef.current.scrollIntoView({
-                        behavior: 'smooth'
-                      });
-                    }
+                    scrollToContentTop();
                     onBack();
                   };
 

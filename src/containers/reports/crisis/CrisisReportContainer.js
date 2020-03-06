@@ -1,17 +1,17 @@
 // @flow
 import React, { useEffect } from 'react';
 
+import { Map } from 'immutable';
 import { Form } from 'lattice-fabricate';
 import { Card } from 'lattice-ui-kit';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router';
 
-import { getCrisisReport } from './CrisisActions';
+import { getCrisisReport, updateCrisisReport } from './CrisisActions';
 import { schemas, uiSchemas } from './schemas';
 import { generateReviewSchema } from './schemas/schemaUtils';
 
 import { useAuthorization } from '../../../components/hooks';
-// import ProfileBanner from '../../profile/ProfileBanner';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
 import { REPORT_ID_PARAM } from '../../../core/router/Routes';
 import { getAuthorization } from '../../../core/sagas/authorize/AuthorizeActions';
@@ -22,9 +22,12 @@ const {
 } = APP_TYPES_FQNS;
 
 const CrisisReportContainer = () => {
-  const reviewSchemas = generateReviewSchema(schemas, uiSchemas);
   const [isAuthorized] = useAuthorization('profile', getAuthorization);
+  const reviewSchemas = generateReviewSchema(schemas, uiSchemas, !isAuthorized);
   const formData = useSelector((store) => store.getIn(['crisisReport', 'formData']));
+  const entityIndexToIdMap = useSelector((store) => store.getIn(['crisisReport', 'entityIndexToIdMap']));
+  const entitySetIds = useSelector((store) => store.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
+  const propertyTypeIds = useSelector((store) => store.getIn(['edm', 'fqnToIdMap'], Map()));
   const dispatch = useDispatch();
   const match = useRouteMatch();
 
@@ -37,6 +40,17 @@ const CrisisReportContainer = () => {
     }));
   }, [dispatch, reportId]);
 
+  const handleUpdateCrisisReport = (params) => {
+    dispatch(updateCrisisReport(params));
+  };
+
+  const formContext = {
+    editAction: handleUpdateCrisisReport,
+    entityIndexToIdMap,
+    entitySetIds,
+    propertyTypeIds,
+  };
+
   return (
     <ContentOuterWrapper>
       <ContentWrapper>
@@ -44,7 +58,8 @@ const CrisisReportContainer = () => {
           Crisis Report
           <Form
               disabled
-              formData={formData}
+              formContext={formContext}
+              formData={formData.toJS()}
               schema={reviewSchemas.schema}
               uiSchema={reviewSchemas.uiSchema} />
         </Card>

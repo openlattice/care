@@ -5,14 +5,15 @@ import { RequestStates } from 'redux-reqseq';
 
 import {
   getCrisisReport,
+  updateCrisisReport,
 } from './CrisisActions';
 
 const INITIAL_STATE :Map = fromJS({
-  formData: Map(),
   entityIndexToIdMap: Map(),
   fetchState: RequestStates.STANDBY,
-  updateState: RequestStates.STANDBY,
+  formData: Map(),
   submitState: RequestStates.STANDBY,
+  updateState: RequestStates.STANDBY,
 });
 
 export default function crisisReportReducer(state :Map = INITIAL_STATE, action :Object) {
@@ -24,6 +25,19 @@ export default function crisisReportReducer(state :Map = INITIAL_STATE, action :
           .set('fetchState', RequestStates.SUCCESS)
           .merge(action.value),
         FAILURE: () => state.set('fetchState', RequestStates.FAILURE),
+      });
+    }
+
+    case updateCrisisReport.case(action.type): {
+      return updateCrisisReport.reducer(state, action, {
+        REQUEST: () => {
+          const { path, properties } = action.value;
+          return state
+            .set('updateState', RequestStates.PENDING)
+            .setIn(['formData', ...path], fromJS(properties));
+        },
+        SUCCESS: () => state.set('updateState', RequestStates.SUCCESS),
+        FAILURE: () => state.set('updateState', RequestStates.FAILURE),
       });
     }
 

@@ -190,6 +190,7 @@ export default function* sagas() :Generator<*, *, *> {
     /* <===== END LONG BEACH HACK =====> */
 
     fork(XStateCrisisReportSagas.submitCrisisReportWatcher),
+    fork(XStateCrisisReportSagas.updateCrisisReportWatcher),
     fork(XStateCrisisReportSagas.getCrisisReportWatcher),
     fork(XStateCrisisReportSagas.getReportsNeighborsWatcher),
     fork(XStateCrisisReportSagas.getSubjectOfIncidentWatcher),
