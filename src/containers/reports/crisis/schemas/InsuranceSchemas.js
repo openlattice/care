@@ -20,23 +20,33 @@ const schema = {
           type: 'string',
           title: 'Primary Insurance',
           description: SELECT_ONLY_ONE,
-          enum: INSURANCE
+          enum: INSURANCE,
+          sharedProperty: {
+            property: FQN.GENERAL_STATUS_FQN,
+            value: 'Primary',
+          }
         },
         [getEntityAddressKey(0, INSURANCE_FQN, FQN.GENERAL_STATUS_FQN)]: {
           type: 'string',
           title: 'Type',
-          default: 'Primary'
+          default: 'Primary',
+          skipPopulate: true,
         },
         [getEntityAddressKey(1, INSURANCE_FQN, FQN.ORGANIZATION_NAME_FQN)]: {
           type: 'string',
           title: 'Secondary Insurance',
           description: SELECT_ONLY_ONE,
-          enum: INSURANCE
+          enum: INSURANCE,
+          sharedProperty: {
+            property: FQN.GENERAL_STATUS_FQN,
+            value: 'Secondary',
+          }
         },
         [getEntityAddressKey(1, INSURANCE_FQN, FQN.GENERAL_STATUS_FQN)]: {
           type: 'string',
           title: 'Type',
-          default: 'Secondary'
+          default: 'Secondary',
+          skipPopulate: true,
         },
       }
     }

@@ -68,9 +68,19 @@ const schema = {
             enum: DRUGS_ALCOHOL,
           },
           // minItems: 1,
-          uniqueItems: true
+          uniqueItems: true,
+          sharedProperty: {
+            property: FQN.TEMPORAL_STATUS_FQN,
+            value: 'current'
+          }
         },
-        [getEntityAddressKey(0, SUBSTANCE_HISTORY_FQN, FQN.TYPE_FQN)]: {
+        [getEntityAddressKey(0, SUBSTANCE_FQN, FQN.TEMPORAL_STATUS_FQN)]: {
+          title: 'Temporal Status',
+          type: 'string',
+          default: 'current',
+          skipPopulate: true,
+        },
+        [getEntityAddressKey(1, SUBSTANCE_FQN, FQN.TYPE_FQN)]: {
           title: 'History of substance abuse or treatment',
           type: 'array',
           description: SELECT_ALL_THAT_APPLY,
@@ -79,7 +89,17 @@ const schema = {
             enum: DRUGS_ALCOHOL,
           },
           // minItems: 1,
-          uniqueItems: true
+          uniqueItems: true,
+          sharedProperty: {
+            property: FQN.TEMPORAL_STATUS_FQN,
+            value: 'past'
+          }
+        },
+        [getEntityAddressKey(1, SUBSTANCE_FQN, FQN.TEMPORAL_STATUS_FQN)]: {
+          title: 'Temporal Status',
+          type: 'string',
+          default: 'past',
+          skipPopulate: true,
         },
       }
     },
@@ -111,6 +131,9 @@ const uiSchema = {
     },
     items: {
       classNames: 'grid-container',
+      'ui:options': {
+        editable: true
+      },
       [getEntityAddressKey(-1, MEDICATION_STATEMENT_FQN, FQN.NAME_FQN)]: {
         classNames: 'column-span-12'
       },
@@ -126,6 +149,9 @@ const uiSchema = {
   },
   [getPageSectionKey(4, 3)]: {
     classNames: 'column-span-12 grid-container',
+    'ui:options': {
+      editable: true
+    },
     [getEntityAddressKey(0, SUBSTANCE_FQN, FQN.TYPE_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
@@ -136,7 +162,7 @@ const uiSchema = {
         withOther: true,
       }
     },
-    [getEntityAddressKey(0, SUBSTANCE_HISTORY_FQN, FQN.TYPE_FQN)]: {
+    [getEntityAddressKey(1, SUBSTANCE_FQN, FQN.TYPE_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
       'ui:options': {
@@ -145,6 +171,12 @@ const uiSchema = {
         withNone: true,
         withOther: true,
       }
+    },
+    [getEntityAddressKey(0, SUBSTANCE_FQN, FQN.TEMPORAL_STATUS_FQN)]: {
+      'ui:widget': 'hidden'
+    },
+    [getEntityAddressKey(1, SUBSTANCE_FQN, FQN.TEMPORAL_STATUS_FQN)]: {
+      'ui:widget': 'hidden'
     },
   }
 };

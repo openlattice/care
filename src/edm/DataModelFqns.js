@@ -4,6 +4,9 @@ const { FullyQualifiedName } = Models;
 const { OPENLATTICE_ID_FQN } = Constants;
 
 export { OPENLATTICE_ID_FQN };
+/* substance */
+const TEMPORAL_STATUS_FQN = new FullyQualifiedName('ol.temporalstatus');
+export { TEMPORAL_STATUS_FQN };
 
 /* referral request */
 const SERVICE_TYPE_FQN = new FullyQualifiedName('ol.servicetype');
