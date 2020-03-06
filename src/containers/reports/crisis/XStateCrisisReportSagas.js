@@ -20,34 +20,42 @@ import {
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
+  DELETE_CRISIS_REPORT_CONTENT,
   GET_CRISIS_REPORT,
   GET_REPORTS_NEIGHBORS,
   GET_SUBJECT_OF_INCIDENT,
   SUBMIT_CRISIS_REPORT,
   UPDATE_CRISIS_REPORT,
+  deleteCrisisReportContent,
   getCrisisReport,
   getReportsNeighbors,
   getSubjectOfIncident,
   submitCrisisReport,
   updateCrisisReport,
 } from './CrisisActions';
-import { constructFormDataFromNeighbors, getCrisisReportAssociations, getEntityIndexToIdMap } from './XStateCrisisReportUtils';
+import {
+  constructFormDataFromNeighbors,
+  getCrisisReportAssociations,
+  getEntityIndexToIdMap
+} from './XStateCrisisReportUtils';
 import { schemas, uiSchemas } from './schemas';
 import { generateReviewSchema } from './schemas/schemaUtils';
 
 import Logger from '../../../utils/Logger';
 import * as FQN from '../../../edm/DataModelFqns';
 import {
+  deleteBulkEntities,
   submitDataGraph,
   submitPartialReplace,
 } from '../../../core/sagas/data/DataActions';
 import {
+  deleteBulkEntitiesWorker,
   submitDataGraphWorker,
   submitPartialReplaceWorker,
 } from '../../../core/sagas/data/DataSagas';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { getESIDsFromApp } from '../../../utils/AppUtils';
-import { getEntityKeyId, groupNeighborsByFQNs } from '../../../utils/DataUtils';
+import { getEntityKeyId, groupNeighborsByFQNs, removeEntitiesFromEntityIndexToIdMap } from '../../../utils/DataUtils';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../utils/Errors';
 import { isDefined } from '../../../utils/LangUtils';
 import { isValidUuid } from '../../../utils/Utils';
@@ -353,7 +361,38 @@ function* updateCrisisReportWatcher() :Generator<any, any, any> {
   yield takeEvery(UPDATE_CRISIS_REPORT, updateCrisisReportWorker);
 }
 
+function* deleteCrisisReportContentWorker(action :SequenceAction) :Generator<any, any, any> {
+  const response = {};
+  try {
+    yield put(deleteCrisisReportContent.failure(action.id));
+    const { value } = action;
+    if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
+
+    const { entityData, path } = value;
+    const deleteResponse = yield call(deleteBulkEntitiesWorker, deleteBulkEntities(entityData));
+
+    if (deleteResponse.error) throw deleteResponse.error;
+
+    const entityIndexToIdMap = yield select((state) => state.getIn(['crisisReport', 'entityIndexToIdMap']));
+    const newEntityIndexToIdMap = removeEntitiesFromEntityIndexToIdMap(entityData, entityIndexToIdMap);
+
+    yield put(deleteCrisisReportContent.success(action.id, { path, entityIndexToIdMap: newEntityIndexToIdMap }));
+  }
+  catch (error) {
+    response.error = error;
+    LOG.error(action.type, error);
+    yield put(deleteCrisisReportContent.failure(action.id, error));
+  }
+  return response;
+}
+
+function* deleteCrisisReportContentWatcher() :Generator<any, any, any> {
+  yield takeEvery(DELETE_CRISIS_REPORT_CONTENT, deleteCrisisReportContentWorker);
+}
+
 export {
+  deleteCrisisReportContentWatcher,
+  deleteCrisisReportContentWorker,
   getCrisisReportWatcher,
   getCrisisReportWorker,
   getReportsNeighborsWatcher,

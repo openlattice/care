@@ -4,6 +4,7 @@ import { Map, fromJS } from 'immutable';
 import { RequestStates } from 'redux-reqseq';
 
 import {
+  deleteCrisisReportContent,
   getCrisisReport,
   updateCrisisReport,
 } from './CrisisActions';
@@ -38,6 +39,20 @@ export default function crisisReportReducer(state :Map = INITIAL_STATE, action :
         },
         SUCCESS: () => state.set('updateState', RequestStates.SUCCESS),
         FAILURE: () => state.set('updateState', RequestStates.FAILURE),
+      });
+    }
+
+    case deleteCrisisReportContent.case(action.type): {
+      return deleteCrisisReportContent.reducer(state, action, {
+        REQUEST: () => state.set('deleteState', RequestStates.PENDING),
+        SUCCESS: () => {
+          const { entityIndexToIdMap, path } = action.value;
+          return state
+            .set('deleteState', RequestStates.SUCCESS)
+            .set('entityIndexToIdMap', entityIndexToIdMap)
+            .deleteIn(['formData', ...path]);
+        },
+        FAILURE: () => state.set('deleteState', RequestStates.FAILURE)
       });
     }
 

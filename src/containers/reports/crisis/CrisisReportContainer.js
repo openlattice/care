@@ -7,7 +7,7 @@ import { Card } from 'lattice-ui-kit';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router';
 
-import { getCrisisReport, updateCrisisReport } from './CrisisActions';
+import { deleteCrisisReportContent, getCrisisReport, updateCrisisReport } from './CrisisActions';
 import { schemas, uiSchemas } from './schemas';
 import { generateReviewSchema } from './schemas/schemaUtils';
 
@@ -44,7 +44,12 @@ const CrisisReportContainer = () => {
     dispatch(updateCrisisReport(params));
   };
 
+  const handleDeleteCrisisReportContent = (params) => {
+    dispatch(deleteCrisisReportContent(params));
+  };
+
   const formContext = {
+    deleteAction: handleDeleteCrisisReportContent,
     editAction: handleUpdateCrisisReport,
     entityIndexToIdMap,
     entitySetIds,
