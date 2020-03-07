@@ -1,5 +1,5 @@
 // @flow
-import { List, Map, getIn } from 'immutable';
+import { Map, getIn } from 'immutable';
 
 import { getAgeFromIsoDate, getDateShortFromIsoDate } from './DateUtils';
 
