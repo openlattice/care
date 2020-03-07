@@ -13,6 +13,8 @@ const INITIAL_STATE :Map = fromJS({
   entityIndexToIdMap: Map(),
   fetchState: RequestStates.STANDBY,
   formData: Map(),
+  reporterData: Map(),
+  subjectData: Map(),
   submitState: RequestStates.STANDBY,
   updateState: RequestStates.STANDBY,
 });

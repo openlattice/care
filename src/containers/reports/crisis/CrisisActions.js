@@ -11,6 +11,9 @@ const getCrisisReport :RequestSequence = newRequestSequence(GET_CRISIS_REPORT);
 const DELETE_CRISIS_REPORT_CONTENT :'DELETE_CRISIS_REPORT_CONTENT' = 'DELETE_CRISIS_REPORT_CONTENT';
 const deleteCrisisReportContent :RequestSequence = newRequestSequence(DELETE_CRISIS_REPORT_CONTENT);
 
+const ADD_OPTIONAL_CRISIS_REPORT_CONTENT :'ADD_OPTIONAL_CRISIS_REPORT_CONTENT' = 'ADD_OPTIONAL_CRISIS_REPORT_CONTENT';
+const addOptionalCrisisReportContent :RequestSequence = newRequestSequence(ADD_OPTIONAL_CRISIS_REPORT_CONTENT);
+
 const UPDATE_CRISIS_REPORT :'UPDATE_CRISIS_REPORT' = 'UPDATE_CRISIS_REPORT';
 const updateCrisisReport :RequestSequence = newRequestSequence(UPDATE_CRISIS_REPORT);
 
@@ -21,12 +24,14 @@ const GET_SUBJECT_OF_INCIDENT :'GET_SUBJECT_OF_INCIDENT' = 'GET_SUBJECT_OF_INCID
 const getSubjectOfIncident :RequestSequence = newRequestSequence(GET_SUBJECT_OF_INCIDENT);
 
 export {
+  ADD_OPTIONAL_CRISIS_REPORT_CONTENT,
   DELETE_CRISIS_REPORT_CONTENT,
   GET_CRISIS_REPORT,
   GET_REPORTS_NEIGHBORS,
   GET_SUBJECT_OF_INCIDENT,
   SUBMIT_CRISIS_REPORT,
   UPDATE_CRISIS_REPORT,
+  addOptionalCrisisReportContent,
   deleteCrisisReportContent,
   getCrisisReport,
   getReportsNeighbors,

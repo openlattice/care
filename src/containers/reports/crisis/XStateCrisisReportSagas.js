@@ -20,12 +20,14 @@ import {
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
+  ADD_OPTIONAL_CRISIS_REPORT_CONTENT,
   DELETE_CRISIS_REPORT_CONTENT,
   GET_CRISIS_REPORT,
   GET_REPORTS_NEIGHBORS,
   GET_SUBJECT_OF_INCIDENT,
   SUBMIT_CRISIS_REPORT,
   UPDATE_CRISIS_REPORT,
+  addOptionalCrisisReportContent,
   deleteCrisisReportContent,
   getCrisisReport,
   getReportsNeighbors,
@@ -36,7 +38,9 @@ import {
 import {
   constructFormDataFromNeighbors,
   getCrisisReportAssociations,
-  getEntityIndexToIdMap
+  getEntityIndexToIdMapFromDataGraphResponse,
+  getEntityIndexToIdMapFromNeighbors,
+  getOptionalCrisisReportAssociations
 } from './XStateCrisisReportUtils';
 import { schemas, uiSchemas } from './schemas';
 import { generateReviewSchema } from './schemas/schemaUtils';
@@ -146,6 +150,50 @@ function* submitCrisisReportWorker(action :SequenceAction) :Generator<any, any, 
 
 function* submitCrisisReportWatcher() :Generator<any, any, any> {
   yield takeEvery(SUBMIT_CRISIS_REPORT, submitCrisisReportWorker);
+}
+
+function* addOptionalCrisisReportContentWorker(action :SequenceAction) :Generator<any, any, any> {
+  const response :Object = {};
+  try {
+    const { value } = action;
+    if (!isPlainObject(value)) throw ERR_ACTION_VALUE_TYPE;
+    yield put(addOptionalCrisisReportContent.request(action.id));
+    const { formData, existingEKIDs, schema } = value;
+
+    const entitySetIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
+    const propertyTypeIds = yield select((state) => state.getIn(['edm', 'fqnToIdMap'], Map()));
+
+    const entityData = processEntityData(formData, entitySetIds, propertyTypeIds);
+
+    const associationEntityData = processAssociationEntityData(
+      getOptionalCrisisReportAssociations(formData, existingEKIDs),
+      entitySetIds,
+      propertyTypeIds
+    );
+
+    const dataGraphResponse = yield call(
+      submitDataGraphWorker,
+      submitDataGraph({
+        entityData,
+        associationEntityData,
+      })
+    );
+    if (dataGraphResponse.error) throw dataGraphResponse.error;
+
+    const entityIndexToIdMap = getEntityIndexToIdMapFromDataGraphResponse(dataGraphResponse, schema);
+
+    yield put(addOptionalCrisisReportContent.success(action.id));
+  }
+  catch (error) {
+    response.error = error;
+    LOG.error(action.type, error);
+    yield put(addOptionalCrisisReportContent.failure(action.id, error));
+  }
+  return response;
+}
+
+function* addOptionalCrisisReportContentWatcher() :Generator<any, any, any> {
+  yield takeEvery(ADD_OPTIONAL_CRISIS_REPORT_CONTENT, addOptionalCrisisReportContentWorker);
 }
 
 function* getReportsNeighborsWorker(action :SequenceAction) :Generator<any, any, any> {
@@ -304,8 +352,9 @@ function* getCrisisReportWorker(action :SequenceAction) :Generator<any, any, any
     const appTypeFqnsByIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds']).flip());
     const neighborsByFQN = groupNeighborsByFQNs(neighbors, appTypeFqnsByIds);
     const incidentEKID = neighborsByFQN.getIn([
-      INCIDENT_FQN, 0, FQN.OPENLATTICE_ID_FQN, 0
+      INCIDENT_FQN, 0, 'neighborDetails', FQN.OPENLATTICE_ID_FQN, 0
     ]);
+    const reporterData = neighborsByFQN.getIn([STAFF_FQN, 0]);
 
     const subjectResponse = yield call(
       getSubjectOfIncidentWorker,
@@ -317,12 +366,13 @@ function* getCrisisReportWorker(action :SequenceAction) :Generator<any, any, any
 
     const { schema } = generateReviewSchema(schemas, uiSchemas, true);
     const formData = fromJS(constructFormDataFromNeighbors(neighborsByFQN, schema));
-    const entityIndexToIdMap = getEntityIndexToIdMap(neighborsByFQN, schema);
+    const entityIndexToIdMap = getEntityIndexToIdMapFromNeighbors(neighborsByFQN, schema);
 
     yield put(getCrisisReport.success(action.id, {
       formData,
       entityIndexToIdMap,
       subjectData,
+      reporterData
     }));
   }
   catch (error) {
@@ -345,9 +395,13 @@ function* updateCrisisReportWorker(action :SequenceAction) :Generator<any, any, 
     if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
     yield put(updateCrisisReport.request(action.id, value));
 
-    const updateResponse = yield call(submitPartialReplaceWorker, submitPartialReplace(value));
+    const updateResponse = yield call(
+      submitPartialReplaceWorker,
+      submitPartialReplace(value)
+    );
+
     if (updateResponse.error) throw updateResponse.error;
-    yield put(updateCrisisReport.failure(action.id));
+    yield put(updateCrisisReport.success(action.id));
   }
   catch (error) {
     response.error = error;
@@ -391,6 +445,8 @@ function* deleteCrisisReportContentWatcher() :Generator<any, any, any> {
 }
 
 export {
+  addOptionalCrisisReportContentWatcher,
+  addOptionalCrisisReportContentWorker,
   deleteCrisisReportContentWatcher,
   deleteCrisisReportContentWorker,
   getCrisisReportWatcher,

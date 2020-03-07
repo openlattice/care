@@ -13,7 +13,6 @@ const {
   DIAGNOSIS_FQN,
   MEDICATION_STATEMENT_FQN,
   SUBSTANCE_FQN,
-  SUBSTANCE_HISTORY_FQN
 } = APP_TYPES_FQNS;
 
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
@@ -110,6 +109,7 @@ const uiSchema = {
   [getPageSectionKey(4, 1)]: {
     classNames: 'column-span-12',
     'ui:options': {
+      addActionKey: 'addOptional',
       addButtonText: '+ Diagnosis',
       orderable: false,
     },
@@ -126,6 +126,7 @@ const uiSchema = {
   [getPageSectionKey(4, 2)]: {
     classNames: 'column-span-12',
     'ui:options': {
+      addActionKey: 'addOptional',
       addButtonText: '+ Medication',
       orderable: false,
     },

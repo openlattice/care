@@ -217,13 +217,13 @@ const groupNeighborsByFQNs = (
   neighbors :List<Map>,
   appTypeFqnsByIds :Map = Map(),
   byAssociation :boolean = false,
-  withEdge :boolean = false
+  entityOnly :boolean = false
 ) :Map => {
   const entitySetType = byAssociation ? 'associationEntitySet' : 'neighborEntitySet';
   const neighborsByFQN = Map().withMutations((mutable) => {
     neighbors.forEach((neighbor) => {
       const neighborESID = neighbor.getIn([entitySetType, 'id']);
-      const neighborData = withEdge ? neighbor : neighbor.get('neighborDetails');
+      const neighborData = entityOnly ? neighbor.get('neighborDetails') : neighbor;
       const appTypeFqn = appTypeFqnsByIds.get(neighborESID);
 
       if (mutable.has(appTypeFqn)) {

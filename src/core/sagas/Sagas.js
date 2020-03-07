@@ -189,6 +189,7 @@ export default function* sagas() :Generator<*, *, *> {
     fork(LongBeachProviderSagas.getLBProvidersWatcher),
     /* <===== END LONG BEACH HACK =====> */
 
+    fork(XStateCrisisReportSagas.addOptionalCrisisReportContentWatcher),
     fork(XStateCrisisReportSagas.deleteCrisisReportContentWatcher),
     fork(XStateCrisisReportSagas.getCrisisReportWatcher),
     fork(XStateCrisisReportSagas.getReportsNeighborsWatcher),

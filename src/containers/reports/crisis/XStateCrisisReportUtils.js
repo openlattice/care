@@ -14,12 +14,69 @@ import { APP_TYPES_FQNS as APP } from '../../../shared/Consts';
 
 const { getPageSectionKey, parseEntityAddressKey } = DataProcessingUtils;
 
-const getCrisisReportAssociations = (formData :Object, existingEntityKeyIds :Object) => {
+const getDiagnosisAssociations = (formData, existingEntityKeyIds, createdDateTime) => {
+  const associations = [];
+  const diagnosis = get(formData, getPageSectionKey(4, 1), []);
+  const reportIndex = existingEntityKeyIds[APP.CLINICIAN_REPORT_FQN] || 0;
+
+  const NOW_DATA = { [COMPLETED_DT_FQN]: [createdDateTime] };
+
+  for (let i = 0; i < diagnosis.length; i += 1) {
+    associations.push([
+      APP.PART_OF_FQN,
+      i,
+      APP.DIAGNOSIS_FQN,
+      reportIndex,
+      APP.CLINICIAN_REPORT_FQN,
+      NOW_DATA,
+    ]);
+  }
+  return associations;
+};
+
+const getMedicationAssociations = (formData, existingEntityKeyIds, createdDateTime) => {
+  const associations = [];
+  const medications = get(formData, getPageSectionKey(4, 2), []);
+  const reportIndex = existingEntityKeyIds[APP.CLINICIAN_REPORT_FQN] || 0;
+
+  const NOW_DATA = { [COMPLETED_DT_FQN]: [createdDateTime] };
+
+  for (let i = 0; i < medications.length; i += 1) {
+    associations.push([
+      APP.PART_OF_FQN,
+      i,
+      APP.MEDICATION_STATEMENT_FQN,
+      reportIndex,
+      APP.CLINICIAN_REPORT_FQN,
+      NOW_DATA,
+    ]);
+  }
+  return associations;
+};
+
+const getOptionalCrisisReportAssociations = (
+  formData :Object,
+  existingEntityKeyIds :Object,
+  createdDateTime :string = DateTime.local().toISO()
+) :any[][] => {
+  const associations = [];
+
+  const diagnosis :any[][] = getDiagnosisAssociations(formData, existingEntityKeyIds, createdDateTime);
+  const medications :any[][] = getMedicationAssociations(formData, existingEntityKeyIds, createdDateTime);
+
+  return associations.concat(diagnosis, medications);
+};
+
+const getCrisisReportAssociations = (
+  formData :Object,
+  existingEntityKeyIds :Object,
+  createdDateTime :string = DateTime.local().toISO()
+) :any[][] => {
   const personEKID = existingEntityKeyIds[APP.PEOPLE_FQN];
   const staffEKID = existingEntityKeyIds[APP.STAFF_FQN];
-  const now = DateTime.local().toISO();
 
-  const NOW_DATA = { [COMPLETED_DT_FQN]: [now] };
+  const NOW_DATA = { [COMPLETED_DT_FQN]: [createdDateTime] };
+
   // static assocations
   const associations :any[][] = [
     [APP.INVOLVED_IN_FQN, personEKID, APP.PEOPLE_FQN, 0, APP.INCIDENT_FQN, NOW_DATA],
@@ -47,18 +104,13 @@ const getCrisisReportAssociations = (formData :Object, existingEntityKeyIds :Obj
     [APP.PART_OF_FQN, 0, APP.REFERRAL_REQUEST_FQN, 0, APP.CLINICIAN_REPORT_FQN, NOW_DATA],
   ];
 
-  const diagnosis = get(formData, getPageSectionKey(4, 1), []);
-  const medications = get(formData, getPageSectionKey(4, 2), []);
+  const optionalAssociations :any[][] = getOptionalCrisisReportAssociations(
+    formData,
+    existingEntityKeyIds,
+    createdDateTime
+  );
 
-  for (let i = 0; i < diagnosis.length; i += 1) {
-    associations.push([APP.PART_OF_FQN, i, APP.DIAGNOSIS_FQN, 0, APP.CLINICIAN_REPORT_FQN, NOW_DATA]);
-  }
-
-  for (let i = 0; i < medications.length; i += 1) {
-    associations.push([APP.PART_OF_FQN, i, APP.MEDICATION_STATEMENT_FQN, 0, APP.CLINICIAN_REPORT_FQN, NOW_DATA]);
-  }
-
-  return associations;
+  return associations.concat(optionalAssociations);
 };
 
 const getSectionProperties = (sectionSchema :Object) :Object => {
@@ -80,11 +132,10 @@ const getSectionProperties = (sectionSchema :Object) :Object => {
   return getIn(sectionSchema, path);
 };
 
-const getEntityIndexToIdMap = (neighborsByFQN :Map, schema :Object) => {
+const getEntityAddressIndexByFQN = (schema) => {
   const entityAddressIndexByFQN = {};
   const { properties } = schema;
 
-  // track entities with negative address indices
   Object.values(properties).forEach((sectionSchema) => {
     const sectionProperties = getSectionProperties(sectionSchema);
     Object.keys(sectionProperties).forEach((entityAddressKey) => {
@@ -95,11 +146,17 @@ const getEntityIndexToIdMap = (neighborsByFQN :Map, schema :Object) => {
     });
   });
 
+  return entityAddressIndexByFQN;
+};
+
+const getEntityIndexToIdMapFromNeighbors = (neighborsByFQN :Map, schema :Object) => {
+  const entityAddressIndexByFQN = getEntityAddressIndexByFQN(schema);
+
   const entityIndexToIdMap = neighborsByFQN.toSeq().mapEntries(([fqn, entities]) => {
     const ekidMap = Map().withMutations((mutable) => {
       entities.forEach((entity, index) => {
         const entityAddressIndex = entityAddressIndexByFQN[fqn];
-        const entityKeyId = getIn(entity, [OPENLATTICE_ID_FQN, 0]);
+        const entityKeyId = getIn(entity, ['neighborDetails', OPENLATTICE_ID_FQN, 0]);
         // group by entityAddressIndex if defined
         if (entityAddressIndex) {
           if (mutable.has(entityAddressIndex)) {
@@ -110,7 +167,7 @@ const getEntityIndexToIdMap = (neighborsByFQN :Map, schema :Object) => {
           }
         }
         else {
-          mutable.set(index, entity.getIn([OPENLATTICE_ID_FQN, 0]));
+          mutable.set(index, entity.getIn(['neighborDetails', OPENLATTICE_ID_FQN, 0]));
         }
       });
     });
@@ -118,6 +175,11 @@ const getEntityIndexToIdMap = (neighborsByFQN :Map, schema :Object) => {
   }).toMap();
 
   return entityIndexToIdMap;
+};
+
+// TODO: get entityIndextoIdMap from dataGraphResponse
+const getEntityIndexToIdMapFromDataGraphResponse = (newEntityResponse, schema) => {
+
 };
 
 // parses a schema and generates formData from a map of neighbors keyed by their FQN
@@ -147,9 +209,9 @@ const constructFormDataFromNeighbors = (neighborsByFQN :Map, schema :Object) :Ob
 
       // if sectionType is an array, iterate over neighbors of matching type
       if (sectionType === 'array' && entityIndex < 0) {
-        const neighbors = neighborsByFQN.get(entitySetName);
+        const neighbors = neighborsByFQN.get(entitySetName, List());
         neighbors.forEach((neighbor, index) => {
-          let value = neighbor.get(propertyTypeFQN, List()).toJS();
+          let value = neighbor.getIn(['neighborDetails', propertyTypeFQN], List()).toJS();
           if (!propertyMultiplicity) {
             value = value.pop();
           }
@@ -162,14 +224,16 @@ const constructFormDataFromNeighbors = (neighborsByFQN :Map, schema :Object) :Ob
         // get first neighbor of type filtered by sharedProperty value
         if (sharedProperty) {
           const matchedEntity = neighborsByFQN.get(entitySetName)
-            .filter((entity) => entity.get(sharedProperty.property, List()).includes(sharedProperty.value))
+            .filter((entity) => entity
+              .getIn(['neighborDetails', sharedProperty.property], List())
+              .includes(sharedProperty.value))
             .first() || Map();
           value = matchedEntity
-            .get(propertyTypeFQN, List())
+            .getIn(['neighborDetails', propertyTypeFQN], List())
             .toJS();
         }
         else {
-          value = neighborsByFQN.getIn([entitySetName, entityIndex, propertyTypeFQN], List()).toJS();
+          value = neighborsByFQN.getIn([entitySetName, entityIndex, 'neighborDetails', propertyTypeFQN], List()).toJS();
         }
         if (!propertyMultiplicity) {
           value = value.pop();
@@ -184,5 +248,7 @@ const constructFormDataFromNeighbors = (neighborsByFQN :Map, schema :Object) :Ob
 export {
   constructFormDataFromNeighbors,
   getCrisisReportAssociations,
-  getEntityIndexToIdMap,
+  getEntityIndexToIdMapFromNeighbors,
+  getEntityIndexToIdMapFromDataGraphResponse,
+  getOptionalCrisisReportAssociations,
 };
