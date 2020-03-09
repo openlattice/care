@@ -23,12 +23,14 @@ import { schemas, uiSchemas } from './schemas';
 import { generateReviewSchema } from './schemas/schemaUtils';
 
 import BlameCard from '../shared/BlameCard';
+import * as FQN from '../../../edm/DataModelFqns';
 import { BreadcrumbItem, BreadcrumbLink } from '../../../components/breadcrumbs';
 import { useAuthorization } from '../../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
-import { REPORT_ID_PARAM } from '../../../core/router/Routes';
+import { PROFILE_ID_PATH, PROFILE_VIEW_PATH, REPORT_ID_PARAM } from '../../../core/router/Routes';
 import { getAuthorization } from '../../../core/sagas/authorize/AuthorizeActions';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
+import { getEntityKeyId } from '../../../utils/DataUtils';
 import { getFirstLastFromPerson } from '../../../utils/PersonUtils';
 
 const {
@@ -47,6 +49,7 @@ const CrisisReportContainer = () => {
   const fetchState = useSelector((store) => store.getIn(['crisisReport', 'fetchState']));
   const propertyTypeIds = useSelector((store) => store.getIn(['edm', 'fqnToIdMap'], Map()));
   const reporterData = useSelector((store) => store.getIn(['crisisReport', 'reporterData']));
+  const reportData = useSelector((store) => store.getIn(['crisisReport', 'reportData']));
   const subjectData = useSelector((store) => store.getIn(['crisisReport', 'subjectData']));
 
   const dispatch = useDispatch();
@@ -81,7 +84,8 @@ const CrisisReportContainer = () => {
 
     dispatch(addOptionalCrisisReportContent({
       ...params,
-      existingEKIDs
+      existingEKIDs,
+      schema: reviewSchemas.schema
     }));
   };
 
@@ -96,14 +100,16 @@ const CrisisReportContainer = () => {
     entitySetIds,
     propertyTypeIds,
   };
+  const subjectEKID = getEntityKeyId(subjectData);
+  const profilePath = PROFILE_VIEW_PATH.replace(PROFILE_ID_PATH, subjectEKID);
 
   return (
     <ContentOuterWrapper>
       <ContentWrapper>
         <CardStack>
           <Breadcrumbs>
-            <BreadcrumbLink>{name}</BreadcrumbLink>
-            <BreadcrumbItem>Crisis Report</BreadcrumbItem>
+            <BreadcrumbLink to={profilePath}>{name}</BreadcrumbLink>
+            <BreadcrumbItem>{reportData.getIn([FQN.TYPE_FQN, 0], 'Report')}</BreadcrumbItem>
           </Breadcrumbs>
           <BlameCard reporterData={reporterData} />
           <Card>

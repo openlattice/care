@@ -1,6 +1,7 @@
 // @flow
 import isPlainObject from 'lodash/isPlainObject';
 import {
+  all,
   call,
   put,
   select,
@@ -14,6 +15,8 @@ import {
 import { Models } from 'lattice';
 import { DataProcessingUtils } from 'lattice-fabricate';
 import {
+  DataApiActions,
+  DataApiSagas,
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
@@ -58,7 +61,7 @@ import {
   submitPartialReplaceWorker,
 } from '../../../core/sagas/data/DataSagas';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
-import { getESIDsFromApp } from '../../../utils/AppUtils';
+import { getESIDFromApp, getESIDsFromApp } from '../../../utils/AppUtils';
 import { getEntityKeyId, groupNeighborsByFQNs, removeEntitiesFromEntityIndexToIdMap } from '../../../utils/DataUtils';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../utils/Errors';
 import { isDefined } from '../../../utils/LangUtils';
@@ -66,12 +69,12 @@ import { isValidUuid } from '../../../utils/Utils';
 
 const { FullyQualifiedName } = Models;
 
-const {
-  searchEntityNeighborsWithFilter,
-} = SearchApiActions;
-const {
-  searchEntityNeighborsWithFilterWorker,
-} = SearchApiSagas;
+const { searchEntityNeighborsWithFilter } = SearchApiActions;
+const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
+
+const { getEntityData } = DataApiActions;
+
+const { getEntityDataWorker } = DataApiSagas;
 
 const { processEntityData, processAssociationEntityData } = DataProcessingUtils;
 const {
@@ -158,7 +161,13 @@ function* addOptionalCrisisReportContentWorker(action :SequenceAction) :Generato
     const { value } = action;
     if (!isPlainObject(value)) throw ERR_ACTION_VALUE_TYPE;
     yield put(addOptionalCrisisReportContent.request(action.id));
-    const { formData, existingEKIDs, schema } = value;
+    const {
+      existingEKIDs,
+      formData,
+      path,
+      properties,
+      schema,
+    } = value;
 
     const entitySetIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
     const propertyTypeIds = yield select((state) => state.getIn(['edm', 'fqnToIdMap'], Map()));
@@ -180,9 +189,19 @@ function* addOptionalCrisisReportContentWorker(action :SequenceAction) :Generato
     );
     if (dataGraphResponse.error) throw dataGraphResponse.error;
 
-    const entityIndexToIdMap = getEntityIndexToIdMapFromDataGraphResponse(dataGraphResponse, schema);
+    const appTypeFqnsByIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds']).flip());
 
-    yield put(addOptionalCrisisReportContent.success(action.id));
+    const entityIndexToIdMap = getEntityIndexToIdMapFromDataGraphResponse(
+      fromJS(dataGraphResponse.data),
+      schema,
+      appTypeFqnsByIds
+    );
+
+    yield put(addOptionalCrisisReportContent.success(action.id, {
+      entityIndexToIdMap,
+      path,
+      properties
+    }));
   }
   catch (error) {
     response.error = error;
@@ -339,7 +358,18 @@ function* getCrisisReportWorker(action :SequenceAction) :Generator<any, any, any
     if (!isValidUuid(reportEKID) || !FullyQualifiedName.isValid(reportFQN)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getCrisisReport.request(action.id));
 
-    const neighborsResponse = yield call(
+    const app :Map = yield select((state) => state.get('app', Map()));
+    const reportESID = getESIDFromApp(app, reportFQN);
+
+    const reportRequest = call(
+      getEntityDataWorker,
+      getEntityData({
+        entitySetId: reportESID,
+        entityKeyId: reportEKID
+      })
+    );
+
+    const neighborsRequest = yield call(
       getReportsNeighborsWorker,
       getReportsNeighbors({
         reportEKIDs: [reportEKID],
@@ -347,7 +377,14 @@ function* getCrisisReportWorker(action :SequenceAction) :Generator<any, any, any
       })
     );
 
+    const [reportResponse, neighborsResponse] = yield all([
+      reportRequest,
+      neighborsRequest,
+    ]);
+
+    if (reportResponse.error) throw reportResponse.error;
     if (neighborsResponse.error) throw neighborsResponse.error;
+
     const neighbors = neighborsResponse.data.get(reportEKID);
     const appTypeFqnsByIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds']).flip());
     const neighborsByFQN = groupNeighborsByFQNs(neighbors, appTypeFqnsByIds);
@@ -364,6 +401,7 @@ function* getCrisisReportWorker(action :SequenceAction) :Generator<any, any, any
     if (subjectResponse.error) throw subjectResponse.error;
     const subjectData = subjectResponse.data.getIn([incidentEKID, 0, 'neighborDetails'], Map());
 
+    // reviewSchema should be passed in from requesting view.
     const { schema } = generateReviewSchema(schemas, uiSchemas, true);
     const formData = fromJS(constructFormDataFromNeighbors(neighborsByFQN, schema));
     const entityIndexToIdMap = getEntityIndexToIdMapFromNeighbors(neighborsByFQN, schema);
@@ -372,7 +410,8 @@ function* getCrisisReportWorker(action :SequenceAction) :Generator<any, any, any
       formData,
       entityIndexToIdMap,
       subjectData,
-      reporterData
+      reporterData,
+      reportData: fromJS(reportResponse.data),
     }));
   }
   catch (error) {
@@ -418,7 +457,7 @@ function* updateCrisisReportWatcher() :Generator<any, any, any> {
 function* deleteCrisisReportContentWorker(action :SequenceAction) :Generator<any, any, any> {
   const response = {};
   try {
-    yield put(deleteCrisisReportContent.failure(action.id));
+    yield put(deleteCrisisReportContent.request(action.id));
     const { value } = action;
     if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
 

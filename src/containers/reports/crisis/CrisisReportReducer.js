@@ -4,6 +4,7 @@ import { Map, fromJS } from 'immutable';
 import { RequestStates } from 'redux-reqseq';
 
 import {
+  addOptionalCrisisReportContent,
   deleteCrisisReportContent,
   getCrisisReport,
   updateCrisisReport,
@@ -13,6 +14,7 @@ const INITIAL_STATE :Map = fromJS({
   entityIndexToIdMap: Map(),
   fetchState: RequestStates.STANDBY,
   formData: Map(),
+  reportData: Map(),
   reporterData: Map(),
   subjectData: Map(),
   submitState: RequestStates.STANDBY,
@@ -55,6 +57,20 @@ export default function crisisReportReducer(state :Map = INITIAL_STATE, action :
             .deleteIn(['formData', ...path]);
         },
         FAILURE: () => state.set('deleteState', RequestStates.FAILURE)
+      });
+    }
+
+    case addOptionalCrisisReportContent.case(action.type): {
+      return addOptionalCrisisReportContent.reducer(state, action, {
+        REQUEST: () => state.set('updateState', RequestStates.PENDING),
+        SUCCESS: () => {
+          const { entityIndexToIdMap, path, properties } = action.value;
+          return state
+            .set('updateState', RequestStates.SUCCESS)
+            .mergeDeepIn(['entityIndexToIdMap'], entityIndexToIdMap)
+            .setIn(['formData', ...path], properties);
+        },
+        FAILURE: () => state.set('updateState', RequestStates.FAILURE)
       });
     }
 

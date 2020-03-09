@@ -2,6 +2,7 @@
 import {
   List,
   Map,
+  fromJS,
   get,
   getIn,
   setIn,
@@ -178,8 +179,27 @@ const getEntityIndexToIdMapFromNeighbors = (neighborsByFQN :Map, schema :Object)
 };
 
 // TODO: get entityIndextoIdMap from dataGraphResponse
-const getEntityIndexToIdMapFromDataGraphResponse = (newEntityResponse, schema) => {
+const getEntityIndexToIdMapFromDataGraphResponse = (
+  newEntityResponse :Map,
+  schema :Object,
+  appTypeFqnsByIds :Map
+) :Map => {
 
+  const entityAddressIndexByFQN = getEntityAddressIndexByFQN(schema);
+  const entityKeyIds = newEntityResponse.get('entityKeyIds');
+  const entityIndexToIdMap = entityKeyIds.mapEntries(([key, value]) => {
+    const fqn = appTypeFqnsByIds.get(key);
+    const entityAddressIndex = entityAddressIndexByFQN[fqn];
+    if (entityAddressIndex) {
+      return [fqn, Map([[
+        entityAddressIndex,
+        List(value)
+      ]])];
+    }
+    return [fqn, value];
+  });
+
+  return fromJS(entityIndexToIdMap);
 };
 
 // parses a schema and generates formData from a map of neighbors keyed by their FQN
