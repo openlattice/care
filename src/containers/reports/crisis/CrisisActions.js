@@ -23,8 +23,14 @@ const getReportsNeighbors :RequestSequence = newRequestSequence(GET_REPORTS_NEIG
 const GET_SUBJECT_OF_INCIDENT :'GET_SUBJECT_OF_INCIDENT' = 'GET_SUBJECT_OF_INCIDENT';
 const getSubjectOfIncident :RequestSequence = newRequestSequence(GET_SUBJECT_OF_INCIDENT);
 
+const CLEAR_CRISIS_REPORT :'CLEAR_CRISIS_REPORT' = 'CLEAR_CRISIS_REPORT';
+const clearCrisisReport = () => ({
+  type: CLEAR_CRISIS_REPORT
+});
+
 export {
   ADD_OPTIONAL_CRISIS_REPORT_CONTENT,
+  CLEAR_CRISIS_REPORT,
   DELETE_CRISIS_REPORT_CONTENT,
   GET_CRISIS_REPORT,
   GET_REPORTS_NEIGHBORS,
@@ -32,6 +38,7 @@ export {
   SUBMIT_CRISIS_REPORT,
   UPDATE_CRISIS_REPORT,
   addOptionalCrisisReportContent,
+  clearCrisisReport,
   deleteCrisisReportContent,
   getCrisisReport,
   getReportsNeighbors,

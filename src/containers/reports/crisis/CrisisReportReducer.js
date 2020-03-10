@@ -4,6 +4,7 @@ import { Map, fromJS } from 'immutable';
 import { RequestStates } from 'redux-reqseq';
 
 import {
+  CLEAR_CRISIS_REPORT,
   addOptionalCrisisReportContent,
   deleteCrisisReportContent,
   getCrisisReport,
@@ -83,6 +84,10 @@ export default function crisisReportReducer(state :Map = INITIAL_STATE, action :
         },
         FAILURE: () => state.set('updateState', RequestStates.FAILURE)
       });
+    }
+
+    case CLEAR_CRISIS_REPORT: {
+      return INITIAL_STATE;
     }
 
     default:
