@@ -245,13 +245,13 @@ function* searchLBLocationsWorker(action :SequenceAction) :Generator<any, any, a
     yield put(searchLBLocations.request(action.id, searchInputs));
 
     const app = yield select((state) => state.get('app', Map()));
-    const issueESID = getESIDFromApp(app, LOCATION_FQN);
+    const locationESID = getESIDFromApp(app, LOCATION_FQN);
     const locationCoordinatesPTID :UUID = yield select((state) => state
       .getIn(['edm', 'fqnToIdMap', FQN.LOCATION_COORDINATES_FQN]));
 
     const searchOptions = {
       start,
-      entitySetIds: [issueESID],
+      entitySetIds: [locationESID],
       maxHits,
       constraints: [{
         constraints: [{
