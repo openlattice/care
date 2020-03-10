@@ -39,12 +39,14 @@ const generateReviewSchema = (schemas :Object[], uiSchemas :Object[], readOnly :
     });
   });
 
-  return readOnly
-    ? merge(reviewSchemas, {
+  if (readOnly) {
+    merge(reviewSchemas.uiSchema, {
       'ui:disabled': true,
       'ui:readonly': true,
-    })
-    : reviewSchemas;
+    });
+  }
+
+  return reviewSchemas;
 };
 
 export { generateReviewSchema, mergeSchemas };

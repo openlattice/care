@@ -7,6 +7,7 @@ import {
   addOptionalCrisisReportContent,
   deleteCrisisReportContent,
   getCrisisReport,
+  submitCrisisReport,
   updateCrisisReport,
 } from './CrisisActions';
 
@@ -23,6 +24,16 @@ const INITIAL_STATE :Map = fromJS({
 
 export default function crisisReportReducer(state :Map = INITIAL_STATE, action :Object) {
   switch (action.type) {
+    case submitCrisisReport.case(action.type): {
+      return submitCrisisReport.reducer(state, action, {
+        REQUEST: () => state.set('submitState', RequestStates.PENDING),
+        SUCCESS: () => state
+          .set('submitState', RequestStates.SUCCESS)
+          .merge(action.value),
+        FAILURE: () => state.set('submitState', RequestStates.FAILURE),
+      });
+    }
+
     case getCrisisReport.case(action.type): {
       return getCrisisReport.reducer(state, action, {
         REQUEST: () => state.set('fetchState', RequestStates.PENDING),

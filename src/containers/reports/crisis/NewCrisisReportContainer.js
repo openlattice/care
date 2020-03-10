@@ -1,5 +1,5 @@
 // @flow
-import React, { useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 
 import styled from 'styled-components';
 import { Map } from 'immutable';
@@ -9,9 +9,10 @@ import {
   Card,
   CardStack
 } from 'lattice-ui-kit';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
 import { Redirect } from 'react-router-dom';
+import { RequestStates } from 'redux-reqseq';
 
 import { submitCrisisReport } from './CrisisActions';
 import { schemas, uiSchemas } from './schemas';
@@ -121,13 +122,16 @@ const ActionRow = styled.div`
 `;
 
 const NewCrisisReportContainer = () => {
+  const dispatch = useDispatch();
   const location = useLocation();
   const pageRef = useRef();
-  const dispatch = useDispatch();
-  const reviewSchemas = generateReviewSchema(schemas, uiSchemas, true);
+  const reviewSchemas = useMemo(() => generateReviewSchema(schemas, uiSchemas, true), []);
+  const submitState = useSelector((store) => store.getIn(['crisisReport', 'submitState']));
 
   const { state: selectedPerson = Map() } = location;
   if (!Map.isMap(selectedPerson) || selectedPerson.isEmpty()) return <Redirect to={HOME_PATH} />;
+
+  const isSubmitting = submitState === RequestStates.PENDING;
 
   return (
     <ContentOuterWrapper ref={pageRef}>
@@ -175,6 +179,7 @@ const NewCrisisReportContainer = () => {
                   return (
                     <>
                       <Form
+                          disabled={isReviewPage}
                           formData={pagedData}
                           hideSubmit
                           onSubmit={handleNext}
@@ -189,6 +194,7 @@ const NewCrisisReportContainer = () => {
                         </Button>
                         <span>{`${page + 1} of ${totalPages}`}</span>
                         <Button
+                            isLoading={isSubmitting}
                             mode="primary"
                             onClick={validate}>
                           { isReviewPage ? 'Submit' : 'Next' }
