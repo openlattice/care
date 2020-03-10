@@ -39,7 +39,7 @@ import RecentIncidentCard from '../RecentIncidentCard';
 import { useAuthorization, usePeopleRoute } from '../../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
 import {
-  CRISIS_PATH,
+  NEW_CRISIS_PATH,
   REPORT_ID_PATH,
   REPORT_VIEW_PATH,
 } from '../../../core/router/Routes';
@@ -207,7 +207,7 @@ const PremiumProfileContainer = (props :Props) => {
                 {
                   !isLoadingIntro && (
                     <CardSegment padding="sm" vertical>
-                      <LinkButton mode="primary" to={`${CRISIS_PATH}/1`} state={selectedPerson}>
+                      <LinkButton mode="primary" to={`${NEW_CRISIS_PATH}`} state={selectedPerson}>
                         New Crisis Report
                       </LinkButton>
                     </CardSegment>
