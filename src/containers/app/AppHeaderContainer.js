@@ -71,7 +71,8 @@ const AppHeaderContainer = (props :Props) => {
     .getIn(['app', 'selectedOrganizationSettings'], Map()));
 
   const isLongBeach = selectedOrganizationSettings.get('longBeach', false);
-  // TODO: Remove conditional isLongBeach rendering
+  const stayAway = isLongBeach || selectedOrganizationSettings.get('stayAway', false);
+  const homelessEncampments = isLongBeach || selectedOrganizationSettings.get('homelessEncampments', false);
   /* <===== END LONG BEACH HACK =====> */
 
   const onChange = useCallback(({ value } :any) => {
@@ -99,11 +100,11 @@ const AppHeaderContainer = (props :Props) => {
           <FontAwesomeIcon size="lg" fixedWidth icon={faUser} />
           <NavLabel>People</NavLabel>
         </StyledNavLink>
-        <StyledNavLink to={LOCATION_PATH} hidden={!isLongBeach}>
+        <StyledNavLink to={LOCATION_PATH} hidden={!stayAway}>
           <FontAwesomeIcon size="lg" fixedWidth icon={faMapMarkedAlt} />
-          <NavLabel>Locations</NavLabel>
+          <NavLabel>Stay Away Locations</NavLabel>
         </StyledNavLink>
-        <StyledNavLink to={PROVIDER_PATH} hidden={!isLongBeach}>
+        <StyledNavLink to={PROVIDER_PATH} hidden={!homelessEncampments}>
           <FontAwesomeIcon size="lg" fixedWidth icon={faUserNurse} />
           <NavLabel>Providers</NavLabel>
         </StyledNavLink>

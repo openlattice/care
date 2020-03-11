@@ -24,7 +24,6 @@ import BehaviorCard from './BehaviorCard';
 import DeescalationCard from './DeescalationCard';
 import IntroCard from './IntroCard';
 import OfficerSafetyCard from './OfficerSafetyCard';
-import ReportsSummary from './ReportsSummary';
 import ResponsePlanCard from './ResponsePlanCard';
 import { countCrisisCalls } from './Utils';
 
@@ -46,6 +45,7 @@ import {
 } from '../../../core/router/Routes';
 import { goToPath } from '../../../core/router/RoutingActions';
 import { getAuthorization } from '../../../core/sagas/authorize/AuthorizeActions';
+import { getLBProfile } from '../../../longbeach/profile/LongBeachProfileActions';
 import { getImageDataFromEntity } from '../../../utils/BinaryUtils';
 import { getEntityKeyId } from '../../../utils/DataUtils';
 import { reduceRequestStates } from '../../../utils/StateUtils';
@@ -101,6 +101,7 @@ type Props = {
     getAuthorization :RequestSequence;
     getBasicInformation :RequestSequence;
     getContacts :RequestSequence;
+    getLBProfile :RequestSequence;
     getOfficerSafety :RequestSequence;
     getProfileReports :RequestSequence;
     getResponsePlan :RequestSequence;
@@ -166,6 +167,7 @@ const PremiumProfileContainer = (props :Props) => {
   usePeopleRoute(actions.getOfficerSafety);
   usePeopleRoute(actions.getProfileReports);
   usePeopleRoute(actions.getResponsePlan);
+  usePeopleRoute(actions.getLBProfile);
 
   const handleResultClick = useCallback((result :Map) => {
     const reportEKID = getEntityKeyId(result);
@@ -233,7 +235,7 @@ const PremiumProfileContainer = (props :Props) => {
                         isLoading={isLoadingBody} />
                     <RecentIncidentCard
                         count={recent}
-                        isLoading={isLoadingBody}/>
+                        isLoading={isLoadingBody} />
                     <BehaviorAndSafetyGrid>
                       <BehaviorCard
                           reports={reports}
@@ -321,6 +323,7 @@ const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
     getAuthorization,
     getBasicInformation,
     getContacts,
+    getLBProfile,
     getOfficerSafety,
     getProfileReports,
     getResponsePlan,
