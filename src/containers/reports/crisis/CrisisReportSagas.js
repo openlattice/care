@@ -44,7 +44,7 @@ import {
   getEntityIndexToIdMapFromDataGraphResponse,
   getEntityIndexToIdMapFromNeighbors,
   getOptionalCrisisReportAssociations
-} from './XStateCrisisReportUtils';
+} from './CrisisReportUtils';
 import { schemas, uiSchemas } from './schemas';
 import { generateReviewSchema } from './schemas/schemaUtils';
 

@@ -21,6 +21,7 @@ import * as AppSagas from '../../containers/app/AppSagas';
 import * as AppearanceSagas from '../../containers/profile/edit/basicinformation/sagas/AppearanceSagas';
 import * as BasicInformationSagas from '../../containers/profile/edit/basicinformation/sagas/BasicInformationSagas';
 import * as ContactsSagas from '../../containers/profile/edit/contacts/ContactsSagas';
+import * as CrisisReportSagas from '../../containers/reports/crisis/CrisisReportSagas';
 import * as DashboardSagas from '../../containers/dashboard/DashboardSagas';
 import * as DownloadsSagas from '../../containers/downloads/DownloadsSagas';
 import * as IssueSagas from '../../containers/issues/issue/IssueSagas';
@@ -40,7 +41,6 @@ import * as RoutingSagas from '../router/RoutingSagas';
 import * as ScarsMarksTattoosSagas from '../../containers/profile/edit/basicinformation/sagas/ScarsMarksTattoosSagas';
 import * as SearchSagas from '../../containers/search/SearchSagas';
 import * as StaffSagas from '../../containers/staff/StaffSagas';
-import * as XStateCrisisReportSagas from '../../containers/reports/crisis/XStateCrisisReportSagas';
 
 export default function* sagas() :Generator<*, *, *> {
 
@@ -189,12 +189,12 @@ export default function* sagas() :Generator<*, *, *> {
     fork(LongBeachProviderSagas.getLBProvidersWatcher),
     /* <===== END LONG BEACH HACK =====> */
 
-    fork(XStateCrisisReportSagas.addOptionalCrisisReportContentWatcher),
-    fork(XStateCrisisReportSagas.deleteCrisisReportContentWatcher),
-    fork(XStateCrisisReportSagas.getCrisisReportWatcher),
-    fork(XStateCrisisReportSagas.getReportsNeighborsWatcher),
-    fork(XStateCrisisReportSagas.getSubjectOfIncidentWatcher),
-    fork(XStateCrisisReportSagas.submitCrisisReportWatcher),
-    fork(XStateCrisisReportSagas.updateCrisisReportWatcher),
+    fork(CrisisReportSagas.addOptionalCrisisReportContentWatcher),
+    fork(CrisisReportSagas.deleteCrisisReportContentWatcher),
+    fork(CrisisReportSagas.getCrisisReportWatcher),
+    fork(CrisisReportSagas.getReportsNeighborsWatcher),
+    fork(CrisisReportSagas.getSubjectOfIncidentWatcher),
+    fork(CrisisReportSagas.submitCrisisReportWatcher),
+    fork(CrisisReportSagas.updateCrisisReportWatcher),
   ]);
 }

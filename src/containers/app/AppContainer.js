@@ -27,7 +27,6 @@ import LongBeachRouter from '../../longbeach/LongBeachRouter';
 import NewCrisisReportContainer from '../reports/crisis/NewCrisisReportContainer';
 import ProfileRouter from '../profile/ProfileRouter';
 import SearchPeopleContainer from '../people/SearchPeopleContainer';
-import XStateCrisisReportContainer from '../reports/crisis/XStateCrisisReportContainer';
 import {
   CRISIS_PATH,
   DASHBOARD_PATH,
@@ -150,7 +149,6 @@ class AppContainer extends Component<Props> {
         <Route exact strict path={HOME_PATH} component={SearchPeopleContainer} />
         <Route path={CRISIS_PATH} component={CrisisReportContainer} />
         <Route path="/new-crisis" component={NewCrisisReportContainer} />
-        <Route path="/x-crisis" component={XStateCrisisReportContainer} />
         <Route path={REPORTS_PATH} component={LegitReportsRouter} />
         <Route path={DASHBOARD_PATH} render={this.wrapComponent(DashboardContainer)} />
         <Route path={DOWNLOADS_PATH} render={this.wrapComponent(DownloadsContainer)} />

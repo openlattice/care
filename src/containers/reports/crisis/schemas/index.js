@@ -29,29 +29,7 @@ const uiSchemas = [
   dispositionUiSchema,
 ];
 
-const xSchemas = {
-  incident: incidentSchema,
-  behavior: behaviorSchema,
-  medical: medicalSchema,
-  threat: threatSchema,
-  housingAndEmployment: housingAndEmploymentSchema,
-  insurance: insuranceSchema,
-  disposition: dispositionSchema,
-};
-
-const xUiSchemas = {
-  incident: incidentUiSchema,
-  behavior: behaviorUiSchema,
-  medical: medicalUiSchema,
-  threat: threatUiSchema,
-  housingAndEmployment: housingAndEmploymentUiSchema,
-  insurance: insuranceUiSchema,
-  disposition: dispositionUiSchema,
-};
-
 export {
   schemas,
   uiSchemas,
-  xSchemas,
-  xUiSchemas,
 };
