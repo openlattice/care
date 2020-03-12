@@ -1,8 +1,9 @@
 // @flow
 
+import { useEffect, useState } from 'react';
+
 import { List, Set } from 'immutable';
 import { useSelector } from 'react-redux';
-import { useEffect, useState } from 'react';
 import { RequestStates } from 'redux-reqseq';
 
 const useAuthorization = (feature :string, callback :any) => {

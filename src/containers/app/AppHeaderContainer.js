@@ -21,7 +21,7 @@ import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 
 import OpenLatticeLogo from '../../assets/images/logo_v2.png';
-import { useOrganization } from '../../components/hooks';
+import { useAppSettings, useOrganization } from '../../components/hooks';
 import {
   DASHBOARD_PATH,
   DOWNLOADS_PATH,
@@ -67,11 +67,12 @@ const AppHeaderContainer = (props :Props) => {
   const [selectedOrganizationId, isLoading, switchOrganization] = useOrganization();
 
   /* <===== BEGIN LONG BEACH HACK =====> */
-  const selectedOrganizationSettings :Map = useSelector((store) => store
-    .getIn(['app', 'selectedOrganizationSettings'], Map()));
+  const appSettings :Map = useAppSettings();
 
-  const isLongBeach = selectedOrganizationSettings.get('longBeach', false);
-  // TODO: Remove conditional isLongBeach rendering
+  const isLongBeach = appSettings.get('longBeach', false);
+  const stayAway = isLongBeach || appSettings.get('stayAway', false);
+  const providers = isLongBeach || appSettings.get('providers', false);
+  const homelessEncampments = isLongBeach || appSettings.get('homelessEncampments', false);
   /* <===== END LONG BEACH HACK =====> */
 
   const onChange = useCallback(({ value } :any) => {
@@ -99,11 +100,11 @@ const AppHeaderContainer = (props :Props) => {
           <FontAwesomeIcon size="lg" fixedWidth icon={faUser} />
           <NavLabel>People</NavLabel>
         </StyledNavLink>
-        <StyledNavLink to={LOCATION_PATH} hidden={!isLongBeach}>
+        <StyledNavLink to={LOCATION_PATH} hidden={!stayAway}>
           <FontAwesomeIcon size="lg" fixedWidth icon={faMapMarkedAlt} />
-          <NavLabel>Locations</NavLabel>
+          <NavLabel>Stay Away Locations</NavLabel>
         </StyledNavLink>
-        <StyledNavLink to={PROVIDER_PATH} hidden={!isLongBeach}>
+        <StyledNavLink to={PROVIDER_PATH} hidden={!providers}>
           <FontAwesomeIcon size="lg" fixedWidth icon={faUserNurse} />
           <NavLabel>Providers</NavLabel>
         </StyledNavLink>
