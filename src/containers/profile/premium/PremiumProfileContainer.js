@@ -33,9 +33,12 @@ import ContactCarousel from '../../../components/premium/contacts/ContactCarouse
 import CrisisCountCard from '../CrisisCountCard';
 import LinkButton from '../../../components/buttons/LinkButton';
 import Portrait from '../../../components/portrait/Portrait';
+import ProbationCard from '../../../components/premium/probation/ProbationCard';
 import ProfileBanner from '../ProfileBanner';
 import ProfileResult from '../ProfileResult';
 import RecentIncidentCard from '../RecentIncidentCard';
+import StayAwayCard from '../../../components/premium/stayaway/StayAwayCard';
+import WarrantCard from '../../../components/premium/warrant/WarrantCard';
 import { useAuthorization, usePeopleRoute } from '../../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
 import {
@@ -127,6 +130,10 @@ type Props = {
   selectedPerson :Map;
   techniques :List<Map>;
   triggers :List<Map>;
+  fetchStayAwayState :RequestState;
+  probation :Map;
+  stayAwayLocation :Map;
+  warrant :Map;
 };
 
 const PremiumProfileContainer = (props :Props) => {
@@ -134,7 +141,7 @@ const PremiumProfileContainer = (props :Props) => {
   useEffect(() => {
     window.scrollTo({
       top: 0
-    })
+    });
   }, []);
 
   const {
@@ -148,6 +155,10 @@ const PremiumProfileContainer = (props :Props) => {
     fetchOfficerSafetyState,
     fetchReportsState,
     fetchResponsePlanState,
+    fetchStayAwayState,
+    probation,
+    stayAwayLocation,
+    warrant,
     interactionStrategies,
     isContactForByContactEKID,
     officerSafety,
@@ -184,6 +195,7 @@ const PremiumProfileContainer = (props :Props) => {
     fetchOfficerSafetyState,
     fetchReportsState,
     fetchResponsePlanState,
+    fetchStayAwayState,
   ]) === RequestStates.PENDING;
 
   const imageURL :string = useMemo(() => getImageDataFromEntity(photo), [photo]);
@@ -269,10 +281,12 @@ const PremiumProfileContainer = (props :Props) => {
                         results={reports}
                         resultLabels={labelMapReport}
                         resultComponent={ProfileResult} />
-                    {/* <ReportsSummary isLoading={isLoadingBody} reports={reports} /> */}
                   </>
                 )
             }
+            <StayAwayCard stayAwayLocation={stayAwayLocation} isLoading={isLoadingBody} />
+            <ProbationCard probation={probation} isLoading={isLoadingBody} />
+            <WarrantCard warrant={warrant} isLoading={isLoadingBody} />
           </ScrollStack>
         </ProfileGrid>
       </ContentWrapper>
@@ -304,6 +318,7 @@ const mapStateToProps = (state :Map) => {
     fetchReportsState: state.getIn(['profile', 'reports', 'fetchState'], RequestStates.STANDBY),
     fetchResponsePlanState: state.getIn(['profile', 'responsePlan', 'fetchState'], RequestStates.STANDBY),
     fetchAboutPlanState: state.getIn(['profile', 'about', 'fetchState'], RequestStates.STANDBY),
+    fetchStayAwayState: state.getIn(['longBeach', 'profile', 'fetchState'], RequestStates.STANDBY),
     interactionStrategies: state.getIn(['profile', 'responsePlan', 'interactionStrategies'], List()),
     officerSafety: state.getIn(['profile', 'officerSafety', 'data', 'officerSafetyConcerns'], List()),
     photo: state.getIn(['profile', 'basicInformation', 'photos', 'data'], Map()),
@@ -314,6 +329,9 @@ const mapStateToProps = (state :Map) => {
     selectedPerson: state.getIn(['profile', 'basicInformation', 'basics', 'data'], Map()),
     techniques: state.getIn(['profile', 'officerSafety', 'data', 'interactionStrategies'], List()),
     triggers: state.getIn(['profile', 'officerSafety', 'data', 'behaviors'], List()),
+    probation: state.getIn(['longBeach', 'profile', 'probation']),
+    stayAwayLocation: state.getIn(['longBeach', 'profile', 'stayAwayLocation']),
+    warrant: state.getIn(['longBeach', 'profile', 'warrant'])
   };
 };
 
