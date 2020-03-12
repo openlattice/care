@@ -15,9 +15,6 @@ const schema = {
   type: 'object',
   properties: {
     [getPageSectionKey(2, 1)]: {
-      associations: [
-        'hello'
-      ],
       type: 'object',
       title: 'Incident',
       properties: {
