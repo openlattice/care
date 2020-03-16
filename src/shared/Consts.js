@@ -24,7 +24,6 @@ export const APP_TYPES_FQNS = {
   IS_PICTURE_OF_FQN: new FullyQualifiedName('app.ispictureof'),
   LOCATED_AT_FQN: new FullyQualifiedName('app.locatedat'),
   LOCATION_FQN: new FullyQualifiedName('app.location'),
-  STAY_AWAY_LOCATION_FQN: new FullyQualifiedName('app.stayawaylocation'),
   OBSERVED_IN_FQN: new FullyQualifiedName('app.observedin'),
   OFFICERS_FQN: new FullyQualifiedName('app.officers'),
   OFFICER_SAFETY_CONCERNS_FQN: new FullyQualifiedName('app.officersafetyconcerns'),
