@@ -1,3 +1,4 @@
+export { default as useAppSettings } from './useAppSettings';
 export { default as useAuthorization } from './useAuthorization';
 export { default as useFormData } from './useFormData';
 export { default as useGoToPath } from './useGoToPath';
