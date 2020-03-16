@@ -28,16 +28,16 @@ import {
   getLBLocationsNeighbors,
   getLBStayAwayPeople,
   searchLBLocations,
-} from './LongBeachLocationsActions';
+} from './stayaway/LongBeachLocationsActions';
 
-import Logger from '../../../utils/Logger';
-import * as FQN from '../../../edm/DataModelFqns';
-import { APP_TYPES_FQNS } from '../../../shared/Consts';
-import { getESIDFromApp, getESIDsFromApp } from '../../../utils/AppUtils';
-import { getEKIDsFromEntryValues, mapFirstEntityDataFromNeighbors } from '../../../utils/DataUtils';
-import { ERR_ACTION_VALUE_TYPE } from '../../../utils/Errors';
-import { getLBPeoplePhotos } from '../../people/LongBeachPeopleActions';
-import { getLBPeoplePhotosWorker } from '../../people/LongBeachPeopleSagas';
+import Logger from '../../utils/Logger';
+import * as FQN from '../../edm/DataModelFqns';
+import { APP_TYPES_FQNS } from '../../shared/Consts';
+import { getESIDFromApp, getESIDsFromApp } from '../../utils/AppUtils';
+import { getEKIDsFromEntryValues, mapFirstEntityDataFromNeighbors } from '../../utils/DataUtils';
+import { ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
+import { getLBPeoplePhotos } from '../people/LongBeachPeopleActions';
+import { getLBPeoplePhotosWorker } from '../people/LongBeachPeopleSagas';
 
 const { executeSearch, searchEntityNeighborsWithFilter } = SearchApiActions;
 const { executeSearchWorker, searchEntityNeighborsWithFilterWorker } = SearchApiSagas;

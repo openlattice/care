@@ -33,6 +33,7 @@ export const APP_TYPES_FQNS = {
   REPORTED_FQN: new FullyQualifiedName('app.reported'),
   RESPONSE_PLAN_FQN: new FullyQualifiedName('app.responseplan'),
   STAFF_FQN: new FullyQualifiedName('app.staff'),
+  STAY_AWAY_LOCATION_FQN: new FullyQualifiedName('app.stayawaylocation'),
   SUBJECT_OF_FQN: new FullyQualifiedName('app.subjectof'),
 
   /* <===== BEGIN LONG BEACH HACK =====> */

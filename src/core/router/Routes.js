@@ -12,6 +12,7 @@ export const CRISIS_PATH :string = '/crisis';
 export const DASHBOARD_PATH :string = '/dashboard';
 export const DOWNLOADS_PATH :string = '/downloads';
 export const EDIT_PATH :string = '/edit';
+export const ENCAMPMENTS_PATH :string = '/encampments';
 export const HOME_PATH :string = '/home';
 export const LOGOUT_PATH :string = '/logout';
 export const PROFILE_PATH :string = '/profile';
