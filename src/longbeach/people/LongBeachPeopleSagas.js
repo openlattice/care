@@ -247,7 +247,7 @@ export function* searchLBPeopleWorker(action :SequenceAction) :Generator<*, *, *
     const edm :Map<*, *> = yield select((state) => state.get('edm'));
     const app = yield select((state) => state.get('app', Map()));
     const peopleESID = getESIDFromApp(app, PEOPLE_FQN);
-    
+
     const firstNamePTID :UUID = edm.getIn(['fqnToIdMap', FQN.PERSON_FIRST_NAME_FQN]);
     const lastNamePTID :UUID = edm.getIn(['fqnToIdMap', FQN.PERSON_LAST_NAME_FQN]);
     const dobPTID :UUID = edm.getIn(['fqnToIdMap', FQN.PERSON_DOB_FQN]);

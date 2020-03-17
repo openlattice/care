@@ -12,7 +12,7 @@ import {
   searchLBLocations
 } from './LongBeachLocationsActions';
 
-import { HOME_PATH } from '../../core/router/Routes';
+import { HOME_PATH } from '../../../core/router/Routes';
 
 const INITIAL_STATE :Map = fromJS({
   fetchState: RequestStates.STANDBY,

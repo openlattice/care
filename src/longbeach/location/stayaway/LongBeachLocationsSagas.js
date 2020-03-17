@@ -28,16 +28,16 @@ import {
   getLBLocationsNeighbors,
   getLBStayAwayPeople,
   searchLBLocations,
-} from './stayaway/LongBeachLocationsActions';
+} from './LongBeachLocationsActions';
 
-import Logger from '../../utils/Logger';
-import * as FQN from '../../edm/DataModelFqns';
-import { APP_TYPES_FQNS } from '../../shared/Consts';
-import { getESIDFromApp, getESIDsFromApp } from '../../utils/AppUtils';
-import { getEKIDsFromEntryValues, mapFirstEntityDataFromNeighbors } from '../../utils/DataUtils';
-import { ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
-import { getLBPeoplePhotos } from '../people/LongBeachPeopleActions';
-import { getLBPeoplePhotosWorker } from '../people/LongBeachPeopleSagas';
+import Logger from '../../../utils/Logger';
+import * as FQN from '../../../edm/DataModelFqns';
+import { APP_TYPES_FQNS } from '../../../shared/Consts';
+import { getESIDFromApp, getESIDsFromApp } from '../../../utils/AppUtils';
+import { getEKIDsFromEntryValues, mapFirstEntityDataFromNeighbors } from '../../../utils/DataUtils';
+import { ERR_ACTION_VALUE_TYPE } from '../../../utils/Errors';
+import { getLBPeoplePhotos } from '../../people/LongBeachPeopleActions';
+import { getLBPeoplePhotosWorker } from '../../people/LongBeachPeopleSagas';
 
 const { executeSearch, searchEntityNeighborsWithFilter } = SearchApiActions;
 const { executeSearchWorker, searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
@@ -245,6 +245,7 @@ function* searchLBLocationsWorker(action :SequenceAction) :Generator<any, any, a
     yield put(searchLBLocations.request(action.id, searchInputs));
 
     const app = yield select((state) => state.get('app', Map()));
+    // TODO: Change this to STAY_AWAY_LOCATION when demo data is available
     const locationESID = getESIDFromApp(app, STAY_AWAY_LOCATION_FQN);
     const locationCoordinatesPTID :UUID = yield select((state) => state
       .getIn(['edm', 'fqnToIdMap', FQN.LOCATION_COORDINATES_FQN]));

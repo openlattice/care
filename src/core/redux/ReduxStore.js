@@ -7,8 +7,9 @@ import createSagaMiddleware from '@redux-saga/core';
 import { routerMiddleware } from 'connected-react-router/immutable';
 import { applyMiddleware, compose, createStore } from 'redux';
 
-import sagas from '../sagas/Sagas';
 import reduxReducer from './ReduxReducer';
+
+import sagas from '../sagas/Sagas';
 import trackingHandlers from '../tracking/google/trackinghandlers';
 import trackingMiddleware from '../tracking/TrackingMiddleware';
 
@@ -29,7 +30,7 @@ export default function initializeReduxStore(routerHistory :any) :Object {
   /* eslint-disable no-underscore-dangle */
   const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
     ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
-      maxAge: 100,
+      maxAge: 50,
       serialize: true
     })
     : compose;

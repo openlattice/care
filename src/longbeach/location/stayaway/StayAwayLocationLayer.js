@@ -6,9 +6,8 @@ import { faMapMarkerAlt } from '@fortawesome/pro-solid-svg-icons';
 import { List } from 'immutable';
 import { Feature, Layer } from 'react-mapbox-gl';
 
-import { getCoordinates } from './MapUtils';
-
-import { OPENLATTICE_ID_FQN } from '../../edm/DataModelFqns';
+import { OPENLATTICE_ID_FQN } from '../../../edm/DataModelFqns';
+import { getCoordinates } from '../../map/MapUtils';
 
 const MapPin = new Image(12, 16);
 MapPin.src = `data:image/svg+xml;utf8,${icon(faMapMarkerAlt).html[0]}`;
