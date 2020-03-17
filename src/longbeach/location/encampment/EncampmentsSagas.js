@@ -482,7 +482,7 @@ function* getEncampmentOccupantsWorker(action :SequenceAction) :Generator<any, a
 
     const occupantsData = fromJS(occupantsResponse.data)
       .get(encampmentEKID);
-    debugger;
+
     const livesAt = occupantsData.map((neighbor) => neighbor.getIn(['associationDetails', FQN.OPENLATTICE_ID_FQN, 0]));
 
     const people = Map().withMutations((mutable) => {
