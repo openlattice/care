@@ -15,6 +15,7 @@ import {
   fromJS,
   getIn
 } from 'immutable';
+import { Types } from 'lattice';
 import {
   DataApiActions,
   DataApiSagas,
@@ -56,19 +57,21 @@ import { isValidUuid } from '../../../utils/Utils';
 
 const {
   createAssociations,
-  // deleteEntityData,
+  deleteEntityData,
   // getEntityData,
   // updateEntityData,
 } = DataApiActions;
 const {
   createAssociationsWorker,
-  // deleteEntityDataWorker,
+  deleteEntityDataWorker,
   // getEntityDataWorker,
   // updateEntityDataWorker,
 } = DataApiSagas;
 
 const { executeSearch, searchEntityNeighborsWithFilter } = SearchApiActions;
 const { executeSearchWorker, searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
+
+const { DeleteTypes } = Types;
 
 const {
   ENCAMPMENT_FQN,
@@ -511,7 +514,23 @@ function* getEncampmentOccupantsWatcher() :Generator<any, any, any> {
 function* removePersonFromEncampmentWorker(action :SequenceAction) :Generator<any, any, any> {
   const response = {};
   try {
-    yield put(removePersonFromEncampment.request(action.id));
+    const { value: livesAtEKID } = action;
+    yield put(removePersonFromEncampment.request(action.id, livesAtEKID));
+
+    const app :Map = yield select((state) => state.get('app', Map()));
+    const livesAtESID = getESIDFromApp(app, LIVES_AT_FQN);
+
+    const deleteResponse = yield call(
+      deleteEntityDataWorker,
+      deleteEntityData({
+        entityKeyIds: [livesAtEKID],
+        entitySetId: livesAtESID,
+        deleteType: DeleteTypes.SOFT
+      })
+    );
+
+    if (deleteResponse.error) throw deleteResponse.error;
+
     yield put(removePersonFromEncampment.success(action.id));
   }
   catch (error) {

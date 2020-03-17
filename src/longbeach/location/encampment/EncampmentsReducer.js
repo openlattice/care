@@ -113,17 +113,25 @@ const encampmentsReducer = (state :Map = INITIAL_STATE, action :Object) => {
 
     case getEncampmentOccupants.case(action.type): {
       return getEncampmentOccupants.reducer(state, action, {
-        REQUEST: () => state.setIn(['occupation', 'submitState'], RequestStates.PENDING),
+        REQUEST: () => state.setIn(['occupation', 'fetchState'], RequestStates.PENDING),
         SUCCESS: () => state
-          .setIn(['occupation', 'submitState'], RequestStates.SUCCESS)
+          .setIn(['occupation', 'fetchState'], RequestStates.SUCCESS)
           .mergeDeepIn(['occupation'], action.value),
-        FAILURE: () => state.setIn(['occupation', 'submitState'], RequestStates.FAILURE),
+        FAILURE: () => state.setIn(['occupation', 'fetchState'], RequestStates.FAILURE),
       });
     }
 
     case removePersonFromEncampment.case(action.type): {
       return removePersonFromEncampment.reducer(state, action, {
-        REQUEST: () => state.setIn(['occupation', 'deleteState'], RequestStates.PENDING),
+        REQUEST: () => {
+          const livesAt = state
+            .getIn(['occupation', 'livesAt'])
+            .filter((id) => id !== action.value);
+          return state
+            .setIn(['occupation', 'deleteState'], RequestStates.PENDING)
+            .setIn(['occupation', 'livesAt'], livesAt)
+            .deleteIn(['occupation', 'people', action.value]);
+        },
         SUCCESS: () => state
           .setIn(['occupation', 'deleteState'], RequestStates.SUCCESS),
         FAILURE: () => state.setIn(['occupation', 'deleteState'], RequestStates.FAILURE),

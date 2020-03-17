@@ -57,7 +57,7 @@ const OccupantList = () => {
 
           const deleteEdge = () => dispatch(removePersonFromEncampment(edge));
           return (
-            <StyledSegment key={edge} padding="10px" onClick={}>
+            <StyledSegment key={edge} padding="10px">
               <span>{name}</span>
               <MinusButton size="sm" mode="negative" onClick={deleteEdge} />
             </StyledSegment>
