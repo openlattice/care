@@ -13,7 +13,7 @@ const clearLBLocationResults = () => ({
 const SEARCH_LB_LOCATIONS :string = 'SEARCH_LB_LOCATIONS';
 const searchLBLocations :RequestSequence = newRequestSequence(SEARCH_LB_LOCATIONS);
 
-const GET_GEO_OPTIONS :string = 'GET_GEO_OPTIONS';
+const GET_GEO_OPTIONS :string = 'GET_STAY_AWAY_GEO_OPTIONS';
 const getGeoOptions :RequestSequence = newRequestSequence(GET_GEO_OPTIONS);
 
 const GET_LB_LOCATIONS_NEIGHBORS :string = 'GET_LB_LOCATIONS_NEIGHBORS';

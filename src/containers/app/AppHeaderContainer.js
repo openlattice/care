@@ -3,6 +3,7 @@ import React, { useCallback } from 'react';
 
 import styled from 'styled-components';
 import {
+  faCampground,
   faDownload,
   faFileAlt,
   faFileExclamation,
@@ -31,6 +32,7 @@ import {
   REPORTS_PATH,
 } from '../../core/router/Routes';
 import {
+  ENCAMPMENTS_PATH,
   LOCATION_PATH,
   PEOPLE_PATH,
   PROVIDER_PATH
@@ -95,6 +97,10 @@ const AppHeaderContainer = (props :Props) => {
           <FontAwesomeIcon size="lg" fixedWidth icon={faHome} />
           <NavLabel>Home</NavLabel>
         </NavLink>
+        <StyledNavLink to={REPORTS_PATH} hidden={isLongBeach}>
+          <FontAwesomeIcon size="lg" fixedWidth icon={faFileAlt} />
+          <NavLabel>Reports</NavLabel>
+        </StyledNavLink>
         {/* <===== BEGIN LONG BEACH HACK =====> */}
         <StyledNavLink to={PEOPLE_PATH} hidden={!isLongBeach}>
           <FontAwesomeIcon size="lg" fixedWidth icon={faUser} />
@@ -104,15 +110,15 @@ const AppHeaderContainer = (props :Props) => {
           <FontAwesomeIcon size="lg" fixedWidth icon={faMapMarkedAlt} />
           <NavLabel>Stay Away Locations</NavLabel>
         </StyledNavLink>
+        <StyledNavLink to={ENCAMPMENTS_PATH} hidden={!homelessEncampments}>
+          <FontAwesomeIcon size="lg" fixedWidth icon={faCampground} />
+          <NavLabel>Encampments</NavLabel>
+        </StyledNavLink>
         <StyledNavLink to={PROVIDER_PATH} hidden={!providers}>
           <FontAwesomeIcon size="lg" fixedWidth icon={faUserNurse} />
           <NavLabel>Providers</NavLabel>
         </StyledNavLink>
         {/* <===== END LONG BEACH HACK =====> */}
-        <StyledNavLink to={REPORTS_PATH} hidden={isLongBeach}>
-          <FontAwesomeIcon size="lg" fixedWidth icon={faFileAlt} />
-          <NavLabel>Reports</NavLabel>
-        </StyledNavLink>
         <StyledNavLink to={DASHBOARD_PATH} hidden={isLongBeach}>
           <FontAwesomeIcon size="lg" fixedWidth icon={faUserChart} />
           <NavLabel>Dashboard</NavLabel>
