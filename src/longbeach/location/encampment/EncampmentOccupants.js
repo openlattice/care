@@ -8,14 +8,22 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
 import OccupantList from './OccupantList';
-import { addPersonToEncampment, getEncampmentOccupants, getEncampmentPeopleOptions, resetEncampmentOccupants } from './EncampmentActions';
+import {
+  addPersonToEncampment,
+  getEncampmentOccupants,
+  getEncampmentPeopleOptions,
+  resetEncampmentOccupants
+} from './EncampmentActions';
 import { ENCAMPMENT_STORE_PATH } from './constants';
 
 import { useTimeout } from '../../../components/hooks';
 
 const OccupantsWrapper = styled.div`
+  display: grid;
+  grid-gap: 10px;
   width: 100vw;
   max-width: 100%;
+  padding-bottom: 30px;
 `;
 
 type Props = {

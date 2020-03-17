@@ -52,6 +52,7 @@ import { getESIDFromApp, getESIDsFromApp } from '../../../utils/AppUtils';
 import { getEntityKeyId, indexSubmittedDataGraph, mapFirstEntityDataFromNeighbors } from '../../../utils/DataUtils';
 import { ERR_ACTION_VALUE_TYPE } from '../../../utils/Errors';
 import { isDefined } from '../../../utils/LangUtils';
+import { isValidUuid } from '../../../utils/Utils';
 
 const {
   createAssociations,
@@ -447,8 +448,55 @@ function* addPersonToEncampmentWatcher() :Generator<any, any, any> {
 function* getEncampmentOccupantsWorker(action :SequenceAction) :Generator<any, any, any> {
   const response = {};
   try {
+    const { value: encampmentEKID } = action;
+    if (!isValidUuid(encampmentEKID)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getEncampmentOccupants.request(action.id));
-    yield put(getEncampmentOccupants.success(action.id));
+    // get people that liveat encampment
+    const app :Map = yield select((state) => state.get('app', Map()));
+    const [
+      peopleESID,
+      livesAtESID,
+      encampmentESID,
+    ] = getESIDsFromApp(app, [
+      PEOPLE_FQN,
+      LIVES_AT_FQN,
+      ENCAMPMENT_FQN,
+    ]);
+
+    const occupantsParams = {
+      entitySetId: encampmentESID,
+      filter: {
+        entityKeyIds: [encampmentEKID],
+        edgeEntitySetIds: [livesAtESID],
+        destinationEntitySetIds: [],
+        sourceEntitySetIds: [peopleESID],
+      }
+    };
+
+    const occupantsResponse = yield call(
+      searchEntityNeighborsWithFilterWorker,
+      searchEntityNeighborsWithFilter(occupantsParams)
+    );
+
+    if (occupantsResponse.error) throw occupantsResponse.error;
+
+    const occupantsData = fromJS(occupantsResponse.data)
+      .get(encampmentEKID);
+    debugger;
+    const livesAt = occupantsData.map((neighbor) => neighbor.getIn(['associationDetails', FQN.OPENLATTICE_ID_FQN, 0]));
+
+    const people = Map().withMutations((mutable) => {
+      occupantsData.forEach((neighbor) => {
+        const livesAtEKID = neighbor.getIn(['associationDetails', FQN.OPENLATTICE_ID_FQN, 0]);
+        const details = neighbor.get('neighborDetails');
+        mutable.set(livesAtEKID, details);
+      });
+    });
+
+    yield put(getEncampmentOccupants.success(action.id, Map({
+      livesAt,
+      people
+    })));
   }
   catch (error) {
     yield put(getEncampmentOccupants.failure(action.id, error));
