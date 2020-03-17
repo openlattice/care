@@ -9,12 +9,25 @@ import { RequestStates } from 'redux-reqseq';
 import {
   CLEAR_ENCAMPMENT_LOCATIONS,
   RESET_ENCAMPMENT,
+  RESET_ENCAMPMENT_OCCUPANTS,
+  addPersonToEncampment,
+  getEncampmentOccupants,
+  getEncampmentPeopleOptions,
   getGeoOptions,
+  removePersonFromEncampment,
   searchEncampmentLocations,
   submitEncampment,
 } from './EncampmentActions';
 
 import { HOME_PATH } from '../../../core/router/Routes';
+
+const INITIAL_OCCUPATION = Map({
+  fetchState: RequestStates.STANDBY,
+  submitState: RequestStates.STANDBY,
+  deleteState: RequestStates.STANDBY,
+  people: Map(),
+  livesAt: List(),
+});
 
 const INITIAL_STATE :Map = fromJS({
   fetchState: RequestStates.STANDBY,
@@ -22,11 +35,16 @@ const INITIAL_STATE :Map = fromJS({
   updateState: RequestStates.STANDBY,
   hits: List(),
   totalHits: 0,
-  options: Map({
-    fetchState: RequestStates.STANDBY,
-    data: List()
-  }),
-  people: Map(),
+  options: {
+    geo: {
+      fetchState: RequestStates.STANDBY,
+      data: List()
+    },
+    people: {
+      fetchState: RequestStates.STANDBY,
+      data: List()
+    }
+  },
   profilePictures: Map(),
   searchInputs: Map({
     address: '',
@@ -34,6 +52,7 @@ const INITIAL_STATE :Map = fromJS({
   }),
   encampments: Map(),
   encampmentLocations: Map(),
+  occupation: INITIAL_OCCUPATION
 });
 
 const encampmentsReducer = (state :Map = INITIAL_STATE, action :Object) => {
@@ -54,11 +73,21 @@ const encampmentsReducer = (state :Map = INITIAL_STATE, action :Object) => {
 
     case getGeoOptions.case(action.type): {
       return getGeoOptions.reducer(state, action, {
-        REQUEST: () => state.setIn(['options', 'fetchState'], RequestStates.PENDING),
+        REQUEST: () => state.setIn(['options', 'geo', 'fetchState'], RequestStates.PENDING),
         SUCCESS: () => state
-          .setIn(['options', 'fetchState'], RequestStates.SUCCESS)
-          .setIn(['options', 'data'], action.value),
-        FAILURE: () => state.setIn(['options', 'fetchState'], RequestStates.FAILURE),
+          .setIn(['options', 'geo', 'fetchState'], RequestStates.SUCCESS)
+          .setIn(['options', 'geo', 'data'], action.value),
+        FAILURE: () => state.setIn(['options', 'geo', 'fetchState'], RequestStates.FAILURE),
+      });
+    }
+
+    case getEncampmentPeopleOptions.case(action.type): {
+      return getEncampmentPeopleOptions.reducer(state, action, {
+        REQUEST: () => state.setIn(['options', 'people', 'fetchState'], RequestStates.PENDING),
+        SUCCESS: () => state
+          .setIn(['options', 'people', 'fetchState'], RequestStates.SUCCESS)
+          .setIn(['options', 'people', 'data'], action.value),
+        FAILURE: () => state.setIn(['options', 'people', 'fetchState'], RequestStates.FAILURE),
       });
     }
 
@@ -72,12 +101,45 @@ const encampmentsReducer = (state :Map = INITIAL_STATE, action :Object) => {
       });
     }
 
+    case addPersonToEncampment.case(action.type): {
+      return addPersonToEncampment.reducer(state, action, {
+        REQUEST: () => state.setIn(['occupation', 'submitState'], RequestStates.PENDING),
+        SUCCESS: () => state
+          .setIn(['occupation', 'submitState'], RequestStates.SUCCESS)
+          .mergeDeepIn(['occupation'], action.value),
+        FAILURE: () => state.setIn(['occupation', 'submitState'], RequestStates.FAILURE),
+      });
+    }
+
+    case getEncampmentOccupants.case(action.type): {
+      return getEncampmentOccupants.reducer(state, action, {
+        REQUEST: () => state.setIn(['occupation', 'submitState'], RequestStates.PENDING),
+        SUCCESS: () => state
+          .setIn(['occupation', 'submitState'], RequestStates.SUCCESS)
+          .mergeDeepIn(['occupation'], action.value),
+        FAILURE: () => state.setIn(['occupation', 'submitState'], RequestStates.FAILURE),
+      });
+    }
+
+    case removePersonFromEncampment.case(action.type): {
+      return removePersonFromEncampment.reducer(state, action, {
+        REQUEST: () => state.setIn(['occupation', 'deleteState'], RequestStates.PENDING),
+        SUCCESS: () => state
+          .setIn(['occupation', 'deleteState'], RequestStates.SUCCESS),
+        FAILURE: () => state.setIn(['occupation', 'deleteState'], RequestStates.FAILURE),
+      });
+    }
+
     case CLEAR_ENCAMPMENT_LOCATIONS: {
       return INITIAL_STATE;
     }
 
     case RESET_ENCAMPMENT: {
       return state.set('submitState', INITIAL_STATE.get('submitState'));
+    }
+
+    case RESET_ENCAMPMENT_OCCUPANTS: {
+      return state.set('occupation', INITIAL_OCCUPATION);
     }
 
     case LOCATION_CHANGE: {

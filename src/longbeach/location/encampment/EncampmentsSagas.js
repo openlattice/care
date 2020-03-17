@@ -6,7 +6,8 @@ import {
   call,
   put,
   select,
-  takeEvery
+  takeEvery,
+  takeLatest,
 } from '@redux-saga/core/effects';
 import {
   List,
@@ -15,18 +16,29 @@ import {
   getIn
 } from 'immutable';
 import {
+  DataApiActions,
+  DataApiSagas,
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
+import { DateTime } from 'luxon';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
+  ADD_PERSON_TO_ENCAMPMENT,
   GET_ENCAMPMENT_LOCATIONS_NEIGHBORS,
+  GET_ENCAMPMENT_OCCUPANTS,
+  GET_ENCAMPMENT_PEOPLE_OPTIONS,
   GET_GEO_OPTIONS,
+  REMOVE_PERSON_FROM_ENCAMPMENT,
   SEARCH_ENCAMPMENT_LOCATIONS,
   SUBMIT_ENCAMPMENT,
+  addPersonToEncampment,
   getEncampmentLocationsNeighbors,
+  getEncampmentOccupants,
+  getEncampmentPeopleOptions,
   getGeoOptions,
+  removePersonFromEncampment,
   searchEncampmentLocations,
   submitEncampment,
 } from './EncampmentActions';
@@ -41,13 +53,28 @@ import { getEntityKeyId, indexSubmittedDataGraph, mapFirstEntityDataFromNeighbor
 import { ERR_ACTION_VALUE_TYPE } from '../../../utils/Errors';
 import { isDefined } from '../../../utils/LangUtils';
 
+const {
+  createAssociations,
+  // deleteEntityData,
+  // getEntityData,
+  // updateEntityData,
+} = DataApiActions;
+const {
+  createAssociationsWorker,
+  // deleteEntityDataWorker,
+  // getEntityDataWorker,
+  // updateEntityDataWorker,
+} = DataApiSagas;
+
 const { executeSearch, searchEntityNeighborsWithFilter } = SearchApiActions;
 const { executeSearchWorker, searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
 
 const {
-  LOCATED_AT_FQN,
   ENCAMPMENT_FQN,
   ENCAMPMENT_LOCATION_FQN,
+  LIVES_AT_FQN,
+  LOCATED_AT_FQN,
+  PEOPLE_FQN,
 } = APP_TYPES_FQNS;
 
 const LOG = new Logger('EncampmentsSagas');
@@ -268,13 +295,202 @@ function* submitEncampmentWatcher() :Generator<any, any, any> {
   yield takeEvery(SUBMIT_ENCAMPMENT, submitEncampmentWorker);
 }
 
+function* getEncampmentPeopleOptionsWorker(action :SequenceAction) :Generator<any, any, any> {
+  const response = {};
+
+  try {
+    yield put(getEncampmentPeopleOptions.request(action.id));
+
+    const { value = '' } = action;
+    const [first = '', last = ''] = value.split(' ');
+
+    const edm :Map<*, *> = yield select((state) => state.get('edm'));
+    const app = yield select((state) => state.get('app', Map()));
+    const peopleESID = getESIDFromApp(app, PEOPLE_FQN);
+    const firstNamePTID :UUID = edm.getIn(['fqnToIdMap', FQN.PERSON_FIRST_NAME_FQN]);
+    const lastNamePTID :UUID = edm.getIn(['fqnToIdMap', FQN.PERSON_LAST_NAME_FQN]);
+
+    const searchFields = [];
+    const updateSearchField = (searchTerm :string, property :string, metaphone :boolean = false) => {
+      searchFields.push({
+        searchTerm: metaphone ? searchTerm : `${searchTerm}*`,
+        property,
+        exact: true
+      });
+    };
+
+    const firstName :string = first.trim();
+    const lastName :string = last.trim();
+
+    if (firstName.length) {
+      updateSearchField(firstName, firstNamePTID, false);
+    }
+    if (lastName.length) {
+      updateSearchField(lastName, lastNamePTID, false);
+    }
+
+    const searchOptions = {
+      entitySetIds: [peopleESID],
+      maxHits: 10000,
+      start: 0,
+      constraints: [{
+        constraints: [{
+          type: 'advanced',
+          searchFields,
+        }]
+      }],
+    };
+
+    const { data, error } = yield call(
+      executeSearchWorker,
+      executeSearch({ searchOptions })
+    );
+    if (error) throw error;
+
+    const options = data.hits.map((person) => {
+      const personEKID = getEntityKeyId(person);
+      const fName = getIn(person, [FQN.PERSON_FIRST_NAME_FQN, 0]);
+      const lName = getIn(person, [FQN.PERSON_LAST_NAME_FQN, 0]);
+      return {
+        label: `${fName} ${lName}`,
+        value: personEKID,
+        person
+      };
+    });
+
+    const result = fromJS(options);
+
+    response.data = result;
+    yield put(getEncampmentPeopleOptions.success(action.id, result));
+  }
+  catch (error) {
+    response.error = error;
+    LOG.error(action.type, error);
+    yield put(getEncampmentPeopleOptions.failure(action.id, error));
+  }
+
+  return response;
+}
+
+function* getEncampmentPeopleOptionsWatcher() :Generator<any, any, any> {
+  yield takeLatest(GET_ENCAMPMENT_PEOPLE_OPTIONS, getEncampmentPeopleOptionsWorker);
+}
+
+function* addPersonToEncampmentWorker(action :SequenceAction) :Generator<any, any, any> {
+  const response = {};
+  try {
+    yield put(addPersonToEncampment.request(action.id));
+    const { person, encampment } = action.value;
+
+    const personEKID = getEntityKeyId(person);
+
+    const app :Map = yield select((state) => state.get('app', Map()));
+    const edm :Map<*, *> = yield select((state) => state.get('edm'));
+    const datetimePTID :UUID = edm.getIn(['fqnToIdMap', FQN.COMPLETED_DT_FQN]);
+    const [
+      peopleESID,
+      livesAtESID,
+      encampmentESID,
+    ] = getESIDsFromApp(app, [
+      PEOPLE_FQN,
+      LIVES_AT_FQN,
+      ENCAMPMENT_FQN,
+    ]);
+
+    const associations = {
+      [livesAtESID]: [{
+        dst: {
+          entityKeyId: encampment,
+          entitySetId: encampmentESID,
+        },
+        src: {
+          entityKeyId: personEKID,
+          entitySetId: peopleESID,
+        },
+        data: {
+          [datetimePTID]: [DateTime.local().toISO()]
+        }
+      }]
+    };
+
+    const livesAtRequest = yield call(
+      createAssociationsWorker,
+      createAssociations(associations)
+    );
+
+    if (livesAtRequest.error) throw livesAtRequest.error;
+
+    const { data } = livesAtRequest;
+    const livesAtEKID = getIn(data, [livesAtESID, 0]);
+
+    const result = fromJS({
+      livesAt: [livesAtEKID],
+      people: {
+        [livesAtEKID]: person
+      }
+    });
+
+    yield put(addPersonToEncampment.success(action.id, result));
+  }
+  catch (error) {
+    response.error = error;
+    LOG.error(action.type, error);
+    yield put(addPersonToEncampment.failure(action.id, error));
+  }
+  return response;
+}
+
+function* addPersonToEncampmentWatcher() :Generator<any, any, any> {
+  yield takeEvery(ADD_PERSON_TO_ENCAMPMENT, addPersonToEncampmentWorker);
+}
+
+function* getEncampmentOccupantsWorker(action :SequenceAction) :Generator<any, any, any> {
+  const response = {};
+  try {
+    yield getEncampmentOccupants.request(action.id);
+    yield getEncampmentOccupants.success(action.id);
+  }
+  catch (error) {
+    yield getEncampmentOccupants.failure(action.id, error);
+  }
+  return response;
+}
+
+function* getEncampmentOccupantsWatcher() :Generator<any, any, any> {
+  yield takeLatest(GET_ENCAMPMENT_OCCUPANTS, getEncampmentOccupantsWorker);
+}
+
+function* removePersonFromEncampmentWorker(action :SequenceAction) :Generator<any, any, any> {
+  const response = {};
+  try {
+    yield removePersonFromEncampment.request(action.id);
+    yield removePersonFromEncampment.success(action.id);
+  }
+  catch (error) {
+    yield removePersonFromEncampment.failure(action.id, error);
+  }
+  return response;
+}
+
+function* removePersonFromEncampmentWatcher() :Generator<any, any, any> {
+  yield takeEvery(REMOVE_PERSON_FROM_ENCAMPMENT, removePersonFromEncampmentWorker);
+}
+
 export {
+  addPersonToEncampmentWorker,
+  addPersonToEncampmentWatcher,
   getEncampmentLocationsNeighborsWatcher,
   getEncampmentLocationsNeighborsWorker,
+  getEncampmentPeopleOptionsWatcher,
+  getEncampmentPeopleOptionsWorker,
   getGeoOptionsWatcher,
   getGeoOptionsWorker,
   searchEncampmentLocationsWatcher,
   searchEncampmentLocationsWorker,
   submitEncampmentWatcher,
   submitEncampmentWorker,
+  getEncampmentOccupantsWorker,
+  getEncampmentOccupantsWatcher,
+  removePersonFromEncampmentWorker,
+  removePersonFromEncampmentWatcher,
 };

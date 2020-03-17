@@ -184,8 +184,12 @@ export default function* sagas() :Generator<*, *, *> {
     fork(LongBeachProviderSagas.getLBProvidersWatcher),
     /* <===== END LONG BEACH HACK =====> */
 
-    fork(EncampmentSagas.searchEncampmentLocationsWatcher),
+    fork(EncampmentSagas.addPersonToEncampmentWatcher),
+    fork(EncampmentSagas.getEncampmentOccupantsWatcher),
+    fork(EncampmentSagas.getEncampmentPeopleOptionsWatcher),
     fork(EncampmentSagas.getGeoOptionsWatcher),
+    fork(EncampmentSagas.removePersonFromEncampmentWatcher),
+    fork(EncampmentSagas.searchEncampmentLocationsWatcher),
     fork(EncampmentSagas.submitEncampmentWatcher),
   ]);
 }

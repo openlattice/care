@@ -46,6 +46,7 @@ export const APP_TYPES_FQNS = {
   /* <===== BEGIN LIVERMORE HACK =====> */
   ENCAMPMENT_FQN: new FullyQualifiedName('app.encampment'),
   ENCAMPMENT_LOCATION_FQN: new FullyQualifiedName('app.encampmentlocation'),
+  LIVES_AT_FQN: new FullyQualifiedName('app.livesat_new'),
   /* <===== END LIVERMORE HACK =====> */
 };
 

@@ -5,19 +5,15 @@ import styled from 'styled-components';
 import { faHistory, faTimes, faUsers } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Map } from 'immutable';
-import { IconButton } from 'lattice-ui-kit';
+import { Button, Hooks, IconButton } from 'lattice-ui-kit';
 import { DateTime } from 'luxon';
 import { Popup } from 'react-mapbox-gl';
 import { useSelector } from 'react-redux';
 
+import EncampmentOccupantsModal from './EncampmentOccupantsModal';
 import { ENCAMPMENT_STORE_PATH } from './constants';
 
-import DefaultLink from '../../../components/links/DefaultLink';
 import Detail from '../../../components/premium/styled/Detail';
-import {
-  ENCAMPMENT_ID_PATH,
-  ENCAMPMENT_VIEW_PATH,
-} from '../../../core/router/Routes';
 import {
   DESCRIPTION_FQN,
   ENTRY_UPDATED_FQN,
@@ -26,6 +22,8 @@ import {
 } from '../../../edm/DataModelFqns';
 import { getEntityKeyId } from '../../../utils/DataUtils';
 import { getCoordinates } from '../../map/MapUtils';
+
+const { useBoolean } = Hooks;
 
 const ActionBar = styled.div`
   display: flex;
@@ -59,6 +57,7 @@ const EncampmentPopup = ({
   const description = encampment.getIn([DESCRIPTION_FQN, 0]);
   const rawUpdated = encampment.getIn([ENTRY_UPDATED_FQN, 0]);
   const lastUpdated = DateTime.fromISO(rawUpdated).toLocaleString(DateTime.DATETIME_SHORT);
+  const [isVisible, setOpen, setClose] = useBoolean(false);
 
   const encampmentEKID = getEntityKeyId(encampment);
 
@@ -75,7 +74,16 @@ const EncampmentPopup = ({
       <Detail content={occupants} icon={faUsers} />
       <Detail content={lastUpdated} icon={faHistory} />
       <Detail content={description} />
-      <DefaultLink to={ENCAMPMENT_VIEW_PATH.replace(ENCAMPMENT_ID_PATH, encampmentEKID)}>View Occupants</DefaultLink>
+      <Button size="sm" mode="subtle" onClick={setOpen}>View Occupants</Button>
+      <EncampmentOccupantsModal
+          viewportScrolling
+          encampmentEKID={encampmentEKID}
+          shouldCloseOnOutsideClick={false}
+          textTitle="Occupants"
+          isVisible={isVisible}
+          onClose={setClose}>
+        something
+      </EncampmentOccupantsModal>
     </Popup>
   );
 };
