@@ -9,6 +9,7 @@ import {
   takeEvery
 } from '@redux-saga/core/effects';
 import {
+  List,
   Map,
   fromJS,
   getIn
@@ -36,7 +37,7 @@ import { submitDataGraph } from '../../../core/sagas/data/DataActions';
 import { submitDataGraphWorker } from '../../../core/sagas/data/DataSagas';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { getESIDFromApp, getESIDsFromApp } from '../../../utils/AppUtils';
-import { mapFirstEntityDataFromNeighbors } from '../../../utils/DataUtils';
+import { getEntityKeyId, indexSubmittedDataGraph, mapFirstEntityDataFromNeighbors } from '../../../utils/DataUtils';
 import { ERR_ACTION_VALUE_TYPE } from '../../../utils/Errors';
 import { isDefined } from '../../../utils/LangUtils';
 
@@ -230,7 +231,32 @@ function* submitEncampmentWorker(action :SequenceAction) :Generator<any, any, an
     const response = yield call(submitDataGraphWorker, submitDataGraph(value));
     if (response.error) throw response.error;
 
-    yield put(submitEncampment.success(action.id));
+    const app :Map = yield select((state) => state.get('app', Map()));
+    const propertyTypesById :Map = yield select((state) => state.getIn(['edm', 'propertyTypesById']), Map());
+    const [encampmentsESID, encampmentsLocationESID] = getESIDsFromApp(app, [
+      ENCAMPMENT_FQN,
+      ENCAMPMENT_LOCATION_FQN
+    ]);
+
+    const indexedDataGraph = indexSubmittedDataGraph(value, response, propertyTypesById);
+    const encampment = getIn(indexedDataGraph, ['entities', encampmentsESID, 0]);
+    const encampmentLocation = getIn(indexedDataGraph, ['entities', encampmentsLocationESID, 0]);
+    const encampmentLocationEKID = getEntityKeyId(encampmentLocation);
+
+    const encampments = Map([
+      [encampmentLocationEKID, fromJS(encampment)]
+    ]);
+
+    const encampmentLocations = Map([
+      [encampmentLocationEKID, fromJS(encampmentLocation)]
+    ]);
+
+    const result = Map({
+      hits: List([encampmentLocationEKID]),
+      encampments,
+      encampmentLocations
+    });
+    yield put(submitEncampment.success(action.id, result));
   }
   catch (error) {
     LOG.error(action.type, error);

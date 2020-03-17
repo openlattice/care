@@ -32,8 +32,6 @@ const INITIAL_STATE :Map = fromJS({
     address: '',
     currentLocation: false,
   }),
-  stayAway: Map(),
-  stayAwayLocations: Map(),
   encampments: Map(),
   encampmentLocations: Map(),
 });
@@ -67,7 +65,9 @@ const encampmentsReducer = (state :Map = INITIAL_STATE, action :Object) => {
     case submitEncampment.case(action.type): {
       return submitEncampment.reducer(state, action, {
         REQUEST: () => state.set('submitState', RequestStates.PENDING),
-        SUCCESS: () => state.set('submitState', RequestStates.SUCCESS),
+        SUCCESS: () => state
+          .set('submitState', RequestStates.SUCCESS)
+          .mergeDeep(action.value),
         FAILURE: () => state.set('submitState', RequestStates.FAILURE),
       });
     }
