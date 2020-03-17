@@ -447,11 +447,11 @@ function* addPersonToEncampmentWatcher() :Generator<any, any, any> {
 function* getEncampmentOccupantsWorker(action :SequenceAction) :Generator<any, any, any> {
   const response = {};
   try {
-    yield getEncampmentOccupants.request(action.id);
-    yield getEncampmentOccupants.success(action.id);
+    yield put(getEncampmentOccupants.request(action.id));
+    yield put(getEncampmentOccupants.success(action.id));
   }
   catch (error) {
-    yield getEncampmentOccupants.failure(action.id, error);
+    yield put(getEncampmentOccupants.failure(action.id, error));
   }
   return response;
 }
@@ -463,11 +463,11 @@ function* getEncampmentOccupantsWatcher() :Generator<any, any, any> {
 function* removePersonFromEncampmentWorker(action :SequenceAction) :Generator<any, any, any> {
   const response = {};
   try {
-    yield removePersonFromEncampment.request(action.id);
-    yield removePersonFromEncampment.success(action.id);
+    yield put(removePersonFromEncampment.request(action.id));
+    yield put(removePersonFromEncampment.success(action.id));
   }
   catch (error) {
-    yield removePersonFromEncampment.failure(action.id, error);
+    yield put(removePersonFromEncampment.failure(action.id, error));
   }
   return response;
 }
