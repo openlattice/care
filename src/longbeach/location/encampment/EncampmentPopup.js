@@ -12,13 +12,19 @@ import { useSelector } from 'react-redux';
 
 import { ENCAMPMENT_STORE_PATH } from './constants';
 
+import DefaultLink from '../../../components/links/DefaultLink';
 import Detail from '../../../components/premium/styled/Detail';
+import {
+  ENCAMPMENT_ID_PATH,
+  ENCAMPMENT_VIEW_PATH,
+} from '../../../core/router/Routes';
 import {
   DESCRIPTION_FQN,
   ENTRY_UPDATED_FQN,
   NUMBER_OF_PEOPLE_FQN,
   OPENLATTICE_ID_FQN,
 } from '../../../edm/DataModelFqns';
+import { getEntityKeyId } from '../../../utils/DataUtils';
 import { getCoordinates } from '../../map/MapUtils';
 
 const ActionBar = styled.div`
@@ -32,6 +38,7 @@ const CloseButton = styled(IconButton)`
   color: inherit;
   padding: 2px;
 `;
+
 const CloseIcon = <FontAwesomeIcon icon={faTimes} fixedWidth />;
 
 type Props = {
@@ -53,6 +60,8 @@ const EncampmentPopup = ({
   const rawUpdated = encampment.getIn([ENTRY_UPDATED_FQN, 0]);
   const lastUpdated = DateTime.fromISO(rawUpdated).toLocaleString(DateTime.DATETIME_SHORT);
 
+  const encampmentEKID = getEntityKeyId(encampment);
+
   if (!isOpen) return null;
 
   const coordinates = getCoordinates(selectedFeature);
@@ -66,6 +75,7 @@ const EncampmentPopup = ({
       <Detail content={occupants} icon={faUsers} />
       <Detail content={lastUpdated} icon={faHistory} />
       <Detail content={description} />
+      <DefaultLink to={ENCAMPMENT_VIEW_PATH.replace(ENCAMPMENT_ID_PATH, encampmentEKID)}>View Occupants</DefaultLink>
     </Popup>
   );
 };
