@@ -7,7 +7,6 @@ import { AuthSagas } from 'lattice-auth';
 import {
   AppApiSagas,
   DataApiSagas,
-  DataIntegrationApiSagas,
   EntityDataModelApiSagas,
   SearchApiSagas,
 } from 'lattice-sagas';
