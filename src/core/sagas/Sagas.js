@@ -7,7 +7,6 @@ import { AuthSagas } from 'lattice-auth';
 import {
   AppApiSagas,
   DataApiSagas,
-  DataIntegrationApiSagas,
   EntityDataModelApiSagas,
   SearchApiSagas,
 } from 'lattice-sagas';
@@ -59,7 +58,6 @@ export default function* sagas() :Generator<*, *, *> {
     fork(DataApiSagas.deleteEntityDataWatcher),
     fork(DataApiSagas.getEntitySetDataWatcher),
     fork(DataApiSagas.updateEntityDataWatcher),
-    fork(DataIntegrationApiSagas.createEntityAndAssociationDataWatcher),
     fork(EntityDataModelApiSagas.getAllPropertyTypesWatcher),
     fork(EntityDataModelApiSagas.getEntityDataModelProjectionWatcher),
     fork(SearchApiSagas.searchEntitySetDataWatcher),
