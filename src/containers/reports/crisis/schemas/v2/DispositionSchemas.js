@@ -1,5 +1,7 @@
 import { DataProcessingUtils } from 'lattice-fabricate';
 
+import * as FQN from '../../../../../edm/DataModelFqns';
+import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
 import {
   BILLED_SERVICES,
   CLINICIAN_REFERRALS,
@@ -9,10 +11,7 @@ import {
   SELECT_ONLY_ONE,
   TECHNIQUES,
   YES_NO_NA,
-} from './constants';
-
-import * as FQN from '../../../../edm/DataModelFqns';
-import { APP_TYPES_FQNS } from '../../../../shared/Consts';
+} from '../constants';
 
 const {
   ENCOUNTER_FQN,

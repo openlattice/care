@@ -1,15 +1,14 @@
 import { DataProcessingUtils } from 'lattice-fabricate';
 
+import * as FQN from '../../../../../edm/DataModelFqns';
+import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
 import {
   BILLED_SERVICES,
   DISPOSITION,
   TECHNIQUES,
   YES_NO_NA,
   YES_NO_UNKNOWN
-} from './constants';
-
-import * as FQN from '../../../../edm/DataModelFqns';
-import { APP_TYPES_FQNS } from '../../../../shared/Consts';
+} from '../constants';
 
 const { PEOPLE_FQN } = APP_TYPES_FQNS;
 

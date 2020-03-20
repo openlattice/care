@@ -1,7 +1,7 @@
 import { DataProcessingUtils } from 'lattice-fabricate';
 
-import * as FQN from '../../../../edm/DataModelFqns';
-import { APP_TYPES_FQNS } from '../../../../shared/Consts';
+import * as FQN from '../../../../../edm/DataModelFqns';
+import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
 
 const {
   CLINICIAN_REPORT_FQN,

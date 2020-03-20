@@ -2,13 +2,13 @@ import { DataProcessingUtils } from 'lattice-fabricate';
 
 import { YES_NO_UNKNOWN } from './constants';
 
-import * as FQN from '../../../../edm/DataModelFqns';
-import { APP_TYPES_FQNS } from '../../../../shared/Consts';
+import * as FQN from '../../../../../edm/DataModelFqns';
+import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
 import {
   ETHNICITY_VALUES,
   RACE_VALUES,
   SEX_VALUES
-} from '../../../profile/constants';
+} from '../../../../profile/constants';
 
 const { PEOPLE_FQN, PERSON_DETAILS_FQN } = APP_TYPES_FQNS;
 

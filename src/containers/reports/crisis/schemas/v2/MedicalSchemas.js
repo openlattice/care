@@ -1,13 +1,12 @@
 import { DataProcessingUtils } from 'lattice-fabricate';
 
+import * as FQN from '../../../../../edm/DataModelFqns';
+import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
 import {
   DRUGS_ALCOHOL,
   SELECT_ALL_THAT_APPLY,
   SELECT_ONLY_ONE,
-} from './constants';
-
-import * as FQN from '../../../../edm/DataModelFqns';
-import { APP_TYPES_FQNS } from '../../../../shared/Consts';
+} from '../constants';
 
 const {
   DIAGNOSIS_FQN,

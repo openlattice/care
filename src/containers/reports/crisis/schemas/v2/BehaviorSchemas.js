@@ -1,9 +1,8 @@
 import { DataProcessingUtils } from 'lattice-fabricate';
 
-import { BEHAVIORS, NATURE_OF_CRISIS, SELECT_ALL_THAT_APPLY } from './constants';
-
-import * as FQN from '../../../../edm/DataModelFqns';
-import { APP_TYPES_FQNS } from '../../../../shared/Consts';
+import * as FQN from '../../../../../edm/DataModelFqns';
+import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
+import { BEHAVIORS, NATURE_OF_CRISIS, SELECT_ALL_THAT_APPLY } from '../constants';
 
 const { BEHAVIOR_FQN, NATURE_OF_CRISIS_FQN } = APP_TYPES_FQNS;
 

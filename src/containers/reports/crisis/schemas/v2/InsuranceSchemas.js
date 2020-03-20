@@ -1,9 +1,8 @@
 import { DataProcessingUtils } from 'lattice-fabricate';
 
-import { INSURANCE, SELECT_ONLY_ONE } from './constants';
-
-import * as FQN from '../../../../edm/DataModelFqns';
-import { APP_TYPES_FQNS } from '../../../../shared/Consts';
+import * as FQN from '../../../../../edm/DataModelFqns';
+import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
+import { INSURANCE, SELECT_ONLY_ONE } from '../constants';
 
 const { INSURANCE_FQN } = APP_TYPES_FQNS;
 

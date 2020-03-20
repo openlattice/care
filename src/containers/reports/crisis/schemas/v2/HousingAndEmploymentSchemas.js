@@ -1,20 +1,19 @@
 import { DataProcessingUtils } from 'lattice-fabricate';
 
+import * as FQN from '../../../../../edm/DataModelFqns';
+import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
 import {
+  EMPLOYMENT,
+  HOUSING,
+  KNOWN_CLIENT,
+  RESIDES_WITH,
   SELECT_ALL_THAT_APPLY,
-  SELF_INJURY,
-  VIOLENCE_TARGET,
-  WEAPON_TYPE
-} from './constants';
-
-import * as FQN from '../../../../edm/DataModelFqns';
-import { APP_TYPES_FQNS } from '../../../../shared/Consts';
+} from '../constants';
 
 const {
-  INJURY_FQN,
-  SELF_HARM_FQN,
-  VIOLENT_BEHAVIOR_FQN,
-  WEAPON_FQN,
+  HOUSING_FQN,
+  OCCUPATION_FQN,
+  INCOME_FQN
 } = APP_TYPES_FQNS;
 
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
@@ -22,50 +21,50 @@ const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
 const schema = {
   type: 'object',
   properties: {
-    [getPageSectionKey(5, 1)]: {
+    [getPageSectionKey(6, 1)]: {
       type: 'object',
-      title: 'Threats, Violence, & Weapons',
+      title: 'Housing & Employment',
       properties: {
-        [getEntityAddressKey(0, WEAPON_FQN, FQN.TYPE_FQN)]: {
+        [getEntityAddressKey(0, HOUSING_FQN, FQN.TYPE_FQN)]: {
+          title: 'Current Housing Situation',
           type: 'array',
-          title: 'Brandished weapon(s):',
           description: SELECT_ALL_THAT_APPLY,
           items: {
             type: 'string',
-            enum: WEAPON_TYPE
+            enum: HOUSING,
           },
           // minItems: 1,
           uniqueItems: true
         },
-        [getEntityAddressKey(0, VIOLENT_BEHAVIOR_FQN, FQN.DIRECTED_AGAINST_RELATION_FQN)]: {
+        [getEntityAddressKey(0, HOUSING_FQN, FQN.DESCRIPTION_FQN)]: {
+          title: 'Resides With',
           type: 'array',
-          title: 'Violence threatened toward or engaged with',
           description: SELECT_ALL_THAT_APPLY,
           items: {
             type: 'string',
-            enum: VIOLENCE_TARGET
+            enum: RESIDES_WITH,
           },
           // minItems: 1,
           uniqueItems: true
         },
-        [getEntityAddressKey(0, INJURY_FQN, FQN.PERSON_INJURED_FQN)]: {
+        [getEntityAddressKey(0, OCCUPATION_FQN, FQN.TYPE_FQN)]: {
+          title: 'Employment',
           type: 'array',
-          title: 'Injured parties:',
           description: SELECT_ALL_THAT_APPLY,
           items: {
             type: 'string',
-            enum: VIOLENCE_TARGET
+            enum: EMPLOYMENT,
           },
           // minItems: 1,
           uniqueItems: true
         },
-        [getEntityAddressKey(0, SELF_HARM_FQN, FQN.ACTION_FQN)]: {
+        [getEntityAddressKey(0, INCOME_FQN, FQN.TYPE_FQN)]: {
+          title: 'Client of State Service',
           type: 'array',
-          title: 'Self-harm:',
           description: SELECT_ALL_THAT_APPLY,
           items: {
             type: 'string',
-            enum: SELF_INJURY
+            enum: KNOWN_CLIENT,
           },
           // minItems: 1,
           uniqueItems: true
@@ -76,12 +75,21 @@ const schema = {
 };
 
 const uiSchema = {
-  [getPageSectionKey(5, 1)]: {
+  [getPageSectionKey(6, 1)]: {
     classNames: 'column-span-12 grid-container',
     'ui:options': {
       editable: true
     },
-    [getEntityAddressKey(0, WEAPON_FQN, FQN.TYPE_FQN)]: {
+    [getEntityAddressKey(0, HOUSING_FQN, FQN.TYPE_FQN)]: {
+      classNames: 'column-span-12',
+      'ui:widget': 'checkboxes',
+      'ui:options': {
+        mode: 'button',
+        row: true,
+        withOther: true,
+      }
+    },
+    [getEntityAddressKey(0, HOUSING_FQN, FQN.DESCRIPTION_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
       'ui:options': {
@@ -91,27 +99,16 @@ const uiSchema = {
         withOther: true,
       }
     },
-    [getEntityAddressKey(0, VIOLENT_BEHAVIOR_FQN, FQN.DIRECTED_AGAINST_RELATION_FQN)]: {
+    [getEntityAddressKey(0, OCCUPATION_FQN, FQN.TYPE_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
       'ui:options': {
         mode: 'button',
         row: true,
-        withNone: true,
         withOther: true,
       }
     },
-    [getEntityAddressKey(0, INJURY_FQN, FQN.PERSON_INJURED_FQN)]: {
-      classNames: 'column-span-12',
-      'ui:widget': 'checkboxes',
-      'ui:options': {
-        mode: 'button',
-        row: true,
-        withNone: true,
-        withOther: true,
-      }
-    },
-    [getEntityAddressKey(0, SELF_HARM_FQN, FQN.ACTION_FQN)]: {
+    [getEntityAddressKey(0, INCOME_FQN, FQN.TYPE_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
       'ui:options': {
