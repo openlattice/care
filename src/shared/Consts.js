@@ -34,6 +34,7 @@ export const APP_TYPES_FQNS = {
   REPORTED_FQN: new FullyQualifiedName('app.reported'),
   RESPONSE_PLAN_FQN: new FullyQualifiedName('app.responseplan'),
   STAFF_FQN: new FullyQualifiedName('app.staff'),
+  STAY_AWAY_LOCATION_FQN: new FullyQualifiedName('app.stayawaylocation'),
   SUBJECT_OF_FQN: new FullyQualifiedName('app.subjectof'),
 
   INCIDENT_FQN: new FullyQualifiedName('app.incident_new'),
@@ -66,6 +67,11 @@ export const APP_TYPES_FQNS = {
   SERVICES_OF_PROCESS_FQN: new FullyQualifiedName('app.services_of_process'),
   WARRANTS_FQN: new FullyQualifiedName('app.warrants'),
   /* <===== END LONG BEACH HACK =====> */
+  /* <===== BEGIN LIVERMORE HACK =====> */
+  ENCAMPMENT_FQN: new FullyQualifiedName('app.encampment'),
+  ENCAMPMENT_LOCATION_FQN: new FullyQualifiedName('app.encampmentlocation'),
+  LIVES_AT_FQN: new FullyQualifiedName('app.livesat_new'),
+  /* <===== END LIVERMORE HACK =====> */
 };
 
 export const STRING_ID_FQN = 'general.stringid';

@@ -22,15 +22,16 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
-import FindingLocationSplash from './FindingLocationSplash';
-import LongBeachLocationResult from './LongBeachLocationResult';
-import { getGeoOptions, searchLBLocations } from './LongBeachLocationsActions';
+import EncampmentMap from './EncampmentMap';
+import EncampmentResult from './EncampmentResult';
+import { getGeoOptions, searchEncampmentLocations } from './EncampmentActions';
+import { ENCAMPMENT_STORE_PATH } from './constants';
 
-import StayAwayMap from '../map/StayAwayMap';
-import { usePosition, useTimeout } from '../../components/hooks';
-import { ContentOuterWrapper, ContentWrapper } from '../../components/layout';
-import { isNonEmptyString } from '../../utils/LangUtils';
-import { FlexRow, MapWrapper, ResultSegment } from '../styled';
+import FindingLocationSplash from '../FindingLocationSplash';
+import { usePosition, useTimeout } from '../../../components/hooks';
+import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
+import { isNonEmptyString } from '../../../utils/LangUtils';
+import { FlexRow, MapWrapper, ResultSegment } from '../../styled';
 
 const MAX_HITS = 20;
 const INITIAL_STATE = {
@@ -50,7 +51,7 @@ const StyledContentWrapper = styled(ContentWrapper)`
 `;
 
 const StyledSearchResults = styled(SearchResults)`
-  margin: auto;
+  margin: auto 0;
 `;
 
 const AbsoluteWrapper = styled.div`
@@ -76,13 +77,13 @@ const reducer = (state, action) => {
   }
 };
 
-const LongBeachLocationContainer = () => {
+const EncampmentsContainer = () => {
 
-  const searchResults = useSelector((store) => store.getIn(['longBeach', 'locations', 'hits'], List()));
-  const totalHits = useSelector((store) => store.getIn(['longBeach', 'locations', 'totalHits'], 0));
-  const fetchState = useSelector((store) => store.getIn(['longBeach', 'locations', 'fetchState']));
-  const optionsFetchState = useSelector((store) => store.getIn(['longBeach', 'locations', 'options', 'fetchState']));
-  const options = useSelector((store) => store.getIn(['longBeach', 'locations', 'options', 'data']));
+  const searchResults = useSelector((store) => store.getIn([...ENCAMPMENT_STORE_PATH, 'hits'], List()));
+  const totalHits = useSelector((store) => store.getIn([...ENCAMPMENT_STORE_PATH, 'totalHits'], 0));
+  const fetchState = useSelector((store) => store.getIn([...ENCAMPMENT_STORE_PATH, 'fetchState']));
+  const optionsFetchState = useSelector((store) => store.getIn([...ENCAMPMENT_STORE_PATH, 'options', 'geo', 'fetchState']));
+  const options = useSelector((store) => store.getIn([...ENCAMPMENT_STORE_PATH, 'options', 'geo', 'data']));
   const dispatch = useDispatch();
   const [state, stateDispatch] = useReducer(reducer, INITIAL_STATE);
 
@@ -92,7 +93,7 @@ const LongBeachLocationContainer = () => {
     selectedOption
   } = state;
   const [address, setAddress] = useState();
-  const [currentPosition, posError] = usePosition();
+  const [currentPosition] = usePosition();
 
   const fetchGeoOptions = useCallback(() => {
     if (isNonEmptyString(address)) {
@@ -103,7 +104,7 @@ const LongBeachLocationContainer = () => {
   useTimeout(fetchGeoOptions, 300);
 
   useEffect(() => {
-    if (!posError && currentPosition.coords && !selectedOption) {
+    if (currentPosition.coords && !selectedOption) {
       const { latitude, longitude } = currentPosition.coords;
       stateDispatch({
         type: 'selectLocation',
@@ -117,7 +118,6 @@ const LongBeachLocationContainer = () => {
     }
   }, [
     currentPosition,
-    posError,
     selectedOption
   ]);
 
@@ -128,7 +128,7 @@ const LongBeachLocationContainer = () => {
     const hasValues = isPlainObject(selectedOption);
 
     if (hasValues) {
-      dispatch(searchLBLocations({
+      dispatch(searchEncampmentLocations({
         searchInputs: newSearchInputs,
         start,
         maxHits: MAX_HITS
@@ -139,12 +139,12 @@ const LongBeachLocationContainer = () => {
   const hasSearched = fetchState !== RequestStates.STANDBY;
   const isLoading = fetchState === RequestStates.PENDING;
   const isFetchingOptions = optionsFetchState === RequestStates.PENDING;
-  const hasPosition = !posError && currentPosition.coords;
+  const hasPosition = !!currentPosition.coords;
 
   const filterOption = () => true;
 
   const handleCurrentPositionClick = () => {
-    if (currentPosition.coords) {
+    if (hasPosition) {
       const { latitude, longitude } = currentPosition.coords;
       stateDispatch({
         type: 'selectLocation',
@@ -172,7 +172,7 @@ const LongBeachLocationContainer = () => {
     <ContentOuterWrapper>
       <ContentWrapper padding="none">
         <MapWrapper>
-          <StayAwayMap
+          <EncampmentMap
               currentPosition={currentPosition}
               selectedOption={selectedOption}
               searchResults={searchResults} />
@@ -215,7 +215,7 @@ const LongBeachLocationContainer = () => {
           <StyledSearchResults
               hasSearched={hasSearched}
               isLoading={isLoading}
-              resultComponent={LongBeachLocationResult}
+              resultComponent={EncampmentResult}
               results={searchResults} />
           {
             hasSearched && (
@@ -232,4 +232,4 @@ const LongBeachLocationContainer = () => {
   );
 };
 
-export default LongBeachLocationContainer;
+export default EncampmentsContainer;

@@ -32,7 +32,11 @@ const LINE_ITEM_FQN = new FullyQualifiedName('ol.lineitem');
 export { LINE_ITEM_FQN };
 
 const NUM_SOURCES_FOUND_IN_FQN = new FullyQualifiedName('ol.numsourcesfoundin');
-export { NUM_SOURCES_FOUND_IN_FQN };
+const NUMBER_OF_PEOPLE_FQN = new FullyQualifiedName('ol.numberofpeople');
+export {
+  NUM_SOURCES_FOUND_IN_FQN,
+  NUMBER_OF_PEOPLE_FQN
+};
 
 /* disposition */
 const CJ_DISPOSITION_FQN = new FullyQualifiedName('criminaljustice.disposition');

@@ -24,9 +24,10 @@ import * as ContactsSagas from '../../containers/profile/edit/contacts/ContactsS
 import * as CrisisReportSagas from '../../containers/reports/crisis/CrisisReportSagas';
 import * as DashboardSagas from '../../containers/dashboard/DashboardSagas';
 import * as DownloadsSagas from '../../containers/downloads/DownloadsSagas';
+import * as EncampmentSagas from '../../longbeach/location/encampment/EncampmentsSagas';
 import * as IssueSagas from '../../containers/issues/issue/IssueSagas';
 import * as IssuesSagas from '../../containers/issues/IssuesSagas';
-import * as LongBeachLocationsSagas from '../../longbeach/location/LongBeachLocationsSagas';
+import * as LongBeachLocationsSagas from '../../longbeach/location/stayaway/LongBeachLocationsSagas';
 import * as LongBeachPeopleSagas from '../../longbeach/people/LongBeachPeopleSagas';
 import * as LongBeachProfileSagas from '../../longbeach/profile/LongBeachProfileSagas';
 import * as LongBeachProviderSagas from '../../longbeach/provider/LongBeachProviderSagas';
@@ -196,5 +197,12 @@ export default function* sagas() :Generator<*, *, *> {
     fork(CrisisReportSagas.getSubjectOfIncidentWatcher),
     fork(CrisisReportSagas.submitCrisisReportWatcher),
     fork(CrisisReportSagas.updateCrisisReportWatcher),
+    fork(EncampmentSagas.addPersonToEncampmentWatcher),
+    fork(EncampmentSagas.getEncampmentOccupantsWatcher),
+    fork(EncampmentSagas.getEncampmentPeopleOptionsWatcher),
+    fork(EncampmentSagas.getGeoOptionsWatcher),
+    fork(EncampmentSagas.removePersonFromEncampmentWatcher),
+    fork(EncampmentSagas.searchEncampmentLocationsWatcher),
+    fork(EncampmentSagas.submitEncampmentWatcher),
   ]);
 }

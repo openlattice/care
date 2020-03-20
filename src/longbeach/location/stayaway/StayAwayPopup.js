@@ -16,14 +16,21 @@ import { IconButton } from 'lattice-ui-kit';
 import { Popup } from 'react-mapbox-gl';
 import { useSelector } from 'react-redux';
 
-import Detail from '../../components/premium/styled/Detail';
+import { STAY_AWAY_STORE_PATH } from './constants';
+
+import DefaultLink from '../../../components/links/DefaultLink';
+import Detail from '../../../components/premium/styled/Detail';
+import {
+  PROFILE_ID_PATH,
+  PROFILE_VIEW_PATH,
+} from '../../../core/router/Routes';
 import {
   OPENLATTICE_ID_FQN,
   PERSON_RACE_FQN,
   PERSON_SEX_FQN
-} from '../../edm/DataModelFqns';
-import { getAddressFromLocation } from '../../utils/AddressUtils';
-import { getDobFromPerson, getLastFirstMiFromPerson } from '../../utils/PersonUtils';
+} from '../../../edm/DataModelFqns';
+import { getAddressFromLocation } from '../../../utils/AddressUtils';
+import { getDobFromPerson, getLastFirstMiFromPerson } from '../../../utils/PersonUtils';
 
 const ActionBar = styled.div`
   display: flex;
@@ -36,6 +43,7 @@ const CloseButton = styled(IconButton)`
   color: inherit;
   padding: 2px;
 `;
+
 const CloseIcon = <FontAwesomeIcon icon={faTimes} fixedWidth />;
 
 type Props = {
@@ -53,9 +61,11 @@ const StayAwayPopup = ({
 } :Props) => {
 
   const locationEKID = stayAwayLocation.getIn([OPENLATTICE_ID_FQN, 0]);
-  const stayAway = useSelector((store) => store.getIn(['longBeach', 'locations', 'stayAway', locationEKID])) || Map();
+  const stayAway = useSelector((store) => store.getIn([...STAY_AWAY_STORE_PATH, 'stayAway', locationEKID])) || Map();
   const stayAwayEKID = stayAway.getIn([OPENLATTICE_ID_FQN, 0]);
-  const person = useSelector((store) => store.getIn(['longBeach', 'locations', 'people', stayAwayEKID])) || Map();
+  const person = useSelector((store) => store.getIn([...STAY_AWAY_STORE_PATH, 'people', stayAwayEKID])) || Map();
+  const personEKID = person.getIn([OPENLATTICE_ID_FQN, 0]);
+
   if (!isOpen) return null;
 
   const fullName = getLastFirstMiFromPerson(person, true);
@@ -82,6 +92,7 @@ const StayAwayPopup = ({
       <Detail content={sex} icon={faVenusMars} />
       <Detail content={nameAndAddress} icon={faMapMarkerAltSlash} />
       <Detail content={radius} icon={faDraftingCompass} />
+      <DefaultLink to={PROFILE_VIEW_PATH.replace(PROFILE_ID_PATH, personEKID)}>View Profile</DefaultLink>
     </Popup>
   );
 };
