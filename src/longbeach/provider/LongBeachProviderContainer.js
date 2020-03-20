@@ -23,8 +23,8 @@ const LongBeachProviderContainer = () => {
       <ContentWrapper>
         <CardStack>
           {
-            providers.map((provider) => {
-              const key = provider.getIn([OPENLATTICE_ID_FQN, 0]);
+            providers.map((provider, idx) => {
+              const key = provider.getIn([OPENLATTICE_ID_FQN, 0]) || idx;
               return (
                 <LongBeachProviderCard key={key} provider={provider} />
               );
