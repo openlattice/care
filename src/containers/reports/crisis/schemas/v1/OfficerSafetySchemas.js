@@ -1,9 +1,15 @@
 import { DataProcessingUtils } from 'lattice-fabricate';
 
+import {
+  INJURY_TYPES,
+  RELATIONSHIP_TYPES,
+  TECHNIQUES,
+  WEAPONS
+} from './constants';
+
 import * as FQN from '../../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
-import { ASSISTANCES, HOUSING_SITUATIONS, NATURE_OF_CRISIS } from '../../../../pages/natureofcrisis/Constants';
-import { SELECT_ALL_THAT_APPLY, SELECT_ONLY_ONE } from '../constants';
+import { SELECT_ALL_THAT_APPLY } from '../constants';
 
 const { BEHAVIORAL_HEALTH_REPORT_FQN } = APP_TYPES_FQNS;
 
@@ -22,7 +28,7 @@ const schema = {
           description: SELECT_ALL_THAT_APPLY,
           items: {
             type: 'string',
-            enum: NATURE_OF_CRISIS,
+            enum: TECHNIQUES,
           },
           // minItems: 1,
           uniqueItems: true
@@ -33,22 +39,32 @@ const schema = {
           description: SELECT_ALL_THAT_APPLY,
           items: {
             type: 'string',
-            enum: ASSISTANCES,
+            enum: WEAPONS,
           },
           // minItems: 1,
           uniqueItems: true
         },
         [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.DIRECTED_AGAINST_RELATION_FQN)]: {
-          title: 'Violence Threatened',
-          type: 'string',
-          description: SELECT_ONLY_ONE,
-          enum: HOUSING_SITUATIONS
+          title: 'Violence threatened',
+          type: 'array',
+          description: SELECT_ALL_THAT_APPLY,
+          items: {
+            type: 'string',
+            enum: RELATIONSHIP_TYPES,
+          },
+          // minItems: 1,
+          uniqueItems: true
         },
         [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.PERSON_INJURED_FQN)]: {
           title: 'Injuries',
-          type: 'string',
-          description: SELECT_ONLY_ONE,
-          enum: HOUSING_SITUATIONS
+          type: 'array',
+          description: SELECT_ALL_THAT_APPLY,
+          items: {
+            type: 'string',
+            enum: INJURY_TYPES,
+          },
+          // minItems: 1,
+          uniqueItems: true
         },
       },
       // required: [
@@ -71,8 +87,6 @@ const uiSchema = {
       'ui:options': {
         mode: 'button',
         row: true,
-        withNone: true,
-        withOther: true,
       }
     },
     [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.ARMED_WEAPON_TYPE_FQN)]: {
@@ -96,10 +110,12 @@ const uiSchema = {
       }
     },
     [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.PERSON_INJURED_FQN)]: {
-      title: 'Injuries',
-      type: 'string',
-      description: SELECT_ONLY_ONE,
-      enum: HOUSING_SITUATIONS
+      classNames: 'column-span-12',
+      'ui:widget': 'checkboxes',
+      'ui:options': {
+        mode: 'button',
+        row: true,
+      }
     },
   }
 };

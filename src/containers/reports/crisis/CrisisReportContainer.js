@@ -1,5 +1,5 @@
 // @flow
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { Map } from 'immutable';
 import { Form } from 'lattice-fabricate';
@@ -39,10 +39,17 @@ const {
 const { schemas, uiSchemas } = v1;
 
 const CrisisReportContainer = () => {
-  const [isAuthorized] = useAuthorization('profile', getAuthorization);
+  const dispatch = useDispatch();
+  const match = useRouteMatch();
 
+  const dispatchGetAuthorization = useCallback(() => {
+    dispatch(getAuthorization());
+  }, [dispatch]);
+
+  const [isAuthorized] = useAuthorization('profile', dispatchGetAuthorization);
+  console.log(isAuthorized);
   // TODO memoize this so you can reuse it in the saga
-  const reviewSchemas = generateReviewSchema(schemas, uiSchemas, !isAuthorized);
+  const reviewSchemas = useMemo(() => generateReviewSchema(schemas, uiSchemas, !isAuthorized), [isAuthorized]);
 
   const entityIndexToIdMap = useSelector((store) => store.getIn(['crisisReport', 'entityIndexToIdMap']));
   const entitySetIds = useSelector((store) => store.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
@@ -52,9 +59,6 @@ const CrisisReportContainer = () => {
   const reporterData = useSelector((store) => store.getIn(['crisisReport', 'reporterData']));
   const reportData = useSelector((store) => store.getIn(['crisisReport', 'reportData']));
   const subjectData = useSelector((store) => store.getIn(['crisisReport', 'subjectData']));
-
-  const dispatch = useDispatch();
-  const match = useRouteMatch();
 
   const { [REPORT_ID_PARAM]: reportId } = match.params;
 

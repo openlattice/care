@@ -1,8 +1,9 @@
 import { DataProcessingUtils } from 'lattice-fabricate';
 
+import { ASSISTANCES, HOUSING_SITUATIONS, NATURE_OF_CRISIS } from './constants';
+
 import * as FQN from '../../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
-import { ASSISTANCES, HOUSING_SITUATIONS, NATURE_OF_CRISIS } from '../../../../pages/natureofcrisis/Constants';
 import { SELECT_ALL_THAT_APPLY, SELECT_ONLY_ONE } from '../constants';
 
 const { BEHAVIORAL_HEALTH_REPORT_FQN } = APP_TYPES_FQNS;
@@ -65,7 +66,6 @@ const uiSchema = {
       'ui:options': {
         mode: 'button',
         row: true,
-        withNone: true,
         withOther: true,
       }
     },
