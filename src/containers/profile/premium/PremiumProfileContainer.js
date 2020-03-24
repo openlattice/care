@@ -42,9 +42,9 @@ import WarrantCard from '../../../components/premium/warrant/WarrantCard';
 import { useAuthorization, usePeopleRoute } from '../../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
 import {
+  CRISIS_REPORT_PATH,
   NEW_CRISIS_PATH,
   REPORT_ID_PATH,
-  REPORT_VIEW_PATH,
 } from '../../../core/router/Routes';
 import { goToPath } from '../../../core/router/RoutingActions';
 import { getAuthorization } from '../../../core/sagas/authorize/AuthorizeActions';
@@ -185,12 +185,13 @@ const PremiumProfileContainer = (props :Props) => {
   usePeopleRoute(actions.getContacts);
   usePeopleRoute(actions.getOfficerSafety);
   usePeopleRoute(actions.getResponsePlan);
-  usePeopleRoute(actions.getIncidentReportsSummary);
-  usePeopleRoute(actions.getLBProfile);
+  usePeopleRoute(actions.getProfileReports);
+  // usePeopleRoute(actions.getIncidentReportsSummary);
+  // usePeopleRoute(actions.getLBProfile);
 
   const handleResultClick = useCallback((result :Map) => {
     const reportEKID = getEntityKeyId(result);
-    actions.goToPath(REPORT_VIEW_PATH.replace(REPORT_ID_PATH, reportEKID));
+    actions.goToPath(CRISIS_REPORT_PATH.replace(REPORT_ID_PATH, reportEKID));
   }, [actions]);
 
   const [isAuthorized] = useAuthorization('profile', actions.getAuthorization);
@@ -247,7 +248,7 @@ const PremiumProfileContainer = (props :Props) => {
           </Aside>
           <ScrollStack>
             {
-              lastIncident.isEmpty() && !isLoadingBody
+              false // lastIncident.isEmpty() && !isLoadingBody
                 ? <IconSplash icon={faFolderOpen} caption="No reports have been filed." />
                 : (
                   <>

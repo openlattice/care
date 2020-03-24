@@ -1,5 +1,5 @@
 // @flow
-import React, { PureComponent } from 'react';
+import React from 'react';
 
 import styled from 'styled-components';
 import { faHeadSideBrain } from '@fortawesome/pro-solid-svg-icons';

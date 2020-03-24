@@ -45,7 +45,7 @@ import {
   getEntityIndexToIdMapFromNeighbors,
   getOptionalCrisisReportAssociations
 } from './CrisisReportUtils';
-import { schemas, uiSchemas } from './schemas';
+import { v2 } from './schemas';
 import { generateReviewSchema } from './schemas/schemaUtils';
 
 import Logger from '../../../utils/Logger';
@@ -68,6 +68,7 @@ import { isDefined } from '../../../utils/LangUtils';
 import { isValidUuid } from '../../../utils/Utils';
 
 const { FullyQualifiedName } = Models;
+const { schemas, uiSchemas } = v2;
 
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
 const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;

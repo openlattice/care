@@ -19,7 +19,7 @@ import {
   getCrisisReport,
   updateCrisisReport
 } from './CrisisActions';
-import { v2 } from './schemas';
+import { v1 } from './schemas';
 import { generateReviewSchema } from './schemas/schemaUtils';
 
 import BlameCard from '../shared/BlameCard';
@@ -36,7 +36,7 @@ import { getFirstLastFromPerson } from '../../../utils/PersonUtils';
 const {
   CLINICIAN_REPORT_FQN
 } = APP_TYPES_FQNS;
-const { schemas, uiSchemas } = v2;
+const { schemas, uiSchemas } = v1;
 
 const CrisisReportContainer = () => {
   const [isAuthorized] = useAuthorization('profile', getAuthorization);
