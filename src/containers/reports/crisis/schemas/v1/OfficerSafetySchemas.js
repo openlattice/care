@@ -1,7 +1,7 @@
 import { DataProcessingUtils } from 'lattice-fabricate';
 
 import {
-  INJURY_TYPES,
+  PERSON_TYPES,
   RELATIONSHIP_TYPES,
   TECHNIQUES,
   WEAPONS
@@ -61,7 +61,7 @@ const schema = {
           description: SELECT_ALL_THAT_APPLY,
           items: {
             type: 'string',
-            enum: INJURY_TYPES,
+            enum: PERSON_TYPES,
           },
           // minItems: 1,
           uniqueItems: true

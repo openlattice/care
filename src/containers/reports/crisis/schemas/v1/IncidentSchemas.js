@@ -21,7 +21,7 @@ const schema = {
           type: 'string',
           format: 'date-time',
         },
-        [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.COMPLAINT_NUMBER_FQN)]: {
+        [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.OL_ID_FQN)]: {
           title: 'Incident #',
           type: 'string',
         },

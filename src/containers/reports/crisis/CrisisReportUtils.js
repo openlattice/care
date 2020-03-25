@@ -10,7 +10,7 @@ import {
 import { DataProcessingUtils } from 'lattice-fabricate';
 import { DateTime } from 'luxon';
 
-import { COMPLETED_DT_FQN, OPENLATTICE_ID_FQN } from '../../../edm/DataModelFqns';
+import { COMPLETED_DT_FQN, DATE_TIME_FQN, OPENLATTICE_ID_FQN } from '../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS as APP } from '../../../shared/Consts';
 
 const { getPageSectionKey, parseEntityAddressKey } = DataProcessingUtils;
@@ -69,6 +69,23 @@ const getOptionalCrisisReportAssociations = (
 };
 
 const getCrisisReportAssociations = (
+  formData :Object,
+  existingEntityKeyIds :Object,
+  createdDateTime :string = DateTime.local().toISO()
+) :any[][] => {
+  const personEKID = existingEntityKeyIds[APP.PEOPLE_FQN];
+  const staffEKID = existingEntityKeyIds[APP.STAFF_FQN];
+
+  const NOW_DATA = { [DATE_TIME_FQN]: [createdDateTime] };
+  const associations :any[][] = [
+    [APP.REPORTED_FQN, staffEKID, APP.STAFF_FQN, 0, APP.BEHAVIORAL_HEALTH_REPORT_FQN, NOW_DATA],
+    [APP.APPEARS_IN_FQN, personEKID, APP.PEOPLE_FQN, 0, APP.BEHAVIORAL_HEALTH_REPORT_FQN, NOW_DATA],
+  ];
+
+  return associations;
+};
+
+const getNewCrisisReportAssociations = (
   formData :Object,
   existingEntityKeyIds :Object,
   createdDateTime :string = DateTime.local().toISO()
@@ -268,7 +285,8 @@ const constructFormDataFromNeighbors = (neighborsByFQN :Map, schema :Object) :Ob
 export {
   constructFormDataFromNeighbors,
   getCrisisReportAssociations,
-  getEntityIndexToIdMapFromNeighbors,
   getEntityIndexToIdMapFromDataGraphResponse,
+  getEntityIndexToIdMapFromNeighbors,
+  getNewCrisisReportAssociations,
   getOptionalCrisisReportAssociations,
 };

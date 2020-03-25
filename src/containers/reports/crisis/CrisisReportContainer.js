@@ -47,7 +47,6 @@ const CrisisReportContainer = () => {
   }, [dispatch]);
 
   const [isAuthorized] = useAuthorization('profile', dispatchGetAuthorization);
-  console.log(isAuthorized);
   // TODO memoize this so you can reuse it in the saga
   const reviewSchemas = useMemo(() => generateReviewSchema(schemas, uiSchemas, !isAuthorized), [isAuthorized]);
 
