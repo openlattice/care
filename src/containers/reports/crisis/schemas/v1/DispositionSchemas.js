@@ -93,7 +93,7 @@ const schema = {
           uniqueItems: true
         },
         [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.NO_ACTION_POSSIBLE_FQN)]: {
-          title: 'If no action possible, why?',
+          title: 'If no action taken, why?',
           type: 'array',
           description: SELECT_ALL_THAT_APPLY,
           items: {
@@ -186,6 +186,7 @@ const uiSchema = {
       'ui:options': {
         mode: 'button',
         row: true,
+        withOther: true,
       }
     },
   }

@@ -43,7 +43,8 @@ import {
   getCrisisReportAssociations,
   getEntityIndexToIdMapFromDataGraphResponse,
   getEntityIndexToIdMapFromNeighbors,
-  getOptionalCrisisReportAssociations
+  getOptionalCrisisReportAssociations,
+  postProcessCrisisReportV1
 } from './CrisisReportUtils';
 import { v2 } from './schemas';
 import { generateReviewSchema } from './schemas/schemaUtils';
@@ -120,7 +121,9 @@ function* submitCrisisReportWorker(action :SequenceAction) :Generator<any, any, 
     const propertyTypeIds = yield select((state) => state.getIn(['edm', 'fqnToIdMap'], Map()));
     const currentStaff = yield select((state) => state.getIn(['staff', 'currentUser', 'data'], Map()));
 
-    const entityData = processEntityData(formData, entitySetIds, propertyTypeIds);
+    const postProcessFormData = postProcessCrisisReportV1(formData);
+
+    const entityData = processEntityData(postProcessFormData, entitySetIds, propertyTypeIds);
     const existingEKIDs = {
       [PEOPLE_FQN]: getEntityKeyId(selectedPerson),
       [STAFF_FQN]: getEntityKeyId(currentStaff)

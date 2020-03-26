@@ -15,8 +15,10 @@ import {
   CRIMES_AGAINST_PERSON,
   DISPOSITIONS,
   FELONY,
+  HOMELESS_STR,
   NO_ACTION_NECESSARY,
   RESOURCES_DECLINED,
+  SUICIDE_BEHAVIORS,
   UNABLE_TO_CONTACT
 } from './schemas/v1/constants';
 
@@ -322,12 +324,6 @@ const postProcessDisposition = (formData) :Object => {
 
   sectionData[getBHRAddress(FQN.REFERRAL_PROVIDER_INDICATOR_FQN)] = false;
   sectionData[getBHRAddress(FQN.TRANSPORT_INDICATOR_FQN)] = false;
-  sectionData[getBHRAddress(FQN.ARREST_INDICATOR_FQN)] = false;
-  sectionData[getBHRAddress(FQN.CRIMES_AGAINST_PERSON_FQN)] = false;
-  sectionData[getBHRAddress(FQN.FELONY_INDICATOR_FQN)] = false;
-  sectionData[getBHRAddress(FQN.NO_ACTION_POSSIBLE_FQN)] = false;
-  sectionData[getBHRAddress(FQN.UNABLE_TO_CONTACT_FQN)] = false;
-  sectionData[getBHRAddress(FQN.RESOURCES_DECLINED_FQN)] = false;
 
   const [
     notifiedValue,
@@ -340,24 +336,24 @@ const postProcessDisposition = (formData) :Object => {
   ] = getSectionValues(formData, sectionKey, dispositionProperties);
 
   if (notifiedValue.length && !notifiedValue.includes('None')) {
-    disposition.concat(DISPOSITIONS.NOTIFIED_SOMEONE);
+    disposition.push(DISPOSITIONS.NOTIFIED_SOMEONE);
   }
   if (referralValue.length && !referralValue.includes('None')) {
-    disposition.concat(DISPOSITIONS.VERBAL_REFERRAL);
+    disposition.push(DISPOSITIONS.VERBAL_REFERRAL);
     sectionData[getBHRAddress(FQN.REFERRAL_PROVIDER_INDICATOR_FQN)] = true;
   }
   if (transportValue.length && !transportValue.includes('None')) {
-    disposition.concat(DISPOSITIONS.COURTESY_TRANPORT);
+    disposition.push(DISPOSITIONS.COURTESY_TRANPORT);
     sectionData[getBHRAddress(FQN.TRANSPORT_INDICATOR_FQN)] = true;
   }
   if (hospitalValue) {
-    disposition.concat(DISPOSITIONS.HOSPITAL);
+    disposition.push(DISPOSITIONS.HOSPITAL);
   }
   if (naloxoneValue) {
-    disposition.concat(DISPOSITIONS.ADMINISTERED_DRUG);
+    disposition.push(DISPOSITIONS.ADMINISTERED_DRUG);
   }
   if (offenseValue.length && !offenseValue.includes('None')) {
-    disposition.concat(DISPOSITIONS.ARRESTABLE_OFFENSE);
+    disposition.push(DISPOSITIONS.ARRESTABLE_OFFENSE);
 
     const arrestedIndicator = offenseValue.includes(ARRESTED);
     const crimeAgainstPerson = offenseValue.includes(CRIMES_AGAINST_PERSON);
@@ -368,7 +364,7 @@ const postProcessDisposition = (formData) :Object => {
     sectionData[getBHRAddress(FQN.FELONY_INDICATOR_FQN)] = felony;
   }
   if (actionValue.length) {
-    disposition.concat(DISPOSITIONS.NO_ACTION_POSSIBLE);
+    disposition.push(DISPOSITIONS.NO_ACTION_POSSIBLE);
     const noActionPossible = actionValue.includes(NO_ACTION_NECESSARY);
     const unableToContact = actionValue.includes(UNABLE_TO_CONTACT);
     const resourcesDeclined = actionValue.includes(RESOURCES_DECLINED);
@@ -410,15 +406,54 @@ const postProcessSafetySection = (formData) :Object => {
   return setIn(formData, [sectionKey], sectionData);
 };
 
+const postProcessNatureSection = (formData) :Object => {
+  const sectionKey = getPageSectionKey(3, 1);
+  const sectionData = getIn(formData, [sectionKey]);
+
+  const housingProperties = [FQN.HOUSING_SITUATION_FQN];
+
+  sectionData[getBHRAddress(FQN.HOMELESS_FQN)] = false;
+
+  const [
+    housingValue,
+  ] = getSectionValues(formData, sectionKey, housingProperties);
+
+  if (housingValue === HOMELESS_STR) {
+    sectionData[getBHRAddress(FQN.HOMELESS_FQN)] = true;
+  }
+
+  return setIn(formData, [sectionKey], sectionData);
+};
+
+const postProcessBehaviorSection = (formData) :Object => {
+  const sectionKey = getPageSectionKey(2, 1);
+  const sectionData = getIn(formData, [sectionKey]);
+
+  const behaviorProperties = [FQN.OBSERVED_BEHAVIORS_FQN];
+
+  sectionData[getBHRAddress(FQN.SUICIDAL_FQN)] = false;
+
+  const [
+    behaviorValue,
+  ] = getSectionValues(formData, sectionKey, behaviorProperties);
+
+  if (behaviorValue.length && behaviorValue.includes(SUICIDE_BEHAVIORS)) {
+    sectionData[getBHRAddress(FQN.SUICIDAL_FQN)] = true;
+  }
+
+  return setIn(formData, [sectionKey], sectionData);
+};
+
 const pipe = (...fns) => (init) => fns.reduce((piped, f) => f(piped), init);
 
-const postProcessCrisisReportV1 = (formData) :Object => {
-  // for each of the dispositions, append to disposition the name of the field if the value is not 'No' or 'None'
-
+const postProcessCrisisReportV1 = (formData :Object) :Object => {
+  const copyFormData = fromJS(formData).toJS();
   const processedFormData = pipe(
+    postProcessBehaviorSection,
+    postProcessNatureSection,
     postProcessSafetySection,
     postProcessDisposition,
-  )(formData);
+  )(copyFormData);
 
   return processedFormData;
 };
