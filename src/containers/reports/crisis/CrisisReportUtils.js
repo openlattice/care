@@ -10,17 +10,31 @@ import {
 import { DataProcessingUtils } from 'lattice-fabricate';
 import { DateTime } from 'luxon';
 
-import { COMPLETED_DT_FQN, DATE_TIME_FQN, OPENLATTICE_ID_FQN } from '../../../edm/DataModelFqns';
+import {
+  ARRESTED,
+  CRIMES_AGAINST_PERSON,
+  DISPOSITIONS,
+  FELONY,
+  NO_ACTION_NECESSARY,
+  RESOURCES_DECLINED,
+  UNABLE_TO_CONTACT
+} from './schemas/v1/constants';
+
+import * as FQN from '../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS as APP } from '../../../shared/Consts';
 
-const { getPageSectionKey, parseEntityAddressKey } = DataProcessingUtils;
+const {
+  getEntityAddressKey,
+  getPageSectionKey,
+  parseEntityAddressKey,
+} = DataProcessingUtils;
 
 const getDiagnosisAssociations = (formData, existingEntityKeyIds, createdDateTime) => {
   const associations = [];
   const diagnosis = get(formData, getPageSectionKey(4, 1), []);
   const reportIndex = existingEntityKeyIds[APP.CLINICIAN_REPORT_FQN] || 0;
 
-  const NOW_DATA = { [COMPLETED_DT_FQN]: [createdDateTime] };
+  const NOW_DATA = { [FQN.COMPLETED_DT_FQN]: [createdDateTime] };
 
   for (let i = 0; i < diagnosis.length; i += 1) {
     associations.push([
@@ -40,7 +54,7 @@ const getMedicationAssociations = (formData, existingEntityKeyIds, createdDateTi
   const medications = get(formData, getPageSectionKey(4, 2), []);
   const reportIndex = existingEntityKeyIds[APP.CLINICIAN_REPORT_FQN] || 0;
 
-  const NOW_DATA = { [COMPLETED_DT_FQN]: [createdDateTime] };
+  const NOW_DATA = { [FQN.COMPLETED_DT_FQN]: [createdDateTime] };
 
   for (let i = 0; i < medications.length; i += 1) {
     associations.push([
@@ -76,7 +90,7 @@ const getCrisisReportAssociations = (
   const personEKID = existingEntityKeyIds[APP.PEOPLE_FQN];
   const staffEKID = existingEntityKeyIds[APP.STAFF_FQN];
 
-  const NOW_DATA = { [DATE_TIME_FQN]: [createdDateTime] };
+  const NOW_DATA = { [FQN.DATE_TIME_FQN]: [createdDateTime] };
   const associations :any[][] = [
     [APP.REPORTED_FQN, staffEKID, APP.STAFF_FQN, 0, APP.BEHAVIORAL_HEALTH_REPORT_FQN, NOW_DATA],
     [APP.APPEARS_IN_FQN, personEKID, APP.PEOPLE_FQN, 0, APP.BEHAVIORAL_HEALTH_REPORT_FQN, NOW_DATA],
@@ -93,7 +107,7 @@ const getNewCrisisReportAssociations = (
   const personEKID = existingEntityKeyIds[APP.PEOPLE_FQN];
   const staffEKID = existingEntityKeyIds[APP.STAFF_FQN];
 
-  const NOW_DATA = { [COMPLETED_DT_FQN]: [createdDateTime] };
+  const NOW_DATA = { [FQN.COMPLETED_DT_FQN]: [createdDateTime] };
 
   // static assocations
   const associations :any[][] = [
@@ -174,7 +188,7 @@ const getEntityIndexToIdMapFromNeighbors = (neighborsByFQN :Map, schema :Object)
     const ekidMap = Map().withMutations((mutable) => {
       entities.forEach((entity, index) => {
         const entityAddressIndex = entityAddressIndexByFQN[fqn];
-        const entityKeyId = getIn(entity, ['neighborDetails', OPENLATTICE_ID_FQN, 0]);
+        const entityKeyId = getIn(entity, ['neighborDetails', FQN.OPENLATTICE_ID_FQN, 0]);
         // group by entityAddressIndex if defined
         if (entityAddressIndex) {
           if (mutable.has(entityAddressIndex)) {
@@ -185,7 +199,7 @@ const getEntityIndexToIdMapFromNeighbors = (neighborsByFQN :Map, schema :Object)
           }
         }
         else {
-          mutable.set(index, entity.getIn(['neighborDetails', OPENLATTICE_ID_FQN, 0]));
+          mutable.set(index, entity.getIn(['neighborDetails', FQN.OPENLATTICE_ID_FQN, 0]));
         }
       });
     });
@@ -280,6 +294,97 @@ const constructFormDataFromNeighbors = (neighborsByFQN :Map, schema :Object) :Ob
     });
     return [pageSectionKey, sectionValue];
   }));
+};
+
+const getSectionValues = (formData, section, properties) => properties
+  .map((property) => {
+    const address = getEntityAddressKey(0, APP.BEHAVIORAL_HEALTH_REPORT_FQN, property);
+    return getIn(formData, [section, address]);
+  });
+
+const postProcessCrisisReportV1 = (formData) :Object => {
+  // for each of the dispositions, append to disposition the name of the field if the value is not 'No' or 'None'
+  const dispositionSection = getPageSectionKey(5, 1);
+  const safetySection = getPageSectionKey(4, 1);
+
+  const dispositionProperties = [
+    FQN.CATEGORY_FQN,
+    FQN.REFERRAL_DEST_FQN,
+    FQN.ORGANIZATION_NAME_FQN,
+    FQN.HOSPITAL_TRANSPORT_INDICATOR_FQN,
+    FQN.NARCAN_ADMINISTERED_FQN,
+    FQN.ARRESTABLE_OFFENSE_FQN,
+    FQN.NO_ACTION_POSSIBLE_FQN,
+  ];
+
+  const safetyProperties = [
+    FQN.ARMED_WEAPON_TYPE_FQN,
+    FQN.DIRECTED_AGAINST_RELATION_FQN
+  ];
+
+  const disposition = [];
+  let transportIndicator = false;
+  let noActionPossible = false;
+  let unableToContact = false;
+  let resourcesDeclined = false;
+  let arrestedIndicator = false;
+  let crimeAgainstPerson = false;
+  let felony = false;
+  let referralProvided = false;
+  let threatenedIndicator = false;
+  let armedWithWeapon = false;
+
+  const [
+    weaponValue,
+    threatenedValue
+  ] = getSectionValues(formData, safetySection, safetyProperties);
+
+  if (weaponValue.length && !weaponValue.includes('None')) {
+    armedWithWeapon = true;
+  }
+  if (threatenedValue.length && !threatenedValue.includes('None')) {
+    threatenedIndicator = true;
+  }
+
+  const [
+    notifiedValue,
+    referralValue,
+    transportValue,
+    hospitalValue,
+    naloxoneValue,
+    offenseValue,
+    actionValue,
+  ] = getSectionValues(formData, dispositionSection, dispositionProperties);
+
+  if (notifiedValue.length && !notifiedValue.includes('None')) {
+    disposition.concat(DISPOSITIONS.NOTIFIED_SOMEONE);
+  }
+  if (referralValue.length && !referralValue.includes('None')) {
+    disposition.concat(DISPOSITIONS.VERBAL_REFERRAL);
+    referralProvided = true;
+  }
+  if (transportValue.length && !transportValue.includes('None')) {
+    disposition.concat(DISPOSITIONS.COURTESY_TRANPORT);
+    transportIndicator = true;
+  }
+  if (hospitalValue) {
+    disposition.concat(DISPOSITIONS.HOSPITAL);
+  }
+  if (naloxoneValue) {
+    disposition.concat(DISPOSITIONS.ADMINISTERED_DRUG);
+  }
+  if (offenseValue.length && !offenseValue.includes('None')) {
+    disposition.concat(DISPOSITIONS.ARRESTABLE_OFFENSE);
+    arrestedIndicator = offenseValue.includes(ARRESTED);
+    crimeAgainstPerson = offenseValue.includes(CRIMES_AGAINST_PERSON);
+    felony = offenseValue.includes(FELONY);
+  }
+  if (actionValue.length) {
+    disposition.concat(DISPOSITIONS.NO_ACTION_POSSIBLE);
+    noActionPossible = actionValue.includes(NO_ACTION_NECESSARY);
+    unableToContact = actionValue.includes(UNABLE_TO_CONTACT);
+    resourcesDeclined = actionValue.includes(RESOURCES_DECLINED);
+  }
 };
 
 export {

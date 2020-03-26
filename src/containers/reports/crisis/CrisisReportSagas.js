@@ -133,7 +133,7 @@ function* submitCrisisReportWorker(action :SequenceAction) :Generator<any, any, 
       propertyTypeIds
     );
 
-    debugger;
+    
     const dataGraphResponse = yield call(
       submitDataGraphWorker,
       submitDataGraph({
