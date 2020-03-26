@@ -4,7 +4,6 @@ import {
   ARRESTABLE_OFFENSES,
   COURTESY_TRANSPORTS,
   DISPOSITIONS,
-  NO_ACTION_VALUES,
   OFFICER_TRAINING,
   PEOPLE_NOTIFIED,
   VERBAL_REFERRALS,
@@ -92,17 +91,6 @@ const schema = {
           // minItems: 1,
           uniqueItems: true
         },
-        [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.NO_ACTION_POSSIBLE_FQN)]: {
-          title: 'If no action taken, why?',
-          type: 'array',
-          description: SELECT_ALL_THAT_APPLY,
-          items: {
-            type: 'string',
-            enum: NO_ACTION_VALUES,
-          },
-          // minItems: 1,
-          uniqueItems: true
-        },
       },
       // required: [
       //   getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.DESCRIPTION_FQN),
@@ -178,15 +166,6 @@ const uiSchema = {
         mode: 'button',
         row: true,
         withNone: true,
-      }
-    },
-    [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.NO_ACTION_POSSIBLE_FQN)]: {
-      classNames: 'column-span-12',
-      'ui:widget': 'checkboxes',
-      'ui:options': {
-        mode: 'button',
-        row: true,
-        withOther: true,
       }
     },
   }

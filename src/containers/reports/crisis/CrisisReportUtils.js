@@ -317,7 +317,6 @@ const postProcessDisposition = (formData) :Object => {
     FQN.HOSPITAL_TRANSPORT_INDICATOR_FQN,
     FQN.NARCAN_ADMINISTERED_FQN,
     FQN.ARRESTABLE_OFFENSE_FQN,
-    FQN.NO_ACTION_POSSIBLE_FQN,
   ];
 
   const disposition = [];
@@ -332,7 +331,6 @@ const postProcessDisposition = (formData) :Object => {
     hospitalValue,
     naloxoneValue,
     offenseValue,
-    actionValue,
   ] = getSectionValues(formData, sectionKey, dispositionProperties);
 
   if (notifiedValue.length && !notifiedValue.includes('None')) {
@@ -362,16 +360,6 @@ const postProcessDisposition = (formData) :Object => {
     sectionData[getBHRAddress(FQN.ARREST_INDICATOR_FQN)] = arrestedIndicator;
     sectionData[getBHRAddress(FQN.CRIMES_AGAINST_PERSON_FQN)] = crimeAgainstPerson;
     sectionData[getBHRAddress(FQN.FELONY_INDICATOR_FQN)] = felony;
-  }
-  if (actionValue.length) {
-    disposition.push(DISPOSITIONS.NO_ACTION_POSSIBLE);
-    const noActionPossible = actionValue.includes(NO_ACTION_NECESSARY);
-    const unableToContact = actionValue.includes(UNABLE_TO_CONTACT);
-    const resourcesDeclined = actionValue.includes(RESOURCES_DECLINED);
-
-    sectionData[getBHRAddress(FQN.NO_ACTION_POSSIBLE_FQN)] = noActionPossible;
-    sectionData[getBHRAddress(FQN.UNABLE_TO_CONTACT_FQN)] = unableToContact;
-    sectionData[getBHRAddress(FQN.RESOURCES_DECLINED_FQN)] = resourcesDeclined;
   }
 
   sectionData[getBHRAddress(FQN.DISPOSITION_FQN)] = disposition;
