@@ -26,6 +26,7 @@ import {
   ADD_OPTIONAL_CRISIS_REPORT_CONTENT,
   DELETE_CRISIS_REPORT_CONTENT,
   GET_CRISIS_REPORT,
+  GET_CRISIS_REPORT_V2,
   GET_REPORTS_NEIGHBORS,
   GET_SUBJECT_OF_INCIDENT,
   SUBMIT_CRISIS_REPORT,
@@ -33,6 +34,7 @@ import {
   addOptionalCrisisReportContent,
   deleteCrisisReportContent,
   getCrisisReport,
+  getCrisisReportV2,
   getReportsNeighbors,
   getSubjectOfIncident,
   submitCrisisReport,
@@ -349,6 +351,87 @@ function* getSubjectOfIncidentWatcher() :Generator<any, any, any> {
   yield takeLatest(GET_SUBJECT_OF_INCIDENT, getSubjectOfIncidentWorker);
 }
 
+function* getCrisisReportV2Worker(action :SequenceAction) :Generator<any, any, any> {
+  const response = {};
+  try {
+    const {
+      value: {
+        reportEKID,
+        reportFQN,
+      }
+    } = action;
+
+    if (!isValidUuid(reportEKID) || !FullyQualifiedName.isValid(reportFQN)) throw ERR_ACTION_VALUE_TYPE;
+    yield put(getCrisisReportV2.request(action.id));
+
+    const app :Map = yield select((state) => state.get('app', Map()));
+    const reportESID = getESIDFromApp(app, reportFQN);
+
+    const reportRequest = call(
+      getEntityDataWorker,
+      getEntityData({
+        entitySetId: reportESID,
+        entityKeyId: reportEKID
+      })
+    );
+
+    const neighborsRequest = yield call(
+      getReportsNeighborsWorker,
+      getReportsNeighbors({
+        reportEKIDs: [reportEKID],
+        reportFQN,
+      })
+    );
+
+    const [reportResponse, neighborsResponse] = yield all([
+      reportRequest,
+      neighborsRequest,
+    ]);
+
+    if (reportResponse.error) throw reportResponse.error;
+    if (neighborsResponse.error) throw neighborsResponse.error;
+
+    const neighbors = neighborsResponse.data.get(reportEKID);
+    const appTypeFqnsByIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds']).flip());
+    const neighborsByFQN = groupNeighborsByFQNs(neighbors, appTypeFqnsByIds);
+    const incidentEKID = neighborsByFQN.getIn([
+      INCIDENT_FQN, 0, 'neighborDetails', FQN.OPENLATTICE_ID_FQN, 0
+    ]);
+    const reporterData = neighborsByFQN.getIn([STAFF_FQN, 0]);
+
+    const subjectResponse = yield call(
+      getSubjectOfIncidentWorker,
+      getSubjectOfIncident(incidentEKID)
+    );
+
+    if (subjectResponse.error) throw subjectResponse.error;
+    const subjectData = subjectResponse.data.getIn([incidentEKID, 0, 'neighborDetails'], Map());
+
+    // reviewSchema should be passed in from requesting view.
+    const { schema } = generateReviewSchema(schemas, uiSchemas, true);
+    const formData = fromJS(constructFormDataFromNeighbors(neighborsByFQN, schema));
+    const entityIndexToIdMap = getEntityIndexToIdMapFromNeighbors(neighborsByFQN, schema);
+
+    yield put(getCrisisReportV2.success(action.id, {
+      formData,
+      entityIndexToIdMap,
+      subjectData,
+      reporterData,
+      reportData: fromJS(reportResponse.data),
+    }));
+  }
+  catch (error) {
+    LOG.error(action.type, error);
+    response.error = error;
+    yield put(getCrisisReportV2.failure(action.id, error));
+  }
+  return response;
+}
+
+function* getCrisisReportV2Watcher() :Generator<any, any, any> {
+  yield takeLatest(GET_CRISIS_REPORT_V2, getCrisisReportV2Worker);
+}
+
 function* getCrisisReportWorker(action :SequenceAction) :Generator<any, any, any> {
   const response = {};
   try {
@@ -494,6 +577,8 @@ export {
   deleteCrisisReportContentWorker,
   getCrisisReportWatcher,
   getCrisisReportWorker,
+  getCrisisReportV2Watcher,
+  getCrisisReportV2Worker,
   getReportsNeighborsWatcher,
   getReportsNeighborsWorker,
   getSubjectOfIncidentWatcher,

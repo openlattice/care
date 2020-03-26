@@ -8,6 +8,9 @@ const submitCrisisReport :RequestSequence = newRequestSequence(SUBMIT_CRISIS_REP
 const GET_CRISIS_REPORT :'GET_CRISIS_REPORT' = 'GET_CRISIS_REPORT';
 const getCrisisReport :RequestSequence = newRequestSequence(GET_CRISIS_REPORT);
 
+const GET_CRISIS_REPORT_V2 :'GET_CRISIS_REPORT_V2' = 'GET_CRISIS_REPORT_V2';
+const getCrisisReportV2 :RequestSequence = newRequestSequence(GET_CRISIS_REPORT_V2);
+
 const DELETE_CRISIS_REPORT_CONTENT :'DELETE_CRISIS_REPORT_CONTENT' = 'DELETE_CRISIS_REPORT_CONTENT';
 const deleteCrisisReportContent :RequestSequence = newRequestSequence(DELETE_CRISIS_REPORT_CONTENT);
 
@@ -33,6 +36,7 @@ export {
   CLEAR_CRISIS_REPORT,
   DELETE_CRISIS_REPORT_CONTENT,
   GET_CRISIS_REPORT,
+  GET_CRISIS_REPORT_V2,
   GET_REPORTS_NEIGHBORS,
   GET_SUBJECT_OF_INCIDENT,
   SUBMIT_CRISIS_REPORT,
@@ -41,6 +45,7 @@ export {
   clearCrisisReport,
   deleteCrisisReportContent,
   getCrisisReport,
+  getCrisisReportV2,
   getReportsNeighbors,
   getSubjectOfIncident,
   submitCrisisReport,
