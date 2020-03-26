@@ -115,6 +115,8 @@ const uiSchema = {
       'ui:options': {
         mode: 'button',
         row: true,
+        withNone: true,
+        withOther: true,
       }
     },
   }

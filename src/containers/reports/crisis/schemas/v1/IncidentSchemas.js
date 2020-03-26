@@ -48,7 +48,7 @@ const uiSchema = {
     [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.DATE_TIME_OCCURRED_FQN)]: {
       classNames: 'column-span-12',
     },
-    [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.COMPLAINT_NUMBER_FQN)]: {
+    [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.OL_ID_FQN)]: {
       classNames: 'column-span-12',
     },
     [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.INCIDENT_NARRATIVE_FQN)]: {
