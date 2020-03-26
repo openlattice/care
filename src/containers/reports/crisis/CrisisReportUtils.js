@@ -302,10 +302,11 @@ const getSectionValues = (formData, section, properties) => properties
     return getIn(formData, [section, address]);
   });
 
-const postProcessCrisisReportV1 = (formData) :Object => {
-  // for each of the dispositions, append to disposition the name of the field if the value is not 'No' or 'None'
-  const dispositionSection = getPageSectionKey(5, 1);
-  const safetySection = getPageSectionKey(4, 1);
+const getBHRAddress = (property) => getEntityAddressKey(0, APP.BEHAVIORAL_HEALTH_REPORT_FQN, property);
+
+const postProcessDisposition = (formData) :Object => {
+  const sectionKey = getPageSectionKey(5, 1);
+  const sectionData = getIn(formData, [sectionKey]);
 
   const dispositionProperties = [
     FQN.CATEGORY_FQN,
@@ -317,34 +318,16 @@ const postProcessCrisisReportV1 = (formData) :Object => {
     FQN.NO_ACTION_POSSIBLE_FQN,
   ];
 
-  const safetyProperties = [
-    FQN.ARMED_WEAPON_TYPE_FQN,
-    FQN.DIRECTED_AGAINST_RELATION_FQN
-  ];
-
   const disposition = [];
-  let transportIndicator = false;
-  let noActionPossible = false;
-  let unableToContact = false;
-  let resourcesDeclined = false;
-  let arrestedIndicator = false;
-  let crimeAgainstPerson = false;
-  let felony = false;
-  let referralProvided = false;
-  let threatenedIndicator = false;
-  let armedWithWeapon = false;
 
-  const [
-    weaponValue,
-    threatenedValue
-  ] = getSectionValues(formData, safetySection, safetyProperties);
-
-  if (weaponValue.length && !weaponValue.includes('None')) {
-    armedWithWeapon = true;
-  }
-  if (threatenedValue.length && !threatenedValue.includes('None')) {
-    threatenedIndicator = true;
-  }
+  sectionData[getBHRAddress(FQN.REFERRAL_PROVIDER_INDICATOR_FQN)] = false;
+  sectionData[getBHRAddress(FQN.TRANSPORT_INDICATOR_FQN)] = false;
+  sectionData[getBHRAddress(FQN.ARREST_INDICATOR_FQN)] = false;
+  sectionData[getBHRAddress(FQN.CRIMES_AGAINST_PERSON_FQN)] = false;
+  sectionData[getBHRAddress(FQN.FELONY_INDICATOR_FQN)] = false;
+  sectionData[getBHRAddress(FQN.NO_ACTION_POSSIBLE_FQN)] = false;
+  sectionData[getBHRAddress(FQN.UNABLE_TO_CONTACT_FQN)] = false;
+  sectionData[getBHRAddress(FQN.RESOURCES_DECLINED_FQN)] = false;
 
   const [
     notifiedValue,
@@ -354,18 +337,18 @@ const postProcessCrisisReportV1 = (formData) :Object => {
     naloxoneValue,
     offenseValue,
     actionValue,
-  ] = getSectionValues(formData, dispositionSection, dispositionProperties);
+  ] = getSectionValues(formData, sectionKey, dispositionProperties);
 
   if (notifiedValue.length && !notifiedValue.includes('None')) {
     disposition.concat(DISPOSITIONS.NOTIFIED_SOMEONE);
   }
   if (referralValue.length && !referralValue.includes('None')) {
     disposition.concat(DISPOSITIONS.VERBAL_REFERRAL);
-    referralProvided = true;
+    sectionData[getBHRAddress(FQN.REFERRAL_PROVIDER_INDICATOR_FQN)] = true;
   }
   if (transportValue.length && !transportValue.includes('None')) {
     disposition.concat(DISPOSITIONS.COURTESY_TRANPORT);
-    transportIndicator = true;
+    sectionData[getBHRAddress(FQN.TRANSPORT_INDICATOR_FQN)] = true;
   }
   if (hospitalValue) {
     disposition.concat(DISPOSITIONS.HOSPITAL);
@@ -375,19 +358,73 @@ const postProcessCrisisReportV1 = (formData) :Object => {
   }
   if (offenseValue.length && !offenseValue.includes('None')) {
     disposition.concat(DISPOSITIONS.ARRESTABLE_OFFENSE);
-    arrestedIndicator = offenseValue.includes(ARRESTED);
-    crimeAgainstPerson = offenseValue.includes(CRIMES_AGAINST_PERSON);
-    felony = offenseValue.includes(FELONY);
+
+    const arrestedIndicator = offenseValue.includes(ARRESTED);
+    const crimeAgainstPerson = offenseValue.includes(CRIMES_AGAINST_PERSON);
+    const felony = offenseValue.includes(FELONY);
+
+    sectionData[getBHRAddress(FQN.ARREST_INDICATOR_FQN)] = arrestedIndicator;
+    sectionData[getBHRAddress(FQN.CRIMES_AGAINST_PERSON_FQN)] = crimeAgainstPerson;
+    sectionData[getBHRAddress(FQN.FELONY_INDICATOR_FQN)] = felony;
   }
   if (actionValue.length) {
     disposition.concat(DISPOSITIONS.NO_ACTION_POSSIBLE);
-    noActionPossible = actionValue.includes(NO_ACTION_NECESSARY);
-    unableToContact = actionValue.includes(UNABLE_TO_CONTACT);
-    resourcesDeclined = actionValue.includes(RESOURCES_DECLINED);
+    const noActionPossible = actionValue.includes(NO_ACTION_NECESSARY);
+    const unableToContact = actionValue.includes(UNABLE_TO_CONTACT);
+    const resourcesDeclined = actionValue.includes(RESOURCES_DECLINED);
+
+    sectionData[getBHRAddress(FQN.NO_ACTION_POSSIBLE_FQN)] = noActionPossible;
+    sectionData[getBHRAddress(FQN.UNABLE_TO_CONTACT_FQN)] = unableToContact;
+    sectionData[getBHRAddress(FQN.RESOURCES_DECLINED_FQN)] = resourcesDeclined;
   }
+
+  sectionData[getBHRAddress(FQN.DISPOSITION_FQN)] = disposition;
+
+  return setIn(formData, [sectionKey], sectionData);
+};
+
+const postProcessSafetySection = (formData) :Object => {
+  const sectionKey = getPageSectionKey(4, 1);
+  const sectionData = getIn(formData, [sectionKey]);
+
+  const safetyProperties = [
+    FQN.ARMED_WEAPON_TYPE_FQN,
+    FQN.DIRECTED_AGAINST_RELATION_FQN
+  ];
+
+  sectionData[getBHRAddress(FQN.ARMED_WITH_WEAPON_FQN)] = false;
+  sectionData[getBHRAddress(FQN.THREATENED_INDICATOR_FQN)] = false;
+
+  const [
+    weaponValue,
+    threatenedValue
+  ] = getSectionValues(formData, sectionKey, safetyProperties);
+
+  if (weaponValue.length && !weaponValue.includes('None')) {
+    sectionData[getBHRAddress(FQN.ARMED_WITH_WEAPON_FQN)] = true;
+  }
+  if (threatenedValue.length && !threatenedValue.includes('None')) {
+    sectionData[getBHRAddress(FQN.THREATENED_INDICATOR_FQN)] = true;
+  }
+
+  return setIn(formData, [sectionKey], sectionData);
+};
+
+const pipe = (...fns) => (init) => fns.reduce((piped, f) => f(piped), init);
+
+const postProcessCrisisReportV1 = (formData) :Object => {
+  // for each of the dispositions, append to disposition the name of the field if the value is not 'No' or 'None'
+
+  const processedFormData = pipe(
+    postProcessSafetySection,
+    postProcessDisposition,
+  )(formData);
+
+  return processedFormData;
 };
 
 export {
+  postProcessCrisisReportV1,
   constructFormDataFromNeighbors,
   getCrisisReportAssociations,
   getEntityIndexToIdMapFromDataGraphResponse,
