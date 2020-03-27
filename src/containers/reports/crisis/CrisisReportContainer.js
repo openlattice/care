@@ -34,7 +34,8 @@ import { getEntityKeyId } from '../../../utils/DataUtils';
 import { getFirstLastFromPerson } from '../../../utils/PersonUtils';
 
 const {
-  CLINICIAN_REPORT_FQN
+  // CLINICIAN_REPORT_FQN // v2,
+  BEHAVIORAL_HEALTH_REPORT_FQN,
 } = APP_TYPES_FQNS;
 const { schemas, uiSchemas } = v1;
 
@@ -64,7 +65,7 @@ const CrisisReportContainer = () => {
   useEffect(() => {
     dispatch(getCrisisReport({
       reportEKID: reportId,
-      reportFQN: CLINICIAN_REPORT_FQN,
+      reportFQN: BEHAVIORAL_HEALTH_REPORT_FQN,
       // schema: reviewSchemas.schema
     }));
   }, [dispatch, reportId]);

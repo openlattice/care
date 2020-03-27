@@ -23,6 +23,9 @@ const updateCrisisReport :RequestSequence = newRequestSequence(UPDATE_CRISIS_REP
 const GET_REPORTS_NEIGHBORS :'GET_REPORTS_NEIGHBORS' = 'GET_REPORTS_NEIGHBORS';
 const getReportsNeighbors :RequestSequence = newRequestSequence(GET_REPORTS_NEIGHBORS);
 
+const GET_REPORTS_V2_NEIGHBORS :'GET_REPORTS_V2_NEIGHBORS' = 'GET_REPORTS_V2_NEIGHBORS';
+const getReportsV2Neighbors :RequestSequence = newRequestSequence(GET_REPORTS_V2_NEIGHBORS);
+
 const GET_SUBJECT_OF_INCIDENT :'GET_SUBJECT_OF_INCIDENT' = 'GET_SUBJECT_OF_INCIDENT';
 const getSubjectOfIncident :RequestSequence = newRequestSequence(GET_SUBJECT_OF_INCIDENT);
 
@@ -38,6 +41,7 @@ export {
   GET_CRISIS_REPORT,
   GET_CRISIS_REPORT_V2,
   GET_REPORTS_NEIGHBORS,
+  GET_REPORTS_V2_NEIGHBORS,
   GET_SUBJECT_OF_INCIDENT,
   SUBMIT_CRISIS_REPORT,
   UPDATE_CRISIS_REPORT,
@@ -47,6 +51,7 @@ export {
   getCrisisReport,
   getCrisisReportV2,
   getReportsNeighbors,
+  getReportsV2Neighbors,
   getSubjectOfIncident,
   submitCrisisReport,
   updateCrisisReport,

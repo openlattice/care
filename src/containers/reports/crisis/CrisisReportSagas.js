@@ -9,6 +9,7 @@ import {
   takeLatest,
 } from '@redux-saga/core/effects';
 import {
+  List,
   Map,
   fromJS,
 } from 'immutable';
@@ -28,6 +29,7 @@ import {
   GET_CRISIS_REPORT,
   GET_CRISIS_REPORT_V2,
   GET_REPORTS_NEIGHBORS,
+  GET_REPORTS_V2_NEIGHBORS,
   GET_SUBJECT_OF_INCIDENT,
   SUBMIT_CRISIS_REPORT,
   UPDATE_CRISIS_REPORT,
@@ -36,6 +38,7 @@ import {
   getCrisisReport,
   getCrisisReportV2,
   getReportsNeighbors,
+  getReportsV2Neighbors,
   getSubjectOfIncident,
   submitCrisisReport,
   updateCrisisReport,
@@ -46,9 +49,14 @@ import {
   getEntityIndexToIdMapFromDataGraphResponse,
   getEntityIndexToIdMapFromNeighbors,
   getOptionalCrisisReportAssociations,
-  postProcessCrisisReportV1
+  postProcessBehaviorSection,
+  postProcessCrisisReportV1,
+  postProcessDisposition,
+  postProcessNatureSection,
+  postProcessSafetySection,
+  preProcessCrisisReportV1,
 } from './CrisisReportUtils';
-import { v2 } from './schemas';
+import { v1, v2 } from './schemas';
 import { generateReviewSchema } from './schemas/schemaUtils';
 
 import Logger from '../../../utils/Logger';
@@ -71,7 +79,6 @@ import { isDefined } from '../../../utils/LangUtils';
 import { isValidUuid } from '../../../utils/Utils';
 
 const { FullyQualifiedName } = Models;
-const { schemas, uiSchemas } = v2;
 
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
 const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
@@ -80,9 +87,15 @@ const { getEntityData } = DataApiActions;
 
 const { getEntityDataWorker } = DataApiSagas;
 
-const { processEntityData, processAssociationEntityData } = DataProcessingUtils;
 const {
+  getPageSectionKey,
+  processAssociationEntityData,
+  processEntityData,
+} = DataProcessingUtils;
+const {
+  APPEARS_IN_FQN,
   BEHAVIOR_FQN,
+  BEHAVIORAL_HEALTH_REPORT_FQN,
   DIAGNOSIS_FQN,
   ENCOUNTER_DETAILS_FQN,
   ENCOUNTER_FQN,
@@ -109,57 +122,9 @@ const {
   WEAPON_FQN,
 } = APP_TYPES_FQNS;
 
-const LOG = new Logger('XCrisisReportSagas');
+const LOG = new Logger('CrisisReportSagas');
 
-function* submitCrisisReportWorker(action :SequenceAction) :Generator<any, any, any> {
-  const response :Object = {};
-  try {
-    const { value } = action;
-    if (!isPlainObject(value)) throw ERR_ACTION_VALUE_TYPE;
-    yield put(submitCrisisReport.request(action.id));
-    const { formData, selectedPerson } = value;
-
-    const entitySetIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
-    const propertyTypeIds = yield select((state) => state.getIn(['edm', 'fqnToIdMap'], Map()));
-    const currentStaff = yield select((state) => state.getIn(['staff', 'currentUser', 'data'], Map()));
-
-    const postProcessFormData = postProcessCrisisReportV1(formData);
-
-    const entityData = processEntityData(postProcessFormData, entitySetIds, propertyTypeIds);
-    const existingEKIDs = {
-      [PEOPLE_FQN]: getEntityKeyId(selectedPerson),
-      [STAFF_FQN]: getEntityKeyId(currentStaff)
-      // add incidentEKID
-    };
-
-    const associationEntityData = processAssociationEntityData(
-      getCrisisReportAssociations(formData, existingEKIDs),
-      entitySetIds,
-      propertyTypeIds
-    );
-
-    const dataGraphResponse = yield call(
-      submitDataGraphWorker,
-      submitDataGraph({
-        entityData,
-        associationEntityData,
-      })
-    );
-    if (dataGraphResponse.error) throw dataGraphResponse.error;
-
-    yield put(submitCrisisReport.success(action.id));
-  }
-  catch (error) {
-    response.error = error;
-    LOG.error(action.type, error);
-    yield put(submitCrisisReport.failure(action.id, error));
-  }
-  return response;
-}
-
-function* submitCrisisReportWatcher() :Generator<any, any, any> {
-  yield takeEvery(SUBMIT_CRISIS_REPORT, submitCrisisReportWorker);
-}
+// V2
 
 function* addOptionalCrisisReportContentWorker(action :SequenceAction) :Generator<any, any, any> {
   const response :Object = {};
@@ -221,7 +186,7 @@ function* addOptionalCrisisReportContentWatcher() :Generator<any, any, any> {
   yield takeEvery(ADD_OPTIONAL_CRISIS_REPORT_CONTENT, addOptionalCrisisReportContentWorker);
 }
 
-function* getReportsNeighborsWorker(action :SequenceAction) :Generator<any, any, any> {
+function* getReportsV2NeighborsWorker(action :SequenceAction) :Generator<any, any, any> {
   const response = {};
   try {
     const {
@@ -233,7 +198,7 @@ function* getReportsNeighborsWorker(action :SequenceAction) :Generator<any, any,
     if (!(Array.isArray(reportEKIDs) && reportEKIDs.every(isValidUuid))
       || !FullyQualifiedName.isValid(reportFQN)) throw ERR_ACTION_VALUE_TYPE;
 
-    yield put(getReportsNeighbors.request(action.id, reportEKIDs));
+    yield put(getReportsV2Neighbors.request(action.id, reportEKIDs));
 
     const app :Map = yield select((state) => state.get('app', Map()));
     const [
@@ -288,18 +253,18 @@ function* getReportsNeighborsWorker(action :SequenceAction) :Generator<any, any,
 
     response.data = neighborsData;
 
-    yield put(getReportsNeighbors.success(action.id, response.data));
+    yield put(getReportsV2Neighbors.success(action.id, response.data));
   }
   catch (error) {
     response.error = error;
     LOG.error(action.type, error);
-    yield put(getReportsNeighbors.failure(action.id, error));
+    yield put(getReportsV2Neighbors.failure(action.id, error));
   }
   return response;
 }
 
-function* getReportsNeighborsWatcher() :Generator<any, any, any> {
-  yield takeEvery(GET_REPORTS_NEIGHBORS, getReportsNeighborsWorker);
+function* getReportsV2NeighborsWatcher() :Generator<any, any, any> {
+  yield takeEvery(GET_REPORTS_V2_NEIGHBORS, getReportsV2NeighborsWorker);
 }
 
 function* getSubjectOfIncidentWorker(action :SequenceAction) :Generator<any, any, any> {
@@ -375,9 +340,9 @@ function* getCrisisReportV2Worker(action :SequenceAction) :Generator<any, any, a
       })
     );
 
-    const neighborsRequest = yield call(
-      getReportsNeighborsWorker,
-      getReportsNeighbors({
+    const neighborsRequest = call(
+      getReportsV2NeighborsWorker,
+      getReportsV2Neighbors({
         reportEKIDs: [reportEKID],
         reportFQN,
       })
@@ -408,6 +373,7 @@ function* getCrisisReportV2Worker(action :SequenceAction) :Generator<any, any, a
     const subjectData = subjectResponse.data.getIn([incidentEKID, 0, 'neighborDetails'], Map());
 
     // reviewSchema should be passed in from requesting view.
+    const { schemas, uiSchemas } = v2;
     const { schema } = generateReviewSchema(schemas, uiSchemas, true);
     const formData = fromJS(constructFormDataFromNeighbors(neighborsByFQN, schema));
     const entityIndexToIdMap = getEntityIndexToIdMapFromNeighbors(neighborsByFQN, schema);
@@ -430,6 +396,121 @@ function* getCrisisReportV2Worker(action :SequenceAction) :Generator<any, any, a
 
 function* getCrisisReportV2Watcher() :Generator<any, any, any> {
   yield takeLatest(GET_CRISIS_REPORT_V2, getCrisisReportV2Worker);
+}
+
+// V1
+
+function* submitCrisisReportWorker(action :SequenceAction) :Generator<any, any, any> {
+  const response :Object = {};
+  try {
+    const { value } = action;
+    if (!isPlainObject(value)) throw ERR_ACTION_VALUE_TYPE;
+    yield put(submitCrisisReport.request(action.id));
+    const { formData, selectedPerson } = value;
+
+    const entitySetIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
+    const propertyTypeIds = yield select((state) => state.getIn(['edm', 'fqnToIdMap'], Map()));
+    const currentStaff = yield select((state) => state.getIn(['staff', 'currentUser', 'data'], Map()));
+
+    const postProcessFormData = postProcessCrisisReportV1(formData);
+
+    const entityData = processEntityData(postProcessFormData, entitySetIds, propertyTypeIds);
+    const existingEKIDs = {
+      [PEOPLE_FQN]: getEntityKeyId(selectedPerson),
+      [STAFF_FQN]: getEntityKeyId(currentStaff)
+      // add incidentEKID
+    };
+
+    const associationEntityData = processAssociationEntityData(
+      getCrisisReportAssociations(formData, existingEKIDs),
+      entitySetIds,
+      propertyTypeIds
+    );
+
+    const dataGraphResponse = yield call(
+      submitDataGraphWorker,
+      submitDataGraph({
+        entityData,
+        associationEntityData,
+      })
+    );
+    if (dataGraphResponse.error) throw dataGraphResponse.error;
+
+    yield put(submitCrisisReport.success(action.id));
+  }
+  catch (error) {
+    response.error = error;
+    LOG.error(action.type, error);
+    yield put(submitCrisisReport.failure(action.id, error));
+  }
+  return response;
+}
+
+function* submitCrisisReportWatcher() :Generator<any, any, any> {
+  yield takeEvery(SUBMIT_CRISIS_REPORT, submitCrisisReportWorker);
+}
+
+function* getReportsNeighborsWorker(action :SequenceAction) :Generator<any, any, any> {
+  const response = {};
+  try {
+    const {
+      value: {
+        reportEKIDs,
+        reportFQN,
+      }
+    } = action;
+    if (!(Array.isArray(reportEKIDs) && reportEKIDs.every(isValidUuid))
+      || !FullyQualifiedName.isValid(reportFQN)) throw ERR_ACTION_VALUE_TYPE;
+
+    yield put(getReportsNeighbors.request(action.id, reportEKIDs));
+
+    const app :Map = yield select((state) => state.get('app', Map()));
+    const [
+      appearsInESID,
+      peopleESID,
+      reportESID,
+      reportedESID,
+      staffESID
+    ] = getESIDsFromApp(app, [
+      APPEARS_IN_FQN,
+      PEOPLE_FQN,
+      reportFQN,
+      REPORTED_FQN,
+      STAFF_FQN,
+    ]);
+
+    const neighborsSearchParam = {
+      entitySetId: reportESID,
+      filter: {
+        entityKeyIds: reportEKIDs,
+        edgeEntitySetIds: [appearsInESID, reportedESID],
+        destinationEntitySetIds: [],
+        sourceEntitySetIds: [peopleESID, staffESID],
+      },
+    };
+
+    const neighborsResponse = yield call(
+      searchEntityNeighborsWithFilterWorker,
+      searchEntityNeighborsWithFilter(neighborsSearchParam)
+    );
+
+    if (neighborsResponse.error) throw neighborsResponse.error;
+    const neighborsData = fromJS(neighborsResponse.data);
+
+    response.data = neighborsData;
+
+    yield put(getReportsNeighbors.success(action.id, response.data));
+  }
+  catch (error) {
+    response.error = error;
+    LOG.error(action.type, error);
+    yield put(getReportsNeighbors.failure(action.id, error));
+  }
+  return response;
+}
+
+function* getReportsNeighborsWatcher() :Generator<any, any, any> {
+  yield takeEvery(GET_REPORTS_NEIGHBORS, getReportsV2NeighborsWorker);
 }
 
 function* getCrisisReportWorker(action :SequenceAction) :Generator<any, any, any> {
@@ -456,7 +537,7 @@ function* getCrisisReportWorker(action :SequenceAction) :Generator<any, any, any
       })
     );
 
-    const neighborsRequest = yield call(
+    const neighborsRequest = call(
       getReportsNeighborsWorker,
       getReportsNeighbors({
         reportEKIDs: [reportEKID],
@@ -475,23 +556,23 @@ function* getCrisisReportWorker(action :SequenceAction) :Generator<any, any, any
     const neighbors = neighborsResponse.data.get(reportEKID);
     const appTypeFqnsByIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds']).flip());
     const neighborsByFQN = groupNeighborsByFQNs(neighbors, appTypeFqnsByIds);
-    const incidentEKID = neighborsByFQN.getIn([
-      INCIDENT_FQN, 0, 'neighborDetails', FQN.OPENLATTICE_ID_FQN, 0
-    ]);
     const reporterData = neighborsByFQN.getIn([STAFF_FQN, 0]);
+    const subjectData = neighborsByFQN.getIn([PEOPLE_FQN, 0, 'neighborDetails'], Map());
 
-    const subjectResponse = yield call(
-      getSubjectOfIncidentWorker,
-      getSubjectOfIncident(incidentEKID)
-    );
+    const processedReportData = preProcessCrisisReportV1(reportResponse.data);
 
-    if (subjectResponse.error) throw subjectResponse.error;
-    const subjectData = subjectResponse.data.getIn([incidentEKID, 0, 'neighborDetails'], Map());
+    const reportData = fromJS({
+      neighborDetails: processedReportData
+    });
+    console.log(reportData);
+    const neighborsWithReport = neighborsByFQN.set(BEHAVIORAL_HEALTH_REPORT_FQN.toString(), List([reportData]));
 
     // reviewSchema should be passed in from requesting view.
+    const { schemas, uiSchemas } = v1;
     const { schema } = generateReviewSchema(schemas, uiSchemas, true);
-    const formData = fromJS(constructFormDataFromNeighbors(neighborsByFQN, schema));
-    const entityIndexToIdMap = getEntityIndexToIdMapFromNeighbors(neighborsByFQN, schema);
+    const formData = fromJS(constructFormDataFromNeighbors(neighborsWithReport, schema));
+    const entityIndexToIdMap = getEntityIndexToIdMapFromNeighbors(neighborsWithReport, schema);
+    console.log(formData);
 
     yield put(getCrisisReport.success(action.id, {
       formData,
@@ -521,9 +602,25 @@ function* updateCrisisReportWorker(action :SequenceAction) :Generator<any, any, 
     if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
     yield put(updateCrisisReport.request(action.id, value));
 
+    const postProcessMap = {
+      [getPageSectionKey(1, 1)]: (formData) => formData,
+      [getPageSectionKey(2, 1)]: postProcessBehaviorSection,
+      [getPageSectionKey(3, 1)]: postProcessNatureSection,
+      [getPageSectionKey(4, 1)]: postProcessSafetySection,
+      [getPageSectionKey(5, 1)]: postProcessDisposition,
+    };
+    const { path, formData } = value;
+
+    const section = path[0];
+    const preFormData = fromJS(formData).mapKeys(() => section).toJS();
+    const postFormData = postProcessMap[section](preFormData);
+
     const updateResponse = yield call(
       submitPartialReplaceWorker,
-      submitPartialReplace(value)
+      submitPartialReplace({
+        ...value,
+        formData: postFormData
+      })
     );
 
     if (updateResponse.error) throw updateResponse.error;
@@ -575,12 +672,14 @@ export {
   addOptionalCrisisReportContentWorker,
   deleteCrisisReportContentWatcher,
   deleteCrisisReportContentWorker,
-  getCrisisReportWatcher,
-  getCrisisReportWorker,
   getCrisisReportV2Watcher,
   getCrisisReportV2Worker,
+  getCrisisReportWatcher,
+  getCrisisReportWorker,
   getReportsNeighborsWatcher,
   getReportsNeighborsWorker,
+  getReportsV2NeighborsWatcher,
+  getReportsV2NeighborsWorker,
   getSubjectOfIncidentWatcher,
   getSubjectOfIncidentWorker,
   submitCrisisReportWatcher,

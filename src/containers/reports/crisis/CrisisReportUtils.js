@@ -7,6 +7,7 @@ import {
   getIn,
   setIn,
 } from 'immutable';
+import { Models } from 'lattice';
 import { DataProcessingUtils } from 'lattice-fabricate';
 import { DateTime } from 'luxon';
 
@@ -16,14 +17,14 @@ import {
   DISPOSITIONS,
   FELONY,
   HOMELESS_STR,
-  NO_ACTION_NECESSARY,
-  RESOURCES_DECLINED,
   SUICIDE_BEHAVIORS,
-  UNABLE_TO_CONTACT
 } from './schemas/v1/constants';
 
 import * as FQN from '../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS as APP } from '../../../shared/Consts';
+import { isNonEmptyStringArray } from '../../../utils/LangUtils';
+
+const { FullyQualifiedName } = Models;
 
 const {
   getEntityAddressKey,
@@ -298,6 +299,9 @@ const constructFormDataFromNeighbors = (neighborsByFQN :Map, schema :Object) :Ob
   }));
 };
 
+// V1
+
+
 const getSectionValues = (formData, section, properties) => properties
   .map((property) => {
     const address = getEntityAddressKey(0, APP.BEHAVIORAL_HEALTH_REPORT_FQN, property);
@@ -306,6 +310,55 @@ const getSectionValues = (formData, section, properties) => properties
 
 const getBHRAddress = (property) => getEntityAddressKey(0, APP.BEHAVIORAL_HEALTH_REPORT_FQN, property);
 
+
+// merge standalone 'other' property with original and check for 'None'
+// mutates passed in entity
+const preProcessOther = (
+  property :FullyQualifiedName | string,
+  otherProperty :FullyQualifiedName | string,
+  withNone = true,
+) => (entity :Object) => {
+  let propertyValue = get(entity, property.toString(), []);
+  const otherPropertyValue = get(entity, otherProperty.toString(), []);
+
+  if (isNonEmptyStringArray(otherPropertyValue)) {
+    const filteredPropertyValue = propertyValue.filter((value) => (value !== 'Other')
+    || !otherPropertyValue.includes(value));
+    propertyValue = [...filteredPropertyValue, 'Other', ...otherPropertyValue];
+  }
+  if (withNone && !isNonEmptyStringArray(propertyValue)) propertyValue = ['None'];
+
+  return setIn(entity, [property.toString()], propertyValue);
+};
+
+const pipe = (...fns) => (init) => fns.reduce((piped, f) => f(piped), init);
+
+// pre/post processing of formData is to maintain interop with old bhr.report data submitted
+// before facelift
+// preprocessors manipulate report entity data before it is transformed to become formData
+const preProcessessObservations = (report :Object) :Object => pipe(
+  preProcessOther(FQN.DEMEANORS_FQN, FQN.OTHER_DEMEANORS_FQN),
+  preProcessOther(FQN.OBSERVED_BEHAVIORS_FQN, FQN.OBSERVED_BEHAVIORS_OTHER_FQN),
+)(report);
+
+const preProcessessNature = (report :Object) :Object => {
+  preProcessOther(FQN.PERSON_ASSISTING_FQN, FQN.OTHER_PERSON_ASSISTING_FQN);
+  return report;
+};
+
+const preProcessessSafety = (report :Object) :Object => pipe(
+  preProcessOther(FQN.ARMED_WEAPON_TYPE_FQN, FQN.OTHER_WEAPON_TYPE_FQN),
+  preProcessOther(FQN.DIRECTED_AGAINST_RELATION_FQN, FQN.DIRECTED_AGAINST_OTHER_FQN),
+  preProcessOther(FQN.PERSON_INJURED_FQN, FQN.OTHER_PERSON_INJURED_FQN),
+)(report);
+
+const preProcessessDisposition = (report :Object) :Object => pipe(
+  preProcessOther(FQN.CATEGORY_FQN, FQN.OTHER_NOTIFIED_FQN),
+  preProcessOther(FQN.REFERRAL_DEST_FQN, FQN.OTHER_TEXT_FQN),
+  preProcessOther(FQN.ORGANIZATION_NAME_FQN, ''),
+)(report);
+
+// postprocessors manipulate formData for submission
 const postProcessDisposition = (formData) :Object => {
   const sectionKey = getPageSectionKey(5, 1);
   const sectionData = getIn(formData, [sectionKey]);
@@ -432,7 +485,17 @@ const postProcessBehaviorSection = (formData) :Object => {
   return setIn(formData, [sectionKey], sectionData);
 };
 
-const pipe = (...fns) => (init) => fns.reduce((piped, f) => f(piped), init);
+const preProcessCrisisReportV1 = (report :Object) => {
+  const copyReport = fromJS(report).toJS();
+  const processedReport = pipe(
+    preProcessessObservations,
+    preProcessessNature,
+    preProcessessSafety,
+    preProcessessDisposition,
+  )(copyReport);
+
+  return processedReport;
+};
 
 const postProcessCrisisReportV1 = (formData :Object) :Object => {
   const copyFormData = fromJS(formData).toJS();
@@ -447,6 +510,7 @@ const postProcessCrisisReportV1 = (formData :Object) :Object => {
 };
 
 export {
+  preProcessCrisisReportV1,
   postProcessCrisisReportV1,
   constructFormDataFromNeighbors,
   getCrisisReportAssociations,
@@ -454,4 +518,8 @@ export {
   getEntityIndexToIdMapFromNeighbors,
   getNewCrisisReportAssociations,
   getOptionalCrisisReportAssociations,
+  postProcessDisposition,
+  postProcessSafetySection,
+  postProcessNatureSection,
+  postProcessBehaviorSection,
 };
