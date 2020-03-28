@@ -88,9 +88,12 @@ const { getEntityData } = DataApiActions;
 const { getEntityDataWorker } = DataApiSagas;
 
 const {
+  findEntityAddressKeyFromMap,
   getPageSectionKey,
   processAssociationEntityData,
   processEntityData,
+  replaceEntityAddressKeys,
+  processEntityDataForPartialReplace,
 } = DataProcessingUtils;
 const {
   APPEARS_IN_FQN,
@@ -564,15 +567,12 @@ function* getCrisisReportWorker(action :SequenceAction) :Generator<any, any, any
     const reportData = fromJS({
       neighborDetails: processedReportData
     });
-    console.log(reportData);
     const neighborsWithReport = neighborsByFQN.set(BEHAVIORAL_HEALTH_REPORT_FQN.toString(), List([reportData]));
 
-    // reviewSchema should be passed in from requesting view.
     const { schemas, uiSchemas } = v1;
     const { schema } = generateReviewSchema(schemas, uiSchemas, true);
     const formData = fromJS(constructFormDataFromNeighbors(neighborsWithReport, schema));
     const entityIndexToIdMap = getEntityIndexToIdMapFromNeighbors(neighborsWithReport, schema);
-    console.log(formData);
 
     yield put(getCrisisReport.success(action.id, {
       formData,
@@ -602,6 +602,10 @@ function* updateCrisisReportWorker(action :SequenceAction) :Generator<any, any, 
     if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
     yield put(updateCrisisReport.request(action.id, value));
 
+    const entitySetIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
+    const propertyTypeIds = yield select((state) => state.getIn(['edm', 'fqnToIdMap'], Map()));
+
+    // post process section that matches path
     const postProcessMap = {
       [getPageSectionKey(1, 1)]: (formData) => formData,
       [getPageSectionKey(2, 1)]: postProcessBehaviorSection,
@@ -609,16 +613,36 @@ function* updateCrisisReportWorker(action :SequenceAction) :Generator<any, any, 
       [getPageSectionKey(4, 1)]: postProcessSafetySection,
       [getPageSectionKey(5, 1)]: postProcessDisposition,
     };
-    const { path, formData } = value;
+    const { path, formData, entityIndexToIdMap } = value;
 
     const section = path[0];
-    const preFormData = fromJS(formData).mapKeys(() => section).toJS();
-    const postFormData = postProcessMap[section](preFormData);
+    const preFormData = fromJS(formData).mapKeys(() => section);
+    const postFormData = postProcessMap[section](preFormData.toJS());
+
+    // replace address keys with entityKeyId
+    const draftWithKeys = replaceEntityAddressKeys(
+      postFormData,
+      findEntityAddressKeyFromMap(entityIndexToIdMap)
+    );
+
+    const originalWithKeys = replaceEntityAddressKeys(
+      preFormData.toJS(),
+      findEntityAddressKeyFromMap(entityIndexToIdMap)
+    );
+
+    // process for partial replace
+    const entityData = processEntityDataForPartialReplace(
+      draftWithKeys,
+      originalWithKeys,
+      entitySetIds,
+      propertyTypeIds,
+    );
 
     const updateResponse = yield call(
       submitPartialReplaceWorker,
       submitPartialReplace({
         ...value,
+        entityData,
         formData: postFormData
       })
     );

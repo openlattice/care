@@ -17,6 +17,7 @@ import {
   DISPOSITIONS,
   FELONY,
   HOMELESS_STR,
+  NOT_ARRESTED,
   SUICIDE_BEHAVIORS,
 } from './schemas/v1/constants';
 
@@ -301,6 +302,7 @@ const constructFormDataFromNeighbors = (neighborsByFQN :Map, schema :Object) :Ob
 
 // V1
 
+const getPropertyValues = (entity, properties) => properties.map((property) => get(entity, property.toString(), []));
 
 const getSectionValues = (formData, section, properties) => properties
   .map((property) => {
@@ -352,14 +354,46 @@ const preProcessessSafety = (report :Object) :Object => pipe(
   preProcessOther(FQN.PERSON_INJURED_FQN, FQN.OTHER_PERSON_INJURED_FQN),
 )(report);
 
+const preProcessArrest = (report :Object) :Object => {
+  const [
+    arrestableOffense,
+    arrestIndicator,
+    crimesAgainstPerson,
+    felony,
+  ] = getPropertyValues(report, [
+    FQN.ARRESTABLE_OFFENSE_FQN,
+    FQN.ARREST_INDICATOR_FQN,
+    FQN.CRIMES_AGAINST_PERSON_FQN,
+    FQN.FELONY_INDICATOR_FQN
+  ]).map((property) => property[0]);
+  const processedArrest = [];
+  if (!arrestableOffense) {
+    processedArrest.push('None');
+  }
+  else {
+    if (arrestIndicator) {
+      processedArrest.push(ARRESTED);
+    }
+    else {
+      processedArrest.push(NOT_ARRESTED);
+    }
+
+    if (crimesAgainstPerson) processedArrest.push(CRIMES_AGAINST_PERSON);
+    if (felony) processedArrest.push(FELONY);
+  }
+
+  return setIn(report, [FQN.ARRESTABLE_OFFENSE_FQN], processedArrest);
+};
+
 const preProcessessDisposition = (report :Object) :Object => pipe(
   preProcessOther(FQN.CATEGORY_FQN, FQN.OTHER_NOTIFIED_FQN),
   preProcessOther(FQN.REFERRAL_DEST_FQN, FQN.OTHER_TEXT_FQN),
   preProcessOther(FQN.ORGANIZATION_NAME_FQN, ''),
+  preProcessArrest,
 )(report);
 
 // postprocessors manipulate formData for submission
-const postProcessDisposition = (formData) :Object => {
+const postProcessDisposition = (formData :Object) :Object => {
   const sectionKey = getPageSectionKey(5, 1);
   const sectionData = getIn(formData, [sectionKey]);
 
@@ -403,16 +437,34 @@ const postProcessDisposition = (formData) :Object => {
   if (naloxoneValue) {
     disposition.push(DISPOSITIONS.ADMINISTERED_DRUG);
   }
+
   if (offenseValue.length && !offenseValue.includes('None')) {
     disposition.push(DISPOSITIONS.ARRESTABLE_OFFENSE);
+    sectionData[getBHRAddress(FQN.ARRESTABLE_OFFENSE_FQN)] = true;
 
-    const arrestedIndicator = offenseValue.includes(ARRESTED);
-    const crimeAgainstPerson = offenseValue.includes(CRIMES_AGAINST_PERSON);
-    const felony = offenseValue.includes(FELONY);
+    const notArrested = offenseValue.includes(NOT_ARRESTED);
+    const arrested = offenseValue.includes(ARRESTED);
+    const crimeAgainstPerson = offenseValue.includes(CRIMES_AGAINST_PERSON) || null;
+    const felony = offenseValue.includes(FELONY) || null;
 
-    sectionData[getBHRAddress(FQN.ARREST_INDICATOR_FQN)] = arrestedIndicator;
+    if (arrested) {
+      sectionData[getBHRAddress(FQN.ARREST_INDICATOR_FQN)] = arrested;
+    }
+    else if (notArrested) {
+      sectionData[getBHRAddress(FQN.ARREST_INDICATOR_FQN)] = !notArrested;
+    }
+    else {
+      sectionData[getBHRAddress(FQN.ARREST_INDICATOR_FQN)] = null;
+    }
+
     sectionData[getBHRAddress(FQN.CRIMES_AGAINST_PERSON_FQN)] = crimeAgainstPerson;
     sectionData[getBHRAddress(FQN.FELONY_INDICATOR_FQN)] = felony;
+  }
+  else {
+    sectionData[getBHRAddress(FQN.ARRESTABLE_OFFENSE_FQN)] = false;
+    sectionData[getBHRAddress(FQN.ARREST_INDICATOR_FQN)] = null;
+    sectionData[getBHRAddress(FQN.CRIMES_AGAINST_PERSON_FQN)] = null;
+    sectionData[getBHRAddress(FQN.FELONY_INDICATOR_FQN)] = null;
   }
 
   sectionData[getBHRAddress(FQN.DISPOSITION_FQN)] = disposition;
@@ -420,7 +472,7 @@ const postProcessDisposition = (formData) :Object => {
   return setIn(formData, [sectionKey], sectionData);
 };
 
-const postProcessSafetySection = (formData) :Object => {
+const postProcessSafetySection = (formData :Object) :Object => {
   const sectionKey = getPageSectionKey(4, 1);
   const sectionData = getIn(formData, [sectionKey]);
 
@@ -447,7 +499,7 @@ const postProcessSafetySection = (formData) :Object => {
   return setIn(formData, [sectionKey], sectionData);
 };
 
-const postProcessNatureSection = (formData) :Object => {
+const postProcessNatureSection = (formData :Object) :Object => {
   const sectionKey = getPageSectionKey(3, 1);
   const sectionData = getIn(formData, [sectionKey]);
 
@@ -466,7 +518,7 @@ const postProcessNatureSection = (formData) :Object => {
   return setIn(formData, [sectionKey], sectionData);
 };
 
-const postProcessBehaviorSection = (formData) :Object => {
+const postProcessBehaviorSection = (formData :Object) :Object => {
   const sectionKey = getPageSectionKey(2, 1);
   const sectionData = getIn(formData, [sectionKey]);
 

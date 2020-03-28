@@ -75,31 +75,34 @@ const CrisisReportContainer = () => {
   }
 
   const handleUpdateCrisisReport = (params) => {
-    dispatch(updateCrisisReport(params));
-  };
-
-  const handleDeleteCrisisReportContent = (params) => {
-    dispatch(deleteCrisisReportContent(params));
-  };
-
-  const handleAddOptionalContent = (params) => {
-    const existingEKIDs = {
-      [CLINICIAN_REPORT_FQN]: reportId,
-    };
-
-    dispatch(addOptionalCrisisReportContent({
+    dispatch(updateCrisisReport({
       ...params,
-      existingEKIDs,
-      schema: reviewSchemas.schema
+      entityIndexToIdMap,
     }));
   };
 
+  // const handleDeleteCrisisReportContent = (params) => {
+  //   dispatch(deleteCrisisReportContent(params));
+  // };
+
+  // const handleAddOptionalContent = (params) => {
+  //   const existingEKIDs = {
+  //     [CLINICIAN_REPORT_FQN]: reportId,
+  //   };
+
+  //   dispatch(addOptionalCrisisReportContent({
+  //     ...params,
+  //     existingEKIDs,
+  //     schema: reviewSchemas.schema
+  //   }));
+  // };
+
   const name = getFirstLastFromPerson(subjectData);
   const formContext = {
-    addActions: {
-      addOptional: handleAddOptionalContent
-    },
-    deleteAction: handleDeleteCrisisReportContent,
+    // addActions: {
+    //   addOptional: handleAddOptionalContent
+    // },
+    // deleteAction: handleDeleteCrisisReportContent,
     editAction: handleUpdateCrisisReport,
     entityIndexToIdMap,
     entitySetIds,
