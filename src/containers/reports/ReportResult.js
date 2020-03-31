@@ -14,7 +14,8 @@ import {
 } from 'lattice-ui-kit';
 import { useDispatch } from 'react-redux';
 
-import { REPORT_ID_PATH, REPORT_VIEW_PATH } from '../../core/router/Routes';
+import { useAppSettings } from '../../components/hooks';
+import { CRISIS_REPORT_PATH, REPORT_ID_PATH, REPORT_VIEW_PATH } from '../../core/router/Routes';
 import { goToPath } from '../../core/router/RoutingActions';
 
 const { OPENLATTICE_ID_FQN } = Constants;
@@ -51,11 +52,16 @@ type Props = {
 const ReportResult = (props :Props) => {
   const dispatch = useDispatch();
   const { result, resultLabels } = props;
-
+  const settings = useAppSettings();
 
   const handleResultClick = () => {
     const reportEKID = result.get(OPENLATTICE_ID_FQN);
-    dispatch(goToPath(REPORT_VIEW_PATH.replace(REPORT_ID_PATH, reportEKID)));
+    if (settings.get('v1')) {
+      dispatch(goToPath(CRISIS_REPORT_PATH.replace(REPORT_ID_PATH, reportEKID)));
+    }
+    else {
+      dispatch(goToPath(REPORT_VIEW_PATH.replace(REPORT_ID_PATH, reportEKID)));
+    }
   };
 
   const reportType = result.get('reportType', '');
