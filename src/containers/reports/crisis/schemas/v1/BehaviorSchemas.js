@@ -4,13 +4,11 @@ import {
   BEHAVIORS,
   DEMEANORS,
   SUICIDE_ACTION_TYPE,
-  SUICIDE_BEHAVIORS,
-  SUICIDE_METHODS,
 } from './constants';
 
 import * as FQN from '../../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
-import { SELECT_ALL_THAT_APPLY } from '../constants';
+import { SELECT_ALL_THAT_APPLY, SELECT_ONLY_ONE } from '../constants';
 
 const { BEHAVIORAL_HEALTH_REPORT_FQN } = APP_TYPES_FQNS;
 
@@ -33,6 +31,12 @@ const schema = {
           },
           // minItems: 1,
           uniqueItems: true
+        },
+        [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.SUICIDAL_ACTIONS_FQN)]: {
+          title: 'Suicide threat or attempt?',
+          type: 'string',
+          description: SELECT_ONLY_ONE,
+          enum: SUICIDE_ACTION_TYPE,
         },
         [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.DEMEANORS_FQN)]: {
           title: 'Demeanors',
@@ -60,6 +64,11 @@ const uiSchema = {
     'ui:options': {
       editable: true
     },
+    'ui:order': [
+      getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.OBSERVED_BEHAVIORS_FQN),
+      getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.SUICIDAL_ACTIONS_FQN),
+      getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.DEMEANORS_FQN),
+    ],
     [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.OBSERVED_BEHAVIORS_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
@@ -68,6 +77,15 @@ const uiSchema = {
         row: true,
         withNone: true,
         withOther: true,
+      }
+    },
+    [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.SUICIDAL_ACTIONS_FQN)]: {
+      classNames: 'column-span-12',
+      'ui:widget': 'radio',
+      'ui:options': {
+        mode: 'button',
+        row: true,
+        withNone: true,
       }
     },
     [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.DEMEANORS_FQN)]: {

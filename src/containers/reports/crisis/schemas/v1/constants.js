@@ -12,12 +12,14 @@ export const BEHAVIORS = [
   'Neglect of self care',
   'Out of touch with reality',
   'Paranoid',
-  SUICIDE_BEHAVIORS,
 ];
 
+export const THREAT = 'Threat';
+export const ATTEMPT = 'Attempt';
+
 export const SUICIDE_ACTION_TYPE = [
-  'Threat',
-  'Attempt'
+  THREAT,
+  ATTEMPT,
 ];
 
 export const SUICIDE_METHODS = [

@@ -13,12 +13,14 @@ import { DateTime } from 'luxon';
 
 import {
   ARRESTED,
+  ATTEMPT,
   CRIMES_AGAINST_PERSON,
   DISPOSITIONS,
   FELONY,
   HOMELESS_STR,
   NOT_ARRESTED,
   SUICIDE_BEHAVIORS,
+  THREAT,
 } from './schemas/v1/constants';
 
 import * as FQN from '../../../edm/DataModelFqns';
@@ -522,16 +524,24 @@ const postProcessBehaviorSection = (formData :Object) :Object => {
   const sectionKey = getPageSectionKey(2, 1);
   const sectionData = getIn(formData, [sectionKey]);
 
-  const behaviorProperties = [FQN.OBSERVED_BEHAVIORS_FQN];
+  const behaviorProperties = [FQN.OBSERVED_BEHAVIORS_FQN, FQN.SUICIDAL_ACTIONS_FQN];
 
   sectionData[getBHRAddress(FQN.SUICIDAL_FQN)] = false;
 
   const [
     behaviorValue,
+    suicidalActionsValue,
   ] = getSectionValues(formData, sectionKey, behaviorProperties);
 
-  if (behaviorValue.length && behaviorValue.includes(SUICIDE_BEHAVIORS)) {
+  const suicidal = suicidalActionsValue.includes(THREAT) || suicidalActionsValue.includes(ATTEMPT);
+  if (suicidalActionsValue.length && suicidal) {
+    sectionData[getBHRAddress(FQN.OBSERVED_BEHAVIORS_FQN)] = behaviorValue
+      .concat(SUICIDE_BEHAVIORS);
     sectionData[getBHRAddress(FQN.SUICIDAL_FQN)] = true;
+  }
+  else {
+    sectionData[getBHRAddress(FQN.OBSERVED_BEHAVIORS_FQN)] = behaviorValue
+      .filter((behavior) => behavior !== SUICIDE_BEHAVIORS);
   }
 
   return setIn(formData, [sectionKey], sectionData);
