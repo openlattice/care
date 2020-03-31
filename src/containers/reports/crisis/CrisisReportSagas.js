@@ -626,7 +626,7 @@ function* updateCrisisReportWorker(action :SequenceAction) :Generator<any, any, 
     );
 
     const originalWithKeys = replaceEntityAddressKeys(
-      preFormData.toJS(),
+      {},
       findEntityAddressKeyFromMap(entityIndexToIdMap)
     );
 
