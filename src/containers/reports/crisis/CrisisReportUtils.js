@@ -343,6 +343,7 @@ const pipe = (...fns) => (init) => fns.reduce((piped, f) => f(piped), init);
 const preProcessessObservations = (report :Object) :Object => pipe(
   preProcessOther(FQN.DEMEANORS_FQN, FQN.OTHER_DEMEANORS_FQN),
   preProcessOther(FQN.OBSERVED_BEHAVIORS_FQN, FQN.OBSERVED_BEHAVIORS_OTHER_FQN),
+  preProcessOther(FQN.SUICIDAL_ACTIONS_FQN, ''),
 )(report);
 
 const preProcessessNature = (report :Object) :Object => {
