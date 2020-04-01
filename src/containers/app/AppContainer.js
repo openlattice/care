@@ -6,7 +6,13 @@ import React, { Component } from 'react';
 
 import styled from 'styled-components';
 import { Map } from 'immutable';
-import { Spinner } from 'lattice-ui-kit';
+import {
+  LatticeLuxonUtils,
+  MuiPickersUtilsProvider,
+  Spinner,
+  ThemeProvider,
+  lightTheme,
+} from 'lattice-ui-kit';
 import { connect } from 'react-redux';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
@@ -172,12 +178,16 @@ class AppContainer extends Component<Props> {
     const { organizations } = this.props;
 
     return (
-      <AppContainerWrapper>
-        <AppHeaderContainer organizations={organizations} />
-        <AppContentOuterWrapper>
-          { this.renderAppContent() }
-        </AppContentOuterWrapper>
-      </AppContainerWrapper>
+      <ThemeProvider theme={lightTheme}>
+        <MuiPickersUtilsProvider utils={LatticeLuxonUtils}>
+          <AppContainerWrapper>
+            <AppHeaderContainer organizations={organizations} />
+            <AppContentOuterWrapper>
+              { this.renderAppContent() }
+            </AppContentOuterWrapper>
+          </AppContainerWrapper>
+        </MuiPickersUtilsProvider>
+      </ThemeProvider>
     );
   }
 }
