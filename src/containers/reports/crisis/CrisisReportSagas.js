@@ -559,7 +559,7 @@ function* getCrisisReportWorker(action :SequenceAction) :Generator<any, any, any
     const neighbors = neighborsResponse.data.get(reportEKID);
     const appTypeFqnsByIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds']).flip());
     const neighborsByFQN = groupNeighborsByFQNs(neighbors, appTypeFqnsByIds);
-    const reporterData = neighborsByFQN.getIn([STAFF_FQN, 0]);
+    const reporterData = neighborsByFQN.getIn([STAFF_FQN, 0], Map());
     const subjectData = neighborsByFQN.getIn([PEOPLE_FQN, 0, 'neighborDetails'], Map());
 
     const processedReportData = preProcessCrisisReportV1(reportResponse.data);
