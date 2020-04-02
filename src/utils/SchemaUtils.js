@@ -1,7 +1,7 @@
 // @flow
 import merge from 'lodash/merge';
 
-import Logger from '../../../../utils/Logger';
+import Logger from './Logger';
 
 const LOG = new Logger('schemaUtils');
 

@@ -14,8 +14,7 @@ import { RequestStates } from 'redux-reqseq';
 import SuccessSplash from './SuccessSplash';
 import { clearCrisisReport, submitCrisisReport } from './CrisisActions';
 import { v1 } from './schemas';
-
-import { generateReviewSchema } from '../../../utils/SchemaUtils';
+import { generateReviewSchema } from './schemas/schemaUtils';
 
 const ActionRow = styled.div`
   display: flex;
