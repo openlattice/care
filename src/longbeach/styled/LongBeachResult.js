@@ -13,7 +13,7 @@ import { Map } from 'immutable';
 import { Card } from 'lattice-ui-kit';
 import { useDispatch } from 'react-redux';
 
-import Detail from '../../components/premium/styled/Detail';
+import Detail from '../../components/premium/styled/IconDetail';
 import Portrait from '../../components/portrait/Portrait';
 import { useGoToPath } from '../../components/hooks';
 import {
@@ -63,8 +63,7 @@ const LongBeachResult = ({
   };
 
   const fullName = getLastFirstMiFromPerson(person, true);
-  // $FlowFixMe
-  const dob :string = getDobFromPerson(person, false, '---');
+  const dob :string = getDobFromPerson(person, '---');
   const sex = person.getIn([PERSON_SEX_FQN, 0]);
   const race = person.getIn([PERSON_RACE_FQN, 0]);
   const { name, address } = getAddressFromLocation(stayAwayLocation);

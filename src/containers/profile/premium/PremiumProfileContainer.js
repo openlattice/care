@@ -6,7 +6,6 @@ import styled from 'styled-components';
 import { faFolderOpen } from '@fortawesome/pro-duotone-svg-icons';
 import { List, Map } from 'immutable';
 import {
-  Card,
   CardSegment,
   CardStack,
   IconSplash,
@@ -24,14 +23,15 @@ import BehaviorCard from './BehaviorCard';
 import DeescalationCard from './DeescalationCard';
 import IntroCard from './IntroCard';
 import OfficerSafetyCard from './OfficerSafetyCard';
+import PortraitCard from './PortraitCard';
 import ResponsePlanCard from './ResponsePlanCard';
 
 import AboutPlanCard from '../../../components/premium/aboutplan/AboutPlanCard';
 import AddressCard from '../../../components/premium/address/AddressCard';
 import ContactCarousel from '../../../components/premium/contacts/ContactCarousel';
 import CrisisCountCard from '../CrisisCountCard';
-import LinkButton from '../../../components/buttons/LinkButton';
-import Portrait from '../../../components/portrait/Portrait';
+// import LinkButton from '../../../components/buttons/LinkButton';
+// import Portrait from '../../../components/portrait/Portrait';
 import ProbationCard from '../../../components/premium/probation/ProbationCard';
 import ProfileBanner from '../ProfileBanner';
 import ProfileResult from '../ProfileResult';
@@ -42,7 +42,6 @@ import { useAppSettings, useAuthorization, usePeopleRoute } from '../../../compo
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
 import {
   CRISIS_REPORT_PATH,
-  NEW_CRISIS_PATH,
   REPORT_ID_PATH,
   REPORT_VIEW_PATH,
 } from '../../../core/router/Routes';
@@ -222,20 +221,7 @@ const PremiumProfileContainer = (props :Props) => {
         <ProfileGrid>
           <Aside>
             <CardStack>
-              <Card>
-                <CenteredSegment padding="sm" vertical>
-                  <Portrait imageUrl={imageURL} />
-                </CenteredSegment>
-                {
-                  !isLoadingIntro && (
-                    <CardSegment padding="sm" vertical>
-                      <LinkButton mode="primary" to={`${NEW_CRISIS_PATH}`} state={selectedPerson}>
-                        New Crisis Report
-                      </LinkButton>
-                    </CardSegment>
-                  )
-                }
-              </Card>
+              <PortraitCard isLoading={isLoadingIntro} imageUrl={imageURL} person={selectedPerson} />
               <IntroCard
                   appearance={appearance}
                   isLoading={isLoadingIntro}

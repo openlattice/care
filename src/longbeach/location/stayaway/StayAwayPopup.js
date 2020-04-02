@@ -19,7 +19,7 @@ import { useSelector } from 'react-redux';
 import { STAY_AWAY_STORE_PATH } from './constants';
 
 import DefaultLink from '../../../components/links/DefaultLink';
-import Detail from '../../../components/premium/styled/Detail';
+import Detail from '../../../components/premium/styled/IconDetail';
 import {
   PROFILE_ID_PATH,
   PROFILE_VIEW_PATH,
@@ -69,8 +69,7 @@ const StayAwayPopup = ({
   if (!isOpen) return null;
 
   const fullName = getLastFirstMiFromPerson(person, true);
-  // $FlowFixMe
-  const dob :string = getDobFromPerson(person, false, '---');
+  const dob :string = getDobFromPerson(person, '---');
   const sex = person.getIn([PERSON_SEX_FQN, 0]);
   const race = person.getIn([PERSON_RACE_FQN, 0]);
   const { name, address } = getAddressFromLocation(stayAwayLocation);

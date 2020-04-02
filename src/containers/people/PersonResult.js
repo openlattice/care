@@ -17,7 +17,7 @@ import { DateTime } from 'luxon';
 import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
-import Detail from '../../components/premium/styled/Detail';
+import Detail from '../../components/premium/styled/IconDetail';
 import Portrait from '../../components/portrait/Portrait';
 import { useAppSettings, useGoToPath } from '../../components/hooks';
 import {
@@ -125,8 +125,7 @@ const PersonResult = (props :Props) => {
   };
 
   const fullName = getLastFirstMiFromPerson(result, true);
-  // $FlowFixMe
-  const dob :string = getDobFromPerson(result, false, '---');
+  const dob :string = getDobFromPerson(result, '---');
   const sex = result.getIn([PERSON_SEX_FQN, 0]);
   const race = result.getIn([PERSON_RACE_FQN, 0]);
   const numSources = result.getIn([NUM_SOURCES_FOUND_IN_FQN, 0]);

@@ -43,7 +43,6 @@ type Props = {
 }
 
 const ProfileBanner = ({ selectedPerson, noDob, sticky } :Props) => {
-  // $FlowFixMe
   const dob :string = getDobFromPerson(selectedPerson);
   const name = getLastFirstMiFromPerson(selectedPerson, true);
 
