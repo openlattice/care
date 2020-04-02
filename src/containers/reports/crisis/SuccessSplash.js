@@ -50,8 +50,7 @@ const Success = styled.h1`
   margin: 0;
 `;
 
-const FileCheck = (size) => <FontAwesomeIcon icon={faFileCheck} color={PURPLES[1]} size={size}/>;
-
+const FileCheck = (size) => <FontAwesomeIcon icon={faFileCheck} color={PURPLES[1]} size={size} />;
 
 type Props = {
   selectedPerson :Map;
