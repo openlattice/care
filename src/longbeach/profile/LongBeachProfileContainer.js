@@ -14,7 +14,7 @@ import { RequestStates } from 'redux-reqseq';
 
 import { getLBProfile } from './LongBeachProfileActions';
 
-import Detail from '../../components/premium/styled/IconDetail';
+import IconDetail from '../../components/premium/styled/IconDetail';
 import Portrait from '../../components/portrait/Portrait';
 import ProfileBanner from '../../containers/profile/ProfileBanner';
 import * as FQN from '../../edm/DataModelFqns';
@@ -98,19 +98,19 @@ const LongBeachProfileContainer = () => {
                       <Label subtle>
                         DOB
                       </Label>
-                      <Detail content={dob} isLoading={isLoading} />
+                      <IconDetail content={dob} isLoading={isLoading} />
                     </div>
                     <div>
                       <Label subtle>
                         Race
                       </Label>
-                      <Detail content={race} isLoading={isLoading} />
+                      <IconDetail content={race} isLoading={isLoading} />
                     </div>
                     <div>
                       <Label subtle>
                         Sex
                       </Label>
-                      <Detail content={sex} isLoading={isLoading} />
+                      <IconDetail content={sex} isLoading={isLoading} />
                     </div>
                   </Grid>
                 </StyledFlexColumn>
@@ -126,13 +126,13 @@ const LongBeachProfileContainer = () => {
                     <Label subtle>
                       Location Name
                     </Label>
-                    <Detail content={name} isLoading={isLoading} />
+                    <IconDetail content={name} isLoading={isLoading} />
                   </div>
                   <div>
                     <Label subtle>
                       Location
                     </Label>
-                    <Detail content={address} isLoading={isLoading} />
+                    <IconDetail content={address} isLoading={isLoading} />
                   </div>
                 </Grid>
               </ResultSegment>
@@ -147,13 +147,13 @@ const LongBeachProfileContainer = () => {
                     <Label subtle>
                       Status
                     </Label>
-                    <Detail content={probationTag} isLoading={isLoading} />
+                    <IconDetail content={probationTag} isLoading={isLoading} />
                   </div>
                   <div>
                     <Label subtle>
                       Period
                     </Label>
-                    <Detail content={`${probationStart} - ${probationEnd}`} isLoading={isLoading} />
+                    <IconDetail content={`${probationStart} - ${probationEnd}`} isLoading={isLoading} />
                   </div>
                 </Grid>
               </ResultSegment>
@@ -168,7 +168,7 @@ const LongBeachProfileContainer = () => {
                     <Label subtle>
                       Warrant #
                     </Label>
-                    <Detail content={warrantNumber} isLoading={isLoading} />
+                    <IconDetail content={warrantNumber} isLoading={isLoading} />
                   </div>
                 </Grid>
               </ResultSegment>

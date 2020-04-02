@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux';
 
 import { ENCAMPMENT_STORE_PATH } from './constants';
 
-import Detail from '../../../components/premium/styled/Detail';
+import IconDetail from '../../../components/premium/styled/IconDetail';
 import {
   DESCRIPTION_FQN,
   ENTRY_UPDATED_FQN,
@@ -42,9 +42,9 @@ const EncampmentResult = (props :Props) => {
     <Card>
       <ResultSegment vertical padding="sm">
         <StepIcon active index={index + 1} />
-        <Detail content={occupants} icon={faUsers} />
-        <Detail content={lastUpdated} icon={faHistory} />
-        <Detail content={description} />
+        <IconDetail content={occupants} icon={faUsers} />
+        <IconDetail content={lastUpdated} icon={faHistory} />
+        <IconDetail content={description} />
       </ResultSegment>
     </Card>
   );

@@ -10,7 +10,7 @@ import {
   Label,
 } from 'lattice-ui-kit';
 
-import Detail from '../styled/Detail';
+import IconDetail from '../styled/IconDetail';
 import * as FQN from '../../../edm/DataModelFqns';
 import { H1 } from '../../layout';
 import { CardSkeleton } from '../../skeletons';
@@ -42,7 +42,7 @@ const WarrantCard = ({ isLoading, warrant } :Props) => {
             <Label subtle>
               Warrant #
             </Label>
-            <Detail content={warrantNumber} isLoading={isLoading} />
+            <IconDetail content={warrantNumber} isLoading={isLoading} />
           </div>
         </Grid>
       </CardSegment>

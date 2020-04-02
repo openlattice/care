@@ -11,7 +11,7 @@ import {
   Tag
 } from 'lattice-ui-kit';
 
-import Detail from '../styled/IconDetail';
+import IconDetail from '../styled/IconDetail';
 import * as FQN from '../../../edm/DataModelFqns';
 import { getDateShortFromIsoDate, isNowValid } from '../../../utils/DateUtils';
 import { H1 } from '../../layout';
@@ -50,13 +50,13 @@ const ProbationCard = ({ isLoading, probation } :Props) => {
             <Label subtle>
               Status
             </Label>
-            <Detail content={probationTag} isLoading={isLoading} />
+            <IconDetail content={probationTag} isLoading={isLoading} />
           </div>
           <div>
             <Label subtle>
               Period
             </Label>
-            <Detail content={`${probationStart} - ${probationEnd}`} isLoading={isLoading} />
+            <IconDetail content={`${probationStart} - ${probationEnd}`} isLoading={isLoading} />
           </div>
         </Grid>
       </CardSegment>

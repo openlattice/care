@@ -19,7 +19,7 @@ import { useSelector } from 'react-redux';
 import { STAY_AWAY_STORE_PATH } from './constants';
 
 import DefaultLink from '../../../components/links/DefaultLink';
-import Detail from '../../../components/premium/styled/IconDetail';
+import IconDetail from '../../../components/premium/styled/IconDetail';
 import {
   PROFILE_ID_PATH,
   PROFILE_VIEW_PATH,
@@ -86,11 +86,11 @@ const StayAwayPopup = ({
         <strong>{fullName}</strong>
         <CloseButton size="sm" mode="subtle" icon={CloseIcon} onClick={onClose} />
       </ActionBar>
-      <Detail content={dob} icon={faBirthdayCake} />
-      <Detail content={race} icon={faUser} />
-      <Detail content={sex} icon={faVenusMars} />
-      <Detail content={nameAndAddress} icon={faMapMarkerAltSlash} />
-      <Detail content={radius} icon={faDraftingCompass} />
+      <IconDetail content={dob} icon={faBirthdayCake} />
+      <IconDetail content={race} icon={faUser} />
+      <IconDetail content={sex} icon={faVenusMars} />
+      <IconDetail content={nameAndAddress} icon={faMapMarkerAltSlash} />
+      <IconDetail content={radius} icon={faDraftingCompass} />
       <DefaultLink to={PROFILE_VIEW_PATH.replace(PROFILE_ID_PATH, personEKID)}>View Profile</DefaultLink>
     </Popup>
   );

@@ -12,8 +12,8 @@ import {
 } from 'lattice-ui-kit';
 import { useRouteMatch } from 'react-router';
 
-import Detail from '../styled/Detail';
 import EditLinkButton from '../../buttons/EditLinkButton';
+import IconDetail from '../styled/IconDetail';
 import NewIssueButton from '../../buttons/CreateIssueButton';
 import { CATEGORIES } from '../../../containers/issues/issue/constants';
 import { ABOUT_PATH, EDIT_PATH } from '../../../core/router/Routes';
@@ -54,7 +54,7 @@ const AboutPlanCard = (props :Props) => {
       </CardHeader>
       <CardSegment vertical padding="sm">
         <Label subtle>Assigned Officer</Label>
-        <Detail isLoading={isLoading} content={content} />
+        <IconDetail isLoading={isLoading} content={content} />
       </CardSegment>
     </Card>
   );

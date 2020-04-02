@@ -13,7 +13,7 @@ import { Map } from 'immutable';
 import { Card } from 'lattice-ui-kit';
 import { useDispatch } from 'react-redux';
 
-import Detail from '../../components/premium/styled/IconDetail';
+import IconDetail from '../../components/premium/styled/IconDetail';
 import Portrait from '../../components/portrait/Portrait';
 import { useGoToPath } from '../../components/hooks';
 import {
@@ -81,11 +81,11 @@ const LongBeachResult = ({
         <FlexRow>
           <Portrait imageUrl={imageUrl} height="90" width="72" />
           <ResultDetails>
-            <Detail content={dob} icon={faBirthdayCake} />
-            <Detail content={race} icon={faUser} />
-            <Detail content={sex} icon={faVenusMars} />
-            <Detail content={nameAndAddress} icon={faMapMarkerAltSlash} />
-            <Detail content={radius} icon={faDraftingCompass} />
+            <IconDetail content={dob} icon={faBirthdayCake} />
+            <IconDetail content={race} icon={faUser} />
+            <IconDetail content={sex} icon={faVenusMars} />
+            <IconDetail content={nameAndAddress} icon={faMapMarkerAltSlash} />
+            <IconDetail content={radius} icon={faDraftingCompass} />
           </ResultDetails>
         </FlexRow>
       </ResultSegment>
