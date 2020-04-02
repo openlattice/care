@@ -7,7 +7,6 @@ import { AuthSagas } from 'lattice-auth';
 import {
   AppApiSagas,
   DataApiSagas,
-  DataIntegrationApiSagas,
   EntityDataModelApiSagas,
   SearchApiSagas,
 } from 'lattice-sagas';
@@ -21,11 +20,13 @@ import * as AppSagas from '../../containers/app/AppSagas';
 import * as AppearanceSagas from '../../containers/profile/edit/basicinformation/sagas/AppearanceSagas';
 import * as BasicInformationSagas from '../../containers/profile/edit/basicinformation/sagas/BasicInformationSagas';
 import * as ContactsSagas from '../../containers/profile/edit/contacts/ContactsSagas';
+import * as CrisisReportSagas from '../../containers/reports/crisis/CrisisReportSagas';
 import * as DashboardSagas from '../../containers/dashboard/DashboardSagas';
 import * as DownloadsSagas from '../../containers/downloads/DownloadsSagas';
+import * as EncampmentSagas from '../../longbeach/location/encampment/EncampmentsSagas';
 import * as IssueSagas from '../../containers/issues/issue/IssueSagas';
 import * as IssuesSagas from '../../containers/issues/IssuesSagas';
-import * as LongBeachLocationsSagas from '../../longbeach/location/LongBeachLocationsSagas';
+import * as LongBeachLocationsSagas from '../../longbeach/location/stayaway/LongBeachLocationsSagas';
 import * as LongBeachPeopleSagas from '../../longbeach/people/LongBeachPeopleSagas';
 import * as LongBeachProfileSagas from '../../longbeach/profile/LongBeachProfileSagas';
 import * as LongBeachProviderSagas from '../../longbeach/provider/LongBeachProviderSagas';
@@ -40,7 +41,6 @@ import * as RoutingSagas from '../router/RoutingSagas';
 import * as ScarsMarksTattoosSagas from '../../containers/profile/edit/basicinformation/sagas/ScarsMarksTattoosSagas';
 import * as SearchSagas from '../../containers/search/SearchSagas';
 import * as StaffSagas from '../../containers/staff/StaffSagas';
-import * as XStateCrisisReportSagas from '../../containers/reports/crisis/XStateCrisisReportSagas';
 
 export default function* sagas() :Generator<*, *, *> {
 
@@ -59,7 +59,6 @@ export default function* sagas() :Generator<*, *, *> {
     fork(DataApiSagas.deleteEntityDataWatcher),
     fork(DataApiSagas.getEntitySetDataWatcher),
     fork(DataApiSagas.updateEntityDataWatcher),
-    fork(DataIntegrationApiSagas.createEntityAndAssociationDataWatcher),
     fork(EntityDataModelApiSagas.getAllPropertyTypesWatcher),
     fork(EntityDataModelApiSagas.getEntityDataModelProjectionWatcher),
     fork(SearchApiSagas.searchEntitySetDataWatcher),
@@ -110,6 +109,11 @@ export default function* sagas() :Generator<*, *, *> {
     fork(ReportsSagas.getReportsByDateRangeWatcher),
     fork(ReportsSagas.submitReportWatcher),
     fork(ReportsSagas.updateReportWatcher),
+    fork(ReportsSagas.getIncidentReportsWatcher),
+    fork(ReportsSagas.getProfileIncidentsWatcher),
+    fork(ReportsSagas.getIncidentReportsSummaryWatcher),
+    fork(ReportsSagas.getReportsBehaviorAndSafetyWatcher),
+    fork(ReportsSagas.getReportersForReportsWatcher),
 
     // ResponsePlanSagas
     fork(ResponsePlanSagas.deleteInteractionStrategiesWatcher),
@@ -184,6 +188,21 @@ export default function* sagas() :Generator<*, *, *> {
     fork(LongBeachProviderSagas.getLBProvidersWatcher),
     /* <===== END LONG BEACH HACK =====> */
 
-    fork(XStateCrisisReportSagas.submitCrisisReportWatcher),
+    fork(CrisisReportSagas.addOptionalCrisisReportContentWatcher),
+    fork(CrisisReportSagas.deleteCrisisReportContentWatcher),
+    fork(CrisisReportSagas.getCrisisReportWatcher),
+    fork(CrisisReportSagas.getCrisisReportV2Watcher),
+    fork(CrisisReportSagas.getReportsV2NeighborsWatcher),
+    fork(CrisisReportSagas.getReportsNeighborsWatcher),
+    fork(CrisisReportSagas.getSubjectOfIncidentWatcher),
+    fork(CrisisReportSagas.submitCrisisReportWatcher),
+    fork(CrisisReportSagas.updateCrisisReportWatcher),
+    fork(EncampmentSagas.addPersonToEncampmentWatcher),
+    fork(EncampmentSagas.getEncampmentOccupantsWatcher),
+    fork(EncampmentSagas.getEncampmentPeopleOptionsWatcher),
+    fork(EncampmentSagas.getGeoOptionsWatcher),
+    fork(EncampmentSagas.removePersonFromEncampmentWatcher),
+    fork(EncampmentSagas.searchEncampmentLocationsWatcher),
+    fork(EncampmentSagas.submitEncampmentWatcher),
   ]);
 }

@@ -47,15 +47,15 @@ const {
   FILED_FOR_FQN,
   IMAGE_FQN,
   IS_PICTURE_OF_FQN,
-  LOCATION_FQN,
+  STAY_AWAY_LOCATION_FQN,
   PEOPLE_FQN,
   SERVED_WITH_FQN,
   SERVICES_OF_PROCESS_FQN,
 } = APP_TYPES_FQNS;
 
 const { OPENLATTICE_ID_FQN } = Constants;
-const { executeSearch, searchEntitySetData, searchEntityNeighborsWithFilter } = SearchApiActions;
-const { executeSearchWorker, searchEntitySetDataWorker, searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
+const { executeSearch, searchEntityNeighborsWithFilter } = SearchApiActions;
+const { executeSearchWorker, searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
 const LOG = new Logger('LongBeachPeopleSagas');
 
 export function* getLBPeoplePhotosWorker(action :SequenceAction) :Generator<*, *, *> {
@@ -125,7 +125,7 @@ export function* getLBStayAwayLocationsWorker(action :SequenceAction) :Generator
       serviceOfProcessESID
     ] = getESIDsFromApp(app, [
       FILED_FOR_FQN,
-      LOCATION_FQN,
+      STAY_AWAY_LOCATION_FQN,
       SERVICES_OF_PROCESS_FQN
     ]);
 
@@ -247,7 +247,7 @@ export function* searchLBPeopleWorker(action :SequenceAction) :Generator<*, *, *
     const edm :Map<*, *> = yield select((state) => state.get('edm'));
     const app = yield select((state) => state.get('app', Map()));
     const peopleESID = getESIDFromApp(app, PEOPLE_FQN);
-    
+
     const firstNamePTID :UUID = edm.getIn(['fqnToIdMap', FQN.PERSON_FIRST_NAME_FQN]);
     const lastNamePTID :UUID = edm.getIn(['fqnToIdMap', FQN.PERSON_LAST_NAME_FQN]);
     const dobPTID :UUID = edm.getIn(['fqnToIdMap', FQN.PERSON_DOB_FQN]);

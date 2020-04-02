@@ -176,7 +176,7 @@ export function processForSubmit(state :Map<*, *>) :Object {
       dispositions.includes(DISPOSITION_TYPES.VERBAL_REFERRAL)
     ).set(
       POST_PROCESS_FIELDS.HOSPITAL_TRANPORT,
-      dispositions.includes(DISPOSITION_TYPES.COURTESY_TRANPORT)
+      dispositions.includes(DISPOSITION_TYPES.HOSPITAL)
     ).set(
       POST_PROCESS_FIELDS.NARCAN_ADMINISTERED,
       dispositions.includes(DISPOSITION_TYPES.ADMINISTERED_DRUG)

@@ -1,103 +1,36 @@
 // @flow
-import React from 'react';
+import React, { useRef } from 'react';
 
-import styled from 'styled-components';
-import { Form, Paged } from 'lattice-fabricate';
+import { Map } from 'immutable';
 import {
-  Button,
-  Card,
   CardStack
 } from 'lattice-ui-kit';
+import { useLocation } from 'react-router';
+import { Redirect } from 'react-router-dom';
 
-import { schemas, uiSchemas } from './schemas';
+import NewCrisisReport from './NewCrisisReport';
 
+import ProfileBanner from '../../profile/ProfileBanner';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
+import { HOME_PATH } from '../../../core/router/Routes';
 
-const initialFormData = {
-  page3section1: {
-    '0__@@__app.people__@@__nc.PersonSurName': [
-      'Homicidal thoughts'
-    ],
-    '1__@@__app.people__@@__nc.PersonSurName': [
-      'Mania'
-    ]
-  },
-  page2section1: {
-    '0__@@__app.people__@@__nc.PersonSurName': '2019-12-19T13:37:58.493-08:00'
-  },
-  page1section1: {
-    '0__@@__app.people__@@__im.PersonNickName': [],
-    '0__@@__app.people__@@__nc.PersonSurName': 'fdsa',
-    '0__@@__app.people__@@__nc.PersonGivenName': 'fdsada',
-    '0__@@__app.people__@@__nc.PersonBirthDate': '2019-12-05',
-    '0__@@__app.people__@@__nc.PersonSex': 'Male',
-    '0__@@__app.people__@@__nc.PersonRace': 'White',
-    '0__@@__app.people__@@__nc.PersonEthnicity': 'Non-Hispanic'
-  }
+const NewCrisisReportContainer = () => {
+  const location = useLocation();
+  const pageRef = useRef<HTMLDivElement | null>(null);
+
+  const { state: selectedPerson = Map() } = location;
+  if (!Map.isMap(selectedPerson) || selectedPerson.isEmpty()) return <Redirect to={HOME_PATH} />;
+
+  return (
+    <ContentOuterWrapper ref={pageRef}>
+      <ProfileBanner selectedPerson={selectedPerson} />
+      <ContentWrapper>
+        <CardStack>
+          <NewCrisisReport pageRef={pageRef} selectedPerson={selectedPerson} />
+        </CardStack>
+      </ContentWrapper>
+    </ContentOuterWrapper>
+  );
 };
-
-
-const ActionRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 30px 30px 30px;
-`;
-
-const onPageChange = (page, formData) => console.log(page, formData);
-
-const NewCrisisReportContainer = () => (
-  <ContentOuterWrapper>
-    <ContentWrapper>
-      <CardStack>
-        <Card>
-          <Paged
-              initialFormData={initialFormData}
-              onPageChange={onPageChange}
-              render={({
-                formRef,
-                pagedData,
-                page,
-                onBack,
-                onNext,
-                validateAndSubmit,
-              }) => {
-                const totalPages = 7;
-                const isLastPage = page === totalPages - 1;
-
-                const handleNext = isLastPage
-                  ? () => console.log(pagedData)
-                  : validateAndSubmit;
-
-                return (
-                  <>
-                    <Form
-                        formData={pagedData}
-                        hideSubmit
-                        onSubmit={onNext}
-                        ref={formRef}
-                        schema={schemas[page]}
-                        uiSchema={uiSchemas[page]} />
-                    <ActionRow>
-                      <Button
-                          disabled={!(page > 0)}
-                          onClick={onBack}>
-                        Back
-                      </Button>
-                      <span>{`${page + 1} of ${totalPages}`}</span>
-                      <Button
-                          mode="primary"
-                          onClick={handleNext}>
-                        { isLastPage ? 'Submit' : 'Next' }
-                      </Button>
-                    </ActionRow>
-                  </>
-                );
-              }} />
-        </Card>
-      </CardStack>
-    </ContentWrapper>
-  </ContentOuterWrapper>
-);
 
 export default NewCrisisReportContainer;

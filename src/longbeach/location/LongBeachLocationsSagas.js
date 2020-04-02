@@ -28,7 +28,7 @@ import {
   getLBLocationsNeighbors,
   getLBStayAwayPeople,
   searchLBLocations,
-} from './LongBeachLocationsActions';
+} from './stayaway/LongBeachLocationsActions';
 
 import Logger from '../../utils/Logger';
 import * as FQN from '../../edm/DataModelFqns';
@@ -44,7 +44,7 @@ const { executeSearchWorker, searchEntityNeighborsWithFilterWorker } = SearchApi
 
 const {
   FILED_FOR_FQN,
-  LOCATION_FQN,
+  STAY_AWAY_LOCATION_FQN,
   PEOPLE_FQN,
   SERVED_WITH_FQN,
   SERVICES_OF_PROCESS_FQN,
@@ -175,7 +175,7 @@ function* getLBLocationsNeighborsWorker(action :SequenceAction) :Generator<any, 
       serviceOfProcessESID
     ] = getESIDsFromApp(app, [
       FILED_FOR_FQN,
-      LOCATION_FQN,
+      STAY_AWAY_LOCATION_FQN,
       SERVICES_OF_PROCESS_FQN
     ]);
 
@@ -245,13 +245,13 @@ function* searchLBLocationsWorker(action :SequenceAction) :Generator<any, any, a
     yield put(searchLBLocations.request(action.id, searchInputs));
 
     const app = yield select((state) => state.get('app', Map()));
-    const issueESID = getESIDFromApp(app, LOCATION_FQN);
+    const locationESID = getESIDFromApp(app, STAY_AWAY_LOCATION_FQN);
     const locationCoordinatesPTID :UUID = yield select((state) => state
       .getIn(['edm', 'fqnToIdMap', FQN.LOCATION_COORDINATES_FQN]));
 
     const searchOptions = {
       start,
-      entitySetIds: [issueESID],
+      entitySetIds: [locationESID],
       maxHits,
       constraints: [{
         constraints: [{

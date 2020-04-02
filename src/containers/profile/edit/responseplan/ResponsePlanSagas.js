@@ -18,7 +18,6 @@ import {
 } from 'lattice-sagas';
 import type { SequenceAction } from 'redux-reqseq';
 
-import Logger from '../../../../utils/Logger';
 import {
   DELETE_INTERACTION_STRATEGIES,
   GET_RESPONSE_PLAN,
@@ -29,12 +28,9 @@ import {
   submitResponsePlan,
   updateResponsePlan,
 } from './ResponsePlanActions';
-import { constructResponsePlanFormData, constructEntityIndexToIdMap } from './ResponsePlanUtils';
-import { APP_TYPES_FQNS } from '../../../../shared/Consts';
-import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../../utils/Errors';
-import { getESIDFromApp } from '../../../../utils/AppUtils';
-import { isDefined } from '../../../../utils/LangUtils';
-import { isValidUuid } from '../../../../utils/Utils';
+import { constructEntityIndexToIdMap, constructResponsePlanFormData } from './ResponsePlanUtils';
+
+import Logger from '../../../../utils/Logger';
 import {
   deleteBulkEntities,
   submitDataGraph,
@@ -46,7 +42,12 @@ import {
   submitPartialReplaceWorker,
 } from '../../../../core/sagas/data/DataSagas';
 import { INDEX_FQN, TECHNIQUES_FQN } from '../../../../edm/DataModelFqns';
+import { APP_TYPES_FQNS } from '../../../../shared/Consts';
+import { getESIDFromApp } from '../../../../utils/AppUtils';
 import { removeEntitiesFromEntityIndexToIdMap } from '../../../../utils/DataUtils';
+import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../../utils/Errors';
+import { isDefined } from '../../../../utils/LangUtils';
+import { isValidUuid } from '../../../../utils/Utils';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
