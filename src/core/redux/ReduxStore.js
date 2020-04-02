@@ -47,8 +47,8 @@ export default function initializeReduxStore(routerHistory :any) :Object {
   const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
     ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
       actionSanitizer,
-      maxAge: 100,
       stateSanitizer,
+      maxAge: 50,
       // serialize: true
     })
     : compose;

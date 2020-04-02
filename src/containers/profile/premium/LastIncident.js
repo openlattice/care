@@ -19,12 +19,7 @@ const StyledHeader = styled(CardHeader)`
   border-bottom: none !important;
 `;
 
-type Props = {
-
-};
-
-const LastIncidentCard = (props :Props) => {
-  const lastIncident = useSelector((store) => store.getIn(['profile', 'reports', 'lastIncident']));
+const LastIncidentCard = () => {
   const lastIncidentReports = useSelector((store) => store.getIn(['profile', 'reports', 'lastIncidentReports']));
   return (
     <Card>

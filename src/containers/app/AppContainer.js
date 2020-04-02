@@ -21,20 +21,25 @@ import {
 import CrisisReportContainer from '../reports/CrisisReportContainer';
 import DashboardContainer from '../dashboard/DashboardContainer';
 import DownloadsContainer from '../downloads/DownloadsContainer';
+import EncampmentsContainer from '../../longbeach/location/encampment/EncampmentsContainer';
 import IssuesContainer from '../issues/IssuesContainer';
 import LegitReportsRouter from '../reports/LegitReportsRouter';
+import LongBeachLocationsContainer from '../../longbeach/location/stayaway/LongBeachLocationsContainer';
+import LongBeachProviderContainer from '../../longbeach/provider/LongBeachProviderContainer';
 import LongBeachRouter from '../../longbeach/LongBeachRouter';
 import NewCrisisReportContainer from '../reports/crisis/NewCrisisReportContainer';
 import ProfileRouter from '../profile/ProfileRouter';
 import SearchPeopleContainer from '../people/SearchPeopleContainer';
-import XStateCrisisReportContainer from '../reports/crisis/XStateCrisisReportContainer';
 import {
   CRISIS_PATH,
   DASHBOARD_PATH,
   DOWNLOADS_PATH,
+  ENCAMPMENTS_PATH,
   HOME_PATH,
   ISSUES_PATH,
+  LOCATION_PATH,
   PROFILE_PATH,
+  PROVIDER_PATH,
   REPORTS_PATH,
 } from '../../core/router/Routes';
 import {
@@ -150,8 +155,10 @@ class AppContainer extends Component<Props> {
         <Route exact strict path={HOME_PATH} component={SearchPeopleContainer} />
         <Route path={CRISIS_PATH} component={CrisisReportContainer} />
         <Route path="/new-crisis" component={NewCrisisReportContainer} />
-        <Route path="/x-crisis" component={XStateCrisisReportContainer} />
         <Route path={REPORTS_PATH} component={LegitReportsRouter} />
+        <Route path={LOCATION_PATH} component={LongBeachLocationsContainer} />
+        <Route path={PROVIDER_PATH} component={LongBeachProviderContainer} />
+        <Route path={ENCAMPMENTS_PATH} component={EncampmentsContainer} />
         <Route path={DASHBOARD_PATH} render={this.wrapComponent(DashboardContainer)} />
         <Route path={DOWNLOADS_PATH} render={this.wrapComponent(DownloadsContainer)} />
         <Route path={PROFILE_PATH} component={ProfileRouter} />

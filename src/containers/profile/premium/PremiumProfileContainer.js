@@ -23,7 +23,6 @@ import BackgroundInformationCard from './BackgroundInformationCard';
 import BehaviorCard from './BehaviorCard';
 import DeescalationCard from './DeescalationCard';
 import IntroCard from './IntroCard';
-import LastIncident from './LastIncident';
 import OfficerSafetyCard from './OfficerSafetyCard';
 import ResponsePlanCard from './ResponsePlanCard';
 
@@ -33,18 +32,23 @@ import ContactCarousel from '../../../components/premium/contacts/ContactCarouse
 import CrisisCountCard from '../CrisisCountCard';
 import LinkButton from '../../../components/buttons/LinkButton';
 import Portrait from '../../../components/portrait/Portrait';
+import ProbationCard from '../../../components/premium/probation/ProbationCard';
 import ProfileBanner from '../ProfileBanner';
 import ProfileResult from '../ProfileResult';
 import RecentIncidentCard from '../RecentIncidentCard';
-import { useAuthorization, usePeopleRoute } from '../../../components/hooks';
+import StayAwayCard from '../../../components/premium/stayaway/StayAwayCard';
+import WarrantCard from '../../../components/premium/warrant/WarrantCard';
+import { useAppSettings, useAuthorization, usePeopleRoute } from '../../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
 import {
-  CRISIS_PATH,
+  CRISIS_REPORT_PATH,
+  NEW_CRISIS_PATH,
   REPORT_ID_PATH,
   REPORT_VIEW_PATH,
 } from '../../../core/router/Routes';
 import { goToPath } from '../../../core/router/RoutingActions';
 import { getAuthorization } from '../../../core/sagas/authorize/AuthorizeActions';
+import { getLBProfile } from '../../../longbeach/profile/LongBeachProfileActions';
 import { getImageDataFromEntity } from '../../../utils/BinaryUtils';
 import { getEntityKeyId } from '../../../utils/DataUtils';
 import { reduceRequestStates } from '../../../utils/StateUtils';
@@ -102,6 +106,7 @@ type Props = {
     getBasicInformation :RequestSequence;
     getIncidentReportsSummary :RequestSequence;
     getContacts :RequestSequence;
+    getLBProfile :RequestSequence;
     getOfficerSafety :RequestSequence;
     getProfileReports :RequestSequence;
     getResponsePlan :RequestSequence;
@@ -130,6 +135,10 @@ type Props = {
   selectedPerson :Map;
   techniques :List<Map>;
   triggers :List<Map>;
+  fetchStayAwayState :RequestState;
+  probation :Map;
+  stayAwayLocation :Map;
+  warrant :Map;
 };
 
 const PremiumProfileContainer = (props :Props) => {
@@ -153,11 +162,14 @@ const PremiumProfileContainer = (props :Props) => {
     fetchOfficerSafetyState,
     fetchReportsState,
     fetchResponsePlanState,
+    fetchStayAwayState,
+    probation,
+    stayAwayLocation,
+    warrant,
     interactionStrategies,
     isContactForByContactEKID,
     officerSafety,
     photo,
-    lastIncident,
     reports,
     responsePlan,
     responsibleUser,
@@ -172,12 +184,21 @@ const PremiumProfileContainer = (props :Props) => {
   usePeopleRoute(actions.getContacts);
   usePeopleRoute(actions.getOfficerSafety);
   usePeopleRoute(actions.getResponsePlan);
-  usePeopleRoute(actions.getIncidentReportsSummary);
+  usePeopleRoute(actions.getProfileReports);
+  // usePeopleRoute(actions.getIncidentReportsSummary);
+  usePeopleRoute(actions.getLBProfile);
+
+  const settings = useAppSettings();
 
   const handleResultClick = useCallback((result :Map) => {
     const reportEKID = getEntityKeyId(result);
-    actions.goToPath(REPORT_VIEW_PATH.replace(REPORT_ID_PATH, reportEKID));
-  }, [actions]);
+    if (settings.get('v1')) {
+      actions.goToPath(CRISIS_REPORT_PATH.replace(REPORT_ID_PATH, reportEKID));
+    }
+    else {
+      actions.goToPath(REPORT_VIEW_PATH.replace(REPORT_ID_PATH, reportEKID));
+    }
+  }, [actions, settings]);
 
   const [isAuthorized] = useAuthorization('profile', actions.getAuthorization);
 
@@ -190,6 +211,7 @@ const PremiumProfileContainer = (props :Props) => {
     fetchOfficerSafetyState,
     fetchReportsState,
     fetchResponsePlanState,
+    fetchStayAwayState,
   ]) === RequestStates.PENDING;
 
   const imageURL :string = useMemo(() => getImageDataFromEntity(photo), [photo]);
@@ -207,7 +229,7 @@ const PremiumProfileContainer = (props :Props) => {
                 {
                   !isLoadingIntro && (
                     <CardSegment padding="sm" vertical>
-                      <LinkButton mode="primary" to={`${CRISIS_PATH}/1`} state={selectedPerson}>
+                      <LinkButton mode="primary" to={`${NEW_CRISIS_PATH}`} state={selectedPerson}>
                         New Crisis Report
                       </LinkButton>
                     </CardSegment>
@@ -232,7 +254,7 @@ const PremiumProfileContainer = (props :Props) => {
           </Aside>
           <ScrollStack>
             {
-              lastIncident.isEmpty() && !isLoadingBody
+              !reports.count() && !isLoadingBody
                 ? <IconSplash icon={faFolderOpen} caption="No reports have been filed." />
                 : (
                   <>
@@ -269,7 +291,6 @@ const PremiumProfileContainer = (props :Props) => {
                         contacts={contacts}
                         contactInfoByContactEKID={contactInfoByContactEKID}
                         isContactForByContactEKID={isContactForByContactEKID} />
-                    <LastIncident />
                     <SearchResults
                         hasSearched={false}
                         onResultClick={handleResultClick}
@@ -279,6 +300,9 @@ const PremiumProfileContainer = (props :Props) => {
                   </>
                 )
             }
+            <StayAwayCard stayAwayLocation={stayAwayLocation} isLoading={isLoadingBody} />
+            <ProbationCard probation={probation} isLoading={isLoadingBody} />
+            <WarrantCard warrant={warrant} isLoading={isLoadingBody} />
           </ScrollStack>
         </ProfileGrid>
       </ContentWrapper>
@@ -312,6 +336,7 @@ const mapStateToProps = (state :Map) => {
     fetchReportsState: state.getIn(['profile', 'reports', 'fetchState'], RequestStates.STANDBY),
     fetchResponsePlanState: state.getIn(['profile', 'responsePlan', 'fetchState'], RequestStates.STANDBY),
     fetchAboutPlanState: state.getIn(['profile', 'about', 'fetchState'], RequestStates.STANDBY),
+    fetchStayAwayState: state.getIn(['longBeach', 'profile', 'fetchState'], RequestStates.STANDBY),
     interactionStrategies: state.getIn(['profile', 'responsePlan', 'interactionStrategies'], List()),
     officerSafety: state.getIn(['profile', 'officerSafety', 'data', 'officerSafetyConcerns'], List()),
     photo: state.getIn(['profile', 'basicInformation', 'photos', 'data'], Map()),
@@ -323,6 +348,9 @@ const mapStateToProps = (state :Map) => {
     selectedPerson: state.getIn(['profile', 'basicInformation', 'basics', 'data'], Map()),
     techniques: state.getIn(['profile', 'officerSafety', 'data', 'interactionStrategies'], List()),
     triggers: state.getIn(['profile', 'officerSafety', 'data', 'behaviors'], List()),
+    probation: state.getIn(['longBeach', 'profile', 'probation']),
+    stayAwayLocation: state.getIn(['longBeach', 'profile', 'stayAwayLocation']),
+    warrant: state.getIn(['longBeach', 'profile', 'warrant'])
   };
 };
 
@@ -333,6 +361,7 @@ const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
     getBasicInformation,
     getIncidentReportsSummary,
     getContacts,
+    getLBProfile,
     getOfficerSafety,
     getProfileReports,
     getResponsePlan,

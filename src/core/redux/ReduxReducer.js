@@ -9,6 +9,7 @@ import { combineReducers } from 'redux-immutable';
 
 import appReducer from '../../containers/app/AppReducer';
 import authorizeReducer from '../sagas/authorize/AuthorizeReducer';
+import crisisReportReducer from '../../containers/reports/crisis/CrisisReportReducer';
 import dashboardReducer from '../../containers/dashboard/DashboardReducer';
 // pages
 import dispositionReducer from '../../containers/pages/disposition/Reducer';
@@ -47,6 +48,7 @@ export default function reduxReducer(routerHistory :any) {
     search: searchReducer,
     staff: staffReducer,
     longBeach: longBeachReducer,
+    crisisReport: crisisReportReducer,
 
     // page reducers
     [STATE.DISPOSITION]: dispositionReducer,
