@@ -20,6 +20,7 @@ import * as AppSagas from '../../containers/app/AppSagas';
 import * as AppearanceSagas from '../../containers/profile/edit/basicinformation/sagas/AppearanceSagas';
 import * as BasicInformationSagas from '../../containers/profile/edit/basicinformation/sagas/BasicInformationSagas';
 import * as ContactsSagas from '../../containers/profile/edit/contacts/ContactsSagas';
+import * as CrisisReportSagas from '../../containers/reports/crisis/CrisisReportSagas';
 import * as DashboardSagas from '../../containers/dashboard/DashboardSagas';
 import * as DownloadsSagas from '../../containers/downloads/DownloadsSagas';
 import * as EncampmentSagas from '../../longbeach/location/encampment/EncampmentsSagas';
@@ -108,6 +109,11 @@ export default function* sagas() :Generator<*, *, *> {
     fork(ReportsSagas.getReportsByDateRangeWatcher),
     fork(ReportsSagas.submitReportWatcher),
     fork(ReportsSagas.updateReportWatcher),
+    fork(ReportsSagas.getIncidentReportsWatcher),
+    fork(ReportsSagas.getProfileIncidentsWatcher),
+    fork(ReportsSagas.getIncidentReportsSummaryWatcher),
+    fork(ReportsSagas.getReportsBehaviorAndSafetyWatcher),
+    fork(ReportsSagas.getReportersForReportsWatcher),
 
     // ResponsePlanSagas
     fork(ResponsePlanSagas.deleteInteractionStrategiesWatcher),
@@ -182,6 +188,15 @@ export default function* sagas() :Generator<*, *, *> {
     fork(LongBeachProviderSagas.getLBProvidersWatcher),
     /* <===== END LONG BEACH HACK =====> */
 
+    fork(CrisisReportSagas.addOptionalCrisisReportContentWatcher),
+    fork(CrisisReportSagas.deleteCrisisReportContentWatcher),
+    fork(CrisisReportSagas.getCrisisReportWatcher),
+    fork(CrisisReportSagas.getCrisisReportV2Watcher),
+    fork(CrisisReportSagas.getReportsV2NeighborsWatcher),
+    fork(CrisisReportSagas.getReportsNeighborsWatcher),
+    fork(CrisisReportSagas.getSubjectOfIncidentWatcher),
+    fork(CrisisReportSagas.submitCrisisReportWatcher),
+    fork(CrisisReportSagas.updateCrisisReportWatcher),
     fork(EncampmentSagas.addPersonToEncampmentWatcher),
     fork(EncampmentSagas.getEncampmentOccupantsWatcher),
     fork(EncampmentSagas.getEncampmentPeopleOptionsWatcher),

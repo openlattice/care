@@ -101,4 +101,8 @@ const OfficerSafetyCard = (props :Props) => {
   );
 };
 
+OfficerSafetyCard.defaultProps = {
+  isLoading: false
+};
+
 export default withRouter(OfficerSafetyCard);

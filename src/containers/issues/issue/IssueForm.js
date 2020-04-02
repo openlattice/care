@@ -7,11 +7,7 @@ import React, {
 } from 'react';
 
 import styled from 'styled-components';
-import {
-  List,
-  Map,
-  removeIn,
-} from 'immutable';
+import { List, Map, removeIn } from 'immutable';
 import { DataProcessingUtils, Form } from 'lattice-fabricate';
 import { DateTime } from 'luxon';
 import { useDispatch, useSelector } from 'react-redux';

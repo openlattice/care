@@ -13,7 +13,7 @@ import {
   faWeightHanging
 } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Map, is } from 'immutable';
+import { Map } from 'immutable';
 import {
   Card,
   CardHeader,

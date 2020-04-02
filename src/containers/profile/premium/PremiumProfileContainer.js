@@ -25,7 +25,6 @@ import DeescalationCard from './DeescalationCard';
 import IntroCard from './IntroCard';
 import OfficerSafetyCard from './OfficerSafetyCard';
 import ResponsePlanCard from './ResponsePlanCard';
-import { countCrisisCalls } from './Utils';
 
 import AboutPlanCard from '../../../components/premium/aboutplan/AboutPlanCard';
 import AddressCard from '../../../components/premium/address/AddressCard';
@@ -39,10 +38,11 @@ import ProfileResult from '../ProfileResult';
 import RecentIncidentCard from '../RecentIncidentCard';
 import StayAwayCard from '../../../components/premium/stayaway/StayAwayCard';
 import WarrantCard from '../../../components/premium/warrant/WarrantCard';
-import { useAuthorization, usePeopleRoute } from '../../../components/hooks';
+import { useAppSettings, useAuthorization, usePeopleRoute } from '../../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
 import {
-  CRISIS_PATH,
+  CRISIS_REPORT_PATH,
+  NEW_CRISIS_PATH,
   REPORT_ID_PATH,
   REPORT_VIEW_PATH,
 } from '../../../core/router/Routes';
@@ -53,6 +53,7 @@ import { getImageDataFromEntity } from '../../../utils/BinaryUtils';
 import { getEntityKeyId } from '../../../utils/DataUtils';
 import { reduceRequestStates } from '../../../utils/StateUtils';
 import { getProfileReports } from '../ProfileActions';
+import { getIncidentReportsSummary } from '../actions/ReportActions';
 import { labelMapReport } from '../constants';
 import { getAboutPlan } from '../edit/about/AboutActions';
 import { getBasicInformation } from '../edit/basicinformation/actions/BasicInformationActions';
@@ -103,6 +104,7 @@ type Props = {
     getAboutPlan :RequestSequence;
     getAuthorization :RequestSequence;
     getBasicInformation :RequestSequence;
+    getIncidentReportsSummary :RequestSequence;
     getContacts :RequestSequence;
     getLBProfile :RequestSequence;
     getOfficerSafety :RequestSequence;
@@ -112,6 +114,8 @@ type Props = {
   };
   address :Map;
   appearance :Map;
+  behaviorSummary :Map;
+  crisisSummary :Map;
   contactInfoByContactEKID :Map;
   contacts :List<Map>;
   fetchAboutPlanState :RequestState;
@@ -121,6 +125,7 @@ type Props = {
   fetchResponsePlanState :RequestState;
   interactionStrategies :List<Map>;
   isContactForByContactEKID :Map;
+  lastIncident :Map;
   officerSafety :List<Map>;
   photo :Map;
   reports :List<Map>;
@@ -148,8 +153,10 @@ const PremiumProfileContainer = (props :Props) => {
     actions,
     address,
     appearance,
+    behaviorSummary,
     contactInfoByContactEKID,
     contacts,
+    crisisSummary,
     fetchAboutPlanState,
     fetchAboutState,
     fetchOfficerSafetyState,
@@ -176,18 +183,27 @@ const PremiumProfileContainer = (props :Props) => {
   usePeopleRoute(actions.getBasicInformation);
   usePeopleRoute(actions.getContacts);
   usePeopleRoute(actions.getOfficerSafety);
-  usePeopleRoute(actions.getProfileReports);
   usePeopleRoute(actions.getResponsePlan);
+  usePeopleRoute(actions.getProfileReports);
+  // usePeopleRoute(actions.getIncidentReportsSummary);
   usePeopleRoute(actions.getLBProfile);
+
+  const settings = useAppSettings();
 
   const handleResultClick = useCallback((result :Map) => {
     const reportEKID = getEntityKeyId(result);
-    actions.goToPath(REPORT_VIEW_PATH.replace(REPORT_ID_PATH, reportEKID));
-  }, [actions]);
+    if (settings.get('v1')) {
+      actions.goToPath(CRISIS_REPORT_PATH.replace(REPORT_ID_PATH, reportEKID));
+    }
+    else {
+      actions.goToPath(REPORT_VIEW_PATH.replace(REPORT_ID_PATH, reportEKID));
+    }
+  }, [actions, settings]);
 
   const [isAuthorized] = useAuthorization('profile', actions.getAuthorization);
 
-  const { recent, total } = countCrisisCalls(reports);
+  const recent = crisisSummary.get('recent');
+  const total = crisisSummary.get('total');
   const isLoadingIntro = fetchAboutState !== RequestStates.SUCCESS;
   const isLoadingAboutPlan = fetchAboutPlanState !== RequestStates.SUCCESS;
 
@@ -213,7 +229,7 @@ const PremiumProfileContainer = (props :Props) => {
                 {
                   !isLoadingIntro && (
                     <CardSegment padding="sm" vertical>
-                      <LinkButton mode="primary" to={`${CRISIS_PATH}/1`} state={selectedPerson}>
+                      <LinkButton mode="primary" to={`${NEW_CRISIS_PATH}`} state={selectedPerson}>
                         New Crisis Report
                       </LinkButton>
                     </CardSegment>
@@ -238,7 +254,7 @@ const PremiumProfileContainer = (props :Props) => {
           </Aside>
           <ScrollStack>
             {
-              reports.isEmpty() && !isLoadingBody
+              !reports.count() && !isLoadingBody
                 ? <IconSplash icon={faFolderOpen} caption="No reports have been filed." />
                 : (
                   <>
@@ -250,7 +266,7 @@ const PremiumProfileContainer = (props :Props) => {
                         isLoading={isLoadingBody} />
                     <BehaviorAndSafetyGrid>
                       <BehaviorCard
-                          reports={reports}
+                          behaviorSummary={behaviorSummary}
                           isLoading={isLoadingBody} />
                       <OfficerSafetyCard
                           isLoading={isLoadingBody}
@@ -310,6 +326,8 @@ const mapStateToProps = (state :Map) => {
   return {
     address: state.getIn(['profile', 'basicInformation', 'address', 'data'], Map()),
     appearance: state.getIn(['profile', 'basicInformation', 'appearance', 'data'], Map()),
+    crisisSummary: state.getIn(['profile', 'reports', 'crisisSummary'], Map()),
+    behaviorSummary: state.getIn(['profile', 'reports', 'behaviorSummary'], Map()),
     contacts: state.getIn(['profile', 'contacts', 'data', 'contacts'], List()),
     contactInfoByContactEKID: state.getIn(['profile', 'contacts', 'data', 'contactInfoByContactEKID'], Map()),
     isContactForByContactEKID: state.getIn(['profile', 'contacts', 'data', 'isContactForByContactEKID'], Map()),
@@ -323,6 +341,7 @@ const mapStateToProps = (state :Map) => {
     officerSafety: state.getIn(['profile', 'officerSafety', 'data', 'officerSafetyConcerns'], List()),
     photo: state.getIn(['profile', 'basicInformation', 'photos', 'data'], Map()),
     reports: state.getIn(['profile', 'reports', 'data'], List()),
+    lastIncident: state.getIn(['profile', 'reports', 'lastIncident'], Map()),
     responsePlan: state.getIn(['profile', 'responsePlan', 'data'], Map()),
     responsibleUser: state.getIn(['profile', 'about', 'data'], Map()),
     scars: state.getIn(['profile', 'basicInformation', 'scars', 'data'], Map()),
@@ -340,6 +359,7 @@ const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
     getAboutPlan,
     getAuthorization,
     getBasicInformation,
+    getIncidentReportsSummary,
     getContacts,
     getLBProfile,
     getOfficerSafety,

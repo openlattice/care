@@ -3,8 +3,8 @@
  */
 
 import React from 'react';
-import styled from 'styled-components';
 
+import styled from 'styled-components';
 import { DateTimePicker, Label } from 'lattice-ui-kit';
 
 type Props = {
@@ -23,7 +23,6 @@ const DatePickerTitle = styled.div`
   font-size: 16px;
   margin: 28px 0 20px 0;
   text-align: center;
-  font-family: 'Open Sans', sans-serif;
   color: #555e6f;
   font-weight: 600;
 `;

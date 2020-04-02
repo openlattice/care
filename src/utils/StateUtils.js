@@ -1,6 +1,6 @@
+import has from 'lodash/has';
 // @flow
 import isString from 'lodash/isString';
-import has from 'lodash/has';
 import { RequestStates } from 'redux-reqseq';
 import type { RequestState } from 'redux-reqseq';
 

@@ -37,16 +37,18 @@ const Birthdate = styled.span`
 `;
 
 type Props = {
-  selectedPerson :Map;
   noDob ?:boolean;
+  selectedPerson :Map;
+  sticky ?:boolean;
 }
 
-const ProfileBanner = ({ selectedPerson, noDob } :Props) => {
-  const dob = getDobFromPerson(selectedPerson);
+const ProfileBanner = ({ selectedPerson, noDob, sticky } :Props) => {
+  // $FlowFixMe
+  const dob :string = getDobFromPerson(selectedPerson);
   const name = getLastFirstMiFromPerson(selectedPerson, true);
 
   return (
-    <Banner mode="default" isOpen sticky>
+    <Banner mode="default" isOpen sticky={sticky}>
       <Content hasContent={selectedPerson.isEmpty()}>
         <Name>{name}</Name>
         { !noDob && <Birthdate>{`DOB: ${dob}`}</Birthdate> }
@@ -56,7 +58,8 @@ const ProfileBanner = ({ selectedPerson, noDob } :Props) => {
 };
 
 ProfileBanner.defaultProps = {
-  noDob: false
+  noDob: false,
+  sticky: true,
 };
 
 export default ProfileBanner;

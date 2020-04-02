@@ -19,9 +19,10 @@ import { RequestStates } from 'redux-reqseq';
 
 import Detail from '../../components/premium/styled/Detail';
 import Portrait from '../../components/portrait/Portrait';
-import { useGoToPath } from '../../components/hooks';
+import { useAppSettings, useGoToPath } from '../../components/hooks';
 import {
   CRISIS_PATH,
+  NEW_CRISIS_PATH,
   PROFILE_ID_PATH,
   PROFILE_VIEW_PATH,
 } from '../../core/router/Routes';
@@ -112,7 +113,9 @@ const PersonResult = (props :Props) => {
     .getIn(['people', 'recentIncidentsByEKID', 'fetchState']) !== RequestStates.SUCCESS);
 
   const goToProfile = useGoToPath(PROFILE_VIEW_PATH.replace(PROFILE_ID_PATH, personEKID));
-  const goToReport = useGoToPath(`${CRISIS_PATH}/1`, result);
+  const settings = useAppSettings();
+  const path = settings.get('v1') ? NEW_CRISIS_PATH : CRISIS_PATH;
+  const goToReport = useGoToPath(path, result);
   const dispatch = useDispatch();
 
   const handleViewProfile = () => {
