@@ -24,8 +24,8 @@ import { DateTime } from 'luxon';
 import { withRouter } from 'react-router-dom';
 import type { Match } from 'react-router-dom';
 
-import Detail from '../../../components/premium/styled/Detail';
 import EditLinkButton from '../../../components/buttons/EditLinkButton';
+import IconDetail from '../../../components/premium/styled/IconDetail';
 import NewIssueButton from '../../../components/buttons/CreateIssueButton';
 import * as FQN from '../../../edm/DataModelFqns';
 import { H1, HeaderActions, IconWrapper } from '../../../components/layout';
@@ -37,12 +37,12 @@ import { CATEGORIES } from '../../issues/issue/constants';
 
 const { BASIC_INFORMATION } = CATEGORIES;
 
-const Name = styled(Detail)`
+const Name = styled(IconDetail)`
   text-transform: uppercase;
   font-weight: 600;
 `;
 
-const Birthdate = styled(Detail)`
+const Birthdate = styled(IconDetail)`
   width: 50%;
 `;
 
@@ -123,37 +123,37 @@ const IntroCard = (props :Props) => {
       </CardSegment>
       <CardSegment vertical padding="sm">
         <Label subtle>Aliases</Label>
-        <Detail
+        <IconDetail
             content={aliases}
             isLoading={isLoading} />
       </CardSegment>
       <CardSegment vertical padding="sm">
         <IntroGrid>
-          <Detail
+          <IconDetail
               content={race}
               isLoading={isLoading}
               icon={faUser} />
-          <Detail
+          <IconDetail
               content={sex}
               isLoading={isLoading}
               icon={faVenusMars} />
-          <Detail
+          <IconDetail
               content={formattedHeight}
               isLoading={isLoading}
               icon={faRulerVertical} />
-          <Detail
+          <IconDetail
               content={formattedWeight}
               isLoading={isLoading}
               icon={faWeightHanging} />
-          <Detail
+          <IconDetail
               content={hairColor}
               isLoading={isLoading}
               icon={faUserHardHat} />
-          <Detail
+          <IconDetail
               content={eyeColor}
               isLoading={isLoading}
               icon={faEye} />
-          <Detail
+          <IconDetail
               content={scarsMarksTattoos}
               isLoading={isLoading}
               icon={faClawMarks} />

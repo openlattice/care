@@ -17,7 +17,7 @@ import { DateTime } from 'luxon';
 import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
-import Detail from '../../components/premium/styled/Detail';
+import IconDetail from '../../components/premium/styled/IconDetail';
 import Portrait from '../../components/portrait/Portrait';
 import { useAppSettings, useGoToPath } from '../../components/hooks';
 import {
@@ -125,8 +125,7 @@ const PersonResult = (props :Props) => {
   };
 
   const fullName = getLastFirstMiFromPerson(result, true);
-  // $FlowFixMe
-  const dob :string = getDobFromPerson(result, false, '---');
+  const dob :string = getDobFromPerson(result, '---');
   const sex = result.getIn([PERSON_SEX_FQN, 0]);
   const race = result.getIn([PERSON_RACE_FQN, 0]);
   const numSources = result.getIn([NUM_SOURCES_FOUND_IN_FQN, 0]);
@@ -138,11 +137,11 @@ const PersonResult = (props :Props) => {
           <Portrait imageUrl={imageUrl} height="128" width="96" />
           <Details>
             <Name bold uppercase fontSize="24px">{fullName}</Name>
-            <Detail content={dob} icon={faBirthdayCake} isLoading={isLoading} />
-            <Detail content={sex} icon={faVenusMars} isLoading={isLoading} />
-            <Detail content={race} icon={faUser} isLoading={isLoading} />
-            <Detail content={recentDate} icon={faHistory} isLoading={isLoading} />
-            <Detail content={numSources} icon={faFileExclamation} isLoading={isLoading} />
+            <IconDetail content={dob} icon={faBirthdayCake} isLoading={isLoading} />
+            <IconDetail content={sex} icon={faVenusMars} isLoading={isLoading} />
+            <IconDetail content={race} icon={faUser} isLoading={isLoading} />
+            <IconDetail content={recentDate} icon={faHistory} isLoading={isLoading} />
+            <IconDetail content={numSources} icon={faFileExclamation} isLoading={isLoading} />
           </Details>
         </FlexRow>
         <Actions>

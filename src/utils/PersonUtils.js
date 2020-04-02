@@ -30,9 +30,9 @@ const getFirstLastFromPerson = (person :Map | Object) => {
   return `${firstName} ${last}`;
 };
 
-const getDobFromPerson = (person :Map | Object, asDate :boolean = false, invalidValue :any = '') => {
+const getDobFromPerson = (person :Map | Object, invalidValue :any = '') :string => {
   const dobStr = getIn(person, [FQN.PERSON_DOB_FQN, 0], '');
-  return getDateShortFromIsoDate(dobStr, asDate, invalidValue);
+  return getDateShortFromIsoDate(dobStr, invalidValue);
 };
 
 

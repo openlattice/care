@@ -10,7 +10,7 @@ import {
   Label,
 } from 'lattice-ui-kit';
 
-import Detail from '../styled/Detail';
+import IconDetail from '../styled/IconDetail';
 import { getAddressFromLocation } from '../../../utils/AddressUtils';
 import { H1 } from '../../layout';
 import { CardSkeleton } from '../../skeletons';
@@ -42,13 +42,13 @@ const StayAwayCard = ({ isLoading, stayAwayLocation } :Props) => {
             <Label subtle>
               Location Name
             </Label>
-            <Detail content={name} isLoading={isLoading} />
+            <IconDetail content={name} isLoading={isLoading} />
           </div>
           <div>
             <Label subtle>
               Location
             </Label>
-            <Detail content={address} isLoading={isLoading} />
+            <IconDetail content={address} isLoading={isLoading} />
           </div>
         </Grid>
       </CardSegment>
