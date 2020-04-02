@@ -13,7 +13,7 @@ import { RequestStates } from 'redux-reqseq';
 
 import SuccessSplash from './SuccessSplash';
 import { clearCrisisReport, submitCrisisReport } from './CrisisActions';
-import { v2 } from './schemas';
+import { v1 } from './schemas';
 import { generateReviewSchema } from './schemas/schemaUtils';
 
 const ActionRow = styled.div`
@@ -23,7 +23,7 @@ const ActionRow = styled.div`
   padding: 0 30px 30px 30px;
 `;
 
-const { schemas, uiSchemas } = v2;
+const { schemas, uiSchemas } = v1;
 
 type Props = {
   pageRef :{ current :HTMLDivElement | null };

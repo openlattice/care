@@ -31,7 +31,9 @@ type Props = {
 const BlameCard = (props :Props) => {
   const { reporterData } = props;
 
-  const reported = reporterData.getIn(['associationDetails', FQN.COMPLETED_DT_FQN, 0]);
+  const completedDT = reporterData.getIn(['associationDetails', FQN.COMPLETED_DT_FQN, 0]);
+  const datetime = reporterData.getIn(['associationDetails', FQN.DATE_TIME_FQN, 0]);
+  const reported = completedDT || datetime;
   const reportedDT = DateTime.fromISO(reported).toLocaleString(DateTime.DATE_SHORT);
   const reporter = reporterData.getIn(['neighborDetails', FQN.PERSON_ID_FQN, 0]);
 

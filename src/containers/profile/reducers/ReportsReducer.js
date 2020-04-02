@@ -24,7 +24,7 @@ const reportsReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
         REQUEST: () => state.set('fetchState', RequestStates.PENDING),
         SUCCESS: () => state
           .set('fetchState', RequestStates.SUCCESS)
-          .set('data', action.value),
+          .merge(action.value),
         FAILURE: () => state.set('fetchState', RequestStates.FAILURE),
       });
     }

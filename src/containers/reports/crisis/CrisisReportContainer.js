@@ -1,5 +1,5 @@
 // @flow
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { Map } from 'immutable';
 import { Form } from 'lattice-fabricate';
@@ -19,7 +19,7 @@ import {
   getCrisisReport,
   updateCrisisReport
 } from './CrisisActions';
-import { v2 } from './schemas';
+import { v1 } from './schemas';
 import { generateReviewSchema } from './schemas/schemaUtils';
 
 import BlameCard from '../shared/BlameCard';
@@ -34,15 +34,22 @@ import { getEntityKeyId } from '../../../utils/DataUtils';
 import { getFirstLastFromPerson } from '../../../utils/PersonUtils';
 
 const {
-  CLINICIAN_REPORT_FQN
+  // CLINICIAN_REPORT_FQN // v2,
+  BEHAVIORAL_HEALTH_REPORT_FQN,
 } = APP_TYPES_FQNS;
-const { schemas, uiSchemas } = v2;
+const { schemas, uiSchemas } = v1;
 
 const CrisisReportContainer = () => {
-  const [isAuthorized] = useAuthorization('profile', getAuthorization);
+  const dispatch = useDispatch();
+  const match = useRouteMatch();
 
+  const dispatchGetAuthorization = useCallback(() => {
+    dispatch(getAuthorization());
+  }, [dispatch]);
+
+  const [isAuthorized] = useAuthorization('profile', dispatchGetAuthorization);
   // TODO memoize this so you can reuse it in the saga
-  const reviewSchemas = generateReviewSchema(schemas, uiSchemas, !isAuthorized);
+  const reviewSchemas = useMemo(() => generateReviewSchema(schemas, uiSchemas, !isAuthorized), [isAuthorized]);
 
   const entityIndexToIdMap = useSelector((store) => store.getIn(['crisisReport', 'entityIndexToIdMap']));
   const entitySetIds = useSelector((store) => store.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
@@ -53,15 +60,12 @@ const CrisisReportContainer = () => {
   const reportData = useSelector((store) => store.getIn(['crisisReport', 'reportData']));
   const subjectData = useSelector((store) => store.getIn(['crisisReport', 'subjectData']));
 
-  const dispatch = useDispatch();
-  const match = useRouteMatch();
-
   const { [REPORT_ID_PARAM]: reportId } = match.params;
 
   useEffect(() => {
     dispatch(getCrisisReport({
       reportEKID: reportId,
-      reportFQN: CLINICIAN_REPORT_FQN,
+      reportFQN: BEHAVIORAL_HEALTH_REPORT_FQN,
       // schema: reviewSchemas.schema
     }));
   }, [dispatch, reportId]);
@@ -71,31 +75,34 @@ const CrisisReportContainer = () => {
   }
 
   const handleUpdateCrisisReport = (params) => {
-    dispatch(updateCrisisReport(params));
-  };
-
-  const handleDeleteCrisisReportContent = (params) => {
-    dispatch(deleteCrisisReportContent(params));
-  };
-
-  const handleAddOptionalContent = (params) => {
-    const existingEKIDs = {
-      [CLINICIAN_REPORT_FQN]: reportId,
-    };
-
-    dispatch(addOptionalCrisisReportContent({
+    dispatch(updateCrisisReport({
       ...params,
-      existingEKIDs,
-      schema: reviewSchemas.schema
+      entityIndexToIdMap,
     }));
   };
 
+  // const handleDeleteCrisisReportContent = (params) => {
+  //   dispatch(deleteCrisisReportContent(params));
+  // };
+
+  // const handleAddOptionalContent = (params) => {
+  //   const existingEKIDs = {
+  //     [CLINICIAN_REPORT_FQN]: reportId,
+  //   };
+
+  //   dispatch(addOptionalCrisisReportContent({
+  //     ...params,
+  //     existingEKIDs,
+  //     schema: reviewSchemas.schema
+  //   }));
+  // };
+
   const name = getFirstLastFromPerson(subjectData);
   const formContext = {
-    addActions: {
-      addOptional: handleAddOptionalContent
-    },
-    deleteAction: handleDeleteCrisisReportContent,
+    // addActions: {
+    //   addOptional: handleAddOptionalContent
+    // },
+    // deleteAction: handleDeleteCrisisReportContent,
     editAction: handleUpdateCrisisReport,
     entityIndexToIdMap,
     entitySetIds,

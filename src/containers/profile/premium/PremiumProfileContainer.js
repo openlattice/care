@@ -23,7 +23,6 @@ import BackgroundInformationCard from './BackgroundInformationCard';
 import BehaviorCard from './BehaviorCard';
 import DeescalationCard from './DeescalationCard';
 import IntroCard from './IntroCard';
-import LastIncident from './LastIncident';
 import OfficerSafetyCard from './OfficerSafetyCard';
 import ResponsePlanCard from './ResponsePlanCard';
 
@@ -39,9 +38,10 @@ import ProfileResult from '../ProfileResult';
 import RecentIncidentCard from '../RecentIncidentCard';
 import StayAwayCard from '../../../components/premium/stayaway/StayAwayCard';
 import WarrantCard from '../../../components/premium/warrant/WarrantCard';
-import { useAuthorization, usePeopleRoute } from '../../../components/hooks';
+import { useAppSettings, useAuthorization, usePeopleRoute } from '../../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
 import {
+  CRISIS_REPORT_PATH,
   NEW_CRISIS_PATH,
   REPORT_ID_PATH,
   REPORT_VIEW_PATH,
@@ -170,7 +170,6 @@ const PremiumProfileContainer = (props :Props) => {
     isContactForByContactEKID,
     officerSafety,
     photo,
-    lastIncident,
     reports,
     responsePlan,
     responsibleUser,
@@ -185,13 +184,21 @@ const PremiumProfileContainer = (props :Props) => {
   usePeopleRoute(actions.getContacts);
   usePeopleRoute(actions.getOfficerSafety);
   usePeopleRoute(actions.getResponsePlan);
-  usePeopleRoute(actions.getIncidentReportsSummary);
+  usePeopleRoute(actions.getProfileReports);
+  // usePeopleRoute(actions.getIncidentReportsSummary);
   usePeopleRoute(actions.getLBProfile);
+
+  const settings = useAppSettings();
 
   const handleResultClick = useCallback((result :Map) => {
     const reportEKID = getEntityKeyId(result);
-    actions.goToPath(REPORT_VIEW_PATH.replace(REPORT_ID_PATH, reportEKID));
-  }, [actions]);
+    if (settings.get('v1')) {
+      actions.goToPath(CRISIS_REPORT_PATH.replace(REPORT_ID_PATH, reportEKID));
+    }
+    else {
+      actions.goToPath(REPORT_VIEW_PATH.replace(REPORT_ID_PATH, reportEKID));
+    }
+  }, [actions, settings]);
 
   const [isAuthorized] = useAuthorization('profile', actions.getAuthorization);
 
@@ -247,7 +254,7 @@ const PremiumProfileContainer = (props :Props) => {
           </Aside>
           <ScrollStack>
             {
-              lastIncident.isEmpty() && !isLoadingBody
+              !reports.count() && !isLoadingBody
                 ? <IconSplash icon={faFolderOpen} caption="No reports have been filed." />
                 : (
                   <>
@@ -284,7 +291,6 @@ const PremiumProfileContainer = (props :Props) => {
                         contacts={contacts}
                         contactInfoByContactEKID={contactInfoByContactEKID}
                         isContactForByContactEKID={isContactForByContactEKID} />
-                    <LastIncident />
                     <SearchResults
                         hasSearched={false}
                         onResultClick={handleResultClick}
