@@ -19,7 +19,7 @@ const NewSymptomsReportContainer = () => {
   const pageRef = useRef<HTMLDivElement | null>(null);
 
   const { state: selectedPerson = Map() } = location;
-  if (!Map.isMap(selectedPerson) || selectedPerson.isEmpty()) return <Redirect to={HOME_PATH} />;
+  // if (!Map.isMap(selectedPerson) || selectedPerson.isEmpty()) return <Redirect to={HOME_PATH} />;
 
   return (
     <ContentOuterWrapper ref={pageRef}>

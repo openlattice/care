@@ -11,10 +11,10 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
-import SuccessSplash from './SuccessSplash';
 import { clearCrisisReport, submitCrisisReport } from './CrisisActions';
 import { v1 } from './schemas';
 
+import SuccessSplash from '../shared/SuccessSplash';
 import { generateReviewSchema } from '../../../utils/SchemaUtils';
 
 const ActionRow = styled.div`
@@ -42,7 +42,7 @@ const NewCrisisReport = ({ pageRef, selectedPerson } :Props) => {
 
   if (submitState === RequestStates.SUCCESS) {
     return (
-      <SuccessSplash selectedPerson={selectedPerson} />
+      <SuccessSplash reportType="Crisis Report" selectedPerson={selectedPerson} />
     );
   }
 

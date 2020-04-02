@@ -2,6 +2,7 @@
 
 import React from 'react';
 
+import isFunction from 'lodash/isFunction';
 import styled from 'styled-components';
 import {
   faBirthdayCake,
@@ -23,6 +24,7 @@ import { useAppSettings, useGoToPath } from '../../components/hooks';
 import {
   CRISIS_PATH,
   NEW_CRISIS_PATH,
+  NEW_SYMPTOMS_PATH,
   PROFILE_ID_PATH,
   PROFILE_VIEW_PATH,
 } from '../../core/router/Routes';
@@ -92,12 +94,13 @@ const BigButton = styled(Button)`
 `;
 
 type Props = {
+  onClick :(result :Map) => void;
   result :Map;
 }
 
 const PersonResult = (props :Props) => {
 
-  const { result } = props;
+  const { result, onClick } = props;
 
   const personEKID = result.getIn([OPENLATTICE_ID_FQN, 0]);
   const imageUrl = useSelector((store) => {
@@ -114,9 +117,17 @@ const PersonResult = (props :Props) => {
 
   const goToProfile = useGoToPath(PROFILE_VIEW_PATH.replace(PROFILE_ID_PATH, personEKID));
   const settings = useAppSettings();
-  const path = settings.get('v1') ? NEW_CRISIS_PATH : CRISIS_PATH;
+  // TODO: update this to open modal to select the type of report to make.
+  // const path = settings.get('v1') ? NEW_CRISIS_PATH : CRISIS_PATH;
+  const path = NEW_SYMPTOMS_PATH;
   const goToReport = useGoToPath(path, result);
   const dispatch = useDispatch();
+
+  const handleClick = () => {
+    if (isFunction(onClick)) {
+      onClick(result);
+    }
+  };
 
   const handleViewProfile = () => {
     dispatch(clearProfile());

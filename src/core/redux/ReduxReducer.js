@@ -27,6 +27,7 @@ import reportsReducer from '../../containers/reports/ReportsReducer';
 import searchReducer from '../../containers/search/SearchReducer';
 import staffReducer from '../../containers/staff/StaffReducer';
 import subjectInformationReducer from '../../containers/pages/subjectinformation/Reducer';
+import symptomsReportReducer from '../../containers/reports/symptoms/SymptomsReportReducer';
 import { INITIALIZE_APPLICATION } from '../../containers/app/AppActions';
 import { STATE } from '../../utils/constants/StateConstants';
 
@@ -49,6 +50,7 @@ export default function reduxReducer(routerHistory :any) {
     staff: staffReducer,
     longBeach: longBeachReducer,
     crisisReport: crisisReportReducer,
+    symptomsReport: symptomsReportReducer,
 
     // page reducers
     [STATE.DISPOSITION]: dispositionReducer,

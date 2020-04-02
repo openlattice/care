@@ -34,6 +34,7 @@ import LongBeachLocationsContainer from '../../longbeach/location/stayaway/LongB
 import LongBeachProviderContainer from '../../longbeach/provider/LongBeachProviderContainer';
 import LongBeachRouter from '../../longbeach/LongBeachRouter';
 import NewCrisisReportContainer from '../reports/crisis/NewCrisisReportContainer';
+import NewSymptomsReportContainer from '../reports/symptoms/NewSymptomsReportContainer';
 import ProfileRouter from '../profile/ProfileRouter';
 import SearchPeopleContainer from '../people/SearchPeopleContainer';
 import {
@@ -161,6 +162,7 @@ class AppContainer extends Component<Props> {
         <Route exact strict path={HOME_PATH} component={SearchPeopleContainer} />
         <Route path={CRISIS_PATH} component={CrisisReportContainer} />
         <Route path="/new-crisis" component={NewCrisisReportContainer} />
+        <Route path="/new-symptoms" component={NewSymptomsReportContainer} />
         <Route path={REPORTS_PATH} component={LegitReportsRouter} />
         <Route path={LOCATION_PATH} component={LongBeachLocationsContainer} />
         <Route path={PROVIDER_PATH} component={LongBeachProviderContainer} />
