@@ -1,10 +1,28 @@
+import { setIn } from 'immutable';
+import { DataProcessingUtils } from 'lattice-fabricate';
 // @flow
 import { DateTime } from 'luxon';
 
 import * as FQN from '../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS as APP } from '../../../shared/Consts';
 
-const getNewSymptomsReportAssociations = (
+const { getPageSectionKey, getEntityAddressKey } = DataProcessingUtils;
+
+const postProcessSymptoms = (
+  formData :Object,
+  position :Position,
+) => {
+  const sectionKey = getPageSectionKey(1, 1);
+  const { coords } = position;
+  if (coords) {
+    const { latitude, longitude } = coords;
+    const property = getEntityAddressKey(0, APP.LOCATION_FQN, FQN.LOCATION_COORDINATES_FQN);
+    return setIn(formData, [sectionKey, property], `${latitude},${longitude}`);
+  }
+  return formData;
+};
+
+const getSymptomsReportAssociations = (
   formData :Object,
   existingEntityKeyIds :Object,
   createdDateTime :string = DateTime.local().toISO()
@@ -16,18 +34,15 @@ const getNewSymptomsReportAssociations = (
 
   // static assocations
   const associations :any[][] = [
-    [APP.INVOLVED_IN_FQN, personEKID, APP.PEOPLE_FQN, 0, APP.INCIDENT_FQN, NOW_DATA],
-    [APP.LOCATED_AT_FQN, 0, APP.INCIDENT_FQN, 0, APP.LOCATION_FQN, NOW_DATA],
-    [APP.REPORTED_FQN, staffEKID, APP.STAFF_FQN, 0, APP.INCIDENT_FQN, NOW_DATA],
-    [APP.REPORTED_FQN, staffEKID, APP.STAFF_FQN, 0, APP.SYMPTOMS_REPORT_FQN, NOW_DATA],
-    [APP.PART_OF_FQN, 0, APP.INCIDENT_FQN, 0, APP.SYMPTOMS_REPORT_FQN, NOW_DATA],
-    [APP.PART_OF_FQN, 0, APP.NATURE_OF_CRISIS_FQN, 0, APP.SYMPTOMS_REPORT_FQN, NOW_DATA],
-    [APP.PART_OF_FQN, 0, APP.SYMPTOM_FQN, 0, APP.SYMPTOMS_REPORT_FQN, NOW_DATA],
+    [APP.OBSERVED_IN_FQN, 0, APP.SYMPTOM_FQN, personEKID, APP.PEOPLE_FQN, NOW_DATA],
+    [APP.REPORTED_FQN, staffEKID, APP.STAFF_FQN, 0, APP.SYMPTOM_FQN, NOW_DATA],
+    [APP.LOCATED_AT_FQN, 0, APP.SYMPTOM_FQN, 0, APP.LOCATION_FQN, NOW_DATA],
   ];
 
   return associations;
 };
 
 export {
-  getNewSymptomsReportAssociations
+  postProcessSymptoms,
+  getSymptomsReportAssociations
 };

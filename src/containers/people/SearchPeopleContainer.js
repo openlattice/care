@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useState } from 'react';
+import React, { useReducer, useState } from 'react';
 
 import styled from 'styled-components';
 import { List, Map, fromJS } from 'immutable';
@@ -24,6 +24,7 @@ import { RequestStates } from 'redux-reqseq';
 import AdvancedHeader from './AdvancedHeader';
 import MetaphoneLabel from './MetaphoneLabel';
 import PersonResult from './PersonResult';
+import ReportSelectionModal from './ReportSelectionModal';
 import { searchPeople } from './PeopleActions';
 
 import Accordion from '../../components/accordion';
@@ -74,6 +75,26 @@ const FlexEnd = styled.div`
 
 const MAX_HITS = 20;
 
+const INITIAL_STATE = {
+  selectedPerson: undefined,
+  isVisible: false,
+};
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'open': {
+      return {
+        selectedPerson: action.payload,
+        isVisible: true
+      };
+    }
+    case 'close':
+      return INITIAL_STATE;
+    default:
+      return state;
+  }
+};
+
 const SearchPeopleContainer = () => {
 
   const searchResults = useSelector((store) => store.getIn(['people', 'hits'], List()));
@@ -82,6 +103,7 @@ const SearchPeopleContainer = () => {
   const searchInputs = useSelector((store) => store.getIn(['people', 'searchInputs']));
   const dispatch = useDispatch();
 
+  const [modalState, modalDispatch] = useReducer(reducer, INITIAL_STATE);
   const [dob, setDob] = useState(searchInputs.get('dob'));
   const [ethnicity, setEthnicity] = useState(searchInputs.get('ethnicity'));
   const [firstName, setFirstName] = useInput(searchInputs.get('firstName'));
@@ -142,6 +164,14 @@ const SearchPeopleContainer = () => {
   const onPageChange = ({ page: newPage, start }) => {
     dispatchSearch(start);
     setPage(newPage);
+  };
+
+  const handleOpenReportSelection = (result :Map) => {
+    modalDispatch({ type: 'open', payload: result });
+  };
+
+  const handleCloseReportSelection = () => {
+    modalDispatch({ type: 'close' });
   };
 
   return (
@@ -236,6 +266,7 @@ const SearchPeopleContainer = () => {
               hasSearched={hasSearched}
               isLoading={isLoading}
               resultComponent={PersonResult}
+              onResultClick={handleOpenReportSelection}
               results={searchResults} />
           {
             hasSearched && (
@@ -247,6 +278,10 @@ const SearchPeopleContainer = () => {
             )
           }
         </CardStack>
+        <ReportSelectionModal
+            selectedPerson={modalState.selectedPerson}
+            isVisible={modalState.isVisible}
+            onClose={handleCloseReportSelection} />
       </ContentWrapper>
     </ContentOuterWrapper>
   );

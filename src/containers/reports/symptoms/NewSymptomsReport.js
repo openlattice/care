@@ -26,10 +26,11 @@ const ActionRow = styled.div`
 
 type Props = {
   pageRef :{ current :HTMLDivElement | null };
+  position :Position;
   selectedPerson :Map;
 };
 
-const NewCrisisReport = ({ pageRef, selectedPerson } :Props) => {
+const NewCrisisReport = ({ pageRef, position, selectedPerson } :Props) => {
   const dispatch = useDispatch();
   const reviewSchemas = useMemo(() => generateReviewSchema(schemas, uiSchemas, true), []);
   const submitState = useSelector((store) => store.getIn(['symptomsReport', 'submitState']));
@@ -60,7 +61,7 @@ const NewCrisisReport = ({ pageRef, selectedPerson } :Props) => {
 
             const validate = isReviewPage
               ? () => {
-                dispatch(submitSymptomsReport({ formData: pagedData, selectedPerson }));
+                dispatch(submitSymptomsReport({ formData: pagedData, selectedPerson, position }));
               }
               : validateAndSubmit;
 

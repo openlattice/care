@@ -6,7 +6,7 @@ import * as FQN from '../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
 import { SELECT_ALL_THAT_APPLY } from '../../shared/constants';
 
-const { SYMPTOMS_REPORT_FQN, SYMPTOM_FQN } = APP_TYPES_FQNS;
+const { SYMPTOM_FQN } = APP_TYPES_FQNS;
 
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
 
@@ -32,11 +32,6 @@ const schema = {
           title: 'Additional Notes',
           type: 'string',
         },
-        [getEntityAddressKey(0, SYMPTOMS_REPORT_FQN, FQN.TYPE_FQN)]: {
-          title: 'Report Type',
-          type: 'string',
-          default: 'Symptoms Report'
-        },
       },
       required: [
         getEntityAddressKey(0, SYMPTOM_FQN, FQN.NAME_FQN),
@@ -57,7 +52,6 @@ const uiSchema = {
       'ui:options': {
         mode: 'button',
         row: true,
-        withOther: true,
       },
     },
     [getEntityAddressKey(0, SYMPTOM_FQN, FQN.DESCRIPTION_FQN)]: {
@@ -66,10 +60,6 @@ const uiSchema = {
       'ui:options': {
         placeholder: ADDITIONAL_NOTES_PLACEHOLDER
       }
-    },
-    [getEntityAddressKey(0, SYMPTOMS_REPORT_FQN, FQN.TYPE_FQN)]: {
-      classNames: 'column-span-12',
-      'ui:widget': 'hidden',
     },
   },
 };
