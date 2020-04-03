@@ -1,7 +1,7 @@
 // @flow
 import { useEffect, useState } from 'react';
 
-const usePosition = () :[Position, PositionError] => {
+const usePosition = (timeout :number = 0) :[Position, PositionError] => {
   const [position, setPosition] = useState({});
   const [error, setError] = useState(null);
 
@@ -19,9 +19,9 @@ const usePosition = () :[Position, PositionError] => {
       setError('Geolocation is not supported');
       return;
     }
-
-    geo.getCurrentPosition(onChange, onError);
-  }, []);
+    const options = { timeout };
+    geo.getCurrentPosition(onChange, onError, options);
+  }, [timeout]);
 
   return [position, error];
 };
