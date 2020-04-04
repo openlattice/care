@@ -74,7 +74,7 @@ export const APP_TYPES_FQNS = {
   /* <===== END LIVERMORE HACK =====> */
   /* <===== SYMPTOMS ======> */
   SYMPTOM_FQN: new FullyQualifiedName('app.symptom'),
-  SYMPTOMS_REPORT_FQN: new FullyQualifiedName('app.symptomsreport')
+  INTERACTED_WITH_FQN: new FullyQualifiedName('app.interactedwith'),
   /* <===== END SYMPTOMS ======> */
 };
 

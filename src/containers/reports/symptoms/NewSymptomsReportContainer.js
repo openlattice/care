@@ -19,7 +19,7 @@ import { HOME_PATH } from '../../../core/router/Routes';
 const NewSymptomsReportContainer = () => {
   const location = useLocation();
   const pageRef = useRef<HTMLDivElement | null>(null);
-  const [position, error] = usePosition();
+  const [position, error] = usePosition(500);
   const isLoading = !position.coords && !error;
 
   const { state: selectedPerson = Map() } = location;
