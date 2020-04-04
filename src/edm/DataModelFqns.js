@@ -4,6 +4,15 @@ const { FullyQualifiedName } = Models;
 const { OPENLATTICE_ID_FQN } = Constants;
 
 export { OPENLATTICE_ID_FQN };
+
+/* symptom */
+const DATE_LAST_REPORTED = new FullyQualifiedName('ol.datelastreported');
+export { DATE_LAST_REPORTED };
+
+/* interacted with */
+const CONTACT_DATE_TIME_FQN = new FullyQualifiedName('ol.contactdatetime');
+export { CONTACT_DATE_TIME_FQN };
+
 /* substance */
 const TEMPORAL_STATUS_FQN = new FullyQualifiedName('ol.temporalstatus');
 export { TEMPORAL_STATUS_FQN };

@@ -7,15 +7,17 @@ import { Form, Paged } from 'lattice-fabricate';
 import {
   Button,
   Card,
+  CardStack,
 } from 'lattice-ui-kit';
 import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
-import { clearCrisisReport, submitCrisisReport } from './CrisisActions';
-import { v1 } from './schemas';
+import { clearSymptomsReport, submitSymptomsReport } from './SymptomsReportActions';
+import { schemas, uiSchemas } from './schemas';
 
 import SuccessSplash from '../shared/SuccessSplash';
 import { generateReviewSchema } from '../../../utils/SchemaUtils';
+import LastContactWith from './LastContactWith';
 
 const ActionRow = styled.div`
   display: flex;
@@ -24,25 +26,27 @@ const ActionRow = styled.div`
   padding: 0 30px 30px 30px;
 `;
 
-const { schemas, uiSchemas } = v1;
-
 type Props = {
   pageRef :{ current :HTMLDivElement | null };
+  position :Position;
   selectedPerson :Map;
 };
 
-const NewCrisisReport = ({ pageRef, selectedPerson } :Props) => {
+const NewCrisisReport = ({ pageRef, position, selectedPerson } :Props) => {
   const dispatch = useDispatch();
   const reviewSchemas = useMemo(() => generateReviewSchema(schemas, uiSchemas, true), []);
-  const submitState = useSelector((store) => store.getIn(['crisisReport', 'submitState']));
+  const submitState = useSelector((store) => store.getIn(['symptomsReport', 'submitState']));
 
-  useEffect(() => () => dispatch(clearCrisisReport()), [dispatch]);
+  useEffect(() => () => dispatch(clearSymptomsReport()), [dispatch]);
 
   const isLoading = submitState === RequestStates.PENDING;
 
   if (submitState === RequestStates.SUCCESS) {
     return (
-      <SuccessSplash reportType="Crisis Report" selectedPerson={selectedPerson} />
+      <CardStack>
+        <SuccessSplash reportType="Symptoms Report" selectedPerson={selectedPerson} />
+        <LastContactWith selectedPerson={selectedPerson} />
+      </CardStack>
     );
   }
 
@@ -62,7 +66,7 @@ const NewCrisisReport = ({ pageRef, selectedPerson } :Props) => {
 
             const validate = isReviewPage
               ? () => {
-                dispatch(submitCrisisReport({ formData: pagedData, selectedPerson }));
+                dispatch(submitSymptomsReport({ formData: pagedData, selectedPerson, position }));
               }
               : validateAndSubmit;
 
@@ -113,7 +117,6 @@ const NewCrisisReport = ({ pageRef, selectedPerson } :Props) => {
           }} />
     </Card>
   );
-
 };
 
 export default NewCrisisReport;

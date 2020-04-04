@@ -2,6 +2,7 @@
 
 import React from 'react';
 
+import isFunction from 'lodash/isFunction';
 import styled from 'styled-components';
 import {
   faBirthdayCake,
@@ -19,10 +20,8 @@ import { RequestStates } from 'redux-reqseq';
 
 import IconDetail from '../../components/premium/styled/IconDetail';
 import Portrait from '../../components/portrait/Portrait';
-import { useAppSettings, useGoToPath } from '../../components/hooks';
+import { useGoToPath } from '../../components/hooks';
 import {
-  CRISIS_PATH,
-  NEW_CRISIS_PATH,
   PROFILE_ID_PATH,
   PROFILE_VIEW_PATH,
 } from '../../core/router/Routes';
@@ -92,12 +91,13 @@ const BigButton = styled(Button)`
 `;
 
 type Props = {
+  onClick :(result :Map) => void;
   result :Map;
 }
 
 const PersonResult = (props :Props) => {
 
-  const { result } = props;
+  const { result, onClick } = props;
 
   const personEKID = result.getIn([OPENLATTICE_ID_FQN, 0]);
   const imageUrl = useSelector((store) => {
@@ -113,10 +113,13 @@ const PersonResult = (props :Props) => {
     .getIn(['people', 'recentIncidentsByEKID', 'fetchState']) !== RequestStates.SUCCESS);
 
   const goToProfile = useGoToPath(PROFILE_VIEW_PATH.replace(PROFILE_ID_PATH, personEKID));
-  const settings = useAppSettings();
-  const path = settings.get('v1') ? NEW_CRISIS_PATH : CRISIS_PATH;
-  const goToReport = useGoToPath(path, result);
   const dispatch = useDispatch();
+
+  const handleClick = () => {
+    if (isFunction(onClick)) {
+      onClick(result);
+    }
+  };
 
   const handleViewProfile = () => {
     dispatch(clearProfile());
@@ -148,7 +151,7 @@ const PersonResult = (props :Props) => {
           <BigButton mode="secondary" onClick={handleViewProfile}>
             View Profile
           </BigButton>
-          <Button mode="positive" onClick={goToReport}>
+          <Button mode="positive" onClick={handleClick}>
             New Report
           </Button>
         </Actions>

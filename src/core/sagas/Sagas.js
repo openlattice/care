@@ -35,12 +35,14 @@ import * as OfficerSafetyConcernsSagas from '../../containers/profile/edit/offic
 import * as PeopleSagas from '../../containers/people/PeopleSagas';
 import * as PhotosSagas from '../../containers/profile/edit/basicinformation/sagas/PhotosSagas';
 import * as ProfileSagas from '../../containers/profile/ProfileSagas';
+import * as RecentInteractionSagas from '../../containers/reports/interaction/RecentInteractionSagas';
 import * as ReportsSagas from '../../containers/reports/ReportsSagas';
 import * as ResponsePlanSagas from '../../containers/profile/edit/responseplan/ResponsePlanSagas';
 import * as RoutingSagas from '../router/RoutingSagas';
 import * as ScarsMarksTattoosSagas from '../../containers/profile/edit/basicinformation/sagas/ScarsMarksTattoosSagas';
 import * as SearchSagas from '../../containers/search/SearchSagas';
 import * as StaffSagas from '../../containers/staff/StaffSagas';
+import * as SymptomsReportSagas from '../../containers/reports/symptoms/SymptomsReportSagas';
 
 export default function* sagas() :Generator<*, *, *> {
 
@@ -204,5 +206,12 @@ export default function* sagas() :Generator<*, *, *> {
     fork(EncampmentSagas.removePersonFromEncampmentWatcher),
     fork(EncampmentSagas.searchEncampmentLocationsWatcher),
     fork(EncampmentSagas.submitEncampmentWatcher),
+
+    fork(SymptomsReportSagas.getSymptomsReportWatcher),
+    fork(SymptomsReportSagas.getAllSymptomsReportsWatcher),
+    fork(SymptomsReportSagas.submitSymptomsReportWatcher),
+    fork(SymptomsReportSagas.updateSymptomsReportWatcher),
+
+    fork(RecentInteractionSagas.getRecentInteractionsWatcher),
   ]);
 }

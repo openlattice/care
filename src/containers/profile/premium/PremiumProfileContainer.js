@@ -6,7 +6,6 @@ import styled from 'styled-components';
 import { faFolderOpen } from '@fortawesome/pro-duotone-svg-icons';
 import { List, Map } from 'immutable';
 import {
-  CardSegment,
   CardStack,
   IconSplash,
   SearchResults,
@@ -20,6 +19,7 @@ import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import BackgroundInformationCard from './BackgroundInformationCard';
 import BehaviorCard from './BehaviorCard';
+import CovidBanner from './CovidBanner';
 import DeescalationCard from './DeescalationCard';
 import IntroCard from './IntroCard';
 import OfficerSafetyCard from './OfficerSafetyCard';
@@ -33,7 +33,6 @@ import CrisisCountCard from '../CrisisCountCard';
 // import LinkButton from '../../../components/buttons/LinkButton';
 // import Portrait from '../../../components/portrait/Portrait';
 import ProbationCard from '../../../components/premium/probation/ProbationCard';
-import ProfileBanner from '../ProfileBanner';
 import ProfileResult from '../ProfileResult';
 import RecentIncidentCard from '../RecentIncidentCard';
 import StayAwayCard from '../../../components/premium/stayaway/StayAwayCard';
@@ -51,6 +50,7 @@ import { getLBProfile } from '../../../longbeach/profile/LongBeachProfileActions
 import { getImageDataFromEntity } from '../../../utils/BinaryUtils';
 import { getEntityKeyId } from '../../../utils/DataUtils';
 import { reduceRequestStates } from '../../../utils/StateUtils';
+import { getAllSymptomsReports } from '../../reports/symptoms/SymptomsReportActions';
 import { getProfileReports } from '../ProfileActions';
 import { getIncidentReportsSummary } from '../actions/ReportActions';
 import { labelMapReport } from '../constants';
@@ -67,10 +67,6 @@ const Aside = styled.aside`
   display: flex;
   flex-direction: column;
   flex: 1 1 100%;
-`;
-
-const CenteredSegment = styled(CardSegment)`
-  align-items: center;
 `;
 
 const ProfileGrid = styled.div`
@@ -101,10 +97,11 @@ const ScrollStack = styled(CardStack)`
 type Props = {
   actions :{
     getAboutPlan :RequestSequence;
+    getAllSymptomsReports :RequestSequence;
     getAuthorization :RequestSequence;
     getBasicInformation :RequestSequence;
-    getIncidentReportsSummary :RequestSequence;
     getContacts :RequestSequence;
+    getIncidentReportsSummary :RequestSequence;
     getLBProfile :RequestSequence;
     getOfficerSafety :RequestSequence;
     getProfileReports :RequestSequence;
@@ -114,29 +111,29 @@ type Props = {
   address :Map;
   appearance :Map;
   behaviorSummary :Map;
-  crisisSummary :Map;
   contactInfoByContactEKID :Map;
   contacts :List<Map>;
+  crisisSummary :Map;
   fetchAboutPlanState :RequestState;
   fetchAboutState :RequestState;
   fetchOfficerSafetyState :RequestState;
   fetchReportsState :RequestState;
   fetchResponsePlanState :RequestState;
+  fetchStayAwayState :RequestState;
   interactionStrategies :List<Map>;
   isContactForByContactEKID :Map;
-  lastIncident :Map;
   officerSafety :List<Map>;
   photo :Map;
+  probation :Map;
   reports :List<Map>;
   responsePlan :Map;
   responsibleUser :Map;
   scars :Map;
   selectedPerson :Map;
+  stayAwayLocation :Map;
+  recentSymptoms :boolean;
   techniques :List<Map>;
   triggers :List<Map>;
-  fetchStayAwayState :RequestState;
-  probation :Map;
-  stayAwayLocation :Map;
   warrant :Map;
 };
 
@@ -162,20 +159,21 @@ const PremiumProfileContainer = (props :Props) => {
     fetchReportsState,
     fetchResponsePlanState,
     fetchStayAwayState,
-    probation,
-    stayAwayLocation,
-    warrant,
     interactionStrategies,
     isContactForByContactEKID,
     officerSafety,
     photo,
+    probation,
     reports,
     responsePlan,
     responsibleUser,
     scars,
     selectedPerson,
+    stayAwayLocation,
+    recentSymptoms,
     techniques,
     triggers,
+    warrant,
   } = props;
 
   usePeopleRoute(actions.getAboutPlan);
@@ -186,6 +184,7 @@ const PremiumProfileContainer = (props :Props) => {
   usePeopleRoute(actions.getProfileReports);
   // usePeopleRoute(actions.getIncidentReportsSummary);
   usePeopleRoute(actions.getLBProfile);
+  usePeopleRoute(actions.getAllSymptomsReports);
 
   const settings = useAppSettings();
 
@@ -216,7 +215,7 @@ const PremiumProfileContainer = (props :Props) => {
   const imageURL :string = useMemo(() => getImageDataFromEntity(photo), [photo]);
   return (
     <ContentOuterWrapper>
-      <ProfileBanner selectedPerson={selectedPerson} />
+      <CovidBanner recentSymptoms={recentSymptoms} />
       <ContentWrapper>
         <ProfileGrid>
           <Aside>
@@ -336,6 +335,8 @@ const mapStateToProps = (state :Map) => {
     triggers: state.getIn(['profile', 'officerSafety', 'data', 'behaviors'], List()),
     probation: state.getIn(['longBeach', 'profile', 'probation']),
     stayAwayLocation: state.getIn(['longBeach', 'profile', 'stayAwayLocation']),
+    symptoms: state.getIn(['profile', 'symptomReports', 'data']),
+    recentSymptoms: state.getIn(['profile', 'symptomReports', 'recentSymptoms']),
     warrant: state.getIn(['longBeach', 'profile', 'warrant'])
   };
 };
@@ -343,10 +344,11 @@ const mapStateToProps = (state :Map) => {
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
     getAboutPlan,
+    getAllSymptomsReports,
     getAuthorization,
     getBasicInformation,
-    getIncidentReportsSummary,
     getContacts,
+    getIncidentReportsSummary,
     getLBProfile,
     getOfficerSafety,
     getProfileReports,

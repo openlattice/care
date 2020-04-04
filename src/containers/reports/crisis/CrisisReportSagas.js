@@ -57,7 +57,6 @@ import {
   preProcessCrisisReportV1,
 } from './CrisisReportUtils';
 import { v1, v2 } from './schemas';
-import { generateReviewSchema } from './schemas/schemaUtils';
 
 import Logger from '../../../utils/Logger';
 import * as FQN from '../../../edm/DataModelFqns';
@@ -76,6 +75,7 @@ import { getESIDFromApp, getESIDsFromApp } from '../../../utils/AppUtils';
 import { getEntityKeyId, groupNeighborsByFQNs, removeEntitiesFromEntityIndexToIdMap } from '../../../utils/DataUtils';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../utils/Errors';
 import { isDefined } from '../../../utils/LangUtils';
+import { generateReviewSchema } from '../../../utils/SchemaUtils';
 import { isValidUuid } from '../../../utils/Utils';
 
 const { FullyQualifiedName } = Models;

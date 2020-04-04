@@ -50,21 +50,21 @@ const Success = styled.h1`
   margin: 0;
 `;
 
-const FileCheck = (size) => <FontAwesomeIcon icon={faFileCheck} color={PURPLES[1]} size={size}/>;
-
+const FileCheck = (size) => <FontAwesomeIcon icon={faFileCheck} color={PURPLES[1]} size={size} />;
 
 type Props = {
+  reportType :string;
   selectedPerson :Map;
 };
 
-const SuccessSplash = ({ selectedPerson } :Props) => {
+const SuccessSplash = ({ reportType, selectedPerson } :Props) => {
 
   const personEKID = getEntityKeyId(selectedPerson);
   const name = getFirstLastFromPerson(selectedPerson);
   const Message = (
     <MessageWrapper>
       <Success>Success!</Success>
-      <p>{`You submitted a Crisis Report on ${DateTime.local().toLocaleString(DateTime.DATE_SHORT)} for ${name}`}</p>
+      <p>{`You submitted a ${reportType} on ${DateTime.local().toLocaleString(DateTime.DATE_SHORT)} for ${name}`}</p>
       <StyledLink to={PROFILE_VIEW_PATH.replace(PROFILE_ID_PATH, personEKID)}>
         <LinkText>
           Visit profile

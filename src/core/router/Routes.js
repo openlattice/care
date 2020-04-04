@@ -10,6 +10,7 @@ export const LOGIN_PATH :string = '/login';
 
 export const X_CRISIS_PATH :string = '/x-crisis';
 export const NEW_CRISIS_PATH :string = '/new-crisis';
+export const NEW_SYMPTOMS_PATH :string = '/new-symptoms';
 export const CRISIS_PATH :string = '/crisis';
 export const DASHBOARD_PATH :string = '/dashboard';
 export const DOWNLOADS_PATH :string = '/downloads';
@@ -33,6 +34,8 @@ export const REPORT_ID_PATH :string = `:${REPORT_ID_PARAM}`;
 export const REPORT_EDIT_PATH :string = `${REPORTS_PATH}/${REPORT_ID_PATH}${EDIT_PATH}`;
 export const REPORT_VIEW_PATH :string = `${REPORTS_PATH}/${REPORT_ID_PATH}/view`;
 export const CRISIS_REPORT_PATH :string = `${REPORTS_PATH}/crisis/${REPORT_ID_PATH}`;
+export const SYMPTOMS_REPORT_PATH :string = `${REPORTS_PATH}/symptoms/${REPORT_ID_PATH}`;
+
 
 export const PROFILE_ID_PARAM :string = 'profileId';
 export const PROFILE_ID_PATH :string = `:${PROFILE_ID_PARAM}`;

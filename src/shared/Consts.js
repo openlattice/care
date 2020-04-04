@@ -72,6 +72,10 @@ export const APP_TYPES_FQNS = {
   ENCAMPMENT_LOCATION_FQN: new FullyQualifiedName('app.encampmentlocation'),
   LIVES_AT_FQN: new FullyQualifiedName('app.livesat_new'),
   /* <===== END LIVERMORE HACK =====> */
+  /* <===== SYMPTOMS ======> */
+  SYMPTOM_FQN: new FullyQualifiedName('app.symptom'),
+  INTERACTED_WITH_FQN: new FullyQualifiedName('app.interactedwith'),
+  /* <===== END SYMPTOMS ======> */
 };
 
 export const STRING_ID_FQN = 'general.stringid';

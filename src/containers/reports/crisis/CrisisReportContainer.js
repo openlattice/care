@@ -20,7 +20,6 @@ import {
   updateCrisisReport
 } from './CrisisActions';
 import { v1 } from './schemas';
-import { generateReviewSchema } from './schemas/schemaUtils';
 
 import BlameCard from '../shared/BlameCard';
 import * as FQN from '../../../edm/DataModelFqns';
@@ -32,6 +31,7 @@ import { getAuthorization } from '../../../core/sagas/authorize/AuthorizeActions
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { getEntityKeyId } from '../../../utils/DataUtils';
 import { getFirstLastFromPerson } from '../../../utils/PersonUtils';
+import { generateReviewSchema } from '../../../utils/SchemaUtils';
 
 const {
   // CLINICIAN_REPORT_FQN // v2,
