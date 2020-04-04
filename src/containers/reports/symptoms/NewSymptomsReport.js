@@ -7,6 +7,7 @@ import { Form, Paged } from 'lattice-fabricate';
 import {
   Button,
   Card,
+  CardStack,
 } from 'lattice-ui-kit';
 import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
@@ -16,6 +17,7 @@ import { schemas, uiSchemas } from './schemas';
 
 import SuccessSplash from '../shared/SuccessSplash';
 import { generateReviewSchema } from '../../../utils/SchemaUtils';
+import LastContactWith from './LastContactWith';
 
 const ActionRow = styled.div`
   display: flex;
@@ -41,7 +43,10 @@ const NewCrisisReport = ({ pageRef, position, selectedPerson } :Props) => {
 
   if (submitState === RequestStates.SUCCESS) {
     return (
-      <SuccessSplash reportType="Symptoms Report" selectedPerson={selectedPerson} />
+      <CardStack>
+        <SuccessSplash reportType="Symptoms Report" selectedPerson={selectedPerson} />
+        <LastContactWith selectedPerson={selectedPerson} />
+      </CardStack>
     );
   }
 

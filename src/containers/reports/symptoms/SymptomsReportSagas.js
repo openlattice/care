@@ -1,5 +1,4 @@
 // @flow
-
 import isPlainObject from 'lodash/isPlainObject';
 import {
   call,
@@ -8,14 +7,21 @@ import {
   takeEvery,
   takeLatest
 } from '@redux-saga/core/effects';
-import { Map } from 'immutable';
+import { List, Map, fromJS } from 'immutable';
 import { DataProcessingUtils } from 'lattice-fabricate';
+import {
+  SearchApiActions,
+  SearchApiSagas,
+} from 'lattice-sagas';
+import { DateTime } from 'luxon';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
+  GET_ALL_SYMPTOMS_REPORTS,
   GET_SYMPTOMS_REPORT,
   SUBMIT_SYMPTOMS_REPORT,
   UPDATE_SYMPTOMS_REPORT,
+  getAllSymptomsReports,
   getSymptomsReport,
   submitSymptomsReport,
   updateSymptomsReport,
@@ -23,6 +29,7 @@ import {
 import { getSymptomsReportAssociations, postProcessSymptoms } from './SymptomsReportUtils';
 
 import Logger from '../../../utils/Logger';
+import * as FQN from '../../../edm/DataModelFqns';
 import {
   submitDataGraph,
   submitPartialReplace,
@@ -32,16 +39,83 @@ import {
   submitPartialReplaceWorker,
 } from '../../../core/sagas/data/DataSagas';
 import { APP_TYPES_FQNS as APP } from '../../../shared/Consts';
+import { getESIDFromApp } from '../../../utils/AppUtils';
 import { getEntityKeyId } from '../../../utils/DataUtils';
 import { ERR_ACTION_VALUE_TYPE } from '../../../utils/Errors';
+import { isValidUuid } from '../../../utils/Utils';
 
+const { searchEntityNeighborsWithFilter } = SearchApiActions;
+const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
 const { processAssociationEntityData, processEntityData } = DataProcessingUtils;
 const LOG = new Logger('SymptomsReportSagas');
+
+function* getAllSymptomsReportsWorker(action :SequenceAction) :Generator<any, any, any> {
+  const response = {};
+  try {
+    const { value: entityKeyId } = action;
+    if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
+    yield put(getAllSymptomsReports.request(action.id));
+
+    const app :Map = yield select((state) => state.get('app', Map()));
+    const peopleESID :UUID = getESIDFromApp(app, APP.PEOPLE_FQN);
+    const symptomESID :UUID = getESIDFromApp(app, APP.SYMPTOM_FQN);
+    const observedInESID :UUID = getESIDFromApp(app, APP.OBSERVED_IN_FQN);
+
+    const symptomSearchParams = {
+      entitySetId: peopleESID,
+      filter: {
+        entityKeyIds: [entityKeyId],
+        edgeEntitySetIds: [observedInESID],
+        destinationEntitySetIds: [],
+        sourceEntitySetIds: [symptomESID]
+      }
+    };
+
+    const symptomResponse = yield call(
+      searchEntityNeighborsWithFilterWorker,
+      searchEntityNeighborsWithFilter(symptomSearchParams),
+    );
+
+    if (symptomResponse.error) throw symptomResponse.error;
+    const symptoms = fromJS(symptomResponse.data).get(entityKeyId, List());
+    response.data = symptoms;
+
+    const recentSymptoms :boolean = symptoms.filter((symptom) => {
+      const datetimeStr = symptom.getIn(['associationDetails', FQN.COMPLETED_DT_FQN, 0]);
+
+      const contactDateTime = DateTime.fromISO(datetimeStr);
+      if (!contactDateTime.isValid) return false;
+
+      const now = DateTime.local();
+      const { days = 0 } = contactDateTime.until(now).toDuration(['days'])
+        .toObject();
+
+      return days < 14;
+    }).count() > 0;
+
+    yield put(getAllSymptomsReports.success(action.id, {
+      data: response.data,
+      recentSymptoms
+    }));
+  }
+  catch (error) {
+    LOG.error(action.type, error);
+    response.error = error;
+    yield put(getAllSymptomsReports.request(action.id, error));
+  }
+}
+
+function* getAllSymptomsReportsWatcher() :Generator<any, any, any> {
+  yield takeLatest(GET_ALL_SYMPTOMS_REPORTS, getAllSymptomsReportsWorker);
+}
 
 function* getSymptomsReportWorker(action :SequenceAction) :Generator<any, any, any> {
   const response = {};
   try {
+    const { value: entityKeyId } = action;
+    if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getSymptomsReport.request(action.id));
+
     yield put(getSymptomsReport.success(action.id));
   }
   catch (error) {
@@ -121,10 +195,12 @@ function* updateSymptomsReportWatcher() :Generator<any, any, any> {
 }
 
 export {
-  getSymptomsReportWorker,
+  getAllSymptomsReportsWatcher,
+  getAllSymptomsReportsWorker,
   getSymptomsReportWatcher,
-  submitSymptomsReportWorker,
+  getSymptomsReportWorker,
   submitSymptomsReportWatcher,
-  updateSymptomsReportWorker,
+  submitSymptomsReportWorker,
   updateSymptomsReportWatcher,
-}
+  updateSymptomsReportWorker,
+};

@@ -1,6 +1,6 @@
+// @flow
 import { getIn, setIn } from 'immutable';
 import { DataProcessingUtils } from 'lattice-fabricate';
-// @flow
 import { DateTime } from 'luxon';
 
 import * as FQN from '../../../edm/DataModelFqns';

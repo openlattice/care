@@ -1,6 +1,6 @@
 // @flow
 
-import { Map, fromJS } from 'immutable';
+import { List, Map, fromJS } from 'immutable';
 import { RequestStates } from 'redux-reqseq';
 
 import {
@@ -17,6 +17,7 @@ const INITIAL_STATE :Map = fromJS({
   reportData: Map(),
   reporterData: Map(),
   subjectData: Map(),
+  recentInteractions: List(),
   submitState: RequestStates.STANDBY,
   updateState: RequestStates.STANDBY,
 });

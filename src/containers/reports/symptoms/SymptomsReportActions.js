@@ -11,6 +11,9 @@ const getSymptomsReport :RequestSequence = newRequestSequence(GET_SYMPTOMS_REPOR
 const UPDATE_SYMPTOMS_REPORT :'UPDATE_SYMPTOMS_REPORT' = 'UPDATE_SYMPTOMS_REPORT';
 const updateSymptomsReport :RequestSequence = newRequestSequence(UPDATE_SYMPTOMS_REPORT);
 
+const GET_ALL_SYMPTOMS_REPORTS :'GET_ALL_SYMPTOMS_REPORTS' = 'GET_ALL_SYMPTOMS_REPORTS';
+const getAllSymptomsReports :RequestSequence = newRequestSequence(GET_ALL_SYMPTOMS_REPORTS);
+
 const CLEAR_SYMPTOMS_REPORT :'CLEAR_SYMPTOMS_REPORT' = 'CLEAR_SYMPTOMS_REPORT';
 const clearSymptomsReport = () => ({
   type: CLEAR_SYMPTOMS_REPORT
@@ -18,10 +21,12 @@ const clearSymptomsReport = () => ({
 
 export {
   CLEAR_SYMPTOMS_REPORT,
+  GET_ALL_SYMPTOMS_REPORTS,
   GET_SYMPTOMS_REPORT,
   SUBMIT_SYMPTOMS_REPORT,
   UPDATE_SYMPTOMS_REPORT,
   clearSymptomsReport,
+  getAllSymptomsReports,
   getSymptomsReport,
   submitSymptomsReport,
   updateSymptomsReport,

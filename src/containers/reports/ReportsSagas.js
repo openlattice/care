@@ -100,6 +100,7 @@ const {
   CLINICIAN_REPORT_FQN,
   INCIDENT_FQN,
   INJURY_FQN,
+  INTERACTED_WITH_FQN,
   INVOLVED_IN_FQN,
   PART_OF_FQN,
   PEOPLE_FQN,
@@ -621,6 +622,10 @@ function* submitReportWorker(action :SequenceAction) :Generator<*, *, *> {
       }],
       [APPEARS_IN_FQN, personEKID, PEOPLE_FQN, 0, BEHAVIORAL_HEALTH_REPORT_FQN, {
         [FQN.DATE_TIME_FQN]: [formData[POST_PROCESS_FIELDS.TIMESTAMP]]
+      }],
+      [INTERACTED_WITH_FQN, staffEKID, STAFF_FQN, personEKID, PEOPLE_FQN, {
+        [FQN.DATE_TIME_FQN]: [formData[POST_PROCESS_FIELDS.TIMESTAMP]],
+        [FQN.CONTACT_DATE_TIME_FQN]: [formData[POST_PROCESS_FIELDS.TIMESTAMP]]
       }],
     ];
 
