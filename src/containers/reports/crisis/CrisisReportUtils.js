@@ -97,8 +97,22 @@ const getCrisisReportAssociations = (
   const staffEKID = existingEntityKeyIds[APP.STAFF_FQN];
 
   const NOW_DATA = { [FQN.DATE_TIME_FQN]: [createdDateTime] };
+  const INTERACTED_DATA = {
+    [FQN.DATE_TIME_FQN]: [createdDateTime],
+  };
+
+  const datetimeKey = getEntityAddressKey(0, APP.BEHAVIORAL_HEALTH_REPORT_FQN, FQN.DATE_TIME_OCCURRED_FQN);
+  const datetime = getIn(formData, [getPageSectionKey(1, 1), datetimeKey]);
+  if (DateTime.fromISO(datetime).isValid) {
+    INTERACTED_DATA[FQN.CONTACT_DATE_TIME_FQN] = [datetime];
+  }
+  else {
+    INTERACTED_DATA[FQN.CONTACT_DATE_TIME_FQN] = [createdDateTime];
+  }
+
   const associations :any[][] = [
     [APP.REPORTED_FQN, staffEKID, APP.STAFF_FQN, 0, APP.BEHAVIORAL_HEALTH_REPORT_FQN, NOW_DATA],
+    [APP.INTERACTED_WITH_FQN, staffEKID, APP.STAFF_FQN, personEKID, APP.PEOPLE_FQN, INTERACTED_DATA],
     [APP.APPEARS_IN_FQN, personEKID, APP.PEOPLE_FQN, 0, APP.BEHAVIORAL_HEALTH_REPORT_FQN, NOW_DATA],
   ];
 

@@ -71,7 +71,7 @@ import { getSearchTerm } from '../../utils/DataUtils';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
 import { isDefined } from '../../utils/LangUtils';
 import { isValidUuid } from '../../utils/Utils';
-import { POST_PROCESS_FIELDS } from '../../utils/constants/CrisisReportConstants';
+import { DISPOSITION, POST_PROCESS_FIELDS } from '../../utils/constants/CrisisReportConstants';
 import { setInputValues as setDispositionData } from '../pages/disposition/ActionFactory';
 import { setInputValues as setNatureOfCrisisData } from '../pages/natureofcrisis/ActionFactory';
 import { setInputValues as setObservedBehaviors } from '../pages/observedbehaviors/ActionFactory';
@@ -625,7 +625,7 @@ function* submitReportWorker(action :SequenceAction) :Generator<*, *, *> {
       }],
       [INTERACTED_WITH_FQN, staffEKID, STAFF_FQN, personEKID, PEOPLE_FQN, {
         [FQN.DATE_TIME_FQN]: [formData[POST_PROCESS_FIELDS.TIMESTAMP]],
-        [FQN.CONTACT_DATE_TIME_FQN]: [formData[POST_PROCESS_FIELDS.TIMESTAMP]]
+        [FQN.CONTACT_DATE_TIME_FQN]: [formData[DISPOSITION.INCIDENT_DATE_TIME]]
       }],
     ];
 
