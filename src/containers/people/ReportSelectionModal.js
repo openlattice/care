@@ -56,11 +56,11 @@ const ReportSelectionModal = (props :Props) => {
               state={selectedPerson}>
             Symptoms Report
           </LinkButton>
-          <LinkButton
+          {/* <LinkButton
               to=""
               state={selectedPerson}>
             Track Contact
-          </LinkButton>
+          </LinkButton> */}
         </ActionWrapper>
       </div>
     </Modal>
