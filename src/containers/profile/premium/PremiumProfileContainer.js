@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import { faFolderOpen } from '@fortawesome/pro-duotone-svg-icons';
 import { List, Map } from 'immutable';
 import {
+  Breadcrumbs,
   CardStack,
   IconSplash,
   SearchResults,
@@ -17,30 +18,33 @@ import { RequestStates } from 'redux-reqseq';
 import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
+// import LinkButton from '../../../components/buttons/LinkButton';
+// import Portrait from '../../../components/portrait/Portrait';
+import AppearancePanel from './AppearancePanel';
+import AssignedOfficerPanel from './AssignedOfficerPanel';
 import BackgroundInformationCard from './BackgroundInformationCard';
 import BehaviorCard from './BehaviorCard';
+import ContactPanel from './ContactPanel';
 import CovidBanner from './CovidBanner';
 import DeescalationCard from './DeescalationCard';
-import IntroCard from './IntroCard';
 import OfficerSafetyCard from './OfficerSafetyCard';
 import PortraitCard from './PortraitCard';
 import ResponsePlanCard from './ResponsePlanCard';
 
-import AboutPlanCard from '../../../components/premium/aboutplan/AboutPlanCard';
-import AddressCard from '../../../components/premium/address/AddressCard';
 import ContactCarousel from '../../../components/premium/contacts/ContactCarousel';
 import CrisisCountCard from '../CrisisCountCard';
-// import LinkButton from '../../../components/buttons/LinkButton';
-// import Portrait from '../../../components/portrait/Portrait';
 import ProbationCard from '../../../components/premium/probation/ProbationCard';
 import ProfileResult from '../ProfileResult';
 import RecentIncidentCard from '../RecentIncidentCard';
 import StayAwayCard from '../../../components/premium/stayaway/StayAwayCard';
 import WarrantCard from '../../../components/premium/warrant/WarrantCard';
+import { BreadcrumbLink, BreadcrumbItem } from '../../../components/breadcrumbs';
 import { useAppSettings, useAuthorization, usePeopleRoute } from '../../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
 import {
   CRISIS_REPORT_PATH,
+  PROFILE_ID_PATH,
+  PROFILE_VIEW_PATH,
   REPORT_ID_PATH,
   REPORT_VIEW_PATH,
 } from '../../../core/router/Routes';
@@ -49,6 +53,7 @@ import { getAuthorization } from '../../../core/sagas/authorize/AuthorizeActions
 import { getLBProfile } from '../../../longbeach/profile/LongBeachProfileActions';
 import { getImageDataFromEntity } from '../../../utils/BinaryUtils';
 import { getEntityKeyId } from '../../../utils/DataUtils';
+import { getFirstLastFromPerson } from '../../../utils/PersonUtils';
 import { reduceRequestStates } from '../../../utils/StateUtils';
 import { getAllSymptomsReports } from '../../reports/symptoms/SymptomsReportActions';
 import { getProfileReports } from '../ProfileActions';
@@ -71,7 +76,7 @@ const Aside = styled.aside`
 
 const ProfileGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr 3fr;
+  grid-template-columns: 1fr 2.25fr;
   grid-gap: 20px;
   ${media.phone`
     grid-template-columns: 1fr;
@@ -213,28 +218,31 @@ const PremiumProfileContainer = (props :Props) => {
   ]) === RequestStates.PENDING;
 
   const imageURL :string = useMemo(() => getImageDataFromEntity(photo), [photo]);
+  const name = getFirstLastFromPerson(selectedPerson);
+  const subjectEKID = getEntityKeyId(selectedPerson);
+  const profilePath = PROFILE_VIEW_PATH.replace(PROFILE_ID_PATH, subjectEKID);
+
   return (
     <ContentOuterWrapper>
       <CovidBanner recentSymptoms={recentSymptoms} />
       <ContentWrapper>
         <ProfileGrid>
           <Aside>
+            <Breadcrumbs>
+              <BreadcrumbLink to={profilePath}>{name}</BreadcrumbLink>
+              <BreadcrumbItem>profile</BreadcrumbItem>
+            </Breadcrumbs>
             <CardStack>
               <PortraitCard isLoading={isLoadingIntro} imageUrl={imageURL} person={selectedPerson} />
-              <IntroCard
+              <AppearancePanel
+                  isLoading={isLoadingIntro}
                   appearance={appearance}
-                  isLoading={isLoadingIntro}
                   scars={scars}
-                  selectedPerson={selectedPerson}
-                  showEdit={isAuthorized} />
-              <AddressCard
-                  address={address}
-                  isLoading={isLoadingIntro}
-                  showEdit={isAuthorized} />
-              <AboutPlanCard
-                  isLoading={isLoadingAboutPlan}
+                  selectedPerson={selectedPerson} />
+              <ContactPanel address={address} isLoading={isLoadingIntro} />
+              <AssignedOfficerPanel
                   responsibleUser={responsibleUser}
-                  showEdit={isAuthorized} />
+                  isLoading={isLoadingAboutPlan} />
             </CardStack>
           </Aside>
           <ScrollStack>
