@@ -1,91 +1,38 @@
 // @flow
-import React, { useEffect } from 'react';
-
-import styled from 'styled-components';
+import React, { useCallback } from 'react';
 import { Map } from 'immutable';
-import { Form, Paged } from 'lattice-fabricate';
-import {
-  Button,
-  Card,
-  CardStack,
-} from 'lattice-ui-kit';
-import { useDispatch, useSelector } from 'react-redux';
-import { RequestStates } from 'redux-reqseq';
+import { Form } from 'lattice-fabricate';
+import { useDispatch } from 'react-redux';
 
-import { clearSymptomsReport, submitSymptomsReport } from './SymptomsReportActions';
-import { schemas, uiSchemas } from './schemas';
-
-import SuccessSplash from '../shared/SuccessSplash';
-import LastContactWith from './LastContactWith';
-
-const ActionRow = styled.div`
-  display: flex;
-  align-items: center;
-  padding: 0 30px 30px 30px;
-`;
+import { submitSymptomsReport } from './SymptomsReportActions';
+import { schema, uiSchema } from './schemas';
 
 type Props = {
-  pageRef :{ current :HTMLDivElement | null };
   position :Position;
   selectedPerson :Map;
 };
 
-const NewCrisisReport = ({ position, selectedPerson } :Props) => {
+const NewCrisisReport = ({ position, selectedPerson } :Props, ref) => {
   const dispatch = useDispatch();
-  const submitState = useSelector((store) => store.getIn(['symptomsReport', 'submitState']));
 
-  useEffect(() => () => dispatch(clearSymptomsReport()), [dispatch]);
-
-  const isLoading = submitState === RequestStates.PENDING;
-
-  if (submitState === RequestStates.SUCCESS) {
-    return (
-      <CardStack>
-        <SuccessSplash reportType="Symptoms Report" selectedPerson={selectedPerson} />
-        <LastContactWith selectedPerson={selectedPerson} />
-      </CardStack>
-    );
-  }
+  const handleSubmit = useCallback((payload) => {
+    dispatch(submitSymptomsReport({
+      formData: payload.formData,
+      selectedPerson,
+      position
+    }));
+  }, [dispatch, position, selectedPerson]);
 
   return (
-    <Card>
-      <Paged
-          render={({
-            formRef,
-            page,
-            validateAndSubmit,
-          }) => {
-
-            const handleSubmit = (payload) => {
-              dispatch(submitSymptomsReport({
-                formData: payload.formData,
-                selectedPerson,
-                position
-              }));
-            };
-
-            return (
-              <>
-                <Form
-                    hideSubmit
-                    onSubmit={handleSubmit}
-                    ref={formRef}
-                    schema={schemas[page]}
-                    uiSchema={uiSchemas[page]} />
-                <ActionRow>
-                  <Button
-                      fullWidth
-                      isLoading={isLoading}
-                      mode="primary"
-                      onClick={validateAndSubmit}>
-                    Submit
-                  </Button>
-                </ActionRow>
-              </>
-            );
-          }} />
-    </Card>
+    <Form
+        hideSubmit
+        onSubmit={handleSubmit}
+        ref={ref}
+        schema={schema}
+        uiSchema={uiSchema} />
   );
 };
 
-export default NewCrisisReport;
+export default React.memo(
+  React.forwardRef(NewCrisisReport)
+);

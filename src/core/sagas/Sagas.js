@@ -213,5 +213,6 @@ export default function* sagas() :Generator<*, *, *> {
     fork(SymptomsReportSagas.updateSymptomsReportWatcher),
 
     fork(RecentInteractionSagas.getRecentInteractionsWatcher),
+    fork(RecentInteractionSagas.submitRecentInteractionWatcher),
   ]);
 }

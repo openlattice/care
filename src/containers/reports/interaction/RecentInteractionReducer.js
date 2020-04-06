@@ -6,11 +6,13 @@ import { RequestStates } from 'redux-reqseq';
 import {
   CLEAR_RECENT_INTERACTIONS,
   getRecentInteractions,
+  submitRecentInteraction,
 } from './RecentInteractionActions';
 
 const INITIAL_STATE :Map = fromJS({
+  data: List(),
   fetchState: RequestStates.STANDBY,
-  data: List()
+  submitState: RequestStates.STANDBY,
 });
 
 export default function recentInteractionsReducer(state :Map = INITIAL_STATE, action :Object) {
@@ -23,6 +25,14 @@ export default function recentInteractionsReducer(state :Map = INITIAL_STATE, ac
           .set('fetchState', RequestStates.SUCCESS)
           .set('data', action.value),
         FAILURE: () => state.set('fetchState', RequestStates.FAILURE),
+      });
+    }
+
+    case submitRecentInteraction.case(action.type): {
+      return submitRecentInteraction.reducer(state, action, {
+        REQUEST: () => state.set('submitState', RequestStates.PENDING),
+        SUCCESS: () => state.set('submitState', RequestStates.SUCCESS),
+        FAILURE: () => state.set('submitState', RequestStates.FAILURE),
       });
     }
 
