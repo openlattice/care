@@ -11,6 +11,7 @@ import {
   CRISIS_PATH,
   NEW_CRISIS_PATH,
   NEW_SYMPTOMS_PATH,
+  TRACK_CONTACT_PATH
 } from '../../core/router/Routes';
 import { getFirstLastFromPerson } from '../../utils/PersonUtils';
 
@@ -34,6 +35,7 @@ const ReportSelectionModal = (props :Props) => {
   const settings = useAppSettings();
   const crisisPath = settings.get('v1') ? NEW_CRISIS_PATH : CRISIS_PATH;
   const name = getFirstLastFromPerson(selectedPerson);
+
   return (
     <Modal
         textTitle="Select Report Type"
@@ -56,11 +58,11 @@ const ReportSelectionModal = (props :Props) => {
               state={selectedPerson}>
             Symptoms Report
           </LinkButton>
-          {/* <LinkButton
-              to=""
+          <LinkButton
+              to={TRACK_CONTACT_PATH}
               state={selectedPerson}>
-            Track Contact
-          </LinkButton> */}
+            Track Your Contact
+          </LinkButton>
         </ActionWrapper>
       </div>
     </Modal>

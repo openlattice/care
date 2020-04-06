@@ -1,12 +1,21 @@
 // @flow
+import isPlainObject from 'lodash/isPlainObject';
 import {
   call,
   put,
   select,
   takeLatest
 } from '@redux-saga/core/effects';
-import { List, Map, fromJS } from 'immutable';
 import {
+  List,
+  Map,
+  fromJS,
+  getIn
+} from 'immutable';
+import { DataProcessingUtils } from 'lattice-fabricate';
+import {
+  DataApiActions,
+  DataApiSagas,
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
@@ -15,16 +24,22 @@ import type { SequenceAction } from 'redux-reqseq';
 
 import {
   GET_RECENT_INTERACTIONS,
+  SUBMIT_RECENT_INTERACTION,
   getRecentInteractions,
+  submitRecentInteraction,
 } from './RecentInteractionActions';
 
 import Logger from '../../../utils/Logger';
 import * as FQN from '../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS as APP } from '../../../shared/Consts';
 import { getESIDFromApp } from '../../../utils/AppUtils';
+import { getEntityKeyId } from '../../../utils/DataUtils';
 import { ERR_ACTION_VALUE_TYPE } from '../../../utils/Errors';
 import { isValidUuid } from '../../../utils/Utils';
 
+const { getPageSectionKey, getEntityAddressKey } = DataProcessingUtils;
+const { createAssociations } = DataApiActions;
+const { createAssociationsWorker } = DataApiSagas;
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
 const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
 const LOG = new Logger('InteractionSagas');
@@ -103,7 +118,75 @@ function* getRecentInteractionsWatcher() :Generator<any, any, any> {
   yield takeLatest(GET_RECENT_INTERACTIONS, getRecentInteractionsWorker);
 }
 
+function* submitRecentInteractionWorker(action :SequenceAction) :Generator<any, any, any> {
+  const response = {};
+  try {
+    const { value } = action;
+    if (!isPlainObject(value)) throw ERR_ACTION_VALUE_TYPE;
+    yield put(submitRecentInteraction.request(action.id));
+    const { formData, selectedPerson } = value;
+
+    const edm :Map<*, *> = yield select((state) => state.get('edm'));
+    const app = yield select((state) => state.get('app', Map()));
+    const interactedWithESID :UUID = getESIDFromApp(app, APP.INTERACTED_WITH_FQN);
+    const staffESID :UUID = getESIDFromApp(app, APP.STAFF_FQN);
+    const peopleESID :UUID = getESIDFromApp(app, APP.PEOPLE_FQN);
+    const datetimePTID :UUID = edm.getIn(['fqnToIdMap', FQN.DATE_TIME_FQN]);
+    const contactDatetimePTID :UUID = edm.getIn(['fqnToIdMap', FQN.CONTACT_DATE_TIME_FQN]);
+
+    const staffEKID :UUID = yield select(
+      (state) => state.getIn(['staff', 'currentUser', 'data', FQN.OPENLATTICE_ID_FQN, 0], '')
+    );
+
+    if (!isValidUuid(staffEKID)) {
+      throw Error('staff entityKeyId is invalid');
+    }
+
+    const personEntityKeyId = getEntityKeyId(selectedPerson);
+    const contactAddressKey = getEntityAddressKey(0, APP.INTERACTED_WITH_FQN, FQN.CONTACT_DATE_TIME_FQN);
+    const contactDateTime = getIn(formData, [getPageSectionKey(1, 1), contactAddressKey]);
+
+    const now = DateTime.local().toISO();
+    const associations = {
+      [interactedWithESID]: [{
+        dst: {
+          entityKeyId: personEntityKeyId,
+          entitySetId: peopleESID,
+        },
+        src: {
+          entityKeyId: staffEKID,
+          entitySetId: staffESID,
+        },
+        data: {
+          [datetimePTID]: [now],
+          [contactDatetimePTID]: [contactDateTime]
+        }
+      }]
+    };
+
+    const interactionResponse = yield call(
+      createAssociationsWorker,
+      createAssociations(associations)
+    );
+
+    if (interactionResponse.error) throw interactionResponse.error;
+
+    yield put(submitRecentInteraction.success(action.id));
+  }
+  catch (error) {
+    LOG.error(action.type, error);
+    yield put(submitRecentInteraction.failure(action.id, error));
+  }
+  return response;
+}
+
+function* submitRecentInteractionWatcher() :Generator<any, any, any> {
+  yield takeLatest(SUBMIT_RECENT_INTERACTION, submitRecentInteractionWorker);
+}
+
 export {
   getRecentInteractionsWatcher,
   getRecentInteractionsWorker,
+  submitRecentInteractionWatcher,
+  submitRecentInteractionWorker,
 };
