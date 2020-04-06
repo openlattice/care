@@ -1,24 +1,32 @@
 // @flow
 
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo
+} from 'react';
 
 import styled from 'styled-components';
 import { faFolderOpen } from '@fortawesome/pro-duotone-svg-icons';
+import { faPen } from '@fortawesome/pro-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { List, Map } from 'immutable';
 import {
   Breadcrumbs,
+  Button,
   CardStack,
+  Hooks,
   IconSplash,
   SearchResults,
-  StyleUtils
+  StyleUtils,
 } from 'lattice-ui-kit';
 import { connect } from 'react-redux';
+import { useRouteMatch } from 'react-router';
 import { bindActionCreators } from 'redux';
 import { RequestStates } from 'redux-reqseq';
 import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
-// import LinkButton from '../../../components/buttons/LinkButton';
 // import Portrait from '../../../components/portrait/Portrait';
 import AppearancePanel from './AppearancePanel';
 import AssignedOfficerPanel from './AssignedOfficerPanel';
@@ -32,17 +40,22 @@ import PortraitCard from './PortraitCard';
 import ResponsePlanCard from './ResponsePlanCard';
 
 import ContactCarousel from '../../../components/premium/contacts/ContactCarousel';
+import CreateIssueButton from '../../../components/buttons/CreateIssueButton';
 import CrisisCountCard from '../CrisisCountCard';
+import LinkButton from '../../../components/buttons/LinkButton';
 import ProbationCard from '../../../components/premium/probation/ProbationCard';
 import ProfileResult from '../ProfileResult';
 import RecentIncidentCard from '../RecentIncidentCard';
+import ReportSelectionModal from '../../people/ReportSelectionModal';
 import StayAwayCard from '../../../components/premium/stayaway/StayAwayCard';
 import WarrantCard from '../../../components/premium/warrant/WarrantCard';
-import { BreadcrumbLink, BreadcrumbItem } from '../../../components/breadcrumbs';
+import { BreadcrumbItem, BreadcrumbLink } from '../../../components/breadcrumbs';
 import { useAppSettings, useAuthorization, usePeopleRoute } from '../../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
 import {
+  BASIC_PATH,
   CRISIS_REPORT_PATH,
+  EDIT_PATH,
   PROFILE_ID_PATH,
   PROFILE_VIEW_PATH,
   REPORT_ID_PATH,
@@ -67,6 +80,7 @@ import { getResponsePlan } from '../edit/responseplan/ResponsePlanActions';
 import type { RoutingAction } from '../../../core/router/RoutingActions';
 
 const { media } = StyleUtils;
+const { useBoolean } = Hooks;
 
 const Aside = styled.aside`
   display: flex;
@@ -97,6 +111,26 @@ const BehaviorAndSafetyGrid = styled.div`
 
 const ScrollStack = styled(CardStack)`
   overflow-x: auto;
+`;
+
+const BreadcrumbWrapper = styled.div`
+  padding: 8px;
+`;
+
+const ActionBar = styled.div`
+  display: flex;
+  flex: 1 0 auto;
+  justify-content: flex-end;
+
+  > button:not(:first-child):not(:last-child) {
+    margin: 0 10px;
+  }
+`;
+
+const StyledLinkButton = styled(LinkButton)`
+  background-color: #E5E5F0;
+  border-color: #E5E5F0;
+  padding: 10px;
 `;
 
 type Props = {
@@ -181,6 +215,8 @@ const PremiumProfileContainer = (props :Props) => {
     warrant,
   } = props;
 
+  const match = useRouteMatch();
+  const [isVisible, open, close] = useBoolean();
   usePeopleRoute(actions.getAboutPlan);
   usePeopleRoute(actions.getBasicInformation);
   usePeopleRoute(actions.getContacts);
@@ -228,11 +264,13 @@ const PremiumProfileContainer = (props :Props) => {
       <ContentWrapper>
         <ProfileGrid>
           <Aside>
-            <Breadcrumbs>
-              <BreadcrumbLink to={profilePath}>{name}</BreadcrumbLink>
-              <BreadcrumbItem>profile</BreadcrumbItem>
-            </Breadcrumbs>
             <CardStack>
+              <BreadcrumbWrapper>
+                <Breadcrumbs>
+                  <BreadcrumbLink to={profilePath}>{name}</BreadcrumbLink>
+                  <BreadcrumbItem>profile</BreadcrumbItem>
+                </Breadcrumbs>
+              </BreadcrumbWrapper>
               <PortraitCard isLoading={isLoadingIntro} imageUrl={imageURL} person={selectedPerson} />
               <AppearancePanel
                   isLoading={isLoadingIntro}
@@ -246,6 +284,17 @@ const PremiumProfileContainer = (props :Props) => {
             </CardStack>
           </Aside>
           <ScrollStack>
+            <ActionBar>
+              <StyledLinkButton to={`${match.url}${EDIT_PATH}${BASIC_PATH}`}>
+                <FontAwesomeIcon icon={faPen} />
+              </StyledLinkButton>
+              <CreateIssueButton />
+              <Button mode="primary" onClick={open}>Create Report</Button>
+              <ReportSelectionModal
+                  selectedPerson={selectedPerson}
+                  isVisible={isVisible}
+                  onClose={close} />
+            </ActionBar>
             {
               !reports.count() && !isLoadingBody
                 ? <IconSplash icon={faFolderOpen} caption="No reports have been filed." />
