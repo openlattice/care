@@ -1,37 +1,32 @@
 // @flow
 
 import React from 'react';
-import styled from 'styled-components';
-import { Colors } from 'lattice-ui-kit';
 
-const { NEUTRALS } = Colors;
+import styled from 'styled-components';
 
 const BehaviorItemWrapper = styled.div`
   display: grid;
-  grid-template-columns: 10fr 1fr 1fr;
+  grid-template-columns: 9fr 1fr;
   grid-gap: 5px;
   padding: 5px 0;
   align-items: center;
-`;
 
-const Percentage = styled.span`
-  color: ${NEUTRALS[1]};
+  strong:last-child {
+    text-align: end;
+  }
 `;
 
 type Props = {
   name :string;
   count :number;
-  total :number;
 };
 
 const BehaviorItem = (props :Props) => {
-  const { name, count, total } = props;
-  const percentage = Math.round((count / total) * 100);
+  const { name, count } = props;
   return (
     <BehaviorItemWrapper>
       <strong>{name}</strong>
       <strong>{count}</strong>
-      <Percentage>{`(${percentage}%)`}</Percentage>
     </BehaviorItemWrapper>
   );
 };

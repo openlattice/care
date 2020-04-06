@@ -36,6 +36,7 @@ import {
   updateProfileAbout,
 } from './ProfileActions';
 import { personFqnsByName, physicalAppearanceFqnsByName } from './constants';
+import { countCrisisCalls, countPropertyOccurrance } from './premium/Utils';
 
 import Logger from '../../utils/Logger';
 import * as FQN from '../../edm/DataModelFqns';
@@ -192,7 +193,14 @@ function* getProfileReportsWorker(action :SequenceAction) :Generator<any, any, a
         return -time.valueOf();
       });
 
-    yield put(getProfileReports.success(action.id, reportsData));
+    const behaviorSummary = countPropertyOccurrance(reportsData, FQN.OBSERVED_BEHAVIORS_FQN);
+    const crisisSummary = countCrisisCalls(reportsData, FQN.DATE_TIME_OCCURRED_FQN);
+
+    yield put(getProfileReports.success(action.id, fromJS({
+      data: reportsData,
+      behaviorSummary,
+      crisisSummary,
+    })));
   }
   catch (error) {
     yield put(getProfileReports.failure(action.id));
@@ -409,8 +417,8 @@ function* updateProfileAboutWatcher() :Generator<any, any, any> {
 export {
   getPersonDataWatcher,
   getPersonDataWorker,
-  getPhysicalAppearanceWorker,
   getPhysicalAppearanceWatcher,
+  getPhysicalAppearanceWorker,
   getProfileReportsWatcher,
   getProfileReportsWorker,
   updateProfileAboutWatcher,

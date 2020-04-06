@@ -46,7 +46,7 @@ const schema = {
           title: 'Aliases',
           items: {
             type: 'string',
-            enum: ['']
+            enum: []
           },
           uniqueItems: true,
           default: []
@@ -95,8 +95,9 @@ const uiSchema = {
       classNames: 'column-span-8',
       'ui:options': {
         creatable: true,
-        hideMenu: true,
-        placeholder: 'Press “Enter” or “Tab” after each item',
+        multiple: true,
+        placeholder: '',
+        noOptionsMessage: 'Type to Create'
       }
     },
     [getEntityAddressKey(0, PEOPLE_FQN, PERSON_DOB_FQN)]: {

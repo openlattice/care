@@ -6,7 +6,13 @@ import React, { Component } from 'react';
 
 import styled from 'styled-components';
 import { Map } from 'immutable';
-import { Spinner } from 'lattice-ui-kit';
+import {
+  LatticeLuxonUtils,
+  MuiPickersUtilsProvider,
+  Spinner,
+  ThemeProvider,
+  lightTheme,
+} from 'lattice-ui-kit';
 import { connect } from 'react-redux';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
@@ -27,6 +33,8 @@ import LegitReportsRouter from '../reports/LegitReportsRouter';
 import LongBeachLocationsContainer from '../../longbeach/location/stayaway/LongBeachLocationsContainer';
 import LongBeachProviderContainer from '../../longbeach/provider/LongBeachProviderContainer';
 import LongBeachRouter from '../../longbeach/LongBeachRouter';
+import NewCrisisReportContainer from '../reports/crisis/NewCrisisReportContainer';
+import NewSymptomsReportContainer from '../reports/symptoms/NewSymptomsReportContainer';
 import ProfileRouter from '../profile/ProfileRouter';
 import SearchPeopleContainer from '../people/SearchPeopleContainer';
 import {
@@ -153,6 +161,8 @@ class AppContainer extends Component<Props> {
       <Switch>
         <Route exact strict path={HOME_PATH} component={SearchPeopleContainer} />
         <Route path={CRISIS_PATH} component={CrisisReportContainer} />
+        <Route path="/new-crisis" component={NewCrisisReportContainer} />
+        <Route path="/new-symptoms" component={NewSymptomsReportContainer} />
         <Route path={REPORTS_PATH} component={LegitReportsRouter} />
         <Route path={LOCATION_PATH} component={LongBeachLocationsContainer} />
         <Route path={PROVIDER_PATH} component={LongBeachProviderContainer} />
@@ -170,12 +180,16 @@ class AppContainer extends Component<Props> {
     const { organizations } = this.props;
 
     return (
-      <AppContainerWrapper>
-        <AppHeaderContainer organizations={organizations} />
-        <AppContentOuterWrapper>
-          { this.renderAppContent() }
-        </AppContentOuterWrapper>
-      </AppContainerWrapper>
+      <ThemeProvider theme={lightTheme}>
+        <MuiPickersUtilsProvider utils={LatticeLuxonUtils}>
+          <AppContainerWrapper>
+            <AppHeaderContainer organizations={organizations} />
+            <AppContentOuterWrapper>
+              { this.renderAppContent() }
+            </AppContentOuterWrapper>
+          </AppContainerWrapper>
+        </MuiPickersUtilsProvider>
+      </ThemeProvider>
     );
   }
 }

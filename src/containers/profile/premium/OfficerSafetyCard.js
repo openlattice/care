@@ -10,27 +10,18 @@ import {
   CardHeader,
   CardSegment
 } from 'lattice-ui-kit';
-import { withRouter } from 'react-router-dom';
-import type { Match } from 'react-router-dom';
 
 import BehaviorItem from './BehaviorItem';
 import Triggers from './Triggers';
 import { countSafetyIncidents } from './Utils';
 
-import EditLinkButton from '../../../components/buttons/EditLinkButton';
-import NewIssueButton from '../../../components/buttons/CreateIssueButton';
 import OfficerSafetyConcernsList from '../../../components/premium/officersafety/OfficerSafetyConcernsList';
 import {
   DashedList,
   H1,
-  HeaderActions,
   IconWrapper,
 } from '../../../components/layout';
 import { CardSkeleton } from '../../../components/skeletons';
-import { EDIT_PATH, OFFICER_SAFETY_PATH } from '../../../core/router/Routes';
-import { CATEGORIES } from '../../issues/issue/constants';
-
-const { OFFICER_SAFETY } = CATEGORIES;
 
 const StyledCardSegment = styled(CardSegment)`
   min-height: 100px;
@@ -39,10 +30,8 @@ const StyledCardSegment = styled(CardSegment)`
 
 type Props = {
   isLoading ?:boolean;
-  match :Match;
   officerSafety :List<Map>;
   reports :List<Map>;
-  showEdit :boolean;
   triggers :List<Map>;
 };
 
@@ -50,10 +39,8 @@ const OfficerSafetyCard = (props :Props) => {
 
   const {
     isLoading,
-    match,
     officerSafety,
     reports,
-    showEdit,
     triggers,
   } = props;
 
@@ -66,18 +53,12 @@ const OfficerSafetyCard = (props :Props) => {
 
   return (
     <Card>
-      <CardHeader mode="warning" padding="sm">
+      <CardHeader mode="primary" padding="sm">
         <H1>
           <IconWrapper>
             <FontAwesomeIcon icon={faExclamationTriangle} fixedWidth />
           </IconWrapper>
-          { OFFICER_SAFETY }
-          <HeaderActions>
-            { showEdit && <EditLinkButton mode="subtle" to={`${match.url}${EDIT_PATH}${OFFICER_SAFETY_PATH}`} /> }
-            <NewIssueButton
-                defaultComponent={OFFICER_SAFETY}
-                mode="subtle" />
-          </HeaderActions>
+          Officer Safety
         </H1>
       </CardHeader>
       <StyledCardSegment padding="sm" vertical>
@@ -101,4 +82,8 @@ const OfficerSafetyCard = (props :Props) => {
   );
 };
 
-export default withRouter(OfficerSafetyCard);
+OfficerSafetyCard.defaultProps = {
+  isLoading: false
+};
+
+export default OfficerSafetyCard;

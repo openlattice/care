@@ -9,6 +9,7 @@ import { combineReducers } from 'redux-immutable';
 
 import appReducer from '../../containers/app/AppReducer';
 import authorizeReducer from '../sagas/authorize/AuthorizeReducer';
+import crisisReportReducer from '../../containers/reports/crisis/CrisisReportReducer';
 import dashboardReducer from '../../containers/dashboard/DashboardReducer';
 // pages
 import dispositionReducer from '../../containers/pages/disposition/Reducer';
@@ -26,6 +27,8 @@ import reportsReducer from '../../containers/reports/ReportsReducer';
 import searchReducer from '../../containers/search/SearchReducer';
 import staffReducer from '../../containers/staff/StaffReducer';
 import subjectInformationReducer from '../../containers/pages/subjectinformation/Reducer';
+import symptomsReportReducer from '../../containers/reports/symptoms/SymptomsReportReducer';
+import recentInteractionReducer from '../../containers/reports/interaction/RecentInteractionReducer';
 import { INITIALIZE_APPLICATION } from '../../containers/app/AppActions';
 import { STATE } from '../../utils/constants/StateConstants';
 
@@ -47,6 +50,9 @@ export default function reduxReducer(routerHistory :any) {
     search: searchReducer,
     staff: staffReducer,
     longBeach: longBeachReducer,
+    crisisReport: crisisReportReducer,
+    symptomsReport: symptomsReportReducer,
+    recentInteractions: recentInteractionReducer,
 
     // page reducers
     [STATE.DISPOSITION]: dispositionReducer,

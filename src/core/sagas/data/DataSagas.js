@@ -12,22 +12,23 @@ import { Models, Types } from 'lattice';
 import { DataApiActions, DataApiSagas } from 'lattice-sagas';
 import type { SequenceAction } from 'redux-reqseq';
 
+import {
+  CREATE_OR_REPLACE_ASSOCIATION,
+  DELETE_BULK_ENTITIES,
+  SUBMIT_DATA_GRAPH,
+  SUBMIT_PARTIAL_REPLACE,
+  createOrReplaceAssociation,
+  deleteBulkEntities,
+  submitDataGraph,
+  submitPartialReplace,
+} from './DataActions';
+
 import Logger from '../../../utils/Logger';
 import {
   ERR_ACTION_VALUE_NOT_DEFINED,
   ERR_ACTION_VALUE_TYPE,
   ERR_WORKER_SAGA,
 } from '../../../utils/Errors';
-import {
-  DELETE_BULK_ENTITIES,
-  SUBMIT_DATA_GRAPH,
-  SUBMIT_PARTIAL_REPLACE,
-  CREATE_OR_REPLACE_ASSOCIATION,
-  createOrReplaceAssociation,
-  deleteBulkEntities,
-  submitDataGraph,
-  submitPartialReplace,
-} from './DataActions';
 import { isDefined } from '../../../utils/LangUtils';
 import { isValidUuid } from '../../../utils/Utils';
 

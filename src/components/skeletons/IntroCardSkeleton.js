@@ -26,10 +26,10 @@ const IntroCardSkeleton = () => (
     </CardHeader>
     <CardSegment vertical padding="sm">
       <Skeleton height={27} width="80%" />
-      <Skeleton width="40%"/>
+      <Skeleton width="40%" />
     </CardSegment>
     <CardSegment vertical padding="sm">
-      <Skeleton width="50%"/>
+      <Skeleton width="50%" />
     </CardSegment>
     <CardSegment vertical padding="sm">
       <IntroGrid>

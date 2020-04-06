@@ -13,7 +13,7 @@ import { useSelector } from 'react-redux';
 import EncampmentOccupantsModal from './EncampmentOccupantsModal';
 import { ENCAMPMENT_STORE_PATH } from './constants';
 
-import Detail from '../../../components/premium/styled/Detail';
+import IconDetail from '../../../components/premium/styled/IconDetail';
 import {
   DESCRIPTION_FQN,
   ENTRY_UPDATED_FQN,
@@ -71,9 +71,9 @@ const EncampmentPopup = ({
         <strong>Encampment</strong>
         <CloseButton size="sm" mode="subtle" icon={CloseIcon} onClick={onClose} />
       </ActionBar>
-      <Detail content={occupants} icon={faUsers} />
-      <Detail content={lastUpdated} icon={faHistory} />
-      <Detail content={description} />
+      <IconDetail content={occupants} icon={faUsers} />
+      <IconDetail content={lastUpdated} icon={faHistory} />
+      <IconDetail content={description} />
       <Button size="sm" mode="subtle" onClick={setOpen}>View Occupants</Button>
       <EncampmentOccupantsModal
           viewportScrolling

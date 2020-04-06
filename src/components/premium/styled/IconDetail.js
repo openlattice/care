@@ -7,7 +7,7 @@ import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Skeleton } from 'lattice-ui-kit';
 
-const DetailWrapper = styled.div`
+const IconDetailWrapper = styled.div`
   display: flex;
 `;
 
@@ -29,7 +29,7 @@ type Props = {
   isLoading ? :boolean;
 }
 
-class Detail extends Component<Props> {
+class IconDetail extends Component<Props> {
   static defaultProps = {
     className: undefined,
     content: '',
@@ -64,11 +64,11 @@ class Detail extends Component<Props> {
     }
 
     return (
-      <DetailWrapper className={className}>
+      <IconDetailWrapper className={className}>
         { this.renderContent() }
-      </DetailWrapper>
+      </IconDetailWrapper>
     );
   }
 }
 
-export default Detail;
+export default IconDetail;

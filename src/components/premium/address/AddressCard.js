@@ -10,27 +10,18 @@ import {
   CardHeader,
   CardSegment,
 } from 'lattice-ui-kit';
-import { withRouter } from 'react-router-dom';
-import type { Match } from 'react-router-dom';
 
 import Address from './Address';
 
-import EditLinkButton from '../../buttons/EditLinkButton';
-import NewIssueButton from '../../buttons/CreateIssueButton';
 import * as FQN from '../../../edm/DataModelFqns';
-import { CATEGORIES } from '../../../containers/issues/issue/constants';
-import { BASIC_PATH, EDIT_PATH } from '../../../core/router/Routes';
 import { formatCityStateZip } from '../../../utils/AddressUtils';
-import { H1, HeaderActions, IconWrapper } from '../../layout';
+import { H1, IconWrapper } from '../../layout';
 import { CardSkeleton } from '../../skeletons';
 
-const { BASIC_INFORMATION } = CATEGORIES;
 
 type Props = {
   address :Map;
   isLoading :boolean;
-  match :Match;
-  showEdit :boolean;
 };
 
 const AddressCard = (props :Props) => {
@@ -38,8 +29,6 @@ const AddressCard = (props :Props) => {
   const {
     address,
     isLoading,
-    match,
-    showEdit
   } = props;
 
   if (isLoading) {
@@ -62,10 +51,6 @@ const AddressCard = (props :Props) => {
             <FontAwesomeIcon icon={faHome} />
           </IconWrapper>
           Address
-          <HeaderActions>
-            { showEdit && <EditLinkButton mode="primary" to={`${match.url}${EDIT_PATH}${BASIC_PATH}`} /> }
-            <NewIssueButton defaultComponent={BASIC_INFORMATION} mode="primary" />
-          </HeaderActions>
         </H1>
       </CardHeader>
       <CardSegment vertical padding="sm">
@@ -81,4 +66,4 @@ const AddressCard = (props :Props) => {
 
 };
 
-export default withRouter(AddressCard);
+export default AddressCard;

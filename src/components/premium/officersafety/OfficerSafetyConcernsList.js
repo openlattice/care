@@ -48,4 +48,8 @@ const OfficerSafetyConcernsList = (props :Props) => {
   );
 };
 
+OfficerSafetyConcernsList.defaultProps = {
+  isLoading: false
+};
+
 export default OfficerSafetyConcernsList;

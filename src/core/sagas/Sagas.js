@@ -7,7 +7,6 @@ import { AuthSagas } from 'lattice-auth';
 import {
   AppApiSagas,
   DataApiSagas,
-  DataIntegrationApiSagas,
   EntityDataModelApiSagas,
   SearchApiSagas,
 } from 'lattice-sagas';
@@ -21,6 +20,7 @@ import * as AppSagas from '../../containers/app/AppSagas';
 import * as AppearanceSagas from '../../containers/profile/edit/basicinformation/sagas/AppearanceSagas';
 import * as BasicInformationSagas from '../../containers/profile/edit/basicinformation/sagas/BasicInformationSagas';
 import * as ContactsSagas from '../../containers/profile/edit/contacts/ContactsSagas';
+import * as CrisisReportSagas from '../../containers/reports/crisis/CrisisReportSagas';
 import * as DashboardSagas from '../../containers/dashboard/DashboardSagas';
 import * as DownloadsSagas from '../../containers/downloads/DownloadsSagas';
 import * as EncampmentSagas from '../../longbeach/location/encampment/EncampmentsSagas';
@@ -35,12 +35,14 @@ import * as OfficerSafetyConcernsSagas from '../../containers/profile/edit/offic
 import * as PeopleSagas from '../../containers/people/PeopleSagas';
 import * as PhotosSagas from '../../containers/profile/edit/basicinformation/sagas/PhotosSagas';
 import * as ProfileSagas from '../../containers/profile/ProfileSagas';
+import * as RecentInteractionSagas from '../../containers/reports/interaction/RecentInteractionSagas';
 import * as ReportsSagas from '../../containers/reports/ReportsSagas';
 import * as ResponsePlanSagas from '../../containers/profile/edit/responseplan/ResponsePlanSagas';
 import * as RoutingSagas from '../router/RoutingSagas';
 import * as ScarsMarksTattoosSagas from '../../containers/profile/edit/basicinformation/sagas/ScarsMarksTattoosSagas';
 import * as SearchSagas from '../../containers/search/SearchSagas';
 import * as StaffSagas from '../../containers/staff/StaffSagas';
+import * as SymptomsReportSagas from '../../containers/reports/symptoms/SymptomsReportSagas';
 
 export default function* sagas() :Generator<*, *, *> {
 
@@ -59,7 +61,6 @@ export default function* sagas() :Generator<*, *, *> {
     fork(DataApiSagas.deleteEntityDataWatcher),
     fork(DataApiSagas.getEntitySetDataWatcher),
     fork(DataApiSagas.updateEntityDataWatcher),
-    fork(DataIntegrationApiSagas.createEntityAndAssociationDataWatcher),
     fork(EntityDataModelApiSagas.getAllPropertyTypesWatcher),
     fork(EntityDataModelApiSagas.getEntityDataModelProjectionWatcher),
     fork(SearchApiSagas.searchEntitySetDataWatcher),
@@ -110,6 +111,11 @@ export default function* sagas() :Generator<*, *, *> {
     fork(ReportsSagas.getReportsByDateRangeWatcher),
     fork(ReportsSagas.submitReportWatcher),
     fork(ReportsSagas.updateReportWatcher),
+    fork(ReportsSagas.getIncidentReportsWatcher),
+    fork(ReportsSagas.getProfileIncidentsWatcher),
+    fork(ReportsSagas.getIncidentReportsSummaryWatcher),
+    fork(ReportsSagas.getReportsBehaviorAndSafetyWatcher),
+    fork(ReportsSagas.getReportersForReportsWatcher),
 
     // ResponsePlanSagas
     fork(ResponsePlanSagas.deleteInteractionStrategiesWatcher),
@@ -184,6 +190,15 @@ export default function* sagas() :Generator<*, *, *> {
     fork(LongBeachProviderSagas.getLBProvidersWatcher),
     /* <===== END LONG BEACH HACK =====> */
 
+    fork(CrisisReportSagas.addOptionalCrisisReportContentWatcher),
+    fork(CrisisReportSagas.deleteCrisisReportContentWatcher),
+    fork(CrisisReportSagas.getCrisisReportWatcher),
+    fork(CrisisReportSagas.getCrisisReportV2Watcher),
+    fork(CrisisReportSagas.getReportsV2NeighborsWatcher),
+    fork(CrisisReportSagas.getReportsNeighborsWatcher),
+    fork(CrisisReportSagas.getSubjectOfIncidentWatcher),
+    fork(CrisisReportSagas.submitCrisisReportWatcher),
+    fork(CrisisReportSagas.updateCrisisReportWatcher),
     fork(EncampmentSagas.addPersonToEncampmentWatcher),
     fork(EncampmentSagas.getEncampmentOccupantsWatcher),
     fork(EncampmentSagas.getEncampmentPeopleOptionsWatcher),
@@ -191,5 +206,12 @@ export default function* sagas() :Generator<*, *, *> {
     fork(EncampmentSagas.removePersonFromEncampmentWatcher),
     fork(EncampmentSagas.searchEncampmentLocationsWatcher),
     fork(EncampmentSagas.submitEncampmentWatcher),
+
+    fork(SymptomsReportSagas.getSymptomsReportWatcher),
+    fork(SymptomsReportSagas.getAllSymptomsReportsWatcher),
+    fork(SymptomsReportSagas.submitSymptomsReportWatcher),
+    fork(SymptomsReportSagas.updateSymptomsReportWatcher),
+
+    fork(RecentInteractionSagas.getRecentInteractionsWatcher),
   ]);
 }

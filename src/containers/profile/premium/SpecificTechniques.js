@@ -50,9 +50,6 @@ const SpecificTechniques = (props :Props) => {
 
   return (
     <div>
-      <H2>
-        Specific Techniques
-      </H2>
       { content }
     </div>
   );

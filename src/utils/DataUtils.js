@@ -72,34 +72,66 @@ const simulateResponseData = (properties :Map, entityKeyId :UUID, propertyTypesB
 const replacePropertyTypeIdsWithFqns = (
   entity :Object,
   propertyTypesById :Map
-) => Object.fromEntries(Object.entries(entity).map(([propertyTypeId, value]) => {
+) => Object.fromEntries<string, Object>(Object.entries(entity).map(([propertyTypeId, value]) => {
   const fqnObj = propertyTypesById.getIn([propertyTypeId, 'type']);
   const fqn = new FullyQualifiedName(fqnObj);
   return [fqn.toString(), value];
 }));
 
-const indexSubmittedDataGraph = (dataGraph :Object, response :Object, propertyTypesById) :Object => {
+type Entity = {
+  [key :string] :any[]
+};
+
+type DataGraph = {|
+  associationEntityData :{
+    [key :string] :Entity[]
+  };
+  entityData :{
+    [key :string] :Entity[]
+  };
+|};
+
+type SubmitDataGraphResponse = {|
+  data :{
+    entityKeyIds :{ [key :string] :string[] },
+    entitySetIds :{ [key :string] :string[] },
+   };
+  error ?:Object;
+|};
+
+const indexSubmittedDataGraph = (
+  dataGraph :DataGraph,
+  response :SubmitDataGraphResponse,
+  propertyTypesById :Map
+) :Object => {
   const { associationEntityData, entityData } = dataGraph;
-  // for each array of data in entityData keyed by ESID
-  // find the matching EKID from response
+
   const indexedEntityEntries = Object.entries(entityData).map(([entitySetId, entities]) => {
-    const indexedEntities = entities.map((entity, index) => {
-      const { entityKeyIds } = response.data;
-      const entityKeyId = getIn(entityKeyIds, [entitySetId, index]);
-      const entityWithFqns = replacePropertyTypeIdsWithFqns(entity, propertyTypesById);
-      return setIn(entityWithFqns, [OPENLATTICE_ID_FQN], [entityKeyId]);
-    });
-    return [entitySetId, indexedEntities];
+    if (Array.isArray(entities)) {
+      const indexedEntities :Object[] = entities.map((entity :Object, index :number) => {
+        const { entityKeyIds } = response.data;
+        const entityKeyId :UUID = getIn(entityKeyIds, [entitySetId, index]);
+        const entityWithFqns = replacePropertyTypeIdsWithFqns(entity, propertyTypesById);
+        return setIn(entityWithFqns, [OPENLATTICE_ID_FQN], [entityKeyId]);
+      });
+      return [entitySetId, indexedEntities];
+    }
+
+    throw new Error("entityData 'entities' is not an array");
   });
 
   const indexedAssociationEntityEntries = Object.entries(associationEntityData).map(([entitySetId, entities]) => {
-    const indexedEntities = entities.map((entity, index) => {
-      const { entitySetIds } = response.data;
-      const entityKeyId = getIn(entitySetIds, [entitySetId, index]);
-      const entityWithFqns = replacePropertyTypeIdsWithFqns(entity.data, propertyTypesById);
-      return setIn(entityWithFqns, [OPENLATTICE_ID_FQN], [entityKeyId]);
-    });
-    return [entitySetId, indexedEntities];
+    if (Array.isArray(entities)) {
+      const indexedEntities = entities.map((entity :Object, index :number) => {
+        const { entitySetIds } = response.data;
+        const entityKeyId = getIn(entitySetIds, [entitySetId, index]);
+        const entityWithFqns = replacePropertyTypeIdsWithFqns(entity.data, propertyTypesById);
+        return setIn(entityWithFqns, [OPENLATTICE_ID_FQN], [entityKeyId]);
+      });
+      return [entitySetId, indexedEntities];
+    }
+
+    throw new Error("associationEntitiyData 'entities' is not an array");
   });
 
   const indexedEntities = Object.fromEntries(indexedEntityEntries);
@@ -181,6 +213,33 @@ const groupNeighborsByEntitySetIds = (
   return neighborsByESID;
 };
 
+const groupNeighborsByFQNs = (
+  neighbors :List<Map>,
+  appTypeFqnsByIds :Map = Map(),
+  byAssociation :boolean = false,
+  entityOnly :boolean = false
+) :Map => {
+  const entitySetType = byAssociation ? 'associationEntitySet' : 'neighborEntitySet';
+  const neighborsByFQN = Map().withMutations((mutable) => {
+    neighbors.forEach((neighbor) => {
+      const neighborESID = neighbor.getIn([entitySetType, 'id']);
+      const neighborData = entityOnly ? neighbor.get('neighborDetails') : neighbor;
+      const appTypeFqn = appTypeFqnsByIds.get(neighborESID);
+
+      if (mutable.has(appTypeFqn)) {
+        const entitySetCount = mutable.get(appTypeFqn).count();
+        mutable.setIn([appTypeFqn, entitySetCount], neighborData);
+      }
+      else {
+        mutable.set(appTypeFqn, List([neighborData]));
+      }
+
+    });
+  });
+
+  return neighborsByFQN;
+};
+
 const formatDataGraphResponse = (responseData :Map, app :Map) => {
   const newEntityKeyIdsByEntitySetId = responseData.get('entityKeyIds');
   const newAssociationKeyIdsByEntitySetId = responseData.get('entitySetIds');
@@ -235,11 +294,13 @@ export {
   getFqnObj,
   getSearchTerm,
   groupNeighborsByEntitySetIds,
+  groupNeighborsByFQNs,
   inchesToFeetString,
   indexSubmittedDataGraph,
   keyIn,
   mapFirstEntityDataFromNeighbors,
   removeEntitiesFromEntityIndexToIdMap,
+  replacePropertyTypeIdsWithFqns,
   simulateResponseData,
   stripIdField,
 };

@@ -1,17 +1,18 @@
 // @flow
 import React, { Component } from 'react';
-import { DateTime } from 'luxon';
+
+import { Map, get, setIn } from 'immutable';
 import { Constants } from 'lattice';
-import { Form, DataProcessingUtils } from 'lattice-fabricate';
+import { DataProcessingUtils, Form } from 'lattice-fabricate';
 import {
   Card,
   CardHeader,
   CardSegment,
   Spinner
 } from 'lattice-ui-kit';
-import { Map, get, setIn } from 'immutable';
-import { bindActionCreators } from 'redux';
+import { DateTime } from 'luxon';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { RequestStates } from 'redux-reqseq';
 import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
@@ -22,10 +23,11 @@ import {
   updateOfficerSafetyConcerns,
 } from './OfficerSafetyActions';
 import { schema, uiSchema } from './schemas/OfficerSafetyConcernsSchemas';
+
 import { COMPLETED_DT_FQN, CONTEXT_FQN } from '../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
-import { isValidUuid } from '../../../../utils/Utils';
 import { reduceRequestStates } from '../../../../utils/StateUtils';
+import { isValidUuid } from '../../../../utils/Utils';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 
