@@ -2,31 +2,32 @@
 import React from 'react';
 
 import styled from 'styled-components';
-import { faCommentAltPlus } from '@fortawesome/pro-solid-svg-icons';
+import { faCommentAltLines } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Map } from 'immutable';
-import { IconButton, Hooks } from 'lattice-ui-kit';
+import { Hooks, IconButton } from 'lattice-ui-kit';
 import { useSelector } from 'react-redux';
 
 import IssueModal from '../../containers/issues/issue/IssueModal';
 
 const { useBoolean } = Hooks;
 
-const ChangeButton = styled(IconButton)`
-  color: inherit;
-  background-color: inherit;
-  padding: 2px;
+const ChangeIcon = <FontAwesomeIcon icon={faCommentAltLines} fixedWidth />;
+const StyledButton = styled(IconButton)`
+  padding: 10px;
+  background-color: #E5E5F0;
+  border-color: #E5E5F0;
 `;
 
-const ChangeIcon = <FontAwesomeIcon icon={faCommentAltPlus} fixedWidth />;
-
 type Props = {
-  mode :string;
-  defaultComponent :string;
+  className ?:string;
+  defaultComponent ?:string;
+  mode ?:string;
 };
 
 const CreateIssueButton = (props :Props) => {
   const {
+    className,
     defaultComponent,
     mode,
   } = props;
@@ -39,7 +40,7 @@ const CreateIssueButton = (props :Props) => {
 
   return (
     <>
-      <ChangeButton mode={mode} onClick={onOpen} icon={ChangeIcon} />
+      <StyledButton className={className} mode={mode} onClick={onOpen} icon={ChangeIcon} />
       <IssueModal
           assignee={assignee}
           currentUser={currentUser}
@@ -49,6 +50,12 @@ const CreateIssueButton = (props :Props) => {
           person={person} />
     </>
   );
+};
+
+CreateIssueButton.defaultProps = {
+  className: undefined,
+  defaultComponent: undefined,
+  mode: undefined,
 };
 
 export default React.memo<Props>(CreateIssueButton);
