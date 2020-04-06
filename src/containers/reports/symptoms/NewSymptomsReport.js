@@ -1,5 +1,5 @@
 // @flow
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect } from 'react';
 
 import styled from 'styled-components';
 import { Map } from 'immutable';
@@ -16,12 +16,10 @@ import { clearSymptomsReport, submitSymptomsReport } from './SymptomsReportActio
 import { schemas, uiSchemas } from './schemas';
 
 import SuccessSplash from '../shared/SuccessSplash';
-import { generateReviewSchema } from '../../../utils/SchemaUtils';
 import LastContactWith from './LastContactWith';
 
 const ActionRow = styled.div`
   display: flex;
-  justify-content: space-between;
   align-items: center;
   padding: 0 30px 30px 30px;
 `;
@@ -32,9 +30,8 @@ type Props = {
   selectedPerson :Map;
 };
 
-const NewCrisisReport = ({ pageRef, position, selectedPerson } :Props) => {
+const NewCrisisReport = ({ position, selectedPerson } :Props) => {
   const dispatch = useDispatch();
-  const reviewSchemas = useMemo(() => generateReviewSchema(schemas, uiSchemas, true), []);
   const submitState = useSelector((store) => store.getIn(['symptomsReport', 'submitState']));
 
   useEffect(() => () => dispatch(clearSymptomsReport()), [dispatch]);
@@ -55,61 +52,33 @@ const NewCrisisReport = ({ pageRef, position, selectedPerson } :Props) => {
       <Paged
           render={({
             formRef,
-            pagedData,
             page,
-            onBack,
-            onNext,
             validateAndSubmit,
           }) => {
-            const totalPages = schemas.length + 1;
-            const isReviewPage = page === totalPages - 1;
 
-            const validate = isReviewPage
-              ? () => {
-                dispatch(submitSymptomsReport({ formData: pagedData, selectedPerson, position }));
-              }
-              : validateAndSubmit;
-
-            const scrollToContentTop = () => {
-              if (pageRef.current) {
-                pageRef.current.scrollIntoView({
-                  behavior: 'smooth'
-                });
-              }
-            };
-
-            const handleNext = () => {
-              scrollToContentTop();
-              onNext();
-            };
-
-            const handleBack = () => {
-              scrollToContentTop();
-              onBack();
+            const handleSubmit = (payload) => {
+              dispatch(submitSymptomsReport({
+                formData: payload.formData,
+                selectedPerson,
+                position
+              }));
             };
 
             return (
               <>
                 <Form
-                    disabled={isReviewPage}
-                    formData={pagedData}
                     hideSubmit
-                    onSubmit={handleNext}
+                    onSubmit={handleSubmit}
                     ref={formRef}
-                    schema={isReviewPage ? reviewSchemas.schema : schemas[page]}
-                    uiSchema={isReviewPage ? reviewSchemas.uiSchema : uiSchemas[page]} />
+                    schema={schemas[page]}
+                    uiSchema={uiSchemas[page]} />
                 <ActionRow>
                   <Button
-                      disabled={!(page > 0)}
-                      onClick={handleBack}>
-                    Back
-                  </Button>
-                  <span>{`${page + 1} of ${totalPages}`}</span>
-                  <Button
+                      fullWidth
                       isLoading={isLoading}
                       mode="primary"
-                      onClick={validate}>
-                    { isReviewPage ? 'Submit' : 'Next' }
+                      onClick={validateAndSubmit}>
+                    Submit
                   </Button>
                 </ActionRow>
               </>
