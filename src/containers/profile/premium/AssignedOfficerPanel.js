@@ -34,7 +34,7 @@ const AssignedOfficerPanel = (props :Props) => {
     <div>
       <ExpansionPanel>
         <ExpansionPanelSummary expandIcon={expandIcon}>
-          <Label subtle>Assigned Officer</Label>
+          <Label subtle>Assigned Supervisor</Label>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
           <List>
