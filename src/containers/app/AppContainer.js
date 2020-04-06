@@ -45,9 +45,12 @@ import {
   HOME_PATH,
   ISSUES_PATH,
   LOCATION_PATH,
+  NEW_CRISIS_PATH,
+  NEW_SYMPTOMS_PATH,
   PROFILE_PATH,
   PROVIDER_PATH,
   REPORTS_PATH,
+  TRACK_CONTACT_PATH,
 } from '../../core/router/Routes';
 import {
   APP_CONTAINER_MAX_WIDTH,
@@ -56,6 +59,7 @@ import {
   MEDIA_QUERY_MD,
   MEDIA_QUERY_TECH_SM
 } from '../../core/style/Sizes';
+import TrackContactReportContainer from '../reports/interaction/TrackContactReportContainer';
 
 /*
  * styled components
@@ -161,8 +165,9 @@ class AppContainer extends Component<Props> {
       <Switch>
         <Route exact strict path={HOME_PATH} component={SearchPeopleContainer} />
         <Route path={CRISIS_PATH} component={CrisisReportContainer} />
-        <Route path="/new-crisis" component={NewCrisisReportContainer} />
-        <Route path="/new-symptoms" component={NewSymptomsReportContainer} />
+        <Route path={NEW_CRISIS_PATH} component={NewCrisisReportContainer} />
+        <Route path={NEW_SYMPTOMS_PATH} component={NewSymptomsReportContainer} />
+        <Route path={TRACK_CONTACT_PATH} component={TrackContactReportContainer} />
         <Route path={REPORTS_PATH} component={LegitReportsRouter} />
         <Route path={LOCATION_PATH} component={LongBeachLocationsContainer} />
         <Route path={PROVIDER_PATH} component={LongBeachProviderContainer} />
