@@ -65,10 +65,10 @@ const AppearancePanel = (props :Props) => {
               <LabeledDetail isLoading={isLoading} label="weight" content={formattedWeight} />
             </li>
             <li>
-              <LabeledDetail isLoading={isLoading} label="eye color" content={hairColor} />
+              <LabeledDetail isLoading={isLoading} label="eye color" content={eyeColor} />
             </li>
             <li>
-              <LabeledDetail isLoading={isLoading} label="hair color" content={eyeColor} />
+              <LabeledDetail isLoading={isLoading} label="hair color" content={hairColor} />
             </li>
             <li>
               <LabeledDetail isLoading={isLoading} label="identifiers" content={identifiers} />
