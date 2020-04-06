@@ -16,7 +16,7 @@ import LastContactList from './LastContactList';
 const Header = styled.h1`
   font-weight: 600;
   font-size: 1.375rem;
-  margin: 0 0 1.25rem 0;
+  margin: 0 0 20px 0;
 `;
 
 const Centered = styled.div`

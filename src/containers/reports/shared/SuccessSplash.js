@@ -29,7 +29,7 @@ const StyledLink = styled(BreadcrumbLink)`
 `;
 
 const LinkText = styled.span`
-  margin-right: 0.5rem;
+  margin-right: 8px;
 `;
 
 const MessageWrapper = styled.div`
@@ -40,7 +40,7 @@ const MessageWrapper = styled.div`
 
   > p {
     font-weight: normal;
-    margin: 0.625rem 0;
+    margin: 10px 0;
   }
 `;
 

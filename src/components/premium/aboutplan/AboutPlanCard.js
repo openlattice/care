@@ -10,28 +10,19 @@ import {
   CardSegment,
   Label
 } from 'lattice-ui-kit';
-import { useRouteMatch } from 'react-router';
 
-import EditLinkButton from '../../buttons/EditLinkButton';
 import IconDetail from '../styled/IconDetail';
-import NewIssueButton from '../../buttons/CreateIssueButton';
-import { CATEGORIES } from '../../../containers/issues/issue/constants';
-import { ABOUT_PATH, EDIT_PATH } from '../../../core/router/Routes';
 import { PERSON_ID_FQN } from '../../../edm/DataModelFqns';
-import { H1, HeaderActions, IconWrapper } from '../../layout';
+import { H1, IconWrapper } from '../../layout';
 import { CardSkeleton } from '../../skeletons';
-
-const { ABOUT } = CATEGORIES;
 
 type Props = {
   isLoading ?:boolean;
   responsibleUser :Map;
-  showEdit :boolean;
 }
 
 const AboutPlanCard = (props :Props) => {
-  const match = useRouteMatch();
-  const { isLoading, responsibleUser, showEdit } = props;
+  const { isLoading, responsibleUser } = props;
 
   if (isLoading) {
     return <CardSkeleton />;
@@ -46,10 +37,6 @@ const AboutPlanCard = (props :Props) => {
             <FontAwesomeIcon icon={faInfoSquare} fixedWidth />
           </IconWrapper>
           About Plan
-          <HeaderActions>
-            { showEdit && <EditLinkButton mode="subtle" to={`${match.url}${EDIT_PATH}${ABOUT_PATH}`} /> }
-            <NewIssueButton defaultComponent={ABOUT} mode="subtle" />
-          </HeaderActions>
         </H1>
       </CardHeader>
       <CardSegment vertical padding="sm">

@@ -18,7 +18,6 @@ import Triggers from './Triggers';
 import { countSafetyIncidents } from './Utils';
 
 import EditLinkButton from '../../../components/buttons/EditLinkButton';
-import NewIssueButton from '../../../components/buttons/CreateIssueButton';
 import OfficerSafetyConcernsList from '../../../components/premium/officersafety/OfficerSafetyConcernsList';
 import {
   DashedList,
@@ -66,18 +65,12 @@ const OfficerSafetyCard = (props :Props) => {
 
   return (
     <Card>
-      <CardHeader mode="warning" padding="sm">
+      <CardHeader mode="primary" padding="sm">
         <H1>
           <IconWrapper>
             <FontAwesomeIcon icon={faExclamationTriangle} fixedWidth />
           </IconWrapper>
           { OFFICER_SAFETY }
-          <HeaderActions>
-            { showEdit && <EditLinkButton mode="subtle" to={`${match.url}${EDIT_PATH}${OFFICER_SAFETY_PATH}`} /> }
-            <NewIssueButton
-                defaultComponent={OFFICER_SAFETY}
-                mode="subtle" />
-          </HeaderActions>
         </H1>
       </CardHeader>
       <StyledCardSegment padding="sm" vertical>

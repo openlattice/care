@@ -57,6 +57,26 @@ export const DashedList = styled.div`
   ${(props) => (props.isLoading ? behaviorItemSkeleton : null)};
 `;
 
+export const List = styled.ul`
+  margin: 0;
+  padding: 0;
+  position: relative;
+  list-style: none;
+  width: 100%;
+
+  li {
+    padding: 10px 0;
+    border-bottom: 1px solid ${NEUTRALS[4]};
+  }
+  li:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+  li:first-child {
+    padding-top: 0;
+  }
+`;
+
 export const H1 = styled.h1`
   display: flex;
   flex: 1;

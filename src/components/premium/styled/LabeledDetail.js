@@ -1,26 +1,30 @@
 // @flow
 import React from 'react';
-
+import type { Node } from 'react';
 import styled from 'styled-components';
 import { Label, Skeleton } from 'lattice-ui-kit';
 
 const LabeledDetailWrapper = styled.div`
-  display: flex;
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  grid-gap: 10px;
 `;
 
 const Content = styled.div`
-  flex: 1;
+  display: inline-block;
+  font-size: 0.875rem;
   word-break: break-word;
   white-space: pre-wrap;
 `;
 
 const LabelHeader = styled(Label)`
-  min-width: 90px;
+  margin: 0;
+  line-height: 1.3125rem;
 `;
 
 type Props = {
   className ? :string;
-  content ? :string;
+  content ? :Node;
   label ? :string;
   isLoading ? :boolean;
 }
@@ -42,7 +46,9 @@ const LabeledDetail = (props :Props) => {
 
   return (
     <LabeledDetailWrapper className={className}>
-      <LabelHeader subtle>{label}</LabelHeader>
+      {
+        label && <LabelHeader subtle>{label}</LabelHeader>
+      }
       <Content>
         {display}
       </Content>

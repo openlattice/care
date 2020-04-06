@@ -20,7 +20,7 @@ const BlameWrapper = styled.span`
   text-align: center;
   font-size: 0.875rem;
   > svg {
-    margin-right: 0.5rem;
+    margin-right: 8px;
   }
 `;
 
