@@ -121,6 +121,7 @@ const ActionBar = styled.div`
   display: flex;
   flex: 1 0 auto;
   justify-content: flex-end;
+  max-height: 40px;
 
   > button:not(:first-child):not(:last-child) {
     margin: 0 10px;
