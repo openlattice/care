@@ -126,6 +126,10 @@ const uiSchema = {
     },
     [getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_RACE_FQN)]: {
       classNames: 'column-span-12',
+      'ui:widget': 'radio',
+      'ui:options': {
+        inline: false
+      }
     },
     [getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_ETHNICITY_FQN)]: {
       classNames: 'column-span-12',
