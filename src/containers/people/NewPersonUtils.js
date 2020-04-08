@@ -20,8 +20,8 @@ function getNewPersonAssociations() :any[][] {
 }
 
 function getDefaultFormData(searchInputs :Map) {
-  const firstName :string = searchInputs.get('firstName', '').trim();
-  const lastName :string = searchInputs.get('lastName', '').trim();
+  const firstName :string = searchInputs.get('firstName').trim() || undefined;
+  const lastName :string = searchInputs.get('lastName').trim() || undefined;
   const dob :string = searchInputs.get('dob');
   const race :string = searchInputs.getIn(['race', 'value']);
   const sex :string = searchInputs.getIn(['sex', 'value']);
