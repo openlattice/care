@@ -64,7 +64,7 @@ const NewPersonContainer = () => {
                         isLoading={isSubmitting}
                         mode="primary"
                         onClick={handleExternalSubmit}>
-                      Submit
+                      Create New Person
                     </Button>
                   </ActionRow>
                 </Card>
