@@ -1,8 +1,8 @@
 // @flow
 import {
+  all,
   call,
   put,
-  all,
   select,
   takeEvery,
   takeLatest,
@@ -19,17 +19,9 @@ import {
   SearchApiActions,
   SearchApiSagas
 } from 'lattice-sagas';
-import type { SequenceAction } from 'redux-reqseq';
 import { DateTime } from 'luxon';
+import type { SequenceAction } from 'redux-reqseq';
 
-import Logger from '../../../../utils/Logger';
-import { APP_TYPES_FQNS } from '../../../../shared/Consts';
-import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../../utils/Errors';
-import { getESIDFromApp } from '../../../../utils/AppUtils';
-import { getResponsePlan } from '../responseplan/ResponsePlanActions';
-import { getResponsePlanWorker } from '../responseplan/ResponsePlanSagas';
-import { isDefined } from '../../../../utils/LangUtils';
-import { isValidUuid } from '../../../../utils/Utils';
 import {
   GET_ABOUT_PLAN,
   GET_RESPONSIBLE_USER,
@@ -41,6 +33,8 @@ import {
   updateAboutPlan,
 } from './AboutActions';
 import { constructEntityIndexToIdMap, constructFormData } from './AboutUtils';
+
+import Logger from '../../../../utils/Logger';
 import {
   createOrReplaceAssociation,
   submitDataGraph,
@@ -52,7 +46,14 @@ import {
   submitPartialReplaceWorker,
 } from '../../../../core/sagas/data/DataSagas';
 import { DATE_TIME_FQN } from '../../../../edm/DataModelFqns';
+import { APP_TYPES_FQNS } from '../../../../shared/Consts';
+import { getESIDFromApp } from '../../../../utils/AppUtils';
 import { formatDataGraphResponse } from '../../../../utils/DataUtils';
+import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../../utils/Errors';
+import { isDefined } from '../../../../utils/LangUtils';
+import { isValidUuid } from '../../../../utils/Utils';
+import { getResponsePlan } from '../responseplan/ResponsePlanActions';
+import { getResponsePlanWorker } from '../responseplan/ResponsePlanSagas';
 
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
 const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;

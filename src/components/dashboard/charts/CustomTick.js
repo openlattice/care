@@ -7,7 +7,6 @@ const Tick = styled.text`
   width: 200px;
   min-height: 20px;
   fill: #2e2e34;
-  font-family: 'Open Sans', sans-serif;
   font-size: 11px;
 `;
 

@@ -6,7 +6,13 @@ import React, { Component } from 'react';
 
 import styled from 'styled-components';
 import { Map } from 'immutable';
-import { Spinner } from 'lattice-ui-kit';
+import {
+  LatticeLuxonUtils,
+  MuiPickersUtilsProvider,
+  Spinner,
+  ThemeProvider,
+  lightTheme,
+} from 'lattice-ui-kit';
 import { connect } from 'react-redux';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
@@ -21,19 +27,33 @@ import {
 import CrisisReportContainer from '../reports/CrisisReportContainer';
 import DashboardContainer from '../dashboard/DashboardContainer';
 import DownloadsContainer from '../downloads/DownloadsContainer';
+import EncampmentsContainer from '../../longbeach/location/encampment/EncampmentsContainer';
 import IssuesContainer from '../issues/IssuesContainer';
 import LegitReportsRouter from '../reports/LegitReportsRouter';
+import LongBeachLocationsContainer from '../../longbeach/location/stayaway/LongBeachLocationsContainer';
+import LongBeachProviderContainer from '../../longbeach/provider/LongBeachProviderContainer';
 import LongBeachRouter from '../../longbeach/LongBeachRouter';
+import NewCrisisReportContainer from '../reports/crisis/NewCrisisReportContainer';
+import NewPersonContainer from '../people/NewPersonContainer';
+import NewSymptomsReportContainer from '../reports/symptoms/NewSymptomsReportContainer';
 import ProfileRouter from '../profile/ProfileRouter';
 import SearchPeopleContainer from '../people/SearchPeopleContainer';
+import TrackContactReportContainer from '../reports/interaction/TrackContactReportContainer';
 import {
   CRISIS_PATH,
   DASHBOARD_PATH,
   DOWNLOADS_PATH,
+  ENCAMPMENTS_PATH,
   HOME_PATH,
   ISSUES_PATH,
+  LOCATION_PATH,
+  NEW_CRISIS_PATH,
+  NEW_PERSON_PATH,
+  NEW_SYMPTOMS_PATH,
   PROFILE_PATH,
+  PROVIDER_PATH,
   REPORTS_PATH,
+  TRACK_CONTACT_PATH,
 } from '../../core/router/Routes';
 import {
   APP_CONTAINER_MAX_WIDTH,
@@ -147,7 +167,14 @@ class AppContainer extends Component<Props> {
       <Switch>
         <Route exact strict path={HOME_PATH} component={SearchPeopleContainer} />
         <Route path={CRISIS_PATH} component={CrisisReportContainer} />
+        <Route path={NEW_PERSON_PATH} component={NewPersonContainer} />
+        <Route path={NEW_CRISIS_PATH} component={NewCrisisReportContainer} />
+        <Route path={NEW_SYMPTOMS_PATH} component={NewSymptomsReportContainer} />
+        <Route path={TRACK_CONTACT_PATH} component={TrackContactReportContainer} />
         <Route path={REPORTS_PATH} component={LegitReportsRouter} />
+        <Route path={LOCATION_PATH} component={LongBeachLocationsContainer} />
+        <Route path={PROVIDER_PATH} component={LongBeachProviderContainer} />
+        <Route path={ENCAMPMENTS_PATH} component={EncampmentsContainer} />
         <Route path={DASHBOARD_PATH} render={this.wrapComponent(DashboardContainer)} />
         <Route path={DOWNLOADS_PATH} render={this.wrapComponent(DownloadsContainer)} />
         <Route path={PROFILE_PATH} component={ProfileRouter} />
@@ -161,12 +188,16 @@ class AppContainer extends Component<Props> {
     const { organizations } = this.props;
 
     return (
-      <AppContainerWrapper>
-        <AppHeaderContainer organizations={organizations} />
-        <AppContentOuterWrapper>
-          { this.renderAppContent() }
-        </AppContentOuterWrapper>
-      </AppContainerWrapper>
+      <ThemeProvider theme={lightTheme}>
+        <MuiPickersUtilsProvider utils={LatticeLuxonUtils}>
+          <AppContainerWrapper>
+            <AppHeaderContainer organizations={organizations} />
+            <AppContentOuterWrapper>
+              { this.renderAppContent() }
+            </AppContentOuterWrapper>
+          </AppContainerWrapper>
+        </MuiPickersUtilsProvider>
+      </ThemeProvider>
     );
   }
 }

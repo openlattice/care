@@ -55,7 +55,7 @@ const formatIssueRowData = (entityData :List<Map>) :List<Map> => entityData
       .map((details) => details.get(0))
       .set('id', id);
   })
-  .sortBy((issue :Map,) :number => {
+  .sortBy((issue :Map) :number => {
     const time = DateTime.fromISO(issue.get(COMPLETED_DT_FQN));
 
     return -time.valueOf();

@@ -5,8 +5,47 @@ const { OPENLATTICE_ID_FQN } = Constants;
 
 export { OPENLATTICE_ID_FQN };
 
+/* symptom */
+const DATE_LAST_REPORTED = new FullyQualifiedName('ol.datelastreported');
+export { DATE_LAST_REPORTED };
+
+/* interacted with */
+const CONTACT_DATE_TIME_FQN = new FullyQualifiedName('ol.contactdatetime');
+export { CONTACT_DATE_TIME_FQN };
+
+/* substance */
+const TEMPORAL_STATUS_FQN = new FullyQualifiedName('ol.temporalstatus');
+export { TEMPORAL_STATUS_FQN };
+
+/* referral request */
+const SERVICE_TYPE_FQN = new FullyQualifiedName('ol.servicetype');
+export { SERVICE_TYPE_FQN };
+
+/* encounter */
+const SERVICE_SETTING_FQN = new FullyQualifiedName('ol.servicesetting');
+export { SERVICE_SETTING_FQN };
+
+/* encounter details */
+const LAW_ENFORCEMENT_INVOLVEMENT_FQN = new FullyQualifiedName('ol.lawenforcementinvolvement');
+const REASON_FQN = new FullyQualifiedName('ol.reason');
+const LEVEL_OF_CARE_FQN = new FullyQualifiedName('ol.levelofcare');
+
+export {
+  LAW_ENFORCEMENT_INVOLVEMENT_FQN,
+  LEVEL_OF_CARE_FQN,
+  REASON_FQN,
+};
+
+/* invoice */
+const LINE_ITEM_FQN = new FullyQualifiedName('ol.lineitem');
+export { LINE_ITEM_FQN };
+
 const NUM_SOURCES_FOUND_IN_FQN = new FullyQualifiedName('ol.numsourcesfoundin');
-export { NUM_SOURCES_FOUND_IN_FQN };
+const NUMBER_OF_PEOPLE_FQN = new FullyQualifiedName('ol.numberofpeople');
+export {
+  NUM_SOURCES_FOUND_IN_FQN,
+  NUMBER_OF_PEOPLE_FQN
+};
 
 /* disposition */
 const CJ_DISPOSITION_FQN = new FullyQualifiedName('criminaljustice.disposition');
@@ -108,9 +147,11 @@ export { IMAGE_DATA_FQN };
  */
 
 const TRIGGER_FQN = new FullyQualifiedName('ol.trigger');
+const OBSERVED_BEHAVIOR_FQN = new FullyQualifiedName('ol.observedbehavior');
 
 export {
-  TRIGGER_FQN
+  OBSERVED_BEHAVIOR_FQN,
+  TRIGGER_FQN,
 };
 
 /*
@@ -335,6 +376,7 @@ const PERSON_SSN_LAST_4_FQN = new FullyQualifiedName('general.ssnlast4');
 const PERSON_SUFFIX_FQN = new FullyQualifiedName('nc.PersonSuffix');
 const PERSON_WEIGHT_FQN = new FullyQualifiedName('nc.PersonWeightMeasure');
 
+
 export {
   PERSON_DOB_FQN,
   PERSON_ETHNICITY_FQN,
@@ -426,12 +468,14 @@ export {
  * Other
  */
 
-const DATE_TIME_FQN = new FullyQualifiedName('general.datetime');
 const COMPLETED_DT_FQN = new FullyQualifiedName('date.completeddatetime');
+const DATE_TIME_FQN = new FullyQualifiedName('general.datetime');
+const GENERAL_STATUS_FQN = new FullyQualifiedName('general.status');
 
 export {
   COMPLETED_DT_FQN,
-  DATE_TIME_FQN
+  DATE_TIME_FQN,
+  GENERAL_STATUS_FQN
 };
 
 /*

@@ -13,7 +13,6 @@ const TooltipCard = styled.div`
   color: #2e2e34;
   display: flex;
   flex-direction: column;
-  font-family: 'Open Sans', sans-serif;
   font-size: 12px;
   font-weight: 600;
   justify-content: flex-start;

@@ -14,7 +14,7 @@ import {
   StyleUtils
 } from 'lattice-ui-kit';
 
-import Detail from '../../components/premium/styled/Detail';
+import IconDetail from '../../components/premium/styled/IconDetail';
 import * as FQN from '../../edm/DataModelFqns';
 import { addressSkeleton } from '../../components/skeletons';
 
@@ -54,7 +54,7 @@ const LongBeachProviderCard = ({ provider } :Props) => {
   return (
     <Card>
       <CardSegment padding="sm" vertical>
-        <Detail content={name} isLoading={isLoading} />
+        <IconDetail content={name} isLoading={isLoading} />
       </CardSegment>
       <CardSegment padding="sm" vertical>
         {
@@ -63,10 +63,10 @@ const LongBeachProviderCard = ({ provider } :Props) => {
             : (
               <ProviderContent>
                 <ProviderDescription>{description}</ProviderDescription>
-                <Detail content={address} icon={faMapMarkerAlt} />
-                <Detail content={telTag} icon={faPhoneAlt} />
-                <Detail content={capacity} icon={faBedEmpty} />
-                <Detail content={operatingHours} icon={faClock} />
+                <IconDetail content={address} icon={faMapMarkerAlt} />
+                <IconDetail content={telTag} icon={faPhoneAlt} />
+                <IconDetail content={capacity} icon={faBedEmpty} />
+                <IconDetail content={operatingHours} icon={faClock} />
               </ProviderContent>
             )
         }

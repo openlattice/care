@@ -7,7 +7,7 @@ import { Label, Skeleton } from 'lattice-ui-kit';
 
 const LabeledDetailWrapper = styled.div`
   display: grid;
-  grid-template-columns: ${(props) => (props.noLabel ? '1fr' : '90px 1fr')};
+  grid-template-columns: 90px 1fr;
   grid-gap: 10px;
 `;
 

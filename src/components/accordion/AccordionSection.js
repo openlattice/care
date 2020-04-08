@@ -29,9 +29,9 @@ const LabelWrapper = styled.div`
   align-items: center;
 `;
 
-const ToggleIcon = styled(FontAwesomeIcon).attrs({
-  icon: (props :any) => (props.open ? faChevronUp : faChevronDown)
-})``;
+const ToggleIcon = styled(FontAwesomeIcon).attrs((props :any) => ({
+  icon: props.open ? faChevronUp : faChevronDown
+}))``;
 
 const ToggleButton = styled(Button)`
   color: inherit;

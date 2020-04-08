@@ -1,9 +1,9 @@
 // @flow
 
-import React, { useState } from 'react';
+import React, { useReducer, useState } from 'react';
 
 import styled from 'styled-components';
-import { List, Map, fromJS } from 'immutable';
+import { List, Map } from 'immutable';
 import {
   Button,
   Card,
@@ -24,17 +24,16 @@ import { RequestStates } from 'redux-reqseq';
 import AdvancedHeader from './AdvancedHeader';
 import MetaphoneLabel from './MetaphoneLabel';
 import PersonResult from './PersonResult';
+import ReportSelectionModal from './ReportSelectionModal';
 import { searchPeople } from './PeopleActions';
 
 import Accordion from '../../components/accordion';
 import { useInput } from '../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../components/layout';
-import { CRISIS_PATH } from '../../core/router/Routes';
+import { NEW_PERSON_PATH } from '../../core/router/Routes';
 import { goToPath } from '../../core/router/RoutingActions';
 import { isNonEmptyString } from '../../utils/LangUtils';
 import { media } from '../../utils/StyleUtils';
-import { SUBJECT_INFORMATION } from '../../utils/constants/CrisisReportConstants';
-import { setInputValues } from '../pages/subjectinformation/Actions';
 import { ethnicityOptions, raceOptions, sexOptions } from '../profile/constants';
 
 const NewPersonButton = styled(PlusButton)`
@@ -74,6 +73,26 @@ const FlexEnd = styled.div`
 
 const MAX_HITS = 20;
 
+const INITIAL_STATE = {
+  selectedPerson: undefined,
+  isVisible: false,
+};
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'open': {
+      return {
+        selectedPerson: action.payload,
+        isVisible: true
+      };
+    }
+    case 'close':
+      return INITIAL_STATE;
+    default:
+      return state;
+  }
+};
+
 const SearchPeopleContainer = () => {
 
   const searchResults = useSelector((store) => store.getIn(['people', 'hits'], List()));
@@ -82,6 +101,7 @@ const SearchPeopleContainer = () => {
   const searchInputs = useSelector((store) => store.getIn(['people', 'searchInputs']));
   const dispatch = useDispatch();
 
+  const [modalState, modalDispatch] = useReducer(reducer, INITIAL_STATE);
   const [dob, setDob] = useState(searchInputs.get('dob'));
   const [ethnicity, setEthnicity] = useState(searchInputs.get('ethnicity'));
   const [firstName, setFirstName] = useInput(searchInputs.get('firstName'));
@@ -95,15 +115,7 @@ const SearchPeopleContainer = () => {
   const isLoading = fetchState === RequestStates.PENDING;
 
   const handleNewPerson = () => {
-    const person = fromJS({
-      [SUBJECT_INFORMATION.DOB]: dob,
-      [SUBJECT_INFORMATION.FIRST]: firstName,
-      [SUBJECT_INFORMATION.LAST]: lastName,
-      [SUBJECT_INFORMATION.IS_NEW_PERSON]: true
-    });
-
-    dispatch(setInputValues(person));
-    dispatch(goToPath(`${CRISIS_PATH}/1`));
+    dispatch(goToPath(NEW_PERSON_PATH));
   };
 
   const dispatchSearch = (start = 0) => {
@@ -142,6 +154,14 @@ const SearchPeopleContainer = () => {
   const onPageChange = ({ page: newPage, start }) => {
     dispatchSearch(start);
     setPage(newPage);
+  };
+
+  const handleOpenReportSelection = (result :Map) => {
+    modalDispatch({ type: 'open', payload: result });
+  };
+
+  const handleCloseReportSelection = () => {
+    modalDispatch({ type: 'close' });
   };
 
   return (
@@ -236,6 +256,7 @@ const SearchPeopleContainer = () => {
               hasSearched={hasSearched}
               isLoading={isLoading}
               resultComponent={PersonResult}
+              onResultClick={handleOpenReportSelection}
               results={searchResults} />
           {
             hasSearched && (
@@ -247,6 +268,10 @@ const SearchPeopleContainer = () => {
             )
           }
         </CardStack>
+        <ReportSelectionModal
+            selectedPerson={modalState.selectedPerson}
+            isVisible={modalState.isVisible}
+            onClose={handleCloseReportSelection} />
       </ContentWrapper>
     </ContentOuterWrapper>
   );

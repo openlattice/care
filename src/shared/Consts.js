@@ -29,11 +29,36 @@ export const APP_TYPES_FQNS = {
   OFFICER_SAFETY_CONCERNS_FQN: new FullyQualifiedName('app.officersafetyconcerns'),
   PART_OF_FQN: new FullyQualifiedName('app.partof'),
   PEOPLE_FQN: new FullyQualifiedName('app.people'),
+  PERSON_DETAILS_FQN: new FullyQualifiedName('app.persondetails'),
   PHYSICAL_APPEARANCE_FQN: new FullyQualifiedName('app.physicalappearance'),
   REPORTED_FQN: new FullyQualifiedName('app.reported'),
   RESPONSE_PLAN_FQN: new FullyQualifiedName('app.responseplan'),
   STAFF_FQN: new FullyQualifiedName('app.staff'),
+  STAY_AWAY_LOCATION_FQN: new FullyQualifiedName('app.stayawaylocation'),
   SUBJECT_OF_FQN: new FullyQualifiedName('app.subjectof'),
+
+  INCIDENT_FQN: new FullyQualifiedName('app.incident_new'),
+  CALL_FOR_SERVICE_FQN: new FullyQualifiedName('app.callforservice'),
+  NATURE_OF_CRISIS_FQN: new FullyQualifiedName('app.natureofcrisis'),
+  DIAGNOSIS_FQN: new FullyQualifiedName('app.diagnosis'),
+  MEDICATION_STATEMENT_FQN: new FullyQualifiedName('app.medicationstatement'),
+  SUBSTANCE_FQN: new FullyQualifiedName('app.substance'),
+  SUBSTANCE_HISTORY_FQN: new FullyQualifiedName('app.substancehistory'),
+  WEAPON_FQN: new FullyQualifiedName('app.weapon'),
+  VIOLENT_BEHAVIOR_FQN: new FullyQualifiedName('app.violentbehavior'),
+  INJURY_FQN: new FullyQualifiedName('app.injury'),
+  SELF_HARM_FQN: new FullyQualifiedName('app.selfharm'),
+  HOUSING_FQN: new FullyQualifiedName('app.housing'),
+  OCCUPATION_FQN: new FullyQualifiedName('app.occupation'),
+  INCOME_FQN: new FullyQualifiedName('app.income'),
+  INSURANCE_FQN: new FullyQualifiedName('app.insurance'),
+  INVOLVED_IN_FQN: new FullyQualifiedName('app.involvedin'),
+  CLINICIAN_REPORT_FQN: new FullyQualifiedName('app.cliniciancrisisreport'),
+  PATROL_REPORT_FQN: new FullyQualifiedName('app.patrolcrisisreport'),
+  ENCOUNTER_FQN: new FullyQualifiedName('app.encounters'),
+  ENCOUNTER_DETAILS_FQN: new FullyQualifiedName('app.encounterdetails'),
+  INVOICE_FQN: new FullyQualifiedName('app.invoice'),
+  REFERRAL_REQUEST_FQN: new FullyQualifiedName('app.referralrequest'),
 
   /* <===== BEGIN LONG BEACH HACK =====> */
   FILED_FOR_FQN: new FullyQualifiedName('app.filed_for'),
@@ -42,6 +67,15 @@ export const APP_TYPES_FQNS = {
   SERVICES_OF_PROCESS_FQN: new FullyQualifiedName('app.services_of_process'),
   WARRANTS_FQN: new FullyQualifiedName('app.warrants'),
   /* <===== END LONG BEACH HACK =====> */
+  /* <===== BEGIN LIVERMORE HACK =====> */
+  ENCAMPMENT_FQN: new FullyQualifiedName('app.encampment'),
+  ENCAMPMENT_LOCATION_FQN: new FullyQualifiedName('app.encampmentlocation'),
+  LIVES_AT_FQN: new FullyQualifiedName('app.livesat_new'),
+  /* <===== END LIVERMORE HACK =====> */
+  /* <===== SYMPTOMS ======> */
+  SYMPTOM_FQN: new FullyQualifiedName('app.symptom'),
+  INTERACTED_WITH_FQN: new FullyQualifiedName('app.interactedwith'),
+  /* <===== END SYMPTOMS ======> */
 };
 
 export const STRING_ID_FQN = 'general.stringid';

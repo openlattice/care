@@ -1,8 +1,9 @@
 import { DataProcessingUtils } from 'lattice-fabricate';
-import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
-import * as FQN from '../../../../../edm/DataModelFqns';
 
 import { PHONE_TYPES } from './constants';
+
+import * as FQN from '../../../../../edm/DataModelFqns';
+import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
 
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
 const {

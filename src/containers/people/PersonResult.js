@@ -2,6 +2,7 @@
 
 import React from 'react';
 
+import isFunction from 'lodash/isFunction';
 import styled from 'styled-components';
 import {
   faBirthdayCake,
@@ -17,11 +18,10 @@ import { DateTime } from 'luxon';
 import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
-import Detail from '../../components/premium/styled/Detail';
+import IconDetail from '../../components/premium/styled/IconDetail';
 import Portrait from '../../components/portrait/Portrait';
 import { useGoToPath } from '../../components/hooks';
 import {
-  CRISIS_PATH,
   PROFILE_ID_PATH,
   PROFILE_VIEW_PATH,
 } from '../../core/router/Routes';
@@ -91,12 +91,13 @@ const BigButton = styled(Button)`
 `;
 
 type Props = {
+  onClick :(result :Map) => void;
   result :Map;
 }
 
 const PersonResult = (props :Props) => {
 
-  const { result } = props;
+  const { result, onClick } = props;
 
   const personEKID = result.getIn([OPENLATTICE_ID_FQN, 0]);
   const imageUrl = useSelector((store) => {
@@ -112,8 +113,13 @@ const PersonResult = (props :Props) => {
     .getIn(['people', 'recentIncidentsByEKID', 'fetchState']) !== RequestStates.SUCCESS);
 
   const goToProfile = useGoToPath(PROFILE_VIEW_PATH.replace(PROFILE_ID_PATH, personEKID));
-  const goToReport = useGoToPath(`${CRISIS_PATH}/1`, result);
   const dispatch = useDispatch();
+
+  const handleClick = () => {
+    if (isFunction(onClick)) {
+      onClick(result);
+    }
+  };
 
   const handleViewProfile = () => {
     dispatch(clearProfile());
@@ -122,8 +128,7 @@ const PersonResult = (props :Props) => {
   };
 
   const fullName = getLastFirstMiFromPerson(result, true);
-  // $FlowFixMe
-  const dob :string = getDobFromPerson(result, false, '---');
+  const dob :string = getDobFromPerson(result, '---');
   const sex = result.getIn([PERSON_SEX_FQN, 0]);
   const race = result.getIn([PERSON_RACE_FQN, 0]);
   const numSources = result.getIn([NUM_SOURCES_FOUND_IN_FQN, 0]);
@@ -135,18 +140,18 @@ const PersonResult = (props :Props) => {
           <Portrait imageUrl={imageUrl} height="128" width="96" />
           <Details>
             <Name bold uppercase fontSize="24px">{fullName}</Name>
-            <Detail content={dob} icon={faBirthdayCake} isLoading={isLoading} />
-            <Detail content={sex} icon={faVenusMars} isLoading={isLoading} />
-            <Detail content={race} icon={faUser} isLoading={isLoading} />
-            <Detail content={recentDate} icon={faHistory} isLoading={isLoading} />
-            <Detail content={numSources} icon={faFileExclamation} isLoading={isLoading} />
+            <IconDetail content={dob} icon={faBirthdayCake} isLoading={isLoading} />
+            <IconDetail content={sex} icon={faVenusMars} isLoading={isLoading} />
+            <IconDetail content={race} icon={faUser} isLoading={isLoading} />
+            <IconDetail content={recentDate} icon={faHistory} isLoading={isLoading} />
+            <IconDetail content={numSources} icon={faFileExclamation} isLoading={isLoading} />
           </Details>
         </FlexRow>
         <Actions>
           <BigButton mode="secondary" onClick={handleViewProfile}>
             View Profile
           </BigButton>
-          <Button mode="positive" onClick={goToReport}>
+          <Button mode="positive" onClick={handleClick}>
             New Report
           </Button>
         </Actions>

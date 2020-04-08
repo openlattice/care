@@ -13,7 +13,7 @@ import {
   faWeightHanging
 } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Map, is } from 'immutable';
+import { Map } from 'immutable';
 import {
   Card,
   CardHeader,
@@ -21,28 +21,20 @@ import {
   Label,
 } from 'lattice-ui-kit';
 import { DateTime } from 'luxon';
-import { withRouter } from 'react-router-dom';
-import type { Match } from 'react-router-dom';
 
-import Detail from '../../../components/premium/styled/Detail';
-import EditLinkButton from '../../../components/buttons/EditLinkButton';
-import NewIssueButton from '../../../components/buttons/CreateIssueButton';
+import IconDetail from '../../../components/premium/styled/IconDetail';
 import * as FQN from '../../../edm/DataModelFqns';
-import { H1, HeaderActions, IconWrapper } from '../../../components/layout';
+import { H1, IconWrapper } from '../../../components/layout';
 import { IntroCardSkeleton } from '../../../components/skeletons';
-import { BASIC_PATH, EDIT_PATH } from '../../../core/router/Routes';
 import { inchesToFeetString } from '../../../utils/DataUtils';
 import { getLastFirstMiFromPerson } from '../../../utils/PersonUtils';
-import { CATEGORIES } from '../../issues/issue/constants';
 
-const { BASIC_INFORMATION } = CATEGORIES;
-
-const Name = styled(Detail)`
+const Name = styled(IconDetail)`
   text-transform: uppercase;
   font-weight: 600;
 `;
 
-const Birthdate = styled(Detail)`
+const Birthdate = styled(IconDetail)`
   width: 50%;
 `;
 
@@ -60,10 +52,8 @@ const IntroGrid = styled.div`
 type Props = {
   appearance :Map;
   isLoading :boolean;
-  match :Match;
   scars :Map;
   selectedPerson :Map;
-  showEdit :boolean;
 };
 
 const IntroCard = (props :Props) => {
@@ -71,10 +61,8 @@ const IntroCard = (props :Props) => {
   const {
     appearance,
     isLoading,
-    match,
     scars,
     selectedPerson,
-    showEdit,
   } = props;
 
   if (isLoading) {
@@ -111,10 +99,6 @@ const IntroCard = (props :Props) => {
             <FontAwesomeIcon icon={faUser} fixedWidth />
           </IconWrapper>
           Intro
-          <HeaderActions>
-            { showEdit && <EditLinkButton mode="primary" to={`${match.url}${EDIT_PATH}${BASIC_PATH}`} /> }
-            <NewIssueButton defaultComponent={BASIC_INFORMATION} mode="primary" />
-          </HeaderActions>
         </H1>
       </CardHeader>
       <CardSegment vertical padding="sm">
@@ -123,37 +107,37 @@ const IntroCard = (props :Props) => {
       </CardSegment>
       <CardSegment vertical padding="sm">
         <Label subtle>Aliases</Label>
-        <Detail
+        <IconDetail
             content={aliases}
             isLoading={isLoading} />
       </CardSegment>
       <CardSegment vertical padding="sm">
         <IntroGrid>
-          <Detail
+          <IconDetail
               content={race}
               isLoading={isLoading}
               icon={faUser} />
-          <Detail
+          <IconDetail
               content={sex}
               isLoading={isLoading}
               icon={faVenusMars} />
-          <Detail
+          <IconDetail
               content={formattedHeight}
               isLoading={isLoading}
               icon={faRulerVertical} />
-          <Detail
+          <IconDetail
               content={formattedWeight}
               isLoading={isLoading}
               icon={faWeightHanging} />
-          <Detail
+          <IconDetail
               content={hairColor}
               isLoading={isLoading}
               icon={faUserHardHat} />
-          <Detail
+          <IconDetail
               content={eyeColor}
               isLoading={isLoading}
               icon={faEye} />
-          <Detail
+          <IconDetail
               content={scarsMarksTattoos}
               isLoading={isLoading}
               icon={faClawMarks} />
@@ -167,4 +151,4 @@ IntroCard.defaultProps = {
   isLoading: false,
 };
 
-export default withRouter(IntroCard);
+export default IntroCard;

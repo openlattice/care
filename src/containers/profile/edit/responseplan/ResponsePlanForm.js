@@ -1,35 +1,37 @@
 // @flow
 import React, { Component } from 'react';
-import { DateTime } from 'luxon';
+
 import {
   Map,
   get,
   setIn,
 } from 'immutable';
-import { Form, DataProcessingUtils } from 'lattice-fabricate';
+import { DataProcessingUtils, Form } from 'lattice-fabricate';
 import {
   Card,
   CardHeader,
   CardSegment,
   Spinner
 } from 'lattice-ui-kit';
+import { DateTime } from 'luxon';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { RequestStates } from 'redux-reqseq';
+import type { Match } from 'react-router';
 import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
-import type { Match } from 'react-router';
 
-import { schema, uiSchema } from './schemas/ResponsePlanSchemas';
-import { PROFILE_ID_PARAM } from '../../../../core/router/Routes';
-import { COMPLETED_DT_FQN, INDEX_FQN } from '../../../../edm/DataModelFqns';
-import { APP_TYPES_FQNS } from '../../../../shared/Consts';
 import {
   deleteInteractionStrategies,
   getResponsePlan,
   submitResponsePlan,
   updateResponsePlan,
 } from './ResponsePlanActions';
+import { schema, uiSchema } from './schemas/ResponsePlanSchemas';
+
+import { PROFILE_ID_PARAM } from '../../../../core/router/Routes';
+import { COMPLETED_DT_FQN, INDEX_FQN } from '../../../../edm/DataModelFqns';
+import { APP_TYPES_FQNS } from '../../../../shared/Consts';
 import { isValidUuid } from '../../../../utils/Utils';
 
 const {

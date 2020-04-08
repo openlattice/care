@@ -1,17 +1,19 @@
 // @flow
 import React, { Component } from 'react';
+
+import { Colors } from 'lattice-ui-kit';
 import {
   Bar,
   BarChart,
-  XAxis,
-  Tooltip,
   LabelList,
   ResponsiveContainer,
+  Tooltip,
+  XAxis,
   YAxis
 } from 'recharts';
-import { Colors } from 'lattice-ui-kit';
-import PercentTick from './PercentTick';
+
 import ChartTooltip from './ChartTooltip';
+import PercentTick from './PercentTick';
 
 const { PURPLES } = Colors;
 

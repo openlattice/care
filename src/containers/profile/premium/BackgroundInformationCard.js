@@ -12,19 +12,11 @@ import {
   IconSplash,
   Spinner
 } from 'lattice-ui-kit';
-import { withRouter } from 'react-router-dom';
-import type { Match } from 'react-router-dom';
 
-import EditLinkButton from '../../../components/buttons/EditLinkButton';
-import NewIssueButton from '../../../components/buttons/CreateIssueButton';
-import { H1, HeaderActions, IconWrapper } from '../../../components/layout';
+import { H1, IconWrapper } from '../../../components/layout';
 import { CardSkeleton } from '../../../components/skeletons';
-import { EDIT_PATH, RESPONSE_PLAN_PATH } from '../../../core/router/Routes';
 import { CONTEXT_FQN } from '../../../edm/DataModelFqns';
 import { isEmptyString, isNonEmptyString } from '../../../utils/LangUtils';
-import { CATEGORIES } from '../../issues/issue/constants';
-
-const { RESPONSE_PLAN } = CATEGORIES;
 
 const Text = styled.p`
   white-space: pre-wrap;
@@ -34,16 +26,12 @@ const Text = styled.p`
 type Props = {
   isLoading ? :boolean;
   backgroundInformation :Map;
-  match :Match;
-  showEdit :boolean;
 };
 
 const BackgroundInformationCard = (props :Props) => {
   const {
     backgroundInformation,
     isLoading,
-    match,
-    showEdit
   } = props;
   if (isLoading) {
     return <CardSkeleton />;
@@ -57,10 +45,6 @@ const BackgroundInformationCard = (props :Props) => {
             <FontAwesomeIcon icon={faAddressCard} fixedWidth />
           </IconWrapper>
           Background Information
-          <HeaderActions>
-            { showEdit && <EditLinkButton mode="primary" to={`${match.url}${EDIT_PATH}${RESPONSE_PLAN_PATH}`} /> }
-            <NewIssueButton defaultComponent={RESPONSE_PLAN} mode="primary" />
-          </HeaderActions>
         </H1>
       </CardHeader>
       <CardSegment vertical padding="sm">
@@ -76,4 +60,4 @@ BackgroundInformationCard.defaultProps = {
   isLoading: false
 };
 
-export default withRouter(BackgroundInformationCard);
+export default BackgroundInformationCard;

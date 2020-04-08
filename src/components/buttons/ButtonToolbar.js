@@ -32,7 +32,6 @@ const StyledButton = styled.button`
   text-decoration: none;
   padding: ${(props) => props.styles.padding};
   min-width: 130px;
-  font-family: 'Open Sans', sans-serif;
   font-size: 12px;
   font-weight: ${(props) => (props.selected ? 600 : props.styles.defaultFontWeight)};
   background-color: ${(props) => (props.selected ? props.styles.selectedBackgroundColor : 'transparent')};

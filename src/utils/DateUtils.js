@@ -13,10 +13,10 @@ const getAgeFromIsoDate = (dob :string = '', asNumber :boolean = false, invalidV
   return invalidValue;
 };
 
-const getDateShortFromIsoDate = (dob :string = '', asDate :boolean = false, invalidValue :any = '') => {
+const getDateShortFromIsoDate = (dob :string = '', invalidValue :string = '') :string => {
   const dobDT = DateTime.fromISO(dob);
   if (dobDT.isValid) {
-    return asDate ? dobDT : dobDT.toLocaleString(DateTime.DATE_SHORT);
+    return dobDT.toLocaleString(DateTime.DATE_SHORT);
   }
 
   return invalidValue;

@@ -1,55 +1,76 @@
 // @flow
 
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo
+} from 'react';
 
 import styled from 'styled-components';
 import { faFolderOpen } from '@fortawesome/pro-duotone-svg-icons';
+import { faPen } from '@fortawesome/pro-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { List, Map } from 'immutable';
 import {
-  Card,
-  CardSegment,
+  Breadcrumbs,
+  Button,
   CardStack,
+  Hooks,
   IconSplash,
   SearchResults,
-  StyleUtils
+  StyleUtils,
 } from 'lattice-ui-kit';
 import { connect } from 'react-redux';
+import { useRouteMatch } from 'react-router';
 import { bindActionCreators } from 'redux';
 import { RequestStates } from 'redux-reqseq';
 import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
+// import Portrait from '../../../components/portrait/Portrait';
+import AppearancePanel from './AppearancePanel';
+import AssignedOfficerPanel from './AssignedOfficerPanel';
 import BackgroundInformationCard from './BackgroundInformationCard';
 import BehaviorCard from './BehaviorCard';
+import ContactPanel from './ContactPanel';
+import CovidBanner from './CovidBanner';
 import DeescalationCard from './DeescalationCard';
-import IntroCard from './IntroCard';
 import OfficerSafetyCard from './OfficerSafetyCard';
-import ReportsSummary from './ReportsSummary';
+import PortraitCard from './PortraitCard';
 import ResponsePlanCard from './ResponsePlanCard';
-import { countCrisisCalls } from './Utils';
 
-import AboutPlanCard from '../../../components/premium/aboutplan/AboutPlanCard';
-import AddressCard from '../../../components/premium/address/AddressCard';
 import ContactCarousel from '../../../components/premium/contacts/ContactCarousel';
+import CreateIssueButton from '../../../components/buttons/CreateIssueButton';
 import CrisisCountCard from '../CrisisCountCard';
 import LinkButton from '../../../components/buttons/LinkButton';
-import Portrait from '../../../components/portrait/Portrait';
-import ProfileBanner from '../ProfileBanner';
+import ProbationCard from '../../../components/premium/probation/ProbationCard';
 import ProfileResult from '../ProfileResult';
 import RecentIncidentCard from '../RecentIncidentCard';
-import { useAuthorization, usePeopleRoute } from '../../../components/hooks';
+import ReportSelectionModal from '../../people/ReportSelectionModal';
+import StayAwayCard from '../../../components/premium/stayaway/StayAwayCard';
+import WarrantCard from '../../../components/premium/warrant/WarrantCard';
+import { BreadcrumbItem, BreadcrumbLink } from '../../../components/breadcrumbs';
+import { useAppSettings, useAuthorization, usePeopleRoute } from '../../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
 import {
-  CRISIS_PATH,
+  BASIC_PATH,
+  CRISIS_REPORT_PATH,
+  EDIT_PATH,
+  PROFILE_ID_PATH,
+  PROFILE_VIEW_PATH,
   REPORT_ID_PATH,
   REPORT_VIEW_PATH,
 } from '../../../core/router/Routes';
 import { goToPath } from '../../../core/router/RoutingActions';
 import { getAuthorization } from '../../../core/sagas/authorize/AuthorizeActions';
+import { getLBProfile } from '../../../longbeach/profile/LongBeachProfileActions';
 import { getImageDataFromEntity } from '../../../utils/BinaryUtils';
 import { getEntityKeyId } from '../../../utils/DataUtils';
+import { getFirstLastFromPerson } from '../../../utils/PersonUtils';
 import { reduceRequestStates } from '../../../utils/StateUtils';
+import { getAllSymptomsReports } from '../../reports/symptoms/SymptomsReportActions';
 import { getProfileReports } from '../ProfileActions';
+import { getIncidentReportsSummary } from '../actions/ReportActions';
 import { labelMapReport } from '../constants';
 import { getAboutPlan } from '../edit/about/AboutActions';
 import { getBasicInformation } from '../edit/basicinformation/actions/BasicInformationActions';
@@ -59,6 +80,7 @@ import { getResponsePlan } from '../edit/responseplan/ResponsePlanActions';
 import type { RoutingAction } from '../../../core/router/RoutingActions';
 
 const { media } = StyleUtils;
+const { useBoolean } = Hooks;
 
 const Aside = styled.aside`
   display: flex;
@@ -66,13 +88,9 @@ const Aside = styled.aside`
   flex: 1 1 100%;
 `;
 
-const CenteredSegment = styled(CardSegment)`
-  align-items: center;
-`;
-
 const ProfileGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr 3fr;
+  grid-template-columns: 1fr 2.25fr;
   grid-gap: 20px;
   ${media.phone`
     grid-template-columns: 1fr;
@@ -95,12 +113,36 @@ const ScrollStack = styled(CardStack)`
   overflow-x: auto;
 `;
 
+const BreadcrumbWrapper = styled.div`
+  padding: 8px;
+`;
+
+const ActionBar = styled.div`
+  display: flex;
+  flex: 1 0 auto;
+  justify-content: flex-end;
+  max-height: 40px;
+
+  > button:not(:first-child):not(:last-child) {
+    margin: 0 10px;
+  }
+`;
+
+const StyledLinkButton = styled(LinkButton)`
+  background-color: #E5E5F0;
+  border-color: #E5E5F0;
+  padding: 10px;
+`;
+
 type Props = {
   actions :{
     getAboutPlan :RequestSequence;
+    getAllSymptomsReports :RequestSequence;
     getAuthorization :RequestSequence;
     getBasicInformation :RequestSequence;
     getContacts :RequestSequence;
+    getIncidentReportsSummary :RequestSequence;
+    getLBProfile :RequestSequence;
     getOfficerSafety :RequestSequence;
     getProfileReports :RequestSequence;
     getResponsePlan :RequestSequence;
@@ -108,24 +150,31 @@ type Props = {
   };
   address :Map;
   appearance :Map;
+  behaviorSummary :Map;
   contactInfoByContactEKID :Map;
   contacts :List<Map>;
+  crisisSummary :Map;
   fetchAboutPlanState :RequestState;
   fetchAboutState :RequestState;
   fetchOfficerSafetyState :RequestState;
   fetchReportsState :RequestState;
   fetchResponsePlanState :RequestState;
+  fetchStayAwayState :RequestState;
   interactionStrategies :List<Map>;
   isContactForByContactEKID :Map;
   officerSafety :List<Map>;
   photo :Map;
+  probation :Map;
   reports :List<Map>;
   responsePlan :Map;
   responsibleUser :Map;
   scars :Map;
   selectedPerson :Map;
+  stayAwayLocation :Map;
+  recentSymptoms :boolean;
   techniques :List<Map>;
   triggers :List<Map>;
+  warrant :Map;
 };
 
 const PremiumProfileContainer = (props :Props) => {
@@ -133,48 +182,68 @@ const PremiumProfileContainer = (props :Props) => {
   useEffect(() => {
     window.scrollTo({
       top: 0
-    })
+    });
   }, []);
 
   const {
     actions,
     address,
     appearance,
+    behaviorSummary,
     contactInfoByContactEKID,
     contacts,
+    crisisSummary,
     fetchAboutPlanState,
     fetchAboutState,
     fetchOfficerSafetyState,
     fetchReportsState,
     fetchResponsePlanState,
+    fetchStayAwayState,
     interactionStrategies,
     isContactForByContactEKID,
     officerSafety,
     photo,
+    probation,
     reports,
     responsePlan,
     responsibleUser,
     scars,
     selectedPerson,
+    stayAwayLocation,
+    recentSymptoms,
     techniques,
     triggers,
+    warrant,
   } = props;
 
+  const match = useRouteMatch();
+  const [isVisible, open, close] = useBoolean();
   usePeopleRoute(actions.getAboutPlan);
   usePeopleRoute(actions.getBasicInformation);
   usePeopleRoute(actions.getContacts);
   usePeopleRoute(actions.getOfficerSafety);
-  usePeopleRoute(actions.getProfileReports);
   usePeopleRoute(actions.getResponsePlan);
+  usePeopleRoute(actions.getProfileReports);
+  // usePeopleRoute(actions.getIncidentReportsSummary);
+  usePeopleRoute(actions.getLBProfile);
+  usePeopleRoute(actions.getAllSymptomsReports);
+
+  const settings = useAppSettings();
 
   const handleResultClick = useCallback((result :Map) => {
     const reportEKID = getEntityKeyId(result);
-    actions.goToPath(REPORT_VIEW_PATH.replace(REPORT_ID_PATH, reportEKID));
-  }, [actions]);
+    if (settings.get('v1')) {
+      actions.goToPath(CRISIS_REPORT_PATH.replace(REPORT_ID_PATH, reportEKID));
+    }
+    else {
+      actions.goToPath(REPORT_VIEW_PATH.replace(REPORT_ID_PATH, reportEKID));
+    }
+  }, [actions, settings]);
 
   const [isAuthorized] = useAuthorization('profile', actions.getAuthorization);
 
-  const { recent, total } = countCrisisCalls(reports);
+  const recent = crisisSummary.get('recent');
+  const total = crisisSummary.get('total');
   const isLoadingIntro = fetchAboutState !== RequestStates.SUCCESS;
   const isLoadingAboutPlan = fetchAboutPlanState !== RequestStates.SUCCESS;
 
@@ -182,49 +251,53 @@ const PremiumProfileContainer = (props :Props) => {
     fetchOfficerSafetyState,
     fetchReportsState,
     fetchResponsePlanState,
+    fetchStayAwayState,
   ]) === RequestStates.PENDING;
 
   const imageURL :string = useMemo(() => getImageDataFromEntity(photo), [photo]);
+  const name = getFirstLastFromPerson(selectedPerson);
+  const subjectEKID = getEntityKeyId(selectedPerson);
+  const profilePath = PROFILE_VIEW_PATH.replace(PROFILE_ID_PATH, subjectEKID);
+
   return (
     <ContentOuterWrapper>
-      <ProfileBanner selectedPerson={selectedPerson} />
+      <CovidBanner recentSymptoms={recentSymptoms} />
       <ContentWrapper>
         <ProfileGrid>
           <Aside>
             <CardStack>
-              <Card>
-                <CenteredSegment padding="sm" vertical>
-                  <Portrait imageUrl={imageURL} />
-                </CenteredSegment>
-                {
-                  !isLoadingIntro && (
-                    <CardSegment padding="sm" vertical>
-                      <LinkButton mode="primary" to={`${CRISIS_PATH}/1`} state={selectedPerson}>
-                        New Crisis Report
-                      </LinkButton>
-                    </CardSegment>
-                  )
-                }
-              </Card>
-              <IntroCard
+              <BreadcrumbWrapper>
+                <Breadcrumbs>
+                  <BreadcrumbLink to={profilePath}>{name}</BreadcrumbLink>
+                  <BreadcrumbItem>profile</BreadcrumbItem>
+                </Breadcrumbs>
+              </BreadcrumbWrapper>
+              <PortraitCard isLoading={isLoadingIntro} imageUrl={imageURL} person={selectedPerson} />
+              <AppearancePanel
+                  isLoading={isLoadingIntro}
                   appearance={appearance}
-                  isLoading={isLoadingIntro}
                   scars={scars}
-                  selectedPerson={selectedPerson}
-                  showEdit={isAuthorized} />
-              <AddressCard
-                  address={address}
-                  isLoading={isLoadingIntro}
-                  showEdit={isAuthorized} />
-              <AboutPlanCard
-                  isLoading={isLoadingAboutPlan}
+                  selectedPerson={selectedPerson} />
+              <ContactPanel address={address} isLoading={isLoadingIntro} />
+              <AssignedOfficerPanel
                   responsibleUser={responsibleUser}
-                  showEdit={isAuthorized} />
+                  isLoading={isLoadingAboutPlan} />
             </CardStack>
           </Aside>
           <ScrollStack>
+            <ActionBar>
+              <StyledLinkButton to={`${match.url}${EDIT_PATH}${BASIC_PATH}`}>
+                <FontAwesomeIcon icon={faPen} />
+              </StyledLinkButton>
+              <CreateIssueButton />
+              <Button mode="primary" onClick={open}>Create Report</Button>
+              <ReportSelectionModal
+                  selectedPerson={selectedPerson}
+                  isVisible={isVisible}
+                  onClose={close} />
+            </ActionBar>
             {
-              reports.isEmpty() && !isLoadingBody
+              !reports.count() && !isLoadingBody
                 ? <IconSplash icon={faFolderOpen} caption="No reports have been filed." />
                 : (
                   <>
@@ -233,10 +306,10 @@ const PremiumProfileContainer = (props :Props) => {
                         isLoading={isLoadingBody} />
                     <RecentIncidentCard
                         count={recent}
-                        isLoading={isLoadingBody}/>
+                        isLoading={isLoadingBody} />
                     <BehaviorAndSafetyGrid>
                       <BehaviorCard
-                          reports={reports}
+                          behaviorSummary={behaviorSummary}
                           isLoading={isLoadingBody} />
                       <OfficerSafetyCard
                           isLoading={isLoadingBody}
@@ -267,10 +340,12 @@ const PremiumProfileContainer = (props :Props) => {
                         results={reports}
                         resultLabels={labelMapReport}
                         resultComponent={ProfileResult} />
-                    {/* <ReportsSummary isLoading={isLoadingBody} reports={reports} /> */}
                   </>
                 )
             }
+            <StayAwayCard stayAwayLocation={stayAwayLocation} isLoading={isLoadingBody} />
+            <ProbationCard probation={probation} isLoading={isLoadingBody} />
+            <WarrantCard warrant={warrant} isLoading={isLoadingBody} />
           </ScrollStack>
         </ProfileGrid>
       </ContentWrapper>
@@ -294,6 +369,8 @@ const mapStateToProps = (state :Map) => {
   return {
     address: state.getIn(['profile', 'basicInformation', 'address', 'data'], Map()),
     appearance: state.getIn(['profile', 'basicInformation', 'appearance', 'data'], Map()),
+    crisisSummary: state.getIn(['profile', 'reports', 'crisisSummary'], Map()),
+    behaviorSummary: state.getIn(['profile', 'reports', 'behaviorSummary'], Map()),
     contacts: state.getIn(['profile', 'contacts', 'data', 'contacts'], List()),
     contactInfoByContactEKID: state.getIn(['profile', 'contacts', 'data', 'contactInfoByContactEKID'], Map()),
     isContactForByContactEKID: state.getIn(['profile', 'contacts', 'data', 'isContactForByContactEKID'], Map()),
@@ -302,25 +379,35 @@ const mapStateToProps = (state :Map) => {
     fetchReportsState: state.getIn(['profile', 'reports', 'fetchState'], RequestStates.STANDBY),
     fetchResponsePlanState: state.getIn(['profile', 'responsePlan', 'fetchState'], RequestStates.STANDBY),
     fetchAboutPlanState: state.getIn(['profile', 'about', 'fetchState'], RequestStates.STANDBY),
+    fetchStayAwayState: state.getIn(['longBeach', 'profile', 'fetchState'], RequestStates.STANDBY),
     interactionStrategies: state.getIn(['profile', 'responsePlan', 'interactionStrategies'], List()),
     officerSafety: state.getIn(['profile', 'officerSafety', 'data', 'officerSafetyConcerns'], List()),
     photo: state.getIn(['profile', 'basicInformation', 'photos', 'data'], Map()),
     reports: state.getIn(['profile', 'reports', 'data'], List()),
+    lastIncident: state.getIn(['profile', 'reports', 'lastIncident'], Map()),
     responsePlan: state.getIn(['profile', 'responsePlan', 'data'], Map()),
     responsibleUser: state.getIn(['profile', 'about', 'data'], Map()),
     scars: state.getIn(['profile', 'basicInformation', 'scars', 'data'], Map()),
     selectedPerson: state.getIn(['profile', 'basicInformation', 'basics', 'data'], Map()),
     techniques: state.getIn(['profile', 'officerSafety', 'data', 'interactionStrategies'], List()),
     triggers: state.getIn(['profile', 'officerSafety', 'data', 'behaviors'], List()),
+    probation: state.getIn(['longBeach', 'profile', 'probation']),
+    stayAwayLocation: state.getIn(['longBeach', 'profile', 'stayAwayLocation']),
+    symptoms: state.getIn(['profile', 'symptomReports', 'data']),
+    recentSymptoms: state.getIn(['profile', 'symptomReports', 'recentSymptoms']),
+    warrant: state.getIn(['longBeach', 'profile', 'warrant'])
   };
 };
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
     getAboutPlan,
+    getAllSymptomsReports,
     getAuthorization,
     getBasicInformation,
     getContacts,
+    getIncidentReportsSummary,
+    getLBProfile,
     getOfficerSafety,
     getProfileReports,
     getResponsePlan,

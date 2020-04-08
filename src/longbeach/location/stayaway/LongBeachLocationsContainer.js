@@ -22,15 +22,16 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
-import FindingLocationSplash from './FindingLocationSplash';
 import LongBeachLocationResult from './LongBeachLocationResult';
+import StayAwayMap from './StayAwayMap';
 import { getGeoOptions, searchLBLocations } from './LongBeachLocationsActions';
+import { STAY_AWAY_STORE_PATH } from './constants';
 
-import StayAwayMap from '../map/StayAwayMap';
-import { usePosition, useTimeout } from '../../components/hooks';
-import { ContentOuterWrapper, ContentWrapper } from '../../components/layout';
-import { isNonEmptyString } from '../../utils/LangUtils';
-import { FlexRow, MapWrapper, ResultSegment } from '../styled';
+import FindingLocationSplash from '../FindingLocationSplash';
+import { usePosition, useTimeout } from '../../../components/hooks';
+import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
+import { isNonEmptyString } from '../../../utils/LangUtils';
+import { FlexRow, MapWrapper, ResultSegment } from '../../styled';
 
 const MAX_HITS = 20;
 const INITIAL_STATE = {
@@ -78,11 +79,11 @@ const reducer = (state, action) => {
 
 const LongBeachLocationContainer = () => {
 
-  const searchResults = useSelector((store) => store.getIn(['longBeach', 'locations', 'hits'], List()));
-  const totalHits = useSelector((store) => store.getIn(['longBeach', 'locations', 'totalHits'], 0));
-  const fetchState = useSelector((store) => store.getIn(['longBeach', 'locations', 'fetchState']));
-  const optionsFetchState = useSelector((store) => store.getIn(['longBeach', 'locations', 'options', 'fetchState']));
-  const options = useSelector((store) => store.getIn(['longBeach', 'locations', 'options', 'data']));
+  const searchResults = useSelector((store) => store.getIn([...STAY_AWAY_STORE_PATH, 'hits'], List()));
+  const totalHits = useSelector((store) => store.getIn([...STAY_AWAY_STORE_PATH, 'totalHits'], 0));
+  const fetchState = useSelector((store) => store.getIn([...STAY_AWAY_STORE_PATH, 'fetchState']));
+  const optionsFetchState = useSelector((store) => store.getIn([...STAY_AWAY_STORE_PATH, 'options', 'fetchState']));
+  const options = useSelector((store) => store.getIn([...STAY_AWAY_STORE_PATH, 'options', 'data']));
   const dispatch = useDispatch();
   const [state, stateDispatch] = useReducer(reducer, INITIAL_STATE);
 
@@ -92,7 +93,7 @@ const LongBeachLocationContainer = () => {
     selectedOption
   } = state;
   const [address, setAddress] = useState();
-  const [currentPosition, posError] = usePosition();
+  const [currentPosition] = usePosition();
 
   const fetchGeoOptions = useCallback(() => {
     if (isNonEmptyString(address)) {
@@ -103,7 +104,7 @@ const LongBeachLocationContainer = () => {
   useTimeout(fetchGeoOptions, 300);
 
   useEffect(() => {
-    if (!posError && currentPosition.coords && !selectedOption) {
+    if (currentPosition.coords && !selectedOption) {
       const { latitude, longitude } = currentPosition.coords;
       stateDispatch({
         type: 'selectLocation',
@@ -117,7 +118,6 @@ const LongBeachLocationContainer = () => {
     }
   }, [
     currentPosition,
-    posError,
     selectedOption
   ]);
 
@@ -139,7 +139,7 @@ const LongBeachLocationContainer = () => {
   const hasSearched = fetchState !== RequestStates.STANDBY;
   const isLoading = fetchState === RequestStates.PENDING;
   const isFetchingOptions = optionsFetchState === RequestStates.PENDING;
-  const hasPosition = !posError && currentPosition.coords;
+  const hasPosition = !!currentPosition.coords;
 
   const filterOption = () => true;
 
@@ -185,7 +185,6 @@ const LongBeachLocationContainer = () => {
                   <div>
                     <FlexRow>
                       <Select
-                          autoFocus
                           filterOption={filterOption}
                           inputId="address"
                           inputValue={address}

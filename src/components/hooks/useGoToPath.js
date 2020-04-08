@@ -1,6 +1,8 @@
 // @flow
 import { useCallback } from 'react';
+
 import { useDispatch } from 'react-redux';
+
 import { goToPath } from '../../core/router/RoutingActions';
 
 const useGoToPath = (to :string, state :any) => {

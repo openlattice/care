@@ -1,7 +1,8 @@
-import { DataProcessingUtils } from 'lattice-fabricate';
 import { Constants } from 'lattice';
-import { APP_TYPES_FQNS } from '../../../../shared/Consts';
+import { DataProcessingUtils } from 'lattice-fabricate';
+
 import { NOTES_FQN } from '../../../../edm/DataModelFqns';
+import { APP_TYPES_FQNS } from '../../../../shared/Consts';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;

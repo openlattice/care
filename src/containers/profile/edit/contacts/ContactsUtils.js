@@ -3,15 +3,15 @@ import {
   List,
   Map,
   get,
-  remove,
-  merge
+  merge,
+  remove
 } from 'immutable';
 import { Constants } from 'lattice';
 import { DataProcessingUtils } from 'lattice-fabricate';
 
-import { getFormDataFromEntity, getFormDataFromEntityArray } from '../../../../utils/DataUtils';
 import * as FQN from '../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
+import { getFormDataFromEntity, getFormDataFromEntityArray } from '../../../../utils/DataUtils';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 

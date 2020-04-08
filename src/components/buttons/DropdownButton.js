@@ -42,7 +42,6 @@ const MenuContainer = styled.div`
   button {
     padding: 8px 12px;
     text-transform: none;
-    font-family: 'Open Sans', sans-serif;
     font-size: 14px;
     color: ${NEUTRALS[0]};
     border: none;
