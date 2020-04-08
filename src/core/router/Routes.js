@@ -11,6 +11,7 @@ export const LOGIN_PATH :string = '/login';
 export const X_CRISIS_PATH :string = '/x-crisis';
 export const NEW_CRISIS_PATH :string = '/new-crisis';
 export const NEW_SYMPTOMS_PATH :string = '/new-symptoms';
+export const NEW_PERSON_PATH :string = '/new-person';
 export const TRACK_CONTACT_PATH :string = '/track-contact';
 export const CRISIS_PATH :string = '/crisis';
 export const DASHBOARD_PATH :string = '/dashboard';

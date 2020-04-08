@@ -3,7 +3,7 @@
 import React, { useReducer, useState } from 'react';
 
 import styled from 'styled-components';
-import { List, Map, fromJS } from 'immutable';
+import { List, Map } from 'immutable';
 import {
   Button,
   Card,
@@ -30,12 +30,10 @@ import { searchPeople } from './PeopleActions';
 import Accordion from '../../components/accordion';
 import { useInput } from '../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../components/layout';
-import { CRISIS_PATH } from '../../core/router/Routes';
+import { NEW_PERSON_PATH } from '../../core/router/Routes';
 import { goToPath } from '../../core/router/RoutingActions';
 import { isNonEmptyString } from '../../utils/LangUtils';
 import { media } from '../../utils/StyleUtils';
-import { SUBJECT_INFORMATION } from '../../utils/constants/CrisisReportConstants';
-import { setInputValues } from '../pages/subjectinformation/Actions';
 import { ethnicityOptions, raceOptions, sexOptions } from '../profile/constants';
 
 const NewPersonButton = styled(PlusButton)`
@@ -117,15 +115,7 @@ const SearchPeopleContainer = () => {
   const isLoading = fetchState === RequestStates.PENDING;
 
   const handleNewPerson = () => {
-    const person = fromJS({
-      [SUBJECT_INFORMATION.DOB]: dob,
-      [SUBJECT_INFORMATION.FIRST]: firstName,
-      [SUBJECT_INFORMATION.LAST]: lastName,
-      [SUBJECT_INFORMATION.IS_NEW_PERSON]: true
-    });
-
-    dispatch(setInputValues(person));
-    dispatch(goToPath(`${CRISIS_PATH}/1`));
+    dispatch(goToPath(NEW_PERSON_PATH));
   };
 
   const dispatchSearch = (start = 0) => {

@@ -1,22 +1,20 @@
 import { DataProcessingUtils } from 'lattice-fabricate';
 
-import { YES_NO_UNKNOWN } from '../constants';
-
-import * as FQN from '../../../../../edm/DataModelFqns';
-import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
+import * as FQN from '../../../edm/DataModelFqns';
+import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import {
   ETHNICITY_VALUES,
   RACE_VALUES,
   SEX_VALUES
-} from '../../../../profile/constants';
+} from '../../profile/constants';
 
-const { PEOPLE_FQN, PERSON_DETAILS_FQN } = APP_TYPES_FQNS;
+const { PEOPLE_FQN } = APP_TYPES_FQNS;
 
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
 
 const schema = {
   type: 'object',
-  title: 'Profile',
+  title: 'New Person',
   properties: {
     [getPageSectionKey(1, 1)]: {
       type: 'object',
@@ -51,7 +49,9 @@ const schema = {
         },
         [getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_SSN_LAST_4_FQN)]: {
           type: 'number',
-          title: 'Last 4 SSN'
+          title: 'Last 4 SSN',
+          minimum: 0,
+          maximum: 9999
         },
         [getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_SEX_FQN)]: {
           type: 'string',
@@ -68,20 +68,21 @@ const schema = {
           title: 'Ethnicity',
           enum: ETHNICITY_VALUES
         },
-        [getEntityAddressKey(0, PERSON_DETAILS_FQN, FQN.VETERAN_STATUS_FQN)]: {
-          type: 'string',
-          title: 'Served in the military?',
-          enum: YES_NO_UNKNOWN
-        },
+        // [getEntityAddressKey(0, PERSON_DETAILS_FQN, FQN.VETERAN_STATUS_FQN)]: {
+        //   type: 'string',
+        //   title: 'Served in the military?',
+        //   enum: YES_NO_UNKNOWN
+        // },
       },
-      // required: [
-      //   getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN),
-      //   getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_FIRST_NAME_FQN),
-      //   getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_DOB_FQN),
-      //   getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_SEX_FQN),
-      //   getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_RACE_FQN),
-      //   getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_ETHNICITY_FQN),
-      // ]
+      required: [
+        getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN),
+        getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_FIRST_NAME_FQN),
+        getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_DOB_FQN),
+        getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_SEX_FQN),
+        getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_RACE_FQN),
+        getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_ETHNICITY_FQN),
+        // getEntityAddressKey(0, PERSON_DETAILS_FQN, FQN.VETERAN_STATUS_FQN),
+      ]
     }
   }
 };
@@ -133,13 +134,13 @@ const uiSchema = {
         inline: false
       }
     },
-    [getEntityAddressKey(0, PERSON_DETAILS_FQN, FQN.VETERAN_STATUS_FQN)]: {
-      classNames: 'column-span-12',
-      'ui:widget': 'radio',
-      'ui:options': {
-        inline: false
-      }
-    },
+    // [getEntityAddressKey(0, PERSON_DETAILS_FQN, FQN.VETERAN_STATUS_FQN)]: {
+    //   classNames: 'column-span-12',
+    //   'ui:widget': 'radio',
+    //   'ui:options': {
+    //     inline: false
+    //   }
+    // },
   }
 };
 

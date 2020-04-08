@@ -13,9 +13,11 @@ import {
 import {
   List,
   Map,
-  fromJS
+  fromJS,
+  getIn
 } from 'immutable';
 import { Constants } from 'lattice';
+import { DataProcessingUtils } from 'lattice-fabricate';
 import {
   SearchApiActions,
   SearchApiSagas,
@@ -27,19 +29,26 @@ import {
   GET_PEOPLE_PHOTOS,
   GET_RECENT_INCIDENTS,
   SEARCH_PEOPLE,
+  SUBMIT_NEW_PERSON,
   getPeoplePhotos,
   getRecentIncidents,
   searchPeople,
+  submitNewPerson,
 } from './PeopleActions';
 
 import Logger from '../../utils/Logger';
 import * as FQN from '../../edm/DataModelFqns';
+import { submitDataGraph } from '../../core/sagas/data/DataActions';
+import { submitDataGraphWorker } from '../../core/sagas/data/DataSagas';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import {
   getESIDFromApp,
   getPeopleESId,
 } from '../../utils/AppUtils';
+import { indexSubmittedDataGraph } from '../../utils/DataUtils';
 import { ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
+
+const { processEntityData } = DataProcessingUtils;
 
 const {
   APPEARS_IN_FQN,
@@ -258,4 +267,48 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
 
 export function* searchPeopleWatcher() :Generator<*, *, *> {
   yield takeEvery(SEARCH_PEOPLE, searchPeopleWorker);
+}
+
+export function* submitNewPersonWorker(action :SequenceAction) :Generator<any, any, any> {
+  const response = {};
+  try {
+    const { value } = action;
+    if (!isPlainObject(value)) throw ERR_ACTION_VALUE_TYPE;
+    yield put(submitNewPerson.request(action.id));
+    const { formData } = value;
+
+    const app = yield select((state) => state.get('app', Map()));
+    const entitySetIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
+    const propertyFqnToIdMap = yield select((state) => state.getIn(['edm', 'fqnToIdMap'], Map()));
+    const propertyTypesById = yield select((state) => state.getIn(['edm', 'propertyTypesById']), Map());
+    const peopleESID = getESIDFromApp(app, PEOPLE_FQN);
+
+    const entityData = processEntityData(formData, entitySetIds, propertyFqnToIdMap);
+
+    const dataGraph = {
+      entityData,
+      associationEntityData: {},
+    };
+
+    const dataGraphResponse = yield call(
+      submitDataGraphWorker,
+      submitDataGraph(dataGraph)
+    );
+
+    if (dataGraphResponse.error) throw dataGraphResponse.error;
+    const indexedDataGraph = indexSubmittedDataGraph(dataGraph, dataGraphResponse, propertyTypesById);
+    const createdPerson = fromJS(getIn(indexedDataGraph, ['entities', peopleESID, 0]));
+
+    yield put(submitNewPerson.success(action.id, createdPerson));
+  }
+  catch (error) {
+    response.error = error;
+    LOG.error(action.type, error);
+    yield put(submitNewPerson.failure(action.id));
+  }
+  return response;
+}
+
+export function* submitNewPersonWatcher() :Generator<any, any, any> {
+  yield takeEvery(SUBMIT_NEW_PERSON, submitNewPersonWorker);
 }
