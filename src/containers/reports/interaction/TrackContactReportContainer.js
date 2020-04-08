@@ -65,7 +65,7 @@ const TrackContactReportContainer = () => {
                         isLoading={isSubmitting}
                         mode="primary"
                         onClick={handleExternalSubmit}>
-                      Submit
+                      Track Contact
                     </Button>
                   </ActionRow>
                 </Card>

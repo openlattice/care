@@ -11,14 +11,15 @@ import {
   getPeoplePhotos,
   getRecentIncidents,
   searchPeople,
+  submitNewPerson
 } from './PeopleActions';
 
 import { HOME_PATH } from '../../core/router/Routes';
 
 const INITIAL_STATE :Map = fromJS({
+  createdPerson: Map(),
   fetchState: RequestStates.STANDBY,
   hits: List(),
-  totalHits: 0,
   profilePicsByEKID: Map(),
   recentIncidentsByEKID: Map({
     data: Map(),
@@ -28,7 +29,12 @@ const INITIAL_STATE :Map = fromJS({
     dob: undefined,
     firstName: '',
     lastName: '',
+    ethnicity: undefined,
+    race: undefined,
+    sex: undefined
   }),
+  submitState: RequestStates.STANDBY,
+  totalHits: 0,
 });
 
 export default function peopleReducer(state :Map = INITIAL_STATE, action :Object) {
@@ -53,6 +59,16 @@ export default function peopleReducer(state :Map = INITIAL_STATE, action :Object
           .set('fetchState', RequestStates.SUCCESS)
           .set('profilePicsByEKID', action.value),
         FAILURE: () => state.set('fetchState', RequestStates.FAILURE),
+      });
+    }
+
+    case submitNewPerson.case(action.type): {
+      return submitNewPerson.reducer(state, action, {
+        REQUEST: () => state.set('submitState', RequestStates.PENDING),
+        SUCCESS: () => state
+          .set('createdPerson', action.value)
+          .set('submitState', RequestStates.SUCCESS),
+        FAILURE: () => state.set('submitState', RequestStates.FAILURE)
       });
     }
 

@@ -41,6 +41,6 @@ const TrackContactReport = ({ selectedPerson } :Props, ref) => {
   );
 };
 
-export default React.memo(
+export default React.memo<Props, typeof Form>(
   React.forwardRef(TrackContactReport)
 );

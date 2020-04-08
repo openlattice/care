@@ -1,5 +1,5 @@
 // @flow
-import React, { useEffect, useCallback, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 
 import styled from 'styled-components';
 import { Map } from 'immutable';
@@ -13,9 +13,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
 import { Redirect } from 'react-router-dom';
 import { RequestStates } from 'redux-reqseq';
-import { clearSymptomsReport } from './SymptomsReportActions';
+
 import LastContactWith from './LastContactWith';
 import NewSymptomsReport from './NewSymptomsReport';
+import { clearSymptomsReport } from './SymptomsReportActions';
 
 import ProfileBanner from '../../profile/ProfileBanner';
 import SuccessSplash from '../shared/SuccessSplash';
@@ -69,7 +70,7 @@ const NewSymptomsReportContainer = () => {
               isLoading={isSubmitting}
               mode="primary"
               onClick={handleExternalSubmit}>
-            Submit
+            Create Symptom Report
           </Button>
         </ActionRow>
       </Card>
