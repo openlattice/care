@@ -52,6 +52,7 @@ const uiSchema = {
       'ui:options': {
         mode: 'button',
         row: true,
+        withNone: true,
       },
     },
     [getEntityAddressKey(0, SYMPTOM_FQN, FQN.DESCRIPTION_FQN)]: {
