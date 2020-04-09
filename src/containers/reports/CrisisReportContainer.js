@@ -237,7 +237,7 @@ class CrisisReportContainer extends React.Component<Props, State> {
     const age = getPersonAge(result);
 
     actions.setInputValues({
-      [SUBJECT_INFORMATION.PERSON_ID]: getIn(result, [FQN.PERSON_ID_FQN, 0], ''),
+      [SUBJECT_INFORMATION.PERSON_ID]: getIn(result, [FQN.OPENLATTICE_ID_FQN, 0], ''),
       [SUBJECT_INFORMATION.FULL_NAME]: getLastFirstMiFromPerson(result),
       [SUBJECT_INFORMATION.FIRST]: getIn(result, [FQN.PERSON_FIRST_NAME_FQN, 0], ''),
       [SUBJECT_INFORMATION.LAST]: getIn(result, [FQN.PERSON_LAST_NAME_FQN, 0], ''),
@@ -245,6 +245,7 @@ class CrisisReportContainer extends React.Component<Props, State> {
       [SUBJECT_INFORMATION.AKA]: getIn(result, [FQN.PERSON_NICK_NAME_FQN, 0], ''),
       [SUBJECT_INFORMATION.DOB]: getIn(result, [FQN.PERSON_DOB_FQN, 0], ''),
       [SUBJECT_INFORMATION.RACE]: getIn(result, [FQN.PERSON_RACE_FQN, 0], ''),
+      [SUBJECT_INFORMATION.ETHNICITY]: getIn(result, [FQN.PERSON_ETHNICITY_FQN, 0], ''),
       [SUBJECT_INFORMATION.GENDER]: getIn(result, [FQN.PERSON_SEX_FQN, 0], ''),
       [SUBJECT_INFORMATION.AGE]: age,
       [SUBJECT_INFORMATION.SSN_LAST_4]: getIn(result, [FQN.PERSON_SSN_LAST_4_FQN, 0], ''),
