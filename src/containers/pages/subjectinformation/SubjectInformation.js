@@ -215,10 +215,8 @@ class SubjectInformation extends Component<Props> {
           </RequiredField>
           {this.renderRadioButtons(SUBJECT_INFORMATION.RACE, RACE_VALUES)}
         </PersonFormSection>
-        <PersonFormSection invalid={invalidFields.includes(SUBJECT_INFORMATION.ETHNICITY)}>
-          <RequiredField>
-            <Label bold>Ethnicity</Label>
-          </RequiredField>
+        <PersonFormSection>
+          <Label bold>Ethnicity</Label>
           {this.renderRadioButtons(SUBJECT_INFORMATION.ETHNICITY, ETHNICITY_VALUES)}
         </PersonFormSection>
       </FormWrapper>
