@@ -90,7 +90,10 @@ function* getAllSymptomsReportsWorker(action :SequenceAction) :Generator<any, an
       const { days = 0 } = contactDateTime.until(now).toDuration(['days'])
         .toObject();
 
-      return days < 14;
+      const symptomValues = symptom.getIn(['neighborDetails', FQN.NAME_FQN]);
+      const noSymptoms = symptomValues.includes('None') && symptomValues.count() === 1;
+
+      return (days < 14) && !noSymptoms;
     }).count() > 0;
 
     yield put(getAllSymptomsReports.success(action.id, {
