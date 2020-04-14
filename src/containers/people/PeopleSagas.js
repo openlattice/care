@@ -185,7 +185,7 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
     const ethnicityPTID :UUID = edm.getIn(['fqnToIdMap', FQN.PERSON_ETHNICITY_FQN]);
     const firstNamePTID :UUID = edm.getIn(['fqnToIdMap', FQN.PERSON_FIRST_NAME_FQN]);
     const lastNamePTID :UUID = edm.getIn(['fqnToIdMap', FQN.PERSON_LAST_NAME_FQN]);
-    const numSourcesPTID :UUID = edm.getIn(['fqnToIdMap', FQN.NUM_SOURCES_FOUND_IN_FQN]);
+    const numReportsPTID :UUID = edm.getIn(['fqnToIdMap', FQN.NUM_REPORTS_FOUND_IN_FQN]);
     const racePTID :UUID = edm.getIn(['fqnToIdMap', FQN.PERSON_RACE_FQN]);
     const sexPTID :UUID = edm.getIn(['fqnToIdMap', FQN.PERSON_SEX_FQN]);
 
@@ -205,6 +205,7 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
     const sex :Object = searchInputs.get('sex');
     const ethnicity :Object = searchInputs.get('ethnicity');
     const metaphone :boolean = searchInputs.get('metaphone');
+    const includeRMS :boolean = searchInputs.get('includeRMS');
 
     if (firstName.length) {
       updateSearchField(firstName, firstNamePTID, metaphone);
@@ -226,18 +227,37 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
       updateSearchField(ethnicity.value, ethnicityPTID, true);
     }
 
+    const reportThresholdConstraint = {
+      constraints: [{
+        type: 'simple',
+        searchTerm: `entity.${numReportsPTID}:[1 TO *]`,
+        fuzzy: false
+      }, {
+        type: 'simple',
+        fuzzy: false,
+        searchTerm: `_exists_:entity.${numReportsPTID}`
+      }],
+      min: 2
+    };
+
+    const constraints = [{
+      constraints: [{
+        type: 'advanced',
+        searchFields,
+      }]
+    }];
+
+    if (!includeRMS) {
+      constraints.push(reportThresholdConstraint);
+    }
+
     const searchOptions = {
       entitySetIds: [peopleESID],
       maxHits,
       start,
-      constraints: [{
-        constraints: [{
-          type: 'advanced',
-          searchFields,
-        }]
-      }],
+      constraints,
       sort: {
-        propertyTypeId: numSourcesPTID,
+        propertyTypeId: numReportsPTID,
         type: 'field'
       }
     };
