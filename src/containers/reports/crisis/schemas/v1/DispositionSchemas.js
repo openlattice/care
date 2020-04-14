@@ -32,7 +32,7 @@ const schema = {
             type: 'string',
             enum: OFFICER_TRAINING,
           },
-          // minItems: 1,
+          minItems: 1,
           uniqueItems: true
         },
         [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.CATEGORY_FQN)]: {
@@ -43,7 +43,7 @@ const schema = {
             type: 'string',
             enum: PEOPLE_NOTIFIED,
           },
-          // minItems: 1,
+          minItems: 1,
           uniqueItems: true
         },
         [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.REFERRAL_DEST_FQN)]: {
@@ -54,7 +54,7 @@ const schema = {
             type: 'string',
             enum: VERBAL_REFERRALS,
           },
-          // minItems: 1,
+          minItems: 1,
           uniqueItems: true
         },
         [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.ORGANIZATION_NAME_FQN)]: {
@@ -65,7 +65,7 @@ const schema = {
             type: 'string',
             enum: COURTESY_TRANSPORTS,
           },
-          // minItems: 1,
+          minItems: 1,
           uniqueItems: true
         },
         [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.HOSPITAL_TRANSPORT_INDICATOR_FQN)]: {
@@ -88,16 +88,21 @@ const schema = {
             type: 'string',
             enum: ARRESTABLE_OFFENSES,
           },
-          // minItems: 1,
+          minItems: 1,
           uniqueItems: true
         },
       },
-      // required: [
-      //   getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.DESCRIPTION_FQN),
-      //   getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.OBSERVED_BEHAVIOR_FQN),
-      // ]
-    }
-  }
+      required: [
+        getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.SPECIAL_RESOURCES_CALLED_FQN),
+        getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.CATEGORY_FQN),
+        getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.REFERRAL_DEST_FQN),
+        getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.ORGANIZATION_NAME_FQN),
+        getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.HOSPITAL_TRANSPORT_INDICATOR_FQN),
+        getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.NARCAN_ADMINISTERED_FQN),
+        getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.ARRESTABLE_OFFENSE_FQN),
+      ]
+    },
+  },
 };
 
 const uiSchema = {

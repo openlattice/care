@@ -26,7 +26,7 @@ import {
   PROFILE_VIEW_PATH,
 } from '../../core/router/Routes';
 import {
-  NUM_SOURCES_FOUND_IN_FQN,
+  NUM_REPORTS_FOUND_IN_FQN,
   PERSON_RACE_FQN,
   PERSON_SEX_FQN
 } from '../../edm/DataModelFqns';
@@ -131,7 +131,7 @@ const PersonResult = (props :Props) => {
   const dob :string = getDobFromPerson(result, '---');
   const sex = result.getIn([PERSON_SEX_FQN, 0]);
   const race = result.getIn([PERSON_RACE_FQN, 0]);
-  const numSources = result.getIn([NUM_SOURCES_FOUND_IN_FQN, 0]);
+  const numSources = result.getIn([NUM_REPORTS_FOUND_IN_FQN, 0]);
 
   return (
     <Card>
