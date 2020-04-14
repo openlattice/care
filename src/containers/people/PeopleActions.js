@@ -6,8 +6,9 @@ import { newRequestSequence } from 'redux-reqseq';
 import type { RequestSequence } from 'redux-reqseq';
 
 const CLEAR_SEARCH_RESULTS :'CLEAR_SEARCH_RESULTS' = 'CLEAR_SEARCH_RESULTS';
-const clearSearchResults = () => ({
-  type: CLEAR_SEARCH_RESULTS
+const clearSearchResults = (value :boolean) => ({
+  type: CLEAR_SEARCH_RESULTS,
+  value,
 });
 
 const SEARCH_PEOPLE :'SEARCH_PEOPLE' = 'SEARCH_PEOPLE';

@@ -2,7 +2,6 @@
  * @flow
  */
 
-import { LOCATION_CHANGE } from 'connected-react-router';
 import { List, Map, fromJS } from 'immutable';
 import { AccountUtils } from 'lattice-auth';
 import { RequestStates } from 'redux-reqseq';
@@ -15,7 +14,6 @@ import {
   submitNewPerson
 } from './PeopleActions';
 
-import { HOME_PATH } from '../../core/router/Routes';
 import { loadApp } from '../app/AppActions';
 
 const INITIAL_STATE :Map = fromJS({
@@ -34,7 +32,6 @@ const INITIAL_STATE :Map = fromJS({
     ethnicity: undefined,
     race: undefined,
     sex: undefined,
-    includeRMS: true,
   }),
   submitState: RequestStates.STANDBY,
   totalHits: 0,
@@ -103,24 +100,7 @@ export default function peopleReducer(state :Map = INITIAL_STATE, action :Object
     }
 
     case CLEAR_SEARCH_RESULTS: {
-      return INITIAL_STATE;
-    }
-
-    case LOCATION_CHANGE: {
-      const {
-        payload: {
-          action: routingAction,
-          location: {
-            pathname
-          } = {}
-        } = {}
-      } = action;
-
-      // clear search results when pushing directly to /home
-      if (pathname.startsWith(HOME_PATH) && routingAction === 'PUSH') {
-        return INITIAL_STATE;
-      }
-      return state;
+      return INITIAL_STATE.setIn(['searchInputs', 'includeRMS'], action.value);
     }
 
     default:
