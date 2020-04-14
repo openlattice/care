@@ -30,7 +30,7 @@ const schema = {
             type: 'string',
             enum: TECHNIQUES,
           },
-          // minItems: 1,
+          minItems: 1,
           uniqueItems: true
         },
         [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.ARMED_WEAPON_TYPE_FQN)]: {
@@ -41,7 +41,7 @@ const schema = {
             type: 'string',
             enum: WEAPONS,
           },
-          // minItems: 1,
+          minItems: 1,
           uniqueItems: true
         },
         [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.DIRECTED_AGAINST_RELATION_FQN)]: {
@@ -52,7 +52,7 @@ const schema = {
             type: 'string',
             enum: RELATIONSHIP_TYPES,
           },
-          // minItems: 1,
+          minItems: 1,
           uniqueItems: true
         },
         [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.PERSON_INJURED_FQN)]: {
@@ -63,14 +63,16 @@ const schema = {
             type: 'string',
             enum: PERSON_TYPES,
           },
-          // minItems: 1,
+          minItems: 1,
           uniqueItems: true
         },
       },
-      // required: [
-      //   getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.DESCRIPTION_FQN),
-      //   getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.OBSERVED_BEHAVIOR_FQN),
-      // ]
+      required: [
+        getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.DEESCALATION_TECHNIQUES_FQN),
+        getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.ARMED_WEAPON_TYPE_FQN),
+        getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.DIRECTED_AGAINST_RELATION_FQN),
+        getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.PERSON_INJURED_FQN),
+      ]
     }
   }
 };

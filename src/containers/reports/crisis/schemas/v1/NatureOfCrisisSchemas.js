@@ -25,7 +25,7 @@ const schema = {
             type: 'string',
             enum: NATURE_OF_CRISIS,
           },
-          // minItems: 1,
+          minItems: 1,
           uniqueItems: true
         },
         [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.PERSON_ASSISTING_FQN)]: {
@@ -36,7 +36,7 @@ const schema = {
             type: 'string',
             enum: ASSISTANCES,
           },
-          // minItems: 1,
+          minItems: 1,
           uniqueItems: true
         },
         [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.HOUSING_SITUATION_FQN)]: {
@@ -46,10 +46,11 @@ const schema = {
           enum: HOUSING_SITUATIONS
         },
       },
-      // required: [
-      //   getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.DESCRIPTION_FQN),
-      //   getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.OBSERVED_BEHAVIOR_FQN),
-      // ]
+      required: [
+        getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.DISPATCH_REASON_FQN),
+        getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.PERSON_ASSISTING_FQN),
+        getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.HOUSING_SITUATION_FQN),
+      ]
     }
   }
 };

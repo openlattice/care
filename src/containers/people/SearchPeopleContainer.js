@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useReducer, useState } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 
 import styled from 'styled-components';
 import { faExclamationTriangle } from '@fortawesome/pro-solid-svg-icons';
@@ -26,7 +26,7 @@ import AdvancedHeader from './AdvancedHeader';
 import MetaphoneLabel from './MetaphoneLabel';
 import PersonResult from './PersonResult';
 import ReportSelectionModal from './ReportSelectionModal';
-import { searchPeople } from './PeopleActions';
+import { clearSearchResults, searchPeople } from './PeopleActions';
 
 import Accordion from '../../components/accordion';
 import { BreadcrumbLink } from '../../components/breadcrumbs';
@@ -114,6 +114,7 @@ const SearchPeopleContainer = () => {
   const searchInputs = useSelector((store) => store.getIn(['people', 'searchInputs']));
   const dispatch = useDispatch();
   const appSettings = useAppSettings();
+  const integratedRMS = appSettings.get('integratedRMS', false);
 
   const [modalState, modalDispatch] = useReducer(reducer, INITIAL_STATE);
   const [dob, setDob] = useState(searchInputs.get('dob'));
@@ -124,7 +125,11 @@ const SearchPeopleContainer = () => {
   const [page, setPage] = useState(0);
   const [race, setRace] = useState(searchInputs.get('race'));
   const [sex, setSex] = useState(searchInputs.get('sex'));
-  const [includeRMS, setRMS] = useState(searchInputs.get('includeRMS', true));
+  const [includeRMS, setRMS] = useState(searchInputs.get('includeRMS', !integratedRMS));
+
+  useEffect(() => () => {
+    dispatch(clearSearchResults(!integratedRMS));
+  }, [dispatch, integratedRMS]);
 
   const hasSearched = fetchState !== RequestStates.STANDBY;
   const isLoading = fetchState === RequestStates.PENDING;
@@ -182,8 +187,6 @@ const SearchPeopleContainer = () => {
   const handleCloseReportSelection = () => {
     modalDispatch({ type: 'close' });
   };
-
-  const integratedRMS = appSettings.get('integratedRMS', false);
 
   let searchTip = 'Try the advanced search filters';
   const rmsAction = includeRMS ? 'Exclude' : 'Include';

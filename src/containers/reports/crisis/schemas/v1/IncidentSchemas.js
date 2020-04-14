@@ -35,6 +35,10 @@ const schema = {
           default: 'Crisis Report',
         },
       },
+      required: [
+        getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.DATE_TIME_OCCURRED_FQN),
+        getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.OL_ID_FQN),
+      ]
     }
   },
 };

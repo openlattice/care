@@ -411,6 +411,10 @@ function* submitCrisisReportWorker(action :SequenceAction) :Generator<any, any, 
     yield put(submitCrisisReport.request(action.id));
     const { formData, selectedPerson } = value;
 
+    const edm :Map = yield select((state) => state.get('edm'));
+    const app :Map = yield select((state) => state.get('app'), Map());
+    const peopleESID :UUID = getESIDFromApp(app, PEOPLE_FQN);
+    const numReportsPTID :UUID = edm.getIn(['fqnToIdMap', FQN.NUM_REPORTS_FOUND_IN_FQN]);
     const entitySetIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
     const propertyTypeIds = yield select((state) => state.getIn(['edm', 'fqnToIdMap'], Map()));
     const currentStaff = yield select((state) => state.getIn(['staff', 'currentUser', 'data'], Map()));
@@ -418,8 +422,9 @@ function* submitCrisisReportWorker(action :SequenceAction) :Generator<any, any, 
     const postProcessFormData = postProcessCrisisReportV1(formData);
 
     const entityData = processEntityData(postProcessFormData, entitySetIds, propertyTypeIds);
+    const personEKID = getEntityKeyId(selectedPerson);
     const existingEKIDs = {
-      [PEOPLE_FQN]: getEntityKeyId(selectedPerson),
+      [PEOPLE_FQN]: personEKID,
       [STAFF_FQN]: getEntityKeyId(currentStaff)
       // add incidentEKID
     };
@@ -438,6 +443,23 @@ function* submitCrisisReportWorker(action :SequenceAction) :Generator<any, any, 
       })
     );
     if (dataGraphResponse.error) throw dataGraphResponse.error;
+
+    const count = selectedPerson.getIn([FQN.NUM_REPORTS_FOUND_IN_FQN, 0], 0);
+    const updateData = {
+      entityData: {
+        [peopleESID]: {
+          [personEKID]: {
+            [numReportsPTID]: [count + 1]
+          }
+        }
+      }
+    };
+
+    // increment count of crisis reports
+    yield call(
+      submitPartialReplaceWorker,
+      submitPartialReplace(updateData)
+    );
 
     yield put(submitCrisisReport.success(action.id));
   }
