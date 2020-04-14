@@ -29,7 +29,7 @@ const schema = {
             type: 'string',
             enum: BEHAVIORS,
           },
-          // minItems: 1,
+          minItems: 1,
           uniqueItems: true
         },
         [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.SUICIDAL_ACTIONS_FQN)]: {
@@ -46,14 +46,15 @@ const schema = {
             type: 'string',
             enum: DEMEANORS,
           },
-          // minItems: 1,
+          minItems: 1,
           uniqueItems: true
         },
       },
-      // required: [
-      //   getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.DESCRIPTION_FQN),
-      //   getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.OBSERVED_BEHAVIOR_FQN),
-      // ]
+      required: [
+        getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.OBSERVED_BEHAVIORS_FQN),
+        getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.SUICIDAL_ACTIONS_FQN),
+        getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.DEMEANORS_FQN),
+      ]
     }
   }
 };
