@@ -14,7 +14,8 @@ import {
   List,
   Map,
   fromJS,
-  getIn
+  getIn,
+  setIn,
 } from 'immutable';
 import { Constants } from 'lattice';
 import { DataProcessingUtils } from 'lattice-fabricate';
@@ -26,10 +27,12 @@ import { DateTime } from 'luxon';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
+  COUNT_REPORTS_BY_PERSON,
   GET_PEOPLE_PHOTOS,
   GET_RECENT_INCIDENTS,
   SEARCH_PEOPLE,
   SUBMIT_NEW_PERSON,
+  countReportsByPerson,
   getPeoplePhotos,
   getRecentIncidents,
   searchPeople,
@@ -38,14 +41,14 @@ import {
 
 import Logger from '../../utils/Logger';
 import * as FQN from '../../edm/DataModelFqns';
-import { submitDataGraph } from '../../core/sagas/data/DataActions';
-import { submitDataGraphWorker } from '../../core/sagas/data/DataSagas';
+import { submitDataGraph, submitPartialReplace } from '../../core/sagas/data/DataActions';
+import { submitDataGraphWorker, submitPartialReplaceWorker } from '../../core/sagas/data/DataSagas';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import {
   getESIDFromApp,
   getPeopleESId,
 } from '../../utils/AppUtils';
-import { indexSubmittedDataGraph } from '../../utils/DataUtils';
+import { getEntityKeyId, getEntityKeyIdsFromList, getSearchTerm, indexSubmittedDataGraph } from '../../utils/DataUtils';
 import { ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
 
 const { processEntityData } = DataProcessingUtils;
@@ -56,6 +59,8 @@ const {
   IMAGE_FQN,
   IS_PICTURE_OF_FQN,
   PEOPLE_FQN,
+  REPORTED_FQN,
+  STAFF_FQN,
 } = APP_TYPES_FQNS;
 
 const { OPENLATTICE_ID_FQN } = Constants;
@@ -331,4 +336,108 @@ export function* submitNewPersonWorker(action :SequenceAction) :Generator<any, a
 
 export function* submitNewPersonWatcher() :Generator<any, any, any> {
   yield takeEvery(SUBMIT_NEW_PERSON, submitNewPersonWorker);
+}
+
+export function* countReportsByPersonWorker(action :SequenceAction) :Generator<any, any, any> {
+  try {
+    yield put(countReportsByPerson.request(action.id));
+
+    const edm :Map<*, *> = yield select((state) => state.get('edm'));
+    const app = yield select((state) => state.get('app', Map()));
+
+    const entitySetId :UUID = getESIDFromApp(app, BEHAVIORAL_HEALTH_REPORT_FQN);
+    const peopleESID :UUID = getESIDFromApp(app, PEOPLE_FQN);
+    const appearsInESID :UUID = getESIDFromApp(app, APPEARS_IN_FQN);
+
+    const datetimePTID :UUID = edm.getIn(['fqnToIdMap', FQN.DATE_TIME_OCCURRED_FQN]);
+    const numReportsPTID :UUID = edm.getIn(['fqnToIdMap', FQN.NUM_REPORTS_FOUND_IN_FQN]);
+    const searchTerm = getSearchTerm(datetimePTID, '[* TO *]');
+
+    // search for reports within date range
+    const searchOptions = {
+      entitySetIds: [entitySetId],
+      start: 0,
+      maxHits: 10000,
+      constraints: [{
+        constraints: [{
+          type: 'advanced',
+          searchFields: [
+            {
+              searchTerm,
+              property: datetimePTID
+            }
+          ]
+        }]
+      }],
+      sort: {
+        propertyTypeId: datetimePTID,
+        type: 'field'
+      }
+    };
+
+    const { data, error } = yield call(
+      executeSearchWorker,
+      executeSearch({ searchOptions })
+    );
+
+    if (error) throw error;
+
+    const { hits } = data;
+    const reportEKIDS = getEntityKeyIdsFromList(hits);
+    console.log(reportEKIDS);
+
+    const peopleParams = {
+      entitySetId,
+      filter: {
+        entityKeyIds: reportEKIDS,
+        edgeEntitySetIds: [appearsInESID],
+        destinationEntitySetIds: [],
+        sourceEntitySetIds: [peopleESID]
+      }
+    };
+
+    const peopleResponse = yield call(
+      searchEntityNeighborsWithFilterWorker,
+      searchEntityNeighborsWithFilter(peopleParams)
+    );
+
+    console.log(peopleResponse);
+    const { data: peopleData } = peopleResponse;
+
+    const countsByPersonEKID = Object.values(peopleData).reduce((counts :Object, person :any) => {
+      const personEKID = getEntityKeyId(getIn(person, [0, 'neighborDetails']));
+
+      const count = getIn(counts, [personEKID, numReportsPTID, 0]);
+      if (count) {
+        counts = setIn(counts, [personEKID, numReportsPTID, 0], count + 1);
+      }
+      else {
+        counts = setIn(counts, [personEKID, numReportsPTID], [1]);
+      }
+      return counts;
+    }, {});
+
+    console.log(countsByPersonEKID);
+
+    const response = yield call(
+      submitPartialReplaceWorker,
+      submitPartialReplace({
+        entityData: {
+          [peopleESID]: countsByPersonEKID
+        }
+      })
+    );
+
+    console.log(response);
+
+    yield put(countReportsByPerson.success(action.id));
+  }
+  catch (error) {
+    LOG.error(action.type, error);
+    yield put(countReportsByPerson.failure(action.id));
+  }
+}
+
+export function* countReportsByPersonWatcher() :Generator<any, any, any> {
+  yield takeEvery(COUNT_REPORTS_BY_PERSON, countReportsByPersonWorker);
 }

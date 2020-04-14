@@ -22,13 +22,18 @@ const getRecentIncidents :RequestSequence = newRequestSequence(GET_RECENT_INCIDE
 const SUBMIT_NEW_PERSON :'SUBMIT_NEW_PERSON' = 'SUBMIT_NEW_PERSON';
 const submitNewPerson :RequestSequence = newRequestSequence(SUBMIT_NEW_PERSON);
 
+const COUNT_REPORTS_BY_PERSON :'COUNT_REPORTS_BY_PERSON' = 'COUNT_REPORTS_BY_PERSON';
+const countReportsByPerson :RequestSequence = newRequestSequence(COUNT_REPORTS_BY_PERSON);
+
 export {
   CLEAR_SEARCH_RESULTS,
+  COUNT_REPORTS_BY_PERSON,
   GET_PEOPLE_PHOTOS,
   GET_RECENT_INCIDENTS,
   SEARCH_PEOPLE,
   SUBMIT_NEW_PERSON,
   clearSearchResults,
+  countReportsByPerson,
   getPeoplePhotos,
   getRecentIncidents,
   searchPeople,

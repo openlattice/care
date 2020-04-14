@@ -1,7 +1,5 @@
 import { DataProcessingUtils } from 'lattice-fabricate';
 
-import { YES_NO_UNKNOWN } from '../constants';
-
 import * as FQN from '../../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
 import {
@@ -9,6 +7,7 @@ import {
   RACE_VALUES,
   SEX_VALUES
 } from '../../../../profile/constants';
+import { YES_NO_UNKNOWN } from '../constants';
 
 const { PEOPLE_FQN, PERSON_DETAILS_FQN } = APP_TYPES_FQNS;
 

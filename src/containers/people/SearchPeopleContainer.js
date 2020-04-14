@@ -26,7 +26,7 @@ import AdvancedHeader from './AdvancedHeader';
 import MetaphoneLabel from './MetaphoneLabel';
 import PersonResult from './PersonResult';
 import ReportSelectionModal from './ReportSelectionModal';
-import { searchPeople } from './PeopleActions';
+import { countReportsByPerson, searchPeople } from './PeopleActions';
 
 import Accordion from '../../components/accordion';
 import { BreadcrumbLink } from '../../components/breadcrumbs';
@@ -199,6 +199,7 @@ const SearchPeopleContainer = () => {
     <ContentOuterWrapper>
       <Panel>
         <ContentWrapper>
+          <button type="button" onClick={() => dispatch(countReportsByPerson())}>count reports</button>
           <CardSegment vertical padding="0">
             <form>
               <InputGrid>
