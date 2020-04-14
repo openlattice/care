@@ -419,6 +419,8 @@ export function* countReportsByPersonWorker(action :SequenceAction) :Generator<a
 
     console.log(countsByPersonEKID);
 
+    debugger;
+
     const response = yield call(
       submitPartialReplaceWorker,
       submitPartialReplace({
