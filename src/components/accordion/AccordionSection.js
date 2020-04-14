@@ -83,7 +83,7 @@ class AccordionSection extends Component<AccordionSectionProps> {
           </LabelWrapper>
           {
             !alwaysOpen && (
-              <ToggleButton mode="subtle">
+              <ToggleButton mode="subtle" size="sm">
                 <ToggleIcon open={isOpen} onClick={this.onClick} />
               </ToggleButton>
             )

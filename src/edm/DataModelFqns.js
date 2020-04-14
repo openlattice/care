@@ -41,10 +41,12 @@ const LINE_ITEM_FQN = new FullyQualifiedName('ol.lineitem');
 export { LINE_ITEM_FQN };
 
 const NUM_SOURCES_FOUND_IN_FQN = new FullyQualifiedName('ol.numsourcesfoundin');
+const NUM_REPORTS_FOUND_IN_FQN = new FullyQualifiedName('ol.numreportsfoundin');
 const NUMBER_OF_PEOPLE_FQN = new FullyQualifiedName('ol.numberofpeople');
 export {
   NUM_SOURCES_FOUND_IN_FQN,
-  NUMBER_OF_PEOPLE_FQN
+  NUM_REPORTS_FOUND_IN_FQN,
+  NUMBER_OF_PEOPLE_FQN,
 };
 
 /* disposition */
