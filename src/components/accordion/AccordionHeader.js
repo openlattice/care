@@ -22,7 +22,7 @@ const AccordionHeader = (props :Props) => {
       <Headline isOpen={isOpen}>
         {headline}
       </Headline>
-      <div isOpen={isOpen}>
+      <div>
         {caption}
       </div>
     </>
