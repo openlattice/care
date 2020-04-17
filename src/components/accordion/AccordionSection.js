@@ -3,9 +3,9 @@ import React, { Component } from 'react';
 import type { ComponentType, Node } from 'react';
 
 import styled from 'styled-components';
-import { faChevronDown, faChevronUp } from '@fortawesome/pro-regular-svg-icons';
+import { faChevronDown } from '@fortawesome/pro-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, CardSegment } from 'lattice-ui-kit';
+import { Button, CardSegment, Collapse } from 'lattice-ui-kit';
 
 import AccordionHeader from './AccordionHeader';
 
@@ -29,9 +29,10 @@ const LabelWrapper = styled.div`
   align-items: center;
 `;
 
-const ToggleIcon = styled(FontAwesomeIcon).attrs((props :any) => ({
-  icon: props.open ? faChevronUp : faChevronDown
-}))``;
+const ToggleIcon = styled(FontAwesomeIcon)`
+  transform: ${(props) => (props.open ? 'rotate(180deg)' : 'rotate(0deg)')};
+  transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
+`;
 
 const ToggleButton = styled(Button)`
   color: inherit;
@@ -73,7 +74,7 @@ class AccordionSection extends Component<AccordionSectionProps> {
     } = this.props;
 
     return (
-      <AccordionWrapper isOpen={isOpen}>
+      <AccordionWrapper>
         <HeaderWrapper onClick={this.onClick}>
           <LabelWrapper>
             <TitleComponent
@@ -84,14 +85,14 @@ class AccordionSection extends Component<AccordionSectionProps> {
           {
             !alwaysOpen && (
               <ToggleButton mode="subtle" size="sm">
-                <ToggleIcon open={isOpen} onClick={this.onClick} />
+                <ToggleIcon icon={faChevronDown} open={isOpen} onClick={this.onClick} />
               </ToggleButton>
             )
           }
         </HeaderWrapper>
-        {
-          isOpen && children
-        }
+        <Collapse in={isOpen}>
+          {children}
+        </Collapse>
       </AccordionWrapper>
     );
   }
