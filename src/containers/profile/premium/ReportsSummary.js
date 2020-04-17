@@ -90,8 +90,8 @@ class ReportsSummary extends PureComponent<Props> {
       : (
         <Card>
           { this.renderBehaviorChart() }
-          { this.renderNatureOfCrisisChart() }
-          { this.renderDispositionChart() }
+          {/* { this.renderNatureOfCrisisChart() }
+          { this.renderDispositionChart() } */}
         </Card>
       );
   }
