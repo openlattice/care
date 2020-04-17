@@ -6,7 +6,9 @@ module.exports = {
     'babel-plugin-styled-components',
   ],
   presets: [
-    '@babel/preset-env',
+    ['@babel/preset-env', {
+      targets: { ie: '11' }
+    }],
     '@babel/preset-flow',
     '@babel/preset-react',
   ],
