@@ -19,15 +19,10 @@ import {
 
 import Accordion from '../../../components/accordion';
 import * as FQN from '../../../edm/DataModelFqns';
+import { Header } from '../../../components/layout';
 import { CardSkeleton } from '../../../components/skeletons';
 
 const { NEUTRALS } = Colors;
-
-const Header = styled.h1`
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin: 0 0 15px;
-`;
 
 const StyledSplash = styled(IconSplash)`
   margin: 0 0 15px;

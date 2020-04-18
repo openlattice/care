@@ -5,14 +5,13 @@ import styled from 'styled-components';
 import { Map } from 'immutable';
 import {
   Card,
-  CardHeader,
   CardSegment,
   Label,
 } from 'lattice-ui-kit';
 
 import IconDetail from '../styled/IconDetail';
 import * as FQN from '../../../edm/DataModelFqns';
-import { H1 } from '../../layout';
+import { Header } from '../../layout';
 import { CardSkeleton } from '../../skeletons';
 
 const Grid = styled.div`
@@ -33,10 +32,8 @@ const WarrantCard = ({ isLoading, warrant } :Props) => {
 
   return (
     <Card>
-      <CardHeader mode="primary" padding="sm">
-        <H1>Warrant</H1>
-      </CardHeader>
-      <CardSegment padding="sm">
+      <CardSegment vertical>
+        <Header>Warrant</Header>
         <Grid>
           <div>
             <Label subtle>

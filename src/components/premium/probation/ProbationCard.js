@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import { Map } from 'immutable';
 import {
   Card,
-  CardHeader,
   CardSegment,
   Label,
   Tag
@@ -14,7 +13,7 @@ import {
 import IconDetail from '../styled/IconDetail';
 import * as FQN from '../../../edm/DataModelFqns';
 import { getDateShortFromIsoDate, isNowValid } from '../../../utils/DateUtils';
-import { H1 } from '../../layout';
+import { Header } from '../../layout';
 import { CardSkeleton } from '../../skeletons';
 
 const Grid = styled.div`
@@ -41,10 +40,8 @@ const ProbationCard = ({ isLoading, probation } :Props) => {
 
   return (
     <Card>
-      <CardHeader mode="primary" padding="sm">
-        <H1>Probation</H1>
-      </CardHeader>
-      <CardSegment padding="sm">
+      <CardSegment vertical>
+        <Header>Probation</Header>
         <Grid>
           <div>
             <Label subtle>
