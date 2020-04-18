@@ -4,8 +4,9 @@ import React from 'react';
 import styled from 'styled-components';
 
 const Tick = styled.text`
-  font-size: 12px;
-  min-height: 20px;
+  font-size: 0.75rem;
+  font-weight: 300;
+  stroke: #AFB2B9;
 `;
 
 const MAX_CHARS_PER_LINE = 20;
@@ -14,8 +15,6 @@ const splitText = (text) => {
   const lines = [];
   let currStr = '';
   text
-    .replace(/\//g, ' / ')
-    .replace(/-/g, ' - ')
     .split(' ')
     .filter((val) => val.length)
     .forEach((word) => {

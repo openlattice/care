@@ -1,7 +1,7 @@
 // @flow
 import { useEffect, useState } from 'react';
 
-const usePosition = (timeout :number = 0) :[Position, PositionError] => {
+const usePosition = (timeout ?:number) :[Position, PositionError] => {
   const [position, setPosition] = useState({});
   const [error, setError] = useState(null);
 
