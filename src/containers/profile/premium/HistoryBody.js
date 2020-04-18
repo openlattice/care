@@ -1,18 +1,19 @@
 // @flow
 import React, { useCallback } from 'react';
 
-import styled from 'styled-components';
 import { faFolderOpen } from '@fortawesome/pro-duotone-svg-icons';
 import { List, Map } from 'immutable';
-import { IconSplash, SearchResults, StyleUtils } from 'lattice-ui-kit';
+import {
+  Card,
+  CardSegment,
+  IconSplash,
+  SearchResults
+} from 'lattice-ui-kit';
 import { useDispatch } from 'react-redux';
 
 import BackgroundInformationCard from './BackgroundInformationCard';
-import BehaviorCard from './BehaviorCard';
-import OfficerSafetyCard from './OfficerSafetyCard';
 import ReportsSummary from './ReportsSummary';
 
-import ContactCarousel from '../../../components/premium/contacts/ContactCarousel';
 import CrisisCountCard from '../CrisisCountCard';
 import ProbationCard from '../../../components/premium/probation/ProbationCard';
 import ProfileResult from '../ProfileResult';
@@ -20,6 +21,7 @@ import RecentIncidentCard from '../RecentIncidentCard';
 import StayAwayCard from '../../../components/premium/stayaway/StayAwayCard';
 import WarrantCard from '../../../components/premium/warrant/WarrantCard';
 import { useAppSettings } from '../../../components/hooks';
+import { Header } from '../../../components/layout';
 import {
   CRISIS_REPORT_PATH,
   REPORT_ID_PATH,
@@ -29,28 +31,11 @@ import { goToPath } from '../../../core/router/RoutingActions';
 import { getEntityKeyId } from '../../../utils/DataUtils';
 import { labelMapReport } from '../constants';
 
-const { media } = StyleUtils;
-
-const BehaviorAndSafetyGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-gap: 20px;
-  overflow-x: auto;
-  ${media.tablet`
-    grid-template-columns: 1fr;
-    grid-gap: 10px;
-  `}
-`;
-
 type Props = {
-  behaviorSummary :Map;
   crisisSummary :Map;
   isLoading :boolean;
   reports :List;
   responsePlan :Map;
-  contacts :List<Map>;
-  contactInfoByContactEKID :Map;
-  isContactForByContactEKID :Map;
   stayAwayLocation :Map;
   probation :Map;
   warrant :Map;
@@ -58,14 +43,10 @@ type Props = {
 
 const HistoryBody = (props :Props) => {
   const {
-    behaviorSummary,
     crisisSummary,
     isLoading,
     reports,
     responsePlan,
-    contacts,
-    contactInfoByContactEKID,
-    isContactForByContactEKID,
     stayAwayLocation,
     probation,
     warrant,
@@ -100,27 +81,20 @@ const HistoryBody = (props :Props) => {
           count={recent}
           isLoading={isLoading} />
       <ReportsSummary reports={reports} isLoading={isLoading} />
-      {/* <BehaviorAndSafetyGrid>
-        <BehaviorCard
-            behaviorSummary={behaviorSummary}
-            isLoading={isLoading} />
-        <OfficerSafetyCard
-            isLoading={isLoading}
-            reports={reports} />
-      </BehaviorAndSafetyGrid> */}
       <BackgroundInformationCard
           backgroundInformation={responsePlan}
           isLoading={isLoading} />
-      <ContactCarousel
-          contacts={contacts}
-          contactInfoByContactEKID={contactInfoByContactEKID}
-          isContactForByContactEKID={isContactForByContactEKID} />
-      <SearchResults
-          hasSearched={false}
-          onResultClick={handleResultClick}
-          results={reports}
-          resultLabels={labelMapReport}
-          resultComponent={ProfileResult} />
+      <Card>
+        <CardSegment vertical>
+          <Header>Report History</Header>
+          <SearchResults
+              hasSearched={false}
+              onResultClick={handleResultClick}
+              results={reports}
+              resultLabels={labelMapReport}
+              resultComponent={ProfileResult} />
+        </CardSegment>
+      </Card>
       <StayAwayCard stayAwayLocation={stayAwayLocation} isLoading={isLoading} />
       <ProbationCard probation={probation} isLoading={isLoading} />
       <WarrantCard warrant={warrant} isLoading={isLoading} />

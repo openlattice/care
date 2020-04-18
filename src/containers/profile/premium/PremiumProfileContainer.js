@@ -6,7 +6,7 @@ import React, {
   useState
 } from 'react';
 
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { faFolderOpen } from '@fortawesome/pro-duotone-svg-icons';
 import { faPen } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -26,7 +26,6 @@ import { RequestStates } from 'redux-reqseq';
 import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
-// import Portrait from '../../../components/portrait/Portrait';
 import AppearancePanel from './AppearancePanel';
 import AssignedOfficerPanel from './AssignedOfficerPanel';
 import ContactPanel from './ContactPanel';
@@ -35,6 +34,7 @@ import HistoryBody from './HistoryBody';
 import NewResponsePlanCard from './NewResponsePlanCard';
 import PortraitCard from './PortraitCard';
 
+import ContactCarousel from '../../../components/premium/contacts/ContactCarousel';
 import CreateIssueButton from '../../../components/buttons/CreateIssueButton';
 import LinkButton from '../../../components/buttons/LinkButton';
 import ReportSelectionModal from '../../people/ReportSelectionModal';
@@ -73,7 +73,38 @@ const Aside = styled.aside`
   flex: 1 1 100%;
 `;
 
-const ButtonGroup = styled.div``;
+const ButtonGroup = styled.div`
+  button:first-of-type {
+    border-radius: 3px 0 0 3px;
+  }
+  button:last-of-type {
+    border-radius: 0 3px 3px 0;
+  }
+`;
+
+const getActiveStyles = ({ active }) => {
+  if (active) {
+    return css`
+      background-color: #A6AAB2;
+      border-color: #A6AAB2;
+      color: #fff;
+
+      :hover {
+        background-color: #A6AAB2;
+        border-color: #A6AAB2;
+        color: #fff;
+      }
+    `;
+  }
+  return null;
+};
+
+const ActiveButton = styled(Button)`
+  background-color: #E5E5F0;
+  border-color: #E5E5F0;
+  border-radius: 0;
+  ${getActiveStyles};
+`;
 
 const ProfileGrid = styled.div`
   display: grid;
@@ -95,9 +126,8 @@ const BreadcrumbWrapper = styled.div`
 
 const ActionBar = styled.div`
   display: flex;
-  flex: 1 0 auto;
+  flex: 0 0 auto;
   justify-content: space-between;
-  max-height: 40px;
 
   button:not(:first-child):not(:last-child) {
     margin: 0 10px;
@@ -220,11 +250,18 @@ const PremiumProfileContainer = (props :Props) => {
   const profilePath = PROFILE_VIEW_PATH.replace(PROFILE_ID_PATH, subjectEKID);
 
   let body = (
-    <NewResponsePlanCard
-        isLoading={isLoadingBody}
-        officerSafety={officerSafety}
-        triggers={triggers}
-        interactionStrategies={interactionStrategies} />
+    <>
+      <NewResponsePlanCard
+          isLoading={isLoadingBody}
+          officerSafety={officerSafety}
+          triggers={triggers}
+          interactionStrategies={interactionStrategies} />
+      <ContactCarousel
+          isLoading={isLoadingBody}
+          contacts={contacts}
+          contactInfoByContactEKID={contactInfoByContactEKID}
+          isContactForByContactEKID={isContactForByContactEKID} />
+    </>
   );
 
   // TODO use React Router for this
@@ -273,8 +310,20 @@ const PremiumProfileContainer = (props :Props) => {
           <ScrollStack>
             <ActionBar>
               <ButtonGroup>
-                <Button name="response-btn" type="button" onClick={() => setTab('response')}>Response</Button>
-                <Button name="history-btn" type="button" onClick={() => setTab('history')}>History</Button>
+                <ActiveButton
+                    active={tab === 'response'}
+                    name="response-btn"
+                    type="button"
+                    onClick={() => setTab('response')}>
+                  Response
+                </ActiveButton>
+                <ActiveButton
+                    active={tab === 'history'}
+                    name="history-btn"
+                    type="button"
+                    onClick={() => setTab('history')}>
+                  History
+                </ActiveButton>
               </ButtonGroup>
               <div>
                 {
