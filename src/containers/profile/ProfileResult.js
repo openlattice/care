@@ -1,16 +1,16 @@
 // @flow
 import React, { Component } from 'react';
-import styled from 'styled-components';
+
 import isFunction from 'lodash/isFunction';
-import { DateTime } from 'luxon';
-import { List, Map } from 'immutable';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import styled from 'styled-components';
 import { faFileAlt } from '@fortawesome/pro-light-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { List, Map } from 'immutable';
 import {
   Card,
   CardSegment,
-  DataGrid,
 } from 'lattice-ui-kit';
+import { DateTime } from 'luxon';
 
 import { DATE_TIME_OCCURRED_FQN, TYPE_FQN } from '../../edm/DataModelFqns';
 
@@ -19,7 +19,6 @@ const ReportHeader = styled.div`
   flex: 1;
   font-size: 20px;
   font-weight: 600;
-  margin: 0 0 10px 0;
   align-items: center;
 `;
 
@@ -49,37 +48,24 @@ class ReportResult extends Component<Props> {
     }
   }
 
-  formatResult = () => {
-    const { result } = this.props;
-    const rawDatetime :string = result.getIn([DATE_TIME_OCCURRED_FQN, 0]);
-    if (rawDatetime) {
-      const formattedDob = DateTime.fromISO(rawDatetime).toLocaleString(DateTime.DATE_SHORT);
-      return result.set(DATE_TIME_OCCURRED_FQN, List(formattedDob));
-    }
-
-    return result;
-  }
-
   render() {
 
-    const { result, resultLabels } = this.props;
+    const { result } = this.props;
 
     const reportType = result.get(TYPE_FQN, '');
-    const formattedResult = this.formatResult();
+    const rawDatetime :string = result.getIn([DATE_TIME_OCCURRED_FQN, 0]);
+    const formattedDate = DateTime.fromISO(rawDatetime).toLocaleString(DateTime.DATE_SHORT);
 
     return (
       <Card onClick={this.handleClick}>
-        <CardSegment vertical>
+        <CardSegment>
           <ReportHeader>
             <FontAwesomeIcon icon={faFileAlt} color="black" fixedWidth />
             <ReportType>
               { reportType }
             </ReportType>
           </ReportHeader>
-          <DataGrid
-              columns={2}
-              data={formattedResult}
-              labelMap={resultLabels} />
+          {formattedDate}
         </CardSegment>
       </Card>
     );

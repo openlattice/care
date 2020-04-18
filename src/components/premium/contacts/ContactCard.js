@@ -2,7 +2,7 @@
 import React from 'react';
 
 import styled from 'styled-components';
-import { faPhoneAlt, faPhoneOffice } from '@fortawesome/pro-duotone-svg-icons';
+import { faPhoneAlt } from '@fortawesome/pro-duotone-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   Card,
@@ -27,24 +27,22 @@ const IconWrapper = styled.span`
 
 const Telephone = styled.a`
   font-weight: 600;
+  font-size: 0.875rem;
 `;
 
 const ContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  margin: 10px 0;
-  margin-top: ${(props) => (props.bottom ? 'auto' : 0)};
   word-break: break-word;
 `;
 
 const StyledCard = styled(Card)`
-  width: 280px;
+  width: 240px;
 `;
 
 type Props = {
   extension ? :string;
   name ? :string;
-  notes ? :string;
   phoneNumber ? :string;
   phoneType ? :string;
   relationship ? :string;
@@ -54,7 +52,6 @@ const ContactCard = (props :Props) => {
   const {
     extension,
     name,
-    notes,
     phoneNumber,
     phoneType,
     relationship,
@@ -67,23 +64,16 @@ const ContactCard = (props :Props) => {
     <StyledCard>
       <CardHeader padding="sm" noBleed>
         <H2>
-          <IconWrapper>
-            <FontAwesomeIcon icon={faPhoneOffice} fixedWidth />
-          </IconWrapper>
           { name }
         </H2>
       </CardHeader>
       <CardSegment vertical padding="sm">
         {relationship}
-        <ContentWrapper>
-          <Label subtle>Notes</Label>
-          {notes}
-        </ContentWrapper>
         <ContentWrapper bottom>
           <Label subtle>{phoneType}</Label>
           <Telephone href={telHref}>
             <IconWrapper>
-              <FontAwesomeIcon icon={faPhoneAlt} fixedWidth />
+              <FontAwesomeIcon icon={faPhoneAlt} />
             </IconWrapper>
             {formattedNumber}
           </Telephone>
@@ -96,7 +86,6 @@ const ContactCard = (props :Props) => {
 ContactCard.defaultProps = {
   extension: '',
   name: '',
-  notes: '',
   phoneNumber: '',
   phoneType: '',
   relationship: '',

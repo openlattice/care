@@ -77,7 +77,6 @@ const uiSchema = {
         mode: 'button',
         row: true,
         withNone: true,
-        withOther: true,
       }
     },
     [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.SUICIDAL_ACTIONS_FQN)]: {

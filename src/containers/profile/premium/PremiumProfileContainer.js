@@ -1,12 +1,12 @@
 // @flow
 
 import React, {
-  useCallback,
   useEffect,
-  useMemo
+  useMemo,
+  useState
 } from 'react';
 
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { faFolderOpen } from '@fortawesome/pro-duotone-svg-icons';
 import { faPen } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -17,7 +17,6 @@ import {
   CardStack,
   Hooks,
   IconSplash,
-  SearchResults,
   StyleUtils,
 } from 'lattice-ui-kit';
 import { connect } from 'react-redux';
@@ -27,39 +26,26 @@ import { RequestStates } from 'redux-reqseq';
 import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
-// import Portrait from '../../../components/portrait/Portrait';
 import AppearancePanel from './AppearancePanel';
 import AssignedOfficerPanel from './AssignedOfficerPanel';
-import BackgroundInformationCard from './BackgroundInformationCard';
-import BehaviorCard from './BehaviorCard';
 import ContactPanel from './ContactPanel';
 import CovidBanner from './CovidBanner';
-import DeescalationCard from './DeescalationCard';
-import OfficerSafetyCard from './OfficerSafetyCard';
+import HistoryBody from './HistoryBody';
+import NewResponsePlanCard from './NewResponsePlanCard';
 import PortraitCard from './PortraitCard';
-import ResponsePlanCard from './ResponsePlanCard';
 
 import ContactCarousel from '../../../components/premium/contacts/ContactCarousel';
 import CreateIssueButton from '../../../components/buttons/CreateIssueButton';
-import CrisisCountCard from '../CrisisCountCard';
 import LinkButton from '../../../components/buttons/LinkButton';
-import ProbationCard from '../../../components/premium/probation/ProbationCard';
-import ProfileResult from '../ProfileResult';
-import RecentIncidentCard from '../RecentIncidentCard';
 import ReportSelectionModal from '../../people/ReportSelectionModal';
-import StayAwayCard from '../../../components/premium/stayaway/StayAwayCard';
-import WarrantCard from '../../../components/premium/warrant/WarrantCard';
 import { BreadcrumbItem, BreadcrumbLink } from '../../../components/breadcrumbs';
-import { useAppSettings, useAuthorization, usePeopleRoute } from '../../../components/hooks';
+import { useAuthorization, usePeopleRoute } from '../../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
 import {
   BASIC_PATH,
-  CRISIS_REPORT_PATH,
   EDIT_PATH,
   PROFILE_ID_PATH,
   PROFILE_VIEW_PATH,
-  REPORT_ID_PATH,
-  REPORT_VIEW_PATH,
 } from '../../../core/router/Routes';
 import { goToPath } from '../../../core/router/RoutingActions';
 import { getAuthorization } from '../../../core/sagas/authorize/AuthorizeActions';
@@ -71,7 +57,6 @@ import { reduceRequestStates } from '../../../utils/StateUtils';
 import { getAllSymptomsReports } from '../../reports/symptoms/SymptomsReportActions';
 import { getProfileReports } from '../ProfileActions';
 import { getIncidentReportsSummary } from '../actions/ReportActions';
-import { labelMapReport } from '../constants';
 import { getAboutPlan } from '../edit/about/AboutActions';
 import { getBasicInformation } from '../edit/basicinformation/actions/BasicInformationActions';
 import { getContacts } from '../edit/contacts/ContactsActions';
@@ -88,24 +73,46 @@ const Aside = styled.aside`
   flex: 1 1 100%;
 `;
 
+const TabGroup = styled.div`
+  margin-right: auto;
+  button:first-of-type {
+    border-radius: 3px 0 0 3px;
+  }
+  button:last-of-type {
+    border-radius: 0 3px 3px 0;
+  }
+`;
+
+const getActiveStyles = ({ active }) => {
+  if (active) {
+    return css`
+      background-color: #A6AAB2;
+      border-color: #A6AAB2;
+      color: #fff;
+
+      :hover {
+        background-color: #A6AAB2;
+        border-color: #A6AAB2;
+        color: #fff;
+      }
+    `;
+  }
+  return null;
+};
+
+const TabButton = styled(Button)`
+  background-color: #E5E5F0;
+  border-color: #E5E5F0;
+  border-radius: 0;
+  ${getActiveStyles};
+`;
+
 const ProfileGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 2.25fr;
   grid-gap: 20px;
   ${media.phone`
     grid-template-columns: 1fr;
-    grid-gap: 10px;
-  `}
-`;
-
-const BehaviorAndSafetyGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-gap: 20px;
-  overflow-x: auto;
-  ${media.tablet`
-    grid-template-columns: 1fr;
-    grid-gap: 10px;
   `}
 `;
 
@@ -119,12 +126,15 @@ const BreadcrumbWrapper = styled.div`
 
 const ActionBar = styled.div`
   display: flex;
-  flex: 1 0 auto;
-  justify-content: flex-end;
-  max-height: 40px;
+  ${media.tablet`
+    flex-direction: column;
+  `}
+`;
 
-  > button:not(:first-child):not(:last-child) {
-    margin: 0 10px;
+const ButtonGroup = styled.div`
+  margin-left: auto;
+  button:not(:last-child) {
+    margin-right: 10px;
   }
 `;
 
@@ -172,7 +182,6 @@ type Props = {
   selectedPerson :Map;
   stayAwayLocation :Map;
   recentSymptoms :boolean;
-  techniques :List<Map>;
   triggers :List<Map>;
   warrant :Map;
 };
@@ -211,7 +220,6 @@ const PremiumProfileContainer = (props :Props) => {
     selectedPerson,
     stayAwayLocation,
     recentSymptoms,
-    techniques,
     triggers,
     warrant,
   } = props;
@@ -228,22 +236,8 @@ const PremiumProfileContainer = (props :Props) => {
   usePeopleRoute(actions.getLBProfile);
   usePeopleRoute(actions.getAllSymptomsReports);
 
-  const settings = useAppSettings();
-
-  const handleResultClick = useCallback((result :Map) => {
-    const reportEKID = getEntityKeyId(result);
-    if (settings.get('v1')) {
-      actions.goToPath(CRISIS_REPORT_PATH.replace(REPORT_ID_PATH, reportEKID));
-    }
-    else {
-      actions.goToPath(REPORT_VIEW_PATH.replace(REPORT_ID_PATH, reportEKID));
-    }
-  }, [actions, settings]);
-
+  const [tab, setTab] = useState('response');
   const [isAuthorized] = useAuthorization('profile', actions.getAuthorization);
-
-  const recent = crisisSummary.get('recent');
-  const total = crisisSummary.get('total');
   const isLoadingIntro = fetchAboutState !== RequestStates.SUCCESS;
   const isLoadingAboutPlan = fetchAboutPlanState !== RequestStates.SUCCESS;
 
@@ -258,6 +252,39 @@ const PremiumProfileContainer = (props :Props) => {
   const name = getFirstLastFromPerson(selectedPerson);
   const subjectEKID = getEntityKeyId(selectedPerson);
   const profilePath = PROFILE_VIEW_PATH.replace(PROFILE_ID_PATH, subjectEKID);
+
+  let body = (
+    <>
+      <NewResponsePlanCard
+          isLoading={isLoadingBody}
+          officerSafety={officerSafety}
+          triggers={triggers}
+          interactionStrategies={interactionStrategies} />
+      <ContactCarousel
+          isLoading={isLoadingBody}
+          contacts={contacts}
+          contactInfoByContactEKID={contactInfoByContactEKID}
+          isContactForByContactEKID={isContactForByContactEKID} />
+    </>
+  );
+
+  // TODO use React Router for this
+  if (tab === 'history') {
+    body = (
+      <HistoryBody
+          behaviorSummary={behaviorSummary}
+          crisisSummary={crisisSummary}
+          isLoading={isLoadingBody}
+          reports={reports}
+          responsePlan={responsePlan}
+          contacts={contacts}
+          contactInfoByContactEKID={contactInfoByContactEKID}
+          isContactForByContactEKID={isContactForByContactEKID}
+          stayAwayLocation={stayAwayLocation}
+          probation={probation}
+          warrant={warrant} />
+    );
+  }
 
   return (
     <ContentOuterWrapper>
@@ -286,66 +313,44 @@ const PremiumProfileContainer = (props :Props) => {
           </Aside>
           <ScrollStack>
             <ActionBar>
-              <StyledLinkButton to={`${match.url}${EDIT_PATH}${BASIC_PATH}`}>
-                <FontAwesomeIcon icon={faPen} />
-              </StyledLinkButton>
-              <CreateIssueButton />
-              <Button mode="primary" onClick={open}>Create Report</Button>
-              <ReportSelectionModal
-                  selectedPerson={selectedPerson}
-                  isVisible={isVisible}
-                  onClose={close} />
+              <TabGroup>
+                <TabButton
+                    active={tab === 'response'}
+                    name="response-btn"
+                    type="button"
+                    onClick={() => setTab('response')}>
+                  Response
+                </TabButton>
+                <TabButton
+                    active={tab === 'history'}
+                    name="history-btn"
+                    type="button"
+                    onClick={() => setTab('history')}>
+                  History
+                </TabButton>
+              </TabGroup>
+              <ButtonGroup>
+                {
+                  isAuthorized && (
+                    <StyledLinkButton to={`${match.url}${EDIT_PATH}${BASIC_PATH}`}>
+                      <FontAwesomeIcon icon={faPen} />
+                    </StyledLinkButton>
+                  )
+                }
+                <CreateIssueButton />
+                <Button mode="primary" onClick={open}>Create Report</Button>
+                <ReportSelectionModal
+                    selectedPerson={selectedPerson}
+                    isVisible={isVisible}
+                    onClose={close} />
+              </ButtonGroup>
+
             </ActionBar>
             {
               !reports.count() && !isLoadingBody
                 ? <IconSplash icon={faFolderOpen} caption="No reports have been filed." />
-                : (
-                  <>
-                    <CrisisCountCard
-                        count={total}
-                        isLoading={isLoadingBody} />
-                    <RecentIncidentCard
-                        count={recent}
-                        isLoading={isLoadingBody} />
-                    <BehaviorAndSafetyGrid>
-                      <BehaviorCard
-                          behaviorSummary={behaviorSummary}
-                          isLoading={isLoadingBody} />
-                      <OfficerSafetyCard
-                          isLoading={isLoadingBody}
-                          officerSafety={officerSafety}
-                          reports={reports}
-                          showEdit={isAuthorized}
-                          triggers={triggers} />
-                    </BehaviorAndSafetyGrid>
-                    <DeescalationCard
-                        isLoading={isLoadingBody}
-                        showEdit={isAuthorized}
-                        techniques={techniques} />
-                    <ResponsePlanCard
-                        interactionStrategies={interactionStrategies}
-                        isLoading={isLoadingBody}
-                        showEdit={isAuthorized} />
-                    <BackgroundInformationCard
-                        backgroundInformation={responsePlan}
-                        isLoading={isLoadingBody}
-                        showEdit={isAuthorized} />
-                    <ContactCarousel
-                        contacts={contacts}
-                        contactInfoByContactEKID={contactInfoByContactEKID}
-                        isContactForByContactEKID={isContactForByContactEKID} />
-                    <SearchResults
-                        hasSearched={false}
-                        onResultClick={handleResultClick}
-                        results={reports}
-                        resultLabels={labelMapReport}
-                        resultComponent={ProfileResult} />
-                  </>
-                )
+                : body
             }
-            <StayAwayCard stayAwayLocation={stayAwayLocation} isLoading={isLoadingBody} />
-            <ProbationCard probation={probation} isLoading={isLoadingBody} />
-            <WarrantCard warrant={warrant} isLoading={isLoadingBody} />
           </ScrollStack>
         </ProfileGrid>
       </ContentWrapper>

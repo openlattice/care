@@ -14,6 +14,24 @@ export const BEHAVIORS = [
   'Paranoid',
 ];
 
+export const BEHAVIOR_LABEL_MAP = {
+  'Belligerent / Uncooperative': 'Belligerent',
+  'Bizzare, unusual behavior': 'Bizarre',
+  'Disorientation / Confusion': 'Disoriented',
+  'Disorganized speech / Communication': 'Incoherant',
+  'Disorganized speed / Communication': 'Incoherant',
+  'Disorderly / Disruptive': 'Disorderly',
+  'Hallucinations / Delusions': 'Delusional',
+  'Hopeless / Depressed': 'Depressed',
+  Mania: 'Manic',
+  'Neglect of self care': 'Self-neglect',
+  'Out of touch with reality': 'Psychotic',
+  Paranoid: 'Paranoid',
+  [SUICIDE_BEHAVIORS]: 'Suicidal',
+  None: 'None',
+  Other: 'Other',
+};
+
 export const THREAT = 'Threat';
 export const ATTEMPT = 'Attempt';
 

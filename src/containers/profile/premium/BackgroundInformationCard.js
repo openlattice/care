@@ -13,7 +13,7 @@ import {
   Spinner
 } from 'lattice-ui-kit';
 
-import { H1, IconWrapper } from '../../../components/layout';
+import { Header, IconWrapper } from '../../../components/layout';
 import { CardSkeleton } from '../../../components/skeletons';
 import { CONTEXT_FQN } from '../../../edm/DataModelFqns';
 import { isEmptyString, isNonEmptyString } from '../../../utils/LangUtils';
@@ -39,15 +39,8 @@ const BackgroundInformationCard = (props :Props) => {
   const backgroundSummary :string = backgroundInformation.getIn([CONTEXT_FQN, 0]) || '';
   return (
     <Card>
-      <CardHeader mode="primary" padding="sm">
-        <H1>
-          <IconWrapper>
-            <FontAwesomeIcon icon={faAddressCard} fixedWidth />
-          </IconWrapper>
-          Background Information
-        </H1>
-      </CardHeader>
-      <CardSegment vertical padding="sm">
+      <CardSegment vertical>
+        <Header>Background</Header>
         { isLoading && <Spinner size="2x" /> }
         { (!isLoading && isNonEmptyString(backgroundSummary)) && <Text>{backgroundSummary}</Text> }
         { (!isLoading && isEmptyString(backgroundSummary)) && <IconSplash caption="No background information." /> }
