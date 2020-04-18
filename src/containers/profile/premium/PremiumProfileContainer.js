@@ -73,7 +73,8 @@ const Aside = styled.aside`
   flex: 1 1 100%;
 `;
 
-const ButtonGroup = styled.div`
+const TabGroup = styled.div`
+  margin-right: auto;
   button:first-of-type {
     border-radius: 3px 0 0 3px;
   }
@@ -99,7 +100,7 @@ const getActiveStyles = ({ active }) => {
   return null;
 };
 
-const ActiveButton = styled(Button)`
+const TabButton = styled(Button)`
   background-color: #E5E5F0;
   border-color: #E5E5F0;
   border-radius: 0;
@@ -112,7 +113,6 @@ const ProfileGrid = styled.div`
   grid-gap: 20px;
   ${media.phone`
     grid-template-columns: 1fr;
-    grid-gap: 10px;
   `}
 `;
 
@@ -126,11 +126,15 @@ const BreadcrumbWrapper = styled.div`
 
 const ActionBar = styled.div`
   display: flex;
-  flex: 0 0 auto;
-  justify-content: space-between;
+  ${media.tablet`
+    flex-direction: column;
+  `}
+`;
 
-  button:not(:first-child):not(:last-child) {
-    margin: 0 10px;
+const ButtonGroup = styled.div`
+  margin-left: auto;
+  button:not(:last-child) {
+    margin-right: 10px;
   }
 `;
 
@@ -309,23 +313,23 @@ const PremiumProfileContainer = (props :Props) => {
           </Aside>
           <ScrollStack>
             <ActionBar>
-              <ButtonGroup>
-                <ActiveButton
+              <TabGroup>
+                <TabButton
                     active={tab === 'response'}
                     name="response-btn"
                     type="button"
                     onClick={() => setTab('response')}>
                   Response
-                </ActiveButton>
-                <ActiveButton
+                </TabButton>
+                <TabButton
                     active={tab === 'history'}
                     name="history-btn"
                     type="button"
                     onClick={() => setTab('history')}>
                   History
-                </ActiveButton>
-              </ButtonGroup>
-              <div>
+                </TabButton>
+              </TabGroup>
+              <ButtonGroup>
                 {
                   isAuthorized && (
                     <StyledLinkButton to={`${match.url}${EDIT_PATH}${BASIC_PATH}`}>
@@ -339,7 +343,7 @@ const PremiumProfileContainer = (props :Props) => {
                     selectedPerson={selectedPerson}
                     isVisible={isVisible}
                     onClose={close} />
-              </div>
+              </ButtonGroup>
 
             </ActionBar>
             {
