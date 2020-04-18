@@ -2,7 +2,7 @@
 import React from 'react';
 
 import styled from 'styled-components';
-import { faPhoneAlt, faPhoneOffice } from '@fortawesome/pro-duotone-svg-icons';
+import { faPhoneAlt } from '@fortawesome/pro-duotone-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   Card,
@@ -44,7 +44,7 @@ const StyledCard = styled(Card)`
 type Props = {
   extension ? :string;
   name ? :string;
-  notes ? :string;
+  // notes ? :string;
   phoneNumber ? :string;
   phoneType ? :string;
   relationship ? :string;
@@ -54,7 +54,7 @@ const ContactCard = (props :Props) => {
   const {
     extension,
     name,
-    notes,
+    // notes,
     phoneNumber,
     phoneType,
     relationship,
@@ -67,18 +67,15 @@ const ContactCard = (props :Props) => {
     <StyledCard>
       <CardHeader padding="sm" noBleed>
         <H2>
-          <IconWrapper>
-            <FontAwesomeIcon icon={faPhoneOffice} fixedWidth />
-          </IconWrapper>
           { name }
         </H2>
       </CardHeader>
       <CardSegment vertical padding="sm">
         {relationship}
-        <ContentWrapper>
+        {/* <ContentWrapper>
           <Label subtle>Notes</Label>
           {notes}
-        </ContentWrapper>
+        </ContentWrapper> */}
         <ContentWrapper bottom>
           <Label subtle>{phoneType}</Label>
           <Telephone href={telHref}>
