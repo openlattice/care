@@ -86,6 +86,12 @@ export const H1 = styled.h1`
   align-items: center;
 `;
 
+export const Header = styled.h1`
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 15px;
+`;
+
 export const IconWrapper = styled.span`
   vertical-align: middle;
   margin-right: 10px;
