@@ -52,7 +52,6 @@ const ContactCard = (props :Props) => {
   const {
     extension,
     name,
-    // notes,
     phoneNumber,
     phoneType,
     relationship,
