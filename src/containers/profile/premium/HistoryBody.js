@@ -11,7 +11,6 @@ import {
 } from 'lattice-ui-kit';
 import { useDispatch } from 'react-redux';
 
-import BackgroundInformationCard from './BackgroundInformationCard';
 import ReportsSummary from './ReportsSummary';
 
 import CrisisCountCard from '../CrisisCountCard';
@@ -81,9 +80,6 @@ const HistoryBody = (props :Props) => {
           count={recent}
           isLoading={isLoading} />
       <ReportsSummary reports={reports} isLoading={isLoading} />
-      <BackgroundInformationCard
-          backgroundInformation={responsePlan}
-          isLoading={isLoading} />
       <Card>
         <CardSegment vertical>
           <Header>Report History</Header>

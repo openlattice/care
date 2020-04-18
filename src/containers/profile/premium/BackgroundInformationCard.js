@@ -40,7 +40,7 @@ const BackgroundInformationCard = (props :Props) => {
   return (
     <Card>
       <CardSegment vertical>
-        <Header>Background Information</Header>
+        <Header>Background</Header>
         { isLoading && <Spinner size="2x" /> }
         { (!isLoading && isNonEmptyString(backgroundSummary)) && <Text>{backgroundSummary}</Text> }
         { (!isLoading && isEmptyString(backgroundSummary)) && <IconSplash caption="No background information." /> }

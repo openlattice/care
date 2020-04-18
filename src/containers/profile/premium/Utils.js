@@ -87,14 +87,14 @@ const countSafetyIncidents = (reports :List) :Map => Map()
       const armedWithWeapon :boolean = report.getIn([ARMED_WITH_WEAPON_FQN, 0], false);
       const threatenedViolence :boolean = report.getIn([THREATENED_INDICATOR_FQN, 0], false);
 
-      incrementValueAtKey(mutable, ARMED_WITH_WEAPON, armedWithWeapon);
-      incrementValueAtKey(mutable, INJURED_PARTIES, threatenedViolence);
-      incrementValueAtKey(mutable, THREATENED_VIOLENCE, hadInjuries);
+      incrementValueAtKey(mutable, 'Armed', armedWithWeapon);
+      incrementValueAtKey(mutable, 'Injuries', threatenedViolence);
+      incrementValueAtKey(mutable, 'Violence', hadInjuries);
     });
   })
   .sortBy((count) => -count)
-  .toKeyedSeq()
-  .toArray();
+  .toArray()
+  .map(([name, count]) => ({ name, count }));
 
 export {
   countCrisisCalls,
