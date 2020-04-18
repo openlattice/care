@@ -18,14 +18,16 @@ import { BEHAVIOR_LABEL_MAP } from '../../reports/crisis/schemas/v1/constants';
 const { FullyQualifiedName } = Models;
 const { media } = StyleUtils;
 
+// do not use fr units in css grid for recharts
+// https://github.com/recharts/recharts/issues/1423
 const BehaviorAndSafetyGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: calc(50% - 10px) calc(50% - 10px);
   grid-gap: 20px;
   overflow: hidden;
+  flex: 1 0 auto;
   ${media.desktop`
-    grid-template-columns: 1fr;
-    grid-gap: 10px;
+    grid-template-columns: 100%;
   `}
 `;
 

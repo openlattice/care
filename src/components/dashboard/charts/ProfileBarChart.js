@@ -54,7 +54,6 @@ class ProfileBarChart extends PureComponent <Props> {
               axisLine={false}
               width={80}
               dataKey="name"
-              // minTickGap={5}
               tick={LabelTick}
               type="category" />
           <XAxis
@@ -68,7 +67,6 @@ class ProfileBarChart extends PureComponent <Props> {
               domain={[0, maxCount]} />
           <Tooltip content={this.renderTooltip} />
           <Bar
-              isAnimationActive={false}
               barSize={20}
               maxBarSize={20}
               barCategoryGap={0}
