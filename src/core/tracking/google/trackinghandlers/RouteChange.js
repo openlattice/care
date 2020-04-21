@@ -37,6 +37,9 @@ export default function handler(action :Action, prevState :Map, nextState :Map) 
     const origin = `${location.protocol}//${location.host}`;
     const url = `${origin}${location.pathname}${location.hash}`.split('?')[0];
 
+    // https://developers.google.com/analytics/devguides/collection/gtagjs/pages
+    // https://developers.google.com/analytics/devguides/collection/gtagjs/single-page-applications
+    // https://developers.google.com/analytics/devguides/collection/gtagjs/cookies-user-id#set_user_id
     const event :RouteChangeEvent = {};
     event.page_location = url;
     event.page_path = url.replace(origin, '');
