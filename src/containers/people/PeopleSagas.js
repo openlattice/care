@@ -215,7 +215,7 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
     }
     const dobDT = DateTime.fromISO(dob);
     if (dobDT.isValid) {
-      updateSearchField(dobDT.toISODate(), dobPTID);
+      updateSearchField(dobDT.toISODate(), dobPTID, true);
     }
     if (isPlainObject(race)) {
       updateSearchField(race.value, racePTID, true);
