@@ -7,9 +7,13 @@
     <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-118446829-5"></script>
     <script>
+      if (window.location.hostname === 'localhost') {
+        window['ga-disable-UA-118446829-5'] = true;
+      }
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
+      gtag('config', 'UA-118446829-5');
     </script>
     <link href="https://rsms.me/inter/inter.css" rel="stylesheet">
   </head>
