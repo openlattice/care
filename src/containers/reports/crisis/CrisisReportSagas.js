@@ -32,6 +32,7 @@ import {
   GET_REPORTS_V2_NEIGHBORS,
   GET_SUBJECT_OF_INCIDENT,
   SUBMIT_CRISIS_REPORT,
+  SUBMIT_CRISIS_REPORT_V2,
   UPDATE_CRISIS_REPORT,
   addOptionalCrisisReportContent,
   deleteCrisisReportContent,
@@ -41,13 +42,16 @@ import {
   getReportsV2Neighbors,
   getSubjectOfIncident,
   submitCrisisReport,
+  submitCrisisReportV2,
   updateCrisisReport,
+  updatePersonReportCount,
 } from './CrisisActions';
 import {
   constructFormDataFromNeighbors,
   getCrisisReportAssociations,
   getEntityIndexToIdMapFromDataGraphResponse,
   getEntityIndexToIdMapFromNeighbors,
+  getNewCrisisReportAssociations,
   getOptionalCrisisReportAssociations,
   postProcessBehaviorSection,
   postProcessCrisisReportV1,
@@ -401,6 +405,108 @@ function* getCrisisReportV2Watcher() :Generator<any, any, any> {
   yield takeLatest(GET_CRISIS_REPORT_V2, getCrisisReportV2Worker);
 }
 
+function* updatePersonReportCountWorker(action :SequenceAction) :Generator<any, any, any> {
+  const response = {};
+  try {
+    if (!isPlainObject(action.value)) throw ERR_ACTION_VALUE_TYPE;
+    const { entityKeyId, count } = action.value;
+    if (!isValidUuid(entityKeyId) || !Number.isInteger(count)) throw ERR_ACTION_VALUE_TYPE;
+
+    yield put(updatePersonReportCount.request(action.id));
+
+    const edm :Map = yield select((state) => state.get('edm'));
+    const app :Map = yield select((state) => state.get('app'), Map());
+    const peopleESID :UUID = getESIDFromApp(app, PEOPLE_FQN);
+    const numReportsPTID :UUID = edm.getIn(['fqnToIdMap', FQN.NUM_REPORTS_FOUND_IN_FQN]);
+
+    const updateData = {
+      entityData: {
+        [peopleESID]: {
+          [entityKeyId]: {
+            [numReportsPTID]: [count]
+          }
+        }
+      }
+    };
+
+    const updateResponse = yield call(
+      submitPartialReplaceWorker,
+      submitPartialReplace(updateData)
+    );
+    if (updateResponse.error) throw updateResponse.error;
+
+    yield put(updatePersonReportCount.success(action.id));
+  }
+  catch (error) {
+    LOG.error(action.type, error);
+    response.error = error;
+    yield put(updatePersonReportCount.failure(action.id));
+  }
+  return response;
+}
+
+function* submitCrisisReportV2Worker(action :SequenceAction) :Generator<any, any, any> {
+  const response :Object = {};
+  try {
+    const { value } = action;
+    if (!isPlainObject(value)) throw ERR_ACTION_VALUE_TYPE;
+    yield put(submitCrisisReportV2.request(action.id));
+    const { formData, selectedPerson } = value;
+
+    const entitySetIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
+    const propertyTypeIds = yield select((state) => state.getIn(['edm', 'fqnToIdMap'], Map()));
+    const currentStaff = yield select((state) => state.getIn(['staff', 'currentUser', 'data'], Map()));
+
+    const postProcessFormData = postProcessCrisisReportV1(formData);
+
+    const entityData = processEntityData(postProcessFormData, entitySetIds, propertyTypeIds);
+    const personEKID = getEntityKeyId(selectedPerson);
+    const existingEKIDs = {
+      [PEOPLE_FQN]: personEKID,
+      [STAFF_FQN]: getEntityKeyId(currentStaff)
+      // add incidentEKID
+    };
+
+    const associationEntityData = processAssociationEntityData(
+      getNewCrisisReportAssociations(formData, existingEKIDs),
+      entitySetIds,
+      propertyTypeIds
+    );
+
+    const dataGraphResponse = yield call(
+      submitDataGraphWorker,
+      submitDataGraph({
+        entityData,
+        associationEntityData,
+      })
+    );
+    if (dataGraphResponse.error) throw dataGraphResponse.error;
+
+    yield put(submitCrisisReportV2.success(action.id));
+
+    // update count after submission success
+    const count = selectedPerson.getIn([FQN.NUM_REPORTS_FOUND_IN_FQN, 0], 0) + 1;
+    yield call(
+      updatePersonReportCountWorker,
+      updatePersonReportCount({
+        entityKeyId: personEKID,
+        count
+      })
+    );
+
+  }
+  catch (error) {
+    response.error = error;
+    LOG.error(action.type, error);
+    yield put(submitCrisisReportV2.failure(action.id, error));
+  }
+  return response;
+}
+
+function* submitCrisisReportV2Watcher() :Generator<any, any, any> {
+  yield takeEvery(SUBMIT_CRISIS_REPORT_V2, submitCrisisReportV2Worker);
+}
+
 // V1
 
 function* submitCrisisReportWorker(action :SequenceAction) :Generator<any, any, any> {
@@ -411,10 +517,6 @@ function* submitCrisisReportWorker(action :SequenceAction) :Generator<any, any, 
     yield put(submitCrisisReport.request(action.id));
     const { formData, selectedPerson } = value;
 
-    const edm :Map = yield select((state) => state.get('edm'));
-    const app :Map = yield select((state) => state.get('app'), Map());
-    const peopleESID :UUID = getESIDFromApp(app, PEOPLE_FQN);
-    const numReportsPTID :UUID = edm.getIn(['fqnToIdMap', FQN.NUM_REPORTS_FOUND_IN_FQN]);
     const entitySetIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
     const propertyTypeIds = yield select((state) => state.getIn(['edm', 'fqnToIdMap'], Map()));
     const currentStaff = yield select((state) => state.getIn(['staff', 'currentUser', 'data'], Map()));
@@ -444,24 +546,17 @@ function* submitCrisisReportWorker(action :SequenceAction) :Generator<any, any, 
     );
     if (dataGraphResponse.error) throw dataGraphResponse.error;
 
-    const count = selectedPerson.getIn([FQN.NUM_REPORTS_FOUND_IN_FQN, 0], 0);
-    const updateData = {
-      entityData: {
-        [peopleESID]: {
-          [personEKID]: {
-            [numReportsPTID]: [count + 1]
-          }
-        }
-      }
-    };
-
-    // increment count of crisis reports
-    yield call(
-      submitPartialReplaceWorker,
-      submitPartialReplace(updateData)
-    );
-
     yield put(submitCrisisReport.success(action.id));
+
+    // update count after submission success
+    const count = selectedPerson.getIn([FQN.NUM_REPORTS_FOUND_IN_FQN, 0], 0) + 1;
+    yield call(
+      updatePersonReportCountWorker,
+      updatePersonReportCount({
+        entityKeyId: personEKID,
+        count
+      })
+    );
   }
   catch (error) {
     response.error = error;
@@ -728,8 +823,11 @@ export {
   getReportsV2NeighborsWorker,
   getSubjectOfIncidentWatcher,
   getSubjectOfIncidentWorker,
+  submitCrisisReportV2Watcher,
+  submitCrisisReportV2Worker,
   submitCrisisReportWatcher,
   submitCrisisReportWorker,
   updateCrisisReportWatcher,
   updateCrisisReportWorker,
+  updatePersonReportCountWorker,
 };

@@ -24,7 +24,6 @@ import {
   initializeApplication,
 } from './AppActions';
 
-import CrisisReportContainer from '../reports/CrisisReportContainer';
 import DashboardContainer from '../dashboard/DashboardContainer';
 import DownloadsContainer from '../downloads/DownloadsContainer';
 import EncampmentsContainer from '../../longbeach/location/encampment/EncampmentsContainer';
@@ -36,6 +35,7 @@ import LongBeachRouter from '../../longbeach/LongBeachRouter';
 import NewCrisisReportContainer from '../reports/crisis/NewCrisisReportContainer';
 import NewPersonContainer from '../people/NewPersonContainer';
 import NewSymptomsReportContainer from '../reports/symptoms/NewSymptomsReportContainer';
+import OriginalCrisisReportContainer from '../reports/OriginalCrisisReportContainer';
 import ProfileRouter from '../profile/ProfileRouter';
 import SearchPeopleContainer from '../people/SearchPeopleContainer';
 import TrackContactReportContainer from '../reports/interaction/TrackContactReportContainer';
@@ -166,7 +166,7 @@ class AppContainer extends Component<Props> {
     return (
       <Switch>
         <Route exact strict path={HOME_PATH} component={SearchPeopleContainer} />
-        <Route path={CRISIS_PATH} component={CrisisReportContainer} />
+        <Route path={CRISIS_PATH} component={OriginalCrisisReportContainer} />
         <Route path={NEW_PERSON_PATH} component={NewPersonContainer} />
         <Route path={NEW_CRISIS_PATH} component={NewCrisisReportContainer} />
         <Route path={NEW_SYMPTOMS_PATH} component={NewSymptomsReportContainer} />

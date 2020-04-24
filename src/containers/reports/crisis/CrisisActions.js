@@ -5,6 +5,9 @@ import type { RequestSequence } from 'redux-reqseq';
 const SUBMIT_CRISIS_REPORT :'SUBMIT_CRISIS_REPORT' = 'SUBMIT_CRISIS_REPORT';
 const submitCrisisReport :RequestSequence = newRequestSequence(SUBMIT_CRISIS_REPORT);
 
+const SUBMIT_CRISIS_REPORT_V2 :'SUBMIT_CRISIS_REPORT_V2' = 'SUBMIT_CRISIS_REPORT_V2';
+const submitCrisisReportV2 :RequestSequence = newRequestSequence(SUBMIT_CRISIS_REPORT_V2);
+
 const GET_CRISIS_REPORT :'GET_CRISIS_REPORT' = 'GET_CRISIS_REPORT';
 const getCrisisReport :RequestSequence = newRequestSequence(GET_CRISIS_REPORT);
 
@@ -19,6 +22,9 @@ const addOptionalCrisisReportContent :RequestSequence = newRequestSequence(ADD_O
 
 const UPDATE_CRISIS_REPORT :'UPDATE_CRISIS_REPORT' = 'UPDATE_CRISIS_REPORT';
 const updateCrisisReport :RequestSequence = newRequestSequence(UPDATE_CRISIS_REPORT);
+
+const UPDATE_PERSON_REPORT_COUNT :'UPDATE_PERSON_REPORT_COUNT' = 'UPDATE_PERSON_REPORT_COUNT';
+const updatePersonReportCount :RequestSequence = newRequestSequence(UPDATE_PERSON_REPORT_COUNT);
 
 const GET_REPORTS_NEIGHBORS :'GET_REPORTS_NEIGHBORS' = 'GET_REPORTS_NEIGHBORS';
 const getReportsNeighbors :RequestSequence = newRequestSequence(GET_REPORTS_NEIGHBORS);
@@ -44,7 +50,9 @@ export {
   GET_REPORTS_V2_NEIGHBORS,
   GET_SUBJECT_OF_INCIDENT,
   SUBMIT_CRISIS_REPORT,
+  SUBMIT_CRISIS_REPORT_V2,
   UPDATE_CRISIS_REPORT,
+  UPDATE_PERSON_REPORT_COUNT,
   addOptionalCrisisReportContent,
   clearCrisisReport,
   deleteCrisisReportContent,
@@ -54,5 +62,7 @@ export {
   getReportsV2Neighbors,
   getSubjectOfIncident,
   submitCrisisReport,
+  submitCrisisReportV2,
   updateCrisisReport,
+  updatePersonReportCount,
 };

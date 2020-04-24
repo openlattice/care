@@ -51,6 +51,8 @@ import {
   compileSubjectData,
   getEntityDataFromFields
 } from './ReportsUtils';
+import { updatePersonReportCount } from './crisis/CrisisActions';
+import { updatePersonReportCountWorker } from './crisis/CrisisReportSagas';
 
 import Logger from '../../utils/Logger';
 import * as FQN from '../../edm/DataModelFqns';
@@ -67,7 +69,7 @@ import {
   getReportedESId,
   getStaffESId,
 } from '../../utils/AppUtils';
-import { getSearchTerm } from '../../utils/DataUtils';
+import { getEntityKeyId, getSearchTerm } from '../../utils/DataUtils';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
 import { isDefined } from '../../utils/LangUtils';
 import { isValidUuid } from '../../utils/Utils';
@@ -161,10 +163,10 @@ const getStaffInteractions = (entities :List<Map>) => {
 function* deleteReportWorker(action :SequenceAction) :Generator<*, *, *> {
 
   try {
-    const { value: entityKeyId } = action;
-    if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
+    const { reportEKID, person } = action.value;
+    if (!isValidUuid(reportEKID)) throw ERR_ACTION_VALUE_TYPE;
 
-    yield put(deleteReport.request(action.id, entityKeyId));
+    yield put(deleteReport.request(action.id, reportEKID));
 
     const app = yield select((state) => state.get('app', Map()));
     const entitySetId :UUID = getReportESId(app);
@@ -172,13 +174,25 @@ function* deleteReportWorker(action :SequenceAction) :Generator<*, *, *> {
     const response = yield call(
       deleteEntityDataWorker,
       deleteEntityData({
-        entityKeyIds: [entityKeyId],
+        entityKeyIds: [reportEKID],
         entitySetId,
         deleteType: DeleteTypes.Soft
       })
     );
     if (response.error) throw response.error;
     yield put(deleteReport.success(action.id));
+
+    // decrement report count
+    const count = Math.max(0, person.getIn([FQN.NUM_REPORTS_FOUND_IN_FQN, 0], 0) - 1);
+    const personEKID = getEntityKeyId(person);
+
+    yield call(
+      updatePersonReportCountWorker,
+      updatePersonReportCount({
+        entityKeyId: personEKID,
+        count
+      })
+    );
   }
   catch (error) {
     LOG.error(action.type, error);
@@ -290,7 +304,7 @@ function* getReportWorker(action :SequenceAction) :Generator<*, *, *> {
     yield put(setOfficerSafetyData(officerSafety));
     yield put(setDispositionData(disposition));
 
-    yield put(getReport.success(action.id, { submitted, lastUpdated }));
+    yield put(getReport.success(action.id, { submitted, lastUpdated, person: subjectData }));
   }
   catch (error) {
     LOG.error(action.type, error);
@@ -600,6 +614,7 @@ function* submitReportWorker(action :SequenceAction) :Generator<*, *, *> {
     if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
     const {
       entityKeyId: personEKID = 0,
+      selectedPerson,
       formData,
     } = value;
     if (!isPlainObject(formData)) throw ERR_ACTION_VALUE_TYPE;
@@ -654,6 +669,15 @@ function* submitReportWorker(action :SequenceAction) :Generator<*, *, *> {
     }));
 
     if (submitResponse.error) throw submitResponse.error;
+
+    const count = selectedPerson.getIn([FQN.NUM_REPORTS_FOUND_IN_FQN, 0], 0) + 1;
+    yield call(
+      updatePersonReportCountWorker,
+      updatePersonReportCount({
+        entityKeyId: personEKID,
+        count
+      })
+    );
 
     yield put(submitReport.success(action.id));
   }
