@@ -34,7 +34,7 @@ import { getFirstLastFromPerson } from '../../../utils/PersonUtils';
 import { generateReviewSchema } from '../../../utils/SchemaUtils';
 
 const {
-  // CLINICIAN_REPORT_FQN // v2,
+  CLINICIAN_REPORT_FQN, // v2,
   BEHAVIORAL_HEALTH_REPORT_FQN,
 } = APP_TYPES_FQNS;
 const { schemas, uiSchemas } = v1;
