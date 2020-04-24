@@ -23,6 +23,9 @@ const addOptionalCrisisReportContent :RequestSequence = newRequestSequence(ADD_O
 const UPDATE_CRISIS_REPORT :'UPDATE_CRISIS_REPORT' = 'UPDATE_CRISIS_REPORT';
 const updateCrisisReport :RequestSequence = newRequestSequence(UPDATE_CRISIS_REPORT);
 
+const UPDATE_PERSON_REPORT_COUNT :'UPDATE_PERSON_REPORT_COUNT' = 'UPDATE_PERSON_REPORT_COUNT';
+const updatePersonReportCount :RequestSequence = newRequestSequence(UPDATE_PERSON_REPORT_COUNT);
+
 const GET_REPORTS_NEIGHBORS :'GET_REPORTS_NEIGHBORS' = 'GET_REPORTS_NEIGHBORS';
 const getReportsNeighbors :RequestSequence = newRequestSequence(GET_REPORTS_NEIGHBORS);
 
@@ -49,6 +52,7 @@ export {
   SUBMIT_CRISIS_REPORT,
   SUBMIT_CRISIS_REPORT_V2,
   UPDATE_CRISIS_REPORT,
+  UPDATE_PERSON_REPORT_COUNT,
   addOptionalCrisisReportContent,
   clearCrisisReport,
   deleteCrisisReportContent,
@@ -60,4 +64,5 @@ export {
   submitCrisisReport,
   submitCrisisReportV2,
   updateCrisisReport,
+  updatePersonReportCount,
 };

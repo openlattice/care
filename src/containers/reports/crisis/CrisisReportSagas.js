@@ -44,6 +44,7 @@ import {
   submitCrisisReport,
   submitCrisisReportV2,
   updateCrisisReport,
+  updatePersonReportCount,
 } from './CrisisActions';
 import {
   constructFormDataFromNeighbors,
@@ -404,6 +405,46 @@ function* getCrisisReportV2Watcher() :Generator<any, any, any> {
   yield takeLatest(GET_CRISIS_REPORT_V2, getCrisisReportV2Worker);
 }
 
+function* updatePersonReportCountWorker(action :SequenceAction) :Generator<any, any, any> {
+  const response = {};
+  try {
+    if (!isPlainObject(action.value)) throw ERR_ACTION_VALUE_TYPE;
+    const { entityKeyId, count } = action.value;
+    if (!isValidUuid(entityKeyId) || !Number.isInteger(count)) throw ERR_ACTION_VALUE_TYPE;
+
+    yield put(updatePersonReportCount.request(action.id));
+
+    const edm :Map = yield select((state) => state.get('edm'));
+    const app :Map = yield select((state) => state.get('app'), Map());
+    const peopleESID :UUID = getESIDFromApp(app, PEOPLE_FQN);
+    const numReportsPTID :UUID = edm.getIn(['fqnToIdMap', FQN.NUM_REPORTS_FOUND_IN_FQN]);
+
+    const updateData = {
+      entityData: {
+        [peopleESID]: {
+          [entityKeyId]: {
+            [numReportsPTID]: [count]
+          }
+        }
+      }
+    };
+
+    const updateResponse = yield call(
+      submitPartialReplaceWorker,
+      submitPartialReplace(updateData)
+    );
+    if (updateResponse.error) throw updateResponse.error;
+
+    yield put(updatePersonReportCount.success(action.id));
+  }
+  catch (error) {
+    LOG.error(action.type, error);
+    response.error = error;
+    yield put(updatePersonReportCount.failure(action.id));
+  }
+  return response;
+}
+
 function* submitCrisisReportV2Worker(action :SequenceAction) :Generator<any, any, any> {
   const response :Object = {};
   try {
@@ -412,10 +453,6 @@ function* submitCrisisReportV2Worker(action :SequenceAction) :Generator<any, any
     yield put(submitCrisisReportV2.request(action.id));
     const { formData, selectedPerson } = value;
 
-    const edm :Map = yield select((state) => state.get('edm'));
-    const app :Map = yield select((state) => state.get('app'), Map());
-    const peopleESID :UUID = getESIDFromApp(app, PEOPLE_FQN);
-    const numReportsPTID :UUID = edm.getIn(['fqnToIdMap', FQN.NUM_REPORTS_FOUND_IN_FQN]);
     const entitySetIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
     const propertyTypeIds = yield select((state) => state.getIn(['edm', 'fqnToIdMap'], Map()));
     const currentStaff = yield select((state) => state.getIn(['staff', 'currentUser', 'data'], Map()));
@@ -445,24 +482,18 @@ function* submitCrisisReportV2Worker(action :SequenceAction) :Generator<any, any
     );
     if (dataGraphResponse.error) throw dataGraphResponse.error;
 
-    const count = selectedPerson.getIn([FQN.NUM_REPORTS_FOUND_IN_FQN, 0], 0);
-    const updateData = {
-      entityData: {
-        [peopleESID]: {
-          [personEKID]: {
-            [numReportsPTID]: [count + 1]
-          }
-        }
-      }
-    };
+    yield put(submitCrisisReportV2.success(action.id));
 
-    // increment count of crisis reports
+    // update count after submission success
+    const count = selectedPerson.getIn([FQN.NUM_REPORTS_FOUND_IN_FQN, 0], 0) + 1;
     yield call(
-      submitPartialReplaceWorker,
-      submitPartialReplace(updateData)
+      updatePersonReportCountWorker,
+      updatePersonReportCount({
+        entityKeyId: personEKID,
+        count
+      })
     );
 
-    yield put(submitCrisisReportV2.success(action.id));
   }
   catch (error) {
     response.error = error;
@@ -486,10 +517,6 @@ function* submitCrisisReportWorker(action :SequenceAction) :Generator<any, any, 
     yield put(submitCrisisReport.request(action.id));
     const { formData, selectedPerson } = value;
 
-    const edm :Map = yield select((state) => state.get('edm'));
-    const app :Map = yield select((state) => state.get('app'), Map());
-    const peopleESID :UUID = getESIDFromApp(app, PEOPLE_FQN);
-    const numReportsPTID :UUID = edm.getIn(['fqnToIdMap', FQN.NUM_REPORTS_FOUND_IN_FQN]);
     const entitySetIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
     const propertyTypeIds = yield select((state) => state.getIn(['edm', 'fqnToIdMap'], Map()));
     const currentStaff = yield select((state) => state.getIn(['staff', 'currentUser', 'data'], Map()));
@@ -519,24 +546,17 @@ function* submitCrisisReportWorker(action :SequenceAction) :Generator<any, any, 
     );
     if (dataGraphResponse.error) throw dataGraphResponse.error;
 
-    const count = selectedPerson.getIn([FQN.NUM_REPORTS_FOUND_IN_FQN, 0], 0);
-    const updateData = {
-      entityData: {
-        [peopleESID]: {
-          [personEKID]: {
-            [numReportsPTID]: [count + 1]
-          }
-        }
-      }
-    };
-
-    // increment count of crisis reports
-    yield call(
-      submitPartialReplaceWorker,
-      submitPartialReplace(updateData)
-    );
-
     yield put(submitCrisisReport.success(action.id));
+
+    // update count after submission success
+    const count = selectedPerson.getIn([FQN.NUM_REPORTS_FOUND_IN_FQN, 0], 0) + 1;
+    yield call(
+      updatePersonReportCountWorker,
+      updatePersonReportCount({
+        entityKeyId: personEKID,
+        count
+      })
+    );
   }
   catch (error) {
     response.error = error;
@@ -809,4 +829,5 @@ export {
   submitCrisisReportWorker,
   updateCrisisReportWatcher,
   updateCrisisReportWorker,
+  updatePersonReportCountWorker,
 };

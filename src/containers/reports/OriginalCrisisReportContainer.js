@@ -184,7 +184,7 @@ type Props = {
     clearReport :() => { type :string };
     submitReport :RequestSequence;
     setInputValues :(value :any) => Action<typeof SET_INPUT_VALUES>;
-    personEKID ? :UUID;
+    selectedPerson ? :Map;
   };
   history :RouterHistory;
   location :Location;
@@ -195,7 +195,7 @@ type Props = {
 type State = {
   showDiscard :boolean;
   formInProgress :boolean;
-  personEKID :UUID;
+  selectedPerson :Map;
 }
 
 class OriginalCrisisReportContainer extends React.Component<Props, State> {
@@ -205,11 +205,7 @@ class OriginalCrisisReportContainer extends React.Component<Props, State> {
     this.state = {
       showDiscard: false,
       formInProgress: false,
-      personEKID: getIn(props.location, [
-        'state',
-        OPENLATTICE_ID_FQN,
-        0
-      ]),
+      selectedPerson: getIn(props.location, ['state']),
     };
   }
 
@@ -267,7 +263,7 @@ class OriginalCrisisReportContainer extends React.Component<Props, State> {
     history.push(HOME_PATH);
   }
 
-  handlePageChange = (path) => {
+  handlePageChange = (path :string) => {
     const { history } = this.props;
     history.push(path);
     window.scrollTo({
@@ -284,7 +280,8 @@ class OriginalCrisisReportContainer extends React.Component<Props, State> {
       state
     } = this.props;
 
-    const { personEKID } = this.state;
+    const { selectedPerson } = this.state;
+    const personEKID = getIn(selectedPerson, [OPENLATTICE_ID_FQN, 0]);
 
     let submission = {
       [POST_PROCESS_FIELDS.FORM_TYPE]: FORM_TYPE.CRISIS_REPORT,
@@ -299,6 +296,7 @@ class OriginalCrisisReportContainer extends React.Component<Props, State> {
 
     actions.submitReport({
       entityKeyId: personEKID,
+      selectedPerson,
       formData: submission
     });
   }

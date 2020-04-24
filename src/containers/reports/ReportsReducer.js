@@ -23,6 +23,7 @@ const INITIAL_STATE :Map<*, *> = fromJS({
   submitState: RequestStates.STANDBY,
   updateState: RequestStates.STANDBY,
   totalHits: 0,
+  person: Map(),
 });
 
 export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :Object) {
@@ -37,11 +38,12 @@ export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :
       return getReport.reducer(state, action, {
         REQUEST: () => state.set('fetchState', RequestStates.PENDING),
         SUCCESS: () => {
-          const { submitted, lastUpdated } = action.value;
+          const { submitted, lastUpdated, person } = action.value;
           return state
             .set('fetchState', RequestStates.SUCCESS)
             .set('submittedStaff', submitted)
-            .set('lastUpdatedStaff', lastUpdated);
+            .set('lastUpdatedStaff', lastUpdated)
+            .set('person', person);
         },
         FAILURE: () => state.set('fetchState', RequestStates.FAILURE),
       });

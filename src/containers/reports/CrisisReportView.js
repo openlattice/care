@@ -181,6 +181,7 @@ type Props = {
   history :RouterHistory;
   lastUpdatedStaff :Map;
   match :Match;
+  person :Map;
   state :Map;
   submittedStaff :Map;
   updateState :RequestState;
@@ -260,9 +261,9 @@ class CrisisReportView extends React.Component<Props, State> {
   }
 
   handleDelete = () => {
-    const { actions, match } = this.props;
+    const { actions, match, person } = this.props;
     const reportEKID :?UUID = match.params[REPORT_ID_PARAM];
-    actions.deleteReport(reportEKID);
+    actions.deleteReport({ reportEKID, person });
   }
 
   handleSubmit = () => {
@@ -459,12 +460,13 @@ class CrisisReportView extends React.Component<Props, State> {
 function mapStateToProps(state :Map<*, *>) :Object {
 
   return {
-    fetchState: state.getIn(['reports', 'fetchState'], RequestStates.STANDBY),
-    updateState: state.getIn(['reports', 'updateState'], RequestStates.STANDBY),
     deleteState: state.getIn(['reports', 'deleteState'], RequestStates.STANDBY),
+    fetchState: state.getIn(['reports', 'fetchState'], RequestStates.STANDBY),
     lastUpdatedStaff: state.getIn(['reports', 'lastUpdatedStaff'], Map()),
+    person: state.getIn(['reports', 'person'], Map()),
     state,
     submittedStaff: state.getIn(['reports', 'submittedStaff'], Map()),
+    updateState: state.getIn(['reports', 'updateState'], RequestStates.STANDBY),
   };
 }
 
