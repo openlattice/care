@@ -39,7 +39,7 @@ class IconDetail extends Component<Props> {
 
   renderContent = () => {
     const { content, icon } = this.props;
-    const display = content || '---';
+    const display = (content === '' || content === undefined) ? '---' : content;
     return (
       <>
         {
