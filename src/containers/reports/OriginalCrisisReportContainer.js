@@ -194,7 +194,6 @@ type Props = {
 
 type State = {
   showDiscard :boolean;
-  formInProgress :boolean;
   selectedPerson :Map;
 }
 
@@ -204,21 +203,19 @@ class OriginalCrisisReportContainer extends React.Component<Props, State> {
     super(props);
     this.state = {
       showDiscard: false,
-      formInProgress: false,
       selectedPerson: getIn(props.location, ['state']),
     };
   }
 
   componentDidMount() {
     const { history } = this.props;
-    const { formInProgress } = this.state;
+    const { selectedPerson } = this.state;
 
     this.initializePerson();
 
-    if (!formInProgress && !window.location.href.endsWith(START_PATH)) {
-      history.push(START_PATH);
+    if (!selectedPerson) {
+      history.push(HOME_PATH);
     }
-    this.setState({ formInProgress: true });
   }
 
   componentWillUnmount() {
