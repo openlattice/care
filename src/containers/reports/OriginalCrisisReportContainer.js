@@ -198,7 +198,7 @@ type State = {
   personEKID :UUID;
 }
 
-class CrisisReportContainer extends React.Component<Props, State> {
+class OriginalCrisisReportContainer extends React.Component<Props, State> {
 
   constructor(props) {
     super(props);
@@ -463,5 +463,5 @@ const mapDispatchToProps = (dispatch :Function) :Object => ({
 
 // $FlowFixMe
 export default withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(CrisisReportContainer)
+  connect(mapStateToProps, mapDispatchToProps)(OriginalCrisisReportContainer)
 );
