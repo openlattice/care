@@ -9,6 +9,7 @@ import {
   deleteCrisisReportContent,
   getCrisisReport,
   submitCrisisReport,
+  submitCrisisReportV2,
   updateCrisisReport,
 } from './CrisisActions';
 
@@ -27,6 +28,16 @@ export default function crisisReportReducer(state :Map = INITIAL_STATE, action :
   switch (action.type) {
     case submitCrisisReport.case(action.type): {
       return submitCrisisReport.reducer(state, action, {
+        REQUEST: () => state.set('submitState', RequestStates.PENDING),
+        SUCCESS: () => state
+          .set('submitState', RequestStates.SUCCESS)
+          .merge(action.value),
+        FAILURE: () => state.set('submitState', RequestStates.FAILURE),
+      });
+    }
+
+    case submitCrisisReportV2.case(action.type): {
+      return submitCrisisReportV2.reducer(state, action, {
         REQUEST: () => state.set('submitState', RequestStates.PENDING),
         SUCCESS: () => state
           .set('submitState', RequestStates.SUCCESS)
