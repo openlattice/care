@@ -43,7 +43,6 @@ export const APP_TYPES_FQNS = {
   DIAGNOSIS_FQN: new FullyQualifiedName('app.diagnosis'),
   MEDICATION_STATEMENT_FQN: new FullyQualifiedName('app.medicationstatement'),
   SUBSTANCE_FQN: new FullyQualifiedName('app.substance'),
-  SUBSTANCE_HISTORY_FQN: new FullyQualifiedName('app.substancehistory'),
   WEAPON_FQN: new FullyQualifiedName('app.weapon'),
   VIOLENT_BEHAVIOR_FQN: new FullyQualifiedName('app.violentbehavior'),
   INJURY_FQN: new FullyQualifiedName('app.injury'),

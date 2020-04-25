@@ -457,9 +457,7 @@ function* submitCrisisReportV2Worker(action :SequenceAction) :Generator<any, any
     const propertyTypeIds = yield select((state) => state.getIn(['edm', 'fqnToIdMap'], Map()));
     const currentStaff = yield select((state) => state.getIn(['staff', 'currentUser', 'data'], Map()));
 
-    const postProcessFormData = postProcessCrisisReportV1(formData);
-
-    const entityData = processEntityData(postProcessFormData, entitySetIds, propertyTypeIds);
+    const entityData = processEntityData(formData, entitySetIds, propertyTypeIds);
     const personEKID = getEntityKeyId(selectedPerson);
     const existingEKIDs = {
       [PEOPLE_FQN]: personEKID,

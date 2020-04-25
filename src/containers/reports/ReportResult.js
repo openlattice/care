@@ -56,7 +56,7 @@ const ReportResult = (props :Props) => {
 
   const handleResultClick = () => {
     const reportEKID = result.get(OPENLATTICE_ID_FQN);
-    if (settings.get('v1')) {
+    if (settings.get('v1') || settings.get('v2')) {
       dispatch(goToPath(CRISIS_REPORT_PATH.replace(REPORT_ID_PATH, reportEKID)));
     }
     else {

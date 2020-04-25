@@ -34,7 +34,6 @@ type Props = {
   crisisSummary :Map;
   isLoading :boolean;
   reports :List;
-  responsePlan :Map;
   stayAwayLocation :Map;
   probation :Map;
   warrant :Map;
@@ -45,7 +44,6 @@ const HistoryBody = (props :Props) => {
     crisisSummary,
     isLoading,
     reports,
-    responsePlan,
     stayAwayLocation,
     probation,
     warrant,
@@ -55,7 +53,7 @@ const HistoryBody = (props :Props) => {
   const settings = useAppSettings();
   const handleResultClick = useCallback((result :Map) => {
     const reportEKID = getEntityKeyId(result);
-    if (settings.get('v1')) {
+    if (settings.get('v1') || settings.get('v2')) {
       dispatch(goToPath(CRISIS_REPORT_PATH.replace(REPORT_ID_PATH, reportEKID)));
     }
     else {

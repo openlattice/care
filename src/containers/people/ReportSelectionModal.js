@@ -33,7 +33,7 @@ type Props = {
 const ReportSelectionModal = (props :Props) => {
   const { isVisible, selectedPerson, onClose } = props;
   const settings = useAppSettings();
-  const crisisPath = settings.get('v1') ? NEW_CRISIS_PATH : CRISIS_PATH;
+  const crisisPath = (settings.get('v1') || settings.get('v2')) ? NEW_CRISIS_PATH : CRISIS_PATH;
   const name = getFirstLastFromPerson(selectedPerson);
 
   return (

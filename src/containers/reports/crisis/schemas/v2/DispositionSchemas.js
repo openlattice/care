@@ -71,7 +71,7 @@ const schema = {
         [getEntityAddressKey(0, ENCOUNTER_DETAILS_FQN, FQN.REASON_FQN)]: {
           type: 'array',
           description: SELECT_ALL_THAT_APPLY,
-          title: 'JDP intervention',
+          title: 'Reason for JDP intervention',
           items: {
             type: 'string',
             enum: PURPOSE_OF_JDP

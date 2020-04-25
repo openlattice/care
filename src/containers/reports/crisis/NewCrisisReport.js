@@ -1,5 +1,5 @@
 // @flow
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 
 import styled from 'styled-components';
 import { Map } from 'immutable';
@@ -11,10 +11,11 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
-import { clearCrisisReport, submitCrisisReport } from './CrisisActions';
-import { v1 } from './schemas';
+import { clearCrisisReport, submitCrisisReport, submitCrisisReportV2 } from './CrisisActions';
+import { v1, v2 } from './schemas';
 
 import SuccessSplash from '../shared/SuccessSplash';
+import { useAppSettings } from '../../../components/hooks';
 import { generateReviewSchema } from '../../../utils/SchemaUtils';
 
 const ActionRow = styled.div`
@@ -24,17 +25,29 @@ const ActionRow = styled.div`
   padding: 0 30px 30px 30px;
 `;
 
-const { schemas, uiSchemas } = v1;
-
 type Props = {
   pageRef :{ current :HTMLDivElement | null };
   selectedPerson :Map;
 };
 
 const NewCrisisReport = ({ pageRef, selectedPerson } :Props) => {
+  const settings = useAppSettings();
   const dispatch = useDispatch();
-  const reviewSchemas = useMemo(() => generateReviewSchema(schemas, uiSchemas, true), []);
   const submitState = useSelector((store) => store.getIn(['crisisReport', 'submitState']));
+
+  let schemaVersion = v1;
+  if (settings.get('v2')) schemaVersion = v2;
+
+  const reviewSchemas = useMemo(
+    () => generateReviewSchema(schemaVersion.schemas, schemaVersion.uiSchemas, true),
+    [schemaVersion]
+  );
+
+  const getVersionSubmit = (formData :Object) => {
+    let action = submitCrisisReport;
+    if (settings.get('v2')) action = submitCrisisReportV2;
+    return () => dispatch(action({ formData, selectedPerson }));
+  };
 
   useEffect(() => () => dispatch(clearCrisisReport()), [dispatch]);
 
@@ -45,6 +58,8 @@ const NewCrisisReport = ({ pageRef, selectedPerson } :Props) => {
       <SuccessSplash reportType="Crisis Report" selectedPerson={selectedPerson} />
     );
   }
+
+  const { schemas, uiSchemas } = schemaVersion;
 
   return (
     <Card>
@@ -61,9 +76,7 @@ const NewCrisisReport = ({ pageRef, selectedPerson } :Props) => {
             const isReviewPage = page === totalPages - 1;
 
             const validate = isReviewPage
-              ? () => {
-                dispatch(submitCrisisReport({ formData: pagedData, selectedPerson }));
-              }
+              ? getVersionSubmit(pagedData)
               : validateAndSubmit;
 
             const scrollToContentTop = () => {
