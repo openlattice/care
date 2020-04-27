@@ -3,21 +3,23 @@
  */
 
 import React from 'react';
+
 import styled from 'styled-components';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { Map } from 'immutable';
 import { Spinner } from 'lattice-ui-kit';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import type { RequestSequence } from 'redux-reqseq';
+
+import { loadDashboardData } from './DashboardActionFactory';
+import { SUBMISSION_STATES } from './DashboardReducer';
 
 import ButtonToolbar from '../../components/buttons/ButtonToolbar';
 import DropdownButton from '../../components/buttons/DropdownButton';
-import SummaryStats from '../../components/dashboard/SummaryStats';
-import OverviewCharts from '../../components/dashboard/OverviewCharts';
 import IncidentCharts from '../../components/dashboard/IncidentCharts';
 import OutcomeCharts from '../../components/dashboard/OutcomeCharts';
-import { loadDashboardData } from './DashboardActionFactory';
-import { SUBMISSION_STATES } from './DashboardReducer';
+import OverviewCharts from '../../components/dashboard/OverviewCharts';
+import SummaryStats from '../../components/dashboard/SummaryStats';
 import { SUMMARY_STATS } from '../../shared/Consts';
 
 const OptionRow = styled.div`
@@ -160,7 +162,7 @@ class DashboardContainer extends React.Component<Props, State> {
         </OptionRow>
         {resultsArePresent
           ? <ChartsComponent dashboardCounts={dashboardCounts} months={timeRange.value} />
-          : <NoReports>No BHR reports were filed in this time period.</NoReports>}
+          : <NoReports>No Crisis reports were filed in this time period.</NoReports>}
       </DashboardWrapper>
     );
   }
