@@ -77,14 +77,14 @@ class DownloadsContainer extends React.Component<Props, State> {
       <DownloadsWrapper>
         <FormWrapper>
           <DateTimeRange
-              label="BHR Downloads"
+              label="Crisis Downloads"
               startDate={startDate}
               endDate={endDate}
               onStartChange={(date) => this.onDateChange('startDate', date)}
               onEndChange={(date) => this.onDateChange('endDate', date)} />
           <ButtonRow>
             <Button mode="primary" onClick={this.download} disabled={downloading || !startDate || !endDate}>
-              Download BHR Reports
+              Download Crisis Reports
             </Button>
           </ButtonRow>
         </FormWrapper>
