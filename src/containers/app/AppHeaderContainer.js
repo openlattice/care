@@ -84,7 +84,7 @@ const AppHeaderContainer = (props :Props) => {
   return (
     <StyledAppHeaderWrapper
         appIcon={OpenLatticeLogo}
-        appTitle="Behavioral Health Report"
+        appTitle="CARE"
         organizationsSelect={{
           isLoading,
           onChange,

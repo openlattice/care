@@ -51,7 +51,7 @@ const ReportSelectionModal = (props :Props) => {
           <LinkButton
               to={crisisPath}
               state={selectedPerson}>
-            Behavioral Health Report
+            Crisis Report
           </LinkButton>
           <LinkButton
               to={NEW_SYMPTOMS_PATH}

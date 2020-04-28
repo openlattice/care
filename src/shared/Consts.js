@@ -79,31 +79,6 @@ export const APP_TYPES_FQNS = {
 
 export const STRING_ID_FQN = 'general.stringid';
 
-export const RACE = {
-  americanIndian: 'American Indian or Alaska Native',
-  asian: 'Asian',
-  black: 'Black or African American',
-  hispanic: 'Hispanic or Latino',
-  nativeHawaiian: 'Native Hawaiian or Other Pacific Islander',
-  white: 'White',
-  other: 'Other'
-};
-
-export const FORM_PATHS = {
-  CONSUMER_SEARCH: '/bhr/1',
-  CONSUMER: '/bhr/2',
-  REPORT: '/bhr/3',
-  COMPLAINANT: '/bhr/4',
-  DISPOSITION: '/bhr/5',
-  OFFICER: '/bhr/6',
-  REVIEW: '/bhr/7'
-};
-
-export const FORM_ERRORS = {
-  INVALID_FORMAT: 'Some formats are invalid',
-  IS_REQUIRED: 'Some required fields are empty'
-};
-
 export const STATES = [
   'AL',
   'AK',
