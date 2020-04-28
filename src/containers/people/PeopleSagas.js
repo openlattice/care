@@ -54,6 +54,8 @@ const {
   APPEARS_IN_FQN,
   BEHAVIORAL_HEALTH_REPORT_FQN,
   IMAGE_FQN,
+  INCIDENT_FQN,
+  INVOLVED_IN_FQN,
   IS_PICTURE_OF_FQN,
   PEOPLE_FQN,
 } = APP_TYPES_FQNS;
@@ -113,17 +115,30 @@ export function* getRecentIncidentsWorker(action :SequenceAction) :Generator<any
     yield put(getRecentIncidents.request(action.id, entityKeyIds));
 
     const app :Map = yield select((state) => state.get('app', Map()));
-    const reportESID :UUID = getESIDFromApp(app, BEHAVIORAL_HEALTH_REPORT_FQN);
+    const bhrESID :UUID = getESIDFromApp(app, BEHAVIORAL_HEALTH_REPORT_FQN);
     const peopleESID :UUID = getESIDFromApp(app, PEOPLE_FQN);
     const appearsInESID :UUID = getESIDFromApp(app, APPEARS_IN_FQN);
+    const involvedInESID :UUID = getESIDFromApp(app, INVOLVED_IN_FQN);
+    const incidentESID :UUID = getESIDFromApp(app, INCIDENT_FQN);
+    const settings :Map = app.get('selectedOrganizationSettings', Map());
+
+    const isV2 = settings.get('v2');
+
+    let edgeEntitySetIds = [appearsInESID];
+    let destinationEntitySetIds = [bhrESID];
+
+    if (isV2) {
+      edgeEntitySetIds = [involvedInESID];
+      destinationEntitySetIds = [incidentESID];
+    }
 
     // all reports for each person
     const reportsSearchParams = {
       entitySetId: peopleESID,
       filter: {
         entityKeyIds: entityKeyIds.toJS(),
-        edgeEntitySetIds: [appearsInESID],
-        destinationEntitySetIds: [reportESID],
+        edgeEntitySetIds,
+        destinationEntitySetIds,
         sourceEntitySetIds: [],
       }
     };
@@ -137,24 +152,23 @@ export function* getRecentIncidentsWorker(action :SequenceAction) :Generator<any
 
     // get most recent incident per EKID
     const recentIncidentsByEKID = fromJS(incidentsResponse.data)
-      .map((reports) => {
-        const recentIncident = reports
-          .map((report :Map) => report.get('neighborDetails'))
+      .map((incidents) => {
+        const dateFQN = isV2 ? FQN.DATETIME_START_FQN : FQN.DATE_TIME_OCCURRED_FQN;
+        const recentIncident = incidents
+          .map((incident :Map) => incident.get('neighborDetails'))
           .toSet()
           .toList()
-          .sortBy((report :Map) :number => {
-            const time = DateTime.fromISO(report.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0]));
+          .sortBy((incident :Map) :number => {
+            const time = DateTime.fromISO(incident.getIn([dateFQN, 0]));
 
             return -time.valueOf();
           })
           .first();
 
-        const recentIncidentDT = DateTime.fromISO(recentIncident.getIn([FQN.DATE_TIME_OCCURRED_FQN, 0]));
-        const totalIncidents = reports.count();
+        const recentIncidentDT = DateTime.fromISO(recentIncident.getIn([dateFQN, 0]));
 
         return Map({
           recentIncidentDT,
-          totalIncidents,
         });
       });
 
