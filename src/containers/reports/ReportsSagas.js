@@ -930,32 +930,27 @@ function* getIncidentReportsSummaryWorker(action :SequenceAction) :Generator<any
     const incidentsEKIDs = incidentsData
       .map((incident) => incident.getIn([FQN.OPENLATTICE_ID_FQN, 0]));
 
-    const lastIncident = incidentsData.first();
-    const lastIncidentEKID = incidentsEKIDs.first();
-    let lastIncidentReports = List();
+    const incidentsByEKID = Map(incidentsData.map((incident) => [incident.getIn([OPENLATTICE_ID_FQN, 0]), incident]));
 
-    let allReportsEKID = List();
+    let allReports = List();
     if (incidentsEKIDs.size) {
       const reportsResponse = yield call(getIncidentReportsWorker, getIncidentReports(incidentsEKIDs.toJS()));
       if (reportsResponse.error) throw reportsResponse.error;
-      const reportsData = reportsResponse.data;
-      allReportsEKID = List().withMutations((mutable) => {
-        reportsData.forEach((reports) => {
+      const reportsData :Map = reportsResponse.data;
+      allReports = List().withMutations((mutable) => {
+        reportsData.forEach((reports, incidentEKID) => {
           reports.forEach((report) => {
-            mutable.push(report.getIn(['neighborDetails', FQN.OPENLATTICE_ID_FQN, 0]));
+            const incidentStartDate = incidentsByEKID.getIn([incidentEKID, FQN.DATETIME_START_FQN, 0]);
+            const reportData = report
+              .get('neighborDetails')
+              .set(FQN.DATETIME_START_FQN, List([incidentStartDate]));
+            mutable.push(reportData);
           });
         });
       });
-
-      lastIncidentReports = reportsData.get(lastIncidentEKID);
     }
 
-    const recentReportsEKIDs = lastIncidentReports.map((report) => report.get('neighborId')).toJS();
-    const { data: lastReporters = Map() } = yield call(
-      getReportersForReportsWorker,
-      getReportersForReports(recentReportsEKIDs)
-    );
-
+    const allReportsEKID = allReports.map((report) => report.getIn([OPENLATTICE_ID_FQN, 0]));
     const appTypeFqnsByIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds']).flip());
     let groupedNeighborsByType = Map();
     if (allReportsEKID.size) {
@@ -1012,9 +1007,8 @@ function* getIncidentReportsSummaryWorker(action :SequenceAction) :Generator<any
     const reportSummary = fromJS({
       behaviorSummary,
       crisisSummary,
-      lastIncident,
-      lastIncidentReports,
-      lastReporters,
+      data: allReports,
+      incidents: incidentsData,
       safetySummary,
     });
 
