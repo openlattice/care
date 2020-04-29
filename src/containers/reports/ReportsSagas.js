@@ -53,6 +53,7 @@ import {
 } from './ReportsUtils';
 import { updatePersonReportCount } from './crisis/CrisisActions';
 import { updatePersonReportCountWorker } from './crisis/CrisisReportSagas';
+import { BEHAVIOR_LABEL_MAP } from './crisis/schemas/v1/constants';
 
 import Logger from '../../utils/Logger';
 import * as FQN from '../../edm/DataModelFqns';
@@ -990,14 +991,27 @@ function* getIncidentReportsSummaryWorker(action :SequenceAction) :Generator<any
     const violentBehaviors = groupedNeighborsByType.get(VIOLENT_BEHAVIOR_FQN);
     const weapons = groupedNeighborsByType.get(WEAPON_FQN);
 
-    const behaviorSummary = countPropertyOccurrance(behaviors, FQN.OBSERVED_BEHAVIOR_FQN);
+    console.log(behaviors);
+    debugger;
+    const behaviorSummary = countPropertyOccurrance(behaviors, FQN.OBSERVED_BEHAVIOR_FQN)
+      .sortBy((count) => count, (valueA, valueB) => valueB - valueA)
+      .toArray()
+      .map(([name, count]) => ({ name, count }))
+      .map((datum) => {
+        const { name } = datum;
+        const transformedName = BEHAVIOR_LABEL_MAP[name] || name;
+        return { ...datum, name: transformedName };
+      });
+
     const crisisSummary = countCrisisCalls(incidentsData, FQN.DATETIME_START_FQN);
-    const safetySummary = fromJS({
-      injuries,
-      selfHarms,
-      violentBehaviors,
-      weapons,
-    });
+    const safetySummary = fromJS([
+      { name: 'Injuries', count: injuries.count() },
+      { name: 'Self-harm', count: selfHarms.count() },
+      { name: 'Violence', count: violentBehaviors.count() },
+      { name: 'Armed', count: weapons.count() },
+    ]);
+
+    console.log(behaviorSummary, safetySummary);
     const reportSummary = fromJS({
       behaviorSummary,
       crisisSummary,

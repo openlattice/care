@@ -7,7 +7,8 @@ import type { SequenceAction } from 'redux-reqseq';
 import { getIncidentReportsSummary, getProfileReports } from '../actions/ReportActions';
 
 const INITIAL_STATE :Map = fromJS({
-  behaviorSummary: Map(),
+  behaviorSummary: List(),
+  safetySummary: List(),
   crisisSummary: Map(),
   data: List(),
   fetchState: RequestStates.STANDBY,
