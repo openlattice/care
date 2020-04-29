@@ -718,24 +718,31 @@ function* updateCrisisReportWorker(action :SequenceAction) :Generator<any, any, 
 
     const entitySetIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
     const propertyTypeIds = yield select((state) => state.getIn(['edm', 'fqnToIdMap'], Map()));
+    const settings :Map = yield select((state) => state.getIn(['app', 'selectedOrganizationSettings'], Map()));
 
-    // post process section that matches path
-    const postProcessMap = {
-      [getPageSectionKey(1, 1)]: (formData) => formData,
-      [getPageSectionKey(2, 1)]: postProcessBehaviorSection,
-      [getPageSectionKey(3, 1)]: postProcessNatureSection,
-      [getPageSectionKey(4, 1)]: postProcessSafetySection,
-      [getPageSectionKey(5, 1)]: postProcessDisposition,
-    };
     const { path, formData, entityIndexToIdMap } = value;
 
     const section = path[0];
     const preFormData = fromJS(formData).mapKeys(() => section);
-    const postFormData = postProcessMap[section](preFormData.toJS());
+
+    let processedFormData = formData;
+
+    // post process section that matches path only if V1
+    if (settings.get(v1)) {
+
+      const postProcessMap = {
+        [getPageSectionKey(1, 1)]: (v) => v,
+        [getPageSectionKey(2, 1)]: postProcessBehaviorSection,
+        [getPageSectionKey(3, 1)]: postProcessNatureSection,
+        [getPageSectionKey(4, 1)]: postProcessSafetySection,
+        [getPageSectionKey(5, 1)]: postProcessDisposition,
+      };
+      processedFormData = postProcessMap[section](preFormData.toJS());
+    }
 
     // replace address keys with entityKeyId
     const draftWithKeys = replaceEntityAddressKeys(
-      postFormData,
+      processedFormData,
       findEntityAddressKeyFromMap(entityIndexToIdMap)
     );
 
@@ -757,7 +764,7 @@ function* updateCrisisReportWorker(action :SequenceAction) :Generator<any, any, 
       submitPartialReplace({
         ...value,
         entityData,
-        formData: postFormData
+        formData: processedFormData
       })
     );
 
