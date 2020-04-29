@@ -991,8 +991,6 @@ function* getIncidentReportsSummaryWorker(action :SequenceAction) :Generator<any
     const violentBehaviors = groupedNeighborsByType.get(VIOLENT_BEHAVIOR_FQN);
     const weapons = groupedNeighborsByType.get(WEAPON_FQN);
 
-    console.log(behaviors);
-    debugger;
     const behaviorSummary = countPropertyOccurrance(behaviors, FQN.OBSERVED_BEHAVIOR_FQN)
       .sortBy((count) => count, (valueA, valueB) => valueB - valueA)
       .toArray()
