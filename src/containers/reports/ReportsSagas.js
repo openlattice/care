@@ -1009,7 +1009,6 @@ function* getIncidentReportsSummaryWorker(action :SequenceAction) :Generator<any
       { name: 'Armed', count: weapons.count() },
     ]);
 
-    console.log(behaviorSummary, safetySummary);
     const reportSummary = fromJS({
       behaviorSummary,
       crisisSummary,

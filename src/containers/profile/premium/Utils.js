@@ -35,7 +35,6 @@ const incrementValueAtKey = (mutable :Map, key :string, value :boolean) => {
 const countPropertyOccurrance = (reports :List<Map>, propertyTypeFqn :FullyQualifiedName) => Map()
   .withMutations((mutable) => {
     reports.forEach((report) => {
-      console.log(report);
       const propertyValues = report.get(propertyTypeFqn, []);
 
       propertyValues.forEach((value) => {
