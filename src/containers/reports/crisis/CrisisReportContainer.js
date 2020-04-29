@@ -17,14 +17,15 @@ import {
   addOptionalCrisisReportContent,
   deleteCrisisReportContent,
   getCrisisReport,
+  getCrisisReportV2,
   updateCrisisReport
 } from './CrisisActions';
-import { v1 } from './schemas';
+import { v1, v2 } from './schemas';
 
 import BlameCard from '../shared/BlameCard';
 import * as FQN from '../../../edm/DataModelFqns';
 import { BreadcrumbItem, BreadcrumbLink } from '../../../components/breadcrumbs';
-import { useAuthorization } from '../../../components/hooks';
+import { useAppSettings, useAuthorization } from '../../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
 import { PROFILE_ID_PATH, PROFILE_VIEW_PATH, REPORT_ID_PARAM } from '../../../core/router/Routes';
 import { getAuthorization } from '../../../core/sagas/authorize/AuthorizeActions';
@@ -37,9 +38,9 @@ const {
   CLINICIAN_REPORT_FQN, // v2,
   BEHAVIORAL_HEALTH_REPORT_FQN,
 } = APP_TYPES_FQNS;
-const { schemas, uiSchemas } = v1;
 
 const CrisisReportContainer = () => {
+  const settings = useAppSettings();
   const dispatch = useDispatch();
   const match = useRouteMatch();
 
@@ -48,8 +49,15 @@ const CrisisReportContainer = () => {
   }, [dispatch]);
 
   const [isAuthorized] = useAuthorization('profile', dispatchGetAuthorization);
+
+  let schemaVersion = v1;
+  if (settings.get('v2')) schemaVersion = v2;
+
   // TODO memoize this so you can reuse it in the saga
-  const reviewSchemas = useMemo(() => generateReviewSchema(schemas, uiSchemas, !isAuthorized), [isAuthorized]);
+  const reviewSchemas = useMemo(
+    () => generateReviewSchema(schemaVersion.schemas, schemaVersion.uiSchemas, !isAuthorized),
+    [schemaVersion, isAuthorized]
+  );
 
   const entityIndexToIdMap = useSelector((store) => store.getIn(['crisisReport', 'entityIndexToIdMap']));
   const entitySetIds = useSelector((store) => store.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
@@ -63,12 +71,19 @@ const CrisisReportContainer = () => {
   const { [REPORT_ID_PARAM]: reportId } = match.params;
 
   useEffect(() => {
-    dispatch(getCrisisReport({
-      reportEKID: reportId,
-      reportFQN: BEHAVIORAL_HEALTH_REPORT_FQN,
-      // schema: reviewSchemas.schema
-    }));
-  }, [dispatch, reportId]);
+    if (settings.get('v2')) {
+      dispatch(getCrisisReportV2({
+        reportEKID: reportId,
+        reportFQN: CLINICIAN_REPORT_FQN,
+      }));
+    }
+    else {
+      dispatch(getCrisisReport({
+        reportEKID: reportId,
+        reportFQN: BEHAVIORAL_HEALTH_REPORT_FQN,
+      }));
+    }
+  }, [dispatch, reportId, settings]);
 
   if (fetchState === RequestStates.PENDING) {
     return <Spinner size="3x" />;
@@ -81,28 +96,28 @@ const CrisisReportContainer = () => {
     }));
   };
 
-  // const handleDeleteCrisisReportContent = (params) => {
-  //   dispatch(deleteCrisisReportContent(params));
-  // };
+  const handleDeleteCrisisReportContent = (params) => {
+    dispatch(deleteCrisisReportContent(params));
+  };
 
-  // const handleAddOptionalContent = (params) => {
-  //   const existingEKIDs = {
-  //     [CLINICIAN_REPORT_FQN]: reportId,
-  //   };
+  const handleAddOptionalContent = (params) => {
+    const existingEKIDs = {
+      [CLINICIAN_REPORT_FQN]: reportId,
+    };
 
-  //   dispatch(addOptionalCrisisReportContent({
-  //     ...params,
-  //     existingEKIDs,
-  //     schema: reviewSchemas.schema
-  //   }));
-  // };
+    dispatch(addOptionalCrisisReportContent({
+      ...params,
+      existingEKIDs,
+      schema: reviewSchemas.schema
+    }));
+  };
 
   const name = getFirstLastFromPerson(subjectData);
   const formContext = {
-    // addActions: {
-    //   addOptional: handleAddOptionalContent
-    // },
-    // deleteAction: handleDeleteCrisisReportContent,
+    addActions: {
+      addOptional: handleAddOptionalContent
+    },
+    deleteAction: handleDeleteCrisisReportContent,
     editAction: handleUpdateCrisisReport,
     entityIndexToIdMap,
     entitySetIds,

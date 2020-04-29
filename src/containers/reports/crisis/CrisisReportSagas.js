@@ -124,7 +124,6 @@ const {
   SELF_HARM_FQN,
   STAFF_FQN,
   SUBSTANCE_FQN,
-  SUBSTANCE_HISTORY_FQN,
   VIOLENT_BEHAVIOR_FQN,
   WEAPON_FQN,
 } = APP_TYPES_FQNS;
@@ -208,6 +207,7 @@ function* getReportsV2NeighborsWorker(action :SequenceAction) :Generator<any, an
     yield put(getReportsV2Neighbors.request(action.id, reportEKIDs));
 
     const app :Map = yield select((state) => state.get('app', Map()));
+
     const [
       reportESID,
       partOfESID,
@@ -235,7 +235,6 @@ function* getReportsV2NeighborsWorker(action :SequenceAction) :Generator<any, an
       SELF_HARM_FQN,
       STAFF_FQN,
       SUBSTANCE_FQN,
-      SUBSTANCE_HISTORY_FQN,
       VIOLENT_BEHAVIOR_FQN,
       WEAPON_FQN,
     ]);
