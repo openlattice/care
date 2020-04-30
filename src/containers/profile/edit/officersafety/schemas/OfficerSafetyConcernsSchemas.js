@@ -69,13 +69,6 @@ const schema = {
         $ref: '#/definitions/trigger'
       },
     },
-    [getPageSectionKey(1, 3)]: {
-      type: 'array',
-      title: 'De-escalation Techniques',
-      items: {
-        $ref: '#/definitions/deescalation'
-      },
-    }
   }
 };
 
@@ -118,23 +111,6 @@ const uiSchema = {
       }
     }
   },
-  [getPageSectionKey(1, 3)]: {
-    classNames: 'column-span-12',
-    'ui:options': {
-      addButtonText: '+ Add De-escalation Technique',
-      addActionKey: 'addDeescalationTechnique',
-      orderable: false
-    },
-    items: {
-      classNames: 'grid-container',
-      'ui:options': {
-        editable: true
-      },
-      [getEntityAddressKey(-1, INTERACTION_STRATEGY_FQN, TECHNIQUES_FQN)]: {
-        classNames: 'column-span-12'
-      }
-    }
-  }
 };
 
 export { schema, uiSchema };
