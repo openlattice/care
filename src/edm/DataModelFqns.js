@@ -5,9 +5,13 @@ const { OPENLATTICE_ID_FQN } = Constants;
 
 export { OPENLATTICE_ID_FQN };
 
+/* offense */
+const DIVERSION_STATUS_FQN = new FullyQualifiedName('ol.diversionstatus');
+export { DIVERSION_STATUS_FQN };
+
 /* symptom */
-const DATE_LAST_REPORTED = new FullyQualifiedName('ol.datelastreported');
-export { DATE_LAST_REPORTED };
+const DATE_LAST_REPORTED_FQN = new FullyQualifiedName('ol.datelastreported');
+export { DATE_LAST_REPORTED_FQN };
 
 /* interacted with */
 const CONTACT_DATE_TIME_FQN = new FullyQualifiedName('ol.contactdatetime');
@@ -19,11 +23,13 @@ export { TEMPORAL_STATUS_FQN };
 
 /* referral request */
 const SERVICE_TYPE_FQN = new FullyQualifiedName('ol.servicetype');
-export { SERVICE_TYPE_FQN };
+const SOURCE_FQN = new FullyQualifiedName('ol.source');
+export { SOURCE_FQN, SERVICE_TYPE_FQN };
 
 /* encounter */
 const SERVICE_SETTING_FQN = new FullyQualifiedName('ol.servicesetting');
-export { SERVICE_SETTING_FQN };
+const CHECKED_IN_FQN = new FullyQualifiedName('ol.checkedin');
+export { CHECKED_IN_FQN, SERVICE_SETTING_FQN };
 
 /* encounter details */
 const LAW_ENFORCEMENT_INVOLVEMENT_FQN = new FullyQualifiedName('ol.lawenforcementinvolvement');

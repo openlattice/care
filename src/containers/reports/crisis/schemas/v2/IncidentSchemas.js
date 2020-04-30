@@ -46,9 +46,9 @@ const schema = {
         //   enum: ['Call dispatched', 'Self-initiated']
         // },
       },
-      // required: [
-      //   getEntityAddressKey(0, INCIDENT_FQN, FQN.PERSON_LAST_NAME_FQN),
-      // ]
+      required: [
+        getEntityAddressKey(0, INCIDENT_FQN, FQN.DATETIME_START_FQN),
+      ]
     }
   },
 };
