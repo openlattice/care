@@ -12,6 +12,7 @@ import {
   List,
   Map,
   fromJS,
+  setIn,
 } from 'immutable';
 import { Models } from 'lattice';
 import { DataProcessingUtils } from 'lattice-fabricate';
@@ -21,6 +22,7 @@ import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
+import { DateTime } from 'luxon';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
@@ -93,16 +95,19 @@ const { getEntityDataWorker } = DataApiSagas;
 
 const {
   findEntityAddressKeyFromMap,
+  getEntityAddressKey,
   getPageSectionKey,
   processAssociationEntityData,
   processEntityData,
-  replaceEntityAddressKeys,
   processEntityDataForPartialReplace,
+  replaceEntityAddressKeys,
 } = DataProcessingUtils;
+
 const {
   APPEARS_IN_FQN,
   BEHAVIOR_FQN,
   BEHAVIORAL_HEALTH_REPORT_FQN,
+  CLINICIAN_REPORT_FQN,
   DIAGNOSIS_FQN,
   ENCOUNTER_DETAILS_FQN,
   ENCOUNTER_FQN,
@@ -456,7 +461,14 @@ function* submitCrisisReportV2Worker(action :SequenceAction) :Generator<any, any
     const propertyTypeIds = yield select((state) => state.getIn(['edm', 'fqnToIdMap'], Map()));
     const currentStaff = yield select((state) => state.getIn(['staff', 'currentUser', 'data'], Map()));
 
-    const entityData = processEntityData(formData, entitySetIds, propertyTypeIds);
+    const now = DateTime.local().toISO();
+    const timestampedFormData = setIn(
+      formData,
+      [getPageSectionKey(2, 1), getEntityAddressKey(0, CLINICIAN_REPORT_FQN, FQN.COMPLETED_DT_FQN)],
+      [now]
+    );
+
+    const entityData = processEntityData(timestampedFormData, entitySetIds, propertyTypeIds);
     const personEKID = getEntityKeyId(selectedPerson);
     const existingEKIDs = {
       [PEOPLE_FQN]: personEKID,
@@ -465,7 +477,7 @@ function* submitCrisisReportV2Worker(action :SequenceAction) :Generator<any, any
     };
 
     const associationEntityData = processAssociationEntityData(
-      getNewCrisisReportAssociations(formData, existingEKIDs),
+      getNewCrisisReportAssociations(timestampedFormData, existingEKIDs, now),
       entitySetIds,
       propertyTypeIds
     );
