@@ -52,7 +52,7 @@ const schema = {
         },
         [getEntityAddressKey(0, OFFENSE_FQN, FQN.NOTES_FQN)]: {
           type: 'string',
-          title: 'Prior arrest history',
+          title: 'Prior arrests',
           description: SELECT_ONLY_ONE,
           enum: PRIOR_ARREST_HISTORY
         },
