@@ -1,5 +1,5 @@
 // @flow
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import styled from 'styled-components';
 import { Map } from 'immutable';
