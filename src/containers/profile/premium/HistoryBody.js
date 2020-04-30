@@ -4,24 +4,20 @@ import React, { useCallback, useEffect } from 'react';
 import { faFolderOpen } from '@fortawesome/pro-duotone-svg-icons';
 import { List, Map } from 'immutable';
 import {
-  Card,
-  CardSegment,
   IconSplash,
-  SearchResults
 } from 'lattice-ui-kit';
 import { useDispatch } from 'react-redux';
 import { useRouteMatch } from 'react-router';
 
+import ReportHistory from './ReportHistory';
 import ReportsSummary from './ReportsSummary';
 
 import CrisisCountCard from '../CrisisCountCard';
 import ProbationCard from '../../../components/premium/probation/ProbationCard';
-import ProfileResult from '../ProfileResult';
 import RecentIncidentCard from '../RecentIncidentCard';
 import StayAwayCard from '../../../components/premium/stayaway/StayAwayCard';
 import WarrantCard from '../../../components/premium/warrant/WarrantCard';
 import { useAppSettings } from '../../../components/hooks';
-import { Header } from '../../../components/layout';
 import {
   CRISIS_REPORT_PATH,
   PROFILE_ID_PARAM,
@@ -31,7 +27,6 @@ import {
 import { goToPath } from '../../../core/router/RoutingActions';
 import { getEntityKeyId } from '../../../utils/DataUtils';
 import { getIncidentReportsSummary } from '../actions/ReportActions';
-import { labelMapReport } from '../constants';
 
 type Props = {
   behaviorSummary :List<Map>;
@@ -97,17 +92,7 @@ const HistoryBody = (props :Props) => {
           safetySummary={safetySummary}
           behaviorSummary={behaviorSummary}
           isLoading={isLoading} />
-      <Card>
-        <CardSegment vertical>
-          <Header>Report History</Header>
-          <SearchResults
-              hasSearched={false}
-              onResultClick={handleResultClick}
-              results={reports}
-              resultLabels={labelMapReport}
-              resultComponent={ProfileResult} />
-        </CardSegment>
-      </Card>
+      <ReportHistory isLoading={isLoading} onResultClick={handleResultClick} results={reports} />
       <StayAwayCard stayAwayLocation={stayAwayLocation} isLoading={isLoading} />
       <ProbationCard probation={probation} isLoading={isLoading} />
       <WarrantCard warrant={warrant} isLoading={isLoading} />
