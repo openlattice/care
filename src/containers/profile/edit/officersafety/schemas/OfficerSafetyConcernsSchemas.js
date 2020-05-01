@@ -23,14 +23,10 @@ const schema = {
       type: 'object',
       properties: {
         [getEntityAddressKey(-1, OFFICER_SAFETY_CONCERNS_FQN, CATEGORY_FQN)]: {
-          type: 'string',
           title: 'Safety type',
-          enum: SAFETY_TYPES
-        },
-        [getEntityAddressKey(-1, OFFICER_SAFETY_CONCERNS_FQN, DESCRIPTION_FQN)]: {
           type: 'string',
-          title: 'Description',
-        }
+          enum: SAFETY_TYPES,
+        },
       }
     },
     trigger: {
@@ -87,10 +83,9 @@ const uiSchema = {
       },
       [getEntityAddressKey(-1, OFFICER_SAFETY_CONCERNS_FQN, CATEGORY_FQN)]: {
         classNames: 'column-span-12',
-        'ui:widget': 'radio'
-      },
-      [getEntityAddressKey(-1, OFFICER_SAFETY_CONCERNS_FQN, DESCRIPTION_FQN)]: {
-        classNames: 'column-span-12'
+        'ui:options': {
+          creatable: true,
+        }
       },
     }
   },
