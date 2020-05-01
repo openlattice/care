@@ -1,11 +1,12 @@
 import { DataProcessingUtils } from 'lattice-fabricate';
-import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
+
 import {
   CONTEXT_FQN,
   DESCRIPTION_FQN,
   INDEX_FQN,
   TITLE_FQN
 } from '../../../../../edm/DataModelFqns';
+import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
 
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
 const {
@@ -48,7 +49,7 @@ export const schema = {
     },
     [getPageSectionKey(1, 2)]: {
       type: 'array',
-      title: 'Response Plan',
+      title: 'Interaction Strategies',
       items: {
         $ref: '#/definitions/interactionStrategy'
       }
@@ -58,14 +59,7 @@ export const schema = {
 
 export const uiSchema = {
   [getPageSectionKey(1, 1)]: {
-    classNames: 'column-span-12 grid-container',
-    [getEntityAddressKey(0, RESPONSE_PLAN_FQN, CONTEXT_FQN)]: {
-      classNames: 'column-span-12',
-      'ui:widget': 'textarea'
-    },
-    'ui:options': {
-      editable: true
-    }
+    classNames: 'hidden',
   },
   [getPageSectionKey(1, 2)]: {
     classNames: 'column-span-12',
