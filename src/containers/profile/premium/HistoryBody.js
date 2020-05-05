@@ -63,16 +63,6 @@ const HistoryBody = (props :Props) => {
     }
   }, [profileId, settings, dispatch]);
 
-  const handleResultClick = useCallback((result :Map) => {
-    const reportEKID = getEntityKeyId(result);
-    if (settings.get('v1') || settings.get('v2')) {
-      dispatch(goToPath(CRISIS_REPORT_PATH.replace(REPORT_ID_PATH, reportEKID)));
-    }
-    else {
-      dispatch(goToPath(REPORT_VIEW_PATH.replace(REPORT_ID_PATH, reportEKID)));
-    }
-  }, [dispatch, settings]);
-
   const recent = crisisSummary.get('recent');
   const total = crisisSummary.get('total');
 
@@ -92,7 +82,7 @@ const HistoryBody = (props :Props) => {
           safetySummary={safetySummary}
           behaviorSummary={behaviorSummary}
           isLoading={isLoading} />
-      <ReportHistory isLoading={isLoading} onResultClick={handleResultClick} results={reports} />
+      <ReportHistory isLoading={isLoading} results={reports} />
       <StayAwayCard stayAwayLocation={stayAwayLocation} isLoading={isLoading} />
       <ProbationCard probation={probation} isLoading={isLoading} />
       <WarrantCard warrant={warrant} isLoading={isLoading} />

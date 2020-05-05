@@ -87,7 +87,7 @@ const ReportResult = (props :Props) => {
       </CardSegment>
     </Card>
   );
-}
+};
 
 ReportResult.defaultProps = {
   resultLabels: Map(),

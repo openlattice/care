@@ -100,7 +100,8 @@ const {
   APPEARS_IN_FQN,
   BEHAVIORAL_HEALTH_REPORT_FQN,
   BEHAVIOR_FQN,
-  CLINICIAN_REPORT_FQN,
+  CRISIS_REPORT_FQN,
+  CRISIS_REPORT_CLINICIAN_FQN,
   INCIDENT_FQN,
   INJURY_FQN,
   INTERACTED_WITH_FQN,
@@ -767,11 +768,13 @@ function* getIncidentReportsWorker(action :SequenceAction) :Generator<any, any, 
     const [
       partOfESID,
       incidentESID,
-      clinicianReportESID,
+      crisisReportESID,
+      crisisReportClinicianESID,
     ] = getESIDsFromApp(app, [
       PART_OF_FQN,
       INCIDENT_FQN,
-      CLINICIAN_REPORT_FQN,
+      CRISIS_REPORT_FQN,
+      CRISIS_REPORT_CLINICIAN_FQN,
     ]);
 
     const reportsSearchParam = {
@@ -779,7 +782,7 @@ function* getIncidentReportsWorker(action :SequenceAction) :Generator<any, any, 
       filter: {
         entityKeyIds: incidentEKIDs,
         edgeEntitySetIds: [partOfESID],
-        destinationEntitySetIds: [clinicianReportESID],
+        destinationEntitySetIds: [crisisReportESID, crisisReportClinicianESID],
         sourceEntitySetIds: [],
       },
     };
@@ -824,7 +827,7 @@ function* getReportsBehaviorAndSafetyWorker(action :SequenceAction) :Generator<a
       weaponESID,
     ] = getESIDsFromApp(app, [
       BEHAVIOR_FQN,
-      CLINICIAN_REPORT_FQN,
+      CRISIS_REPORT_FQN,
       INJURY_FQN,
       PART_OF_FQN,
       SELF_HARM_FQN,
@@ -875,7 +878,7 @@ function* getReportersForReportsWorker(action :SequenceAction) :Generator<any, a
 
     const app :Map = yield select((state) => state.get('app', Map()));
     const [reportedESID, staffESID, clinicianReportESID] = getESIDsFromApp(app, [
-      REPORTED_FQN, STAFF_FQN, CLINICIAN_REPORT_FQN
+      REPORTED_FQN, STAFF_FQN, CRISIS_REPORT_FQN
     ]);
 
     const reportersSearchParam = {
