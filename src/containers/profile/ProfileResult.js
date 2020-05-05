@@ -16,13 +16,14 @@ import { useAppSettings } from '../../components/hooks';
 import {
   CRISIS_REPORT_CLINICIAN_PATH,
   CRISIS_REPORT_PATH,
+  FOLLOW_UP_REPORT_PATH,
   REPORT_ID_PATH,
   REPORT_VIEW_PATH
 } from '../../core/router/Routes';
 import { goToPath } from '../../core/router/RoutingActions';
 import { DATETIME_START_FQN, DATE_TIME_OCCURRED_FQN, TYPE_FQN } from '../../edm/DataModelFqns';
 import { getEntityKeyId } from '../../utils/DataUtils';
-import { CRISIS_REPORT, CRISIS_REPORT_CLINICIAN } from '../reports/crisis/schemas/constants';
+import { CRISIS_REPORT, CRISIS_REPORT_CLINICIAN, FOLLOW_UP_REPORT } from '../reports/crisis/schemas/constants';
 
 const ReportHeader = styled.div`
   display: flex;
@@ -59,6 +60,9 @@ const ProfileResult = (props :Props) => {
       }
       if (reportType === CRISIS_REPORT) {
         dispatch(goToPath(CRISIS_REPORT_PATH.replace(REPORT_ID_PATH, reportEKID)));
+      }
+      if (reportType === FOLLOW_UP_REPORT) {
+        dispatch(goToPath(FOLLOW_UP_REPORT_PATH.replace(REPORT_ID_PATH, reportEKID)));
       }
     }
     else {
