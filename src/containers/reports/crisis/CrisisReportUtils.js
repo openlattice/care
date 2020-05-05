@@ -137,17 +137,17 @@ const getClinicianCrisisReportAssociations = (
 ) :any[][] => {
   const personEKID = existingEntityKeyIds[APP.PEOPLE_FQN];
   const staffEKID = existingEntityKeyIds[APP.STAFF_FQN];
+  const incidentEKID = existingEntityKeyIds[APP.INCIDENT_FQN] || 0;
 
   const NOW_DATA = { [FQN.COMPLETED_DT_FQN]: [createdDateTime] };
 
   // static assocations
-  const associations :any[][] = [
-    [APP.INVOLVED_IN_FQN, personEKID, APP.PEOPLE_FQN, 0, APP.INCIDENT_FQN, NOW_DATA],
-    // [APP.LOCATED_AT_FQN, 0, APP.INCIDENT_FQN, 0, APP.LOCATION_FQN, NOW_DATA],
-    [APP.REPORTED_FQN, staffEKID, APP.STAFF_FQN, 0, APP.INCIDENT_FQN, NOW_DATA],
+  let associations :any[][] = [
+    // [APP.LOCATED_AT_FQN, incidentEKID, APP.INCIDENT_FQN, 0, APP.LOCATION_FQN, NOW_DATA],
     [APP.REPORTED_FQN, staffEKID, APP.STAFF_FQN, 0, APP.CRISIS_REPORT_CLINICIAN_FQN, NOW_DATA],
-    [APP.PART_OF_FQN, 0, APP.INCIDENT_FQN, 0, APP.CRISIS_REPORT_CLINICIAN_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, incidentEKID, APP.INCIDENT_FQN, 0, APP.CRISIS_REPORT_CLINICIAN_FQN, NOW_DATA],
     [APP.PART_OF_FQN, 0, APP.NATURE_OF_CRISIS_FQN, 0, APP.CRISIS_REPORT_CLINICIAN_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.LOCATION_FQN, 0, APP.CRISIS_REPORT_CLINICIAN_FQN, NOW_DATA],
     [APP.PART_OF_FQN, 0, APP.BEHAVIOR_FQN, 0, APP.CRISIS_REPORT_CLINICIAN_FQN, NOW_DATA],
     [APP.PART_OF_FQN, 0, APP.SUBSTANCE_FQN, 0, APP.CRISIS_REPORT_CLINICIAN_FQN, NOW_DATA],
     [APP.PART_OF_FQN, 1, APP.SUBSTANCE_FQN, 0, APP.CRISIS_REPORT_CLINICIAN_FQN, NOW_DATA],
@@ -167,6 +167,14 @@ const getClinicianCrisisReportAssociations = (
     [APP.PART_OF_FQN, 0, APP.REFERRAL_REQUEST_FQN, 0, APP.CRISIS_REPORT_CLINICIAN_FQN, NOW_DATA],
   ];
 
+  // do not duplicate edges
+  if (!incidentEKID) {
+    associations = associations.concat([
+      [APP.INVOLVED_IN_FQN, personEKID, APP.PEOPLE_FQN, incidentEKID, APP.INCIDENT_FQN, NOW_DATA],
+      [APP.REPORTED_FQN, staffEKID, APP.STAFF_FQN, incidentEKID, APP.INCIDENT_FQN, NOW_DATA],
+    ]);
+  }
+
   const optionalAssociations :any[][] = getOptionalCrisisReportAssociations(
     formData,
     existingEntityKeyIds,
@@ -184,16 +192,16 @@ const getOfficerCrisisReportAssociations = (
 ) :any[][] => {
   const personEKID = existingEntityKeyIds[APP.PEOPLE_FQN];
   const staffEKID = existingEntityKeyIds[APP.STAFF_FQN];
+  const incidentEKID = existingEntityKeyIds[APP.INCIDENT_FQN] || 0;
 
   const NOW_DATA = { [FQN.COMPLETED_DT_FQN]: [createdDateTime] };
 
   // static assocations
-  const associations :any[][] = [
-    [APP.INVOLVED_IN_FQN, personEKID, APP.PEOPLE_FQN, 0, APP.INCIDENT_FQN, NOW_DATA],
+  let associations :any[][] = [
     // [APP.LOCATED_AT_FQN, 0, APP.INCIDENT_FQN, 0, APP.LOCATION_FQN, NOW_DATA],
-    [APP.REPORTED_FQN, staffEKID, APP.STAFF_FQN, 0, APP.INCIDENT_FQN, NOW_DATA],
     [APP.REPORTED_FQN, staffEKID, APP.STAFF_FQN, 0, APP.CRISIS_REPORT_FQN, NOW_DATA],
-    [APP.PART_OF_FQN, 0, APP.INCIDENT_FQN, 0, APP.CRISIS_REPORT_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, incidentEKID, APP.INCIDENT_FQN, 0, APP.CRISIS_REPORT_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.LOCATION_FQN, 0, APP.CRISIS_REPORT_FQN, NOW_DATA],
     [APP.PART_OF_FQN, 0, APP.BEHAVIOR_FQN, 0, APP.CRISIS_REPORT_FQN, NOW_DATA],
     [APP.PART_OF_FQN, 0, APP.SUBSTANCE_FQN, 0, APP.CRISIS_REPORT_FQN, NOW_DATA],
     [APP.PART_OF_FQN, 1, APP.SUBSTANCE_FQN, 0, APP.CRISIS_REPORT_FQN, NOW_DATA],
@@ -209,6 +217,14 @@ const getOfficerCrisisReportAssociations = (
     [APP.PART_OF_FQN, 0, APP.DISPOSITION_FQN, 0, APP.CRISIS_REPORT_FQN, NOW_DATA],
   ];
 
+  // do not duplicate edges
+  if (!incidentEKID) {
+    associations = associations.concat([
+      [APP.INVOLVED_IN_FQN, personEKID, APP.PEOPLE_FQN, incidentEKID, APP.INCIDENT_FQN, NOW_DATA],
+      [APP.REPORTED_FQN, staffEKID, APP.STAFF_FQN, incidentEKID, APP.INCIDENT_FQN, NOW_DATA],
+    ]);
+  }
+
   const optionalAssociations :any[][] = getOptionalCrisisReportAssociations(
     formData,
     existingEntityKeyIds,
@@ -217,6 +233,33 @@ const getOfficerCrisisReportAssociations = (
   );
 
   return associations.concat(optionalAssociations);
+};
+
+const getFollowupReportAssociations = (
+  formData :Object,
+  existingEntityKeyIds :Object,
+  createdDateTime :string = DateTime.local().toISO()
+) :any[][] => {
+  const staffEKID = existingEntityKeyIds[APP.STAFF_FQN];
+  const incidentEKID = existingEntityKeyIds[APP.INCIDENT_FQN];
+
+  const NOW_DATA = { [FQN.COMPLETED_DT_FQN]: [createdDateTime] };
+
+  // static assocations
+  const associations :any[][] = [
+    // [APP.LOCATED_AT_FQN, incidentEKID, APP.INCIDENT_FQN, 0, APP.LOCATION_FQN, NOW_DATA],
+    [APP.REPORTED_FQN, staffEKID, APP.STAFF_FQN, 0, APP.FOLLOW_UP_REPORT_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, incidentEKID, APP.INCIDENT_FQN, 0, APP.FOLLOW_UP_REPORT_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.LOCATION_FQN, 0, APP.FOLLOW_UP_REPORT_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.REFERRAL_REQUEST_FQN, 0, APP.FOLLOW_UP_REPORT_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.SUBSTANCE_FQN, 0, APP.FOLLOW_UP_REPORT_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 1, APP.SUBSTANCE_FQN, 0, APP.FOLLOW_UP_REPORT_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.ENCOUNTER_FQN, 0, APP.FOLLOW_UP_REPORT_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.OFFENSE_FQN, 0, APP.FOLLOW_UP_REPORT_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.DISPOSITION_FQN, 0, APP.FOLLOW_UP_REPORT_FQN, NOW_DATA],
+  ];
+
+  return associations;
 };
 
 const getSectionProperties = (sectionSchema :Object) :Object => {
@@ -646,6 +689,7 @@ export {
   getCrisisReportAssociations,
   getEntityIndexToIdMapFromDataGraphResponse,
   getEntityIndexToIdMapFromNeighbors,
+  getFollowupReportAssociations,
   getOfficerCrisisReportAssociations,
   getOptionalCrisisReportAssociations,
   postProcessBehaviorSection,
