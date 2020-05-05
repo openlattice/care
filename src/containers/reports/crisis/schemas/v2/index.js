@@ -8,6 +8,12 @@ import {
   schema as dispositionSchema,
   uiSchema as dispositionUiSchema
 } from './DispositionSchemas';
+import { schema as backgroundSchema, uiSchema as backgroundUiSchema } from './FollowupBackgroundSchemas';
+import {
+  schema as followupDispositionSchema,
+  uiSchema as followupDispositionUiSchema
+} from './FollowupDispositionSchemas';
+import { schema as substancesSchema, uiSchema as substancesUiSchema } from './FollowupSubstancesSchemas';
 import {
   schema as housingAndEmploymentSchema,
   uiSchema as housingAndEmploymentUiSchema
@@ -55,6 +61,18 @@ const uiSchemas = [
   dispositionUiSchema,
 ];
 
+const followupSchemas = [
+  backgroundSchema,
+  substancesSchema,
+  followupDispositionSchema,
+];
+
+const followupUiSchemas = [
+  backgroundUiSchema,
+  substancesUiSchema,
+  followupDispositionUiSchema,
+];
+
 
 const v2 = {
   officer: {
@@ -64,6 +82,10 @@ const v2 = {
   clinician: {
     schemas: clinicianSchemas,
     uiSchemas: clinicianUiSchemas,
+  },
+  followup: {
+    schemas: followupSchemas,
+    uiSchemas: followupUiSchemas
   }
 };
 
