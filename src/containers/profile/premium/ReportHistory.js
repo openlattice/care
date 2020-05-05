@@ -14,14 +14,12 @@ import { CardSkeleton } from '../../../components/skeletons';
 
 type Props = {
   results :List<Map>;
-  onResultClick :(result :Map) => void;
   isLoading :boolean;
 };
 
 const ReportHistory = (props :Props) => {
   const {
     isLoading,
-    onResultClick,
     results,
   } = props;
 
@@ -35,7 +33,6 @@ const ReportHistory = (props :Props) => {
         <Header>Report History</Header>
         <SearchResults
             hasSearched={false}
-            onResultClick={onResultClick}
             results={results}
             resultComponent={ProfileResult} />
       </CardSegment>

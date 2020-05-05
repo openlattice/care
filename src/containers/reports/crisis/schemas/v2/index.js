@@ -17,25 +17,25 @@ import { schema as insuranceSchema, uiSchema as insuranceUiSchema } from './Insu
 import { schema as medicalSchema, uiSchema as medicalUiSchema } from './MedicalSchemas';
 import { schema as threatSchema, uiSchema as threatUiSchema } from './ThreatSchemas';
 
-// const schemas = [
-//   incidentSchema,
-//   clinicianBehaviorSchema,
-//   medicalSchema,
-//   threatSchema,
-//   housingAndEmploymentSchema,
-//   insuranceSchema,
-//   clinicianDispositionSchema,
-// ];
+const clinicianSchemas = [
+  incidentSchema,
+  clinicianBehaviorSchema,
+  medicalSchema,
+  threatSchema,
+  housingAndEmploymentSchema,
+  insuranceSchema,
+  clinicianDispositionSchema,
+];
 
-// const uiSchemas = [
-//   incidentUiSchema,
-//   clinicianBehaviorUiSchema,
-//   medicalUiSchema,
-//   threatUiSchema,
-//   housingAndEmploymentUiSchema,
-//   insuranceUiSchema,
-//   clinicianDispositionUiSchema,
-// ];
+const clinicianUiSchemas = [
+  incidentUiSchema,
+  clinicianBehaviorUiSchema,
+  medicalUiSchema,
+  threatUiSchema,
+  housingAndEmploymentUiSchema,
+  insuranceUiSchema,
+  clinicianDispositionUiSchema,
+];
 
 const schemas = [
   incidentSchema,
@@ -57,8 +57,14 @@ const uiSchemas = [
 
 
 const v2 = {
-  schemas,
-  uiSchemas
+  officer: {
+    schemas,
+    uiSchemas,
+  },
+  clinician: {
+    schemas: clinicianSchemas,
+    uiSchemas: clinicianUiSchemas,
+  }
 };
 
 export default v2;

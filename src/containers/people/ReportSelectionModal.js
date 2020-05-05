@@ -9,6 +9,7 @@ import LinkButton from '../../components/buttons/LinkButton';
 import { useAppSettings } from '../../components/hooks';
 import {
   CRISIS_PATH,
+  NEW_CRISIS_CLINICIAN_PATH,
   NEW_CRISIS_PATH,
   NEW_SYMPTOMS_PATH,
   TRACK_CONTACT_PATH
@@ -53,6 +54,15 @@ const ReportSelectionModal = (props :Props) => {
               state={selectedPerson}>
             Crisis Report
           </LinkButton>
+          {
+            settings.get('v2') && (
+              <LinkButton
+                  to={NEW_CRISIS_CLINICIAN_PATH}
+                  state={selectedPerson}>
+                Crisis Report (Clinician)
+              </LinkButton>
+            )
+          }
           <LinkButton
               to={NEW_SYMPTOMS_PATH}
               state={selectedPerson}>
