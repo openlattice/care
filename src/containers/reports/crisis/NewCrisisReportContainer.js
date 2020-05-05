@@ -3,30 +3,56 @@ import React, { useRef } from 'react';
 
 import { Map } from 'immutable';
 import {
+  Breadcrumbs,
   CardStack
 } from 'lattice-ui-kit';
 import { useLocation } from 'react-router';
 import { Redirect } from 'react-router-dom';
 
 import NewCrisisReport from './NewCrisisReport';
+import { CRISIS_REPORT } from './schemas/constants';
 
-import ProfileBanner from '../../profile/ProfileBanner';
+import * as FQN from '../../../edm/DataModelFqns';
+import { BreadcrumbItem, BreadcrumbLink } from '../../../components/breadcrumbs';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
-import { HOME_PATH } from '../../../core/router/Routes';
+import { HOME_PATH, PROFILE_ID_PATH, PROFILE_VIEW_PATH } from '../../../core/router/Routes';
+import { getEntityKeyId } from '../../../utils/DataUtils';
+import { getDateShortFromIsoDate } from '../../../utils/DateUtils';
+import { getFirstLastFromPerson } from '../../../utils/PersonUtils';
 
 const NewCrisisReportContainer = () => {
   const location = useLocation();
   const pageRef = useRef<HTMLDivElement | null>(null);
 
-  const { state: selectedPerson = Map() } = location;
+  const { state = {} } = location;
+  const { selectedPerson = Map(), incident = Map() } = state;
   if (!Map.isMap(selectedPerson) || selectedPerson.isEmpty()) return <Redirect to={HOME_PATH} />;
+
+  const personEKID = getEntityKeyId(selectedPerson);
+  const profilePath = PROFILE_VIEW_PATH.replace(PROFILE_ID_PATH, personEKID);
+  const name = getFirstLastFromPerson(selectedPerson);
+
+  let breadcrumbLabel = `New ${CRISIS_REPORT}`;
+  if (!incident.isEmpty()) {
+    const incidentNumber = incident.getIn([FQN.CRIMINALJUSTICE_CASE_NUMBER_FQN, 0]);
+    const incidentDatetime = incident.getIn([FQN.DATETIME_START_FQN, 0]);
+    const formattedDateTime = getDateShortFromIsoDate(incidentDatetime);
+
+    breadcrumbLabel = `${breadcrumbLabel} - #${incidentNumber} (${formattedDateTime})`;
+  }
 
   return (
     <ContentOuterWrapper ref={pageRef}>
-      <ProfileBanner selectedPerson={selectedPerson} />
       <ContentWrapper>
+        <Breadcrumbs>
+          <BreadcrumbLink to={profilePath}>{name}</BreadcrumbLink>
+          <BreadcrumbItem>{breadcrumbLabel}</BreadcrumbItem>
+        </Breadcrumbs>
         <CardStack>
-          <NewCrisisReport pageRef={pageRef} selectedPerson={selectedPerson} />
+          <NewCrisisReport
+              incident={incident}
+              pageRef={pageRef}
+              selectedPerson={selectedPerson} />
         </CardStack>
       </ContentWrapper>
     </ContentOuterWrapper>

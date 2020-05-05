@@ -30,27 +30,38 @@ const ActionRow = styled.div`
 `;
 
 type Props = {
+  incident :Map;
   pageRef :{ current :HTMLDivElement | null };
   selectedPerson :Map;
 };
 
-const NewCrisisReport = ({ pageRef, selectedPerson } :Props) => {
+const NewCrisisReport = ({ incident, pageRef, selectedPerson } :Props) => {
   const settings = useAppSettings();
   const dispatch = useDispatch();
   const submitState = useSelector((store) => store.getIn(['crisisReport', 'submitState']));
 
   let schemaVersion = v1;
   if (settings.get('v2')) schemaVersion = v2.officer;
+  let { schemas, uiSchemas } = schemaVersion;
+  if (!incident.isEmpty()) {
+    schemas = schemas.slice(1);
+    uiSchemas = uiSchemas.slice(1);
+  }
 
   const reviewSchemas = useMemo(
-    () => generateReviewSchema(schemaVersion.schemas, schemaVersion.uiSchemas, true),
-    [schemaVersion]
+    () => generateReviewSchema(schemas, uiSchemas, true),
+    [schemas, uiSchemas]
   );
 
   const getVersionSubmit = (formData :Object) => {
     let action = submitCrisisReport;
     if (settings.get('v2')) action = submitCrisisReportV2;
-    return () => dispatch(action({ formData, selectedPerson, reportFQN: CRISIS_REPORT_FQN }));
+    return () => dispatch(action({
+      formData,
+      incident,
+      reportFQN: CRISIS_REPORT_FQN,
+      selectedPerson,
+    }));
   };
 
   useEffect(() => () => dispatch(clearCrisisReport()), [dispatch]);
@@ -62,8 +73,6 @@ const NewCrisisReport = ({ pageRef, selectedPerson } :Props) => {
       <SuccessSplash reportType={CRISIS_REPORT} selectedPerson={selectedPerson} />
     );
   }
-
-  const { schemas, uiSchemas } = schemaVersion;
 
   return (
     <Card>
