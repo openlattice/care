@@ -54,6 +54,7 @@ import {
   getCrisisReportAssociations,
   getEntityIndexToIdMapFromDataGraphResponse,
   getEntityIndexToIdMapFromNeighbors,
+  getFollowupReportAssociations,
   getOfficerCrisisReportAssociations,
   getOptionalCrisisReportAssociations,
   postProcessBehaviorSection,
@@ -113,6 +114,7 @@ const {
   DISPOSITION_FQN,
   ENCOUNTER_DETAILS_FQN,
   ENCOUNTER_FQN,
+  FOLLOW_UP_REPORT_FQN,
   HOUSING_FQN,
   INCIDENT_FQN,
   INCOME_FQN,
@@ -121,6 +123,7 @@ const {
   INTERACTION_STRATEGY_FQN,
   INVOICE_FQN,
   INVOLVED_IN_FQN,
+  LOCATION_FQN,
   MEDICATION_STATEMENT_FQN,
   NATURE_OF_CRISIS_FQN,
   OCCUPATION_FQN,
@@ -238,6 +241,7 @@ function* getReportsV2NeighborsWorker(action :SequenceAction) :Generator<any, an
       INSURANCE_FQN,
       INTERACTION_STRATEGY_FQN,
       INVOICE_FQN,
+      LOCATION_FQN,
       MEDICATION_STATEMENT_FQN,
       NATURE_OF_CRISIS_FQN,
       OCCUPATION_FQN,
@@ -390,11 +394,11 @@ function* getCrisisReportV2Worker(action :SequenceAction) :Generator<any, any, a
     if (subjectResponse.error) throw subjectResponse.error;
     const subjectData = subjectResponse.data.getIn([incidentEKID, 0, 'neighborDetails'], Map());
 
-    // reviewSchema should be passed in from requesting view.
-    // const { schemas, uiSchemas } = v2;
-    // const { schema } = generateReviewSchema(schemas, uiSchemas, true);
-    const formData = fromJS(constructFormDataFromNeighbors(neighborsByFQN, reviewSchema));
-    const entityIndexToIdMap = getEntityIndexToIdMapFromNeighbors(neighborsByFQN, reviewSchema);
+    // include report self in neighbors
+    const reportEntity = fromJS({ neighborDetails: reportResponse.data });
+    const reportDataByFQN = neighborsByFQN.set(reportFQN.toString(), List([reportEntity]));
+    const formData = fromJS(constructFormDataFromNeighbors(reportDataByFQN, reviewSchema));
+    const entityIndexToIdMap = getEntityIndexToIdMapFromNeighbors(reportDataByFQN, reviewSchema);
 
     yield put(getCrisisReportV2.success(action.id, {
       formData,
@@ -462,7 +466,12 @@ function* submitCrisisReportV2Worker(action :SequenceAction) :Generator<any, any
     const { value } = action;
     if (!isPlainObject(value)) throw ERR_ACTION_VALUE_TYPE;
     yield put(submitCrisisReportV2.request(action.id));
-    const { formData, selectedPerson, reportFQN } = value;
+    const {
+      formData,
+      selectedPerson,
+      reportFQN,
+      incident = Map(),
+    } = value;
 
     const entitySetIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
     const propertyTypeIds = yield select((state) => state.getIn(['edm', 'fqnToIdMap'], Map()));
@@ -477,15 +486,20 @@ function* submitCrisisReportV2Worker(action :SequenceAction) :Generator<any, any
 
     const entityData = processEntityData(timestampedFormData, entitySetIds, propertyTypeIds);
     const personEKID = getEntityKeyId(selectedPerson);
+    const incidentEKID = getEntityKeyId(incident);
+    const staffEKID = getEntityKeyId(currentStaff);
     const existingEKIDs = {
       [PEOPLE_FQN]: personEKID,
-      [STAFF_FQN]: getEntityKeyId(currentStaff)
-      // add incidentEKID
+      [STAFF_FQN]: staffEKID,
+      [INCIDENT_FQN]: incidentEKID
     };
 
     let associationFn = getOfficerCrisisReportAssociations;
     if (reportFQN === CRISIS_REPORT_CLINICIAN_FQN) {
       associationFn = getClinicianCrisisReportAssociations;
+    }
+    if (reportFQN === FOLLOW_UP_REPORT_FQN) {
+      associationFn = getFollowupReportAssociations;
     }
 
     const associationEntityData = processAssociationEntityData(
@@ -505,15 +519,17 @@ function* submitCrisisReportV2Worker(action :SequenceAction) :Generator<any, any
 
     yield put(submitCrisisReportV2.success(action.id));
 
-    // update count after submission success
-    const count = selectedPerson.getIn([FQN.NUM_REPORTS_FOUND_IN_FQN, 0], 0) + 1;
-    yield call(
-      updatePersonReportCountWorker,
-      updatePersonReportCount({
-        entityKeyId: personEKID,
-        count
-      })
-    );
+    // update count after submission of new incident
+    if (incident.isEmpty()) {
+      const count = selectedPerson.getIn([FQN.NUM_REPORTS_FOUND_IN_FQN, 0], 0) + 1;
+      yield call(
+        updatePersonReportCountWorker,
+        updatePersonReportCount({
+          entityKeyId: personEKID,
+          count
+        })
+      );
+    }
 
   }
   catch (error) {

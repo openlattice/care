@@ -100,8 +100,9 @@ const {
   APPEARS_IN_FQN,
   BEHAVIORAL_HEALTH_REPORT_FQN,
   BEHAVIOR_FQN,
-  CRISIS_REPORT_FQN,
   CRISIS_REPORT_CLINICIAN_FQN,
+  CRISIS_REPORT_FQN,
+  FOLLOW_UP_REPORT_FQN,
   INCIDENT_FQN,
   INJURY_FQN,
   INTERACTED_WITH_FQN,
@@ -770,11 +771,13 @@ function* getIncidentReportsWorker(action :SequenceAction) :Generator<any, any, 
       incidentESID,
       crisisReportESID,
       crisisReportClinicianESID,
+      followupReportESID,
     ] = getESIDsFromApp(app, [
       PART_OF_FQN,
       INCIDENT_FQN,
       CRISIS_REPORT_FQN,
       CRISIS_REPORT_CLINICIAN_FQN,
+      FOLLOW_UP_REPORT_FQN,
     ]);
 
     const reportsSearchParam = {
@@ -782,7 +785,7 @@ function* getIncidentReportsWorker(action :SequenceAction) :Generator<any, any, 
       filter: {
         entityKeyIds: incidentEKIDs,
         edgeEntitySetIds: [partOfESID],
-        destinationEntitySetIds: [crisisReportESID, crisisReportClinicianESID],
+        destinationEntitySetIds: [crisisReportESID, crisisReportClinicianESID, followupReportESID,],
         sourceEntitySetIds: [],
       },
     };
@@ -983,11 +986,11 @@ function* getIncidentReportsSummaryWorker(action :SequenceAction) :Generator<any
       groupedNeighborsByType = tempGroupedData;
     }
 
-    const behaviors = groupedNeighborsByType.get(BEHAVIOR_FQN);
-    const injuries = groupedNeighborsByType.get(INJURY_FQN);
-    const selfHarms = groupedNeighborsByType.get(SELF_HARM_FQN);
-    const violentBehaviors = groupedNeighborsByType.get(VIOLENT_BEHAVIOR_FQN);
-    const weapons = groupedNeighborsByType.get(WEAPON_FQN);
+    const behaviors = groupedNeighborsByType.get(BEHAVIOR_FQN, List());
+    const injuries = groupedNeighborsByType.get(INJURY_FQN, List());
+    const selfHarms = groupedNeighborsByType.get(SELF_HARM_FQN, List());
+    const violentBehaviors = groupedNeighborsByType.get(VIOLENT_BEHAVIOR_FQN, List());
+    const weapons = groupedNeighborsByType.get(WEAPON_FQN, List());
 
     const behaviorSummary = countPropertyOccurrance(behaviors, FQN.OBSERVED_BEHAVIOR_FQN)
       .sortBy((count) => count, (valueA, valueB) => valueB - valueA)
