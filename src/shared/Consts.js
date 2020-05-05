@@ -58,7 +58,7 @@ export const APP_TYPES_FQNS = {
   REFERRAL_REQUEST_FQN: new FullyQualifiedName('app.referralrequest'),
   CRISIS_REPORT_CLINICIAN_FQN: new FullyQualifiedName('app.crisisreport_clinician'),
   CRISIS_REPORT_FQN: new FullyQualifiedName('app.crisisreport_officer'),
-  FOLLOW_UP_REPORT_FQN: new FullyQualifiedName('app.followup'),
+  FOLLOW_UP_REPORT_FQN: new FullyQualifiedName('app.followupreport'),
 
   DISPOSITION_FQN: new FullyQualifiedName('app.disposition'),
   OFFENSE_FQN: new FullyQualifiedName('app.offense'),

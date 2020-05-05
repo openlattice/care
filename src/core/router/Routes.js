@@ -40,6 +40,7 @@ export const FOLLOW_UP_REPORT_PATH :string = `${REPORTS_PATH}/follow-up/${REPORT
 export const CRISIS_REPORT_CLINICIAN_PATH :string = `${REPORTS_PATH}/crisis-clinician/${REPORT_ID_PATH}`;
 export const SYMPTOMS_REPORT_PATH :string = `${REPORTS_PATH}/symptoms/${REPORT_ID_PATH}`;
 export const NEW_CRISIS_PATH :string = '/new-crisis';
+export const NEW_FOLLOW_UP_PATH :string = '/new-follow-up';
 export const NEW_CRISIS_CLINICIAN_PATH :string = '/new-crisis-clinician';
 export const NEW_SYMPTOMS_PATH :string = '/new-symptoms';
 

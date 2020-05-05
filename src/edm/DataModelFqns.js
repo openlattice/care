@@ -6,6 +6,10 @@ const { OPENLATTICE_ID_FQN } = Constants;
 export { OPENLATTICE_ID_FQN };
 
 /* offense */
+const NATURE_OF_CRISIS_FQN = new FullyQualifiedName('ol.natureofcrisis');
+export { NATURE_OF_CRISIS_FQN };
+
+/* offense */
 const DIVERSION_STATUS_FQN = new FullyQualifiedName('ol.diversionstatus');
 export { DIVERSION_STATUS_FQN };
 
