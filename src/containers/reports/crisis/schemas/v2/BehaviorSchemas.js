@@ -2,9 +2,9 @@ import { DataProcessingUtils } from 'lattice-fabricate';
 
 import * as FQN from '../../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
-import { BEHAVIORS, SELECT_ALL_THAT_APPLY } from '../constants';
+import { BEHAVIORS, CRISIS_REPORT, SELECT_ALL_THAT_APPLY } from '../constants';
 
-const { BEHAVIOR_FQN } = APP_TYPES_FQNS;
+const { BEHAVIOR_FQN, CRISIS_REPORT_FQN } = APP_TYPES_FQNS;
 
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
 
@@ -25,6 +25,11 @@ const schema = {
           },
           // minItems: 1,
           uniqueItems: true
+        },
+        [getEntityAddressKey(0, CRISIS_REPORT_FQN, FQN.TYPE_FQN)]: {
+          title: 'Report Type',
+          type: 'string',
+          default: CRISIS_REPORT,
         },
       },
       // required: [
@@ -50,6 +55,9 @@ const uiSchema = {
         withOther: true,
       }
     },
+    [getEntityAddressKey(0, CRISIS_REPORT_FQN, FQN.TYPE_FQN)]: {
+      'ui:widget': 'hidden'
+    }
   }
 };
 
