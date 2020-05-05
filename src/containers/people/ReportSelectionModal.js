@@ -19,6 +19,7 @@ const ReportSelectionModal = (props :Props) => {
     <Modal
         textTitle="Select Report Type"
         isVisible={isVisible}
+        viewportScrolling
         onClose={onClose}>
       <ReportSelectionBody selectedPerson={selectedPerson} />
     </Modal>

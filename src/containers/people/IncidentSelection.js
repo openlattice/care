@@ -1,8 +1,9 @@
 // @flow
 import React, { useEffect } from 'react';
 
+import styled from 'styled-components';
 import { Map } from 'immutable';
-import { Select } from 'lattice-ui-kit';
+import { Label, Select } from 'lattice-ui-kit';
 import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
@@ -12,6 +13,18 @@ import { goToPath } from '../../core/router/RoutingActions';
 import { getEntityKeyId } from '../../utils/DataUtils';
 import { getDateShortFromIsoDate } from '../../utils/DateUtils';
 import { clearIncidents, getProfileIncidents } from '../profile/actions/ReportActions';
+import { FOLLOW_UP_REPORT } from '../reports/crisis/schemas/constants';
+
+const Wrapper = styled.div`
+  padding-bottom: 30px;
+`;
+
+const Centered = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px 0;
+`;
 
 type Props = {
   state :{ path :string, person :Map, type :string };
@@ -44,19 +57,29 @@ const IncidentSelection = (props :Props) => {
   });
 
   return (
-    <div>
-      {`File a ${state.type} for an existing incident`}
+    <Wrapper>
+      <span>
+        <Label subtle>Type: </Label>
+        <span>{state.type}</span>
+      </span>
       <Select
-          placeholder="Select an incident"
+          placeholder="Select a prior incident"
           options={incidentOptions}
           onChange={(option) => {
             dispatch(goToPath(state.path, { selectedPerson: state.person, incident: option.value }));
           }}
           isLoading={fetchState === RequestStates.PENDING} />
-      or
-      <p>{`File a ${state.type} against a new incident`}</p>
-      <LinkButton to={state.path} state={{ selectedPerson: state.person }}>New Incident</LinkButton>
-    </div>
+      {
+        (state.type !== FOLLOW_UP_REPORT) && (
+          <>
+            <Centered>
+              <Label subtle>or</Label>
+            </Centered>
+            <LinkButton fullWidth to={state.path} state={{ selectedPerson: state.person }}>New Incident</LinkButton>
+          </>
+        )
+      }
+    </Wrapper>
   );
 };
 
