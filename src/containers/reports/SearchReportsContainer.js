@@ -13,15 +13,18 @@ import {
   Label,
   PaginationToolbar,
   SearchResults,
+  Select,
   StyleUtils
 } from 'lattice-ui-kit';
 import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
 import ReportResult from './ReportResult';
-import { getReportsByDateRange } from './ReportsActions';
+import { getReportsByDateRange, getReportsByDateRangeV2 } from './ReportsActions';
 import { reportLabels } from './constants';
+import { REPORT_TYPE_OPTIONS } from './crisis/schemas/constants';
 
+import { useAppSettings } from '../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../components/layout';
 import { isNonEmptyString } from '../../utils/LangUtils';
 
@@ -63,7 +66,11 @@ const SearchReportsContainer = () => {
   const fetchState = useSelector((store) => store.getIn(['reports', 'fetchState']));
   const [dateEnd, setDateEnd] = useState();
   const [dateStart, setDateStart] = useState();
+  const [reportType, setReportType] = useState(REPORT_TYPE_OPTIONS[0]);
   const [page, setPage] = useState(0);
+  const settings = useAppSettings();
+
+  const getReportsAction = settings.get('v2') ? getReportsByDateRangeV2 : getReportsByDateRange;
 
   const hasSearched = fetchState !== RequestStates.STANDBY;
   const isLoading = fetchState === RequestStates.PENDING;
@@ -72,6 +79,7 @@ const SearchReportsContainer = () => {
     const newSearchInputs = Map({
       dateEnd,
       dateStart,
+      reportType,
       maxHits: MAX_HITS,
       start,
     });
@@ -79,7 +87,7 @@ const SearchReportsContainer = () => {
     const hasValues = newSearchInputs.some(isNonEmptyString);
 
     if (hasValues) {
-      dispatch(getReportsByDateRange({
+      dispatch(getReportsAction({
         searchInputs: newSearchInputs,
         start,
         maxHits: MAX_HITS
@@ -115,6 +123,18 @@ const SearchReportsContainer = () => {
                     <Label htmlFor="date-end">Date End</Label>
                     <DatePicker id="date-end" onChange={setDateEnd} />
                   </FlexColumn>
+                  {
+                    settings.get('v2') && (
+                      <FlexColumn>
+                        <Label htmlFor="report-type">Report Type</Label>
+                        <Select
+                            inputId="report-type"
+                            options={REPORT_TYPE_OPTIONS}
+                            onChange={(option) => setReportType(option)}
+                            value={reportType} />
+                      </FlexColumn>
+                    )
+                  }
                   <FlexColumn>
                     <Label stealth>Search</Label>
                     <Button
