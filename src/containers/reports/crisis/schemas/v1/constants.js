@@ -144,6 +144,7 @@ export const INJURY_TYPES = [
 ];
 
 export const OFFICER_TRAINING = [
+  'Officer with 8-hour CIT training',
   'Officer with 40-hour CIT training',
   'Co-responder (mental health professional)'
 ];
