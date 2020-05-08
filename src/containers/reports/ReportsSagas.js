@@ -35,11 +35,13 @@ import {
   DELETE_REPORT,
   GET_REPORT,
   GET_REPORTS_BY_DATE_RANGE,
+  GET_REPORTS_BY_DATE_RANGE_V2,
   SUBMIT_REPORT,
   UPDATE_REPORT,
   deleteReport,
   getReport,
   getReportsByDateRange,
+  getReportsByDateRangeV2,
   submitReport,
   updateReport,
 } from './ReportsActions';
@@ -321,6 +323,220 @@ function* getReportWatcher() :Generator<*, *, *> {
 
 /*
  *
+ * ReportsActions.getReportsByDateRangeV2()
+ *
+ */
+
+function* getReportsByDateRangeV2Worker(action :SequenceAction) :Generator<*, *, *> {
+  try {
+    const { value } = action;
+    if (!isPlainObject(value)) throw ERR_ACTION_VALUE_TYPE;
+    const { searchInputs, start = 0, maxHits = 20 } = value;
+
+    yield put(getReportsByDateRangeV2.request(action.id));
+
+    const edm :Map = yield select((state) => state.get('edm'));
+    const app = yield select((state) => state.get('app', Map()));
+
+    const startDT = DateTime.fromISO(searchInputs.get('dateStart'));
+    const endDT = DateTime.fromISO(searchInputs.get('dateEnd'));
+    const type = searchInputs.getIn(['reportType', 'value']);
+
+    // set entity set to match reportType value
+    const reportESID :UUID = getESIDFromApp(app, type);
+    const peopleESID :UUID = getPeopleESId(app);
+    const reportedESID :UUID = getReportedESId(app);
+    const staffESID :UUID = getStaffESId(app);
+    const incidentESID :UUID = getESIDFromApp(app, INCIDENT_FQN);
+    const partOfESID :UUID = getESIDFromApp(app, PART_OF_FQN);
+    const involvedInESID :UUID = getESIDFromApp(app, INVOLVED_IN_FQN);
+
+    const datetimePTID :UUID = edm.getIn(['fqnToIdMap', FQN.COMPLETED_DT_FQN]);
+
+    const startTerm = startDT.isValid ? startDT.toISO() : '*';
+    const endTerm = endDT.isValid ? endDT.endOf('day').toISO() : '*';
+    const searchTerm = getSearchTerm(datetimePTID, `[${startTerm} TO ${endTerm}]`);
+
+    // search for reports within date range
+    const searchOptions = {
+      entitySetIds: [reportESID],
+      start,
+      maxHits,
+      constraints: [{
+        constraints: [{
+          type: 'advanced',
+          searchFields: [
+            {
+              searchTerm,
+              property: datetimePTID
+            }
+          ]
+        }]
+      }],
+      sort: {
+        propertyTypeId: datetimePTID,
+        type: 'field'
+      }
+    };
+
+    const { data, error } = yield call(
+      executeSearchWorker,
+      executeSearch({ searchOptions })
+    );
+
+    if (error) throw error;
+
+    const { hits, numHits } = data;
+    const reportData = fromJS(hits);
+
+    const reportEKIDs = reportData.map((report) => report.getIn([OPENLATTICE_ID_FQN, 0])).toJS();
+
+    let incidentEKIDsByReportEKID = Map();
+    let staffResponseData = Map();
+    let peopleResponseData = Map();
+    if (reportEKIDs.length) {
+      const incidentSearchParams = {
+        entitySetId: reportESID,
+        filter: {
+          entityKeyIds: reportEKIDs,
+          edgeEntitySetIds: [partOfESID],
+          destinationEntitySetIds: [],
+          sourceEntitySetIds: [incidentESID]
+        }
+      };
+
+      const staffSearchParams = {
+        entitySetId: reportESID,
+        filter: {
+          entityKeyIds: reportEKIDs,
+          edgeEntitySetIds: [reportedESID],
+          destinationEntitySetIds: [],
+          sourceEntitySetIds: [staffESID],
+        }
+      };
+      const staffRequest = call(
+        searchEntityNeighborsWithFilterWorker,
+        searchEntityNeighborsWithFilter(staffSearchParams)
+      );
+
+      const incidentRequest = call(
+        searchEntityNeighborsWithFilterWorker,
+        searchEntityNeighborsWithFilter(incidentSearchParams)
+      );
+
+      const [staffResponse, incidentResponse] = yield all([
+        staffRequest,
+        incidentRequest
+      ]);
+
+      if (staffResponse.error || incidentResponse.error) {
+        const neighborErrors = {
+          error: [
+            staffResponse.error,
+            incidentResponse.error,
+          ]
+        };
+
+        throw neighborErrors;
+      }
+
+      staffResponseData = fromJS(staffResponse.data);
+      const incidentsResponseData :Map = fromJS(incidentResponse.data);
+      const incidentEKIDs = [];
+      incidentEKIDsByReportEKID = incidentsResponseData.map((incident) => {
+        const incidentDetails = incident.getIn([0, 'neighborDetails']);
+        const incidentEKID = getEntityKeyId(incidentDetails);
+        incidentEKIDs.push(incidentEKID);
+        return incidentEKID;
+      });
+
+      const personSearchParams = {
+        entitySetId: incidentESID,
+        filter: {
+          entityKeyIds: incidentEKIDs,
+          edgeEntitySetIds: [involvedInESID],
+          destinationEntitySetIds: [],
+          sourceEntitySetIds: [peopleESID],
+        }
+      };
+
+      const personResponse = yield call(
+        searchEntityNeighborsWithFilterWorker,
+        searchEntityNeighborsWithFilter(personSearchParams)
+      );
+
+      if (personResponse.error) throw personResponse.error;
+
+      peopleResponseData = fromJS(personResponse.data);
+    }
+
+    const reportsByDateRange = List().withMutations((mutable) => {
+
+      reportData.forEach((report) => {
+        const entityKeyId = report.getIn([OPENLATTICE_ID_FQN, 0]);
+        const reportType = report.getIn([FQN.TYPE_FQN, 0]);
+        const natureOfCrisis = report.getIn([FQN.DISPATCH_REASON_FQN]);
+        const rawOccurred = report.getIn([FQN.COMPLETED_DT_FQN, 0]);
+        let occurred;
+        if (rawOccurred) {
+          occurred = DateTime.fromISO(
+            rawOccurred
+          ).toLocaleString(DateTime.DATE_SHORT);
+        }
+
+        const incidentEKID = incidentEKIDsByReportEKID.get(entityKeyId);
+        const staffs = staffResponseData.get(entityKeyId, List());
+        const subjectDataList = peopleResponseData.get(incidentEKID, List());
+
+        const { submitted } = getStaffInteractions(staffs);
+
+        if (subjectDataList.count() > 1) {
+          LOG.warn('more than one person found in report', entityKeyId);
+        }
+        if (!subjectDataList.count()) {
+          LOG.warn('person not found in report', entityKeyId);
+        }
+        else {
+          const subjectEntity = subjectDataList.first() || Map();
+          const subjectData = subjectEntity.get('neighborDetails', Map());
+          const rawDob = subjectData.getIn([FQN.PERSON_DOB_FQN, 0]);
+          let dob;
+          if (rawDob) {
+            dob = DateTime.fromISO(
+              rawDob
+            ).toLocaleString(DateTime.DATE_SHORT);
+          }
+
+          mutable.push(OrderedMap({
+            lastName: subjectData.getIn([FQN.PERSON_LAST_NAME_FQN, 0]),
+            firstName: subjectData.getIn([FQN.PERSON_FIRST_NAME_FQN, 0]),
+            middleName: subjectData.getIn([FQN.PERSON_MIDDLE_NAME_FQN, 0]),
+            dob,
+            occurred,
+            reportType,
+            natureOfCrisis,
+            reporter: submitted.getIn(['neighborDetails', FQN.PERSON_ID_FQN, 0]),
+            [OPENLATTICE_ID_FQN]: entityKeyId
+          }));
+        }
+
+      });
+    });
+
+    yield put(getReportsByDateRangeV2.success(action.id, { reportsByDateRange, totalHits: numHits }));
+  }
+  catch (error) {
+    LOG.error(action.type, error);
+    yield put(getReportsByDateRangeV2.failure(action.id, error));
+  }
+}
+
+function* getReportsByDateRangeV2Watcher() :Generator<*, *, *> {
+  yield takeEvery(GET_REPORTS_BY_DATE_RANGE_V2, getReportsByDateRangeV2Worker);
+}
+
+/*
+ *
  * ReportsActions.getReportsByDateRange()
  *
  */
@@ -384,54 +600,59 @@ function* getReportsByDateRangeWorker(action :SequenceAction) :Generator<*, *, *
 
     const reportEKIDs = reportData.map((report) => report.getIn([OPENLATTICE_ID_FQN, 0]));
 
-    const peopleSearchParams = {
-      entitySetId,
-      filter: {
-        entityKeyIds: reportEKIDs.toJS(),
-        edgeEntitySetIds: [appearsInESID],
-        destinationEntitySetIds: [],
-        sourceEntitySetIds: [peopleESID],
-      }
-    };
+    let peopleResponseData = Map();
+    let staffResponseData = Map();
+    if (reportEKIDs.count()) {
 
-    const staffSearchParams = {
-      entitySetId,
-      filter: {
-        entityKeyIds: reportEKIDs.toJS(),
-        edgeEntitySetIds: [reportedESID],
-        destinationEntitySetIds: [],
-        sourceEntitySetIds: [staffESID],
-      }
-    };
-
-    const peopleRequest = call(
-      searchEntityNeighborsWithFilterWorker,
-      searchEntityNeighborsWithFilter(peopleSearchParams)
-    );
-
-    const staffRequest = call(
-      searchEntityNeighborsWithFilterWorker,
-      searchEntityNeighborsWithFilter(staffSearchParams)
-    );
-
-    const [peopleResponse, staffResponse] = yield all([
-      peopleRequest,
-      staffRequest
-    ]);
-
-    if (peopleResponse.error || staffResponse.error) {
-      const neighborErrors = {
-        error: [
-          peopleResponse.error,
-          staffResponse.error
-        ]
+      const peopleSearchParams = {
+        entitySetId,
+        filter: {
+          entityKeyIds: reportEKIDs.toJS(),
+          edgeEntitySetIds: [appearsInESID],
+          destinationEntitySetIds: [],
+          sourceEntitySetIds: [peopleESID],
+        }
       };
 
-      throw neighborErrors;
-    }
+      const staffSearchParams = {
+        entitySetId,
+        filter: {
+          entityKeyIds: reportEKIDs.toJS(),
+          edgeEntitySetIds: [reportedESID],
+          destinationEntitySetIds: [],
+          sourceEntitySetIds: [staffESID],
+        }
+      };
 
-    const peopleResponseData = fromJS(peopleResponse.data);
-    const staffResponseData = fromJS(staffResponse.data);
+      const peopleRequest = call(
+        searchEntityNeighborsWithFilterWorker,
+        searchEntityNeighborsWithFilter(peopleSearchParams)
+      );
+
+      const staffRequest = call(
+        searchEntityNeighborsWithFilterWorker,
+        searchEntityNeighborsWithFilter(staffSearchParams)
+      );
+
+      const [peopleResponse, staffResponse] = yield all([
+        peopleRequest,
+        staffRequest
+      ]);
+
+      if (peopleResponse.error || staffResponse.error) {
+        const neighborErrors = {
+          error: [
+            peopleResponse.error,
+            staffResponse.error
+          ]
+        };
+
+        throw neighborErrors;
+      }
+
+      peopleResponseData = fromJS(peopleResponse.data);
+      staffResponseData = fromJS(staffResponse.data);
+    }
 
     const reportsByDateRange = List().withMutations((mutable) => {
 
@@ -785,7 +1006,7 @@ function* getIncidentReportsWorker(action :SequenceAction) :Generator<any, any, 
       filter: {
         entityKeyIds: incidentEKIDs,
         edgeEntitySetIds: [partOfESID],
-        destinationEntitySetIds: [crisisReportESID, crisisReportClinicianESID, followupReportESID,],
+        destinationEntitySetIds: [crisisReportESID, crisisReportClinicianESID, followupReportESID],
         sourceEntitySetIds: [],
       },
     };
@@ -1049,6 +1270,8 @@ export {
   getReportsBehaviorAndSafetyWorker,
   getReportsByDateRangeWatcher,
   getReportsByDateRangeWorker,
+  getReportsByDateRangeV2Watcher,
+  getReportsByDateRangeV2Worker,
   submitReportWatcher,
   submitReportWorker,
   updateReportWatcher,

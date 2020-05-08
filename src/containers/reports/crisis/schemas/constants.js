@@ -1,6 +1,23 @@
+import { APP_TYPES_FQNS as APP } from '../../../../shared/Consts';
+
 const CRISIS_REPORT = 'Crisis Report';
 const CRISIS_REPORT_CLINICIAN = 'Crisis Report (Clinician)';
 const FOLLOW_UP_REPORT = 'Follow-up Report';
+
+const REPORT_TYPE_OPTIONS = [
+  {
+    label: CRISIS_REPORT,
+    value: APP.CRISIS_REPORT_FQN,
+  },
+  {
+    label: CRISIS_REPORT_CLINICIAN,
+    value: APP.CRISIS_REPORT_CLINICIAN_FQN,
+  },
+  {
+    label: FOLLOW_UP_REPORT,
+    value: APP.FOLLOW_UP_REPORT_FQN
+  },
+];
 
 const BEHAVIORS = [
   'Belligerent',
@@ -286,6 +303,7 @@ export {
   PRIOR_ARREST_HISTORY,
   PURPOSE_OF_JDP,
   REFERRAL_SOURCE,
+  REPORT_TYPE_OPTIONS,
   RESIDES_WITH,
   SELECT_ALL_THAT_APPLY,
   SELECT_ONLY_ONE,
