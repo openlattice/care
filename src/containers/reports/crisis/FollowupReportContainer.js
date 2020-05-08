@@ -15,6 +15,7 @@ import { RequestStates } from 'redux-reqseq';
 
 import {
   addOptionalCrisisReportContent,
+  clearCrisisReport,
   deleteCrisisReportContent,
   getCrisisReportV2,
   updateCrisisReport
@@ -74,6 +75,7 @@ const FollowupReportContainer = () => {
       reportFQN: FOLLOW_UP_REPORT_FQN,
       reviewSchema: reviewSchemas.schema
     }));
+    return () => dispatch(clearCrisisReport());
   }, [dispatch, reportId, reviewSchemas]);
 
   if (fetchState === RequestStates.PENDING) {

@@ -15,10 +15,11 @@ import { RequestStates } from 'redux-reqseq';
 
 import {
   addOptionalCrisisReportContent,
+  clearCrisisReport,
   deleteCrisisReportContent,
   getCrisisReport,
   getCrisisReportV2,
-  updateCrisisReport
+  updateCrisisReport,
 } from './CrisisActions';
 import { v1, v2 } from './schemas';
 
@@ -88,6 +89,8 @@ const CrisisReportContainer = () => {
         reportFQN: BEHAVIORAL_HEALTH_REPORT_FQN,
       }));
     }
+
+    return () => dispatch(clearCrisisReport());
   }, [dispatch, reportId, settings, reviewSchemas]);
 
   if (fetchState === RequestStates.PENDING) {
