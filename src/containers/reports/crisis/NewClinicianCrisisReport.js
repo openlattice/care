@@ -11,16 +11,15 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
-import { clearCrisisReport, submitCrisisReport, submitCrisisReportV2 } from './CrisisActions';
-import { v1, v2 } from './schemas';
-import { CRISIS_REPORT } from './schemas/constants';
+import { clearCrisisReport, submitCrisisReportV2 } from './CrisisActions';
+import { v2 } from './schemas';
+import { CRISIS_REPORT_CLINICIAN } from './schemas/constants';
 
 import SuccessSplash from '../shared/SuccessSplash';
-import { useAppSettings } from '../../../components/hooks';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { generateReviewSchema } from '../../../utils/SchemaUtils';
 
-const { CRISIS_REPORT_FQN } = APP_TYPES_FQNS;
+const { CRISIS_REPORT_CLINICIAN_FQN } = APP_TYPES_FQNS;
 
 const ActionRow = styled.div`
   display: flex;
@@ -36,12 +35,10 @@ type Props = {
 };
 
 const NewCrisisReport = ({ incident, pageRef, selectedPerson } :Props) => {
-  const settings = useAppSettings();
   const dispatch = useDispatch();
   const submitState = useSelector((store) => store.getIn(['crisisReport', 'submitState']));
 
-  let schemaVersion = v1;
-  if (settings.get('v2')) schemaVersion = v2.officer;
+  const schemaVersion = v2.clinician;
   let { schemas, uiSchemas } = schemaVersion;
   if (!incident.isEmpty()) {
     schemas = schemas.slice(1);
@@ -53,16 +50,12 @@ const NewCrisisReport = ({ incident, pageRef, selectedPerson } :Props) => {
     [schemas, uiSchemas]
   );
 
-  const getVersionSubmit = (formData :Object) => {
-    let action = submitCrisisReport;
-    if (settings.get('v2')) action = submitCrisisReportV2;
-    return () => dispatch(action({
-      formData,
-      incident,
-      reportFQN: CRISIS_REPORT_FQN,
-      selectedPerson,
-    }));
-  };
+  const getVersionSubmit = (formData :Object) => () => dispatch(submitCrisisReportV2({
+    formData,
+    incident,
+    reportFQN: CRISIS_REPORT_CLINICIAN_FQN,
+    selectedPerson,
+  }));
 
   useEffect(() => () => dispatch(clearCrisisReport()), [dispatch]);
 
@@ -70,7 +63,7 @@ const NewCrisisReport = ({ incident, pageRef, selectedPerson } :Props) => {
 
   if (submitState === RequestStates.SUCCESS) {
     return (
-      <SuccessSplash reportType={CRISIS_REPORT} selectedPerson={selectedPerson} />
+      <SuccessSplash reportType={CRISIS_REPORT_CLINICIAN} selectedPerson={selectedPerson} />
     );
   }
 

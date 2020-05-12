@@ -59,7 +59,7 @@ export default function crisisReportReducer(state :Map = INITIAL_STATE, action :
 
     case getCrisisReportV2.case(action.type): {
       return getCrisisReportV2.reducer(state, action, {
-        REQUEST: () => state.set('fetchState', RequestStates.PENDING),
+        REQUEST: () => INITIAL_STATE.set('fetchState', RequestStates.PENDING),
         SUCCESS: () => state
           .set('fetchState', RequestStates.SUCCESS)
           .merge(action.value),

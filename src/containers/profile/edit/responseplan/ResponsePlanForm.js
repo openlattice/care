@@ -259,7 +259,7 @@ class ResponsePlanForm extends Component<Props, State> {
     return (
       <Card>
         <CardHeader mode="primary" padding="sm">
-          Background & Response Plan
+          Response Plan
         </CardHeader>
         <Form
             disabled={prepopulated}

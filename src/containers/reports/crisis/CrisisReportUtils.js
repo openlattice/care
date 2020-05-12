@@ -35,10 +35,15 @@ const {
   parseEntityAddressKey,
 } = DataProcessingUtils;
 
-const getDiagnosisAssociations = (formData, existingEntityKeyIds, createdDateTime) => {
+const getDiagnosisAssociations = (
+  formData,
+  existingEntityKeyIds,
+  createdDateTime,
+  reportFQN
+) => {
   const associations = [];
   const diagnosis = get(formData, getPageSectionKey(4, 1), []);
-  const reportIndex = existingEntityKeyIds[APP.CLINICIAN_REPORT_FQN] || 0;
+  const reportIndex = existingEntityKeyIds[reportFQN] || 0;
 
   const NOW_DATA = { [FQN.COMPLETED_DT_FQN]: [createdDateTime] };
 
@@ -48,17 +53,22 @@ const getDiagnosisAssociations = (formData, existingEntityKeyIds, createdDateTim
       i,
       APP.DIAGNOSIS_FQN,
       reportIndex,
-      APP.CLINICIAN_REPORT_FQN,
+      reportFQN,
       NOW_DATA,
     ]);
   }
   return associations;
 };
 
-const getMedicationAssociations = (formData, existingEntityKeyIds, createdDateTime) => {
+const getMedicationAssociations = (
+  formData,
+  existingEntityKeyIds,
+  createdDateTime,
+  reportFQN
+) => {
   const associations = [];
   const medications = get(formData, getPageSectionKey(4, 2), []);
-  const reportIndex = existingEntityKeyIds[APP.CLINICIAN_REPORT_FQN] || 0;
+  const reportIndex = existingEntityKeyIds[reportFQN] || 0;
 
   const NOW_DATA = { [FQN.COMPLETED_DT_FQN]: [createdDateTime] };
 
@@ -68,7 +78,7 @@ const getMedicationAssociations = (formData, existingEntityKeyIds, createdDateTi
       i,
       APP.MEDICATION_STATEMENT_FQN,
       reportIndex,
-      APP.CLINICIAN_REPORT_FQN,
+      reportFQN,
       NOW_DATA,
     ]);
   }
@@ -78,12 +88,13 @@ const getMedicationAssociations = (formData, existingEntityKeyIds, createdDateTi
 const getOptionalCrisisReportAssociations = (
   formData :Object,
   existingEntityKeyIds :Object,
-  createdDateTime :string = DateTime.local().toISO()
+  createdDateTime :string = DateTime.local().toISO(),
+  reportFQN :FullyQualifiedName,
 ) :any[][] => {
   const associations = [];
 
-  const diagnosis :any[][] = getDiagnosisAssociations(formData, existingEntityKeyIds, createdDateTime);
-  const medications :any[][] = getMedicationAssociations(formData, existingEntityKeyIds, createdDateTime);
+  const diagnosis :any[][] = getDiagnosisAssociations(formData, existingEntityKeyIds, createdDateTime, reportFQN);
+  const medications :any[][] = getMedicationAssociations(formData, existingEntityKeyIds, createdDateTime, reportFQN);
 
   return associations.concat(diagnosis, medications);
 };
@@ -91,7 +102,7 @@ const getOptionalCrisisReportAssociations = (
 const getCrisisReportAssociations = (
   formData :Object,
   existingEntityKeyIds :Object,
-  createdDateTime :string = DateTime.local().toISO()
+  createdDateTime :string = DateTime.local().toISO(),
 ) :any[][] => {
   const personEKID = existingEntityKeyIds[APP.PEOPLE_FQN];
   const staffEKID = existingEntityKeyIds[APP.STAFF_FQN];
@@ -119,50 +130,136 @@ const getCrisisReportAssociations = (
   return associations;
 };
 
-const getNewCrisisReportAssociations = (
+const getClinicianCrisisReportAssociations = (
   formData :Object,
   existingEntityKeyIds :Object,
   createdDateTime :string = DateTime.local().toISO()
 ) :any[][] => {
   const personEKID = existingEntityKeyIds[APP.PEOPLE_FQN];
   const staffEKID = existingEntityKeyIds[APP.STAFF_FQN];
+  const incidentEKID = existingEntityKeyIds[APP.INCIDENT_FQN] || 0;
+
+  const NOW_DATA = { [FQN.COMPLETED_DT_FQN]: [createdDateTime] };
+
+  // static assocations
+  let associations :any[][] = [
+    // [APP.LOCATED_AT_FQN, incidentEKID, APP.INCIDENT_FQN, 0, APP.LOCATION_FQN, NOW_DATA],
+    [APP.REPORTED_FQN, staffEKID, APP.STAFF_FQN, 0, APP.CRISIS_REPORT_CLINICIAN_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, incidentEKID, APP.INCIDENT_FQN, 0, APP.CRISIS_REPORT_CLINICIAN_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.NATURE_OF_CRISIS_FQN, 0, APP.CRISIS_REPORT_CLINICIAN_FQN, NOW_DATA],
+    // [APP.PART_OF_FQN, 0, APP.LOCATION_FQN, 0, APP.CRISIS_REPORT_CLINICIAN_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.BEHAVIOR_FQN, 0, APP.CRISIS_REPORT_CLINICIAN_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.SUBSTANCE_FQN, 0, APP.CRISIS_REPORT_CLINICIAN_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 1, APP.SUBSTANCE_FQN, 0, APP.CRISIS_REPORT_CLINICIAN_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.WEAPON_FQN, 0, APP.CRISIS_REPORT_CLINICIAN_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.VIOLENT_BEHAVIOR_FQN, 0, APP.CRISIS_REPORT_CLINICIAN_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.INJURY_FQN, 0, APP.CRISIS_REPORT_CLINICIAN_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.SELF_HARM_FQN, 0, APP.CRISIS_REPORT_CLINICIAN_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.HOUSING_FQN, 0, APP.CRISIS_REPORT_CLINICIAN_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.OCCUPATION_FQN, 0, APP.CRISIS_REPORT_CLINICIAN_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.INCOME_FQN, 0, APP.CRISIS_REPORT_CLINICIAN_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.INSURANCE_FQN, 0, APP.CRISIS_REPORT_CLINICIAN_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 1, APP.INSURANCE_FQN, 0, APP.CRISIS_REPORT_CLINICIAN_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.INTERACTION_STRATEGY_FQN, 0, APP.CRISIS_REPORT_CLINICIAN_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.ENCOUNTER_FQN, 0, APP.CRISIS_REPORT_CLINICIAN_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.ENCOUNTER_DETAILS_FQN, 0, APP.CRISIS_REPORT_CLINICIAN_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.INVOICE_FQN, 0, APP.CRISIS_REPORT_CLINICIAN_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.REFERRAL_REQUEST_FQN, 0, APP.CRISIS_REPORT_CLINICIAN_FQN, NOW_DATA],
+  ];
+
+  // do not duplicate edges
+  if (!incidentEKID) {
+    associations = associations.concat([
+      [APP.INVOLVED_IN_FQN, personEKID, APP.PEOPLE_FQN, incidentEKID, APP.INCIDENT_FQN, NOW_DATA],
+      [APP.REPORTED_FQN, staffEKID, APP.STAFF_FQN, incidentEKID, APP.INCIDENT_FQN, NOW_DATA],
+    ]);
+  }
+
+  const optionalAssociations :any[][] = getOptionalCrisisReportAssociations(
+    formData,
+    existingEntityKeyIds,
+    createdDateTime,
+    APP.CRISIS_REPORT_CLINICIAN_FQN
+  );
+
+  return associations.concat(optionalAssociations);
+};
+
+const getOfficerCrisisReportAssociations = (
+  formData :Object,
+  existingEntityKeyIds :Object,
+  createdDateTime :string = DateTime.local().toISO()
+) :any[][] => {
+  const personEKID = existingEntityKeyIds[APP.PEOPLE_FQN];
+  const staffEKID = existingEntityKeyIds[APP.STAFF_FQN];
+  const incidentEKID = existingEntityKeyIds[APP.INCIDENT_FQN] || 0;
+
+  const NOW_DATA = { [FQN.COMPLETED_DT_FQN]: [createdDateTime] };
+
+  // static assocations
+  let associations :any[][] = [
+    // [APP.LOCATED_AT_FQN, 0, APP.INCIDENT_FQN, 0, APP.LOCATION_FQN, NOW_DATA],
+    [APP.REPORTED_FQN, staffEKID, APP.STAFF_FQN, 0, APP.CRISIS_REPORT_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, incidentEKID, APP.INCIDENT_FQN, 0, APP.CRISIS_REPORT_FQN, NOW_DATA],
+    // [APP.PART_OF_FQN, 0, APP.LOCATION_FQN, 0, APP.CRISIS_REPORT_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.BEHAVIOR_FQN, 0, APP.CRISIS_REPORT_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.SUBSTANCE_FQN, 0, APP.CRISIS_REPORT_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 1, APP.SUBSTANCE_FQN, 0, APP.CRISIS_REPORT_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.WEAPON_FQN, 0, APP.CRISIS_REPORT_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.VIOLENT_BEHAVIOR_FQN, 0, APP.CRISIS_REPORT_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.INJURY_FQN, 0, APP.CRISIS_REPORT_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.SELF_HARM_FQN, 0, APP.CRISIS_REPORT_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.HOUSING_FQN, 0, APP.CRISIS_REPORT_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.OCCUPATION_FQN, 0, APP.CRISIS_REPORT_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.INCOME_FQN, 0, APP.CRISIS_REPORT_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.INTERACTION_STRATEGY_FQN, 0, APP.CRISIS_REPORT_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.OFFENSE_FQN, 0, APP.CRISIS_REPORT_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.DISPOSITION_FQN, 0, APP.CRISIS_REPORT_FQN, NOW_DATA],
+  ];
+
+  // do not duplicate edges
+  if (!incidentEKID) {
+    associations = associations.concat([
+      [APP.INVOLVED_IN_FQN, personEKID, APP.PEOPLE_FQN, incidentEKID, APP.INCIDENT_FQN, NOW_DATA],
+      [APP.REPORTED_FQN, staffEKID, APP.STAFF_FQN, incidentEKID, APP.INCIDENT_FQN, NOW_DATA],
+    ]);
+  }
+
+  const optionalAssociations :any[][] = getOptionalCrisisReportAssociations(
+    formData,
+    existingEntityKeyIds,
+    createdDateTime,
+    APP.CRISIS_REPORT_FQN
+  );
+
+  return associations.concat(optionalAssociations);
+};
+
+const getFollowupReportAssociations = (
+  formData :Object,
+  existingEntityKeyIds :Object,
+  createdDateTime :string = DateTime.local().toISO()
+) :any[][] => {
+  const staffEKID = existingEntityKeyIds[APP.STAFF_FQN];
+  const incidentEKID = existingEntityKeyIds[APP.INCIDENT_FQN];
 
   const NOW_DATA = { [FQN.COMPLETED_DT_FQN]: [createdDateTime] };
 
   // static assocations
   const associations :any[][] = [
-    [APP.INVOLVED_IN_FQN, personEKID, APP.PEOPLE_FQN, 0, APP.INCIDENT_FQN, NOW_DATA],
-    [APP.LOCATED_AT_FQN, 0, APP.INCIDENT_FQN, 0, APP.LOCATION_FQN, NOW_DATA],
-    [APP.REPORTED_FQN, staffEKID, APP.STAFF_FQN, 0, APP.INCIDENT_FQN, NOW_DATA],
-    [APP.REPORTED_FQN, staffEKID, APP.STAFF_FQN, 0, APP.CLINICIAN_REPORT_FQN, NOW_DATA],
-    [APP.PART_OF_FQN, 0, APP.INCIDENT_FQN, 0, APP.CLINICIAN_REPORT_FQN, NOW_DATA],
-    [APP.PART_OF_FQN, 0, APP.NATURE_OF_CRISIS_FQN, 0, APP.CLINICIAN_REPORT_FQN, NOW_DATA],
-    [APP.PART_OF_FQN, 0, APP.BEHAVIOR_FQN, 0, APP.CLINICIAN_REPORT_FQN, NOW_DATA],
-    [APP.PART_OF_FQN, 0, APP.SUBSTANCE_FQN, 0, APP.CLINICIAN_REPORT_FQN, NOW_DATA],
-    [APP.PART_OF_FQN, 1, APP.SUBSTANCE_FQN, 0, APP.CLINICIAN_REPORT_FQN, NOW_DATA],
-    [APP.PART_OF_FQN, 0, APP.WEAPON_FQN, 0, APP.CLINICIAN_REPORT_FQN, NOW_DATA],
-    [APP.PART_OF_FQN, 0, APP.VIOLENT_BEHAVIOR_FQN, 0, APP.CLINICIAN_REPORT_FQN, NOW_DATA],
-    [APP.PART_OF_FQN, 0, APP.INJURY_FQN, 0, APP.CLINICIAN_REPORT_FQN, NOW_DATA],
-    [APP.PART_OF_FQN, 0, APP.SELF_HARM_FQN, 0, APP.CLINICIAN_REPORT_FQN, NOW_DATA],
-    [APP.PART_OF_FQN, 0, APP.HOUSING_FQN, 0, APP.CLINICIAN_REPORT_FQN, NOW_DATA],
-    [APP.PART_OF_FQN, 0, APP.OCCUPATION_FQN, 0, APP.CLINICIAN_REPORT_FQN, NOW_DATA],
-    [APP.PART_OF_FQN, 0, APP.INCOME_FQN, 0, APP.CLINICIAN_REPORT_FQN, NOW_DATA],
-    [APP.PART_OF_FQN, 0, APP.INSURANCE_FQN, 0, APP.CLINICIAN_REPORT_FQN, NOW_DATA],
-    [APP.PART_OF_FQN, 1, APP.INSURANCE_FQN, 0, APP.CLINICIAN_REPORT_FQN, NOW_DATA],
-    [APP.PART_OF_FQN, 0, APP.INTERACTION_STRATEGY_FQN, 0, APP.CLINICIAN_REPORT_FQN, NOW_DATA],
-    [APP.PART_OF_FQN, 0, APP.ENCOUNTER_FQN, 0, APP.CLINICIAN_REPORT_FQN, NOW_DATA],
-    [APP.PART_OF_FQN, 0, APP.ENCOUNTER_DETAILS_FQN, 0, APP.CLINICIAN_REPORT_FQN, NOW_DATA],
-    [APP.PART_OF_FQN, 0, APP.INVOICE_FQN, 0, APP.CLINICIAN_REPORT_FQN, NOW_DATA],
-    [APP.PART_OF_FQN, 0, APP.REFERRAL_REQUEST_FQN, 0, APP.CLINICIAN_REPORT_FQN, NOW_DATA],
+    // [APP.LOCATED_AT_FQN, incidentEKID, APP.INCIDENT_FQN, 0, APP.LOCATION_FQN, NOW_DATA],
+    [APP.REPORTED_FQN, staffEKID, APP.STAFF_FQN, 0, APP.FOLLOW_UP_REPORT_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, incidentEKID, APP.INCIDENT_FQN, 0, APP.FOLLOW_UP_REPORT_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.LOCATION_FQN, 0, APP.FOLLOW_UP_REPORT_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.REFERRAL_REQUEST_FQN, 0, APP.FOLLOW_UP_REPORT_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.SUBSTANCE_FQN, 0, APP.FOLLOW_UP_REPORT_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 1, APP.SUBSTANCE_FQN, 0, APP.FOLLOW_UP_REPORT_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.ENCOUNTER_FQN, 0, APP.FOLLOW_UP_REPORT_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.OFFENSE_FQN, 0, APP.FOLLOW_UP_REPORT_FQN, NOW_DATA],
+    [APP.PART_OF_FQN, 0, APP.DISPOSITION_FQN, 0, APP.FOLLOW_UP_REPORT_FQN, NOW_DATA],
   ];
 
-  const optionalAssociations :any[][] = getOptionalCrisisReportAssociations(
-    formData,
-    existingEntityKeyIds,
-    createdDateTime
-  );
-
-  return associations.concat(optionalAssociations);
+  return associations;
 };
 
 const getSectionProperties = (sectionSchema :Object) :Object => {
@@ -294,7 +391,7 @@ const constructFormDataFromNeighbors = (neighborsByFQN :Map, schema :Object) :Ob
         let value;
         // get first neighbor of type filtered by sharedProperty value
         if (sharedProperty) {
-          const matchedEntity = neighborsByFQN.get(entitySetName)
+          const matchedEntity = neighborsByFQN.get(entitySetName, List())
             .filter((entity) => entity
               .getIn(['neighborDetails', sharedProperty.property], List())
               .includes(sharedProperty.value))
@@ -587,16 +684,18 @@ const postProcessCrisisReportV1 = (formData :Object) :Object => {
 };
 
 export {
-  preProcessCrisisReportV1,
-  postProcessCrisisReportV1,
   constructFormDataFromNeighbors,
+  getClinicianCrisisReportAssociations,
   getCrisisReportAssociations,
   getEntityIndexToIdMapFromDataGraphResponse,
   getEntityIndexToIdMapFromNeighbors,
-  getNewCrisisReportAssociations,
+  getFollowupReportAssociations,
+  getOfficerCrisisReportAssociations,
   getOptionalCrisisReportAssociations,
-  postProcessDisposition,
-  postProcessSafetySection,
-  postProcessNatureSection,
   postProcessBehaviorSection,
+  postProcessCrisisReportV1,
+  postProcessDisposition,
+  postProcessNatureSection,
+  postProcessSafetySection,
+  preProcessCrisisReportV1,
 };

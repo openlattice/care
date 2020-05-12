@@ -96,7 +96,6 @@ const uiSchema = {
       'ui:options': {
         creatable: true,
         multiple: true,
-        placeholder: '',
         noOptionsMessage: 'Type to Create'
       }
     },

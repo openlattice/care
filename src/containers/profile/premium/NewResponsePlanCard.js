@@ -99,25 +99,17 @@ const NewResponsePlanCard = (props :Props) => {
           </IconLayer>
           Officer Safety
         </ListHeader>
-        { !triggers.count() && <StyledSplash caption="No curated safety concerns." /> }
+        { !officerSafety.count() && <StyledSplash caption="No curated safety concerns." /> }
         <ListWrapper>
-          <StyledAccordion>
-            {
-              officerSafety.map((concern) => {
-                const category = concern.getIn([FQN.CATEGORY_FQN, 0], '');
-                const description = concern.getIn([FQN.DESCRIPTION_FQN, 0], '');
-                const entityKeyId = concern.getIn([FQN.OPENLATTICE_ID_FQN, 0]);
-                return (
-                  <div
-                      key={entityKeyId}
-                      headline={category}
-                      titleComponent={AccordionTitle}>
-                    <Description>{description}</Description>
-                  </div>
-                );
-              })
-            }
-          </StyledAccordion>
+          {
+            officerSafety.map((concern) => {
+              const category = concern.getIn([FQN.CATEGORY_FQN, 0], '');
+              const entityKeyId = concern.getIn([FQN.OPENLATTICE_ID_FQN, 0]);
+              return (
+                <li key={entityKeyId}>{category}</li>
+              );
+            })
+          }
         </ListWrapper>
         <ListHeader>
           <IconLayer className="fa-layers">
@@ -143,7 +135,7 @@ const NewResponsePlanCard = (props :Props) => {
           </IconLayer>
           Interaction Strategies
         </ListHeader>
-        { !triggers.count() && <StyledSplash caption="No curated strategies." /> }
+        { !interactionStrategies.count() && <StyledSplash caption="No curated strategies." /> }
         <ListWrapper>
           <StyledAccordion>
             {
