@@ -4,7 +4,6 @@ import * as FQN from '../../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
 
 const {
-  CLINICIAN_REPORT_FQN,
   INCIDENT_FQN,
   LOCATION_FQN
 } = APP_TYPES_FQNS;
@@ -27,18 +26,13 @@ const schema = {
           title: 'Incident #',
           type: 'string',
         },
-        [getEntityAddressKey(0, LOCATION_FQN, FQN.LOCATION_ADDRESS_FQN)]: {
-          title: 'Location',
-          type: 'string',
-        },
+        // [getEntityAddressKey(0, LOCATION_FQN, FQN.LOCATION_ADDRESS_FQN)]: {
+        //   title: 'Location',
+        //   type: 'string',
+        // },
         [getEntityAddressKey(0, INCIDENT_FQN, FQN.DESCRIPTION_FQN)]: {
           title: 'Summary',
           type: 'string',
-        },
-        [getEntityAddressKey(0, CLINICIAN_REPORT_FQN, FQN.TYPE_FQN)]: {
-          title: 'Report Type',
-          type: 'string',
-          default: 'Crisis Report',
         },
         // [getEntityAddressKey(0, CALL_FOR_SERVICE_FQN, FQN.HOW_REPORTED_FQN)]: {
         //   title: 'Dispatch',
@@ -46,9 +40,9 @@ const schema = {
         //   enum: ['Call dispatched', 'Self-initiated']
         // },
       },
-      // required: [
-      //   getEntityAddressKey(0, INCIDENT_FQN, FQN.PERSON_LAST_NAME_FQN),
-      // ]
+      required: [
+        getEntityAddressKey(0, INCIDENT_FQN, FQN.DATETIME_START_FQN),
+      ]
     }
   },
 };
@@ -65,16 +59,13 @@ const uiSchema = {
     [getEntityAddressKey(0, INCIDENT_FQN, FQN.CRIMINALJUSTICE_CASE_NUMBER_FQN)]: {
       classNames: 'column-span-12',
     },
-    [getEntityAddressKey(0, LOCATION_FQN, FQN.LOCATION_ADDRESS_FQN)]: {
-      classNames: 'column-span-12',
-    },
+    // [getEntityAddressKey(0, LOCATION_FQN, FQN.LOCATION_ADDRESS_FQN)]: {
+    //   classNames: 'column-span-12',
+    // },
     [getEntityAddressKey(0, INCIDENT_FQN, FQN.DESCRIPTION_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'textarea'
     },
-    [getEntityAddressKey(0, CLINICIAN_REPORT_FQN, FQN.TYPE_FQN)]: {
-      'ui:widget': 'hidden'
-    }
     // [getEntityAddressKey(0, CALL_FOR_SERVICE_FQN, FQN.HOW_REPORTED_FQN)]: {
     //   classNames: 'column-span-12',
     // },

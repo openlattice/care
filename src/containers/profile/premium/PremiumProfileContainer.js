@@ -38,6 +38,7 @@ import ContactCarousel from '../../../components/premium/contacts/ContactCarouse
 import CreateIssueButton from '../../../components/buttons/CreateIssueButton';
 import LinkButton from '../../../components/buttons/LinkButton';
 import ReportSelectionModal from '../../people/ReportSelectionModal';
+import * as FQN from '../../../edm/DataModelFqns';
 import { BreadcrumbItem, BreadcrumbLink } from '../../../components/breadcrumbs';
 import { useAuthorization, usePeopleRoute } from '../../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
@@ -160,7 +161,7 @@ type Props = {
   };
   address :Map;
   appearance :Map;
-  behaviorSummary :Map;
+  behaviorSummary :List<Map>;
   contactInfoByContactEKID :Map;
   contacts :List<Map>;
   crisisSummary :Map;
@@ -175,13 +176,14 @@ type Props = {
   officerSafety :List<Map>;
   photo :Map;
   probation :Map;
+  recentSymptoms :boolean;
   reports :List<Map>;
   responsePlan :Map;
   responsibleUser :Map;
+  safetySummary :List<Map>;
   scars :Map;
   selectedPerson :Map;
   stayAwayLocation :Map;
-  recentSymptoms :boolean;
   triggers :List<Map>;
   warrant :Map;
 };
@@ -213,13 +215,14 @@ const PremiumProfileContainer = (props :Props) => {
     officerSafety,
     photo,
     probation,
+    recentSymptoms,
     reports,
     responsePlan,
     responsibleUser,
+    safetySummary,
     scars,
     selectedPerson,
     stayAwayLocation,
-    recentSymptoms,
     triggers,
     warrant,
   } = props;
@@ -251,6 +254,7 @@ const PremiumProfileContainer = (props :Props) => {
   const imageURL :string = useMemo(() => getImageDataFromEntity(photo), [photo]);
   const name = getFirstLastFromPerson(selectedPerson);
   const subjectEKID = getEntityKeyId(selectedPerson);
+  const numReportsFoundIn = selectedPerson.getIn([FQN.NUM_REPORTS_FOUND_IN_FQN, 0], 0);
   const profilePath = PROFILE_VIEW_PATH.replace(PROFILE_ID_PATH, subjectEKID);
 
   let body = (
@@ -273,6 +277,7 @@ const PremiumProfileContainer = (props :Props) => {
     body = (
       <HistoryBody
           behaviorSummary={behaviorSummary}
+          safetySummary={safetySummary}
           crisisSummary={crisisSummary}
           isLoading={isLoadingBody}
           reports={reports}
@@ -347,7 +352,8 @@ const PremiumProfileContainer = (props :Props) => {
 
             </ActionBar>
             {
-              !reports.count() && !isLoadingBody
+              // show splash based on report number from person, rather than successful neighbor returns.
+              !numReportsFoundIn && !isLoadingBody
                 ? <IconSplash icon={faFolderOpen} caption="No reports have been filed." />
                 : body
             }
@@ -375,7 +381,8 @@ const mapStateToProps = (state :Map) => {
     address: state.getIn(['profile', 'basicInformation', 'address', 'data'], Map()),
     appearance: state.getIn(['profile', 'basicInformation', 'appearance', 'data'], Map()),
     crisisSummary: state.getIn(['profile', 'reports', 'crisisSummary'], Map()),
-    behaviorSummary: state.getIn(['profile', 'reports', 'behaviorSummary'], Map()),
+    behaviorSummary: state.getIn(['profile', 'reports', 'behaviorSummary'], List()),
+    safetySummary: state.getIn(['profile', 'reports', 'safetySummary'], List()),
     contacts: state.getIn(['profile', 'contacts', 'data', 'contacts'], List()),
     contactInfoByContactEKID: state.getIn(['profile', 'contacts', 'data', 'contactInfoByContactEKID'], Map()),
     isContactForByContactEKID: state.getIn(['profile', 'contacts', 'data', 'isContactForByContactEKID'], Map()),

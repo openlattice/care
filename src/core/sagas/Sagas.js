@@ -110,6 +110,7 @@ export default function* sagas() :Generator<*, *, *> {
     fork(ReportsSagas.deleteReportWatcher),
     fork(ReportsSagas.getReportWatcher),
     fork(ReportsSagas.getReportsByDateRangeWatcher),
+    fork(ReportsSagas.getReportsByDateRangeV2Watcher),
     fork(ReportsSagas.submitReportWatcher),
     fork(ReportsSagas.updateReportWatcher),
     fork(ReportsSagas.getIncidentReportsWatcher),
@@ -201,6 +202,7 @@ export default function* sagas() :Generator<*, *, *> {
     fork(CrisisReportSagas.submitCrisisReportWatcher),
     fork(CrisisReportSagas.submitCrisisReportV2Watcher),
     fork(CrisisReportSagas.updateCrisisReportWatcher),
+
     fork(EncampmentSagas.addPersonToEncampmentWatcher),
     fork(EncampmentSagas.getEncampmentOccupantsWatcher),
     fork(EncampmentSagas.getEncampmentPeopleOptionsWatcher),

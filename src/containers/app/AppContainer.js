@@ -32,7 +32,9 @@ import LegitReportsRouter from '../reports/LegitReportsRouter';
 import LongBeachLocationsContainer from '../../longbeach/location/stayaway/LongBeachLocationsContainer';
 import LongBeachProviderContainer from '../../longbeach/provider/LongBeachProviderContainer';
 import LongBeachRouter from '../../longbeach/LongBeachRouter';
+import NewClinicianCrisisReportContainer from '../reports/crisis/NewClinicianCrisisReportContainer';
 import NewCrisisReportContainer from '../reports/crisis/NewCrisisReportContainer';
+import NewFollowupReportContainer from '../reports/crisis/NewFollowupReportContainer';
 import NewPersonContainer from '../people/NewPersonContainer';
 import NewSymptomsReportContainer from '../reports/symptoms/NewSymptomsReportContainer';
 import OriginalCrisisReportContainer from '../reports/OriginalCrisisReportContainer';
@@ -47,7 +49,9 @@ import {
   HOME_PATH,
   ISSUES_PATH,
   LOCATION_PATH,
+  NEW_CRISIS_CLINICIAN_PATH,
   NEW_CRISIS_PATH,
+  NEW_FOLLOW_UP_PATH,
   NEW_PERSON_PATH,
   NEW_SYMPTOMS_PATH,
   PROFILE_PATH,
@@ -168,7 +172,9 @@ class AppContainer extends Component<Props> {
         <Route exact strict path={HOME_PATH} component={SearchPeopleContainer} />
         <Route path={CRISIS_PATH} component={OriginalCrisisReportContainer} />
         <Route path={NEW_PERSON_PATH} component={NewPersonContainer} />
+        <Route path={NEW_FOLLOW_UP_PATH} component={NewFollowupReportContainer} />
         <Route path={NEW_CRISIS_PATH} component={NewCrisisReportContainer} />
+        <Route path={NEW_CRISIS_CLINICIAN_PATH} component={NewClinicianCrisisReportContainer} />
         <Route path={NEW_SYMPTOMS_PATH} component={NewSymptomsReportContainer} />
         <Route path={TRACK_CONTACT_PATH} component={TrackContactReportContainer} />
         <Route path={REPORTS_PATH} component={LegitReportsRouter} />

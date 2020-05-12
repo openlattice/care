@@ -21,13 +21,20 @@ const getReportsBehaviorAndSafety :RequestSequence = newRequestSequence(GET_REPO
 const GET_REPORTERS_FOR_REPORTS :'GET_REPORTERS_FOR_REPORTS' = 'GET_REPORTERS_FOR_REPORTS';
 const getReportersForReports :RequestSequence = newRequestSequence(GET_REPORTERS_FOR_REPORTS);
 
+const CLEAR_INCIDENTS :'CLEAR_INCIDENTS' = 'CLEAR_INCIDENTS';
+const clearIncidents = () => ({
+  type: CLEAR_INCIDENTS
+});
+
 export {
+  CLEAR_INCIDENTS,
   GET_INCIDENT_REPORTS,
   GET_INCIDENT_REPORTS_SUMMARY,
   GET_PROFILE_INCIDENTS,
   GET_PROFILE_REPORTS,
   GET_REPORTERS_FOR_REPORTS,
   GET_REPORTS_BEHAVIOR_AND_SAFETY,
+  clearIncidents,
   getIncidentReports,
   getIncidentReportsSummary,
   getProfileIncidents,

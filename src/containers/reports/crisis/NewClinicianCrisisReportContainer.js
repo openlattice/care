@@ -9,8 +9,8 @@ import {
 import { useLocation } from 'react-router';
 import { Redirect } from 'react-router-dom';
 
-import NewCrisisReport from './NewCrisisReport';
-import { CRISIS_REPORT } from './schemas/constants';
+import NewClinicianCrisisReport from './NewClinicianCrisisReport';
+import { CRISIS_REPORT_CLINICIAN } from './schemas/constants';
 
 import * as FQN from '../../../edm/DataModelFqns';
 import { BreadcrumbItem, BreadcrumbLink } from '../../../components/breadcrumbs';
@@ -20,7 +20,7 @@ import { getEntityKeyId } from '../../../utils/DataUtils';
 import { getDateShortFromIsoDate } from '../../../utils/DateUtils';
 import { getFirstLastFromPerson } from '../../../utils/PersonUtils';
 
-const NewCrisisReportContainer = () => {
+const NewClinicianCrisisReportContainer = () => {
   const location = useLocation();
   const pageRef = useRef<HTMLDivElement | null>(null);
 
@@ -32,7 +32,7 @@ const NewCrisisReportContainer = () => {
   const profilePath = PROFILE_VIEW_PATH.replace(PROFILE_ID_PATH, personEKID);
   const name = getFirstLastFromPerson(selectedPerson);
 
-  let breadcrumbLabel = `New ${CRISIS_REPORT}`;
+  let breadcrumbLabel = `New ${CRISIS_REPORT_CLINICIAN}`;
   if (!incident.isEmpty()) {
     const incidentNumber = incident.getIn([FQN.CRIMINALJUSTICE_CASE_NUMBER_FQN, 0]);
     const incidentDatetime = incident.getIn([FQN.DATETIME_START_FQN, 0]);
@@ -49,7 +49,7 @@ const NewCrisisReportContainer = () => {
           <BreadcrumbItem>{breadcrumbLabel}</BreadcrumbItem>
         </Breadcrumbs>
         <CardStack>
-          <NewCrisisReport
+          <NewClinicianCrisisReport
               incident={incident}
               pageRef={pageRef}
               selectedPerson={selectedPerson} />
@@ -59,4 +59,4 @@ const NewCrisisReportContainer = () => {
   );
 };
 
-export default NewCrisisReportContainer;
+export default NewClinicianCrisisReportContainer;
