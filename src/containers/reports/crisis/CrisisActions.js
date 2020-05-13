@@ -35,6 +35,9 @@ const getReportsV2Neighbors :RequestSequence = newRequestSequence(GET_REPORTS_V2
 const GET_SUBJECT_OF_INCIDENT :'GET_SUBJECT_OF_INCIDENT' = 'GET_SUBJECT_OF_INCIDENT';
 const getSubjectOfIncident :RequestSequence = newRequestSequence(GET_SUBJECT_OF_INCIDENT);
 
+const GET_LOCATION_OF_INCIDENT :'GET_LOCATION_OF_INCIDENT' = 'GET_LOCATION_OF_INCIDENT';
+const getLocationOfIncident :RequestSequence = newRequestSequence(GET_LOCATION_OF_INCIDENT);
+
 const CLEAR_CRISIS_REPORT :'CLEAR_CRISIS_REPORT' = 'CLEAR_CRISIS_REPORT';
 const clearCrisisReport = () => ({
   type: CLEAR_CRISIS_REPORT
@@ -46,6 +49,7 @@ export {
   DELETE_CRISIS_REPORT_CONTENT,
   GET_CRISIS_REPORT,
   GET_CRISIS_REPORT_V2,
+  GET_LOCATION_OF_INCIDENT,
   GET_REPORTS_NEIGHBORS,
   GET_REPORTS_V2_NEIGHBORS,
   GET_SUBJECT_OF_INCIDENT,
@@ -58,6 +62,7 @@ export {
   deleteCrisisReportContent,
   getCrisisReport,
   getCrisisReportV2,
+  getLocationOfIncident,
   getReportsNeighbors,
   getReportsV2Neighbors,
   getSubjectOfIncident,

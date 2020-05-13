@@ -21,7 +21,7 @@ import {
   REPORT_VIEW_PATH
 } from '../../core/router/Routes';
 import { goToPath } from '../../core/router/RoutingActions';
-import { DATETIME_START_FQN, DATE_TIME_OCCURRED_FQN, TYPE_FQN } from '../../edm/DataModelFqns';
+import { COMPLETED_DT_FQN, DATE_TIME_OCCURRED_FQN, TYPE_FQN } from '../../edm/DataModelFqns';
 import { getEntityKeyId } from '../../utils/DataUtils';
 import { CRISIS_REPORT, CRISIS_REPORT_CLINICIAN, FOLLOW_UP_REPORT } from '../reports/crisis/schemas/constants';
 
@@ -49,7 +49,7 @@ const ProfileResult = (props :Props) => {
 
   const { result } = props;
   const reportType = result.getIn([TYPE_FQN, 0], '');
-  const rawDatetime :string = result.getIn([DATE_TIME_OCCURRED_FQN, 0]) || result.getIn([DATETIME_START_FQN, 0]);
+  const rawDatetime :string = result.getIn([DATE_TIME_OCCURRED_FQN, 0]) || result.getIn([COMPLETED_DT_FQN, 0]);
   const formattedDate = DateTime.fromISO(rawDatetime).toLocaleString(DateTime.DATE_SHORT);
 
   const handleClick = () => {
