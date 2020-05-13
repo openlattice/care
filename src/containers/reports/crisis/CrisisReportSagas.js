@@ -243,7 +243,6 @@ function* getReportsV2NeighborsWorker(action :SequenceAction) :Generator<any, an
       INVOICE_FQN,
       LOCATION_FQN,
       MEDICATION_STATEMENT_FQN,
-      NATURE_OF_CRISIS_FQN,
       OCCUPATION_FQN,
       OFFENSE_FQN,
       REFERRAL_REQUEST_FQN,
