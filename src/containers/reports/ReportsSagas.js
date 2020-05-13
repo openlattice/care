@@ -1170,11 +1170,16 @@ function* getIncidentReportsSummaryWorker(action :SequenceAction) :Generator<any
             const incidentStartDate = incidentsByEKID.getIn([incidentEKID, FQN.DATETIME_START_FQN, 0]);
             const reportData = report
               .get('neighborDetails')
-              .set(FQN.DATETIME_START_FQN, List([incidentStartDate]));
+              .set(FQN.DATETIME_START_FQN.toString(), List([incidentStartDate]));
             mutable.push(reportData);
           });
         });
-      });
+      })
+        .sortBy((report :Map) :number => {
+          const time = DateTime.fromISO(report.getIn([FQN.COMPLETED_DT_FQN, 0]));
+
+          return -time.valueOf();
+        });
     }
 
     const allReportsEKID = allReports.map((report) => report.getIn([OPENLATTICE_ID_FQN, 0]));
