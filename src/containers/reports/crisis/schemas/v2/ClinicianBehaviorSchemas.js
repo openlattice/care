@@ -9,7 +9,7 @@ import {
   SELECT_ALL_THAT_APPLY
 } from '../constants';
 
-const { BEHAVIOR_FQN, NATURE_OF_CRISIS_FQN, CRISIS_REPORT_CLINICIAN_FQN } = APP_TYPES_FQNS;
+const { BEHAVIOR_FQN, CRISIS_REPORT_CLINICIAN_FQN } = APP_TYPES_FQNS;
 
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
 
@@ -20,7 +20,7 @@ const schema = {
       type: 'object',
       title: 'Observations',
       properties: {
-        [getEntityAddressKey(0, NATURE_OF_CRISIS_FQN, FQN.DESCRIPTION_FQN)]: {
+        [getEntityAddressKey(0, CRISIS_REPORT_CLINICIAN_FQN, FQN.NATURE_OF_CRISIS_FQN)]: {
           title: 'Nature of Crisis',
           type: 'array',
           description: SELECT_ALL_THAT_APPLY,
@@ -48,10 +48,10 @@ const schema = {
           default: CRISIS_REPORT_CLINICIAN,
         },
       },
-      // required: [
-      //   getEntityAddressKey(0, NATURE_OF_CRISIS_FQN, FQN.DESCRIPTION_FQN),
-      //   getEntityAddressKey(0, BEHAVIOR_FQN, FQN.OBSERVED_BEHAVIOR_FQN),
-      // ]
+      required: [
+        getEntityAddressKey(0, CRISIS_REPORT_CLINICIAN_FQN, FQN.NATURE_OF_CRISIS_FQN),
+        getEntityAddressKey(0, BEHAVIOR_FQN, FQN.OBSERVED_BEHAVIOR_FQN),
+      ]
     }
   }
 };
@@ -62,7 +62,7 @@ const uiSchema = {
     'ui:options': {
       editable: true
     },
-    [getEntityAddressKey(0, NATURE_OF_CRISIS_FQN, FQN.DESCRIPTION_FQN)]: {
+    [getEntityAddressKey(0, CRISIS_REPORT_CLINICIAN_FQN, FQN.NATURE_OF_CRISIS_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
       'ui:options': {
