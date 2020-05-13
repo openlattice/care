@@ -30,6 +30,7 @@ import {
   DELETE_CRISIS_REPORT_CONTENT,
   GET_CRISIS_REPORT,
   GET_CRISIS_REPORT_V2,
+  GET_LOCATION_OF_INCIDENT,
   GET_REPORTS_NEIGHBORS,
   GET_REPORTS_V2_NEIGHBORS,
   GET_SUBJECT_OF_INCIDENT,
@@ -40,6 +41,7 @@ import {
   deleteCrisisReportContent,
   getCrisisReport,
   getCrisisReportV2,
+  getLocationOfIncident,
   getReportsNeighbors,
   getReportsV2Neighbors,
   getSubjectOfIncident,
@@ -125,7 +127,7 @@ const {
   INVOLVED_IN_FQN,
   LOCATION_FQN,
   MEDICATION_STATEMENT_FQN,
-  NATURE_OF_CRISIS_FQN,
+  LOCATED_AT_FQN,
   OCCUPATION_FQN,
   OFFENSE_FQN,
   PART_OF_FQN,
@@ -291,6 +293,8 @@ function* getSubjectOfIncidentWorker(action :SequenceAction) :Generator<any, any
   const response = {};
   try {
     const { value: incidentEKID } = action;
+    if (!isValidUuid(incidentEKID)) throw ERR_ACTION_VALUE_TYPE;
+
     yield put(getSubjectOfIncident.request(action.id, incidentEKID));
     const app = yield select((state) => state.get('app', Map()));
 
@@ -327,7 +331,7 @@ function* getSubjectOfIncidentWorker(action :SequenceAction) :Generator<any, any
   catch (error) {
     response.error = error;
     LOG.error(action.type, error);
-    yield put(getSubjectOfIncident.failure(action.id), error);
+    yield put(getSubjectOfIncident.failure(action.id, error));
   }
   return response;
 }
@@ -335,6 +339,58 @@ function* getSubjectOfIncidentWorker(action :SequenceAction) :Generator<any, any
 function* getSubjectOfIncidentWatcher() :Generator<any, any, any> {
   yield takeLatest(GET_SUBJECT_OF_INCIDENT, getSubjectOfIncidentWorker);
 }
+
+function* getLocationOfIncidentWorker(action :SequenceAction) :Generator<any, any, any> {
+  const response = {};
+
+  try {
+    const { value: incidentEKID } = action;
+    if (!isValidUuid(incidentEKID)) throw ERR_ACTION_VALUE_TYPE;
+
+    yield put(getLocationOfIncident.request(action.id, incidentEKID));
+    const app = yield select((state) => state.get('app', Map()));
+
+    const [
+      incidentESID,
+      locatedAtESID,
+      locationESID,
+    ] = getESIDsFromApp(app, [
+      INCIDENT_FQN,
+      LOCATED_AT_FQN,
+      LOCATION_FQN,
+    ]);
+
+    const peopleSearchParams = {
+      entitySetId: incidentESID,
+      filter: {
+        entityKeyIds: [incidentEKID],
+        sourceEntitySetIds: [],
+        edgeEntitySetIds: [locatedAtESID],
+        destinationEntitySetIds: [locationESID]
+      },
+    };
+
+    const peopleResponse = yield call(
+      searchEntityNeighborsWithFilterWorker,
+      searchEntityNeighborsWithFilter(peopleSearchParams)
+    );
+
+    if (peopleResponse.error) throw peopleResponse.error;
+    response.data = fromJS(peopleResponse.data);
+    yield put(getLocationOfIncident.success(action.id));
+  }
+  catch (error) {
+    response.error = error;
+    LOG.error(action.type, error);
+    yield put(getLocationOfIncident.failure(action.id, error));
+  }
+  return response;
+}
+
+function* getLocationOfIncidentWatcher() :Generator<any, any, any> {
+  yield takeLatest(GET_LOCATION_OF_INCIDENT, getLocationOfIncidentWorker);
+}
+
 
 function* getCrisisReportV2Worker(action :SequenceAction) :Generator<any, any, any> {
   const response = {};
@@ -385,17 +441,31 @@ function* getCrisisReportV2Worker(action :SequenceAction) :Generator<any, any, a
     ]);
     const reporterData = neighborsByFQN.getIn([STAFF_FQN, 0]);
 
-    const subjectResponse = yield call(
+    const locationRequest = call(
+      getLocationOfIncidentWorker,
+      getLocationOfIncident(incidentEKID)
+    );
+
+    const subjectRequest = call(
       getSubjectOfIncidentWorker,
       getSubjectOfIncident(incidentEKID)
     );
 
-    if (subjectResponse.error) throw subjectResponse.error;
-    const subjectData = subjectResponse.data.getIn([incidentEKID, 0, 'neighborDetails'], Map());
+    const [subjectResponse, locationResponse] = yield all([
+      subjectRequest,
+      locationRequest,
+    ]);
 
-    // include report self in neighbors
+    if (subjectResponse.error) throw subjectResponse.error;
+    if (locationResponse.error) throw locationResponse.error;
+    const subjectData = subjectResponse.data.getIn([incidentEKID, 0, 'neighborDetails'], Map());
+    const locationData = locationResponse.data.get(incidentEKID, List());
+
+    // include report and location in neighbors
     const reportEntity = fromJS({ neighborDetails: reportResponse.data });
-    const reportDataByFQN = neighborsByFQN.set(reportFQN.toString(), List([reportEntity]));
+    const reportDataByFQN = neighborsByFQN
+      .set(reportFQN.toString(), List([reportEntity]))
+      .set(LOCATION_FQN.toString(), locationData);
     const formData = fromJS(constructFormDataFromNeighbors(reportDataByFQN, reviewSchema));
     const entityIndexToIdMap = getEntityIndexToIdMapFromNeighbors(reportDataByFQN, reviewSchema);
 
@@ -860,6 +930,8 @@ export {
   getCrisisReportV2Worker,
   getCrisisReportWatcher,
   getCrisisReportWorker,
+  getLocationOfIncidentWatcher,
+  getLocationOfIncidentWorker,
   getReportsNeighborsWatcher,
   getReportsNeighborsWorker,
   getReportsV2NeighborsWatcher,

@@ -26,10 +26,10 @@ const schema = {
           title: 'Incident #',
           type: 'string',
         },
-        // [getEntityAddressKey(0, LOCATION_FQN, FQN.LOCATION_ADDRESS_FQN)]: {
-        //   title: 'Location',
-        //   type: 'string',
-        // },
+        [getEntityAddressKey(0, LOCATION_FQN, FQN.LOCATION_ADDRESS_FQN)]: {
+          title: 'Location',
+          type: 'string',
+        },
         [getEntityAddressKey(0, INCIDENT_FQN, FQN.DESCRIPTION_FQN)]: {
           title: 'Summary',
           type: 'string',
@@ -59,9 +59,9 @@ const uiSchema = {
     [getEntityAddressKey(0, INCIDENT_FQN, FQN.CRIMINALJUSTICE_CASE_NUMBER_FQN)]: {
       classNames: 'column-span-12',
     },
-    // [getEntityAddressKey(0, LOCATION_FQN, FQN.LOCATION_ADDRESS_FQN)]: {
-    //   classNames: 'column-span-12',
-    // },
+    [getEntityAddressKey(0, LOCATION_FQN, FQN.LOCATION_ADDRESS_FQN)]: {
+      classNames: 'column-span-12',
+    },
     [getEntityAddressKey(0, INCIDENT_FQN, FQN.DESCRIPTION_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'textarea'
