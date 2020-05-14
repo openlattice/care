@@ -42,7 +42,7 @@ const schema = {
           uniqueItems: true
         },
         // change this to disposition
-        [getEntityAddressKey(0, ENCOUNTER_FQN, FQN.SERVICE_TYPE_FQN)]: {
+        [getEntityAddressKey(0, FQN.DISPOSITION_FQN, FQN.CJ_DISPOSITION_FQN)]: {
           type: 'array',
           description: SELECT_ALL_THAT_APPLY,
           title: 'Disposition',
