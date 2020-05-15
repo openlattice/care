@@ -2,6 +2,7 @@ import { DataProcessingUtils } from 'lattice-fabricate';
 
 import * as FQN from '../../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
+import { CRISIS_REPORT } from '../constants';
 
 const {
   BEHAVIORAL_HEALTH_REPORT_FQN,
@@ -32,7 +33,7 @@ const schema = {
         [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.TYPE_FQN)]: {
           title: 'Report Type',
           type: 'string',
-          default: 'Crisis Report',
+          default: CRISIS_REPORT,
         },
       },
       required: [

@@ -17,19 +17,19 @@ import {
   addOptionalCrisisReportContent,
   clearCrisisReport,
   deleteCrisisReportContent,
-  getCrisisReport,
   getCrisisReportV2,
-  updateCrisisReport,
+  updateCrisisReport
 } from './CrisisActions';
-import { v1, v2 } from './schemas';
+import { v2 } from './schemas';
 
 import BlameCard from '../shared/BlameCard';
+import Unauthorized from '../../../components/warnings/Unauthorized';
 import * as FQN from '../../../edm/DataModelFqns';
 import { BreadcrumbItem, BreadcrumbLink } from '../../../components/breadcrumbs';
-import { useAppSettings, useAuthorization } from '../../../components/hooks';
+import { useAuthorization } from '../../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
 import {
-  CRISIS_REPORT_PATH,
+  CRISIS_REPORT_CLINICIAN_PATH,
   PROFILE_ID_PATH,
   PROFILE_VIEW_PATH,
   REPORT_ID_PARAM,
@@ -41,14 +41,12 @@ import { getFirstLastFromPerson } from '../../../utils/PersonUtils';
 import { generateReviewSchema } from '../../../utils/SchemaUtils';
 
 const {
-  CRISIS_REPORT_FQN, // v2,
-  BEHAVIORAL_HEALTH_REPORT_FQN,
+  CRISIS_REPORT_CLINICIAN_FQN,
 } = APP_TYPES_FQNS;
 
-const CrisisReportContainer = () => {
-  const settings = useAppSettings();
+const CrisisReportClinicianContainer = () => {
   const dispatch = useDispatch();
-  const match = useRouteMatch(CRISIS_REPORT_PATH);
+  const match = useRouteMatch(CRISIS_REPORT_CLINICIAN_PATH);
 
   const dispatchGetAuthorization = useCallback(() => {
     dispatch(getAuthorization());
@@ -56,8 +54,7 @@ const CrisisReportContainer = () => {
 
   const [isAuthorized] = useAuthorization('profile', dispatchGetAuthorization);
 
-  let schemaVersion = v1;
-  if (settings.get('v2')) schemaVersion = v2.officer;
+  const schemaVersion = v2.clinician;
 
   const reviewSchemas = useMemo(
     () => generateReviewSchema(schemaVersion.schemas, schemaVersion.uiSchemas, !isAuthorized),
@@ -68,6 +65,7 @@ const CrisisReportContainer = () => {
   const entitySetIds = useSelector((store) => store.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
   const formData = useSelector((store) => store.getIn(['crisisReport', 'formData']));
   const fetchState = useSelector((store) => store.getIn(['crisisReport', 'fetchState']));
+  const error = useSelector((store) => store.getIn(['crisisReport', 'error']));
   const propertyTypeIds = useSelector((store) => store.getIn(['edm', 'fqnToIdMap'], Map()));
   const reporterData = useSelector((store) => store.getIn(['crisisReport', 'reporterData']));
   const reportData = useSelector((store) => store.getIn(['crisisReport', 'reportData']));
@@ -76,25 +74,20 @@ const CrisisReportContainer = () => {
   const { [REPORT_ID_PARAM]: reportId } = match.params;
 
   useEffect(() => {
-    if (settings.get('v2')) {
-      dispatch(getCrisisReportV2({
-        reportEKID: reportId,
-        reportFQN: CRISIS_REPORT_FQN,
-        reviewSchema: reviewSchemas.schema
-      }));
-    }
-    else {
-      dispatch(getCrisisReport({
-        reportEKID: reportId,
-        reportFQN: BEHAVIORAL_HEALTH_REPORT_FQN,
-      }));
-    }
+    dispatch(getCrisisReportV2({
+      reportEKID: reportId,
+      reportFQN: CRISIS_REPORT_CLINICIAN_FQN,
+      reviewSchema: reviewSchemas.schema
+    }));
 
     return () => dispatch(clearCrisisReport());
-  }, [dispatch, reportId, settings, reviewSchemas]);
+  }, [dispatch, reportId, reviewSchemas]);
 
   if (fetchState === RequestStates.PENDING) {
     return <Spinner size="3x" />;
+  }
+  if (fetchState === RequestStates.FAILURE && error) {
+    return <Unauthorized isLoading={false} />;
   }
 
   const handleUpdateCrisisReport = (params) => {
@@ -110,14 +103,14 @@ const CrisisReportContainer = () => {
 
   const handleAddOptionalContent = (params) => {
     const existingEKIDs = {
-      [CRISIS_REPORT_FQN]: reportId,
+      [CRISIS_REPORT_CLINICIAN_FQN]: reportId,
     };
 
     dispatch(addOptionalCrisisReportContent({
       ...params,
       existingEKIDs,
       schema: reviewSchemas.schema,
-      reportFQN: CRISIS_REPORT_FQN
+      reportFQN: CRISIS_REPORT_CLINICIAN_FQN
     }));
   };
 
@@ -158,4 +151,4 @@ const CrisisReportContainer = () => {
   );
 };
 
-export default CrisisReportContainer;
+export default CrisisReportClinicianContainer;

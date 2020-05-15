@@ -10,6 +10,7 @@ import {
   deleteReport,
   getReport,
   getReportsByDateRange,
+  getReportsByDateRangeV2,
   submitReport,
   updateReport,
 } from './ReportsActions';
@@ -45,6 +46,16 @@ export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :
             .set('lastUpdatedStaff', lastUpdated)
             .set('person', person);
         },
+        FAILURE: () => state.set('fetchState', RequestStates.FAILURE),
+      });
+    }
+
+    case getReportsByDateRangeV2.case(action.type): {
+      return getReportsByDateRangeV2.reducer(state, (action :any), {
+        REQUEST: () => state.set('fetchState', RequestStates.PENDING),
+        SUCCESS: () => state
+          .set('fetchState', RequestStates.SUCCESS)
+          .merge(action.value),
         FAILURE: () => state.set('fetchState', RequestStates.FAILURE),
       });
     }

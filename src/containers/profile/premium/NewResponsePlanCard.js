@@ -99,7 +99,7 @@ const NewResponsePlanCard = (props :Props) => {
           </IconLayer>
           Officer Safety
         </ListHeader>
-        { !triggers.count() && <StyledSplash caption="No curated safety concerns." /> }
+        { !officerSafety.count() && <StyledSplash caption="No curated safety concerns." /> }
         <ListWrapper>
           {
             officerSafety.map((concern) => {
@@ -135,7 +135,7 @@ const NewResponsePlanCard = (props :Props) => {
           </IconLayer>
           Interaction Strategies
         </ListHeader>
-        { !triggers.count() && <StyledSplash caption="No curated strategies." /> }
+        { !interactionStrategies.count() && <StyledSplash caption="No curated strategies." /> }
         <ListWrapper>
           <StyledAccordion>
             {

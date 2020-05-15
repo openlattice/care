@@ -1,6 +1,7 @@
 // @flow
 import React from 'react';
 import type { Node } from 'react';
+
 import { Button } from 'lattice-ui-kit';
 
 import { useGoToPath } from '../hooks';
@@ -14,6 +15,7 @@ type Props = {
   size ? :string;
   state ? :any;
   to :string;
+  fullWidth ? :boolean;
 }
 
 const LinkButton = (props :Props) => {
@@ -21,6 +23,7 @@ const LinkButton = (props :Props) => {
     children,
     className,
     disabled,
+    fullWidth,
     isLoading,
     mode,
     size,
@@ -34,6 +37,7 @@ const LinkButton = (props :Props) => {
     <Button
         className={className}
         disabled={disabled}
+        fullWidth={fullWidth}
         isLoading={isLoading}
         mode={mode}
         onClick={onClick}
@@ -46,6 +50,7 @@ const LinkButton = (props :Props) => {
 LinkButton.defaultProps = {
   className: undefined,
   disabled: false,
+  fullWidth: false,
   isLoading: false,
   mode: undefined,
   size: undefined,

@@ -4,7 +4,6 @@ import * as FQN from '../../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
 
 const {
-  CLINICIAN_REPORT_FQN,
   INCIDENT_FQN,
   LOCATION_FQN
 } = APP_TYPES_FQNS;
@@ -35,20 +34,15 @@ const schema = {
           title: 'Summary',
           type: 'string',
         },
-        [getEntityAddressKey(0, CLINICIAN_REPORT_FQN, FQN.TYPE_FQN)]: {
-          title: 'Report Type',
-          type: 'string',
-          default: 'Crisis Report',
-        },
         // [getEntityAddressKey(0, CALL_FOR_SERVICE_FQN, FQN.HOW_REPORTED_FQN)]: {
         //   title: 'Dispatch',
         //   type: 'string',
         //   enum: ['Call dispatched', 'Self-initiated']
         // },
       },
-      // required: [
-      //   getEntityAddressKey(0, INCIDENT_FQN, FQN.PERSON_LAST_NAME_FQN),
-      // ]
+      required: [
+        getEntityAddressKey(0, INCIDENT_FQN, FQN.DATETIME_START_FQN),
+      ]
     }
   },
 };
@@ -72,9 +66,6 @@ const uiSchema = {
       classNames: 'column-span-12',
       'ui:widget': 'textarea'
     },
-    [getEntityAddressKey(0, CLINICIAN_REPORT_FQN, FQN.TYPE_FQN)]: {
-      'ui:widget': 'hidden'
-    }
     // [getEntityAddressKey(0, CALL_FOR_SERVICE_FQN, FQN.HOW_REPORTED_FQN)]: {
     //   classNames: 'column-span-12',
     // },

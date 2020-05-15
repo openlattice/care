@@ -20,6 +20,9 @@ const submitReport :RequestSequence = newRequestSequence(SUBMIT_REPORT);
 const GET_REPORTS_BY_DATE_RANGE :'GET_REPORTS_BY_DATE_RANGE' = 'GET_REPORTS_BY_DATE_RANGE';
 const getReportsByDateRange :RequestSequence = newRequestSequence(GET_REPORTS_BY_DATE_RANGE);
 
+const GET_REPORTS_BY_DATE_RANGE_V2 :'GET_REPORTS_BY_DATE_RANGE_V2' = 'GET_REPORTS_BY_DATE_RANGE_V2';
+const getReportsByDateRangeV2 :RequestSequence = newRequestSequence(GET_REPORTS_BY_DATE_RANGE_V2);
+
 const CLEAR_REPORT :'CLEAR_REPORT' = 'CLEAR_REPORT';
 const clearReport = () => ({
   type: CLEAR_REPORT
@@ -30,12 +33,14 @@ export {
   DELETE_REPORT,
   GET_REPORT,
   GET_REPORTS_BY_DATE_RANGE,
+  GET_REPORTS_BY_DATE_RANGE_V2,
   SUBMIT_REPORT,
   UPDATE_REPORT,
   clearReport,
   deleteReport,
   getReport,
   getReportsByDateRange,
+  getReportsByDateRangeV2,
   submitReport,
   updateReport,
 };

@@ -17,19 +17,18 @@ import {
   addOptionalCrisisReportContent,
   clearCrisisReport,
   deleteCrisisReportContent,
-  getCrisisReport,
   getCrisisReportV2,
-  updateCrisisReport,
+  updateCrisisReport
 } from './CrisisActions';
-import { v1, v2 } from './schemas';
+import { v2 } from './schemas';
 
 import BlameCard from '../shared/BlameCard';
 import * as FQN from '../../../edm/DataModelFqns';
 import { BreadcrumbItem, BreadcrumbLink } from '../../../components/breadcrumbs';
-import { useAppSettings, useAuthorization } from '../../../components/hooks';
+import { useAuthorization } from '../../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
 import {
-  CRISIS_REPORT_PATH,
+  FOLLOW_UP_REPORT_PATH,
   PROFILE_ID_PATH,
   PROFILE_VIEW_PATH,
   REPORT_ID_PARAM,
@@ -40,15 +39,11 @@ import { getEntityKeyId } from '../../../utils/DataUtils';
 import { getFirstLastFromPerson } from '../../../utils/PersonUtils';
 import { generateReviewSchema } from '../../../utils/SchemaUtils';
 
-const {
-  CRISIS_REPORT_FQN, // v2,
-  BEHAVIORAL_HEALTH_REPORT_FQN,
-} = APP_TYPES_FQNS;
+const { FOLLOW_UP_REPORT_FQN } = APP_TYPES_FQNS;
 
-const CrisisReportContainer = () => {
-  const settings = useAppSettings();
+const FollowupReportContainer = () => {
   const dispatch = useDispatch();
-  const match = useRouteMatch(CRISIS_REPORT_PATH);
+  const match = useRouteMatch(FOLLOW_UP_REPORT_PATH);
 
   const dispatchGetAuthorization = useCallback(() => {
     dispatch(getAuthorization());
@@ -56,8 +51,7 @@ const CrisisReportContainer = () => {
 
   const [isAuthorized] = useAuthorization('profile', dispatchGetAuthorization);
 
-  let schemaVersion = v1;
-  if (settings.get('v2')) schemaVersion = v2.officer;
+  const schemaVersion = v2.followup;
 
   const reviewSchemas = useMemo(
     () => generateReviewSchema(schemaVersion.schemas, schemaVersion.uiSchemas, !isAuthorized),
@@ -76,22 +70,13 @@ const CrisisReportContainer = () => {
   const { [REPORT_ID_PARAM]: reportId } = match.params;
 
   useEffect(() => {
-    if (settings.get('v2')) {
-      dispatch(getCrisisReportV2({
-        reportEKID: reportId,
-        reportFQN: CRISIS_REPORT_FQN,
-        reviewSchema: reviewSchemas.schema
-      }));
-    }
-    else {
-      dispatch(getCrisisReport({
-        reportEKID: reportId,
-        reportFQN: BEHAVIORAL_HEALTH_REPORT_FQN,
-      }));
-    }
-
+    dispatch(getCrisisReportV2({
+      reportEKID: reportId,
+      reportFQN: FOLLOW_UP_REPORT_FQN,
+      reviewSchema: reviewSchemas.schema
+    }));
     return () => dispatch(clearCrisisReport());
-  }, [dispatch, reportId, settings, reviewSchemas]);
+  }, [dispatch, reportId, reviewSchemas]);
 
   if (fetchState === RequestStates.PENDING) {
     return <Spinner size="3x" />;
@@ -110,14 +95,14 @@ const CrisisReportContainer = () => {
 
   const handleAddOptionalContent = (params) => {
     const existingEKIDs = {
-      [CRISIS_REPORT_FQN]: reportId,
+      [FOLLOW_UP_REPORT_FQN]: reportId,
     };
 
     dispatch(addOptionalCrisisReportContent({
       ...params,
       existingEKIDs,
       schema: reviewSchemas.schema,
-      reportFQN: CRISIS_REPORT_FQN
+      reportFQN: FOLLOW_UP_REPORT_FQN
     }));
   };
 
@@ -158,4 +143,4 @@ const CrisisReportContainer = () => {
   );
 };
 
-export default CrisisReportContainer;
+export default FollowupReportContainer;

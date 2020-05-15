@@ -16,6 +16,7 @@ import dispositionReducer from '../../containers/pages/disposition/Reducer';
 import downloadsReducer from '../../containers/downloads/DownloadsReducer';
 import edmReducer from '../../edm/EdmReducer';
 import hospitalsReducer from '../../containers/form/HospitalsReducer';
+import incidentsReducer from '../../containers/reports/IncidentsReducer';
 import issuesReducer from '../../containers/issues/IssuesReducer';
 import longBeachReducer from '../../longbeach/LongBeachReducer';
 import natureOfCrisisReducer from '../../containers/pages/natureofcrisis/Reducer';
@@ -23,12 +24,12 @@ import observedBehaviorsReducer from '../../containers/pages/observedbehaviors/R
 import officerSafetyReducer from '../../containers/pages/officersafety/Reducer';
 import peopleReducer from '../../containers/people/PeopleReducer';
 import profileReducer from '../../containers/profile/reducers/ProfileReducer';
+import recentInteractionReducer from '../../containers/reports/interaction/RecentInteractionReducer';
 import reportsReducer from '../../containers/reports/ReportsReducer';
 import searchReducer from '../../containers/search/SearchReducer';
 import staffReducer from '../../containers/staff/StaffReducer';
 import subjectInformationReducer from '../../containers/pages/subjectinformation/Reducer';
 import symptomsReportReducer from '../../containers/reports/symptoms/SymptomsReportReducer';
-import recentInteractionReducer from '../../containers/reports/interaction/RecentInteractionReducer';
 import { INITIALIZE_APPLICATION } from '../../containers/app/AppActions';
 import { STATE } from '../../utils/constants/StateConstants';
 
@@ -53,6 +54,7 @@ export default function reduxReducer(routerHistory :any) {
     crisisReport: crisisReportReducer,
     symptomsReport: symptomsReportReducer,
     recentInteractions: recentInteractionReducer,
+    incidents: incidentsReducer,
 
     // page reducers
     [STATE.DISPOSITION]: dispositionReducer,

@@ -8,7 +8,9 @@ import {
   addOptionalCrisisReportContent,
   deleteCrisisReportContent,
   getCrisisReport,
+  getCrisisReportV2,
   submitCrisisReport,
+  submitCrisisReportV2,
   updateCrisisReport,
 } from './CrisisActions';
 
@@ -35,6 +37,16 @@ export default function crisisReportReducer(state :Map = INITIAL_STATE, action :
       });
     }
 
+    case submitCrisisReportV2.case(action.type): {
+      return submitCrisisReportV2.reducer(state, action, {
+        REQUEST: () => state.set('submitState', RequestStates.PENDING),
+        SUCCESS: () => state
+          .set('submitState', RequestStates.SUCCESS)
+          .merge(action.value),
+        FAILURE: () => state.set('submitState', RequestStates.FAILURE),
+      });
+    }
+
     case getCrisisReport.case(action.type): {
       return getCrisisReport.reducer(state, action, {
         REQUEST: () => state.set('fetchState', RequestStates.PENDING),
@@ -42,6 +54,18 @@ export default function crisisReportReducer(state :Map = INITIAL_STATE, action :
           .set('fetchState', RequestStates.SUCCESS)
           .merge(action.value),
         FAILURE: () => state.set('fetchState', RequestStates.FAILURE),
+      });
+    }
+
+    case getCrisisReportV2.case(action.type): {
+      return getCrisisReportV2.reducer(state, action, {
+        REQUEST: () => INITIAL_STATE.set('fetchState', RequestStates.PENDING),
+        SUCCESS: () => state
+          .set('fetchState', RequestStates.SUCCESS)
+          .merge(action.value),
+        FAILURE: () => state
+          .set('fetchState', RequestStates.FAILURE)
+          .set('error', action.value)
       });
     }
 

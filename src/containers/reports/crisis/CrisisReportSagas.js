@@ -12,15 +12,20 @@ import {
   List,
   Map,
   fromJS,
+  getIn,
+  setIn,
 } from 'immutable';
 import { Models } from 'lattice';
 import { DataProcessingUtils } from 'lattice-fabricate';
 import {
+  AuthorizationsApiActions,
+  AuthorizationsApiSagas,
   DataApiActions,
   DataApiSagas,
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
+import { DateTime } from 'luxon';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
@@ -28,6 +33,7 @@ import {
   DELETE_CRISIS_REPORT_CONTENT,
   GET_CRISIS_REPORT,
   GET_CRISIS_REPORT_V2,
+  GET_LOCATION_OF_INCIDENT,
   GET_REPORTS_NEIGHBORS,
   GET_REPORTS_V2_NEIGHBORS,
   GET_SUBJECT_OF_INCIDENT,
@@ -38,6 +44,7 @@ import {
   deleteCrisisReportContent,
   getCrisisReport,
   getCrisisReportV2,
+  getLocationOfIncident,
   getReportsNeighbors,
   getReportsV2Neighbors,
   getSubjectOfIncident,
@@ -48,10 +55,12 @@ import {
 } from './CrisisActions';
 import {
   constructFormDataFromNeighbors,
+  getClinicianCrisisReportAssociations,
   getCrisisReportAssociations,
   getEntityIndexToIdMapFromDataGraphResponse,
   getEntityIndexToIdMapFromNeighbors,
-  getNewCrisisReportAssociations,
+  getFollowupReportAssociations,
+  getOfficerCrisisReportAssociations,
   getOptionalCrisisReportAssociations,
   postProcessBehaviorSection,
   postProcessCrisisReportV1,
@@ -60,7 +69,7 @@ import {
   postProcessSafetySection,
   preProcessCrisisReportV1,
 } from './CrisisReportUtils';
-import { v1, v2 } from './schemas';
+import { v1 } from './schemas';
 
 import Logger from '../../../utils/Logger';
 import * as FQN from '../../../edm/DataModelFqns';
@@ -86,6 +95,8 @@ const { FullyQualifiedName } = Models;
 
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
 const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
+const { getAuthorizationsWorker } = AuthorizationsApiSagas;
+const { getAuthorizations } = AuthorizationsApiActions;
 
 const { getEntityData } = DataApiActions;
 
@@ -93,19 +104,23 @@ const { getEntityDataWorker } = DataApiSagas;
 
 const {
   findEntityAddressKeyFromMap,
+  getEntityAddressKey,
   getPageSectionKey,
   processAssociationEntityData,
   processEntityData,
-  replaceEntityAddressKeys,
   processEntityDataForPartialReplace,
+  replaceEntityAddressKeys,
 } = DataProcessingUtils;
+
 const {
   APPEARS_IN_FQN,
-  BEHAVIOR_FQN,
   BEHAVIORAL_HEALTH_REPORT_FQN,
+  BEHAVIOR_FQN,
+  CRISIS_REPORT_CLINICIAN_FQN,
   DIAGNOSIS_FQN,
+  DISPOSITION_FQN,
   ENCOUNTER_DETAILS_FQN,
-  ENCOUNTER_FQN,
+  FOLLOW_UP_REPORT_FQN,
   HOUSING_FQN,
   INCIDENT_FQN,
   INCOME_FQN,
@@ -114,9 +129,11 @@ const {
   INTERACTION_STRATEGY_FQN,
   INVOICE_FQN,
   INVOLVED_IN_FQN,
+  LOCATION_FQN,
   MEDICATION_STATEMENT_FQN,
-  NATURE_OF_CRISIS_FQN,
+  LOCATED_AT_FQN,
   OCCUPATION_FQN,
+  OFFENSE_FQN,
   PART_OF_FQN,
   PEOPLE_FQN,
   REFERRAL_REQUEST_FQN,
@@ -124,9 +141,14 @@ const {
   SELF_HARM_FQN,
   STAFF_FQN,
   SUBSTANCE_FQN,
-  SUBSTANCE_HISTORY_FQN,
   VIOLENT_BEHAVIOR_FQN,
   WEAPON_FQN,
+  DISPOSITION_CLINICIAN_FQN,
+  MEDICATION_STATEMENT_CLINICIAN_FQN,
+  DIAGNOSIS_CLINICIAN_FQN,
+  SUBSTANCE_CLINICIAN_FQN,
+  SELF_HARM_CLINICIAN_FQN,
+  BEHAVIOR_CLINICIAN_FQN,
 } = APP_TYPES_FQNS;
 
 const LOG = new Logger('CrisisReportSagas');
@@ -145,6 +167,7 @@ function* addOptionalCrisisReportContentWorker(action :SequenceAction) :Generato
       path,
       properties,
       schema,
+      reportFQN,
     } = value;
 
     const entitySetIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
@@ -153,7 +176,7 @@ function* addOptionalCrisisReportContentWorker(action :SequenceAction) :Generato
     const entityData = processEntityData(formData, entitySetIds, propertyTypeIds);
 
     const associationEntityData = processAssociationEntityData(
-      getOptionalCrisisReportAssociations(formData, existingEKIDs),
+      getOptionalCrisisReportAssociations(formData, existingEKIDs, DateTime.local().toISO(), reportFQN),
       entitySetIds,
       propertyTypeIds
     );
@@ -208,20 +231,16 @@ function* getReportsV2NeighborsWorker(action :SequenceAction) :Generator<any, an
     yield put(getReportsV2Neighbors.request(action.id, reportEKIDs));
 
     const app :Map = yield select((state) => state.get('app', Map()));
-    const [
-      reportESID,
-      partOfESID,
-      reportedESID,
-      ...neighborESIDs
-    ] = getESIDsFromApp(app, [
+
+    const isProtected = reportFQN === CRISIS_REPORT_CLINICIAN_FQN;
+    let entitySetFQNs = [
       reportFQN,
       PART_OF_FQN,
       REPORTED_FQN,
       BEHAVIOR_FQN,
       DIAGNOSIS_FQN,
-      MEDICATION_STATEMENT_FQN,
+      DISPOSITION_FQN,
       ENCOUNTER_DETAILS_FQN,
-      ENCOUNTER_FQN,
       HOUSING_FQN,
       INCIDENT_FQN,
       INCOME_FQN,
@@ -229,16 +248,56 @@ function* getReportsV2NeighborsWorker(action :SequenceAction) :Generator<any, an
       INSURANCE_FQN,
       INTERACTION_STRATEGY_FQN,
       INVOICE_FQN,
-      NATURE_OF_CRISIS_FQN,
+      LOCATION_FQN,
+      MEDICATION_STATEMENT_FQN,
       OCCUPATION_FQN,
+      OFFENSE_FQN,
       REFERRAL_REQUEST_FQN,
       SELF_HARM_FQN,
       STAFF_FQN,
       SUBSTANCE_FQN,
-      SUBSTANCE_HISTORY_FQN,
       VIOLENT_BEHAVIOR_FQN,
       WEAPON_FQN,
-    ]);
+    ];
+
+    if (isProtected) {
+      // check observed behavior property access as proxy for all clinician read permissions
+      const behaviorESID = getESIDFromApp(app, BEHAVIOR_CLINICIAN_FQN);
+      const observedBehaviorPTID :UUID = yield select(
+        (state) => state.getIn(['edm', 'fqnToIdMap', FQN.OBSERVED_BEHAVIOR_FQN])
+      );
+
+      const accessCheck = [{
+        aclKey: [behaviorESID, observedBehaviorPTID],
+        permissions: ['READ']
+      }];
+
+      const accessResponse = yield call(
+        getAuthorizationsWorker,
+        getAuthorizations(accessCheck)
+      );
+
+      if (accessResponse.error) throw accessResponse.error;
+      const readAccess = getIn(accessResponse, ['data', 0, 'permissions', 'READ']);
+
+      if (!readAccess) throw new Error('401');
+
+      entitySetFQNs = entitySetFQNs.concat([
+        DISPOSITION_CLINICIAN_FQN,
+        MEDICATION_STATEMENT_CLINICIAN_FQN,
+        DIAGNOSIS_CLINICIAN_FQN,
+        SUBSTANCE_CLINICIAN_FQN,
+        SELF_HARM_CLINICIAN_FQN,
+        BEHAVIOR_CLINICIAN_FQN
+      ]);
+    }
+
+    const [
+      reportESID,
+      partOfESID,
+      reportedESID,
+      ...neighborESIDs
+    ] = getESIDsFromApp(app, entitySetFQNs);
 
     const neighborsSearchParam = {
       entitySetId: reportESID,
@@ -278,6 +337,8 @@ function* getSubjectOfIncidentWorker(action :SequenceAction) :Generator<any, any
   const response = {};
   try {
     const { value: incidentEKID } = action;
+    if (!isValidUuid(incidentEKID)) throw ERR_ACTION_VALUE_TYPE;
+
     yield put(getSubjectOfIncident.request(action.id, incidentEKID));
     const app = yield select((state) => state.get('app', Map()));
 
@@ -314,7 +375,7 @@ function* getSubjectOfIncidentWorker(action :SequenceAction) :Generator<any, any
   catch (error) {
     response.error = error;
     LOG.error(action.type, error);
-    yield put(getSubjectOfIncident.failure(action.id), error);
+    yield put(getSubjectOfIncident.failure(action.id, error));
   }
   return response;
 }
@@ -323,6 +384,58 @@ function* getSubjectOfIncidentWatcher() :Generator<any, any, any> {
   yield takeLatest(GET_SUBJECT_OF_INCIDENT, getSubjectOfIncidentWorker);
 }
 
+function* getLocationOfIncidentWorker(action :SequenceAction) :Generator<any, any, any> {
+  const response = {};
+
+  try {
+    const { value: incidentEKID } = action;
+    if (!isValidUuid(incidentEKID)) throw ERR_ACTION_VALUE_TYPE;
+
+    yield put(getLocationOfIncident.request(action.id, incidentEKID));
+    const app = yield select((state) => state.get('app', Map()));
+
+    const [
+      incidentESID,
+      locatedAtESID,
+      locationESID,
+    ] = getESIDsFromApp(app, [
+      INCIDENT_FQN,
+      LOCATED_AT_FQN,
+      LOCATION_FQN,
+    ]);
+
+    const peopleSearchParams = {
+      entitySetId: incidentESID,
+      filter: {
+        entityKeyIds: [incidentEKID],
+        sourceEntitySetIds: [],
+        edgeEntitySetIds: [locatedAtESID],
+        destinationEntitySetIds: [locationESID]
+      },
+    };
+
+    const peopleResponse = yield call(
+      searchEntityNeighborsWithFilterWorker,
+      searchEntityNeighborsWithFilter(peopleSearchParams)
+    );
+
+    if (peopleResponse.error) throw peopleResponse.error;
+    response.data = fromJS(peopleResponse.data);
+    yield put(getLocationOfIncident.success(action.id));
+  }
+  catch (error) {
+    response.error = error;
+    LOG.error(action.type, error);
+    yield put(getLocationOfIncident.failure(action.id, error));
+  }
+  return response;
+}
+
+function* getLocationOfIncidentWatcher() :Generator<any, any, any> {
+  yield takeLatest(GET_LOCATION_OF_INCIDENT, getLocationOfIncidentWorker);
+}
+
+
 function* getCrisisReportV2Worker(action :SequenceAction) :Generator<any, any, any> {
   const response = {};
   try {
@@ -330,6 +443,7 @@ function* getCrisisReportV2Worker(action :SequenceAction) :Generator<any, any, a
       value: {
         reportEKID,
         reportFQN,
+        reviewSchema,
       }
     } = action;
 
@@ -371,19 +485,33 @@ function* getCrisisReportV2Worker(action :SequenceAction) :Generator<any, any, a
     ]);
     const reporterData = neighborsByFQN.getIn([STAFF_FQN, 0]);
 
-    const subjectResponse = yield call(
+    const locationRequest = call(
+      getLocationOfIncidentWorker,
+      getLocationOfIncident(incidentEKID)
+    );
+
+    const subjectRequest = call(
       getSubjectOfIncidentWorker,
       getSubjectOfIncident(incidentEKID)
     );
 
-    if (subjectResponse.error) throw subjectResponse.error;
-    const subjectData = subjectResponse.data.getIn([incidentEKID, 0, 'neighborDetails'], Map());
+    const [subjectResponse, locationResponse] = yield all([
+      subjectRequest,
+      locationRequest,
+    ]);
 
-    // reviewSchema should be passed in from requesting view.
-    const { schemas, uiSchemas } = v2;
-    const { schema } = generateReviewSchema(schemas, uiSchemas, true);
-    const formData = fromJS(constructFormDataFromNeighbors(neighborsByFQN, schema));
-    const entityIndexToIdMap = getEntityIndexToIdMapFromNeighbors(neighborsByFQN, schema);
+    if (subjectResponse.error) throw subjectResponse.error;
+    if (locationResponse.error) throw locationResponse.error;
+    const subjectData = subjectResponse.data.getIn([incidentEKID, 0, 'neighborDetails'], Map());
+    const locationData = locationResponse.data.get(incidentEKID, List());
+
+    // include report and location in neighbors
+    const reportEntity = fromJS({ neighborDetails: reportResponse.data });
+    const reportDataByFQN = neighborsByFQN
+      .set(reportFQN.toString(), List([reportEntity]))
+      .set(LOCATION_FQN.toString(), locationData);
+    const formData = fromJS(constructFormDataFromNeighbors(reportDataByFQN, reviewSchema));
+    const entityIndexToIdMap = getEntityIndexToIdMapFromNeighbors(reportDataByFQN, reviewSchema);
 
     yield put(getCrisisReportV2.success(action.id, {
       formData,
@@ -396,7 +524,7 @@ function* getCrisisReportV2Worker(action :SequenceAction) :Generator<any, any, a
   catch (error) {
     LOG.error(action.type, error);
     response.error = error;
-    yield put(getCrisisReportV2.failure(action.id, error));
+    yield put(getCrisisReportV2.failure(action.id, error.message));
   }
   return response;
 }
@@ -451,24 +579,44 @@ function* submitCrisisReportV2Worker(action :SequenceAction) :Generator<any, any
     const { value } = action;
     if (!isPlainObject(value)) throw ERR_ACTION_VALUE_TYPE;
     yield put(submitCrisisReportV2.request(action.id));
-    const { formData, selectedPerson } = value;
+    const {
+      formData,
+      selectedPerson,
+      reportFQN,
+      incident = Map(),
+    } = value;
 
     const entitySetIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
     const propertyTypeIds = yield select((state) => state.getIn(['edm', 'fqnToIdMap'], Map()));
     const currentStaff = yield select((state) => state.getIn(['staff', 'currentUser', 'data'], Map()));
 
-    const postProcessFormData = postProcessCrisisReportV1(formData);
+    const now = DateTime.local().toISO();
+    const timestampedFormData = setIn(
+      formData,
+      [getPageSectionKey(2, 1), getEntityAddressKey(0, reportFQN, FQN.COMPLETED_DT_FQN)],
+      [now]
+    );
 
-    const entityData = processEntityData(postProcessFormData, entitySetIds, propertyTypeIds);
+    const entityData = processEntityData(timestampedFormData, entitySetIds, propertyTypeIds);
     const personEKID = getEntityKeyId(selectedPerson);
+    const incidentEKID = getEntityKeyId(incident);
+    const staffEKID = getEntityKeyId(currentStaff);
     const existingEKIDs = {
       [PEOPLE_FQN]: personEKID,
-      [STAFF_FQN]: getEntityKeyId(currentStaff)
-      // add incidentEKID
+      [STAFF_FQN]: staffEKID,
+      [INCIDENT_FQN]: incidentEKID
     };
 
+    let associationFn = getOfficerCrisisReportAssociations;
+    if (reportFQN === CRISIS_REPORT_CLINICIAN_FQN) {
+      associationFn = getClinicianCrisisReportAssociations;
+    }
+    if (reportFQN === FOLLOW_UP_REPORT_FQN) {
+      associationFn = getFollowupReportAssociations;
+    }
+
     const associationEntityData = processAssociationEntityData(
-      getNewCrisisReportAssociations(formData, existingEKIDs),
+      associationFn(timestampedFormData, existingEKIDs, now),
       entitySetIds,
       propertyTypeIds
     );
@@ -484,15 +632,17 @@ function* submitCrisisReportV2Worker(action :SequenceAction) :Generator<any, any
 
     yield put(submitCrisisReportV2.success(action.id));
 
-    // update count after submission success
-    const count = selectedPerson.getIn([FQN.NUM_REPORTS_FOUND_IN_FQN, 0], 0) + 1;
-    yield call(
-      updatePersonReportCountWorker,
-      updatePersonReportCount({
-        entityKeyId: personEKID,
-        count
-      })
-    );
+    // update count after submission of new incident
+    if (incident.isEmpty()) {
+      const count = selectedPerson.getIn([FQN.NUM_REPORTS_FOUND_IN_FQN, 0], 0) + 1;
+      yield call(
+        updatePersonReportCountWorker,
+        updatePersonReportCount({
+          entityKeyId: personEKID,
+          count
+        })
+      );
+    }
 
   }
   catch (error) {
@@ -630,7 +780,7 @@ function* getReportsNeighborsWorker(action :SequenceAction) :Generator<any, any,
 }
 
 function* getReportsNeighborsWatcher() :Generator<any, any, any> {
-  yield takeEvery(GET_REPORTS_NEIGHBORS, getReportsV2NeighborsWorker);
+  yield takeEvery(GET_REPORTS_NEIGHBORS, getReportsNeighborsWorker);
 }
 
 function* getCrisisReportWorker(action :SequenceAction) :Generator<any, any, any> {
@@ -721,24 +871,31 @@ function* updateCrisisReportWorker(action :SequenceAction) :Generator<any, any, 
 
     const entitySetIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
     const propertyTypeIds = yield select((state) => state.getIn(['edm', 'fqnToIdMap'], Map()));
+    const settings :Map = yield select((state) => state.getIn(['app', 'selectedOrganizationSettings'], Map()));
 
-    // post process section that matches path
-    const postProcessMap = {
-      [getPageSectionKey(1, 1)]: (formData) => formData,
-      [getPageSectionKey(2, 1)]: postProcessBehaviorSection,
-      [getPageSectionKey(3, 1)]: postProcessNatureSection,
-      [getPageSectionKey(4, 1)]: postProcessSafetySection,
-      [getPageSectionKey(5, 1)]: postProcessDisposition,
-    };
     const { path, formData, entityIndexToIdMap } = value;
 
     const section = path[0];
     const preFormData = fromJS(formData).mapKeys(() => section);
-    const postFormData = postProcessMap[section](preFormData.toJS());
+
+    let processedFormData = formData;
+
+    // post process section that matches path only if V1
+    if (settings.get(v1)) {
+
+      const postProcessMap = {
+        [getPageSectionKey(1, 1)]: (v) => v,
+        [getPageSectionKey(2, 1)]: postProcessBehaviorSection,
+        [getPageSectionKey(3, 1)]: postProcessNatureSection,
+        [getPageSectionKey(4, 1)]: postProcessSafetySection,
+        [getPageSectionKey(5, 1)]: postProcessDisposition,
+      };
+      processedFormData = postProcessMap[section](preFormData.toJS());
+    }
 
     // replace address keys with entityKeyId
     const draftWithKeys = replaceEntityAddressKeys(
-      postFormData,
+      processedFormData,
       findEntityAddressKeyFromMap(entityIndexToIdMap)
     );
 
@@ -760,7 +917,7 @@ function* updateCrisisReportWorker(action :SequenceAction) :Generator<any, any, 
       submitPartialReplace({
         ...value,
         entityData,
-        formData: postFormData
+        formData: processedFormData
       })
     );
 
@@ -817,6 +974,8 @@ export {
   getCrisisReportV2Worker,
   getCrisisReportWatcher,
   getCrisisReportWorker,
+  getLocationOfIncidentWatcher,
+  getLocationOfIncidentWorker,
   getReportsNeighborsWatcher,
   getReportsNeighborsWorker,
   getReportsV2NeighborsWatcher,

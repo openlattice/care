@@ -43,7 +43,6 @@ export const APP_TYPES_FQNS = {
   DIAGNOSIS_FQN: new FullyQualifiedName('app.diagnosis'),
   MEDICATION_STATEMENT_FQN: new FullyQualifiedName('app.medicationstatement'),
   SUBSTANCE_FQN: new FullyQualifiedName('app.substance'),
-  SUBSTANCE_HISTORY_FQN: new FullyQualifiedName('app.substancehistory'),
   WEAPON_FQN: new FullyQualifiedName('app.weapon'),
   VIOLENT_BEHAVIOR_FQN: new FullyQualifiedName('app.violentbehavior'),
   INJURY_FQN: new FullyQualifiedName('app.injury'),
@@ -53,12 +52,25 @@ export const APP_TYPES_FQNS = {
   INCOME_FQN: new FullyQualifiedName('app.income'),
   INSURANCE_FQN: new FullyQualifiedName('app.insurance'),
   INVOLVED_IN_FQN: new FullyQualifiedName('app.involvedin'),
-  CLINICIAN_REPORT_FQN: new FullyQualifiedName('app.cliniciancrisisreport'),
-  PATROL_REPORT_FQN: new FullyQualifiedName('app.patrolcrisisreport'),
   ENCOUNTER_FQN: new FullyQualifiedName('app.encounters'),
   ENCOUNTER_DETAILS_FQN: new FullyQualifiedName('app.encounterdetails'),
   INVOICE_FQN: new FullyQualifiedName('app.invoice'),
   REFERRAL_REQUEST_FQN: new FullyQualifiedName('app.referralrequest'),
+  CRISIS_REPORT_CLINICIAN_FQN: new FullyQualifiedName('app.crisisreport_clinician'),
+  CRISIS_REPORT_FQN: new FullyQualifiedName('app.crisisreport_officer'),
+  FOLLOW_UP_REPORT_FQN: new FullyQualifiedName('app.followupreport'),
+
+  DISPOSITION_FQN: new FullyQualifiedName('app.disposition'),
+  OFFENSE_FQN: new FullyQualifiedName('app.offense'),
+  CLEARED_BY_FQN: new FullyQualifiedName('app.clearedby'),
+
+  // protected
+  DISPOSITION_CLINICIAN_FQN: new FullyQualifiedName('app.disposition_clinician'),
+  MEDICATION_STATEMENT_CLINICIAN_FQN: new FullyQualifiedName('app.medicationstatement_clinician'),
+  DIAGNOSIS_CLINICIAN_FQN: new FullyQualifiedName('app.diagnosis_clinician'),
+  SUBSTANCE_CLINICIAN_FQN: new FullyQualifiedName('app.substance_clinician'),
+  BEHAVIOR_CLINICIAN_FQN: new FullyQualifiedName('app.behavior_clinician'),
+  SELF_HARM_CLINICIAN_FQN: new FullyQualifiedName('app.selfharm_clinician'),
 
   /* <===== BEGIN LONG BEACH HACK =====> */
   FILED_FOR_FQN: new FullyQualifiedName('app.filed_for'),
