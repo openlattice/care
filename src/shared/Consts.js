@@ -62,6 +62,15 @@ export const APP_TYPES_FQNS = {
 
   DISPOSITION_FQN: new FullyQualifiedName('app.disposition'),
   OFFENSE_FQN: new FullyQualifiedName('app.offense'),
+  CLEARED_BY_FQN: new FullyQualifiedName('app.clearedby'),
+
+  // protected
+  DISPOSITION_CLINICIAN_FQN: new FullyQualifiedName('app.disposition_clinician'),
+  MEDICATION_STATEMENT_CLINICIAN_FQN: new FullyQualifiedName('app.medicationstatement_clinician'),
+  DIAGNOSIS_CLINICIAN_FQN: new FullyQualifiedName('app.diagnosis_clinician'),
+  SUBSTANCE_CLINICIAN_FQN: new FullyQualifiedName('app.substance_clinician'),
+  BEHAVIOR_CLINICIAN_FQN: new FullyQualifiedName('app.behavior_clinician'),
+  SELF_HARM_CLINICIAN_FQN: new FullyQualifiedName('app.selfharm_clinician'),
 
   /* <===== BEGIN LONG BEACH HACK =====> */
   FILED_FOR_FQN: new FullyQualifiedName('app.filed_for'),

@@ -5,6 +5,14 @@ import {
   uiSchema as clinicianDispositionUiSchema
 } from './ClinicianDispositionSchemas';
 import {
+  schema as clinicianMedicalSchema,
+  uiSchema as clinicianMedicalUiSchema
+} from './ClinicianMedicalSchemas';
+import {
+  schema as clinicianThreatSchema,
+  uiSchema as clinicianThreatUiSchema
+} from './ClinicianThreatSchemas';
+import {
   schema as dispositionSchema,
   uiSchema as dispositionUiSchema
 } from './DispositionSchemas';
@@ -26,8 +34,8 @@ import { schema as threatSchema, uiSchema as threatUiSchema } from './ThreatSche
 const clinicianSchemas = [
   incidentSchema,
   clinicianBehaviorSchema,
-  medicalSchema,
-  threatSchema,
+  clinicianMedicalSchema,
+  clinicianThreatSchema,
   housingAndEmploymentSchema,
   insuranceSchema,
   clinicianDispositionSchema,
@@ -36,8 +44,8 @@ const clinicianSchemas = [
 const clinicianUiSchemas = [
   incidentUiSchema,
   clinicianBehaviorUiSchema,
-  medicalUiSchema,
-  threatUiSchema,
+  clinicianMedicalUiSchema,
+  clinicianThreatUiSchema,
   housingAndEmploymentUiSchema,
   insuranceUiSchema,
   clinicianDispositionUiSchema,
