@@ -9,7 +9,7 @@ import {
   SELECT_ALL_THAT_APPLY
 } from '../constants';
 
-const { BEHAVIOR_FQN, CRISIS_REPORT_CLINICIAN_FQN } = APP_TYPES_FQNS;
+const { BEHAVIOR_CLINICIAN_FQN, CRISIS_REPORT_CLINICIAN_FQN } = APP_TYPES_FQNS;
 
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
 
@@ -31,7 +31,7 @@ const schema = {
           // minItems: 1,
           uniqueItems: true
         },
-        [getEntityAddressKey(0, BEHAVIOR_FQN, FQN.OBSERVED_BEHAVIOR_FQN)]: {
+        [getEntityAddressKey(0, BEHAVIOR_CLINICIAN_FQN, FQN.OBSERVED_BEHAVIOR_FQN)]: {
           title: 'Behavior',
           type: 'array',
           description: SELECT_ALL_THAT_APPLY,
@@ -50,7 +50,7 @@ const schema = {
       },
       required: [
         getEntityAddressKey(0, CRISIS_REPORT_CLINICIAN_FQN, FQN.NATURE_OF_CRISIS_FQN),
-        getEntityAddressKey(0, BEHAVIOR_FQN, FQN.OBSERVED_BEHAVIOR_FQN),
+        getEntityAddressKey(0, BEHAVIOR_CLINICIAN_FQN, FQN.OBSERVED_BEHAVIOR_FQN),
       ]
     }
   }
@@ -72,7 +72,7 @@ const uiSchema = {
         withOther: true,
       }
     },
-    [getEntityAddressKey(0, BEHAVIOR_FQN, FQN.OBSERVED_BEHAVIOR_FQN)]: {
+    [getEntityAddressKey(0, BEHAVIOR_CLINICIAN_FQN, FQN.OBSERVED_BEHAVIOR_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
       'ui:options': {

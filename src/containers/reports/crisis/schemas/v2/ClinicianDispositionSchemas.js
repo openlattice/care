@@ -14,7 +14,7 @@ import {
 } from '../constants';
 
 const {
-  ENCOUNTER_FQN,
+  DISPOSITION_CLINICIAN_FQN,
   ENCOUNTER_DETAILS_FQN,
   INVOICE_FQN,
   INTERACTION_STRATEGY_FQN,
@@ -42,7 +42,7 @@ const schema = {
           uniqueItems: true
         },
         // change this to disposition
-        [getEntityAddressKey(0, FQN.DISPOSITION_FQN, FQN.CJ_DISPOSITION_FQN)]: {
+        [getEntityAddressKey(0, DISPOSITION_CLINICIAN_FQN, FQN.CJ_DISPOSITION_FQN)]: {
           type: 'array',
           description: SELECT_ALL_THAT_APPLY,
           title: 'Disposition',
@@ -116,7 +116,7 @@ const uiSchema = {
         row: true,
       }
     },
-    [getEntityAddressKey(0, ENCOUNTER_FQN, FQN.SERVICE_TYPE_FQN)]: {
+    [getEntityAddressKey(0, DISPOSITION_CLINICIAN_FQN, FQN.CJ_DISPOSITION_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
       'ui:options': {

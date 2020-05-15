@@ -5,6 +5,10 @@ const { OPENLATTICE_ID_FQN } = Constants;
 
 export { OPENLATTICE_ID_FQN };
 
+/* involved in */
+const ROLE_FQN = new FullyQualifiedName('ol.role');
+export { ROLE_FQN };
+
 /* offense */
 const NATURE_OF_CRISIS_FQN = new FullyQualifiedName('ol.natureofcrisis');
 export { NATURE_OF_CRISIS_FQN };
