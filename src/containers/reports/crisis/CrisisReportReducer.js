@@ -63,7 +63,9 @@ export default function crisisReportReducer(state :Map = INITIAL_STATE, action :
         SUCCESS: () => state
           .set('fetchState', RequestStates.SUCCESS)
           .merge(action.value),
-        FAILURE: () => state.set('fetchState', RequestStates.FAILURE),
+        FAILURE: () => state
+          .set('fetchState', RequestStates.FAILURE)
+          .set('error', action.value)
       });
     }
 

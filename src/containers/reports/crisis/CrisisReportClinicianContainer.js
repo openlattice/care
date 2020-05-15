@@ -23,6 +23,7 @@ import {
 import { v2 } from './schemas';
 
 import BlameCard from '../shared/BlameCard';
+import Unauthorized from '../../../components/warnings/Unauthorized';
 import * as FQN from '../../../edm/DataModelFqns';
 import { BreadcrumbItem, BreadcrumbLink } from '../../../components/breadcrumbs';
 import { useAuthorization } from '../../../components/hooks';
@@ -64,6 +65,7 @@ const CrisisReportClinicianContainer = () => {
   const entitySetIds = useSelector((store) => store.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
   const formData = useSelector((store) => store.getIn(['crisisReport', 'formData']));
   const fetchState = useSelector((store) => store.getIn(['crisisReport', 'fetchState']));
+  const error = useSelector((store) => store.getIn(['crisisReport', 'error']));
   const propertyTypeIds = useSelector((store) => store.getIn(['edm', 'fqnToIdMap'], Map()));
   const reporterData = useSelector((store) => store.getIn(['crisisReport', 'reporterData']));
   const reportData = useSelector((store) => store.getIn(['crisisReport', 'reportData']));
@@ -83,6 +85,9 @@ const CrisisReportClinicianContainer = () => {
 
   if (fetchState === RequestStates.PENDING) {
     return <Spinner size="3x" />;
+  }
+  if (fetchState === RequestStates.FAILURE && error) {
+    return <Unauthorized isLoading={false} />;
   }
 
   const handleUpdateCrisisReport = (params) => {

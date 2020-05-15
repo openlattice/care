@@ -12,11 +12,14 @@ import {
   List,
   Map,
   fromJS,
+  getIn,
   setIn,
 } from 'immutable';
 import { Models } from 'lattice';
 import { DataProcessingUtils } from 'lattice-fabricate';
 import {
+  AuthorizationsApiActions,
+  AuthorizationsApiSagas,
   DataApiActions,
   DataApiSagas,
   SearchApiActions,
@@ -92,6 +95,8 @@ const { FullyQualifiedName } = Models;
 
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
 const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
+const { getAuthorizationsWorker } = AuthorizationsApiSagas;
+const { getAuthorizations } = AuthorizationsApiActions;
 
 const { getEntityData } = DataApiActions;
 
@@ -115,7 +120,6 @@ const {
   DIAGNOSIS_FQN,
   DISPOSITION_FQN,
   ENCOUNTER_DETAILS_FQN,
-  ENCOUNTER_FQN,
   FOLLOW_UP_REPORT_FQN,
   HOUSING_FQN,
   INCIDENT_FQN,
@@ -139,6 +143,12 @@ const {
   SUBSTANCE_FQN,
   VIOLENT_BEHAVIOR_FQN,
   WEAPON_FQN,
+  DISPOSITION_CLINICIAN_FQN,
+  MEDICATION_STATEMENT_CLINICIAN_FQN,
+  DIAGNOSIS_CLINICIAN_FQN,
+  SUBSTANCE_CLINICIAN_FQN,
+  SELF_HARM_CLINICIAN_FQN,
+  BEHAVIOR_CLINICIAN_FQN,
 } = APP_TYPES_FQNS;
 
 const LOG = new Logger('CrisisReportSagas');
@@ -222,12 +232,8 @@ function* getReportsV2NeighborsWorker(action :SequenceAction) :Generator<any, an
 
     const app :Map = yield select((state) => state.get('app', Map()));
 
-    const [
-      reportESID,
-      partOfESID,
-      reportedESID,
-      ...neighborESIDs
-    ] = getESIDsFromApp(app, [
+    const isProtected = reportFQN === CRISIS_REPORT_CLINICIAN_FQN;
+    let entitySetFQNs = [
       reportFQN,
       PART_OF_FQN,
       REPORTED_FQN,
@@ -235,7 +241,6 @@ function* getReportsV2NeighborsWorker(action :SequenceAction) :Generator<any, an
       DIAGNOSIS_FQN,
       DISPOSITION_FQN,
       ENCOUNTER_DETAILS_FQN,
-      ENCOUNTER_FQN,
       HOUSING_FQN,
       INCIDENT_FQN,
       INCOME_FQN,
@@ -253,7 +258,46 @@ function* getReportsV2NeighborsWorker(action :SequenceAction) :Generator<any, an
       SUBSTANCE_FQN,
       VIOLENT_BEHAVIOR_FQN,
       WEAPON_FQN,
-    ]);
+    ];
+
+    if (isProtected) {
+      // check observed behavior property access as proxy for all clinician read permissions
+      const behaviorESID = getESIDFromApp(app, BEHAVIOR_CLINICIAN_FQN);
+      const observedBehaviorPTID :UUID = yield select(
+        (state) => state.getIn(['edm', 'fqnToIdMap', FQN.OBSERVED_BEHAVIOR_FQN])
+      );
+
+      const accessCheck = [{
+        aclKey: [behaviorESID, observedBehaviorPTID],
+        permissions: ['READ']
+      }];
+
+      const accessResponse = yield call(
+        getAuthorizationsWorker,
+        getAuthorizations(accessCheck)
+      );
+
+      if (accessResponse.error) throw accessResponse.error;
+      const readAccess = getIn(accessResponse, ['data', 0, 'permissions', 'READ']);
+
+      if (!readAccess) throw new Error('401');
+
+      entitySetFQNs = entitySetFQNs.concat([
+        DISPOSITION_CLINICIAN_FQN,
+        MEDICATION_STATEMENT_CLINICIAN_FQN,
+        DIAGNOSIS_CLINICIAN_FQN,
+        SUBSTANCE_CLINICIAN_FQN,
+        SELF_HARM_CLINICIAN_FQN,
+        BEHAVIOR_CLINICIAN_FQN
+      ]);
+    }
+
+    const [
+      reportESID,
+      partOfESID,
+      reportedESID,
+      ...neighborESIDs
+    ] = getESIDsFromApp(app, entitySetFQNs);
 
     const neighborsSearchParam = {
       entitySetId: reportESID,
@@ -480,7 +524,7 @@ function* getCrisisReportV2Worker(action :SequenceAction) :Generator<any, any, a
   catch (error) {
     LOG.error(action.type, error);
     response.error = error;
-    yield put(getCrisisReportV2.failure(action.id, error));
+    yield put(getCrisisReportV2.failure(action.id, error.message));
   }
   return response;
 }
