@@ -117,6 +117,7 @@ export const RELATIONSHIP_TYPES = [
   'Family Member',
   'Frequent Contact / Associate',
   'Neighbor',
+  'Self',
   'Unknown'
 ];
 
