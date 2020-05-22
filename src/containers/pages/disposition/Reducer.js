@@ -2,9 +2,9 @@
  * @flow
  */
 
-import randomUUID from 'uuid/v4';
 import { List, Map, fromJS } from 'immutable';
 import { DateTime } from 'luxon';
+import { v4 as uuid } from 'uuid';
 
 import { SET_INPUT_VALUE, SET_INPUT_VALUES } from './ActionFactory';
 import {
@@ -191,7 +191,7 @@ export function processForSubmit(state :Map<*, *>) :Object {
 
   let formID = state.get(REPORT_NUMBER, '');
   if (!formID.trim().length) {
-    formID = randomUUID();
+    formID = uuid();
   }
 
   const incidentDT = DateTime.fromISO(state.get(INCIDENT_DATE_TIME));

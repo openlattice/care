@@ -2,9 +2,9 @@
  * @flow
  */
 
-import randomUUID from 'uuid/v4';
 import { Map, fromJS } from 'immutable';
 import { DateTime } from 'luxon';
+import { v4 as uuid } from 'uuid';
 
 import { CLEAR_SUBJECT_INFORMATION, SET_INPUT_VALUE, SET_INPUT_VALUES } from './Actions';
 
@@ -111,7 +111,7 @@ export function processForSubmit(state :Map) :Object {
   const last4SSN = state.get(SSN_LAST_4) || undefined;
 
   let preprocessedState = state.get(IS_NEW_PERSON)
-    ? state.set(DOB, dob).set(PERSON_ID, randomUUID())
+    ? state.set(DOB, dob).set(PERSON_ID, uuid())
     : Map().set(PERSON_ID, state.get(PERSON_ID));
 
   if (dobDT.isValid && !state.get(AGE)) {
