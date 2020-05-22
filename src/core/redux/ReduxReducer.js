@@ -30,12 +30,11 @@ import searchReducer from '../../containers/search/SearchReducer';
 import staffReducer from '../../containers/staff/StaffReducer';
 import subjectInformationReducer from '../../containers/pages/subjectinformation/Reducer';
 import symptomsReportReducer from '../../containers/reports/symptoms/SymptomsReportReducer';
-import { INITIALIZE_APPLICATION } from '../../containers/app/AppActions';
 import { STATE } from '../../utils/constants/StateConstants';
 
 export default function reduxReducer(routerHistory :any) {
 
-  const allReducers = combineReducers({
+  return combineReducers({
     app: appReducer,
     auth: AuthReducer,
     authorization: authorizeReducer,
@@ -63,14 +62,4 @@ export default function reduxReducer(routerHistory :any) {
     [STATE.OFFICER_SAFETY]: officerSafetyReducer,
     [STATE.SUBJECT_INFORMATION]: subjectInformationReducer,
   });
-
-  const rootReducer = (state :Map, action :Object) => {
-    if (action.type === INITIALIZE_APPLICATION) {
-      return allReducers(undefined, action);
-    }
-
-    return allReducers(state, action);
-  };
-
-  return rootReducer;
 }
