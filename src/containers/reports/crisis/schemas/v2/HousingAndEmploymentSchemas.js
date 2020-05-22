@@ -69,7 +69,13 @@ const schema = {
           // minItems: 1,
           uniqueItems: true
         },
-      }
+      },
+      required: [
+        getEntityAddressKey(0, HOUSING_FQN, FQN.TYPE_FQN),
+        getEntityAddressKey(0, HOUSING_FQN, FQN.DESCRIPTION_FQN),
+        getEntityAddressKey(0, OCCUPATION_FQN, FQN.TYPE_FQN),
+        getEntityAddressKey(0, INCOME_FQN, FQN.TYPE_FQN),
+      ]
     }
   }
 };

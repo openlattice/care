@@ -42,6 +42,7 @@ const schema = {
       },
       required: [
         getEntityAddressKey(0, INCIDENT_FQN, FQN.DATETIME_START_FQN),
+        getEntityAddressKey(0, LOCATION_FQN, FQN.LOCATION_ADDRESS_FQN),
       ]
     }
   },
