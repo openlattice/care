@@ -62,7 +62,13 @@ const schema = {
           default: 'past',
           skipPopulate: true,
         },
-      }
+      },
+      required: [
+        getEntityAddressKey(0, SUBSTANCE_FQN, FQN.TYPE_FQN),
+        getEntityAddressKey(0, SUBSTANCE_FQN, FQN.TEMPORAL_STATUS_FQN),
+        getEntityAddressKey(1, SUBSTANCE_FQN, FQN.TYPE_FQN),
+        getEntityAddressKey(1, SUBSTANCE_FQN, FQN.TEMPORAL_STATUS_FQN),
+      ]
     },
   },
 };

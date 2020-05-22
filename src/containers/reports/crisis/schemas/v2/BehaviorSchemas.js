@@ -32,9 +32,9 @@ const schema = {
           default: CRISIS_REPORT,
         },
       },
-      // required: [
-      //   getEntityAddressKey(0, BEHAVIOR_FQN, FQN.OBSERVED_BEHAVIOR_FQN),
-      // ]
+      required: [
+        getEntityAddressKey(0, BEHAVIOR_FQN, FQN.OBSERVED_BEHAVIOR_FQN),
+      ]
     }
   }
 };

@@ -97,7 +97,16 @@ const schema = {
           // minItems: 1,
           uniqueItems: true
         },
-      }
+      },
+      required: [
+        getEntityAddressKey(0, INTERACTION_STRATEGY_FQN, FQN.TECHNIQUES_FQN),
+        getEntityAddressKey(0, DISPOSITION_CLINICIAN_FQN, FQN.CJ_DISPOSITION_FQN),
+        getEntityAddressKey(0, REFERRAL_REQUEST_FQN, FQN.SERVICE_TYPE_FQN),
+        getEntityAddressKey(0, ENCOUNTER_DETAILS_FQN, FQN.LAW_ENFORCEMENT_INVOLVEMENT_FQN),
+        getEntityAddressKey(0, ENCOUNTER_DETAILS_FQN, FQN.REASON_FQN),
+        getEntityAddressKey(0, ENCOUNTER_DETAILS_FQN, FQN.LEVEL_OF_CARE_FQN),
+        getEntityAddressKey(0, INVOICE_FQN, FQN.LINE_ITEM_FQN),
+      ]
     }
   }
 };
