@@ -117,6 +117,7 @@ const uiSchema = {
       'ui:options': {
         mode: 'button',
         row: true,
+        withNone: true,
       }
     },
     [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.CATEGORY_FQN)]: {
