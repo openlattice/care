@@ -80,6 +80,9 @@ const schema = {
       required: [
         getEntityAddressKey(0, FOLLOW_UP_REPORT_FQN, FQN.COMPLETED_DT_FQN),
         getEntityAddressKey(0, FOLLOW_UP_REPORT_FQN, FQN.NATURE_OF_CRISIS_FQN),
+        getEntityAddressKey(0, ENCOUNTER_FQN, FQN.SERVICE_TYPE_FQN),
+        getEntityAddressKey(0, LOCATION_FQN, FQN.TYPE_FQN),
+        getEntityAddressKey(0, REFERRAL_REQUEST_FQN, FQN.SOURCE_FQN),
       ]
     }
   }

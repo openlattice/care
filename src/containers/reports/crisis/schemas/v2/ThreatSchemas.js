@@ -69,7 +69,13 @@ const schema = {
           // minItems: 1,
           uniqueItems: true
         },
-      }
+      },
+      required: [
+        getEntityAddressKey(0, WEAPON_FQN, FQN.TYPE_FQN),
+        getEntityAddressKey(0, VIOLENT_BEHAVIOR_FQN, FQN.DIRECTED_AGAINST_RELATION_FQN),
+        getEntityAddressKey(0, INJURY_FQN, FQN.PERSON_INJURED_FQN),
+        getEntityAddressKey(0, SELF_HARM_FQN, FQN.ACTION_FQN),
+      ]
     }
   }
 };

@@ -46,7 +46,12 @@ const schema = {
           description: SELECT_ONLY_ONE,
           enum: YES_NO_UNKNOWN
         },
-      }
+      },
+      required: [
+        getEntityAddressKey(0, DISPOSITION_FQN, FQN.CJ_DISPOSITION_FQN),
+        getEntityAddressKey(0, DISPOSITION_FQN, FQN.STATUS_FQN),
+        getEntityAddressKey(0, OFFENSE_FQN, FQN.DIVERSION_STATUS_FQN),
+      ]
     }
   }
 };

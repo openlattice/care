@@ -29,7 +29,10 @@ const schema = {
             type: 'string',
             title: 'Diagnosis'
           }
-        }
+        },
+        required: [
+          getEntityAddressKey(-1, DIAGNOSIS_CLINICIAN_FQN, FQN.NAME_FQN)
+        ]
       },
       default: [{}],
     },
@@ -49,7 +52,11 @@ const schema = {
             title: 'Compliance',
             enumNames: ['Yes', 'No']
           }
-        }
+        },
+        required: [
+          getEntityAddressKey(-1, MEDICATION_STATEMENT_CLINICIAN_FQN, FQN.NAME_FQN),
+          getEntityAddressKey(-1, MEDICATION_STATEMENT_CLINICIAN_FQN, FQN.TAKEN_AS_PRESCRIBED_FQN),
+        ]
       },
       default: [{}],
     },
@@ -99,7 +106,13 @@ const schema = {
           default: 'past',
           skipPopulate: true,
         },
-      }
+      },
+      required: [
+        getEntityAddressKey(0, SUBSTANCE_CLINICIAN_FQN, FQN.TYPE_FQN),
+        getEntityAddressKey(0, SUBSTANCE_CLINICIAN_FQN, FQN.TEMPORAL_STATUS_FQN),
+        getEntityAddressKey(1, SUBSTANCE_CLINICIAN_FQN, FQN.TYPE_FQN),
+        getEntityAddressKey(1, SUBSTANCE_CLINICIAN_FQN, FQN.TEMPORAL_STATUS_FQN),
+      ]
     },
   },
 };

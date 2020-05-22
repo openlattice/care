@@ -47,7 +47,13 @@ const schema = {
           default: 'Secondary',
           skipPopulate: true,
         },
-      }
+      },
+      required: [
+        getEntityAddressKey(0, INSURANCE_FQN, FQN.ORGANIZATION_NAME_FQN),
+        getEntityAddressKey(0, INSURANCE_FQN, FQN.GENERAL_STATUS_FQN),
+        getEntityAddressKey(1, INSURANCE_FQN, FQN.ORGANIZATION_NAME_FQN),
+        getEntityAddressKey(1, INSURANCE_FQN, FQN.GENERAL_STATUS_FQN),
+      ]
     }
   }
 };
