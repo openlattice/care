@@ -65,6 +65,7 @@ export const NATURE_OF_CRISIS = [
   'Medically Induced (Traumatic Brain Injury / UTI)',
   CHEMICAL,
   'Excited Delirium',
+  'Medication Non-compliance',
   'Unknown'
 ];
 
@@ -77,10 +78,11 @@ export const BIOLOGICAL_CAUSES = [
 ];
 
 export const CHEMICAL_CAUSES = [
-  'OTC',
-  'Prescription',
+  'Alcohol',
   'Illicit',
-  'Poison'
+  'OTC',
+  'Poison',
+  'Prescription',
 ];
 
 export const ASSISTANCES = [

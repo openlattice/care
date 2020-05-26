@@ -21,6 +21,16 @@ const schema = {
       type: 'object',
       title: 'Observations',
       properties: {
+        [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.MILITARY_STATUS_FQN)]: {
+          title: 'Served in military?',
+          type: 'boolean',
+          default: false
+        },
+        // [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.AFFILIATION_FQN)]: {
+        //   title: 'Affiliated with University of Iowa?',
+        //   type: 'boolean',
+        //   default: false
+        // },
         [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.OBSERVED_BEHAVIORS_FQN)]: {
           title: 'Behaviors',
           type: 'array',
@@ -66,10 +76,18 @@ const uiSchema = {
       editable: true
     },
     'ui:order': [
+      getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.MILITARY_STATUS_FQN),
+      '*',
       getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.OBSERVED_BEHAVIORS_FQN),
       getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.SUICIDAL_ACTIONS_FQN),
       getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.DEMEANORS_FQN),
     ],
+    [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.MILITARY_STATUS_FQN)]: {
+      classNames: 'column-span-12',
+    },
+    [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.AFFILIATION_FQN)]: {
+      classNames: 'column-span-12',
+    },
     [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.OBSERVED_BEHAVIORS_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
