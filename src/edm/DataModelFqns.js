@@ -5,6 +5,7 @@ const { OPENLATTICE_ID_FQN } = Constants;
 
 export { OPENLATTICE_ID_FQN };
 
+export const AFFILIATION_FQN = new FullyQualifiedName('bhr.affiliation');
 /* involved in */
 const ROLE_FQN = new FullyQualifiedName('ol.role');
 export { ROLE_FQN };

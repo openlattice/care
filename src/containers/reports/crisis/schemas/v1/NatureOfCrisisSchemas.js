@@ -1,6 +1,11 @@
 import { DataProcessingUtils } from 'lattice-fabricate';
 
-import { ASSISTANCES, HOUSING_SITUATIONS, NATURE_OF_CRISIS } from './constants';
+import {
+  ASSISTANCES,
+  CHEMICAL_CAUSES,
+  HOUSING_SITUATIONS,
+  NATURE_OF_CRISIS
+} from './constants';
 
 import * as FQN from '../../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
@@ -28,6 +33,16 @@ const schema = {
           minItems: 1,
           uniqueItems: true
         },
+        [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.CHEMICALLY_INDUCED_CAUSES_FQN)]: {
+          title: 'Chemically induced causes',
+          type: 'array',
+          description: SELECT_ALL_THAT_APPLY,
+          items: {
+            type: 'string',
+            enum: CHEMICAL_CAUSES,
+          },
+          uniqueItems: true
+        },
         [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.PERSON_ASSISTING_FQN)]: {
           title: 'Assistance on Scene',
           type: 'array',
@@ -50,7 +65,7 @@ const schema = {
         getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.DISPATCH_REASON_FQN),
         getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.PERSON_ASSISTING_FQN),
         getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.HOUSING_SITUATION_FQN),
-      ]
+      ],
     }
   }
 };
@@ -68,6 +83,14 @@ const uiSchema = {
         mode: 'button',
         row: true,
         withOther: true,
+      }
+    },
+    [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.CHEMICALLY_INDUCED_CAUSES_FQN)]: {
+      classNames: 'column-span-12',
+      'ui:widget': 'checkboxes',
+      'ui:options': {
+        mode: 'button',
+        row: true,
       }
     },
     [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.PERSON_ASSISTING_FQN)]: {
