@@ -4,7 +4,8 @@ export const STATE = {
   OBSERVED_BEHAVIORS: 'observedBehaviors',
   OFFICER_SAFETY: 'officerSafety',
   SUBJECT_INFORMATION: 'subjectInformation',
-  SUBMIT: 'submit'
+  SUBMIT: 'submit',
+  SUBSCRIPTIONS: 'subscriptions'
 };
 
 export const SUBMIT = {
@@ -12,4 +13,9 @@ export const SUBMIT = {
   SUCCESS: 'submitSuccess',
   SUBMITTED: 'submitted',
   ERROR: 'error'
+};
+
+export const SUBSCRIBE = {
+  IS_LOADING_SUBSCRIPTIONS: 'isLoadingSubscriptions',
+  SUBSCRIPTIONS: 'subscriptions'
 };
