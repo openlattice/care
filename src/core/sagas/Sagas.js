@@ -42,6 +42,7 @@ import * as RoutingSagas from '../router/RoutingSagas';
 import * as ScarsMarksTattoosSagas from '../../containers/profile/edit/basicinformation/sagas/ScarsMarksTattoosSagas';
 import * as SearchSagas from '../../containers/search/SearchSagas';
 import * as StaffSagas from '../../containers/staff/StaffSagas';
+import * as SubscriptionSagas from '../../containers/subscriptions/SubscriptionSagas';
 import * as SymptomsReportSagas from '../../containers/reports/symptoms/SymptomsReportSagas';
 
 export default function* sagas() :Generator<*, *, *> {
@@ -218,5 +219,11 @@ export default function* sagas() :Generator<*, *, *> {
 
     fork(RecentInteractionSagas.getRecentInteractionsWatcher),
     fork(RecentInteractionSagas.submitRecentInteractionWatcher),
+
+    // SubscriptionSagas
+    fork(SubscriptionSagas.getSubscriptionsWatcher),
+    fork(SubscriptionSagas.createSubscriptionWatcher),
+    fork(SubscriptionSagas.updateSubscriptionWatcher),
+    fork(SubscriptionSagas.expireSubscriptionWatcher)
   ]);
 }

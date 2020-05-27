@@ -29,6 +29,7 @@ import reportsReducer from '../../containers/reports/ReportsReducer';
 import searchReducer from '../../containers/search/SearchReducer';
 import staffReducer from '../../containers/staff/StaffReducer';
 import subjectInformationReducer from '../../containers/pages/subjectinformation/Reducer';
+import subscriptionReducer from '../../containers/subscriptions/SubscriptionReducer';
 import symptomsReportReducer from '../../containers/reports/symptoms/SymptomsReportReducer';
 import { STATE } from '../../utils/constants/StateConstants';
 
@@ -61,5 +62,6 @@ export default function reduxReducer(routerHistory :any) {
     [STATE.OBSERVED_BEHAVIORS]: observedBehaviorsReducer,
     [STATE.OFFICER_SAFETY]: officerSafetyReducer,
     [STATE.SUBJECT_INFORMATION]: subjectInformationReducer,
+    [STATE.SUBSCRIPTIONS]: subscriptionReducer
   });
 }

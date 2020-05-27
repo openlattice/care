@@ -3,6 +3,7 @@ import React, { useCallback } from 'react';
 
 import styled from 'styled-components';
 import {
+  faBell,
   faCampground,
   faDownload,
   faFileAlt,
@@ -13,12 +14,11 @@ import {
   faSignOut,
   faUser,
   faUserChart,
-  faUserNurse
+  faUserNurse,
 } from '@fortawesome/pro-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Map } from 'immutable';
 import { AppHeaderWrapper, AppNavigationWrapper } from 'lattice-ui-kit';
-import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 
 import OpenLatticeLogo from '../../assets/images/logo_v2.png';
@@ -30,6 +30,7 @@ import {
   ISSUES_PATH,
   LOGOUT_PATH,
   REPORTS_PATH,
+  SUBSCRIPTIONS_PATH
 } from '../../core/router/Routes';
 import {
   ENCAMPMENTS_PATH,
@@ -75,6 +76,7 @@ const AppHeaderContainer = (props :Props) => {
   const stayAway = isLongBeach || appSettings.get('stayAway', false);
   const providers = isLongBeach || appSettings.get('providers', false);
   const homelessEncampments = isLongBeach || appSettings.get('homelessEncampments', false);
+  const v2 = appSettings.get('v2', false);
   /* <===== END LONG BEACH HACK =====> */
 
   const onChange = useCallback(({ value } :any) => {
@@ -119,6 +121,10 @@ const AppHeaderContainer = (props :Props) => {
           <NavLabel>Providers</NavLabel>
         </StyledNavLink>
         {/* <===== END LONG BEACH HACK =====> */}
+        <StyledNavLink to={SUBSCRIPTIONS_PATH} hidden={v2}>
+          <FontAwesomeIcon size="lg" fixedWidth icon={faBell} />
+          <NavLabel>Subscriptions</NavLabel>
+        </StyledNavLink>
         <StyledNavLink to={DASHBOARD_PATH} hidden={isLongBeach}>
           <FontAwesomeIcon size="lg" fixedWidth icon={faUserChart} />
           <NavLabel>Dashboard</NavLabel>
