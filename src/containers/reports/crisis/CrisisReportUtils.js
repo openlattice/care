@@ -483,11 +483,16 @@ const pipe = (...fns) => (init) => fns.reduce((piped, f) => f(piped), init);
 // pre/post processing of formData is to maintain interop with old bhr.report data submitted
 // before facelift
 // preprocessors manipulate report entity data before it is transformed to become formData
-const preProcessessObservations = (report :Object) :Object => pipe(
-  preProcessOther(FQN.DEMEANORS_FQN, FQN.OTHER_DEMEANORS_FQN),
-  preProcessOther(FQN.OBSERVED_BEHAVIORS_FQN, FQN.OBSERVED_BEHAVIORS_OTHER_FQN),
-  preProcessOther(FQN.SUICIDAL_ACTIONS_FQN, ''),
-)(report);
+const preProcessessObservations = (report :Object) :Object => {
+  const updatedReport = pipe(
+    preProcessOther(FQN.DEMEANORS_FQN, FQN.OTHER_DEMEANORS_FQN),
+    preProcessOther(FQN.OBSERVED_BEHAVIORS_FQN, FQN.OBSERVED_BEHAVIORS_OTHER_FQN),
+    preProcessOther(FQN.SUICIDAL_ACTIONS_FQN, ''),
+  )(report);
+
+  const [militaryStatus] = getPropertyValues(report, [FQN.MILITARY_STATUS_FQN]);
+  return setIn(updatedReport, [FQN.MILITARY_STATUS_FQN], [militaryStatus.includes('Veteran')]);
+};
 
 const preProcessessNature = (report :Object) :Object => {
   preProcessOther(FQN.PERSON_ASSISTING_FQN, FQN.OTHER_PERSON_ASSISTING_FQN);
@@ -668,13 +673,14 @@ const postProcessBehaviorSection = (formData :Object) :Object => {
   const sectionKey = getPageSectionKey(2, 1);
   const sectionData = getIn(formData, [sectionKey]);
 
-  const behaviorProperties = [FQN.OBSERVED_BEHAVIORS_FQN, FQN.SUICIDAL_ACTIONS_FQN];
+  const behaviorProperties = [FQN.OBSERVED_BEHAVIORS_FQN, FQN.SUICIDAL_ACTIONS_FQN, FQN.MILITARY_STATUS_FQN];
 
   sectionData[getBHRAddress(FQN.SUICIDAL_FQN)] = false;
 
   const [
     behaviorValue,
     suicidalActionsValue,
+    militaryStatusValue
   ] = getSectionValues(formData, sectionKey, behaviorProperties);
 
   const suicidal = suicidalActionsValue.includes(THREAT) || suicidalActionsValue.includes(ATTEMPT);
@@ -686,6 +692,13 @@ const postProcessBehaviorSection = (formData :Object) :Object => {
   else {
     sectionData[getBHRAddress(FQN.OBSERVED_BEHAVIORS_FQN)] = behaviorValue
       .filter((behavior) => behavior !== SUICIDE_BEHAVIORS);
+  }
+
+  if (militaryStatusValue) {
+    sectionData[getBHRAddress(FQN.MILITARY_STATUS_FQN)] = 'Veteran';
+  }
+  else {
+    sectionData[getBHRAddress(FQN.MILITARY_STATUS_FQN)] = null;
   }
 
   return setIn(formData, [sectionKey], sectionData);
