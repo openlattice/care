@@ -881,8 +881,7 @@ function* updateCrisisReportWorker(action :SequenceAction) :Generator<any, any, 
     let processedFormData = formData;
 
     // post process section that matches path only if V1
-    if (settings.get(v1)) {
-
+    if (settings.get('v1')) {
       const postProcessMap = {
         [getPageSectionKey(1, 1)]: (v) => v,
         [getPageSectionKey(2, 1)]: postProcessBehaviorSection,

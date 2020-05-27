@@ -14,6 +14,7 @@ export const TRACK_CONTACT_PATH :string = '/track-contact';
 export const CRISIS_PATH :string = '/crisis';
 export const DASHBOARD_PATH :string = '/dashboard';
 export const DOWNLOADS_PATH :string = '/downloads';
+export const SUBSCRIPTIONS_PATH :string = '/subscriptions';
 export const EDIT_PATH :string = '/edit';
 export const ENCAMPMENTS_PATH :string = '/encampments';
 export const ENCAMPMENT_ID_PARAM :string = 'encampmentId';
