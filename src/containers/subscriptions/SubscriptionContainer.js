@@ -2,16 +2,21 @@
  * @flow
  */
 
-import React from 'react';
+import React, { Component } from 'react';
 
 import { List, Map } from 'immutable';
 import { Card, CardSegment, Spinner } from 'lattice-ui-kit';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router';
 import { bindActionCreators } from 'redux';
+import type { Dispatch } from 'redux';
 
 import Subscription from './Subscription';
-import * as SubscribeActionFactory from './SubscriptionActions';
+import {
+  createSubscription,
+  expireSubscription,
+  getSubscriptions,
+  updateSubscription,
+} from './SubscriptionActions';
 import { SUBSCRIPTION_TYPE } from './constants';
 
 import { ContentOuterWrapper, ContentWrapper, Header } from '../../components/layout';
@@ -38,7 +43,7 @@ type State = {
   homelessSubscription :?Map
 };
 
-class SubscribeContainer extends React.Component<Props, State> {
+class SubscriptionContainer extends Component<Props, State> {
 
   constructor(props :Props) {
     super(props);
@@ -170,32 +175,21 @@ class SubscribeContainer extends React.Component<Props, State> {
   }
 }
 
-function mapStateToProps(state) {
+const mapStateToProps = (state :Map) => ({
+  isLoadingSubscriptions: state.getIn([STATE.SUBSCRIPTIONS, SUBSCRIBE.IS_LOADING_SUBSCRIPTIONS]),
+  subscriptions: state.getIn([STATE.SUBSCRIPTIONS, SUBSCRIBE.SUBSCRIPTIONS]),
+  homelessQuery: getSearchTerm(state.getIn(['edm', 'fqnToIdMap', HOUSING_SITUATION_FQN]), HOMELESS_STR),
+  app: state.get('app', Map())
+});
 
-  return {
-    isLoadingSubscriptions: state.getIn([STATE.SUBSCRIPTIONS, SUBSCRIBE.IS_LOADING_SUBSCRIPTIONS]),
-    subscriptions: state.getIn([STATE.SUBSCRIPTIONS, SUBSCRIBE.SUBSCRIPTIONS]),
-    homelessQuery: getSearchTerm(state.getIn(['edm', 'fqnToIdMap', HOUSING_SITUATION_FQN]), HOMELESS_STR),
-    app: state.get('app', Map())
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-
-  const actions = {};
-
-  Object.keys(SubscribeActionFactory).forEach((action) => {
-    actions[action] = SubscribeActionFactory[action];
-  });
-
-  return {
-    actions: {
-      ...bindActionCreators(actions, dispatch)
-    }
-  };
-}
+const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
+  actions: bindActionCreators({
+    createSubscription,
+    expireSubscription,
+    getSubscriptions,
+    updateSubscription,
+  }, dispatch)
+});
 
 // $FlowFixMe
-export default withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(SubscribeContainer)
-);
+export default connect(mapStateToProps, mapDispatchToProps)(SubscriptionContainer);
