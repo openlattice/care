@@ -484,14 +484,18 @@ const pipe = (...fns) => (init) => fns.reduce((piped, f) => f(piped), init);
 // before facelift
 // preprocessors manipulate report entity data before it is transformed to become formData
 const preProcessessObservations = (report :Object) :Object => {
-  const updatedReport = pipe(
+  let updatedReport = pipe(
     preProcessOther(FQN.DEMEANORS_FQN, FQN.OTHER_DEMEANORS_FQN),
     preProcessOther(FQN.OBSERVED_BEHAVIORS_FQN, FQN.OBSERVED_BEHAVIORS_OTHER_FQN),
     preProcessOther(FQN.SUICIDAL_ACTIONS_FQN, ''),
   )(report);
 
   const [militaryStatus] = getPropertyValues(report, [FQN.MILITARY_STATUS_FQN]);
-  return setIn(updatedReport, [FQN.MILITARY_STATUS_FQN], [militaryStatus.includes('Veteran')]);
+  const [affiliation] = getPropertyValues(report, [FQN.AFFILIATION_FQN]);
+  updatedReport = setIn(updatedReport, [FQN.MILITARY_STATUS_FQN], [militaryStatus.includes('Veteran')]);
+  updatedReport = setIn(updatedReport, [FQN.AFFILIATION_FQN], [affiliation.includes('University of Iowa')]);
+
+  return updatedReport;
 };
 
 const preProcessessNature = (report :Object) :Object => {
@@ -673,14 +677,20 @@ const postProcessBehaviorSection = (formData :Object) :Object => {
   const sectionKey = getPageSectionKey(2, 1);
   const sectionData = getIn(formData, [sectionKey]);
 
-  const behaviorProperties = [FQN.OBSERVED_BEHAVIORS_FQN, FQN.SUICIDAL_ACTIONS_FQN, FQN.MILITARY_STATUS_FQN];
+  const behaviorProperties = [
+    FQN.OBSERVED_BEHAVIORS_FQN,
+    FQN.SUICIDAL_ACTIONS_FQN,
+    FQN.MILITARY_STATUS_FQN,
+    FQN.AFFILIATION_FQN
+  ];
 
   sectionData[getBHRAddress(FQN.SUICIDAL_FQN)] = false;
 
   const [
     behaviorValue,
     suicidalActionsValue,
-    militaryStatusValue
+    militaryStatusValue,
+    affiliationValue
   ] = getSectionValues(formData, sectionKey, behaviorProperties);
 
   const suicidal = suicidalActionsValue.includes(THREAT) || suicidalActionsValue.includes(ATTEMPT);
@@ -699,6 +709,13 @@ const postProcessBehaviorSection = (formData :Object) :Object => {
   }
   else {
     sectionData[getBHRAddress(FQN.MILITARY_STATUS_FQN)] = null;
+  }
+
+  if (affiliationValue) {
+    sectionData[getBHRAddress(FQN.AFFILIATION_FQN)] = 'University of Iowa';
+  }
+  else {
+    sectionData[getBHRAddress(FQN.AFFILIATION_FQN)] = null;
   }
 
   return setIn(formData, [sectionKey], sectionData);
