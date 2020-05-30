@@ -90,6 +90,8 @@ import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../ut
 import { isDefined } from '../../../utils/LangUtils';
 import { generateReviewSchema } from '../../../utils/SchemaUtils';
 import { isValidUuid } from '../../../utils/Utils';
+import { getFormSchema } from '../FormSchemasActions';
+import { getFormSchemaWorker } from '../FormSchemasSagas';
 
 const { FullyQualifiedName } = Models;
 
@@ -807,6 +809,11 @@ function* getCrisisReportWorker(action :SequenceAction) :Generator<any, any, any
       })
     );
 
+    const formSchemaRequest = call(
+      getFormSchemaWorker,
+      getFormSchema('CRISIS_REPORT')
+    );
+
     const neighborsRequest = call(
       getReportsNeighborsWorker,
       getReportsNeighbors({
@@ -815,9 +822,10 @@ function* getCrisisReportWorker(action :SequenceAction) :Generator<any, any, any
       })
     );
 
-    const [reportResponse, neighborsResponse] = yield all([
+    const [reportResponse, neighborsResponse, formSchemaResponse] = yield all([
       reportRequest,
       neighborsRequest,
+      formSchemaRequest
     ]);
 
     if (reportResponse.error) throw reportResponse.error;
@@ -836,7 +844,8 @@ function* getCrisisReportWorker(action :SequenceAction) :Generator<any, any, any
     });
     const neighborsWithReport = neighborsByFQN.set(BEHAVIORAL_HEALTH_REPORT_FQN.toString(), List([reportData]));
 
-    const { schemas, uiSchemas } = v1;
+    const formSchemas = formSchemaResponse.data || v1;
+    const { schemas, uiSchemas } = formSchemas;
     const { schema } = generateReviewSchema(schemas, uiSchemas, true);
     const formData = fromJS(constructFormDataFromNeighbors(neighborsWithReport, schema));
     const entityIndexToIdMap = getEntityIndexToIdMapFromNeighbors(neighborsWithReport, schema);

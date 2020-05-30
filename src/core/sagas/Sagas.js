@@ -24,6 +24,7 @@ import * as CrisisReportSagas from '../../containers/reports/crisis/CrisisReport
 import * as DashboardSagas from '../../containers/dashboard/DashboardSagas';
 import * as DownloadsSagas from '../../containers/downloads/DownloadsSagas';
 import * as EncampmentSagas from '../../longbeach/location/encampment/EncampmentsSagas';
+import * as FormSchemasSagas from '../../containers/reports/FormSchemasSagas';
 import * as IssueSagas from '../../containers/issues/issue/IssueSagas';
 import * as IssuesSagas from '../../containers/issues/IssuesSagas';
 import * as LongBeachLocationsSagas from '../../longbeach/location/stayaway/LongBeachLocationsSagas';
@@ -197,13 +198,14 @@ export default function* sagas() :Generator<*, *, *> {
     fork(CrisisReportSagas.deleteCrisisReportContentWatcher),
     fork(CrisisReportSagas.getCrisisReportV2Watcher),
     fork(CrisisReportSagas.getCrisisReportWatcher),
-    fork(CrisisReportSagas.getFormSchemaWatcher),
     fork(CrisisReportSagas.getReportsNeighborsWatcher),
     fork(CrisisReportSagas.getReportsV2NeighborsWatcher),
     fork(CrisisReportSagas.getSubjectOfIncidentWatcher),
     fork(CrisisReportSagas.submitCrisisReportV2Watcher),
     fork(CrisisReportSagas.submitCrisisReportWatcher),
     fork(CrisisReportSagas.updateCrisisReportWatcher),
+
+    fork(FormSchemasSagas.getFormSchemaWatcher),
 
     fork(EncampmentSagas.addPersonToEncampmentWatcher),
     fork(EncampmentSagas.getEncampmentOccupantsWatcher),
