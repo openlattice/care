@@ -680,7 +680,6 @@ function* submitCrisisReportWorker(action :SequenceAction) :Generator<any, any, 
     const existingEKIDs = {
       [PEOPLE_FQN]: personEKID,
       [STAFF_FQN]: getEntityKeyId(currentStaff)
-      // add incidentEKID
     };
 
     const associationEntityData = processAssociationEntityData(
