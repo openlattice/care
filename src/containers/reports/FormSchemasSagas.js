@@ -88,6 +88,7 @@ function* getFormSchemaWorker(action :SequenceAction) :Generator<any, any, any> 
     }));
   }
   catch (error) {
+    LOG.error(action.type, error);
     yield put(getFormSchema.failure(action.id, error));
   }
   return response;
