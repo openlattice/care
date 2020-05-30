@@ -7,19 +7,17 @@ import { Form, Paged } from 'lattice-fabricate';
 import {
   Button,
   Card,
-  Spinner
 } from 'lattice-ui-kit';
 import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
-import { clearCrisisReport, submitCrisisReport } from './CrisisActions';
-import { v1 } from './schemas';
+import { clearCrisisReport, submitCrisisReportV2 } from './CrisisActions';
+import { v2 } from './schemas';
 import { CRISIS_REPORT } from './schemas/constants';
 
 import SuccessSplash from '../shared/SuccessSplash';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { generateReviewSchema } from '../../../utils/SchemaUtils';
-import { getFormSchema } from '../FormSchemasActions';
 
 const { CRISIS_REPORT_FQN } = APP_TYPES_FQNS;
 
@@ -31,57 +29,44 @@ const ActionRow = styled.div`
 `;
 
 type Props = {
+  incident :Map;
   pageRef :{ current :HTMLDivElement | null };
   selectedPerson :Map;
 };
 
-const NewCrisisReport = ({ pageRef, selectedPerson } :Props) => {
+const NewCrisisReportV2 = ({ incident, pageRef, selectedPerson } :Props) => {
   const dispatch = useDispatch();
   const submitState = useSelector((store) => store.getIn(['crisisReport', 'submitState']));
-  const remoteSchemas = useSelector((store) => store.getIn(['formSchemas', 'schemas', 'CRISIS_REPORT']));
-  const fetchState = useSelector((store) => store.getIn(['formSchemas', 'fetchState']));
 
-  const allSchemas = useMemo(
-    () => {
-      let schemaVersion = v1;
-      if (remoteSchemas) {
-        schemaVersion = remoteSchemas.toJS();
-      }
-      const { schemas, uiSchemas } = schemaVersion;
-      return {
-        reviewSchemas: generateReviewSchema(schemas, uiSchemas, true),
-        schemas,
-        uiSchemas,
-      };
-    },
-    [remoteSchemas]
+  const schemaVersion = v2.officer;
+  let { schemas, uiSchemas } = schemaVersion;
+
+  if (!incident.isEmpty()) {
+    schemas = schemas.slice(1);
+    uiSchemas = uiSchemas.slice(1);
+  }
+
+  const reviewSchemas = useMemo(
+    () => generateReviewSchema(schemas, uiSchemas, true),
+    [schemas, uiSchemas]
   );
 
-  const getVersionSubmit = (formData :Object) => () => dispatch(submitCrisisReport({
+  const getVersionSubmit = (formData :Object) => () => dispatch(submitCrisisReportV2({
     formData,
+    incident,
     reportFQN: CRISIS_REPORT_FQN,
     selectedPerson,
   }));
 
-  useEffect(() => {
-    dispatch(getFormSchema('CRISIS_REPORT'));
-
-    return () => dispatch(clearCrisisReport());
-  }, [dispatch]);
+  useEffect(() => () => dispatch(clearCrisisReport()), [dispatch]);
 
   const isLoading = submitState === RequestStates.PENDING;
-
-  if (fetchState === RequestStates.PENDING) {
-    return <Spinner size="3x" />;
-  }
 
   if (submitState === RequestStates.SUCCESS) {
     return (
       <SuccessSplash reportType={CRISIS_REPORT} selectedPerson={selectedPerson} />
     );
   }
-
-  const { reviewSchemas, schemas, uiSchemas } = allSchemas;
 
   return (
     <Card>
@@ -151,4 +136,4 @@ const NewCrisisReport = ({ pageRef, selectedPerson } :Props) => {
 
 };
 
-export default NewCrisisReport;
+export default NewCrisisReportV2;
