@@ -40,7 +40,7 @@ import SubmitSuccess from '../../components/crisis/SubmitSuccess';
 import { HOME_PATH, REPORT_ID_PARAM } from '../../core/router/Routes';
 import { getAuthorization } from '../../core/sagas/authorize/AuthorizeActions';
 import { MEDIA_QUERY_LG, MEDIA_QUERY_MD } from '../../core/style/Sizes';
-import { FORM_TYPE } from '../../utils/DataConstants';
+import { FORM_NAME } from '../../utils/DataConstants';
 import {
   getCurrentPage,
   getNextPath,
@@ -277,7 +277,7 @@ class CrisisReportView extends React.Component<Props, State> {
     const reportEKID :?UUID = match.params[REPORT_ID_PARAM];
 
     let submission = {
-      [POST_PROCESS_FIELDS.FORM_TYPE]: FORM_TYPE.CRISIS_REPORT,
+      [POST_PROCESS_FIELDS.FORM_TYPE]: FORM_NAME.CRISIS_REPORT,
       [POST_PROCESS_FIELDS.TIMESTAMP]: DateTime.local().toISO(),
       [POST_PROCESS_FIELDS.USER_EMAIL]: AuthUtils.getUserInfo().email
     };
