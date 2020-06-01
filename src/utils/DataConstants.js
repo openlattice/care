@@ -1,5 +1,5 @@
 /* Form Types */
-export const FORM_TYPE = {
+export const FORM_NAME = {
   CRISIS_REPORT: 'Crisis Report'
 };
 
