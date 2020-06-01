@@ -176,11 +176,11 @@ export const VERBAL_REFERRALS = [
 ];
 
 export const COURTESY_TRANSPORTS = [
-  'To shelter',
+  'Drug/alcohol detox assistance',
   'Emergency crisis center',
   'Home',
-  'Drug/alcohol detox assistance',
-  'General'
+  'Jail',
+  'Shelter',
 ];
 
 export const NOT_ARRESTED = 'Not arrested';
