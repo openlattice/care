@@ -3,7 +3,6 @@
  */
 
 import { connectRouter } from 'connected-react-router/immutable';
-import { Map } from 'immutable';
 import { AuthReducer } from 'lattice-auth';
 import { combineReducers } from 'redux-immutable';
 
@@ -15,6 +14,7 @@ import dashboardReducer from '../../containers/dashboard/DashboardReducer';
 import dispositionReducer from '../../containers/pages/disposition/Reducer';
 import downloadsReducer from '../../containers/downloads/DownloadsReducer';
 import edmReducer from '../../edm/EdmReducer';
+import formSchemasReducer from '../../containers/reports/FormSchemasReducer';
 import hospitalsReducer from '../../containers/form/HospitalsReducer';
 import incidentsReducer from '../../containers/reports/IncidentsReducer';
 import issuesReducer from '../../containers/issues/IssuesReducer';
@@ -55,6 +55,7 @@ export default function reduxReducer(routerHistory :any) {
     symptomsReport: symptomsReportReducer,
     recentInteractions: recentInteractionReducer,
     incidents: incidentsReducer,
+    formSchemas: formSchemasReducer,
 
     // page reducers
     [STATE.DISPOSITION]: dispositionReducer,

@@ -88,6 +88,8 @@ export const APP_TYPES_FQNS = {
   SYMPTOM_FQN: new FullyQualifiedName('app.symptom'),
   INTERACTED_WITH_FQN: new FullyQualifiedName('app.interactedwith'),
   /* <===== END SYMPTOMS ======> */
+
+  FORMS_FQN: new FullyQualifiedName('app.forms')
 };
 
 export const STRING_ID_FQN = 'general.stringid';

@@ -34,7 +34,7 @@ import * as FQN from '../../edm/DataModelFqns';
 import { FormWrapper as StyledPageWrapper } from '../../components/crisis/FormComponents';
 import { CRISIS_PATH, HOME_PATH } from '../../core/router/Routes';
 import { MEDIA_QUERY_LG, MEDIA_QUERY_MD } from '../../core/style/Sizes';
-import { FORM_TYPE } from '../../utils/DataConstants';
+import { FORM_NAME } from '../../utils/DataConstants';
 import {
   getCurrentPage,
   getNextPath,
@@ -281,7 +281,7 @@ class OriginalCrisisReportContainer extends React.Component<Props, State> {
     const personEKID = getIn(selectedPerson, [OPENLATTICE_ID_FQN, 0]);
 
     let submission = {
-      [POST_PROCESS_FIELDS.FORM_TYPE]: FORM_TYPE.CRISIS_REPORT,
+      [POST_PROCESS_FIELDS.FORM_NAME]: FORM_NAME.CRISIS_REPORT,
       [POST_PROCESS_FIELDS.TIMESTAMP]: DateTime.local().toISO(),
       [POST_PROCESS_FIELDS.USER_EMAIL]: AuthUtils.getUserInfo().email
     };

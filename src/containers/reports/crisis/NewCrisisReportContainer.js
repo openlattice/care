@@ -10,10 +10,12 @@ import { useLocation } from 'react-router';
 import { Redirect } from 'react-router-dom';
 
 import NewCrisisReport from './NewCrisisReport';
+import NewCrisisReportV2 from './NewCrisisReportV2';
 import { CRISIS_REPORT } from './schemas/constants';
 
 import * as FQN from '../../../edm/DataModelFqns';
 import { BreadcrumbItem, BreadcrumbLink } from '../../../components/breadcrumbs';
+import { useAppSettings } from '../../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
 import { HOME_PATH, PROFILE_ID_PATH, PROFILE_VIEW_PATH } from '../../../core/router/Routes';
 import { getEntityKeyId } from '../../../utils/DataUtils';
@@ -22,7 +24,10 @@ import { getFirstLastFromPerson } from '../../../utils/PersonUtils';
 
 const NewCrisisReportContainer = () => {
   const location = useLocation();
+  const settings = useAppSettings();
   const pageRef = useRef<HTMLDivElement | null>(null);
+
+  const isV2 = settings.get('v2', false);
 
   const { state = {} } = location;
   const { selectedPerson = Map(), incident = Map() } = state;
@@ -41,6 +46,8 @@ const NewCrisisReportContainer = () => {
     breadcrumbLabel = `${breadcrumbLabel} - #${incidentNumber} (${formattedDateTime})`;
   }
 
+  const ReportComponent = isV2 ? NewCrisisReportV2 : NewCrisisReport;
+
   return (
     <ContentOuterWrapper ref={pageRef}>
       <ContentWrapper>
@@ -49,7 +56,7 @@ const NewCrisisReportContainer = () => {
           <BreadcrumbItem>{breadcrumbLabel}</BreadcrumbItem>
         </Breadcrumbs>
         <CardStack>
-          <NewCrisisReport
+          <ReportComponent
               incident={incident}
               pageRef={pageRef}
               selectedPerson={selectedPerson} />

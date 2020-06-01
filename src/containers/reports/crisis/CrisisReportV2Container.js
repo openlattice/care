@@ -14,16 +14,18 @@ import { useRouteMatch } from 'react-router';
 import { RequestStates } from 'redux-reqseq';
 
 import {
+  addOptionalCrisisReportContent,
   clearCrisisReport,
-  getCrisisReport,
+  deleteCrisisReportContent,
+  getCrisisReportV2,
   updateCrisisReport,
 } from './CrisisActions';
-import { v1 } from './schemas';
+import { v2 } from './schemas';
 
 import BlameCard from '../shared/BlameCard';
 import * as FQN from '../../../edm/DataModelFqns';
 import { BreadcrumbItem, BreadcrumbLink } from '../../../components/breadcrumbs';
-import { useAuthorization } from '../../../components/hooks';
+import { useAppSettings, useAuthorization } from '../../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
 import {
   CRISIS_REPORT_PATH,
@@ -37,11 +39,10 @@ import { getEntityKeyId } from '../../../utils/DataUtils';
 import { getFirstLastFromPerson } from '../../../utils/PersonUtils';
 import { generateReviewSchema } from '../../../utils/SchemaUtils';
 
-const {
-  BEHAVIORAL_HEALTH_REPORT_FQN,
-} = APP_TYPES_FQNS;
+const { CRISIS_REPORT_FQN } = APP_TYPES_FQNS;
 
-const CrisisReportContainer = () => {
+const CrisisReportContainerV2 = () => {
+  const settings = useAppSettings();
   const dispatch = useDispatch();
   const match = useRouteMatch(CRISIS_REPORT_PATH);
 
@@ -51,37 +52,33 @@ const CrisisReportContainer = () => {
 
   const [isAuthorized] = useAuthorization('profile', dispatchGetAuthorization);
 
+  const schemaVersion = v2.officer;
+
+  const reviewSchemas = useMemo(
+    () => generateReviewSchema(schemaVersion.schemas, schemaVersion.uiSchemas, !isAuthorized),
+    [schemaVersion, isAuthorized]
+  );
+
   const entityIndexToIdMap = useSelector((store) => store.getIn(['crisisReport', 'entityIndexToIdMap']));
-  const entitySetIds = useSelector((store) => store.getIn(['app', 'selectedOrgEntitySetIds']));
+  const entitySetIds = useSelector((store) => store.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
   const formData = useSelector((store) => store.getIn(['crisisReport', 'formData']));
   const fetchState = useSelector((store) => store.getIn(['crisisReport', 'fetchState']));
-  const propertyTypeIds = useSelector((store) => store.getIn(['edm', 'fqnToIdMap']));
+  const propertyTypeIds = useSelector((store) => store.getIn(['edm', 'fqnToIdMap'], Map()));
   const reporterData = useSelector((store) => store.getIn(['crisisReport', 'reporterData']));
   const reportData = useSelector((store) => store.getIn(['crisisReport', 'reportData']));
   const subjectData = useSelector((store) => store.getIn(['crisisReport', 'subjectData']));
-  const remoteSchemas = useSelector((store) => store.getIn(['formSchemas', 'schemas', 'CRISIS_REPORT']));
 
   const { [REPORT_ID_PARAM]: reportId } = match.params;
 
-  const reviewSchemas = useMemo(
-    () => {
-      let schemaVersion = v1;
-      if (remoteSchemas) {
-        schemaVersion = remoteSchemas.toJS();
-      }
-      return generateReviewSchema(schemaVersion.schemas, schemaVersion.uiSchemas, !isAuthorized);
-    },
-    [remoteSchemas, isAuthorized]
-  );
-
   useEffect(() => {
-    dispatch(getCrisisReport({
+    dispatch(getCrisisReportV2({
       reportEKID: reportId,
-      reportFQN: BEHAVIORAL_HEALTH_REPORT_FQN,
+      reportFQN: CRISIS_REPORT_FQN,
+      reviewSchema: reviewSchemas.schema
     }));
 
     return () => dispatch(clearCrisisReport());
-  }, [dispatch, reportId]);
+  }, [dispatch, reportId, settings, reviewSchemas]);
 
   if (fetchState === RequestStates.PENDING) {
     return <Spinner size="3x" />;
@@ -94,8 +91,29 @@ const CrisisReportContainer = () => {
     }));
   };
 
+  const handleDeleteCrisisReportContent = (params) => {
+    dispatch(deleteCrisisReportContent(params));
+  };
+
+  const handleAddOptionalContent = (params) => {
+    const existingEKIDs = {
+      [CRISIS_REPORT_FQN]: reportId,
+    };
+
+    dispatch(addOptionalCrisisReportContent({
+      ...params,
+      existingEKIDs,
+      schema: reviewSchemas.schema,
+      reportFQN: CRISIS_REPORT_FQN
+    }));
+  };
+
   const name = getFirstLastFromPerson(subjectData);
   const formContext = {
+    addActions: {
+      addOptional: handleAddOptionalContent
+    },
+    deleteAction: handleDeleteCrisisReportContent,
     editAction: handleUpdateCrisisReport,
     entityIndexToIdMap,
     entitySetIds,
@@ -127,4 +145,4 @@ const CrisisReportContainer = () => {
   );
 };
 
-export default CrisisReportContainer;
+export default CrisisReportContainerV2;
