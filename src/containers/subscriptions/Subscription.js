@@ -113,10 +113,10 @@ type Props = {
 };
 
 type State = {
-  isCreating :boolean,
-  isEditing :boolean,
-  timezone :string,
-  expiration :string
+  expiration :string;
+  isCreating :boolean;
+  isEditing :boolean;
+  timezone :string;
 };
 
 export default class Subscription extends React.Component<Props, State> {

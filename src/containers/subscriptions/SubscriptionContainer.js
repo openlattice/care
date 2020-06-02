@@ -33,33 +33,33 @@ import { STATE, SUBSCRIBE } from '../../utils/constants/StateConstants';
 import { HOMELESS_STR, UNIVERSITY_OF_IOWA, VETERAN } from '../reports/crisis/schemas/v1/constants';
 
 type Props = {
-  isLoadingSubscriptions :boolean;
-  subscriptions :List;
-  homelessQuery :string;
-  veteranQuery :string;
-  affiliateQuery :string;
-  personEntitySetId :UUID;
-  reportEntitySetId :UUID;
-  staffEntitySetId :UUID;
   actions :{
     clearSubscriptions :Function;
     createSubscription :Function;
     expireSubscription :Function;
     getSubscriptions :Function;
     updateSubscription :Function;
-  }
+  };
+  affiliateQuery :string;
+  homelessQuery :string;
+  isLoadingSubscriptions :boolean;
+  personEntitySetId :UUID;
+  reportEntitySetId :UUID;
+  staffEntitySetId :UUID;
+  subscriptions :List;
+  veteranQuery :string;
 }
 
 const SubscriptionContainer = (props :Props) => {
   const {
     actions,
-    subscriptions,
+    affiliateQuery,
+    homelessQuery,
     personEntitySetId,
     reportEntitySetId,
     staffEntitySetId,
-    homelessQuery,
+    subscriptions,
     veteranQuery,
-    affiliateQuery,
   } = props;
 
   const settings = useAppSettings();
@@ -110,13 +110,13 @@ const SubscriptionContainer = (props :Props) => {
       veteranSubscription,
     });
   }, [
-    subscriptions,
+    affiliateQuery,
+    homelessQuery,
     personEntitySetId,
     reportEntitySetId,
     staffEntitySetId,
-    homelessQuery,
+    subscriptions,
     veteranQuery,
-    affiliateQuery,
   ]);
 
   const onCreate = ({
@@ -209,15 +209,15 @@ const SubscriptionContainer = (props :Props) => {
                     } = definition;
                     return (
                       <Subscription
-                          key={alertName}
-                          title={title}
-                          description={description}
                           alertName={alertName}
-                          query={query}
-                          subscription={subscription}
+                          description={description}
+                          key={alertName}
+                          onCancel={actions.expireSubscription}
                           onCreate={onCreate}
                           onEdit={actions.updateSubscription}
-                          onCancel={actions.expireSubscription} />
+                          query={query}
+                          subscription={subscription}
+                          title={title} />
                     );
                   })
               }
@@ -233,11 +233,11 @@ const mapStateToProps = (state :Map) => {
   const app = state.get('app', Map());
   return {
     affiliateQuery: getSearchTerm(state.getIn(['edm', 'fqnToIdMap', AFFILIATION_FQN]), UNIVERSITY_OF_IOWA),
-    reportEntitySetId: getReportESId(app),
-    personEntitySetId: getPeopleESId(app),
-    staffEntitySetId: getStaffESId(app),
     homelessQuery: getSearchTerm(state.getIn(['edm', 'fqnToIdMap', HOUSING_SITUATION_FQN]), HOMELESS_STR),
     isLoadingSubscriptions: state.getIn([STATE.SUBSCRIPTIONS, 'fetchState']) === RequestStates.PENDING,
+    personEntitySetId: getPeopleESId(app),
+    reportEntitySetId: getReportESId(app),
+    staffEntitySetId: getStaffESId(app),
     subscriptions: state.getIn([STATE.SUBSCRIPTIONS, SUBSCRIBE.SUBSCRIPTIONS]),
     veteranQuery: getSearchTerm(state.getIn(['edm', 'fqnToIdMap', MILITARY_STATUS_FQN]), VETERAN),
   };
