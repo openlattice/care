@@ -8,5 +8,10 @@ export const TIMEZONES = [
 export const ALERT_NAMES = {
   HOMELESS: 'Unsheltered Homeless',
   VETERAN: 'Veteran',
-  AFFILIATE: 'University of Iowa Affiliate',
+  // JC, IA specific
+  UNIVERSITY_OF_IOWA_AFFILIATE: 'University of Iowa Affiliate',
+};
+
+export const ADDITIONAL_ALERT_TYPES = {
+  UNIVERSITY_OF_IOWA_AFFILIATE: 'UNIVERSITY_OF_IOWA_AFFILIATE'
 };

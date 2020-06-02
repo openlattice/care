@@ -1,24 +1,30 @@
-/*
- * @flow
- */
+// @flow
 
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { List, Map } from 'immutable';
-import { Card, CardSegment, Spinner } from 'lattice-ui-kit';
+import {
+  Card,
+  CardSegment,
+  CardStack,
+  Spinner
+} from 'lattice-ui-kit';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { RequestStates } from 'redux-reqseq';
 import type { Dispatch } from 'redux';
 
 import Subscription from './Subscription';
 import {
+  clearSubscriptions,
   createSubscription,
   expireSubscription,
   getSubscriptions,
   updateSubscription,
 } from './SubscriptionActions';
-import { ALERT_NAMES, SUBSCRIPTION_TYPE } from './constants';
+import { ADDITIONAL_ALERT_TYPES, ALERT_NAMES, SUBSCRIPTION_TYPE } from './constants';
 
+import { useAppSettings } from '../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper, Header } from '../../components/layout';
 import { AFFILIATION_FQN, HOUSING_SITUATION_FQN, MILITARY_STATUS_FQN } from '../../edm/DataModelFqns';
 import { getPeopleESId, getReportESId, getStaffESId } from '../../utils/AppUtils';
@@ -26,62 +32,55 @@ import { getSearchTerm } from '../../utils/DataUtils';
 import { STATE, SUBSCRIBE } from '../../utils/constants/StateConstants';
 import { HOMELESS_STR, UNIVERSITY_OF_IOWA, VETERAN } from '../reports/crisis/schemas/v1/constants';
 
-type AlertMetadata = {
-  alertName :string;
-  query :string;
-  expiration :string;
-  timezone :string,
-}
-
 type Props = {
-  app :Map,
-  isLoadingSubscriptions :boolean,
-  subscriptions :List,
-  homelessQuery :string,
-  veteranQuery :string,
-  affiliateQuery :string,
+  isLoadingSubscriptions :boolean;
+  subscriptions :List;
+  homelessQuery :string;
+  veteranQuery :string;
+  affiliateQuery :string;
+  personEntitySetId :UUID;
+  reportEntitySetId :UUID;
+  staffEntitySetId :UUID;
   actions :{
-    createSubscription :Function,
-    expireSubscription :Function,
-    getSubscriptions :Function,
-    updateSubscription :Function
+    clearSubscriptions :Function;
+    createSubscription :Function;
+    expireSubscription :Function;
+    getSubscriptions :Function;
+    updateSubscription :Function;
   }
 }
 
-type State = {
-  affiliateSubscription :?Map;
-  homelessSubscription :?Map;
-  veteranSubscription :?Map;
-};
+const SubscriptionContainer = (props :Props) => {
+  const {
+    actions,
+    subscriptions,
+    personEntitySetId,
+    reportEntitySetId,
+    staffEntitySetId,
+    homelessQuery,
+    veteranQuery,
+    affiliateQuery,
+  } = props;
 
-class SubscriptionContainer extends Component<Props, State> {
+  const settings = useAppSettings();
+  const hasAffiliateSubscription = settings
+    .getIn(['additionalSubscriptions', ADDITIONAL_ALERT_TYPES.UNIVERSITY_OF_IOWA_AFFILIATE], false);
 
-  constructor(props :Props) {
-    super(props);
-    this.state = {
-      affiliateSubscription: undefined,
-      homelessSubscription: undefined,
-      veteranSubscription: undefined,
-    };
-  }
+  const [state, setState] = useState({
+    affiliateSubscription: undefined,
+    homelessSubscription: undefined,
+    veteranSubscription: undefined,
+  });
 
-  componentDidMount() {
-    const { actions } = this.props;
+  useEffect(() => {
     actions.getSubscriptions();
-  }
 
-  static getDerivedStateFromProps(props :Props) {
-    const {
-      affiliateQuery,
-      app,
-      homelessQuery,
-      subscriptions,
-      veteranQuery,
-    } = props;
+    return () => {
+      actions.clearSubscriptions();
+    };
+  }, [actions]);
 
-    const personEntitySetId = getPeopleESId(app);
-    const reportEntitySetId = getReportESId(app);
-    const staffEntitySetId = getStaffESId(app);
+  useEffect(() => {
 
     let affiliateSubscription;
     let homelessSubscription;
@@ -105,24 +104,27 @@ class SubscriptionContainer extends Component<Props, State> {
       }
     });
 
-    return {
+    setState({
       affiliateSubscription,
       homelessSubscription,
       veteranSubscription,
-    };
-  }
+    });
+  }, [
+    subscriptions,
+    personEntitySetId,
+    reportEntitySetId,
+    staffEntitySetId,
+    homelessQuery,
+    veteranQuery,
+    affiliateQuery,
+  ]);
 
-  createSubscription = ({
+  const onCreate = ({
     alertName,
     expiration,
     query,
     timezone,
-  } :AlertMetadata) => {
-    const { actions, app } = this.props;
-
-    const reportEntitySetId = getReportESId(app);
-    const personEntitySetId = getPeopleESId(app);
-    const staffEntitySetId = getStaffESId(app);
+  } :any) => {
 
     const subscription = {
       expiration,
@@ -147,106 +149,103 @@ class SubscriptionContainer extends Component<Props, State> {
     };
 
     actions.createSubscription(subscription);
-  }
+  };
 
-  renderSubscription = (
-    title :string,
-    description :string,
-    alertName :string,
-    query :string,
-    subscription :?Map
-  ) => {
-    const { actions } = this.props;
+  const { isLoadingSubscriptions } = props;
+  const {
+    affiliateSubscription,
+    homelessSubscription,
+    veteranSubscription,
+  } = state;
 
-    const timezone = subscription ? subscription.getIn(['alertMetadata', 'timezone']) : undefined;
-    const expiration = subscription ? subscription.get('expiration') : undefined;
+  const subscriptionDefinitions = [
+    {
+      title: 'Homeless Alerts',
+      description: 'Receive an email when a Crisis Report is marked with "Unsheltered Homeless"',
+      alertName: ALERT_NAMES.HOMELESS,
+      query: homelessQuery,
+      subscription: homelessSubscription
+    },
+    {
+      title: 'Veteran Alerts',
+      description: 'Receive an email when a Crisis Report is created for a veteran',
+      alertName: ALERT_NAMES.VETERAN,
+      query: veteranQuery,
+      subscription: veteranSubscription
+    },
+  ];
 
-    return (
-      <Subscription
-          title={title}
-          description={description}
-          alertName={alertName}
-          query={query}
-          subscription={subscription}
-          timezone={timezone}
-          expiration={expiration}
-          onCreate={this.createSubscription}
-          onEdit={actions.updateSubscription}
-          onCancel={actions.expireSubscription} />
+  if (hasAffiliateSubscription) {
+    subscriptionDefinitions.push(
+      {
+        title: 'University of Iowa Affiliate Alerts',
+        description: 'Receive an email when a Crisis Report is created for a University of Iowa affiliate',
+        alertName: ALERT_NAMES.UNIVERSITY_OF_IOWA_AFFILIATE,
+        query: affiliateQuery,
+        subscription: affiliateSubscription
+      }
     );
   }
 
-  renderSubscriptions = () => {
-    const {
-      affiliateQuery,
-      homelessQuery,
-      veteranQuery,
-    } = this.props;
-    const {
-      affiliateSubscription,
-      homelessSubscription,
-      veteranSubscription,
-    } = this.state;
+  return (
+    <ContentOuterWrapper>
+      <ContentWrapper>
+        <Card>
+          <CardSegment vertical>
+            <Header>
+              Manage Subscriptions
+            </Header>
+            <CardStack>
+              {
+                isLoadingSubscriptions
+                  ? <Spinner />
+                  : subscriptionDefinitions.map((definition) => {
+                    const {
+                      title,
+                      description,
+                      alertName,
+                      query,
+                      subscription,
+                    } = definition;
+                    return (
+                      <Subscription
+                          key={alertName}
+                          title={title}
+                          description={description}
+                          alertName={alertName}
+                          query={query}
+                          subscription={subscription}
+                          onCreate={onCreate}
+                          onEdit={actions.updateSubscription}
+                          onCancel={actions.expireSubscription} />
+                    );
+                  })
+              }
+            </CardStack>
+          </CardSegment>
+        </Card>
+      </ContentWrapper>
+    </ContentOuterWrapper>
+  );
+};
 
-    return (
-      <>
-        {this.renderSubscription(
-          'Homeless Alerts',
-          'Receive an email when a Crisis Report is marked with "Unsheltered Homeless"',
-          ALERT_NAMES.HOMELESS,
-          homelessQuery,
-          homelessSubscription
-        )}
-        {this.renderSubscription(
-          'Veteran Alerts',
-          'Receive an email when a Crisis Report is created for a veteran',
-          ALERT_NAMES.VETERAN,
-          veteranQuery,
-          veteranSubscription
-        )}
-        {this.renderSubscription(
-          'University of Iowa Affiliate Alerts',
-          'Receive an email when a Crisis Report is created for a University of Iowa affiliate',
-          ALERT_NAMES.AFFILIATE,
-          affiliateQuery,
-          affiliateSubscription
-        )}
-      </>
-    );
-  }
-
-  render() {
-    const { isLoadingSubscriptions } = this.props;
-    const content = isLoadingSubscriptions ? <Spinner /> : this.renderSubscriptions();
-
-    return (
-      <ContentOuterWrapper>
-        <ContentWrapper>
-          <Card>
-            <CardSegment vertical>
-              <Header>
-                Manage Subscriptions
-              </Header>
-              {content}
-            </CardSegment>
-          </Card>
-        </ContentWrapper>
-      </ContentOuterWrapper>
-    );
-  }
-}
-
-const mapStateToProps = (state :Map) => ({
-  affiliateQuery: getSearchTerm(state.getIn(['edm', 'fqnToIdMap', AFFILIATION_FQN]), UNIVERSITY_OF_IOWA),
-  app: state.get('app', Map()),
-  homelessQuery: getSearchTerm(state.getIn(['edm', 'fqnToIdMap', HOUSING_SITUATION_FQN]), HOMELESS_STR),
-  isLoadingSubscriptions: state.getIn([STATE.SUBSCRIPTIONS, SUBSCRIBE.IS_LOADING_SUBSCRIPTIONS]),
-  subscriptions: state.getIn([STATE.SUBSCRIPTIONS, SUBSCRIBE.SUBSCRIPTIONS]),
-  veteranQuery: getSearchTerm(state.getIn(['edm', 'fqnToIdMap', MILITARY_STATUS_FQN]), VETERAN),
-});
+const mapStateToProps = (state :Map) => {
+  const app = state.get('app', Map());
+  return {
+    affiliateQuery: getSearchTerm(state.getIn(['edm', 'fqnToIdMap', AFFILIATION_FQN]), UNIVERSITY_OF_IOWA),
+    reportEntitySetId: getReportESId(app),
+    personEntitySetId: getPeopleESId(app),
+    staffEntitySetId: getStaffESId(app),
+    homelessQuery: getSearchTerm(state.getIn(['edm', 'fqnToIdMap', HOUSING_SITUATION_FQN]), HOMELESS_STR),
+    isLoadingSubscriptions: state.getIn([STATE.SUBSCRIPTIONS, 'fetchState']) === RequestStates.PENDING,
+    subscriptions: state.getIn([STATE.SUBSCRIPTIONS, SUBSCRIBE.SUBSCRIPTIONS]),
+    veteranQuery: getSearchTerm(state.getIn(['edm', 'fqnToIdMap', MILITARY_STATUS_FQN]), VETERAN),
+  };
+};
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
+    clearSubscriptions,
     createSubscription,
     expireSubscription,
     getSubscriptions,
