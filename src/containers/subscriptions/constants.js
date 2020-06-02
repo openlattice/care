@@ -5,3 +5,8 @@ export const TIMEZONES = [
   { value: 'CST', label: 'CST' },
   { value: 'EST', label: 'EST' },
 ];
+export const ALERT_NAMES = {
+  HOMELESS: 'Unsheltered Homeless',
+  VETERAN: 'Veteran',
+  AFFILIATE: 'University of Iowa Affiliate',
+};
