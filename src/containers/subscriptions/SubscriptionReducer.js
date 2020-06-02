@@ -5,6 +5,7 @@
 import { List, Map, fromJS } from 'immutable';
 
 import {
+  CLEAR_SUBSCRIPTIONS,
   getSubscriptions,
 } from './SubscriptionActions';
 import { SUBSCRIPTION_TYPE } from './constants';
@@ -32,6 +33,8 @@ export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :
         FINALLY: () => state.set(IS_LOADING_SUBSCRIPTIONS, false)
       });
     }
+    case CLEAR_SUBSCRIPTIONS:
+      return INITIAL_STATE;
 
     default:
       return state;
