@@ -266,7 +266,7 @@ export default class Subscription extends React.Component<Props, State> {
 
     return (
       <Card>
-        <CardSegment>
+        <CardSegment vertical={false}>
           <TitleSection>
             <TitleWrapper>
               <h1>{title}</h1>

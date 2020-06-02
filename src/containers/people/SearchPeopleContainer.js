@@ -202,7 +202,7 @@ const SearchPeopleContainer = () => {
     <ContentOuterWrapper>
       <Panel>
         <ContentWrapper>
-          <CardSegment vertical padding="0">
+          <div>
             <form>
               <InputGrid>
                 <FlexColumn>
@@ -235,7 +235,7 @@ const SearchPeopleContainer = () => {
                 </FlexColumn>
               </InputGrid>
             </form>
-          </CardSegment>
+          </div>
           <StyledAccordion>
             <div headline="Advanced Search" titleComponent={AdvancedHeader}>
               <InputGrid>

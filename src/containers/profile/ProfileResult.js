@@ -73,7 +73,7 @@ const ProfileResult = (props :Props) => {
 
   return (
     <Card onClick={handleClick}>
-      <CardSegment>
+      <CardSegment vertical={false}>
         <ReportHeader>
           <FontAwesomeIcon icon={faFileAlt} color="black" fixedWidth />
           <ReportType>
