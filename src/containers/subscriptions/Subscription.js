@@ -21,15 +21,16 @@ import { DateTime } from 'luxon';
 import { TIMEZONES } from './constants';
 
 type Props = {
-  query :string,
-  title :string,
-  description :string,
-  subscription :Map,
-  timezone? :string,
-  expiration? :string,
-  onCancel :Function,
-  onEdit :Function,
-  onCreate :Function
+  alertName :string;
+  description :string;
+  expiration? :string;
+  onCancel :Function;
+  onCreate :Function;
+  onEdit :Function;
+  query :string;
+  subscription :Map;
+  timezone? :string;
+  title :string;
 };
 
 type State = {
@@ -161,9 +162,10 @@ export default class Subscription extends React.Component<Props, State> {
   }
 
   createSubscription = () => {
-    const { onCreate, query } = this.props;
+    const { onCreate, query, alertName } = this.props;
     const { timezone, expiration } = this.state;
     onCreate({
+      alertName,
       query,
       timezone,
       expiration

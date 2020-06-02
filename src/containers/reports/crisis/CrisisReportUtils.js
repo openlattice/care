@@ -22,6 +22,7 @@ import {
   NOT_ARRESTED,
   SUICIDE_BEHAVIORS,
   THREAT,
+  UNIVERSITY_OF_IOWA,
 } from './schemas/v1/constants';
 
 import * as FQN from '../../../edm/DataModelFqns';
@@ -712,7 +713,7 @@ const postProcessBehaviorSection = (formData :Object) :Object => {
   }
 
   if (affiliationValue) {
-    sectionData[getBHRAddress(FQN.AFFILIATION_FQN)] = 'University of Iowa';
+    sectionData[getBHRAddress(FQN.AFFILIATION_FQN)] = UNIVERSITY_OF_IOWA;
   }
   else {
     sectionData[getBHRAddress(FQN.AFFILIATION_FQN)] = null;
