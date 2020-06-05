@@ -72,13 +72,11 @@ const uiSchemas = [
 const followupSchemas = [
   backgroundSchema,
   substancesSchema,
-  followupDispositionSchema,
 ];
 
 const followupUiSchemas = [
   backgroundUiSchema,
   substancesUiSchema,
-  followupDispositionUiSchema,
 ];
 
 
