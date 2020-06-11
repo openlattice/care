@@ -18,7 +18,6 @@ import {
 } from 'lattice-sagas';
 import type { SequenceAction } from 'redux-reqseq';
 
-import Logger from '../../../../utils/Logger';
 import {
   DELETE_CONTACT,
   GET_CONTACTS,
@@ -28,12 +27,10 @@ import {
   getContacts,
   submitContacts,
   updateContact,
-} from './ContactsActions';
-import { APP_TYPES_FQNS } from '../../../../shared/Consts';
-import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../../utils/Errors';
-import { getESIDFromApp } from '../../../../utils/AppUtils';
-import { isDefined } from '../../../../utils/LangUtils';
-import { isValidUuid } from '../../../../utils/Utils';
+} from './EmergencyContactsActions';
+import { constructEntityIndexToIdMap, constructFormData } from './EmergencyContactsUtils';
+
+import Logger from '../../../../utils/Logger';
 import {
   deleteBulkEntities,
   submitDataGraph,
@@ -44,8 +41,12 @@ import {
   submitDataGraphWorker,
   submitPartialReplaceWorker,
 } from '../../../../core/sagas/data/DataSagas';
-import { constructEntityIndexToIdMap, constructFormData } from './ContactsUtils';
+import { APP_TYPES_FQNS } from '../../../../shared/Consts';
+import { getESIDFromApp } from '../../../../utils/AppUtils';
 import { getEntityKeyIdsFromList, removeEntitiesFromEntityIndexToIdMap } from '../../../../utils/DataUtils';
+import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../../utils/Errors';
+import { isDefined } from '../../../../utils/LangUtils';
+import { isValidUuid } from '../../../../utils/Utils';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
@@ -88,7 +89,7 @@ function* submitContactsWorker(action :SequenceAction) :Generator<*, *, *> {
     const isContactForEKIDs = newAssociationKeyIdsByEntitySetName.get(IS_EMERGENCY_CONTACT_FOR_FQN);
 
     const newEntityIndexToIdMap = constructEntityIndexToIdMap(contactsEKIDs, isContactForEKIDs, contactInfoEKIDs);
-    const entityIndexToIdMap = yield select((state) => state.getIn(['profile', 'contacts', 'entityIndexToIdMap']));
+    const entityIndexToIdMap = yield select((state) => state.getIn(['profile', 'emergencyContacts', 'entityIndexToIdMap']));
     const mergedEntityIndexToIdMap = entityIndexToIdMap.mergeDeep(newEntityIndexToIdMap);
 
     const { path, properties } = value;
@@ -251,7 +252,7 @@ function* deleteContactWorker(action :SequenceAction) :Generator<*, *, *> {
 
     if (response.error) throw response.error;
 
-    const entityIndexToIdMap = yield select((state) => state.getIn(['profile', 'contacts', 'entityIndexToIdMap']));
+    const entityIndexToIdMap = yield select((state) => state.getIn(['profile', 'emergencyContacts', 'entityIndexToIdMap']));
     const newEntityIndexToIdMap = removeEntitiesFromEntityIndexToIdMap(entityData, entityIndexToIdMap);
 
     yield put(deleteContact.success(action.id, { path, entityIndexToIdMap: newEntityIndexToIdMap }));

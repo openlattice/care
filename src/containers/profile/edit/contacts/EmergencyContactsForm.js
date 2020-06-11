@@ -1,30 +1,32 @@
 // @flow
 import React, { Component } from 'react';
-import { DateTime } from 'luxon';
-import { Form, DataProcessingUtils } from 'lattice-fabricate';
+
+import { List, Map, get } from 'immutable';
+import { DataProcessingUtils, Form } from 'lattice-fabricate';
 import {
   Card,
   CardHeader,
   CardSegment,
   Spinner
 } from 'lattice-ui-kit';
-import { List, Map, get } from 'immutable';
-import { bindActionCreators } from 'redux';
+import { DateTime } from 'luxon';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { RequestStates } from 'redux-reqseq';
-import type { Dispatch } from 'redux';
 import type { Match } from 'react-router';
+import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import {
-  getContacts,
   deleteContact,
+  getContacts,
   submitContacts,
   updateContact,
-} from './ContactsActions';
-import { schema, uiSchema } from './schemas/ContactsSchemas';
+} from './EmergencyContactsActions';
+import { getContactAssociations, removeRelationshipData } from './EmergencyContactsUtils';
+import { schema, uiSchema } from './schemas/EmergencyContactsSchemas';
+
 import { PROFILE_ID_PARAM } from '../../../../core/router/Routes';
-import { removeRelationshipData, getContactAssociations } from './ContactsUtils';
 
 const {
   getPageSectionKey,
@@ -192,12 +194,12 @@ class ContactsForm extends Component<Props, State> {
 }
 
 const mapStateToProps = (state) => ({
-  entityIndexToIdMap: state.getIn(['profile', 'contacts', 'entityIndexToIdMap'], Map()),
+  entityIndexToIdMap: state.getIn(['profile', 'emergencyContacts', 'entityIndexToIdMap'], Map()),
   entitySetIds: state.getIn(['app', 'selectedOrgEntitySetIds'], Map()),
-  fetchState: state.getIn(['profile', 'contacts', 'fetchState'], RequestStates.STANDBY),
-  formData: state.getIn(['profile', 'contacts', 'formData'], Map()),
+  fetchState: state.getIn(['profile', 'emergencyContacts', 'fetchState'], RequestStates.STANDBY),
+  formData: state.getIn(['profile', 'emergencyContacts', 'formData'], Map()),
   propertyTypeIds: state.getIn(['edm', 'fqnToIdMap'], Map()),
-  submitState: state.getIn(['profile', 'contacts', 'submitState'], RequestStates.STANDBY),
+  submitState: state.getIn(['profile', 'emergencyContacts', 'submitState'], RequestStates.STANDBY),
 });
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({

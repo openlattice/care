@@ -1,7 +1,7 @@
 // @flow
 import { Map, fromJS } from 'immutable';
-import { RequestStates } from 'redux-reqseq';
 import { DataProcessingUtils } from 'lattice-fabricate';
+import { RequestStates } from 'redux-reqseq';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
@@ -9,7 +9,7 @@ import {
   getContacts,
   submitContacts,
   updateContact,
-} from './ContactsActions';
+} from './EmergencyContactsActions';
 
 const { getPageSectionKey } = DataProcessingUtils;
 
@@ -24,7 +24,7 @@ const INITIAL_STATE :Map = fromJS({
   updateState: RequestStates.STANDBY,
 });
 
-const ContactsReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
+const EmergencyContactsReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
   switch (action.type) {
 
     case getContacts.case(action.type): {
@@ -87,4 +87,4 @@ const ContactsReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => 
   }
 };
 
-export default ContactsReducer;
+export default EmergencyContactsReducer;
