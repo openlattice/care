@@ -17,13 +17,20 @@ const updateSubscription :RequestSequence = newRequestSequence(UPDATE_SUBSCRIPTI
 const EXPIRE_SUBSCRIPTION :string = 'EXPIRE_SUBSCRIPTION';
 const expireSubscription :RequestSequence = newRequestSequence(EXPIRE_SUBSCRIPTION);
 
+const CLEAR_SUBSCRIPTIONS :string = 'CLEAR_SUBSCRIPTIONS';
+const clearSubscriptions = () => ({
+  type: CLEAR_SUBSCRIPTIONS
+});
+
 export {
+  CLEAR_SUBSCRIPTIONS,
   CREATE_SUBSCRIPTION,
   EXPIRE_SUBSCRIPTION,
   GET_SUBSCRIPTIONS,
   UPDATE_SUBSCRIPTION,
+  clearSubscriptions,
   createSubscription,
   expireSubscription,
   getSubscriptions,
-  updateSubscription
+  updateSubscription,
 };

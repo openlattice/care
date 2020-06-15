@@ -26,11 +26,6 @@ const schema = {
           type: 'boolean',
           default: false
         },
-        // [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.AFFILIATION_FQN)]: {
-        //   title: 'Affiliated with University of Iowa?',
-        //   type: 'boolean',
-        //   default: false
-        // },
         [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.OBSERVED_BEHAVIORS_FQN)]: {
           title: 'Behaviors',
           type: 'array',

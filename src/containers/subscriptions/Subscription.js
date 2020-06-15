@@ -20,25 +20,6 @@ import { DateTime } from 'luxon';
 
 import { TIMEZONES } from './constants';
 
-type Props = {
-  query :string,
-  title :string,
-  description :string,
-  subscription :Map,
-  timezone? :string,
-  expiration? :string,
-  onCancel :Function,
-  onEdit :Function,
-  onCreate :Function
-};
-
-type State = {
-  isCreating :boolean,
-  isEditing :boolean,
-  timezone :string,
-  expiration :string
-};
-
 const TitleSection = styled.div`
   display: flex;
   flex-direction: column;
@@ -120,12 +101,33 @@ const DateTimePickerWrapper = styled.div`
   width: 100%;
 `;
 
+type Props = {
+  alertName :string;
+  description :string;
+  onCancel :Function;
+  onCreate :Function;
+  onEdit :Function;
+  query :string;
+  subscription :Map;
+  title :string;
+};
+
+type State = {
+  expiration :string;
+  isCreating :boolean;
+  isEditing :boolean;
+  timezone :string;
+};
+
 export default class Subscription extends React.Component<Props, State> {
 
   constructor(props :Props) {
     super(props);
 
-    const { timezone, expiration } = props;
+    const { subscription } = props;
+
+    const timezone = subscription ? subscription.getIn(['alertMetadata', 'timezone']) : undefined;
+    const expiration = subscription ? subscription.get('expiration') : undefined;
 
     this.state = {
       isCreating: false,
@@ -161,9 +163,10 @@ export default class Subscription extends React.Component<Props, State> {
   }
 
   createSubscription = () => {
-    const { onCreate, query } = this.props;
+    const { onCreate, query, alertName } = this.props;
     const { timezone, expiration } = this.state;
     onCreate({
+      alertName,
       query,
       timezone,
       expiration
@@ -263,7 +266,7 @@ export default class Subscription extends React.Component<Props, State> {
 
     return (
       <Card>
-        <CardSegment>
+        <CardSegment vertical={false}>
           <TitleSection>
             <TitleWrapper>
               <h1>{title}</h1>

@@ -95,6 +95,10 @@ export const ASSISTANCES = [
 
 export const HOMELESS_STR = 'Unsheltered Homeless';
 
+export const VETERAN = 'Veteran';
+
+export const UNIVERSITY_OF_IOWA = 'University of Iowa';
+
 export const HOUSING_SITUATIONS = [
   'Stable Housing',
   'Service Provider Housing',
