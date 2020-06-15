@@ -135,7 +135,7 @@ const PersonResult = (props :Props) => {
 
   return (
     <Card>
-      <StyledSegment padding="sm">
+      <StyledSegment vertical={false} padding="sm">
         <FlexRow>
           <Portrait imageUrl={imageUrl} height="128" width="96" />
           <Details>
