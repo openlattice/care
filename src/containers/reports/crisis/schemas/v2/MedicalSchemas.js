@@ -21,7 +21,7 @@ const schema = {
   properties: {
     [getPageSectionKey(4, 1)]: {
       type: 'array',
-      title: 'Diagnoses',
+      title: 'Diagnosis History',
       items: {
         type: 'object',
         properties: {
