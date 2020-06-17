@@ -62,6 +62,10 @@ const FlexEnd = styled.div`
   align-self: flex-end;
 `;
 
+const BorderlessSegment = styled(CardSegment)`
+  border: 0;
+`;
+
 const Panel = styled.div`
   display: flex;
   flex-direction: column;
@@ -202,7 +206,7 @@ const SearchPeopleContainer = () => {
     <ContentOuterWrapper>
       <Panel>
         <ContentWrapper>
-          <CardSegment vertical padding="0">
+          <BorderlessSegment vertical padding="0">
             <form>
               <InputGrid>
                 <FlexColumn>
@@ -235,7 +239,7 @@ const SearchPeopleContainer = () => {
                 </FlexColumn>
               </InputGrid>
             </form>
-          </CardSegment>
+          </BorderlessSegment>
           <StyledAccordion>
             <div headline="Advanced Search" titleComponent={AdvancedHeader}>
               <InputGrid>
