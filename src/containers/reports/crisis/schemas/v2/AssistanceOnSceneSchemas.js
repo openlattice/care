@@ -17,7 +17,7 @@ const schema = {
       type: 'object',
       title: 'Assistance On Scene',
       properties: {
-        [getEntityAddressKey(0, GENERAL_PERSON_FQN, FQN.PERSON_LAST_NAME_FQN)]: {
+        [getEntityAddressKey(0, GENERAL_PERSON_FQN, FQN.CATEGORY_FQN)]: {
           type: 'array',
           title: 'Assistance on scene',
           items: {

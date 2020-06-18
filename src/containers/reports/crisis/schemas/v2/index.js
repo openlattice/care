@@ -1,3 +1,4 @@
+import { schema as assistanceSchema, uiSchema as assistanceUiSchema } from './AssistanceOnSceneSchemas';
 import { schema as behaviorSchema, uiSchema as behaviorUiSchema } from './BehaviorSchemas';
 import { schema as clinicianBehaviorSchema, uiSchema as clinicianBehaviorUiSchema } from './ClinicianBehaviorSchemas';
 import {
@@ -56,6 +57,7 @@ const schemas = [
   behaviorSchema,
   medicalSchema,
   threatSchema,
+  assistanceSchema,
   housingAndEmploymentSchema,
   dispositionSchema,
 ];
@@ -65,6 +67,7 @@ const uiSchemas = [
   behaviorUiSchema,
   medicalUiSchema,
   threatUiSchema,
+  assistanceUiSchema,
   housingAndEmploymentUiSchema,
   dispositionUiSchema,
 ];
