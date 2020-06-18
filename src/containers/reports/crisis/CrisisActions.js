@@ -43,17 +43,12 @@ const clearCrisisReport = () => ({
   type: CLEAR_CRISIS_REPORT
 });
 
-
-const GET_FORM_SCHEMA :'GET_FORM_SCHEMA' = 'GET_FORM_SCHEMA';
-const getFormSchema :RequestSequence = newRequestSequence(GET_FORM_SCHEMA);
-
 export {
   ADD_OPTIONAL_CRISIS_REPORT_CONTENT,
   CLEAR_CRISIS_REPORT,
   DELETE_CRISIS_REPORT_CONTENT,
   GET_CRISIS_REPORT,
   GET_CRISIS_REPORT_V2,
-  GET_FORM_SCHEMA,
   GET_LOCATION_OF_INCIDENT,
   GET_REPORTS_NEIGHBORS,
   GET_REPORTS_V2_NEIGHBORS,
@@ -67,7 +62,6 @@ export {
   deleteCrisisReportContent,
   getCrisisReport,
   getCrisisReportV2,
-  getFormSchema,
   getLocationOfIncident,
   getReportsNeighbors,
   getReportsV2Neighbors,

@@ -37,6 +37,7 @@ const OccupantItem = (props :Props) => {
 
   return (
     <StyledSegment
+        vertical={false}
         padding="10px">
       <DefaultLink to={PROFILE_VIEW_PATH.replace(PROFILE_ID_PATH, personEKID)}>{name}</DefaultLink>
       <MinusButton size="sm" mode="negative" onClick={deleteEdge} />

@@ -3,8 +3,10 @@
  */
 
 import { List, Map, fromJS } from 'immutable';
+import { RequestStates } from 'redux-reqseq';
 
 import {
+  CLEAR_SUBSCRIPTIONS,
   getSubscriptions,
 } from './SubscriptionActions';
 import { SUBSCRIPTION_TYPE } from './constants';
@@ -12,12 +14,11 @@ import { SUBSCRIPTION_TYPE } from './constants';
 import { SUBSCRIBE } from '../../utils/constants/StateConstants';
 
 const {
-  IS_LOADING_SUBSCRIPTIONS,
   SUBSCRIPTIONS
 } = SUBSCRIBE;
 
 const INITIAL_STATE :Map<*, *> = fromJS({
-  [IS_LOADING_SUBSCRIPTIONS]: false,
+  fetchState: RequestStates.STANDBY,
   [SUBSCRIPTIONS]: List()
 });
 
@@ -27,11 +28,15 @@ export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :
 
     case getSubscriptions.case(action.type): {
       return getSubscriptions.reducer(state, action, {
-        REQUEST: () => state.set(IS_LOADING_SUBSCRIPTIONS, true),
-        SUCCESS: () => state.set(SUBSCRIPTIONS, fromJS(action.value.filter(({ type }) => type === SUBSCRIPTION_TYPE))),
-        FINALLY: () => state.set(IS_LOADING_SUBSCRIPTIONS, false)
+        REQUEST: () => state.set('fetchState', RequestStates.PENDING),
+        SUCCESS: () => state
+          .set('fetchState', RequestStates.SUCCESS)
+          .set(SUBSCRIPTIONS, fromJS(action.value.filter(({ type }) => type === SUBSCRIPTION_TYPE))),
+        FAILURE: () => state.set('fetchState', RequestStates.FAILURE)
       });
     }
+    case CLEAR_SUBSCRIPTIONS:
+      return INITIAL_STATE;
 
     default:
       return state;
