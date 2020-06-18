@@ -18,10 +18,6 @@ import {
   uiSchema as dispositionUiSchema
 } from './DispositionSchemas';
 import { schema as backgroundSchema, uiSchema as backgroundUiSchema } from './FollowupBackgroundSchemas';
-import {
-  schema as followupDispositionSchema,
-  uiSchema as followupDispositionUiSchema
-} from './FollowupDispositionSchemas';
 import { schema as substancesSchema, uiSchema as substancesUiSchema } from './FollowupSubstancesSchemas';
 import {
   schema as housingAndEmploymentSchema,
