@@ -17,9 +17,9 @@ import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import {
-  submitAddress,
-  updateAddress,
-} from './actions/AddressActions';
+  submitContact,
+  updateContact,
+} from './actions/ContactActions';
 import { schema, uiSchema } from './schemas/ContactSchemas';
 
 import { COMPLETED_DT_FQN } from '../../../../edm/DataModelFqns';
@@ -38,8 +38,8 @@ const {
 
 type Props = {
   actions :{
-    submitAddress :RequestSequence;
-    updateAddress :RequestSequence;
+    submitContact :RequestSequence;
+    updateContact :RequestSequence;
   },
   entityIndexToIdMap :Map;
   entitySetIds :Map;
@@ -55,7 +55,7 @@ type State = {
   prepopulated :boolean;
 };
 
-class AddressForm extends Component<Props, State> {
+class ContactForm extends Component<Props, State> {
 
   state = {
     formData: {},
@@ -102,7 +102,7 @@ class AddressForm extends Component<Props, State> {
       propertyTypeIds
     );
 
-    actions.submitAddress({
+    actions.submitContact({
       associationEntityData,
       entityData,
       path: [],
@@ -125,7 +125,7 @@ class AddressForm extends Component<Props, State> {
     } = this.props;
     const { formData, prepopulated } = this.state;
     const formContext = {
-      editAction: actions.updateAddress,
+      editAction: actions.updateContact,
       entityIndexToIdMap,
       entitySetIds,
       mappers: {},
@@ -145,7 +145,7 @@ class AddressForm extends Component<Props, State> {
     return (
       <Card>
         <CardHeader mode="primary" padding="sm">
-          Address
+          Contact
         </CardHeader>
         <Form
             disabled={prepopulated}
@@ -172,10 +172,10 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
-    updateAddress,
-    submitAddress,
+    updateContact,
+    submitContact,
   }, dispatch)
 });
 
 // $FlowFixMe
-export default connect(mapStateToProps, mapDispatchToProps)(AddressForm);
+export default connect(mapStateToProps, mapDispatchToProps)(ContactForm);
