@@ -14,6 +14,7 @@ const INITIAL_STATE :Map = fromJS({
   fetchState: RequestStates.STANDBY,
   formData: Map(),
   updateState: RequestStates.STANDBY,
+  data: Map(),
 });
 
 const addressReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
