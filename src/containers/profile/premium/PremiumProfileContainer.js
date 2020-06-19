@@ -162,9 +162,10 @@ type Props = {
   address :Map;
   appearance :Map;
   behaviorSummary :List<Map>;
+  contact :Map;
   contactInfoByContactEKID :Map;
-  contacts :List<Map>;
   crisisSummary :Map;
+  emergencyContacts :List<Map>;
   fetchAboutPlanState :RequestState;
   fetchAboutState :RequestState;
   fetchOfficerSafetyState :RequestState;
@@ -201,9 +202,10 @@ const PremiumProfileContainer = (props :Props) => {
     address,
     appearance,
     behaviorSummary,
+    contact,
     contactInfoByContactEKID,
-    contacts,
     crisisSummary,
+    emergencyContacts,
     fetchAboutPlanState,
     fetchAboutState,
     fetchOfficerSafetyState,
@@ -266,7 +268,7 @@ const PremiumProfileContainer = (props :Props) => {
           interactionStrategies={interactionStrategies} />
       <ContactCarousel
           isLoading={isLoadingBody}
-          contacts={contacts}
+          contacts={emergencyContacts}
           contactInfoByContactEKID={contactInfoByContactEKID}
           isContactForByContactEKID={isContactForByContactEKID} />
     </>
@@ -282,7 +284,7 @@ const PremiumProfileContainer = (props :Props) => {
           isLoading={isLoadingBody}
           reports={reports}
           responsePlan={responsePlan}
-          contacts={contacts}
+          contacts={emergencyContacts}
           contactInfoByContactEKID={contactInfoByContactEKID}
           isContactForByContactEKID={isContactForByContactEKID}
           stayAwayLocation={stayAwayLocation}
@@ -310,7 +312,7 @@ const PremiumProfileContainer = (props :Props) => {
                   appearance={appearance}
                   scars={scars}
                   selectedPerson={selectedPerson} />
-              <ContactPanel address={address} isLoading={isLoadingIntro} />
+              <ContactPanel address={address} contact={contact} isLoading={isLoadingIntro} />
               <AssignedOfficerPanel
                   responsibleUser={responsibleUser}
                   isLoading={isLoadingAboutPlan} />
@@ -380,34 +382,35 @@ const mapStateToProps = (state :Map) => {
   return {
     address: state.getIn(['profile', 'basicInformation', 'address', 'data'], Map()),
     appearance: state.getIn(['profile', 'basicInformation', 'appearance', 'data'], Map()),
-    crisisSummary: state.getIn(['profile', 'reports', 'crisisSummary'], Map()),
     behaviorSummary: state.getIn(['profile', 'reports', 'behaviorSummary'], List()),
-    safetySummary: state.getIn(['profile', 'reports', 'safetySummary'], List()),
-    contacts: state.getIn(['profile', 'emergencyContacts', 'data', 'contacts'], List()),
+    contact: state.getIn(['profile', 'basicInformation', 'contact', 'data'], Map()),
     contactInfoByContactEKID: state.getIn(['profile', 'emergencyContacts', 'data', 'contactInfoByContactEKID'], Map()),
-    isContactForByContactEKID: state.getIn(['profile', 'emergencyContacts', 'data', 'isContactForByContactEKID'], Map()),
+    emergencyContacts: state.getIn(['profile', 'emergencyContacts', 'data', 'contacts'], List()),
+    crisisSummary: state.getIn(['profile', 'reports', 'crisisSummary'], Map()),
+    fetchAboutPlanState: state.getIn(['profile', 'about', 'fetchState'], RequestStates.STANDBY),
     fetchAboutState: reduceRequestStates(fetchAboutStates),
     fetchOfficerSafetyState: reduceRequestStates(fetchOfficerSafetyStates),
     fetchReportsState: state.getIn(['profile', 'reports', 'fetchState'], RequestStates.STANDBY),
     fetchResponsePlanState: state.getIn(['profile', 'responsePlan', 'fetchState'], RequestStates.STANDBY),
-    fetchAboutPlanState: state.getIn(['profile', 'about', 'fetchState'], RequestStates.STANDBY),
     fetchStayAwayState: state.getIn(['longBeach', 'profile', 'fetchState'], RequestStates.STANDBY),
     interactionStrategies: state.getIn(['profile', 'responsePlan', 'interactionStrategies'], List()),
+    isContactForByContactEKID: state.getIn(['profile', 'emergencyContacts', 'data', 'isContactForByContactEKID'], Map()),
+    lastIncident: state.getIn(['profile', 'reports', 'lastIncident'], Map()),
     officerSafety: state.getIn(['profile', 'officerSafety', 'data', 'officerSafetyConcerns'], List()),
     photo: state.getIn(['profile', 'basicInformation', 'photos', 'data'], Map()),
+    probation: state.getIn(['longBeach', 'profile', 'probation']),
+    recentSymptoms: state.getIn(['profile', 'symptomReports', 'recentSymptoms']),
     reports: state.getIn(['profile', 'reports', 'data'], List()),
-    lastIncident: state.getIn(['profile', 'reports', 'lastIncident'], Map()),
     responsePlan: state.getIn(['profile', 'responsePlan', 'data'], Map()),
     responsibleUser: state.getIn(['profile', 'about', 'data'], Map()),
+    safetySummary: state.getIn(['profile', 'reports', 'safetySummary'], List()),
     scars: state.getIn(['profile', 'basicInformation', 'scars', 'data'], Map()),
     selectedPerson: state.getIn(['profile', 'basicInformation', 'basics', 'data'], Map()),
-    techniques: state.getIn(['profile', 'officerSafety', 'data', 'interactionStrategies'], List()),
-    triggers: state.getIn(['profile', 'officerSafety', 'data', 'behaviors'], List()),
-    probation: state.getIn(['longBeach', 'profile', 'probation']),
     stayAwayLocation: state.getIn(['longBeach', 'profile', 'stayAwayLocation']),
     symptoms: state.getIn(['profile', 'symptomReports', 'data']),
-    recentSymptoms: state.getIn(['profile', 'symptomReports', 'recentSymptoms']),
-    warrant: state.getIn(['longBeach', 'profile', 'warrant'])
+    techniques: state.getIn(['profile', 'officerSafety', 'data', 'interactionStrategies'], List()),
+    triggers: state.getIn(['profile', 'officerSafety', 'data', 'behaviors'], List()),
+    warrant: state.getIn(['longBeach', 'profile', 'warrant']),
   };
 };
 
