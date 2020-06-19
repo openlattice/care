@@ -32,110 +32,107 @@ import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../..
 import { isDefined } from '../../../../../utils/LangUtils';
 import { isValidUuid } from '../../../../../utils/Utils';
 import {
-  GET_ADDRESS,
-  SUBMIT_ADDRESS,
-  UPDATE_ADDRESS,
-  getAddress,
-  submitAddress,
-  updateAddress,
-} from '../actions/AddressActions';
+  GET_CONTACT,
+  SUBMIT_CONTACT,
+  UPDATE_CONTACT,
+  getContact,
+  submitContact,
+  updateContact,
+} from '../actions/ContactActions';
 
 const LOG = new Logger('BasicInformationSagas');
 const { getPageSectionKey } = DataProcessingUtils;
 const { OPENLATTICE_ID_FQN } = Constants;
 const {
-  LOCATED_AT_FQN,
+  CONTACTED_VIA_FQN,
   PEOPLE_FQN,
-  LOCATION_FQN,
+  CONTACT_INFORMATION_FQN,
 } = APP_TYPES_FQNS;
 
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
 const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
 
-function* getAddressWorker(action :SequenceAction) :Generator<any, any, any> {
+function* getContactWorker(action :SequenceAction) :Generator<any, any, any> {
   const response = {};
   try {
     const { value: entityKeyId } = action;
     if (!isDefined(entityKeyId)) throw ERR_ACTION_VALUE_NOT_DEFINED;
     if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
 
-    yield put(getAddress.request(action.id, entityKeyId));
+    yield put(getContact.request(action.id, entityKeyId));
 
     const app :Map = yield select((state) => state.get('app', Map()));
     const entitySetId :UUID = getESIDFromApp(app, PEOPLE_FQN);
-    const locationESID :UUID = getESIDFromApp(app, LOCATION_FQN);
-    const locatedAtESID :UUID = getESIDFromApp(app, LOCATED_AT_FQN);
+    const contactInformationESID :UUID = getESIDFromApp(app, CONTACT_INFORMATION_FQN);
+    const contactedViaESID :UUID = getESIDFromApp(app, CONTACTED_VIA_FQN);
 
-    const locationSearchParams = {
+    const contactSearchParams = {
       entitySetId,
       filter: {
         entityKeyIds: [entityKeyId],
-        edgeEntitySetIds: [locatedAtESID],
-        destinationEntitySetIds: [locationESID],
+        edgeEntitySetIds: [contactedViaESID],
+        destinationEntitySetIds: [contactInformationESID],
         sourceEntitySetIds: [],
       }
     };
 
-    const locationRequest = yield call(
+    const contactRequest = yield call(
       searchEntityNeighborsWithFilterWorker,
-      searchEntityNeighborsWithFilter(locationSearchParams)
+      searchEntityNeighborsWithFilter(contactSearchParams)
     );
 
-    if (locationRequest.error) throw locationRequest.error;
-    const locationDataList = fromJS(locationRequest.data).get(entityKeyId, List());
-    if (locationDataList.count() > 1) {
-      LOG.warn('more than one location found in person', entityKeyId);
+    if (contactRequest.error) throw contactRequest.error;
+    const contactDataList = fromJS(contactRequest.data).get(entityKeyId, List());
+    if (contactDataList.count() > 1) {
+      LOG.warn('more than one contact found in person', entityKeyId);
     }
 
-    const locationData = locationDataList
+    const contactData = contactDataList
       .getIn([0, 'neighborDetails'], Map());
 
-    if (!locationData.isEmpty()) {
+    if (!contactData.isEmpty()) {
 
-      const locationProperties = [
-        FQN.LOCATION_ADDRESS_LINE_2_FQN,
-        FQN.LOCATION_CITY_FQN,
-        FQN.LOCATION_NAME_FQN,
-        FQN.LOCATION_STATE_FQN,
-        FQN.LOCATION_STREET_FQN,
-        FQN.LOCATION_ZIP_FQN,
+      const contactProperties = [
+        FQN.CONTACT_PHONE_NUMBER_FQN,
+        FQN.EXTENTION_FQN,
+        FQN.TYPE_FQN,
       ];
 
-      const locationEKID = locationData.getIn([OPENLATTICE_ID_FQN, 0]);
+      const contactEKID = contactData.getIn([OPENLATTICE_ID_FQN, 0]);
 
       const locationFormData = getFormDataFromEntity(
-        locationData,
-        LOCATION_FQN,
-        locationProperties,
+        contactData,
+        CONTACT_INFORMATION_FQN,
+        contactProperties,
         0
       );
-      response.entityIndexToIdMap = Map().setIn([LOCATION_FQN, 0], locationEKID);
+      response.entityIndexToIdMap = Map().setIn([CONTACT_INFORMATION_FQN, 0], contactEKID);
       response.formData = Map().set(getPageSectionKey(1, 1), locationFormData);
     }
 
-    response.data = locationData;
+    response.data = contactData;
 
-    yield put(getAddress.success(action.id, response));
+    yield put(getContact.success(action.id, response));
   }
   catch (error) {
     response.error = error;
     LOG.error(action.type, error);
-    yield put(getAddress.failure(action.id, error));
+    yield put(getContact.failure(action.id, error));
   }
 
   return response;
 }
 
-function* getAddressWatcher() :Generator<any, any, any> {
-  yield takeLatest(GET_ADDRESS, getAddressWorker);
+function* getContactWatcher() :Generator<any, any, any> {
+  yield takeLatest(GET_CONTACT, getContactWorker);
 }
 
-function* submitAddressWorker(action :SequenceAction) :Generator<any, any, any> {
+function* submitContactWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
     const { value } = action;
     if (value === null || value === undefined) throw ERR_ACTION_VALUE_NOT_DEFINED;
 
-    yield put(submitAddress.request(action.id));
+    yield put(submitContact.request(action.id));
     const response = yield call(submitDataGraphWorker, submitDataGraph(value));
     if (response.error) throw response.error;
 
@@ -147,13 +144,13 @@ function* submitAddressWorker(action :SequenceAction) :Generator<any, any, any> 
     const newEntityKeyIdsByEntitySetName = newEntityKeyIdsByEntitySetId
       .mapKeys((entitySetId) => entitySetNamesByEntitySetId.get(entitySetId));
 
-    const locationEKID = newEntityKeyIdsByEntitySetName.getIn([LOCATION_FQN, 0]);
+    const contactEKID = newEntityKeyIdsByEntitySetName.getIn([CONTACT_INFORMATION_FQN, 0]);
 
-    const entityIndexToIdMap = Map().setIn([LOCATION_FQN.toString(), 0], locationEKID);
+    const entityIndexToIdMap = Map().setIn([CONTACT_INFORMATION_FQN.toString(), 0], contactEKID);
 
     const { path, properties } = value;
 
-    yield put(submitAddress.success(action.id, {
+    yield put(submitContact.success(action.id, {
       entityIndexToIdMap,
       path,
       properties
@@ -161,41 +158,41 @@ function* submitAddressWorker(action :SequenceAction) :Generator<any, any, any> 
   }
   catch (error) {
     LOG.error(action.type, error);
-    yield put(submitAddress.failure(action.id, error));
+    yield put(submitContact.failure(action.id, error));
   }
 }
 
-function* submitAddressWatcher() :Generator<any, any, any> {
-  yield takeEvery(SUBMIT_ADDRESS, submitAddressWorker);
+function* submitContactWatcher() :Generator<any, any, any> {
+  yield takeEvery(SUBMIT_CONTACT, submitContactWorker);
 }
 
-function* updateAddressWorker(action :SequenceAction) :Generator<any, any, any> {
+function* updateContactWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
     const { value } = action;
     if (value === null || value === undefined) throw ERR_ACTION_VALUE_NOT_DEFINED;
 
-    yield put(updateAddress.request(action.id, value));
+    yield put(updateContact.request(action.id, value));
     const response = yield call(submitPartialReplaceWorker, submitPartialReplace(value));
 
     if (response.error) throw response.error;
 
-    yield put(updateAddress.success(action.id));
+    yield put(updateContact.success(action.id));
   }
   catch (error) {
     LOG.error(action.type, error);
-    yield put(updateAddress.failure(action.id, error));
+    yield put(updateContact.failure(action.id, error));
   }
 }
 
-function* updateAddressWatcher() :Generator<any, any, any> {
-  yield takeEvery(UPDATE_ADDRESS, updateAddressWorker);
+function* updateContactWatcher() :Generator<any, any, any> {
+  yield takeEvery(UPDATE_CONTACT, updateContactWorker);
 }
 
 export {
-  getAddressWatcher,
-  getAddressWorker,
-  submitAddressWatcher,
-  submitAddressWorker,
-  updateAddressWatcher,
-  updateAddressWorker,
+  getContactWatcher,
+  getContactWorker,
+  submitContactWatcher,
+  submitContactWorker,
+  updateContactWatcher,
+  updateContactWorker,
 };

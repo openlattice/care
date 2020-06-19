@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 
-import { Map } from 'immutable';
+import { List, Map, get } from 'immutable';
 import { DataProcessingUtils, Form } from 'lattice-fabricate';
 import {
   Card,
@@ -13,39 +13,39 @@ import { DateTime } from 'luxon';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { RequestStates } from 'redux-reqseq';
+import type { Match } from 'react-router';
 import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import {
-  submitAddress,
-  updateAddress,
-} from './actions/AddressActions';
-import { schema, uiSchema } from './schemas/AddressSchemas';
+  deleteEmergencyContact,
+  getEmergencyContacts,
+  submitEmergencyContacts,
+  updateEmergencyContact,
+} from './EmergencyContactsActions';
+import { getContactAssociations, removeRelationshipData } from './EmergencyContactsUtils';
+import { schema, uiSchema } from './schemas/EmergencyContactsSchemas';
 
-import { COMPLETED_DT_FQN } from '../../../../edm/DataModelFqns';
-import { APP_TYPES_FQNS } from '../../../../shared/Consts';
-
-const {
-  LOCATED_AT_FQN,
-  PEOPLE_FQN,
-  LOCATION_FQN,
-} = APP_TYPES_FQNS;
+import { PROFILE_ID_PARAM } from '../../../../core/router/Routes';
 
 const {
+  getPageSectionKey,
+  processAssociationEntityData,
   processEntityData,
-  processAssociationEntityData
 } = DataProcessingUtils;
 
 type Props = {
   actions :{
-    submitAddress :RequestSequence;
-    updateAddress :RequestSequence;
+    getEmergencyContacts :RequestSequence;
+    deleteEmergencyContact :RequestSequence;
+    submitEmergencyContacts :RequestSequence;
+    updateEmergencyContact :RequestSequence;
   },
   entityIndexToIdMap :Map;
   entitySetIds :Map;
   fetchState :RequestState;
   formData :Map;
-  personEKID :UUID;
+  match :Match;
   propertyTypeIds :Map;
   submitState :RequestState;
 };
@@ -55,7 +55,7 @@ type State = {
   prepopulated :boolean;
 };
 
-class AddressForm extends Component<Props, State> {
+class ContactsForm extends Component<Props, State> {
 
   state = {
     formData: {},
@@ -63,12 +63,30 @@ class AddressForm extends Component<Props, State> {
   }
 
   componentDidMount() {
+    const {
+      actions,
+      match,
+    } = this.props;
+    const personEKID = match.params[PROFILE_ID_PARAM];
+    actions.getEmergencyContacts(personEKID);
     this.initializeFormData();
   }
 
   componentDidUpdate(prevProps :Props) {
-    const { formData } = this.props;
-    const { formData: prevFormData } = prevProps;
+    const {
+      actions,
+      formData,
+      match,
+    } = this.props;
+    const {
+      formData: prevFormData,
+      match: prevMatch,
+    } = prevProps;
+    const personEKID = match.params[PROFILE_ID_PARAM];
+    const prevPersonEKID = prevMatch.params[PROFILE_ID_PARAM];
+    if (personEKID !== prevPersonEKID) {
+      actions.getEmergencyContacts(personEKID);
+    }
 
     if (!formData.equals(prevFormData)) {
       this.initializeFormData();
@@ -79,34 +97,44 @@ class AddressForm extends Component<Props, State> {
     const { formData } = this.props;
     this.setState({
       formData: formData.toJS(),
-      prepopulated: !formData.isEmpty()
+      prepopulated: !get(formData, getPageSectionKey(1, 1), List()).isEmpty()
     });
   }
 
-  getAssociations = () => {
-    const { personEKID } = this.props;
+  getAssociations = (formData :Object) => {
+    const { match } = this.props;
+    const personEKID = match.params[PROFILE_ID_PARAM];
     const nowAsIsoString :string = DateTime.local().toISO();
     return [
-      [LOCATED_AT_FQN, personEKID, PEOPLE_FQN, 0, LOCATION_FQN, {
-        [COMPLETED_DT_FQN.toString()]: [nowAsIsoString]
-      }],
+      ...getContactAssociations(
+        formData,
+        nowAsIsoString,
+        personEKID
+      )
     ];
   }
 
-  handleSubmit = ({ formData } :Object) => {
+  // process associations before removing them from being processed as a regular entity
+  handleSubmit = ({
+    formData,
+    path = [],
+    properties
+  } :Object) => {
     const { actions, entitySetIds, propertyTypeIds } = this.props;
-    const entityData = processEntityData(formData, entitySetIds, propertyTypeIds);
     const associationEntityData = processAssociationEntityData(
-      this.getAssociations(),
+      this.getAssociations(formData),
       entitySetIds,
       propertyTypeIds
     );
 
-    actions.submitAddress({
+    const withoutRelationships = removeRelationshipData(formData);
+    const entityData = processEntityData(withoutRelationships, entitySetIds, propertyTypeIds);
+
+    actions.submitEmergencyContacts({
       associationEntityData,
       entityData,
-      path: [],
-      properties: formData
+      path,
+      properties: properties || formData
     });
   }
 
@@ -125,7 +153,11 @@ class AddressForm extends Component<Props, State> {
     } = this.props;
     const { formData, prepopulated } = this.state;
     const formContext = {
-      editAction: actions.updateAddress,
+      addActions: {
+        addContact: this.handleSubmit
+      },
+      deleteAction: actions.deleteEmergencyContact,
+      editAction: actions.updateEmergencyContact,
       entityIndexToIdMap,
       entitySetIds,
       mappers: {},
@@ -145,7 +177,7 @@ class AddressForm extends Component<Props, State> {
     return (
       <Card>
         <CardHeader mode="primary" padding="sm">
-          Address
+          Emergency Contacts
         </CardHeader>
         <Form
             disabled={prepopulated}
@@ -162,20 +194,22 @@ class AddressForm extends Component<Props, State> {
 }
 
 const mapStateToProps = (state) => ({
-  entityIndexToIdMap: state.getIn(['profile', 'basicInformation', 'address', 'entityIndexToIdMap'], Map()),
+  entityIndexToIdMap: state.getIn(['profile', 'emergencyContacts', 'entityIndexToIdMap'], Map()),
   entitySetIds: state.getIn(['app', 'selectedOrgEntitySetIds'], Map()),
-  fetchState: state.getIn(['profile', 'basicInformation', 'address', 'fetchState'], RequestStates.STANDBY),
-  formData: state.getIn(['profile', 'basicInformation', 'address', 'formData'], Map()),
+  fetchState: state.getIn(['profile', 'emergencyContacts', 'fetchState'], RequestStates.STANDBY),
+  formData: state.getIn(['profile', 'emergencyContacts', 'formData'], Map()),
   propertyTypeIds: state.getIn(['edm', 'fqnToIdMap'], Map()),
-  submitState: state.getIn(['profile', 'basicInformation', 'address', 'submitState'], RequestStates.STANDBY),
+  submitState: state.getIn(['profile', 'emergencyContacts', 'submitState'], RequestStates.STANDBY),
 });
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
-    updateAddress,
-    submitAddress,
+    getEmergencyContacts,
+    deleteEmergencyContact,
+    submitEmergencyContacts,
+    updateEmergencyContact,
   }, dispatch)
 });
 
 // $FlowFixMe
-export default connect(mapStateToProps, mapDispatchToProps)(AddressForm);
+export default connect(mapStateToProps, mapDispatchToProps)(ContactsForm);

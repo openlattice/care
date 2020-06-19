@@ -62,10 +62,6 @@ const FlexEnd = styled.div`
   align-self: flex-end;
 `;
 
-const BorderlessSegment = styled(CardSegment)`
-  border: 0;
-`;
-
 const Panel = styled.div`
   display: flex;
   flex-direction: column;

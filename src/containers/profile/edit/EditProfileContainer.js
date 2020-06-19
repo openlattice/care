@@ -20,7 +20,7 @@ import type { RequestSequence } from 'redux-reqseq';
 
 import AboutForm from './about/AboutForm';
 import BasicInformationContainer from './basicinformation/BasicInformationContainer';
-import ContactsForm from './contacts/ContactsForm';
+import EmergencyContactsForm from './contacts/EmergencyContactsForm';
 import NavStep from './NavStep';
 import OfficerSafetyContainer from './officersafety/OfficerSafetyContainer';
 import ResponsePlanForm from './responseplan/ResponsePlanForm';
@@ -140,7 +140,7 @@ const EditProfileContainer = (props :Props) => {
                 path={`${match.path}${RESPONSE_PLAN_PATH}`} />
             <PrivateRoute
                 authorize={actions.getAuthorization}
-                component={ContactsForm}
+                component={EmergencyContactsForm}
                 feature="profile"
                 path={`${match.path}${CONTACTS_PATH}`} />
             <PrivateRoute
