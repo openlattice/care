@@ -19,14 +19,14 @@ import {
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
-  DELETE_CONTACT,
-  GET_CONTACTS,
-  SUBMIT_CONTACTS,
-  UPDATE_CONTACT,
-  deleteContact,
-  getContacts,
-  submitContacts,
-  updateContact,
+  DELETE_EMERGENCY_CONTACT,
+  GET_EMERGENCY_CONTACTS,
+  SUBMIT_EMERGENCY_CONTACTS,
+  UPDATE_EMERGENCY_CONTACT,
+  deleteEmergencyContact,
+  getEmergencyContacts,
+  submitEmergencyContacts,
+  updateEmergencyContact,
 } from './EmergencyContactsActions';
 import { constructEntityIndexToIdMap, constructFormData } from './EmergencyContactsUtils';
 
@@ -62,12 +62,12 @@ const {
 
 const LOG = new Logger('ProfileSagas');
 
-function* submitContactsWorker(action :SequenceAction) :Generator<*, *, *> {
+function* submitEmergencyContactsWorker(action :SequenceAction) :Generator<*, *, *> {
   try {
     const { value } = action;
     if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
 
-    yield put(submitContacts.request(action.id));
+    yield put(submitEmergencyContacts.request(action.id));
     const response = yield call(submitDataGraphWorker, submitDataGraph(value));
     if (response.error) throw response.error;
 
@@ -89,12 +89,13 @@ function* submitContactsWorker(action :SequenceAction) :Generator<*, *, *> {
     const isContactForEKIDs = newAssociationKeyIdsByEntitySetName.get(IS_EMERGENCY_CONTACT_FOR_FQN);
 
     const newEntityIndexToIdMap = constructEntityIndexToIdMap(contactsEKIDs, isContactForEKIDs, contactInfoEKIDs);
-    const entityIndexToIdMap = yield select((state) => state.getIn(['profile', 'emergencyContacts', 'entityIndexToIdMap']));
+    const entityIndexToIdMap = yield select((state) => state
+      .getIn(['profile', 'emergencyContacts', 'entityIndexToIdMap']));
     const mergedEntityIndexToIdMap = entityIndexToIdMap.mergeDeep(newEntityIndexToIdMap);
 
     const { path, properties } = value;
 
-    yield put(submitContacts.success(action.id, {
+    yield put(submitEmergencyContacts.success(action.id, {
       entityIndexToIdMap: mergedEntityIndexToIdMap,
       path,
       properties
@@ -102,21 +103,21 @@ function* submitContactsWorker(action :SequenceAction) :Generator<*, *, *> {
   }
   catch (error) {
     LOG.error(action.type, error);
-    yield put(submitContacts.failure(action.id, error));
+    yield put(submitEmergencyContacts.failure(action.id, error));
   }
 }
 
-function* submitContactsWatcher() :Generator<*, *, *> {
-  yield takeEvery(SUBMIT_CONTACTS, submitContactsWorker);
+function* submitEmergencyContactsWatcher() :Generator<*, *, *> {
+  yield takeEvery(SUBMIT_EMERGENCY_CONTACTS, submitEmergencyContactsWorker);
 }
 
-function* getContactsWorker(action :SequenceAction) :Generator<*, *, *> {
+function* getEmergencyContactsWorker(action :SequenceAction) :Generator<*, *, *> {
   const response = {};
   try {
     const { value: entityKeyId } = action;
     if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
 
-    yield put(getContacts.request(action.id));
+    yield put(getEmergencyContacts.request(action.id));
 
     const app :Map = yield select((state) => state.get('app', Map()));
     const peopleESID :UUID = getESIDFromApp(app, PEOPLE_FQN);
@@ -196,7 +197,7 @@ function* getContactsWorker(action :SequenceAction) :Generator<*, *, *> {
       contactInfoEKIDs
     );
 
-    yield put(getContacts.success(action.id, {
+    yield put(getEmergencyContacts.success(action.id, {
       entityIndexToIdMap,
       formData,
       data: fromJS({
@@ -209,71 +210,72 @@ function* getContactsWorker(action :SequenceAction) :Generator<*, *, *> {
   catch (error) {
     LOG.error(action.type, error);
     response.error = error;
-    yield put(getContacts.failure(action.id, error));
+    yield put(getEmergencyContacts.failure(action.id, error));
   }
 
   return response;
 }
 
-function* getContactsWatcher() :Generator<*, *, *> {
-  yield takeLatest(GET_CONTACTS, getContactsWorker);
+function* getEmergencyContactsWatcher() :Generator<*, *, *> {
+  yield takeLatest(GET_EMERGENCY_CONTACTS, getEmergencyContactsWorker);
 }
 
-function* updateContactWorker(action :SequenceAction) :Generator<*, *, *> {
+function* updateEmergencyContactWorker(action :SequenceAction) :Generator<*, *, *> {
   try {
     const { value } = action;
     if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
 
-    yield put(updateContact.request(action.id, value));
+    yield put(updateEmergencyContact.request(action.id, value));
     const response = yield call(submitPartialReplaceWorker, submitPartialReplace(value));
 
     if (response.error) throw response.error;
 
-    yield put(updateContact.success(action.id));
+    yield put(updateEmergencyContact.success(action.id));
   }
   catch (error) {
     LOG.error(action.type, error);
-    yield put(updateContact.failure(action.id, error));
+    yield put(updateEmergencyContact.failure(action.id, error));
   }
 }
 
-function* updateContactWatcher() :Generator<*, *, *> {
-  yield takeEvery(UPDATE_CONTACT, updateContactWorker);
+function* updateEmergencyContactWatcher() :Generator<*, *, *> {
+  yield takeEvery(UPDATE_EMERGENCY_CONTACT, updateEmergencyContactWorker);
 }
 
-function* deleteContactWorker(action :SequenceAction) :Generator<*, *, *> {
+function* deleteEmergencyContactWorker(action :SequenceAction) :Generator<*, *, *> {
   try {
     const { value } = action;
     if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
 
-    yield put(deleteContact.request(action.id));
+    yield put(deleteEmergencyContact.request(action.id));
     const { entityData, path } = value;
     const response = yield call(deleteBulkEntitiesWorker, deleteBulkEntities(entityData));
 
     if (response.error) throw response.error;
 
-    const entityIndexToIdMap = yield select((state) => state.getIn(['profile', 'emergencyContacts', 'entityIndexToIdMap']));
+    const entityIndexToIdMap = yield select((state) => state
+      .getIn(['profile', 'emergencyContacts', 'entityIndexToIdMap']));
     const newEntityIndexToIdMap = removeEntitiesFromEntityIndexToIdMap(entityData, entityIndexToIdMap);
 
-    yield put(deleteContact.success(action.id, { path, entityIndexToIdMap: newEntityIndexToIdMap }));
+    yield put(deleteEmergencyContact.success(action.id, { path, entityIndexToIdMap: newEntityIndexToIdMap }));
   }
   catch (error) {
     LOG.error(action.type, error);
-    yield put(deleteContact.failure(action.id, error));
+    yield put(deleteEmergencyContact.failure(action.id, error));
   }
 }
 
-function* deleteContactWatcher() :Generator<*, *, *> {
-  yield takeEvery(DELETE_CONTACT, deleteContactWorker);
+function* deleteEmergencyContactWatcher() :Generator<*, *, *> {
+  yield takeEvery(DELETE_EMERGENCY_CONTACT, deleteEmergencyContactWorker);
 }
 
 export {
-  deleteContactWatcher,
-  deleteContactWorker,
-  getContactsWatcher,
-  getContactsWorker,
-  submitContactsWatcher,
-  submitContactsWorker,
-  updateContactWatcher,
-  updateContactWorker,
+  deleteEmergencyContactWatcher,
+  deleteEmergencyContactWorker,
+  getEmergencyContactsWatcher,
+  getEmergencyContactsWorker,
+  submitEmergencyContactsWatcher,
+  submitEmergencyContactsWorker,
+  updateEmergencyContactWatcher,
+  updateEmergencyContactWorker,
 };

@@ -18,10 +18,10 @@ import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import {
-  deleteContact,
-  getContacts,
-  submitContacts,
-  updateContact,
+  deleteEmergencyContact,
+  getEmergencyContacts,
+  submitEmergencyContacts,
+  updateEmergencyContact,
 } from './EmergencyContactsActions';
 import { getContactAssociations, removeRelationshipData } from './EmergencyContactsUtils';
 import { schema, uiSchema } from './schemas/EmergencyContactsSchemas';
@@ -36,10 +36,10 @@ const {
 
 type Props = {
   actions :{
-    getContacts :RequestSequence;
-    deleteContact :RequestSequence;
-    submitContacts :RequestSequence;
-    updateContact :RequestSequence;
+    getEmergencyContacts :RequestSequence;
+    deleteEmergencyContact :RequestSequence;
+    submitEmergencyContacts :RequestSequence;
+    updateEmergencyContact :RequestSequence;
   },
   entityIndexToIdMap :Map;
   entitySetIds :Map;
@@ -68,7 +68,7 @@ class ContactsForm extends Component<Props, State> {
       match,
     } = this.props;
     const personEKID = match.params[PROFILE_ID_PARAM];
-    actions.getContacts(personEKID);
+    actions.getEmergencyContacts(personEKID);
     this.initializeFormData();
   }
 
@@ -85,7 +85,7 @@ class ContactsForm extends Component<Props, State> {
     const personEKID = match.params[PROFILE_ID_PARAM];
     const prevPersonEKID = prevMatch.params[PROFILE_ID_PARAM];
     if (personEKID !== prevPersonEKID) {
-      actions.getContacts(personEKID);
+      actions.getEmergencyContacts(personEKID);
     }
 
     if (!formData.equals(prevFormData)) {
@@ -130,7 +130,7 @@ class ContactsForm extends Component<Props, State> {
     const withoutRelationships = removeRelationshipData(formData);
     const entityData = processEntityData(withoutRelationships, entitySetIds, propertyTypeIds);
 
-    actions.submitContacts({
+    actions.submitEmergencyContacts({
       associationEntityData,
       entityData,
       path,
@@ -156,8 +156,8 @@ class ContactsForm extends Component<Props, State> {
       addActions: {
         addContact: this.handleSubmit
       },
-      deleteAction: actions.deleteContact,
-      editAction: actions.updateContact,
+      deleteAction: actions.deleteEmergencyContact,
+      editAction: actions.updateEmergencyContact,
       entityIndexToIdMap,
       entitySetIds,
       mappers: {},
@@ -204,10 +204,10 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
   actions: bindActionCreators({
-    getContacts,
-    deleteContact,
-    submitContacts,
-    updateContact,
+    getEmergencyContacts,
+    deleteEmergencyContact,
+    submitEmergencyContacts,
+    updateEmergencyContact,
   }, dispatch)
 });
 

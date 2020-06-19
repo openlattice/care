@@ -1,25 +1,25 @@
 // @flow
 import { newRequestSequence } from 'redux-reqseq';
 
-const SUBMIT_CONTACTS :'SUBMIT_CONTACTS' = 'SUBMIT_CONTACTS';
-const submitContacts = newRequestSequence(SUBMIT_CONTACTS);
+const SUBMIT_EMERGENCY_CONTACTS :'SUBMIT_EMERGENCY_CONTACTS' = 'SUBMIT_EMERGENCY_CONTACTS';
+const submitEmergencyContacts = newRequestSequence(SUBMIT_EMERGENCY_CONTACTS);
 
-const GET_CONTACTS :'GET_CONTACTS' = 'GET_CONTACTS';
-const getContacts = newRequestSequence(GET_CONTACTS);
+const GET_EMERGENCY_CONTACTS :'GET_EMERGENCY_CONTACTS' = 'GET_EMERGENCY_CONTACTS';
+const getEmergencyContacts = newRequestSequence(GET_EMERGENCY_CONTACTS);
 
-const UPDATE_CONTACT :'UPDATE_CONTACT' = 'UPDATE_CONTACT';
-const updateContact = newRequestSequence(UPDATE_CONTACT);
+const UPDATE_EMERGENCY_CONTACT :'UPDATE_EMERGENCY_CONTACT' = 'UPDATE_EMERGENCY_CONTACT';
+const updateEmergencyContact = newRequestSequence(UPDATE_EMERGENCY_CONTACT);
 
-const DELETE_CONTACT :'DELETE_CONTACT' = 'DELETE_CONTACT';
-const deleteContact = newRequestSequence(DELETE_CONTACT);
+const DELETE_EMERGENCY_CONTACT :'DELETE_EMERGENCY_CONTACT' = 'DELETE_EMERGENCY_CONTACT';
+const deleteEmergencyContact = newRequestSequence(DELETE_EMERGENCY_CONTACT);
 
 export {
-  DELETE_CONTACT,
-  GET_CONTACTS,
-  SUBMIT_CONTACTS,
-  UPDATE_CONTACT,
-  deleteContact,
-  getContacts,
-  submitContacts,
-  updateContact,
+  DELETE_EMERGENCY_CONTACT,
+  GET_EMERGENCY_CONTACTS,
+  SUBMIT_EMERGENCY_CONTACTS,
+  UPDATE_EMERGENCY_CONTACT,
+  deleteEmergencyContact,
+  getEmergencyContacts,
+  submitEmergencyContacts,
+  updateEmergencyContact,
 };

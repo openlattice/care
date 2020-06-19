@@ -5,10 +5,10 @@ import { RequestStates } from 'redux-reqseq';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
-  deleteContact,
-  getContacts,
-  submitContacts,
-  updateContact,
+  deleteEmergencyContact,
+  getEmergencyContacts,
+  submitEmergencyContacts,
+  updateEmergencyContact,
 } from './EmergencyContactsActions';
 
 const { getPageSectionKey } = DataProcessingUtils;
@@ -27,8 +27,8 @@ const INITIAL_STATE :Map = fromJS({
 const EmergencyContactsReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
   switch (action.type) {
 
-    case getContacts.case(action.type): {
-      return getContacts.reducer(state, action, {
+    case getEmergencyContacts.case(action.type): {
+      return getEmergencyContacts.reducer(state, action, {
         REQUEST: () => state.set('fetchState', RequestStates.PENDING),
         SUCCESS: () => state
           .merge(action.value)
@@ -37,8 +37,8 @@ const EmergencyContactsReducer = (state :Map = INITIAL_STATE, action :SequenceAc
       });
     }
 
-    case submitContacts.case(action.type): {
-      return submitContacts.reducer(state, action, {
+    case submitEmergencyContacts.case(action.type): {
+      return submitEmergencyContacts.reducer(state, action, {
         REQUEST: () => state.set('submitState', RequestStates.PENDING),
         SUCCESS: () => {
           const {
@@ -55,8 +55,8 @@ const EmergencyContactsReducer = (state :Map = INITIAL_STATE, action :SequenceAc
       });
     }
 
-    case updateContact.case(action.type): {
-      return updateContact.reducer(state, action, {
+    case updateEmergencyContact.case(action.type): {
+      return updateEmergencyContact.reducer(state, action, {
         REQUEST: () => {
           const { path, properties } = action.value;
           return state
@@ -68,8 +68,8 @@ const EmergencyContactsReducer = (state :Map = INITIAL_STATE, action :SequenceAc
       });
     }
 
-    case deleteContact.case(action.type): {
-      return deleteContact.reducer(state, action, {
+    case deleteEmergencyContact.case(action.type): {
+      return deleteEmergencyContact.reducer(state, action, {
         REQUEST: () => state.set('deleteState', RequestStates.PENDING),
         SUCCESS: () => {
           const { entityIndexToIdMap, path } = action.value;

@@ -60,7 +60,7 @@ import { getProfileReports } from '../ProfileActions';
 import { getIncidentReportsSummary } from '../actions/ReportActions';
 import { getAboutPlan } from '../edit/about/AboutActions';
 import { getBasicInformation } from '../edit/basicinformation/actions/BasicInformationActions';
-import { getContacts } from '../edit/contacts/EmergencyContactsActions';
+import { getEmergencyContacts } from '../edit/contacts/EmergencyContactsActions';
 import { getOfficerSafety } from '../edit/officersafety/OfficerSafetyActions';
 import { getResponsePlan } from '../edit/responseplan/ResponsePlanActions';
 import type { RoutingAction } from '../../../core/router/RoutingActions';
@@ -151,7 +151,7 @@ type Props = {
     getAllSymptomsReports :RequestSequence;
     getAuthorization :RequestSequence;
     getBasicInformation :RequestSequence;
-    getContacts :RequestSequence;
+    getEmergencyContacts :RequestSequence;
     getIncidentReportsSummary :RequestSequence;
     getLBProfile :RequestSequence;
     getOfficerSafety :RequestSequence;
@@ -233,7 +233,7 @@ const PremiumProfileContainer = (props :Props) => {
   const [isVisible, open, close] = useBoolean();
   usePeopleRoute(actions.getAboutPlan);
   usePeopleRoute(actions.getBasicInformation);
-  usePeopleRoute(actions.getContacts);
+  usePeopleRoute(actions.getEmergencyContacts);
   usePeopleRoute(actions.getOfficerSafety);
   usePeopleRoute(actions.getResponsePlan);
   usePeopleRoute(actions.getProfileReports);
@@ -420,7 +420,7 @@ const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
     getAllSymptomsReports,
     getAuthorization,
     getBasicInformation,
-    getContacts,
+    getEmergencyContacts,
     getIncidentReportsSummary,
     getLBProfile,
     getOfficerSafety,

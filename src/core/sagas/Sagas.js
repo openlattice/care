@@ -160,10 +160,10 @@ export default function* sagas() :Generator<*, *, *> {
     fork(OfficerSafetyConcernsSagas.updateOfficerSafetyConcernsWatcher),
     fork(OfficerSafetyConcernsSagas.deleteOfficerSafetyConcernsWatcher),
 
-    fork(EmergencyContactsSagas.getContactsWatcher),
-    fork(EmergencyContactsSagas.submitContactsWatcher),
-    fork(EmergencyContactsSagas.updateContactWatcher),
-    fork(EmergencyContactsSagas.deleteContactWatcher),
+    fork(EmergencyContactsSagas.getEmergencyContactsWatcher),
+    fork(EmergencyContactsSagas.submitEmergencyContactsWatcher),
+    fork(EmergencyContactsSagas.updateEmergencyContactWatcher),
+    fork(EmergencyContactsSagas.deleteEmergencyContactWatcher),
 
     fork(AboutSagas.getAboutPlanWatcher),
     fork(AboutSagas.getResponsibleUserWatcher),
