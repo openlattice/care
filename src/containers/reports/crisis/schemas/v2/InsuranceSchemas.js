@@ -71,6 +71,7 @@ const uiSchema = {
         mode: 'button',
         row: true,
         withOther: true,
+        withNone: true,
       }
     },
     [getEntityAddressKey(0, INSURANCE_FQN, FQN.GENERAL_STATUS_FQN)]: {
@@ -83,6 +84,7 @@ const uiSchema = {
         mode: 'button',
         row: true,
         withOther: true,
+        withNone: true,
       }
     },
     [getEntityAddressKey(1, INSURANCE_FQN, FQN.GENERAL_STATUS_FQN)]: {

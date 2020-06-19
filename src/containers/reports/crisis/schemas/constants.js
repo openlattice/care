@@ -54,6 +54,17 @@ const NATURE_OF_CRISIS = [
   'Unknown',
 ];
 
+const ASSISTANCE_ON_SCENE = [
+  'EMS',
+  'Fire',
+  'Case Manager',
+  'Service Provider',
+  'Family',
+  'Friend',
+  'Neighbor',
+  'Spouse or Partner',
+];
+
 const DRUGS_ALCOHOL = [
   'Alcohol',
   'Cocaine',
@@ -93,7 +104,8 @@ const HOUSING = [
   'Assisted Care',
   'Homeless Shelter',
   'Unsheltered Homeless',
-  'Friend or Family',
+  'Family',
+  'Friend',
   'Group Home',
   'Unknown'
 ];
@@ -281,6 +293,7 @@ const FOLLOW_UP_DISPOSITON = [
 
 export {
   ASSESSMENT_LOCATION,
+  ASSISTANCE_ON_SCENE,
   BEHAVIORS,
   BILLED_SERVICES,
   CLINICIAN_DISPOSITION,
