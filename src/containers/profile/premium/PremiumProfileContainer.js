@@ -60,7 +60,7 @@ import { getProfileReports } from '../ProfileActions';
 import { getIncidentReportsSummary } from '../actions/ReportActions';
 import { getAboutPlan } from '../edit/about/AboutActions';
 import { getBasicInformation } from '../edit/basicinformation/actions/BasicInformationActions';
-import { getContacts } from '../edit/contacts/ContactsActions';
+import { getContacts } from '../edit/contacts/EmergencyContactsActions';
 import { getOfficerSafety } from '../edit/officersafety/OfficerSafetyActions';
 import { getResponsePlan } from '../edit/responseplan/ResponsePlanActions';
 import type { RoutingAction } from '../../../core/router/RoutingActions';
