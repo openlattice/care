@@ -30,7 +30,11 @@ export const schema = {
           title: 'Type',
           enum: PHONE_TYPES
         },
-      }
+      },
+      required: [
+        getEntityAddressKey(0, CONTACT_INFORMATION_FQN, FQN.CONTACT_PHONE_NUMBER_FQN),
+        getEntityAddressKey(0, CONTACT_INFORMATION_FQN, FQN.TYPE_FQN),
+      ]
     }
   }
 };
