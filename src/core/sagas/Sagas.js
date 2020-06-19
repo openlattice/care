@@ -19,6 +19,7 @@ import * as AddressSagas from '../../containers/profile/edit/basicinformation/sa
 import * as AppSagas from '../../containers/app/AppSagas';
 import * as AppearanceSagas from '../../containers/profile/edit/basicinformation/sagas/AppearanceSagas';
 import * as BasicInformationSagas from '../../containers/profile/edit/basicinformation/sagas/BasicInformationSagas';
+import * as ContactSagas from '../../containers/profile/edit/basicinformation/sagas/ContactSagas';
 import * as CrisisReportSagas from '../../containers/reports/crisis/CrisisReportSagas';
 import * as DashboardSagas from '../../containers/dashboard/DashboardSagas';
 import * as DownloadsSagas from '../../containers/downloads/DownloadsSagas';
@@ -135,6 +136,10 @@ export default function* sagas() :Generator<*, *, *> {
     fork(AppearanceSagas.getAppearanceWatcher),
     fork(AppearanceSagas.submitAppearanceWatcher),
     fork(AppearanceSagas.updateAppearanceWatcher),
+
+    fork(ContactSagas.getContactWatcher),
+    fork(ContactSagas.submitContactWatcher),
+    fork(ContactSagas.updateContactWatcher),
 
     fork(AddressSagas.getAddressWatcher),
     fork(AddressSagas.submitAddressWatcher),
