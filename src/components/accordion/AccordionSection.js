@@ -9,12 +9,6 @@ import { Button, CardSegment, Collapse } from 'lattice-ui-kit';
 
 import AccordionHeader from './AccordionHeader';
 
-const AccordionWrapper = styled(CardSegment)`
-  display: flex;
-  flex-direction: column;
-  padding: 0;
-`;
-
 const HeaderWrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -74,7 +68,7 @@ class AccordionSection extends Component<AccordionSectionProps> {
     } = this.props;
 
     return (
-      <AccordionWrapper>
+      <CardSegment padding="0">
         <HeaderWrapper onClick={this.onClick}>
           <LabelWrapper>
             <TitleComponent
@@ -93,7 +87,7 @@ class AccordionSection extends Component<AccordionSectionProps> {
         <Collapse in={isOpen}>
           {children}
         </Collapse>
-      </AccordionWrapper>
+      </CardSegment>
     );
   }
 }
