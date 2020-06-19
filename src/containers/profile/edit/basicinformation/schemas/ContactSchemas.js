@@ -17,15 +17,15 @@ export const schema = {
       type: 'object',
       title: '',
       properties: {
-        [getEntityAddressKey(-1, CONTACT_INFORMATION_FQN, FQN.CONTACT_PHONE_NUMBER_FQN)]: {
+        [getEntityAddressKey(0, CONTACT_INFORMATION_FQN, FQN.CONTACT_PHONE_NUMBER_FQN)]: {
           type: 'string',
           title: 'Phone Number',
         },
-        [getEntityAddressKey(-1, CONTACT_INFORMATION_FQN, FQN.EXTENTION_FQN)]: {
+        [getEntityAddressKey(0, CONTACT_INFORMATION_FQN, FQN.EXTENTION_FQN)]: {
           type: 'string',
           title: 'Ext.',
         },
-        [getEntityAddressKey(-1, CONTACT_INFORMATION_FQN, FQN.TYPE_FQN)]: {
+        [getEntityAddressKey(0, CONTACT_INFORMATION_FQN, FQN.TYPE_FQN)]: {
           type: 'string',
           title: 'Type',
           enum: PHONE_TYPES
@@ -37,21 +37,18 @@ export const schema = {
 
 export const uiSchema = {
   [getPageSectionKey(1, 1)]: {
-    classNames: 'column-span-12',
-    items: {
-      classNames: 'grid-container',
-      [getEntityAddressKey(-1, CONTACT_INFORMATION_FQN, FQN.CONTACT_PHONE_NUMBER_FQN)]: {
-        classNames: 'column-span-6'
-      },
-      [getEntityAddressKey(-1, CONTACT_INFORMATION_FQN, FQN.EXTENTION_FQN)]: {
-        classNames: 'column-span-2'
-      },
-      [getEntityAddressKey(-1, CONTACT_INFORMATION_FQN, FQN.TYPE_FQN)]: {
-        classNames: 'column-span-4'
-      },
-      'ui:options': {
-        editable: true
-      }
-    }
-  }
+    classNames: 'column-span-12 grid-container',
+    'ui:options': {
+      editable: true
+    },
+    [getEntityAddressKey(0, CONTACT_INFORMATION_FQN, FQN.CONTACT_PHONE_NUMBER_FQN)]: {
+      classNames: 'column-span-6'
+    },
+    [getEntityAddressKey(0, CONTACT_INFORMATION_FQN, FQN.EXTENTION_FQN)]: {
+      classNames: 'column-span-2'
+    },
+    [getEntityAddressKey(0, CONTACT_INFORMATION_FQN, FQN.TYPE_FQN)]: {
+      classNames: 'column-span-4'
+    },
+  },
 };
