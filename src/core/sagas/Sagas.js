@@ -19,10 +19,11 @@ import * as AddressSagas from '../../containers/profile/edit/basicinformation/sa
 import * as AppSagas from '../../containers/app/AppSagas';
 import * as AppearanceSagas from '../../containers/profile/edit/basicinformation/sagas/AppearanceSagas';
 import * as BasicInformationSagas from '../../containers/profile/edit/basicinformation/sagas/BasicInformationSagas';
-import * as ContactsSagas from '../../containers/profile/edit/contacts/ContactsSagas';
+import * as ContactSagas from '../../containers/profile/edit/basicinformation/sagas/ContactSagas';
 import * as CrisisReportSagas from '../../containers/reports/crisis/CrisisReportSagas';
 import * as DashboardSagas from '../../containers/dashboard/DashboardSagas';
 import * as DownloadsSagas from '../../containers/downloads/DownloadsSagas';
+import * as EmergencyContactsSagas from '../../containers/profile/edit/contacts/EmergencyContactsSagas';
 import * as EncampmentSagas from '../../longbeach/location/encampment/EncampmentsSagas';
 import * as FormSchemasSagas from '../../containers/reports/FormSchemasSagas';
 import * as IssueSagas from '../../containers/issues/issue/IssueSagas';
@@ -136,6 +137,10 @@ export default function* sagas() :Generator<*, *, *> {
     fork(AppearanceSagas.submitAppearanceWatcher),
     fork(AppearanceSagas.updateAppearanceWatcher),
 
+    fork(ContactSagas.getContactWatcher),
+    fork(ContactSagas.submitContactWatcher),
+    fork(ContactSagas.updateContactWatcher),
+
     fork(AddressSagas.getAddressWatcher),
     fork(AddressSagas.submitAddressWatcher),
     fork(AddressSagas.updateAddressWatcher),
@@ -155,10 +160,10 @@ export default function* sagas() :Generator<*, *, *> {
     fork(OfficerSafetyConcernsSagas.updateOfficerSafetyConcernsWatcher),
     fork(OfficerSafetyConcernsSagas.deleteOfficerSafetyConcernsWatcher),
 
-    fork(ContactsSagas.getContactsWatcher),
-    fork(ContactsSagas.submitContactsWatcher),
-    fork(ContactsSagas.updateContactWatcher),
-    fork(ContactsSagas.deleteContactWatcher),
+    fork(EmergencyContactsSagas.getEmergencyContactsWatcher),
+    fork(EmergencyContactsSagas.submitEmergencyContactsWatcher),
+    fork(EmergencyContactsSagas.updateEmergencyContactWatcher),
+    fork(EmergencyContactsSagas.deleteEmergencyContactWatcher),
 
     fork(AboutSagas.getAboutPlanWatcher),
     fork(AboutSagas.getResponsibleUserWatcher),

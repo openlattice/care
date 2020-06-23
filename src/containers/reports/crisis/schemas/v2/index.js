@@ -1,3 +1,4 @@
+import { schema as assistanceSchema, uiSchema as assistanceUiSchema } from './AssistanceOnSceneSchemas';
 import { schema as behaviorSchema, uiSchema as behaviorUiSchema } from './BehaviorSchemas';
 import { schema as clinicianBehaviorSchema, uiSchema as clinicianBehaviorUiSchema } from './ClinicianBehaviorSchemas';
 import {
@@ -17,10 +18,6 @@ import {
   uiSchema as dispositionUiSchema
 } from './DispositionSchemas';
 import { schema as backgroundSchema, uiSchema as backgroundUiSchema } from './FollowupBackgroundSchemas';
-import {
-  schema as followupDispositionSchema,
-  uiSchema as followupDispositionUiSchema
-} from './FollowupDispositionSchemas';
 import { schema as substancesSchema, uiSchema as substancesUiSchema } from './FollowupSubstancesSchemas';
 import {
   schema as housingAndEmploymentSchema,
@@ -56,6 +53,7 @@ const schemas = [
   behaviorSchema,
   medicalSchema,
   threatSchema,
+  assistanceSchema,
   housingAndEmploymentSchema,
   dispositionSchema,
 ];
@@ -65,6 +63,7 @@ const uiSchemas = [
   behaviorUiSchema,
   medicalUiSchema,
   threatUiSchema,
+  assistanceUiSchema,
   housingAndEmploymentUiSchema,
   dispositionUiSchema,
 ];
@@ -72,13 +71,11 @@ const uiSchemas = [
 const followupSchemas = [
   backgroundSchema,
   substancesSchema,
-  followupDispositionSchema,
 ];
 
 const followupUiSchemas = [
   backgroundUiSchema,
   substancesUiSchema,
-  followupDispositionUiSchema,
 ];
 
 

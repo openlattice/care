@@ -2,14 +2,14 @@
 import React from 'react';
 
 import styled from 'styled-components';
-import { faPhoneAlt } from '@fortawesome/pro-duotone-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   Card,
   CardHeader,
   CardSegment,
   Label,
 } from 'lattice-ui-kit';
+
+import PhoneLink from '../../links/PhoneLink';
 
 const H2 = styled.h2`
   display: flex;
@@ -18,16 +18,6 @@ const H2 = styled.h2`
   font-size: 16px;
   font-weight: 600;
   align-items: center;
-`;
-
-const IconWrapper = styled.span`
-  vertical-align: middle;
-  margin-right: 10px;
-`;
-
-const Telephone = styled.a`
-  font-weight: 600;
-  font-size: 0.875rem;
 `;
 
 const ContentWrapper = styled.div`
@@ -57,9 +47,6 @@ const ContactCard = (props :Props) => {
     relationship,
   } = props;
 
-  const formattedNumber = (phoneNumber && extension) ? `${phoneNumber} ext. ${extension}` : phoneNumber;
-  const telHref = (phoneNumber && extension) ? `tel:${phoneNumber};ext=${extension}` : `tel:${phoneNumber}`;
-
   return (
     <StyledCard>
       <CardHeader padding="sm" noBleed>
@@ -71,12 +58,7 @@ const ContactCard = (props :Props) => {
         {relationship}
         <ContentWrapper bottom>
           <Label subtle>{phoneType}</Label>
-          <Telephone href={telHref}>
-            <IconWrapper>
-              <FontAwesomeIcon icon={faPhoneAlt} />
-            </IconWrapper>
-            {formattedNumber}
-          </Telephone>
+          <PhoneLink number={phoneNumber} extension={extension} />
         </ContentWrapper>
       </CardSegment>
     </StyledCard>

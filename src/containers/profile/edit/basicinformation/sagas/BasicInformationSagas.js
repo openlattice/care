@@ -15,6 +15,7 @@ import type { SequenceAction } from 'redux-reqseq';
 
 import { getAddressWorker } from './AddressSagas';
 import { getAppearanceWorker } from './AppearanceSagas';
+import { getContactWorker } from './ContactSagas';
 import { getPhotosWorker } from './PhotosSagas';
 import { getScarsMarksTattoosWorker } from './ScarsMarksTattoosSagas';
 
@@ -38,6 +39,7 @@ import {
   getBasics,
   updateBasics
 } from '../actions/BasicInformationActions';
+import { getContact } from '../actions/ContactActions';
 import { getPhotos } from '../actions/PhotosActions';
 import { getScarsMarksTattoos } from '../actions/ScarsMarksTattoosActions';
 
@@ -160,6 +162,11 @@ function* getBasicInformationWorker(action :SequenceAction) :Generator<any, any,
       getAddress(personEKID)
     );
 
+    const contactRequest = call(
+      getContactWorker,
+      getContact(personEKID)
+    );
+
     const photosRequest = call(
       getPhotosWorker,
       getPhotos(personEKID)
@@ -174,6 +181,7 @@ function* getBasicInformationWorker(action :SequenceAction) :Generator<any, any,
       addressRequest,
       appearanceRequest,
       basicsRequest,
+      contactRequest,
       photosRequest,
       scarsRequest,
     ]);

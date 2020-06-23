@@ -1,19 +1,22 @@
 // @flow
 import React, { Component } from 'react';
+
 import { CardStack } from 'lattice-ui-kit';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import type { Match } from 'react-router-dom';
 import type { Dispatch } from 'redux';
 import type { RequestSequence } from 'redux-reqseq';
-import type { Match } from 'react-router-dom';
 
-import BasicsForm from './BasicsForm';
-import AppearanceForm from './AppearanceForm';
 import AddressForm from './AddressForm';
+import AppearanceForm from './AppearanceForm';
+import BasicsForm from './BasicsForm';
+import ContactForm from './ContactForm';
+import PhotosForm from './PhotosForm';
 import ScarsMarksTattoosForm from './ScarsMarksTattoosForm';
 import { getBasicInformation } from './actions/BasicInformationActions';
+
 import { PROFILE_ID_PARAM } from '../../../../core/router/Routes';
-import PhotosForm from './PhotosForm';
 
 type Props = {
   actions :{
@@ -54,6 +57,7 @@ class BasicInformationContainer extends Component<Props> {
         <AppearanceForm personEKID={personEKID} />
         <ScarsMarksTattoosForm personEKID={personEKID} />
         <PhotosForm personEKID={personEKID} />
+        <ContactForm personEKID={personEKID} />
         <AddressForm personEKID={personEKID} />
       </CardStack>
     );

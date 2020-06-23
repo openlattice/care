@@ -13,20 +13,23 @@ import {
 
 import Address from '../../../components/premium/address/Address';
 import LabeledDetail from '../../../components/premium/styled/LabeledDetail';
+import PhoneLink from '../../../components/links/PhoneLink';
 import * as FQN from '../../../edm/DataModelFqns';
-import { formatCityStateZip } from '../../../utils/AddressUtils';
 import { List } from '../../../components/layout';
+import { formatCityStateZip } from '../../../utils/AddressUtils';
 
 const expandIcon = <FontAwesomeIcon icon={faChevronDown} size="xs" />;
 
 type Props = {
   address :Map;
+  contact :Map;
   isLoading :boolean;
 };
 
 const ContactPanel = (props :Props) => {
   const {
     address,
+    contact,
     isLoading,
   } = props;
 
@@ -38,7 +41,14 @@ const ContactPanel = (props :Props) => {
   const zip = address.getIn([FQN.LOCATION_ZIP_FQN, 0]);
   const cityStateZip = formatCityStateZip(city, state, zip);
 
-  const content = (
+  const phone = contact.getIn([FQN.CONTACT_PHONE_NUMBER_FQN, 0]);
+  const ext = contact.getIn([FQN.EXTENTION_FQN, 0]);
+  const type = contact.getIn([FQN.TYPE_FQN, 0]);
+  const phoneContent = (
+    <PhoneLink number={phone} extension={ext} />
+  );
+
+  const addressContent = (
     <Address
         cityStateZip={cityStateZip}
         isLoading={isLoading}
@@ -55,14 +65,28 @@ const ContactPanel = (props :Props) => {
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
           <List>
+            {
+              contact.isEmpty() && !isLoading
+                ? null
+                : (
+                  <li>
+                    <LabeledDetail isLoading={isLoading} label={type} content={phoneContent} />
+                  </li>
+                )
+            }
             <li>
-              <LabeledDetail isLoading={isLoading} label="address" content={content} />
+              <LabeledDetail isLoading={isLoading} label="address" content={addressContent} />
             </li>
           </List>
         </ExpansionPanelDetails>
       </ExpansionPanel>
     </div>
   );
+};
+
+ContactPanel.defaultProps = {
+  contact: Map(),
+  address: Map(),
 };
 
 export default ContactPanel;

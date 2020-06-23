@@ -2,6 +2,10 @@ import { DataProcessingUtils } from 'lattice-fabricate';
 
 import * as FQN from '../../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
+import {
+  ASSESSMENT_LOCATION,
+  SELECT_ONLY_ONE
+} from '../constants';
 
 const {
   INCIDENT_FQN,
@@ -26,6 +30,12 @@ const schema = {
           title: 'Incident #',
           type: 'string',
         },
+        [getEntityAddressKey(0, LOCATION_FQN, FQN.TYPE_FQN)]: {
+          title: 'Location Category',
+          type: 'string',
+          description: SELECT_ONLY_ONE,
+          enum: ASSESSMENT_LOCATION,
+        },
         [getEntityAddressKey(0, LOCATION_FQN, FQN.LOCATION_ADDRESS_FQN)]: {
           title: 'Location',
           type: 'string',
@@ -42,7 +52,7 @@ const schema = {
       },
       required: [
         getEntityAddressKey(0, INCIDENT_FQN, FQN.DATETIME_START_FQN),
-        getEntityAddressKey(0, LOCATION_FQN, FQN.LOCATION_ADDRESS_FQN),
+        getEntityAddressKey(0, LOCATION_FQN, FQN.TYPE_FQN),
       ]
     }
   },
@@ -59,6 +69,9 @@ const uiSchema = {
     },
     [getEntityAddressKey(0, INCIDENT_FQN, FQN.CRIMINALJUSTICE_CASE_NUMBER_FQN)]: {
       classNames: 'column-span-12',
+    },
+    [getEntityAddressKey(0, LOCATION_FQN, FQN.TYPE_FQN)]: {
+      classNames: 'column-span-12'
     },
     [getEntityAddressKey(0, LOCATION_FQN, FQN.LOCATION_ADDRESS_FQN)]: {
       classNames: 'column-span-12',
