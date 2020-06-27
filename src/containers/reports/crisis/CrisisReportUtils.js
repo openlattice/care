@@ -91,6 +91,47 @@ const getMedicationAssociations = (
   return associations;
 };
 
+const getChargeAssociations = (
+  formData,
+  existingEntityKeyIds,
+  createdDateTime,
+  reportFQN
+) => {
+  const associations = [];
+  const charges = get(formData, getPageSectionKey(8, 2), []);
+  const reportIndex = existingEntityKeyIds[reportFQN] || 0;
+
+  const NOW_DATA = { [FQN.COMPLETED_DT_FQN]: [createdDateTime] };
+
+  for (let i = 0; i < charges.length; i += 1) {
+    associations.push([
+      APP.PART_OF_FQN,
+      i,
+      APP.CHARGE_FQN,
+      reportIndex,
+      reportFQN,
+      NOW_DATA,
+    ]);
+    associations.push([
+      APP.PART_OF_FQN,
+      i,
+      APP.CHARGE_EVENT_FQN,
+      reportIndex,
+      reportFQN,
+      NOW_DATA,
+    ]);
+    associations.push([
+      APP.REGISTERED_FOR_FQN,
+      i,
+      APP.CHARGE_EVENT_FQN,
+      i,
+      APP.CHARGE_FQN,
+      NOW_DATA,
+    ]);
+  }
+  return associations;
+};
+
 const getOptionalCrisisReportAssociations = (
   formData :Object,
   existingEntityKeyIds :Object,
@@ -101,8 +142,9 @@ const getOptionalCrisisReportAssociations = (
 
   const diagnosis :any[][] = getDiagnosisAssociations(formData, existingEntityKeyIds, createdDateTime, reportFQN);
   const medications :any[][] = getMedicationAssociations(formData, existingEntityKeyIds, createdDateTime, reportFQN);
+  const charges :any[][] = getChargeAssociations(formData, existingEntityKeyIds, createdDateTime, reportFQN);
 
-  return associations.concat(diagnosis, medications);
+  return associations.concat(diagnosis, medications, charges);
 };
 
 const getCrisisReportAssociations = (
@@ -454,7 +496,6 @@ const getSectionValues = (formData, section, properties) => properties
   });
 
 const getBHRAddress = (property) => getEntityAddressKey(0, APP.BEHAVIORAL_HEALTH_REPORT_FQN, property);
-
 
 // merge standalone 'other' property with original and check for 'None'
 // mutates passed in entity
