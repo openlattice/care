@@ -10,7 +10,6 @@ import {
   SELECT_ONLY_ONE,
   TECHNIQUES,
   YES_NO,
-  YES_NO_NA,
 } from '../constants';
 
 const {
@@ -87,7 +86,7 @@ const schema = {
             type: 'string',
             title: 'Was charge diverted?',
             description: SELECT_ONLY_ONE,
-            enum: YES_NO_NA,
+            enum: YES_NO,
           }
         },
         required: [
