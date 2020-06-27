@@ -31,6 +31,7 @@ import type { SequenceAction } from 'redux-reqseq';
 import {
   ADD_OPTIONAL_CRISIS_REPORT_CONTENT,
   DELETE_CRISIS_REPORT_CONTENT,
+  GET_CHARGE_EVENTS,
   GET_CRISIS_REPORT,
   GET_CRISIS_REPORT_V2,
   GET_LOCATION_OF_INCIDENT,
@@ -42,6 +43,7 @@ import {
   UPDATE_CRISIS_REPORT,
   addOptionalCrisisReportContent,
   deleteCrisisReportContent,
+  getChargeEvents,
   getCrisisReport,
   getCrisisReportV2,
   getLocationOfIncident,
@@ -85,7 +87,7 @@ import {
 } from '../../../core/sagas/data/DataSagas';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { getESIDFromApp, getESIDsFromApp } from '../../../utils/AppUtils';
-import { getEntityKeyId, groupNeighborsByFQNs, removeEntitiesFromEntityIndexToIdMap } from '../../../utils/DataUtils';
+import { getEntityKeyId, getEntityKeyIdsFromList, groupNeighborsByFQNs, removeEntitiesFromEntityIndexToIdMap } from '../../../utils/DataUtils';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../utils/Errors';
 import { isDefined } from '../../../utils/LangUtils';
 import { generateReviewSchema } from '../../../utils/SchemaUtils';
@@ -119,6 +121,8 @@ const {
   BEHAVIORAL_HEALTH_REPORT_FQN,
   BEHAVIOR_CLINICIAN_FQN,
   BEHAVIOR_FQN,
+  CHARGE_EVENT_FQN,
+  CHARGE_FQN,
   CRISIS_REPORT_CLINICIAN_FQN,
   DIAGNOSIS_CLINICIAN_FQN,
   DIAGNOSIS_FQN,
@@ -144,6 +148,7 @@ const {
   PART_OF_FQN,
   PEOPLE_FQN,
   REFERRAL_REQUEST_FQN,
+  REGISTERED_FOR_FQN,
   REPORTED_FQN,
   SELF_HARM_CLINICIAN_FQN,
   SELF_HARM_FQN,
@@ -243,6 +248,7 @@ function* getReportsV2NeighborsWorker(action :SequenceAction) :Generator<any, an
       REPORTED_FQN,
       // report contents
       BEHAVIOR_FQN,
+      CHARGE_FQN,
       DIAGNOSIS_FQN,
       DISPOSITION_FQN,
       ENCOUNTER_DETAILS_FQN,
@@ -441,6 +447,61 @@ function* getLocationOfIncidentWatcher() :Generator<any, any, any> {
   yield takeLatest(GET_LOCATION_OF_INCIDENT, getLocationOfIncidentWorker);
 }
 
+function* getChargeEventsWorker(action :SequenceAction) :Generator<any, any, any> {
+  const response = {};
+
+  try {
+    const { value: chargeEKIDs } = action;
+    if (!Array.isArray(chargeEKIDs)) throw ERR_ACTION_VALUE_TYPE;
+
+    yield put(getChargeEvents.request(action.id, chargeEKIDs));
+    response.data = List();
+    if (chargeEKIDs.length) {
+
+      const app = yield select((state) => state.get('app', Map()));
+
+      const [
+        chargeESID,
+        registeredForESID,
+        chargeEventESID,
+      ] = getESIDsFromApp(app, [
+        CHARGE_FQN,
+        REGISTERED_FOR_FQN,
+        CHARGE_EVENT_FQN,
+      ]);
+
+      const chargeEventsParams = {
+        entitySetId: chargeESID,
+        filter: {
+          entityKeyIds: chargeEKIDs,
+          sourceEntitySetIds: [chargeEventESID],
+          edgeEntitySetIds: [registeredForESID],
+          destinationEntitySetIds: []
+        },
+      };
+
+      const chargeEventsResponse = yield call(
+        searchEntityNeighborsWithFilterWorker,
+        searchEntityNeighborsWithFilter(chargeEventsParams)
+      );
+
+      if (chargeEventsResponse.error) throw chargeEventsResponse.error;
+      response.data = fromJS(chargeEventsResponse.data);
+    }
+
+    yield put(getChargeEvents.success(action.id));
+  }
+  catch (error) {
+    response.error = error;
+    LOG.error(action.type, error);
+    yield put(getChargeEvents.failure(action.id, error));
+  }
+  return response;
+}
+
+function* getChargeEventsWatcher() :Generator<any, any, any> {
+  yield takeLatest(GET_CHARGE_EVENTS, getChargeEventsWorker);
+}
 
 function* getCrisisReportV2Worker(action :SequenceAction) :Generator<any, any, any> {
   const response = {};
@@ -489,6 +550,10 @@ function* getCrisisReportV2Worker(action :SequenceAction) :Generator<any, any, a
     const incidentEKID = neighborsByFQN.getIn([
       INCIDENT_FQN, 0, 'neighborDetails', FQN.OPENLATTICE_ID_FQN, 0
     ]);
+    const chargeEKIDs = neighborsByFQN
+      .get(CHARGE_FQN, List())
+      .map((charge) => charge.getIn(['neighborDetails', FQN.OPENLATTICE_ID_FQN, 0]))
+      .toJS();
     const reporterData = neighborsByFQN.getIn([STAFF_FQN, 0]);
 
     const locationRequest = call(
@@ -501,21 +566,31 @@ function* getCrisisReportV2Worker(action :SequenceAction) :Generator<any, any, a
       getSubjectOfIncident(incidentEKID)
     );
 
-    const [subjectResponse, locationResponse] = yield all([
+    const chargeEventsRequest = call(
+      getChargeEventsWorker,
+      getChargeEvents(chargeEKIDs)
+    );
+
+    const [subjectResponse, locationResponse, chargeEventsResponse] = yield all([
       subjectRequest,
       locationRequest,
+      chargeEventsRequest
     ]);
 
     if (subjectResponse.error) throw subjectResponse.error;
     if (locationResponse.error) throw locationResponse.error;
+    if (chargeEventsResponse.error) throw chargeEventsResponse.error;
     const subjectData = subjectResponse.data.getIn([incidentEKID, 0, 'neighborDetails'], Map());
     const locationData = locationResponse.data.get(incidentEKID, List());
+    const chargeEventsData = chargeEKIDs
+      .map((chargeEKID) => chargeEventsResponse.data.getIn([chargeEKID, 0], Map()));
 
     // include report and location in neighbors
     const reportEntity = fromJS({ neighborDetails: reportResponse.data });
     const reportDataByFQN = neighborsByFQN
       .set(reportFQN.toString(), List([reportEntity]))
-      .set(LOCATION_FQN.toString(), locationData);
+      .set(LOCATION_FQN.toString(), locationData)
+      .set(CHARGE_EVENT_FQN.toString(), chargeEventsData);
     const formData = fromJS(constructFormDataFromNeighbors(reportDataByFQN, reviewSchema));
     const entityIndexToIdMap = getEntityIndexToIdMapFromNeighbors(reportDataByFQN, reviewSchema);
 
@@ -981,6 +1056,8 @@ export {
   addOptionalCrisisReportContentWorker,
   deleteCrisisReportContentWatcher,
   deleteCrisisReportContentWorker,
+  getChargeEventsWatcher,
+  getChargeEventsWorker,
   getCrisisReportV2Watcher,
   getCrisisReportV2Worker,
   getCrisisReportWatcher,
