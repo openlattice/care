@@ -64,6 +64,9 @@ export const APP_TYPES_FQNS = {
   OFFENSE_FQN: new FullyQualifiedName('app.offense'),
   CLEARED_BY_FQN: new FullyQualifiedName('app.clearedby'),
   GENERAL_PERSON_FQN: new FullyQualifiedName('app.generalperson'),
+  CHARGE_EVENT_FQN: new FullyQualifiedName('app.chargeevent'),
+  CHARGE_FQN: new FullyQualifiedName('app.charge'),
+  REGISTERED_FOR_FQN: new FullyQualifiedName('app.registeredfor'),
 
   // protected
   DISPOSITION_CLINICIAN_FQN: new FullyQualifiedName('app.disposition_clinician'),

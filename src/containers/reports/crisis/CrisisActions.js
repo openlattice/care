@@ -38,6 +38,9 @@ const getSubjectOfIncident :RequestSequence = newRequestSequence(GET_SUBJECT_OF_
 const GET_LOCATION_OF_INCIDENT :'GET_LOCATION_OF_INCIDENT' = 'GET_LOCATION_OF_INCIDENT';
 const getLocationOfIncident :RequestSequence = newRequestSequence(GET_LOCATION_OF_INCIDENT);
 
+const GET_CHARGE_EVENTS :'GET_CHARGE_EVENTS' = 'GET_CHARGE_EVENTS';
+const getChargeEvents :RequestSequence = newRequestSequence(GET_CHARGE_EVENTS);
+
 const CLEAR_CRISIS_REPORT :'CLEAR_CRISIS_REPORT' = 'CLEAR_CRISIS_REPORT';
 const clearCrisisReport = () => ({
   type: CLEAR_CRISIS_REPORT
@@ -47,6 +50,7 @@ export {
   ADD_OPTIONAL_CRISIS_REPORT_CONTENT,
   CLEAR_CRISIS_REPORT,
   DELETE_CRISIS_REPORT_CONTENT,
+  GET_CHARGE_EVENTS,
   GET_CRISIS_REPORT,
   GET_CRISIS_REPORT_V2,
   GET_LOCATION_OF_INCIDENT,
@@ -60,6 +64,7 @@ export {
   addOptionalCrisisReportContent,
   clearCrisisReport,
   deleteCrisisReportContent,
+  getChargeEvents,
   getCrisisReport,
   getCrisisReportV2,
   getLocationOfIncident,
