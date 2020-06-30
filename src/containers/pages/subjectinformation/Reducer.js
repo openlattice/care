@@ -14,35 +14,37 @@ import { FORM_STEP_STATUS } from '../../../utils/constants/FormConstants';
 import { CLEAR_REPORT } from '../../reports/ReportsActions';
 
 const {
-  FULL_NAME,
-  PERSON_ID,
-  IS_NEW_PERSON,
-  LAST,
-  FIRST,
-  MIDDLE,
+  AGE,
   AKA,
   DOB,
   DOB_UNKNOWN,
+  ETHNICITY,
+  FIRST,
+  FULL_NAME,
   GENDER,
+  IS_NEW_PERSON,
+  LAST,
+  MIDDLE,
+  PERSON_ID,
   RACE,
-  AGE,
-  SSN_LAST_4
+  SSN_LAST_4,
 } = SUBJECT_INFORMATION;
 
 const INITIAL_STATE :Map = fromJS({
-  [FULL_NAME]: '',
-  [PERSON_ID]: '',
-  [IS_NEW_PERSON]: true,
-  [LAST]: '',
-  [FIRST]: '',
-  [MIDDLE]: '',
+  [AGE]: '',
   [AKA]: '',
   [DOB]: '',
   [DOB_UNKNOWN]: false,
+  [ETHNICITY]: '',
+  [FIRST]: '',
+  [FULL_NAME]: '',
   [GENDER]: '',
+  [IS_NEW_PERSON]: true,
+  [LAST]: '',
+  [MIDDLE]: '',
+  [PERSON_ID]: '',
   [RACE]: '',
-  [AGE]: '',
-  [SSN_LAST_4]: ''
+  [SSN_LAST_4]: '',
 });
 
 export default function reducer(state :Map = INITIAL_STATE, action :Object) {
@@ -89,9 +91,6 @@ export function getInvalidFields(state :Map) {
       invalidFields.push(DOB);
     }
 
-  }
-  else if (!state.get(PERSON_ID, '').length) {
-    invalidFields.push(PERSON_ID);
   }
 
   return invalidFields;

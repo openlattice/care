@@ -1,6 +1,8 @@
+import { List, Map } from 'immutable';
 // @flow
 import { DateTime } from 'luxon';
-import { List, Map } from 'immutable';
+
+import Logger from '../../utils/Logger';
 import * as FQN from '../../edm/DataModelFqns';
 import { getLastFirstMiFromPerson } from '../../utils/PersonUtils';
 import {
@@ -14,12 +16,11 @@ import {
   ARRESTED,
   CRIMES_AGAINST_PERSON,
   FELONY,
+  NOT_ARRESTED,
   NO_ACTION_NECESSARY,
   RESOURCES_DECLINED,
   UNABLE_TO_CONTACT,
-  NOT_ARRESTED,
 } from '../pages/disposition/Constants';
-import Logger from '../../utils/Logger';
 
 const LOG = new Logger('ReportsUtils');
 
@@ -51,10 +52,11 @@ const compileSubjectData = (subjectData :Map, reportData :Map) => {
     [SUBJECT_INFORMATION.DOB]: subjectDob,
     [SUBJECT_INFORMATION.RACE]: subjectData.getIn([FQN.PERSON_RACE_FQN, 0], ''),
     [SUBJECT_INFORMATION.GENDER]: subjectData.getIn([FQN.PERSON_SEX_FQN, 0], ''),
+    [SUBJECT_INFORMATION.ETHNICITY]: subjectData.getIn([FQN.PERSON_ETHNICITY_FQN, 0], ''),
     [SUBJECT_INFORMATION.AGE]: ageDuringReport,
     [SUBJECT_INFORMATION.DOB_UNKNOWN]: dobUnknown,
     [SUBJECT_INFORMATION.SSN_LAST_4]: subjectData.getIn([FQN.PERSON_SSN_LAST_4_FQN, 0], ''),
-    [SUBJECT_INFORMATION.IS_NEW_PERSON]: false
+    [SUBJECT_INFORMATION.IS_NEW_PERSON]: false,
   };
 };
 
