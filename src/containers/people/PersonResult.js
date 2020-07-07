@@ -151,7 +151,7 @@ const PersonResult = (props :Props) => {
           <BigButton color="secondary" onClick={handleViewProfile}>
             View Profile
           </BigButton>
-          <Button color="success" onClick={handleClick}>
+          <Button onClick={handleClick}>
             New Report
           </Button>
         </Actions>
