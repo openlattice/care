@@ -14,6 +14,7 @@ type Props = {
   fullWidth ? :boolean;
   isLoading ? :boolean;
   size ? :string;
+  startIcon ? :Node;
   state ? :any;
   to :string;
   variant ? :string;
@@ -21,22 +22,24 @@ type Props = {
 
 const LinkButton = (props :Props) => {
   const {
-    color,
     children,
     className,
+    color,
     disabled,
     fullWidth,
     isLoading,
-    variant,
     size,
+    startIcon,
     state,
     to,
+    variant,
   } = props;
 
   const onClick = useGoToPath(to, state);
 
   return (
     <Button
+        startIcon={startIcon}
         color={color}
         className={className}
         disabled={disabled}
@@ -52,13 +55,14 @@ const LinkButton = (props :Props) => {
 
 LinkButton.defaultProps = {
   className: undefined,
-  color: 'primary',
+  color: undefined,
   disabled: false,
   fullWidth: false,
   isLoading: false,
   size: undefined,
+  startIcon: undefined,
   state: undefined,
-  variant: 'text',
+  variant: undefined,
 };
 
 export default LinkButton;
