@@ -50,7 +50,7 @@
     "lattice-auth": "0.20.0",
     "lattice-fabricate": "~0.14.0-alpha.3",
     "lattice-sagas": "~0.49.0",
-    "lattice-ui-kit": "~0.33.0-alpha.5",
+    "lattice-ui-kit": "~0.33.0-alpha.7",
     "lodash": "~4.17.10",
     "loglevel": "~1.6.8",
     "luxon": "~1.24.0",
