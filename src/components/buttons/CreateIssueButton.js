@@ -11,8 +11,9 @@ import { useSelector } from 'react-redux';
 import IssueModal from '../../containers/issues/issue/IssueModal';
 
 const StyledButton = styled(Button)`
-  padding: 10px;
+  background-color: #e5e5f0;
   min-width: 0;
+  padding: 10px;
 `;
 
 const { useBoolean } = Hooks;

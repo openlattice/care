@@ -75,7 +75,7 @@ const NewSymptomsReportContainer = () => {
           <Button
               fullWidth
               isLoading={isSubmitting}
-              mode="primary"
+              color="primary"
               onClick={handleExternalSubmit}>
             Create Symptom Report
           </Button>

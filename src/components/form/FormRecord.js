@@ -132,7 +132,7 @@ const FormRecord = ({
               && (
                 <Button
                     onClick={onClickPrimary}
-                    mode="primary">
+                    color="primary">
                   {primaryText}
                 </Button>
               )
@@ -142,7 +142,7 @@ const FormRecord = ({
               && (
                 <Button
                     onClick={onClickSecondary}
-                    mode="secondary">
+                    color="secondary">
                   {secondaryText}
                 </Button>
               )

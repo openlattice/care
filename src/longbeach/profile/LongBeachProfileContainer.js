@@ -89,7 +89,6 @@ const LongBeachProfileContainer = () => {
                 <FlexColumn>
                   <Center>
                     <Portrait imageUrl={imageURL} height="128" width="96" />
-                    {/* <PlusButton mode="primary">Photo</PlusButton> */}
                   </Center>
                 </FlexColumn>
                 <StyledFlexColumn>

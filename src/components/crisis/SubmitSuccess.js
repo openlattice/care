@@ -1,5 +1,6 @@
 // @flow
 import React, { Component } from 'react';
+
 import styled from 'styled-components';
 import { Button } from 'lattice-ui-kit';
 import { connect } from 'react-redux';
@@ -7,10 +8,11 @@ import { bindActionCreators } from 'redux';
 import type { Dispatch } from 'redux';
 
 import { FormWrapper } from './FormComponents';
-import { BLACK } from '../../shared/Colors';
-import { HOME_PATH } from '../../core/router/Routes';
+
 import { clearReport } from '../../containers/reports/ReportsActions';
+import { HOME_PATH } from '../../core/router/Routes';
 import { goToPath } from '../../core/router/RoutingActions';
+import { BLACK } from '../../shared/Colors';
 import type { RoutingAction } from '../../core/router/RoutingActions';
 
 const SubmittedView = styled.div`
@@ -65,7 +67,7 @@ class SubmitSuccess extends Component<Props> {
         <FormWrapper>
           <SubmittedView>
             <h1>{`Your report has been ${actionText}!`}</h1>
-            <StyledButton mode="primary" onClick={this.clearAndNavigate(HOME_PATH)}>Return to Home</StyledButton>
+            <StyledButton color="primary" onClick={this.clearAndNavigate(HOME_PATH)}>Return to Home</StyledButton>
           </SubmittedView>
         </FormWrapper>
       </PageWrapper>

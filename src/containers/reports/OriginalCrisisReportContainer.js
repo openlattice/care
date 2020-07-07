@@ -338,7 +338,7 @@ class OriginalCrisisReportContainer extends React.Component<Props, State> {
       onClick = this.handleSubmit;
     }
 
-    return <Button mode="primary" onClick={onClick}>{buttonText}</Button>;
+    return <Button color="primary" onClick={onClick}>{buttonText}</Button>;
   }
 
   renderPage = (page, index) => {

@@ -103,6 +103,7 @@ const getActiveStyles = ({ active }) => {
 
 const TabButton = styled(Button)`
   border-radius: 0;
+  background-color: #e5e5f0;
   ${getActiveStyles};
 `;
 
@@ -140,6 +141,7 @@ const ButtonGroup = styled.div`
 const StyledLinkButton = styled(LinkButton)`
   padding: 10px;
   min-width: 0;
+  background-color: #e5e5f0;
 `;
 
 type Props = {
