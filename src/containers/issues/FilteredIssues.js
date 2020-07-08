@@ -4,9 +4,10 @@ import React, {
   useMemo,
   useState
 } from 'react';
+
 import styled, { css } from 'styled-components';
-import { Constants } from 'lattice';
 import { List, Map } from 'immutable';
+import { Constants } from 'lattice';
 import {
   Card,
   CardStack,
@@ -14,17 +15,17 @@ import {
   Label,
   Table
 } from 'lattice-ui-kit';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 import type { RequestState } from 'redux-reqseq';
 
 import IssueRow from './IssueRow';
-import { ISSUE_HEADERS, ISSUE_FILTERS } from './constants';
 import {
   getAllIssues,
   getMyOpenIssues,
   getReportedByMe,
 } from './IssuesActions';
+import { ISSUE_FILTERS, ISSUE_HEADERS } from './constants';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 const { NEUTRALS, PURPLES, WHITE } = Colors;
@@ -51,6 +52,7 @@ const StyledLabel = styled(Label)`
 `;
 
 const VerticalCard = styled(Card)`
+  display: flex;
   flex-direction: row;
 `;
 
