@@ -9,37 +9,43 @@ import { useGoToPath } from '../hooks';
 type Props = {
   children :Node;
   className ? :string;
+  color ? :string;
   disabled ? :boolean;
+  fullWidth ? :boolean;
   isLoading ? :boolean;
-  mode ? :string;
   size ? :string;
+  startIcon ? :Node;
   state ? :any;
   to :string;
-  fullWidth ? :boolean;
+  variant ? :string;
 }
 
 const LinkButton = (props :Props) => {
   const {
     children,
     className,
+    color,
     disabled,
     fullWidth,
     isLoading,
-    mode,
     size,
+    startIcon,
     state,
     to,
+    variant,
   } = props;
 
   const onClick = useGoToPath(to, state);
 
   return (
     <Button
+        startIcon={startIcon}
+        color={color}
         className={className}
         disabled={disabled}
         fullWidth={fullWidth}
         isLoading={isLoading}
-        mode={mode}
+        variant={variant}
         onClick={onClick}
         size={size}>
       {children}
@@ -49,12 +55,14 @@ const LinkButton = (props :Props) => {
 
 LinkButton.defaultProps = {
   className: undefined,
+  color: undefined,
   disabled: false,
   fullWidth: false,
   isLoading: false,
-  mode: undefined,
   size: undefined,
+  startIcon: undefined,
   state: undefined,
+  variant: undefined,
 };
 
 export default LinkButton;

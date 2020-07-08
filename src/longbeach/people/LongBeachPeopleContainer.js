@@ -158,7 +158,7 @@ const LongBeachPeopleContainer = () => {
                         type="submit"
                         fullWidth
                         isLoading={isLoading}
-                        mode="primary"
+                        color="primary"
                         onClick={handleOnSearch}>
                       Search
                     </Button>

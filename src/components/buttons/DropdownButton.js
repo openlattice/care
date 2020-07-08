@@ -35,7 +35,7 @@ const MenuContainer = styled.div`
   padding: 4px 0;
   position: absolute;
   right: 0;
-  top: ${(props) => (props.offset === 'sm' ? '33px' : '45px')};
+  top: ${(props) => (props.offset === 'small' ? '33px' : '45px')};
   width: auto;
   z-index: 1;
 
@@ -46,6 +46,7 @@ const MenuContainer = styled.div`
     color: ${NEUTRALS[0]};
     border: none;
     min-width: fit-content;
+    background-color: white;
 
     &:hover {
       background-color: ${NEUTRALS[6]};

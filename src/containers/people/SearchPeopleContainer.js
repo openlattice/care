@@ -228,7 +228,7 @@ const SearchPeopleContainer = () => {
                   <Button
                       type="submit"
                       isLoading={isLoading}
-                      mode="primary"
+                      color="primary"
                       onClick={handleOnSearch}>
                     Search
                   </Button>

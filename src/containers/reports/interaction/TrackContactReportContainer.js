@@ -63,7 +63,7 @@ const TrackContactReportContainer = () => {
                     <Button
                         fullWidth
                         isLoading={isSubmitting}
-                        mode="primary"
+                        color="primary"
                         onClick={handleExternalSubmit}>
                       Track Contact
                     </Button>

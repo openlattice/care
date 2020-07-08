@@ -236,7 +236,7 @@ class EditProfileForm extends Component<Props, State> {
           </FormGrid>
           <ActionRow>
             <Button onClick={onDiscard}>Discard</Button>
-            <Button mode="primary" onClick={this.handleSubmit} isLoading={isLoading}>Submit</Button>
+            <Button color="primary" onClick={this.handleSubmit} isLoading={isLoading}>Submit</Button>
           </ActionRow>
         </CardSegment>
       </>

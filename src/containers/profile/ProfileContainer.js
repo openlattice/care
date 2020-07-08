@@ -1,13 +1,12 @@
 // @flow
 
 import React, { Component } from 'react';
+
 import styled from 'styled-components';
-import { DateTime } from 'luxon';
-import { Constants } from 'lattice';
+import { faEdit, faPortrait, faUser } from '@fortawesome/pro-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { List, Map } from 'immutable';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { RequestStates } from 'redux-reqseq';
+import { Constants } from 'lattice';
 import {
   Button,
   Card,
@@ -17,21 +16,19 @@ import {
   Colors,
   SearchResults
 } from 'lattice-ui-kit';
-import { faEdit, faPortrait, faUser } from '@fortawesome/pro-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
+import { DateTime } from 'luxon';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { RequestStates } from 'redux-reqseq';
+import type { Match } from 'react-router';
 import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
-import type { Match } from 'react-router';
 
 import CrisisCountCard from './CrisisCountCard';
 import EditProfileForm from './EditProfileForm';
 import ProfileBanner from './ProfileBanner';
 import ProfileDetails from './ProfileDetails';
 import ProfileResult from './ProfileResult';
-import LinkButton from '../../components/buttons/LinkButton';
-import { labelMapReport } from './constants';
-import { ContentWrapper, ContentOuterWrapper } from '../../components/layout';
 import {
   clearProfile,
   getPersonData,
@@ -39,7 +36,10 @@ import {
   getProfileReports,
   updateProfileAbout
 } from './ProfileActions';
-import { DATE_TIME_OCCURRED_FQN } from '../../edm/DataModelFqns';
+import { labelMapReport } from './constants';
+
+import LinkButton from '../../components/buttons/LinkButton';
+import { ContentOuterWrapper, ContentWrapper } from '../../components/layout';
 import {
   CRISIS_PATH,
   PROFILE_ID_PARAM,
@@ -47,6 +47,7 @@ import {
   REPORT_VIEW_PATH,
 } from '../../core/router/Routes';
 import { goToPath } from '../../core/router/RoutingActions';
+import { DATE_TIME_OCCURRED_FQN } from '../../edm/DataModelFqns';
 import { reduceRequestStates } from '../../utils/StateUtils';
 import type { RoutingAction } from '../../core/router/RoutingActions';
 
@@ -236,7 +237,7 @@ class ProfileContainer extends Component<Props, State> {
           <H1>
             <UserIcon fixedWidth />
             About
-            <EditButton mode="primary" onClick={this.handleShowEdit}>
+            <EditButton color="primary" onClick={this.handleShowEdit}>
               <FontAwesomeIcon icon={faEdit} fixedWidth />
             </EditButton>
           </H1>
@@ -264,7 +265,7 @@ class ProfileContainer extends Component<Props, State> {
                   <PlaceholderPortrait icon={faPortrait} color={NEUTRALS[5]} />
                 </CardSegment>
                 <CardSegment vertical padding="sm">
-                  <LinkButton mode="primary" to={`${CRISIS_PATH}/1`} state={selectedPerson}>
+                  <LinkButton color="primary" to={`${CRISIS_PATH}/1`} state={selectedPerson}>
                     New Crisis Report
                   </LinkButton>
                 </CardSegment>

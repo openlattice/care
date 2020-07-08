@@ -62,7 +62,7 @@ const NewPersonContainer = () => {
                     <Button
                         fullWidth
                         isLoading={isSubmitting}
-                        mode="primary"
+                        color="primary"
                         onClick={handleExternalSubmit}>
                       Create New Person
                     </Button>

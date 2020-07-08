@@ -148,10 +148,10 @@ const PersonResult = (props :Props) => {
           </Details>
         </FlexRow>
         <Actions>
-          <BigButton mode="secondary" onClick={handleViewProfile}>
+          <BigButton color="secondary" onClick={handleViewProfile}>
             View Profile
           </BigButton>
-          <Button mode="positive" onClick={handleClick}>
+          <Button onClick={handleClick}>
             New Report
           </Button>
         </Actions>

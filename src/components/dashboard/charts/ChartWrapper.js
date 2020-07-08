@@ -157,7 +157,7 @@ const ChartWrapper = ({
     <HeaderRow>
       <h1>{title}</h1>
       <Buttons>
-        {downloadFn ? <Button mode="secondary" onClick={downloadFn}>Download</Button> : null}
+        {downloadFn ? <Button color="secondary" onClick={downloadFn}>Download</Button> : null}
         {infoText ? (
           <ExplainButton>
             <span>?</span>

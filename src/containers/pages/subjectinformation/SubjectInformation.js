@@ -38,17 +38,6 @@ import { SUBJECT_INFORMATION } from '../../../utils/constants/CrisisReportConsta
 import { STATE } from '../../../utils/constants/StateConstants';
 import { ETHNICITY_VALUES, RACE_VALUES, SEX_VALUES } from '../../profile/constants';
 
-type Props = {
-  actions :{
-    clearSubjectInformation :() => { type :string },
-    setInputValue :(value :{ field :string, value :Object }) => void,
-    setInputValues :(values :{}) => void,
-  },
-  className :string;
-  disabled :boolean;
-  values :Map,
-}
-
 const HeaderWithClearButton = styled.div`
   display: flex;
   flex-direction: row;
@@ -59,6 +48,21 @@ const HeaderWithClearButton = styled.div`
     margin: 0;
   }
 `;
+
+const StyledInput = styled(Input)`
+  width: ${({ width }) => width && `${width}px`};
+`;
+
+type Props = {
+  actions :{
+    clearSubjectInformation :() => { type :string },
+    setInputValue :(value :{ field :string, value :Object }) => void,
+    setInputValues :(values :{}) => void,
+  },
+  className :string;
+  disabled :boolean;
+  values :Map,
+}
 
 class SubjectInformation extends Component<Props> {
 
@@ -80,14 +84,13 @@ class SubjectInformation extends Component<Props> {
       : 'text';
 
     return (
-      <Input
+      <StyledInput
           type={type}
-          padBottom
           name={field}
           disabled={!values.get(SUBJECT_INFORMATION.IS_NEW_PERSON)}
           value={values.get(field)}
           onChange={onChange}
-          width={width && `${width}px`} />
+          width={width} />
     );
   };
 

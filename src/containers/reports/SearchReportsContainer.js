@@ -138,7 +138,7 @@ const SearchReportsContainer = () => {
                   <FlexColumn>
                     <Label stealth>Search</Label>
                     <Button
-                        mode="primary"
+                        color="primary"
                         isLoading={isLoading}
                         type="submit"
                         onClick={handleOnSearch}>
