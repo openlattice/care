@@ -118,7 +118,7 @@ const NewFollowupReport = ({ incident, pageRef, selectedPerson } :Props) => {
                   <span>{`${page + 1} of ${totalPages}`}</span>
                   <Button
                       isLoading={isLoading}
-                      mode="primary"
+                      color="primary"
                       onClick={validate}>
                     { isReviewPage ? 'Submit' : 'Next' }
                   </Button>

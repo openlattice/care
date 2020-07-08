@@ -10,6 +10,7 @@ import {
   LatticeLuxonUtils,
   MuiPickersUtilsProvider,
   Spinner,
+  StylesProvider,
   ThemeProvider,
   lightTheme,
 } from 'lattice-ui-kit';
@@ -199,12 +200,14 @@ class AppContainer extends Component<Props> {
     return (
       <ThemeProvider theme={lightTheme}>
         <MuiPickersUtilsProvider utils={LatticeLuxonUtils}>
-          <AppContainerWrapper>
-            <AppHeaderContainer organizations={organizations} />
-            <AppContentOuterWrapper>
-              { this.renderAppContent() }
-            </AppContentOuterWrapper>
-          </AppContainerWrapper>
+          <StylesProvider injectFirst>
+            <AppContainerWrapper>
+              <AppHeaderContainer organizations={organizations} />
+              <AppContentOuterWrapper>
+                { this.renderAppContent() }
+              </AppContentOuterWrapper>
+            </AppContainerWrapper>
+          </StylesProvider>
         </MuiPickersUtilsProvider>
       </ThemeProvider>
     );

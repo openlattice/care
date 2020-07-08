@@ -1,28 +1,30 @@
 // @flow
 import React, { useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+
 import styled from 'styled-components';
 import { Map, getIn } from 'immutable';
-import { Button, Label, Hooks } from 'lattice-ui-kit';
+import { Button, Hooks, Label } from 'lattice-ui-kit';
+import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 import type { Match } from 'react-router';
 
-import LinkButton from '../../components/buttons/LinkButton';
 import IssueModal from './issue/IssueModal';
-import DropdownButton from '../../components/buttons/DropdownButton';
 import { setIssueStatus } from './issue/IssueActions';
-import { getJumpToActionPath, getIssueUrl } from './issue/IssueUtils';
-import { getLastFirstMiFromPerson } from '../../utils/PersonUtils';
+import { getIssueUrl, getJumpToActionPath } from './issue/IssueUtils';
+import { STATUS_VALUES } from './issue/constants';
+
+import DropdownButton from '../../components/buttons/DropdownButton';
+import LinkButton from '../../components/buttons/LinkButton';
 import {
-  TITLE_FQN,
-  PRIORITY_FQN,
-  STATUS_FQN,
   CATEGORY_FQN,
   DESCRIPTION_FQN,
-  PERSON_ID_FQN,
   OPENLATTICE_ID_FQN,
+  PERSON_ID_FQN,
+  PRIORITY_FQN,
+  STATUS_FQN,
+  TITLE_FQN,
 } from '../../edm/DataModelFqns';
-import { STATUS_VALUES } from './issue/constants';
+import { getLastFirstMiFromPerson } from '../../utils/PersonUtils';
 
 const { useBoolean } = Hooks;
 
@@ -124,14 +126,14 @@ const IssueDetails = (props :Props) => {
           authorized && (
             <>
               <Button
-                  size="sm"
+                  size="small"
                   onClick={open}>
                 Edit
               </Button>
               <DropdownButton
                   isLoading={isLoading}
                   options={resolveOptions}
-                  size="sm"
+                  size="small"
                   title="Status" />
               <LinkButton
                   to={actionPath}
@@ -141,8 +143,8 @@ const IssueDetails = (props :Props) => {
                     subject,
                     assignee,
                   })}
-                  size="sm"
-                  mode="primary">
+                  size="small"
+                  color="primary">
                 Jump to Action
               </LinkButton>
             </>
@@ -151,8 +153,8 @@ const IssueDetails = (props :Props) => {
         {
           navigator.clipboard.writeText && (
             <Button
-                size="sm"
-                mode={hasCopied ? 'positive' : 'default'}
+                size="small"
+                color={hasCopied ? 'success' : 'default'}
                 onClick={copyLink}>
               {hasCopied ? 'Copied URL' : 'Copy URL'}
             </Button>

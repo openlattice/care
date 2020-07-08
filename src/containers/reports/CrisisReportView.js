@@ -338,7 +338,7 @@ class CrisisReportView extends React.Component<Props, State> {
       onClick = this.handleSubmit;
     }
 
-    return <Button mode="primary" onClick={onClick}>{buttonText}</Button>;
+    return <Button color="primary" onClick={onClick}>{buttonText}</Button>;
   }
 
   renderPage = (page, index) => {
@@ -351,7 +351,13 @@ class CrisisReportView extends React.Component<Props, State> {
           <Component disabled={!edit} />
         </FormWrapper>
         <ButtonRow>
-          <Button mode="subtle" disabled={!index} onClick={() => this.handlePageChange(prevPath)}>Back</Button>
+          <Button
+              variant="text"
+              color="primary"
+              disabled={!index}
+              onClick={() => this.handlePageChange(prevPath)}>
+            Back
+          </Button>
           {this.renderForwardButton(page, index)}
         </ButtonRow>
       </>

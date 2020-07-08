@@ -189,7 +189,7 @@ export default class Subscription extends React.Component<Props, State> {
       }
       return (
         <>
-          <Button onClick={() => this.setState({ isEditing: true })} mode="secondary">
+          <Button onClick={() => this.setState({ isEditing: true })} color="secondary">
             Manage
           </Button>
           <Button onClick={this.cancelSubscription}>Cancel</Button>
@@ -199,14 +199,14 @@ export default class Subscription extends React.Component<Props, State> {
     if (isCreating) {
       return (
         <>
-          <Button mode="primary" onClick={this.createSubscription}>Subscribe</Button>
+          <Button color="primary" onClick={this.createSubscription}>Subscribe</Button>
           <Button onClick={() => this.setState({ isCreating: false })}>Cancel</Button>
         </>
       );
     }
 
     return (
-      <Button mode="secondary" onClick={() => this.setState({ isCreating: true })}>Manage</Button>
+      <Button color="secondary" onClick={() => this.setState({ isCreating: true })}>Manage</Button>
     );
 
   }

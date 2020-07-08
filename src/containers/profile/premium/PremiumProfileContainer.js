@@ -102,9 +102,8 @@ const getActiveStyles = ({ active }) => {
 };
 
 const TabButton = styled(Button)`
-  background-color: #E5E5F0;
-  border-color: #E5E5F0;
   border-radius: 0;
+  background-color: #e5e5f0;
   ${getActiveStyles};
 `;
 
@@ -140,9 +139,9 @@ const ButtonGroup = styled.div`
 `;
 
 const StyledLinkButton = styled(LinkButton)`
-  background-color: #E5E5F0;
-  border-color: #E5E5F0;
   padding: 10px;
+  min-width: 0;
+  background-color: #e5e5f0;
 `;
 
 type Props = {
@@ -345,7 +344,7 @@ const PremiumProfileContainer = (props :Props) => {
                   )
                 }
                 <CreateIssueButton />
-                <Button mode="primary" onClick={open}>Create Report</Button>
+                <Button color="primary" onClick={open}>Create Report</Button>
                 <ReportSelectionModal
                     selectedPerson={selectedPerson}
                     isVisible={isVisible}

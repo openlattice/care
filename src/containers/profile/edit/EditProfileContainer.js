@@ -106,8 +106,11 @@ const EditProfileContainer = (props :Props) => {
         }
         <CardStack>
           <div>
-            <LinkButton mode="subtle" to={match.url}>
-              <FontAwesomeIcon icon={faArrowLeft} fixedWidth />
+            <LinkButton
+                color="primary"
+                startIcon={<FontAwesomeIcon icon={faArrowLeft} fixedWidth />}
+                to={match.url}
+                variant="text">
               Back to Profile
             </LinkButton>
           </div>

@@ -1,26 +1,28 @@
 // @flow
 import React, { useCallback, useEffect } from 'react';
+
 import styled from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
-import { useRouteMatch } from 'react-router';
+import { faArrowLeft } from '@fortawesome/pro-regular-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Map } from 'immutable';
 import {
   Card,
   CardSegment,
   CardStack,
   Spinner
 } from 'lattice-ui-kit';
-import { Map } from 'immutable';
+import { useDispatch, useSelector } from 'react-redux';
+import { useRouteMatch } from 'react-router';
 import { RequestStates } from 'redux-reqseq';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft } from '@fortawesome/pro-regular-svg-icons';
 import type { RequestState } from 'redux-reqseq';
+
+import { resetIssue, selectIssue } from './IssueActions';
 
 import IssueDetails from '../IssueDetails';
 import LinkButton from '../../../components/buttons/LinkButton';
-import { resetIssue, selectIssue } from './IssueActions';
+import { useAuthorization } from '../../../components/hooks';
 import { ISSUES_PATH } from '../../../core/router/Routes';
 import { getAuthorization } from '../../../core/sagas/authorize/AuthorizeActions';
-import { useAuthorization } from '../../../components/hooks';
 
 const Centered = styled.div`
   display: flex;
@@ -56,8 +58,11 @@ const Issue = () => {
   return (
     <CardStack>
       <div>
-        <LinkButton to={ISSUES_PATH} mode="subtle">
-          <FontAwesomeIcon icon={faArrowLeft} fixedWidth />
+        <LinkButton
+            color="primary"
+            startIcon={<FontAwesomeIcon icon={faArrowLeft} fixedWidth />}
+            to={ISSUES_PATH}
+            variant="text">
           Back to Issues
         </LinkButton>
       </div>
