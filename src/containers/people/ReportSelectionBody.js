@@ -67,7 +67,7 @@ const ReportSelectionBody = (props :Props) => {
           : (
             <LinkButton
                 to={crisisPath}
-                state={selectedPerson}>
+                state={{ selectedPerson }}>
               Crisis Report
             </LinkButton>
           )
