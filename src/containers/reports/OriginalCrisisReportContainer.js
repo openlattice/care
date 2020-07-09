@@ -226,22 +226,23 @@ class OriginalCrisisReportContainer extends React.Component<Props, State> {
   initializePerson() {
     const { actions, location } = this.props;
     const { state: result = Map() } = location;
-    const isNewPerson = !isValidUuid(getIn(result, [OPENLATTICE_ID_FQN, 0]));
-    const age = getPersonAge(result);
+    const selectedPerson = result.selectedPerson || Map();
+    const isNewPerson = !isValidUuid(getIn(selectedPerson, [OPENLATTICE_ID_FQN, 0]));
+    const age = getPersonAge(selectedPerson);
 
     actions.setInputValues({
-      [SUBJECT_INFORMATION.PERSON_ID]: getIn(result, [FQN.OPENLATTICE_ID_FQN, 0], ''),
-      [SUBJECT_INFORMATION.FULL_NAME]: getLastFirstMiFromPerson(result),
-      [SUBJECT_INFORMATION.FIRST]: getIn(result, [FQN.PERSON_FIRST_NAME_FQN, 0], ''),
-      [SUBJECT_INFORMATION.LAST]: getIn(result, [FQN.PERSON_LAST_NAME_FQN, 0], ''),
-      [SUBJECT_INFORMATION.MIDDLE]: getIn(result, [FQN.PERSON_MIDDLE_NAME_FQN, 0], ''),
-      [SUBJECT_INFORMATION.AKA]: getIn(result, [FQN.PERSON_NICK_NAME_FQN, 0], ''),
-      [SUBJECT_INFORMATION.DOB]: getIn(result, [FQN.PERSON_DOB_FQN, 0], ''),
-      [SUBJECT_INFORMATION.RACE]: getIn(result, [FQN.PERSON_RACE_FQN, 0], ''),
-      [SUBJECT_INFORMATION.ETHNICITY]: getIn(result, [FQN.PERSON_ETHNICITY_FQN, 0], ''),
-      [SUBJECT_INFORMATION.GENDER]: getIn(result, [FQN.PERSON_SEX_FQN, 0], ''),
+      [SUBJECT_INFORMATION.PERSON_ID]: getIn(selectedPerson, [FQN.OPENLATTICE_ID_FQN, 0], ''),
+      [SUBJECT_INFORMATION.FULL_NAME]: getLastFirstMiFromPerson(selectedPerson),
+      [SUBJECT_INFORMATION.FIRST]: getIn(selectedPerson, [FQN.PERSON_FIRST_NAME_FQN, 0], ''),
+      [SUBJECT_INFORMATION.LAST]: getIn(selectedPerson, [FQN.PERSON_LAST_NAME_FQN, 0], ''),
+      [SUBJECT_INFORMATION.MIDDLE]: getIn(selectedPerson, [FQN.PERSON_MIDDLE_NAME_FQN, 0], ''),
+      [SUBJECT_INFORMATION.AKA]: getIn(selectedPerson, [FQN.PERSON_NICK_NAME_FQN, 0], ''),
+      [SUBJECT_INFORMATION.DOB]: getIn(selectedPerson, [FQN.PERSON_DOB_FQN, 0], ''),
+      [SUBJECT_INFORMATION.RACE]: getIn(selectedPerson, [FQN.PERSON_RACE_FQN, 0], ''),
+      [SUBJECT_INFORMATION.ETHNICITY]: getIn(selectedPerson, [FQN.PERSON_ETHNICITY_FQN, 0], ''),
+      [SUBJECT_INFORMATION.GENDER]: getIn(selectedPerson, [FQN.PERSON_SEX_FQN, 0], ''),
       [SUBJECT_INFORMATION.AGE]: age,
-      [SUBJECT_INFORMATION.SSN_LAST_4]: getIn(result, [FQN.PERSON_SSN_LAST_4_FQN, 0], ''),
+      [SUBJECT_INFORMATION.SSN_LAST_4]: getIn(selectedPerson, [FQN.PERSON_SSN_LAST_4_FQN, 0], ''),
       [SUBJECT_INFORMATION.IS_NEW_PERSON]: isNewPerson
     });
   }
