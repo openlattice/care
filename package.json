@@ -98,7 +98,7 @@
     "eslint-plugin-import": "~2.22.0",
     "eslint-plugin-jest": "~23.18.0",
     "eslint-plugin-jsx-a11y": "~6.3.0",
-    "eslint-plugin-react": "~7.19.0",
+    "eslint-plugin-react": "~7.20.3",
     "eslint-plugin-react-hooks": "~4.0.0",
     "file-loader": "~6.0.0",
     "flow-bin": "~0.128.0",
