@@ -2,6 +2,8 @@
 import React from 'react';
 
 import styled from 'styled-components';
+import { faMinus } from '@fortawesome/pro-regular-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Map } from 'immutable';
 import { Button, CardSegment } from 'lattice-ui-kit';
 import { useDispatch } from 'react-redux';
@@ -40,7 +42,9 @@ const OccupantItem = (props :Props) => {
         vertical={false}
         padding="10px">
       <DefaultLink to={PROFILE_VIEW_PATH.replace(PROFILE_ID_PATH, personEKID)}>{name}</DefaultLink>
-      <Button size="small" color="error" variant="outlined" onClick={deleteEdge}>-</Button>
+      <Button size="small" color="error" variant="outlined" onClick={deleteEdge}>
+        <FontAwesomeIcon icon={faMinus} />
+      </Button>
     </StyledSegment>
   );
 };
