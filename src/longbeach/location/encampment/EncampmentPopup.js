@@ -69,12 +69,12 @@ const EncampmentPopup = ({
     <Popup coordinates={coordinates}>
       <ActionBar>
         <strong>Encampment</strong>
-        <CloseButton size="sm" mode="subtle" icon={CloseIcon} onClick={onClose} />
+        <CloseButton size="small" variant="text" icon={CloseIcon} onClick={onClose} />
       </ActionBar>
       <IconDetail content={occupants} icon={faUsers} />
       <IconDetail content={lastUpdated} icon={faHistory} />
       <IconDetail content={description} />
-      <Button size="sm" mode="subtle" onClick={setOpen}>View Occupants</Button>
+      <Button fullWidth size="small" variant="text" color="primary" onClick={setOpen}>View Occupants</Button>
       <EncampmentOccupantsModal
           viewportScrolling
           encampmentEKID={encampmentEKID}
