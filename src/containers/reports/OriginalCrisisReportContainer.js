@@ -353,8 +353,8 @@ class OriginalCrisisReportContainer extends React.Component<Props, State> {
         </FormWrapper>
         <ButtonRow>
           { index === 0
-            ? <Button mode="subtle" onClick={this.handleShowDiscard}>Discard</Button>
-            : <Button mode="subtle" onClick={() => this.handlePageChange(prevPath)}>Back</Button>}
+            ? <Button variant="text" onClick={this.handleShowDiscard}>Discard</Button>
+            : <Button variant="text" onClick={() => this.handlePageChange(prevPath)}>Back</Button>}
           {this.renderForwardButton(page, index)}
         </ButtonRow>
       </PageWrapper>

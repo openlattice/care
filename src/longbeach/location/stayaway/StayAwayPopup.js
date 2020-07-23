@@ -84,7 +84,7 @@ const StayAwayPopup = ({
     <Popup coordinates={coordinates}>
       <ActionBar>
         <strong>{fullName}</strong>
-        <CloseButton size="sm" mode="subtle" icon={CloseIcon} onClick={onClose} />
+        <CloseButton size="small" variant="text" icon={CloseIcon} onClick={onClose} />
       </ActionBar>
       <IconDetail content={dob} icon={faBirthdayCake} />
       <IconDetail content={race} icon={faUser} />
