@@ -24,6 +24,8 @@ import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
+import type { Saga } from '@redux-saga/core';
+import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
@@ -70,12 +72,12 @@ const LOG = new Logger('AppSagas');
  * loadApp()
  */
 
-function* loadAppWatcher() :Generator<*, *, *> {
+function* loadAppWatcher() :Saga<*> {
 
   yield takeEvery(LOAD_APP, loadAppWorker);
 }
 
-function* loadAppWorker(action :SequenceAction) :Generator<*, *, *> {
+function* loadAppWorker(action :SequenceAction) :Saga<*> {
 
   const workerResponse :Object = {};
   try {
@@ -195,12 +197,12 @@ function* loadAppWorker(action :SequenceAction) :Generator<*, *, *> {
  * loadHospitals()
  */
 
-function* loadHospitalsWatcher() :Generator<*, *, *> {
+function* loadHospitalsWatcher() :Saga<*> {
 
   yield takeEvery(LOAD_HOSPITALS, loadHospitalsWorker);
 }
 
-function* loadHospitalsWorker(action :SequenceAction) :Generator<*, *, *> {
+function* loadHospitalsWorker(action :SequenceAction) :Saga<*> {
   const workerResponse = {};
 
   try {
@@ -233,12 +235,12 @@ function* loadHospitalsWorker(action :SequenceAction) :Generator<*, *, *> {
  * switchOrganization()
  */
 
-function* switchOrganizationWatcher() :Generator<*, *, *> {
+function* switchOrganizationWatcher() :Saga<*> {
 
   yield takeEvery(SWITCH_ORGANIZATION, switchOrganizationWorker);
 }
 
-function* switchOrganizationWorker(action :Object) :Generator<*, *, *> {
+function* switchOrganizationWorker(action :Object) :Saga<*> {
 
   try {
     const { value } = action;
@@ -260,7 +262,7 @@ function* switchOrganizationWorker(action :Object) :Generator<*, *, *> {
  * initializeApplication()
  */
 
-function* initializeApplicationWorker(action :SequenceAction) :Generator<*, *, *> {
+function* initializeApplicationWorker(action :SequenceAction) :Saga<*> {
 
   try {
     yield put(initializeApplication.request(action.id));
@@ -315,7 +317,7 @@ function* initializeApplicationWorker(action :SequenceAction) :Generator<*, *, *
   }
 }
 
-function* initializeApplicationWatcher() :Generator<*, *, *> {
+function* initializeApplicationWatcher() :Saga<*> {
 
   yield takeEvery(INITIALIZE_APPLICATION, initializeApplicationWorker);
 }
