@@ -2,9 +2,14 @@
  * @flow
  */
 
-import { call, put, takeEvery } from '@redux-saga/core/effects';
+import {
+  call,
+  put,
+  select,
+  takeEvery,
+} from '@redux-saga/core/effects';
 import { List, Map, fromJS } from 'immutable';
-import { DataApi, EntityDataModelApi, SearchApi } from 'lattice';
+import { SearchApi } from 'lattice';
 import { DateTime } from 'luxon';
 import type { SequenceAction } from 'redux-reqseq';
 
@@ -71,14 +76,18 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *> {
     const isPortland = isPortlandOrg(getSelectedOrganizationId(app));
     const reportESId :string = getReportESId(app);
 
-    const ceiling = yield call(DataApi.getEntitySetSize, reportESId);
-    const datePropertyTypeId = yield call(EntityDataModelApi.getPropertyTypeId, DATE_TIME_OCCURRED_FQN);
+    const datePTID = yield select((state) => state.getIn(['edm', 'fqnToIdMap', DATE_TIME_OCCURRED_FQN]));
     const startDate = DateTime.local().minus({ months }).toISODate();
-    const bhrs = yield call(SearchApi.searchEntitySetData, reportESId, {
-      searchTerm: getSearchTerm(datePropertyTypeId, `[${startDate} TO *]`),
+    const bhrs = yield call(SearchApi.searchEntitySetData, {
+      entitySetIds: [reportESId],
+      maxHits: 10000,
       start: 0,
-      maxHits: ceiling,
-      fuzzy: false
+      constraints: [{
+        constraints: [{
+          searchTerm: getSearchTerm(datePTID, `[${startDate} TO *]`),
+          fuzzy: false,
+        }],
+      }],
     });
 
     const numReports = bhrs.hits.length;
@@ -123,7 +132,6 @@ function* loadDashboardDataWorker(action :SequenceAction) :Generator<*, *, *> {
         dispositionsByDeescalation = dispositionsByDeescalation.setIn([disp, deescTechnique], 0);
       });
     });
-
 
     fromJS(bhrs.hits).forEach((bhr) => {
 
