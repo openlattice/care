@@ -3,6 +3,7 @@
  */
 
 import React, { Component } from 'react';
+import type { ComponentType } from 'react';
 
 import styled from 'styled-components';
 import { Map } from 'immutable';
@@ -18,6 +19,7 @@ import { connect } from 'react-redux';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { RequestStates } from 'redux-reqseq';
+import type { UUID } from 'lattice';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
 import AppHeaderContainer from './AppHeaderContainer';
@@ -142,7 +144,9 @@ class AppContainer extends Component<Props> {
     </MissingOrgsWrapper>
   )
 
-  wrapComponent = (AppComponent) => () => <AppContentInnerWrapper><AppComponent /></AppContentInnerWrapper>;
+  wrapComponent = (AppComponent :ComponentType<{}>) => () => (
+    <AppContentInnerWrapper><AppComponent /></AppContentInnerWrapper>
+  );
 
   renderAppContent = () => {
 
