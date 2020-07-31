@@ -8,7 +8,6 @@ import { List, Map } from 'immutable';
 import {
   Banner,
   Button,
-  CardSegment,
   CardStack,
   Checkbox,
   Colors,
