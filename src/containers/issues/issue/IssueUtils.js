@@ -1,30 +1,32 @@
 // @flow
 import { Map, getIn, setIn } from 'immutable';
 import { Constants } from 'lattice';
-import { DateTime } from 'luxon';
 import { DataProcessingUtils } from 'lattice-fabricate';
+import { DateTime } from 'luxon';
+import type { UUID } from 'lattice';
 import type { Match } from 'react-router';
 
-import { getFormDataFromEntity, getEntityKeyId } from '../../../utils/DataUtils';
-import { APP_TYPES_FQNS } from '../../../shared/Consts';
-import {
-  CATEGORY_FQN,
-  DATE_TIME_FQN,
-  COMPLETED_DT_FQN,
-  DESCRIPTION_FQN,
-  PRIORITY_FQN,
-  TITLE_FQN,
-  STATUS_FQN,
-  ENTRY_UPDATED_FQN,
-} from '../../../edm/DataModelFqns';
-import { isValidUuid } from '../../../utils/Utils';
 import { CATEGORY_PATHS } from './constants';
+
 import {
   ISSUES_PATH,
   ISSUE_ID_PARAM,
   ISSUE_PATH,
   PROFILE_ID_PATH,
 } from '../../../core/router/Routes';
+import {
+  CATEGORY_FQN,
+  COMPLETED_DT_FQN,
+  DATE_TIME_FQN,
+  DESCRIPTION_FQN,
+  ENTRY_UPDATED_FQN,
+  PRIORITY_FQN,
+  STATUS_FQN,
+  TITLE_FQN,
+} from '../../../edm/DataModelFqns';
+import { APP_TYPES_FQNS } from '../../../shared/Consts';
+import { getEntityKeyId, getFormDataFromEntity } from '../../../utils/DataUtils';
+import { isValidUuid } from '../../../utils/Utils';
 
 const { getPageSectionKey, getEntityAddressKey } = DataProcessingUtils;
 
