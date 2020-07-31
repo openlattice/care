@@ -54,8 +54,8 @@ const { searchEntitySetDataWorker } = SearchApiSagas;
 const { createOrMergeEntityData } = DataApiActions;
 const { createOrMergeEntityDataWorker } = DataApiSagas;
 
-const { getAllUsersOfRole } = OrganizationsApiActions;
-const { getAllUsersOfRoleWorker } = OrganizationsApiSagas;
+const { getUsersWithRole } = OrganizationsApiActions;
+const { getUsersWithRoleWorker } = OrganizationsApiSagas;
 
 const { STAFF_FQN } = APP_TYPES_FQNS;
 
@@ -204,7 +204,7 @@ function* getResponsibleUserOptionsWorker(action :SequenceAction) :Generator<any
     };
 
     let responseData = responsibleUserOptions;
-    if (responsibleUserOptions.isEmpty()){
+    if (responsibleUserOptions.isEmpty()) {
       const staffResponse = yield call(
         searchEntitySetDataWorker,
         searchEntitySetData({
@@ -217,8 +217,8 @@ function* getResponsibleUserOptionsWorker(action :SequenceAction) :Generator<any
 
       responseData = fromJS(staffResponse.data.hits);
       const requestUsers = roleIds.map((roleId) => call(
-        getAllUsersOfRoleWorker,
-        getAllUsersOfRole({
+        getUsersWithRoleWorker,
+        getUsersWithRole({
           organizationId,
           roleId
         })
