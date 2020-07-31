@@ -8,9 +8,9 @@ import {
   set,
   setIn,
 } from 'immutable';
-import { Models } from 'lattice';
 import { DataProcessingUtils } from 'lattice-fabricate';
 import { DateTime } from 'luxon';
+import type { FQN } from 'lattice';
 
 import {
   ARRESTED,
@@ -25,11 +25,50 @@ import {
   UNIVERSITY_OF_IOWA,
 } from './schemas/v1/constants';
 
-import * as FQN from '../../../edm/DataModelFqns';
+import {
+  AFFILIATION_FQN,
+  ARMED_WEAPON_TYPE_FQN,
+  ARMED_WITH_WEAPON_FQN,
+  ARRESTABLE_OFFENSE_FQN,
+  ARREST_INDICATOR_FQN,
+  CATEGORY_FQN,
+  COMPLETED_DT_FQN,
+  CONTACT_DATE_TIME_FQN,
+  CRIMES_AGAINST_PERSON_FQN,
+  DATE_TIME_FQN,
+  DATE_TIME_OCCURRED_FQN,
+  DEMEANORS_FQN,
+  DIRECTED_AGAINST_OTHER_FQN,
+  DIRECTED_AGAINST_RELATION_FQN,
+  DISPOSITION_FQN,
+  FELONY_INDICATOR_FQN,
+  HOMELESS_FQN,
+  HOSPITAL_TRANSPORT_INDICATOR_FQN,
+  HOUSING_SITUATION_FQN,
+  MILITARY_STATUS_FQN,
+  NARCAN_ADMINISTERED_FQN,
+  OBSERVED_BEHAVIORS_FQN,
+  OBSERVED_BEHAVIORS_OTHER_FQN,
+  OPENLATTICE_ID_FQN,
+  ORGANIZATION_NAME_FQN,
+  OTHER_DEMEANORS_FQN,
+  OTHER_NOTIFIED_FQN,
+  OTHER_PERSON_ASSISTING_FQN,
+  OTHER_PERSON_INJURED_FQN,
+  OTHER_TEXT_FQN,
+  OTHER_WEAPON_TYPE_FQN,
+  PERSON_ASSISTING_FQN,
+  PERSON_INJURED_FQN,
+  REFERRAL_DEST_FQN,
+  REFERRAL_PROVIDER_INDICATOR_FQN,
+  ROLE_FQN,
+  SUICIDAL_ACTIONS_FQN,
+  SUICIDAL_FQN,
+  THREATENED_INDICATOR_FQN,
+  TRANSPORT_INDICATOR_FQN,
+} from '../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS as APP } from '../../../shared/Consts';
 import { isNonEmptyStringArray } from '../../../utils/LangUtils';
-
-const { FullyQualifiedName } = Models;
 
 const {
   getEntityAddressKey,
@@ -48,7 +87,7 @@ const getDiagnosisAssociations = (
   const reportIndex = existingEntityKeyIds[reportFQN] || 0;
 
   const diagnosisFQN = reportFQN === APP.CRISIS_REPORT_FQN ? APP.DIAGNOSIS_FQN : APP.DIAGNOSIS_CLINICIAN_FQN;
-  const NOW_DATA = { [FQN.COMPLETED_DT_FQN]: [createdDateTime] };
+  const NOW_DATA = { [COMPLETED_DT_FQN]: [createdDateTime] };
 
   for (let i = 0; i < diagnosis.length; i += 1) {
     associations.push([
@@ -76,7 +115,7 @@ const getMedicationAssociations = (
   const medicationFQN = reportFQN === APP.CRISIS_REPORT_FQN
     ? APP.MEDICATION_STATEMENT_FQN
     : APP.MEDICATION_STATEMENT_CLINICIAN_FQN;
-  const NOW_DATA = { [FQN.COMPLETED_DT_FQN]: [createdDateTime] };
+  const NOW_DATA = { [COMPLETED_DT_FQN]: [createdDateTime] };
 
   for (let i = 0; i < medications.length; i += 1) {
     associations.push([
@@ -101,7 +140,7 @@ const getChargeAssociations = (
   const charges = get(formData, getPageSectionKey(8, 2), []);
   const reportIndex = existingEntityKeyIds[reportFQN] || 0;
 
-  const NOW_DATA = { [FQN.COMPLETED_DT_FQN]: [createdDateTime] };
+  const NOW_DATA = { [COMPLETED_DT_FQN]: [createdDateTime] };
 
   for (let i = 0; i < charges.length; i += 1) {
     associations.push([
@@ -136,7 +175,7 @@ const getOptionalCrisisReportAssociations = (
   formData :Object,
   existingEntityKeyIds :Object,
   createdDateTime :string = DateTime.local().toISO(),
-  reportFQN :FullyQualifiedName,
+  reportFQN :FQN,
 ) :any[][] => {
   const associations = [];
 
@@ -155,18 +194,18 @@ const getCrisisReportAssociations = (
   const personEKID = existingEntityKeyIds[APP.PEOPLE_FQN];
   const staffEKID = existingEntityKeyIds[APP.STAFF_FQN];
 
-  const NOW_DATA = { [FQN.DATE_TIME_FQN]: [createdDateTime] };
+  const NOW_DATA = { [DATE_TIME_FQN]: [createdDateTime] };
   const INTERACTED_DATA = {
-    [FQN.DATE_TIME_FQN]: [createdDateTime],
+    [DATE_TIME_FQN]: [createdDateTime],
   };
 
-  const datetimeKey = getEntityAddressKey(0, APP.BEHAVIORAL_HEALTH_REPORT_FQN, FQN.DATE_TIME_OCCURRED_FQN);
+  const datetimeKey = getEntityAddressKey(0, APP.BEHAVIORAL_HEALTH_REPORT_FQN, DATE_TIME_OCCURRED_FQN);
   const datetime = getIn(formData, [getPageSectionKey(1, 1), datetimeKey]);
   if (DateTime.fromISO(datetime).isValid) {
-    INTERACTED_DATA[FQN.CONTACT_DATE_TIME_FQN] = [datetime];
+    INTERACTED_DATA[CONTACT_DATE_TIME_FQN] = [datetime];
   }
   else {
-    INTERACTED_DATA[FQN.CONTACT_DATE_TIME_FQN] = [createdDateTime];
+    INTERACTED_DATA[CONTACT_DATE_TIME_FQN] = [createdDateTime];
   }
 
   const associations :any[][] = [
@@ -187,9 +226,9 @@ const getClinicianCrisisReportAssociations = (
   const staffEKID = existingEntityKeyIds[APP.STAFF_FQN];
   const incidentEKID = existingEntityKeyIds[APP.INCIDENT_FQN] || 0;
 
-  const NOW_DATA = { [FQN.COMPLETED_DT_FQN]: [createdDateTime] };
-  const INVOLVED_IN_DATA = set(NOW_DATA, FQN.ROLE_FQN, ['Report subject']);
-  const CLEARED_BY_DATA = { [FQN.DATE_TIME_FQN]: [createdDateTime] };
+  const NOW_DATA = { [COMPLETED_DT_FQN]: [createdDateTime] };
+  const INVOLVED_IN_DATA = set(NOW_DATA, ROLE_FQN, ['Report subject']);
+  const CLEARED_BY_DATA = { [DATE_TIME_FQN]: [createdDateTime] };
 
   // static assocations
   let associations :any[][] = [
@@ -253,9 +292,9 @@ const getOfficerCrisisReportAssociations = (
   const staffEKID = existingEntityKeyIds[APP.STAFF_FQN];
   const incidentEKID = existingEntityKeyIds[APP.INCIDENT_FQN] || 0;
 
-  const NOW_DATA = { [FQN.COMPLETED_DT_FQN]: [createdDateTime] };
-  const INVOLVED_IN_DATA = set(NOW_DATA, FQN.ROLE_FQN, ['Report subject']);
-  const CLEARED_BY_DATA = { [FQN.DATE_TIME_FQN]: [createdDateTime] };
+  const NOW_DATA = { [COMPLETED_DT_FQN]: [createdDateTime] };
+  const INVOLVED_IN_DATA = set(NOW_DATA, ROLE_FQN, ['Report subject']);
+  const CLEARED_BY_DATA = { [DATE_TIME_FQN]: [createdDateTime] };
 
   // static assocations
   let associations :any[][] = [
@@ -313,7 +352,7 @@ const getFollowupReportAssociations = (
   const incidentEKID = existingEntityKeyIds[APP.INCIDENT_FQN];
   const personEKID = existingEntityKeyIds[APP.PEOPLE_FQN];
 
-  const NOW_DATA = { [FQN.COMPLETED_DT_FQN]: [createdDateTime] };
+  const NOW_DATA = { [COMPLETED_DT_FQN]: [createdDateTime] };
 
   // static assocations
   const associations :any[][] = [
@@ -377,7 +416,7 @@ const getEntityIndexToIdMapFromNeighbors = (neighborsByFQN :Map, schema :Object)
     const ekidMap = Map().withMutations((mutable) => {
       entities.forEach((entity, index) => {
         const entityAddressIndex = entityAddressIndexByFQN[fqn];
-        const entityKeyId = getIn(entity, ['neighborDetails', FQN.OPENLATTICE_ID_FQN, 0]);
+        const entityKeyId = getIn(entity, ['neighborDetails', OPENLATTICE_ID_FQN, 0]);
         // group by entityAddressIndex if defined
         if (entityAddressIndex) {
           if (mutable.has(entityAddressIndex)) {
@@ -388,7 +427,7 @@ const getEntityIndexToIdMapFromNeighbors = (neighborsByFQN :Map, schema :Object)
           }
         }
         else {
-          mutable.set(index, entity.getIn(['neighborDetails', FQN.OPENLATTICE_ID_FQN, 0]));
+          mutable.set(index, entity.getIn(['neighborDetails', OPENLATTICE_ID_FQN, 0]));
         }
       });
     });
@@ -500,8 +539,8 @@ const getBHRAddress = (property) => getEntityAddressKey(0, APP.BEHAVIORAL_HEALTH
 // merge standalone 'other' property with original and check for 'None'
 // mutates passed in entity
 const preProcessOther = (
-  property :FullyQualifiedName | string,
-  otherProperty :FullyQualifiedName | string,
+  property :FQN | string,
+  otherProperty :FQN | string,
   withNone = true,
 ) => (entity :Object) => {
   let propertyValue = get(entity, property.toString(), []);
@@ -524,28 +563,28 @@ const pipe = (...fns) => (init) => fns.reduce((piped, f) => f(piped), init);
 // preprocessors manipulate report entity data before it is transformed to become formData
 const preProcessessObservations = (report :Object) :Object => {
   let updatedReport = pipe(
-    preProcessOther(FQN.DEMEANORS_FQN, FQN.OTHER_DEMEANORS_FQN),
-    preProcessOther(FQN.OBSERVED_BEHAVIORS_FQN, FQN.OBSERVED_BEHAVIORS_OTHER_FQN),
-    preProcessOther(FQN.SUICIDAL_ACTIONS_FQN, ''),
+    preProcessOther(DEMEANORS_FQN, OTHER_DEMEANORS_FQN),
+    preProcessOther(OBSERVED_BEHAVIORS_FQN, OBSERVED_BEHAVIORS_OTHER_FQN),
+    preProcessOther(SUICIDAL_ACTIONS_FQN, ''),
   )(report);
 
-  const [militaryStatus] = getPropertyValues(report, [FQN.MILITARY_STATUS_FQN]);
-  const [affiliation] = getPropertyValues(report, [FQN.AFFILIATION_FQN]);
-  updatedReport = setIn(updatedReport, [FQN.MILITARY_STATUS_FQN], [militaryStatus.includes('Veteran')]);
-  updatedReport = setIn(updatedReport, [FQN.AFFILIATION_FQN], [affiliation.includes('University of Iowa')]);
+  const [militaryStatus] = getPropertyValues(report, [MILITARY_STATUS_FQN]);
+  const [affiliation] = getPropertyValues(report, [AFFILIATION_FQN]);
+  updatedReport = setIn(updatedReport, [MILITARY_STATUS_FQN], [militaryStatus.includes('Veteran')]);
+  updatedReport = setIn(updatedReport, [AFFILIATION_FQN], [affiliation.includes('University of Iowa')]);
 
   return updatedReport;
 };
 
 const preProcessessNature = (report :Object) :Object => {
-  preProcessOther(FQN.PERSON_ASSISTING_FQN, FQN.OTHER_PERSON_ASSISTING_FQN);
+  preProcessOther(PERSON_ASSISTING_FQN, OTHER_PERSON_ASSISTING_FQN);
   return report;
 };
 
 const preProcessessSafety = (report :Object) :Object => pipe(
-  preProcessOther(FQN.ARMED_WEAPON_TYPE_FQN, FQN.OTHER_WEAPON_TYPE_FQN),
-  preProcessOther(FQN.DIRECTED_AGAINST_RELATION_FQN, FQN.DIRECTED_AGAINST_OTHER_FQN),
-  preProcessOther(FQN.PERSON_INJURED_FQN, FQN.OTHER_PERSON_INJURED_FQN),
+  preProcessOther(ARMED_WEAPON_TYPE_FQN, OTHER_WEAPON_TYPE_FQN),
+  preProcessOther(DIRECTED_AGAINST_RELATION_FQN, DIRECTED_AGAINST_OTHER_FQN),
+  preProcessOther(PERSON_INJURED_FQN, OTHER_PERSON_INJURED_FQN),
 )(report);
 
 const preProcessArrest = (report :Object) :Object => {
@@ -555,10 +594,10 @@ const preProcessArrest = (report :Object) :Object => {
     crimesAgainstPerson,
     felony,
   ] = getPropertyValues(report, [
-    FQN.ARRESTABLE_OFFENSE_FQN,
-    FQN.ARREST_INDICATOR_FQN,
-    FQN.CRIMES_AGAINST_PERSON_FQN,
-    FQN.FELONY_INDICATOR_FQN
+    ARRESTABLE_OFFENSE_FQN,
+    ARREST_INDICATOR_FQN,
+    CRIMES_AGAINST_PERSON_FQN,
+    FELONY_INDICATOR_FQN
   ]).map((property) => property[0]);
   const processedArrest = [];
   if (!arrestableOffense) {
@@ -576,13 +615,13 @@ const preProcessArrest = (report :Object) :Object => {
     if (felony) processedArrest.push(FELONY);
   }
 
-  return setIn(report, [FQN.ARRESTABLE_OFFENSE_FQN], processedArrest);
+  return setIn(report, [ARRESTABLE_OFFENSE_FQN], processedArrest);
 };
 
 const preProcessessDisposition = (report :Object) :Object => pipe(
-  preProcessOther(FQN.CATEGORY_FQN, FQN.OTHER_NOTIFIED_FQN),
-  preProcessOther(FQN.REFERRAL_DEST_FQN, FQN.OTHER_TEXT_FQN),
-  preProcessOther(FQN.ORGANIZATION_NAME_FQN, ''),
+  preProcessOther(CATEGORY_FQN, OTHER_NOTIFIED_FQN),
+  preProcessOther(REFERRAL_DEST_FQN, OTHER_TEXT_FQN),
+  preProcessOther(ORGANIZATION_NAME_FQN, ''),
   preProcessArrest,
 )(report);
 
@@ -592,18 +631,18 @@ const postProcessDisposition = (formData :Object) :Object => {
   const sectionData = getIn(formData, [sectionKey]);
 
   const dispositionProperties = [
-    FQN.CATEGORY_FQN,
-    FQN.REFERRAL_DEST_FQN,
-    FQN.ORGANIZATION_NAME_FQN,
-    FQN.HOSPITAL_TRANSPORT_INDICATOR_FQN,
-    FQN.NARCAN_ADMINISTERED_FQN,
-    FQN.ARRESTABLE_OFFENSE_FQN,
+    CATEGORY_FQN,
+    REFERRAL_DEST_FQN,
+    ORGANIZATION_NAME_FQN,
+    HOSPITAL_TRANSPORT_INDICATOR_FQN,
+    NARCAN_ADMINISTERED_FQN,
+    ARRESTABLE_OFFENSE_FQN,
   ];
 
   const disposition = [];
 
-  sectionData[getBHRAddress(FQN.REFERRAL_PROVIDER_INDICATOR_FQN)] = false;
-  sectionData[getBHRAddress(FQN.TRANSPORT_INDICATOR_FQN)] = false;
+  sectionData[getBHRAddress(REFERRAL_PROVIDER_INDICATOR_FQN)] = false;
+  sectionData[getBHRAddress(TRANSPORT_INDICATOR_FQN)] = false;
 
   const [
     notifiedValue,
@@ -619,11 +658,11 @@ const postProcessDisposition = (formData :Object) :Object => {
   }
   if (referralValue.length && !referralValue.includes('None')) {
     disposition.push(DISPOSITIONS.VERBAL_REFERRAL);
-    sectionData[getBHRAddress(FQN.REFERRAL_PROVIDER_INDICATOR_FQN)] = true;
+    sectionData[getBHRAddress(REFERRAL_PROVIDER_INDICATOR_FQN)] = true;
   }
   if (transportValue.length && !transportValue.includes('None')) {
     disposition.push(DISPOSITIONS.COURTESY_TRANPORT);
-    sectionData[getBHRAddress(FQN.TRANSPORT_INDICATOR_FQN)] = true;
+    sectionData[getBHRAddress(TRANSPORT_INDICATOR_FQN)] = true;
   }
   if (hospitalValue) {
     disposition.push(DISPOSITIONS.HOSPITAL);
@@ -634,7 +673,7 @@ const postProcessDisposition = (formData :Object) :Object => {
 
   if (offenseValue.length && !offenseValue.includes('None')) {
     disposition.push(DISPOSITIONS.ARRESTABLE_OFFENSE);
-    sectionData[getBHRAddress(FQN.ARRESTABLE_OFFENSE_FQN)] = true;
+    sectionData[getBHRAddress(ARRESTABLE_OFFENSE_FQN)] = true;
 
     const notArrested = offenseValue.includes(NOT_ARRESTED);
     const arrested = offenseValue.includes(ARRESTED);
@@ -642,26 +681,26 @@ const postProcessDisposition = (formData :Object) :Object => {
     const felony = offenseValue.includes(FELONY) || null;
 
     if (arrested) {
-      sectionData[getBHRAddress(FQN.ARREST_INDICATOR_FQN)] = arrested;
+      sectionData[getBHRAddress(ARREST_INDICATOR_FQN)] = arrested;
     }
     else if (notArrested) {
-      sectionData[getBHRAddress(FQN.ARREST_INDICATOR_FQN)] = !notArrested;
+      sectionData[getBHRAddress(ARREST_INDICATOR_FQN)] = !notArrested;
     }
     else {
-      sectionData[getBHRAddress(FQN.ARREST_INDICATOR_FQN)] = null;
+      sectionData[getBHRAddress(ARREST_INDICATOR_FQN)] = null;
     }
 
-    sectionData[getBHRAddress(FQN.CRIMES_AGAINST_PERSON_FQN)] = crimeAgainstPerson;
-    sectionData[getBHRAddress(FQN.FELONY_INDICATOR_FQN)] = felony;
+    sectionData[getBHRAddress(CRIMES_AGAINST_PERSON_FQN)] = crimeAgainstPerson;
+    sectionData[getBHRAddress(FELONY_INDICATOR_FQN)] = felony;
   }
   else {
-    sectionData[getBHRAddress(FQN.ARRESTABLE_OFFENSE_FQN)] = false;
-    sectionData[getBHRAddress(FQN.ARREST_INDICATOR_FQN)] = null;
-    sectionData[getBHRAddress(FQN.CRIMES_AGAINST_PERSON_FQN)] = null;
-    sectionData[getBHRAddress(FQN.FELONY_INDICATOR_FQN)] = null;
+    sectionData[getBHRAddress(ARRESTABLE_OFFENSE_FQN)] = false;
+    sectionData[getBHRAddress(ARREST_INDICATOR_FQN)] = null;
+    sectionData[getBHRAddress(CRIMES_AGAINST_PERSON_FQN)] = null;
+    sectionData[getBHRAddress(FELONY_INDICATOR_FQN)] = null;
   }
 
-  sectionData[getBHRAddress(FQN.DISPOSITION_FQN)] = disposition;
+  sectionData[getBHRAddress(DISPOSITION_FQN)] = disposition;
 
   return setIn(formData, [sectionKey], sectionData);
 };
@@ -671,12 +710,12 @@ const postProcessSafetySection = (formData :Object) :Object => {
   const sectionData = getIn(formData, [sectionKey]);
 
   const safetyProperties = [
-    FQN.ARMED_WEAPON_TYPE_FQN,
-    FQN.DIRECTED_AGAINST_RELATION_FQN
+    ARMED_WEAPON_TYPE_FQN,
+    DIRECTED_AGAINST_RELATION_FQN
   ];
 
-  sectionData[getBHRAddress(FQN.ARMED_WITH_WEAPON_FQN)] = false;
-  sectionData[getBHRAddress(FQN.THREATENED_INDICATOR_FQN)] = false;
+  sectionData[getBHRAddress(ARMED_WITH_WEAPON_FQN)] = false;
+  sectionData[getBHRAddress(THREATENED_INDICATOR_FQN)] = false;
 
   const [
     weaponValue,
@@ -684,10 +723,10 @@ const postProcessSafetySection = (formData :Object) :Object => {
   ] = getSectionValues(formData, sectionKey, safetyProperties);
 
   if (weaponValue.length && !weaponValue.includes('None')) {
-    sectionData[getBHRAddress(FQN.ARMED_WITH_WEAPON_FQN)] = true;
+    sectionData[getBHRAddress(ARMED_WITH_WEAPON_FQN)] = true;
   }
   if (threatenedValue.length && !threatenedValue.includes('None')) {
-    sectionData[getBHRAddress(FQN.THREATENED_INDICATOR_FQN)] = true;
+    sectionData[getBHRAddress(THREATENED_INDICATOR_FQN)] = true;
   }
 
   return setIn(formData, [sectionKey], sectionData);
@@ -697,16 +736,16 @@ const postProcessNatureSection = (formData :Object) :Object => {
   const sectionKey = getPageSectionKey(3, 1);
   const sectionData = getIn(formData, [sectionKey]);
 
-  const housingProperties = [FQN.HOUSING_SITUATION_FQN];
+  const housingProperties = [HOUSING_SITUATION_FQN];
 
-  sectionData[getBHRAddress(FQN.HOMELESS_FQN)] = false;
+  sectionData[getBHRAddress(HOMELESS_FQN)] = false;
 
   const [
     housingValue,
   ] = getSectionValues(formData, sectionKey, housingProperties);
 
   if (housingValue === HOMELESS_STR) {
-    sectionData[getBHRAddress(FQN.HOMELESS_FQN)] = true;
+    sectionData[getBHRAddress(HOMELESS_FQN)] = true;
   }
 
   return setIn(formData, [sectionKey], sectionData);
@@ -717,13 +756,13 @@ const postProcessBehaviorSection = (formData :Object) :Object => {
   const sectionData = getIn(formData, [sectionKey]);
 
   const behaviorProperties = [
-    FQN.OBSERVED_BEHAVIORS_FQN,
-    FQN.SUICIDAL_ACTIONS_FQN,
-    FQN.MILITARY_STATUS_FQN,
-    FQN.AFFILIATION_FQN
+    OBSERVED_BEHAVIORS_FQN,
+    SUICIDAL_ACTIONS_FQN,
+    MILITARY_STATUS_FQN,
+    AFFILIATION_FQN
   ];
 
-  sectionData[getBHRAddress(FQN.SUICIDAL_FQN)] = false;
+  sectionData[getBHRAddress(SUICIDAL_FQN)] = false;
 
   const [
     behaviorValue,
@@ -734,27 +773,27 @@ const postProcessBehaviorSection = (formData :Object) :Object => {
 
   const suicidal = suicidalActionsValue.includes(THREAT) || suicidalActionsValue.includes(ATTEMPT);
   if (suicidalActionsValue.length && suicidal) {
-    sectionData[getBHRAddress(FQN.OBSERVED_BEHAVIORS_FQN)] = behaviorValue
+    sectionData[getBHRAddress(OBSERVED_BEHAVIORS_FQN)] = behaviorValue
       .concat(SUICIDE_BEHAVIORS);
-    sectionData[getBHRAddress(FQN.SUICIDAL_FQN)] = true;
+    sectionData[getBHRAddress(SUICIDAL_FQN)] = true;
   }
   else {
-    sectionData[getBHRAddress(FQN.OBSERVED_BEHAVIORS_FQN)] = behaviorValue
+    sectionData[getBHRAddress(OBSERVED_BEHAVIORS_FQN)] = behaviorValue
       .filter((behavior) => behavior !== SUICIDE_BEHAVIORS);
   }
 
   if (militaryStatusValue) {
-    sectionData[getBHRAddress(FQN.MILITARY_STATUS_FQN)] = 'Veteran';
+    sectionData[getBHRAddress(MILITARY_STATUS_FQN)] = 'Veteran';
   }
   else {
-    sectionData[getBHRAddress(FQN.MILITARY_STATUS_FQN)] = null;
+    sectionData[getBHRAddress(MILITARY_STATUS_FQN)] = null;
   }
 
   if (affiliationValue) {
-    sectionData[getBHRAddress(FQN.AFFILIATION_FQN)] = UNIVERSITY_OF_IOWA;
+    sectionData[getBHRAddress(AFFILIATION_FQN)] = UNIVERSITY_OF_IOWA;
   }
   else {
-    sectionData[getBHRAddress(FQN.AFFILIATION_FQN)] = null;
+    sectionData[getBHRAddress(AFFILIATION_FQN)] = null;
   }
 
   return setIn(formData, [sectionKey], sectionData);
