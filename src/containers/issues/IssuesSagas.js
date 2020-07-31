@@ -7,7 +7,7 @@ import {
 } from '@redux-saga/core/effects';
 import { List, Map, fromJS } from 'immutable';
 import { SearchApiActions, SearchApiSagas } from 'lattice-sagas';
-import { Logger } from 'lattice-utils';
+import { Logger, ValidationUtils } from 'lattice-utils';
 import { DateTime } from 'luxon';
 import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
@@ -26,8 +26,8 @@ import { COMPLETED_DT_FQN, OPENLATTICE_ID_FQN, STATUS_FQN } from '../../edm/Data
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { getESIDFromApp } from '../../utils/AppUtils';
 import { ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
-import { isValidUuid } from '../../utils/Utils';
 
+const { isValidUUID } = ValidationUtils;
 const {
   searchEntitySetData,
   searchEntityNeighborsWithFilter,
@@ -62,7 +62,7 @@ const formatIssueRowData = (entityData :List<Map>) :List<Map> => entityData
 function* getMyOpenIssuesWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
     const { value: currentUserEKID } = action;
-    if (!isValidUuid(currentUserEKID)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(currentUserEKID)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getMyOpenIssues.request(action.id));
 
     const app = yield select((state) => state.get('app', Map()));
@@ -110,7 +110,7 @@ function* getMyOpenIssuesWatcher() :Generator<any, any, any> {
 function* getReportedByMeWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
     const { value: currentUserEKID } = action;
-    if (!isValidUuid(currentUserEKID)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(currentUserEKID)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getReportedByMe.request(action.id));
 
     const app = yield select((state) => state.get('app', Map()));

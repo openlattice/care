@@ -10,7 +10,7 @@ import {
 import { List, Map, fromJS } from 'immutable';
 import { DataProcessingUtils } from 'lattice-fabricate';
 import { SearchApiActions, SearchApiSagas } from 'lattice-sagas';
-import { Logger } from 'lattice-utils';
+import { Logger, ValidationUtils } from 'lattice-utils';
 import { DateTime } from 'luxon';
 import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
@@ -34,18 +34,19 @@ import { APP_TYPES_FQNS as APP } from '../../../shared/Consts';
 import { getESIDFromApp } from '../../../utils/AppUtils';
 import { getEntityKeyId } from '../../../utils/DataUtils';
 import { ERR_ACTION_VALUE_TYPE } from '../../../utils/Errors';
-import { isValidUuid } from '../../../utils/Utils';
 
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
 const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
 const { processAssociationEntityData, processEntityData } = DataProcessingUtils;
+const { isValidUUID } = ValidationUtils;
+
 const LOG = new Logger('SymptomsReportSagas');
 
 function* getAllSymptomsReportsWorker(action :SequenceAction) :Generator<any, any, any> {
   const response = {};
   try {
     const { value: entityKeyId } = action;
-    if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getAllSymptomsReports.request(action.id));
 
     const app :Map = yield select((state) => state.get('app', Map()));
@@ -108,7 +109,7 @@ function* getSymptomsReportWorker(action :SequenceAction) :Generator<any, any, a
   const response = {};
   try {
     const { value: entityKeyId } = action;
-    if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getSymptomsReport.request(action.id));
 
     yield put(getSymptomsReport.success(action.id));

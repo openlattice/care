@@ -13,7 +13,7 @@ import {
 } from 'immutable';
 import { Constants } from 'lattice';
 import { SearchApiActions, SearchApiSagas } from 'lattice-sagas';
-import { Logger } from 'lattice-utils';
+import { Logger, ValidationUtils } from 'lattice-utils';
 import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
 
@@ -44,9 +44,9 @@ import { getESIDFromApp } from '../../../../utils/AppUtils';
 import { getEntityKeyIdsFromList, removeEntitiesFromEntityIndexToIdMap } from '../../../../utils/DataUtils';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../../utils/Errors';
 import { isDefined } from '../../../../utils/LangUtils';
-import { isValidUuid } from '../../../../utils/Utils';
 
 const { OPENLATTICE_ID_FQN } = Constants;
+const { isValidUUID } = ValidationUtils;
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
 const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
 
@@ -113,7 +113,7 @@ function* getEmergencyContactsWorker(action :SequenceAction) :Generator<*, *, *>
   const response = {};
   try {
     const { value: entityKeyId } = action;
-    if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
 
     yield put(getEmergencyContacts.request(action.id));
 

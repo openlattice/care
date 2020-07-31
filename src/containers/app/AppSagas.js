@@ -24,7 +24,7 @@ import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
-import { Logger } from 'lattice-utils';
+import { Logger, ValidationUtils } from 'lattice-utils';
 import type { Saga } from '@redux-saga/core';
 import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
@@ -43,12 +43,12 @@ import * as Routes from '../../core/router/Routes';
 import { APP_DETAILS_FQN } from '../../edm/DataModelFqns';
 import { APP_NAME, APP_TYPES_FQNS } from '../../shared/Consts';
 import { ERR_ACTION_VALUE_TYPE, ERR_WORKER_SAGA } from '../../utils/Errors';
-import { isValidUuid } from '../../utils/Utils';
 import { getCurrentUserStaffMemberData } from '../staff/StaffActions';
 import { getCurrentUserStaffMemberDataWorker } from '../staff/StaffSagas';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 const { SecurableTypes } = Types;
+const { isValidUUID } = ValidationUtils;
 const { getApp, getAppConfigs, getAppTypes } = AppApiActions;
 const { getAppWorker, getAppConfigsWorker, getAppTypesWorker } = AppApiSagas;
 const { getEntityDataModelProjection, getAllPropertyTypes } = EntityDataModelApiActions;
@@ -244,7 +244,7 @@ function* switchOrganizationWorker(action :Object) :Saga<*> {
 
   try {
     const { value } = action;
-    if (!isValidUuid(value)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(value)) throw ERR_ACTION_VALUE_TYPE;
 
     const currentOrgId = yield select((state) => state.getIn(['app', 'selectedOrganizationId']));
     if (value !== currentOrgId) {

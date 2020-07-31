@@ -8,6 +8,7 @@ import {
 } from 'immutable';
 import { Constants } from 'lattice';
 import { DataProcessingUtils } from 'lattice-fabricate';
+import { ValidationUtils } from 'lattice-utils';
 import type { UUID } from 'lattice';
 
 import {
@@ -18,7 +19,6 @@ import {
 } from '../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
 import { getFormDataFromEntity } from '../../../../utils/DataUtils';
-import { isValidUuid } from '../../../../utils/Utils';
 
 const {
   ASSIGNED_TO_FQN,
@@ -28,6 +28,7 @@ const {
   SUBJECT_OF_FQN
 } = APP_TYPES_FQNS;
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
+const { isValidUUID } = ValidationUtils;
 const { OPENLATTICE_ID_FQN } = Constants;
 
 const getOptionsFromEntityList = (entities :List<Map>, property :string) => {
@@ -72,10 +73,10 @@ const constructEntityIndexToIdMap = (
   assignedToEKID :UUID
 ) => {
   const entityIndexToIdMap = Map().withMutations((mutable) => {
-    if (isValidUuid(responsePlanEKID)) {
+    if (isValidUUID(responsePlanEKID)) {
       mutable.setIn([RESPONSE_PLAN_FQN.toString(), 0], responsePlanEKID);
     }
-    if (isValidUuid(assignedToEKID)) {
+    if (isValidUUID(assignedToEKID)) {
       mutable.setIn([ASSIGNED_TO_FQN.toString(), 0], assignedToEKID);
     }
   });

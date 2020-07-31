@@ -2,6 +2,7 @@
 import { Map, getIn, setIn } from 'immutable';
 import { Constants } from 'lattice';
 import { DataProcessingUtils } from 'lattice-fabricate';
+import { ValidationUtils } from 'lattice-utils';
 import { DateTime } from 'luxon';
 import type { UUID } from 'lattice';
 import type { Match } from 'react-router';
@@ -26,8 +27,8 @@ import {
 } from '../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { getEntityKeyId, getFormDataFromEntity } from '../../../utils/DataUtils';
-import { isValidUuid } from '../../../utils/Utils';
 
+const { isValidUUID } = ValidationUtils;
 const { getPageSectionKey, getEntityAddressKey } = DataProcessingUtils;
 
 const { OPENLATTICE_ID_FQN } = Constants;
@@ -46,13 +47,13 @@ const constructEntityIndexToIdMap = (
   issueEKID :UUID
 ) => {
   const entityIndexToIdMap = Map().withMutations((mutable) => {
-    if (isValidUuid(assigneeEKID)) {
+    if (isValidUUID(assigneeEKID)) {
       mutable.setIn([STAFF_FQN.toString(), 0], assigneeEKID);
     }
-    if (isValidUuid(assignedToEKID)) {
+    if (isValidUUID(assignedToEKID)) {
       mutable.setIn([ASSIGNED_TO_FQN.toString(), 0], assignedToEKID);
     }
-    if (isValidUuid(issueEKID)) {
+    if (isValidUUID(issueEKID)) {
       mutable.setIn([ISSUE_FQN.toString(), 0], issueEKID);
     }
   });

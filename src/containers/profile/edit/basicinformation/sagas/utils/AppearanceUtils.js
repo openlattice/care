@@ -2,16 +2,17 @@
 
 import { Map } from 'immutable';
 import { DataProcessingUtils } from 'lattice-fabricate';
+import { ValidationUtils } from 'lattice-utils';
 import type { UUID } from 'lattice';
 
 import * as FQN from '../../../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../../../shared/Consts';
 import { getFormDataFromEntity } from '../../../../../../utils/DataUtils';
-import { isValidUuid } from '../../../../../../utils/Utils';
 
 const { PHYSICAL_APPEARANCE_FQN } = APP_TYPES_FQNS;
 
 const { getPageSectionKey } = DataProcessingUtils;
+const { isValidUUID } = ValidationUtils;
 
 const constructFormData = (appearance :Map) => {
 
@@ -37,7 +38,7 @@ const constructFormData = (appearance :Map) => {
 
 const constructEntityIndexToIdMap = (appearanceEKID :UUID) => {
   const entityIndexToIdMap = Map().withMutations((mutable) => {
-    if (isValidUuid(appearanceEKID)) {
+    if (isValidUUID(appearanceEKID)) {
       mutable.setIn([PHYSICAL_APPEARANCE_FQN.toString(), 0], appearanceEKID);
     }
   });

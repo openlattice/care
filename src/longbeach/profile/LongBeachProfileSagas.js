@@ -21,7 +21,7 @@ import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
-import { Logger } from 'lattice-utils';
+import { Logger, ValidationUtils } from 'lattice-utils';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
@@ -35,7 +35,6 @@ import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { getESIDsFromApp } from '../../utils/AppUtils';
 import { groupNeighborsByEntitySetIds } from '../../utils/DataUtils';
 import { ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
-import { isValidUuid } from '../../utils/Utils';
 import {
   getLBPeoplePhotos,
   getLBPeopleStayAway,
@@ -53,6 +52,7 @@ const {
   SUBJECT_OF_FQN,
 } = APP_TYPES_FQNS;
 
+const { isValidUUID } = ValidationUtils;
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
 const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
 const { getEntityData } = DataApiActions;
@@ -66,7 +66,7 @@ function* getLBProfileNeighborsWorker(action :SequenceAction) :Generator<any, an
 
   try {
     const { value: personEKID } = action;
-    if (!isValidUuid(personEKID)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(personEKID)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getLBProfileNeighbors.request(action.id));
 
     const app = yield select((state) => state.get('app', Map()));
@@ -134,7 +134,7 @@ function* getLBProfileWorker(action :SequenceAction) :Generator<any, any, any> {
 
   try {
     const { value: personEKID } = action;
-    if (!isValidUuid(personEKID)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(personEKID)) throw ERR_ACTION_VALUE_TYPE;
 
     const peopleEKIDs = [personEKID];
     yield put(getLBProfile.request(action.id));

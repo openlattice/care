@@ -1,6 +1,7 @@
 // @flow
 import { Map, setIn } from 'immutable';
 import { DataProcessingUtils } from 'lattice-fabricate';
+import { ValidationUtils } from 'lattice-utils';
 import { DateTime } from 'luxon';
 import type { UUID } from 'lattice';
 
@@ -14,9 +15,9 @@ import {
 } from '../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { getEntityKeyId, getFormDataFromEntity } from '../../../utils/DataUtils';
-import { isValidUuid } from '../../../utils/Utils';
 
 const { getPageSectionKey, getEntityAddressKey } = DataProcessingUtils;
+const { isValidUUID } = ValidationUtils;
 
 const {
   ENCAMPMENT_FQN,
@@ -32,13 +33,13 @@ const constructEntityIndexToIdMap = (
   encampmentEKID :UUID
 ) => {
   const entityIndexToIdMap = Map().withMutations((mutable) => {
-    if (isValidUuid(staffEKID)) {
+    if (isValidUUID(staffEKID)) {
       mutable.setIn([STAFF_FQN.toString(), 0], staffEKID);
     }
-    if (isValidUuid(reportedEKID)) {
+    if (isValidUUID(reportedEKID)) {
       mutable.setIn([REPORTED_FQN.toString(), 0], reportedEKID);
     }
-    if (isValidUuid(encampmentEKID)) {
+    if (isValidUUID(encampmentEKID)) {
       mutable.setIn([ENCAMPMENT_FQN.toString(), 0], encampmentEKID);
     }
   });

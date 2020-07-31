@@ -25,7 +25,7 @@ import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
-import { Logger } from 'lattice-utils';
+import { Logger, ValidationUtils } from 'lattice-utils';
 import { DateTime } from 'luxon';
 import type { UUID } from 'lattice';
 import type { WorkerResponse } from 'lattice-sagas';
@@ -74,7 +74,6 @@ import {
 import { getEntityKeyId, getSearchTerm } from '../../utils/DataUtils';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
 import { isDefined } from '../../utils/LangUtils';
-import { isValidUuid } from '../../utils/Utils';
 import { DISPOSITION, POST_PROCESS_FIELDS } from '../../utils/constants/CrisisReportConstants';
 import { setInputValues as setDispositionData } from '../pages/disposition/ActionFactory';
 import { setInputValues as setNatureOfCrisisData } from '../pages/natureofcrisis/ActionFactory';
@@ -96,6 +95,7 @@ import {
 import { countCrisisCalls, countPropertyOccurrance } from '../profile/premium/Utils';
 
 const { processAssociationEntityData } = DataProcessingUtils;
+const { isValidUUID } = ValidationUtils;
 
 const {
   APPEARS_IN_FQN,
@@ -168,7 +168,7 @@ function* deleteReportWorker(action :SequenceAction) :Generator<*, *, *> {
 
   try {
     const { reportEKID, person } = action.value;
-    if (!isValidUuid(reportEKID)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(reportEKID)) throw ERR_ACTION_VALUE_TYPE;
 
     yield put(deleteReport.request(action.id, reportEKID));
 
@@ -219,7 +219,7 @@ function* getReportWorker(action :SequenceAction) :Generator<*, *, *> {
   try {
     const { value: reportEKID } = action;
     if (!isDefined(reportEKID)) throw ERR_ACTION_VALUE_NOT_DEFINED;
-    if (!isValidUuid(reportEKID)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(reportEKID)) throw ERR_ACTION_VALUE_TYPE;
 
     yield put(getReport.request(action.id, reportEKID));
 
@@ -733,7 +733,7 @@ function* updateReportWorker(action :SequenceAction) :Generator<*, *, *> {
       entityKeyId,
       formData,
     } = value;
-    if (!isPlainObject(formData) || !isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isPlainObject(formData) || !isValidUUID(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
 
     yield put(updateReport.request(action.id, value));
 
@@ -748,7 +748,7 @@ function* updateReportWorker(action :SequenceAction) :Generator<*, *, *> {
       (state) => state.getIn(['staff', 'currentUser', 'data', OPENLATTICE_ID_FQN, 0], '')
     );
 
-    if (!isValidUuid(staffEKID)) {
+    if (!isValidUUID(staffEKID)) {
       throw Error('staff entityKeyId is invalid');
     }
 
@@ -919,7 +919,7 @@ function* getProfileIncidentsWorker(action :SequenceAction) :Generator<any, any,
   const response = {};
   try {
     const { value: entityKeyId } = action;
-    if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getProfileIncidents.request(action.id, entityKeyId));
 
     const app :Map = yield select((state) => state.get('app', Map()));
@@ -980,7 +980,7 @@ function* getIncidentReportsWorker(action :SequenceAction) :Generator<any, any, 
   const response = {};
   try {
     const { value: incidentEKIDs } = action;
-    if (Array.isArray(incidentEKIDs) && !incidentEKIDs.every(isValidUuid)) throw ERR_ACTION_VALUE_TYPE;
+    if (Array.isArray(incidentEKIDs) && !incidentEKIDs.every(isValidUUID)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getIncidentReports.request(action.id));
 
     // TODO: handle both clinician and patrol views separately.
@@ -1036,7 +1036,7 @@ function* getReportsBehaviorAndSafetyWorker(action :SequenceAction) :Generator<a
   const response = {};
   try {
     const { value: reportsEKIDs } = action;
-    if (Array.isArray(reportsEKIDs) && !reportsEKIDs.every(isValidUuid)) throw ERR_ACTION_VALUE_TYPE;
+    if (Array.isArray(reportsEKIDs) && !reportsEKIDs.every(isValidUUID)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getReportsBehaviorAndSafety.request(action.id, reportsEKIDs));
 
     const app :Map = yield select((state) => state.get('app', Map()));
@@ -1096,7 +1096,7 @@ function* getReportersForReportsWorker(action :SequenceAction) :Generator<any, a
   const response = {};
   try {
     const { value: entityKeyIds } = action;
-    if (Array.isArray(entityKeyIds) && !entityKeyIds.every(isValidUuid)) throw ERR_ACTION_VALUE_TYPE;
+    if (Array.isArray(entityKeyIds) && !entityKeyIds.every(isValidUUID)) throw ERR_ACTION_VALUE_TYPE;
     yield getReportersForReports.request(action.id);
 
     const app :Map = yield select((state) => state.get('app', Map()));
@@ -1141,7 +1141,7 @@ function* getIncidentReportsSummaryWorker(action :SequenceAction) :Generator<any
   const response = {};
   try {
     const { value: personEKID } = action;
-    if (!isValidUuid(personEKID)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(personEKID)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getIncidentReportsSummary.request(action.id));
 
     const incidents = yield call(

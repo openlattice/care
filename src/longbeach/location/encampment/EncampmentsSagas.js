@@ -22,7 +22,7 @@ import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
-import { Logger } from 'lattice-utils';
+import { Logger, ValidationUtils } from 'lattice-utils';
 import { DateTime } from 'luxon';
 import type { UUID } from 'lattice';
 import type { WorkerResponse } from 'lattice-sagas';
@@ -55,7 +55,8 @@ import { getESIDFromApp, getESIDsFromApp } from '../../../utils/AppUtils';
 import { getEntityKeyId, indexSubmittedDataGraph, mapFirstEntityDataFromNeighbors } from '../../../utils/DataUtils';
 import { ERR_ACTION_VALUE_TYPE } from '../../../utils/Errors';
 import { isDefined } from '../../../utils/LangUtils';
-import { isValidUuid } from '../../../utils/Utils';
+
+const { isValidUUID } = ValidationUtils;
 
 const {
   createAssociations,
@@ -454,7 +455,7 @@ function* getEncampmentOccupantsWorker(action :SequenceAction) :Generator<any, a
   const response = {};
   try {
     const { value: encampmentEKID } = action;
-    if (!isValidUuid(encampmentEKID)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(encampmentEKID)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getEncampmentOccupants.request(action.id));
     // get people that liveat encampment
     const app :Map = yield select((state) => state.get('app', Map()));

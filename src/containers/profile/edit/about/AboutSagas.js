@@ -16,7 +16,7 @@ import {
 } from 'immutable';
 import { Constants } from 'lattice';
 import { SearchApiActions, SearchApiSagas } from 'lattice-sagas';
-import { Logger } from 'lattice-utils';
+import { Logger, ValidationUtils } from 'lattice-utils';
 import { DateTime } from 'luxon';
 import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
@@ -49,10 +49,10 @@ import { getESIDFromApp } from '../../../../utils/AppUtils';
 import { formatDataGraphResponse } from '../../../../utils/DataUtils';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../../utils/Errors';
 import { isDefined } from '../../../../utils/LangUtils';
-import { isValidUuid } from '../../../../utils/Utils';
 import { getResponsePlan } from '../responseplan/ResponsePlanActions';
 import { getResponsePlanWorker } from '../responseplan/ResponsePlanSagas';
 
+const { isValidUUID } = ValidationUtils;
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
 const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
 const { OPENLATTICE_ID_FQN } = Constants;
@@ -70,7 +70,7 @@ function* getResponsibleUserWorker(action :SequenceAction) :Generator<any, any, 
   const response = {};
   try {
     const { value: entityKeyId } = action;
-    if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
 
     yield put(getResponsibleUser.request(action.id));
     const app :Map = yield select((state) => state.get('app', Map()));
@@ -121,7 +121,7 @@ function* getResponsibleUserWatcher() :Generator<any, any, any> {
 function* getAboutPlanWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
     const { value: entityKeyId } = action;
-    if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getAboutPlan.request(action.id, entityKeyId));
 
     const responsePlanRequest = call(
