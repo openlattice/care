@@ -18,6 +18,7 @@ import {
   SearchApiSagas,
 } from 'lattice-sagas';
 import type { UUID } from 'lattice';
+import type { WorkerResponse } from 'lattice-sagas';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
@@ -40,8 +41,8 @@ import { ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
 import { getLBPeoplePhotos } from '../people/LongBeachPeopleActions';
 import { getLBPeoplePhotosWorker } from '../people/LongBeachPeopleSagas';
 
-const { executeSearch, searchEntityNeighborsWithFilter } = SearchApiActions;
-const { executeSearchWorker, searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
+const { searchEntitySetData, searchEntityNeighborsWithFilter } = SearchApiActions;
+const { searchEntitySetDataWorker, searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
 
 const {
   FILED_FOR_FQN,
@@ -250,7 +251,7 @@ function* searchLBLocationsWorker(action :SequenceAction) :Generator<any, any, a
     const locationCoordinatesPTID :UUID = yield select((state) => state
       .getIn(['edm', 'fqnToIdMap', FQN.LOCATION_COORDINATES_FQN]));
 
-    const searchOptions = {
+    const searchConstraints = {
       start,
       entitySetIds: [locationESID],
       maxHits,
@@ -266,14 +267,14 @@ function* searchLBLocationsWorker(action :SequenceAction) :Generator<any, any, a
       }],
     };
 
-    const { data, error } = yield call(
-      executeSearchWorker,
-      executeSearch({ searchOptions })
+    const searchResponse :WorkerResponse = yield call(
+      searchEntitySetDataWorker,
+      searchEntitySetData(searchConstraints)
     );
 
-    if (error) throw error;
+    if (searchResponse.error) throw searchResponse.error;
 
-    const { hits, numHits } = data;
+    const { hits, numHits } = searchResponse.data;
     const locationsEKIDs = hits.map((location) => getIn(location, [FQN.OPENLATTICE_ID_FQN, 0]));
     const locationsByEKID = Map(hits.map((entity) => [getIn(entity, [FQN.OPENLATTICE_ID_FQN, 0]), fromJS(entity)]));
     response.data.hits = fromJS(locationsEKIDs);
