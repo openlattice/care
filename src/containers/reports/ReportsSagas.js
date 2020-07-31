@@ -30,6 +30,7 @@ import {
 import { isPlainObject } from 'lodash';
 import { DateTime } from 'luxon';
 import type { UUID } from 'lattice';
+import type { WorkerResponse } from 'lattice-sagas';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
@@ -136,11 +137,11 @@ const {
   updateEntityDataWorker,
 } = DataApiSagas;
 const {
-  executeSearch,
+  searchEntitySetData,
   searchEntityNeighborsWithFilter,
 } = SearchApiActions;
 const {
-  executeSearchWorker,
+  searchEntitySetDataWorker,
   searchEntityNeighborsWithFilterWorker,
 } = SearchApiSagas;
 
@@ -359,7 +360,7 @@ function* getReportsByDateRangeV2Worker(action :SequenceAction) :Generator<*, *,
     const searchTerm = getSearchTerm(datetimePTID, `[${startTerm} TO ${endTerm}]`);
 
     // search for reports within date range
-    const searchOptions = {
+    const searchConstraints = {
       entitySetIds: [reportESID],
       start,
       maxHits,
@@ -380,14 +381,14 @@ function* getReportsByDateRangeV2Worker(action :SequenceAction) :Generator<*, *,
       }
     };
 
-    const { data, error } = yield call(
-      executeSearchWorker,
-      executeSearch({ searchOptions })
+    const response :WorkerResponse = yield call(
+      searchEntitySetDataWorker,
+      searchEntitySetData(searchConstraints)
     );
 
-    if (error) throw error;
+    if (response.error) throw response.error;
 
-    const { hits, numHits } = data;
+    const { hits, numHits } = response.data;
     const reportData = fromJS(hits);
 
     const reportEKIDs = reportData.map((report) => report.getIn([OPENLATTICE_ID_FQN, 0])).toJS();
@@ -568,7 +569,7 @@ function* getReportsByDateRangeWorker(action :SequenceAction) :Generator<*, *, *
     const searchTerm = getSearchTerm(datetimePTID, `[${startTerm} TO ${endTerm}]`);
 
     // search for reports within date range
-    const searchOptions = {
+    const searchConstraints = {
       entitySetIds: [entitySetId],
       start,
       maxHits,
@@ -589,14 +590,14 @@ function* getReportsByDateRangeWorker(action :SequenceAction) :Generator<*, *, *
       }
     };
 
-    const { data, error } = yield call(
-      executeSearchWorker,
-      executeSearch({ searchOptions })
+    const response :WorkerResponse = yield call(
+      searchEntitySetDataWorker,
+      searchEntitySetData(searchConstraints)
     );
 
-    if (error) throw error;
+    if (response.error) throw response.error;
 
-    const { hits, numHits } = data;
+    const { hits, numHits } = response.data;
     const reportData = fromJS(hits);
 
     const reportEKIDs = reportData.map((report) => report.getIn([OPENLATTICE_ID_FQN, 0]));
@@ -1258,7 +1259,6 @@ function* getIncidentReportsSummaryWorker(action :SequenceAction) :Generator<any
 function* getIncidentReportsSummaryWatcher() :Generator<any, any, any> {
   yield takeLatest(GET_INCIDENT_REPORTS_SUMMARY, getIncidentReportsSummaryWorker);
 }
-
 
 export {
   deleteReportWatcher,
