@@ -203,19 +203,19 @@ function* getResponsibleUserOptionsWorker(action :SequenceAction) :Generator<any
     );
     const responsibleUserOptions = yield select((state) => state.getIn(['staff', 'responsibleUsers', 'data'], List()));
 
-    const searchOptions :Object = {
-      maxHits: 10000,
-      searchTerm: getSearchTerm(personIdPTId, '*', false),
-      start: 0,
-    };
-
     let responseData = responsibleUserOptions;
     if (responsibleUserOptions.isEmpty()) {
       const staffResponse = yield call(
         searchEntitySetDataWorker,
         searchEntitySetData({
-          entitySetId,
-          searchOptions
+          constraints: [{
+            constraints: [{
+              searchTerm: getSearchTerm(personIdPTId, '*', false),
+            }],
+          }],
+          entitySetIds: [entitySetId],
+          maxHits: 10000,
+          start: 0,
         })
       );
 
