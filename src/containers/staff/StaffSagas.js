@@ -143,13 +143,19 @@ function* getCurrentUserStaffMemberDataWorker(action :SequenceAction) :Generator
     const app = yield select((state) => state.get('app', Map()));
     const entitySetId :UUID = getStaffESId(app);
     const personIdPTId :UUID = yield select((state) => state.getIn(['edm', 'fqnToIdMap', FQN.PERSON_ID_FQN]));
-    const searchOptions :Object = {
+
+    const searchConstraints = {
+      constraints: [{
+        constraints: [{
+          searchTerm: getSearchTerm(personIdPTId, userInfo.email, true),
+        }],
+      }],
+      entitySetIds: [entitySetId],
       maxHits: 10000,
-      searchTerm: getSearchTerm(personIdPTId, userInfo.email, true),
       start: 0,
     };
 
-    response = yield call(searchEntitySetDataWorker, searchEntitySetData({ entitySetId, searchOptions }));
+    response = yield call(searchEntitySetDataWorker, searchEntitySetData(searchConstraints));
     if (response.error) throw response.error;
 
     const { data: { hits: [searchResult = undefined] = [] } = {} } = response;
