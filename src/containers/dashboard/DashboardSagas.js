@@ -10,6 +10,7 @@ import {
 } from '@redux-saga/core/effects';
 import { List, Map, fromJS } from 'immutable';
 import { SearchApi } from 'lattice';
+import { Logger } from 'lattice-utils';
 import { DateTime } from 'luxon';
 import type { SequenceAction } from 'redux-reqseq';
 
@@ -18,7 +19,6 @@ import {
   loadDashboardData
 } from './DashboardActionFactory';
 
-import Logger from '../../utils/Logger';
 import {
   ACCESSIBLE_WEAPON_TYPE_FQN,
   ACCESS_TO_WEAPONS_FQN,

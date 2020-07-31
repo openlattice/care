@@ -18,10 +18,8 @@ import {
   getIn
 } from 'immutable';
 import { Constants } from 'lattice';
-import {
-  SearchApiActions,
-  SearchApiSagas,
-} from 'lattice-sagas';
+import { SearchApiActions, SearchApiSagas } from 'lattice-sagas';
+import { Logger } from 'lattice-utils';
 import { DateTime } from 'luxon';
 import type { UUID } from 'lattice';
 import type { WorkerResponse } from 'lattice-sagas';
@@ -38,7 +36,6 @@ import {
   searchLBPeople,
 } from './LongBeachPeopleActions';
 
-import Logger from '../../utils/Logger';
 import * as FQN from '../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { getESIDFromApp, getESIDsFromApp } from '../../utils/AppUtils';

@@ -2,6 +2,7 @@
  * @flow
  */
 
+import isPlainObject from 'lodash/isPlainObject';
 import {
   all,
   call,
@@ -16,10 +17,7 @@ import {
   OrderedMap,
   fromJS
 } from 'immutable';
-import {
-  Constants,
-  Types
-} from 'lattice';
+import { Constants, Types } from 'lattice';
 import { DataProcessingUtils } from 'lattice-fabricate';
 import {
   DataApiActions,
@@ -27,7 +25,7 @@ import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
-import { isPlainObject } from 'lodash';
+import { Logger } from 'lattice-utils';
 import { DateTime } from 'luxon';
 import type { UUID } from 'lattice';
 import type { WorkerResponse } from 'lattice-sagas';
@@ -59,7 +57,6 @@ import { updatePersonReportCount } from './crisis/CrisisActions';
 import { updatePersonReportCountWorker } from './crisis/CrisisReportSagas';
 import { BEHAVIOR_LABEL_MAP } from './crisis/schemas/v1/constants';
 
-import Logger from '../../utils/Logger';
 import * as FQN from '../../edm/DataModelFqns';
 import { BHR_CONFIG, PEOPLE_CONFIG } from '../../config/formconfig/CrisisReportConfig';
 import { submitDataGraph } from '../../core/sagas/data/DataActions';

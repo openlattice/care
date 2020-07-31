@@ -6,10 +6,8 @@ import {
   takeEvery,
 } from '@redux-saga/core/effects';
 import { List, Map, fromJS } from 'immutable';
-import {
-  SearchApiActions,
-  SearchApiSagas,
-} from 'lattice-sagas';
+import { SearchApiActions, SearchApiSagas } from 'lattice-sagas';
+import { Logger } from 'lattice-utils';
 import { DateTime } from 'luxon';
 import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
@@ -24,7 +22,6 @@ import {
 } from './IssuesActions';
 import { STATUS } from './issue/constants';
 
-import Logger from '../../utils/Logger';
 import { COMPLETED_DT_FQN, OPENLATTICE_ID_FQN, STATUS_FQN } from '../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { getESIDFromApp } from '../../utils/AppUtils';
@@ -47,7 +44,7 @@ const {
   STAFF_FQN,
 } = APP_TYPES_FQNS;
 
-const LOG = new Logger('IssueSagas');
+const LOG = new Logger('IssuesSagas');
 
 const formatIssueRowData = (entityData :List<Map>) :List<Map> => entityData
   .map((neighbor) => {

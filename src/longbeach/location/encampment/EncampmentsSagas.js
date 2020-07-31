@@ -22,6 +22,7 @@ import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
+import { Logger } from 'lattice-utils';
 import { DateTime } from 'luxon';
 import type { UUID } from 'lattice';
 import type { WorkerResponse } from 'lattice-sagas';
@@ -46,7 +47,6 @@ import {
   submitEncampment,
 } from './EncampmentActions';
 
-import Logger from '../../../utils/Logger';
 import * as FQN from '../../../edm/DataModelFqns';
 import { submitDataGraph } from '../../../core/sagas/data/DataActions';
 import { submitDataGraphWorker } from '../../../core/sagas/data/DataSagas';

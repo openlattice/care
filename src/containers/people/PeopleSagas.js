@@ -8,20 +8,18 @@ import {
   put,
   select,
   takeEvery,
-  takeLatest
+  takeLatest,
 } from '@redux-saga/core/effects';
 import {
   List,
   Map,
   fromJS,
-  getIn
+  getIn,
 } from 'immutable';
 import { Constants } from 'lattice';
 import { DataProcessingUtils } from 'lattice-fabricate';
-import {
-  SearchApiActions,
-  SearchApiSagas,
-} from 'lattice-sagas';
+import { SearchApiActions, SearchApiSagas } from 'lattice-sagas';
+import { Logger } from 'lattice-utils';
 import { DateTime } from 'luxon';
 import type { UUID } from 'lattice';
 import type { WorkerResponse } from 'lattice-sagas';
@@ -38,7 +36,6 @@ import {
   submitNewPerson,
 } from './PeopleActions';
 
-import Logger from '../../utils/Logger';
 import * as FQN from '../../edm/DataModelFqns';
 import { submitDataGraph } from '../../core/sagas/data/DataActions';
 import { submitDataGraphWorker } from '../../core/sagas/data/DataSagas';

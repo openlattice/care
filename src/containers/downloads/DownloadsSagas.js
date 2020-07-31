@@ -15,11 +15,9 @@ import {
   OrderedSet,
   fromJS,
 } from 'immutable';
-import {
-  Constants,
-  EntityDataModelApi,
-} from 'lattice';
+import { Constants, EntityDataModelApi } from 'lattice';
 import { SearchApiActions, SearchApiSagas } from 'lattice-sagas';
+import { Logger } from 'lattice-utils';
 import { DateTime } from 'luxon';
 import type { SequenceAction } from 'redux-reqseq';
 
@@ -29,7 +27,6 @@ import {
 } from './DownloadsActionFactory';
 
 import FileSaver from '../../utils/FileSaver';
-import Logger from '../../utils/Logger';
 import * as FQN from '../../edm/DataModelFqns';
 import { getAppearsInESId, getPeopleESId, getReportESId } from '../../utils/AppUtils';
 import { getSearchTerm } from '../../utils/DataUtils';

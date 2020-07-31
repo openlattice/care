@@ -21,6 +21,7 @@ import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
+import { Logger } from 'lattice-utils';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
@@ -30,7 +31,6 @@ import {
   getLBProfileNeighbors,
 } from './LongBeachProfileActions';
 
-import Logger from '../../utils/Logger';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { getESIDsFromApp } from '../../utils/AppUtils';
 import { groupNeighborsByEntitySetIds } from '../../utils/DataUtils';

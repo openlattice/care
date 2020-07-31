@@ -11,6 +11,7 @@ import { List, Map, fromJS } from 'immutable';
 import { Constants } from 'lattice';
 import { DataProcessingUtils } from 'lattice-fabricate';
 import { DataApiActions, DataApiSagas } from 'lattice-sagas';
+import { Logger } from 'lattice-utils';
 import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
 
@@ -20,7 +21,6 @@ import { getContactWorker } from './ContactSagas';
 import { getPhotosWorker } from './PhotosSagas';
 import { getScarsMarksTattoosWorker } from './ScarsMarksTattoosSagas';
 
-import Logger from '../../../../../utils/Logger';
 import * as FQN from '../../../../../edm/DataModelFqns';
 import { submitPartialReplace } from '../../../../../core/sagas/data/DataActions';
 import { submitPartialReplaceWorker } from '../../../../../core/sagas/data/DataSagas';

@@ -15,10 +15,8 @@ import {
   has,
 } from 'immutable';
 import { Constants } from 'lattice';
-import {
-  SearchApiActions,
-  SearchApiSagas
-} from 'lattice-sagas';
+import { SearchApiActions, SearchApiSagas } from 'lattice-sagas';
+import { Logger } from 'lattice-utils';
 import { DateTime } from 'luxon';
 import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
@@ -35,7 +33,6 @@ import {
 } from './AboutActions';
 import { constructEntityIndexToIdMap, constructFormData } from './AboutUtils';
 
-import Logger from '../../../../utils/Logger';
 import {
   createOrReplaceAssociation,
   submitDataGraph,

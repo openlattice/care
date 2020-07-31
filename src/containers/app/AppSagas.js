@@ -24,6 +24,7 @@ import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
+import { Logger } from 'lattice-utils';
 import type { Saga } from '@redux-saga/core';
 import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
@@ -38,7 +39,6 @@ import {
   loadHospitals,
 } from './AppActions';
 
-import Logger from '../../utils/Logger';
 import * as Routes from '../../core/router/Routes';
 import { APP_DETAILS_FQN } from '../../edm/DataModelFqns';
 import { APP_NAME, APP_TYPES_FQNS } from '../../shared/Consts';

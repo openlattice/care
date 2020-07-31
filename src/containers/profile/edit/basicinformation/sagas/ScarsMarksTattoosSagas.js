@@ -9,14 +9,11 @@ import {
 import { List, Map, fromJS } from 'immutable';
 import { Constants } from 'lattice';
 import { DataProcessingUtils } from 'lattice-fabricate';
-import {
-  SearchApiActions,
-  SearchApiSagas,
-} from 'lattice-sagas';
+import { SearchApiActions, SearchApiSagas } from 'lattice-sagas';
+import { Logger } from 'lattice-utils';
 import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
 
-import Logger from '../../../../../utils/Logger';
 import * as FQN from '../../../../../edm/DataModelFqns';
 import {
   submitDataGraph,

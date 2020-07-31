@@ -9,10 +9,8 @@ import {
 } from '@redux-saga/core/effects';
 import { List, Map, fromJS } from 'immutable';
 import { DataProcessingUtils } from 'lattice-fabricate';
-import {
-  SearchApiActions,
-  SearchApiSagas,
-} from 'lattice-sagas';
+import { SearchApiActions, SearchApiSagas } from 'lattice-sagas';
+import { Logger } from 'lattice-utils';
 import { DateTime } from 'luxon';
 import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
@@ -29,7 +27,6 @@ import {
 } from './SymptomsReportActions';
 import { getSymptomsReportAssociations, postProcessSymptoms } from './SymptomsReportUtils';
 
-import Logger from '../../../utils/Logger';
 import * as FQN from '../../../edm/DataModelFqns';
 import { submitDataGraph } from '../../../core/sagas/data/DataActions';
 import { submitDataGraphWorker } from '../../../core/sagas/data/DataSagas';

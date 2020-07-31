@@ -10,10 +10,8 @@ import {
   fromJS,
   getIn,
 } from 'immutable';
-import {
-  SearchApiActions,
-  SearchApiSagas,
-} from 'lattice-sagas';
+import { SearchApiActions, SearchApiSagas } from 'lattice-sagas';
+import { Logger } from 'lattice-utils';
 import type { WorkerResponse } from 'lattice-sagas';
 import type { SequenceAction } from 'redux-reqseq';
 
@@ -22,7 +20,6 @@ import {
   getFormSchema,
 } from './FormSchemasActions';
 
-import Logger from '../../utils/Logger';
 import * as FQN from '../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { getESIDFromApp } from '../../utils/AppUtils';

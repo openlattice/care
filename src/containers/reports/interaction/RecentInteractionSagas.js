@@ -19,6 +19,7 @@ import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
+import { Logger } from 'lattice-utils';
 import { DateTime } from 'luxon';
 import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
@@ -30,7 +31,6 @@ import {
   submitRecentInteraction,
 } from './RecentInteractionActions';
 
-import Logger from '../../../utils/Logger';
 import * as FQN from '../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS as APP } from '../../../shared/Consts';
 import { getESIDFromApp } from '../../../utils/AppUtils';

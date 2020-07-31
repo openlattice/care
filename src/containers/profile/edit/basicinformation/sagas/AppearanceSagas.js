@@ -8,16 +8,13 @@ import {
 } from '@redux-saga/core/effects';
 import { List, Map, fromJS } from 'immutable';
 import { Constants } from 'lattice';
-import {
-  SearchApiActions,
-  SearchApiSagas,
-} from 'lattice-sagas';
+import { SearchApiActions, SearchApiSagas } from 'lattice-sagas';
+import { Logger } from 'lattice-utils';
 import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
 
 import { constructEntityIndexToIdMap, constructFormData } from './utils/AppearanceUtils';
 
-import Logger from '../../../../../utils/Logger';
 import {
   submitDataGraph,
   submitPartialReplace,

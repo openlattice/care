@@ -20,6 +20,7 @@ import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
+import { Logger } from 'lattice-utils';
 import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
 
@@ -35,7 +36,6 @@ import {
 } from './IssueActions';
 import { constructEntityIndexToIdMap } from './IssueUtils';
 
-import Logger from '../../../utils/Logger';
 import {
   createOrReplaceAssociation,
   submitDataGraph,

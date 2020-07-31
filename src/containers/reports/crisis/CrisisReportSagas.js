@@ -25,6 +25,7 @@ import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
+import { Logger } from 'lattice-utils';
 import { DateTime } from 'luxon';
 import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
@@ -74,7 +75,6 @@ import {
 } from './CrisisReportUtils';
 import { v1 } from './schemas';
 
-import Logger from '../../../utils/Logger';
 import {
   deleteBulkEntities,
   submitDataGraph,

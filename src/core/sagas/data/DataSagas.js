@@ -10,6 +10,7 @@ import {
 } from '@redux-saga/core/effects';
 import { Models, Types } from 'lattice';
 import { DataApiActions, DataApiSagas } from 'lattice-sagas';
+import { Logger } from 'lattice-utils';
 import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
 
@@ -24,7 +25,6 @@ import {
   submitPartialReplace,
 } from './DataActions';
 
-import Logger from '../../../utils/Logger';
 import {
   ERR_ACTION_VALUE_NOT_DEFINED,
   ERR_ACTION_VALUE_TYPE,

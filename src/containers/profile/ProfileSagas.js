@@ -11,7 +11,7 @@ import {
 import {
   List,
   Map,
-  fromJS
+  fromJS,
 } from 'immutable';
 import { Models, Types } from 'lattice';
 import {
@@ -20,6 +20,7 @@ import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
+import { Logger } from 'lattice-utils';
 import { DateTime } from 'luxon';
 import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
@@ -39,7 +40,6 @@ import {
 import { personFqnsByName, physicalAppearanceFqnsByName } from './constants';
 import { countCrisisCalls, countPropertyOccurrance, countSafetyIncidents } from './premium/Utils';
 
-import Logger from '../../utils/Logger';
 import * as FQN from '../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { getESIDFromApp } from '../../utils/AppUtils';

@@ -11,12 +11,10 @@ import {
 import {
   Map,
   fromJS,
-  getIn
+  getIn,
 } from 'immutable';
-import {
-  SearchApiActions,
-  SearchApiSagas,
-} from 'lattice-sagas';
+import { SearchApiActions, SearchApiSagas } from 'lattice-sagas';
+import { Logger } from 'lattice-utils';
 import type { UUID } from 'lattice';
 import type { WorkerResponse } from 'lattice-sagas';
 import type { SequenceAction } from 'redux-reqseq';
@@ -32,7 +30,6 @@ import {
   searchLBLocations,
 } from './stayaway/LongBeachLocationsActions';
 
-import Logger from '../../utils/Logger';
 import * as FQN from '../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { getESIDFromApp, getESIDsFromApp } from '../../utils/AppUtils';

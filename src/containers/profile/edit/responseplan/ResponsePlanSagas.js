@@ -12,10 +12,8 @@ import {
   fromJS,
 } from 'immutable';
 import { Constants } from 'lattice';
-import {
-  SearchApiActions,
-  SearchApiSagas
-} from 'lattice-sagas';
+import { SearchApiActions, SearchApiSagas } from 'lattice-sagas';
+import { Logger } from 'lattice-utils';
 import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
 
@@ -31,7 +29,6 @@ import {
 } from './ResponsePlanActions';
 import { constructEntityIndexToIdMap, constructResponsePlanFormData } from './ResponsePlanUtils';
 
-import Logger from '../../../../utils/Logger';
 import {
   deleteBulkEntities,
   submitDataGraph,
@@ -62,7 +59,7 @@ const {
   SUBJECT_OF_FQN,
 } = APP_TYPES_FQNS;
 
-const LOG = new Logger('ProfileSagas');
+const LOG = new Logger('ResponsePlanSagas');
 
 export function* submitResponsePlanWorker(action :SequenceAction) :Generator<*, *, *> {
   try {

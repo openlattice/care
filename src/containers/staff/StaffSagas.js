@@ -13,7 +13,7 @@ import {
   List,
   Map,
   Set,
-  fromJS
+  fromJS,
 } from 'immutable';
 import { Constants } from 'lattice';
 import { AuthUtils } from 'lattice-auth';
@@ -25,6 +25,7 @@ import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
+import { Logger } from 'lattice-utils';
 import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
 
@@ -37,7 +38,6 @@ import {
   getResponsibleUserOptions,
 } from './StaffActions';
 
-import Logger from '../../utils/Logger';
 import * as FQN from '../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { getESIDFromApp, getStaffESId } from '../../utils/AppUtils';
