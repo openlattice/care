@@ -11,6 +11,7 @@ import {
   SearchApiSagas,
 } from 'lattice-sagas';
 import { DateTime } from 'luxon';
+import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
@@ -31,11 +32,11 @@ import { ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
 import { isValidUuid } from '../../utils/Utils';
 
 const {
-  executeSearch,
+  searchEntitySetData,
   searchEntityNeighborsWithFilter,
 } = SearchApiActions;
 const {
-  executeSearchWorker,
+  searchEntitySetDataWorker,
   searchEntityNeighborsWithFilterWorker,
 } = SearchApiSagas;
 
@@ -71,7 +72,6 @@ function* getMyOpenIssuesWorker(action :SequenceAction) :Generator<any, any, any
     const issueESID = getESIDFromApp(app, ISSUE_FQN);
     const staffESID = getESIDFromApp(app, STAFF_FQN);
     const assignedToESID = getESIDFromApp(app, ASSIGNED_TO_FQN);
-
 
     const issuesRequestParams = {
       entitySetId: staffESID,
@@ -166,7 +166,7 @@ function* getAllIssuesWorker(action :SequenceAction) :Generator<any, any, any> {
     const issueESID = getESIDFromApp(app, ISSUE_FQN);
     const completedPTID :UUID = yield select((state) => state.getIn(['edm', 'fqnToIdMap', COMPLETED_DT_FQN]));
 
-    const searchOptions = {
+    const searchConstraints = {
       start: 0,
       entitySetIds: [issueESID],
       maxHits: 10000,
@@ -182,8 +182,8 @@ function* getAllIssuesWorker(action :SequenceAction) :Generator<any, any, any> {
     };
 
     const issuesResponse = yield call(
-      executeSearchWorker,
-      executeSearch({ searchOptions })
+      searchEntitySetDataWorker,
+      searchEntitySetData(searchConstraints)
     );
 
     if (issuesResponse.error) throw issuesResponse.error;
