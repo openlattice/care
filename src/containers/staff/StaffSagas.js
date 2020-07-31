@@ -25,6 +25,7 @@ import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
+import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
@@ -211,9 +212,9 @@ function* getResponsibleUserOptionsWorker(action :SequenceAction) :Generator<any
           searchOptions
         })
       );
-  
+
       if (staffResponse.error) throw staffResponse.error;
-  
+
       responseData = fromJS(staffResponse.data.hits);
       const requestUsers = roleIds.map((roleId) => call(
         getAllUsersOfRoleWorker,
@@ -222,13 +223,13 @@ function* getResponsibleUserOptionsWorker(action :SequenceAction) :Generator<any
           roleId
         })
       )).toJS();
-  
+
       const usersResponses = yield all(requestUsers);
-  
+
       usersResponses.forEach((usersResponse) => {
         if (usersResponse.error) throw usersResponse.error;
       });
-  
+
       const usersResponseData = fromJS(usersResponses);
       const authorizedUsers = Set().withMutations((mutable) => {
         usersResponseData.forEach((roleResponse) => {
@@ -238,7 +239,7 @@ function* getResponsibleUserOptionsWorker(action :SequenceAction) :Generator<any
           });
         });
       });
-  
+
       if (usersResponseData.size) {
         responseData = responseData
           .filter((staff) => {

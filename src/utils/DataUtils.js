@@ -9,6 +9,7 @@ import {
 } from 'immutable';
 import { Constants, Models } from 'lattice';
 import { DataProcessingUtils } from 'lattice-fabricate';
+import type { UUID } from 'lattice';
 
 import { isDefined } from './LangUtils';
 

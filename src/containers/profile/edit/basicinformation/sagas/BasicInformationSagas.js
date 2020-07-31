@@ -11,6 +11,7 @@ import { List, Map, fromJS } from 'immutable';
 import { Constants } from 'lattice';
 import { DataProcessingUtils } from 'lattice-fabricate';
 import { DataApiActions, DataApiSagas } from 'lattice-sagas';
+import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
 
 import { getAddressWorker } from './AddressSagas';

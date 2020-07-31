@@ -7,14 +7,28 @@ import {
   takeLatest,
 } from '@redux-saga/core/effects';
 import { List, Map, fromJS } from 'immutable';
-import type { SequenceAction } from 'redux-reqseq';
 import { Constants } from 'lattice';
 import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
+import type { UUID } from 'lattice';
+import type { SequenceAction } from 'redux-reqseq';
+
+import { constructEntityIndexToIdMap, constructFormData } from './utils/AppearanceUtils';
 
 import Logger from '../../../../../utils/Logger';
+import {
+  submitDataGraph,
+  submitPartialReplace,
+} from '../../../../../core/sagas/data/DataActions';
+import {
+  submitDataGraphWorker,
+  submitPartialReplaceWorker,
+} from '../../../../../core/sagas/data/DataSagas';
+import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
+import { getESIDFromApp } from '../../../../../utils/AppUtils';
+import { groupNeighborsByEntitySetIds } from '../../../../../utils/DataUtils';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../../../utils/Errors';
 import { isDefined } from '../../../../../utils/LangUtils';
 import { isValidUuid } from '../../../../../utils/Utils';
@@ -26,19 +40,6 @@ import {
   submitAppearance,
   updateAppearance,
 } from '../actions/BasicInformationActions';
-import {
-  submitDataGraph,
-  submitPartialReplace,
-} from '../../../../../core/sagas/data/DataActions';
-import {
-  submitDataGraphWorker,
-  submitPartialReplaceWorker,
-} from '../../../../../core/sagas/data/DataSagas';
-
-import { getESIDFromApp } from '../../../../../utils/AppUtils';
-import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
-import { groupNeighborsByEntitySetIds } from '../../../../../utils/DataUtils';
-import { constructEntityIndexToIdMap, constructFormData } from './utils/AppearanceUtils';
 
 const LOG = new Logger('BasicInformationSagas');
 const { OPENLATTICE_ID_FQN } = Constants;

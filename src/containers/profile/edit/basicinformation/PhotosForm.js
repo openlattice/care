@@ -1,27 +1,30 @@
 // @flow
 import React, { Component } from 'react';
+
 import styled from 'styled-components';
-import { DateTime } from 'luxon';
-import { Form, DataProcessingUtils } from 'lattice-fabricate';
+import { Map, getIn } from 'immutable';
+import { DataProcessingUtils, Form } from 'lattice-fabricate';
 import {
   Card,
   CardHeader,
   CardSegment,
   Spinner
 } from 'lattice-ui-kit';
-import { Map, getIn } from 'immutable';
-import { bindActionCreators } from 'redux';
+import { DateTime } from 'luxon';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { RequestStates } from 'redux-reqseq';
+import type { UUID } from 'lattice';
 import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
-import Portrait from '../../../../components/portrait/Portrait';
-import { updatePhoto, submitPhotos } from './actions/PhotosActions';
-import { removeDataUriPrefix, getImageDataFromEntity } from '../../../../utils/BinaryUtils';
+import { submitPhotos, updatePhoto } from './actions/PhotosActions';
 import { schema, uiSchema } from './schemas/PhotosSchemas';
+
+import Portrait from '../../../../components/portrait/Portrait';
 import { COMPLETED_DT_FQN, IMAGE_DATA_FQN } from '../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
+import { getImageDataFromEntity, removeDataUriPrefix } from '../../../../utils/BinaryUtils';
 import { reduceRequestStates } from '../../../../utils/StateUtils';
 
 const {

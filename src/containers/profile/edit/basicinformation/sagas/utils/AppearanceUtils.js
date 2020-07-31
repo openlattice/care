@@ -1,9 +1,12 @@
 // @flow
-import { DataProcessingUtils } from 'lattice-fabricate';
+
 import { Map } from 'immutable';
-import { getFormDataFromEntity } from '../../../../../../utils/DataUtils';
-import { APP_TYPES_FQNS } from '../../../../../../shared/Consts';
+import { DataProcessingUtils } from 'lattice-fabricate';
+import type { UUID } from 'lattice';
+
 import * as FQN from '../../../../../../edm/DataModelFqns';
+import { APP_TYPES_FQNS } from '../../../../../../shared/Consts';
+import { getFormDataFromEntity } from '../../../../../../utils/DataUtils';
 import { isValidUuid } from '../../../../../../utils/Utils';
 
 const { PHYSICAL_APPEARANCE_FQN } = APP_TYPES_FQNS;

@@ -2,6 +2,7 @@
 import { Map, setIn } from 'immutable';
 import { DataProcessingUtils } from 'lattice-fabricate';
 import { DateTime } from 'luxon';
+import type { UUID } from 'lattice';
 
 import {
   COMPLETED_DT_FQN,

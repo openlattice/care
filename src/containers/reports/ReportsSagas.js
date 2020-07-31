@@ -29,6 +29,7 @@ import {
 } from 'lattice-sagas';
 import { isPlainObject } from 'lodash';
 import { DateTime } from 'luxon';
+import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {

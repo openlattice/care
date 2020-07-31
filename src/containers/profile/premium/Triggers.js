@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { List, Map } from 'immutable';
 import { Constants } from 'lattice';
 import { IconSplash } from 'lattice-ui-kit';
+import type { UUID } from 'lattice';
 
 import { UL } from '../../../components/layout';
 import { TRIGGER_FQN } from '../../../edm/DataModelFqns';
