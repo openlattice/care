@@ -36,12 +36,14 @@ function* searchConsumersWorker(action :SequenceAction) :Saga<*> {
     const response :WorkerResponse = yield call(
       searchEntitySetDataWorker,
       searchEntitySetData({
-        entitySetId: action.value.entitySetId,
-        searchOptions: {
-          searchTerm: action.value.query,
-          start: 0,
-          maxHits: 10000,
-        },
+        constraints: [{
+          constraints: [{
+            searchTerm: action.value.query,
+          }]
+        }],
+        entitySetIds: [action.value.entitySetId],
+        maxHits: 10000,
+        start: 0,
       })
     );
 
