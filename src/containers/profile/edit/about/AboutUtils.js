@@ -1,21 +1,23 @@
 // @flow
-import { Constants } from 'lattice';
-import { DataProcessingUtils } from 'lattice-fabricate';
+
 import {
   List,
   Map,
   getIn,
-  setIn
+  setIn,
 } from 'immutable';
+import { Constants } from 'lattice';
+import { DataProcessingUtils } from 'lattice-fabricate';
+import type { UUID } from 'lattice';
 
-import { getFormDataFromEntity } from '../../../../utils/DataUtils';
-import { APP_TYPES_FQNS } from '../../../../shared/Consts';
 import {
   COMPLETED_DT_FQN,
   DATE_TIME_FQN,
   NOTES_FQN,
   PERSON_ID_FQN,
 } from '../../../../edm/DataModelFqns';
+import { APP_TYPES_FQNS } from '../../../../shared/Consts';
+import { getFormDataFromEntity } from '../../../../utils/DataUtils';
 import { isValidUuid } from '../../../../utils/Utils';
 
 const {
