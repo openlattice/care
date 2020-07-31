@@ -128,16 +128,21 @@ function* loadAppWorker(action :SequenceAction) :Saga<*> {
       });
     });
 
-    const searchOptions = {
-      start: 0,
+    const searchConstraints = (entitySetId :UUID) => ({
+      entitySetIds: [entitySetId],
+      constraints: [{
+        constraints: [{
+          searchTerm: '*'
+        }],
+      }],
       maxHits: 10000,
-      searchTerm: '*'
-    };
+      start: 0,
+    });
 
     const appSettingsRequests = appSettingsESIDByOrgId
       .valueSeq()
       .map((entitySetId) => (
-        call(searchEntitySetDataWorker, searchEntitySetData({ entitySetId, searchOptions }))
+        call(searchEntitySetDataWorker, searchEntitySetData(searchConstraints(entitySetId)))
       ));
 
     const orgIds = appSettingsESIDByOrgId.keySeq().toJS();
