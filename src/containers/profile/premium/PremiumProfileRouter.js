@@ -19,7 +19,7 @@ const PremiumProfileRouter = () => {
 
   return (
     <Switch>
-      <Route component={ProfileContainer} path={`${PROFILE_PATH}/helpline`}/>
+      <Route component={ProfileContainer} path={`${PROFILE_PATH}/helpline`} />
       <Redirect strict exact from={`${PROFILE_VIEW_PATH}/`} to={PROFILE_VIEW_PATH} />
       <Route
           component={PremiumProfileContainer}
