@@ -9,11 +9,12 @@ import {
 } from 'immutable';
 import { Constants, Models } from 'lattice';
 import { DataProcessingUtils } from 'lattice-fabricate';
+import { LangUtils } from 'lattice-utils';
+import type { UUID } from 'lattice';
 
-import { isDefined } from './LangUtils';
-
+const { isDefined } = LangUtils;
 const { getEntityAddressKey } = DataProcessingUtils;
-const { FullyQualifiedName } = Models;
+const { FQN } = Models;
 const { OPENLATTICE_ID_FQN } = Constants;
 
 const SEARCH_PREFIX = 'entity';
@@ -57,7 +58,7 @@ const simulateResponseData = (properties :Map, entityKeyId :UUID, propertyTypesB
   const transformedIds = Map().withMutations((mutable :Map) => {
     properties.mapKeys((propertyTypeId :UUID, value :any) => {
       const fqnObj = propertyTypesById.getIn([propertyTypeId, 'type']);
-      const fqn = new FullyQualifiedName(fqnObj);
+      const fqn = FQN.of(fqnObj);
       if (!value.isEmpty()) {
         mutable.set(fqn.toString(), value);
       }
@@ -74,8 +75,7 @@ const replacePropertyTypeIdsWithFqns = (
   propertyTypesById :Map
 ) => Object.fromEntries<string, Object>(Object.entries(entity).map(([propertyTypeId, value]) => {
   const fqnObj = propertyTypesById.getIn([propertyTypeId, 'type']);
-  const fqn = new FullyQualifiedName(fqnObj);
-  return [fqn.toString(), value];
+  return [FQN.toString(fqnObj), value];
 }));
 
 type Entity = {
@@ -157,11 +157,11 @@ const getEntityKeyIdsFromList = (entityList :List) => entityList
 const getFormDataFromEntity = (
   entity :Map | Object,
   esn :string,
-  properties :List<FullyQualifiedName> | FullyQualifiedName[],
+  properties :List<FQN> | FQN[],
   index :number
 ) :Map => {
   const entityFormData = Map().withMutations((entityMutator) => {
-    properties.forEach((fqn :FullyQualifiedName) => {
+    properties.forEach((fqn :FQN) => {
       const value = getIn(entity, [fqn, 0]);
       if (isDefined(value)) {
         entityMutator.set(getEntityAddressKey(index, esn, fqn), value);
@@ -175,7 +175,7 @@ const getFormDataFromEntity = (
 const getFormDataFromEntityArray = (
   data :List<Map> | Object[],
   esn :string,
-  properties :List<FullyQualifiedName> | FullyQualifiedName[],
+  properties :List<FQN> | FQN[],
   index :number
 ) :List<Map> => {
   const entityFormDataList = List().withMutations((mutator :List) => {

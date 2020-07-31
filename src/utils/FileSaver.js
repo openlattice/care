@@ -6,7 +6,12 @@ import FS from 'file-saver';
 
 export default class FileSaver {
 
-  static saveFile(entityData :{}, name :string, datatype :string, success? :?(datatype :string) => void) {
+  static saveFile(
+    entityData :Blob | File | string,
+    name :string,
+    datatype :string,
+    success ?:(datatype :string) => void,
+  ) {
     let contentType = 'application/json';
     let data = entityData;
 

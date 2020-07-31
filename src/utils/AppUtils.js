@@ -1,6 +1,6 @@
 // @flow
 import { Map } from 'immutable';
-import type { FullyQualifiedName } from 'lattice';
+import type { FQN } from 'lattice';
 
 import { APP_TYPES_FQNS } from '../shared/Consts';
 
@@ -16,7 +16,7 @@ const {
 
 export const getSelectedOrganizationId = (app :Map) => app.get('selectedOrganizationId');
 
-export const getESIDFromApp = (app :Map, fqn :FullyQualifiedName) :string => app.getIn([
+export const getESIDFromApp = (app :Map, fqn :FQN) :string => app.getIn([
   'selectedOrgEntitySetIds',
   fqn.toString(),
 ]);
@@ -29,5 +29,5 @@ export const getReportedESId = (app :Map) :string => getESIDFromApp(app, REPORTE
 export const getReportESId = (app :Map) :string => getESIDFromApp(app, BEHAVIORAL_HEALTH_REPORT_FQN);
 export const getStaffESId = (app :Map) :string => getESIDFromApp(app, STAFF_FQN);
 
-export const getESIDsFromApp = (app :Map, fqns :Array<FullyQualifiedName>) :string[] => fqns
-  .map((fqn :FullyQualifiedName) => getESIDFromApp(app, fqn));
+export const getESIDsFromApp = (app :Map, fqns :Array<FQN>) :string[] => fqns
+  .map((fqn :FQN) => getESIDFromApp(app, fqn));

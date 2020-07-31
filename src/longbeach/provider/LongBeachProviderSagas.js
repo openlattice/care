@@ -13,18 +13,14 @@ import {
   Map,
   fromJS,
 } from 'immutable';
-import {
-  DataApiActions,
-  DataApiSagas,
-} from 'lattice-sagas';
+import { DataApiActions, DataApiSagas } from 'lattice-sagas';
+import { Logger } from 'lattice-utils';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
   GET_LB_PROVIDERS,
   getLBProviders,
 } from './LongBeachProviderActions';
-
-import Logger from '../../utils/Logger';
 
 const { getEntitySetData } = DataApiActions;
 const { getEntitySetDataWorker } = DataApiSagas;

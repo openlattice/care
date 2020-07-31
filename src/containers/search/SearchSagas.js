@@ -2,10 +2,11 @@
  * @flow
  */
 
-/* eslint-disable no-use-before-define */
-
 import { call, put, takeEvery } from '@redux-saga/core/effects';
 import { SearchApiActions, SearchApiSagas } from 'lattice-sagas';
+import { Logger } from 'lattice-utils';
+import type { Saga } from '@redux-saga/core';
+import type { WorkerResponse } from 'lattice-sagas';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
@@ -21,38 +22,40 @@ const {
   searchEntitySetDataWorker,
 } = SearchApiSagas;
 
+const LOG = new Logger('SearchSagas');
+
 /*
  * searchConsumers sagas
  */
 
-function* searchConsumersWatcher() :Generator<*, *, *> {
-
-  yield takeEvery(SEARCH_CONSUMERS, searchConsumersWorker);
-}
-
-function* searchConsumersWorker(action :SequenceAction) :Generator<*, *, *> {
+function* searchConsumersWorker(action :SequenceAction) :Saga<*> {
 
   try {
     yield put(searchConsumers.request(action.id, action.value));
 
-    const response = yield call(
+    const response :WorkerResponse = yield call(
       searchEntitySetDataWorker,
       searchEntitySetData({
-        entitySetId: action.value.entitySetId,
-        searchOptions: {
-          searchTerm: action.value.query,
-          start: 0,
-          maxHits: 10000
-        },
+        constraints: [{
+          constraints: [{
+            searchTerm: action.value.query,
+          }]
+        }],
+        entitySetIds: [action.value.entitySetId],
+        maxHits: 10000,
+        start: 0,
       })
     );
 
     if (response.error) {
       yield put(searchConsumers.failure(action.id, response.error));
     }
-    yield put(searchConsumers.success(action.id, response.data));
+    else {
+      yield put(searchConsumers.success(action.id, response.data));
+    }
   }
   catch (error) {
+    LOG.error(action.type, error);
     yield put(searchConsumers.failure(action.id, error));
   }
   finally {
@@ -60,7 +63,12 @@ function* searchConsumersWorker(action :SequenceAction) :Generator<*, *, *> {
   }
 }
 
+function* searchConsumersWatcher() :Saga<*> {
+
+  yield takeEvery(SEARCH_CONSUMERS, searchConsumersWorker);
+}
+
 export {
   searchConsumersWatcher,
-  searchConsumersWorker
+  searchConsumersWorker,
 };

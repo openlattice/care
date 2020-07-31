@@ -1,20 +1,17 @@
 // @flow
 
-import { fromJS } from 'immutable';
 import {
   call,
   put,
   select,
   takeLatest,
 } from '@redux-saga/core/effects';
-
-import {
-  PrincipalsApiActions,
-  PrincipalsApiSagas
-} from 'lattice-sagas';
+import { fromJS } from 'immutable';
+import { PrincipalsApiActions, PrincipalsApiSagas } from 'lattice-sagas';
+import { Logger } from 'lattice-utils';
+import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
 
-import Logger from '../../../utils/Logger';
 import { GET_AUTHORIZATION, getAuthorization } from './AuthorizeActions';
 
 const { getCurrentRolesWorker } = PrincipalsApiSagas;

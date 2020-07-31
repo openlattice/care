@@ -91,7 +91,7 @@ function* getSubscriptionsWorker(action :SequenceAction) :Generator<*, *, *> {
   try {
     yield put(getSubscriptions.request(action.id));
 
-    const subscriptions = yield call(PersistentSearchApi.loadPersistentSearches, false);
+    const subscriptions = yield call(PersistentSearchApi.getPersistentSearches, false);
 
     yield put(getSubscriptions.success(action.id, subscriptions));
   }

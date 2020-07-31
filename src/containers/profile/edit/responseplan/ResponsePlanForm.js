@@ -13,10 +13,12 @@ import {
   CardSegment,
   Spinner
 } from 'lattice-ui-kit';
+import { ValidationUtils } from 'lattice-utils';
 import { DateTime } from 'luxon';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { RequestStates } from 'redux-reqseq';
+import type { UUID } from 'lattice';
 import type { Match } from 'react-router';
 import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
@@ -32,7 +34,6 @@ import { schema, uiSchema } from './schemas/ResponsePlanSchemas';
 import { PROFILE_ID_PARAM } from '../../../../core/router/Routes';
 import { COMPLETED_DT_FQN, INDEX_FQN } from '../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
-import { isValidUuid } from '../../../../utils/Utils';
 
 const {
   PART_OF_FQN,
@@ -48,6 +49,7 @@ const {
   processEntityData,
   processAssociationEntityData
 } = DataProcessingUtils;
+const { isValidUUID } = ValidationUtils;
 
 type Props = {
   actions :{
@@ -84,7 +86,7 @@ class ResponsePlanForm extends Component<Props, State> {
       responsePlanEKID
     } = this.props;
     const personEKID = match.params[PROFILE_ID_PARAM];
-    if (!isValidUuid(responsePlanEKID)) {
+    if (!isValidUUID(responsePlanEKID)) {
       actions.getResponsePlan(personEKID);
     }
     else {
@@ -117,7 +119,7 @@ class ResponsePlanForm extends Component<Props, State> {
     const { formData, entityIndexToIdMap } = this.props;
 
     let prepopulated = false;
-    if (isValidUuid(entityIndexToIdMap.getIn([RESPONSE_PLAN_FQN, 0]))) {
+    if (isValidUUID(entityIndexToIdMap.getIn([RESPONSE_PLAN_FQN, 0]))) {
       prepopulated = true;
     }
 

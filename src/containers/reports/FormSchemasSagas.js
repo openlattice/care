@@ -10,10 +10,9 @@ import {
   fromJS,
   getIn,
 } from 'immutable';
-import {
-  SearchApiActions,
-  SearchApiSagas,
-} from 'lattice-sagas';
+import { SearchApiActions, SearchApiSagas } from 'lattice-sagas';
+import { LangUtils, Logger } from 'lattice-utils';
+import type { WorkerResponse } from 'lattice-sagas';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
@@ -21,21 +20,17 @@ import {
   getFormSchema,
 } from './FormSchemasActions';
 
-import Logger from '../../utils/Logger';
 import * as FQN from '../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { getESIDFromApp } from '../../utils/AppUtils';
 import { ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
-import { isEmptyString } from '../../utils/LangUtils';
 
-const { executeSearch } = SearchApiActions;
-const { executeSearchWorker } = SearchApiSagas;
-const {
-  FORMS_FQN,
-} = APP_TYPES_FQNS;
+const { isEmptyString } = LangUtils;
+const { searchEntitySetData } = SearchApiActions;
+const { searchEntitySetDataWorker } = SearchApiSagas;
+const { FORMS_FQN } = APP_TYPES_FQNS;
 
-const LOG = new Logger('CrisisReportSagas');
-
+const LOG = new Logger('FormSchemasSagas');
 
 function* getFormSchemaWorker(action :SequenceAction) :Generator<any, any, any> {
   const response :Object = {};
@@ -49,7 +44,7 @@ function* getFormSchemaWorker(action :SequenceAction) :Generator<any, any, any> 
     const formESID = getESIDFromApp(app, FORMS_FQN);
     const typePTID = edm.getIn(['fqnToIdMap', FQN.TYPE_FQN]);
 
-    const searchOptions = {
+    const searchConstraints = {
       entitySetIds: [formESID],
       start: 0,
       maxHits: 10000,
@@ -67,14 +62,14 @@ function* getFormSchemaWorker(action :SequenceAction) :Generator<any, any, any> 
       }],
     };
 
-    const { data, error } = yield call(
-      executeSearchWorker,
-      executeSearch({ searchOptions })
+    const searchResponse :WorkerResponse = yield call(
+      searchEntitySetDataWorker,
+      searchEntitySetData(searchConstraints)
     );
 
-    if (error) throw error;
-    const form = data.hits[0];
-    if (data.hits.length > 1) {
+    if (searchResponse.error) throw searchResponse.error;
+    const form = searchResponse.data.hits[0];
+    if (searchResponse.data.hits.length > 1) {
       LOG.warn(action.type, 'more than one form schema found');
     }
 

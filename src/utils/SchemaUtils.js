@@ -1,9 +1,8 @@
 // @flow
 import merge from 'lodash/merge';
+import { Logger } from 'lattice-utils';
 
-import Logger from './Logger';
-
-const LOG = new Logger('schemaUtils');
+const LOG = new Logger('SchemaUtils');
 
 type ReviewSchemas = {|
   schema :Object;

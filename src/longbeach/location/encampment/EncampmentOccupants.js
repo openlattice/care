@@ -6,6 +6,7 @@ import { faSearch } from '@fortawesome/pro-regular-svg-icons';
 import { Select } from 'lattice-ui-kit';
 import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
+import type { UUID } from 'lattice';
 
 import OccupantList from './OccupantList';
 import {

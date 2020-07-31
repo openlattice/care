@@ -12,10 +12,9 @@ import {
   fromJS,
 } from 'immutable';
 import { Constants } from 'lattice';
-import {
-  SearchApiActions,
-  SearchApiSagas
-} from 'lattice-sagas';
+import { SearchApiActions, SearchApiSagas } from 'lattice-sagas';
+import { LangUtils, Logger, ValidationUtils } from 'lattice-utils';
+import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
@@ -30,7 +29,6 @@ import {
 } from './ResponsePlanActions';
 import { constructEntityIndexToIdMap, constructResponsePlanFormData } from './ResponsePlanUtils';
 
-import Logger from '../../../../utils/Logger';
 import {
   deleteBulkEntities,
   submitDataGraph,
@@ -46,10 +44,10 @@ import { APP_TYPES_FQNS } from '../../../../shared/Consts';
 import { getESIDFromApp } from '../../../../utils/AppUtils';
 import { removeEntitiesFromEntityIndexToIdMap } from '../../../../utils/DataUtils';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../../utils/Errors';
-import { isDefined } from '../../../../utils/LangUtils';
-import { isValidUuid } from '../../../../utils/Utils';
 
 const { OPENLATTICE_ID_FQN } = Constants;
+const { isDefined } = LangUtils;
+const { isValidUUID } = ValidationUtils;
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
 const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
 
@@ -61,7 +59,7 @@ const {
   SUBJECT_OF_FQN,
 } = APP_TYPES_FQNS;
 
-const LOG = new Logger('ProfileSagas');
+const LOG = new Logger('ResponsePlanSagas');
 
 export function* submitResponsePlanWorker(action :SequenceAction) :Generator<*, *, *> {
   try {
@@ -109,7 +107,7 @@ export function* getResponsePlanWorker(action :SequenceAction) :Generator<*, *, 
   const response = {};
   try {
     const { value: entityKeyId } = action;
-    if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
 
     yield put(getResponsePlan.request(action.id));
 

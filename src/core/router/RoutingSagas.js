@@ -4,6 +4,7 @@
 
 import { put, takeEvery } from '@redux-saga/core/effects';
 import { push } from 'connected-react-router';
+import { Logger } from 'lattice-utils';
 
 import {
   GO_TO_PATH,
@@ -12,7 +13,6 @@ import {
 } from './RoutingActions';
 import type { RoutingAction } from './RoutingActions';
 
-import Logger from '../../utils/Logger';
 import { ERR_INVALID_ROUTE } from '../../utils/Errors';
 
 const LOG = new Logger('RoutingSagas');
@@ -38,7 +38,10 @@ function* goToPathWorker(action :RoutingAction) :Generator<*, *, *> {
     return;
   }
 
-  yield put(push({ state, pathname: path }));
+  // ISSUE: https://github.com/supasate/connected-react-router/issues/394#issuecomment-596713700
+  // FIX: https://github.com/supasate/connected-react-router/pull/399
+  // TODO: remove JSON.stringify() once the fix ^ is released
+  yield put(push({ state: JSON.stringify(state), pathname: path }));
 }
 
 function* goToPathWatcher() :Generator<*, *, *> {
