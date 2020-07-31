@@ -11,7 +11,7 @@ import {
   getIn,
 } from 'immutable';
 import { SearchApiActions, SearchApiSagas } from 'lattice-sagas';
-import { Logger } from 'lattice-utils';
+import { LangUtils, Logger } from 'lattice-utils';
 import type { WorkerResponse } from 'lattice-sagas';
 import type { SequenceAction } from 'redux-reqseq';
 
@@ -24,13 +24,11 @@ import * as FQN from '../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { getESIDFromApp } from '../../utils/AppUtils';
 import { ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
-import { isEmptyString } from '../../utils/LangUtils';
 
+const { isEmptyString } = LangUtils;
 const { searchEntitySetData } = SearchApiActions;
 const { searchEntitySetDataWorker } = SearchApiSagas;
-const {
-  FORMS_FQN,
-} = APP_TYPES_FQNS;
+const { FORMS_FQN } = APP_TYPES_FQNS;
 
 const LOG = new Logger('FormSchemasSagas');
 

@@ -25,7 +25,7 @@ import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
-import { Logger, ValidationUtils } from 'lattice-utils';
+import { LangUtils, Logger, ValidationUtils } from 'lattice-utils';
 import { DateTime } from 'luxon';
 import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
@@ -99,12 +99,12 @@ import {
   removeEntitiesFromEntityIndexToIdMap,
 } from '../../../utils/DataUtils';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../utils/Errors';
-import { isDefined } from '../../../utils/LangUtils';
 import { generateReviewSchema } from '../../../utils/SchemaUtils';
 import { getFormSchema } from '../FormSchemasActions';
 import { getFormSchemaWorker } from '../FormSchemasSagas';
 
 const { FQN } = Models;
+const { isDefined } = LangUtils;
 const { isValidUUID } = ValidationUtils;
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
 const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;

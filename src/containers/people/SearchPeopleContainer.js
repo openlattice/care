@@ -18,6 +18,7 @@ import {
   SearchResults,
   Select,
 } from 'lattice-ui-kit';
+import { LangUtils } from 'lattice-utils';
 import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
@@ -32,9 +33,10 @@ import { BreadcrumbLink } from '../../components/breadcrumbs';
 import { useAppSettings, useInput } from '../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../components/layout';
 import { NEW_PERSON_PATH } from '../../core/router/Routes';
-import { isNonEmptyString } from '../../utils/LangUtils';
 import { media } from '../../utils/StyleUtils';
 import { ethnicityOptions, raceOptions, sexOptions } from '../profile/constants';
+
+const { isNonEmptyString } = LangUtils;
 
 const { NEUTRALS } = Colors;
 const CANT_FIND_MSG = 'Can\'t find the person you\'re looking for? ';

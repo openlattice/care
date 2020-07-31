@@ -9,6 +9,7 @@ import {
   setIn,
 } from 'immutable';
 import { DataProcessingUtils } from 'lattice-fabricate';
+import { LangUtils } from 'lattice-utils';
 import { DateTime } from 'luxon';
 import type { FQN } from 'lattice';
 
@@ -68,7 +69,8 @@ import {
   TRANSPORT_INDICATOR_FQN,
 } from '../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS as APP } from '../../../shared/Consts';
-import { isNonEmptyStringArray } from '../../../utils/LangUtils';
+
+const { isNonEmptyArray, isNonEmptyString } = LangUtils;
 
 const {
   getEntityAddressKey,
@@ -546,12 +548,15 @@ const preProcessOther = (
   let propertyValue = get(entity, property.toString(), []);
   const otherPropertyValue = get(entity, otherProperty.toString(), []);
 
-  if (isNonEmptyStringArray(otherPropertyValue)) {
+  if (isNonEmptyArray(otherPropertyValue) && otherPropertyValue.every(isNonEmptyString)) {
     const filteredPropertyValue = propertyValue.filter((value) => (value !== 'Other')
     || !otherPropertyValue.includes(value));
     propertyValue = [...filteredPropertyValue, 'Other', ...otherPropertyValue];
   }
-  if (withNone && !isNonEmptyStringArray(propertyValue)) propertyValue = ['None'];
+
+  if (withNone && !(isNonEmptyArray(propertyValue) && otherPropertyValue.every(propertyValue))) {
+    propertyValue = ['None'];
+  }
 
   return setIn(entity, [property.toString()], propertyValue);
 };

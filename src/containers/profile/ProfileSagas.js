@@ -20,7 +20,7 @@ import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
-import { Logger, ValidationUtils } from 'lattice-utils';
+import { LangUtils, Logger, ValidationUtils } from 'lattice-utils';
 import { DateTime } from 'luxon';
 import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
@@ -45,13 +45,13 @@ import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { getESIDFromApp } from '../../utils/AppUtils';
 import { simulateResponseData } from '../../utils/DataUtils';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
-import { isDefined } from '../../utils/LangUtils';
 import { BEHAVIOR_LABEL_MAP } from '../reports/crisis/schemas/v1/constants';
 
 const LOG = new Logger('ProfileSagas');
 
 const { DataGraphBuilder } = Models;
 const { UpdateTypes } = Types;
+const { isDefined } = LangUtils;
 const { isValidUUID } = ValidationUtils;
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
 const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;

@@ -13,7 +13,7 @@ import {
 } from 'immutable';
 import { Constants } from 'lattice';
 import { SearchApiActions, SearchApiSagas } from 'lattice-sagas';
-import { Logger, ValidationUtils } from 'lattice-utils';
+import { LangUtils, Logger, ValidationUtils } from 'lattice-utils';
 import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
 
@@ -44,9 +44,9 @@ import { APP_TYPES_FQNS } from '../../../../shared/Consts';
 import { getESIDFromApp } from '../../../../utils/AppUtils';
 import { removeEntitiesFromEntityIndexToIdMap } from '../../../../utils/DataUtils';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../../utils/Errors';
-import { isDefined } from '../../../../utils/LangUtils';
 
 const { OPENLATTICE_ID_FQN } = Constants;
+const { isDefined } = LangUtils;
 const { isValidUUID } = ValidationUtils;
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
 const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;

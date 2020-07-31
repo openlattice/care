@@ -16,6 +16,7 @@ import {
   SearchResults,
   Select,
 } from 'lattice-ui-kit';
+import { LangUtils } from 'lattice-utils';
 import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
@@ -28,9 +29,10 @@ import MetaphoneLabel from '../../containers/people/MetaphoneLabel';
 import { useInput } from '../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../components/layout';
 import { ethnicityOptions, raceOptions, sexOptions } from '../../containers/profile/constants';
-import { isNonEmptyString } from '../../utils/LangUtils';
 import { media } from '../../utils/StyleUtils';
 import { ResultSegment } from '../styled';
+
+const { isNonEmptyString } = LangUtils;
 
 const InputGrid = styled.div`
   align-items: flex-start;

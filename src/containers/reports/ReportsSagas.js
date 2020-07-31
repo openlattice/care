@@ -25,7 +25,7 @@ import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
-import { Logger, ValidationUtils } from 'lattice-utils';
+import { LangUtils, Logger, ValidationUtils } from 'lattice-utils';
 import { DateTime } from 'luxon';
 import type { UUID } from 'lattice';
 import type { WorkerResponse } from 'lattice-sagas';
@@ -73,7 +73,6 @@ import {
 } from '../../utils/AppUtils';
 import { getEntityKeyId, getSearchTerm } from '../../utils/DataUtils';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
-import { isDefined } from '../../utils/LangUtils';
 import { DISPOSITION, POST_PROCESS_FIELDS } from '../../utils/constants/CrisisReportConstants';
 import { setInputValues as setDispositionData } from '../pages/disposition/ActionFactory';
 import { setInputValues as setNatureOfCrisisData } from '../pages/natureofcrisis/ActionFactory';
@@ -94,6 +93,7 @@ import {
 } from '../profile/actions/ReportActions';
 import { countCrisisCalls, countPropertyOccurrance } from '../profile/premium/Utils';
 
+const { isDefined } = LangUtils;
 const { processAssociationEntityData } = DataProcessingUtils;
 const { isValidUUID } = ValidationUtils;
 

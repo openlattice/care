@@ -9,10 +9,10 @@ import {
 } from 'immutable';
 import { Constants, Models } from 'lattice';
 import { DataProcessingUtils } from 'lattice-fabricate';
+import { LangUtils } from 'lattice-utils';
 import type { UUID } from 'lattice';
 
-import { isDefined } from './LangUtils';
-
+const { isDefined } = LangUtils;
 const { getEntityAddressKey } = DataProcessingUtils;
 const { FQN } = Models;
 const { OPENLATTICE_ID_FQN } = Constants;

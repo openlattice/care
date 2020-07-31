@@ -22,7 +22,7 @@ import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
-import { Logger, ValidationUtils } from 'lattice-utils';
+import { LangUtils, Logger, ValidationUtils } from 'lattice-utils';
 import { DateTime } from 'luxon';
 import type { UUID } from 'lattice';
 import type { WorkerResponse } from 'lattice-sagas';
@@ -54,8 +54,8 @@ import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { getESIDFromApp, getESIDsFromApp } from '../../../utils/AppUtils';
 import { getEntityKeyId, indexSubmittedDataGraph, mapFirstEntityDataFromNeighbors } from '../../../utils/DataUtils';
 import { ERR_ACTION_VALUE_TYPE } from '../../../utils/Errors';
-import { isDefined } from '../../../utils/LangUtils';
 
+const { isDefined } = LangUtils;
 const { isValidUUID } = ValidationUtils;
 
 const {
