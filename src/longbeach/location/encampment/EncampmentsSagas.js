@@ -24,6 +24,7 @@ import {
 } from 'lattice-sagas';
 import { DateTime } from 'luxon';
 import type { UUID } from 'lattice';
+import type { WorkerResponse } from 'lattice-sagas';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
@@ -69,8 +70,8 @@ const {
   // updateEntityDataWorker,
 } = DataApiSagas;
 
-const { executeSearch, searchEntityNeighborsWithFilter } = SearchApiActions;
-const { executeSearchWorker, searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
+const { searchEntitySetData, searchEntityNeighborsWithFilter } = SearchApiActions;
+const { searchEntitySetDataWorker, searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
 
 const { DeleteTypes } = Types;
 
@@ -197,7 +198,7 @@ function* searchEncampmentLocationsWorker(action :SequenceAction) :Generator<any
     const locationCoordinatesPTID :UUID = yield select((state) => state
       .getIn(['edm', 'fqnToIdMap', FQN.LOCATION_COORDINATES_FQN]));
 
-    const searchOptions = {
+    const searchConstraints = {
       start,
       entitySetIds: [encampmentLocationESID],
       maxHits,
@@ -213,14 +214,14 @@ function* searchEncampmentLocationsWorker(action :SequenceAction) :Generator<any
       }]
     };
 
-    const { data, error } = yield call(
-      executeSearchWorker,
-      executeSearch({ searchOptions })
+    const searchResponse :WorkerResponse = yield call(
+      searchEntitySetDataWorker,
+      searchEntitySetData(searchConstraints)
     );
 
-    if (error) throw error;
+    if (searchResponse.error) throw searchResponse.error;
 
-    const { hits, numHits } = data;
+    const { hits, numHits } = searchResponse.data;
     const locationsEKIDs = hits.map((location) => getIn(location, [FQN.OPENLATTICE_ID_FQN, 0]));
     const locationsByEKID = Map(hits.map((entity) => [getIn(entity, [FQN.OPENLATTICE_ID_FQN, 0]), fromJS(entity)]));
     response.data.hits = fromJS(locationsEKIDs);
@@ -334,7 +335,7 @@ function* getEncampmentPeopleOptionsWorker(action :SequenceAction) :Generator<an
       updateSearchField(lastName, lastNamePTID, false);
     }
 
-    const searchOptions = {
+    const searchConstraints = {
       entitySetIds: [peopleESID],
       maxHits: 10000,
       start: 0,
@@ -346,13 +347,13 @@ function* getEncampmentPeopleOptionsWorker(action :SequenceAction) :Generator<an
       }],
     };
 
-    const { data, error } = yield call(
-      executeSearchWorker,
-      executeSearch({ searchOptions })
+    const searchResponse :WorkerResponse = yield call(
+      searchEntitySetDataWorker,
+      searchEntitySetData(searchConstraints)
     );
-    if (error) throw error;
+    if (searchResponse.error) throw searchResponse.error;
 
-    const options = data.hits.map((person) => {
+    const options = searchResponse.data.hits.map((person) => {
       const personEKID = getEntityKeyId(person);
       const fName = getIn(person, [FQN.PERSON_FIRST_NAME_FQN, 0]);
       const lName = getIn(person, [FQN.PERSON_LAST_NAME_FQN, 0]);
