@@ -1,9 +1,10 @@
 // @flow
 import { Map, getIn } from 'immutable';
-
-import { isNonEmptyString } from './LangUtils';
+import { LangUtils } from 'lattice-utils';
 
 import * as FQN from '../edm/DataModelFqns';
+
+const { isNonEmptyString } = LangUtils;
 
 const getAddressFromLocation = (location :Map = Map()) => {
 

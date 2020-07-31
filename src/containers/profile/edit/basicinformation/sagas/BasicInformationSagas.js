@@ -11,6 +11,8 @@ import { List, Map, fromJS } from 'immutable';
 import { Constants } from 'lattice';
 import { DataProcessingUtils } from 'lattice-fabricate';
 import { DataApiActions, DataApiSagas } from 'lattice-sagas';
+import { LangUtils, Logger, ValidationUtils } from 'lattice-utils';
+import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
 
 import { getAddressWorker } from './AddressSagas';
@@ -19,7 +21,6 @@ import { getContactWorker } from './ContactSagas';
 import { getPhotosWorker } from './PhotosSagas';
 import { getScarsMarksTattoosWorker } from './ScarsMarksTattoosSagas';
 
-import Logger from '../../../../../utils/Logger';
 import * as FQN from '../../../../../edm/DataModelFqns';
 import { submitPartialReplace } from '../../../../../core/sagas/data/DataActions';
 import { submitPartialReplaceWorker } from '../../../../../core/sagas/data/DataSagas';
@@ -27,8 +28,6 @@ import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
 import { getESIDFromApp } from '../../../../../utils/AppUtils';
 import { getFormDataFromEntity } from '../../../../../utils/DataUtils';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../../../utils/Errors';
-import { isDefined } from '../../../../../utils/LangUtils';
-import { isValidUuid } from '../../../../../utils/Utils';
 import { getAddress } from '../actions/AddressActions';
 import {
   GET_BASICS,
@@ -44,7 +43,10 @@ import { getPhotos } from '../actions/PhotosActions';
 import { getScarsMarksTattoos } from '../actions/ScarsMarksTattoosActions';
 
 const LOG = new Logger('BasicInformationSagas');
+
+const { isDefined } = LangUtils;
 const { getPageSectionKey, getEntityAddressKey } = DataProcessingUtils;
+const { isValidUUID } = ValidationUtils;
 const { OPENLATTICE_ID_FQN } = Constants;
 const { PEOPLE_FQN } = APP_TYPES_FQNS;
 
@@ -55,7 +57,7 @@ function* getBasicsWorker(action :SequenceAction) :Generator<any, any, any> {
   const response = {};
   try {
     const { value: entityKeyId } = action;
-    if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getBasics.request(action.id, entityKeyId));
 
     const app :Map = yield select((state) => state.get('app', Map()));
@@ -144,7 +146,7 @@ function* updateBasicsWatcher() :Generator<any, any, any> {
 function* getBasicInformationWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
     const { value: personEKID } = action;
-    if (!isValidUuid(personEKID)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(personEKID)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getBasicInformation.request(action.id, personEKID));
 
     const appearanceRequest = call(

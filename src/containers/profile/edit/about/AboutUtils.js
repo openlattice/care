@@ -1,22 +1,24 @@
 // @flow
-import { Constants } from 'lattice';
-import { DataProcessingUtils } from 'lattice-fabricate';
+
 import {
   List,
   Map,
   getIn,
-  setIn
+  setIn,
 } from 'immutable';
+import { Constants } from 'lattice';
+import { DataProcessingUtils } from 'lattice-fabricate';
+import { ValidationUtils } from 'lattice-utils';
+import type { UUID } from 'lattice';
 
-import { getFormDataFromEntity } from '../../../../utils/DataUtils';
-import { APP_TYPES_FQNS } from '../../../../shared/Consts';
 import {
   COMPLETED_DT_FQN,
   DATE_TIME_FQN,
   NOTES_FQN,
   PERSON_ID_FQN,
 } from '../../../../edm/DataModelFqns';
-import { isValidUuid } from '../../../../utils/Utils';
+import { APP_TYPES_FQNS } from '../../../../shared/Consts';
+import { getFormDataFromEntity } from '../../../../utils/DataUtils';
 
 const {
   ASSIGNED_TO_FQN,
@@ -26,6 +28,7 @@ const {
   SUBJECT_OF_FQN
 } = APP_TYPES_FQNS;
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
+const { isValidUUID } = ValidationUtils;
 const { OPENLATTICE_ID_FQN } = Constants;
 
 const getOptionsFromEntityList = (entities :List<Map>, property :string) => {
@@ -70,10 +73,10 @@ const constructEntityIndexToIdMap = (
   assignedToEKID :UUID
 ) => {
   const entityIndexToIdMap = Map().withMutations((mutable) => {
-    if (isValidUuid(responsePlanEKID)) {
+    if (isValidUUID(responsePlanEKID)) {
       mutable.setIn([RESPONSE_PLAN_FQN.toString(), 0], responsePlanEKID);
     }
-    if (isValidUuid(assignedToEKID)) {
+    if (isValidUUID(assignedToEKID)) {
       mutable.setIn([ASSIGNED_TO_FQN.toString(), 0], assignedToEKID);
     }
   });

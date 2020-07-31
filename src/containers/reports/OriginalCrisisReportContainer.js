@@ -9,6 +9,7 @@ import { Map, getIn } from 'immutable';
 import { Constants } from 'lattice';
 import { AuthUtils } from 'lattice-auth';
 import { Button, Spinner } from 'lattice-ui-kit';
+import { ValidationUtils } from 'lattice-utils';
 import { DateTime } from 'luxon';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
@@ -42,7 +43,6 @@ import {
   setShowInvalidFields
 } from '../../utils/NavigationUtils';
 import { getLastFirstMiFromPerson, getPersonAge } from '../../utils/PersonUtils';
-import { isValidUuid } from '../../utils/Utils';
 import { POST_PROCESS_FIELDS, SUBJECT_INFORMATION } from '../../utils/constants/CrisisReportConstants';
 import { FORM_STEP_STATUS } from '../../utils/constants/FormConstants';
 import { STATE } from '../../utils/constants/StateConstants';
@@ -69,6 +69,7 @@ import {
 } from '../pages/subjectinformation/Reducer';
 
 const { OPENLATTICE_ID_FQN } = Constants;
+const { isValidUUID } = ValidationUtils;
 
 const CrisisReportWrapper = styled.div`
   width: 100%;
@@ -227,7 +228,7 @@ class OriginalCrisisReportContainer extends React.Component<Props, State> {
     const { actions, location } = this.props;
     const { state: result = Map() } = location;
     const selectedPerson = result.selectedPerson || Map();
-    const isNewPerson = !isValidUuid(getIn(selectedPerson, [OPENLATTICE_ID_FQN, 0]));
+    const isNewPerson = !isValidUUID(getIn(selectedPerson, [OPENLATTICE_ID_FQN, 0]));
     const age = getPersonAge(selectedPerson);
 
     actions.setInputValues({

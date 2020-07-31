@@ -13,7 +13,7 @@ import {
   List,
   Map,
   Set,
-  fromJS
+  fromJS,
 } from 'immutable';
 import { Constants } from 'lattice';
 import { AuthUtils } from 'lattice-auth';
@@ -25,6 +25,8 @@ import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
+import { Logger } from 'lattice-utils';
+import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
@@ -36,7 +38,6 @@ import {
   getResponsibleUserOptions,
 } from './StaffActions';
 
-import Logger from '../../utils/Logger';
 import * as FQN from '../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { getESIDFromApp, getStaffESId } from '../../utils/AppUtils';
@@ -53,8 +54,8 @@ const { searchEntitySetDataWorker } = SearchApiSagas;
 const { createOrMergeEntityData } = DataApiActions;
 const { createOrMergeEntityDataWorker } = DataApiSagas;
 
-const { getAllUsersOfRole } = OrganizationsApiActions;
-const { getAllUsersOfRoleWorker } = OrganizationsApiSagas;
+const { getUsersWithRole } = OrganizationsApiActions;
+const { getUsersWithRoleWorker } = OrganizationsApiSagas;
 
 const { STAFF_FQN } = APP_TYPES_FQNS;
 
@@ -142,13 +143,19 @@ function* getCurrentUserStaffMemberDataWorker(action :SequenceAction) :Generator
     const app = yield select((state) => state.get('app', Map()));
     const entitySetId :UUID = getStaffESId(app);
     const personIdPTId :UUID = yield select((state) => state.getIn(['edm', 'fqnToIdMap', FQN.PERSON_ID_FQN]));
-    const searchOptions :Object = {
+
+    const searchConstraints = {
+      constraints: [{
+        constraints: [{
+          searchTerm: getSearchTerm(personIdPTId, userInfo.email, true),
+        }],
+      }],
+      entitySetIds: [entitySetId],
       maxHits: 10000,
-      searchTerm: getSearchTerm(personIdPTId, userInfo.email, true),
       start: 0,
     };
 
-    response = yield call(searchEntitySetDataWorker, searchEntitySetData({ entitySetId, searchOptions }));
+    response = yield call(searchEntitySetDataWorker, searchEntitySetData(searchConstraints));
     if (response.error) throw response.error;
 
     const { data: { hits: [searchResult = undefined] = [] } = {} } = response;
@@ -196,39 +203,39 @@ function* getResponsibleUserOptionsWorker(action :SequenceAction) :Generator<any
     );
     const responsibleUserOptions = yield select((state) => state.getIn(['staff', 'responsibleUsers', 'data'], List()));
 
-    const searchOptions :Object = {
-      maxHits: 10000,
-      searchTerm: getSearchTerm(personIdPTId, '*', false),
-      start: 0,
-    };
-
     let responseData = responsibleUserOptions;
-    if (responsibleUserOptions.isEmpty()){
+    if (responsibleUserOptions.isEmpty()) {
       const staffResponse = yield call(
         searchEntitySetDataWorker,
         searchEntitySetData({
-          entitySetId,
-          searchOptions
+          constraints: [{
+            constraints: [{
+              searchTerm: getSearchTerm(personIdPTId, '*', false),
+            }],
+          }],
+          entitySetIds: [entitySetId],
+          maxHits: 10000,
+          start: 0,
         })
       );
-  
+
       if (staffResponse.error) throw staffResponse.error;
-  
+
       responseData = fromJS(staffResponse.data.hits);
       const requestUsers = roleIds.map((roleId) => call(
-        getAllUsersOfRoleWorker,
-        getAllUsersOfRole({
+        getUsersWithRoleWorker,
+        getUsersWithRole({
           organizationId,
           roleId
         })
       )).toJS();
-  
+
       const usersResponses = yield all(requestUsers);
-  
+
       usersResponses.forEach((usersResponse) => {
         if (usersResponse.error) throw usersResponse.error;
       });
-  
+
       const usersResponseData = fromJS(usersResponses);
       const authorizedUsers = Set().withMutations((mutable) => {
         usersResponseData.forEach((roleResponse) => {
@@ -238,7 +245,7 @@ function* getResponsibleUserOptionsWorker(action :SequenceAction) :Generator<any
           });
         });
       });
-  
+
       if (usersResponseData.size) {
         responseData = responseData
           .filter((staff) => {

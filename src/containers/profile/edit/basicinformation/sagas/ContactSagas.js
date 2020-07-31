@@ -9,13 +9,11 @@ import {
 import { List, Map, fromJS } from 'immutable';
 import { Constants } from 'lattice';
 import { DataProcessingUtils } from 'lattice-fabricate';
-import {
-  SearchApiActions,
-  SearchApiSagas,
-} from 'lattice-sagas';
+import { SearchApiActions, SearchApiSagas } from 'lattice-sagas';
+import { LangUtils, Logger, ValidationUtils } from 'lattice-utils';
+import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
 
-import Logger from '../../../../../utils/Logger';
 import * as FQN from '../../../../../edm/DataModelFqns';
 import {
   submitDataGraph,
@@ -29,8 +27,6 @@ import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
 import { getESIDFromApp } from '../../../../../utils/AppUtils';
 import { getFormDataFromEntity } from '../../../../../utils/DataUtils';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../../../utils/Errors';
-import { isDefined } from '../../../../../utils/LangUtils';
-import { isValidUuid } from '../../../../../utils/Utils';
 import {
   GET_CONTACT,
   SUBMIT_CONTACT,
@@ -41,7 +37,10 @@ import {
 } from '../actions/ContactActions';
 
 const LOG = new Logger('BasicInformationSagas');
+
+const { isDefined } = LangUtils;
 const { getPageSectionKey } = DataProcessingUtils;
+const { isValidUUID } = ValidationUtils;
 const { OPENLATTICE_ID_FQN } = Constants;
 const {
   CONTACTED_VIA_FQN,
@@ -57,7 +56,7 @@ function* getContactWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
     const { value: entityKeyId } = action;
     if (!isDefined(entityKeyId)) throw ERR_ACTION_VALUE_NOT_DEFINED;
-    if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
 
     yield put(getContact.request(action.id, entityKeyId));
 

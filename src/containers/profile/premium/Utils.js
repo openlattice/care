@@ -1,13 +1,8 @@
-import { List, Map } from 'immutable';
 // @flow
-import { Models } from 'lattice';
-import { DateTime } from 'luxon';
 
-import {
-  ARMED_WITH_WEAPON,
-  INJURED_PARTIES,
-  THREATENED_VIOLENCE,
-} from './constants';
+import { List, Map } from 'immutable';
+import { DateTime } from 'luxon';
+import type { FQN } from 'lattice';
 
 import {
   ARMED_WITH_WEAPON_FQN,
@@ -18,8 +13,6 @@ import {
   PERSON_INJURED_FQN,
   THREATENED_INDICATOR_FQN,
 } from '../../../edm/DataModelFqns';
-
-const { FullyQualifiedName } = Models;
 
 const incrementValueAtKey = (mutable :Map, key :string, value :boolean) => {
   if (value) {
@@ -32,7 +25,7 @@ const incrementValueAtKey = (mutable :Map, key :string, value :boolean) => {
   }
 };
 
-const countPropertyOccurrance = (reports :List<Map>, propertyTypeFqn :FullyQualifiedName) => Map()
+const countPropertyOccurrance = (reports :List<Map>, propertyTypeFqn :FQN) => Map()
   .withMutations((mutable) => {
     reports.forEach((report) => {
       const propertyValues = report.get(propertyTypeFqn, []);
@@ -44,7 +37,7 @@ const countPropertyOccurrance = (reports :List<Map>, propertyTypeFqn :FullyQuali
     });
   });
 
-const countCrisisCalls = (reports :List<Map>, timeFQN = DATE_TIME_OCCURRED_FQN) => {
+const countCrisisCalls = (reports :List<Map>, timeFQN :FQN = DATE_TIME_OCCURRED_FQN) => {
   let total = 0;
   let recent = 0;
   reports.forEach((report :Map) => {

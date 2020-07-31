@@ -1,9 +1,10 @@
 // @flow
 import { List, Map } from 'immutable';
 import { DataProcessingUtils } from 'lattice-fabricate';
+import type { UUID } from 'lattice';
 
-import { APP_TYPES_FQNS as APP } from '../../../../shared/Consts';
 import * as FQN from '../../../../edm/DataModelFqns';
+import { APP_TYPES_FQNS as APP } from '../../../../shared/Consts';
 import { getFormDataFromEntityArray } from '../../../../utils/DataUtils';
 
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;

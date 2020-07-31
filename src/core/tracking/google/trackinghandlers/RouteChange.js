@@ -5,11 +5,11 @@
 import isFunction from 'lodash/isFunction';
 import { Map } from 'immutable';
 import { AuthUtils } from 'lattice-auth';
+import { Logger } from 'lattice-utils';
 
-import Logger from '../../../../utils/Logger';
 import { GOOGLE_TRACKING_ID } from '../GoogleAnalytics';
 
-const LOG :Logger = new Logger('RouteChangeEventHandler');
+const LOG = new Logger('RouteChangeEventHandler');
 
 declare var gtag :?Function;
 type Action = {

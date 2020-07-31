@@ -1,15 +1,18 @@
 // @flow
+
+import { LangUtils } from 'lattice-utils';
 import type { Map } from 'immutable';
-import { isNonEmptyStringArray } from './LangUtils';
+
 import { IMAGE_DATA_FQN } from '../edm/DataModelFqns';
 
 const DATA_URL_PREFIX_REGEX = new RegExp(/^data:image\/.*base64,/);
 
+const { isNonEmptyArray, isNonEmptyString } = LangUtils;
+
 const removeDataUriPrefix = (value :string) => {
   const match = value.match(DATA_URL_PREFIX_REGEX);
 
-  // $FlowFixMe
-  if (isNonEmptyStringArray(match) && Array.isArray(match)) {
+  if (isNonEmptyArray(match) && match.every(isNonEmptyString)) {
     const dataUri = match[0];
     return value.slice(dataUri.length);
   }

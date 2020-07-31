@@ -11,7 +11,7 @@ import {
 import {
   List,
   Map,
-  fromJS
+  fromJS,
 } from 'immutable';
 import { Models, Types } from 'lattice';
 import {
@@ -20,7 +20,9 @@ import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
+import { LangUtils, Logger, ValidationUtils } from 'lattice-utils';
 import { DateTime } from 'luxon';
+import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
@@ -38,20 +40,19 @@ import {
 import { personFqnsByName, physicalAppearanceFqnsByName } from './constants';
 import { countCrisisCalls, countPropertyOccurrance, countSafetyIncidents } from './premium/Utils';
 
-import Logger from '../../utils/Logger';
 import * as FQN from '../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { getESIDFromApp } from '../../utils/AppUtils';
 import { simulateResponseData } from '../../utils/DataUtils';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
-import { isDefined } from '../../utils/LangUtils';
-import { isValidUuid } from '../../utils/Utils';
 import { BEHAVIOR_LABEL_MAP } from '../reports/crisis/schemas/v1/constants';
 
 const LOG = new Logger('ProfileSagas');
 
 const { DataGraphBuilder } = Models;
 const { UpdateTypes } = Types;
+const { isDefined } = LangUtils;
+const { isValidUUID } = ValidationUtils;
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
 const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
 const { createEntityAndAssociationData, getEntityData, updateEntityData } = DataApiActions;
@@ -69,7 +70,7 @@ function* getPhysicalAppearanceWorker(action :SequenceAction) :Generator<any, an
   const response = {};
   try {
     const { value: entityKeyId } = action;
-    if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
 
     yield put(getPhysicalAppearance.request(action.id, entityKeyId));
 
@@ -122,7 +123,7 @@ function* getPersonDataWorker(action :SequenceAction) :Generator<any, any, any> 
   const response = {};
   try {
     const { value: entityKeyId } = action;
-    if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getPersonData.request(action.id, entityKeyId));
 
     const app :Map = yield select((state) => state.get('app', Map()));
@@ -155,7 +156,7 @@ function* getPersonDataWatcher() :Generator<any, any, any> {
 function* getProfileReportsWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
     const { value: entityKeyId } = action;
-    if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
 
     yield put(getProfileReports.request(action.id, entityKeyId));
 
@@ -230,7 +231,7 @@ function* createPhysicalAppearanceWorker(action :SequenceAction) :Generator<any,
     const { appearanceProperties, personEKID } = value;
 
     if (!isDefined(appearanceProperties)) throw ERR_ACTION_VALUE_NOT_DEFINED;
-    if (!isValidUuid(personEKID) || !isPlainObject(appearanceProperties)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(personEKID) || !isPlainObject(appearanceProperties)) throw ERR_ACTION_VALUE_TYPE;
     yield put(createPhysicalAppearance.request(action.id, personEKID));
 
     const propertyTypesById :Map = yield select((state) => state.getIn(['edm', 'propertyTypesById']), Map());
@@ -298,7 +299,7 @@ function* updatePhysicalAppearanceWorker(action :SequenceAction) :Generator<any,
     const { value } :Object = action;
     const { appearanceEKID, appearanceProperties } = value;
     if (!isDefined(appearanceProperties)) throw ERR_ACTION_VALUE_NOT_DEFINED;
-    if (!isValidUuid(appearanceEKID) || !isPlainObject(appearanceProperties)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(appearanceEKID) || !isPlainObject(appearanceProperties)) throw ERR_ACTION_VALUE_TYPE;
     yield put(updatePhysicalAppearance.request(action.id));
 
     const propertyTypesById :Map = yield select((state) => state.getIn(['edm', 'propertyTypesById']), Map());
@@ -360,7 +361,7 @@ function* updateProfileAboutWorker(action :SequenceAction) :Generator<any, any, 
     const { data, personEKID, appearanceEKID } = value;
 
     if (!isDefined(data)) throw ERR_ACTION_VALUE_NOT_DEFINED;
-    if (!isValidUuid(personEKID)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(personEKID)) throw ERR_ACTION_VALUE_TYPE;
     yield put(updateProfileAbout.request(action.id, personEKID));
 
     const propertyTypesById :Map = yield select((state) => state.getIn(['edm', 'propertyTypesById']), Map());

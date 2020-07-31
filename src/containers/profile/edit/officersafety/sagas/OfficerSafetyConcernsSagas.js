@@ -13,13 +13,11 @@ import {
   getIn
 } from 'immutable';
 import { Constants } from 'lattice';
-import {
-  SearchApiActions,
-  SearchApiSagas
-} from 'lattice-sagas';
+import { SearchApiActions, SearchApiSagas } from 'lattice-sagas';
+import { LangUtils, Logger, ValidationUtils } from 'lattice-utils';
+import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
 
-import Logger from '../../../../../utils/Logger';
 import {
   deleteBulkEntities,
   submitDataGraph,
@@ -39,8 +37,6 @@ import {
   removeEntitiesFromEntityIndexToIdMap
 } from '../../../../../utils/DataUtils';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../../../utils/Errors';
-import { isDefined } from '../../../../../utils/LangUtils';
-import { isValidUuid } from '../../../../../utils/Utils';
 import { getResponsePlan } from '../../responseplan/ResponsePlanActions';
 import { getResponsePlanWorker } from '../../responseplan/ResponsePlanSagas';
 import {
@@ -58,6 +54,8 @@ import {
 import { constructEntityIndexToIdMap, constructFormData } from '../utils/OfficerSafetyConcernsUtils';
 
 const { OPENLATTICE_ID_FQN } = Constants;
+const { isDefined } = LangUtils;
+const { isValidUUID } = ValidationUtils;
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
 const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
 
@@ -74,7 +72,7 @@ const {
 function* getOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
     const { value: entityKeyId } = action;
-    if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
 
     yield put(getOfficerSafetyConcerns.request(action.id));
 
@@ -157,7 +155,7 @@ function* getOfficerSafetyConcernsWatcher() :Generator<any, any, any> {
 function* getOfficerSafetyWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
     const { value: entityKeyId } = action;
-    if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
 
     yield put(getOfficerSafety.request(action.id));
     let responsePlanEKID :Map = yield select((state) => state.getIn([
@@ -168,7 +166,7 @@ function* getOfficerSafetyWorker(action :SequenceAction) :Generator<any, any, an
       0
     ]));
 
-    if (!isValidUuid(responsePlanEKID)) {
+    if (!isValidUUID(responsePlanEKID)) {
       const responsePlanResponse = yield call(
         getResponsePlanWorker,
         getResponsePlan(entityKeyId)
@@ -220,7 +218,7 @@ function* submitOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<a
     // set blank response plan if created
     const responsePlanEKID = newEntityKeyIdsByEntitySetName.getIn([RESPONSE_PLAN_FQN, 0]);
 
-    if (isValidUuid(responsePlanEKID)) {
+    if (isValidUUID(responsePlanEKID)) {
       const responsePlanPayload = {
         responsePlan: fromJS({
           [OPENLATTICE_ID_FQN]: [responsePlanEKID]

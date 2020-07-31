@@ -8,21 +8,21 @@ import {
   put,
   select,
   takeEvery,
-  takeLatest
+  takeLatest,
 } from '@redux-saga/core/effects';
 import {
   List,
   Map,
   fromJS,
-  getIn
+  getIn,
 } from 'immutable';
 import { Constants } from 'lattice';
 import { DataProcessingUtils } from 'lattice-fabricate';
-import {
-  SearchApiActions,
-  SearchApiSagas,
-} from 'lattice-sagas';
+import { SearchApiActions, SearchApiSagas } from 'lattice-sagas';
+import { Logger } from 'lattice-utils';
 import { DateTime } from 'luxon';
+import type { UUID } from 'lattice';
+import type { WorkerResponse } from 'lattice-sagas';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
@@ -36,7 +36,6 @@ import {
   submitNewPerson,
 } from './PeopleActions';
 
-import Logger from '../../utils/Logger';
 import * as FQN from '../../edm/DataModelFqns';
 import { submitDataGraph } from '../../core/sagas/data/DataActions';
 import { submitDataGraphWorker } from '../../core/sagas/data/DataSagas';
@@ -61,8 +60,9 @@ const {
 } = APP_TYPES_FQNS;
 
 const { OPENLATTICE_ID_FQN } = Constants;
-const { executeSearch, searchEntityNeighborsWithFilter } = SearchApiActions;
-const { executeSearchWorker, searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
+const { searchEntitySetData, searchEntityNeighborsWithFilter } = SearchApiActions;
+const { searchEntitySetDataWorker, searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
+
 const LOG = new Logger('PeopleSagas');
 
 export function* getPeoplePhotosWorker(action :SequenceAction) :Generator<*, *, *> {
@@ -265,7 +265,7 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
       constraints.push(reportThresholdConstraint);
     }
 
-    const searchOptions = {
+    const searchConstraints = {
       entitySetIds: [peopleESID],
       maxHits,
       start,
@@ -276,18 +276,18 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
       }
     };
 
-    const { data, error } = yield call(
-      executeSearchWorker,
-      executeSearch({ searchOptions })
+    const response :WorkerResponse = yield call(
+      searchEntitySetDataWorker,
+      searchEntitySetData(searchConstraints)
     );
 
-    if (error) throw error;
+    if (response.error) throw response.error;
 
-    const hits = fromJS(data.hits);
+    const hits = fromJS(response.data.hits);
 
     const peopleEKIDs = hits.map((person) => person.getIn([OPENLATTICE_ID_FQN, 0]));
 
-    yield put(searchPeople.success(action.id, { hits, totalHits: data.numHits }));
+    yield put(searchPeople.success(action.id, { hits, totalHits: response.data.numHits }));
     if (!peopleEKIDs.isEmpty()) {
       yield put(getPeoplePhotos(peopleEKIDs));
       yield put(getRecentIncidents(peopleEKIDs));

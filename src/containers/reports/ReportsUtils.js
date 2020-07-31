@@ -1,8 +1,9 @@
-import { List, Map } from 'immutable';
 // @flow
+
+import { List, Map } from 'immutable';
+import { Logger } from 'lattice-utils';
 import { DateTime } from 'luxon';
 
-import Logger from '../../utils/Logger';
 import * as FQN from '../../edm/DataModelFqns';
 import { getLastFirstMiFromPerson } from '../../utils/PersonUtils';
 import {
