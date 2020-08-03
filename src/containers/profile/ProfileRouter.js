@@ -9,7 +9,6 @@ import {
   Switch,
 } from 'react-router';
 
-import HelplineContainer from './helpline/HelplineContainer';
 import PremiumProfileRouter from './premium/PremiumProfileRouter';
 import ProfileContainer from './ProfileContainer';
 
@@ -29,7 +28,6 @@ const ProfileRouter = ({ selectedOrganizationSettings } :Props) => {
 
   return (
     <Switch>
-      <Route component={HelplineContainer} path={`${PROFILE_PATH}/helpline`}/>
       <Route strict path={PROFILE_VIEW_PATH} component={profileComponent} />
       <Redirect to={HOME_PATH} />
     </Switch>
