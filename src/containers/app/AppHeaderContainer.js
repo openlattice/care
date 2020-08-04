@@ -79,6 +79,8 @@ const AppHeaderContainer = (props :Props) => {
   const v2 = appSettings.get('v2', false);
   /* <===== END LONG BEACH HACK =====> */
 
+  const hiddenFeatures = appSettings.get('hiddenFeatures', Map());
+
   const onChange = useCallback(({ value } :any) => {
     switchOrganization(value);
   }, [switchOrganization]);
@@ -99,7 +101,7 @@ const AppHeaderContainer = (props :Props) => {
           <FontAwesomeIcon size="lg" fixedWidth icon={faHome} />
           <NavLabel>Home</NavLabel>
         </NavLink>
-        <StyledNavLink to={REPORTS_PATH} hidden={isLongBeach}>
+        <StyledNavLink to={REPORTS_PATH} hidden={isLongBeach || hiddenFeatures.get('reports')}>
           <FontAwesomeIcon size="lg" fixedWidth icon={faFileAlt} />
           <NavLabel>Reports</NavLabel>
         </StyledNavLink>
@@ -121,20 +123,20 @@ const AppHeaderContainer = (props :Props) => {
           <NavLabel>Providers</NavLabel>
         </StyledNavLink>
         {/* <===== END LONG BEACH HACK =====> */}
-        <StyledNavLink to={SUBSCRIPTIONS_PATH} hidden={v2}>
+        <StyledNavLink to={SUBSCRIPTIONS_PATH} hidden={v2 || hiddenFeatures.get('subscriptions')}>
           <FontAwesomeIcon size="lg" fixedWidth icon={faBell} />
           <NavLabel>Subscriptions</NavLabel>
         </StyledNavLink>
-        <StyledNavLink to={DASHBOARD_PATH} hidden={isLongBeach}>
+        <StyledNavLink to={DASHBOARD_PATH} hidden={isLongBeach || hiddenFeatures.get('dashboard')}>
           <FontAwesomeIcon size="lg" fixedWidth icon={faUserChart} />
           <NavLabel>Dashboard</NavLabel>
         </StyledNavLink>
-        <StyledNavLink to={DOWNLOADS_PATH} hidden={isLongBeach}>
+        <StyledNavLink to={DOWNLOADS_PATH} hidden={isLongBeach || hiddenFeatures.get('downloads')}>
           <FontAwesomeIcon size="lg" fixedWidth icon={faDownload} />
           <NavLabel>Downloads</NavLabel>
         </StyledNavLink>
         <hr />
-        <StyledNavLink to={ISSUES_PATH} hidden={isLongBeach}>
+        <StyledNavLink to={ISSUES_PATH} hidden={isLongBeach || hiddenFeatures.get('issues')}>
           <FontAwesomeIcon size="lg" fixedWidth icon={faFileExclamation} />
           <NavLabel>Manage Issues</NavLabel>
         </StyledNavLink>
