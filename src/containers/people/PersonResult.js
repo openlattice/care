@@ -107,8 +107,6 @@ const PersonResult = (props :Props) => {
   const recentIncident = useSelector((store) => store
     .getIn(['people', 'recentIncidentsByEKID', 'data', personEKID, 'recentIncidentDT']));
 
-  const recentDate = (recentIncident && recentIncident.isValid) && recentIncident.toLocaleString(DateTime.DATE_SHORT);
-
   const isLoading = useSelector((store) => store
     .getIn(['people', 'recentIncidentsByEKID', 'fetchState']) !== RequestStates.SUCCESS);
 
@@ -131,6 +129,7 @@ const PersonResult = (props :Props) => {
   const dob :string = getDobFromPerson(result, '---');
   const sex = result.getIn([PERSON_SEX_FQN, 0]);
   const race = result.getIn([PERSON_RACE_FQN, 0]);
+  const recentDate = (recentIncident && recentIncident.isValid) && recentIncident.toLocaleString(DateTime.DATE_SHORT);
   const numSources = result.getIn([NUM_REPORTS_FOUND_IN_FQN, 0]);
 
   return (
