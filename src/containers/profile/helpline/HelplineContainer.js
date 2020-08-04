@@ -8,11 +8,9 @@ import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout'
 
 const HelplineContainer = () => {
   const organizationId = useSelector((state) => state.getIn(['app', 'selectedOrganizationId']));
-  console.log(organizationId);
   const [personId, setPersonId] = useState('');
   usePeopleRoute(setPersonId);
 
-  console.log(personId);
   return (
     <ContentOuterWrapper>
       <ContentWrapper>
