@@ -10,10 +10,12 @@ import {
   CardSegment,
   Spinner
 } from 'lattice-ui-kit';
+import { ValidationUtils } from 'lattice-utils';
 import { DateTime } from 'luxon';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { RequestStates } from 'redux-reqseq';
+import type { UUID } from 'lattice';
 import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
@@ -27,7 +29,6 @@ import { schema, uiSchema } from './schemas/OfficerSafetyConcernsSchemas';
 import { COMPLETED_DT_FQN, CONTEXT_FQN } from '../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
 import { reduceRequestStates } from '../../../../utils/StateUtils';
-import { isValidUuid } from '../../../../utils/Utils';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 
@@ -47,6 +48,7 @@ const {
   processAssociationEntityData,
   processEntityData,
 } = DataProcessingUtils;
+const { isValidUUID } = ValidationUtils;
 
 type Props = {
   actions :{
@@ -131,7 +133,7 @@ class OfficerSafetyConcernsForm extends Component<Props, State> {
     ];
 
     // if response plan doesn't exist, add new association
-    if (!isValidUuid(responsePlanEKID) && isValidUuid(personEKID)) {
+    if (!isValidUUID(responsePlanEKID) && isValidUUID(personEKID)) {
       associations.push(
         [SUBJECT_OF_FQN, personEKID, PEOPLE_FQN, 0, RESPONSE_PLAN_FQN, {
           [COMPLETED_DT_FQN.toString()]: [nowAsIsoString]
@@ -209,7 +211,7 @@ class OfficerSafetyConcernsForm extends Component<Props, State> {
     } = this.props;
 
     let finalFormData = formData;
-    if (!isValidUuid(responsePlanEKID) && isValidUuid(personEKID)) {
+    if (!isValidUUID(responsePlanEKID) && isValidUUID(personEKID)) {
       // modify formData to create a blank responsePlan if one doesn't already exist
       finalFormData = setIn(formData, [
         getPageSectionKey(1, 0),

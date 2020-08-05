@@ -19,7 +19,9 @@ import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
+import { Logger, ValidationUtils } from 'lattice-utils';
 import { DateTime } from 'luxon';
+import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
@@ -29,15 +31,14 @@ import {
   submitRecentInteraction,
 } from './RecentInteractionActions';
 
-import Logger from '../../../utils/Logger';
 import * as FQN from '../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS as APP } from '../../../shared/Consts';
 import { getESIDFromApp } from '../../../utils/AppUtils';
 import { getEntityKeyId } from '../../../utils/DataUtils';
 import { ERR_ACTION_VALUE_TYPE } from '../../../utils/Errors';
-import { isValidUuid } from '../../../utils/Utils';
 
 const { getPageSectionKey, getEntityAddressKey } = DataProcessingUtils;
+const { isValidUUID } = ValidationUtils;
 const { createAssociations } = DataApiActions;
 const { createAssociationsWorker } = DataApiSagas;
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
@@ -48,7 +49,7 @@ function* getRecentInteractionsWorker(action :SequenceAction) :Generator<any, an
   const response = {};
   try {
     const { value: entityKeyId } = action;
-    if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getRecentInteractions.request(action.id));
 
     const app :Map = yield select((state) => state.get('app', Map()));
@@ -138,7 +139,7 @@ function* submitRecentInteractionWorker(action :SequenceAction) :Generator<any, 
       (state) => state.getIn(['staff', 'currentUser', 'data', FQN.OPENLATTICE_ID_FQN, 0], '')
     );
 
-    if (!isValidUuid(staffEKID)) {
+    if (!isValidUUID(staffEKID)) {
       throw Error('staff entityKeyId is invalid');
     }
 

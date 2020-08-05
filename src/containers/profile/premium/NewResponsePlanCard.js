@@ -16,6 +16,7 @@ import {
   Colors,
   IconSplash
 } from 'lattice-ui-kit';
+import type { UUID } from 'lattice';
 
 import Accordion from '../../../components/accordion';
 import * as FQN from '../../../edm/DataModelFqns';

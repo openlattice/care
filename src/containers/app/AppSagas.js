@@ -24,6 +24,9 @@ import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
+import { Logger, ValidationUtils } from 'lattice-utils';
+import type { Saga } from '@redux-saga/core';
+import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
@@ -36,17 +39,16 @@ import {
   loadHospitals,
 } from './AppActions';
 
-import Logger from '../../utils/Logger';
 import * as Routes from '../../core/router/Routes';
 import { APP_DETAILS_FQN } from '../../edm/DataModelFqns';
 import { APP_NAME, APP_TYPES_FQNS } from '../../shared/Consts';
 import { ERR_ACTION_VALUE_TYPE, ERR_WORKER_SAGA } from '../../utils/Errors';
-import { isValidUuid } from '../../utils/Utils';
 import { getCurrentUserStaffMemberData } from '../staff/StaffActions';
 import { getCurrentUserStaffMemberDataWorker } from '../staff/StaffSagas';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 const { SecurableTypes } = Types;
+const { isValidUUID } = ValidationUtils;
 const { getApp, getAppConfigs, getAppTypes } = AppApiActions;
 const { getAppWorker, getAppConfigsWorker, getAppTypesWorker } = AppApiSagas;
 const { getEntityDataModelProjection, getAllPropertyTypes } = EntityDataModelApiActions;
@@ -70,12 +72,12 @@ const LOG = new Logger('AppSagas');
  * loadApp()
  */
 
-function* loadAppWatcher() :Generator<*, *, *> {
+function* loadAppWatcher() :Saga<*> {
 
   yield takeEvery(LOAD_APP, loadAppWorker);
 }
 
-function* loadAppWorker(action :SequenceAction) :Generator<*, *, *> {
+function* loadAppWorker(action :SequenceAction) :Saga<*> {
 
   const workerResponse :Object = {};
   try {
@@ -126,16 +128,21 @@ function* loadAppWorker(action :SequenceAction) :Generator<*, *, *> {
       });
     });
 
-    const searchOptions = {
-      start: 0,
+    const searchConstraints = (entitySetId :UUID) => ({
+      entitySetIds: [entitySetId],
+      constraints: [{
+        constraints: [{
+          searchTerm: '*'
+        }],
+      }],
       maxHits: 10000,
-      searchTerm: '*'
-    };
+      start: 0,
+    });
 
     const appSettingsRequests = appSettingsESIDByOrgId
       .valueSeq()
       .map((entitySetId) => (
-        call(searchEntitySetDataWorker, searchEntitySetData({ entitySetId, searchOptions }))
+        call(searchEntitySetDataWorker, searchEntitySetData(searchConstraints(entitySetId)))
       ));
 
     const orgIds = appSettingsESIDByOrgId.keySeq().toJS();
@@ -195,12 +202,12 @@ function* loadAppWorker(action :SequenceAction) :Generator<*, *, *> {
  * loadHospitals()
  */
 
-function* loadHospitalsWatcher() :Generator<*, *, *> {
+function* loadHospitalsWatcher() :Saga<*> {
 
   yield takeEvery(LOAD_HOSPITALS, loadHospitalsWorker);
 }
 
-function* loadHospitalsWorker(action :SequenceAction) :Generator<*, *, *> {
+function* loadHospitalsWorker(action :SequenceAction) :Saga<*> {
   const workerResponse = {};
 
   try {
@@ -233,16 +240,16 @@ function* loadHospitalsWorker(action :SequenceAction) :Generator<*, *, *> {
  * switchOrganization()
  */
 
-function* switchOrganizationWatcher() :Generator<*, *, *> {
+function* switchOrganizationWatcher() :Saga<*> {
 
   yield takeEvery(SWITCH_ORGANIZATION, switchOrganizationWorker);
 }
 
-function* switchOrganizationWorker(action :Object) :Generator<*, *, *> {
+function* switchOrganizationWorker(action :Object) :Saga<*> {
 
   try {
     const { value } = action;
-    if (!isValidUuid(value)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(value)) throw ERR_ACTION_VALUE_TYPE;
 
     const currentOrgId = yield select((state) => state.getIn(['app', 'selectedOrganizationId']));
     if (value !== currentOrgId) {
@@ -260,7 +267,7 @@ function* switchOrganizationWorker(action :Object) :Generator<*, *, *> {
  * initializeApplication()
  */
 
-function* initializeApplicationWorker(action :SequenceAction) :Generator<*, *, *> {
+function* initializeApplicationWorker(action :SequenceAction) :Saga<*> {
 
   try {
     yield put(initializeApplication.request(action.id));
@@ -315,7 +322,7 @@ function* initializeApplicationWorker(action :SequenceAction) :Generator<*, *, *
   }
 }
 
-function* initializeApplicationWatcher() :Generator<*, *, *> {
+function* initializeApplicationWatcher() :Saga<*> {
 
   yield takeEvery(INITIALIZE_APPLICATION, initializeApplicationWorker);
 }

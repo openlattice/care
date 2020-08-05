@@ -199,7 +199,6 @@ export function processForSubmit(state :Map<*, *>) :Object {
 
   newState = newState.set(POST_PROCESS_FIELDS.FORM_ID, formID);
 
-
   // handle arrestable offenses
   const arrestableOffense = state.get(ARRESTABLE_OFFENSES, List());
 

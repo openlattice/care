@@ -18,7 +18,7 @@ import {
   loadApp,
 } from './AppActions';
 
-const { FullyQualifiedName } = Models;
+const { FQN } = Models;
 
 const INITIAL_STATE :Map<*, *> = fromJS({
   actions: {
@@ -36,15 +36,7 @@ const INITIAL_STATE :Map<*, *> = fromJS({
   initializeState: RequestStates.STANDBY,
 });
 
-const getEntityTypePropertyTypes = (edm :Object, entityTypeId :string) :Object => {
-  const propertyTypesMap :Object = {};
-  edm.entityTypes[entityTypeId].properties.forEach((propertyTypeId :string) => {
-    propertyTypesMap[propertyTypeId] = edm.propertyTypes[propertyTypeId];
-  });
-  return propertyTypesMap;
-};
-
-export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Object) {
+export default function reducer(state :Map<*, *> = INITIAL_STATE, action :Object) {
 
   switch (action.type) {
 
@@ -82,7 +74,6 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
             appConfigs,
             appSettingsByOrgId,
             appTypes,
-            edm
           } = value;
           const organizations :Object = {};
 
@@ -105,9 +96,9 @@ export default function appReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
                 appTypes.forEach((appType) => {
                   const type = get(appType, 'type');
                   // .toString() is necessary when using setIn as immutable attempts to set the FQN instance as the key
-                  const appTypeFqn = new FullyQualifiedName(type).toString();
-                  const appTypeESID = getIn(appConfig, ['config', appTypeFqn, 'entitySetId']);
-                  mutable.setIn(['selectedOrgEntitySetIds', appTypeFqn], appTypeESID);
+                  const appTypeFQN = FQN.toString(type);
+                  const appTypeESID = getIn(appConfig, ['config', appTypeFQN, 'entitySetId']);
+                  mutable.setIn(['selectedOrgEntitySetIds', appTypeFQN], appTypeESID);
                 });
               }
             });

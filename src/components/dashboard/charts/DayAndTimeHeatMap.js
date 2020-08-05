@@ -36,7 +36,6 @@ const DayAndTimeHeatMap = ({ counts } :Props) => {
     return formattedTime;
   };
 
-
   return (
     <HeatMap
         title="Reports by Day of Week and Time"

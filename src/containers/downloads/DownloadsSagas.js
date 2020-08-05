@@ -15,11 +15,9 @@ import {
   OrderedSet,
   fromJS,
 } from 'immutable';
-import {
-  Constants,
-  EntityDataModelApi,
-} from 'lattice';
+import { Constants, EntityDataModelApi } from 'lattice';
 import { SearchApiActions, SearchApiSagas } from 'lattice-sagas';
+import { Logger } from 'lattice-utils';
 import { DateTime } from 'luxon';
 import type { SequenceAction } from 'redux-reqseq';
 
@@ -29,7 +27,6 @@ import {
 } from './DownloadsActionFactory';
 
 import FileSaver from '../../utils/FileSaver';
-import Logger from '../../utils/Logger';
 import * as FQN from '../../edm/DataModelFqns';
 import { getAppearsInESId, getPeopleESId, getReportESId } from '../../utils/AppUtils';
 import { getSearchTerm } from '../../utils/DataUtils';
@@ -172,21 +169,20 @@ function* downloadFormsWorker(action :SequenceAction) :Generator<*, *, *> {
       titleToFqn = titleToFqn.set(title, fqn);
     });
     const datetimePTID = edm.getIn(['fqnToIdMap', FQN.DATE_TIME_OCCURRED_FQN]);
-    const options = {
-      searchTerm: getSearchTerm(datetimePTID, `[${startDT.toString()} TO ${endDT.toString()}]`),
-      start: 0,
+
+    const searchConstraints = {
+      constraints: [{
+        constraints: [{
+          fuzzy: false,
+          searchTerm: getSearchTerm(datetimePTID, `[${startDT.toString()} TO ${endDT.toString()}]`),
+        }]
+      }],
+      entitySetIds: [reportESID],
       maxHits: 10000,
-      fuzzy: false
+      start: 0,
     };
 
-    const reportsResponse = yield call(
-      searchEntitySetDataWorker,
-      searchEntitySetData({
-        entitySetId: reportESID,
-        searchOptions: options
-      })
-    );
-
+    const reportsResponse = yield call(searchEntitySetDataWorker, searchEntitySetData(searchConstraints));
     if (reportsResponse.error) throw reportsResponse.error;
     const reportData = fromJS(reportsResponse.data);
 

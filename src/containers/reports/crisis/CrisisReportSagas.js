@@ -25,7 +25,9 @@ import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
+import { LangUtils, Logger, ValidationUtils } from 'lattice-utils';
 import { DateTime } from 'luxon';
+import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
@@ -73,8 +75,6 @@ import {
 } from './CrisisReportUtils';
 import { v1 } from './schemas';
 
-import Logger from '../../../utils/Logger';
-import * as FQN from '../../../edm/DataModelFqns';
 import {
   deleteBulkEntities,
   submitDataGraph,
@@ -85,18 +85,27 @@ import {
   submitDataGraphWorker,
   submitPartialReplaceWorker,
 } from '../../../core/sagas/data/DataSagas';
+import {
+  COMPLETED_DT_FQN,
+  NUM_REPORTS_FOUND_IN_FQN,
+  OBSERVED_BEHAVIOR_FQN,
+  OPENLATTICE_ID_FQN,
+} from '../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { getESIDFromApp, getESIDsFromApp } from '../../../utils/AppUtils';
-import { getEntityKeyId, getEntityKeyIdsFromList, groupNeighborsByFQNs, removeEntitiesFromEntityIndexToIdMap } from '../../../utils/DataUtils';
+import {
+  getEntityKeyId,
+  groupNeighborsByFQNs,
+  removeEntitiesFromEntityIndexToIdMap,
+} from '../../../utils/DataUtils';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../utils/Errors';
-import { isDefined } from '../../../utils/LangUtils';
 import { generateReviewSchema } from '../../../utils/SchemaUtils';
-import { isValidUuid } from '../../../utils/Utils';
 import { getFormSchema } from '../FormSchemasActions';
 import { getFormSchemaWorker } from '../FormSchemasSagas';
 
-const { FullyQualifiedName } = Models;
-
+const { FQN } = Models;
+const { isDefined } = LangUtils;
+const { isValidUUID } = ValidationUtils;
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
 const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
 const { getAuthorizationsWorker } = AuthorizationsApiSagas;
@@ -233,8 +242,8 @@ function* getReportsV2NeighborsWorker(action :SequenceAction) :Generator<any, an
         reportFQN,
       }
     } = action;
-    if (!(Array.isArray(reportEKIDs) && reportEKIDs.every(isValidUuid))
-      || !FullyQualifiedName.isValid(reportFQN)) throw ERR_ACTION_VALUE_TYPE;
+    if (!(Array.isArray(reportEKIDs) && reportEKIDs.every(isValidUUID))
+      || !FQN.isValid(reportFQN)) throw ERR_ACTION_VALUE_TYPE;
 
     yield put(getReportsV2Neighbors.request(action.id, reportEKIDs));
 
@@ -276,7 +285,7 @@ function* getReportsV2NeighborsWorker(action :SequenceAction) :Generator<any, an
       // check observed behavior property access as proxy for all clinician read permissions
       const behaviorESID = getESIDFromApp(app, BEHAVIOR_CLINICIAN_FQN);
       const observedBehaviorPTID :UUID = yield select(
-        (state) => state.getIn(['edm', 'fqnToIdMap', FQN.OBSERVED_BEHAVIOR_FQN])
+        (state) => state.getIn(['edm', 'fqnToIdMap', OBSERVED_BEHAVIOR_FQN])
       );
 
       const accessCheck = [{
@@ -349,7 +358,7 @@ function* getSubjectOfIncidentWorker(action :SequenceAction) :Generator<any, any
   const response = {};
   try {
     const { value: incidentEKID } = action;
-    if (!isValidUuid(incidentEKID)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(incidentEKID)) throw ERR_ACTION_VALUE_TYPE;
 
     yield put(getSubjectOfIncident.request(action.id, incidentEKID));
     const app = yield select((state) => state.get('app', Map()));
@@ -401,7 +410,7 @@ function* getLocationOfIncidentWorker(action :SequenceAction) :Generator<any, an
 
   try {
     const { value: incidentEKID } = action;
-    if (!isValidUuid(incidentEKID)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(incidentEKID)) throw ERR_ACTION_VALUE_TYPE;
 
     yield put(getLocationOfIncident.request(action.id, incidentEKID));
     const app = yield select((state) => state.get('app', Map()));
@@ -514,7 +523,7 @@ function* getCrisisReportV2Worker(action :SequenceAction) :Generator<any, any, a
       }
     } = action;
 
-    if (!isValidUuid(reportEKID) || !FullyQualifiedName.isValid(reportFQN)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(reportEKID) || !FQN.isValid(reportFQN)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getCrisisReportV2.request(action.id));
 
     const app :Map = yield select((state) => state.get('app', Map()));
@@ -547,12 +556,10 @@ function* getCrisisReportV2Worker(action :SequenceAction) :Generator<any, any, a
     const neighbors = neighborsResponse.data.get(reportEKID);
     const appTypeFqnsByIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds']).flip());
     const neighborsByFQN = groupNeighborsByFQNs(neighbors, appTypeFqnsByIds);
-    const incidentEKID = neighborsByFQN.getIn([
-      INCIDENT_FQN, 0, 'neighborDetails', FQN.OPENLATTICE_ID_FQN, 0
-    ]);
+    const incidentEKID = neighborsByFQN.getIn([INCIDENT_FQN, 0, 'neighborDetails', OPENLATTICE_ID_FQN, 0]);
     const chargeEKIDs = neighborsByFQN
       .get(CHARGE_FQN, List())
-      .map((charge) => charge.getIn(['neighborDetails', FQN.OPENLATTICE_ID_FQN, 0]))
+      .map((charge) => charge.getIn(['neighborDetails', OPENLATTICE_ID_FQN, 0]))
       .toJS();
     const reporterData = neighborsByFQN.getIn([STAFF_FQN, 0]);
 
@@ -619,14 +626,14 @@ function* updatePersonReportCountWorker(action :SequenceAction) :Generator<any, 
   try {
     if (!isPlainObject(action.value)) throw ERR_ACTION_VALUE_TYPE;
     const { entityKeyId, count } = action.value;
-    if (!isValidUuid(entityKeyId) || !Number.isInteger(count)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(entityKeyId) || !Number.isInteger(count)) throw ERR_ACTION_VALUE_TYPE;
 
     yield put(updatePersonReportCount.request(action.id));
 
     const edm :Map = yield select((state) => state.get('edm'));
     const app :Map = yield select((state) => state.get('app'), Map());
     const peopleESID :UUID = getESIDFromApp(app, PEOPLE_FQN);
-    const numReportsPTID :UUID = edm.getIn(['fqnToIdMap', FQN.NUM_REPORTS_FOUND_IN_FQN]);
+    const numReportsPTID :UUID = edm.getIn(['fqnToIdMap', NUM_REPORTS_FOUND_IN_FQN]);
 
     const updateData = {
       entityData: {
@@ -674,7 +681,7 @@ function* submitCrisisReportV2Worker(action :SequenceAction) :Generator<any, any
     const now = DateTime.local().toISO();
     const timestampedFormData = setIn(
       formData,
-      [getPageSectionKey(2, 1), getEntityAddressKey(0, reportFQN, FQN.COMPLETED_DT_FQN)],
+      [getPageSectionKey(2, 1), getEntityAddressKey(0, reportFQN, COMPLETED_DT_FQN)],
       [now]
     );
 
@@ -715,7 +722,7 @@ function* submitCrisisReportV2Worker(action :SequenceAction) :Generator<any, any
 
     // update count after submission of new incident
     if (incident.isEmpty()) {
-      const count = selectedPerson.getIn([FQN.NUM_REPORTS_FOUND_IN_FQN, 0], 0) + 1;
+      const count = selectedPerson.getIn([NUM_REPORTS_FOUND_IN_FQN, 0], 0) + 1;
       yield call(
         updatePersonReportCountWorker,
         updatePersonReportCount({
@@ -779,7 +786,7 @@ function* submitCrisisReportWorker(action :SequenceAction) :Generator<any, any, 
     yield put(submitCrisisReport.success(action.id));
 
     // update count after submission success
-    const count = selectedPerson.getIn([FQN.NUM_REPORTS_FOUND_IN_FQN, 0], 0) + 1;
+    const count = selectedPerson.getIn([NUM_REPORTS_FOUND_IN_FQN, 0], 0) + 1;
     yield call(
       updatePersonReportCountWorker,
       updatePersonReportCount({
@@ -809,8 +816,8 @@ function* getReportsNeighborsWorker(action :SequenceAction) :Generator<any, any,
         reportFQN,
       }
     } = action;
-    if (!(Array.isArray(reportEKIDs) && reportEKIDs.every(isValidUuid))
-      || !FullyQualifiedName.isValid(reportFQN)) throw ERR_ACTION_VALUE_TYPE;
+    if (!(Array.isArray(reportEKIDs) && reportEKIDs.every(isValidUUID))
+      || !FQN.isValid(reportFQN)) throw ERR_ACTION_VALUE_TYPE;
 
     yield put(getReportsNeighbors.request(action.id, reportEKIDs));
 
@@ -873,7 +880,7 @@ function* getCrisisReportWorker(action :SequenceAction) :Generator<any, any, any
       }
     } = action;
 
-    if (!isValidUuid(reportEKID) || !FullyQualifiedName.isValid(reportFQN)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(reportEKID) || !FQN.isValid(reportFQN)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getCrisisReport.request(action.id));
 
     const app :Map = yield select((state) => state.get('app', Map()));

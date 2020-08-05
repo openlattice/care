@@ -6,10 +6,11 @@ import React, { Component } from 'react';
 import type { ComponentType, ElementProps, Node } from 'react';
 
 import { CardSegment } from 'lattice-ui-kit';
+import { LangUtils } from 'lattice-utils';
 
 import AccordionSection from './AccordionSection';
 
-import { isDefined } from '../../utils/LangUtils';
+const { isDefined } = LangUtils;
 
 type ChildProps = {
   defaultOpen :boolean;

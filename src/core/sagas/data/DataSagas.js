@@ -10,6 +10,8 @@ import {
 } from '@redux-saga/core/effects';
 import { Models, Types } from 'lattice';
 import { DataApiActions, DataApiSagas } from 'lattice-sagas';
+import { LangUtils, Logger, ValidationUtils } from 'lattice-utils';
+import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
@@ -23,18 +25,18 @@ import {
   submitPartialReplace,
 } from './DataActions';
 
-import Logger from '../../../utils/Logger';
 import {
   ERR_ACTION_VALUE_NOT_DEFINED,
   ERR_ACTION_VALUE_TYPE,
   ERR_WORKER_SAGA,
 } from '../../../utils/Errors';
-import { isDefined } from '../../../utils/LangUtils';
-import { isValidUuid } from '../../../utils/Utils';
 
 const LOG = new Logger('DataSagas');
+
 const { DataGraphBuilder } = Models;
 const { UpdateTypes, DeleteTypes } = Types;
+const { isDefined } = LangUtils;
+const { isValidUUID } = ValidationUtils;
 const {
   createAssociations,
   createEntityAndAssociationData,
@@ -227,7 +229,7 @@ function* createOrReplaceAssociationWorker(action :SequenceAction) :Generator<an
 
     const { association, entityKeyId, entitySetId } = value;
 
-    if (isValidUuid(entityKeyId) && isValidUuid(entitySetId)) {
+    if (isValidUUID(entityKeyId) && isValidUUID(entitySetId)) {
       const deleteResponse = yield call(
         deleteEntityDataWorker,
         deleteEntityData({

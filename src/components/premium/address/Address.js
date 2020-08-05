@@ -1,7 +1,10 @@
 // @flow
 import React from 'react';
+
 import styled from 'styled-components';
-import { isEmptyString } from '../../../utils/LangUtils';
+import { LangUtils } from 'lattice-utils';
+
+const { isEmptyString } = LangUtils;
 
 const H2 = styled.h2`
   font-size: 1rem;

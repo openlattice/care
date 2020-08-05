@@ -152,7 +152,7 @@ class SubjectInformation extends Component<Props> {
               <h1>Person Information</h1>
               {
                 (!disabled && isCreatingNewPerson)
-                && <Button mode="subtle" onClick={actions.clearSubjectInformation}>Clear Fields</Button>
+                && <Button variant="text" onClick={actions.clearSubjectInformation}>Clear Fields</Button>
               }
             </HeaderWithClearButton>
           </Header>
