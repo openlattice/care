@@ -39,7 +39,6 @@ const DatePickerWrapper = styled.div`
   margin: 10px;
 `;
 
-
 const DateTimeRange = ({
   startDate,
   endDate,

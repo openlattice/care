@@ -11,14 +11,14 @@ type Props = {
   encampmentEKID :UUID;
 };
 
-const EncampmentOccupantsModal = ({ encampmentEKID, ...props } :Props) => {
+const EncampmentOccupantsModal = ({ encampmentEKID, ...props } :Props) =>
   /* eslint-disable react/jsx-props-no-spreading */
-  return (
+  (
     <Modal {...props} textTitle="Occupants">
       <EncampmentOccupants encampmentEKID={encampmentEKID} />
     </Modal>
-  );
+  )
   /* eslint-enable */
-};
+;
 
 export default EncampmentOccupantsModal;

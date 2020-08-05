@@ -78,7 +78,6 @@ const NO = 'No';
 const UNKNOWN = 'Unknown';
 const NA = 'N/A';
 
-
 const YES_NO_UNKNOWN = [
   YES,
   NO,

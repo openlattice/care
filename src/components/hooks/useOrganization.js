@@ -22,5 +22,4 @@ const useOrganization = () :Tuple => {
   return [selectedOrganizationId, isLoading, changeOrganization];
 };
 
-
 export default useOrganization;

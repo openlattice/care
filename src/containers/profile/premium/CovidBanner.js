@@ -7,13 +7,11 @@ type Props = {
   recentSymptoms :boolean
 };
 
-const CovidBanner = ({ recentSymptoms } :Props) => {
-  return (
-    <Banner mode="warning" isOpen={recentSymptoms}>
-      Recent COVID-19 symptoms
-    </Banner>
-  );
-};
+const CovidBanner = ({ recentSymptoms } :Props) => (
+  <Banner mode="warning" isOpen={recentSymptoms}>
+    Recent COVID-19 symptoms
+  </Banner>
+);
 
 CovidBanner.defaultProps = {
   recentSymptoms: false

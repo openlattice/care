@@ -24,7 +24,7 @@ const Helpline = () => {
             match={match} />
       </ContentWrapper>
     </ContentOuterWrapper>
-  )
+  );
 };
 
 export default Helpline;

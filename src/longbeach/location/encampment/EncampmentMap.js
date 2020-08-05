@@ -34,7 +34,6 @@ import { COORDS, MAP_STYLE } from '../../map/constants';
 
 const { GREENS } = Colors;
 
-
 declare var __MAPBOX_TOKEN__;
 
 const { useBoolean } = Hooks;

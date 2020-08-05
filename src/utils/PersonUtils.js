@@ -35,7 +35,6 @@ const getDobFromPerson = (person :Map | Object, invalidValue :any = '') :string 
   return getDateShortFromIsoDate(dobStr, invalidValue);
 };
 
-
 const getPersonAge = (person :Map | Object, asNumber :boolean = false, invalidValue :any = '') => {
   const dobStr = getIn(person, [FQN.PERSON_DOB_FQN, 0], '');
   return getAgeFromIsoDate(dobStr, asNumber, invalidValue);
