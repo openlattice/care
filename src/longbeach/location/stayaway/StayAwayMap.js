@@ -1,7 +1,7 @@
 // @flow
 import React, { useEffect, useMemo, useReducer } from 'react';
 
-import ReactMapboxGl, { ScaleControl } from 'react-mapbox-gl';
+import ReactMapboxGl from 'react-mapbox-gl';
 import { List } from 'immutable';
 import { useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
@@ -163,9 +163,6 @@ const StayAwayMap = (props :Props) => {
         fitBoundsOptions={fitBoundsOptions}
         style={MAP_STYLE.DEFAULT}
         zoom={zoom}>
-      <ScaleControl
-          position="bottom-right"
-          measurement="mi" />
       <CurrentPositionLayer position={currentPosition} />
       {
         selectedFeature && (

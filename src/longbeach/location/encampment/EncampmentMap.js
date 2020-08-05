@@ -222,10 +222,6 @@ const EncampmentMap = (props :Props) => {
         style={MAP_STYLE.DEFAULT}
         onMoveEnd={handleMoveEnd}
         zoom={zoom}>
-      <ScaleControl
-          style={{ maxWidth: '55%' }}
-          position="bottom-left"
-          measurement="mi" />
       <CurrentPositionLayer position={currentPosition} />
       {
         selectedFeature && (
