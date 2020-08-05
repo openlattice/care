@@ -244,7 +244,6 @@ function* searchLBLocationsWorker(action :SequenceAction) :Generator<any, any, a
     yield put(searchLBLocations.request(action.id, searchInputs));
 
     const app = yield select((state) => state.get('app', Map()));
-    // TODO: Change this to STAY_AWAY_LOCATION when demo data is available
     const locationESID = getESIDFromApp(app, STAY_AWAY_LOCATION_FQN);
     const locationCoordinatesPTID :UUID = yield select((state) => state
       .getIn(['edm', 'fqnToIdMap', FQN.LOCATION_COORDINATES_FQN]));
