@@ -70,7 +70,6 @@ const ProfileResult = (props :Props) => {
     }
   };
 
-
   return (
     <Card onClick={handleClick}>
       <CardSegment vertical={false}>

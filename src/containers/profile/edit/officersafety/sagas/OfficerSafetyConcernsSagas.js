@@ -151,7 +151,6 @@ function* getOfficerSafetyConcernsWatcher() :Generator<any, any, any> {
   yield takeLatest(GET_OFFICER_SAFETY_CONCERNS, getOfficerSafetyConcernsWorker);
 }
 
-
 function* getOfficerSafetyWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
     const { value: entityKeyId } = action;
@@ -176,7 +175,6 @@ function* getOfficerSafetyWorker(action :SequenceAction) :Generator<any, any, an
 
       responsePlanEKID = getIn(responsePlanResponse.data, [OPENLATTICE_ID_FQN, 0]);
     }
-
 
     if (responsePlanEKID) {
       yield call(
@@ -227,7 +225,6 @@ function* submitOfficerSafetyConcernsWorker(action :SequenceAction) :Generator<a
         formData: Map(),
         interactionStrategies: List()
       };
-
 
       yield put({
         type: getResponsePlan.SUCCESS,

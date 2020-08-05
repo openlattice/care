@@ -161,9 +161,13 @@ const PersonResult = (props :Props) => {
           <BigButton color="secondary" onClick={handleViewProfile}>
             View Profile
           </BigButton>
-          <Button onClick={handleClick}>
-            New Report
-          </Button>
+          {
+            showDetails && (
+              <Button onClick={handleClick}>
+                New Report
+              </Button>
+            )
+          }
         </Actions>
       </StyledSegment>
     </Card>

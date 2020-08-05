@@ -23,5 +23,4 @@ const IssuesContainer = () => (
   </ContentOuterWrapper>
 );
 
-
 export default IssuesContainer;

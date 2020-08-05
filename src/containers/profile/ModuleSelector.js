@@ -4,14 +4,16 @@ import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { faChevronDown } from '@fortawesome/pro-light-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Menu, MenuItem, MenuList } from 'lattice-ui-kit';
+import {
+  Button, Menu, MenuItem, MenuList
+} from 'lattice-ui-kit';
 import { useDispatch } from 'react-redux';
 import { useRouteMatch } from 'react-router';
 
 import DropdownButton from '../../components/buttons/DropdownButton';
 import { useGoToPath } from '../../components/hooks';
 import { PROFILE_ID_PARAM, PROFILE_ID_PATH, PROFILE_VIEW_PATH } from '../../core/router/Routes';
-import { goToPath } from '../../core/router/RoutingActions'
+import { goToPath } from '../../core/router/RoutingActions';
 
 const PROFILE_MODULES = [
   {
@@ -22,7 +24,7 @@ const PROFILE_MODULES = [
     label: 'Helpline',
     path: '/helpline'
   },
-]
+];
 
 const Wrapper = styled.div`
   display: flex;
@@ -63,7 +65,9 @@ const ModuleSelector = ({ title } :Props) => {
           aria-controls="simple-menu"
           aria-haspopup="true"
           endIcon={chevron}
-          onClick={handleClick}>{title}</Button>
+          onClick={handleClick}>
+        {title}
+      </Button>
       <Menu
           id="module-menu"
           anchorEl={anchorEl}
@@ -87,7 +91,7 @@ const ModuleSelector = ({ title } :Props) => {
         ))}
       </Menu>
     </Wrapper>
-  )
+  );
 };
 
 export default ModuleSelector;

@@ -395,7 +395,6 @@ const PERSON_SSN_LAST_4_FQN = FQN.of('general.ssnlast4');
 const PERSON_SUFFIX_FQN = FQN.of('nc.PersonSuffix');
 const PERSON_WEIGHT_FQN = FQN.of('nc.PersonWeightMeasure');
 
-
 export {
   PERSON_DOB_FQN,
   PERSON_ETHNICITY_FQN,

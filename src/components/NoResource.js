@@ -24,7 +24,6 @@ const ErrorWrapper = styled.div`
   }
 `;
 
-
 type Props = {
   message :string;
 }
