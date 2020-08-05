@@ -1,11 +1,10 @@
 import styled, { css } from 'styled-components';
-import { Colors, StyleUtils } from 'lattice-ui-kit';
+import { Colors } from 'lattice-ui-kit';
 
 import { APP_CONTAINER_WIDTH } from '../../core/style/Sizes';
 import { behaviorItemSkeleton, bulletsSkeleton } from '../skeletons';
 
 const { NEUTRALS } = Colors;
-const { media } = StyleUtils;
 
 export const ContentOuterWrapper = styled.div`
   display: flex;
@@ -18,10 +17,7 @@ const getContentPadding = ({ padding }) => {
     return null;
   }
   return css`
-    padding: 30px;
-    ${media.phone`
-      padding: 10px;
-    `}
+    padding: 15px;
   `;
 };
 

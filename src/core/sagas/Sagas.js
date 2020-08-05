@@ -42,7 +42,6 @@ import * as ReportsSagas from '../../containers/reports/ReportsSagas';
 import * as ResponsePlanSagas from '../../containers/profile/edit/responseplan/ResponsePlanSagas';
 import * as RoutingSagas from '../router/RoutingSagas';
 import * as ScarsMarksTattoosSagas from '../../containers/profile/edit/basicinformation/sagas/ScarsMarksTattoosSagas';
-import * as SearchSagas from '../../containers/search/SearchSagas';
 import * as StaffSagas from '../../containers/staff/StaffSagas';
 import * as SubscriptionSagas from '../../containers/subscriptions/SubscriptionSagas';
 import * as SymptomsReportSagas from '../../containers/reports/symptoms/SymptomsReportSagas';
@@ -180,9 +179,6 @@ export default function* sagas() :Generator<*, *, *> {
     fork(IssuesSagas.getAllIssuesWatcher),
     fork(IssuesSagas.getMyOpenIssuesWatcher),
     fork(IssuesSagas.getReportedByMeWatcher),
-
-    // SearchSagas
-    fork(SearchSagas.searchConsumersWatcher),
 
     /* <===== BEGIN LONG BEACH HACK =====> */
     fork(LongBeachPeopleSagas.searchLBPeopleWatcher),

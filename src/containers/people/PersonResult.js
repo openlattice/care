@@ -20,7 +20,7 @@ import { RequestStates } from 'redux-reqseq';
 
 import IconDetail from '../../components/premium/styled/IconDetail';
 import Portrait from '../../components/portrait/Portrait';
-import { useGoToPath } from '../../components/hooks';
+import { useAppSettings, useGoToPath } from '../../components/hooks';
 import {
   PROFILE_ID_PATH,
   PROFILE_VIEW_PATH,
@@ -107,10 +107,13 @@ const PersonResult = (props :Props) => {
   const recentIncident = useSelector((store) => store
     .getIn(['people', 'recentIncidentsByEKID', 'data', personEKID, 'recentIncidentDT']));
 
-  const recentDate = (recentIncident && recentIncident.isValid) && recentIncident.toLocaleString(DateTime.DATE_SHORT);
-
   const isLoading = useSelector((store) => store
     .getIn(['people', 'recentIncidentsByEKID', 'fetchState']) !== RequestStates.SUCCESS);
+
+  const settings = useAppSettings();
+  const profileModule = settings.get('profileModule', 'crisis');
+
+  const showDetails = profileModule !== 'helpline';
 
   const goToProfile = useGoToPath(PROFILE_VIEW_PATH.replace(PROFILE_ID_PATH, personEKID));
   const dispatch = useDispatch();
@@ -131,6 +134,7 @@ const PersonResult = (props :Props) => {
   const dob :string = getDobFromPerson(result, '---');
   const sex = result.getIn([PERSON_SEX_FQN, 0]);
   const race = result.getIn([PERSON_RACE_FQN, 0]);
+  const recentDate = (recentIncident && recentIncident.isValid) && recentIncident.toLocaleString(DateTime.DATE_SHORT);
   const numSources = result.getIn([NUM_REPORTS_FOUND_IN_FQN, 0]);
 
   return (
@@ -143,8 +147,14 @@ const PersonResult = (props :Props) => {
             <IconDetail content={dob} icon={faBirthdayCake} isLoading={isLoading} />
             <IconDetail content={sex} icon={faVenusMars} isLoading={isLoading} />
             <IconDetail content={race} icon={faUser} isLoading={isLoading} />
-            <IconDetail content={recentDate} icon={faHistory} isLoading={isLoading} />
-            <IconDetail content={numSources} icon={faFileExclamation} isLoading={isLoading} />
+            {
+              showDetails && (
+                <>
+                  <IconDetail content={recentDate} icon={faHistory} isLoading={isLoading} />
+                  <IconDetail content={numSources} icon={faFileExclamation} isLoading={isLoading} />
+                </>
+              )
+            }
           </Details>
         </FlexRow>
         <Actions>
