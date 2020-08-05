@@ -2,6 +2,7 @@
  * @flow
  */
 
+import isPlainObject from 'lodash/isPlainObject';
 import {
   all,
   call,
@@ -16,10 +17,7 @@ import {
   OrderedMap,
   fromJS
 } from 'immutable';
-import {
-  Constants,
-  Types
-} from 'lattice';
+import { Constants, Types } from 'lattice';
 import { DataProcessingUtils } from 'lattice-fabricate';
 import {
   DataApiActions,
@@ -27,8 +25,10 @@ import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
-import { isPlainObject } from 'lodash';
+import { LangUtils, Logger, ValidationUtils } from 'lattice-utils';
 import { DateTime } from 'luxon';
+import type { UUID } from 'lattice';
+import type { WorkerResponse } from 'lattice-sagas';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
@@ -57,7 +57,6 @@ import { updatePersonReportCount } from './crisis/CrisisActions';
 import { updatePersonReportCountWorker } from './crisis/CrisisReportSagas';
 import { BEHAVIOR_LABEL_MAP } from './crisis/schemas/v1/constants';
 
-import Logger from '../../utils/Logger';
 import * as FQN from '../../edm/DataModelFqns';
 import { BHR_CONFIG, PEOPLE_CONFIG } from '../../config/formconfig/CrisisReportConfig';
 import { submitDataGraph } from '../../core/sagas/data/DataActions';
@@ -74,8 +73,6 @@ import {
 } from '../../utils/AppUtils';
 import { getEntityKeyId, getSearchTerm } from '../../utils/DataUtils';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
-import { isDefined } from '../../utils/LangUtils';
-import { isValidUuid } from '../../utils/Utils';
 import { DISPOSITION, POST_PROCESS_FIELDS } from '../../utils/constants/CrisisReportConstants';
 import { setInputValues as setDispositionData } from '../pages/disposition/ActionFactory';
 import { setInputValues as setNatureOfCrisisData } from '../pages/natureofcrisis/ActionFactory';
@@ -96,7 +93,9 @@ import {
 } from '../profile/actions/ReportActions';
 import { countCrisisCalls, countPropertyOccurrance } from '../profile/premium/Utils';
 
+const { isDefined } = LangUtils;
 const { processAssociationEntityData } = DataProcessingUtils;
+const { isValidUUID } = ValidationUtils;
 
 const {
   APPEARS_IN_FQN,
@@ -135,11 +134,11 @@ const {
   updateEntityDataWorker,
 } = DataApiSagas;
 const {
-  executeSearch,
+  searchEntitySetData,
   searchEntityNeighborsWithFilter,
 } = SearchApiActions;
 const {
-  executeSearchWorker,
+  searchEntitySetDataWorker,
   searchEntityNeighborsWithFilterWorker,
 } = SearchApiSagas;
 
@@ -169,7 +168,7 @@ function* deleteReportWorker(action :SequenceAction) :Generator<*, *, *> {
 
   try {
     const { reportEKID, person } = action.value;
-    if (!isValidUuid(reportEKID)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(reportEKID)) throw ERR_ACTION_VALUE_TYPE;
 
     yield put(deleteReport.request(action.id, reportEKID));
 
@@ -220,7 +219,7 @@ function* getReportWorker(action :SequenceAction) :Generator<*, *, *> {
   try {
     const { value: reportEKID } = action;
     if (!isDefined(reportEKID)) throw ERR_ACTION_VALUE_NOT_DEFINED;
-    if (!isValidUuid(reportEKID)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(reportEKID)) throw ERR_ACTION_VALUE_TYPE;
 
     yield put(getReport.request(action.id, reportEKID));
 
@@ -358,7 +357,7 @@ function* getReportsByDateRangeV2Worker(action :SequenceAction) :Generator<*, *,
     const searchTerm = getSearchTerm(datetimePTID, `[${startTerm} TO ${endTerm}]`);
 
     // search for reports within date range
-    const searchOptions = {
+    const searchConstraints = {
       entitySetIds: [reportESID],
       start,
       maxHits,
@@ -379,14 +378,14 @@ function* getReportsByDateRangeV2Worker(action :SequenceAction) :Generator<*, *,
       }
     };
 
-    const { data, error } = yield call(
-      executeSearchWorker,
-      executeSearch({ searchOptions })
+    const response :WorkerResponse = yield call(
+      searchEntitySetDataWorker,
+      searchEntitySetData(searchConstraints)
     );
 
-    if (error) throw error;
+    if (response.error) throw response.error;
 
-    const { hits, numHits } = data;
+    const { hits, numHits } = response.data;
     const reportData = fromJS(hits);
 
     const reportEKIDs = reportData.map((report) => report.getIn([OPENLATTICE_ID_FQN, 0])).toJS();
@@ -567,7 +566,7 @@ function* getReportsByDateRangeWorker(action :SequenceAction) :Generator<*, *, *
     const searchTerm = getSearchTerm(datetimePTID, `[${startTerm} TO ${endTerm}]`);
 
     // search for reports within date range
-    const searchOptions = {
+    const searchConstraints = {
       entitySetIds: [entitySetId],
       start,
       maxHits,
@@ -588,14 +587,14 @@ function* getReportsByDateRangeWorker(action :SequenceAction) :Generator<*, *, *
       }
     };
 
-    const { data, error } = yield call(
-      executeSearchWorker,
-      executeSearch({ searchOptions })
+    const response :WorkerResponse = yield call(
+      searchEntitySetDataWorker,
+      searchEntitySetData(searchConstraints)
     );
 
-    if (error) throw error;
+    if (response.error) throw response.error;
 
-    const { hits, numHits } = data;
+    const { hits, numHits } = response.data;
     const reportData = fromJS(hits);
 
     const reportEKIDs = reportData.map((report) => report.getIn([OPENLATTICE_ID_FQN, 0]));
@@ -734,7 +733,7 @@ function* updateReportWorker(action :SequenceAction) :Generator<*, *, *> {
       entityKeyId,
       formData,
     } = value;
-    if (!isPlainObject(formData) || !isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isPlainObject(formData) || !isValidUUID(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
 
     yield put(updateReport.request(action.id, value));
 
@@ -749,7 +748,7 @@ function* updateReportWorker(action :SequenceAction) :Generator<*, *, *> {
       (state) => state.getIn(['staff', 'currentUser', 'data', OPENLATTICE_ID_FQN, 0], '')
     );
 
-    if (!isValidUuid(staffEKID)) {
+    if (!isValidUUID(staffEKID)) {
       throw Error('staff entityKeyId is invalid');
     }
 
@@ -920,7 +919,7 @@ function* getProfileIncidentsWorker(action :SequenceAction) :Generator<any, any,
   const response = {};
   try {
     const { value: entityKeyId } = action;
-    if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getProfileIncidents.request(action.id, entityKeyId));
 
     const app :Map = yield select((state) => state.get('app', Map()));
@@ -981,7 +980,7 @@ function* getIncidentReportsWorker(action :SequenceAction) :Generator<any, any, 
   const response = {};
   try {
     const { value: incidentEKIDs } = action;
-    if (Array.isArray(incidentEKIDs) && !incidentEKIDs.every(isValidUuid)) throw ERR_ACTION_VALUE_TYPE;
+    if (Array.isArray(incidentEKIDs) && !incidentEKIDs.every(isValidUUID)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getIncidentReports.request(action.id));
 
     // TODO: handle both clinician and patrol views separately.
@@ -1037,7 +1036,7 @@ function* getReportsBehaviorAndSafetyWorker(action :SequenceAction) :Generator<a
   const response = {};
   try {
     const { value: reportsEKIDs } = action;
-    if (Array.isArray(reportsEKIDs) && !reportsEKIDs.every(isValidUuid)) throw ERR_ACTION_VALUE_TYPE;
+    if (Array.isArray(reportsEKIDs) && !reportsEKIDs.every(isValidUUID)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getReportsBehaviorAndSafety.request(action.id, reportsEKIDs));
 
     const app :Map = yield select((state) => state.get('app', Map()));
@@ -1097,7 +1096,7 @@ function* getReportersForReportsWorker(action :SequenceAction) :Generator<any, a
   const response = {};
   try {
     const { value: entityKeyIds } = action;
-    if (Array.isArray(entityKeyIds) && !entityKeyIds.every(isValidUuid)) throw ERR_ACTION_VALUE_TYPE;
+    if (Array.isArray(entityKeyIds) && !entityKeyIds.every(isValidUUID)) throw ERR_ACTION_VALUE_TYPE;
     yield getReportersForReports.request(action.id);
 
     const app :Map = yield select((state) => state.get('app', Map()));
@@ -1142,7 +1141,7 @@ function* getIncidentReportsSummaryWorker(action :SequenceAction) :Generator<any
   const response = {};
   try {
     const { value: personEKID } = action;
-    if (!isValidUuid(personEKID)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(personEKID)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getIncidentReportsSummary.request(action.id));
 
     const incidents = yield call(
@@ -1257,7 +1256,6 @@ function* getIncidentReportsSummaryWorker(action :SequenceAction) :Generator<any
 function* getIncidentReportsSummaryWatcher() :Generator<any, any, any> {
   yield takeLatest(GET_INCIDENT_REPORTS_SUMMARY, getIncidentReportsSummaryWorker);
 }
-
 
 export {
   deleteReportWatcher,

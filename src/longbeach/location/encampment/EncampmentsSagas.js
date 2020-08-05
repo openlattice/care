@@ -22,7 +22,10 @@ import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
+import { LangUtils, Logger, ValidationUtils } from 'lattice-utils';
 import { DateTime } from 'luxon';
+import type { UUID } from 'lattice';
+import type { WorkerResponse } from 'lattice-sagas';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
@@ -44,7 +47,6 @@ import {
   submitEncampment,
 } from './EncampmentActions';
 
-import Logger from '../../../utils/Logger';
 import * as FQN from '../../../edm/DataModelFqns';
 import { submitDataGraph } from '../../../core/sagas/data/DataActions';
 import { submitDataGraphWorker } from '../../../core/sagas/data/DataSagas';
@@ -52,8 +54,9 @@ import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { getESIDFromApp, getESIDsFromApp } from '../../../utils/AppUtils';
 import { getEntityKeyId, indexSubmittedDataGraph, mapFirstEntityDataFromNeighbors } from '../../../utils/DataUtils';
 import { ERR_ACTION_VALUE_TYPE } from '../../../utils/Errors';
-import { isDefined } from '../../../utils/LangUtils';
-import { isValidUuid } from '../../../utils/Utils';
+
+const { isDefined } = LangUtils;
+const { isValidUUID } = ValidationUtils;
 
 const {
   createAssociations,
@@ -68,8 +71,8 @@ const {
   // updateEntityDataWorker,
 } = DataApiSagas;
 
-const { executeSearch, searchEntityNeighborsWithFilter } = SearchApiActions;
-const { executeSearchWorker, searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
+const { searchEntitySetData, searchEntityNeighborsWithFilter } = SearchApiActions;
+const { searchEntitySetDataWorker, searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
 
 const { DeleteTypes } = Types;
 
@@ -196,7 +199,7 @@ function* searchEncampmentLocationsWorker(action :SequenceAction) :Generator<any
     const locationCoordinatesPTID :UUID = yield select((state) => state
       .getIn(['edm', 'fqnToIdMap', FQN.LOCATION_COORDINATES_FQN]));
 
-    const searchOptions = {
+    const searchConstraints = {
       start,
       entitySetIds: [encampmentLocationESID],
       maxHits,
@@ -212,14 +215,14 @@ function* searchEncampmentLocationsWorker(action :SequenceAction) :Generator<any
       }]
     };
 
-    const { data, error } = yield call(
-      executeSearchWorker,
-      executeSearch({ searchOptions })
+    const searchResponse :WorkerResponse = yield call(
+      searchEntitySetDataWorker,
+      searchEntitySetData(searchConstraints)
     );
 
-    if (error) throw error;
+    if (searchResponse.error) throw searchResponse.error;
 
-    const { hits, numHits } = data;
+    const { hits, numHits } = searchResponse.data;
     const locationsEKIDs = hits.map((location) => getIn(location, [FQN.OPENLATTICE_ID_FQN, 0]));
     const locationsByEKID = Map(hits.map((entity) => [getIn(entity, [FQN.OPENLATTICE_ID_FQN, 0]), fromJS(entity)]));
     response.data.hits = fromJS(locationsEKIDs);
@@ -333,7 +336,7 @@ function* getEncampmentPeopleOptionsWorker(action :SequenceAction) :Generator<an
       updateSearchField(lastName, lastNamePTID, false);
     }
 
-    const searchOptions = {
+    const searchConstraints = {
       entitySetIds: [peopleESID],
       maxHits: 10000,
       start: 0,
@@ -345,13 +348,13 @@ function* getEncampmentPeopleOptionsWorker(action :SequenceAction) :Generator<an
       }],
     };
 
-    const { data, error } = yield call(
-      executeSearchWorker,
-      executeSearch({ searchOptions })
+    const searchResponse :WorkerResponse = yield call(
+      searchEntitySetDataWorker,
+      searchEntitySetData(searchConstraints)
     );
-    if (error) throw error;
+    if (searchResponse.error) throw searchResponse.error;
 
-    const options = data.hits.map((person) => {
+    const options = searchResponse.data.hits.map((person) => {
       const personEKID = getEntityKeyId(person);
       const fName = getIn(person, [FQN.PERSON_FIRST_NAME_FQN, 0]);
       const lName = getIn(person, [FQN.PERSON_LAST_NAME_FQN, 0]);
@@ -452,7 +455,7 @@ function* getEncampmentOccupantsWorker(action :SequenceAction) :Generator<any, a
   const response = {};
   try {
     const { value: encampmentEKID } = action;
-    if (!isValidUuid(encampmentEKID)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(encampmentEKID)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getEncampmentOccupants.request(action.id));
     // get people that liveat encampment
     const app :Map = yield select((state) => state.get('app', Map()));

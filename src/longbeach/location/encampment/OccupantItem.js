@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Map } from 'immutable';
 import { Button, CardSegment } from 'lattice-ui-kit';
 import { useDispatch } from 'react-redux';
+import type { UUID } from 'lattice';
 
 import { removePersonFromEncampment } from './EncampmentActions';
 
@@ -26,7 +27,7 @@ const StyledSegment = styled(CardSegment)`
 type Props = {
   person :Map;
   livesAtEKID :UUID;
-}
+};
 
 const OccupantItem = (props :Props) => {
   const { person, livesAtEKID } = props;

@@ -82,8 +82,6 @@ const ReportResult = (props :Props) => {
     }
   };
 
-
-
   return (
     <Card onClick={handleClick}>
       <CardSegment vertical>

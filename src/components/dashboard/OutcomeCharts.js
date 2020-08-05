@@ -48,7 +48,6 @@ const OutcomeCharts = ({ dashboardCounts } :Props) => {
         numItems={2} />
   );
 
-
   const renderDeescalationDispositionHeatmap = () => {
     const countMap = dashboardCounts.get(DASHBOARD_COUNTS.DISPOSITIONS_BY_DEESCALATION, Map());
     const deescList = countMap.keySeq();

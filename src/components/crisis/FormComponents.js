@@ -13,7 +13,6 @@ import {
 
 const { RED_1 } = Colors;
 
-
 export const FormWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -75,7 +74,6 @@ export const IndentWrapper = styled.div`
   padding-left: 30px;
   width: 100%;
 `;
-
 
 const RequiredFieldWrapper = styled.div`
   display: flex;

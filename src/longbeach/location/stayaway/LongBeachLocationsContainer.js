@@ -19,6 +19,7 @@ import {
   SearchResults,
   Select,
 } from 'lattice-ui-kit';
+import { LangUtils } from 'lattice-utils';
 import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
@@ -30,8 +31,9 @@ import { STAY_AWAY_STORE_PATH } from './constants';
 import FindingLocationSplash from '../FindingLocationSplash';
 import { usePosition, useTimeout } from '../../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
-import { isNonEmptyString } from '../../../utils/LangUtils';
 import { FlexRow, MapWrapper, ResultSegment } from '../../styled';
+
+const { isNonEmptyString } = LangUtils;
 
 const MAX_HITS = 20;
 const INITIAL_STATE = {

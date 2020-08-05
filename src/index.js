@@ -34,7 +34,7 @@ const NormalizeCSS = createGlobalStyle`
 const GlobalStyle = createGlobalStyle`
   html,
   body {
-    background-color: ${NEUTRALS[7]};
+    background-color: white;
     color: ${NEUTRAL.N900};
     line-height: 1.5;
     font-family: 'Inter', Arial, sans-serif;

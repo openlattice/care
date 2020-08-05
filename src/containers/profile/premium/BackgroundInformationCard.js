@@ -2,21 +2,20 @@
 import React from 'react';
 
 import styled from 'styled-components';
-import { faAddressCard } from '@fortawesome/pro-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Map } from 'immutable';
 import {
   Card,
-  CardHeader,
   CardSegment,
   IconSplash,
   Spinner
 } from 'lattice-ui-kit';
+import { LangUtils } from 'lattice-utils';
 
-import { Header, IconWrapper } from '../../../components/layout';
+import { Header } from '../../../components/layout';
 import { CardSkeleton } from '../../../components/skeletons';
 import { CONTEXT_FQN } from '../../../edm/DataModelFqns';
-import { isEmptyString, isNonEmptyString } from '../../../utils/LangUtils';
+
+const { isEmptyString, isNonEmptyString } = LangUtils;
 
 const Text = styled.p`
   white-space: pre-wrap;

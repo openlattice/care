@@ -6,11 +6,10 @@ import {
   takeEvery,
 } from '@redux-saga/core/effects';
 import { List, Map, fromJS } from 'immutable';
-import {
-  SearchApiActions,
-  SearchApiSagas,
-} from 'lattice-sagas';
+import { SearchApiActions, SearchApiSagas } from 'lattice-sagas';
+import { Logger, ValidationUtils } from 'lattice-utils';
 import { DateTime } from 'luxon';
+import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
@@ -23,19 +22,18 @@ import {
 } from './IssuesActions';
 import { STATUS } from './issue/constants';
 
-import Logger from '../../utils/Logger';
 import { COMPLETED_DT_FQN, OPENLATTICE_ID_FQN, STATUS_FQN } from '../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { getESIDFromApp } from '../../utils/AppUtils';
 import { ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
-import { isValidUuid } from '../../utils/Utils';
 
+const { isValidUUID } = ValidationUtils;
 const {
-  executeSearch,
+  searchEntitySetData,
   searchEntityNeighborsWithFilter,
 } = SearchApiActions;
 const {
-  executeSearchWorker,
+  searchEntitySetDataWorker,
   searchEntityNeighborsWithFilterWorker,
 } = SearchApiSagas;
 
@@ -46,7 +44,7 @@ const {
   STAFF_FQN,
 } = APP_TYPES_FQNS;
 
-const LOG = new Logger('IssueSagas');
+const LOG = new Logger('IssuesSagas');
 
 const formatIssueRowData = (entityData :List<Map>) :List<Map> => entityData
   .map((neighbor) => {
@@ -64,14 +62,13 @@ const formatIssueRowData = (entityData :List<Map>) :List<Map> => entityData
 function* getMyOpenIssuesWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
     const { value: currentUserEKID } = action;
-    if (!isValidUuid(currentUserEKID)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(currentUserEKID)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getMyOpenIssues.request(action.id));
 
     const app = yield select((state) => state.get('app', Map()));
     const issueESID = getESIDFromApp(app, ISSUE_FQN);
     const staffESID = getESIDFromApp(app, STAFF_FQN);
     const assignedToESID = getESIDFromApp(app, ASSIGNED_TO_FQN);
-
 
     const issuesRequestParams = {
       entitySetId: staffESID,
@@ -113,7 +110,7 @@ function* getMyOpenIssuesWatcher() :Generator<any, any, any> {
 function* getReportedByMeWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
     const { value: currentUserEKID } = action;
-    if (!isValidUuid(currentUserEKID)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(currentUserEKID)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getReportedByMe.request(action.id));
 
     const app = yield select((state) => state.get('app', Map()));
@@ -166,7 +163,7 @@ function* getAllIssuesWorker(action :SequenceAction) :Generator<any, any, any> {
     const issueESID = getESIDFromApp(app, ISSUE_FQN);
     const completedPTID :UUID = yield select((state) => state.getIn(['edm', 'fqnToIdMap', COMPLETED_DT_FQN]));
 
-    const searchOptions = {
+    const searchConstraints = {
       start: 0,
       entitySetIds: [issueESID],
       maxHits: 10000,
@@ -182,8 +179,8 @@ function* getAllIssuesWorker(action :SequenceAction) :Generator<any, any, any> {
     };
 
     const issuesResponse = yield call(
-      executeSearchWorker,
-      executeSearch({ searchOptions })
+      searchEntitySetDataWorker,
+      searchEntitySetData(searchConstraints)
     );
 
     if (issuesResponse.error) throw issuesResponse.error;

@@ -26,7 +26,6 @@ import peopleReducer from '../../containers/people/PeopleReducer';
 import profileReducer from '../../containers/profile/reducers/ProfileReducer';
 import recentInteractionReducer from '../../containers/reports/interaction/RecentInteractionReducer';
 import reportsReducer from '../../containers/reports/ReportsReducer';
-import searchReducer from '../../containers/search/SearchReducer';
 import staffReducer from '../../containers/staff/StaffReducer';
 import subjectInformationReducer from '../../containers/pages/subjectinformation/Reducer';
 import subscriptionReducer from '../../containers/subscriptions/SubscriptionReducer';
@@ -48,7 +47,6 @@ export default function reduxReducer(routerHistory :any) {
     profile: profileReducer,
     reports: reportsReducer,
     router: connectRouter(routerHistory),
-    search: searchReducer,
     staff: staffReducer,
     longBeach: longBeachReducer,
     crisisReport: crisisReportReducer,

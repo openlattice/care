@@ -7,25 +7,12 @@ import {
   takeLatest,
 } from '@redux-saga/core/effects';
 import { List, Map, fromJS } from 'immutable';
-import type { SequenceAction } from 'redux-reqseq';
 import { Constants } from 'lattice';
-import {
-  SearchApiActions,
-  SearchApiSagas,
-} from 'lattice-sagas';
+import { SearchApiActions, SearchApiSagas } from 'lattice-sagas';
+import { LangUtils, Logger, ValidationUtils } from 'lattice-utils';
+import type { UUID } from 'lattice';
+import type { SequenceAction } from 'redux-reqseq';
 
-import Logger from '../../../../../utils/Logger';
-import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../../../utils/Errors';
-import { isDefined } from '../../../../../utils/LangUtils';
-import { isValidUuid } from '../../../../../utils/Utils';
-import {
-  GET_PHOTOS,
-  SUBMIT_PHOTOS,
-  UPDATE_PHOTO,
-  getPhotos,
-  submitPhotos,
-  updatePhoto,
-} from '../actions/PhotosActions';
 import {
   submitDataGraph,
   submitPartialReplace,
@@ -34,9 +21,17 @@ import {
   submitDataGraphWorker,
   submitPartialReplaceWorker,
 } from '../../../../../core/sagas/data/DataSagas';
-
-import { getESIDFromApp } from '../../../../../utils/AppUtils';
 import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
+import { getESIDFromApp } from '../../../../../utils/AppUtils';
+import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../../../utils/Errors';
+import {
+  GET_PHOTOS,
+  SUBMIT_PHOTOS,
+  UPDATE_PHOTO,
+  getPhotos,
+  submitPhotos,
+  updatePhoto,
+} from '../actions/PhotosActions';
 
 const LOG = new Logger('BasicInformationSagas');
 const { OPENLATTICE_ID_FQN } = Constants;
@@ -46,6 +41,8 @@ const {
   PEOPLE_FQN,
 } = APP_TYPES_FQNS;
 
+const { isDefined } = LangUtils;
+const { isValidUUID } = ValidationUtils;
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
 const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
 
@@ -53,7 +50,7 @@ function* getPhotosWorker(action :SequenceAction) :Generator<any, any, any> {
   const response = {};
   try {
     const { value: entityKeyId } = action;
-    if (!isValidUuid(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
 
     yield put(getPhotos.request(action.id, entityKeyId));
 

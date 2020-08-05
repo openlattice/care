@@ -2,28 +2,30 @@
 import React from 'react';
 
 import { Map } from 'immutable';
-import { connect } from 'react-redux';
 import {
   Redirect,
   Route,
   Switch,
 } from 'react-router';
 
+import Helpline from './helpline/Helpline';
 import PremiumProfileRouter from './premium/PremiumProfileRouter';
 import ProfileContainer from './ProfileContainer';
 
+import { useAppSettings } from '../../components/hooks';
 import {
   HOME_PATH,
+  PROFILE_PATH,
   PROFILE_VIEW_PATH
 } from '../../core/router/Routes';
 
-type Props = {
-  selectedOrganizationSettings :Map;
-};
+const ProfileRouter = () => {
+  const settings = useAppSettings();
+  const premium = settings.get('premium', false);
+  const profileModule = settings.get('profileModule', 'crisis');
+  const crisisComponent = premium ? PremiumProfileRouter : ProfileContainer;
 
-const ProfileRouter = ({ selectedOrganizationSettings } :Props) => {
-  const premium = selectedOrganizationSettings.get('premium', false);
-  const profileComponent = premium ? PremiumProfileRouter : ProfileContainer;
+  const profileComponent = profileModule === 'crisis' ? crisisComponent : Helpline;
 
   return (
     <Switch>
@@ -33,9 +35,5 @@ const ProfileRouter = ({ selectedOrganizationSettings } :Props) => {
   );
 };
 
-const mapStateToProps = (state) => ({
-  selectedOrganizationSettings: state.getIn(['app', 'selectedOrganizationSettings'], Map())
-});
-
 // $FlowFixMe
-export default connect(mapStateToProps)(ProfileRouter);
+export default ProfileRouter;

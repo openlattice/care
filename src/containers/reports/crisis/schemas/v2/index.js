@@ -78,7 +78,6 @@ const followupUiSchemas = [
   substancesUiSchema,
 ];
 
-
 const v2 = {
   officer: {
     schemas,

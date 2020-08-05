@@ -20,6 +20,8 @@ import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
+import { LangUtils, Logger, ValidationUtils } from 'lattice-utils';
+import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
@@ -34,7 +36,6 @@ import {
 } from './IssueActions';
 import { constructEntityIndexToIdMap } from './IssueUtils';
 
-import Logger from '../../../utils/Logger';
 import {
   createOrReplaceAssociation,
   submitDataGraph,
@@ -50,11 +51,11 @@ import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { getESIDFromApp } from '../../../utils/AppUtils';
 import { groupNeighborsByEntitySetIds, simulateResponseData } from '../../../utils/DataUtils';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../utils/Errors';
-import { isDefined, isEmptyString } from '../../../utils/LangUtils';
-import { isValidUuid } from '../../../utils/Utils';
 
 const LOG = new Logger('IssueSagas');
 
+const { isDefined, isEmptyString } = LangUtils;
+const { isValidUUID } = ValidationUtils;
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
 const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
 const { OPENLATTICE_ID_FQN } = Constants;
@@ -271,7 +272,7 @@ function* setIssueStatusWorker(action :SequenceAction) :Generator<any, any, any>
     if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
     const { entityKeyId, status } = value;
 
-    if (!isValidUuid(entityKeyId) || isEmptyString(status)) {
+    if (!isValidUUID(entityKeyId) || isEmptyString(status)) {
       throw ERR_ACTION_VALUE_TYPE;
     }
 

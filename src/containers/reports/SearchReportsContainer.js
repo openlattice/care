@@ -16,6 +16,7 @@ import {
   Select,
   StyleUtils
 } from 'lattice-ui-kit';
+import { LangUtils } from 'lattice-utils';
 import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
@@ -26,8 +27,8 @@ import { REPORT_TYPE_OPTIONS } from './crisis/schemas/constants';
 
 import { useAppSettings } from '../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../components/layout';
-import { isNonEmptyString } from '../../utils/LangUtils';
 
+const { isNonEmptyString } = LangUtils;
 const { media } = StyleUtils;
 
 const InputGrid = styled.div`

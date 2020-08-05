@@ -2,10 +2,11 @@
 import React from 'react';
 
 import styled from 'styled-components';
+import { LangUtils } from 'lattice-utils';
 
 import PlaceholderPortrait from './PlaceholderPortrait';
 
-import { isEmptyString } from '../../utils/LangUtils';
+const { isEmptyString } = LangUtils;
 
 type Props = {
   imageUrl :string;

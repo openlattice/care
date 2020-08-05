@@ -8,6 +8,7 @@ import {
 } from 'immutable';
 import { Constants } from 'lattice';
 import { DataProcessingUtils } from 'lattice-fabricate';
+import type { UUID } from 'lattice';
 
 import * as FQN from '../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';

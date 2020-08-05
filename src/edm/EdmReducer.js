@@ -7,9 +7,8 @@ import { Models } from 'lattice';
 import { EntityDataModelApiActions } from 'lattice-sagas';
 import type { SequenceAction } from 'redux-reqseq';
 
+const { FQN } = Models;
 const { getAllPropertyTypes } = EntityDataModelApiActions;
-// TODO: use PropertyType and PropertyTypeBuilder models
-const { FullyQualifiedName } = Models;
 
 const INITIAL_STATE :Map<*, *> = fromJS({
   fqnToIdMap: Map(),
@@ -17,7 +16,7 @@ const INITIAL_STATE :Map<*, *> = fromJS({
   propertyTypesById: Map(),
 });
 
-export default function edmReducer(state :Map<*, *> = INITIAL_STATE, action :Object) {
+export default function reducer(state :Map<*, *> = INITIAL_STATE, action :Object) {
 
   switch (action.type) {
 
@@ -28,10 +27,10 @@ export default function edmReducer(state :Map<*, *> = INITIAL_STATE, action :Obj
           const seqAction :SequenceAction = (action :any);
           const propertyTypes :List<Map<*, *>> = fromJS(seqAction.value);
           const propertyTypesById :Map<string, number> = Map().asMutable();
-          const fqnToIdMap :Map<FullyQualifiedName, string> = Map().asMutable();
+          const fqnToIdMap :Map<FQN, string> = Map().asMutable();
           propertyTypes.forEach((propertyType :Map<*, *>) => {
             propertyTypesById.set(propertyType.get('id'), propertyType);
-            fqnToIdMap.set(new FullyQualifiedName(propertyType.get('type')), propertyType.get('id'));
+            fqnToIdMap.set(FQN.of(propertyType.get('type')), propertyType.get('id'));
           });
           return state
             .set('fqnToIdMap', fqnToIdMap.asImmutable())

@@ -18,7 +18,6 @@ import { formatCityStateZip } from '../../../utils/AddressUtils';
 import { H1, IconWrapper } from '../../layout';
 import { CardSkeleton } from '../../skeletons';
 
-
 type Props = {
   address :Map;
   isLoading :boolean;
