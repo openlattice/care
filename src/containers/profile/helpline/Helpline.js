@@ -1,23 +1,30 @@
 import React, { useState } from 'react';
 
-import { ProfileContainer } from '@lattice-works/lattice-helpline-center';
+import { HelplineContainer } from '@lattice-works/lattice-helpline-center';
 import { useSelector } from 'react-redux';
+import { useLocation, useRouteMatch } from 'react-router';
 
 import { usePeopleRoute } from '../../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
+import { PROFILE_VIEW_PATH } from '../../../core/router/Routes';
 
-const HelplineContainer = () => {
+const Helpline = () => {
   const organizationId = useSelector((state) => state.getIn(['app', 'selectedOrganizationId']));
+  const match = useRouteMatch();
   const [personId, setPersonId] = useState('');
   usePeopleRoute(setPersonId);
 
   return (
     <ContentOuterWrapper>
       <ContentWrapper>
-        <ProfileContainer organizationId={organizationId} personId={personId} />
+        <HelplineContainer
+            organizationId={organizationId}
+            personId={personId}
+            root={`${PROFILE_VIEW_PATH}`}
+            match={match} />
       </ContentWrapper>
     </ContentOuterWrapper>
   )
 };
 
-export default HelplineContainer;
+export default Helpline;

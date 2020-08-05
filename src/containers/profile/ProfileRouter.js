@@ -8,7 +8,7 @@ import {
   Switch,
 } from 'react-router';
 
-import HelplineContainer from './helpline/HelplineContainer';
+import Helpline from './helpline/Helpline';
 import PremiumProfileRouter from './premium/PremiumProfileRouter';
 import ProfileContainer from './ProfileContainer';
 
@@ -25,7 +25,7 @@ const ProfileRouter = () => {
   const profileModule = settings.get('profileModule', 'crisis');
   const crisisComponent = premium ? PremiumProfileRouter : ProfileContainer;
 
-  const profileComponent = profileModule === 'crisis' ? crisisComponent : HelplineContainer;
+  const profileComponent = profileModule === 'crisis' ? crisisComponent : Helpline;
 
   return (
     <Switch>
