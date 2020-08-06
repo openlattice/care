@@ -1,9 +1,7 @@
 import styled from 'styled-components';
-import { CardSegment, StyleUtils } from 'lattice-ui-kit';
+import { CardSegment } from 'lattice-ui-kit';
 
 import { APP_CONTAINER_WIDTH } from '../../core/style/Sizes';
-
-const { media } = StyleUtils;
 
 const MapWrapper = styled.div`
   display: flex;
@@ -20,34 +18,26 @@ const SearchTitle = styled.h1`
 `;
 
 const ResultSegment = styled(CardSegment)`
-  ${media.phone`
-    padding: 10px 15px;
-  `}
+  padding: 10px 15px;
 `;
 
 const ResultDetails = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
-  font-size: 16px;
+  font-size: 14px;
   margin: 0 10px;
   min-width: 0;
-  ${media.phone`
-    font-size: 12px;
-  `}
 `;
 
 const ResultName = styled.div`
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 600;
   text-transform: uppercase;
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
-  ${media.phone`
-    font-size: 16px;
-  `}
 `;
 
 const FlexRow = styled.div`
