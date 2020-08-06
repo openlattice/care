@@ -50,7 +50,7 @@ const StyledContentWrapper = styled(ContentWrapper)`
 `;
 
 const StyledSearchResults = styled(SearchResults)`
-  margin: auto;
+  margin: auto 0;
 `;
 
 const AbsoluteWrapper = styled.div`
