@@ -1,7 +1,7 @@
 import React from 'react';
 
 import styled from 'styled-components';
-import { faLocationSlash } from '@fortawesome/pro-light-svg-icons';
+import { faLocation } from '@fortawesome/pro-light-svg-icons';
 import { Hooks, IconSplash } from 'lattice-ui-kit';
 
 import { useTimeout } from '../../components/hooks';
@@ -16,15 +16,15 @@ const Centered = styled.div`
   opacity: ${(props) => (props.hidden ? 0 : 1)};
 `;
 
-const FindingLocationSplash = () => {
+const SelectLocationSplash = () => {
   const [hidden, , reveal] = useBoolean(true);
   useTimeout(reveal, 200);
 
   return (
     <Centered hidden={hidden}>
-      <IconSplash icon={faLocationSlash} caption="Finding location. Please ensure location services are enabled" />
+      <IconSplash icon={faLocation} caption="Select a location" />
     </Centered>
   );
 };
 
-export default FindingLocationSplash;
+export default SelectLocationSplash;
