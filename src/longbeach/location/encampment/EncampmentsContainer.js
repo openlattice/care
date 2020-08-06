@@ -9,12 +9,11 @@ import React, {
 
 import isPlainObject from 'lodash/isPlainObject';
 import styled from 'styled-components';
-import { faLocation, faLocationSlash } from '@fortawesome/pro-solid-svg-icons';
+import { faSearch } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { List, Map } from 'immutable';
 import {
   Card,
-  IconButton,
   PaginationToolbar,
   SearchResults,
   Select,
@@ -28,7 +27,8 @@ import EncampmentResult from './EncampmentResult';
 import { getGeoOptions, searchEncampmentLocations } from './EncampmentActions';
 import { ENCAMPMENT_STORE_PATH } from './constants';
 
-import FindingLocationSplash from '../FindingLocationSplash';
+import SearchErrorSplash from '../SearchErrorSplash';
+import SelectLocationSplash from '../SelectLocationSplash';
 import { usePosition, useTimeout } from '../../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
 import { FlexRow, MapWrapper, ResultSegment } from '../../styled';
@@ -42,11 +42,8 @@ const INITIAL_STATE = {
   selectedOption: undefined
 };
 
-const PositionIcon = <FontAwesomeIcon icon={faLocation} fixedWidth />;
-const noPositionIcon = <FontAwesomeIcon icon={faLocationSlash} fixedWidth />;
-const MarginButton = styled(IconButton)`
-  margin-left: 5px;
-`;
+const SearchIcon = <FontAwesomeIcon icon={faSearch} fixedWidth />;
+const GroupHeading = () => (<div style={{ borderBottom: '1px solid #E6E6EB' }} />);
 
 const StyledContentWrapper = styled(ContentWrapper)`
   justify-content: space-between;
@@ -99,14 +96,14 @@ const EncampmentsContainer = () => {
 
   const fetchGeoOptions = useCallback(() => {
     if (isNonEmptyString(address)) {
-      dispatch(getGeoOptions(address));
+      dispatch(getGeoOptions({ address, currentPosition }));
     }
-  }, [dispatch, address]);
+  }, [dispatch, address, currentPosition]);
 
   useTimeout(fetchGeoOptions, 300);
 
   useEffect(() => {
-    if (currentPosition.coords && !selectedOption) {
+    if (currentPosition.coords) {
       const { latitude, longitude } = currentPosition.coords;
       stateDispatch({
         type: 'selectLocation',
@@ -119,8 +116,7 @@ const EncampmentsContainer = () => {
       });
     }
   }, [
-    currentPosition,
-    selectedOption
+    currentPosition
   ]);
 
   useEffect(() => {
@@ -140,25 +136,11 @@ const EncampmentsContainer = () => {
 
   const hasSearched = fetchState !== RequestStates.STANDBY;
   const isLoading = fetchState === RequestStates.PENDING;
+  const error = fetchState === RequestStates.FAILURE;
   const isFetchingOptions = optionsFetchState === RequestStates.PENDING;
   const hasPosition = !!currentPosition.coords;
 
   const filterOption = () => true;
-
-  const handleCurrentPositionClick = () => {
-    if (hasPosition) {
-      const { latitude, longitude } = currentPosition.coords;
-      stateDispatch({
-        type: 'selectLocation',
-        payload: {
-          label: 'Current Location',
-          value: `${latitude},${longitude}`,
-          lat: latitude,
-          lon: longitude
-        }
-      });
-    }
-  };
 
   const handleChange = (payload) => {
     stateDispatch({ type: 'selectLocation', payload });
@@ -170,6 +152,14 @@ const EncampmentsContainer = () => {
       payload: { page: newPage, start: startRow }
     });
   };
+
+  const optionsWithMyLocation = options.toJS();
+  optionsWithMyLocation.push({
+    options: [
+      { label: 'Current Location', value: 'Current Location' }
+    ]
+  });
+
   return (
     <ContentOuterWrapper>
       <ContentWrapper padding="none">
@@ -187,19 +177,19 @@ const EncampmentsContainer = () => {
                   <div>
                     <FlexRow>
                       <Select
+                          components={{ GroupHeading }}
                           filterOption={filterOption}
+                          hideDropdownIcon
+                          inputIcon={SearchIcon}
                           inputId="address"
                           inputValue={address}
+                          isClearable
                           isLoading={isFetchingOptions}
                           onChange={handleChange}
                           onInputChange={setAddress}
-                          options={options.toJS()}
+                          options={optionsWithMyLocation}
                           placeholder="Search Locations"
                           value={selectedOption} />
-                      <MarginButton
-                          disabled={!hasPosition}
-                          icon={hasPosition ? PositionIcon : noPositionIcon}
-                          onClick={handleCurrentPositionClick} />
                     </FlexRow>
                   </div>
                 </form>
@@ -210,14 +200,20 @@ const EncampmentsContainer = () => {
         <StyledContentWrapper>
           {
             (!hasPosition && !hasSearched) && (
-              <FindingLocationSplash />
+              <SelectLocationSplash />
             )
           }
-          <StyledSearchResults
-              hasSearched={hasSearched}
-              isLoading={isLoading}
-              resultComponent={EncampmentResult}
-              results={searchResults} />
+          {
+            error
+              ? <SearchErrorSplash />
+              : (
+                <StyledSearchResults
+                    hasSearched={hasSearched}
+                    isLoading={isLoading}
+                    resultComponent={EncampmentResult}
+                    results={searchResults} />
+              )
+          }
           {
             hasSearched && (
               <PaginationToolbar

@@ -162,6 +162,13 @@ const EncampmentMap = (props :Props) => {
   };
 
   useEffect(() => {
+    stateDispatch({
+      type: 'bounds',
+      payload: COORDS.BAY_AREA
+    });
+  }, []);
+
+  useEffect(() => {
     if (!isLoading) {
       // first, use bounds whenever possible
       const newBounds = getBoundsFromPointsOfInterest(locationData);
@@ -171,22 +178,18 @@ const EncampmentMap = (props :Props) => {
       // then, try to center to position without bounds
       else if (selectedOption) {
         const { lat, lon } = selectedOption;
-        stateDispatch({
-          type: 'center',
-          payload: {
-            center: [parseFloat(lon), parseFloat(lat)],
-            selectedFeature: undefined,
-            isPopupOpen: false
-          }
-        });
-      }
-      // TODO: fall back to app.settings default bounds
-      // fall back to bay area bounds
-      else {
-        stateDispatch({
-          type: 'bounds',
-          payload: COORDS.BAY_AREA
-        });
+        const parsedLat = parseFloat(lat);
+        const parsedLon = parseFloat(lon);
+        if (!Number.isNaN(parsedLat) && !Number.isNaN(parsedLon)) {
+          stateDispatch({
+            type: 'center',
+            payload: {
+              center: [parsedLon, parsedLat],
+              selectedFeature: undefined,
+              isPopupOpen: false
+            }
+          });
+        }
       }
     }
   }, [
@@ -222,10 +225,6 @@ const EncampmentMap = (props :Props) => {
         style={MAP_STYLE.DEFAULT}
         onMoveEnd={handleMoveEnd}
         zoom={zoom}>
-      <ScaleControl
-          style={{ maxWidth: '55%' }}
-          position="bottom-left"
-          measurement="mi" />
       <CurrentPositionLayer position={currentPosition} />
       {
         selectedFeature && (

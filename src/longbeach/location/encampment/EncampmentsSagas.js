@@ -2,6 +2,7 @@
 import axios from 'axios';
 import isArray from 'lodash/isArray';
 import isPlainObject from 'lodash/isPlainObject';
+import qs from 'query-string';
 import {
   call,
   put,
@@ -71,6 +72,8 @@ const {
   // updateEntityDataWorker,
 } = DataApiSagas;
 
+declare var __MAPBOX_TOKEN__;
+
 const { searchEntitySetData, searchEntityNeighborsWithFilter } = SearchApiActions;
 const { searchEntitySetDataWorker, searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
 
@@ -86,31 +89,49 @@ const {
 
 const LOG = new Logger('EncampmentsSagas');
 
-const GEOCODER_URL_PREFIX = 'https://osm.openlattice.com/nominatim/search/';
-const GEOCODER_URL_SUFFIX = '?format=json';
+const GEOCODING_API = 'https://api.mapbox.com/geocoding/v5/mapbox.places';
 
 function* getGeoOptionsWorker(action :SequenceAction) :Generator<*, *, *> {
   try {
     yield put(getGeoOptions.request(action.id));
 
-    const response = yield call(axios, {
+    const { address, currentPosition } = action.value;
+
+    const params = {
+      access_token: __MAPBOX_TOKEN__,
+      autocomplete: true,
+    };
+
+    if (currentPosition && currentPosition.coords) {
+      const { latitude, longitude } = currentPosition.coords;
+      params.proximity = `${longitude},${latitude}`;
+    }
+
+    const queryString = qs.stringify(params);
+
+    const { data: suggestions } = yield call(axios, {
       method: 'get',
-      url: `${GEOCODER_URL_PREFIX}${window.encodeURI(action.value)}${GEOCODER_URL_SUFFIX}`
+      url: `${GEOCODING_API}/${window.encodeURI(address)}.json?${queryString}`,
     });
 
-    const formattedOptions = response.data.map((option) => {
+    const formattedSuggestions = suggestions.features.map((sugg) => {
       // eslint-disable-next-line camelcase
-      const { display_name, lat, lon } = option;
+      const { place_name, geometry } = sugg;
+      const { coordinates } = geometry;
+      const [lon, lat] = coordinates;
       return {
-        ...option,
-        label: display_name,
-        value: `${lat},${lon}`
+        ...sugg,
+        label: place_name,
+        value: `${lat},${lon}`,
+        lon,
+        lat
       };
     });
 
-    yield put(getGeoOptions.success(action.id, fromJS(formattedOptions)));
+    yield put(getGeoOptions.success(action.id, fromJS(formattedSuggestions)));
   }
   catch (error) {
+    LOG.error(action.type, error);
     yield put(getGeoOptions.failure(action.id, error));
   }
   finally {
@@ -189,10 +210,24 @@ function* searchEncampmentLocationsWorker(action :SequenceAction) :Generator<any
     const { value } = action;
     if (!isPlainObject(value)) throw ERR_ACTION_VALUE_TYPE;
     const { searchInputs, start = 0, maxHits = 20 } = value;
-    const latitude :string = searchInputs.getIn(['selectedOption', 'lat']);
-    const longitude :string = searchInputs.getIn(['selectedOption', 'lon']);
+    const optionValue :string = searchInputs.getIn(['selectedOption', 'value']);
 
     yield put(searchEncampmentLocations.request(action.id, searchInputs));
+
+    let latitude :string = searchInputs.getIn(['selectedOption', 'lat']);
+    let longitude :string = searchInputs.getIn(['selectedOption', 'lon']);
+
+    if (optionValue === 'Current Location') {
+      const getUserLocation = () => new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject);
+      });
+      const location = yield call(getUserLocation);
+      if (location.error) throw location.error;
+
+      const { latitude: currentLat, longitude: currentLon } = location.coords;
+      latitude = currentLat;
+      longitude = currentLon;
+    }
 
     const app = yield select((state) => state.get('app', Map()));
     const encampmentLocationESID = getESIDFromApp(app, ENCAMPMENT_LOCATION_FQN);

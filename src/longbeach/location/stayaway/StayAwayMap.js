@@ -1,7 +1,7 @@
 // @flow
 import React, { useEffect, useMemo, useReducer } from 'react';
 
-import ReactMapboxGl, { ScaleControl } from 'react-mapbox-gl';
+import ReactMapboxGl from 'react-mapbox-gl';
 import { List } from 'immutable';
 import { useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
@@ -104,6 +104,13 @@ const StayAwayMap = (props :Props) => {
   [searchResults, stayAwayLocations]);
 
   useEffect(() => {
+    stateDispatch({
+      type: 'bounds',
+      payload: COORDS.BAY_AREA
+    });
+  }, []);
+
+  useEffect(() => {
     if (!isLoading) {
       // first, use bounds whenever possible
       const newBounds = getBoundsFromPointsOfInterest(stayAwayData);
@@ -113,22 +120,18 @@ const StayAwayMap = (props :Props) => {
       // then, try to center to position without bounds
       else if (selectedOption) {
         const { lat, lon } = selectedOption;
-        stateDispatch({
-          type: 'center',
-          payload: {
-            center: [parseFloat(lon), parseFloat(lat)],
-            selectedFeature: undefined,
-            isPopupOpen: false
-          }
-        });
-      }
-      // TODO: fall back to app.settings default bounds
-      // fall back to bay area bounds
-      else {
-        stateDispatch({
-          type: 'bounds',
-          payload: COORDS.BAY_AREA
-        });
+        const parsedLat = parseFloat(lat);
+        const parsedLon = parseFloat(lon);
+        if (!Number.isNaN(parsedLat) && !Number.isNaN(parsedLon)) {
+          stateDispatch({
+            type: 'center',
+            payload: {
+              center: [parsedLon, parsedLat],
+              selectedFeature: undefined,
+              isPopupOpen: false
+            }
+          });
+        }
       }
     }
   }, [
@@ -163,9 +166,6 @@ const StayAwayMap = (props :Props) => {
         fitBoundsOptions={fitBoundsOptions}
         style={MAP_STYLE.DEFAULT}
         zoom={zoom}>
-      <ScaleControl
-          position="bottom-right"
-          measurement="mi" />
       <CurrentPositionLayer position={currentPosition} />
       {
         selectedFeature && (
