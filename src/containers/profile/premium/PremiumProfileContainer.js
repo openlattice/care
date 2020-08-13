@@ -396,7 +396,8 @@ const mapStateToProps = (state :Map) => {
     fetchResponsePlanState: state.getIn(['profile', 'responsePlan', 'fetchState'], RequestStates.STANDBY),
     fetchStayAwayState: state.getIn(['longBeach', 'profile', 'fetchState'], RequestStates.STANDBY),
     interactionStrategies: state.getIn(['profile', 'responsePlan', 'interactionStrategies'], List()),
-    isContactForByContactEKID: state.getIn(['profile', 'emergencyContacts', 'data', 'isContactForByContactEKID'], Map()),
+    isContactForByContactEKID: state
+      .getIn(['profile', 'emergencyContacts', 'data', 'isContactForByContactEKID'], Map()),
     lastIncident: state.getIn(['profile', 'reports', 'lastIncident'], Map()),
     officerSafety: state.getIn(['profile', 'officerSafety', 'data', 'officerSafetyConcerns'], List()),
     photo: state.getIn(['profile', 'basicInformation', 'photos', 'data'], Map()),
