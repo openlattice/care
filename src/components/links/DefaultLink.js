@@ -10,6 +10,7 @@ const DefaultLink = styled(Link)`
   text-transform: uppercase;
   color: ${PURPLES[1]};
   text-decoration: none;
+
   :hover {
     text-decoration: underline;
   }
