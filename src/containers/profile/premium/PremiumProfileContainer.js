@@ -76,9 +76,11 @@ const Aside = styled.aside`
 
 const TabGroup = styled.div`
   margin-right: auto;
+
   button:first-of-type {
     border-radius: 3px 0 0 3px;
   }
+
   button:last-of-type {
     border-radius: 0 3px 3px 0;
   }
@@ -87,13 +89,13 @@ const TabGroup = styled.div`
 const getActiveStyles = ({ active }) => {
   if (active) {
     return css`
-      background-color: #A6AAB2;
-      border-color: #A6AAB2;
+      background-color: #a6aab2;
+      border-color: #a6aab2;
       color: #fff;
 
       :hover {
-        background-color: #A6AAB2;
-        border-color: #A6AAB2;
+        background-color: #a6aab2;
+        border-color: #a6aab2;
         color: #fff;
       }
     `;
@@ -133,6 +135,7 @@ const ActionBar = styled.div`
 
 const ButtonGroup = styled.div`
   margin-left: auto;
+
   button:not(:last-child) {
     margin-right: 10px;
   }

@@ -67,6 +67,7 @@ const AccordionTitle = ({ headline }) => <Headline>{headline}</Headline>;
 const IconLayer = styled.span`
   font-size: 2.5rem;
   margin-right: 30px;
+
   svg:last-of-type {
     font-size: 1rem;
   }
