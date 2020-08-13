@@ -18,7 +18,6 @@ const emptyBody = {
 };
 
 type Props = {
-  currentUser :Map;
   edit ?:boolean;
   encampment ?:Map;
   encampmentLocation :?Map;
