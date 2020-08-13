@@ -27,8 +27,6 @@ const EncampmentResult = (props :Props) => {
 
   const { index, result: locationEKID } = props;
 
-  const encampmentLocation = useSelector((store) => store
-    .getIn([...ENCAMPMENT_STORE_PATH, 'encampmentLocations', locationEKID]));
   const encampment = useSelector((store) => store
     .getIn([...ENCAMPMENT_STORE_PATH, 'encampments', locationEKID])) || Map();
   const occupants = encampment.getIn([NUMBER_OF_PEOPLE_FQN, 0]);
