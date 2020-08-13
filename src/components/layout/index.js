@@ -64,10 +64,12 @@ export const List = styled.ul`
     padding: 10px 0;
     border-bottom: 1px solid ${NEUTRALS[4]};
   }
+
   li:last-child {
     padding-bottom: 0;
     border-bottom: 0;
   }
+
   li:first-child {
     padding-top: 0;
   }

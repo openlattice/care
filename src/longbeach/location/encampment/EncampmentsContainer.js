@@ -81,7 +81,8 @@ const EncampmentsContainer = () => {
   const searchResults = useSelector((store) => store.getIn([...ENCAMPMENT_STORE_PATH, 'hits'], List()));
   const totalHits = useSelector((store) => store.getIn([...ENCAMPMENT_STORE_PATH, 'totalHits'], 0));
   const fetchState = useSelector((store) => store.getIn([...ENCAMPMENT_STORE_PATH, 'fetchState']));
-  const optionsFetchState = useSelector((store) => store.getIn([...ENCAMPMENT_STORE_PATH, 'options', 'geo', 'fetchState']));
+  const optionsFetchState = useSelector((store) => store
+    .getIn([...ENCAMPMENT_STORE_PATH, 'options', 'geo', 'fetchState']));
   const options = useSelector((store) => store.getIn([...ENCAMPMENT_STORE_PATH, 'options', 'geo', 'data']));
   const dispatch = useDispatch();
   const [state, stateDispatch] = useReducer(reducer, INITIAL_STATE);

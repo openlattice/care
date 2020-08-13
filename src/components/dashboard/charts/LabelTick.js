@@ -6,7 +6,7 @@ import styled from 'styled-components';
 const Tick = styled.text`
   font-size: 0.75rem;
   font-weight: 300;
-  stroke: #AFB2B9;
+  stroke: #afb2b9;
 `;
 
 const MAX_CHARS_PER_LINE = 20;

@@ -55,11 +55,19 @@ const ReportSelectionBody = (props :Props) => {
                 Crisis Report
               </Button>
               <Button
-                  onClick={() => setState({ type: CRISIS_REPORT_CLINICIAN, path: NEW_CRISIS_CLINICIAN_PATH, person: selectedPerson })}>
+                  onClick={() => (
+                    setState({
+                      path: NEW_CRISIS_CLINICIAN_PATH,
+                      person: selectedPerson,
+                      type: CRISIS_REPORT_CLINICIAN,
+                    })
+                  )}>
                 Crisis Report (Clinician)
               </Button>
               <Button
-                  onClick={() => setState({ type: FOLLOW_UP_REPORT, path: NEW_FOLLOW_UP_PATH, person: selectedPerson })}>
+                  onClick={() => (
+                    setState({ type: FOLLOW_UP_REPORT, path: NEW_FOLLOW_UP_PATH, person: selectedPerson })
+                  )}>
                 Follow-up
               </Button>
             </>

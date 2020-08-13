@@ -14,6 +14,7 @@ const BreadcrumbLink = styled(Link)`
   ${breadcrumbStyle};
   color: ${PURPLES[1]};
   text-decoration: none;
+
   :hover {
     text-decoration: underline;
   }

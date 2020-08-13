@@ -15,9 +15,11 @@ const BehaviorAndSafetyGrid = styled.div`
   grid-gap: 20px;
   overflow: hidden;
   flex: 1 0 auto;
+
   @media (max-width: 64em) {
     grid-template-columns: 100%;
   }
+
   @media (min-width: 64em) {
     grid-template-columns: calc(50% - 10px) calc(50% - 10px);
   }

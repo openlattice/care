@@ -7,7 +7,7 @@ import React, {
 } from 'react';
 
 import styled from 'styled-components';
-import ReactMapboxGl, { ScaleControl } from 'react-mapbox-gl';
+import ReactMapboxGl from 'react-mapbox-gl';
 import { faCheckCircle } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { List, Map, fromJS } from 'immutable';
@@ -62,8 +62,8 @@ const CenteredPinWrapper = styled.div`
   align-items: center;
   justify-content: center;
 
-  
-  svg, img {
+  svg,
+  img {
     z-index: 1;
   }
 `;
