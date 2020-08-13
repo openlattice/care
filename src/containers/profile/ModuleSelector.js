@@ -1,17 +1,13 @@
 // @flow
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 
 import styled from 'styled-components';
 import { faChevronDown } from '@fortawesome/pro-light-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  Button, Menu, MenuItem, MenuList
-} from 'lattice-ui-kit';
+import { Button, Menu, MenuItem } from 'lattice-ui-kit';
 import { useDispatch } from 'react-redux';
 import { useRouteMatch } from 'react-router';
 
-import DropdownButton from '../../components/buttons/DropdownButton';
-import { useGoToPath } from '../../components/hooks';
 import { PROFILE_ID_PARAM, PROFILE_ID_PATH, PROFILE_VIEW_PATH } from '../../core/router/Routes';
 import { goToPath } from '../../core/router/RoutingActions';
 
@@ -40,7 +36,9 @@ type Props = {
 const ModuleSelector = ({ title } :Props) => {
   const dispatch = useDispatch();
   const match = useRouteMatch();
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const { [PROFILE_ID_PARAM]: profileId } = match.params;
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -56,8 +54,6 @@ const ModuleSelector = ({ title } :Props) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
-  const { [PROFILE_ID_PARAM]: profileId } = match.params;
 
   return (
     <Wrapper>

@@ -1,7 +1,6 @@
 // @flow
 import React, { useCallback, useEffect, useMemo } from 'react';
 
-import { Map } from 'immutable';
 import { Form } from 'lattice-fabricate';
 import {
   Breadcrumbs,

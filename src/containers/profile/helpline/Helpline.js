@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import { HelplineContainer } from '@lattice-works/lattice-helpline-center';
 import { useSelector } from 'react-redux';
-import { useLocation, useRouteMatch } from 'react-router';
+import { useRouteMatch } from 'react-router';
 
 import { usePeopleRoute } from '../../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';

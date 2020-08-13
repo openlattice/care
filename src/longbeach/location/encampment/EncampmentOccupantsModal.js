@@ -9,16 +9,16 @@ import EncampmentOccupants from './EncampmentOccupants';
 
 type Props = {
   encampmentEKID :UUID;
+  isVisible :boolean;
+  onClose :() => void;
 };
 
-const EncampmentOccupantsModal = ({ encampmentEKID, ...props } :Props) =>
-  /* eslint-disable react/jsx-props-no-spreading */
-  (
-    <Modal {...props} textTitle="Occupants">
-      <EncampmentOccupants encampmentEKID={encampmentEKID} />
-    </Modal>
-  )
-  /* eslint-enable */
-;
+/* eslint-disable react/jsx-props-no-spreading */
+const EncampmentOccupantsModal = ({ encampmentEKID, ...props } :Props) => (
+  <Modal {...props} textTitle="Occupants">
+    <EncampmentOccupants encampmentEKID={encampmentEKID} />
+  </Modal>
+);
+/* eslint-enable */
 
 export default EncampmentOccupantsModal;

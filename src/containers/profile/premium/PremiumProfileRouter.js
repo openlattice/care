@@ -7,7 +7,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import PremiumProfileContainer from './PremiumProfileContainer';
 
 import EditProfileContainer from '../edit/EditProfileContainer';
-import { PROFILE_EDIT_PATH, PROFILE_PATH, PROFILE_VIEW_PATH } from '../../../core/router/Routes';
+import { PROFILE_EDIT_PATH, PROFILE_VIEW_PATH } from '../../../core/router/Routes';
 import { clearProfile } from '../ProfileActions';
 
 const PremiumProfileRouter = () => {

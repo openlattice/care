@@ -1,11 +1,9 @@
 // @flow
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 import { faFolderOpen } from '@fortawesome/pro-duotone-svg-icons';
 import { List, Map } from 'immutable';
-import {
-  IconSplash,
-} from 'lattice-ui-kit';
+import { IconSplash } from 'lattice-ui-kit';
 import { useDispatch } from 'react-redux';
 import { useRouteMatch } from 'react-router';
 
@@ -18,14 +16,7 @@ import RecentIncidentCard from '../RecentIncidentCard';
 import StayAwayCard from '../../../components/premium/stayaway/StayAwayCard';
 import WarrantCard from '../../../components/premium/warrant/WarrantCard';
 import { useAppSettings } from '../../../components/hooks';
-import {
-  CRISIS_REPORT_PATH,
-  PROFILE_ID_PARAM,
-  REPORT_ID_PATH,
-  REPORT_VIEW_PATH,
-} from '../../../core/router/Routes';
-import { goToPath } from '../../../core/router/RoutingActions';
-import { getEntityKeyId } from '../../../utils/DataUtils';
+import { PROFILE_ID_PARAM } from '../../../core/router/Routes';
 import { getIncidentReportsSummary } from '../actions/ReportActions';
 
 type Props = {
