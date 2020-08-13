@@ -52,7 +52,8 @@ const EncampmentPopup = ({
 } :Props) => {
 
   const locationEKID = selectedFeature.getIn([OPENLATTICE_ID_FQN, 0]);
-  const encampment = useSelector((store) => store.getIn([...ENCAMPMENT_STORE_PATH, 'encampments', locationEKID])) || Map();
+  const encampment = useSelector((store) => store
+    .getIn([...ENCAMPMENT_STORE_PATH, 'encampments', locationEKID])) || Map();
   const occupants = encampment.getIn([NUMBER_OF_PEOPLE_FQN, 0]);
   const description = encampment.getIn([DESCRIPTION_FQN, 0]);
   const rawUpdated = encampment.getIn([ENTRY_UPDATED_FQN, 0]);
