@@ -14,10 +14,8 @@ import IconDetail from '../../../components/premium/styled/IconDetail';
 import {
   DESCRIPTION_FQN,
   ENTRY_UPDATED_FQN,
-  LOCATION_COORDINATES_FQN,
   NUMBER_OF_PEOPLE_FQN,
 } from '../../../edm/DataModelFqns';
-import { getCoordinates } from '../../map/MapUtils';
 import { ResultSegment } from '../../styled';
 
 type Props = {
@@ -29,13 +27,13 @@ const EncampmentResult = (props :Props) => {
 
   const { index, result: locationEKID } = props;
 
-  const encampmentLocation = useSelector((store) => store.getIn([...ENCAMPMENT_STORE_PATH, 'encampmentLocations', locationEKID]));
-  const encampment = useSelector((store) => store.getIn([...ENCAMPMENT_STORE_PATH, 'encampments', locationEKID])) || Map();
+  const encampmentLocation = useSelector((store) => store
+    .getIn([...ENCAMPMENT_STORE_PATH, 'encampmentLocations', locationEKID]));
+  const encampment = useSelector((store) => store
+    .getIn([...ENCAMPMENT_STORE_PATH, 'encampments', locationEKID])) || Map();
   const occupants = encampment.getIn([NUMBER_OF_PEOPLE_FQN, 0]);
   const description = encampment.getIn([DESCRIPTION_FQN, 0]);
   const rawUpdated = encampment.getIn([ENTRY_UPDATED_FQN, 0]);
-
-  const coordinates = getCoordinates(encampmentLocation);
   const lastUpdated = DateTime.fromISO(rawUpdated).toLocaleString(DateTime.DATETIME_SHORT);
 
   return (
