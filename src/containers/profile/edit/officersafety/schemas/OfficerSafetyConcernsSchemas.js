@@ -4,7 +4,6 @@ import { SAFETY_TYPES } from './constants';
 
 import {
   CATEGORY_FQN,
-  DESCRIPTION_FQN,
   TECHNIQUES_FQN,
   TRIGGER_FQN,
 } from '../../../../../edm/DataModelFqns';

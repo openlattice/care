@@ -1,7 +1,6 @@
 // @flow
 import React from 'react';
 
-import { Map } from 'immutable';
 import {
   Redirect,
   Route,
@@ -13,11 +12,7 @@ import PremiumProfileRouter from './premium/PremiumProfileRouter';
 import ProfileContainer from './ProfileContainer';
 
 import { useAppSettings } from '../../components/hooks';
-import {
-  HOME_PATH,
-  PROFILE_PATH,
-  PROFILE_VIEW_PATH
-} from '../../core/router/Routes';
+import { HOME_PATH, PROFILE_VIEW_PATH } from '../../core/router/Routes';
 
 const ProfileRouter = () => {
   const settings = useAppSettings();
