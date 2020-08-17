@@ -554,7 +554,7 @@ const preProcessOther = (
     propertyValue = [...filteredPropertyValue, 'Other', ...otherPropertyValue];
   }
 
-  if (withNone && !(isNonEmptyArray(propertyValue) && otherPropertyValue.every(propertyValue))) {
+  if (withNone && !isNonEmptyArray(propertyValue)) {
     propertyValue = ['None'];
   }
 
