@@ -147,14 +147,14 @@ const CrisisReportSubscriptions = (props :Props) => {
   const subscriptionDefinitions = [
     {
       title: 'Homeless Alerts',
-      description: 'Receive an email when a Crisis Report is marked with "Unsheltered Homeless"',
+      description: 'Receive an email when a Crisis Report is marked with "Unsheltered Homeless."',
       alertName: ALERT_NAMES.HOMELESS,
       query: homelessQuery,
       subscription: homelessSubscription
     },
     {
       title: 'Veteran Alerts',
-      description: 'Receive an email when a Crisis Report is created for a veteran',
+      description: 'Receive an email when a Crisis Report is created for a veteran.',
       alertName: ALERT_NAMES.VETERAN,
       query: veteranQuery,
       subscription: veteranSubscription
