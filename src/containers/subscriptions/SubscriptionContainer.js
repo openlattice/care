@@ -12,6 +12,7 @@ import { RequestStates } from 'redux-reqseq';
 import type { Dispatch } from 'redux';
 
 import CrisisReportSubscriptions from './CrisisReportSubscriptions';
+import IssuesSubscriptions from './IssuesSubscriptions';
 import {
   clearSubscriptions,
   getSubscriptions,
@@ -49,7 +50,12 @@ const SubscriptionContainer = (props :Props) => {
         {
           isLoadingSubscriptions
             ? <Spinner />
-            : <CrisisReportSubscriptions subscriptions={subscriptions} />
+            : (
+              <>
+                <CrisisReportSubscriptions subscriptions={subscriptions} />
+                <IssuesSubscriptions subscriptions={subscriptions} />
+              </>
+            )
         }
       </ContentWrapper>
     </ContentOuterWrapper>
