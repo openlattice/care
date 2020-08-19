@@ -191,40 +191,36 @@ const SubscriptionContainer = (props :Props) => {
   return (
     <ContentOuterWrapper>
       <ContentWrapper>
-        <Card>
-          <CardSegment vertical>
-            <Header>
-              Manage Subscriptions
-            </Header>
-            <CardStack>
-              {
-                isLoadingSubscriptions
-                  ? <Spinner />
-                  : subscriptionDefinitions.map((definition) => {
-                    const {
-                      title,
-                      description,
-                      alertName,
-                      query,
-                      subscription,
-                    } = definition;
-                    return (
-                      <Subscription
-                          alertName={alertName}
-                          description={description}
-                          key={alertName}
-                          onCancel={actions.expireSubscription}
-                          onCreate={onCreate}
-                          onEdit={actions.updateSubscription}
-                          query={query}
-                          subscription={subscription}
-                          title={title} />
-                    );
-                  })
-              }
-            </CardStack>
-          </CardSegment>
-        </Card>
+        <Header>
+          Manage Subscriptions
+        </Header>
+        <CardStack>
+          {
+            isLoadingSubscriptions
+              ? <Spinner />
+              : subscriptionDefinitions.map((definition) => {
+                const {
+                  title,
+                  description,
+                  alertName,
+                  query,
+                  subscription,
+                } = definition;
+                return (
+                  <Subscription
+                      alertName={alertName}
+                      description={description}
+                      key={alertName}
+                      onCancel={actions.expireSubscription}
+                      onCreate={onCreate}
+                      onEdit={actions.updateSubscription}
+                      query={query}
+                      subscription={subscription}
+                      title={title} />
+                );
+              })
+          }
+        </CardStack>
       </ContentWrapper>
     </ContentOuterWrapper>
   );
