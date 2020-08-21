@@ -1,19 +1,22 @@
 // @flow
 import { Constants } from 'lattice';
 import { DataProcessingUtils } from 'lattice-fabricate';
-import { APP_TYPES_FQNS } from '../../../shared/Consts';
-import {
-  CATEGORY_FQN,
-  DESCRIPTION_FQN,
-  PRIORITY_FQN,
-  TITLE_FQN,
-  STATUS_FQN,
-} from '../../../edm/DataModelFqns';
+
 import {
   CATEGORY_VALUES,
   PRIORITIES,
   PRIORITY_VALUES,
 } from './constants';
+
+import {
+  ASSIGNEE_ID_FQN,
+  CATEGORY_FQN,
+  DESCRIPTION_FQN,
+  PRIORITY_FQN,
+  STATUS_FQN,
+  TITLE_FQN,
+} from '../../../edm/DataModelFqns';
+import { APP_TYPES_FQNS } from '../../../shared/Consts';
 
 const { OPENLATTICE_ID_FQN } = Constants;
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
@@ -34,6 +37,10 @@ const schema = {
         [getEntityAddressKey(0, STAFF_FQN, OPENLATTICE_ID_FQN)]: {
           type: 'string',
           title: 'Assignee'
+        },
+        [getEntityAddressKey(0, ISSUE_FQN, ASSIGNEE_ID_FQN)]: {
+          type: 'string',
+          title: 'Assignee ID'
         },
         [getEntityAddressKey(0, ISSUE_FQN, PRIORITY_FQN)]: {
           type: 'string',
@@ -73,6 +80,9 @@ const uiSchema = {
     classNames: 'column-span-12 grid-container',
     [getEntityAddressKey(0, STAFF_FQN, OPENLATTICE_ID_FQN)]: {
       classNames: 'column-span-12',
+    },
+    [getEntityAddressKey(0, ISSUE_FQN, ASSIGNEE_ID_FQN)]: {
+      'ui:widget': 'hidden'
     },
     [getEntityAddressKey(0, ISSUE_FQN, TITLE_FQN)]: {
       classNames: 'column-span-12',
