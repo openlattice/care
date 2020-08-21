@@ -19,9 +19,12 @@ import {
 } from './SubscriptionActions';
 import { ALERT_NAMES, ISSUE_ALERT_TYPE } from './constants';
 
-import { PERSON_ID_FQN } from '../../edm/DataModelFqns';
-import { getPeopleESId, getStaffESId } from '../../utils/AppUtils';
+import { ASSIGNEE_ID_FQN } from '../../edm/DataModelFqns';
+import { APP_TYPES_FQNS } from '../../shared/Consts';
+import { getESIDFromApp } from '../../utils/AppUtils';
 import { getSearchTerm } from '../../utils/DataUtils';
+
+const { ISSUE_FQN, PEOPLE_FQN, STAFF_FQN } = APP_TYPES_FQNS;
 
 const Header = styled.h2`
   font-size: 1.125rem;
@@ -35,18 +38,20 @@ type Props = {
     expireSubscription :Function;
     updateSubscription :Function;
   };
+  assigneeQuery :string;
+  issueEntitySetId :UUID;
   personEntitySetId :UUID;
   staffEntitySetId :UUID;
-  staffQuery :string;
   subscriptions :List;
 }
 
 const IssuesSubscriptions = (props :Props) => {
   const {
     actions,
+    assigneeQuery,
+    issueEntitySetId,
     personEntitySetId,
     staffEntitySetId,
-    staffQuery,
     subscriptions,
   } = props;
 
@@ -65,7 +70,7 @@ const IssuesSubscriptions = (props :Props) => {
     )).forEach((subscription) => {
 
       const query = subscription.getIn(['constraints', 'constraints', 0, 'constraints', 0, 'searchTerm']);
-      if (query === staffQuery) {
+      if (query === assigneeQuery) {
         issuesSubscription = subscription;
       }
     });
@@ -74,7 +79,7 @@ const IssuesSubscriptions = (props :Props) => {
   }, [
     personEntitySetId,
     staffEntitySetId,
-    staffQuery,
+    assigneeQuery,
     subscriptions,
   ]);
 
@@ -89,7 +94,7 @@ const IssuesSubscriptions = (props :Props) => {
       expiration,
       type: ISSUE_ALERT_TYPE,
       constraints: {
-        entitySetIds: [personEntitySetId],
+        entitySetIds: [issueEntitySetId],
         start: 0,
         maxHits: 10000,
         constraints: [{
@@ -101,7 +106,7 @@ const IssuesSubscriptions = (props :Props) => {
       },
       alertMetadata: {
         alertName,
-        personEntitySetId,
+        issueEntitySetId,
         staffEntitySetId,
         timezone,
       }
@@ -119,7 +124,7 @@ const IssuesSubscriptions = (props :Props) => {
       title: 'Issue Assignment',
       description: 'Receive an email when an issue is assigned to you.',
       alertName: ALERT_NAMES.ISSUE,
-      query: staffQuery,
+      query: assigneeQuery,
       subscription: issuesSubscription
     },
   ];
@@ -162,9 +167,10 @@ const mapStateToProps = (state :Map) => {
   const app = state.get('app', Map());
   const userInfo :Object = AuthUtils.getUserInfo();
   return {
-    staffQuery: getSearchTerm(state.getIn(['edm', 'fqnToIdMap', PERSON_ID_FQN]), userInfo.email),
-    personEntitySetId: getPeopleESId(app),
-    staffEntitySetId: getStaffESId(app),
+    assigneeQuery: getSearchTerm(state.getIn(['edm', 'fqnToIdMap', ASSIGNEE_ID_FQN]), userInfo.email),
+    issueEntitySetId: getESIDFromApp(app, ISSUE_FQN),
+    personEntitySetId: getESIDFromApp(app, PEOPLE_FQN),
+    staffEntitySetId: getESIDFromApp(app, STAFF_FQN),
   };
 };
 
