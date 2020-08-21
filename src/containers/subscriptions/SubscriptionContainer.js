@@ -49,7 +49,7 @@ const SubscriptionContainer = (props :Props) => {
         </Header>
         {
           isLoadingSubscriptions
-            ? <Spinner />
+            ? <Spinner size="3x" />
             : (
               <>
                 <CrisisReportSubscriptions subscriptions={subscriptions} />
