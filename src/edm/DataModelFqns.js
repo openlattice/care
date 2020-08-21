@@ -128,14 +128,16 @@ export {
 /* <===== END LONG BEACH HACK =====> */
 
 /* Issue */
+const ASSIGNEE_ID_FQN = FQN.of('ol.assigneeid');
+const ENTRY_UPDATED_FQN = FQN.of('general.entryupdated');
 const PRIORITY_FQN = FQN.of('ol.priority');
 const STATUS_FQN = FQN.of('ol.status');
-const ENTRY_UPDATED_FQN = FQN.of('general.entryupdated');
 
 export {
+  ASSIGNEE_ID_FQN,
   ENTRY_UPDATED_FQN,
   PRIORITY_FQN,
-  STATUS_FQN
+  STATUS_FQN,
 };
 
 /* Is Emergency Contact For */
