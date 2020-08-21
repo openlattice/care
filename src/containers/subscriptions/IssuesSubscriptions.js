@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 
 import styled from 'styled-components';
 import { List, Map } from 'immutable';
-import { AuthUtils } from 'lattice-auth';
 import { CardStack } from 'lattice-ui-kit';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -19,7 +18,7 @@ import {
 } from './SubscriptionActions';
 import { ALERT_NAMES, ISSUE_ALERT_TYPE } from './constants';
 
-import { ASSIGNEE_ID_FQN } from '../../edm/DataModelFqns';
+import { ASSIGNEE_ID_FQN, OPENLATTICE_ID_FQN } from '../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { getESIDFromApp } from '../../utils/AppUtils';
 import { getSearchTerm } from '../../utils/DataUtils';
@@ -165,9 +164,9 @@ const IssuesSubscriptions = (props :Props) => {
 
 const mapStateToProps = (state :Map) => {
   const app = state.get('app', Map());
-  const userInfo :Object = AuthUtils.getUserInfo();
+  const currentUserEKID = state.getIn(['staff', 'currentUser', 'data', OPENLATTICE_ID_FQN, 0]);
   return {
-    assigneeQuery: getSearchTerm(state.getIn(['edm', 'fqnToIdMap', ASSIGNEE_ID_FQN]), userInfo.email),
+    assigneeQuery: getSearchTerm(state.getIn(['edm', 'fqnToIdMap', ASSIGNEE_ID_FQN]), currentUserEKID),
     issueEntitySetId: getESIDFromApp(app, ISSUE_FQN),
     personEntitySetId: getESIDFromApp(app, PEOPLE_FQN),
     staffEntitySetId: getESIDFromApp(app, STAFF_FQN),
