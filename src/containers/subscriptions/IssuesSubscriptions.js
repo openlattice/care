@@ -23,7 +23,13 @@ import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { getESIDFromApp } from '../../utils/AppUtils';
 import { getSearchTerm } from '../../utils/DataUtils';
 
-const { ISSUE_FQN, PEOPLE_FQN, STAFF_FQN } = APP_TYPES_FQNS;
+const {
+  ASSIGNED_TO_FQN,
+  ISSUE_FQN,
+  PEOPLE_FQN,
+  REPORTED_FQN,
+  STAFF_FQN,
+} = APP_TYPES_FQNS;
 
 const Header = styled.h2`
   font-size: 1.125rem;
@@ -37,9 +43,11 @@ type Props = {
     expireSubscription :Function;
     updateSubscription :Function;
   };
+  assignedToEntitySetId :UUID;
   assigneeQuery :string;
   issueEntitySetId :UUID;
   personEntitySetId :UUID;
+  reportedEntitySetId :UUID;
   staffEntitySetId :UUID;
   subscriptions :List;
 }
@@ -47,9 +55,11 @@ type Props = {
 const IssuesSubscriptions = (props :Props) => {
   const {
     actions,
+    assignedToEntitySetId,
     assigneeQuery,
     issueEntitySetId,
     personEntitySetId,
+    reportedEntitySetId,
     staffEntitySetId,
     subscriptions,
   } = props;
@@ -105,7 +115,9 @@ const IssuesSubscriptions = (props :Props) => {
       },
       alertMetadata: {
         alertName,
+        assignedToEntitySetId,
         issueEntitySetId,
+        reportedEntitySetId,
         staffEntitySetId,
         timezone,
       }
@@ -167,8 +179,10 @@ const mapStateToProps = (state :Map) => {
   const currentUserEKID = state.getIn(['staff', 'currentUser', 'data', OPENLATTICE_ID_FQN, 0]);
   return {
     assigneeQuery: getSearchTerm(state.getIn(['edm', 'fqnToIdMap', ASSIGNEE_ID_FQN]), currentUserEKID),
+    assignedToEntitySetId: getESIDFromApp(app, ASSIGNED_TO_FQN),
     issueEntitySetId: getESIDFromApp(app, ISSUE_FQN),
     personEntitySetId: getESIDFromApp(app, PEOPLE_FQN),
+    reporterEntitySetId: getESIDFromApp(app, REPORTED_FQN),
     staffEntitySetId: getESIDFromApp(app, STAFF_FQN),
   };
 };
