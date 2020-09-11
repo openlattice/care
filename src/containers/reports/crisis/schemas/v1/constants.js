@@ -66,7 +66,6 @@ export const NATURE_OF_CRISIS = [
   CHEMICAL,
   'Excited Delirium',
   'Medication Non-compliance',
-  'Unknown'
 ];
 
 export const BIOLOGICAL_CAUSES = [
