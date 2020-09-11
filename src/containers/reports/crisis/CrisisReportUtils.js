@@ -44,6 +44,7 @@ import {
   DISPOSITION_FQN,
   FELONY_INDICATOR_FQN,
   HOMELESS_FQN,
+  HOSPITAL_FQN,
   HOSPITAL_TRANSPORT_INDICATOR_FQN,
   HOUSING_SITUATION_FQN,
   MILITARY_STATUS_FQN,
@@ -394,6 +395,21 @@ const getSectionProperties = (sectionSchema :Object) :Object => {
   return getIn(sectionSchema, path);
 };
 
+const getSectionDependencies = (sectionSchema :Object) :Object => {
+  const dependenciesSchema = get(sectionSchema, 'dependencies', {});
+  const dependencies = {};
+  Object.entries(dependenciesSchema).forEach(([entityAddressKey, dependencyTree]) => {
+    const oneOfs = get(dependencyTree, 'oneOf', []);
+    oneOfs.forEach((rule) => {
+      const oneOfDependencies = Object.fromEntries(Object.entries(rule.properties || {})
+        .filter(([depEntityAddressKey]) => depEntityAddressKey !== entityAddressKey));
+      Object.assign(dependencies, oneOfDependencies);
+    });
+  });
+
+  return dependencies;
+};
+
 const getEntityAddressIndexByFQN = (schema) => {
   const entityAddressIndexByFQN = {};
   const { properties } = schema;
@@ -471,11 +487,13 @@ const constructFormDataFromNeighbors = (neighborsByFQN :Map, schema :Object) :Ob
     // $FlowFixMe destructure from mixed type
     const { type: sectionType } = sectionSchema;
     const sectionProperties = getSectionProperties(sectionSchema);
+    const sectionDependencies = getSectionDependencies(sectionSchema);
+    const sectionPropertiesAndDependencies = Object.assign(sectionProperties, sectionDependencies);
 
     // sectionValue should have type that matches type specified in schema type
     let sectionValue = sectionType === 'array' ? [] : {};
 
-    Object.entries(sectionProperties).forEach(([entityAddressKey, propertySchema]) => {
+    Object.entries(sectionPropertiesAndDependencies).forEach(([entityAddressKey, propertySchema]) => {
       // $FlowFixMe destructure from mixed type
       const { type: propertyType, sharedProperty, skipPopulate } = propertySchema;
 
@@ -640,6 +658,7 @@ const postProcessDisposition = (formData :Object) :Object => {
     REFERRAL_DEST_FQN,
     ORGANIZATION_NAME_FQN,
     HOSPITAL_TRANSPORT_INDICATOR_FQN,
+    HOSPITAL_FQN,
     NARCAN_ADMINISTERED_FQN,
     ARRESTABLE_OFFENSE_FQN,
   ];
@@ -653,6 +672,7 @@ const postProcessDisposition = (formData :Object) :Object => {
     notifiedValue,
     referralValue,
     transportValue,
+    hospitalIndicatorValue,
     hospitalValue,
     naloxoneValue,
     offenseValue,
@@ -669,7 +689,7 @@ const postProcessDisposition = (formData :Object) :Object => {
     disposition.push(DISPOSITIONS.COURTESY_TRANPORT);
     sectionData[getBHRAddress(TRANSPORT_INDICATOR_FQN)] = true;
   }
-  if (hospitalValue) {
+  if (hospitalIndicatorValue || hospitalValue) {
     disposition.push(DISPOSITIONS.HOSPITAL);
   }
   if (naloxoneValue) {

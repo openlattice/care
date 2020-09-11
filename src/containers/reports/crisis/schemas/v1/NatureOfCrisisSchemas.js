@@ -83,6 +83,8 @@ const uiSchema = {
         mode: 'button',
         row: true,
         withOther: true,
+        withNone: true,
+        noneText: 'Unknown'
       }
     },
     [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.CHEMICALLY_INDUCED_CAUSES_FQN)]: {
