@@ -125,6 +125,7 @@ const NewCrisisReport = ({ pageRef, selectedPerson } :Props) => {
                     disabled={isReviewPage}
                     formData={pagedData}
                     hideSubmit
+                    omitExtraData={isReviewPage}
                     onSubmit={handleNext}
                     ref={formRef}
                     schema={isReviewPage ? reviewSchemas.schema : schemas[page]}
