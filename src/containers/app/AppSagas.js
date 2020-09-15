@@ -12,7 +12,7 @@ import {
 } from '@redux-saga/core/effects';
 import { push } from 'connected-react-router';
 import { Map, fromJS } from 'immutable';
-import { Constants, Types } from 'lattice';
+import { Constants } from 'lattice';
 import { AccountUtils } from 'lattice-auth';
 import {
   AppApiActions,
@@ -47,12 +47,11 @@ import { getCurrentUserStaffMemberData } from '../staff/StaffActions';
 import { getCurrentUserStaffMemberDataWorker } from '../staff/StaffSagas';
 
 const { OPENLATTICE_ID_FQN } = Constants;
-const { SecurableTypes } = Types;
 const { isValidUUID } = ValidationUtils;
-const { getApp, getAppConfigs, getAppTypes } = AppApiActions;
-const { getAppWorker, getAppConfigsWorker, getAppTypesWorker } = AppApiSagas;
-const { getEntityDataModelProjection, getAllPropertyTypes } = EntityDataModelApiActions;
-const { getEntityDataModelProjectionWorker, getAllPropertyTypesWorker } = EntityDataModelApiSagas;
+const { getApp, getAppConfigs } = AppApiActions;
+const { getAppWorker, getAppConfigsWorker } = AppApiSagas;
+const { getAllPropertyTypes } = EntityDataModelApiActions;
+const { getAllPropertyTypesWorker } = EntityDataModelApiSagas;
 const { getEntitySetData } = DataApiActions;
 const { getEntitySetDataWorker } = DataApiSagas;
 const { searchEntitySetData } = SearchApiActions;
