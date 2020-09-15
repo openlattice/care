@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import type { Dispatch } from 'redux';
 
+import FileUpload from '../../components/documents/FileUpload';
 import { uploadDocument } from './DocumentsActionFactory';
 
 
@@ -73,7 +74,10 @@ class DocumentsContainer extends React.Component<Props, State> {
     const { endDate, startDate } = this.state;
 
     return (
-      <div>Documents!</div>
+      <div>
+        <h1>Documents!</h1>
+        <FileUpload onUpload={console.log} />
+      </div>
     );
   }
 }
