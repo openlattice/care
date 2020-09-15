@@ -7,7 +7,6 @@ import React, {
 } from 'react';
 
 import styled, { css } from 'styled-components';
-import { faFolderOpen } from '@fortawesome/pro-duotone-svg-icons';
 import { faPen } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { List, Map } from 'immutable';
@@ -16,7 +15,6 @@ import {
   Button,
   CardStack,
   Hooks,
-  IconSplash,
   StyleUtils,
 } from 'lattice-ui-kit';
 import { connect } from 'react-redux';
@@ -33,6 +31,7 @@ import CovidBanner from './CovidBanner';
 import HistoryBody from './HistoryBody';
 import NewResponsePlanCard from './NewResponsePlanCard';
 import PortraitCard from './PortraitCard';
+import ProfilePrivacyWall from './ProfilePrivacyWall';
 import { meetsCrisisProfileReportThreshold } from './Utils';
 
 import ContactCarousel from '../../../components/premium/contacts/ContactCarousel';
@@ -134,10 +133,6 @@ const ActionBar = styled.div`
   `}
 `;
 
-const StyledSplash = styled(IconSplash)`
-  margin: auto;
-`;
-
 const ButtonGroup = styled.div`
   margin-left: auto;
 
@@ -237,7 +232,8 @@ const PremiumProfileContainer = (props :Props) => {
   } = props;
 
   const match = useRouteMatch();
-  const [isVisible, open, close] = useBoolean();
+  const [reportSelectionVisible, open, close] = useBoolean(false);
+  const [show, onShow] = useBoolean(false);
   const settings = useAppSettings();
   const reportAction = settings.get('v2') ? actions.getIncidentReportsSummary : actions.getProfileReports;
 
@@ -303,9 +299,6 @@ const PremiumProfileContainer = (props :Props) => {
     );
   }
 
-  let splashCaption = 'No reports have been filed.';
-  if (!meetsReportThreshold) splashCaption = 'Profile does not meet reporting threshold.';
-
   return (
     <ContentOuterWrapper>
       <CovidBanner recentSymptoms={recentSymptoms} />
@@ -361,17 +354,18 @@ const PremiumProfileContainer = (props :Props) => {
                 <Button color="primary" onClick={open}>Create Report</Button>
                 <ReportSelectionModal
                     selectedPerson={selectedPerson}
-                    isVisible={isVisible}
+                    isVisible={reportSelectionVisible}
                     onClose={close} />
               </ButtonGroup>
-
             </ActionBar>
-            {
-              // show splash based on report number from person, rather than successful neighbor returns.
-              (!numReportsFoundIn || !meetsReportThreshold) && !isLoadingBody
-                ? <StyledSplash icon={faFolderOpen} caption={splashCaption} />
-                : body
-            }
+            <ProfilePrivacyWall
+                component={body}
+                hasReports={numReportsFoundIn}
+                isAuthorized={isAuthorized}
+                isLoading={isLoadingBody}
+                meetsThreshold={meetsReportThreshold}
+                show={show}
+                onShow={onShow} />
           </ScrollStack>
         </ProfileGrid>
       </ContentWrapper>
