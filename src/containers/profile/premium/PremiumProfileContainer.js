@@ -33,6 +33,7 @@ import CovidBanner from './CovidBanner';
 import HistoryBody from './HistoryBody';
 import NewResponsePlanCard from './NewResponsePlanCard';
 import PortraitCard from './PortraitCard';
+import { meetsCrisisProfileReportThreshold } from './Utils';
 
 import ContactCarousel from '../../../components/premium/contacts/ContactCarousel';
 import CreateIssueButton from '../../../components/buttons/CreateIssueButton';
@@ -40,7 +41,7 @@ import LinkButton from '../../../components/buttons/LinkButton';
 import ReportSelectionModal from '../../people/ReportSelectionModal';
 import * as FQN from '../../../edm/DataModelFqns';
 import { BreadcrumbItem, BreadcrumbLink } from '../../../components/breadcrumbs';
-import { useAuthorization, usePeopleRoute } from '../../../components/hooks';
+import { useAppSettings, useAuthorization, usePeopleRoute } from '../../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
 import {
   BASIC_PATH,
@@ -131,6 +132,10 @@ const ActionBar = styled.div`
   ${media.tablet`
     flex-direction: column;
   `}
+`;
+
+const StyledSplash = styled(IconSplash)`
+  margin: auto;
 `;
 
 const ButtonGroup = styled.div`
@@ -233,15 +238,17 @@ const PremiumProfileContainer = (props :Props) => {
 
   const match = useRouteMatch();
   const [isVisible, open, close] = useBoolean();
+  const settings = useAppSettings();
+  const reportAction = settings.get('v2') ? actions.getIncidentReportsSummary : actions.getProfileReports;
+
   usePeopleRoute(actions.getAboutPlan);
   usePeopleRoute(actions.getBasicInformation);
   usePeopleRoute(actions.getEmergencyContacts);
   usePeopleRoute(actions.getOfficerSafety);
   usePeopleRoute(actions.getResponsePlan);
-  usePeopleRoute(actions.getProfileReports);
-  // usePeopleRoute(actions.getIncidentReportsSummary);
   usePeopleRoute(actions.getLBProfile);
   usePeopleRoute(actions.getAllSymptomsReports);
+  usePeopleRoute(reportAction);
 
   const [tab, setTab] = useState('response');
   const [isAuthorized] = useAuthorization('profile', actions.getAuthorization);
@@ -256,6 +263,7 @@ const PremiumProfileContainer = (props :Props) => {
   ]) === RequestStates.PENDING;
 
   const imageURL :string = useMemo(() => getImageDataFromEntity(photo), [photo]);
+  const meetsReportThreshold = useMemo(() => meetsCrisisProfileReportThreshold(settings, reports), [settings, reports]);
   const name = getFirstLastFromPerson(selectedPerson);
   const subjectEKID = getEntityKeyId(selectedPerson);
   const numReportsFoundIn = selectedPerson.getIn([FQN.NUM_REPORTS_FOUND_IN_FQN, 0], 0);
@@ -294,6 +302,9 @@ const PremiumProfileContainer = (props :Props) => {
           warrant={warrant} />
     );
   }
+
+  let splashCaption = 'No reports have been filed.';
+  if (!meetsReportThreshold) splashCaption = 'Profile does not meet reporting threshold.';
 
   return (
     <ContentOuterWrapper>
@@ -357,8 +368,8 @@ const PremiumProfileContainer = (props :Props) => {
             </ActionBar>
             {
               // show splash based on report number from person, rather than successful neighbor returns.
-              !numReportsFoundIn && !isLoadingBody
-                ? <IconSplash icon={faFolderOpen} caption="No reports have been filed." />
+              (!numReportsFoundIn || !meetsReportThreshold) && !isLoadingBody
+                ? <StyledSplash icon={faFolderOpen} caption={splashCaption} />
                 : body
             }
           </ScrollStack>
