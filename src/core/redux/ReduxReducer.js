@@ -12,6 +12,7 @@ import crisisReportReducer from '../../containers/reports/crisis/CrisisReportRed
 import dashboardReducer from '../../containers/dashboard/DashboardReducer';
 // pages
 import dispositionReducer from '../../containers/pages/disposition/Reducer';
+import documentsReducer from '../../containers/documents/DocumentsReducer';
 import downloadsReducer from '../../containers/downloads/DownloadsReducer';
 import edmReducer from '../../edm/EdmReducer';
 import formSchemasReducer from '../../containers/reports/FormSchemasReducer';
@@ -39,6 +40,7 @@ export default function reduxReducer(routerHistory :any) {
     auth: AuthReducer,
     authorization: authorizeReducer,
     dashboard: dashboardReducer,
+    documents: documentsReducer,
     downloads: downloadsReducer,
     edm: edmReducer,
     hospitals: hospitalsReducer,
