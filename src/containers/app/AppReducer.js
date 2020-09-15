@@ -5,10 +5,7 @@
 import {
   Map,
   fromJS,
-  get,
-  getIn,
 } from 'immutable';
-import { Models } from 'lattice';
 import { AccountUtils } from 'lattice-auth';
 import { RequestStates } from 'redux-reqseq';
 import type { SequenceAction } from 'redux-reqseq';
@@ -17,8 +14,6 @@ import {
   initializeApplication,
   loadApp,
 } from './AppActions';
-
-const { FQN } = Models;
 
 const INITIAL_STATE :Map<*, *> = fromJS({
   actions: {
@@ -73,7 +68,6 @@ export default function reducer(state :Map<*, *> = INITIAL_STATE, action :Object
             app,
             appConfigs,
             appSettingsByOrgId,
-            appTypes,
           } = value;
           const organizations :Object = {};
 
@@ -89,17 +83,14 @@ export default function reducer(state :Map<*, *> = INITIAL_STATE, action :Object
           const newState = Map().withMutations((mutable) => {
             appConfigs.forEach((appConfig :Object) => {
 
-              const { organization } :Object = appConfig;
+              const { config, organization } :Object = appConfig;
               const orgId :string = organization.id;
               organizations[orgId] = organization;
               if (orgId === selectedOrganizationId) {
-                appTypes.forEach((appType) => {
-                  const type = get(appType, 'type');
-                  // .toString() is necessary when using setIn as immutable attempts to set the FQN instance as the key
-                  const appTypeFQN = FQN.toString(type);
-                  const appTypeESID = getIn(appConfig, ['config', appTypeFQN, 'entitySetId']);
-                  mutable.setIn(['selectedOrgEntitySetIds', appTypeFQN], appTypeESID);
-                });
+                // TODO: replace selectedOrgEntitySetIds with plain config
+                const selectedOrgEntitySetIds = Object.fromEntries(Object.entries(config)
+                  .map(([appTypeFQN, appTypeValue]) => [appTypeFQN, appTypeValue.entitySetId]));
+                mutable.set('selectedOrgEntitySetIds', fromJS(selectedOrgEntitySetIds));
               }
             });
 

@@ -86,7 +86,7 @@ function* loadAppWorker(action :SequenceAction) :Saga<*> {
     /*
      * 1. load App
      */
-    let response :any = yield call(getAppWorker, getApp(APP_NAME));
+    const response :any = yield call(getAppWorker, getApp(APP_NAME));
     if (response.error) throw response.error;
 
     /*
@@ -94,27 +94,14 @@ function* loadAppWorker(action :SequenceAction) :Saga<*> {
      */
 
     const app = response.data;
-    const [appConfigsResponse, appTypesResponse] = yield all([
-      call(getAppConfigsWorker, getAppConfigs(app.id)),
-      call(getAppTypesWorker, getAppTypes(app.appTypeIds)),
-    ]);
+    const appConfigsResponse = yield call(getAppConfigsWorker, getAppConfigs(app.id));
     if (appConfigsResponse.error) throw appConfigsResponse.error;
-    if (appTypesResponse.error) throw appTypesResponse.error;
 
     /*
      * 3. load EntityTypes and PropertyTypes
      */
 
     const appConfigs :Object[] = appConfigsResponse.data;
-    const appTypesMap :Object = appTypesResponse.data;
-    const appTypes :Object[] = (Object.values(appTypesMap) :any);
-    const projection :Object[] = appTypes.map((appType :Object) => ({
-      id: appType.entityTypeId,
-      include: [SecurableTypes.EntityType, SecurableTypes.PropertyTypeInEntitySet],
-      type: SecurableTypes.EntityType,
-    }));
-    response = yield call(getEntityDataModelProjectionWorker, getEntityDataModelProjection(projection));
-    if (response.error) throw response.error;
 
     const appSettingsESIDByOrgId = Map().withMutations((mutable) => {
       appConfigs.forEach((appConfig :Object) => {
@@ -175,13 +162,10 @@ function* loadAppWorker(action :SequenceAction) :Saga<*> {
       });
     });
 
-    const edm :Object = response.data;
     workerResponse.data = {
       app,
       appConfigs,
-      appSettingsByOrgId,
-      appTypes,
-      edm
+      appSettingsByOrgId
     };
 
     yield put(loadApp.success(action.id, workerResponse.data));
