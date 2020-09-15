@@ -89,7 +89,8 @@ export default function reducer(state :Map<*, *> = INITIAL_STATE, action :Object
               if (orgId === selectedOrganizationId) {
                 // TODO: replace selectedOrgEntitySetIds with plain config
                 const selectedOrgEntitySetIds = Object.fromEntries(Object.entries(config)
-                  .map(([appTypeFQN, appTypeValue]) => [appTypeFQN, appTypeValue.entitySetId]));
+                // $FlowFixMe object incompatible with mixed
+                  .map(([appTypeFQN, appType]) => [appTypeFQN, appType.entitySetId]));
                 mutable.set('selectedOrgEntitySetIds', fromJS(selectedOrgEntitySetIds));
               }
             });
