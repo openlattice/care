@@ -12,7 +12,7 @@ import {
 } from '@redux-saga/core/effects';
 import { push } from 'connected-react-router';
 import { Map, fromJS } from 'immutable';
-import { Constants, Types } from 'lattice';
+import { Constants } from 'lattice';
 import { AccountUtils } from 'lattice-auth';
 import {
   AppApiActions,
@@ -47,12 +47,11 @@ import { getCurrentUserStaffMemberData } from '../staff/StaffActions';
 import { getCurrentUserStaffMemberDataWorker } from '../staff/StaffSagas';
 
 const { OPENLATTICE_ID_FQN } = Constants;
-const { SecurableTypes } = Types;
 const { isValidUUID } = ValidationUtils;
-const { getApp, getAppConfigs, getAppTypes } = AppApiActions;
-const { getAppWorker, getAppConfigsWorker, getAppTypesWorker } = AppApiSagas;
-const { getEntityDataModelProjection, getAllPropertyTypes } = EntityDataModelApiActions;
-const { getEntityDataModelProjectionWorker, getAllPropertyTypesWorker } = EntityDataModelApiSagas;
+const { getApp, getAppConfigs } = AppApiActions;
+const { getAppWorker, getAppConfigsWorker } = AppApiSagas;
+const { getAllPropertyTypes } = EntityDataModelApiActions;
+const { getAllPropertyTypesWorker } = EntityDataModelApiSagas;
 const { getEntitySetData } = DataApiActions;
 const { getEntitySetDataWorker } = DataApiSagas;
 const { searchEntitySetData } = SearchApiActions;
@@ -86,7 +85,7 @@ function* loadAppWorker(action :SequenceAction) :Saga<*> {
     /*
      * 1. load App
      */
-    let response :any = yield call(getAppWorker, getApp(APP_NAME));
+    const response :any = yield call(getAppWorker, getApp(APP_NAME));
     if (response.error) throw response.error;
 
     /*
@@ -94,32 +93,18 @@ function* loadAppWorker(action :SequenceAction) :Saga<*> {
      */
 
     const app = response.data;
-    const [appConfigsResponse, appTypesResponse] = yield all([
-      call(getAppConfigsWorker, getAppConfigs(app.id)),
-      call(getAppTypesWorker, getAppTypes(app.appTypeIds)),
-    ]);
+    const appConfigsResponse = yield call(getAppConfigsWorker, getAppConfigs(app.id));
     if (appConfigsResponse.error) throw appConfigsResponse.error;
-    if (appTypesResponse.error) throw appTypesResponse.error;
 
     /*
      * 3. load EntityTypes and PropertyTypes
      */
 
     const appConfigs :Object[] = appConfigsResponse.data;
-    const appTypesMap :Object = appTypesResponse.data;
-    const appTypes :Object[] = (Object.values(appTypesMap) :any);
-    const projection :Object[] = appTypes.map((appType :Object) => ({
-      id: appType.entityTypeId,
-      include: [SecurableTypes.EntityType, SecurableTypes.PropertyTypeInEntitySet],
-      type: SecurableTypes.EntityType,
-    }));
-    response = yield call(getEntityDataModelProjectionWorker, getEntityDataModelProjection(projection));
-    if (response.error) throw response.error;
 
     const appSettingsESIDByOrgId = Map().withMutations((mutable) => {
       appConfigs.forEach((appConfig :Object) => {
-        const { config } = appConfig;
-        const { organization } :Object = appConfig;
+        const { config, organization } = appConfig;
         const orgId :string = organization.id;
         if (Object.keys(config).length) {
           const appSettingsConfig = config[APP_SETTINGS_FQN];
@@ -175,13 +160,10 @@ function* loadAppWorker(action :SequenceAction) :Saga<*> {
       });
     });
 
-    const edm :Object = response.data;
     workerResponse.data = {
       app,
       appConfigs,
-      appSettingsByOrgId,
-      appTypes,
-      edm
+      appSettingsByOrgId
     };
 
     yield put(loadApp.success(action.id, workerResponse.data));

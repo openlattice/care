@@ -13,6 +13,7 @@ import emergencyContacts from '../edit/contacts/EmergencyContactsReducer';
 import officerSafety from '../edit/officersafety/reducers/OfficerSafetyReducer';
 import responsePlan from '../edit/responseplan/ResponsePlanReducer';
 import symptomReports from '../../reports/symptoms/ProfileSymptomsReducer';
+import visibility from '../edit/visibility/VisibilityReducer';
 import { CLEAR_PROFILE } from '../ProfileActions';
 
 const subReducers = combineReducers({
@@ -25,6 +26,7 @@ const subReducers = combineReducers({
   reports,
   responsePlan,
   symptomReports,
+  visibility,
 });
 
 const profileReducer = (state :Map, action :Object) => {
