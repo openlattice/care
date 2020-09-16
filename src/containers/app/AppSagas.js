@@ -104,8 +104,7 @@ function* loadAppWorker(action :SequenceAction) :Saga<*> {
 
     const appSettingsESIDByOrgId = Map().withMutations((mutable) => {
       appConfigs.forEach((appConfig :Object) => {
-        const { config } = appConfig;
-        const { organization } :Object = appConfig;
+        const { config, organization } = appConfig;
         const orgId :string = organization.id;
         if (Object.keys(config).length) {
           const appSettingsConfig = config[APP_SETTINGS_FQN];
