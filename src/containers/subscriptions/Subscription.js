@@ -143,13 +143,6 @@ export default class Subscription extends React.Component<Props, State> {
     this.setState({ isEditing: false });
   }
 
-  cancelSubscription = () => {
-    const { onCancel, subscription } = this.props;
-    const id = subscription.get('id');
-    onCancel(id);
-    this.setState({ isEditing: false });
-  }
-
   editSubscription = () => {
     const { onEdit, subscription } = this.props;
     const { expiration } = this.state;
