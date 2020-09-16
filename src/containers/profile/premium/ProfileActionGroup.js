@@ -113,7 +113,7 @@ const ProfileActionGroup = ({ isAuthorized } :Props) => {
         {isAuthorized && (
           <NestedMenuItem elevation={4} label="Visibility" parentMenuOpen={!!isMenuOpen}>
             <MenuItem
-                selected={visibilityStatus === VisibilityTypes.AUTO}
+                selected={visibilityStatus === VisibilityTypes.AUTO || !visibilityStatus}
                 onClick={createVisibilityDispatch(VisibilityTypes.AUTO)}>
               Auto
             </MenuItem>
