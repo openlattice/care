@@ -6,13 +6,16 @@ import type { FQN } from 'lattice';
 
 import {
   ARMED_WITH_WEAPON_FQN,
+  DATETIME_START_FQN,
   DATE_TIME_OCCURRED_FQN,
   INJURIES_FQN,
   INJURIES_OTHER_FQN,
   OTHER_PERSON_INJURED_FQN,
   PERSON_INJURED_FQN,
   THREATENED_INDICATOR_FQN,
+  TYPE_FQN,
 } from '../../../edm/DataModelFqns';
+import { CRISIS_REPORT } from '../../reports/crisis/schemas/constants';
 
 const incrementValueAtKey = (mutable :Map, key :string, value :boolean) => {
   if (value) {
@@ -89,9 +92,42 @@ const countSafetyIncidents = (reports :List) :Map => Map()
   .toArray()
   .map(([name, count]) => ({ name, count }));
 
+const meetsCrisisProfileReportThreshold = (settings :Map, reports :List) :boolean => {
+  const months = parseInt(settings.getIn(['crisisProfileReportThreshold', 'months']), 10);
+  const threshold = parseInt(settings.getIn(['crisisProfileReportThreshold', 'threshold']), 10);
+
+  let total = 0;
+  if (!Number.isNaN(months) && !Number.isNaN(threshold)) {
+    const isV2 = settings.get('v2');
+    const datetimePath = isV2 ? [DATETIME_START_FQN, 0] : [DATE_TIME_OCCURRED_FQN, 0];
+    reports.forEach((report :Map) => {
+      if (isV2 && report.getIn([TYPE_FQN, 0]) !== CRISIS_REPORT) {
+        return;
+      }
+
+      const occurred = report.getIn(datetimePath, '');
+      const dtOccurred = DateTime.fromISO(occurred);
+
+      if (dtOccurred.isValid) {
+        const durationInMonths :number = dtOccurred
+          .until(DateTime.local()).toDuration(['months'])
+          .toObject()
+          .months || Infinity;
+
+        if (durationInMonths <= months) total += 1;
+      }
+    });
+    return total >= threshold;
+  }
+
+  // return true if valid threshold does not exist
+  return true;
+};
+
 export {
   countCrisisCalls,
   countPropertyOccurrance,
   countSafetyIncidents,
   incrementValueAtKey,
+  meetsCrisisProfileReportThreshold,
 };

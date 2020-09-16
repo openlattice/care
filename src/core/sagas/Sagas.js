@@ -45,6 +45,7 @@ import * as ScarsMarksTattoosSagas from '../../containers/profile/edit/basicinfo
 import * as StaffSagas from '../../containers/staff/StaffSagas';
 import * as SubscriptionSagas from '../../containers/subscriptions/SubscriptionSagas';
 import * as SymptomsReportSagas from '../../containers/reports/symptoms/SymptomsReportSagas';
+import * as VisibilitySagas from '../../containers/profile/edit/visibility/VisibilitySagas';
 
 export default function* sagas() :Generator<*, *, *> {
 
@@ -228,6 +229,10 @@ export default function* sagas() :Generator<*, *, *> {
     fork(SubscriptionSagas.getSubscriptionsWatcher),
     fork(SubscriptionSagas.createSubscriptionWatcher),
     fork(SubscriptionSagas.updateSubscriptionWatcher),
-    fork(SubscriptionSagas.expireSubscriptionWatcher)
+    fork(SubscriptionSagas.expireSubscriptionWatcher),
+
+    // VisibilitySagas
+    fork(VisibilitySagas.getProfileVisibilityWatcher),
+    fork(VisibilitySagas.putProfileVisibilityWatcher),
   ]);
 }

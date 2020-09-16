@@ -93,7 +93,8 @@ export const APP_TYPES_FQNS = {
   INTERACTED_WITH_FQN: FQN.of('app.interactedwith'),
   /* <===== END SYMPTOMS ======> */
 
-  FORMS_FQN: FQN.of('app.forms')
+  FORMS_FQN: FQN.of('app.forms'),
+  SUMMARY_SET_FQN: FQN.of('app.summaryset'),
 };
 
 export const STRING_ID_FQN = 'general.stringid';

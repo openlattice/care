@@ -1,12 +1,9 @@
 // @flow
-import React, { useEffect } from 'react';
+import React from 'react';
 
-import { faFolderOpen } from '@fortawesome/pro-duotone-svg-icons';
 import { List, Map } from 'immutable';
-import { IconSplash } from 'lattice-ui-kit';
-import { useDispatch } from 'react-redux';
-import { useRouteMatch } from 'react-router';
 
+import NoReportsFiled from './styled/NoReportsFiled';
 import ReportHistory from './ReportHistory';
 import ReportsSummary from './ReportsSummary';
 
@@ -15,9 +12,6 @@ import ProbationCard from '../../../components/premium/probation/ProbationCard';
 import RecentIncidentCard from '../RecentIncidentCard';
 import StayAwayCard from '../../../components/premium/stayaway/StayAwayCard';
 import WarrantCard from '../../../components/premium/warrant/WarrantCard';
-import { useAppSettings } from '../../../components/hooks';
-import { PROFILE_ID_PARAM } from '../../../core/router/Routes';
-import { getIncidentReportsSummary } from '../actions/ReportActions';
 
 type Props = {
   behaviorSummary :List<Map>;
@@ -42,23 +36,11 @@ const HistoryBody = (props :Props) => {
     warrant,
   } = props;
 
-  const dispatch = useDispatch();
-  const settings = useAppSettings();
-
-  const match = useRouteMatch();
-  const { [PROFILE_ID_PARAM]: profileId } = match.params;
-
-  useEffect(() => {
-    if (settings.get('v2')) {
-      dispatch(getIncidentReportsSummary(profileId));
-    }
-  }, [profileId, settings, dispatch]);
-
   const recent = crisisSummary.get('recent');
   const total = crisisSummary.get('total');
 
   if (!total && !isLoading) {
-    return <IconSplash icon={faFolderOpen} caption="No reports have been filed." />;
+    return <NoReportsFiled />;
   }
 
   return (
