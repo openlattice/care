@@ -2,22 +2,16 @@
 import React from 'react';
 import type { Node } from 'react';
 
-import styled from 'styled-components';
 import { faFolderOpen } from '@fortawesome/pro-duotone-svg-icons';
 import { getIn } from 'immutable';
 import { Button, IconSplash } from 'lattice-ui-kit';
 import { useSelector } from 'react-redux';
 
+import NoReportsFiled from './styled/NoReportsFiled';
+import { AbsoluteCenter } from './styled/layout';
+
 import VisibilityTypes from '../edit/visibility/VisibilityTypes';
 import { STATUS_FQN } from '../../../edm/DataModelFqns';
-
-const PrivacyWallWrapper = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  flex: 1 0 auto;
-  justify-content: center;
-`;
 
 type Props = {
   component :Node;
@@ -44,36 +38,36 @@ const ProfilePrivacyWall = ({
   let child = component;
 
   if (!isLoading) {
-    if (visibilityStatus === VisibilityTypes.AUTO) {
+    if (visibilityStatus === VisibilityTypes.AUTO || !visibilityStatus) {
       if (!hasReports) {
-        const splashCaption = 'No reports have been filed.';
-        child = (
-          <PrivacyWallWrapper>
-            <IconSplash icon={faFolderOpen} caption={splashCaption} />
-          </PrivacyWallWrapper>
-        );
+        child = <NoReportsFiled />;
       }
       else if (!meetsThreshold && !show) {
         const splashCaption = 'Profile does not meet reporting threshold.';
         child = (
-          <PrivacyWallWrapper>
+          <AbsoluteCenter>
             <IconSplash icon={faFolderOpen} caption={splashCaption} />
             {
               isAuthorized && <Button variant="text" color="primary" onClick={onShow}>Show Content</Button>
             }
-          </PrivacyWallWrapper>
+          </AbsoluteCenter>
         );
+      }
+    }
+    if (visibilityStatus === VisibilityTypes.PUBLIC) {
+      if (!hasReports) {
+        child = <NoReportsFiled />;
       }
     }
     if (visibilityStatus === VisibilityTypes.PRIVATE && !show) {
       const splashCaption = 'This profile has been made private. Contact an administrator for access.';
       child = (
-        <PrivacyWallWrapper>
+        <AbsoluteCenter>
           <IconSplash icon={faFolderOpen} caption={splashCaption} />
           {
             isAuthorized && <Button variant="text" color="primary" onClick={onShow}>Show Content</Button>
           }
-        </PrivacyWallWrapper>
+        </AbsoluteCenter>
       );
     }
   }

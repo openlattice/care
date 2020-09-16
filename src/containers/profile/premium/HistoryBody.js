@@ -1,11 +1,9 @@
 // @flow
 import React from 'react';
 
-import styled from 'styled-components';
-import { faFolderOpen } from '@fortawesome/pro-duotone-svg-icons';
 import { List, Map } from 'immutable';
-import { IconSplash } from 'lattice-ui-kit';
 
+import NoReportsFiled from './styled/NoReportsFiled';
 import ReportHistory from './ReportHistory';
 import ReportsSummary from './ReportsSummary';
 
@@ -14,14 +12,6 @@ import ProbationCard from '../../../components/premium/probation/ProbationCard';
 import RecentIncidentCard from '../RecentIncidentCard';
 import StayAwayCard from '../../../components/premium/stayaway/StayAwayCard';
 import WarrantCard from '../../../components/premium/warrant/WarrantCard';
-
-const Centered = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  flex: 1 0 auto;
-  justify-content: center;
-`;
 
 type Props = {
   behaviorSummary :List<Map>;
@@ -50,11 +40,7 @@ const HistoryBody = (props :Props) => {
   const total = crisisSummary.get('total');
 
   if (!total && !isLoading) {
-    return (
-      <Centered>
-        <IconSplash icon={faFolderOpen} caption="No reports have been filed." />
-      </Centered>
-    );
+    return <NoReportsFiled />;
   }
 
   return (
