@@ -5,6 +5,7 @@ const { OPENLATTICE_ID_FQN } = Constants;
 
 export { OPENLATTICE_ID_FQN };
 
+export const VARIABLE_FQN = FQN.of('ol.variable');
 export const JSON_SCHEMA_FQN = FQN.of('ol.jsonschema');
 
 export const AFFILIATION_FQN = FQN.of('bhr.affiliation');
