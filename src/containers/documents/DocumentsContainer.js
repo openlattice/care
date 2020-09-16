@@ -13,13 +13,14 @@ import type { Dispatch } from 'redux';
 
 import FileUpload from '../../components/documents/FileUpload';
 import UploadedDocument from '../../components/documents/UploadedDocument';
-import { uploadDocument } from './DocumentsActionFactory';
+import { uploadDocuments, loadUsedTags } from './DocumentsActionFactory';
 
 
 type Props = {
   downloading :boolean,
   actions :{
-    uploadDocument :Function
+    loadUsedTags :Function;
+    uploadDocuments :Function;
   }
 };
 
@@ -44,11 +45,6 @@ export const FormWrapper = styled.div`
   width: 100%;
 `;
 
-const ButtonRow = styled.div`
-  margin-top: 30px;
-  text-align: center;
-`;
-
 class DocumentsContainer extends React.Component<Props, State> {
 
   constructor(props :Props) {
@@ -60,11 +56,16 @@ class DocumentsContainer extends React.Component<Props, State> {
     };
   }
 
+  componentDidMount() {
+    const { actions } = this.props;
+    actions.loadUsedTags();
+  }
+
   download = () => {
     const { actions } = this.props;
     const { endDate, startDate } = this.state;
 
-    actions.uploadDocument({ endDate, startDate });
+    actions.uploadDocuments({ endDate, startDate });
   }
 
   onDateChange = (field :string, newDate :string) => {
@@ -88,13 +89,22 @@ class DocumentsContainer extends React.Component<Props, State> {
     });
   }
 
+  renderUploadDocumentsButton = () => {
+    const { actions } = this.props;
+    const { files } = this.state;
+
+    return <button onClick={() => actions.uploadDocuments({ files })}>Upload!</button>;
+  }
+
   render() {
+    const { actions } = this.props;
 
     return (
       <div>
         <h1>Upload documents</h1>
         <FileUpload onUpload={this.onUpload} />
         {this.renderUploadedFiles()}
+        {this.renderUploadDocumentsButton()}
       </div>
     );
   }
@@ -105,7 +115,10 @@ const mapStateToProps = (state :Map) => ({
 });
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
-  actions: bindActionCreators({ uploadDocument }, dispatch)
+  actions: bindActionCreators({
+    loadUsedTags,
+    uploadDocuments,
+  }, dispatch)
 });
 
 // $FlowFixMe

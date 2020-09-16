@@ -8,12 +8,12 @@ import type { RequestSequence } from 'redux-reqseq';
 const LOAD_USED_TAGS :string = 'LOAD_USED_TAGS';
 const loadUsedTags :RequestSequence = newRequestSequence(LOAD_USED_TAGS);
 
-const UPLOAD_DOCUMENT :string = 'UPLOAD_DOCUMENT';
-const uploadDocument :RequestSequence = newRequestSequence(UPLOAD_DOCUMENT);
+const UPLOAD_DOCUMENTS :string = 'UPLOAD_DOCUMENTS';
+const uploadDocuments :RequestSequence = newRequestSequence(UPLOAD_DOCUMENTS);
 
 export {
   LOAD_USED_TAGS,
-  UPLOAD_DOCUMENT,
+  UPLOAD_DOCUMENTS,
   loadUsedTags,
-  uploadDocument
+  uploadDocuments
 };

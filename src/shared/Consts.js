@@ -13,6 +13,7 @@ export const APP_TYPES_FQNS = {
   CONTACTED_VIA_FQN: FQN.of('app.contactedvia'),
   CONTACT_INFORMATION_FQN: FQN.of('app.contactinformation'),
   EMERGENCY_CONTACT_FQN: FQN.of('app.emergencycontact'),
+  FILES_FQN: FQN.of('app.files'),
   HAS_FQN: FQN.of('app.has'),
   HAS_RELATIONSHIP_WITH_FQN: FQN.of('app.hasrelationshipwith'),
   HOSPITALS_FQN: FQN.of('app.hospitals'),

@@ -6,7 +6,7 @@ import { Set, Map } from 'immutable';
 
 import {
   loadUsedTags,
-  uploadDocument
+  uploadDocuments
 } from './DocumentsActionFactory';
 import { DOCUMENTS } from '../../utils/constants/StateConstants';
 
@@ -29,8 +29,8 @@ function reducer(state :Map<*, *> = INITIAL_STATE, action :Object) {
       });
     }
 
-    case uploadDocument.case(action.type): {
-      return uploadDocument.reducer(state, action, {
+    case uploadDocuments.case(action.type): {
+      return uploadDocuments.reducer(state, action, {
         REQUEST: () => state.set(IS_UPLOADING, true),
         FINALLY: () => state.set(IS_UPLOADING, false)
       });

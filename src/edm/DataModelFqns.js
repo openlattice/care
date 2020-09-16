@@ -161,6 +161,15 @@ const IMAGE_DATA_FQN = FQN.of('ol.imagedata');
 
 export { IMAGE_DATA_FQN };
 
+/* File Data */
+const FILE_DATA_FQN = FQN.of('ol.filedata');
+const FILE_TAG_FQN = FQN.of('ol.label');
+
+export {
+  FILE_DATA_FQN,
+  FILE_TAG_FQN,
+};
+
 /*
  * Behavior
  */
