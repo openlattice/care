@@ -7,8 +7,6 @@ import React, {
 } from 'react';
 
 import styled, { css } from 'styled-components';
-import { faPen } from '@fortawesome/pro-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { List, Map } from 'immutable';
 import {
   Breadcrumbs,
@@ -18,7 +16,6 @@ import {
   StyleUtils,
 } from 'lattice-ui-kit';
 import { connect } from 'react-redux';
-import { useRouteMatch } from 'react-router';
 import { bindActionCreators } from 'redux';
 import { RequestStates } from 'redux-reqseq';
 import type { Dispatch } from 'redux';
@@ -31,20 +28,16 @@ import CovidBanner from './CovidBanner';
 import HistoryBody from './HistoryBody';
 import NewResponsePlanCard from './NewResponsePlanCard';
 import PortraitCard from './PortraitCard';
+import ProfileActionGroup from './ProfileActionGroup';
 import ProfilePrivacyWall from './ProfilePrivacyWall';
 import { meetsCrisisProfileReportThreshold } from './Utils';
 
 import ContactCarousel from '../../../components/premium/contacts/ContactCarousel';
-import CreateIssueButton from '../../../components/buttons/CreateIssueButton';
-import LinkButton from '../../../components/buttons/LinkButton';
-import ReportSelectionModal from '../../people/ReportSelectionModal';
 import * as FQN from '../../../edm/DataModelFqns';
 import { BreadcrumbItem, BreadcrumbLink } from '../../../components/breadcrumbs';
 import { useAppSettings, useAuthorization, usePeopleRoute } from '../../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
 import {
-  BASIC_PATH,
-  EDIT_PATH,
   PROFILE_ID_PATH,
   PROFILE_VIEW_PATH,
 } from '../../../core/router/Routes';
@@ -133,20 +126,6 @@ const ActionBar = styled.div`
   `}
 `;
 
-const ButtonGroup = styled.div`
-  margin-left: auto;
-
-  button:not(:last-child) {
-    margin-right: 10px;
-  }
-`;
-
-const StyledLinkButton = styled(LinkButton)`
-  padding: 10px;
-  min-width: 0;
-  background-color: #e5e5f0;
-`;
-
 type Props = {
   actions :{
     getAboutPlan :RequestSequence;
@@ -231,9 +210,7 @@ const PremiumProfileContainer = (props :Props) => {
     warrant,
   } = props;
 
-  const match = useRouteMatch();
-  const [reportSelectionVisible, open, close] = useBoolean(false);
-  const [show, onShow] = useBoolean(false);
+  const [shouldShowContent, onShowContent] = useBoolean(false);
   const settings = useAppSettings();
   const reportAction = settings.get('v2') ? actions.getIncidentReportsSummary : actions.getProfileReports;
 
@@ -280,7 +257,6 @@ const PremiumProfileContainer = (props :Props) => {
     </>
   );
 
-  // TODO use React Router for this
   if (tab === 'history') {
     body = (
       <HistoryBody
@@ -342,21 +318,7 @@ const PremiumProfileContainer = (props :Props) => {
                   History
                 </TabButton>
               </TabGroup>
-              <ButtonGroup>
-                {
-                  isAuthorized && (
-                    <StyledLinkButton to={`${match.url}${EDIT_PATH}${BASIC_PATH}`}>
-                      <FontAwesomeIcon icon={faPen} />
-                    </StyledLinkButton>
-                  )
-                }
-                <CreateIssueButton />
-                <Button color="primary" onClick={open}>Create Report</Button>
-                <ReportSelectionModal
-                    selectedPerson={selectedPerson}
-                    isVisible={reportSelectionVisible}
-                    onClose={close} />
-              </ButtonGroup>
+              <ProfileActionGroup isAuthorized={isAuthorized} />
             </ActionBar>
             <ProfilePrivacyWall
                 component={body}
@@ -364,8 +326,8 @@ const PremiumProfileContainer = (props :Props) => {
                 isAuthorized={isAuthorized}
                 isLoading={isLoadingBody}
                 meetsThreshold={meetsReportThreshold}
-                show={show}
-                onShow={onShow} />
+                show={shouldShowContent}
+                onShow={onShowContent} />
           </ScrollStack>
         </ProfileGrid>
       </ContentWrapper>
@@ -392,8 +354,8 @@ const mapStateToProps = (state :Map) => {
     behaviorSummary: state.getIn(['profile', 'reports', 'behaviorSummary'], List()),
     contact: state.getIn(['profile', 'basicInformation', 'contact', 'data'], Map()),
     contactInfoByContactEKID: state.getIn(['profile', 'emergencyContacts', 'data', 'contactInfoByContactEKID'], Map()),
-    emergencyContacts: state.getIn(['profile', 'emergencyContacts', 'data', 'contacts'], List()),
     crisisSummary: state.getIn(['profile', 'reports', 'crisisSummary'], Map()),
+    emergencyContacts: state.getIn(['profile', 'emergencyContacts', 'data', 'contacts'], List()),
     fetchAboutPlanState: state.getIn(['profile', 'about', 'fetchState'], RequestStates.STANDBY),
     fetchAboutState: reduceRequestStates(fetchAboutStates),
     fetchOfficerSafetyState: reduceRequestStates(fetchOfficerSafetyStates),
