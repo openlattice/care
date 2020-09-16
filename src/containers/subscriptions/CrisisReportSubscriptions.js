@@ -182,11 +182,11 @@ const CrisisReportSubscriptions = (props :Props) => {
         {
           subscriptionDefinitions.map((definition) => {
             const {
-              title,
-              description,
               alertName,
+              description,
               query,
               subscription,
+              title,
             } = definition;
             return (
               <Subscription
