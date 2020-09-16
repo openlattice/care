@@ -56,6 +56,7 @@ import { getBasicInformation } from '../edit/basicinformation/actions/BasicInfor
 import { getEmergencyContacts } from '../edit/contacts/EmergencyContactsActions';
 import { getOfficerSafety } from '../edit/officersafety/OfficerSafetyActions';
 import { getResponsePlan } from '../edit/responseplan/ResponsePlanActions';
+import { getProfileVisibility } from '../edit/visibility/VisibilityActions';
 import type { RoutingAction } from '../../../core/router/RoutingActions';
 
 const { media } = StyleUtils;
@@ -137,6 +138,7 @@ type Props = {
     getLBProfile :RequestSequence;
     getOfficerSafety :RequestSequence;
     getProfileReports :RequestSequence;
+    getProfileVisibility :RequestSequence;
     getResponsePlan :RequestSequence;
     goToPath :(path :string) => RoutingAction;
   };
@@ -210,7 +212,7 @@ const PremiumProfileContainer = (props :Props) => {
     warrant,
   } = props;
 
-  const [shouldShowContent, onShowContent] = useBoolean(false);
+  const [showContent, onShowContent] = useBoolean(false);
   const settings = useAppSettings();
   const reportAction = settings.get('v2') ? actions.getIncidentReportsSummary : actions.getProfileReports;
 
@@ -221,6 +223,7 @@ const PremiumProfileContainer = (props :Props) => {
   usePeopleRoute(actions.getResponsePlan);
   usePeopleRoute(actions.getLBProfile);
   usePeopleRoute(actions.getAllSymptomsReports);
+  usePeopleRoute(actions.getProfileVisibility);
   usePeopleRoute(reportAction);
 
   const [tab, setTab] = useState('response');
@@ -326,7 +329,7 @@ const PremiumProfileContainer = (props :Props) => {
                 isAuthorized={isAuthorized}
                 isLoading={isLoadingBody}
                 meetsThreshold={meetsReportThreshold}
-                show={shouldShowContent}
+                show={showContent}
                 onShow={onShowContent} />
           </ScrollStack>
         </ProfileGrid>
@@ -395,6 +398,7 @@ const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
     getLBProfile,
     getOfficerSafety,
     getProfileReports,
+    getProfileVisibility,
     getResponsePlan,
     goToPath,
   }, dispatch)

@@ -30,9 +30,10 @@ const profileVisibilityReducer = (state :Map = INITIAL_STATE, action :SequenceAc
     case putProfileVisibility.case(action.type): {
       return putProfileVisibility.reducer(state, action, {
         REQUEST: () => state
-          .set('data', action.value)
           .set('updateState', RequestStates.PENDING),
-        SUCCESS: () => state.set('updateState', RequestStates.SUCCESS),
+        SUCCESS: () => state
+          .set('data', action.value)
+          .set('updateState', RequestStates.SUCCESS),
         FAILURE: () => state.set('updateState', RequestStates.FAILURE)
       });
     }

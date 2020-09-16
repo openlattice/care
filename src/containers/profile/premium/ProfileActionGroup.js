@@ -4,7 +4,7 @@ import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
 import { faEllipsisV } from '@fortawesome/pro-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Map } from 'immutable';
+import { Map, getIn } from 'immutable';
 import {
   Button,
   Hooks,
@@ -21,6 +21,7 @@ import IssueModal from '../../issues/issue/IssueModal';
 import ReportSelectionModal from '../../people/ReportSelectionModal';
 import VisibilityTypes from '../edit/visibility/VisibilityTypes';
 import { BASIC_PATH, EDIT_PATH } from '../../../core/router/Routes';
+import { STATUS_FQN } from '../../../edm/DataModelFqns';
 import { getEntityKeyId } from '../../../utils/DataUtils';
 import { putProfileVisibility } from '../edit/visibility/VisibilityActions';
 import type { VisibilityType } from '../edit/visibility/VisibilityTypes';
@@ -44,6 +45,8 @@ const ProfileActionGroup = ({ isAuthorized } :Props) => {
   const person = useSelector((store) => store.getIn(['profile', 'basicInformation', 'basics', 'data'], Map()));
   const visibility = useSelector((store) => store.getIn(['profile', 'visibility', 'data'], Map()));
 
+  const visibilityStatus = getIn(visibility, [STATUS_FQN, 0]);
+
   const match = useRouteMatch();
   const dispatch = useDispatch();
   const [reportSelectionVisible, openReportSelection, closeReportSelection] = useBoolean(false);
@@ -53,7 +56,8 @@ const ProfileActionGroup = ({ isAuthorized } :Props) => {
 
   const createVisibilityDispatch = (status :VisibilityType) => () => {
     dispatch(putProfileVisibility({
-      entityKeyId: getEntityKeyId(visibility),
+      personEKID: getEntityKeyId(person),
+      summarySetEKID: getEntityKeyId(visibility),
       status
     }));
   };
@@ -108,9 +112,21 @@ const ProfileActionGroup = ({ isAuthorized } :Props) => {
         <MenuItem onClick={handleOpenCreateIssue}>Create Issue</MenuItem>
         {isAuthorized && (
           <NestedMenuItem elevation={4} label="Visibility" parentMenuOpen={!!isMenuOpen}>
-            <MenuItem onClick={createVisibilityDispatch(VisibilityTypes.AUTO)}>Auto</MenuItem>
-            <MenuItem onClick={createVisibilityDispatch(VisibilityTypes.PUBLIC)}>Public</MenuItem>
-            <MenuItem onClick={createVisibilityDispatch(VisibilityTypes.PRIVATE)}>Private</MenuItem>
+            <MenuItem
+                selected={visibilityStatus === VisibilityTypes.AUTO}
+                onClick={createVisibilityDispatch(VisibilityTypes.AUTO)}>
+              Auto
+            </MenuItem>
+            <MenuItem
+                selected={visibilityStatus === VisibilityTypes.PUBLIC}
+                onClick={createVisibilityDispatch(VisibilityTypes.PUBLIC)}>
+              Public
+            </MenuItem>
+            <MenuItem
+                selected={visibilityStatus === VisibilityTypes.PRIVATE}
+                onClick={createVisibilityDispatch(VisibilityTypes.PRIVATE)}>
+              Private
+            </MenuItem>
           </NestedMenuItem>
         )}
       </Menu>
