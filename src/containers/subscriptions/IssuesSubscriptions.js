@@ -73,7 +73,7 @@ const IssuesSubscriptions = (props :Props) => {
     let issuesSubscription;
 
     subscriptions.filter((subscription) => (
-      subscription.getIn(['constraints', 'entitySetIds'], List()).includes(personEntitySetId)
+      subscription.getIn(['constraints', 'entitySetIds'], List()).includes(issueEntitySetId)
         && subscription.getIn(['alertMetadata', 'personEntitySetId']) === personEntitySetId
         && subscription.getIn(['alertMetadata', 'staffEntitySetId']) === staffEntitySetId
     )).forEach((subscription) => {
@@ -86,9 +86,10 @@ const IssuesSubscriptions = (props :Props) => {
 
     setState({ issuesSubscription });
   }, [
+    assigneeQuery,
+    issueEntitySetId,
     personEntitySetId,
     staffEntitySetId,
-    assigneeQuery,
     subscriptions,
   ]);
 
@@ -116,7 +117,7 @@ const IssuesSubscriptions = (props :Props) => {
       alertMetadata: {
         alertName,
         assignedToEntitySetId,
-        issueEntitySetId,
+        personEntitySetId,
         reportedEntitySetId,
         staffEntitySetId,
         timezone,
@@ -182,7 +183,7 @@ const mapStateToProps = (state :Map) => {
     assignedToEntitySetId: getESIDFromApp(app, ASSIGNED_TO_FQN),
     issueEntitySetId: getESIDFromApp(app, ISSUE_FQN),
     personEntitySetId: getESIDFromApp(app, PEOPLE_FQN),
-    reporterEntitySetId: getESIDFromApp(app, REPORTED_FQN),
+    reportedEntitySetId: getESIDFromApp(app, REPORTED_FQN),
     staffEntitySetId: getESIDFromApp(app, STAFF_FQN),
   };
 };
