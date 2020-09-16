@@ -12,6 +12,7 @@ import { bindActionCreators } from 'redux';
 import type { Dispatch } from 'redux';
 
 import FileUpload from '../../components/documents/FileUpload';
+import UploadedDocument from '../../components/documents/UploadedDocument';
 import { uploadDocument } from './DocumentsActionFactory';
 
 
@@ -54,7 +55,8 @@ class DocumentsContainer extends React.Component<Props, State> {
     super(props);
     this.state = {
       startDate: '',
-      endDate: ''
+      endDate: '',
+      files: []
     };
   }
 
@@ -69,14 +71,30 @@ class DocumentsContainer extends React.Component<Props, State> {
     this.setState({ [field]: newDate });
   }
 
+  onUpload = ({ file }) => {
+    const { files } = this.state;
+    files.push(file);
+    this.setState({ files });
+  }
+
+  renderUploadedFiles = () => {
+    const { files } = this.state;
+    return files.map((file, idx) => {
+      const onDelete = () => {
+        files.splice(idx, 1);
+        this.setState({ files });
+      };
+      return <UploadedDocument file={file} key={idx} onDelete={onDelete} />;
+    });
+  }
+
   render() {
-    const { downloading } = this.props;
-    const { endDate, startDate } = this.state;
 
     return (
       <div>
-        <h1>Documents!</h1>
-        <FileUpload onUpload={console.log} />
+        <h1>Upload documents</h1>
+        <FileUpload onUpload={this.onUpload} />
+        {this.renderUploadedFiles()}
       </div>
     );
   }

@@ -1,6 +1,21 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useDropzone } from 'react-dropzone';
+import {
+  ALL_IMAGE_MIME_TYPE,
+  ALL_VIDEO_MIME_TYPE,
+  ALL_AUDIO_MIME_TYPE,
+  PDF_MIME_TYPE,
+  DOCX_MIME_TYPE,
+} from '../../utils/constants/FileTypeConstants';
+
+const ACCEPTED_MIME_TYPES = [
+  ALL_IMAGE_MIME_TYPE,
+  ALL_VIDEO_MIME_TYPE,
+  ALL_AUDIO_MIME_TYPE,
+  PDF_MIME_TYPE,
+  DOCX_MIME_TYPE,
+];
 
 const getColor = (props) => {
   if (props.isDragAccept) {
@@ -40,7 +55,7 @@ const StyledDropzone = (props) => {
     isDragAccept,
     isDragReject
   } = useDropzone({
-    accept: 'image/*',
+    accept: ACCEPTED_MIME_TYPES.join(','),
     onDrop
   });
 

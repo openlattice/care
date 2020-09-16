@@ -52,13 +52,13 @@ export default class FileUpload extends React.Component<Props, State> {
     });
 
     files.forEach((file) => {
-      const { name } = file;
+      const { name, type } = file;
       const reader = new FileReader();
       reader.onload = (event) => {
         const base64 = event.target.result;
         onUpload({
           index: mediaIndex,
-          image: { name, base64 }
+          file: { name, base64, type }
         });
       };
       reader.readAsDataURL(file);

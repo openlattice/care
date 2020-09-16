@@ -21,5 +21,6 @@ export const SUBSCRIBE = {
 };
 
 export const DOCUMENTS = {
-  IS_UPLOADING: 'isUploading'
+  IS_UPLOADING: 'isUploading',
+  TAGS: 'tags'
 };
