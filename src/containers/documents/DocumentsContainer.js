@@ -6,9 +6,18 @@ import React from 'react';
 
 import styled from 'styled-components';
 import { Map, OrderedSet } from 'immutable';
-import { Button, Creatable } from 'lattice-ui-kit';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import {
+  Button,
+  Creatable,
+  Label,
+  ExpansionPanel,
+  ExpansionPanelDetails,
+  ExpansionPanelSummary
+} from 'lattice-ui-kit';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronDown } from '@fortawesome/pro-light-svg-icons';
 import type { Dispatch } from 'redux';
 
 import PeopleSelection from './PeopleSelection';
@@ -30,6 +39,10 @@ type State = {
   files :Object[],
   selectedPeople: Set<string>
 };
+
+const ExpansionWrapper = styled.div`
+  margin: 15px 0;
+`;
 
 export const DownloadsWrapper = styled.div`
   display: flex;
@@ -102,7 +115,7 @@ class DocumentsContainer extends React.Component<Props, State> {
   }
 
   onTagChange = (tags) => {
-    const values = tags.map(({ value }) => value);
+    const values = tags ? tags.map(({ value }) => value) : [];
     this.setState({ tags: OrderedSet(values) });
   }
 
@@ -166,6 +179,20 @@ class DocumentsContainer extends React.Component<Props, State> {
     );
   }
 
+  renderExpandableContent = (title, content) => {
+    const expandIcon = <FontAwesomeIcon icon={faChevronDown} size="xs" />;
+    return (
+      <ExpansionWrapper>
+        <ExpansionPanel>
+          <ExpansionPanelSummary expandIcon={expandIcon}>
+            <Label subtle>{title}</Label>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails>{content}</ExpansionPanelDetails>
+        </ExpansionPanel>
+      </ExpansionWrapper>
+    );
+  }
+
   render() {
     const { files } = this.state;
     const hasUploadedFiles = !!files.length;
@@ -175,8 +202,8 @@ class DocumentsContainer extends React.Component<Props, State> {
         <h1>Upload documents</h1>
         <FileUpload onUpload={this.onUpload} />
         {this.renderUploadedFiles()}
-        {hasUploadedFiles && this.renderTagSelect()}
-        {hasUploadedFiles && this.renderPeopleSelect()}
+        {hasUploadedFiles && this.renderExpandableContent('Add tags', this.renderTagSelect())}
+        {hasUploadedFiles && this.renderExpandableContent('Add profiles', this.renderPeopleSelect())}
         {hasUploadedFiles && this.renderUploadDocumentsButton()}
       </div>
     );
