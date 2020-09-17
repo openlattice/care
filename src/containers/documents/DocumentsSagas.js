@@ -22,13 +22,16 @@ import type { SequenceAction } from 'redux-reqseq';
 import { getFilesESId } from '../../utils/AppUtils';
 import {
   LOAD_USED_TAGS,
+  SEARCH_PEOPLE_FOR_DOCUMENTS,
   UPLOAD_DOCUMENTS,
   loadUsedTags,
+  searchPeopleForDocuments,
   uploadDocuments,
 } from './DocumentsActionFactory';
 import {
   FILE_DATA_FQN,
   FILE_TAG_FQN,
+  FILE_TEXT_FQN,
   NAME_FQN,
   TYPE_FQN
 } from '../../edm/DataModelFqns';
@@ -61,10 +64,7 @@ function* loadUsedTagsWorker(action :SequenceAction) :Generator<*, *, *> {
       }
     });
 
-    console.log('allTags')
-    console.log(allTags.toJS())
-
-    yield put(loadUsedTags.success(action.id));
+    yield put(loadUsedTags.success(action.id, allTags));
   }
   catch (error) {
     LOG.error(action.type, error);
@@ -79,6 +79,24 @@ function* loadUsedTagsWatcher() :Generator<*, *, *> {
   yield takeEvery(LOAD_USED_TAGS, loadUsedTagsWorker);
 }
 
+function* searchPeopleForDocumentsWorker(action :SequenceAction) :Generator<*, *, *> {
+  try {
+    yield put(searchPeopleForDocuments.request(action.id));
+
+    yield put(searchPeopleForDocuments.success(action.id));
+  }
+  catch (error) {
+    LOG.error(action.type, error);
+    yield put(searchPeopleForDocuments.failure(action.id, { error }));
+  }
+  finally {
+    yield put(searchPeopleForDocuments.finally(action.id));
+  }
+}
+
+function* searchPeopleForDocumentsWatcher() :Generator<*, *, *> {
+  yield takeEvery(SEARCH_PEOPLE_FOR_DOCUMENTS, searchPeopleForDocumentsWorker);
+}
 
 const cleanBase64ForUpload = (base64String) => {
   const splitPoint = base64String.indexOf(BASE_64_SUBSTR);
@@ -103,6 +121,7 @@ function* uploadDocumentsWorker(action :SequenceAction) :Generator<*, *, *> {
     const namePropertyTypeId = propertyTypeIds.get(NAME_FQN, 'f2dbdc90-bf80-43d4-b015-196864ac4045');
     const typePropertyTypeId = propertyTypeIds.get(TYPE_FQN, 'f2dbdc90-bf80-43d4-b015-196864ac4045');
     const fileDataPropertyTypeId = propertyTypeIds.get(FILE_DATA_FQN, '5364cb1b-ecf4-459d-b8d4-99b47b31281c');
+    const fileTextPropertyTypeId = propertyTypeIds.get(FILE_TEXT_FQN, '5364cb1b-ecf4-459d-b8d4-99b47b31281c');
 
     const entities = files.map(({
       name,
@@ -117,8 +136,6 @@ function* uploadDocumentsWorker(action :SequenceAction) :Generator<*, *, *> {
         data: cleanBase64ForUpload(base64)
       }]
     }));
-
-    console.log({ entities });
 
     yield call(DataApi.createOrMergeEntityData, filesEntitySetId, entities);
 
@@ -140,6 +157,7 @@ function* uploadDocumentsWatcher() :Generator<*, *, *> {
 export {
   loadUsedTagsWatcher,
   loadUsedTagsWorker,
+  searchPeopleForDocumentsWatcher,
   uploadDocumentsWatcher,
   uploadDocumentsWorker,
 };

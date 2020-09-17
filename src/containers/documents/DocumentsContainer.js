@@ -5,16 +5,17 @@
 import React from 'react';
 
 import styled from 'styled-components';
-import { Map } from 'immutable';
-import { Button } from 'lattice-ui-kit';
+import { Map, OrderedSet } from 'immutable';
+import { Button, Creatable } from 'lattice-ui-kit';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import type { Dispatch } from 'redux';
 
+import PeopleSelection from './PeopleSelection';
 import FileUpload from '../../components/documents/FileUpload';
 import UploadedDocument from '../../components/documents/UploadedDocument';
 import { uploadDocuments, loadUsedTags } from './DocumentsActionFactory';
-
+import { DOCUMENTS } from '../../utils/constants/StateConstants';
 
 type Props = {
   downloading :boolean,
@@ -25,8 +26,9 @@ type Props = {
 };
 
 type State = {
-  startDate :?string,
-  endDate :?string
+  tags :Set<string>,
+  files :Object[],
+  selectedPeople: Set<string>
 };
 
 export const DownloadsWrapper = styled.div`
@@ -45,27 +47,37 @@ export const FormWrapper = styled.div`
   width: 100%;
 `;
 
+const DocumentUploadSection = styled.div`
+  width: 100%;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+
+  h1 {
+    font-size: 16px;
+  }
+
+  article {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+`;
+
 class DocumentsContainer extends React.Component<Props, State> {
 
   constructor(props :Props) {
     super(props);
     this.state = {
-      startDate: '',
-      endDate: '',
-      files: []
+      files: [],
+      tags: OrderedSet(),
+      selectedPeople: OrderedSet(),
     };
   }
 
   componentDidMount() {
     const { actions } = this.props;
     actions.loadUsedTags();
-  }
-
-  download = () => {
-    const { actions } = this.props;
-    const { endDate, startDate } = this.state;
-
-    actions.uploadDocuments({ endDate, startDate });
   }
 
   onDateChange = (field :string, newDate :string) => {
@@ -89,29 +101,91 @@ class DocumentsContainer extends React.Component<Props, State> {
     });
   }
 
+  onTagChange = (tags) => {
+    const values = tags.map(({ value }) => value);
+    this.setState({ tags: OrderedSet(values) });
+  }
+
+  renderPeopleSelect = () => {
+    const { selectedPeople } = this.state;
+
+    const label = selectedPeople.size
+      ? `Selected people (${selectedPeople.size})` : 'Select people';
+
+    const onAdd = (person) => {
+      this.setState({ selectedPeople: selectedPeople.add(person) });
+    };
+
+    const onRemove = (person) => {
+      this.setState({ selectedPeople: selectedPeople.delete(person) });
+    };
+
+    return (
+      <DocumentUploadSection>
+        <h1>{label}</h1>
+        <PeopleSelection selectedPeople={selectedPeople} onAdd={onAdd} onRemove={onRemove} />
+      </DocumentUploadSection>
+    );
+  }
+
+  renderTagSelect = () => {
+    const { tags } = this.props;
+    const { tags: selectedTags } = this.state;
+
+    const label = selectedTags.size ? `Selected tags (${selectedTags.size})` : 'Select tags';
+
+    const tagOptions = tags.map((tag) => ({
+      label: tag,
+      value: tag
+    })).toJS();
+    return (
+      <DocumentUploadSection>
+        <h1>{label}</h1>
+        <article>
+          <Creatable
+              options={tagOptions}
+              onChange={this.onTagChange}
+              isMulti />
+        </article>
+      </DocumentUploadSection>
+    );
+  }
+
   renderUploadDocumentsButton = () => {
     const { actions } = this.props;
     const { files } = this.state;
 
-    return <button onClick={() => actions.uploadDocuments({ files })}>Upload!</button>;
+    const onUpload = () => actions.uploadDocuments({ files });
+
+    return (
+      <DocumentUploadSection>
+        <article>
+          <Button color="primary" onClick={onUpload}>Upload documents</Button>
+        </article>
+      </DocumentUploadSection>
+    );
   }
 
   render() {
-    const { actions } = this.props;
+    const { files } = this.state;
+    const hasUploadedFiles = !!files.length;
 
     return (
       <div>
         <h1>Upload documents</h1>
         <FileUpload onUpload={this.onUpload} />
         {this.renderUploadedFiles()}
-        {this.renderUploadDocumentsButton()}
+        {hasUploadedFiles && this.renderTagSelect()}
+        {hasUploadedFiles && this.renderPeopleSelect()}
+        {hasUploadedFiles && this.renderUploadDocumentsButton()}
       </div>
     );
   }
 }
 
 const mapStateToProps = (state :Map) => ({
-  downloading: state.getIn(['downloads', 'downloading'])
+  downloading: state.getIn(['downloads', 'downloading']),
+  tags: state.getIn(['documents', DOCUMENTS.TAGS])
 });
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({

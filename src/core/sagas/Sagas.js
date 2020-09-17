@@ -96,6 +96,7 @@ export default function* sagas() :Generator<*, *, *> {
 
     // Documents Sagas
     fork(DocumentsSagas.loadUsedTagsWatcher),
+    fork(DocumentsSagas.searchPeopleForDocumentsWatcher),
     fork(DocumentsSagas.uploadDocumentsWatcher),
 
     // Downloads Sagas
