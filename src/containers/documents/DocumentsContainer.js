@@ -27,17 +27,17 @@ import { uploadDocuments, loadUsedTags } from './DocumentsActionFactory';
 import { DOCUMENTS } from '../../utils/constants/StateConstants';
 
 type Props = {
-  downloading :boolean,
+  tags :Set<string>;
   actions :{
     loadUsedTags :Function;
     uploadDocuments :Function;
-  }
+  };
 };
 
 type State = {
-  tags :Set<string>,
-  files :Object[],
-  selectedPeople: Map<string, Map>
+  tags :Set<string>;
+  files :Object[];
+  selectedPeople: Map<string, Map>;
 };
 
 const ExpansionWrapper = styled.div`
@@ -122,9 +122,6 @@ class DocumentsContainer extends React.Component<Props, State> {
   renderPeopleSelect = () => {
     const { selectedPeople } = this.state;
 
-    const label = selectedPeople.size
-      ? `Selected profiles (${selectedPeople.size})` : 'Select profiles';
-
     const onAdd = (entityKeyId, person) => {
       this.setState({ selectedPeople: selectedPeople.set(entityKeyId, person) });
     };
@@ -134,33 +131,22 @@ class DocumentsContainer extends React.Component<Props, State> {
     };
 
     return (
-      <DocumentUploadSection>
-        <h1>{label}</h1>
-        <PeopleSelection selectedPeople={selectedPeople} onAdd={onAdd} onRemove={onRemove} />
-      </DocumentUploadSection>
+      <PeopleSelection selectedPeople={selectedPeople} onAdd={onAdd} onRemove={onRemove} />
     );
   }
 
   renderTagSelect = () => {
     const { tags } = this.props;
-    const { tags: selectedTags } = this.state;
-
-    const label = selectedTags.size ? `Selected tags (${selectedTags.size})` : 'Select tags';
 
     const tagOptions = tags.map((tag) => ({
       label: tag,
       value: tag
     })).toJS();
     return (
-      <DocumentUploadSection>
-        <h1>{label}</h1>
-        <article>
-          <Creatable
-              options={tagOptions}
-              onChange={this.onTagChange}
-              isMulti />
-        </article>
-      </DocumentUploadSection>
+      <Creatable
+          options={tagOptions}
+          onChange={this.onTagChange}
+          isMulti />
     );
   }
 
@@ -193,17 +179,28 @@ class DocumentsContainer extends React.Component<Props, State> {
     );
   }
 
+  getLabelText = (label, collection) => {
+    if (!collection.size) {
+      return `Add ${label}`;
+    }
+
+    return `Selected ${label} (${collection.size})`;
+  }
+
   render() {
-    const { files } = this.state;
+    const { files, tags, selectedPeople } = this.state;
     const hasUploadedFiles = !!files.length;
+
+    const tagText = this.getLabelText('tags', tags);
+    const profileText = this.getLabelText('profiles', selectedPeople);
 
     return (
       <div>
         <h1>Upload documents</h1>
         <FileUpload onUpload={this.onUpload} />
         {this.renderUploadedFiles()}
-        {hasUploadedFiles && this.renderExpandableContent('Add tags', this.renderTagSelect())}
-        {hasUploadedFiles && this.renderExpandableContent('Add profiles', this.renderPeopleSelect())}
+        {hasUploadedFiles && this.renderExpandableContent(tagText, this.renderTagSelect())}
+        {hasUploadedFiles && this.renderExpandableContent(profileText, this.renderPeopleSelect())}
         {hasUploadedFiles && this.renderUploadDocumentsButton()}
       </div>
     );
