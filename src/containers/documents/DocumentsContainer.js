@@ -110,7 +110,7 @@ class DocumentsContainer extends React.Component<Props, State> {
     const { selectedPeople } = this.state;
 
     const label = selectedPeople.size
-      ? `Selected people (${selectedPeople.size})` : 'Select people';
+      ? `Selected profiles (${selectedPeople.size})` : 'Select profiles';
 
     const onAdd = (person) => {
       this.setState({ selectedPeople: selectedPeople.add(person) });
