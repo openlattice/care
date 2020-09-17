@@ -241,14 +241,13 @@ class PeopleSelection extends React.Component<Props, State> {
   renderSelectedPeople = () => {
     const { onRemove, selectedPeople } = this.props;
 
-    return selectedPeople.map((person) => {
+    return selectedPeople.entrySeq().map(([entityKeyId, person]) => {
       const firstName = this.formatValue(person.get(PERSON_FIRST_NAME_FQN, List()));
       const middleName = this.formatValue(person.get(PERSON_MIDDLE_NAME_FQN, List()));
       const lastName = this.formatValue(person.get(PERSON_LAST_NAME_FQN, List()));
       const dob = this.formatDateList(person.get(PERSON_DOB_FQN, List()));
-      const entityKeyId :string = person.getIn([OPENLATTICE_ID_FQN, 0], '');
 
-      const onDeletePerson = () => onRemove(person);
+      const onDeletePerson = () => onRemove(entityKeyId);
 
       return (
         <SelectedPersonCard key={entityKeyId}>
@@ -276,43 +275,50 @@ class PeopleSelection extends React.Component<Props, State> {
   }
 
   renderSearchResults = () => {
-    const { onAdd, searchResults, hasSearched } = this.props;
+    const {
+      hasSearched,
+      onAdd,
+      searchResults,
+      selectedPeople
+    } = this.props;
 
     if (!hasSearched) {
       return null;
     }
+
+    const searchResultRows = searchResults
+      .map((person) => [person.getIn([OPENLATTICE_ID_FQN, 0], ''), person])
+      .filter(([entityKeyId]) => !selectedPeople.has(entityKeyId))
+      .map((([entityKeyId, person]) => {
+        const picture = this.renderPersonPicture(person);
+
+        const firstName = this.formatValue(person.get(PERSON_FIRST_NAME_FQN, List()));
+        const middleName = this.formatValue(person.get(PERSON_MIDDLE_NAME_FQN, List()));
+        const lastName = this.formatValue(person.get(PERSON_LAST_NAME_FQN, List()));
+        const dob = this.formatDateList(person.get(PERSON_DOB_FQN, List()));
+
+        return (
+          <Row key={entityKeyId} onClick={() => onAdd(entityKeyId, person)}>
+            <Cell>{ picture }</Cell>
+            <Cell>{ lastName }</Cell>
+            <Cell>{ firstName }</Cell>
+            <Cell>{ middleName }</Cell>
+            <Cell>{ dob }</Cell>
+          </Row>
+        );
+      }));
 
     return (
       <>
         <Table>
           <tbody>
             <Headers />
-            {
-              searchResults.map(((person) => {
-                const picture = this.renderPersonPicture(person);
-
-                const firstName = this.formatValue(person.get(PERSON_FIRST_NAME_FQN, List()));
-                const middleName = this.formatValue(person.get(PERSON_MIDDLE_NAME_FQN, List()));
-                const lastName = this.formatValue(person.get(PERSON_LAST_NAME_FQN, List()));
-                const dob = this.formatDateList(person.get(PERSON_DOB_FQN, List()));
-                const entityKeyId :string = person.getIn([OPENLATTICE_ID_FQN, 0], '');
-
-                return (
-                  <Row key={entityKeyId} onClick={() => onAdd(person)}>
-                    <Cell>{ picture }</Cell>
-                    <Cell>{ lastName }</Cell>
-                    <Cell>{ firstName }</Cell>
-                    <Cell>{ middleName }</Cell>
-                    <Cell>{ dob }</Cell>
-                  </Row>
-                );
-              }))
-            }
+            {searchResultRows}
           </tbody>
         </Table>
-        {searchResults.size ? null : <NoResults>No Results</NoResults> }
+        {searchResultRows.size ? null : <NoResults>No Results</NoResults> }
       </>
-    )
+    );
 
   }
 

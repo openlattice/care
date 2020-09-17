@@ -5,7 +5,7 @@
 import React from 'react';
 
 import styled from 'styled-components';
-import { Map, OrderedSet } from 'immutable';
+import { Map, OrderedMap, OrderedSet } from 'immutable';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
@@ -37,7 +37,7 @@ type Props = {
 type State = {
   tags :Set<string>,
   files :Object[],
-  selectedPeople: Set<string>
+  selectedPeople: Map<string, Map>
 };
 
 const ExpansionWrapper = styled.div`
@@ -84,7 +84,7 @@ class DocumentsContainer extends React.Component<Props, State> {
     this.state = {
       files: [],
       tags: OrderedSet(),
-      selectedPeople: OrderedSet(),
+      selectedPeople: OrderedMap(),
     };
   }
 
@@ -125,12 +125,12 @@ class DocumentsContainer extends React.Component<Props, State> {
     const label = selectedPeople.size
       ? `Selected profiles (${selectedPeople.size})` : 'Select profiles';
 
-    const onAdd = (person) => {
-      this.setState({ selectedPeople: selectedPeople.add(person) });
+    const onAdd = (entityKeyId, person) => {
+      this.setState({ selectedPeople: selectedPeople.set(entityKeyId, person) });
     };
 
-    const onRemove = (person) => {
-      this.setState({ selectedPeople: selectedPeople.delete(person) });
+    const onRemove = (entityKeyId) => {
+      this.setState({ selectedPeople: selectedPeople.delete(entityKeyId) });
     };
 
     return (
