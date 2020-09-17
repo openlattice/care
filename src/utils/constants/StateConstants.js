@@ -22,8 +22,5 @@ export const SUBSCRIBE = {
 
 export const DOCUMENTS = {
   IS_UPLOADING: 'isUploading',
-  IS_SEARCHING: 'isSearching',
-  TAGS: 'tags',
-  PEOPLE_BY_ID: 'peopleById',
-  PERSON_RESULTS: 'personResults'
+  TAGS: 'tags'
 };

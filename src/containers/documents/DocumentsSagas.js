@@ -22,10 +22,8 @@ import type { SequenceAction } from 'redux-reqseq';
 import { getFilesESId } from '../../utils/AppUtils';
 import {
   LOAD_USED_TAGS,
-  SEARCH_PEOPLE_FOR_DOCUMENTS,
   UPLOAD_DOCUMENTS,
   loadUsedTags,
-  searchPeopleForDocuments,
   uploadDocuments,
 } from './DocumentsActionFactory';
 import {
@@ -77,25 +75,6 @@ function* loadUsedTagsWorker(action :SequenceAction) :Generator<*, *, *> {
 
 function* loadUsedTagsWatcher() :Generator<*, *, *> {
   yield takeEvery(LOAD_USED_TAGS, loadUsedTagsWorker);
-}
-
-function* searchPeopleForDocumentsWorker(action :SequenceAction) :Generator<*, *, *> {
-  try {
-    yield put(searchPeopleForDocuments.request(action.id));
-
-    yield put(searchPeopleForDocuments.success(action.id));
-  }
-  catch (error) {
-    LOG.error(action.type, error);
-    yield put(searchPeopleForDocuments.failure(action.id, { error }));
-  }
-  finally {
-    yield put(searchPeopleForDocuments.finally(action.id));
-  }
-}
-
-function* searchPeopleForDocumentsWatcher() :Generator<*, *, *> {
-  yield takeEvery(SEARCH_PEOPLE_FOR_DOCUMENTS, searchPeopleForDocumentsWorker);
 }
 
 const cleanBase64ForUpload = (base64String) => {
@@ -157,7 +136,6 @@ function* uploadDocumentsWatcher() :Generator<*, *, *> {
 export {
   loadUsedTagsWatcher,
   loadUsedTagsWorker,
-  searchPeopleForDocumentsWatcher,
   uploadDocumentsWatcher,
   uploadDocumentsWorker,
 };
