@@ -4,7 +4,10 @@
 
 import React from 'react';
 import styled from 'styled-components';
+
 import StyledDropzone from './StyledDropzone';
+import { getTextFromPDF, extractDocumentText } from '../../utils/DocumentUtils';
+import { PDF_MIME_TYPE, DOCX_MIME_TYPE } from '../../utils/constants/FileTypeConstants';
 
 type Props = {
   onUpload :Function
@@ -54,12 +57,22 @@ export default class FileUpload extends React.Component<Props, State> {
     files.forEach((file) => {
       const { name, type } = file;
       const reader = new FileReader();
+
       reader.onload = (event) => {
         const base64 = event.target.result;
-        onUpload({
-          index: mediaIndex,
-          file: { name, base64, type }
+
+        extractDocumentText(type, base64).then((text) => {
+          onUpload({
+            index: mediaIndex,
+            file: {
+              base64,
+              name,
+              text,
+              type
+            }
+          });
         });
+
       };
       reader.readAsDataURL(file);
     });

@@ -20,6 +20,7 @@ import { Logger } from 'lattice-utils';
 import { DateTime } from 'luxon';
 import type { SequenceAction } from 'redux-reqseq';
 
+import { cleanBase64ForUpload } from '../../utils/DocumentUtils';
 import {
   getFilesESId,
   getIncludesESId,
@@ -41,9 +42,7 @@ import {
   TYPE_FQN
 } from '../../edm/DataModelFqns';
 
-
 const { OPENLATTICE_ID_FQN } = Constants;
-const BASE_64_SUBSTR = ';base64,';
 
 const LOG = new Logger('DocumentsSagas');
 
@@ -82,14 +81,6 @@ function* loadUsedTagsWorker(action :SequenceAction) :Generator<*, *, *> {
 function* loadUsedTagsWatcher() :Generator<*, *, *> {
   yield takeEvery(LOAD_USED_TAGS, loadUsedTagsWorker);
 }
-
-const cleanBase64ForUpload = (base64String) => {
-  const splitPoint = base64String.indexOf(BASE_64_SUBSTR);
-  if (splitPoint < 0) {
-    return base64String;
-  }
-  return base64String.substring(splitPoint + BASE_64_SUBSTR.length);
-};
 
 function* uploadDocumentsWorker(action :SequenceAction) :Generator<*, *, *> {
 
