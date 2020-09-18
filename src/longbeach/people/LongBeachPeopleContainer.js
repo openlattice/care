@@ -129,7 +129,7 @@ const LongBeachPeopleContainer = () => {
       <ContentWrapper>
         <CardStack>
           <Card>
-            <ResultSegment vertical>
+            <ResultSegment>
               <Title>
                 Search People
               </Title>
@@ -168,46 +168,48 @@ const LongBeachPeopleContainer = () => {
                 </InputGrid>
               </form>
             </ResultSegment>
-            <Accordion>
-              <div headline="Additional Fields" titleComponent={AdvancedHeader}>
-                <InputGrid>
-                  <FlexColumn>
-                    <Label htmlFor="sex">Sex</Label>
-                    <Select
-                        id="sex"
-                        isClearable
-                        onChange={(option) => setSex(option)}
-                        value={sex}
-                        options={sexOptions} />
-                  </FlexColumn>
-                  <FlexColumn>
-                    <Label htmlFor="race">Race</Label>
-                    <Select
-                        id="race"
-                        isClearable
-                        onChange={(option) => setRace(option)}
-                        value={race}
-                        options={raceOptions} />
-                  </FlexColumn>
-                  <FlexColumn>
-                    <Label htmlFor="ethnicity">Ethnicity</Label>
-                    <Select
-                        id="ethnicity"
-                        isClearable
-                        onChange={(option) => setEthnicity(option)}
-                        value={ethnicity}
-                        options={ethnicityOptions} />
-                  </FlexColumn>
-                  <FlexEnd>
-                    <Checkbox
-                        id="similar"
-                        checked={metaphone}
-                        onChange={handleOnSimilar}
-                        label={MetaphoneLabel} />
-                  </FlexEnd>
-                </InputGrid>
-              </div>
-            </Accordion>
+            <ResultSegment>
+              <Accordion>
+                <div headline="Additional Fields" titleComponent={AdvancedHeader}>
+                  <InputGrid>
+                    <FlexColumn>
+                      <Label htmlFor="sex">Sex</Label>
+                      <Select
+                          id="sex"
+                          isClearable
+                          onChange={(option) => setSex(option)}
+                          value={sex}
+                          options={sexOptions} />
+                    </FlexColumn>
+                    <FlexColumn>
+                      <Label htmlFor="race">Race</Label>
+                      <Select
+                          id="race"
+                          isClearable
+                          onChange={(option) => setRace(option)}
+                          value={race}
+                          options={raceOptions} />
+                    </FlexColumn>
+                    <FlexColumn>
+                      <Label htmlFor="ethnicity">Ethnicity</Label>
+                      <Select
+                          id="ethnicity"
+                          isClearable
+                          onChange={(option) => setEthnicity(option)}
+                          value={ethnicity}
+                          options={ethnicityOptions} />
+                    </FlexColumn>
+                    <FlexEnd>
+                      <Checkbox
+                          id="similar"
+                          checked={metaphone}
+                          onChange={handleOnSimilar}
+                          label={MetaphoneLabel} />
+                    </FlexEnd>
+                  </InputGrid>
+                </div>
+              </Accordion>
+            </ResultSegment>
           </Card>
           <SearchResults
               hasSearched={hasSearched}

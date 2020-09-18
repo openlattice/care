@@ -96,7 +96,7 @@ class Accordion extends Component<Props, State> {
   render() {
     const { className } = this.props;
     return (
-      <CardSegment className={className} vertical padding="sm">
+      <CardSegment className={className} padding="0">
         { this.renderAccordionSections() }
       </CardSegment>
     );
