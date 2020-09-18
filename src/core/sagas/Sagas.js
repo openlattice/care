@@ -25,6 +25,7 @@ import * as DashboardSagas from '../../containers/dashboard/DashboardSagas';
 import * as DownloadsSagas from '../../containers/downloads/DownloadsSagas';
 import * as EmergencyContactsSagas from '../../containers/profile/edit/contacts/EmergencyContactsSagas';
 import * as EncampmentSagas from '../../longbeach/location/encampment/EncampmentsSagas';
+import * as ExploreSagas from '../../containers/explore/ExploreSagas';
 import * as FormSchemasSagas from '../../containers/reports/FormSchemasSagas';
 import * as IssueSagas from '../../containers/issues/issue/IssueSagas';
 import * as IssuesSagas from '../../containers/issues/IssuesSagas';
@@ -234,5 +235,8 @@ export default function* sagas() :Generator<*, *, *> {
     // VisibilitySagas
     fork(VisibilitySagas.getProfileVisibilityWatcher),
     fork(VisibilitySagas.putProfileVisibilityWatcher),
+
+    fork(ExploreSagas.explorePeopleWatcher),
+    fork(ExploreSagas.exploreFileWatcher),
   ]);
 }

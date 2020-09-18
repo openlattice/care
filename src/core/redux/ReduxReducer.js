@@ -14,6 +14,7 @@ import dashboardReducer from '../../containers/dashboard/DashboardReducer';
 import dispositionReducer from '../../containers/pages/disposition/Reducer';
 import downloadsReducer from '../../containers/downloads/DownloadsReducer';
 import edmReducer from '../../edm/EdmReducer';
+import exploreReducer from '../../containers/explore/ExploreReducer';
 import formSchemasReducer from '../../containers/reports/FormSchemasReducer';
 import hospitalsReducer from '../../containers/form/HospitalsReducer';
 import incidentsReducer from '../../containers/reports/IncidentsReducer';
@@ -38,22 +39,23 @@ export default function reduxReducer(routerHistory :any) {
     app: appReducer,
     auth: AuthReducer,
     authorization: authorizeReducer,
+    crisisReport: crisisReportReducer,
     dashboard: dashboardReducer,
     downloads: downloadsReducer,
     edm: edmReducer,
+    explore: exploreReducer,
+    formSchemas: formSchemasReducer,
     hospitals: hospitalsReducer,
+    incidents: incidentsReducer,
     issues: issuesReducer,
+    longBeach: longBeachReducer,
     people: peopleReducer,
     profile: profileReducer,
+    recentInteractions: recentInteractionReducer,
     reports: reportsReducer,
     router: connectRouter(routerHistory),
     staff: staffReducer,
-    longBeach: longBeachReducer,
-    crisisReport: crisisReportReducer,
     symptomsReport: symptomsReportReducer,
-    recentInteractions: recentInteractionReducer,
-    incidents: incidentsReducer,
-    formSchemas: formSchemasReducer,
 
     // page reducers
     [STATE.DISPOSITION]: dispositionReducer,
