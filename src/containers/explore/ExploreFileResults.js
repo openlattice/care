@@ -5,10 +5,12 @@ import { List } from 'immutable';
 import {
   PaginationToolbar,
   SearchResults,
+  Typography,
 } from 'lattice-ui-kit';
 import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
+import FileResult from './FileResult';
 import { explorePeople } from './ExploreActions';
 import { ExploreResultsWrapper } from './styled';
 
@@ -18,8 +20,6 @@ import { APP_TYPES_FQNS } from '../../shared/Consts';
 const { FILE_FQN } = APP_TYPES_FQNS;
 
 const MAX_HITS = 10;
-
-const FileResult = ({ result }) => <div style={{ whiteSpace: 'pre-wrap' }}>{JSON.stringify(result, true, 2)}</div>;
 
 const ExploreFileResults = () => {
   const dispatch = useDispatch();
@@ -60,6 +60,9 @@ const ExploreFileResults = () => {
         <Accordion>
           <div caption={caption} headline="Files" defaultOpen>
             <ExploreResultsWrapper>
+              <Typography color="textSecondary" gutterBottom>
+                For security purposes, all download links expire after 5 minutes from generation.
+              </Typography>
               <SearchResults
                   hasSearched={hasSearched}
                   isLoading={isLoading}
