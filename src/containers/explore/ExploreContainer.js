@@ -100,8 +100,8 @@ const ExploreContainer = () => {
         </ContentWrapper>
       </Panel>
       <ContentWrapper>
-        <ExplorePeopleResults />
         <ExploreFileResults />
+        <ExplorePeopleResults />
       </ContentWrapper>
     </ContentOuterWrapper>
   );
