@@ -6,8 +6,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import StyledDropzone from './StyledDropzone';
-import { getTextFromPDF, extractDocumentText } from '../../utils/DocumentUtils';
-import { PDF_MIME_TYPE, DOCX_MIME_TYPE } from '../../utils/constants/FileTypeConstants';
+import { extractDocumentText } from '../../utils/DocumentUtils';
 
 type Props = {
   onUpload :Function

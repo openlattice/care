@@ -5,10 +5,6 @@ import { PDF_MIME_TYPE, DOCX_MIME_TYPE } from './constants/FileTypeConstants';
 
 const BASE_64_SUBSTR = ';base64,';
 
-export function getTextFromDocx(docx) {
-  return '';
-}
-
 export function cleanBase64ForUpload(base64String) {
   const splitPoint = base64String.indexOf(BASE_64_SUBSTR);
   if (splitPoint < 0) {
@@ -26,7 +22,13 @@ function base64ToUint8Array(base64) {
   return uint8Array;
 }
 
-export function getTextFromPDF(file) {
+function getTextFromDocx(base64) {
+  console.log('docx todo');
+
+  return Promise.resolve(undefined);
+}
+
+function getTextFromPDF(file) {
   pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
   const pdfObject = pdfjsLib.getDocument({ data: base64ToUint8Array(file) });
   return pdfObject.promise.then((pdf) => {
@@ -52,7 +54,7 @@ export function extractDocumentText(fileType, rawBase64) {
     return getTextFromPDF(rawBase64);
   }
   if (fileType === DOCX_MIME_TYPE) {
-    console.log('docx todo');
+    return getTextFromDocx(rawBase64);
   }
   return Promise.resolve(undefined);
 }
