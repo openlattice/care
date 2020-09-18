@@ -95,6 +95,8 @@ export const APP_TYPES_FQNS = {
 
   FORMS_FQN: FQN.of('app.forms'),
   SUMMARY_SET_FQN: FQN.of('app.summaryset'),
+  FILE_FQN: FQN.of('app.file'),
+  INCLUDES_FQN: FQN.of('app.includes'),
 };
 
 export const STRING_ID_FQN = 'general.stringid';
