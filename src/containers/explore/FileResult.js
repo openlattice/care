@@ -1,9 +1,10 @@
+// @flow
 import React from 'react';
 
 import styled from 'styled-components';
-import { faArrowToBottom } from '@fortawesome/pro-regular-svg-icons';
+import { faDownload } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { get, getIn } from 'immutable';
+import { Map, get, getIn } from 'immutable';
 import {
   Card,
   CardSegment,
@@ -18,7 +19,6 @@ import {
   FILE_DATA_FQN,
   LABEL_FQN,
   NAME_FQN,
-  TYPE_FQN
 } from '../../edm/DataModelFqns';
 
 const { formatAsDate } = DateTimeUtils;
@@ -29,9 +29,12 @@ const Row = styled.div`
   align-items: center;
 `;
 
-const FileResult = ({ result }) => {
+type Props = {
+  result :Map;
+};
+
+const FileResult = ({ result } :Props) => {
   const fileData = getIn(result, [FILE_DATA_FQN, 0]);
-  const type = getIn(result, [TYPE_FQN, 0]);
   const name = getIn(result, [NAME_FQN, 0]);
   const labels = get(result, LABEL_FQN) || [];
   const datetime = getIn(result, [DATETIME_FQN, 0]);
@@ -47,11 +50,10 @@ const FileResult = ({ result }) => {
           </div>
           <a href={fileData} download rel="noreferrer" target="_blank">
             <IconButton>
-              <FontAwesomeIcon icon={faArrowToBottom} fixedWidth />
+              <FontAwesomeIcon icon={faDownload} fixedWidth />
             </IconButton>
           </a>
         </Row>
-        {/* <Typography variant="h4">{type}</Typography> */}
         <div>
           {
             labels.sort().map((label) => <Tag key={label}>{label}</Tag>)
