@@ -107,14 +107,16 @@ function* uploadDocumentsWorker(action :SequenceAction) :Generator<*, *, *> {
     const now = DateTime.local().toISO();
 
     const fileEntities = files.map(({
+      base64,
       name,
+      text,
       type,
-      base64
     }) => ({
       [tagPropertyTypeId]: tags.toJS(),
       [dateTimePropertyTypeId]: [now],
       [typePropertyTypeId]: [type],
       [namePropertyTypeId]: [name],
+      [fileTextPropertyTypeId]: [text],
       [fileDataPropertyTypeId]: [{
         'content-type': type,
         data: cleanBase64ForUpload(base64)
