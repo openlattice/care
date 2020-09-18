@@ -30,6 +30,7 @@ import {
 import DashboardContainer from '../dashboard/DashboardContainer';
 import DownloadsContainer from '../downloads/DownloadsContainer';
 import EncampmentsContainer from '../../longbeach/location/encampment/EncampmentsContainer';
+import ExploreContainer from '../explore/ExploreContainer';
 import IssuesContainer from '../issues/IssuesContainer';
 import LegitReportsRouter from '../reports/LegitReportsRouter';
 import LongBeachLocationsContainer from '../../longbeach/location/stayaway/LongBeachLocationsContainer';
@@ -50,6 +51,7 @@ import {
   DASHBOARD_PATH,
   DOWNLOADS_PATH,
   ENCAMPMENTS_PATH,
+  EXPLORE_PATH,
   HOME_PATH,
   ISSUES_PATH,
   LOCATION_PATH,
@@ -193,6 +195,7 @@ class AppContainer extends Component<Props> {
         <Route path={SUBSCRIPTIONS_PATH} component={SubscriptionContainer} />
         <Route path={PROFILE_PATH} component={ProfileRouter} />
         <Route path={ISSUES_PATH} component={IssuesContainer} />
+        <Route path={EXPLORE_PATH} component={ExploreContainer} />
         <Redirect to={HOME_PATH} />
       </Switch>
     );

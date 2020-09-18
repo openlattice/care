@@ -11,6 +11,7 @@ import {
   faHome,
   faMapMarkedAlt,
   faQuestionCircle,
+  faSearch,
   faSignOut,
   faUser,
   faUserChart,
@@ -26,6 +27,7 @@ import { useAppSettings, useOrganization } from '../../components/hooks';
 import {
   DASHBOARD_PATH,
   DOWNLOADS_PATH,
+  EXPLORE_PATH,
   HOME_PATH,
   ISSUES_PATH,
   LOGOUT_PATH,
@@ -135,6 +137,10 @@ const AppHeaderContainer = (props :Props) => {
           <FontAwesomeIcon size="lg" fixedWidth icon={faDownload} />
           <NavLabel>Downloads</NavLabel>
         </StyledNavLink>
+        <NavLink to={EXPLORE_PATH}>
+          <FontAwesomeIcon size="lg" fixedWidth icon={faSearch} />
+          <NavLabel>Explore</NavLabel>
+        </NavLink>
         <hr />
         <StyledNavLink to={ISSUES_PATH} hidden={isLongBeach || hiddenFeatures.get('issues')}>
           <FontAwesomeIcon size="lg" fixedWidth icon={faFileExclamation} />
