@@ -52,13 +52,13 @@ const ExploreFileResults = () => {
     setPage(newPage);
   };
 
-  const caption = totalHits ? `(${totalHits} results)` : '';
+  const caption = isLoading ? '' : `(${totalHits} results)`;
 
   if (hasSearched) {
     return (
       <div>
         <Accordion>
-          <div caption={caption} headline="People" defaultOpen>
+          <div caption={caption} headline="Files" defaultOpen>
             <ExploreResultsWrapper>
               <SearchResults
                   hasSearched={hasSearched}

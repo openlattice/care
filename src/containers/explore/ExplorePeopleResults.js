@@ -79,7 +79,7 @@ const ExplorePeopleResults = () => {
     modalDispatch({ type: 'close' });
   };
 
-  const caption = totalHits ? `(${totalHits} results)` : '';
+  const caption = isLoading ? '' : `(${totalHits} results)`;
 
   if (hasSearched) {
     return (
