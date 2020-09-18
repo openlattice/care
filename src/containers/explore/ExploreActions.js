@@ -17,11 +17,16 @@ const explorePeople :RequestSequence = newRequestSequence(EXPLORE_PEOPLE);
 const EXPLORE_FILE :'EXPLORE_FILE' = 'EXPLORE_FILE';
 const exploreFile :RequestSequence = newRequestSequence(EXPLORE_FILE);
 
+const GET_INVOLVED_PEOPLE :'GET_INVOLVED_PEOPLE' = 'GET_INVOLVED_PEOPLE';
+const getInvolvedPeople :RequestSequence = newRequestSequence(GET_INVOLVED_PEOPLE);
+
 export {
   CLEAR_EXPLORE_RESULTS,
   EXPLORE_FILE,
   EXPLORE_PEOPLE,
+  GET_INVOLVED_PEOPLE,
   clearExploreResults,
   exploreFile,
   explorePeople,
+  getInvolvedPeople,
 };
