@@ -1,3 +1,5 @@
+import Docxtemplater from 'docxtemplater';
+import PizZip from 'pizzip';
 import * as pdfjsLib from 'pdfjs-dist/build/pdf';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 
@@ -23,9 +25,10 @@ function base64ToUint8Array(base64) {
 }
 
 function getTextFromDocx(base64) {
-  console.log('docx todo');
-
-  return Promise.resolve(undefined);
+  const zipFile = new PizZip(base64ToUint8Array(base64));
+  const maybedoc = new Docxtemplater(zipFile);
+  const text = maybedoc.getFullText();
+  return Promise.resolve(text);
 }
 
 function getTextFromPDF(file) {
@@ -41,7 +44,7 @@ function getTextFromPDF(file) {
 
       countPromises.push(pageObject.then((page) => {
         const textContent = page.getTextContent();
-        return textContent.then((text) => text.items.map(({ str }) => str).join(''));
+        return textContent.then((text) => text.items.map(({ str }) => str).join('\n'));
       }));
     }
 
