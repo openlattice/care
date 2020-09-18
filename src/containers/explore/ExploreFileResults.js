@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
 import FileResult from './FileResult';
-import { explorePeople } from './ExploreActions';
+import { exploreFile } from './ExploreActions';
 import { ExploreResultsWrapper } from './styled';
 
 import Accordion from '../../components/accordion';
@@ -39,7 +39,7 @@ const ExploreFileResults = () => {
 
   const dispatchSearch = (start = 0) => {
     if (searchTerm.trim().length) {
-      dispatch(explorePeople({
+      dispatch(exploreFile({
         searchTerm: searchTerm.trim(),
         start,
         maxHits: MAX_HITS
