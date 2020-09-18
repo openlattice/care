@@ -87,7 +87,12 @@ function* uploadDocumentsWorker(action :SequenceAction) :Generator<*, *, *> {
   try {
     yield put(uploadDocuments.request(action.id));
 
-    const { files, tags, personEntityKeyIds } = action.value;
+    const {
+      files,
+      tags,
+      personEntityKeyIds,
+      onSuccess
+    } = action.value;
 
     const app = yield select((state) => state.get('app', Map()));
     const propertyTypeIds = yield select((state) => state.getIn(['edm', 'fqnToIdMap'], Map()));
@@ -142,6 +147,7 @@ function* uploadDocumentsWorker(action :SequenceAction) :Generator<*, *, *> {
 
     yield call(DataApi.createEntityAndAssociationData, { entities, associations });
 
+    onSuccess();
     yield put(uploadDocuments.success(action.id));
   }
   catch (error) {

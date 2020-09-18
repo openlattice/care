@@ -5,10 +5,7 @@
 import { Set, Map } from 'immutable';
 
 import {
-  ADD_PERSON,
-  REMOVE_PERSON,
   loadUsedTags,
-  searchPeopleForDocuments,
   uploadDocuments
 } from './DocumentsActionFactory';
 import { DOCUMENTS } from '../../utils/constants/StateConstants';

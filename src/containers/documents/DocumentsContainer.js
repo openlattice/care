@@ -14,7 +14,8 @@ import {
   Label,
   ExpansionPanel,
   ExpansionPanelDetails,
-  ExpansionPanelSummary
+  ExpansionPanelSummary,
+  Spinner,
 } from 'lattice-ui-kit';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown } from '@fortawesome/pro-light-svg-icons';
@@ -27,6 +28,7 @@ import { uploadDocuments, loadUsedTags } from './DocumentsActionFactory';
 import { DOCUMENTS } from '../../utils/constants/StateConstants';
 
 type Props = {
+  isUploading :boolean;
   tags :Set<string>;
   actions :{
     loadUsedTags :Function;
@@ -37,16 +39,23 @@ type Props = {
 type State = {
   tags :Set<string>;
   files :Object[];
-  selectedPeople: Map<string, Map>;
+  selectedPeople :Map<string, Map>;
 };
+
+const SpinnerWrapper = styled.div`
+  margin: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
 
 const ExpansionWrapper = styled.div`
   margin: 15px 0;
-`;
-
-export const DownloadsWrapper = styled.div`
-  display: flex;
-  width: 100%;
 `;
 
 export const FormWrapper = styled.div`
@@ -81,17 +90,19 @@ class DocumentsContainer extends React.Component<Props, State> {
 
   constructor(props :Props) {
     super(props);
-    this.state = {
-      files: [],
-      tags: OrderedSet(),
-      selectedPeople: OrderedMap(),
-    };
+    this.state = this.getInitialState();
   }
 
   componentDidMount() {
     const { actions } = this.props;
     actions.loadUsedTags();
   }
+
+  getInitialState = () => ({
+    files: [],
+    tags: OrderedSet(),
+    selectedPeople: OrderedMap(),
+  })
 
   onDateChange = (field :string, newDate :string) => {
     this.setState({ [field]: newDate });
@@ -156,7 +167,12 @@ class DocumentsContainer extends React.Component<Props, State> {
 
     const personEntityKeyIds = selectedPeople.keySeq();
 
-    const onUpload = () => actions.uploadDocuments({ files, tags, personEntityKeyIds });
+    const onUpload = () => actions.uploadDocuments({
+      files,
+      tags,
+      personEntityKeyIds,
+      onSuccess: () => this.setState(this.getInitialState())
+    });
 
     return (
       <DocumentUploadSection>
@@ -190,7 +206,17 @@ class DocumentsContainer extends React.Component<Props, State> {
   }
 
   render() {
+    const { isUploading } = this.props;
     const { files, tags, selectedPeople } = this.state;
+
+    if (isUploading) {
+      return (
+        <SpinnerWrapper>
+          <Spinner size="3x" />
+        </SpinnerWrapper>
+      );
+    }
+
     const hasUploadedFiles = !!files.length;
 
     const tagText = this.getLabelText('tags', tags);
@@ -210,7 +236,7 @@ class DocumentsContainer extends React.Component<Props, State> {
 }
 
 const mapStateToProps = (state :Map) => ({
-  downloading: state.getIn(['downloads', 'downloading']),
+  isUploading: state.getIn(['documents', DOCUMENTS.IS_UPLOADING]),
   tags: state.getIn(['documents', DOCUMENTS.TAGS])
 });
 
