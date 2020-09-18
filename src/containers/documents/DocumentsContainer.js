@@ -152,9 +152,11 @@ class DocumentsContainer extends React.Component<Props, State> {
 
   renderUploadDocumentsButton = () => {
     const { actions } = this.props;
-    const { files } = this.state;
+    const { files, tags, selectedPeople } = this.state;
 
-    const onUpload = () => actions.uploadDocuments({ files });
+    const personEntityKeyIds = selectedPeople.keySeq();
+
+    const onUpload = () => actions.uploadDocuments({ files, tags, personEntityKeyIds });
 
     return (
       <DocumentUploadSection>

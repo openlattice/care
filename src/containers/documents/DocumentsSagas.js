@@ -17,9 +17,14 @@ import {
 } from 'immutable';
 import { Constants, DataApi } from 'lattice';
 import { Logger } from 'lattice-utils';
+import { DateTime } from 'luxon';
 import type { SequenceAction } from 'redux-reqseq';
 
-import { getFilesESId } from '../../utils/AppUtils';
+import {
+  getFilesESId,
+  getIncludesESId,
+  getPeopleESId,
+} from '../../utils/AppUtils';
 import {
   LOAD_USED_TAGS,
   UPLOAD_DOCUMENTS,
@@ -27,6 +32,8 @@ import {
   uploadDocuments,
 } from './DocumentsActionFactory';
 import {
+  COMPLETED_DT_FQN,
+  DATETIME_FQN,
   FILE_DATA_FQN,
   FILE_TAG_FQN,
   FILE_TEXT_FQN,
@@ -47,9 +54,8 @@ function* loadUsedTagsWorker(action :SequenceAction) :Generator<*, *, *> {
 
     const app = yield select((state) => state.get('app', Map()));
     const propertyTypeIds = yield select((state) => state.getIn(['edm', 'fqnToIdMap'], Map()));
-    // const filesEntitySetId = getFilesESId(app);
-    const filesEntitySetId = "8a5f923c-2193-40a3-9d23-d6f3da4d433a"; // // TODO
-    const tagPropertyTypeId = propertyTypeIds.get(FILE_TAG_FQN, 'f2dbdc90-bf80-43d4-b015-196864ac4045');
+    const filesEntitySetId = getFilesESId(app);
+    const tagPropertyTypeId = propertyTypeIds.get(FILE_TAG_FQN);
 
     const entityTags = yield call(DataApi.getEntitySetData, filesEntitySetId, [tagPropertyTypeId]);
     let allTags = Set();
@@ -90,24 +96,32 @@ function* uploadDocumentsWorker(action :SequenceAction) :Generator<*, *, *> {
   try {
     yield put(uploadDocuments.request(action.id));
 
-    const { files } = action.value;
+    const { files, tags, personEntityKeyIds } = action.value;
 
     const app = yield select((state) => state.get('app', Map()));
     const propertyTypeIds = yield select((state) => state.getIn(['edm', 'fqnToIdMap'], Map()));
-    // const filesEntitySetId = getFilesESId(app);
-    const filesEntitySetId = "8a5f923c-2193-40a3-9d23-d6f3da4d433a"; // // TODO
-    const tagPropertyTypeId = propertyTypeIds.get(FILE_TAG_FQN, 'f2dbdc90-bf80-43d4-b015-196864ac4045');
-    const namePropertyTypeId = propertyTypeIds.get(NAME_FQN, 'f2dbdc90-bf80-43d4-b015-196864ac4045');
-    const typePropertyTypeId = propertyTypeIds.get(TYPE_FQN, 'f2dbdc90-bf80-43d4-b015-196864ac4045');
-    const fileDataPropertyTypeId = propertyTypeIds.get(FILE_DATA_FQN, '5364cb1b-ecf4-459d-b8d4-99b47b31281c');
-    const fileTextPropertyTypeId = propertyTypeIds.get(FILE_TEXT_FQN, '5364cb1b-ecf4-459d-b8d4-99b47b31281c');
 
-    const entities = files.map(({
+    const filesEntitySetId = getFilesESId(app);
+    const includesEntitySetId = getIncludesESId(app);
+    const peopleEntitySetId = getPeopleESId(app);
+
+    const tagPropertyTypeId = propertyTypeIds.get(FILE_TAG_FQN);
+    const namePropertyTypeId = propertyTypeIds.get(NAME_FQN);
+    const typePropertyTypeId = propertyTypeIds.get(TYPE_FQN);
+    const fileDataPropertyTypeId = propertyTypeIds.get(FILE_DATA_FQN);
+    const fileTextPropertyTypeId = propertyTypeIds.get(FILE_TEXT_FQN);
+    const dateTimePropertyTypeId = propertyTypeIds.get(DATETIME_FQN);
+    const completedDateTimePropertyTypeId = propertyTypeIds.get(COMPLETED_DT_FQN);
+
+    const now = DateTime.local().toISO();
+
+    const fileEntities = files.map(({
       name,
       type,
       base64
     }) => ({
-      [tagPropertyTypeId]: [type],
+      [tagPropertyTypeId]: tags.toJS(),
+      [dateTimePropertyTypeId]: [now],
       [typePropertyTypeId]: [type],
       [namePropertyTypeId]: [name],
       [fileDataPropertyTypeId]: [{
@@ -116,7 +130,24 @@ function* uploadDocumentsWorker(action :SequenceAction) :Generator<*, *, *> {
       }]
     }));
 
-    yield call(DataApi.createOrMergeEntityData, filesEntitySetId, entities);
+    const includesEntity = { [completedDateTimePropertyTypeId]: [now] };
+    const includesAssociations = [];
+    personEntityKeyIds.forEach((personEntityKeyId) => {
+      for (let fileIndex = 0; fileIndex < fileEntities.length; fileIndex += 1) {
+        includesAssociations.push({
+          srcEntitySetId: filesEntitySetId,
+          srcEntityIndex: fileIndex,
+          dstEntitySetId: peopleEntitySetId,
+          dstEntityKeyId: personEntityKeyId,
+          data: includesEntity
+        });
+      }
+    });
+
+    const entities = { [filesEntitySetId]: fileEntities };
+    const associations = { [includesEntitySetId]: includesAssociations };
+
+    yield call(DataApi.createEntityAndAssociationData, { entities, associations });
 
     yield put(uploadDocuments.success(action.id));
   }

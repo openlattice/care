@@ -162,11 +162,13 @@ const IMAGE_DATA_FQN = FQN.of('ol.imagedata');
 export { IMAGE_DATA_FQN };
 
 /* File Data */
+const DATETIME_FQN = FQN.of('ol.datetime');
 const FILE_DATA_FQN = FQN.of('ol.filedata');
 const FILE_TAG_FQN = FQN.of('ol.label');
 const FILE_TEXT_FQN = FQN.of('ol.text');
 
 export {
+  DATETIME_FQN,
   FILE_DATA_FQN,
   FILE_TAG_FQN,
   FILE_TEXT_FQN,
