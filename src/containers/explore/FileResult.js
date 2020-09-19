@@ -79,7 +79,10 @@ const FileResult = ({ result } :Props) => {
         <AttachedWrapper>
           <Typography variant="h6" component="span">Attached to: </Typography>
           <div>
-            { people.map((person) => <PersonLink person={person} />) }
+            { people.map((person) => {
+              const id = getEntityKeyId(person);
+              return <PersonLink key={id} person={person} />;
+            })}
           </div>
         </AttachedWrapper>
         <div>
