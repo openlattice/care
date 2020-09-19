@@ -38,7 +38,7 @@ const { formatAsDate } = DateTimeUtils;
 const HeaderRow = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
 `;
 
 const MinWidth = styled.div`
