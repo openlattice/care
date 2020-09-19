@@ -10,9 +10,8 @@ import { getEntityKeyId } from '../../../utils/DataUtils';
 import { getFirstLastFromPerson } from '../../../utils/PersonUtils';
 
 const StyledLink = styled(BreadcrumbLink)`
-  margin-left: 3px;
   :not(:last-child)::after {
-    content: ','
+    content: ', '
   }
 `;
 

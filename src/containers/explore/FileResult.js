@@ -41,9 +41,18 @@ const HeaderRow = styled.div`
   align-items: center;
 `;
 
+const MinWidth = styled.div`
+  word-break: break-all;
+  min-width: 0;
+`;
+
 const AttachedWrapper = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+
+  > span {
+    min-width: 100px;
+  }
 `;
 
 type Props = {
@@ -66,10 +75,10 @@ const FileResult = ({ result } :Props) => {
     <Card>
       <CardSegment padding="sm">
         <HeaderRow>
-          <div>
-            <Typography variant="h4">{name}</Typography>
+          <MinWidth>
+            <Typography variant="h5" component="h3">{name}</Typography>
             <Typography variant="caption" color="textSecondary">{date}</Typography>
-          </div>
+          </MinWidth>
           <a href={fileData} download rel="noreferrer" target="_blank">
             <IconButton>
               <FontAwesomeIcon icon={faDownload} fixedWidth />
