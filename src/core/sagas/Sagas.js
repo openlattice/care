@@ -238,5 +238,6 @@ export default function* sagas() :Generator<*, *, *> {
 
     fork(ExploreSagas.explorePeopleWatcher),
     fork(ExploreSagas.exploreFileWatcher),
+    fork(ExploreSagas.getInvolvedPeopleWatcher),
   ]);
 }

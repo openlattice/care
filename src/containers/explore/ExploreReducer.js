@@ -8,6 +8,7 @@ import { RequestStates } from 'redux-reqseq';
 import {
   exploreFile,
   explorePeople,
+  getInvolvedPeople,
 } from './ExploreActions';
 
 import { APP_TYPES_FQNS } from '../../shared/Consts';
@@ -33,11 +34,8 @@ const INITIAL_STATE :Map = fromJS({
   [FILE_FQN]: {
     fetchState: RequestStates.STANDBY,
     hits: List(),
-    // profilePicsByEKID: Map(),
-    // recentIncidentsByEKID: Map({
-    //   data: Map(),
-    //   fetchState: RequestStates.STANDBY,
-    // }),
+    peopleByFileEKID: Map(),
+    peopleByEKID: Map(),
     searchTerm: '',
     totalHits: 0,
   },
@@ -89,6 +87,14 @@ export default function exploreReducer(state :Map = INITIAL_STATE, action :Objec
           .setIn([PEOPLE_FQN, 'recentIncidentsByEKID', 'data'], action.value),
         FAILURE: () => state
           .setIn([PEOPLE_FQN, 'recentIncidentsByEKID', 'fetchState'], RequestStates.FAILURE),
+      });
+    }
+
+    case getInvolvedPeople.case(action.type): {
+      return getInvolvedPeople.reducer(state, action, {
+        SUCCESS: () => state
+          .mergeIn([FILE_FQN], action.value),
+        FAILURE: () => state.setIn([PEOPLE_FQN, 'fetchState'], RequestStates.FAILURE),
       });
     }
 
