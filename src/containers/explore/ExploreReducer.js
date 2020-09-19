@@ -6,6 +6,7 @@ import { List, Map, fromJS } from 'immutable';
 import { RequestStates } from 'redux-reqseq';
 
 import {
+  CLEAR_EXPLORE_RESULTS,
   exploreFile,
   explorePeople,
   getInvolvedPeople,
@@ -96,6 +97,10 @@ export default function exploreReducer(state :Map = INITIAL_STATE, action :Objec
           .mergeIn([FILE_FQN], action.value),
         FAILURE: () => state.setIn([PEOPLE_FQN, 'fetchState'], RequestStates.FAILURE),
       });
+    }
+
+    case CLEAR_EXPLORE_RESULTS: {
+      return INITIAL_STATE;
     }
 
     default:

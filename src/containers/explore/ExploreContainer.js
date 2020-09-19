@@ -1,5 +1,5 @@
 // @flow
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import styled from 'styled-components';
 import { faSearch } from '@fortawesome/pro-regular-svg-icons';
@@ -14,7 +14,7 @@ import { useDispatch } from 'react-redux';
 
 import ExploreFileResults from './ExploreFileResults';
 import ExplorePeopleResults from './ExplorePeopleResults';
-import { exploreFile, explorePeople } from './ExploreActions';
+import { clearExploreResults, exploreFile, explorePeople } from './ExploreActions';
 
 import { useInput } from '../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../components/layout';
@@ -51,7 +51,9 @@ const SearchButton = styled(Button)`
 const MAX_HITS = 10;
 
 const ExploreContainer = () => {
+
   const dispatch = useDispatch();
+  useEffect(() => () => dispatch(clearExploreResults()), [dispatch]);
   const [searchTerm, setSearchTerm] = useInput('');
 
   const dispatchSearch = (start = 0) => {
@@ -100,8 +102,8 @@ const ExploreContainer = () => {
         </ContentWrapper>
       </Panel>
       <ContentWrapper>
-        <ExploreFileResults />
         <ExplorePeopleResults />
+        <ExploreFileResults />
       </ContentWrapper>
     </ContentOuterWrapper>
   );

@@ -142,10 +142,10 @@ export function* exploreFileWorker(action :SequenceAction) :Generator<*, *, *> {
 
     const fileEKIDs = hits.map((file) => file.getIn([OPENLATTICE_ID_FQN, 0]));
 
-    yield put(exploreFile.success(action.id, { hits, totalHits: response.data.numHits }));
     if (!fileEKIDs.isEmpty()) {
       yield put(getInvolvedPeople(fileEKIDs));
     }
+    yield put(exploreFile.success(action.id, { hits, totalHits: response.data.numHits }));
   }
   catch (error) {
     LOG.error(action.type, error);
