@@ -11,7 +11,7 @@ import { getFirstLastFromPerson } from '../../../utils/PersonUtils';
 
 const StyledLink = styled(BreadcrumbLink)`
   :not(:last-child)::after {
-    content: ', '
+    content: ', ';
   }
 `;
 
