@@ -21,13 +21,13 @@ const Button = styled.button`
   border-radius: 50%;
   border: none;
 
+  &:focus {
+    outline: none;
+  }
+
   &:hover:enabled {
     cursor: pointer;
     background-color: #dcdce7;
-  }
-
-  &:focus {
-    outline: none;
   }
 `;
 

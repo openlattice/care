@@ -51,7 +51,7 @@ const Container = styled.div`
   background-color: #fafafa;
   color: #bdbdbd;
   outline: none;
-  transition: border .24s ease-in-out;
+  transition: border 0.24s ease-in-out;
 `;
 
 const StyledDropzone = (props :Props) => {

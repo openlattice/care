@@ -109,9 +109,10 @@ const StyledPersonMugshot = styled.div`
   overflow: hidden;
 
   img {
-      display: inline;
-      margin: 0 auto;
+    display: inline;
+    margin: 0 auto;
   }
+
   ${(props) => (props.small
     ? (
       `min-width: 30px;
@@ -130,15 +131,15 @@ const Row = styled.tr`
   border-left: 1px solid #e1e1eb;
   border-right: 1px solid #e1e1eb;
 
-  ${Cell} {
+  td {
     color: #2e2e34;
   }
 
-  ${Cell}:first-child {
+  td:first-child {
     padding-left: 30px;
   }
 
-  ${Cell}:last-child {
+  td:last-child {
     padding-right: 30px;
   }
 
@@ -177,7 +178,7 @@ const SelectedPersonCard = styled(Card)`
 
     span {
       display: inline-block;
-      margin: 5px 5px 5px 0px;
+      margin: 5px 5px 5px 0;
       color: rgb(139, 139, 144);
       font-size: 0.75rem;
       font-weight: 600;
