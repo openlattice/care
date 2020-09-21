@@ -1,11 +1,13 @@
 // @flow
 
 import React from 'react';
-import { Switch, Redirect, Route } from 'react-router-dom';
+
 import { CardStack } from 'lattice-ui-kit';
+import { Redirect, Route, Switch } from 'react-router-dom';
 
 import FilteredIssues from './FilteredIssues';
 import Issue from './issue/Issue';
+
 import { ContentOuterWrapper, ContentWrapper } from '../../components/layout';
 import { ISSUES_PATH, ISSUE_PATH } from '../../core/router/Routes';
 

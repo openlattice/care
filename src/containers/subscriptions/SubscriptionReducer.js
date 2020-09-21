@@ -9,7 +9,7 @@ import {
   CLEAR_SUBSCRIPTIONS,
   getSubscriptions,
 } from './SubscriptionActions';
-import { SUBSCRIPTION_TYPE } from './constants';
+import { ISSUE_ALERT_TYPE, SUBSCRIPTION_TYPE } from './constants';
 
 import { SUBSCRIBE } from '../../utils/constants/StateConstants';
 
@@ -31,7 +31,10 @@ export default function reportReducer(state :Map<*, *> = INITIAL_STATE, action :
         REQUEST: () => state.set('fetchState', RequestStates.PENDING),
         SUCCESS: () => state
           .set('fetchState', RequestStates.SUCCESS)
-          .set(SUBSCRIPTIONS, fromJS(action.value.filter(({ type }) => type === SUBSCRIPTION_TYPE))),
+          .set(
+            SUBSCRIPTIONS,
+            fromJS(action.value.filter(({ type }) => (type === SUBSCRIPTION_TYPE || type === ISSUE_ALERT_TYPE)))
+          ),
         FAILURE: () => state.set('fetchState', RequestStates.FAILURE)
       });
     }

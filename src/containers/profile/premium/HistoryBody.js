@@ -1,10 +1,9 @@
 // @flow
 import React from 'react';
 
-import { faFolderOpen } from '@fortawesome/pro-duotone-svg-icons';
 import { List, Map } from 'immutable';
-import { IconSplash } from 'lattice-ui-kit';
 
+import NoReportsFiled from './styled/NoReportsFiled';
 import ReportHistory from './ReportHistory';
 import ReportsSummary from './ReportsSummary';
 
@@ -41,7 +40,7 @@ const HistoryBody = (props :Props) => {
   const total = crisisSummary.get('total');
 
   if (!total && !isLoading) {
-    return <IconSplash icon={faFolderOpen} caption="No reports have been filed." />;
+    return <NoReportsFiled />;
   }
 
   return (

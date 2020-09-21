@@ -16,6 +16,7 @@ import {
   PROFILE_ID_PATH,
 } from '../../../core/router/Routes';
 import {
+  ASSIGNEE_ID_FQN,
   CATEGORY_FQN,
   COMPLETED_DT_FQN,
   DATE_TIME_FQN,
@@ -78,11 +79,12 @@ const constructFormData = ({
     issue,
     ISSUE_FQN,
     [
+      ASSIGNEE_ID_FQN,
       CATEGORY_FQN,
       DESCRIPTION_FQN,
       PRIORITY_FQN,
-      TITLE_FQN,
       STATUS_FQN,
+      TITLE_FQN,
     ],
     0
   );

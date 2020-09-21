@@ -7,7 +7,13 @@ import React, {
 } from 'react';
 
 import styled from 'styled-components';
-import { List, Map, removeIn } from 'immutable';
+import {
+  List,
+  Map,
+  getIn,
+  removeIn,
+  setIn
+} from 'immutable';
 import { DataProcessingUtils, Form } from 'lattice-fabricate';
 import { DateTime } from 'luxon';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,12 +23,12 @@ import { schema, uiSchema } from './IssueSchemas';
 import { addIssueTimestamps, constructFormData, getIssueAssociations } from './IssueUtils';
 
 import { useFormData } from '../../../components/hooks';
-import { OPENLATTICE_ID_FQN } from '../../../edm/DataModelFqns';
+import { ASSIGNEE_ID_FQN, OPENLATTICE_ID_FQN } from '../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { hydrateSchemaWithStaff } from '../../profile/edit/about/AboutUtils';
 import { getResponsibleUserOptions } from '../../staff/StaffActions';
 
-const { STAFF_FQN } = APP_TYPES_FQNS;
+const { STAFF_FQN, ISSUE_FQN } = APP_TYPES_FQNS;
 const {
   findEntityAddressKeyFromMap,
   getEntityAddressKey,
@@ -87,7 +93,7 @@ const IssueForm = (props :Props, ref) => {
     issue
   }), [assignee, defaultComponent, issue]);
 
-  const [formData] = useFormData(defaultFormData);
+  const [formData, setFormData] = useFormData(defaultFormData);
 
   const handleSubmit = useCallback((payload :any) => {
     const { formData: newFormData } = payload;
@@ -161,11 +167,32 @@ const IssueForm = (props :Props, ref) => {
 
   const onSubmit = edit ? handleEdit : handleSubmit;
 
+  const onChange = (payload) => {
+    const staffId = getIn(
+      payload,
+      ['formData', getPageSectionKey(1, 1), getEntityAddressKey(0, STAFF_FQN, OPENLATTICE_ID_FQN)]
+    );
+    const assigneeId = getIn(
+      payload,
+      ['formData', getPageSectionKey(1, 1), getEntityAddressKey(0, ISSUE_FQN, ASSIGNEE_ID_FQN)]
+    );
+
+    if (staffId !== assigneeId) {
+      const newPayload = setIn(
+        payload,
+        ['formData', getPageSectionKey(1, 1), getEntityAddressKey(0, ISSUE_FQN, ASSIGNEE_ID_FQN)],
+        staffId
+      );
+      setFormData(newPayload);
+    }
+  };
+
   return (
     <StyledForm
         hideSubmit
         noPadding
         ref={ref}
+        onChange={onChange}
         onSubmit={onSubmit}
         formData={formData}
         schema={changeSchema}
