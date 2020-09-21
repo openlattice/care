@@ -121,7 +121,8 @@ class DocumentsContainer extends React.Component<Props, State> {
         files.splice(idx, 1);
         this.setState({ files });
       };
-      return <UploadedDocument file={file} key={idx} onDelete={onDelete} />;
+      const fileKey = `${file.name}-${idx}`;
+      return <UploadedDocument file={file} key={fileKey} onDelete={onDelete} />;
     });
   }
 

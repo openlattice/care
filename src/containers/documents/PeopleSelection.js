@@ -5,7 +5,7 @@
 import React from 'react';
 
 import styled from 'styled-components';
-import { List, Map, OrderedSet } from 'immutable';
+import { List, Map } from 'immutable';
 import { Constants } from 'lattice';
 import { Button, Card, Search } from 'lattice-ui-kit';
 import { connect } from 'react-redux';
@@ -27,11 +27,16 @@ import {
 } from '../../edm/DataModelFqns';
 
 type Props = {
-  downloading :boolean,
   actions :{
     loadUsedTags :Function;
+    searchPeople :Function;
     uploadDocuments :Function;
-  }
+  };
+  hasSearched :boolean;
+  onAdd :Function;
+  onRemove :Function;
+  searchResults :List;
+  selectedPeople :Map;
 };
 
 type State = {
@@ -323,8 +328,6 @@ class PeopleSelection extends React.Component<Props, State> {
   }
 
   render() {
-    const { actions, searchResults } = this.props;
-
     return (
       <div>
         {this.renderSelectedPeople()}

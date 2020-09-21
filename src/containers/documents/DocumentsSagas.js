@@ -8,14 +8,8 @@ import {
   select,
   takeEvery
 } from '@redux-saga/core/effects';
-import {
-  List,
-  Map,
-  OrderedSet,
-  Set,
-  fromJS,
-} from 'immutable';
-import { Constants, DataApi } from 'lattice';
+import { Map, Set } from 'immutable';
+import { DataApi } from 'lattice';
 import { Logger } from 'lattice-utils';
 import { DateTime } from 'luxon';
 import type { SequenceAction } from 'redux-reqseq';
@@ -41,8 +35,6 @@ import {
   NAME_FQN,
   TYPE_FQN
 } from '../../edm/DataModelFqns';
-
-const { OPENLATTICE_ID_FQN } = Constants;
 
 const LOG = new Logger('DocumentsSagas');
 

@@ -1,3 +1,7 @@
+/*
+ * @flow
+ */
+
 import React from 'react';
 import styled from 'styled-components';
 import { useDropzone } from 'react-dropzone';
@@ -8,6 +12,10 @@ import {
   PDF_MIME_TYPE,
   DOCX_MIME_TYPE,
 } from '../../utils/constants/FileTypeConstants';
+
+type Props = {
+  onDrop :Function;
+};
 
 const ACCEPTED_MIME_TYPES = [
   ALL_IMAGE_MIME_TYPE,
@@ -46,7 +54,7 @@ const Container = styled.div`
   transition: border .24s ease-in-out;
 `;
 
-const StyledDropzone = (props) => {
+const StyledDropzone = (props :Props) => {
   const { onDrop } = props;
   const {
     getRootProps,
@@ -59,10 +67,57 @@ const StyledDropzone = (props) => {
     onDrop
   });
 
+  const {
+    onBlur,
+    onClick,
+    onDragEnter,
+    onDragLeave,
+    onDragOver,
+    onDrop: onDropRoot,
+    onFocus,
+    onKeyDown,
+    ref,
+    tabIndex
+  } = getRootProps();
+
+  const {
+    accept,
+    autoComplete,
+    multiple,
+    onChange,
+    onClick: onClickInput,
+    ref: refInput,
+    style,
+    tabIndex: tabIndexInput,
+    type,
+  } = getInputProps();
+
   return (
     <div className="container">
-      <Container {...getRootProps({ isDragActive, isDragAccept, isDragReject })}>
-        <input {...getInputProps()} />
+      <Container
+          isDragActive={isDragActive}
+          isDragAccept={isDragAccept}
+          isDragReject={isDragReject}
+          onBlur={onBlur}
+          onClick={onClick}
+          onDragEnter={onDragEnter}
+          onDragLeave={onDragLeave}
+          onDragOver={onDragOver}
+          onDrop={onDropRoot}
+          onFocus={onFocus}
+          onKeyDown={onKeyDown}
+          ref={ref}
+          tabIndex={tabIndex}>
+        <input
+            accept={accept}
+            autoComplete={autoComplete}
+            multiple={multiple}
+            onChange={onChange}
+            onClick={onClickInput}
+            ref={refInput}
+            style={style}
+            tabIndex={tabIndexInput}
+            type={type} />
         <p>Drop a file here, or click to select a file to upload.</p>
       </Container>
     </div>
