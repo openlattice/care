@@ -86,7 +86,7 @@ const FileResult = ({ result } :Props) => {
           </a>
         </HeaderRow>
         <AttachedWrapper>
-          <Typography variant="h6" component="span">Attached to: </Typography>
+          <Typography component="span">Attached to: </Typography>
           <div>
             { people.map((person) => {
               const id = getEntityKeyId(person);
