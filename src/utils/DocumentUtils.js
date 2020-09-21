@@ -1,6 +1,7 @@
 import Docxtemplater from 'docxtemplater';
 import PizZip from 'pizzip';
-import * as pdfjsLib from 'pdfjs-dist/build/pdf';
+
+import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 
 import { PDF_MIME_TYPE, DOCX_MIME_TYPE } from './constants/FileTypeConstants';
@@ -32,8 +33,8 @@ function getTextFromDocx(base64) {
 }
 
 function getTextFromPDF(file) {
-  pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
-  const pdfObject = pdfjsLib.getDocument({ data: base64ToUint8Array(file) });
+  GlobalWorkerOptions.workerSrc = pdfjsWorker;
+  const pdfObject = getDocument({ data: base64ToUint8Array(file) });
   return pdfObject.promise.then((pdf) => {
     const { _pdfInfo: pdfInfo } = pdf;
     const { numPages } = pdfInfo;
