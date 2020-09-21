@@ -28,7 +28,6 @@ const ExploreFileResults = () => {
   const searchTerm = useSelector((store) => store.getIn(['explore', FILE_FQN, 'searchTerm']));
   const fetchState = useSelector((store) => store.getIn(['explore', FILE_FQN, 'fetchState']));
   const [page, setPage] = useState(0);
-  // const [modalState, modalDispatch] = useReducer(reducer, INITIAL_STATE);
 
   const hasSearched = fetchState !== RequestStates.STANDBY;
   const isLoading = fetchState === RequestStates.PENDING;
@@ -66,13 +65,12 @@ const ExploreFileResults = () => {
               <SearchResults
                   hasSearched={hasSearched}
                   isLoading={isLoading}
-                  // onResultClick={handleOpenReportSelection}
                   resultComponent={FileResult}
                   results={searchResults} />
               <PaginationToolbar
-                  page={page}
                   count={totalHits}
                   onPageChange={onPageChange}
+                  page={page}
                   rowsPerPage={MAX_HITS} />
             </ExploreResultsWrapper>
           </div>

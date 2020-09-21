@@ -21,8 +21,8 @@ const { PEOPLE_FQN } = APP_TYPES_FQNS;
 
 const MAX_HITS = 10;
 const INITIAL_STATE = {
-  selectedPerson: undefined,
   isVisible: false,
+  selectedPerson: undefined,
 };
 
 const reducer = (state, action) => {
@@ -94,15 +94,15 @@ const ExplorePeopleResults = () => {
                   resultComponent={PersonResult}
                   results={searchResults} />
               <PaginationToolbar
-                  page={page}
                   count={totalHits}
                   onPageChange={onPageChange}
+                  page={page}
                   rowsPerPage={MAX_HITS} />
             </ExploreResultsWrapper>
             <ReportSelectionModal
-                selectedPerson={modalState.selectedPerson}
                 isVisible={modalState.isVisible}
-                onClose={handleCloseReportSelection} />
+                onClose={handleCloseReportSelection}
+                selectedPerson={modalState.selectedPerson} />
           </div>
         </Accordion>
       </div>

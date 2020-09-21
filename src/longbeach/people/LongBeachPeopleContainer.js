@@ -140,28 +140,28 @@ const LongBeachPeopleContainer = () => {
                     <Input
                         autoFocus
                         id="last-name"
-                        value={lastName}
-                        onChange={setLastName} />
+                        onChange={setLastName}
+                        value={lastName} />
                   </FlexColumn>
                   <FlexColumn>
                     <Label htmlFor="first-name">First Name</Label>
                     <Input
                         id="first-name"
-                        value={firstName}
-                        onChange={setFirstName} />
+                        onChange={setFirstName}
+                        value={firstName} />
                   </FlexColumn>
                   <FlexColumn>
                     <Label htmlFor="dob">Date of Birth</Label>
-                    <DatePicker id="dob" value={dob} onChange={setDob} />
+                    <DatePicker id="dob" onChange={setDob} value={dob} />
                   </FlexColumn>
                   <FlexColumn>
                     <Label stealth>Submit</Label>
                     <Button
-                        type="submit"
+                        color="primary"
                         fullWidth
                         isLoading={isLoading}
-                        color="primary"
-                        onClick={handleOnSearch}>
+                        onClick={handleOnSearch}
+                        type="submit">
                       Search
                     </Button>
                   </FlexColumn>
@@ -178,8 +178,8 @@ const LongBeachPeopleContainer = () => {
                           id="sex"
                           isClearable
                           onChange={(option) => setSex(option)}
-                          value={sex}
-                          options={sexOptions} />
+                          options={sexOptions}
+                          value={sex} />
                     </FlexColumn>
                     <FlexColumn>
                       <Label htmlFor="race">Race</Label>
@@ -187,8 +187,8 @@ const LongBeachPeopleContainer = () => {
                           id="race"
                           isClearable
                           onChange={(option) => setRace(option)}
-                          value={race}
-                          options={raceOptions} />
+                          options={raceOptions}
+                          value={race} />
                     </FlexColumn>
                     <FlexColumn>
                       <Label htmlFor="ethnicity">Ethnicity</Label>
@@ -196,15 +196,15 @@ const LongBeachPeopleContainer = () => {
                           id="ethnicity"
                           isClearable
                           onChange={(option) => setEthnicity(option)}
-                          value={ethnicity}
-                          options={ethnicityOptions} />
+                          options={ethnicityOptions}
+                          value={ethnicity} />
                     </FlexColumn>
                     <FlexEnd>
                       <Checkbox
-                          id="similar"
                           checked={metaphone}
-                          onChange={handleOnSimilar}
-                          label={MetaphoneLabel} />
+                          id="similar"
+                          label={MetaphoneLabel}
+                          onChange={handleOnSimilar} />
                     </FlexEnd>
                   </InputGrid>
                 </div>
@@ -219,9 +219,9 @@ const LongBeachPeopleContainer = () => {
           {
             hasSearched && (
               <PaginationToolbar
-                  page={page}
                   count={totalHits}
                   onPageChange={onPageChange}
+                  page={page}
                   rowsPerPage={MAX_HITS} />
             )
           }
