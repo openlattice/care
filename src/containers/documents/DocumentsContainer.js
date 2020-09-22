@@ -3,43 +3,46 @@
  */
 
 import React from 'react';
+import type { Node } from 'react';
 
 import styled from 'styled-components';
+import { faChevronDown } from '@fortawesome/pro-light-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Map, OrderedMap, OrderedSet } from 'immutable';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import {
   Button,
   Creatable,
-  Label,
   ExpansionPanel,
   ExpansionPanelDetails,
   ExpansionPanelSummary,
+  Label,
   Spinner,
+  Typography,
 } from 'lattice-ui-kit';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronDown } from '@fortawesome/pro-light-svg-icons';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import type { Dispatch } from 'redux';
 
 import PeopleSelection from './PeopleSelection';
+import { loadUsedTags, uploadDocuments } from './DocumentsActionFactory';
+
 import FileUpload from '../../components/documents/FileUpload';
 import UploadedDocument from '../../components/documents/UploadedDocument';
-import { uploadDocuments, loadUsedTags } from './DocumentsActionFactory';
 import { DOCUMENTS } from '../../utils/constants/StateConstants';
 
 type Props = {
-  isUploading :boolean;
-  tags :Set<string>;
   actions :{
     loadUsedTags :Function;
     uploadDocuments :Function;
   };
+  isUploading :boolean;
+  tags :OrderedSet<string>;
 };
 
 type State = {
-  tags :Set<string>;
   files :Object[];
   selectedPeople :Map<string, Map>;
+  tags :OrderedSet<string>;
 };
 
 const SpinnerWrapper = styled.div`
@@ -110,8 +113,7 @@ class DocumentsContainer extends React.Component<Props, State> {
 
   onUpload = ({ file }) => {
     const { files } = this.state;
-    files.push(file);
-    this.setState({ files });
+    this.setState({ files: [...files, file] });
   }
 
   renderUploadedFiles = () => {
@@ -126,7 +128,7 @@ class DocumentsContainer extends React.Component<Props, State> {
     });
   }
 
-  onTagChange = (tags) => {
+  onTagChange = (tags :OrderedSet) => {
     const values = tags ? tags.map(({ value }) => value) : [];
     this.setState({ tags: OrderedSet(values) });
   }
@@ -184,7 +186,7 @@ class DocumentsContainer extends React.Component<Props, State> {
     );
   }
 
-  renderExpandableContent = (title, content) => {
+  renderExpandableContent = (title :string, content :Node) => {
     const expandIcon = <FontAwesomeIcon icon={faChevronDown} size="xs" />;
     return (
       <ExpansionWrapper>
@@ -198,7 +200,7 @@ class DocumentsContainer extends React.Component<Props, State> {
     );
   }
 
-  getLabelText = (label, collection) => {
+  getLabelText = (label :string, collection :OrderedSet) => {
     if (!collection.size) {
       return `Add ${label}`;
     }
@@ -225,7 +227,7 @@ class DocumentsContainer extends React.Component<Props, State> {
 
     return (
       <div>
-        <h1>Upload documents</h1>
+        <Typography variant="h1" gutterBottom>Upload documents</Typography>
         <FileUpload onUpload={this.onUpload} />
         {this.renderUploadedFiles()}
         {hasUploadedFiles && this.renderExpandableContent(tagText, this.renderTagSelect())}
