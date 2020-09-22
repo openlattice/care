@@ -293,11 +293,15 @@ const PremiumProfileContainer = (props :Props) => {
               </BreadcrumbWrapper>
               <PortraitCard isLoading={isLoadingIntro} imageUrl={imageURL} person={selectedPerson} />
               <AppearancePanel
-                  isLoading={isLoadingIntro}
                   appearance={appearance}
+                  isLoading={isLoadingIntro}
                   scars={scars}
                   selectedPerson={selectedPerson} />
-              <ContactPanel address={address} contact={contact} isLoading={isLoadingIntro} />
+              <ContactPanel
+                  address={address}
+                  contact={contact}
+                  isLoading={isLoadingIntro}
+                  person={selectedPerson} />
               <AssignedOfficerPanel
                   responsibleUser={responsibleUser}
                   isLoading={isLoadingAboutPlan} />
