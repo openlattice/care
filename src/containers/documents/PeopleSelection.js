@@ -8,7 +8,6 @@ import styled from 'styled-components';
 import { faUserCircle } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { List, Map } from 'immutable';
-import { Constants } from 'lattice';
 import { Button, Card, Search } from 'lattice-ui-kit';
 import { DateTimeUtils } from 'lattice-utils';
 import { connect } from 'react-redux';
@@ -17,12 +16,13 @@ import { RequestStates } from 'redux-reqseq';
 import type { Dispatch } from 'redux';
 
 import {
+  IMAGE_DATA_FQN,
   PERSON_DOB_FQN,
   PERSON_FIRST_NAME_FQN,
   PERSON_LAST_NAME_FQN,
   PERSON_MIDDLE_NAME_FQN,
-  PERSON_PICTURE_FQN,
 } from '../../edm/DataModelFqns';
+import { getEntityKeyId } from '../../utils/DataUtils';
 import { DOCUMENTS } from '../../utils/constants/StateConstants';
 import { searchPeople } from '../people/PeopleActions';
 
@@ -35,8 +35,10 @@ type Props = {
     uploadDocuments :Function;
   };
   hasSearched :boolean;
+  isLoading :boolean;
   onAdd :Function;
   onRemove :Function;
+  profilePics :Map;
   searchResults :List;
   selectedPeople :Map;
 };
@@ -45,9 +47,6 @@ type State = {
   tags :Set<string>,
   files :Object[]
 };
-
-const { OPENLATTICE_ID_FQN } = Constants;
-const DATE_FORMAT = 'MM/dd/yyyy';
 
 export const DownloadsWrapper = styled.div`
   display: flex;
@@ -97,11 +96,14 @@ const Cell = styled.td`
 `;
 
 export const PersonPicture = styled.img`
-  width: ${(props) => (props.small ? 30 : 36)}px;
-  height: auto;
+  height: 36px;
+  object-fit: cover;
+  object-position: 50% 50%;
+  width: 36px;
 `;
 
 const StyledPersonMugshot = styled.div`
+  font-size: 12px;
   margin-right: 20px;
   border-radius: 50%;
   min-width: 36px;
@@ -207,7 +209,7 @@ const Headers = () => (
 
 class PeopleSelection extends React.Component<Props, State> {
 
-  onSearch = (searchFields) => {
+  onSearch = (searchFields :Map) => {
     const { actions } = this.props;
 
     const searchInputs = Map()
@@ -218,7 +220,7 @@ class PeopleSelection extends React.Component<Props, State> {
     actions.searchPeople({ searchInputs, maxHits: 10 });
   }
 
-  formatValue = (rawValue :string | string[]) :string => {
+  formatValue = (rawValue :string | List) :string => {
     if (!rawValue || (!rawValue.length && !rawValue.size)) return '';
     if (typeof rawValue === 'string') {
       return rawValue || '';
@@ -226,19 +228,25 @@ class PeopleSelection extends React.Component<Props, State> {
     return rawValue.join(', ');
   }
 
-  formatDateList = (dateList :string[]) :string => {
+  formatDateList = (dateList :List) :string => {
     if (!dateList || (!dateList.length && !dateList.size)) return '';
     return dateList.map((dateString) => formatAsDate(dateString, dateString)).join(', ');
   }
 
-  renderPersonPicture = (person) => {
-    const picture :string = person.getIn([PERSON_PICTURE_FQN, 0]);
+  renderPersonPicture = (person :Map) => {
+    const { profilePics } = this.props;
+    const personEKID = getEntityKeyId(person);
+    const picture = profilePics.getIn([personEKID, IMAGE_DATA_FQN, 0]);
     return picture
       ? (
         <StyledPersonMugshot>
           <PersonPicture src={picture} alt="" />
         </StyledPersonMugshot>
-      ) : <FontAwesomeIcon icon={faUserCircle} size="2x" />;
+      ) : (
+        <StyledPersonMugshot>
+          <FontAwesomeIcon icon={faUserCircle} size="3x" />
+        </StyledPersonMugshot>
+      );
   }
 
   renderSelectedPeople = () => {
@@ -280,17 +288,18 @@ class PeopleSelection extends React.Component<Props, State> {
   renderSearchResults = () => {
     const {
       hasSearched,
+      isLoading,
       onAdd,
       searchResults,
-      selectedPeople
+      selectedPeople,
     } = this.props;
 
-    if (!hasSearched) {
+    if (!hasSearched || isLoading) {
       return null;
     }
 
     const searchResultRows = searchResults
-      .map((person) => [person.getIn([OPENLATTICE_ID_FQN, 0], ''), person])
+      .map((person) => [getEntityKeyId(person), person])
       .filter(([entityKeyId]) => !selectedPeople.has(entityKeyId))
       .map((([entityKeyId, person]) => {
         const picture = this.renderPersonPicture(person);
@@ -326,10 +335,11 @@ class PeopleSelection extends React.Component<Props, State> {
   }
 
   render() {
+    const { isLoading } = this.props;
     return (
       <div>
         {this.renderSelectedPeople()}
-        <Search onSearch={this.onSearch} />
+        <Search onSearch={this.onSearch} isLoading={isLoading} />
         {this.renderSearchResults()}
       </div>
     );
@@ -338,9 +348,11 @@ class PeopleSelection extends React.Component<Props, State> {
 
 const mapStateToProps = (state :Map) => ({
   downloading: state.getIn(['downloads', 'downloading']),
-  tags: state.getIn(['documents', DOCUMENTS.TAGS]),
+  hasSearched: state.getIn(['people', 'fetchState']) !== RequestStates.STANDBY,
+  isLoading: state.getIn(['people', 'fetchState']) === RequestStates.PENDING,
+  profilePics: state.getIn(['people', 'profilePicsByEKID']),
   searchResults: state.getIn(['people', 'hits']),
-  hasSearched: state.getIn(['people', 'fetchState']) !== RequestStates.STANDBY
+  tags: state.getIn(['documents', DOCUMENTS.TAGS]),
 });
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
