@@ -257,6 +257,10 @@ class PeopleSelection extends React.Component<Props, State> {
           value: firstName
         },
         {
+          label: 'Middle Name',
+          value: middleName
+        },
+        {
           label: 'Date of Birth',
           value: dob
         }
