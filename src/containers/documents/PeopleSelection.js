@@ -8,7 +8,12 @@ import styled from 'styled-components';
 import { faUserCircle } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { List, Map } from 'immutable';
-import { Button, Card, Search } from 'lattice-ui-kit';
+import {
+  Button,
+  Card,
+  Label,
+  Search
+} from 'lattice-ui-kit';
 import { DateTimeUtils } from 'lattice-utils';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -76,9 +81,8 @@ const HeaderRow = styled.tr`
 `;
 
 const HeaderElement = styled.th`
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
-  font-family: 'Open Sans', sans-serif;
   color: #8e929b;
   text-transform: uppercase;
   padding: 12px 0;
@@ -168,32 +172,16 @@ const NoResults = styled.div`
 `;
 
 const SelectedPersonCard = styled(Card)`
-  padding: 15px 40px;
-  margin-bottom: 7px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
   align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 7px;
+  padding: 15px 30px;
 
   article {
     display: flex;
-    flex-direction: column !important;
+    flex-direction: column;
     padding: 0 15px;
-
-    span {
-      display: inline-block;
-      margin: 5px 5px 5px 0;
-      color: rgb(139, 139, 144);
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-
-    div {
-      color: #1f1f22;
-      line-height: 1.5;
-      min-height: 24px;
-    }
   }
 `;
 
@@ -264,19 +252,19 @@ class PeopleSelection extends React.Component<Props, State> {
         <SelectedPersonCard key={entityKeyId}>
           {this.renderPersonPicture(person)}
           <article>
-            <span>Last Name</span>
+            <Label subtle>Last Name</Label>
             <div>{lastName}</div>
           </article>
           <article>
-            <span>First Name</span>
+            <Label subtle>First Name</Label>
             <div>{firstName}</div>
           </article>
           <article>
-            <span>Middle Name</span>
+            <Label subtle>Middle Name</Label>
             <div>{middleName}</div>
           </article>
           <article>
-            <span>Date of Birth</span>
+            <Label subtle>Date of Birth</Label>
             <div>{dob}</div>
           </article>
           <Button onClick={onDeletePerson}>Remove</Button>
