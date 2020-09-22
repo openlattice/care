@@ -135,9 +135,8 @@ const StyledPersonMugshot = styled.div`
 
 const Row = styled.tr`
   padding: 7px 30px;
-  border-bottom: 1px solid #e1e1eb;
-  border-left: 1px solid #e1e1eb;
-  border-right: 1px solid #e1e1eb;
+  border: 1px solid #e1e1eb;
+  border-top: none;
 
   td {
     color: #2e2e34;
@@ -248,25 +247,32 @@ class PeopleSelection extends React.Component<Props, State> {
 
       const onDeletePerson = () => onRemove(entityKeyId);
 
+      const listItems = [
+        {
+          label: 'Last Name',
+          value: lastName
+        },
+        {
+          label: 'First Name',
+          value: firstName
+        },
+        {
+          label: 'Date of Birth',
+          value: dob
+        }
+      ];
+
       return (
         <SelectedPersonCard key={entityKeyId}>
           {this.renderPersonPicture(person)}
-          <article>
-            <Label subtle>Last Name</Label>
-            <div>{lastName}</div>
-          </article>
-          <article>
-            <Label subtle>First Name</Label>
-            <div>{firstName}</div>
-          </article>
-          <article>
-            <Label subtle>Middle Name</Label>
-            <div>{middleName}</div>
-          </article>
-          <article>
-            <Label subtle>Date of Birth</Label>
-            <div>{dob}</div>
-          </article>
+          {
+            listItems.map((item) => (
+              <article key={item.value}>
+                <Label subtle>{item.label}</Label>
+                <div>{item.value}</div>
+              </article>
+            ))
+          }
           <Button onClick={onDeletePerson}>Remove</Button>
         </SelectedPersonCard>
       );

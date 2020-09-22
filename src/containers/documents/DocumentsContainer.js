@@ -84,7 +84,6 @@ const DocumentUploadSection = styled.div`
 
   article {
     display: flex;
-    flex-direction: row;
     justify-content: center;
   }
 `;
