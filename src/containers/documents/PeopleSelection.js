@@ -5,19 +5,17 @@
 import React from 'react';
 
 import styled from 'styled-components';
+import { faUserCircle } from '@fortawesome/pro-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { List, Map } from 'immutable';
 import { Constants } from 'lattice';
 import { Button, Card, Search } from 'lattice-ui-kit';
+import { DateTimeUtils } from 'lattice-utils';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUserCircle } from '@fortawesome/pro-solid-svg-icons';
-import { DateTime } from 'luxon';
 import { RequestStates } from 'redux-reqseq';
 import type { Dispatch } from 'redux';
 
-import { searchPeople } from '../people/PeopleActions';
-import { DOCUMENTS } from '../../utils/constants/StateConstants';
 import {
   PERSON_DOB_FQN,
   PERSON_FIRST_NAME_FQN,
@@ -25,6 +23,10 @@ import {
   PERSON_MIDDLE_NAME_FQN,
   PERSON_PICTURE_FQN,
 } from '../../edm/DataModelFqns';
+import { DOCUMENTS } from '../../utils/constants/StateConstants';
+import { searchPeople } from '../people/PeopleActions';
+
+const { formatAsDate } = DateTimeUtils;
 
 type Props = {
   actions :{
@@ -226,12 +228,7 @@ class PeopleSelection extends React.Component<Props, State> {
 
   formatDateList = (dateList :string[]) :string => {
     if (!dateList || (!dateList.length && !dateList.size)) return '';
-    return dateList.map((dateString) => {
-      if (!dateString) return '';
-      const date = DateTime.fromISO(dateString);
-      if (!date || !date.isValid) return dateString;
-      return date.toFormat(DATE_FORMAT);
-    }).join(', ');
+    return dateList.map((dateString) => formatAsDate(dateString, dateString)).join(', ');
   }
 
   renderPersonPicture = (person) => {
