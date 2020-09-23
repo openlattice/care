@@ -189,6 +189,7 @@ export function* getIncludedPeopleWorker(action :SequenceAction) :Saga<Object> {
       searchEntityNeighborsWithFilterWorker,
       searchEntityNeighborsWithFilter(peopleSearchParams)
     );
+    if (peopleResponse.error) throw peopleResponse.error;
 
     const peopleResponseData = fromJS(peopleResponse.data);
     const peopleByFileEKID = peopleResponseData
@@ -306,6 +307,7 @@ export function* getInvolvedPeopleWorker(action :SequenceAction) :Saga<Object> {
       searchEntityNeighborsWithFilterWorker,
       searchEntityNeighborsWithFilter(peopleSearchParam)
     );
+    if (peopleResponse.error) throw peopleResponse.error;
 
     const peopleResponseData = fromJS(peopleResponse.data);
     const peopleByIncidentEKID = peopleResponseData
