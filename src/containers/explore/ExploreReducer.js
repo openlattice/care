@@ -8,7 +8,9 @@ import { RequestStates } from 'redux-reqseq';
 import {
   CLEAR_EXPLORE_RESULTS,
   exploreFile,
+  exploreIncidents,
   explorePeople,
+  getIncludedPeople,
   getInvolvedPeople,
 } from './ExploreActions';
 
@@ -18,6 +20,7 @@ import { getPeoplePhotos, getRecentIncidents } from '../people/PeopleActions';
 const {
   FILE_FQN,
   PEOPLE_FQN,
+  INCIDENT_FQN
 } = APP_TYPES_FQNS;
 
 const INITIAL_STATE :Map = fromJS({
@@ -36,6 +39,14 @@ const INITIAL_STATE :Map = fromJS({
     fetchState: RequestStates.STANDBY,
     hits: List(),
     peopleByFileEKID: Map(),
+    peopleByEKID: Map(),
+    searchTerm: '',
+    totalHits: 0,
+  },
+  [INCIDENT_FQN]: {
+    fetchState: RequestStates.STANDBY,
+    hits: List(),
+    peopleByIncidentEKID: Map(),
     peopleByEKID: Map(),
     searchTerm: '',
     totalHits: 0,
@@ -70,6 +81,18 @@ export default function exploreReducer(state :Map = INITIAL_STATE, action :Objec
       });
     }
 
+    case exploreIncidents.case(action.type): {
+      return exploreIncidents.reducer(state, action, {
+        REQUEST: () => state
+          .setIn([INCIDENT_FQN, 'fetchState'], RequestStates.PENDING)
+          .mergeIn([INCIDENT_FQN], action.value),
+        SUCCESS: () => state
+          .setIn([INCIDENT_FQN, 'fetchState'], RequestStates.SUCCESS)
+          .mergeIn([INCIDENT_FQN], action.value),
+        FAILURE: () => state.setIn([INCIDENT_FQN, 'fetchState'], RequestStates.FAILURE)
+      });
+    }
+
     case getPeoplePhotos.case(action.type): {
       return getPeoplePhotos.reducer(state, action, {
         SUCCESS: () => state
@@ -91,10 +114,18 @@ export default function exploreReducer(state :Map = INITIAL_STATE, action :Objec
       });
     }
 
+    case getIncludedPeople.case(action.type): {
+      return getIncludedPeople.reducer(state, action, {
+        SUCCESS: () => state
+          .mergeIn([FILE_FQN], action.value),
+        FAILURE: () => state.setIn([PEOPLE_FQN, 'fetchState'], RequestStates.FAILURE),
+      });
+    }
+
     case getInvolvedPeople.case(action.type): {
       return getInvolvedPeople.reducer(state, action, {
         SUCCESS: () => state
-          .mergeIn([FILE_FQN], action.value),
+          .mergeIn([INCIDENT_FQN], action.value),
         FAILURE: () => state.setIn([PEOPLE_FQN, 'fetchState'], RequestStates.FAILURE),
       });
     }
