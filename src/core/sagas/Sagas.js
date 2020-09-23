@@ -242,8 +242,10 @@ export default function* sagas() :Generator<*, *, *> {
     fork(VisibilitySagas.getProfileVisibilityWatcher),
     fork(VisibilitySagas.putProfileVisibilityWatcher),
 
-    fork(ExploreSagas.explorePeopleWatcher),
     fork(ExploreSagas.exploreFileWatcher),
+    fork(ExploreSagas.exploreIncidentsWatcher),
+    fork(ExploreSagas.explorePeopleWatcher),
+    fork(ExploreSagas.getIncludedPeopleWatcher),
     fork(ExploreSagas.getInvolvedPeopleWatcher),
 
     fork(ProfileDocumentsSagas.getProfileDocumentsWatcher),

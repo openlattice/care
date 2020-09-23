@@ -80,7 +80,6 @@ const AppHeaderContainer = (props :Props) => {
   const stayAway = isLongBeach || appSettings.get('stayAway', false);
   const providers = isLongBeach || appSettings.get('providers', false);
   const homelessEncampments = isLongBeach || appSettings.get('homelessEncampments', false);
-  const v2 = appSettings.get('v2', false);
   /* <===== END LONG BEACH HACK =====> */
 
   const hiddenFeatures = appSettings.get('hiddenFeatures', Map());
@@ -127,7 +126,7 @@ const AppHeaderContainer = (props :Props) => {
           <NavLabel>Providers</NavLabel>
         </StyledNavLink>
         {/* <===== END LONG BEACH HACK =====> */}
-        <StyledNavLink to={SUBSCRIPTIONS_PATH} hidden={v2 || hiddenFeatures.get('subscriptions')}>
+        <StyledNavLink to={SUBSCRIPTIONS_PATH} hidden={hiddenFeatures.get('subscriptions')}>
           <FontAwesomeIcon size="lg" fixedWidth icon={faBell} />
           <NavLabel>Subscriptions</NavLabel>
         </StyledNavLink>

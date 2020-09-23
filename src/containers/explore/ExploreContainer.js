@@ -13,8 +13,14 @@ import {
 import { useDispatch } from 'react-redux';
 
 import ExploreFileResults from './ExploreFileResults';
+import ExploreIncidentResults from './ExploreIncidentResults';
 import ExplorePeopleResults from './ExplorePeopleResults';
-import { clearExploreResults, exploreFile, explorePeople } from './ExploreActions';
+import {
+  clearExploreResults,
+  exploreFile,
+  exploreIncidents,
+  explorePeople,
+} from './ExploreActions';
 
 import { useInput } from '../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../components/layout';
@@ -67,6 +73,11 @@ const ExploreContainer = () => {
         start,
         maxHits: MAX_HITS
       }));
+      dispatch(exploreIncidents({
+        searchTerm: searchTerm.trim(),
+        start,
+        maxHits: MAX_HITS
+      }));
     }
   };
 
@@ -103,6 +114,7 @@ const ExploreContainer = () => {
       <ContentWrapper>
         <ExplorePeopleResults />
         <ExploreFileResults />
+        <ExploreIncidentResults />
       </ContentWrapper>
     </ContentOuterWrapper>
   );
