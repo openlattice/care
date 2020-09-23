@@ -7,7 +7,7 @@ import { APP_TYPES_FQNS } from '../shared/Consts';
 const {
   APPEARS_IN_FQN,
   BEHAVIORAL_HEALTH_REPORT_FQN,
-  FILES_FQN,
+  FILE_FQN,
   HAS_FQN,
   INCLUDES_FQN,
   PEOPLE_FQN,
@@ -24,7 +24,7 @@ export const getESIDFromApp = (app :Map, fqn :FQN) :string => app.getIn([
 ]);
 
 export const getAppearsInESId = (app :Map) :string => getESIDFromApp(app, APPEARS_IN_FQN);
-export const getFilesESId = (app :Map) :string => getESIDFromApp(app, FILES_FQN);
+export const getFilesESId = (app :Map) :string => getESIDFromApp(app, FILE_FQN);
 export const getHasESId = (app :Map) :string => getESIDFromApp(app, HAS_FQN);
 export const getIncludesESId = (app :Map) :string => getESIDFromApp(app, INCLUDES_FQN);
 export const getPeopleESId = (app :Map) :string => getESIDFromApp(app, PEOPLE_FQN);

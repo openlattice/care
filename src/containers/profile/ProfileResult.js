@@ -70,6 +70,16 @@ const ProfileResult = (props :Props) => {
     }
   };
 
+  // hide invalid report types for v1/v2
+  if (settings.get('v1') || settings.get('v2')) {
+    if (!(reportType === CRISIS_REPORT
+      || reportType === CRISIS_REPORT_CLINICIAN
+      || reportType === FOLLOW_UP_REPORT)
+    ) {
+      return null;
+    }
+  }
+
   return (
     <Card onClick={handleClick}>
       <CardSegment vertical={false}>

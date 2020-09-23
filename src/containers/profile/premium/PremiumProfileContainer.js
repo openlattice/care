@@ -25,6 +25,7 @@ import AppearancePanel from './AppearancePanel';
 import AssignedOfficerPanel from './AssignedOfficerPanel';
 import ContactPanel from './ContactPanel';
 import CovidBanner from './CovidBanner';
+import FilesPanel from './FilesPanel';
 import HistoryBody from './HistoryBody';
 import NewResponsePlanCard from './NewResponsePlanCard';
 import PortraitCard from './PortraitCard';
@@ -54,6 +55,7 @@ import { getIncidentReportsSummary } from '../actions/ReportActions';
 import { getAboutPlan } from '../edit/about/AboutActions';
 import { getBasicInformation } from '../edit/basicinformation/actions/BasicInformationActions';
 import { getEmergencyContacts } from '../edit/contacts/EmergencyContactsActions';
+import { getProfileDocuments } from '../edit/documents/ProfileDocumentsActions';
 import { getOfficerSafety } from '../edit/officersafety/OfficerSafetyActions';
 import { getResponsePlan } from '../edit/responseplan/ResponsePlanActions';
 import { getProfileVisibility } from '../edit/visibility/VisibilityActions';
@@ -137,6 +139,7 @@ type Props = {
     getIncidentReportsSummary :RequestSequence;
     getLBProfile :RequestSequence;
     getOfficerSafety :RequestSequence;
+    getProfileDocuments :RequestSequence;
     getProfileReports :RequestSequence;
     getProfileVisibility :RequestSequence;
     getResponsePlan :RequestSequence;
@@ -224,6 +227,7 @@ const PremiumProfileContainer = (props :Props) => {
   usePeopleRoute(actions.getLBProfile);
   usePeopleRoute(actions.getAllSymptomsReports);
   usePeopleRoute(actions.getProfileVisibility);
+  usePeopleRoute(actions.getProfileDocuments);
   usePeopleRoute(reportAction);
 
   const [tab, setTab] = useState('response');
@@ -293,14 +297,19 @@ const PremiumProfileContainer = (props :Props) => {
               </BreadcrumbWrapper>
               <PortraitCard isLoading={isLoadingIntro} imageUrl={imageURL} person={selectedPerson} />
               <AppearancePanel
-                  isLoading={isLoadingIntro}
                   appearance={appearance}
+                  isLoading={isLoadingIntro}
                   scars={scars}
                   selectedPerson={selectedPerson} />
-              <ContactPanel address={address} contact={contact} isLoading={isLoadingIntro} />
+              <ContactPanel
+                  address={address}
+                  contact={contact}
+                  isLoading={isLoadingIntro}
+                  person={selectedPerson} />
               <AssignedOfficerPanel
                   responsibleUser={responsibleUser}
                   isLoading={isLoadingAboutPlan} />
+              <FilesPanel />
             </CardStack>
           </Aside>
           <ScrollStack>
@@ -397,6 +406,7 @@ const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
     getIncidentReportsSummary,
     getLBProfile,
     getOfficerSafety,
+    getProfileDocuments,
     getProfileReports,
     getProfileVisibility,
     getResponsePlan,

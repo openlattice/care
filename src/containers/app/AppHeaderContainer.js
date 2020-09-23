@@ -12,6 +12,7 @@ import {
   faHome,
   faMapMarkedAlt,
   faQuestionCircle,
+  faSearch,
   faSignOut,
   faUser,
   faUserChart,
@@ -28,6 +29,7 @@ import {
   DASHBOARD_PATH,
   DOCUMENTS_PATH,
   DOWNLOADS_PATH,
+  EXPLORE_PATH,
   HOME_PATH,
   ISSUES_PATH,
   LOGOUT_PATH,
@@ -136,6 +138,10 @@ const AppHeaderContainer = (props :Props) => {
         <StyledNavLink to={DOWNLOADS_PATH} hidden={isLongBeach || hiddenFeatures.get('downloads')}>
           <FontAwesomeIcon size="lg" fixedWidth icon={faDownload} />
           <NavLabel>Downloads</NavLabel>
+        </StyledNavLink>
+        <StyledNavLink to={EXPLORE_PATH} hidden={isLongBeach || hiddenFeatures.get('explore')}>
+          <FontAwesomeIcon size="lg" fixedWidth icon={faSearch} />
+          <NavLabel>Explore</NavLabel>
         </StyledNavLink>
         <StyledNavLink to={DOCUMENTS_PATH} hidden={isLongBeach || hiddenFeatures.get('documents')}>
           <FontAwesomeIcon size="lg" fixedWidth icon={faFileUpload} />

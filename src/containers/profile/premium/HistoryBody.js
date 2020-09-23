@@ -39,7 +39,7 @@ const HistoryBody = (props :Props) => {
   const recent = crisisSummary.get('recent');
   const total = crisisSummary.get('total');
 
-  if (!total && !isLoading) {
+  if (!reports.count() && !isLoading) {
     return <NoReportsFiled />;
   }
 
