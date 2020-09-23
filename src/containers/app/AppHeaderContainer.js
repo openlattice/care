@@ -80,7 +80,6 @@ const AppHeaderContainer = (props :Props) => {
   const stayAway = isLongBeach || appSettings.get('stayAway', false);
   const providers = isLongBeach || appSettings.get('providers', false);
   const homelessEncampments = isLongBeach || appSettings.get('homelessEncampments', false);
-  const v2 = appSettings.get('v2', false);
   /* <===== END LONG BEACH HACK =====> */
 
   const hiddenFeatures = appSettings.get('hiddenFeatures', Map());
