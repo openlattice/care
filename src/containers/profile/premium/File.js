@@ -2,7 +2,7 @@
 import React from 'react';
 
 import styled from 'styled-components';
-import { faDownload } from '@fortawesome/pro-regular-svg-icons';
+import { faDownload } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Map, get, getIn } from 'immutable';
 import {
