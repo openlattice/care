@@ -8,9 +8,11 @@ import {
   faDownload,
   faFileAlt,
   faFileExclamation,
+  faFileUpload,
   faHome,
   faMapMarkedAlt,
   faQuestionCircle,
+  faSearch,
   faSignOut,
   faUser,
   faUserChart,
@@ -25,7 +27,9 @@ import OpenLatticeLogo from '../../assets/images/logo_v2.png';
 import { useAppSettings, useOrganization } from '../../components/hooks';
 import {
   DASHBOARD_PATH,
+  DOCUMENTS_PATH,
   DOWNLOADS_PATH,
+  EXPLORE_PATH,
   HOME_PATH,
   ISSUES_PATH,
   LOGOUT_PATH,
@@ -76,7 +80,6 @@ const AppHeaderContainer = (props :Props) => {
   const stayAway = isLongBeach || appSettings.get('stayAway', false);
   const providers = isLongBeach || appSettings.get('providers', false);
   const homelessEncampments = isLongBeach || appSettings.get('homelessEncampments', false);
-  const v2 = appSettings.get('v2', false);
   /* <===== END LONG BEACH HACK =====> */
 
   const hiddenFeatures = appSettings.get('hiddenFeatures', Map());
@@ -123,7 +126,7 @@ const AppHeaderContainer = (props :Props) => {
           <NavLabel>Providers</NavLabel>
         </StyledNavLink>
         {/* <===== END LONG BEACH HACK =====> */}
-        <StyledNavLink to={SUBSCRIPTIONS_PATH} hidden={v2 || hiddenFeatures.get('subscriptions')}>
+        <StyledNavLink to={SUBSCRIPTIONS_PATH} hidden={hiddenFeatures.get('subscriptions')}>
           <FontAwesomeIcon size="lg" fixedWidth icon={faBell} />
           <NavLabel>Subscriptions</NavLabel>
         </StyledNavLink>
@@ -134,6 +137,14 @@ const AppHeaderContainer = (props :Props) => {
         <StyledNavLink to={DOWNLOADS_PATH} hidden={isLongBeach || hiddenFeatures.get('downloads')}>
           <FontAwesomeIcon size="lg" fixedWidth icon={faDownload} />
           <NavLabel>Downloads</NavLabel>
+        </StyledNavLink>
+        <StyledNavLink to={EXPLORE_PATH} hidden={isLongBeach || hiddenFeatures.get('explore')}>
+          <FontAwesomeIcon size="lg" fixedWidth icon={faSearch} />
+          <NavLabel>Explore</NavLabel>
+        </StyledNavLink>
+        <StyledNavLink to={DOCUMENTS_PATH} hidden={isLongBeach || hiddenFeatures.get('documents')}>
+          <FontAwesomeIcon size="lg" fixedWidth icon={faFileUpload} />
+          <NavLabel>Documents</NavLabel>
         </StyledNavLink>
         <hr />
         <StyledNavLink to={ISSUES_PATH} hidden={isLongBeach || hiddenFeatures.get('issues')}>

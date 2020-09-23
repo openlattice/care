@@ -19,3 +19,8 @@ export const SUBSCRIBE = {
   IS_LOADING_SUBSCRIPTIONS: 'isLoadingSubscriptions',
   SUBSCRIPTIONS: 'subscriptions'
 };
+
+export const DOCUMENTS = {
+  IS_UPLOADING: 'isUploading',
+  TAGS: 'tags'
+};

@@ -561,7 +561,7 @@ function* getCrisisReportV2Worker(action :SequenceAction) :Generator<any, any, a
       .get(CHARGE_FQN, List())
       .map((charge) => charge.getIn(['neighborDetails', OPENLATTICE_ID_FQN, 0]))
       .toJS();
-    const reporterData = neighborsByFQN.getIn([STAFF_FQN, 0]);
+    const reporterData = neighborsByFQN.getIn([STAFF_FQN, 0], Map());
 
     const locationRequest = call(
       getLocationOfIncidentWorker,

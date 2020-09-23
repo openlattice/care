@@ -22,9 +22,11 @@ import * as BasicInformationSagas from '../../containers/profile/edit/basicinfor
 import * as ContactSagas from '../../containers/profile/edit/basicinformation/sagas/ContactSagas';
 import * as CrisisReportSagas from '../../containers/reports/crisis/CrisisReportSagas';
 import * as DashboardSagas from '../../containers/dashboard/DashboardSagas';
+import * as DocumentsSagas from '../../containers/documents/DocumentsSagas';
 import * as DownloadsSagas from '../../containers/downloads/DownloadsSagas';
 import * as EmergencyContactsSagas from '../../containers/profile/edit/contacts/EmergencyContactsSagas';
 import * as EncampmentSagas from '../../longbeach/location/encampment/EncampmentsSagas';
+import * as ExploreSagas from '../../containers/explore/ExploreSagas';
 import * as FormSchemasSagas from '../../containers/reports/FormSchemasSagas';
 import * as IssueSagas from '../../containers/issues/issue/IssueSagas';
 import * as IssuesSagas from '../../containers/issues/IssuesSagas';
@@ -36,6 +38,7 @@ import * as LongBeachProviderSagas from '../../longbeach/provider/LongBeachProvi
 import * as OfficerSafetyConcernsSagas from '../../containers/profile/edit/officersafety/sagas/OfficerSafetyConcernsSagas';
 import * as PeopleSagas from '../../containers/people/PeopleSagas';
 import * as PhotosSagas from '../../containers/profile/edit/basicinformation/sagas/PhotosSagas';
+import * as ProfileDocumentsSagas from '../../containers/profile/edit/documents/ProfileDocumentsSagas';
 import * as ProfileSagas from '../../containers/profile/ProfileSagas';
 import * as RecentInteractionSagas from '../../containers/reports/interaction/RecentInteractionSagas';
 import * as ReportsSagas from '../../containers/reports/ReportsSagas';
@@ -93,6 +96,10 @@ export default function* sagas() :Generator<*, *, *> {
 
     // Dashboard Sagas
     fork(DashboardSagas.loadDashboardDataWatcher),
+
+    // Documents Sagas
+    fork(DocumentsSagas.loadUsedTagsWatcher),
+    fork(DocumentsSagas.uploadDocumentsWatcher),
 
     // Downloads Sagas
     fork(DownloadsSagas.downloadFormsWatcher),
@@ -234,5 +241,13 @@ export default function* sagas() :Generator<*, *, *> {
     // VisibilitySagas
     fork(VisibilitySagas.getProfileVisibilityWatcher),
     fork(VisibilitySagas.putProfileVisibilityWatcher),
+
+    fork(ExploreSagas.exploreFileWatcher),
+    fork(ExploreSagas.exploreIncidentsWatcher),
+    fork(ExploreSagas.explorePeopleWatcher),
+    fork(ExploreSagas.getIncludedPeopleWatcher),
+    fork(ExploreSagas.getInvolvedPeopleWatcher),
+
+    fork(ProfileDocumentsSagas.getProfileDocumentsWatcher),
   ]);
 }

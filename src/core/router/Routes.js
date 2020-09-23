@@ -12,6 +12,7 @@ export const NEW_PERSON_PATH :string = '/new-person';
 export const TRACK_CONTACT_PATH :string = '/track-contact';
 export const CRISIS_PATH :string = '/crisis';
 export const DASHBOARD_PATH :string = '/dashboard';
+export const DOCUMENTS_PATH :string = '/documents';
 export const DOWNLOADS_PATH :string = '/downloads';
 export const SUBSCRIPTIONS_PATH :string = '/subscriptions';
 export const EDIT_PATH :string = '/edit';
@@ -28,6 +29,7 @@ export const PROVIDER_PATH :string = '/provider';
 export const ISSUES_PATH :string = '/issues';
 export const ISSUE_ID_PARAM :string = 'issueId';
 export const ISSUE_PATH :string = `${ISSUES_PATH}/:${ISSUE_ID_PARAM}`;
+export const EXPLORE_PATH :string = '/explore';
 
 export const REPORT_ID_PARAM :string = 'reportId';
 export const REPORT_ID_PATH :string = `:${REPORT_ID_PARAM}`;

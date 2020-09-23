@@ -89,18 +89,20 @@ const EditProfileContainer = (props :Props) => {
         {
           !selectedIssueData.isEmpty() && (
             <StickyCard>
-              <Accordion>
-                <CardSegment headline={headline} defaultOpen>
-                  <IssueDetails
-                      assignee={assignee}
-                      authorized
-                      hideTitle
-                      issue={issue}
-                      match={match}
-                      reporter={reporter}
-                      subject={subject} />
-                </CardSegment>
-              </Accordion>
+              <CardSegment padding="sm">
+                <Accordion>
+                  <div headline={headline} defaultOpen>
+                    <IssueDetails
+                        assignee={assignee}
+                        authorized
+                        hideTitle
+                        issue={issue}
+                        match={match}
+                        reporter={reporter}
+                        subject={subject} />
+                  </div>
+                </Accordion>
+              </CardSegment>
             </StickyCard>
           )
         }

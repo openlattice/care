@@ -91,7 +91,7 @@ const BigButton = styled(Button)`
 `;
 
 type Props = {
-  onClick :(result :Map) => void;
+  onClick ?:(result :Map) => void;
   result :Map;
 }
 
@@ -172,6 +172,10 @@ const PersonResult = (props :Props) => {
       </StyledSegment>
     </Card>
   );
+};
+
+PersonResult.defaultProps = {
+  onClick: () => {}
 };
 
 export default React.memo<Props>(PersonResult);

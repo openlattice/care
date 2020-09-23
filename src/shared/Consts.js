@@ -13,11 +13,14 @@ export const APP_TYPES_FQNS = {
   CONTACTED_VIA_FQN: FQN.of('app.contactedvia'),
   CONTACT_INFORMATION_FQN: FQN.of('app.contactinformation'),
   EMERGENCY_CONTACT_FQN: FQN.of('app.emergencycontact'),
+  FILE_FQN: FQN.of('app.file'),
+  FORMS_FQN: FQN.of('app.forms'),
   HAS_FQN: FQN.of('app.has'),
   HAS_RELATIONSHIP_WITH_FQN: FQN.of('app.hasrelationshipwith'),
   HOSPITALS_FQN: FQN.of('app.hospitals'),
   IDENTIFYING_CHARACTERISTICS_FQN: FQN.of('app.identifyingcharacteristics'),
   IMAGE_FQN: FQN.of('app.image'),
+  INCLUDES_FQN: FQN.of('app.includes'),
   INTERACTION_STRATEGY_FQN: FQN.of('app.interactionstrategy'),
   ISSUE_FQN: FQN.of('app.issue'),
   IS_EMERGENCY_CONTACT_FOR_FQN: FQN.of('app.isemergencycontactfor'),
@@ -36,7 +39,9 @@ export const APP_TYPES_FQNS = {
   STAFF_FQN: FQN.of('app.staff'),
   STAY_AWAY_LOCATION_FQN: FQN.of('app.stayawaylocation'),
   SUBJECT_OF_FQN: FQN.of('app.subjectof'),
+  SUMMARY_SET_FQN: FQN.of('app.summaryset'),
 
+  // care v2
   INCIDENT_FQN: FQN.of('app.incident_new'),
   CALL_FOR_SERVICE_FQN: FQN.of('app.callforservice'),
   NATURE_OF_CRISIS_FQN: FQN.of('app.natureofcrisis'),
@@ -59,7 +64,6 @@ export const APP_TYPES_FQNS = {
   CRISIS_REPORT_CLINICIAN_FQN: FQN.of('app.crisisreport_clinician'),
   CRISIS_REPORT_FQN: FQN.of('app.crisisreport_officer'),
   FOLLOW_UP_REPORT_FQN: FQN.of('app.followupreport'),
-
   DISPOSITION_FQN: FQN.of('app.disposition'),
   OFFENSE_FQN: FQN.of('app.offense'),
   CLEARED_BY_FQN: FQN.of('app.clearedby'),
@@ -92,9 +96,6 @@ export const APP_TYPES_FQNS = {
   SYMPTOM_FQN: FQN.of('app.symptom'),
   INTERACTED_WITH_FQN: FQN.of('app.interactedwith'),
   /* <===== END SYMPTOMS ======> */
-
-  FORMS_FQN: FQN.of('app.forms'),
-  SUMMARY_SET_FQN: FQN.of('app.summaryset'),
 };
 
 export const STRING_ID_FQN = 'general.stringid';
