@@ -9,6 +9,7 @@ import reports from './ReportsReducer';
 
 import about from '../edit/about/AboutReducer';
 import basicInformation from '../edit/basicinformation/reducers/BasicInformationReducer';
+import documents from '../edit/documents/ProfileDocumentsReducer';
 import emergencyContacts from '../edit/contacts/EmergencyContactsReducer';
 import officerSafety from '../edit/officersafety/reducers/OfficerSafetyReducer';
 import responsePlan from '../edit/responseplan/ResponsePlanReducer';
@@ -19,6 +20,7 @@ import { CLEAR_PROFILE } from '../ProfileActions';
 const subReducers = combineReducers({
   about,
   basicInformation,
+  documents,
   emergencyContacts,
   officerSafety,
   person,

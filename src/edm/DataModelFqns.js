@@ -5,17 +5,6 @@ const { OPENLATTICE_ID_FQN } = Constants;
 
 export { OPENLATTICE_ID_FQN };
 
-/* file */
-const FILE_DATA_FQN = FQN.of('ol.filedata');
-const LABEL_FQN = FQN.of('ol.label');
-const DATETIME_FQN = FQN.of('ol.datetime');
-
-export {
-  DATETIME_FQN,
-  FILE_DATA_FQN,
-  LABEL_FQN,
-};
-
 export const VARIABLE_FQN = FQN.of('ol.variable');
 export const JSON_SCHEMA_FQN = FQN.of('ol.jsonschema');
 
@@ -178,14 +167,14 @@ export { IMAGE_DATA_FQN };
 /* File Data */
 const DATETIME_FQN = FQN.of('ol.datetime');
 const FILE_DATA_FQN = FQN.of('ol.filedata');
-const FILE_TAG_FQN = FQN.of('ol.label');
-const FILE_TEXT_FQN = FQN.of('ol.text');
+const LABEL_FQN = FQN.of('ol.label');
+const TEXT_FQN = FQN.of('ol.text');
 
 export {
   DATETIME_FQN,
   FILE_DATA_FQN,
-  FILE_TAG_FQN,
-  FILE_TEXT_FQN,
+  LABEL_FQN,
+  TEXT_FQN,
 };
 
 /*

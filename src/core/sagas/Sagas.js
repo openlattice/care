@@ -38,6 +38,7 @@ import * as LongBeachProviderSagas from '../../longbeach/provider/LongBeachProvi
 import * as OfficerSafetyConcernsSagas from '../../containers/profile/edit/officersafety/sagas/OfficerSafetyConcernsSagas';
 import * as PeopleSagas from '../../containers/people/PeopleSagas';
 import * as PhotosSagas from '../../containers/profile/edit/basicinformation/sagas/PhotosSagas';
+import * as ProfileDocumentsSagas from '../../containers/profile/edit/documents/ProfileDocumentsSagas';
 import * as ProfileSagas from '../../containers/profile/ProfileSagas';
 import * as RecentInteractionSagas from '../../containers/reports/interaction/RecentInteractionSagas';
 import * as ReportsSagas from '../../containers/reports/ReportsSagas';
@@ -244,5 +245,7 @@ export default function* sagas() :Generator<*, *, *> {
     fork(ExploreSagas.explorePeopleWatcher),
     fork(ExploreSagas.exploreFileWatcher),
     fork(ExploreSagas.getInvolvedPeopleWatcher),
+
+    fork(ProfileDocumentsSagas.getProfileDocumentsWatcher),
   ]);
 }

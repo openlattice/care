@@ -14,27 +14,28 @@ import { Logger } from 'lattice-utils';
 import { DateTime } from 'luxon';
 import type { SequenceAction } from 'redux-reqseq';
 
-import { cleanBase64ForUpload } from '../../utils/DocumentUtils';
-import {
-  getFilesESId,
-  getIncludesESId,
-  getPeopleESId,
-} from '../../utils/AppUtils';
 import {
   LOAD_USED_TAGS,
   UPLOAD_DOCUMENTS,
   loadUsedTags,
   uploadDocuments,
 } from './DocumentsActionFactory';
+
 import {
   COMPLETED_DT_FQN,
   DATETIME_FQN,
   FILE_DATA_FQN,
-  FILE_TAG_FQN,
-  FILE_TEXT_FQN,
+  LABEL_FQN,
   NAME_FQN,
+  TEXT_FQN,
   TYPE_FQN
 } from '../../edm/DataModelFqns';
+import {
+  getFilesESId,
+  getIncludesESId,
+  getPeopleESId,
+} from '../../utils/AppUtils';
+import { cleanBase64ForUpload } from '../../utils/DocumentUtils';
 
 const LOG = new Logger('DocumentsSagas');
 
@@ -46,12 +47,12 @@ function* loadUsedTagsWorker(action :SequenceAction) :Generator<*, *, *> {
     const app = yield select((state) => state.get('app', Map()));
     const propertyTypeIds = yield select((state) => state.getIn(['edm', 'fqnToIdMap'], Map()));
     const filesEntitySetId = getFilesESId(app);
-    const tagPropertyTypeId = propertyTypeIds.get(FILE_TAG_FQN);
+    const tagPropertyTypeId = propertyTypeIds.get(LABEL_FQN);
 
     const entityTags = yield call(DataApi.getEntitySetData, filesEntitySetId, [tagPropertyTypeId]);
     let allTags = Set();
     entityTags.forEach((entity) => {
-      const { [FILE_TAG_FQN]: values } = entity;
+      const { [LABEL_FQN]: values } = entity;
       if (values && values.length) {
         values.forEach((tagValue) => {
           allTags = allTags.add(tagValue);
@@ -93,11 +94,11 @@ function* uploadDocumentsWorker(action :SequenceAction) :Generator<*, *, *> {
     const includesEntitySetId = getIncludesESId(app);
     const peopleEntitySetId = getPeopleESId(app);
 
-    const tagPropertyTypeId = propertyTypeIds.get(FILE_TAG_FQN);
+    const tagPropertyTypeId = propertyTypeIds.get(LABEL_FQN);
     const namePropertyTypeId = propertyTypeIds.get(NAME_FQN);
     const typePropertyTypeId = propertyTypeIds.get(TYPE_FQN);
     const fileDataPropertyTypeId = propertyTypeIds.get(FILE_DATA_FQN);
-    const fileTextPropertyTypeId = propertyTypeIds.get(FILE_TEXT_FQN);
+    const fileTextPropertyTypeId = propertyTypeIds.get(TEXT_FQN);
     const dateTimePropertyTypeId = propertyTypeIds.get(DATETIME_FQN);
     const completedDateTimePropertyTypeId = propertyTypeIds.get(COMPLETED_DT_FQN);
 
