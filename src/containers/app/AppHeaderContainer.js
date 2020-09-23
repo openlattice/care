@@ -127,7 +127,7 @@ const AppHeaderContainer = (props :Props) => {
           <NavLabel>Providers</NavLabel>
         </StyledNavLink>
         {/* <===== END LONG BEACH HACK =====> */}
-        <StyledNavLink to={SUBSCRIPTIONS_PATH} hidden={v2 || hiddenFeatures.get('subscriptions')}>
+        <StyledNavLink to={SUBSCRIPTIONS_PATH} hidden={hiddenFeatures.get('subscriptions')}>
           <FontAwesomeIcon size="lg" fixedWidth icon={faBell} />
           <NavLabel>Subscriptions</NavLabel>
         </StyledNavLink>
