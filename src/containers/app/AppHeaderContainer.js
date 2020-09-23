@@ -8,6 +8,7 @@ import {
   faDownload,
   faFileAlt,
   faFileExclamation,
+  faFileUpload,
   faHome,
   faMapMarkedAlt,
   faQuestionCircle,
@@ -26,6 +27,7 @@ import OpenLatticeLogo from '../../assets/images/logo_v2.png';
 import { useAppSettings, useOrganization } from '../../components/hooks';
 import {
   DASHBOARD_PATH,
+  DOCUMENTS_PATH,
   DOWNLOADS_PATH,
   EXPLORE_PATH,
   HOME_PATH,
@@ -137,10 +139,14 @@ const AppHeaderContainer = (props :Props) => {
           <FontAwesomeIcon size="lg" fixedWidth icon={faDownload} />
           <NavLabel>Downloads</NavLabel>
         </StyledNavLink>
-        <NavLink to={EXPLORE_PATH}>
+        <StyledNavLink to={EXPLORE_PATH} hidden={isLongBeach || hiddenFeatures.get('explore')}>
           <FontAwesomeIcon size="lg" fixedWidth icon={faSearch} />
           <NavLabel>Explore</NavLabel>
-        </NavLink>
+        </StyledNavLink>
+        <StyledNavLink to={DOCUMENTS_PATH} hidden={isLongBeach || hiddenFeatures.get('documents')}>
+          <FontAwesomeIcon size="lg" fixedWidth icon={faFileUpload} />
+          <NavLabel>Documents</NavLabel>
+        </StyledNavLink>
         <hr />
         <StyledNavLink to={ISSUES_PATH} hidden={isLongBeach || hiddenFeatures.get('issues')}>
           <FontAwesomeIcon size="lg" fixedWidth icon={faFileExclamation} />

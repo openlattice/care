@@ -28,6 +28,7 @@ import {
 } from './AppActions';
 
 import DashboardContainer from '../dashboard/DashboardContainer';
+import DocumentsContainer from '../documents/DocumentsContainer';
 import DownloadsContainer from '../downloads/DownloadsContainer';
 import EncampmentsContainer from '../../longbeach/location/encampment/EncampmentsContainer';
 import ExploreContainer from '../explore/ExploreContainer';
@@ -49,6 +50,7 @@ import TrackContactReportContainer from '../reports/interaction/TrackContactRepo
 import {
   CRISIS_PATH,
   DASHBOARD_PATH,
+  DOCUMENTS_PATH,
   DOWNLOADS_PATH,
   ENCAMPMENTS_PATH,
   EXPLORE_PATH,
@@ -191,6 +193,7 @@ class AppContainer extends Component<Props> {
         <Route path={PROVIDER_PATH} component={LongBeachProviderContainer} />
         <Route path={ENCAMPMENTS_PATH} component={EncampmentsContainer} />
         <Route path={DASHBOARD_PATH} render={this.wrapComponent(DashboardContainer)} />
+        <Route path={DOCUMENTS_PATH} render={this.wrapComponent(DocumentsContainer)} />
         <Route path={DOWNLOADS_PATH} render={this.wrapComponent(DownloadsContainer)} />
         <Route path={SUBSCRIPTIONS_PATH} component={SubscriptionContainer} />
         <Route path={PROFILE_PATH} component={ProfileRouter} />
