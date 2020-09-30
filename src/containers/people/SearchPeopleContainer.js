@@ -33,6 +33,7 @@ import { BreadcrumbLink } from '../../components/breadcrumbs';
 import { useAppSettings, useInput } from '../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../components/layout';
 import { NEW_PERSON_PATH } from '../../core/router/Routes';
+import { refreshPermissions } from '../../core/sagas/permissions/PermissionsActions';
 import { media } from '../../utils/StyleUtils';
 import { ethnicityOptions, raceOptions, sexOptions } from '../profile/constants';
 
@@ -201,6 +202,7 @@ const SearchPeopleContainer = () => {
 
   return (
     <ContentOuterWrapper>
+      <Button color="error" onClick={() => dispatch(refreshPermissions())}>Refresh Permissions</Button>
       <Panel>
         <ContentWrapper>
           <div>

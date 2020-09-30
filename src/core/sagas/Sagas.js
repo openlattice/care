@@ -13,6 +13,7 @@ import {
 
 import * as AuthorizeSagas from './authorize/AuthorizeSagas';
 import * as DataSagas from './data/DataSagas';
+import * as PermissionsSagas from './permissions/PermissionsSagas';
 
 import * as AboutSagas from '../../containers/profile/edit/about/AboutSagas';
 import * as AddressSagas from '../../containers/profile/edit/basicinformation/sagas/AddressSagas';
@@ -249,5 +250,7 @@ export default function* sagas() :Generator<*, *, *> {
     fork(ExploreSagas.getInvolvedPeopleWatcher),
 
     fork(ProfileDocumentsSagas.getProfileDocumentsWatcher),
+
+    fork(PermissionsSagas.refreshPermissionsWatcher),
   ]);
 }
