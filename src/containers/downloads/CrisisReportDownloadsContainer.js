@@ -6,7 +6,7 @@ import React from 'react';
 
 import styled from 'styled-components';
 import { Map } from 'immutable';
-import { Button } from 'lattice-ui-kit';
+import { Button, Colors } from 'lattice-ui-kit';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import type { Dispatch } from 'redux';
@@ -14,6 +14,8 @@ import type { Dispatch } from 'redux';
 import { downloadForms } from './DownloadsActionFactory';
 
 import DateTimeRange from '../../components/controls/DateTimeRange';
+
+const { NEUTRAL } = Colors;
 
 type Props = {
   downloading :boolean,
@@ -35,7 +37,7 @@ export const DownloadsWrapper = styled.div`
 export const FormWrapper = styled.div`
   align-items: center;
   background: #fff;
-  border: solid 1px #e1e1eb;
+  border: solid 1px ${NEUTRAL.N100};
   display: flex;
   flex-direction: column;
   margin: 30px auto;
