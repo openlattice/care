@@ -194,7 +194,7 @@ class AppContainer extends Component<Props> {
         <Route path={ENCAMPMENTS_PATH} component={EncampmentsContainer} />
         <Route path={DASHBOARD_PATH} render={this.wrapComponent(DashboardContainer)} />
         <Route path={DOCUMENTS_PATH} render={this.wrapComponent(DocumentsContainer)} />
-        <Route path={DOWNLOADS_PATH} render={this.wrapComponent(DownloadsContainer)} />
+        <Route path={DOWNLOADS_PATH} component={DownloadsContainer} />
         <Route path={SUBSCRIPTIONS_PATH} component={SubscriptionContainer} />
         <Route path={PROFILE_PATH} component={ProfileRouter} />
         <Route path={ISSUES_PATH} component={IssuesContainer} />
