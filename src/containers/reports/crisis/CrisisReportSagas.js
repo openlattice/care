@@ -13,6 +13,8 @@ import {
   Map,
   fromJS,
   getIn,
+  hasIn,
+  removeIn,
   setIn,
 } from 'immutable';
 import { Models } from 'lattice';
@@ -32,6 +34,7 @@ import type { SequenceAction } from 'redux-reqseq';
 
 import {
   ADD_OPTIONAL_CRISIS_REPORT_CONTENT,
+  CREATE_MISSING_CALL_FOR_SERVICE,
   DELETE_CRISIS_REPORT_CONTENT,
   GET_CHARGE_EVENTS,
   GET_CRISIS_REPORT,
@@ -44,6 +47,7 @@ import {
   SUBMIT_CRISIS_REPORT_V2,
   UPDATE_CRISIS_REPORT,
   addOptionalCrisisReportContent,
+  createMissingCallForService,
   deleteCrisisReportContent,
   getChargeEvents,
   getCrisisReport,
@@ -87,8 +91,10 @@ import {
 } from '../../../core/sagas/data/DataSagas';
 import {
   COMPLETED_DT_FQN,
+  DATE_TIME_FQN,
   NUM_REPORTS_FOUND_IN_FQN,
   OBSERVED_BEHAVIOR_FQN,
+  OL_ID_FQN,
   OPENLATTICE_ID_FQN,
 } from '../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
@@ -130,6 +136,7 @@ const {
   BEHAVIORAL_HEALTH_REPORT_FQN,
   BEHAVIOR_CLINICIAN_FQN,
   BEHAVIOR_FQN,
+  CALL_FOR_SERVICE_FQN,
   CHARGE_EVENT_FQN,
   CHARGE_FQN,
   CRISIS_REPORT_CLINICIAN_FQN,
@@ -824,13 +831,17 @@ function* getReportsNeighborsWorker(action :SequenceAction) :Generator<any, any,
     const app :Map = yield select((state) => state.get('app', Map()));
     const [
       appearsInESID,
+      callForServiceESID,
       peopleESID,
+      registeredForESID,
       reportESID,
       reportedESID,
       staffESID
     ] = getESIDsFromApp(app, [
       APPEARS_IN_FQN,
+      CALL_FOR_SERVICE_FQN,
       PEOPLE_FQN,
+      REGISTERED_FOR_FQN,
       reportFQN,
       REPORTED_FQN,
       STAFF_FQN,
@@ -840,8 +851,8 @@ function* getReportsNeighborsWorker(action :SequenceAction) :Generator<any, any,
       entitySetId: reportESID,
       filter: {
         entityKeyIds: reportEKIDs,
-        edgeEntitySetIds: [appearsInESID, reportedESID],
-        destinationEntitySetIds: [],
+        edgeEntitySetIds: [appearsInESID, reportedESID, registeredForESID],
+        destinationEntitySetIds: [callForServiceESID],
         sourceEntitySetIds: [peopleESID, staffESID],
       },
     };
@@ -955,6 +966,91 @@ function* getCrisisReportWatcher() :Generator<any, any, any> {
   yield takeLatest(GET_CRISIS_REPORT, getCrisisReportWorker);
 }
 
+function* createMissingCallForServiceWorker(action :SequenceAction) :Generator<any, any, any> {
+  const response = {};
+  try {
+    const { value } = action;
+    if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
+    yield put(createMissingCallForService.request(action.id));
+
+    const {
+      entityIndexToIdMap,
+      formData,
+      path,
+      schema,
+    } = value;
+    const section = path[0];
+    if (section === 'page1section1') {
+      const callForServiceAddress = getEntityAddressKey(0, CALL_FOR_SERVICE_FQN, OL_ID_FQN);
+      const hasCallForServiceData = hasIn(formData, [section, callForServiceAddress]);
+      const hasCallForServiceEntityKey = hasIn(entityIndexToIdMap, [CALL_FOR_SERVICE_FQN, 0]);
+      if (hasCallForServiceData && !hasCallForServiceEntityKey) {
+        const entitySetIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
+        const propertyTypeIds = yield select((state) => state.getIn(['edm', 'fqnToIdMap'], Map()));
+
+        // const postProcessFormData = postProcessCrisisReportV1(formData);
+        const callForServiceFormData = fromJS({
+          [section]: {
+            [callForServiceAddress]: getIn(formData, [section, callForServiceAddress])
+          }
+        });
+
+        debugger;
+
+        const entityData = processEntityData(callForServiceFormData, entitySetIds, propertyTypeIds);
+
+        const reportEKID = getIn(entityIndexToIdMap, [BEHAVIORAL_HEALTH_REPORT_FQN, 0]);
+
+        const NOW_DATA = { [DATE_TIME_FQN]: [DateTime.local().toISO()] };
+        const associationEntityData = processAssociationEntityData(
+          [[REGISTERED_FOR_FQN, reportEKID, BEHAVIORAL_HEALTH_REPORT_FQN, 0, CALL_FOR_SERVICE_FQN, NOW_DATA]],
+          entitySetIds,
+          propertyTypeIds
+        );
+
+        debugger;
+
+        const dataGraphResponse = yield call(
+          submitDataGraphWorker,
+          submitDataGraph({
+            entityData,
+            associationEntityData,
+          })
+        );
+        if (dataGraphResponse.error) throw dataGraphResponse.error;
+
+        response.data = {
+          formData: removeIn(formData, [section, callForServiceAddress])
+        };
+        const appTypeFqnsByIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds']).flip());
+
+        const newEntityIndexToIdMap = getEntityIndexToIdMapFromDataGraphResponse(
+          fromJS(dataGraphResponse.data),
+          schema,
+          appTypeFqnsByIds
+        );
+
+        debugger;
+      }
+    }
+
+    yield put(createMissingCallForService.success(action.id));
+  }
+  catch (error) {
+    LOG.error(action.type, error);
+    response.error = error;
+    yield put(createMissingCallForService.failure(action.id));
+  }
+  finally {
+    yield put(createMissingCallForService.finally(action.id));
+  }
+  return response;
+}
+
+function* createMissingCallForServiceWatcher() :Generator<any, any, any> {
+  yield takeEvery(CREATE_MISSING_CALL_FOR_SERVICE, createMissingCallForServiceWorker);
+}
+
 function* updateCrisisReportWorker(action :SequenceAction) :Generator<any, any, any> {
   const response = {};
 
@@ -970,9 +1066,10 @@ function* updateCrisisReportWorker(action :SequenceAction) :Generator<any, any, 
     const { path, formData, entityIndexToIdMap } = value;
 
     const section = path[0];
-    const preFormData = fromJS(formData).mapKeys(() => section);
+    let preFormData = fromJS(formData).mapKeys(() => section);
 
     let processedFormData = formData;
+    debugger;
 
     // post process section that matches path only if V1
     if (settings.get('v1')) {
@@ -983,6 +1080,16 @@ function* updateCrisisReportWorker(action :SequenceAction) :Generator<any, any, 
         [getPageSectionKey(4, 1)]: postProcessSafetySection,
         [getPageSectionKey(5, 1)]: postProcessDisposition,
       };
+
+      // check and create missing call for service edge
+      const createMissingCallForServiceResponse = yield call(
+        createMissingCallForServiceWorker,
+        createMissingCallForService(value)
+      );
+      if (createMissingCallForServiceResponse.error) throw createMissingCallForServiceResponse.error;
+      // remove call for service if successfully created
+      preFormData = createMissingCallForServiceResponse?.data?.formData || preFormData;
+
       processedFormData = postProcessMap[section](preFormData.toJS());
     }
 
