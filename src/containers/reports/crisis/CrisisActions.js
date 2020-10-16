@@ -41,6 +41,9 @@ const getLocationOfIncident :RequestSequence = newRequestSequence(GET_LOCATION_O
 const GET_CHARGE_EVENTS :'GET_CHARGE_EVENTS' = 'GET_CHARGE_EVENTS';
 const getChargeEvents :RequestSequence = newRequestSequence(GET_CHARGE_EVENTS);
 
+const CREATE_MISSING_CALL_FOR_SERVICE :'CREATE_MISSING_CALL_FOR_SERVICE' = 'CREATE_MISSING_CALL_FOR_SERVICE';
+const createMissingCallForService :RequestSequence = newRequestSequence(CREATE_MISSING_CALL_FOR_SERVICE);
+
 const CLEAR_CRISIS_REPORT :'CLEAR_CRISIS_REPORT' = 'CLEAR_CRISIS_REPORT';
 const clearCrisisReport = () => ({
   type: CLEAR_CRISIS_REPORT
@@ -49,6 +52,7 @@ const clearCrisisReport = () => ({
 export {
   ADD_OPTIONAL_CRISIS_REPORT_CONTENT,
   CLEAR_CRISIS_REPORT,
+  CREATE_MISSING_CALL_FOR_SERVICE,
   DELETE_CRISIS_REPORT_CONTENT,
   GET_CHARGE_EVENTS,
   GET_CRISIS_REPORT,
@@ -63,6 +67,7 @@ export {
   UPDATE_PERSON_REPORT_COUNT,
   addOptionalCrisisReportContent,
   clearCrisisReport,
+  createMissingCallForService,
   deleteCrisisReportContent,
   getChargeEvents,
   getCrisisReport,
