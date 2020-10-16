@@ -979,7 +979,7 @@ function* createMissingCallForServiceWorker(action :SequenceAction) :Generator<a
       schema,
     } = value;
     const section = path[0];
-    if (section === 'page1section1') {
+    if (section === getPageSectionKey(1, 1)) {
       const callForServiceAddress = getEntityAddressKey(0, CALL_FOR_SERVICE_FQN, OL_ID_FQN);
       const hasCallForServiceData = hasIn(formData, [section, callForServiceAddress]);
       const hasCallForServiceEntityKey = hasIn(entityIndexToIdMap, [CALL_FOR_SERVICE_FQN, 0]);
