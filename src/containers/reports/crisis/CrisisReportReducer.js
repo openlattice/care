@@ -6,6 +6,7 @@ import { RequestStates } from 'redux-reqseq';
 import {
   CLEAR_CRISIS_REPORT,
   addOptionalCrisisReportContent,
+  createMissingCallForService,
   deleteCrisisReportContent,
   getCrisisReport,
   getCrisisReportV2,
@@ -107,6 +108,15 @@ export default function crisisReportReducer(state :Map = INITIAL_STATE, action :
             .setIn(['formData', ...path], properties);
         },
         FAILURE: () => state.set('updateState', RequestStates.FAILURE)
+      });
+    }
+
+    case createMissingCallForService.case(action.type): {
+      return createMissingCallForService.reducer(state, action, {
+        SUCCESS: () => {
+          const { entityIndexToIdMap } = action.value;
+          return state.mergeDeepIn(['entityIndexToIdMap'], entityIndexToIdMap);
+        }
       });
     }
 
