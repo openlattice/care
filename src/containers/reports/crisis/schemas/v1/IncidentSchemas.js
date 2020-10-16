@@ -6,6 +6,7 @@ import { CRISIS_REPORT } from '../constants';
 
 const {
   BEHAVIORAL_HEALTH_REPORT_FQN,
+  CALL_FOR_SERVICE_FQN,
 } = APP_TYPES_FQNS;
 
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
@@ -22,8 +23,12 @@ const schema = {
           type: 'string',
           format: 'date-time',
         },
+        [getEntityAddressKey(0, CALL_FOR_SERVICE_FQN, FQN.OL_ID_FQN)]: {
+          title: 'CAD #',
+          type: 'string',
+        },
         [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.OL_ID_FQN)]: {
-          title: 'Incident #',
+          title: 'RMS #',
           type: 'string',
         },
         [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.INCIDENT_NARRATIVE_FQN)]: {
@@ -50,6 +55,9 @@ const uiSchema = {
       editable: true
     },
     [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.DATE_TIME_OCCURRED_FQN)]: {
+      classNames: 'column-span-12',
+    },
+    [getEntityAddressKey(0, CALL_FOR_SERVICE_FQN, FQN.OL_ID_FQN)]: {
       classNames: 'column-span-12',
     },
     [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.OL_ID_FQN)]: {
