@@ -90,6 +90,7 @@ const CrisisReportContainer = () => {
     dispatch(updateCrisisReport({
       ...params,
       entityIndexToIdMap,
+      schema: reviewSchemas.schema
     }));
   };
 

@@ -5,6 +5,7 @@ import {
   fromJS,
   get,
   getIn,
+  hasIn,
   set,
   setIn,
 } from 'immutable';
@@ -51,6 +52,7 @@ import {
   NARCAN_ADMINISTERED_FQN,
   OBSERVED_BEHAVIORS_FQN,
   OBSERVED_BEHAVIORS_OTHER_FQN,
+  OL_ID_FQN,
   OPENLATTICE_ID_FQN,
   ORGANIZATION_NAME_FQN,
   OTHER_DEMEANORS_FQN,
@@ -216,6 +218,14 @@ const getCrisisReportAssociations = (
     [APP.INTERACTED_WITH_FQN, staffEKID, APP.STAFF_FQN, personEKID, APP.PEOPLE_FQN, INTERACTED_DATA],
     [APP.APPEARS_IN_FQN, personEKID, APP.PEOPLE_FQN, 0, APP.BEHAVIORAL_HEALTH_REPORT_FQN, NOW_DATA],
   ];
+
+  const cadNumberKey = getEntityAddressKey(0, APP.CALL_FOR_SERVICE_FQN, OL_ID_FQN);
+  const hasCadNumberField = hasIn(formData, [getPageSectionKey(1, 1), cadNumberKey]);
+  if (hasCadNumberField) {
+    associations.push([
+      APP.REGISTERED_FOR_FQN, 0, APP.BEHAVIORAL_HEALTH_REPORT_FQN, 0, APP.CALL_FOR_SERVICE_FQN, NOW_DATA
+    ]);
+  }
 
   return associations;
 };
