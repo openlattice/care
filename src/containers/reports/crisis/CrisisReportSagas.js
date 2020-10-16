@@ -91,7 +91,6 @@ import {
 } from '../../../core/sagas/data/DataSagas';
 import {
   COMPLETED_DT_FQN,
-  DATE_TIME_FQN,
   NUM_REPORTS_FOUND_IN_FQN,
   OBSERVED_BEHAVIOR_FQN,
   OL_ID_FQN,
@@ -988,27 +987,22 @@ function* createMissingCallForServiceWorker(action :SequenceAction) :Generator<a
         const entitySetIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
         const propertyTypeIds = yield select((state) => state.getIn(['edm', 'fqnToIdMap'], Map()));
 
-        // const postProcessFormData = postProcessCrisisReportV1(formData);
         const callForServiceFormData = fromJS({
           [section]: {
             [callForServiceAddress]: getIn(formData, [section, callForServiceAddress])
           }
         });
 
-        debugger;
-
         const entityData = processEntityData(callForServiceFormData, entitySetIds, propertyTypeIds);
 
         const reportEKID = getIn(entityIndexToIdMap, [BEHAVIORAL_HEALTH_REPORT_FQN, 0]);
 
-        const NOW_DATA = { [DATE_TIME_FQN]: [DateTime.local().toISO()] };
+        const NOW_DATA = { [COMPLETED_DT_FQN]: [DateTime.local().toISO()] };
         const associationEntityData = processAssociationEntityData(
           [[REGISTERED_FOR_FQN, reportEKID, BEHAVIORAL_HEALTH_REPORT_FQN, 0, CALL_FOR_SERVICE_FQN, NOW_DATA]],
           entitySetIds,
           propertyTypeIds
         );
-
-        debugger;
 
         const dataGraphResponse = yield call(
           submitDataGraphWorker,
@@ -1019,9 +1013,6 @@ function* createMissingCallForServiceWorker(action :SequenceAction) :Generator<a
         );
         if (dataGraphResponse.error) throw dataGraphResponse.error;
 
-        response.data = {
-          formData: removeIn(formData, [section, callForServiceAddress])
-        };
         const appTypeFqnsByIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds']).flip());
 
         const newEntityIndexToIdMap = getEntityIndexToIdMapFromDataGraphResponse(
@@ -1030,11 +1021,14 @@ function* createMissingCallForServiceWorker(action :SequenceAction) :Generator<a
           appTypeFqnsByIds
         );
 
-        debugger;
+        response.data = {
+          formData: fromJS(removeIn(formData, [section, callForServiceAddress])),
+          entityIndexToIdMap: newEntityIndexToIdMap
+        };
       }
     }
 
-    yield put(createMissingCallForService.success(action.id));
+    yield put(createMissingCallForService.success(action.id, response.data));
   }
   catch (error) {
     LOG.error(action.type, error);
@@ -1069,7 +1063,6 @@ function* updateCrisisReportWorker(action :SequenceAction) :Generator<any, any, 
     let preFormData = fromJS(formData).mapKeys(() => section);
 
     let processedFormData = formData;
-    debugger;
 
     // post process section that matches path only if V1
     if (settings.get('v1')) {
@@ -1168,6 +1161,8 @@ function* deleteCrisisReportContentWatcher() :Generator<any, any, any> {
 export {
   addOptionalCrisisReportContentWatcher,
   addOptionalCrisisReportContentWorker,
+  createMissingCallForServiceWatcher,
+  createMissingCallForServiceWorker,
   deleteCrisisReportContentWatcher,
   deleteCrisisReportContentWorker,
   getChargeEventsWatcher,
