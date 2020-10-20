@@ -32,11 +32,12 @@ import staffReducer from '../../containers/staff/StaffReducer';
 import subjectInformationReducer from '../../containers/pages/subjectinformation/Reducer';
 import subscriptionReducer from '../../containers/subscriptions/SubscriptionReducer';
 import symptomsReportReducer from '../../containers/reports/symptoms/SymptomsReportReducer';
+import { SWITCH_ORGANIZATION } from '../../containers/app/AppActions';
 import { STATE } from '../../utils/constants/StateConstants';
 
 export default function reduxReducer(routerHistory :any) {
 
-  return combineReducers({
+  const allReducers = combineReducers({
     app: appReducer,
     auth: AuthReducer,
     authorization: authorizeReducer,
@@ -67,4 +68,15 @@ export default function reduxReducer(routerHistory :any) {
     [STATE.SUBJECT_INFORMATION]: subjectInformationReducer,
     [STATE.SUBSCRIPTIONS]: subscriptionReducer
   });
+
+  const rootReducer = (state, action) => {
+    // reset app state when switching
+    if (action.type === SWITCH_ORGANIZATION) {
+      return allReducers(undefined, action);
+    }
+
+    return allReducers(state, action);
+  };
+
+  return rootReducer;
 }
