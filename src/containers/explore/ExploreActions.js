@@ -25,17 +25,43 @@ const getInvolvedPeople :RequestSequence = newRequestSequence(GET_INVOLVED_PEOPL
 const GET_INCLUDED_PEOPLE :'GET_INCLUDED_PEOPLE' = 'GET_INCLUDED_PEOPLE';
 const getIncludedPeople :RequestSequence = newRequestSequence(GET_INCLUDED_PEOPLE);
 
+const EXPLORE_PHYSICAL_APPEARANCES :'EXPLORE_PHYSICAL_APPEARANCES' = 'EXPLORE_PHYSICAL_APPEARANCES';
+const explorePhysicalAppearances :RequestSequence = newRequestSequence(EXPLORE_PHYSICAL_APPEARANCES);
+
+/* eslint-disable-next-line max-len */
+const EXPLORE_IDENTIFYING_CHARACTERISTICS :'EXPLORE_IDENTIFYING_CHARACTERISTICS' = 'EXPLORE_IDENTIFYING_CHARACTERISTICS';
+const exploreIdentifyingCharacteristics :RequestSequence = newRequestSequence(EXPLORE_IDENTIFYING_CHARACTERISTICS);
+
+const EXPLORE_PERSON_DETAILS :'EXPLORE_PERSON_DETAILS' = 'EXPLORE_PERSON_DETAILS';
+const explorePersonDetails :RequestSequence = newRequestSequence(EXPLORE_PERSON_DETAILS);
+
+const EXPLORE_BEHAVIOR :'EXPLORE_BEHAVIOR' = 'EXPLORE_BEHAVIOR';
+const exploreBehavior :RequestSequence = newRequestSequence(EXPLORE_BEHAVIOR);
+
+const GET_OBSERVED_IN_PEOPLE :'GET_OBSERVED_IN_PEOPLE' = 'GET_OBSERVED_IN_PEOPLE';
+const getObservedInPeople :RequestSequence = newRequestSequence(GET_OBSERVED_IN_PEOPLE);
+
 export {
   CLEAR_EXPLORE_RESULTS,
+  EXPLORE_BEHAVIOR,
   EXPLORE_FILE,
+  EXPLORE_IDENTIFYING_CHARACTERISTICS,
   EXPLORE_INCIDENTS,
   EXPLORE_PEOPLE,
+  EXPLORE_PERSON_DETAILS,
+  EXPLORE_PHYSICAL_APPEARANCES,
   GET_INCLUDED_PEOPLE,
   GET_INVOLVED_PEOPLE,
+  GET_OBSERVED_IN_PEOPLE,
   clearExploreResults,
+  exploreBehavior,
   exploreFile,
+  exploreIdentifyingCharacteristics,
   exploreIncidents,
   explorePeople,
+  explorePersonDetails,
+  explorePhysicalAppearances,
   getIncludedPeople,
   getInvolvedPeople,
+  getObservedInPeople,
 };

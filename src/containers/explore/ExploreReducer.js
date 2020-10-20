@@ -7,9 +7,14 @@ import { RequestStates } from 'redux-reqseq';
 
 import {
   CLEAR_EXPLORE_RESULTS,
+  EXPLORE_IDENTIFYING_CHARACTERISTICS,
+  exploreBehavior,
   exploreFile,
+  exploreIdentifyingCharacteristics,
   exploreIncidents,
   explorePeople,
+  explorePersonDetails,
+  explorePhysicalAppearances,
   getIncludedPeople,
   getInvolvedPeople,
 } from './ExploreActions';
@@ -20,7 +25,11 @@ import { getPeoplePhotos, getRecentIncidents } from '../people/PeopleActions';
 const {
   FILE_FQN,
   PEOPLE_FQN,
-  INCIDENT_FQN
+  INCIDENT_FQN,
+  PHYSICAL_APPEARANCE_FQN,
+  IDENTIFYING_CHARACTERISTICS_FQN,
+  PERSON_DETAILS_FQN,
+  BEHAVIOR_FQN,
 } = APP_TYPES_FQNS;
 
 const INITIAL_STATE :Map = fromJS({
@@ -47,6 +56,38 @@ const INITIAL_STATE :Map = fromJS({
     fetchState: RequestStates.STANDBY,
     hits: List(),
     peopleByIncidentEKID: Map(),
+    peopleByEKID: Map(),
+    searchTerm: '',
+    totalHits: 0,
+  },
+  [PHYSICAL_APPEARANCE_FQN]: {
+    fetchState: RequestStates.STANDBY,
+    hits: List(),
+    peopleByEdgeEKID: Map(),
+    peopleByEKID: Map(),
+    searchTerm: '',
+    totalHits: 0,
+  },
+  [IDENTIFYING_CHARACTERISTICS_FQN]: {
+    fetchState: RequestStates.STANDBY,
+    hits: List(),
+    peopleByEdgeEKID: Map(),
+    peopleByEKID: Map(),
+    searchTerm: '',
+    totalHits: 0,
+  },
+  [PERSON_DETAILS_FQN]: {
+    fetchState: RequestStates.STANDBY,
+    hits: List(),
+    peopleByEdgeEKID: Map(),
+    peopleByEKID: Map(),
+    searchTerm: '',
+    totalHits: 0,
+  },
+  [BEHAVIOR_FQN]: {
+    fetchState: RequestStates.STANDBY,
+    hits: List(),
+    peopleByEdgeEKID: Map(),
     peopleByEKID: Map(),
     searchTerm: '',
     totalHits: 0,
@@ -90,6 +131,54 @@ export default function exploreReducer(state :Map = INITIAL_STATE, action :Objec
           .setIn([INCIDENT_FQN, 'fetchState'], RequestStates.SUCCESS)
           .mergeIn([INCIDENT_FQN], action.value),
         FAILURE: () => state.setIn([INCIDENT_FQN, 'fetchState'], RequestStates.FAILURE)
+      });
+    }
+
+    case explorePhysicalAppearances.case(action.type): {
+      return explorePhysicalAppearances.reducer(state, action, {
+        REQUEST: () => state
+          .setIn([PHYSICAL_APPEARANCE_FQN, 'fetchState'], RequestStates.PENDING)
+          .mergeIn([PHYSICAL_APPEARANCE_FQN], action.value),
+        SUCCESS: () => state
+          .setIn([PHYSICAL_APPEARANCE_FQN, 'fetchState'], RequestStates.SUCCESS)
+          .mergeIn([PHYSICAL_APPEARANCE_FQN], action.value),
+        FAILURE: () => state.setIn([PHYSICAL_APPEARANCE_FQN, 'fetchState'], RequestStates.FAILURE)
+      });
+    }
+
+    case explorePersonDetails.case(action.type): {
+      return explorePersonDetails.reducer(state, action, {
+        REQUEST: () => state
+          .setIn([PERSON_DETAILS_FQN, 'fetchState'], RequestStates.PENDING)
+          .mergeIn([PERSON_DETAILS_FQN], action.value),
+        SUCCESS: () => state
+          .setIn([PERSON_DETAILS_FQN, 'fetchState'], RequestStates.SUCCESS)
+          .mergeIn([PERSON_DETAILS_FQN], action.value),
+        FAILURE: () => state.setIn([PERSON_DETAILS_FQN, 'fetchState'], RequestStates.FAILURE)
+      });
+    }
+
+    case exploreIdentifyingCharacteristics.case(action.type): {
+      return exploreIdentifyingCharacteristics.reducer(state, action, {
+        REQUEST: () => state
+          .setIn([EXPLORE_IDENTIFYING_CHARACTERISTICS, 'fetchState'], RequestStates.PENDING)
+          .mergeIn([EXPLORE_IDENTIFYING_CHARACTERISTICS], action.value),
+        SUCCESS: () => state
+          .setIn([EXPLORE_IDENTIFYING_CHARACTERISTICS, 'fetchState'], RequestStates.SUCCESS)
+          .mergeIn([EXPLORE_IDENTIFYING_CHARACTERISTICS], action.value),
+        FAILURE: () => state.setIn([EXPLORE_IDENTIFYING_CHARACTERISTICS, 'fetchState'], RequestStates.FAILURE)
+      });
+    }
+
+    case exploreBehavior.case(action.type): {
+      return exploreBehavior.reducer(state, action, {
+        REQUEST: () => state
+          .setIn([BEHAVIOR_FQN, 'fetchState'], RequestStates.PENDING)
+          .mergeIn([BEHAVIOR_FQN], action.value),
+        SUCCESS: () => state
+          .setIn([BEHAVIOR_FQN, 'fetchState'], RequestStates.SUCCESS)
+          .mergeIn([BEHAVIOR_FQN], action.value),
+        FAILURE: () => state.setIn([BEHAVIOR_FQN, 'fetchState'], RequestStates.FAILURE)
       });
     }
 
