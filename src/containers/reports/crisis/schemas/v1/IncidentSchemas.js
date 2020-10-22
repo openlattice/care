@@ -28,7 +28,7 @@ const schema = {
           type: 'string',
         },
         [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.OL_ID_FQN)]: {
-          title: 'RMS #',
+          title: 'Report #',
           type: 'string',
         },
         [getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.INCIDENT_NARRATIVE_FQN)]: {
@@ -42,6 +42,7 @@ const schema = {
         },
       },
       required: [
+        getEntityAddressKey(0, CALL_FOR_SERVICE_FQN, FQN.OL_ID_FQN),
         getEntityAddressKey(0, BEHAVIORAL_HEALTH_REPORT_FQN, FQN.DATE_TIME_OCCURRED_FQN),
       ]
     }
