@@ -7,13 +7,12 @@ import { RequestStates } from 'redux-reqseq';
 
 import {
   CLEAR_EXPLORE_RESULTS,
-  EXPLORE_IDENTIFYING_CHARACTERISTICS,
-  exploreBehavior,
+  exploreContactInformation,
   exploreFile,
   exploreIdentifyingCharacteristics,
   exploreIncidents,
+  exploreLocation,
   explorePeople,
-  explorePersonDetails,
   explorePhysicalAppearances,
   getIncludedPeople,
   getInvolvedPeople,
@@ -23,14 +22,23 @@ import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { getPeoplePhotos, getRecentIncidents } from '../people/PeopleActions';
 
 const {
+  CONTACT_INFORMATION_FQN,
   FILE_FQN,
-  PEOPLE_FQN,
-  INCIDENT_FQN,
-  PHYSICAL_APPEARANCE_FQN,
   IDENTIFYING_CHARACTERISTICS_FQN,
-  PERSON_DETAILS_FQN,
-  BEHAVIOR_FQN,
+  INCIDENT_FQN,
+  LOCATION_FQN,
+  PEOPLE_FQN,
+  PHYSICAL_APPEARANCE_FQN,
 } = APP_TYPES_FQNS;
+
+const EXPLORE_EDGE_TO_PEOPLE_STATE = {
+  fetchState: RequestStates.STANDBY,
+  hits: List(),
+  peopleByHitEKID: Map(),
+  peopleByEKID: Map(),
+  searchTerm: '',
+  totalHits: 0,
+};
 
 const INITIAL_STATE :Map = fromJS({
   [PEOPLE_FQN]: {
@@ -44,54 +52,12 @@ const INITIAL_STATE :Map = fromJS({
     searchTerm: '',
     totalHits: 0,
   },
-  [FILE_FQN]: {
-    fetchState: RequestStates.STANDBY,
-    hits: List(),
-    peopleByFileEKID: Map(),
-    peopleByEKID: Map(),
-    searchTerm: '',
-    totalHits: 0,
-  },
-  [INCIDENT_FQN]: {
-    fetchState: RequestStates.STANDBY,
-    hits: List(),
-    peopleByIncidentEKID: Map(),
-    peopleByEKID: Map(),
-    searchTerm: '',
-    totalHits: 0,
-  },
-  [PHYSICAL_APPEARANCE_FQN]: {
-    fetchState: RequestStates.STANDBY,
-    hits: List(),
-    peopleByEdgeEKID: Map(),
-    peopleByEKID: Map(),
-    searchTerm: '',
-    totalHits: 0,
-  },
-  [IDENTIFYING_CHARACTERISTICS_FQN]: {
-    fetchState: RequestStates.STANDBY,
-    hits: List(),
-    peopleByEdgeEKID: Map(),
-    peopleByEKID: Map(),
-    searchTerm: '',
-    totalHits: 0,
-  },
-  [PERSON_DETAILS_FQN]: {
-    fetchState: RequestStates.STANDBY,
-    hits: List(),
-    peopleByEdgeEKID: Map(),
-    peopleByEKID: Map(),
-    searchTerm: '',
-    totalHits: 0,
-  },
-  [BEHAVIOR_FQN]: {
-    fetchState: RequestStates.STANDBY,
-    hits: List(),
-    peopleByEdgeEKID: Map(),
-    peopleByEKID: Map(),
-    searchTerm: '',
-    totalHits: 0,
-  },
+  [FILE_FQN]: EXPLORE_EDGE_TO_PEOPLE_STATE,
+  [INCIDENT_FQN]: EXPLORE_EDGE_TO_PEOPLE_STATE,
+  [PHYSICAL_APPEARANCE_FQN]: EXPLORE_EDGE_TO_PEOPLE_STATE,
+  [IDENTIFYING_CHARACTERISTICS_FQN]: EXPLORE_EDGE_TO_PEOPLE_STATE,
+  [CONTACT_INFORMATION_FQN]: EXPLORE_EDGE_TO_PEOPLE_STATE,
+  [LOCATION_FQN]: EXPLORE_EDGE_TO_PEOPLE_STATE,
 });
 
 export default function exploreReducer(state :Map = INITIAL_STATE, action :Object) {
@@ -146,39 +112,39 @@ export default function exploreReducer(state :Map = INITIAL_STATE, action :Objec
       });
     }
 
-    case explorePersonDetails.case(action.type): {
-      return explorePersonDetails.reducer(state, action, {
+    case exploreLocation.case(action.type): {
+      return exploreLocation.reducer(state, action, {
         REQUEST: () => state
-          .setIn([PERSON_DETAILS_FQN, 'fetchState'], RequestStates.PENDING)
-          .mergeIn([PERSON_DETAILS_FQN], action.value),
+          .setIn([LOCATION_FQN, 'fetchState'], RequestStates.PENDING)
+          .mergeIn([LOCATION_FQN], action.value),
         SUCCESS: () => state
-          .setIn([PERSON_DETAILS_FQN, 'fetchState'], RequestStates.SUCCESS)
-          .mergeIn([PERSON_DETAILS_FQN], action.value),
-        FAILURE: () => state.setIn([PERSON_DETAILS_FQN, 'fetchState'], RequestStates.FAILURE)
+          .setIn([LOCATION_FQN, 'fetchState'], RequestStates.SUCCESS)
+          .mergeIn([LOCATION_FQN], action.value),
+        FAILURE: () => state.setIn([LOCATION_FQN, 'fetchState'], RequestStates.FAILURE)
       });
     }
 
     case exploreIdentifyingCharacteristics.case(action.type): {
       return exploreIdentifyingCharacteristics.reducer(state, action, {
         REQUEST: () => state
-          .setIn([EXPLORE_IDENTIFYING_CHARACTERISTICS, 'fetchState'], RequestStates.PENDING)
-          .mergeIn([EXPLORE_IDENTIFYING_CHARACTERISTICS], action.value),
+          .setIn([IDENTIFYING_CHARACTERISTICS_FQN, 'fetchState'], RequestStates.PENDING)
+          .mergeIn([IDENTIFYING_CHARACTERISTICS_FQN], action.value),
         SUCCESS: () => state
-          .setIn([EXPLORE_IDENTIFYING_CHARACTERISTICS, 'fetchState'], RequestStates.SUCCESS)
-          .mergeIn([EXPLORE_IDENTIFYING_CHARACTERISTICS], action.value),
-        FAILURE: () => state.setIn([EXPLORE_IDENTIFYING_CHARACTERISTICS, 'fetchState'], RequestStates.FAILURE)
+          .setIn([IDENTIFYING_CHARACTERISTICS_FQN, 'fetchState'], RequestStates.SUCCESS)
+          .mergeIn([IDENTIFYING_CHARACTERISTICS_FQN], action.value),
+        FAILURE: () => state.setIn([IDENTIFYING_CHARACTERISTICS_FQN, 'fetchState'], RequestStates.FAILURE)
       });
     }
 
-    case exploreBehavior.case(action.type): {
-      return exploreBehavior.reducer(state, action, {
+    case exploreContactInformation.case(action.type): {
+      return exploreContactInformation.reducer(state, action, {
         REQUEST: () => state
-          .setIn([BEHAVIOR_FQN, 'fetchState'], RequestStates.PENDING)
-          .mergeIn([BEHAVIOR_FQN], action.value),
+          .setIn([CONTACT_INFORMATION_FQN, 'fetchState'], RequestStates.PENDING)
+          .mergeIn([CONTACT_INFORMATION_FQN], action.value),
         SUCCESS: () => state
-          .setIn([BEHAVIOR_FQN, 'fetchState'], RequestStates.SUCCESS)
-          .mergeIn([BEHAVIOR_FQN], action.value),
-        FAILURE: () => state.setIn([BEHAVIOR_FQN, 'fetchState'], RequestStates.FAILURE)
+          .setIn([CONTACT_INFORMATION_FQN, 'fetchState'], RequestStates.SUCCESS)
+          .mergeIn([CONTACT_INFORMATION_FQN], action.value),
+        FAILURE: () => state.setIn([CONTACT_INFORMATION_FQN, 'fetchState'], RequestStates.FAILURE)
       });
     }
 

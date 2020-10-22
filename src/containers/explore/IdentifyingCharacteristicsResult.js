@@ -11,46 +11,36 @@ import {
   CardSegment,
   Typography,
 } from 'lattice-ui-kit';
-import { DateTimeUtils } from 'lattice-utils';
 import { useSelector } from 'react-redux';
 
 import PersonLink from './styled/PersonLink';
-import { DetailWrapper, WordBreak } from './styled';
+import { DetailWrapper } from './styled';
 
-import {
-  CRIMINALJUSTICE_CASE_NUMBER_FQN,
-  DATETIME_START_FQN,
-  DESCRIPTION_FQN,
-} from '../../edm/DataModelFqns';
+import { DESCRIPTION_FQN } from '../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { getEntityKeyId } from '../../utils/DataUtils';
 
-const { INCIDENT_FQN } = APP_TYPES_FQNS;
-
-const { formatAsDate } = DateTimeUtils;
+const { IDENTIFYING_CHARACTERISTICS_FQN } = APP_TYPES_FQNS;
 
 type Props = {
   result :Map;
 };
 
-const IncidentResult = ({ result } :Props) => {
+const IdentifyingCharacteristicsResult = ({ result } :Props) => {
   const entityKeyId = getEntityKeyId(result);
   const people = useSelector((store) => {
-    const peopleByHitEKID = store.getIn(['explore', INCIDENT_FQN, 'peopleByHitEKID', entityKeyId], List());
-    return peopleByHitEKID.map((peopleEKID) => store.getIn(['explore', INCIDENT_FQN, 'peopleByEKID', peopleEKID]));
+    const peopleByHitEKID = store.getIn([
+      'explore', IDENTIFYING_CHARACTERISTICS_FQN, 'peopleByHitEKID', entityKeyId
+    ], List());
+    return peopleByHitEKID
+      .map((peopleEKID) => store.getIn(['explore', IDENTIFYING_CHARACTERISTICS_FQN, 'peopleByEKID', peopleEKID]));
   });
-  const caseNumber = getIn(result, [CRIMINALJUSTICE_CASE_NUMBER_FQN, 0]);
-  const datetime = getIn(result, [DATETIME_START_FQN, 0]);
-  const date = formatAsDate(datetime);
+
   const description = getIn(result, [DESCRIPTION_FQN, 0]);
 
   return (
     <Card>
       <CardSegment padding="sm">
-        <WordBreak>
-          <Typography variant="h5" component="h3">{`#${caseNumber}`}</Typography>
-          <Typography variant="caption" color="textSecondary">{date}</Typography>
-        </WordBreak>
         <DetailWrapper>
           <Typography component="span">Attached to: </Typography>
           <div>
@@ -69,4 +59,4 @@ const IncidentResult = ({ result } :Props) => {
   );
 };
 
-export default IncidentResult;
+export default IdentifyingCharacteristicsResult;

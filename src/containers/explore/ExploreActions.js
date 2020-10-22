@@ -16,6 +16,12 @@ const explorePeople :RequestSequence = newRequestSequence(EXPLORE_PEOPLE);
 const EXPLORE_FILE :'EXPLORE_FILE' = 'EXPLORE_FILE';
 const exploreFile :RequestSequence = newRequestSequence(EXPLORE_FILE);
 
+const EXPLORE_CONTACT_INFORMATION :'EXPLORE_CONTACT_INFORMATION' = 'EXPLORE_CONTACT_INFORMATION';
+const exploreContactInformation :RequestSequence = newRequestSequence(EXPLORE_CONTACT_INFORMATION);
+
+const EXPLORE_LOCATION :'EXPLORE_LOCATION' = 'EXPLORE_LOCATION';
+const exploreLocation :RequestSequence = newRequestSequence(EXPLORE_LOCATION);
+
 const EXPLORE_INCIDENTS :'EXPLORE_INCIDENTS' = 'EXPLORE_INCIDENTS';
 const exploreIncidents :RequestSequence = newRequestSequence(EXPLORE_INCIDENTS);
 
@@ -32,34 +38,28 @@ const explorePhysicalAppearances :RequestSequence = newRequestSequence(EXPLORE_P
 const EXPLORE_IDENTIFYING_CHARACTERISTICS :'EXPLORE_IDENTIFYING_CHARACTERISTICS' = 'EXPLORE_IDENTIFYING_CHARACTERISTICS';
 const exploreIdentifyingCharacteristics :RequestSequence = newRequestSequence(EXPLORE_IDENTIFYING_CHARACTERISTICS);
 
-const EXPLORE_PERSON_DETAILS :'EXPLORE_PERSON_DETAILS' = 'EXPLORE_PERSON_DETAILS';
-const explorePersonDetails :RequestSequence = newRequestSequence(EXPLORE_PERSON_DETAILS);
-
-const EXPLORE_BEHAVIOR :'EXPLORE_BEHAVIOR' = 'EXPLORE_BEHAVIOR';
-const exploreBehavior :RequestSequence = newRequestSequence(EXPLORE_BEHAVIOR);
-
 const GET_OBSERVED_IN_PEOPLE :'GET_OBSERVED_IN_PEOPLE' = 'GET_OBSERVED_IN_PEOPLE';
 const getObservedInPeople :RequestSequence = newRequestSequence(GET_OBSERVED_IN_PEOPLE);
 
 export {
   CLEAR_EXPLORE_RESULTS,
-  EXPLORE_BEHAVIOR,
+  EXPLORE_CONTACT_INFORMATION,
   EXPLORE_FILE,
   EXPLORE_IDENTIFYING_CHARACTERISTICS,
   EXPLORE_INCIDENTS,
+  EXPLORE_LOCATION,
   EXPLORE_PEOPLE,
-  EXPLORE_PERSON_DETAILS,
   EXPLORE_PHYSICAL_APPEARANCES,
   GET_INCLUDED_PEOPLE,
   GET_INVOLVED_PEOPLE,
   GET_OBSERVED_IN_PEOPLE,
   clearExploreResults,
-  exploreBehavior,
+  exploreContactInformation,
   exploreFile,
   exploreIdentifyingCharacteristics,
   exploreIncidents,
+  exploreLocation,
   explorePeople,
-  explorePersonDetails,
   explorePhysicalAppearances,
   getIncludedPeople,
   getInvolvedPeople,

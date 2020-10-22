@@ -24,22 +24,22 @@ import type { WorkerResponse } from 'lattice-sagas';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
-  EXPLORE_BEHAVIOR,
+  EXPLORE_CONTACT_INFORMATION,
   EXPLORE_FILE,
   EXPLORE_IDENTIFYING_CHARACTERISTICS,
   EXPLORE_INCIDENTS,
+  EXPLORE_LOCATION,
   EXPLORE_PEOPLE,
-  EXPLORE_PERSON_DETAILS,
   EXPLORE_PHYSICAL_APPEARANCES,
   GET_INCLUDED_PEOPLE,
   GET_INVOLVED_PEOPLE,
   GET_OBSERVED_IN_PEOPLE,
-  exploreBehavior,
+  exploreContactInformation,
   exploreFile,
   exploreIdentifyingCharacteristics,
   exploreIncidents,
+  exploreLocation,
   explorePeople,
-  explorePersonDetails,
   explorePhysicalAppearances,
   getIncludedPeople,
   getInvolvedPeople,
@@ -48,22 +48,28 @@ import {
 
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { getESIDFromApp, getESIDsFromApp } from '../../utils/AppUtils';
-import { getEntityKeyId } from '../../utils/DataUtils';
+import {
+  getEKIDsFromNeighborResponseData,
+  getEntityKeyId,
+  getNeighborDetailsFromNeighborResponseData
+} from '../../utils/DataUtils';
 import { ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
 import { getPeoplePhotos, getRecentIncidents } from '../people/PeopleActions';
 
 const { isValidUUID } = ValidationUtils;
 
 const {
-  BEHAVIOR_FQN,
+  CONTACTED_VIA_FQN,
+  CONTACT_INFORMATION_FQN,
   FILE_FQN,
   IDENTIFYING_CHARACTERISTICS_FQN,
   INCIDENT_FQN,
   INCLUDES_FQN,
   INVOLVED_IN_FQN,
+  LOCATED_AT_FQN,
+  LOCATION_FQN,
   OBSERVED_IN_FQN,
   PEOPLE_FQN,
-  PERSON_DETAILS_FQN,
   PHYSICAL_APPEARANCE_FQN,
 } = APP_TYPES_FQNS;
 
@@ -209,7 +215,7 @@ export function* getIncludedPeopleWorker(action :SequenceAction) :Saga<Object> {
     if (peopleResponse.error) throw peopleResponse.error;
 
     const peopleResponseData = fromJS(peopleResponse.data);
-    const peopleByFileEKID = peopleResponseData
+    const peopleByHitEKID = peopleResponseData
       .map((neighbors) => neighbors.map((neighbor) => getEntityKeyId(neighbor.get('neighborDetails'))));
 
     const peopleByEKID = Map().withMutations((mutable) => {
@@ -223,7 +229,7 @@ export function* getIncludedPeopleWorker(action :SequenceAction) :Saga<Object> {
     });
 
     response.data = {
-      peopleByFileEKID,
+      peopleByHitEKID,
       peopleByEKID,
     };
 
@@ -275,7 +281,7 @@ export function* exploreIncidentsWorker(action :SequenceAction) :Generator<*, *,
     if (response.error) throw response.error;
 
     const hits = fromJS(response.data.hits);
-    const incidentEKIDs = hits.map((file) => file.getIn([OPENLATTICE_ID_FQN, 0]));
+    const incidentEKIDs = hits.map((hit) => hit.getIn([OPENLATTICE_ID_FQN, 0]));
 
     if (!incidentEKIDs.isEmpty()) {
       yield put(getInvolvedPeople(incidentEKIDs));
@@ -327,7 +333,7 @@ export function* getInvolvedPeopleWorker(action :SequenceAction) :Saga<Object> {
     if (peopleResponse.error) throw peopleResponse.error;
 
     const peopleResponseData = fromJS(peopleResponse.data);
-    const peopleByIncidentEKID = peopleResponseData
+    const peopleByHitEKID = peopleResponseData
       .map((neighbors) => neighbors.map((neighbor) => getEntityKeyId(neighbor.get('neighborDetails'))));
 
     const peopleByEKID = Map().withMutations((mutable) => {
@@ -341,7 +347,7 @@ export function* getInvolvedPeopleWorker(action :SequenceAction) :Saga<Object> {
     });
 
     response.data = {
-      peopleByIncidentEKID,
+      peopleByHitEKID,
       peopleByEKID,
     };
 
@@ -377,38 +383,26 @@ export function* getObservedInPeopleWorker(action :SequenceAction) :Saga<Object>
       OBSERVED_IN_FQN,
     ]);
 
-    const peopleSearchParam = {
-      entitySetId,
-      filter: {
-        entityKeyIds: entityKeyIds.toJS(),
-        edgeEntitySetIds: [observedInESID],
-        destinationEntitySetIds: [peopleESID],
-        sourceEntitySetIds: [],
-      },
-    };
-
     const peopleResponse = yield call(
       searchEntityNeighborsWithFilterWorker,
-      searchEntityNeighborsWithFilter(peopleSearchParam)
+      searchEntityNeighborsWithFilter({
+        entitySetId,
+        filter: {
+          entityKeyIds: entityKeyIds.toJS(),
+          edgeEntitySetIds: [observedInESID],
+          destinationEntitySetIds: [peopleESID],
+          sourceEntitySetIds: [],
+        },
+      })
     );
     if (peopleResponse.error) throw peopleResponse.error;
 
     const peopleResponseData = fromJS(peopleResponse.data);
-    const peopleBySourceEKID = peopleResponseData
-      .map((neighbors) => neighbors.map((neighbor) => getEntityKeyId(neighbor.get('neighborDetails'))));
-
-    const peopleByEKID = Map().withMutations((mutable) => {
-      peopleResponseData.forEach((neighbors) => {
-        neighbors.forEach((neighbor) => {
-          const details = neighbor.get('neighborDetails');
-          const entityKeyId = getEntityKeyId(details);
-          mutable.set(entityKeyId, details);
-        });
-      });
-    });
+    const peopleByHitEKID = getEKIDsFromNeighborResponseData(peopleResponseData);
+    const peopleByEKID = getNeighborDetailsFromNeighborResponseData(peopleResponseData);
 
     response.data = {
-      peopleBySourceEKID,
+      peopleByHitEKID,
       peopleByEKID,
     };
 
@@ -455,8 +449,10 @@ export function* explorePhysicalAppearancesWorker(action :SequenceAction) :Saga<
 
     if (response.error) throw response.error;
 
-    const hits = fromJS(response.data.hits);
-    const physicalAppearanceEKIDs = hits.map((file) => file.getIn([OPENLATTICE_ID_FQN, 0]));
+    const hits = fromJS(response?.data?.hits);
+
+    let payload = { hits, totalHits: response?.data?.numHits };
+    const physicalAppearanceEKIDs = hits.map((hit) => hit.getIn([OPENLATTICE_ID_FQN, 0]));
 
     if (!physicalAppearanceEKIDs.isEmpty()) {
       const peopleResponse = yield call(getObservedInPeopleWorker, getObservedInPeople({
@@ -464,8 +460,10 @@ export function* explorePhysicalAppearancesWorker(action :SequenceAction) :Saga<
         entitySetId: physicalAppearanceESID
       }));
       if (peopleResponse.error) throw peopleResponse.error;
+      payload = Object.assign(payload, peopleResponse.data);
     }
-    yield put(explorePhysicalAppearances.success(action.id, { hits, totalHits: response.data.numHits }));
+
+    yield put(explorePhysicalAppearances.success(action.id, payload));
   }
   catch (error) {
     LOG.error(action.type, error);
@@ -507,8 +505,9 @@ export function* exploreIdentifyingCharacteristicsWorker(action :SequenceAction)
 
     if (response.error) throw response.error;
 
-    const hits = fromJS(response.data.hits);
-    const identifyingCharacteristicsEKIDs = hits.map((file) => file.getIn([OPENLATTICE_ID_FQN, 0]));
+    const hits = fromJS(response?.data?.hits);
+    let payload = { hits, totalHits: response?.data?.numHits };
+    const identifyingCharacteristicsEKIDs = hits.map((hit) => hit.getIn([OPENLATTICE_ID_FQN, 0]));
 
     if (!identifyingCharacteristicsEKIDs.isEmpty()) {
       const peopleResponse = yield call(getObservedInPeopleWorker, getObservedInPeople({
@@ -516,8 +515,10 @@ export function* exploreIdentifyingCharacteristicsWorker(action :SequenceAction)
         entitySetId: identifyingCharacteristicsESID
       }));
       if (peopleResponse.error) throw peopleResponse.error;
+      payload = Object.assign(payload, peopleResponse.data);
     }
-    yield put(exploreIdentifyingCharacteristics.success(action.id, { hits, totalHits: response.data.numHits }));
+
+    yield put(exploreIdentifyingCharacteristics.success(action.id, payload));
   }
   catch (error) {
     LOG.error(action.type, error);
@@ -529,110 +530,159 @@ export function* exploreIdentifyingCharacteristicsWatcher() :Saga<void> {
   yield takeEvery(EXPLORE_IDENTIFYING_CHARACTERISTICS, exploreIdentifyingCharacteristicsWorker);
 }
 
-export function* explorePersonDetailsWorker(action :SequenceAction) :Saga<void> {
+export function* exploreContactInformationWorker(action :SequenceAction) :Saga<void> {
 
   try {
     const { value } = action;
     if (!isPlainObject(value)) throw ERR_ACTION_VALUE_TYPE;
     const { searchTerm, start = 0, maxHits = 20 } = value;
-    yield put(explorePersonDetails.request(action.id, value));
+    yield put(exploreContactInformation.request(action.id, value));
 
     const app = yield select((state) => state.get('app', Map()));
 
-    const personDetailsESID = getESIDFromApp(app, PERSON_DETAILS_FQN);
-
-    const searchConstraints = {
-      entitySetIds: [personDetailsESID],
-      maxHits,
-      start,
-      constraints: [{
-        constraints: [{
-          type: 'simple',
-          searchTerm,
-          fuzzy: false
-        }],
-      }],
-    };
+    const contactInformationESID = getESIDFromApp(app, CONTACT_INFORMATION_FQN);
 
     const response :WorkerResponse = yield call(
       searchEntitySetDataWorker,
-      searchEntitySetData(searchConstraints)
+      searchEntitySetData({
+        entitySetIds: [contactInformationESID],
+        maxHits,
+        start,
+        constraints: [{
+          constraints: [{
+            type: 'simple',
+            searchTerm,
+            fuzzy: false
+          }],
+        }],
+      })
     );
 
     if (response.error) throw response.error;
 
-    const hits = fromJS(response.data.hits);
-    const personDetailsEKIDs = hits.map((file) => file.getIn([OPENLATTICE_ID_FQN, 0]));
+    const hits = fromJS(response?.data?.hits);
+    let payload = { hits, totalHits: response?.data?.numHits };
+    const contactInformationEKIDs = hits.map((hit) => hit.getIn([OPENLATTICE_ID_FQN, 0]));
 
-    if (!personDetailsEKIDs.isEmpty()) {
-      const peopleResponse = yield call(getObservedInPeopleWorker, getObservedInPeople({
-        entityKeyIds: personDetailsEKIDs,
-        entitySetId: personDetailsESID
-      }));
+    if (!contactInformationEKIDs.isEmpty()) {
+
+      const [
+        peopleESID,
+        contactedViaESID
+      ] = getESIDsFromApp(app, [
+        PEOPLE_FQN,
+        CONTACTED_VIA_FQN,
+      ]);
+
+      const peopleResponse = yield call(
+        searchEntityNeighborsWithFilterWorker,
+        searchEntityNeighborsWithFilter({
+          entitySetId: contactInformationESID,
+          filter: {
+            entityKeyIds: contactInformationEKIDs.toJS(),
+            edgeEntitySetIds: [contactedViaESID],
+            destinationEntitySetIds: [],
+            sourceEntitySetIds: [peopleESID],
+          },
+        })
+      );
+
       if (peopleResponse.error) throw peopleResponse.error;
+      const peopleResponseData = fromJS(peopleResponse.data);
+      const peopleByHitEKID = getEKIDsFromNeighborResponseData(peopleResponseData);
+      const peopleByEKID = getNeighborDetailsFromNeighborResponseData(peopleResponseData);
+      payload = Object.assign(payload, {
+        peopleByHitEKID,
+        peopleByEKID,
+      });
     }
-    yield put(explorePersonDetails.success(action.id, { hits, totalHits: response.data.numHits }));
+
+    yield put(exploreContactInformation.success(action.id, payload));
   }
   catch (error) {
     LOG.error(action.type, error);
-    yield put(explorePersonDetails.failure(action.id, error));
+    yield put(exploreContactInformation.failure(action.id, error));
   }
 }
 
-export function* explorePersonDetailsWatcher() :Saga<void> {
-  yield takeEvery(EXPLORE_PERSON_DETAILS, explorePersonDetailsWorker);
+export function* exploreContactInformationWatcher() :Saga<void> {
+  yield takeEvery(EXPLORE_CONTACT_INFORMATION, exploreContactInformationWorker);
 }
 
-export function* exploreBehaviorWorker(action :SequenceAction) :Saga<void> {
+export function* exploreLocationWorker(action :SequenceAction) :Saga<void> {
 
   try {
     const { value } = action;
     if (!isPlainObject(value)) throw ERR_ACTION_VALUE_TYPE;
     const { searchTerm, start = 0, maxHits = 20 } = value;
-    yield put(exploreBehavior.request(action.id, value));
+    yield put(exploreLocation.request(action.id, value));
 
     const app = yield select((state) => state.get('app', Map()));
 
-    const behaviorESID = getESIDFromApp(app, BEHAVIOR_FQN);
-
-    const searchConstraints = {
-      entitySetIds: [behaviorESID],
-      maxHits,
-      start,
-      constraints: [{
-        constraints: [{
-          type: 'simple',
-          searchTerm,
-          fuzzy: false
-        }],
-      }],
-    };
+    const locationESID = getESIDFromApp(app, LOCATION_FQN);
 
     const response :WorkerResponse = yield call(
       searchEntitySetDataWorker,
-      searchEntitySetData(searchConstraints)
+      searchEntitySetData({
+        entitySetIds: [locationESID],
+        maxHits,
+        start,
+        constraints: [{
+          constraints: [{
+            type: 'simple',
+            searchTerm,
+            fuzzy: false
+          }],
+        }],
+      })
     );
 
     if (response.error) throw response.error;
 
-    const hits = fromJS(response.data.hits);
-    const behaviorEKIDs = hits.map((file) => file.getIn([OPENLATTICE_ID_FQN, 0]));
+    const hits = fromJS(response?.data?.hits);
+    let payload = { hits, totalHits: response?.data?.numHits };
+    const locationEKIDs = hits.map((hit) => hit.getIn([OPENLATTICE_ID_FQN, 0]));
 
-    if (!behaviorEKIDs.isEmpty()) {
-      const peopleResponse = yield call(getObservedInPeopleWorker, getObservedInPeople({
-        entityKeyIds: behaviorEKIDs,
-        entitySetId: behaviorESID
-      }));
+    if (!locationEKIDs.isEmpty()) {
+      const [
+        peopleESID,
+        locatedAtESID
+      ] = getESIDsFromApp(app, [
+        PEOPLE_FQN,
+        LOCATED_AT_FQN,
+      ]);
+
+      const peopleResponse = yield call(
+        searchEntityNeighborsWithFilterWorker,
+        searchEntityNeighborsWithFilter({
+          entitySetId: locationESID,
+          filter: {
+            entityKeyIds: locationEKIDs.toJS(),
+            edgeEntitySetIds: [locatedAtESID],
+            destinationEntitySetIds: [],
+            sourceEntitySetIds: [peopleESID],
+          },
+        })
+      );
+
       if (peopleResponse.error) throw peopleResponse.error;
+      const peopleResponseData = fromJS(peopleResponse.data);
+      const peopleByHitEKID = getEKIDsFromNeighborResponseData(peopleResponseData);
+      const peopleByEKID = getNeighborDetailsFromNeighborResponseData(peopleResponseData);
+      payload = Object.assign(payload, {
+        peopleByHitEKID,
+        peopleByEKID,
+      });
     }
-    yield put(exploreBehavior.success(action.id, { hits, totalHits: response.data.numHits }));
+
+    yield put(exploreLocation.success(action.id, payload));
   }
   catch (error) {
     LOG.error(action.type, error);
-    yield put(exploreBehavior.failure(action.id, error));
+    yield put(exploreLocation.failure(action.id, error));
   }
 }
 
-export function* exploreBehaviorWatcher() :Saga<void> {
-  yield takeEvery(EXPLORE_BEHAVIOR, exploreBehaviorWorker);
+export function* exploreLocationWatcher() :Saga<void> {
+  yield takeEvery(EXPLORE_LOCATION, exploreLocationWorker);
 }
