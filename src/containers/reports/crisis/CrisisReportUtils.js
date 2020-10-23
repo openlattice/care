@@ -222,8 +222,9 @@ const getCrisisReportAssociations = (
   const cadNumberKey = getEntityAddressKey(0, APP.CALL_FOR_SERVICE_FQN, OL_ID_FQN);
   const hasCadNumberField = hasIn(formData, [getPageSectionKey(1, 1), cadNumberKey]);
   if (hasCadNumberField) {
+    const registeredForData = { [COMPLETED_DT_FQN]: [createdDateTime] };
     associations.push([
-      APP.REGISTERED_FOR_FQN, 0, APP.BEHAVIORAL_HEALTH_REPORT_FQN, 0, APP.CALL_FOR_SERVICE_FQN, NOW_DATA
+      APP.REGISTERED_FOR_FQN, 0, APP.BEHAVIORAL_HEALTH_REPORT_FQN, 0, APP.CALL_FOR_SERVICE_FQN, registeredForData
     ]);
   }
 
