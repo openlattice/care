@@ -55,6 +55,7 @@ const ContactInformationResult = ({ result } :Props) => {
   const phone = getIn(result, [CONTACT_PHONE_NUMBER_FQN, 0]);
   const ext = getIn(result, [EXTENTION_FQN, 0]);
   const type = getIn(result, [TYPE_FQN, 0]);
+  const typeLabel = type ? `${type}: ` : 'Telephone: ';
 
   return (
     <Card>
@@ -69,7 +70,7 @@ const ContactInformationResult = ({ result } :Props) => {
           </div>
         </DetailWrapper>
         <DetailWrapper>
-          <Typography component="span">{`${type}: ` || 'Telephone: '}</Typography>
+          <Typography component="span">{typeLabel}</Typography>
           <PhoneLink number={phone} extension={ext} />
         </DetailWrapper>
         <DetailWrapper>
