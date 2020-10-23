@@ -127,6 +127,9 @@ export function* explorePeopleWorker(action :SequenceAction) :Generator<*, *, *>
     LOG.error(action.type, error);
     yield put(explorePeople.failure(action.id, error));
   }
+  finally {
+    yield put(explorePeople.finally(action.id));
+  }
 }
 
 export function* explorePeopleWatcher() :Generator<*, *, *> {
@@ -179,6 +182,9 @@ export function* exploreFileWorker(action :SequenceAction) :Generator<*, *, *> {
   catch (error) {
     LOG.error(action.type, error);
     yield put(exploreFile.failure(action.id, error));
+  }
+  finally {
+    yield put(exploreFile.finally(action.id));
   }
 }
 
@@ -239,6 +245,9 @@ export function* getIncludedPeopleWorker(action :SequenceAction) :Saga<Object> {
     LOG.error(action.type, error);
     yield put(getIncludedPeople.failure(action.id, error));
   }
+  finally {
+    yield put(getIncludedPeople.finally(action.id));
+  }
   return response;
 }
 
@@ -291,6 +300,9 @@ export function* exploreIncidentsWorker(action :SequenceAction) :Generator<*, *,
   catch (error) {
     LOG.error(action.type, error);
     yield put(exploreIncidents.failure(action.id, error));
+  }
+  finally {
+    yield put(exploreIncidents.finally(action.id));
   }
 }
 
@@ -357,6 +369,9 @@ export function* getInvolvedPeopleWorker(action :SequenceAction) :Saga<Object> {
     LOG.error(action.type, error);
     yield put(getInvolvedPeople.failure(action.id, error));
   }
+  finally {
+    yield put(getInvolvedPeople.finally(action.id));
+  }
   return response;
 }
 
@@ -411,6 +426,9 @@ export function* getObservedInPeopleWorker(action :SequenceAction) :Saga<Object>
   catch (error) {
     LOG.error(action.type, error);
     yield put(getObservedInPeople.failure(action.id, error));
+  }
+  finally {
+    yield put(getObservedInPeople.finally(action.id));
   }
   return response;
 }
@@ -469,6 +487,9 @@ export function* explorePhysicalAppearancesWorker(action :SequenceAction) :Saga<
     LOG.error(action.type, error);
     yield put(explorePhysicalAppearances.failure(action.id, error));
   }
+  finally {
+    yield put(explorePhysicalAppearances.finally(action.id));
+  }
 }
 
 export function* explorePhysicalAppearancesWatcher() :Saga<void> {
@@ -523,6 +544,9 @@ export function* exploreIdentifyingCharacteristicsWorker(action :SequenceAction)
   catch (error) {
     LOG.error(action.type, error);
     yield put(exploreIdentifyingCharacteristics.failure(action.id, error));
+  }
+  finally {
+    yield put(exploreIdentifyingCharacteristics.finally(action.id));
   }
 }
 
@@ -603,6 +627,9 @@ export function* exploreContactInformationWorker(action :SequenceAction) :Saga<v
     LOG.error(action.type, error);
     yield put(exploreContactInformation.failure(action.id, error));
   }
+  finally {
+    yield put(exploreContactInformation.finally(action.id));
+  }
 }
 
 export function* exploreContactInformationWatcher() :Saga<void> {
@@ -680,6 +707,9 @@ export function* exploreLocationWorker(action :SequenceAction) :Saga<void> {
   catch (error) {
     LOG.error(action.type, error);
     yield put(exploreLocation.failure(action.id, error));
+  }
+  finally {
+    yield put(exploreLocation.finally(action.id));
   }
 }
 

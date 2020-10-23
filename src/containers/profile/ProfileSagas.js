@@ -111,6 +111,9 @@ function* getPhysicalAppearanceWorker(action :SequenceAction) :Generator<any, an
     response.error = error;
     yield put(getPhysicalAppearance.failure(action.id, error));
   }
+  finally {
+    yield put(getPhysicalAppearance.finally(action.id));
+  }
 
   return response;
 }
@@ -145,6 +148,9 @@ function* getPersonDataWorker(action :SequenceAction) :Generator<any, any, any> 
   catch (error) {
     response.error = error;
     yield put(getPersonData.failure(action.id, error));
+  }
+  finally {
+    yield put(getPersonData.finally(action.id));
   }
   return response;
 }
@@ -218,6 +224,9 @@ function* getProfileReportsWorker(action :SequenceAction) :Generator<any, any, a
   catch (error) {
     yield put(getProfileReports.failure(action.id));
   }
+  finally {
+    yield put(getProfileReports.finally(action.id));
+  }
 }
 
 function* getProfileReportsWatcher() :Generator<any, any, any> {
@@ -289,6 +298,9 @@ function* createPhysicalAppearanceWorker(action :SequenceAction) :Generator<any,
     response.error = error;
     yield put(createPhysicalAppearance.failure(action.id, error));
   }
+  finally {
+    yield put(createPhysicalAppearance.finally(action.id));
+  }
 
   return response;
 }
@@ -331,6 +343,9 @@ function* updatePhysicalAppearanceWorker(action :SequenceAction) :Generator<any,
   catch (error) {
     response.error = error;
     yield put(updatePhysicalAppearance.failure(action.id, error));
+  }
+  finally {
+    yield put(updatePhysicalAppearance.finally(action.id));
   }
 
   return response;
@@ -420,6 +435,9 @@ function* updateProfileAboutWorker(action :SequenceAction) :Generator<any, any, 
   }
   catch (error) {
     yield put(updateProfileAbout.failure(action.id, error));
+  }
+  finally {
+    yield put(updateProfileAbout.finally(action.id));
   }
 }
 

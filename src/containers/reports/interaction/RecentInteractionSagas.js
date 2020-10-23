@@ -112,6 +112,9 @@ function* getRecentInteractionsWorker(action :SequenceAction) :Generator<any, an
     LOG.error(error);
     yield put(getRecentInteractions.failure(action.id, error));
   }
+  finally {
+    yield put(getRecentInteractions(action.id));
+  }
   return response;
 }
 
@@ -177,6 +180,9 @@ function* submitRecentInteractionWorker(action :SequenceAction) :Generator<any, 
   catch (error) {
     LOG.error(action.type, error);
     yield put(submitRecentInteraction.failure(action.id, error));
+  }
+  finally {
+    yield put(submitRecentInteraction(action.id));
   }
   return response;
 }

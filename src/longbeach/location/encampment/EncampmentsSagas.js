@@ -62,14 +62,10 @@ const { isValidUUID } = ValidationUtils;
 const {
   createAssociations,
   deleteEntityData,
-  // getEntityData,
-  // updateEntityData,
 } = DataApiActions;
 const {
   createAssociationsWorker,
   deleteEntityDataWorker,
-  // getEntityDataWorker,
-  // updateEntityDataWorker,
 } = DataApiSagas;
 
 declare var __MAPBOX_TOKEN__;
@@ -190,8 +186,12 @@ function* getEncampmentLocationsNeighborsWorker(action :SequenceAction) :Generat
     yield put(getEncampmentLocationsNeighbors.success(action.id, response));
   }
   catch (error) {
-    LOG.error(action.type, error);
+    LOG.error(action.id, error);
+    response.error = error;
     yield put(getEncampmentLocationsNeighbors.failure(action.id));
+  }
+  finally {
+    yield put(getEncampmentLocationsNeighbors.finally(action.id));
   }
 
   return response;
@@ -280,8 +280,12 @@ function* searchEncampmentLocationsWorker(action :SequenceAction) :Generator<any
     yield put(searchEncampmentLocations.success(action.id, response.data));
   }
   catch (error) {
-    LOG.error(action.type, error);
+    LOG.error(action.id, error);
+    response.error = error;
     yield put(searchEncampmentLocations.failure(action.id));
+  }
+  finally {
+    yield put(searchEncampmentLocations.finally(action.id));
   }
 
   return response;
@@ -330,6 +334,9 @@ function* submitEncampmentWorker(action :SequenceAction) :Generator<any, any, an
   catch (error) {
     LOG.error(action.type, error);
     yield put(submitEncampment.failure(action.id));
+  }
+  finally {
+    yield put(submitEncampment.finally(action.id));
   }
 }
 
@@ -410,6 +417,9 @@ function* getEncampmentPeopleOptionsWorker(action :SequenceAction) :Generator<an
     LOG.error(action.type, error);
     yield put(getEncampmentPeopleOptions.failure(action.id, error));
   }
+  finally {
+    yield put(getEncampmentPeopleOptions.finally(action.id));
+  }
 
   return response;
 }
@@ -479,6 +489,9 @@ function* addPersonToEncampmentWorker(action :SequenceAction) :Generator<any, an
     LOG.error(action.type, error);
     yield put(addPersonToEncampment.failure(action.id, error));
   }
+  finally {
+    yield put(addPersonToEncampment.finally(action.id));
+  }
   return response;
 }
 
@@ -540,7 +553,12 @@ function* getEncampmentOccupantsWorker(action :SequenceAction) :Generator<any, a
     })));
   }
   catch (error) {
+    LOG.error(action.id, error);
+    response.error = error;
     yield put(getEncampmentOccupants.failure(action.id, error));
+  }
+  finally {
+    yield put(getEncampmentOccupants.finally(action.id));
   }
   return response;
 }
@@ -572,7 +590,12 @@ function* removePersonFromEncampmentWorker(action :SequenceAction) :Generator<an
     yield put(removePersonFromEncampment.success(action.id));
   }
   catch (error) {
+    LOG.error(action.id, error);
+    response.error = error;
     yield put(removePersonFromEncampment.failure(action.id, error));
+  }
+  finally {
+    yield put(removePersonFromEncampment.finally(action.id));
   }
   return response;
 }
