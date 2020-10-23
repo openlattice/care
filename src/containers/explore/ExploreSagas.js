@@ -434,7 +434,7 @@ export function* getObservedInPeopleWorker(action :SequenceAction) :Saga<Object>
 }
 
 export function* getObservedInPeopleWatcher() :Saga<void> {
-  yield takeLatest(GET_OBSERVED_IN_PEOPLE, getObservedInPeople);
+  yield takeEvery(GET_OBSERVED_IN_PEOPLE, getObservedInPeopleWorker);
 }
 
 export function* explorePhysicalAppearancesWorker(action :SequenceAction) :Saga<void> {
