@@ -29,11 +29,19 @@ const createPhysicalAppearance :RequestSequence = newRequestSequence(CREATE_PHYS
 const UPDATE_PHYSICAL_APPEARANCE :'UPDATE_PHYSICAL_APPEARANCE' = 'UPDATE_PHYSICAL_APPEARANCE';
 const updatePhysicalAppearance :RequestSequence = newRequestSequence(UPDATE_PHYSICAL_APPEARANCE);
 
+const GET_PROFILE_POLICE_CAD :'GET_PROFILE_POLICE_CAD' = 'GET_PROFILE_POLICE_CAD';
+const getProfilePoliceCAD :RequestSequence = newRequestSequence(GET_PROFILE_POLICE_CAD);
+
+const GET_PROFILE_CITATIONS :'GET_PROFILE_CITATIONS' = 'GET_PROFILE_CITATIONS';
+const getProfileCitations :RequestSequence = newRequestSequence(GET_PROFILE_CITATIONS);
+
 export {
   CLEAR_PROFILE,
   CREATE_PHYSICAL_APPEARANCE,
   GET_PERSON_DATA,
   GET_PHYSICAL_APPEARANCE,
+  GET_PROFILE_CITATIONS,
+  GET_PROFILE_POLICE_CAD,
   GET_PROFILE_REPORTS,
   SELECT_PERSON,
   UPDATE_PHYSICAL_APPEARANCE,
@@ -42,6 +50,8 @@ export {
   createPhysicalAppearance,
   getPersonData,
   getPhysicalAppearance,
+  getProfileCitations,
+  getProfilePoliceCAD,
   getProfileReports,
   selectPerson,
   updatePhysicalAppearance,

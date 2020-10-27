@@ -3,8 +3,10 @@
 import { Map } from 'immutable';
 import { combineReducers } from 'redux-immutable';
 
+import citations from './CitationsReducer';
 import person from './PersonReducer';
 import physicalAppearance from './PhysicalAppearanceReducer';
+import policeCad from './PoliceCADReducer';
 import reports from './ReportsReducer';
 
 import about from '../edit/about/AboutReducer';
@@ -20,11 +22,13 @@ import { CLEAR_PROFILE } from '../ProfileActions';
 const subReducers = combineReducers({
   about,
   basicInformation,
+  citations,
   documents,
   emergencyContacts,
   officerSafety,
   person,
   physicalAppearance,
+  policeCad,
   reports,
   responsePlan,
   symptomReports,

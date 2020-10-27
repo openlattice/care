@@ -113,6 +113,8 @@ export default function* sagas() :Generator<*, *, *> {
     // Profile Sagas
     fork(ProfileSagas.getPersonDataWatcher),
     fork(ProfileSagas.getPhysicalAppearanceWatcher),
+    fork(ProfileSagas.getProfileCitationsWatcher),
+    fork(ProfileSagas.getProfilePoliceCADWatcher),
     fork(ProfileSagas.getProfileReportsWatcher),
     fork(ProfileSagas.updateProfileAboutWatcher),
 
