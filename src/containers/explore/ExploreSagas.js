@@ -301,7 +301,10 @@ export function* exploreIncidentsWorker(action :SequenceAction) :Generator<*, *,
     const incidentEKIDs = hits.map((hit) => hit.getIn([OPENLATTICE_ID_FQN, 0]));
 
     if (!incidentEKIDs.isEmpty()) {
-      yield put(getInvolvedPeople(incidentEKIDs));
+      yield put(getInvolvedPeople({
+        entityKeyIds: incidentEKIDs,
+        entitySetId: incidentESID,
+      }));
     }
     yield put(exploreIncidents.success(action.id, { hits, totalHits: response.data.numHits }));
   }
@@ -321,50 +324,38 @@ export function* exploreIncidentsWatcher() :Generator<*, *, *> {
 export function* getInvolvedPeopleWorker(action :SequenceAction) :Saga<Object> {
   const response = {};
   try {
-    const entityKeyIds = action.value;
+    const { entityKeyIds, entitySetId } = action.value;
     if (!List.isList(entityKeyIds)) throw ERR_ACTION_VALUE_TYPE;
+    if (!isValidUUID(entitySetId)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getInvolvedPeople.request(action.id));
 
     const app :Map = yield select((state) => state.get('app', Map()));
     const [
       peopleESID,
-      incidentESID,
       involvedInESID
     ] = getESIDsFromApp(app, [
       PEOPLE_FQN,
-      INCIDENT_FQN,
       INVOLVED_IN_FQN,
     ]);
 
-    const peopleSearchParam = {
-      entitySetId: incidentESID,
-      filter: {
-        entityKeyIds: entityKeyIds.toJS(),
-        edgeEntitySetIds: [involvedInESID],
-        destinationEntitySetIds: [],
-        sourceEntitySetIds: [peopleESID],
-      },
-    };
-
     const peopleResponse = yield call(
       searchEntityNeighborsWithFilterWorker,
-      searchEntityNeighborsWithFilter(peopleSearchParam)
+      searchEntityNeighborsWithFilter({
+        entitySetId,
+        filter: {
+          entityKeyIds: entityKeyIds.toJS(),
+          edgeEntitySetIds: [involvedInESID],
+          destinationEntitySetIds: [],
+          sourceEntitySetIds: [peopleESID],
+        },
+      })
     );
+
     if (peopleResponse.error) throw peopleResponse.error;
 
     const peopleResponseData = fromJS(peopleResponse.data);
-    const peopleByHitEKID = peopleResponseData
-      .map((neighbors) => neighbors.map((neighbor) => getEntityKeyId(neighbor.get('neighborDetails'))));
-
-    const peopleByEKID = Map().withMutations((mutable) => {
-      peopleResponseData.forEach((neighbors) => {
-        neighbors.forEach((neighbor) => {
-          const details = neighbor.get('neighborDetails');
-          const entityKeyId = getEntityKeyId(details);
-          mutable.set(entityKeyId, details);
-        });
-      });
-    });
+    const peopleByHitEKID = getEKIDsFromNeighborResponseData(peopleResponseData);
+    const peopleByEKID = getNeighborDetailsFromNeighborResponseData(peopleResponseData);
 
     response.data = {
       peopleByHitEKID,
@@ -758,35 +749,17 @@ export function* explorePoliceCADWorker(action :SequenceAction) :Saga<void> {
     const policeCadEKIDs = hits.map((hit) => hit.getIn([OPENLATTICE_ID_FQN, 0]));
 
     if (!policeCadEKIDs.isEmpty()) {
-      const [
-        involvedInESID,
-        peopleESID,
-      ] = getESIDsFromApp(app, [
-        INVOLVED_IN_FQN,
-        PEOPLE_FQN,
-      ]);
 
       const peopleResponse = yield call(
-        searchEntityNeighborsWithFilterWorker,
-        searchEntityNeighborsWithFilter({
+        getInvolvedPeopleWorker,
+        getInvolvedPeople({
           entitySetId: policeCadESID,
-          filter: {
-            entityKeyIds: policeCadEKIDs.toJS(),
-            edgeEntitySetIds: [involvedInESID],
-            destinationEntitySetIds: [],
-            sourceEntitySetIds: [peopleESID],
-          },
+          entityKeyIds: policeCadEKIDs,
         })
       );
 
       if (peopleResponse.error) throw peopleResponse.error;
-      const peopleResponseData = fromJS(peopleResponse.data);
-      const peopleByHitEKID = getEKIDsFromNeighborResponseData(peopleResponseData);
-      const peopleByEKID = getNeighborDetailsFromNeighborResponseData(peopleResponseData);
-      payload = Object.assign(payload, {
-        peopleByHitEKID,
-        peopleByEKID,
-      });
+      payload = Object.assign(payload, peopleResponse.data);
     }
 
     yield put(explorePoliceCAD.success(action.id, payload));
@@ -841,11 +814,9 @@ export function* exploreCitationsWorker(action :SequenceAction) :Saga<void> {
       const [
         employeeESID,
         involvedInESID,
-        peopleESID,
       ] = getESIDsFromApp(app, [
         EMPLOYEE_FQN,
         INVOLVED_IN_FQN,
-        PEOPLE_FQN,
       ]);
 
       const employeeRequest = call(
@@ -862,15 +833,10 @@ export function* exploreCitationsWorker(action :SequenceAction) :Saga<void> {
       );
 
       const peopleRequest = yield call(
-        searchEntityNeighborsWithFilterWorker,
-        searchEntityNeighborsWithFilter({
+        getInvolvedPeopleWorker,
+        getInvolvedPeople({
           entitySetId: citationsESID,
-          filter: {
-            entityKeyIds: citationEKIDS.toJS(),
-            edgeEntitySetIds: [involvedInESID],
-            destinationEntitySetIds: [],
-            sourceEntitySetIds: [peopleESID],
-          },
+          entityKeyIds: citationEKIDS,
         })
       );
 
@@ -889,13 +855,7 @@ export function* exploreCitationsWorker(action :SequenceAction) :Saga<void> {
       });
 
       if (peopleResponse.error) throw peopleResponse.error;
-      const peopleResponseData = fromJS(peopleResponse.data);
-      const peopleByHitEKID = getEKIDsFromNeighborResponseData(peopleResponseData);
-      const peopleByEKID = getNeighborDetailsFromNeighborResponseData(peopleResponseData);
-      payload = Object.assign(payload, {
-        peopleByHitEKID,
-        peopleByEKID,
-      });
+      payload = Object.assign(payload, peopleResponse.data);
     }
 
     yield put(exploreCitations.success(action.id, payload));
@@ -906,7 +866,6 @@ export function* exploreCitationsWorker(action :SequenceAction) :Saga<void> {
   }
   finally {
     yield put(exploreCitations.finally(action.id));
-
   }
 }
 
