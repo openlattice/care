@@ -38,7 +38,7 @@ class ProfileBarChart extends PureComponent <Props> {
   render() {
     const { data } = this.props;
     const numberOfBars = data.length;
-    const maxCount = Math.max(...data.map((datum) => datum.count || 0));
+    const maxCount = Math.max(...data.map((datum) => datum.count || 1));
     const STEP = 10;
     const maxTick = Math.ceil(maxCount / STEP) * STEP;
     const ticks = range(0, maxTick + 1, STEP);
