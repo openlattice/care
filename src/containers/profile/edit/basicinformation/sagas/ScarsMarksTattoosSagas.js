@@ -113,6 +113,9 @@ function* getScarsMarksTattoosWorker(action :SequenceAction) :Generator<any, any
     response.error = error;
     yield put(getScarsMarksTattoos.failure(action.id, error));
   }
+  finally {
+    yield put(getScarsMarksTattoos.finally(action.id));
+  }
 
   return response;
 }
@@ -153,6 +156,9 @@ function* submitScarsMarksTattoosWorker(action :SequenceAction) :Generator<any, 
   catch (error) {
     yield put(submitScarsMarksTattoos.failure(action.id, error));
   }
+  finally {
+    yield put(submitScarsMarksTattoos.finally(action.id));
+  }
 }
 
 function* submitScarsMarksTattoosWatcher() :Generator<any, any, any> {
@@ -174,6 +180,9 @@ function* updateScarsMarksTattoosWorker(action :SequenceAction) :Generator<any, 
   catch (error) {
     LOG.error(action.type, error);
     yield put(updateScarsMarksTattoos.failure(action.id, error));
+  }
+  finally {
+    yield put(updateScarsMarksTattoos.finally(action.id));
   }
 }
 

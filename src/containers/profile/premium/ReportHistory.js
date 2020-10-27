@@ -4,13 +4,16 @@ import React from 'react';
 import {
   Card,
   CardSegment,
-  SearchResults
+  IconSplash,
+  SearchResults,
 } from 'lattice-ui-kit';
 import type { List, Map } from 'immutable';
 
 import ProfileResult from '../ProfileResult';
 import { Header } from '../../../components/layout';
 import { CardSkeleton } from '../../../components/skeletons';
+
+const NoCrisisReportHistory = () => <IconSplash caption="No Crisis Reports have been filed." />;
 
 type Props = {
   results :List<Map>;
@@ -30,9 +33,10 @@ const ReportHistory = (props :Props) => {
   return (
     <Card>
       <CardSegment vertical>
-        <Header>Report History</Header>
+        <Header>Crisis Report History</Header>
         <SearchResults
-            hasSearched={false}
+            hasSearched
+            noResults={NoCrisisReportHistory}
             results={results}
             resultComponent={ProfileResult} />
       </CardSegment>

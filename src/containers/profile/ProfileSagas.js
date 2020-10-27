@@ -22,17 +22,22 @@ import {
 } from 'lattice-sagas';
 import { LangUtils, Logger, ValidationUtils } from 'lattice-utils';
 import { DateTime } from 'luxon';
+import type { Saga } from '@redux-saga/core';
 import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
   GET_PERSON_DATA,
   GET_PHYSICAL_APPEARANCE,
+  GET_PROFILE_CITATIONS,
+  GET_PROFILE_POLICE_CAD,
   GET_PROFILE_REPORTS,
   UPDATE_PROFILE_ABOUT,
   createPhysicalAppearance,
   getPersonData,
   getPhysicalAppearance,
+  getProfileCitations,
+  getProfilePoliceCAD,
   getProfileReports,
   updatePhysicalAppearance,
   updateProfileAbout,
@@ -42,9 +47,16 @@ import { countCrisisCalls, countPropertyOccurrance, countSafetyIncidents } from 
 
 import * as FQN from '../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
-import { getESIDFromApp } from '../../utils/AppUtils';
-import { simulateResponseData } from '../../utils/DataUtils';
+import { getESIDFromApp, getESIDsFromApp } from '../../utils/AppUtils';
+import {
+  getEKIDsFromNeighborResponseData,
+  getEntityKeyId,
+  getNeighborDetailsFromNeighborResponseData,
+  simulateResponseData,
+} from '../../utils/DataUtils';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
+import { getInvolvedPeople } from '../explore/ExploreActions';
+import { getInvolvedPeopleWorker } from '../explore/ExploreSagas';
 import { BEHAVIOR_LABEL_MAP } from '../reports/crisis/schemas/v1/constants';
 
 const LOG = new Logger('ProfileSagas');
@@ -61,9 +73,13 @@ const { createEntityAndAssociationDataWorker, getEntityDataWorker, updateEntityD
 const {
   APPEARS_IN_FQN,
   BEHAVIORAL_HEALTH_REPORT_FQN,
+  CITATION_FQN,
+  EMPLOYEE_FQN,
+  INVOLVED_IN_FQN,
   OBSERVED_IN_FQN,
   PEOPLE_FQN,
   PHYSICAL_APPEARANCE_FQN,
+  POLICE_CAD_FQN,
 } = APP_TYPES_FQNS;
 
 function* getPhysicalAppearanceWorker(action :SequenceAction) :Generator<any, any, any> {
@@ -111,6 +127,9 @@ function* getPhysicalAppearanceWorker(action :SequenceAction) :Generator<any, an
     response.error = error;
     yield put(getPhysicalAppearance.failure(action.id, error));
   }
+  finally {
+    yield put(getPhysicalAppearance.finally(action.id));
+  }
 
   return response;
 }
@@ -145,6 +164,9 @@ function* getPersonDataWorker(action :SequenceAction) :Generator<any, any, any> 
   catch (error) {
     response.error = error;
     yield put(getPersonData.failure(action.id, error));
+  }
+  finally {
+    yield put(getPersonData.finally(action.id));
   }
   return response;
 }
@@ -218,6 +240,9 @@ function* getProfileReportsWorker(action :SequenceAction) :Generator<any, any, a
   catch (error) {
     yield put(getProfileReports.failure(action.id));
   }
+  finally {
+    yield put(getProfileReports.finally(action.id));
+  }
 }
 
 function* getProfileReportsWatcher() :Generator<any, any, any> {
@@ -289,6 +314,9 @@ function* createPhysicalAppearanceWorker(action :SequenceAction) :Generator<any,
     response.error = error;
     yield put(createPhysicalAppearance.failure(action.id, error));
   }
+  finally {
+    yield put(createPhysicalAppearance.finally(action.id));
+  }
 
   return response;
 }
@@ -331,6 +359,9 @@ function* updatePhysicalAppearanceWorker(action :SequenceAction) :Generator<any,
   catch (error) {
     response.error = error;
     yield put(updatePhysicalAppearance.failure(action.id, error));
+  }
+  finally {
+    yield put(updatePhysicalAppearance.finally(action.id));
   }
 
   return response;
@@ -421,10 +452,188 @@ function* updateProfileAboutWorker(action :SequenceAction) :Generator<any, any, 
   catch (error) {
     yield put(updateProfileAbout.failure(action.id, error));
   }
+  finally {
+    yield put(updateProfileAbout.finally(action.id));
+  }
 }
 
 function* updateProfileAboutWatcher() :Generator<any, any, any> {
   yield takeEvery(UPDATE_PROFILE_ABOUT, updateProfileAboutWorker);
+}
+
+function* getProfilePoliceCADWorker(action :SequenceAction) :Saga<void> {
+  try {
+    const { value: entityKeyId } = action;
+    if (!isValidUUID(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
+    yield put(getProfilePoliceCAD.request(action.id));
+
+    const app :Map = yield select((state) => state.get('app', Map()));
+    const [
+      peopleESID,
+      policeCadESID,
+      involvedInESID
+    ] = getESIDsFromApp(app, [
+      PEOPLE_FQN,
+      POLICE_CAD_FQN,
+      INVOLVED_IN_FQN,
+    ]);
+
+    const response = yield call(
+      searchEntityNeighborsWithFilterWorker,
+      searchEntityNeighborsWithFilter({
+        entitySetId: peopleESID,
+        filter: {
+          entityKeyIds: [entityKeyId],
+          edgeEntitySetIds: [involvedInESID],
+          destinationEntitySetIds: [policeCadESID],
+          sourceEntitySetIds: [],
+        },
+      })
+    );
+
+    if (response.error) throw response.error;
+
+    const hits = fromJS(response.data)
+      .get(entityKeyId, List())
+      .map((entity :Map) => entity.get('neighborDetails'))
+      .toSet()
+      .toList()
+      .sortBy((entity :Map) :number => {
+        const time = DateTime.fromISO(entity.getIn([FQN.DATETIME_REPORTED_FQN, 0]));
+
+        return -time.valueOf();
+      });
+    let payload = { hits };
+    const policeCadEKIDs = hits.map(getEntityKeyId);
+
+    if (!policeCadEKIDs.isEmpty()) {
+
+      const peopleResponse = yield call(
+        getInvolvedPeopleWorker,
+        getInvolvedPeople({
+          entitySetId: policeCadESID,
+          entityKeyIds: policeCadEKIDs,
+        })
+      );
+
+      if (peopleResponse.error) throw peopleResponse.error;
+      payload = Object.assign(payload, peopleResponse.data);
+    }
+
+    yield put(getProfilePoliceCAD.success(action.id, payload));
+  }
+  catch (error) {
+    yield put(getProfilePoliceCAD.failure(action.id));
+  }
+  finally {
+    yield put(getProfilePoliceCAD.finally(action.id));
+  }
+}
+
+function* getProfilePoliceCADWatcher() :Saga<void> {
+  yield takeLatest(GET_PROFILE_POLICE_CAD, getProfilePoliceCADWorker);
+}
+
+function* getProfileCitationsWorker(action :SequenceAction) :Saga<void> {
+  try {
+    const { value: entityKeyId } = action;
+    if (!isValidUUID(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
+    yield put(getProfileCitations.request(action.id));
+
+    const app :Map = yield select((state) => state.get('app', Map()));
+    const [
+      citationsESID,
+      employeeESID,
+      involvedInESID,
+      peopleESID,
+    ] = getESIDsFromApp(app, [
+      CITATION_FQN,
+      EMPLOYEE_FQN,
+      INVOLVED_IN_FQN,
+      PEOPLE_FQN,
+    ]);
+
+    const response = yield call(
+      searchEntityNeighborsWithFilterWorker,
+      searchEntityNeighborsWithFilter({
+        entitySetId: peopleESID,
+        filter: {
+          entityKeyIds: [entityKeyId],
+          edgeEntitySetIds: [involvedInESID],
+          destinationEntitySetIds: [citationsESID],
+          sourceEntitySetIds: [],
+        },
+      })
+    );
+
+    if (response.error) throw response.error;
+
+    const hits = fromJS(response.data)
+      .get(entityKeyId, List())
+      .map((entity :Map) => entity.get('neighborDetails'))
+      .toSet()
+      .toList()
+      .sortBy((entity :Map) :number => {
+        const time = DateTime.fromISO(entity.getIn([FQN.DATE_TIME_FQN, 0]));
+
+        return -time.valueOf();
+      });
+    let payload = { hits };
+    const citationEKIDs = hits.map(getEntityKeyId);
+
+    if (!citationEKIDs.isEmpty()) {
+
+      const employeeRequest = call(
+        searchEntityNeighborsWithFilterWorker,
+        searchEntityNeighborsWithFilter({
+          entitySetId: citationsESID,
+          filter: {
+            entityKeyIds: citationEKIDs.toJS(),
+            edgeEntitySetIds: [involvedInESID],
+            destinationEntitySetIds: [],
+            sourceEntitySetIds: [employeeESID],
+          },
+        })
+      );
+
+      const peopleRequest = yield call(
+        getInvolvedPeopleWorker,
+        getInvolvedPeople({
+          entitySetId: citationsESID,
+          entityKeyIds: citationEKIDs,
+        })
+      );
+
+      const [employeeResponse, peopleResponse] = yield all([
+        employeeRequest,
+        peopleRequest,
+      ]);
+
+      if (employeeResponse.error) throw employeeResponse.error;
+      const employeeResponseData = fromJS(employeeResponse.data);
+      const employeesByHitEKID = getEKIDsFromNeighborResponseData(employeeResponseData);
+      const employeesByEKID = getNeighborDetailsFromNeighborResponseData(employeeResponseData);
+      payload = Object.assign(payload, {
+        employeesByHitEKID,
+        employeesByEKID,
+      });
+
+      if (peopleResponse.error) throw peopleResponse.error;
+      payload = Object.assign(payload, peopleResponse.data);
+    }
+
+    yield put(getProfileCitations.success(action.id, payload));
+  }
+  catch (error) {
+    yield put(getProfileCitations.failure(action.id));
+  }
+  finally {
+    yield put(getProfileCitations.finally(action.id));
+  }
+}
+
+function* getProfileCitationsWatcher() :Saga<void> {
+  yield takeLatest(GET_PROFILE_CITATIONS, getProfileCitationsWorker);
 }
 
 export {
@@ -432,6 +641,10 @@ export {
   getPersonDataWorker,
   getPhysicalAppearanceWatcher,
   getPhysicalAppearanceWorker,
+  getProfileCitationsWatcher,
+  getProfileCitationsWorker,
+  getProfilePoliceCADWatcher,
+  getProfilePoliceCADWorker,
   getProfileReportsWatcher,
   getProfileReportsWorker,
   updateProfileAboutWatcher,

@@ -113,6 +113,8 @@ export default function* sagas() :Generator<*, *, *> {
     // Profile Sagas
     fork(ProfileSagas.getPersonDataWatcher),
     fork(ProfileSagas.getPhysicalAppearanceWatcher),
+    fork(ProfileSagas.getProfileCitationsWatcher),
+    fork(ProfileSagas.getProfilePoliceCADWatcher),
     fork(ProfileSagas.getProfileReportsWatcher),
     fork(ProfileSagas.updateProfileAboutWatcher),
 
@@ -242,11 +244,18 @@ export default function* sagas() :Generator<*, *, *> {
     fork(VisibilitySagas.getProfileVisibilityWatcher),
     fork(VisibilitySagas.putProfileVisibilityWatcher),
 
+    fork(ExploreSagas.exploreContactInformationWatcher),
     fork(ExploreSagas.exploreFileWatcher),
+    fork(ExploreSagas.exploreIdentifyingCharacteristicsWatcher),
     fork(ExploreSagas.exploreIncidentsWatcher),
+    fork(ExploreSagas.exploreLocationWatcher),
     fork(ExploreSagas.explorePeopleWatcher),
+    fork(ExploreSagas.explorePhysicalAppearancesWatcher),
     fork(ExploreSagas.getIncludedPeopleWatcher),
     fork(ExploreSagas.getInvolvedPeopleWatcher),
+    fork(ExploreSagas.getObservedInPeopleWatcher),
+    fork(ExploreSagas.explorePoliceCADWatcher),
+    fork(ExploreSagas.exploreCitationsWatcher),
 
     fork(ProfileDocumentsSagas.getProfileDocumentsWatcher),
   ]);

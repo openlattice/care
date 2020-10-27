@@ -110,6 +110,9 @@ function* addNewStaffMemberWorker(action :SequenceAction) :Generator<*, *, *> {
     workerResponse.error = error;
     yield put(addNewStaffMember.failure(action.id, workerResponse.error));
   }
+  finally {
+    yield put(addNewStaffMember.finally(action.id));
+  }
 
   return workerResponse;
 }
@@ -180,6 +183,9 @@ function* getCurrentUserStaffMemberDataWorker(action :SequenceAction) :Generator
     LOG.error(ERR_WORKER_SAGA, error);
     workerResponse.error = error;
     yield put(getCurrentUserStaffMemberData.failure(action.id, workerResponse.error));
+  }
+  finally {
+    yield put(getCurrentUserStaffMemberData.finally(action.id));
   }
 
   return workerResponse;
@@ -259,6 +265,9 @@ function* getResponsibleUserOptionsWorker(action :SequenceAction) :Generator<any
   }
   catch (error) {
     yield put(getResponsibleUserOptions.failure(action.id));
+  }
+  finally {
+    yield put(getResponsibleUserOptions.finally(action.id));
   }
 }
 

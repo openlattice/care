@@ -1,8 +1,8 @@
 // @flow
 import React from 'react';
 
+import styled from 'styled-components';
 import {
-  List,
   Map,
   getIn
 } from 'immutable';
@@ -12,46 +12,48 @@ import {
   Typography,
 } from 'lattice-ui-kit';
 import { DateTimeUtils } from 'lattice-utils';
-import { useSelector } from 'react-redux';
 
 import PersonLink from './styled/PersonLink';
 import { DetailWrapper, WordBreak } from './styled';
 
 import {
-  CRIMINALJUSTICE_CASE_NUMBER_FQN,
-  DATETIME_START_FQN,
-  DESCRIPTION_FQN,
+  DATE_TIME_FQN,
+  EMPLOYEE_ID_FQN,
   OL_ID_FQN,
   ROLE_FQN,
-  TYPE_FQN,
 } from '../../edm/DataModelFqns';
-import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { getEntityKeyId } from '../../utils/DataUtils';
-
-const { INCIDENT_FQN } = APP_TYPES_FQNS;
 
 const { formatAsDate } = DateTimeUtils;
 
+const Span = styled.span`
+  :not(:last-child)::after {
+    content: ', ';
+  }
+`;
+
 type Props = {
+  employees :Map;
+  people :Map;
   result :Map;
 };
 
-const IncidentResult = ({ result } :Props) => {
-  const entityKeyId = getEntityKeyId(result);
-  const people = useSelector((store) => store.getIn(['explore', INCIDENT_FQN, 'people', entityKeyId], List()));
-  const caseNumber = getIn(result, [CRIMINALJUSTICE_CASE_NUMBER_FQN, 0]);
+const Citation = ({
+  employees,
+  people,
+  result,
+} :Props) => {
+
+  const datetime = getIn(result, [DATE_TIME_FQN, 0]);
+  const reportDate = formatAsDate(datetime);
   const sorId = getIn(result, [OL_ID_FQN, 0]);
-  const datetime = getIn(result, [DATETIME_START_FQN, 0]);
-  const date = formatAsDate(datetime);
-  const description = getIn(result, [DESCRIPTION_FQN, 0]) || '---';
-  const type = getIn(result, [TYPE_FQN, 0]) || '---';
 
   return (
     <Card>
       <CardSegment padding="sm">
         <WordBreak>
-          <Typography variant="h5" component="h3">{`${caseNumber || sorId}`}</Typography>
-          <Typography variant="caption" color="textSecondary">{date}</Typography>
+          <Typography variant="h5" component="h3">{sorId}</Typography>
+          <Typography variant="caption" color="textSecondary">{reportDate}</Typography>
         </WordBreak>
         <DetailWrapper>
           <Typography component="span">Attached to: </Typography>
@@ -66,16 +68,18 @@ const IncidentResult = ({ result } :Props) => {
           </div>
         </DetailWrapper>
         <DetailWrapper>
-          <Typography component="span">Type: </Typography>
-          <Typography>{type}</Typography>
-        </DetailWrapper>
-        <DetailWrapper>
-          <Typography component="span">Description: </Typography>
-          <Typography>{description}</Typography>
+          <Typography component="span">Employee ID: </Typography>
+          <div>
+            { employees.map((person) => {
+              const id = getEntityKeyId(person);
+              const employeeId = getIn(person, [EMPLOYEE_ID_FQN, 0]);
+              return <Span key={id}>{employeeId}</Span>;
+            })}
+          </div>
         </DetailWrapper>
       </CardSegment>
     </Card>
   );
 };
 
-export default IncidentResult;
+export default Citation;

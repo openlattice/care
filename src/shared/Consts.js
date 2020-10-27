@@ -71,6 +71,10 @@ export const APP_TYPES_FQNS = {
   CHARGE_EVENT_FQN: FQN.of('app.chargeevent'),
   CHARGE_FQN: FQN.of('app.charge'),
   REGISTERED_FOR_FQN: FQN.of('app.registeredfor'),
+  RESULTS_IN_FQN: FQN.of('app.resultsin'),
+  CITATION_FQN: FQN.of('app.citation'),
+  EMPLOYEE_FQN: FQN.of('app.employee'),
+  POLICE_CAD_FQN: FQN.of('app.policecad'),
 
   // protected
   DISPOSITION_CLINICIAN_FQN: FQN.of('app.disposition_clinician'),

@@ -66,12 +66,13 @@ const ContactPanel = (props :Props) => {
   );
 
   const addressContent = (
-    <Address
-        cityStateZip={cityStateZip}
-        isLoading={isLoading}
-        line2={line2}
-        name={name}
-        street={street} />
+    <>
+      <strong>{name}</strong>
+      <Address
+          cityStateZip={cityStateZip}
+          line2={line2}
+          street={street} />
+    </>
   );
 
   return (

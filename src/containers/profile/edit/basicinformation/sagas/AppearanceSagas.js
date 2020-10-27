@@ -104,6 +104,9 @@ function* getAppearanceWorker(action :SequenceAction) :Generator<any, any, any> 
     response.error = error;
     yield put(getAppearance.failure(action.id, error));
   }
+  finally {
+    yield put(getAppearance.finally(action.id));
+  }
 
   return response;
 }
@@ -145,6 +148,9 @@ function* submitAppearanceWorker(action :SequenceAction) :Generator<any, any, an
     LOG.error(action.type, error);
     yield put(submitAppearance.failure(action.id, error));
   }
+  finally {
+    yield put(submitAppearance.finally(action.id));
+  }
 }
 
 function* submitAppearanceWatcher() :Generator<any, any, any> {
@@ -166,6 +172,9 @@ function* updateAppearanceWorker(action :SequenceAction) :Generator<any, any, an
   catch (error) {
     LOG.error(action.type, error);
     yield put(updateAppearance.failure(action.id, error));
+  }
+  finally {
+    yield put(updateAppearance.finally(action.id));
   }
 }
 

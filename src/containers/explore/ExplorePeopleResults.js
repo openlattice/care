@@ -5,12 +5,13 @@ import { List } from 'immutable';
 import {
   PaginationToolbar,
   SearchResults,
+  Spinner,
 } from 'lattice-ui-kit';
 import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
 import { explorePeople } from './ExploreActions';
-import { ExploreResultsWrapper } from './styled';
+import { ExploreResultsWrapper, NoResults } from './styled';
 
 import Accordion from '../../components/accordion';
 import PersonResult from '../people/PersonResult';
@@ -46,8 +47,9 @@ const ExplorePeopleResults = () => {
   const totalHits = useSelector((store) => store.getIn(['explore', PEOPLE_FQN, 'totalHits'], 0));
   const searchTerm = useSelector((store) => store.getIn(['explore', PEOPLE_FQN, 'searchTerm']));
   const fetchState = useSelector((store) => store.getIn(['explore', PEOPLE_FQN, 'fetchState']));
-  const [page, setPage] = useState(0);
+  const savedPage = useSelector((store) => store.getIn(['explore', PEOPLE_FQN, 'page']));
   const [modalState, modalDispatch] = useReducer(reducer, INITIAL_STATE);
+  const [page, setPage] = useState(savedPage);
 
   const hasSearched = fetchState !== RequestStates.STANDBY;
   const isLoading = fetchState === RequestStates.PENDING;
@@ -56,18 +58,23 @@ const ExplorePeopleResults = () => {
     setPage(0);
   }, [searchTerm]);
 
-  const dispatchSearch = (start = 0) => {
+  useEffect(() => {
+    setPage(savedPage);
+  }, [savedPage]);
+
+  const dispatchSearch = (start = 0, pageNumber) => {
     if (searchTerm.trim().length) {
       dispatch(explorePeople({
         searchTerm: searchTerm.trim(),
         start,
-        maxHits: MAX_HITS
+        maxHits: MAX_HITS,
+        page: pageNumber
       }));
     }
   };
 
   const onPageChange = ({ page: newPage, start }) => {
-    dispatchSearch(start);
+    dispatchSearch(start, newPage);
     setPage(newPage);
   };
 
@@ -79,17 +86,18 @@ const ExplorePeopleResults = () => {
     modalDispatch({ type: 'close' });
   };
 
-  const caption = isLoading ? '' : `(${totalHits} results)`;
+  const caption = isLoading ? <Spinner /> : `(${totalHits} results)`;
 
   if (hasSearched) {
     return (
       <div>
         <Accordion>
-          <div caption={caption} headline="People" defaultOpen>
+          <div caption={caption} headline="People" defaultOpen={false}>
             <ExploreResultsWrapper>
               <SearchResults
                   hasSearched={hasSearched}
                   isLoading={isLoading}
+                  noResults={NoResults}
                   onResultClick={handleOpenReportSelection}
                   resultComponent={PersonResult}
                   results={searchResults} />

@@ -97,7 +97,10 @@ function* getAllSymptomsReportsWorker(action :SequenceAction) :Generator<any, an
   catch (error) {
     LOG.error(action.type, error);
     response.error = error;
-    yield put(getAllSymptomsReports.request(action.id, error));
+    yield put(getAllSymptomsReports.failure(action.id, error));
+  }
+  finally {
+    yield put(getAllSymptomsReports.finally(action.id));
   }
 }
 
@@ -117,6 +120,9 @@ function* getSymptomsReportWorker(action :SequenceAction) :Generator<any, any, a
   catch (error) {
     LOG.error(action.type, error);
     yield put(getSymptomsReport.failure(action.id, error));
+  }
+  finally {
+    yield put(getSymptomsReport.finally(action.id));
   }
   return response;
 }
@@ -166,6 +172,9 @@ function* submitSymptomsReportWorker(action :SequenceAction) :Generator<any, any
     LOG.error(action.type, error);
     yield put(submitSymptomsReport.failure(action.id, error));
   }
+  finally {
+    yield put(submitSymptomsReport.finally(action.id));
+  }
   return response;
 }
 
@@ -182,6 +191,9 @@ function* updateSymptomsReportWorker(action :SequenceAction) :Generator<any, any
   catch (error) {
     LOG.error(action.type, error);
     yield put(updateSymptomsReport.failure(action.id, error));
+  }
+  finally {
+    yield put(updateSymptomsReport.finally(action.id));
   }
   return response;
 }
