@@ -1,5 +1,5 @@
 // @flow
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import styled from 'styled-components';
 import { faSearch } from '@fortawesome/pro-regular-svg-icons';
@@ -13,7 +13,6 @@ import {
 import { useDispatch } from 'react-redux';
 
 import {
-  clearExploreResults,
   exploreCitations,
   exploreContactInformation,
   exploreFile,
