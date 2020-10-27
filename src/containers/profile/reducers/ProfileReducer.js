@@ -6,7 +6,7 @@ import { combineReducers } from 'redux-immutable';
 import citations from './CitationsReducer';
 import person from './PersonReducer';
 import physicalAppearance from './PhysicalAppearanceReducer';
-import policeCad from './PoliceCADReducer';
+import policeCAD from './PoliceCADReducer';
 import reports from './ReportsReducer';
 
 import about from '../edit/about/AboutReducer';
@@ -28,7 +28,7 @@ const subReducers = combineReducers({
   officerSafety,
   person,
   physicalAppearance,
-  policeCad,
+  policeCAD,
   reports,
   responsePlan,
   symptomReports,

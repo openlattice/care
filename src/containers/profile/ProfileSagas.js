@@ -48,7 +48,12 @@ import { countCrisisCalls, countPropertyOccurrance, countSafetyIncidents } from 
 import * as FQN from '../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { getESIDFromApp, getESIDsFromApp } from '../../utils/AppUtils';
-import { getEntityKeyId, simulateResponseData } from '../../utils/DataUtils';
+import {
+  getEKIDsFromNeighborResponseData,
+  getEntityKeyId,
+  getNeighborDetailsFromNeighborResponseData,
+  simulateResponseData,
+} from '../../utils/DataUtils';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
 import { getInvolvedPeople } from '../explore/ExploreActions';
 import { getInvolvedPeopleWorker } from '../explore/ExploreSagas';
@@ -69,6 +74,7 @@ const {
   APPEARS_IN_FQN,
   BEHAVIORAL_HEALTH_REPORT_FQN,
   CITATION_FQN,
+  EMPLOYEE_FQN,
   INVOLVED_IN_FQN,
   OBSERVED_IN_FQN,
   PEOPLE_FQN,
@@ -536,11 +542,13 @@ function* getProfileCitationsWorker(action :SequenceAction) :Saga<void> {
 
     const app :Map = yield select((state) => state.get('app', Map()));
     const [
-      citationESID,
+      citationsESID,
+      employeeESID,
       involvedInESID,
       peopleESID,
     ] = getESIDsFromApp(app, [
       CITATION_FQN,
+      EMPLOYEE_FQN,
       INVOLVED_IN_FQN,
       PEOPLE_FQN,
     ]);
@@ -552,7 +560,7 @@ function* getProfileCitationsWorker(action :SequenceAction) :Saga<void> {
         filter: {
           entityKeyIds: [entityKeyId],
           edgeEntitySetIds: [involvedInESID],
-          destinationEntitySetIds: [citationESID],
+          destinationEntitySetIds: [citationsESID],
           sourceEntitySetIds: [],
         },
       })
@@ -575,13 +583,40 @@ function* getProfileCitationsWorker(action :SequenceAction) :Saga<void> {
 
     if (!citationEKIDs.isEmpty()) {
 
-      const peopleResponse = yield call(
+      const employeeRequest = call(
+        searchEntityNeighborsWithFilterWorker,
+        searchEntityNeighborsWithFilter({
+          entitySetId: citationsESID,
+          filter: {
+            entityKeyIds: citationEKIDs.toJS(),
+            edgeEntitySetIds: [involvedInESID],
+            destinationEntitySetIds: [],
+            sourceEntitySetIds: [employeeESID],
+          },
+        })
+      );
+
+      const peopleRequest = yield call(
         getInvolvedPeopleWorker,
         getInvolvedPeople({
-          entitySetId: citationESID,
+          entitySetId: citationsESID,
           entityKeyIds: citationEKIDs,
         })
       );
+
+      const [employeeResponse, peopleResponse] = yield all([
+        employeeRequest,
+        peopleRequest,
+      ]);
+
+      if (employeeResponse.error) throw employeeResponse.error;
+      const employeeResponseData = fromJS(employeeResponse.data);
+      const employeesByHitEKID = getEKIDsFromNeighborResponseData(employeeResponseData);
+      const employeesByEKID = getNeighborDetailsFromNeighborResponseData(employeeResponseData);
+      payload = Object.assign(payload, {
+        employeesByHitEKID,
+        employeesByEKID,
+      });
 
       if (peopleResponse.error) throw peopleResponse.error;
       payload = Object.assign(payload, peopleResponse.data);
