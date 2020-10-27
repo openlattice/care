@@ -30,7 +30,7 @@ const ReportHistory = (props :Props) => {
   return (
     <Card>
       <CardSegment vertical>
-        <Header>Report History</Header>
+        <Header>Crisis Report History</Header>
         <SearchResults
             hasSearched={false}
             results={results}

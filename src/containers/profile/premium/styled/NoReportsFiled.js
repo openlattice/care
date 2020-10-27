@@ -6,7 +6,7 @@ import { IconSplash } from 'lattice-ui-kit';
 import { AbsoluteCenter } from './layout';
 
 const NoReportsFiled = () => {
-  const splashCaption = 'No reports have been filed.';
+  const splashCaption = 'No Crisis Reports have been filed.';
   return (
     <AbsoluteCenter>
       <IconSplash icon={faFolderOpen} caption={splashCaption} />
