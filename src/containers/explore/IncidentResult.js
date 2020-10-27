@@ -22,6 +22,7 @@ import {
   DATETIME_START_FQN,
   DESCRIPTION_FQN,
   OL_ID_FQN,
+  ROLE_FQN,
   TYPE_FQN,
 } from '../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
@@ -37,10 +38,7 @@ type Props = {
 
 const IncidentResult = ({ result } :Props) => {
   const entityKeyId = getEntityKeyId(result);
-  const people = useSelector((store) => {
-    const peopleByHitEKID = store.getIn(['explore', INCIDENT_FQN, 'peopleByHitEKID', entityKeyId], List());
-    return peopleByHitEKID.map((peopleEKID) => store.getIn(['explore', INCIDENT_FQN, 'peopleByEKID', peopleEKID]));
-  });
+  const people = useSelector((store) => store.getIn(['explore', INCIDENT_FQN, 'people', entityKeyId], List()));
   const caseNumber = getIn(result, [CRIMINALJUSTICE_CASE_NUMBER_FQN, 0]);
   const sorId = getIn(result, [OL_ID_FQN, 0]);
   const datetime = getIn(result, [DATETIME_START_FQN, 0]);
@@ -59,8 +57,11 @@ const IncidentResult = ({ result } :Props) => {
           <Typography component="span">Attached to: </Typography>
           <div>
             { people.map((person) => {
-              const id = getEntityKeyId(person);
-              return <PersonLink key={id} person={person} />;
+              const personDetails = person.get('neighborDetails');
+              const assocDetails = person.get('associationDetails');
+              const assocId = getEntityKeyId(assocDetails);
+              const role = assocDetails.getIn([ROLE_FQN, 0]);
+              return <PersonLink key={assocId} person={personDetails} role={role} />;
             })}
           </div>
         </DetailWrapper>

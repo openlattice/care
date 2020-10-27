@@ -28,7 +28,8 @@ const ExploreFileResults = () => {
   const totalHits = useSelector((store) => store.getIn(['explore', FILE_FQN, 'totalHits'], 0));
   const searchTerm = useSelector((store) => store.getIn(['explore', FILE_FQN, 'searchTerm']));
   const fetchState = useSelector((store) => store.getIn(['explore', FILE_FQN, 'fetchState']));
-  const [page, setPage] = useState(0);
+  const savedPage = useSelector((store) => store.getIn(['explore', FILE_FQN, 'page']));
+  const [page, setPage] = useState(savedPage);
 
   const hasSearched = fetchState !== RequestStates.STANDBY;
   const isLoading = fetchState === RequestStates.PENDING;
@@ -37,18 +38,23 @@ const ExploreFileResults = () => {
     setPage(0);
   }, [searchTerm]);
 
-  const dispatchSearch = (start = 0) => {
+  useEffect(() => {
+    setPage(savedPage);
+  }, [savedPage]);
+
+  const dispatchSearch = (start = 0, pageNumber) => {
     if (searchTerm.trim().length) {
       dispatch(exploreFile({
         searchTerm: searchTerm.trim(),
         start,
-        maxHits: MAX_HITS
+        maxHits: MAX_HITS,
+        page: pageNumber
       }));
     }
   };
 
   const onPageChange = ({ page: newPage, start }) => {
-    dispatchSearch(start);
+    dispatchSearch(start, newPage);
     setPage(newPage);
   };
 

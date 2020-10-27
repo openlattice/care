@@ -22,6 +22,7 @@ import {
   DATE_TIME_FQN,
   EMPLOYEE_ID_FQN,
   OL_ID_FQN,
+  ROLE_FQN,
 } from '../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { getEntityKeyId } from '../../utils/DataUtils';
@@ -42,13 +43,8 @@ type Props = {
 
 const CitationResult = ({ result } :Props) => {
   const entityKeyId = getEntityKeyId(result);
-  const people = useSelector((store) => {
-    const peopleByHitEKID = store.getIn([
-      'explore', CITATION_FQN, 'peopleByHitEKID', entityKeyId
-    ], List());
-    return peopleByHitEKID
-      .map((peopleEKID) => store.getIn(['explore', CITATION_FQN, 'peopleByEKID', peopleEKID]));
-  });
+  const people = useSelector((store) => store.getIn(['explore', CITATION_FQN, 'people', entityKeyId], List()));
+
   const employees = useSelector((store) => {
     const employeesByHitEKID = store.getIn([
       'explore', CITATION_FQN, 'employeesByHitEKID', entityKeyId
@@ -72,8 +68,11 @@ const CitationResult = ({ result } :Props) => {
           <Typography component="span">Attached to: </Typography>
           <div>
             { people.map((person) => {
-              const id = getEntityKeyId(person);
-              return <PersonLink key={id} person={person} />;
+              const personDetails = person.get('neighborDetails');
+              const assocDetails = person.get('associationDetails');
+              const assocId = getEntityKeyId(assocDetails);
+              const role = assocDetails.getIn([ROLE_FQN, 0]);
+              return <PersonLink key={assocId} person={personDetails} role={role} />;
             })}
           </div>
         </DetailWrapper>

@@ -5,10 +5,10 @@ import CitationResult from './CitationResult';
 import ContactInformationResult from './ContactInformationResult';
 import ExploreFileResults from './ExploreFileResults';
 import ExploreGenericResults from './ExploreGenericResults';
-import ExploreIncidentResults from './ExploreIncidentResults';
 import ExplorePeopleResults from './ExplorePeopleResults';
 import ExploreSearchBar from './ExploreSearchBar';
 import IdentifyingCharacteristicsResult from './IdentifyingCharacteristicsResult';
+import IncidentResult from './IncidentResult';
 import LocationResult from './LocationResult';
 import PhysicalAppearanceResult from './PhysicalAppearanceResult';
 import PoliceCADResult from './PoliceCADResult';
@@ -16,6 +16,7 @@ import {
   exploreCitations,
   exploreContactInformation,
   exploreIdentifyingCharacteristics,
+  exploreIncidents,
   exploreLocation,
   explorePhysicalAppearances,
   explorePoliceCAD,
@@ -28,6 +29,7 @@ const {
   CITATION_FQN,
   CONTACT_INFORMATION_FQN,
   IDENTIFYING_CHARACTERISTICS_FQN,
+  INCIDENT_FQN,
   LOCATION_FQN,
   PHYSICAL_APPEARANCE_FQN,
   POLICE_CAD_FQN,
@@ -54,7 +56,11 @@ const ExploreContainer = () => (
           resultComponent={IdentifyingCharacteristicsResult}
           searchAction={exploreIdentifyingCharacteristics}
           title="Identifying Characteristics" />
-      <ExploreIncidentResults />
+      <ExploreGenericResults
+          appType={INCIDENT_FQN}
+          resultComponent={IncidentResult}
+          searchAction={exploreIncidents}
+          title="Incidents" />
       <ExploreGenericResults
           appType={LOCATION_FQN}
           resultComponent={LocationResult}

@@ -17,7 +17,6 @@ import {
   explorePhysicalAppearances,
   explorePoliceCAD,
   getIncludedPeople,
-  getInvolvedPeople,
 } from './ExploreActions';
 
 import { APP_TYPES_FQNS } from '../../shared/Consts';
@@ -42,6 +41,7 @@ const EXPLORE_EDGE_TO_PEOPLE_STATE = {
   peopleByEKID: Map(),
   searchTerm: '',
   totalHits: 0,
+  page: 0,
 };
 
 const INITIAL_STATE :Map = fromJS({
@@ -55,6 +55,7 @@ const INITIAL_STATE :Map = fromJS({
     }),
     searchTerm: '',
     totalHits: 0,
+    page: 0,
   },
   [CITATION_FQN]: EXPLORE_EDGE_TO_PEOPLE_STATE,
   [CONTACT_INFORMATION_FQN]: EXPLORE_EDGE_TO_PEOPLE_STATE,

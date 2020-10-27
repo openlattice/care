@@ -295,13 +295,10 @@ export function* getInvolvedPeopleWorker(action :SequenceAction) :Saga<Object> {
 
     if (peopleResponse.error) throw peopleResponse.error;
 
-    const peopleResponseData = fromJS(peopleResponse.data);
-    const peopleByHitEKID = getEKIDsFromNeighborResponseData(peopleResponseData);
-    const peopleByEKID = getNeighborDetailsFromNeighborResponseData(peopleResponseData);
+    const people = fromJS(peopleResponse.data);
 
     response.data = {
-      peopleByHitEKID,
-      peopleByEKID,
+      people
     };
 
     yield put(getInvolvedPeople.success(action.id, response.data));

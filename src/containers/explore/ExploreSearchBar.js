@@ -60,7 +60,6 @@ const MAX_HITS = 10;
 
 const ExploreSearchBar = () => {
   const dispatch = useDispatch();
-  useEffect(() => () => dispatch(clearExploreResults()), [dispatch]);
   const [searchTerm, setSearchTerm] = useInput('');
 
   const dispatchSearch = (start = 0) => {

@@ -24,6 +24,7 @@ import {
   DATETIME_REPORTED_FQN,
   DATETIME_START_FQN,
   OL_ID_FQN,
+  ROLE_FQN,
   STATUS_FQN,
   TYPE_FQN,
 } from '../../edm/DataModelFqns';
@@ -40,13 +41,7 @@ type Props = {
 
 const PoliceCADResult = ({ result } :Props) => {
   const entityKeyId = getEntityKeyId(result);
-  const people = useSelector((store) => {
-    const peopleByHitEKID = store.getIn([
-      'explore', POLICE_CAD_FQN, 'peopleByHitEKID', entityKeyId
-    ], List());
-    return peopleByHitEKID
-      .map((peopleEKID) => store.getIn(['explore', POLICE_CAD_FQN, 'peopleByEKID', peopleEKID]));
-  });
+  const people = useSelector((store) => store.getIn(['explore', POLICE_CAD_FQN, 'people', entityKeyId], List()));
 
   const category = getIn(result, [CATEGORY_FQN, 0]) || '---';
   const end = getIn(result, [DATETIME_END_FQN, 0]);
@@ -71,8 +66,11 @@ const PoliceCADResult = ({ result } :Props) => {
           <Typography component="span">Attached to: </Typography>
           <div>
             { people.map((person) => {
-              const id = getEntityKeyId(person);
-              return <PersonLink key={id} person={person} />;
+              const personDetails = person.get('neighborDetails');
+              const assocDetails = person.get('associationDetails');
+              const assocId = getEntityKeyId(assocDetails);
+              const role = assocDetails.getIn([ROLE_FQN, 0]);
+              return <PersonLink key={assocId} person={personDetails} role={role} />;
             })}
           </div>
         </DetailWrapper>
