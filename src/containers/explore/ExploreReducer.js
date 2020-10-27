@@ -7,6 +7,7 @@ import { RequestStates } from 'redux-reqseq';
 
 import {
   CLEAR_EXPLORE_RESULTS,
+  exploreCitations,
   exploreContactInformation,
   exploreFile,
   exploreIdentifyingCharacteristics,
@@ -14,6 +15,7 @@ import {
   exploreLocation,
   explorePeople,
   explorePhysicalAppearances,
+  explorePoliceCAD,
   getIncludedPeople,
   getInvolvedPeople,
 } from './ExploreActions';
@@ -22,6 +24,7 @@ import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { getPeoplePhotos, getRecentIncidents } from '../people/PeopleActions';
 
 const {
+  CITATION_FQN,
   CONTACT_INFORMATION_FQN,
   FILE_FQN,
   IDENTIFYING_CHARACTERISTICS_FQN,
@@ -29,6 +32,7 @@ const {
   LOCATION_FQN,
   PEOPLE_FQN,
   PHYSICAL_APPEARANCE_FQN,
+  POLICE_CAD_FQN,
 } = APP_TYPES_FQNS;
 
 const EXPLORE_EDGE_TO_PEOPLE_STATE = {
@@ -52,12 +56,14 @@ const INITIAL_STATE :Map = fromJS({
     searchTerm: '',
     totalHits: 0,
   },
-  [FILE_FQN]: EXPLORE_EDGE_TO_PEOPLE_STATE,
-  [INCIDENT_FQN]: EXPLORE_EDGE_TO_PEOPLE_STATE,
-  [PHYSICAL_APPEARANCE_FQN]: EXPLORE_EDGE_TO_PEOPLE_STATE,
-  [IDENTIFYING_CHARACTERISTICS_FQN]: EXPLORE_EDGE_TO_PEOPLE_STATE,
+  [CITATION_FQN]: EXPLORE_EDGE_TO_PEOPLE_STATE,
   [CONTACT_INFORMATION_FQN]: EXPLORE_EDGE_TO_PEOPLE_STATE,
+  [FILE_FQN]: EXPLORE_EDGE_TO_PEOPLE_STATE,
+  [IDENTIFYING_CHARACTERISTICS_FQN]: EXPLORE_EDGE_TO_PEOPLE_STATE,
+  [INCIDENT_FQN]: EXPLORE_EDGE_TO_PEOPLE_STATE,
   [LOCATION_FQN]: EXPLORE_EDGE_TO_PEOPLE_STATE,
+  [PHYSICAL_APPEARANCE_FQN]: EXPLORE_EDGE_TO_PEOPLE_STATE,
+  [POLICE_CAD_FQN]: EXPLORE_EDGE_TO_PEOPLE_STATE,
 });
 
 export default function exploreReducer(state :Map = INITIAL_STATE, action :Object) {
@@ -145,6 +151,30 @@ export default function exploreReducer(state :Map = INITIAL_STATE, action :Objec
           .setIn([CONTACT_INFORMATION_FQN, 'fetchState'], RequestStates.SUCCESS)
           .mergeIn([CONTACT_INFORMATION_FQN], action.value),
         FAILURE: () => state.setIn([CONTACT_INFORMATION_FQN, 'fetchState'], RequestStates.FAILURE)
+      });
+    }
+
+    case explorePoliceCAD.case(action.type): {
+      return explorePoliceCAD.reducer(state, action, {
+        REQUEST: () => state
+          .setIn([POLICE_CAD_FQN, 'fetchState'], RequestStates.PENDING)
+          .mergeIn([POLICE_CAD_FQN], action.value),
+        SUCCESS: () => state
+          .setIn([POLICE_CAD_FQN, 'fetchState'], RequestStates.SUCCESS)
+          .mergeIn([POLICE_CAD_FQN], action.value),
+        FAILURE: () => state.setIn([POLICE_CAD_FQN, 'fetchState'], RequestStates.FAILURE)
+      });
+    }
+
+    case exploreCitations.case(action.type): {
+      return exploreCitations.reducer(state, action, {
+        REQUEST: () => state
+          .setIn([CITATION_FQN, 'fetchState'], RequestStates.PENDING)
+          .mergeIn([CITATION_FQN], action.value),
+        SUCCESS: () => state
+          .setIn([CITATION_FQN, 'fetchState'], RequestStates.SUCCESS)
+          .mergeIn([CITATION_FQN], action.value),
+        FAILURE: () => state.setIn([CITATION_FQN, 'fetchState'], RequestStates.FAILURE)
       });
     }
 

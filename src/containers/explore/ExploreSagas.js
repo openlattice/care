@@ -4,6 +4,7 @@
 
 import isPlainObject from 'lodash/isPlainObject';
 import {
+  all,
   call,
   put,
   select,
@@ -24,6 +25,7 @@ import type { WorkerResponse } from 'lattice-sagas';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
+  EXPLORE_CITATIONS,
   EXPLORE_CONTACT_INFORMATION,
   EXPLORE_FILE,
   EXPLORE_IDENTIFYING_CHARACTERISTICS,
@@ -31,9 +33,11 @@ import {
   EXPLORE_LOCATION,
   EXPLORE_PEOPLE,
   EXPLORE_PHYSICAL_APPEARANCES,
+  EXPLORE_POLICE_CAD,
   GET_INCLUDED_PEOPLE,
   GET_INVOLVED_PEOPLE,
   GET_OBSERVED_IN_PEOPLE,
+  exploreCitations,
   exploreContactInformation,
   exploreFile,
   exploreIdentifyingCharacteristics,
@@ -41,6 +45,7 @@ import {
   exploreLocation,
   explorePeople,
   explorePhysicalAppearances,
+  explorePoliceCAD,
   getIncludedPeople,
   getInvolvedPeople,
   getObservedInPeople,
@@ -59,8 +64,10 @@ import { getPeoplePhotos, getRecentIncidents } from '../people/PeopleActions';
 const { isValidUUID } = ValidationUtils;
 
 const {
+  CITATION_FQN,
   CONTACTED_VIA_FQN,
   CONTACT_INFORMATION_FQN,
+  EMPLOYEE_FQN,
   FILE_FQN,
   IDENTIFYING_CHARACTERISTICS_FQN,
   INCIDENT_FQN,
@@ -71,6 +78,7 @@ const {
   OBSERVED_IN_FQN,
   PEOPLE_FQN,
   PHYSICAL_APPEARANCE_FQN,
+  POLICE_CAD_FQN,
 } = APP_TYPES_FQNS;
 
 const { OPENLATTICE_ID_FQN } = Constants;
@@ -715,4 +723,193 @@ export function* exploreLocationWorker(action :SequenceAction) :Saga<void> {
 
 export function* exploreLocationWatcher() :Saga<void> {
   yield takeEvery(EXPLORE_LOCATION, exploreLocationWorker);
+}
+
+export function* explorePoliceCADWorker(action :SequenceAction) :Saga<void> {
+  try {
+    const { value } = action;
+    if (!isPlainObject(value)) throw ERR_ACTION_VALUE_TYPE;
+    const { searchTerm, start = 0, maxHits = 20 } = value;
+    yield put(explorePoliceCAD.request(action.id, value));
+
+    const app = yield select((state) => state.get('app', Map()));
+
+    const policeCadESID = getESIDFromApp(app, POLICE_CAD_FQN);
+
+    const response :WorkerResponse = yield call(
+      searchEntitySetDataWorker,
+      searchEntitySetData({
+        entitySetIds: [policeCadESID],
+        maxHits,
+        start,
+        constraints: [{
+          constraints: [{
+            type: 'simple',
+            searchTerm,
+            fuzzy: false
+          }],
+        }],
+      })
+    );
+
+    if (response.error) throw response.error;
+    const hits = fromJS(response?.data?.hits);
+    let payload = { hits, totalHits: response?.data?.numHits };
+    const policeCadEKIDs = hits.map((hit) => hit.getIn([OPENLATTICE_ID_FQN, 0]));
+
+    if (!policeCadEKIDs.isEmpty()) {
+      const [
+        involvedInESID,
+        peopleESID,
+      ] = getESIDsFromApp(app, [
+        INVOLVED_IN_FQN,
+        PEOPLE_FQN,
+      ]);
+
+      const peopleResponse = yield call(
+        searchEntityNeighborsWithFilterWorker,
+        searchEntityNeighborsWithFilter({
+          entitySetId: policeCadESID,
+          filter: {
+            entityKeyIds: policeCadEKIDs.toJS(),
+            edgeEntitySetIds: [involvedInESID],
+            destinationEntitySetIds: [],
+            sourceEntitySetIds: [peopleESID],
+          },
+        })
+      );
+
+      if (peopleResponse.error) throw peopleResponse.error;
+      const peopleResponseData = fromJS(peopleResponse.data);
+      const peopleByHitEKID = getEKIDsFromNeighborResponseData(peopleResponseData);
+      const peopleByEKID = getNeighborDetailsFromNeighborResponseData(peopleResponseData);
+      payload = Object.assign(payload, {
+        peopleByHitEKID,
+        peopleByEKID,
+      });
+    }
+
+    yield put(explorePoliceCAD.success(action.id, payload));
+  }
+  catch (error) {
+    LOG.error(action.type, error);
+    yield put(explorePoliceCAD.failure(action.id));
+  }
+  finally {
+    yield put(explorePoliceCAD.finally(action.id));
+
+  }
+}
+
+export function* explorePoliceCADWatcher() :Saga<void> {
+  yield takeEvery(EXPLORE_POLICE_CAD, explorePoliceCADWorker);
+}
+
+export function* exploreCitationsWorker(action :SequenceAction) :Saga<void> {
+  try {
+    const { value } = action;
+    if (!isPlainObject(value)) throw ERR_ACTION_VALUE_TYPE;
+    const { searchTerm, start = 0, maxHits = 20 } = value;
+    yield put(exploreCitations.request(action.id, value));
+
+    const app = yield select((state) => state.get('app', Map()));
+
+    const citationsESID = getESIDFromApp(app, CITATION_FQN);
+
+    const response :WorkerResponse = yield call(
+      searchEntitySetDataWorker,
+      searchEntitySetData({
+        entitySetIds: [citationsESID],
+        maxHits,
+        start,
+        constraints: [{
+          constraints: [{
+            type: 'simple',
+            searchTerm,
+            fuzzy: false
+          }],
+        }],
+      })
+    );
+
+    if (response.error) throw response.error;
+    const hits = fromJS(response?.data?.hits);
+    let payload = { hits, totalHits: response?.data?.numHits };
+    const citationEKIDS = hits.map((hit) => hit.getIn([OPENLATTICE_ID_FQN, 0]));
+
+    if (!citationEKIDS.isEmpty()) {
+      const [
+        employeeESID,
+        involvedInESID,
+        peopleESID,
+      ] = getESIDsFromApp(app, [
+        EMPLOYEE_FQN,
+        INVOLVED_IN_FQN,
+        PEOPLE_FQN,
+      ]);
+
+      const employeeRequest = call(
+        searchEntityNeighborsWithFilterWorker,
+        searchEntityNeighborsWithFilter({
+          entitySetId: citationsESID,
+          filter: {
+            entityKeyIds: citationEKIDS.toJS(),
+            edgeEntitySetIds: [involvedInESID],
+            destinationEntitySetIds: [],
+            sourceEntitySetIds: [employeeESID],
+          },
+        })
+      );
+
+      const peopleRequest = yield call(
+        searchEntityNeighborsWithFilterWorker,
+        searchEntityNeighborsWithFilter({
+          entitySetId: citationsESID,
+          filter: {
+            entityKeyIds: citationEKIDS.toJS(),
+            edgeEntitySetIds: [involvedInESID],
+            destinationEntitySetIds: [],
+            sourceEntitySetIds: [peopleESID],
+          },
+        })
+      );
+
+      const [employeeResponse, peopleResponse] = yield all([
+        employeeRequest,
+        peopleRequest,
+      ]);
+
+      if (employeeResponse.error) throw employeeResponse.error;
+      const employeeResponseData = fromJS(employeeResponse.data);
+      const employeesByHitEKID = getEKIDsFromNeighborResponseData(employeeResponseData);
+      const employeesByEKID = getNeighborDetailsFromNeighborResponseData(employeeResponseData);
+      payload = Object.assign(payload, {
+        employeesByHitEKID,
+        employeesByEKID,
+      });
+
+      if (peopleResponse.error) throw peopleResponse.error;
+      const peopleResponseData = fromJS(peopleResponse.data);
+      const peopleByHitEKID = getEKIDsFromNeighborResponseData(peopleResponseData);
+      const peopleByEKID = getNeighborDetailsFromNeighborResponseData(peopleResponseData);
+      payload = Object.assign(payload, {
+        peopleByHitEKID,
+        peopleByEKID,
+      });
+    }
+
+    yield put(exploreCitations.success(action.id, payload));
+  }
+  catch (error) {
+    LOG.error(action.type, error);
+    yield put(exploreCitations.failure(action.id));
+  }
+  finally {
+    yield put(exploreCitations.finally(action.id));
+
+  }
+}
+
+export function* exploreCitationsWatcher() :Saga<void> {
+  yield takeEvery(EXPLORE_CITATIONS, exploreCitationsWorker);
 }
