@@ -5,12 +5,13 @@ import { List } from 'immutable';
 import {
   PaginationToolbar,
   SearchResults,
+  Spinner,
 } from 'lattice-ui-kit';
 import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
 import { explorePeople } from './ExploreActions';
-import { ExploreResultsWrapper } from './styled';
+import { ExploreResultsWrapper, NoResults } from './styled';
 
 import Accordion from '../../components/accordion';
 import PersonResult from '../people/PersonResult';
@@ -79,17 +80,18 @@ const ExplorePeopleResults = () => {
     modalDispatch({ type: 'close' });
   };
 
-  const caption = isLoading ? '' : `(${totalHits} results)`;
+  const caption = isLoading ? <Spinner /> : `(${totalHits} results)`;
 
   if (hasSearched) {
     return (
       <div>
         <Accordion>
-          <div caption={caption} headline="People" defaultOpen>
+          <div caption={caption} headline="People" defaultOpen={false}>
             <ExploreResultsWrapper>
               <SearchResults
                   hasSearched={hasSearched}
                   isLoading={isLoading}
+                  noResults={NoResults}
                   onResultClick={handleOpenReportSelection}
                   resultComponent={PersonResult}
                   results={searchResults} />

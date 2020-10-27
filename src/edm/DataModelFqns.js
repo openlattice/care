@@ -5,6 +5,8 @@ const { OPENLATTICE_ID_FQN } = Constants;
 
 export { OPENLATTICE_ID_FQN };
 
+export const EMPLOYEE_ID_FQN = FQN.of('publicsafety.employeeid');
+export const DATETIME_REPORTED_FQN = FQN.of('ol.datetime_reported');
 export const VARIABLE_FQN = FQN.of('ol.variable');
 export const JSON_SCHEMA_FQN = FQN.of('ol.jsonschema');
 
@@ -93,8 +95,10 @@ export {
 const DATETIME_START_FQN = FQN.of('ol.datetimestart');
 const DATETIME_END_FQN = FQN.of('ol.datetimeend');
 const CRIMINALJUSTICE_CASE_NUMBER_FQN = FQN.of('criminaljustice.casenumber');
+const CRIMINALJUSTICE_REPORT_NUMBER_FQN = FQN.of('criminaljustice.reportnumber');
 export {
   CRIMINALJUSTICE_CASE_NUMBER_FQN,
+  CRIMINALJUSTICE_REPORT_NUMBER_FQN,
   DATETIME_END_FQN,
   DATETIME_START_FQN,
 };

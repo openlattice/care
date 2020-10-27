@@ -21,6 +21,8 @@ import {
   CRIMINALJUSTICE_CASE_NUMBER_FQN,
   DATETIME_START_FQN,
   DESCRIPTION_FQN,
+  OL_ID_FQN,
+  TYPE_FQN,
 } from '../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { getEntityKeyId } from '../../utils/DataUtils';
@@ -40,15 +42,17 @@ const IncidentResult = ({ result } :Props) => {
     return peopleByHitEKID.map((peopleEKID) => store.getIn(['explore', INCIDENT_FQN, 'peopleByEKID', peopleEKID]));
   });
   const caseNumber = getIn(result, [CRIMINALJUSTICE_CASE_NUMBER_FQN, 0]);
+  const sorId = getIn(result, [OL_ID_FQN, 0]);
   const datetime = getIn(result, [DATETIME_START_FQN, 0]);
   const date = formatAsDate(datetime);
-  const description = getIn(result, [DESCRIPTION_FQN, 0]);
+  const description = getIn(result, [DESCRIPTION_FQN, 0]) || '---';
+  const type = getIn(result, [TYPE_FQN, 0]) || '---';
 
   return (
     <Card>
       <CardSegment padding="sm">
         <WordBreak>
-          <Typography variant="h5" component="h3">{`#${caseNumber}`}</Typography>
+          <Typography variant="h5" component="h3">{`${caseNumber || sorId}`}</Typography>
           <Typography variant="caption" color="textSecondary">{date}</Typography>
         </WordBreak>
         <DetailWrapper>
@@ -59,6 +63,10 @@ const IncidentResult = ({ result } :Props) => {
               return <PersonLink key={id} person={person} />;
             })}
           </div>
+        </DetailWrapper>
+        <DetailWrapper>
+          <Typography component="span">Type: </Typography>
+          <Typography>{type}</Typography>
         </DetailWrapper>
         <DetailWrapper>
           <Typography component="span">Description: </Typography>

@@ -288,7 +288,10 @@ const getEKIDsFromEntryValues = (neighborMap :Map) => neighborMap
 //   <entityKeyId>: List([<neighborEntityKeyId>])
 // })
 const getEKIDsFromNeighborResponseData = (neighborResponseData) => neighborResponseData
-  .map((neighbors) => neighbors.map((neighbor) => getEntityKeyId(neighbor.get('neighborDetails'))));
+  .map((neighbors) => neighbors
+    .map((neighbor) => getEntityKeyId(neighbor.get('neighborDetails')))
+    .toSet()
+    .toList());
 
 // returns a flat map of all neighboring entity of a filtered neighbor search keyed by the neighboring entity key id
 // Map({

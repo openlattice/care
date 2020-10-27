@@ -14,6 +14,7 @@ import { useDispatch } from 'react-redux';
 
 import {
   clearExploreResults,
+  exploreCitations,
   exploreContactInformation,
   exploreFile,
   exploreIdentifyingCharacteristics,
@@ -21,6 +22,7 @@ import {
   exploreLocation,
   explorePeople,
   explorePhysicalAppearances,
+  explorePoliceCAD,
 } from './ExploreActions';
 
 import { useInput } from '../../components/hooks';
@@ -69,6 +71,7 @@ const ExploreSearchBar = () => {
         maxHits: MAX_HITS
       };
 
+      dispatch(exploreCitations(payload));
       dispatch(exploreContactInformation(payload));
       dispatch(exploreFile(payload));
       dispatch(exploreIdentifyingCharacteristics(payload));
@@ -76,6 +79,7 @@ const ExploreSearchBar = () => {
       dispatch(exploreLocation(payload));
       dispatch(explorePeople(payload));
       dispatch(explorePhysicalAppearances(payload));
+      dispatch(explorePoliceCAD(payload));
     }
   };
 
