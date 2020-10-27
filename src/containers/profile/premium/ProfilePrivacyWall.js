@@ -7,7 +7,6 @@ import { getIn } from 'immutable';
 import { Button, IconSplash } from 'lattice-ui-kit';
 import { useSelector } from 'react-redux';
 
-import NoReportsFiled from './styled/NoReportsFiled';
 import { AbsoluteCenter } from './styled/layout';
 
 import VisibilityTypes from '../edit/visibility/VisibilityTypes';
@@ -25,7 +24,6 @@ type Props = {
 
 const ProfilePrivacyWall = ({
   component,
-  hasReports,
   isAuthorized,
   isLoading,
   meetsThreshold,
@@ -39,10 +37,7 @@ const ProfilePrivacyWall = ({
 
   if (!isLoading) {
     if (visibilityStatus === VisibilityTypes.AUTO || !visibilityStatus) {
-      if (!hasReports) {
-        child = <NoReportsFiled />;
-      }
-      else if (!meetsThreshold && !show) {
+      if (!meetsThreshold && !show) {
         const splashCaption = 'Profile does not meet reporting threshold.';
         child = (
           <AbsoluteCenter>
@@ -52,11 +47,6 @@ const ProfilePrivacyWall = ({
             }
           </AbsoluteCenter>
         );
-      }
-    }
-    if (visibilityStatus === VisibilityTypes.PUBLIC) {
-      if (!hasReports) {
-        child = <NoReportsFiled />;
       }
     }
     if (visibilityStatus === VisibilityTypes.PRIVATE && !show) {

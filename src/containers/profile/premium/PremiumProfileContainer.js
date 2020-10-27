@@ -28,6 +28,7 @@ import CovidBanner from './CovidBanner';
 import FilesPanel from './FilesPanel';
 import HistoryBody from './HistoryBody';
 import NewResponsePlanCard from './NewResponsePlanCard';
+import NoReportsFiled from './styled/NoReportsFiled';
 import PortraitCard from './PortraitCard';
 import ProfileActionGroup from './ProfileActionGroup';
 import ProfilePrivacyWall from './ProfilePrivacyWall';
@@ -264,6 +265,10 @@ const PremiumProfileContainer = (props :Props) => {
     </>
   );
 
+  if (!numReportsFoundIn) {
+    body = <NoReportsFiled />;
+  }
+
   if (tab === 'history') {
     body = (
       <HistoryBody
@@ -334,7 +339,6 @@ const PremiumProfileContainer = (props :Props) => {
             </ActionBar>
             <ProfilePrivacyWall
                 component={body}
-                hasReports={numReportsFoundIn}
                 isAuthorized={isAuthorized}
                 isLoading={isLoadingBody}
                 meetsThreshold={meetsReportThreshold}

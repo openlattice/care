@@ -39,10 +39,6 @@ const HistoryBody = (props :Props) => {
   const recent = crisisSummary.get('recent');
   const total = crisisSummary.get('total');
 
-  if (!reports.count() && !isLoading) {
-    return <NoReportsFiled />;
-  }
-
   return (
     <>
       <CrisisCountCard
