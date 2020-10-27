@@ -8,6 +8,8 @@ import { RequestStates } from 'redux-reqseq';
 import { getProfileCitations } from '../ProfileActions';
 
 const INITIAL_STATE :Map = fromJS({
+  employeesByEKID: Map(),
+  employeesByHitEKID: Map(),
   fetchState: RequestStates.STANDBY,
   hits: List(),
   people: Map(),
