@@ -3,7 +3,9 @@ import React from 'react';
 
 import { List, Map } from 'immutable';
 
-import NoReportsFiled from './styled/NoReportsFiled';
+import CADRecordResult from './CADRecordResult';
+import CitationResult from './CitationResult';
+import RecordsCard from './RecordsCard';
 import ReportHistory from './ReportHistory';
 import ReportsSummary from './ReportsSummary';
 
@@ -39,10 +41,6 @@ const HistoryBody = (props :Props) => {
   const recent = crisisSummary.get('recent');
   const total = crisisSummary.get('total');
 
-  if (!reports.count() && !isLoading) {
-    return <NoReportsFiled />;
-  }
-
   return (
     <>
       <CrisisCountCard
@@ -56,6 +54,14 @@ const HistoryBody = (props :Props) => {
           behaviorSummary={behaviorSummary}
           isLoading={isLoading} />
       <ReportHistory isLoading={isLoading} results={reports} />
+      <RecordsCard
+          storePath={['profile', 'policeCAD']}
+          resultComponent={CADRecordResult}
+          title="CAD Records" />
+      <RecordsCard
+          storePath={['profile', 'citations']}
+          resultComponent={CitationResult}
+          title="Citations" />
       <StayAwayCard stayAwayLocation={stayAwayLocation} isLoading={isLoading} />
       <ProbationCard probation={probation} isLoading={isLoading} />
       <WarrantCard warrant={warrant} isLoading={isLoading} />

@@ -27,10 +27,11 @@ import ContactPanel from './ContactPanel';
 import CovidBanner from './CovidBanner';
 import FilesPanel from './FilesPanel';
 import HistoryBody from './HistoryBody';
-import NewResponsePlanCard from './NewResponsePlanCard';
+import NoReportsFiled from './styled/NoReportsFiled';
 import PortraitCard from './PortraitCard';
 import ProfileActionGroup from './ProfileActionGroup';
 import ProfilePrivacyWall from './ProfilePrivacyWall';
+import ResponsePlanCard from './ResponsePlanCard';
 import { meetsCrisisProfileReportThreshold } from './Utils';
 
 import ContactCarousel from '../../../components/premium/contacts/ContactCarousel';
@@ -50,7 +51,7 @@ import { getEntityKeyId } from '../../../utils/DataUtils';
 import { getFirstLastFromPerson } from '../../../utils/PersonUtils';
 import { reduceRequestStates } from '../../../utils/StateUtils';
 import { getAllSymptomsReports } from '../../reports/symptoms/SymptomsReportActions';
-import { getProfileReports } from '../ProfileActions';
+import { getProfileCitations, getProfilePoliceCAD, getProfileReports } from '../ProfileActions';
 import { getIncidentReportsSummary } from '../actions/ReportActions';
 import { getAboutPlan } from '../edit/about/AboutActions';
 import { getBasicInformation } from '../edit/basicinformation/actions/BasicInformationActions';
@@ -139,7 +140,9 @@ type Props = {
     getIncidentReportsSummary :RequestSequence;
     getLBProfile :RequestSequence;
     getOfficerSafety :RequestSequence;
+    getProfileCitations :RequestSequence;
     getProfileDocuments :RequestSequence;
+    getProfilePoliceCAD :RequestSequence;
     getProfileReports :RequestSequence;
     getProfileVisibility :RequestSequence;
     getResponsePlan :RequestSequence;
@@ -220,14 +223,16 @@ const PremiumProfileContainer = (props :Props) => {
   const reportAction = settings.get('v2') ? actions.getIncidentReportsSummary : actions.getProfileReports;
 
   usePeopleRoute(actions.getAboutPlan);
+  usePeopleRoute(actions.getAllSymptomsReports);
   usePeopleRoute(actions.getBasicInformation);
   usePeopleRoute(actions.getEmergencyContacts);
-  usePeopleRoute(actions.getOfficerSafety);
-  usePeopleRoute(actions.getResponsePlan);
   usePeopleRoute(actions.getLBProfile);
-  usePeopleRoute(actions.getAllSymptomsReports);
-  usePeopleRoute(actions.getProfileVisibility);
+  usePeopleRoute(actions.getOfficerSafety);
+  usePeopleRoute(actions.getProfileCitations);
   usePeopleRoute(actions.getProfileDocuments);
+  usePeopleRoute(actions.getProfilePoliceCAD);
+  usePeopleRoute(actions.getProfileVisibility);
+  usePeopleRoute(actions.getResponsePlan);
   usePeopleRoute(reportAction);
 
   const [tab, setTab] = useState('response');
@@ -251,7 +256,7 @@ const PremiumProfileContainer = (props :Props) => {
 
   let body = (
     <>
-      <NewResponsePlanCard
+      <ResponsePlanCard
           isLoading={isLoadingBody}
           officerSafety={officerSafety}
           triggers={triggers}
@@ -263,6 +268,10 @@ const PremiumProfileContainer = (props :Props) => {
           isContactForByContactEKID={isContactForByContactEKID} />
     </>
   );
+
+  if (!numReportsFoundIn) {
+    body = <NoReportsFiled />;
+  }
 
   if (tab === 'history') {
     body = (
@@ -334,7 +343,6 @@ const PremiumProfileContainer = (props :Props) => {
             </ActionBar>
             <ProfilePrivacyWall
                 component={body}
-                hasReports={numReportsFoundIn}
                 isAuthorized={isAuthorized}
                 isLoading={isLoadingBody}
                 meetsThreshold={meetsReportThreshold}
@@ -406,7 +414,9 @@ const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
     getIncidentReportsSummary,
     getLBProfile,
     getOfficerSafety,
+    getProfileCitations,
     getProfileDocuments,
+    getProfilePoliceCAD,
     getProfileReports,
     getProfileVisibility,
     getResponsePlan,
