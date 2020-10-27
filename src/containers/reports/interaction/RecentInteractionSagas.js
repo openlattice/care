@@ -113,7 +113,7 @@ function* getRecentInteractionsWorker(action :SequenceAction) :Generator<any, an
     yield put(getRecentInteractions.failure(action.id, error));
   }
   finally {
-    yield put(getRecentInteractions(action.id));
+    yield put(getRecentInteractions.finally(action.id));
   }
   return response;
 }
@@ -182,7 +182,7 @@ function* submitRecentInteractionWorker(action :SequenceAction) :Generator<any, 
     yield put(submitRecentInteraction.failure(action.id, error));
   }
   finally {
-    yield put(submitRecentInteraction(action.id));
+    yield put(submitRecentInteraction.finally(action.id));
   }
   return response;
 }
