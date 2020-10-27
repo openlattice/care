@@ -49,7 +49,7 @@ const CrisisCountCard = ({ count, isLoading } :Props) => (
             ? <Skeleton width="50%" height={36} />
             : (
               <StrongWithSubtitle>
-                {`${count} CRISIS CALLS`}
+                {`${count} INCIDENTS`}
               </StrongWithSubtitle>
             )
         }
