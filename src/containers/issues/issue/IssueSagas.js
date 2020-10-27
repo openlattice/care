@@ -94,6 +94,9 @@ function* submitIssueWorker(action :SequenceAction) :Generator<any, any, any> {
     LOG.error(action.type, error);
     yield put(submitIssue.failure(action.id));
   }
+  finally {
+    yield put(submitIssue.finally(action.id));
+  }
 }
 
 function* submitIssueWatcher() :Generator<any, any, any> {
@@ -178,6 +181,9 @@ function* updateIssueWorker(action :SequenceAction) :Generator<any, any, any> {
     LOG.error(action.type, error);
     yield put(updateIssue.failure(action.id));
   }
+  finally {
+    yield put(updateIssue.finally(action.id));
+  }
 }
 
 function* updateIssueWatcher() :Generator<any, any, any> {
@@ -260,6 +266,9 @@ function* selectIssueWorker(action :SequenceAction) :Generator<any, any, any> {
     LOG.error(action.type, error);
     yield put(selectIssue.failure(action.id));
   }
+  finally {
+    yield put(selectIssue.finally(action.id));
+  }
 }
 
 function* selectIssueWatcher() :Generator<any, any, any> {
@@ -309,6 +318,9 @@ function* setIssueStatusWorker(action :SequenceAction) :Generator<any, any, any>
   catch (error) {
     LOG.error(action.type, error);
     yield put(setIssueStatus.failure(action.id, error));
+  }
+  finally {
+    yield put(setIssueStatus.finally(action.id));
   }
 }
 

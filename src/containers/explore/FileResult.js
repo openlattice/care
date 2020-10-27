@@ -21,6 +21,7 @@ import { DateTimeUtils } from 'lattice-utils';
 import { useSelector } from 'react-redux';
 
 import PersonLink from './styled/PersonLink';
+import { WordBreak } from './styled';
 
 import {
   DATETIME_FQN,
@@ -41,11 +42,6 @@ const HeaderRow = styled.div`
   align-items: flex-start;
 `;
 
-const MinWidth = styled.div`
-  word-break: break-all;
-  min-width: 0;
-`;
-
 const AttachedWrapper = styled.div`
   display: flex;
   align-items: flex-start;
@@ -62,8 +58,8 @@ type Props = {
 const FileResult = ({ result } :Props) => {
   const entityKeyId = getEntityKeyId(result);
   const people = useSelector((store) => {
-    const peopleByFileEKID = store.getIn(['explore', FILE_FQN, 'peopleByFileEKID', entityKeyId], List());
-    return peopleByFileEKID.map((peopleEKID) => store.getIn(['explore', FILE_FQN, 'peopleByEKID', peopleEKID]));
+    const peopleByHitEKID = store.getIn(['explore', FILE_FQN, 'peopleByHitEKID', entityKeyId], List());
+    return peopleByHitEKID.map((peopleEKID) => store.getIn(['explore', FILE_FQN, 'peopleByEKID', peopleEKID]));
   });
   const fileData = getIn(result, [FILE_DATA_FQN, 0]);
   const name = getIn(result, [NAME_FQN, 0]);
@@ -75,10 +71,10 @@ const FileResult = ({ result } :Props) => {
     <Card>
       <CardSegment padding="sm">
         <HeaderRow>
-          <MinWidth>
+          <WordBreak>
             <Typography variant="h5" component="h3">{name}</Typography>
             <Typography variant="caption" color="textSecondary">{date}</Typography>
-          </MinWidth>
+          </WordBreak>
           <a href={fileData} download rel="noreferrer" target="_blank">
             <IconButton>
               <FontAwesomeIcon icon={faDownload} fixedWidth />

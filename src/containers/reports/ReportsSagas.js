@@ -202,6 +202,9 @@ function* deleteReportWorker(action :SequenceAction) :Generator<*, *, *> {
     LOG.error(action.type, error);
     yield put(deleteReport.failure(action.id, error));
   }
+  finally {
+    yield put(deleteReport.finally(action.id));
+  }
 }
 
 function* deleteReportWatcher() :Generator<*, *, *> {
@@ -313,6 +316,9 @@ function* getReportWorker(action :SequenceAction) :Generator<*, *, *> {
   catch (error) {
     LOG.error(action.type, error);
     yield put(getReport.failure(action.id, error));
+  }
+  finally {
+    yield put(getReport.finally(action.id));
   }
 }
 
@@ -528,6 +534,9 @@ function* getReportsByDateRangeV2Worker(action :SequenceAction) :Generator<*, *,
     LOG.error(action.type, error);
     yield put(getReportsByDateRangeV2.failure(action.id, error));
   }
+  finally {
+    yield put(getReportsByDateRangeV2.finally(action.id));
+  }
 }
 
 function* getReportsByDateRangeV2Watcher() :Generator<*, *, *> {
@@ -711,6 +720,9 @@ function* getReportsByDateRangeWorker(action :SequenceAction) :Generator<*, *, *
     LOG.error(action.type, error);
     yield put(getReportsByDateRange.failure(action.id, error));
   }
+  finally {
+    yield put(getReportsByDateRange.finally(action.id));
+  }
 }
 
 function* getReportsByDateRangeWatcher() :Generator<*, *, *> {
@@ -823,6 +835,9 @@ function* updateReportWorker(action :SequenceAction) :Generator<*, *, *> {
     LOG.error(action.type, error);
     yield put(updateReport.failure(action.id, error));
   }
+  finally {
+    yield put(updateReport.finally(action.id));
+  }
 }
 
 function* updateReportWatcher() :Generator<*, *, *> {
@@ -908,6 +923,9 @@ function* submitReportWorker(action :SequenceAction) :Generator<*, *, *> {
     LOG.error(action.type, error);
     yield put(submitReport.failure(action.id, error));
   }
+  finally {
+    yield put(submitReport.finally(action.id));
+  }
 }
 
 function* submitReportWatcher() :Generator<*, *, *> {
@@ -968,6 +986,9 @@ function* getProfileIncidentsWorker(action :SequenceAction) :Generator<any, any,
     LOG.error(action.type, error);
     yield put(getProfileIncidents.failure(action.id, error));
   }
+  finally {
+    yield put(getProfileIncidents.finally(action.id));
+  }
   return response;
 }
 
@@ -1024,6 +1045,9 @@ function* getIncidentReportsWorker(action :SequenceAction) :Generator<any, any, 
     response.error = error;
     LOG.error(action.type, error);
     yield put(getIncidentReports.failure(action.id), error);
+  }
+  finally {
+    yield put(getIncidentReports.finally(action.id));
   }
   return response;
 }
@@ -1085,6 +1109,9 @@ function* getReportsBehaviorAndSafetyWorker(action :SequenceAction) :Generator<a
     LOG.error(action.type, error);
     yield put(getReportsBehaviorAndSafety.failure(action.id, error));
   }
+  finally {
+    yield put(getReportsBehaviorAndSafety.finally(action.id));
+  }
   return response;
 }
 
@@ -1128,6 +1155,9 @@ function* getReportersForReportsWorker(action :SequenceAction) :Generator<any, a
     response.error = error;
     LOG.error(action.type, error);
     yield getReportersForReports.failure(action.id, error);
+  }
+  finally {
+    yield put(getReportersForReports.finally(action.id));
   }
   return response;
 }
@@ -1249,6 +1279,9 @@ function* getIncidentReportsSummaryWorker(action :SequenceAction) :Generator<any
     response.error = error;
     LOG.error(action.type, error);
     yield put(getIncidentReportsSummary.failure(action.id));
+  }
+  finally {
+    yield put(getIncidentReportsSummary.finally(action.id));
   }
   return response;
 }

@@ -36,7 +36,10 @@ function* getAuthorizationWorker(action :SequenceAction) :Generator<any, any, an
   }
   catch (error) {
     LOG.error(action.type, error);
-    yield put(getAuthorization.failure(action.id));
+    yield put(getAuthorization.failure(action.id, error));
+  }
+  finally {
+    yield put(getAuthorization.finally(action.id));
   }
   return response;
 }

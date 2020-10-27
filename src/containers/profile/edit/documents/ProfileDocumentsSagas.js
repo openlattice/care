@@ -80,6 +80,9 @@ function* getProfileDocumentsWorker(action :SequenceAction) :Generator<any, any,
     LOG.error(action.type, error);
     yield put(getProfileDocuments.failure(action.id));
   }
+  finally {
+    yield put(getProfileDocuments.finally(action.id));
+  }
   return response;
 }
 

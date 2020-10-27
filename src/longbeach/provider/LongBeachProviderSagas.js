@@ -68,6 +68,9 @@ function* getLBProvidersWorker(action :SequenceAction) :Generator<any, any, any>
     LOG.error(action.type, error);
     yield put(getLBProviders.failure(action.id));
   }
+  finally {
+    yield put(getLBProviders.finally(action.id));
+  }
 
   return response;
 }

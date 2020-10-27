@@ -1,6 +1,7 @@
 // @flow
 import React from 'react';
 
+import styled from 'styled-components';
 import {
   List,
   Map,
@@ -11,50 +12,54 @@ import {
   CardSegment,
   Typography,
 } from 'lattice-ui-kit';
-import { DateTimeUtils } from 'lattice-utils';
 import { useSelector } from 'react-redux';
 
 import PersonLink from './styled/PersonLink';
-import { DetailWrapper, WordBreak } from './styled';
 
+import PhoneLink from '../../components/links/PhoneLink';
 import {
-  CRIMINALJUSTICE_CASE_NUMBER_FQN,
-  DATETIME_START_FQN,
+  CONTACT_PHONE_NUMBER_FQN,
   DESCRIPTION_FQN,
-  OL_ID_FQN,
+  EXTENTION_FQN,
   TYPE_FQN,
 } from '../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { getEntityKeyId } from '../../utils/DataUtils';
 
-const { INCIDENT_FQN } = APP_TYPES_FQNS;
+const { CONTACT_INFORMATION_FQN } = APP_TYPES_FQNS;
 
-const { formatAsDate } = DateTimeUtils;
+const DetailWrapper = styled.div`
+  display: flex;
+  align-items: flex-start;
+
+  > span {
+    min-width: 100px;
+  }
+`;
 
 type Props = {
   result :Map;
 };
 
-const IncidentResult = ({ result } :Props) => {
+const ContactInformationResult = ({ result } :Props) => {
   const entityKeyId = getEntityKeyId(result);
   const people = useSelector((store) => {
-    const peopleByHitEKID = store.getIn(['explore', INCIDENT_FQN, 'peopleByHitEKID', entityKeyId], List());
-    return peopleByHitEKID.map((peopleEKID) => store.getIn(['explore', INCIDENT_FQN, 'peopleByEKID', peopleEKID]));
+    const peopleByHitEKID = store.getIn([
+      'explore', CONTACT_INFORMATION_FQN, 'peopleByHitEKID', entityKeyId
+    ], List());
+    return peopleByHitEKID
+      .map((peopleEKID) => store.getIn(['explore', CONTACT_INFORMATION_FQN, 'peopleByEKID', peopleEKID]));
   });
-  const caseNumber = getIn(result, [CRIMINALJUSTICE_CASE_NUMBER_FQN, 0]);
-  const sorId = getIn(result, [OL_ID_FQN, 0]);
-  const datetime = getIn(result, [DATETIME_START_FQN, 0]);
-  const date = formatAsDate(datetime);
+
   const description = getIn(result, [DESCRIPTION_FQN, 0]) || '---';
-  const type = getIn(result, [TYPE_FQN, 0]) || '---';
+  const phone = getIn(result, [CONTACT_PHONE_NUMBER_FQN, 0]);
+  const ext = getIn(result, [EXTENTION_FQN, 0]);
+  const type = getIn(result, [TYPE_FQN, 0]);
+  const typeLabel = type ? `${type}: ` : 'Telephone: ';
 
   return (
     <Card>
       <CardSegment padding="sm">
-        <WordBreak>
-          <Typography variant="h5" component="h3">{`${caseNumber || sorId}`}</Typography>
-          <Typography variant="caption" color="textSecondary">{date}</Typography>
-        </WordBreak>
         <DetailWrapper>
           <Typography component="span">Attached to: </Typography>
           <div>
@@ -65,8 +70,8 @@ const IncidentResult = ({ result } :Props) => {
           </div>
         </DetailWrapper>
         <DetailWrapper>
-          <Typography component="span">Type: </Typography>
-          <Typography>{type}</Typography>
+          <Typography component="span">{typeLabel}</Typography>
+          <PhoneLink number={phone} extension={ext} />
         </DetailWrapper>
         <DetailWrapper>
           <Typography component="span">Description: </Typography>
@@ -77,4 +82,4 @@ const IncidentResult = ({ result } :Props) => {
   );
 };
 
-export default IncidentResult;
+export default ContactInformationResult;

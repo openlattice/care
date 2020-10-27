@@ -5,13 +5,14 @@ import { List } from 'immutable';
 import {
   PaginationToolbar,
   SearchResults,
+  Spinner,
 } from 'lattice-ui-kit';
 import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
 import IncidentResult from './IncidentResult';
 import { exploreIncidents } from './ExploreActions';
-import { ExploreResultsWrapper } from './styled';
+import { ExploreResultsWrapper, NoResults } from './styled';
 
 import Accordion from '../../components/accordion';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
@@ -50,17 +51,18 @@ const ExploreIncidentResults = () => {
     setPage(newPage);
   };
 
-  const caption = isLoading ? '' : `(${totalHits} results)`;
+  const caption = isLoading ? <Spinner /> : `(${totalHits} results)`;
 
   if (hasSearched) {
     return (
       <div>
         <Accordion>
-          <div caption={caption} headline="Incidents" defaultOpen>
+          <div caption={caption} headline="Incidents" defaultOpen={false}>
             <ExploreResultsWrapper>
               <SearchResults
                   hasSearched={hasSearched}
                   isLoading={isLoading}
+                  noResults={NoResults}
                   resultComponent={IncidentResult}
                   results={searchResults} />
               <PaginationToolbar

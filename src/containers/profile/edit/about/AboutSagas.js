@@ -110,6 +110,9 @@ function* getResponsibleUserWorker(action :SequenceAction) :Generator<any, any, 
     LOG.error(action.type, error);
     yield put(getResponsibleUser.failure(action.id, error));
   }
+  finally {
+    yield put(getResponsibleUser.finally(action.id));
+  }
 
   return response;
 }
@@ -157,6 +160,9 @@ function* getAboutPlanWorker(action :SequenceAction) :Generator<any, any, any> {
   catch (error) {
     LOG.error(action.type, error);
     yield put(getAboutPlan.failure(action.id));
+  }
+  finally {
+    yield put(getAboutPlan.finally(action.id));
   }
 }
 
@@ -230,6 +236,9 @@ function* updateAboutPlanWorker(action :SequenceAction) :Generator<any, any, any
     LOG.error(action.type, error);
     yield put(updateAboutPlan.failure(action.id, error));
   }
+  finally {
+    yield put(updateAboutPlan.finally(action.id));
+  }
 }
 
 function* updateAboutPlanWatcher() :Generator<any, any, any> {
@@ -265,6 +274,9 @@ function* submitAboutPlanWorker(action :SequenceAction) :Generator<any, any, any
   catch (error) {
     LOG.error(action.type, error);
     yield put(submitAboutPlan.failure(action.id));
+  }
+  finally {
+    yield put(submitAboutPlan.finally(action.id));
   }
 }
 

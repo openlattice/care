@@ -101,6 +101,9 @@ export function* getPeoplePhotosWorker(action :SequenceAction) :Generator<*, *, 
     LOG.error(action.type, error);
     yield put(getPeoplePhotos.failure(action.id));
   }
+  finally {
+    yield put(getPeoplePhotos.finally(action.id));
+  }
 }
 
 export function* getPeoplePhotosWatcher() :Generator<*, *, *> {
@@ -175,7 +178,11 @@ export function* getRecentIncidentsWorker(action :SequenceAction) :Generator<any
     yield put(getRecentIncidents.success(action.id, recentIncidentsByEKID));
   }
   catch (error) {
+    LOG.error(action.type, error);
     yield put(getRecentIncidents.failure(action.id));
+  }
+  finally {
+    yield put(getRecentIncidents.finally(action.id));
   }
 }
 
@@ -297,6 +304,9 @@ function* searchPeopleWorker(action :SequenceAction) :Generator<*, *, *> {
     LOG.error(action.type, error);
     yield put(searchPeople.failure(action.id, error));
   }
+  finally {
+    yield put(searchPeople.finally(action.id));
+  }
 }
 
 export function* searchPeopleWatcher() :Generator<*, *, *> {
@@ -339,6 +349,9 @@ export function* submitNewPersonWorker(action :SequenceAction) :Generator<any, a
     response.error = error;
     LOG.error(action.type, error);
     yield put(submitNewPerson.failure(action.id));
+  }
+  finally {
+    yield put(submitNewPerson.finally(action.id));
   }
   return response;
 }

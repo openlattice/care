@@ -233,6 +233,9 @@ function* addOptionalCrisisReportContentWorker(action :SequenceAction) :Generato
     LOG.error(action.type, error);
     yield put(addOptionalCrisisReportContent.failure(action.id, error));
   }
+  finally {
+    yield put(addOptionalCrisisReportContent.finally(action.id));
+  }
   return response;
 }
 
@@ -355,6 +358,9 @@ function* getReportsV2NeighborsWorker(action :SequenceAction) :Generator<any, an
     LOG.error(action.type, error);
     yield put(getReportsV2Neighbors.failure(action.id, error));
   }
+  finally {
+    yield put(getReportsV2Neighbors.finally(action.id));
+  }
   return response;
 }
 
@@ -406,6 +412,9 @@ function* getSubjectOfIncidentWorker(action :SequenceAction) :Generator<any, any
     LOG.error(action.type, error);
     yield put(getSubjectOfIncident.failure(action.id, error));
   }
+  finally {
+    yield put(getSubjectOfIncident.finally(action.id));
+  }
   return response;
 }
 
@@ -456,6 +465,9 @@ function* getLocationOfIncidentWorker(action :SequenceAction) :Generator<any, an
     response.error = error;
     LOG.error(action.type, error);
     yield put(getLocationOfIncident.failure(action.id, error));
+  }
+  finally {
+    yield put(getLocationOfIncident.finally(action.id));
   }
   return response;
 }
@@ -512,6 +524,9 @@ function* getChargeEventsWorker(action :SequenceAction) :Generator<any, any, any
     response.error = error;
     LOG.error(action.type, error);
     yield put(getChargeEvents.failure(action.id, error));
+  }
+  finally {
+    yield put(getChargeEvents.finally(action.id));
   }
   return response;
 }
@@ -622,6 +637,9 @@ function* getCrisisReportV2Worker(action :SequenceAction) :Generator<any, any, a
     response.error = error;
     yield put(getCrisisReportV2.failure(action.id, error.message));
   }
+  finally {
+    yield put(getCrisisReportV2.finally(action.id));
+  }
   return response;
 }
 
@@ -665,6 +683,9 @@ function* updatePersonReportCountWorker(action :SequenceAction) :Generator<any, 
     LOG.error(action.type, error);
     response.error = error;
     yield put(updatePersonReportCount.failure(action.id));
+  }
+  finally {
+    yield put(updatePersonReportCount.finally(action.id));
   }
   return response;
 }
@@ -746,6 +767,9 @@ function* submitCrisisReportV2Worker(action :SequenceAction) :Generator<any, any
     LOG.error(action.type, error);
     yield put(submitCrisisReportV2.failure(action.id, error));
   }
+  finally {
+    yield put(submitCrisisReportV2.finally(action.id));
+  }
   return response;
 }
 
@@ -807,6 +831,9 @@ function* submitCrisisReportWorker(action :SequenceAction) :Generator<any, any, 
     response.error = error;
     LOG.error(action.type, error);
     yield put(submitCrisisReport.failure(action.id, error));
+  }
+  finally {
+    yield put(submitCrisisReport.finally(action.id));
   }
   return response;
 }
@@ -874,6 +901,9 @@ function* getReportsNeighborsWorker(action :SequenceAction) :Generator<any, any,
     response.error = error;
     LOG.error(action.type, error);
     yield put(getReportsNeighbors.failure(action.id, error));
+  }
+  finally {
+    yield put(getReportsNeighbors.finally(action.id));
   }
   return response;
 }
@@ -959,6 +989,9 @@ function* getCrisisReportWorker(action :SequenceAction) :Generator<any, any, any
     LOG.error(action.type, error);
     response.error = error;
     yield put(getCrisisReport.failure(action.id, error));
+  }
+  finally {
+    yield put(getCrisisReport.finally(action.id));
   }
   return response;
 }
@@ -1124,6 +1157,9 @@ function* updateCrisisReportWorker(action :SequenceAction) :Generator<any, any, 
     LOG.error(action.type, error);
     yield put(updateCrisisReport.failure(action.id, error));
   }
+  finally {
+    yield put(updateCrisisReport.finally(action.id));
+  }
   return response;
 }
 
@@ -1152,6 +1188,9 @@ function* deleteCrisisReportContentWorker(action :SequenceAction) :Generator<any
     response.error = error;
     LOG.error(action.type, error);
     yield put(deleteCrisisReportContent.failure(action.id, error));
+  }
+  finally {
+    yield put(deleteCrisisReportContent.finally(action.id));
   }
   return response;
 }
