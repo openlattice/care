@@ -103,6 +103,9 @@ function* submitEmergencyContactsWorker(action :SequenceAction) :Generator<*, *,
     LOG.error(action.type, error);
     yield put(submitEmergencyContacts.failure(action.id, error));
   }
+  finally {
+    yield put(submitEmergencyContacts.finally(action.id));
+  }
 }
 
 function* submitEmergencyContactsWatcher() :Generator<*, *, *> {
@@ -210,6 +213,9 @@ function* getEmergencyContactsWorker(action :SequenceAction) :Generator<*, *, *>
     response.error = error;
     yield put(getEmergencyContacts.failure(action.id, error));
   }
+  finally {
+    yield put(getEmergencyContacts.finally(action.id));
+  }
 
   return response;
 }
@@ -233,6 +239,9 @@ function* updateEmergencyContactWorker(action :SequenceAction) :Generator<*, *, 
   catch (error) {
     LOG.error(action.type, error);
     yield put(updateEmergencyContact.failure(action.id, error));
+  }
+  finally {
+    yield put(updateEmergencyContact.finally(action.id));
   }
 }
 
@@ -260,6 +269,9 @@ function* deleteEmergencyContactWorker(action :SequenceAction) :Generator<*, *, 
   catch (error) {
     LOG.error(action.type, error);
     yield put(deleteEmergencyContact.failure(action.id, error));
+  }
+  finally {
+    yield put(deleteEmergencyContact.finally(action.id));
   }
 }
 

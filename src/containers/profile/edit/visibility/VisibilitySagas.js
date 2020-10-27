@@ -97,6 +97,9 @@ function* getProfileVisibilityWorker(action :SequenceAction) :Saga<Object> {
     response.error = error;
     yield put(getProfileVisibility.failure(action.id), error);
   }
+  finally {
+    yield put(getProfileVisibility.finally(action.id));
+  }
   return response;
 }
 
@@ -184,6 +187,9 @@ function* putProfileVisibilityWorker(action :SequenceAction) :Saga<Object> {
     LOG.error(action.type, error);
     response.error = error;
     yield put(putProfileVisibility.failure(action.id, error));
+  }
+  finally {
+    yield put(putProfileVisibility.finally(action.id));
   }
   return response;
 }

@@ -118,6 +118,9 @@ function* getContactWorker(action :SequenceAction) :Generator<any, any, any> {
     LOG.error(action.type, error);
     yield put(getContact.failure(action.id, error));
   }
+  finally {
+    yield put(getContact.finally(action.id));
+  }
 
   return response;
 }
@@ -159,6 +162,9 @@ function* submitContactWorker(action :SequenceAction) :Generator<any, any, any> 
     LOG.error(action.type, error);
     yield put(submitContact.failure(action.id, error));
   }
+  finally {
+    yield put(submitContact.finally(action.id));
+  }
 }
 
 function* submitContactWatcher() :Generator<any, any, any> {
@@ -180,6 +186,9 @@ function* updateContactWorker(action :SequenceAction) :Generator<any, any, any> 
   catch (error) {
     LOG.error(action.type, error);
     yield put(updateContact.failure(action.id, error));
+  }
+  finally {
+    yield put(updateContact.finally(action.id));
   }
 }
 

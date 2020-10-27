@@ -283,15 +283,39 @@ const getEKIDsFromEntryValues = (neighborMap :Map) => neighborMap
   .valueSeq()
   .map((neighbor) => neighbor.getIn([OPENLATTICE_ID_FQN, 0]));
 
+// returns a list of neighboring entity key ids for each entity of a filtered neighbor search
+// Map({
+//   <entityKeyId>: List([<neighborEntityKeyId>])
+// })
+const getEKIDsFromNeighborResponseData = (neighborResponseData) => neighborResponseData
+  .map((neighbors) => neighbors.map((neighbor) => getEntityKeyId(neighbor.get('neighborDetails'))));
+
+// returns a flat map of all neighboring entity of a filtered neighbor search keyed by the neighboring entity key id
+// Map({
+//   <neighborEntityKeyId>: Map(<neighborDetails>)
+// })
+const getNeighborDetailsFromNeighborResponseData = (neighborResponseData) => Map()
+  .withMutations((mutable) => {
+    neighborResponseData.forEach((neighbors) => {
+      neighbors.forEach((neighbor) => {
+        const details = neighbor.get('neighborDetails');
+        const entityKeyId = getEntityKeyId(details);
+        mutable.set(entityKeyId, details);
+      });
+    });
+  });
+
 export {
   SEARCH_PREFIX,
   formatDataGraphResponse,
   getEKIDsFromEntryValues,
+  getEKIDsFromNeighborResponseData,
   getEntityKeyId,
   getEntityKeyIdsFromList,
   getFormDataFromEntity,
   getFormDataFromEntityArray,
   getFqnObj,
+  getNeighborDetailsFromNeighborResponseData,
   getSearchTerm,
   groupNeighborsByEntitySetIds,
   groupNeighborsByFQNs,

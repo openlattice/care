@@ -98,6 +98,9 @@ export function* getLBPeoplePhotosWorker(action :SequenceAction) :Generator<*, *
     response.error = error;
     yield put(getLBPeoplePhotos.failure(action.id, error));
   }
+  finally {
+    yield put(getLBPeoplePhotos.finally(action.id));
+  }
 
   return response;
 }
@@ -153,6 +156,9 @@ export function* getLBStayAwayLocationsWorker(action :SequenceAction) :Generator
   catch (error) {
     response.error = error;
     yield put(getLBStayAwayLocations.failure(action.id, error));
+  }
+  finally {
+    yield put(getLBStayAwayLocations.finally(action.id));
   }
 
   return response;
@@ -223,6 +229,9 @@ export function* getLBPeopleStayAwayWorker(action :SequenceAction) :Generator<an
   catch (error) {
     response.error = error;
     yield put(getLBPeopleStayAway.failure(action.id, error));
+  }
+  finally {
+    yield put(getLBPeopleStayAway.finally(action.id));
   }
 
   return response;
@@ -358,6 +367,9 @@ export function* searchLBPeopleWorker(action :SequenceAction) :Generator<*, *, *
   catch (error) {
     LOG.error(action.type, error);
     yield put(searchLBPeople.failure(action.id, error));
+  }
+  finally {
+    yield put(searchLBPeople.finally(action.id));
   }
 
   return response;

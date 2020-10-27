@@ -119,6 +119,9 @@ function* getLBProfileNeighborsWorker(action :SequenceAction) :Generator<any, an
     LOG.error(action.type, error);
     yield put(getLBProfileNeighbors.failure(action.id));
   }
+  finally {
+    yield put(getLBProfileNeighbors.finally(action.id));
+  }
 
   return response;
 }
@@ -209,6 +212,9 @@ function* getLBProfileWorker(action :SequenceAction) :Generator<any, any, any> {
   catch (error) {
     LOG.error(action.type, error);
     yield put(getLBProfile.failure(action.id, error));
+  }
+  finally {
+    yield put(getLBProfile.finally(action.id));
   }
 
   return response;
