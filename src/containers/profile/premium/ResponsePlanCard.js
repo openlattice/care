@@ -14,7 +14,7 @@ import {
   Card,
   CardSegment,
   Colors,
-  IconSplash
+  IconSplash,
 } from 'lattice-ui-kit';
 import type { UUID } from 'lattice';
 
@@ -23,7 +23,12 @@ import * as FQN from '../../../edm/DataModelFqns';
 import { Header } from '../../../components/layout';
 import { CardSkeleton } from '../../../components/skeletons';
 
-const { NEUTRALS } = Colors;
+const {
+  GREEN,
+  NEUTRAL,
+  RED,
+  YELLOW,
+} = Colors;
 
 const StyledSplash = styled(IconSplash)`
   margin: 0 0 15px;
@@ -44,7 +49,7 @@ const ListWrapper = styled.ul`
   margin-top: -1rem;
 
   > li {
-    border-bottom: 1px solid ${NEUTRALS[4]};
+    border-bottom: 1px solid ${NEUTRAL.N100};
     padding: 1rem 0;
   }
 `;
@@ -96,8 +101,8 @@ const ResponsePlanCard = (props :Props) => {
         <Header>Response Plan</Header>
         <ListHeader>
           <IconLayer className="fa-layers">
-            <FontAwesomeIcon icon={faCircle} color="#FFD0CB" />
-            <FontAwesomeIcon icon={faExclamationTriangle} color="#E11300" />
+            <FontAwesomeIcon icon={faCircle} color={RED.R00} />
+            <FontAwesomeIcon icon={faExclamationTriangle} color={RED.R400} />
           </IconLayer>
           Officer Safety
         </ListHeader>
@@ -115,8 +120,8 @@ const ResponsePlanCard = (props :Props) => {
         </ListWrapper>
         <ListHeader>
           <IconLayer className="fa-layers">
-            <FontAwesomeIcon icon={faCircle} color="#FFEDC0" />
-            <FontAwesomeIcon icon={faBan} color="#DB8300" />
+            <FontAwesomeIcon icon={faCircle} color={YELLOW.Y00} />
+            <FontAwesomeIcon icon={faBan} color={YELLOW.Y400} />
           </IconLayer>
           Triggers
         </ListHeader>
@@ -132,8 +137,8 @@ const ResponsePlanCard = (props :Props) => {
         </ListWrapper>
         <ListHeader>
           <IconLayer className="fa-layers">
-            <FontAwesomeIcon icon={faCircle} color="#C6EECF" />
-            <FontAwesomeIcon icon={faCheckCircle} color="#0F5A43" />
+            <FontAwesomeIcon icon={faCircle} color={GREEN.G00} />
+            <FontAwesomeIcon icon={faCheckCircle} color={GREEN.G400} />
           </IconLayer>
           Interaction Strategies
         </ListHeader>
