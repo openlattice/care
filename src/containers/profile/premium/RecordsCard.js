@@ -30,7 +30,7 @@ const RecordsCard = ({ storePath, resultComponent, title } :Props) => {
     return <CardSkeleton />;
   }
 
-  const NoRecord = () => <IconSplash caption={`No ${title} have been filed." />`} />;
+  const NoRecord = () => <IconSplash caption={`No ${title} have been filed.`} />;
 
   return (
     <Card>
