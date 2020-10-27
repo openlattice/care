@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 const { NEUTRALS, PURPLES } = Colors;
 
 const breadcrumbStyle = css`
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   font-weight: 600;
   text-transform: uppercase;
 `;
