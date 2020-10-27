@@ -263,64 +263,6 @@ export function* getIncludedPeopleWatcher() :Saga<void> {
   yield takeLatest(GET_INCLUDED_PEOPLE, getIncludedPeopleWorker);
 }
 
-export function* exploreIncidentsWorker(action :SequenceAction) :Generator<*, *, *> {
-
-  try {
-    const { value } = action;
-    if (!isPlainObject(value)) throw ERR_ACTION_VALUE_TYPE;
-    const { searchTerm, start = 0, maxHits = 20 } = value;
-    yield put(exploreIncidents.request(action.id, value));
-
-    const app = yield select((state) => state.get('app', Map()));
-
-    const incidentESID = getESIDFromApp(app, INCIDENT_FQN);
-
-    const constraints = [{
-      constraints: [{
-        type: 'simple',
-        searchTerm,
-        fuzzy: false
-      }],
-    }];
-
-    const searchConstraints = {
-      entitySetIds: [incidentESID],
-      maxHits,
-      start,
-      constraints,
-    };
-
-    const response :WorkerResponse = yield call(
-      searchEntitySetDataWorker,
-      searchEntitySetData(searchConstraints)
-    );
-
-    if (response.error) throw response.error;
-
-    const hits = fromJS(response.data.hits);
-    const incidentEKIDs = hits.map((hit) => hit.getIn([OPENLATTICE_ID_FQN, 0]));
-
-    if (!incidentEKIDs.isEmpty()) {
-      yield put(getInvolvedPeople({
-        entityKeyIds: incidentEKIDs,
-        entitySetId: incidentESID,
-      }));
-    }
-    yield put(exploreIncidents.success(action.id, { hits, totalHits: response.data.numHits }));
-  }
-  catch (error) {
-    LOG.error(action.type, error);
-    yield put(exploreIncidents.failure(action.id, error));
-  }
-  finally {
-    yield put(exploreIncidents.finally(action.id));
-  }
-}
-
-export function* exploreIncidentsWatcher() :Generator<*, *, *> {
-  yield takeEvery(EXPLORE_INCIDENTS, exploreIncidentsWorker);
-}
-
 export function* getInvolvedPeopleWorker(action :SequenceAction) :Saga<Object> {
   const response = {};
   try {
@@ -376,6 +318,71 @@ export function* getInvolvedPeopleWorker(action :SequenceAction) :Saga<Object> {
 
 export function* getInvolvedPeopleWatcher() :Saga<void> {
   yield takeLatest(GET_INVOLVED_PEOPLE, getInvolvedPeopleWorker);
+}
+
+export function* exploreIncidentsWorker(action :SequenceAction) :Generator<*, *, *> {
+
+  try {
+    const { value } = action;
+    if (!isPlainObject(value)) throw ERR_ACTION_VALUE_TYPE;
+    const { searchTerm, start = 0, maxHits = 20 } = value;
+    yield put(exploreIncidents.request(action.id, value));
+
+    const app = yield select((state) => state.get('app', Map()));
+
+    const incidentESID = getESIDFromApp(app, INCIDENT_FQN);
+
+    const constraints = [{
+      constraints: [{
+        type: 'simple',
+        searchTerm,
+        fuzzy: false
+      }],
+    }];
+
+    const searchConstraints = {
+      entitySetIds: [incidentESID],
+      maxHits,
+      start,
+      constraints,
+    };
+
+    const response :WorkerResponse = yield call(
+      searchEntitySetDataWorker,
+      searchEntitySetData(searchConstraints)
+    );
+
+    if (response.error) throw response.error;
+
+    const hits = fromJS(response?.data?.hits);
+    let payload = { hits, totalHits: response?.data?.numHits };
+    const incidentEKIDs = hits.map((hit) => hit.getIn([OPENLATTICE_ID_FQN, 0]));
+
+    if (!incidentEKIDs.isEmpty()) {
+      const peopleResponse = yield call(
+        getInvolvedPeopleWorker,
+        getInvolvedPeople({
+          entitySetId: incidentESID,
+          entityKeyIds: incidentEKIDs,
+        })
+      );
+
+      if (peopleResponse.error) throw peopleResponse.error;
+      payload = Object.assign(payload, peopleResponse.data);
+    }
+    yield put(exploreIncidents.success(action.id, payload));
+  }
+  catch (error) {
+    LOG.error(action.type, error);
+    yield put(exploreIncidents.failure(action.id, error));
+  }
+  finally {
+    yield put(exploreIncidents.finally(action.id));
+  }
+}
+
+export function* exploreIncidentsWatcher() :Generator<*, *, *> {
+  yield takeEvery(EXPLORE_INCIDENTS, exploreIncidentsWorker);
 }
 
 export function* getObservedInPeopleWorker(action :SequenceAction) :Saga<Object> {

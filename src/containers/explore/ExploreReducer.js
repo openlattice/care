@@ -207,14 +207,6 @@ export default function exploreReducer(state :Map = INITIAL_STATE, action :Objec
       });
     }
 
-    case getInvolvedPeople.case(action.type): {
-      return getInvolvedPeople.reducer(state, action, {
-        SUCCESS: () => state
-          .mergeIn([INCIDENT_FQN], action.value),
-        FAILURE: () => state.setIn([PEOPLE_FQN, 'fetchState'], RequestStates.FAILURE),
-      });
-    }
-
     case CLEAR_EXPLORE_RESULTS: {
       return INITIAL_STATE;
     }
