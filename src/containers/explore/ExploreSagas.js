@@ -812,9 +812,9 @@ export function* exploreCitationsWorker(action :SequenceAction) :Saga<void> {
     if (response.error) throw response.error;
     const hits = fromJS(response?.data?.hits);
     let payload = { hits, totalHits: response?.data?.numHits };
-    const citationEKIDS = hits.map((hit) => hit.getIn([OPENLATTICE_ID_FQN, 0]));
+    const citationEKIDs = hits.map((hit) => hit.getIn([OPENLATTICE_ID_FQN, 0]));
 
-    if (!citationEKIDS.isEmpty()) {
+    if (!citationEKIDs.isEmpty()) {
       const [
         employeeESID,
         involvedInESID,
@@ -828,7 +828,7 @@ export function* exploreCitationsWorker(action :SequenceAction) :Saga<void> {
         searchEntityNeighborsWithFilter({
           entitySetId: citationsESID,
           filter: {
-            entityKeyIds: citationEKIDS.toJS(),
+            entityKeyIds: citationEKIDs.toJS(),
             edgeEntitySetIds: [involvedInESID],
             destinationEntitySetIds: [],
             sourceEntitySetIds: [employeeESID],
@@ -840,7 +840,7 @@ export function* exploreCitationsWorker(action :SequenceAction) :Saga<void> {
         getInvolvedPeopleWorker,
         getInvolvedPeople({
           entitySetId: citationsESID,
-          entityKeyIds: citationEKIDS,
+          entityKeyIds: citationEKIDs,
         })
       );
 
