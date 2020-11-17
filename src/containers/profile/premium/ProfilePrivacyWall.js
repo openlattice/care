@@ -14,7 +14,6 @@ import { STATUS_FQN } from '../../../edm/DataModelFqns';
 
 type Props = {
   component :Node;
-  hasReports :boolean;
   isAuthorized :boolean;
   isLoading :boolean;
   meetsThreshold :boolean;
