@@ -269,7 +269,7 @@ const PremiumProfileContainer = (props :Props) => {
     </>
   );
 
-  if (!numReportsFoundIn) {
+  if (!responsePlan && !numReportsFoundIn) {
     body = <NoReportsFiled />;
   }
 
