@@ -31,6 +31,4 @@ const NewPersonForm = (props :any, ref) => {
   );
 };
 
-export default React.memo<any, typeof Form>(
-  React.forwardRef(NewPersonForm)
-);
+export default React.forwardRef<any, Form>(NewPersonForm);
