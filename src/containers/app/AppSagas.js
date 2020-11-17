@@ -138,6 +138,8 @@ function* loadAppWorker(action :SequenceAction) :Saga<*> {
       })
     );
 
+    if (appSettingsResponse.error) throw appSettingsResponse.error;
+
     let selectedOrganizationSettings = Map();
     const appSettingsHit = fromJS(appSettingsResponse?.data?.hits || []).first();
     if (appSettingsHit) {
