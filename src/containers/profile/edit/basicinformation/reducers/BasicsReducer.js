@@ -5,6 +5,7 @@ import type { SequenceAction } from 'redux-reqseq';
 
 import {
   SELECT_PERSON,
+  createMissingPersonDetails,
   getBasics,
   updateBasics,
 } from '../actions/BasicInformationActions';
@@ -19,6 +20,15 @@ const INITIAL_STATE :Map = fromJS({
 const basicsReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
 
   switch (action.type) {
+
+    case createMissingPersonDetails.case(action.type): {
+      return createMissingPersonDetails.reducer(state, action, {
+        SUCCESS: () => {
+          const { entityIndexToIdMap } = action.value;
+          return state.mergeDeepIn(['entityIndexToIdMap'], entityIndexToIdMap);
+        }
+      });
+    }
 
     case getBasics.case(action.type): {
       return getBasics.reducer(state, action, {
