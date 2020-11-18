@@ -576,7 +576,7 @@ function* getCrisisReportV2Worker(action :SequenceAction) :Generator<any, any, a
     if (reportResponse.error) throw reportResponse.error;
     if (neighborsResponse.error) throw neighborsResponse.error;
 
-    const neighbors = neighborsResponse.data.get(reportEKID);
+    const neighbors = neighborsResponse.data.get(reportEKID) || List();
     const appTypeFqnsByIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds']).flip());
     const neighborsByFQN = groupNeighborsByFQNs(neighbors, appTypeFqnsByIds);
     const incidentEKID = neighborsByFQN.getIn([INCIDENT_FQN, 0, 'neighborDetails', OPENLATTICE_ID_FQN, 0]);
