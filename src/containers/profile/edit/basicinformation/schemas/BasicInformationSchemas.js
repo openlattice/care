@@ -73,12 +73,6 @@ const schema = {
           title: 'Ethnicity',
           enum: ETHNICITY_VALUES
         },
-      },
-    },
-    [getPageSectionKey(1, 2)]: {
-      type: 'object',
-      title: '',
-      properties: {
         [getEntityAddressKey(0, PERSON_DETAILS_FQN, VETERAN_STATUS_FQN)]: {
           type: 'string',
           title: 'History of Military service?',
@@ -124,19 +118,13 @@ const uiSchema = {
     [getEntityAddressKey(0, PEOPLE_FQN, PERSON_ETHNICITY_FQN)]: {
       classNames: 'column-span-4'
     },
-  },
-  [getPageSectionKey(1, 2)]: {
-    classNames: 'column-span-12 grid-container',
-    'ui:options': {
-      editable: true
-    },
     [getEntityAddressKey(0, PERSON_DETAILS_FQN, VETERAN_STATUS_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'radio',
       'ui:options': {
         row: true
-      }
-    }
+      },
+    },
   },
 };
 
