@@ -8,11 +8,13 @@ import {
   takeLatest,
 } from '@redux-saga/core/effects';
 import { List, Map, fromJS } from 'immutable';
-import { Constants } from 'lattice';
-import { DataProcessingUtils } from 'lattice-fabricate';
-import { DataApiActions, DataApiSagas } from 'lattice-sagas';
+import {
+  DataApiActions,
+  DataApiSagas,
+  SearchApiActions,
+  SearchApiSagas,
+} from 'lattice-sagas';
 import { LangUtils, Logger, ValidationUtils } from 'lattice-utils';
-import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
 
 import { getAddressWorker } from './AddressSagas';
@@ -21,13 +23,16 @@ import { getContactWorker } from './ContactSagas';
 import { getPhotosWorker } from './PhotosSagas';
 import { getScarsMarksTattoosWorker } from './ScarsMarksTattoosSagas';
 
-import * as FQN from '../../../../../edm/DataModelFqns';
 import { submitPartialReplace } from '../../../../../core/sagas/data/DataActions';
 import { submitPartialReplaceWorker } from '../../../../../core/sagas/data/DataSagas';
 import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
-import { getESIDFromApp } from '../../../../../utils/AppUtils';
-import { getFormDataFromEntity } from '../../../../../utils/DataUtils';
+import { getESIDsFromApp } from '../../../../../utils/AppUtils';
+import { groupNeighborsByFQNs } from '../../../../../utils/DataUtils';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../../../utils/Errors';
+import {
+  constructFormDataFromNeighbors,
+  getEntityIndexToIdMapFromNeighbors
+} from '../../../../reports/crisis/CrisisReportUtils';
 import { getAddress } from '../actions/AddressActions';
 import {
   GET_BASICS,
@@ -41,17 +46,18 @@ import {
 import { getContact } from '../actions/ContactActions';
 import { getPhotos } from '../actions/PhotosActions';
 import { getScarsMarksTattoos } from '../actions/ScarsMarksTattoosActions';
+import { schema } from '../schemas/BasicInformationSchemas';
 
 const LOG = new Logger('BasicInformationSagas');
 
 const { isDefined } = LangUtils;
-const { getPageSectionKey, getEntityAddressKey } = DataProcessingUtils;
 const { isValidUUID } = ValidationUtils;
-const { OPENLATTICE_ID_FQN } = Constants;
-const { PEOPLE_FQN } = APP_TYPES_FQNS;
+const { PEOPLE_FQN, PERSON_DETAILS_FQN, REPORTED_FQN } = APP_TYPES_FQNS;
 
 const { getEntityData } = DataApiActions;
 const { getEntityDataWorker } = DataApiSagas;
+const { searchEntityNeighborsWithFilter } = SearchApiActions;
+const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
 
 function* getBasicsWorker(action :SequenceAction) :Generator<any, any, any> {
   const response = {};
@@ -61,49 +67,61 @@ function* getBasicsWorker(action :SequenceAction) :Generator<any, any, any> {
     yield put(getBasics.request(action.id, entityKeyId));
 
     const app :Map = yield select((state) => state.get('app', Map()));
-    const entitySetId :UUID = getESIDFromApp(app, PEOPLE_FQN);
+    const [
+      peopleESID,
+      personDetailsESID,
+      reportedESID,
+    ] = getESIDsFromApp(app, [
+      PEOPLE_FQN,
+      PERSON_DETAILS_FQN,
+      REPORTED_FQN,
+    ]);
 
-    const personResponse = yield call(
+    const personRequest = call(
       getEntityDataWorker,
       getEntityData({
-        entitySetId,
+        entitySetId: peopleESID,
         entityKeyId
       })
     );
 
+    const neighborsRequest = call(
+      searchEntityNeighborsWithFilterWorker,
+      searchEntityNeighborsWithFilter({
+        entitySetId: peopleESID,
+        filter: {
+          entityKeyIds: [entityKeyId],
+          edgeEntitySetIds: [reportedESID],
+          destinationEntitySetIds: [personDetailsESID],
+          sourceEntitySetIds: [],
+        },
+      })
+    );
+
+    const [
+      neighborsResponse,
+      personResponse,
+    ] = yield all([
+      neighborsRequest,
+      personRequest
+    ]);
+
     if (personResponse.error) throw personResponse.error;
+    if (neighborsResponse.error) throw neighborsResponse.error;
 
+    const neighbors = fromJS(neighborsResponse.data).get(entityKeyId);
+    const appTypeFqnsByIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds']).flip());
     const personData = fromJS(personResponse.data);
+    const personEntity = fromJS({ neighborDetails: personResponse.data });
+    const dataByFQN = groupNeighborsByFQNs(neighbors, appTypeFqnsByIds)
+      .set(PEOPLE_FQN, List([personEntity]));
+
+    const formData = fromJS(constructFormDataFromNeighbors(dataByFQN, schema));
+    const entityIndexToIdMap = getEntityIndexToIdMapFromNeighbors(dataByFQN, schema);
+
     if (!personData.isEmpty()) {
-
-      const personProperties = [
-        FQN.PERSON_DOB_FQN,
-        FQN.PERSON_ETHNICITY_FQN,
-        FQN.PERSON_FIRST_NAME_FQN,
-        FQN.PERSON_LAST_NAME_FQN,
-        FQN.PERSON_MIDDLE_NAME_FQN,
-        FQN.PERSON_RACE_FQN,
-        FQN.PERSON_SEX_FQN,
-      ];
-
-      const aliases = personData.get(FQN.PERSON_NICK_NAME_FQN) || List();
-
-      const personEKID = personData.getIn([OPENLATTICE_ID_FQN, 0]);
-
-      const personFormData :Map = getFormDataFromEntity(
-        personData,
-        PEOPLE_FQN,
-        personProperties,
-        0
-      );
-
-      response.entityIndexToIdMap = Map().setIn([PEOPLE_FQN, 0], personEKID);
-      response.formData = Map()
-        .set(getPageSectionKey(1, 1), personFormData)
-        .setIn([
-          getPageSectionKey(1, 1),
-          getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_NICK_NAME_FQN),
-        ], aliases);
+      response.entityIndexToIdMap = entityIndexToIdMap;
+      response.formData = formData;
     }
 
     response.data = personData;
