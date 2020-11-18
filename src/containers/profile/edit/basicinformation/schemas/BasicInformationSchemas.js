@@ -9,9 +9,11 @@ import {
   PERSON_MIDDLE_NAME_FQN,
   PERSON_NICK_NAME_FQN,
   PERSON_RACE_FQN,
-  PERSON_SEX_FQN
+  PERSON_SEX_FQN,
+  VETERAN_STATUS_FQN,
 } from '../../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
+import { YES_NO_UNKNOWN } from '../../../../reports/crisis/schemas/constants';
 import {
   ETHNICITY_VALUES,
   RACE_VALUES,
@@ -19,7 +21,7 @@ import {
 } from '../../../constants';
 
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
-const { PEOPLE_FQN } = APP_TYPES_FQNS;
+const { PEOPLE_FQN, PERSON_DETAILS_FQN } = APP_TYPES_FQNS;
 
 const schema = {
   type: 'object',
@@ -71,9 +73,14 @@ const schema = {
           title: 'Ethnicity',
           enum: ETHNICITY_VALUES
         },
+        [getEntityAddressKey(0, PERSON_DETAILS_FQN, VETERAN_STATUS_FQN)]: {
+          type: 'string',
+          title: 'History of Military service?',
+          enum: YES_NO_UNKNOWN
+        },
       },
-    }
-  }
+    },
+  },
 };
 
 const uiSchema = {
@@ -111,7 +118,14 @@ const uiSchema = {
     [getEntityAddressKey(0, PEOPLE_FQN, PERSON_ETHNICITY_FQN)]: {
       classNames: 'column-span-4'
     },
-  }
+    [getEntityAddressKey(0, PERSON_DETAILS_FQN, VETERAN_STATUS_FQN)]: {
+      classNames: 'column-span-12',
+      'ui:widget': 'radio',
+      'ui:options': {
+        row: true
+      },
+    },
+  },
 };
 
 export {

@@ -46,6 +46,7 @@ import {
 import { goToPath } from '../../../core/router/RoutingActions';
 import { getAuthorization } from '../../../core/sagas/authorize/AuthorizeActions';
 import { getLBProfile } from '../../../longbeach/profile/LongBeachProfileActions';
+import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { getImageDataFromEntity } from '../../../utils/BinaryUtils';
 import { getEntityKeyId } from '../../../utils/DataUtils';
 import { getFirstLastFromPerson } from '../../../utils/PersonUtils';
@@ -64,6 +65,7 @@ import type { RoutingAction } from '../../../core/router/RoutingActions';
 
 const { media } = StyleUtils;
 const { useBoolean } = Hooks;
+const { PERSON_DETAILS_FQN } = APP_TYPES_FQNS;
 
 const Aside = styled.aside`
   display: flex;
@@ -164,6 +166,7 @@ type Props = {
   interactionStrategies :List<Map>;
   isContactForByContactEKID :Map;
   officerSafety :List<Map>;
+  personDetails :Map;
   photo :Map;
   probation :Map;
   recentSymptoms :boolean;
@@ -204,6 +207,7 @@ const PremiumProfileContainer = (props :Props) => {
     interactionStrategies,
     isContactForByContactEKID,
     officerSafety,
+    personDetails,
     photo,
     probation,
     recentSymptoms,
@@ -304,7 +308,11 @@ const PremiumProfileContainer = (props :Props) => {
                   <BreadcrumbItem>profile</BreadcrumbItem>
                 </Breadcrumbs>
               </BreadcrumbWrapper>
-              <PortraitCard isLoading={isLoadingIntro} imageUrl={imageURL} person={selectedPerson} />
+              <PortraitCard
+                  isLoading={isLoadingIntro}
+                  imageUrl={imageURL}
+                  person={selectedPerson}
+                  personDetails={personDetails} />
               <AppearancePanel
                   appearance={appearance}
                   isLoading={isLoadingIntro}
@@ -387,6 +395,7 @@ const mapStateToProps = (state :Map) => {
       .getIn(['profile', 'emergencyContacts', 'data', 'isContactForByContactEKID'], Map()),
     lastIncident: state.getIn(['profile', 'reports', 'lastIncident'], Map()),
     officerSafety: state.getIn(['profile', 'officerSafety', 'data', 'officerSafetyConcerns'], List()),
+    personDetails: state.getIn(['profile', 'basicInformation', 'basics', PERSON_DETAILS_FQN], Map()),
     photo: state.getIn(['profile', 'basicInformation', 'photos', 'data'], Map()),
     probation: state.getIn(['longBeach', 'profile', 'probation']),
     recentSymptoms: state.getIn(['profile', 'symptomReports', 'recentSymptoms']),

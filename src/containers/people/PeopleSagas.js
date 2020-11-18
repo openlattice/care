@@ -25,6 +25,7 @@ import type { UUID } from 'lattice';
 import type { WorkerResponse } from 'lattice-sagas';
 import type { SequenceAction } from 'redux-reqseq';
 
+import { getPersonBasicsAssociations } from './NewPersonUtils';
 import {
   GET_PEOPLE_PHOTOS,
   GET_RECENT_INCIDENTS,
@@ -47,7 +48,7 @@ import {
 import { indexSubmittedDataGraph } from '../../utils/DataUtils';
 import { ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
 
-const { processEntityData } = DataProcessingUtils;
+const { processEntityData, processAssociationEntityData } = DataProcessingUtils;
 
 const {
   APPEARS_IN_FQN,
@@ -328,10 +329,15 @@ export function* submitNewPersonWorker(action :SequenceAction) :Generator<any, a
     const peopleESID = getESIDFromApp(app, PEOPLE_FQN);
 
     const entityData = processEntityData(formData, entitySetIds, propertyFqnToIdMap);
+    const associationEntityData = processAssociationEntityData(
+      getPersonBasicsAssociations(),
+      entitySetIds,
+      propertyFqnToIdMap,
+    );
 
     const dataGraph = {
       entityData,
-      associationEntityData: {},
+      associationEntityData,
     };
 
     const dataGraphResponse = yield call(

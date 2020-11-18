@@ -3,13 +3,19 @@ import { Map, fromJS } from 'immutable';
 import { RequestStates } from 'redux-reqseq';
 import type { SequenceAction } from 'redux-reqseq';
 
+import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
 import {
   SELECT_PERSON,
+  createMissingPersonDetails,
   getBasics,
   updateBasics,
 } from '../actions/BasicInformationActions';
 
+const { PERSON_DETAILS_FQN } = APP_TYPES_FQNS;
+
 const INITIAL_STATE :Map = fromJS({
+  [PERSON_DETAILS_FQN]: Map(),
+  data: Map(),
   entityIndexToIdMap: Map(),
   fetchState: RequestStates.STANDBY,
   formData: Map(),
@@ -19,6 +25,15 @@ const INITIAL_STATE :Map = fromJS({
 const basicsReducer = (state :Map = INITIAL_STATE, action :SequenceAction) => {
 
   switch (action.type) {
+
+    case createMissingPersonDetails.case(action.type): {
+      return createMissingPersonDetails.reducer(state, action, {
+        SUCCESS: () => {
+          const { entityIndexToIdMap } = action.value;
+          return state.mergeDeepIn(['entityIndexToIdMap'], entityIndexToIdMap);
+        }
+      });
+    }
 
     case getBasics.case(action.type): {
       return getBasics.reducer(state, action, {
