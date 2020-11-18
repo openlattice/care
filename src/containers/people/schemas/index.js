@@ -5,10 +5,11 @@ import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import {
   ETHNICITY_VALUES,
   RACE_VALUES,
-  SEX_VALUES
+  SEX_VALUES,
 } from '../../profile/constants';
+import { YES_NO_UNKNOWN } from '../../reports/crisis/schemas/constants';
 
-const { PEOPLE_FQN } = APP_TYPES_FQNS;
+const { PEOPLE_FQN, PERSON_DETAILS_FQN } = APP_TYPES_FQNS;
 
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
 
@@ -68,11 +69,11 @@ const schema = {
           title: 'Ethnicity',
           enum: ETHNICITY_VALUES
         },
-        // [getEntityAddressKey(0, PERSON_DETAILS_FQN, FQN.VETERAN_STATUS_FQN)]: {
-        //   type: 'string',
-        //   title: 'Served in the military?',
-        //   enum: YES_NO_UNKNOWN
-        // },
+        [getEntityAddressKey(0, PERSON_DETAILS_FQN, FQN.VETERAN_STATUS_FQN)]: {
+          type: 'string',
+          title: 'History of Military service?',
+          enum: YES_NO_UNKNOWN
+        },
       },
       required: [
         getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_LAST_NAME_FQN),
@@ -81,7 +82,7 @@ const schema = {
         getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_SEX_FQN),
         getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_RACE_FQN),
         getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_ETHNICITY_FQN),
-        // getEntityAddressKey(0, PERSON_DETAILS_FQN, FQN.VETERAN_STATUS_FQN),
+        getEntityAddressKey(0, PERSON_DETAILS_FQN, FQN.VETERAN_STATUS_FQN),
       ]
     }
   }
@@ -119,31 +120,19 @@ const uiSchema = {
     [getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_SEX_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'radio',
-      'ui:options': {
-        inline: false
-      }
     },
     [getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_RACE_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'radio',
-      'ui:options': {
-        inline: false
-      }
     },
     [getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_ETHNICITY_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'radio',
-      'ui:options': {
-        inline: false
-      }
     },
-    // [getEntityAddressKey(0, PERSON_DETAILS_FQN, FQN.VETERAN_STATUS_FQN)]: {
-    //   classNames: 'column-span-12',
-    //   'ui:widget': 'radio',
-    //   'ui:options': {
-    //     inline: false
-    //   }
-    // },
+    [getEntityAddressKey(0, PERSON_DETAILS_FQN, FQN.VETERAN_STATUS_FQN)]: {
+      classNames: 'column-span-12',
+      'ui:widget': 'radio',
+    },
   }
 };
 
