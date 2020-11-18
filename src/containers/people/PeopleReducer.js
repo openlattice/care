@@ -46,8 +46,8 @@ export default function peopleReducer(state :Map = INITIAL_STATE, action :Object
         SUCCESS: () => {
           const organizationId = AccountUtils.retrieveOrganizationId();
           if (organizationId) {
-            const { appSettingsByOrgId } = action.value;
-            const appSettings = appSettingsByOrgId.get(organizationId, Map());
+            const { value } = action;
+            const appSettings = value.get('selectedOrganizationSettings');
             const integratedRMS = appSettings.get('integratedRMS', false);
             return state.setIn(['searchInputs', 'includeRMS'], !integratedRMS);
           }

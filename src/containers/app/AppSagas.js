@@ -102,6 +102,15 @@ function* loadAppWorker(action :SequenceAction) :Saga<*> {
 
     const appConfigs :Object[] = appConfigsResponse.data;
 
+    let selectedOrganizationId :string = '';
+    if (appConfigs.length) {
+      selectedOrganizationId = appConfigs[0].organization.id;
+    }
+    const storedOrganizationId :?string = AccountUtils.retrieveOrganizationId();
+    if (storedOrganizationId) {
+      selectedOrganizationId = storedOrganizationId;
+    }
+
     const appSettingsESIDByOrgId = Map().withMutations((mutable) => {
       appConfigs.forEach((appConfig :Object) => {
         const { config, organization } = appConfig;
@@ -113,58 +122,61 @@ function* loadAppWorker(action :SequenceAction) :Saga<*> {
       });
     });
 
-    const searchConstraints = (entitySetId :UUID) => ({
-      entitySetIds: [entitySetId],
-      constraints: [{
+    const appSettingsESID = appSettingsESIDByOrgId.get(selectedOrganizationId);
+
+    const appSettingsResponse = yield call(
+      searchEntitySetDataWorker,
+      searchEntitySetData({
+        entitySetIds: [appSettingsESID],
         constraints: [{
-          searchTerm: '*'
+          constraints: [{
+            searchTerm: '*'
+          }],
         }],
-      }],
-      maxHits: 10000,
-      start: 0,
-    });
-
-    const appSettingsRequests = appSettingsESIDByOrgId
-      .valueSeq()
-      .map((entitySetId) => (
-        call(searchEntitySetDataWorker, searchEntitySetData(searchConstraints(entitySetId)))
-      ));
-
-    const orgIds = appSettingsESIDByOrgId.keySeq().toJS();
-    const appSettingResponses = yield all(appSettingsRequests.toJS());
-
-    const responseError = appSettingResponses.reduce(
-      (error, result) => (error || result.error), undefined
+        maxHits: 10000,
+        start: 0,
+      })
     );
-    if (responseError) throw responseError;
 
-    const appSettingsByOrgId = Map().withMutations((mutable) => {
-      appSettingResponses.map(({ data }) => fromJS(data.hits)).forEach((hit, i) => {
+    if (appSettingsResponse.error) throw appSettingsResponse.error;
 
-        const organizationId = orgIds[i];
-        const settingsEntity = hit.first();
-        if (settingsEntity) {
-          const appDetails = settingsEntity.getIn([APP_DETAILS_FQN, 0]);
-          const settingsEKID = settingsEntity.getIn([OPENLATTICE_ID_FQN, 0]);
-          try {
-            const parsedAppDetails = JSON.parse(appDetails);
-            const parsedAppSettings = fromJS(parsedAppDetails)
-              .set(OPENLATTICE_ID_FQN, settingsEKID);
-            mutable.set(organizationId, parsedAppSettings);
-          }
-          catch (error) {
-            LOG.error('could not parse app details');
-            mutable.set(organizationId, settingsEntity.set(APP_DETAILS_FQN, Map()));
-          }
-        }
-      });
+    let selectedOrganizationSettings = Map();
+    const appSettingsHit = fromJS(appSettingsResponse?.data?.hits || []).first();
+    if (appSettingsHit) {
+      const appDetails = appSettingsHit.getIn([APP_DETAILS_FQN, 0]);
+      const settingsEKID = appSettingsHit.getIn([OPENLATTICE_ID_FQN, 0]);
+      try {
+        const parsedAppDetails = JSON.parse(appDetails);
+        const parsedAppSettings = fromJS(parsedAppDetails)
+          .set(OPENLATTICE_ID_FQN, settingsEKID);
+        selectedOrganizationSettings = parsedAppSettings;
+      }
+      catch (error) {
+        LOG.error('could not parse app details');
+      }
+    }
+
+    const organizations = {};
+    let selectedOrgEntitySetIds = {};
+    appConfigs.forEach((appConfig :Object) => {
+
+      const { config, organization } :Object = appConfig;
+      const orgId :string = organization.id;
+      organizations[orgId] = organization;
+      if (orgId === selectedOrganizationId) {
+        selectedOrgEntitySetIds = Object.fromEntries(Object.entries(config)
+        // $FlowFixMe object incompatible with mixed
+          .map(([appTypeFQN, appType]) => [appTypeFQN, appType.entitySetId]));
+      }
     });
 
-    workerResponse.data = {
+    workerResponse.data = fromJS({
       app,
-      appConfigs,
-      appSettingsByOrgId
-    };
+      organizations,
+      selectedOrgEntitySetIds,
+      selectedOrganizationId,
+      selectedOrganizationSettings,
+    });
 
     yield put(loadApp.success(action.id, workerResponse.data));
   }

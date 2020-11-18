@@ -6,7 +6,6 @@ import {
   Map,
   fromJS,
 } from 'immutable';
-import { AccountUtils } from 'lattice-auth';
 import { RequestStates } from 'redux-reqseq';
 import type { SequenceAction } from 'redux-reqseq';
 
@@ -20,10 +19,6 @@ const INITIAL_STATE :Map<*, *> = fromJS({
     loadApp: Map(),
   },
   app: Map(),
-  appTypes: Map(),
-  errors: {
-    loadApp: Map(),
-  },
   isLoadingApp: true,
   organizations: Map(),
   selectedOrganizationId: '',
@@ -64,46 +59,7 @@ export default function reducer(state :Map<*, *> = INITIAL_STATE, action :Object
             return state;
           }
 
-          const {
-            app,
-            appConfigs,
-            appSettingsByOrgId,
-          } = value;
-          const organizations :Object = {};
-
-          let selectedOrganizationId :string = '';
-          if (appConfigs.length) {
-            selectedOrganizationId = appConfigs[0].organization.id;
-          }
-          const storedOrganizationId :?string = AccountUtils.retrieveOrganizationId();
-          if (storedOrganizationId) {
-            selectedOrganizationId = storedOrganizationId;
-          }
-
-          const newState = Map().withMutations((mutable) => {
-            appConfigs.forEach((appConfig :Object) => {
-
-              const { config, organization } :Object = appConfig;
-              const orgId :string = organization.id;
-              organizations[orgId] = organization;
-              if (orgId === selectedOrganizationId) {
-                // TODO: replace selectedOrgEntitySetIds with plain config
-                const selectedOrgEntitySetIds = Object.fromEntries(Object.entries(config)
-                // $FlowFixMe object incompatible with mixed
-                  .map(([appTypeFQN, appType]) => [appTypeFQN, appType.entitySetId]));
-                mutable.set('selectedOrgEntitySetIds', fromJS(selectedOrgEntitySetIds));
-              }
-            });
-
-            const appSettings = appSettingsByOrgId.get(selectedOrganizationId, Map());
-
-            mutable
-              .set('app', app)
-              .set('organizations', fromJS(organizations))
-              .set('selectedOrganizationSettings', appSettings)
-              .set('selectedOrganizationId', selectedOrganizationId);
-          });
-          return newState;
+          return state.merge(value);
         },
         FINALLY: () => {
           const seqAction :SequenceAction = action;
