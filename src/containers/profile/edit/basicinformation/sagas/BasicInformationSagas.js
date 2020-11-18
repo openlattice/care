@@ -138,7 +138,7 @@ function* getBasicsWorker(action :SequenceAction) :Generator<any, any, any> {
     const dataByFQN = groupNeighborsByFQNs(neighbors, appTypeFqnsByIds)
       .set(PEOPLE_FQN, List([personEntity]));
 
-    const personDetails = dataByFQN.getIn([PERSON_DETAILS_FQN, 0, 'neighborDetails']);
+    const personDetails :Map = dataByFQN.getIn([PERSON_DETAILS_FQN, 0, 'neighborDetails'], Map());
 
     const formData = fromJS(constructFormDataFromNeighbors(dataByFQN, schema));
     const entityIndexToIdMap = getEntityIndexToIdMapFromNeighbors(dataByFQN, schema);
