@@ -22,7 +22,11 @@ const updateAppearance = newRequestSequence(UPDATE_APPEARANCE);
 const UPDATE_BASICS :'UPDATE_BASICS' = 'UPDATE_BASICS';
 const updateBasics = newRequestSequence(UPDATE_BASICS);
 
+const CREATE_MISSING_PERSON_DETAILS :'CREATE_MISSING_PERSON_DETAILS' = 'CREATE_MISSING_PERSON_DETAILS';
+const createMissingPersonDetails = newRequestSequence(CREATE_MISSING_PERSON_DETAILS);
+
 export {
+  CREATE_MISSING_PERSON_DETAILS,
   GET_APPEARANCE,
   GET_BASICS,
   GET_BASIC_INFORMATION,
@@ -30,11 +34,12 @@ export {
   SUBMIT_APPEARANCE,
   UPDATE_APPEARANCE,
   UPDATE_BASICS,
+  createMissingPersonDetails,
   getAppearance,
   getBasicInformation,
   getBasics,
   selectPerson,
   submitAppearance,
   updateAppearance,
-  updateBasics
+  updateBasics,
 };
