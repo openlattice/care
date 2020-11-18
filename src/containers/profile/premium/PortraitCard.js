@@ -24,30 +24,40 @@ const WordBreakSegment = styled(CardSegment)`
 
 type Props = {
   imageUrl :string;
-  person :Map;
   isLoading :boolean;
+  person :Map;
+  personDetails :Map;
 };
 
 const PortraitCard = (props :Props) => {
-  const { imageUrl, person, isLoading } = props;
+  const {
+    imageUrl,
+    isLoading,
+    person,
+    personDetails,
+  } = props;
 
+  const dob = getDobFromPerson(person);
   const first = person.getIn([FQN.PERSON_FIRST_NAME_FQN, 0], '');
   const last = person.getIn([FQN.PERSON_LAST_NAME_FQN, 0], '');
-  const dob = getDobFromPerson(person);
+  const veteran = personDetails.getIn([FQN.VETERAN_STATUS_FQN, 0], '');
 
   return (
     <Card>
       <CenteredSegment vertical>
         <Portrait imageUrl={imageUrl} />
       </CenteredSegment>
-      <WordBreakSegment padding="0 0 10px" noBleed vertical>
-        <LabeledDetail label="First Name" content={first} isLoading={isLoading} />
+      <WordBreakSegment noBleed padding="0 0 10px" vertical>
+        <LabeledDetail content={first} isLoading={isLoading} label="First Name" />
       </WordBreakSegment>
-      <WordBreakSegment padding="sm" noBleed vertical>
-        <LabeledDetail label="Last Name" content={last} isLoading={isLoading} />
+      <WordBreakSegment noBleed padding="sm" vertical>
+        <LabeledDetail content={last} isLoading={isLoading} label="Last Name" />
       </WordBreakSegment>
-      <WordBreakSegment padding="10px 0 30px" noBleed vertical>
-        <LabeledDetail label="Date of Birth" content={dob} isLoading={isLoading} />
+      <WordBreakSegment noBleed padding="sm" vertical>
+        <LabeledDetail content={dob} isLoading={isLoading} label="Date of Birth" />
+      </WordBreakSegment>
+      <WordBreakSegment noBleed padding="10px 0 30px" vertical>
+        <LabeledDetail content={veteran} isLoading={isLoading} label="Veteran" />
       </WordBreakSegment>
     </Card>
   );

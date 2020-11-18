@@ -3,6 +3,7 @@ import { Map, fromJS } from 'immutable';
 import { RequestStates } from 'redux-reqseq';
 import type { SequenceAction } from 'redux-reqseq';
 
+import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
 import {
   SELECT_PERSON,
   createMissingPersonDetails,
@@ -10,7 +11,11 @@ import {
   updateBasics,
 } from '../actions/BasicInformationActions';
 
+const { PERSON_DETAILS_FQN } = APP_TYPES_FQNS;
+
 const INITIAL_STATE :Map = fromJS({
+  [PERSON_DETAILS_FQN]: Map(),
+  data: Map(),
   entityIndexToIdMap: Map(),
   fetchState: RequestStates.STANDBY,
   formData: Map(),
