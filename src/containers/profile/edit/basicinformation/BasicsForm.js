@@ -1,5 +1,7 @@
 // @flow
 import React, { Component } from 'react';
+
+import { Map } from 'immutable';
 import { Form } from 'lattice-fabricate';
 import {
   Card,
@@ -7,11 +9,10 @@ import {
   CardSegment,
   Spinner
 } from 'lattice-ui-kit';
-import { Map } from 'immutable';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { RequestStates } from 'redux-reqseq';
 import { withRouter } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
+import { RequestStates } from 'redux-reqseq';
 import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
@@ -64,9 +65,16 @@ class BasicInformationForm extends Component<Props, State> {
     });
   }
 
+  handleUpdate = (params) => {
+    const { actions, entityIndexToIdMap } = this.props;
+    actions.updateBasics({
+      ...params,
+      entityIndexToIdMap,
+    });
+  }
+
   render() {
     const {
-      actions,
       entityIndexToIdMap,
       entitySetIds,
       fetchState,
@@ -74,7 +82,7 @@ class BasicInformationForm extends Component<Props, State> {
     } = this.props;
     const { formData, prepopulated } = this.state;
     const formContext = {
-      editAction: actions.updateBasics,
+      editAction: this.handleUpdate,
       entityIndexToIdMap,
       entitySetIds,
       mappers: {},
