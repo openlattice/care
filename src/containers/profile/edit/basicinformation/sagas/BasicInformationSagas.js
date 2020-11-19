@@ -7,12 +7,23 @@ import {
   takeEvery,
   takeLatest,
 } from '@redux-saga/core/effects';
-import { List, Map, fromJS } from 'immutable';
-import { Constants } from 'lattice';
+import {
+  List,
+  Map,
+  fromJS,
+  getIn,
+  hasIn,
+  removeIn,
+} from 'immutable';
 import { DataProcessingUtils } from 'lattice-fabricate';
-import { DataApiActions, DataApiSagas } from 'lattice-sagas';
+import {
+  DataApiActions,
+  DataApiSagas,
+  SearchApiActions,
+  SearchApiSagas,
+} from 'lattice-sagas';
 import { LangUtils, Logger, ValidationUtils } from 'lattice-utils';
-import type { UUID } from 'lattice';
+import { DateTime } from 'luxon';
 import type { SequenceAction } from 'redux-reqseq';
 
 import { getAddressWorker } from './AddressSagas';
@@ -21,37 +32,54 @@ import { getContactWorker } from './ContactSagas';
 import { getPhotosWorker } from './PhotosSagas';
 import { getScarsMarksTattoosWorker } from './ScarsMarksTattoosSagas';
 
-import * as FQN from '../../../../../edm/DataModelFqns';
-import { submitPartialReplace } from '../../../../../core/sagas/data/DataActions';
-import { submitPartialReplaceWorker } from '../../../../../core/sagas/data/DataSagas';
+import { submitDataGraph, submitPartialReplace } from '../../../../../core/sagas/data/DataActions';
+import { submitDataGraphWorker, submitPartialReplaceWorker } from '../../../../../core/sagas/data/DataSagas';
+import { COMPLETED_DT_FQN, VETERAN_STATUS_FQN } from '../../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
-import { getESIDFromApp } from '../../../../../utils/AppUtils';
-import { getFormDataFromEntity } from '../../../../../utils/DataUtils';
+import { getESIDsFromApp } from '../../../../../utils/AppUtils';
+import { groupNeighborsByFQNs } from '../../../../../utils/DataUtils';
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../../../../utils/Errors';
+import {
+  constructFormDataFromNeighbors,
+  getEntityIndexToIdMapFromDataGraphResponse,
+  getEntityIndexToIdMapFromNeighbors
+} from '../../../../reports/crisis/CrisisReportUtils';
 import { getAddress } from '../actions/AddressActions';
 import {
+  CREATE_MISSING_PERSON_DETAILS,
   GET_BASICS,
   GET_BASIC_INFORMATION,
   UPDATE_BASICS,
+  createMissingPersonDetails,
   getAppearance,
   getBasicInformation,
   getBasics,
-  updateBasics
+  updateBasics,
 } from '../actions/BasicInformationActions';
 import { getContact } from '../actions/ContactActions';
 import { getPhotos } from '../actions/PhotosActions';
 import { getScarsMarksTattoos } from '../actions/ScarsMarksTattoosActions';
+import { schema } from '../schemas/BasicInformationSchemas';
 
 const LOG = new Logger('BasicInformationSagas');
 
 const { isDefined } = LangUtils;
-const { getPageSectionKey, getEntityAddressKey } = DataProcessingUtils;
 const { isValidUUID } = ValidationUtils;
-const { OPENLATTICE_ID_FQN } = Constants;
-const { PEOPLE_FQN } = APP_TYPES_FQNS;
+const { PEOPLE_FQN, PERSON_DETAILS_FQN, REPORTED_FQN } = APP_TYPES_FQNS;
 
 const { getEntityData } = DataApiActions;
 const { getEntityDataWorker } = DataApiSagas;
+const { searchEntityNeighborsWithFilter } = SearchApiActions;
+const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
+
+const {
+  findEntityAddressKeyFromMap,
+  getEntityAddressKey,
+  processAssociationEntityData,
+  processEntityData,
+  processEntityDataForPartialReplace,
+  replaceEntityAddressKeys,
+} = DataProcessingUtils;
 
 function* getBasicsWorker(action :SequenceAction) :Generator<any, any, any> {
   const response = {};
@@ -61,49 +89,64 @@ function* getBasicsWorker(action :SequenceAction) :Generator<any, any, any> {
     yield put(getBasics.request(action.id, entityKeyId));
 
     const app :Map = yield select((state) => state.get('app', Map()));
-    const entitySetId :UUID = getESIDFromApp(app, PEOPLE_FQN);
+    const [
+      peopleESID,
+      personDetailsESID,
+      reportedESID,
+    ] = getESIDsFromApp(app, [
+      PEOPLE_FQN,
+      PERSON_DETAILS_FQN,
+      REPORTED_FQN,
+    ]);
 
-    const personResponse = yield call(
+    const personRequest = call(
       getEntityDataWorker,
       getEntityData({
-        entitySetId,
+        entitySetId: peopleESID,
         entityKeyId
       })
     );
 
+    const neighborsRequest = call(
+      searchEntityNeighborsWithFilterWorker,
+      searchEntityNeighborsWithFilter({
+        entitySetId: peopleESID,
+        filter: {
+          entityKeyIds: [entityKeyId],
+          edgeEntitySetIds: [reportedESID],
+          destinationEntitySetIds: [personDetailsESID],
+          sourceEntitySetIds: [],
+        },
+      })
+    );
+
+    const [
+      neighborsResponse,
+      personResponse,
+    ] = yield all([
+      neighborsRequest,
+      personRequest
+    ]);
+
     if (personResponse.error) throw personResponse.error;
+    if (neighborsResponse.error) throw neighborsResponse.error;
 
+    const neighbors = fromJS(neighborsResponse.data).get(entityKeyId) || List();
+    const appTypeFqnsByIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds']).flip());
     const personData = fromJS(personResponse.data);
+    const personEntity = fromJS({ neighborDetails: personResponse.data });
+    const dataByFQN = groupNeighborsByFQNs(neighbors, appTypeFqnsByIds)
+      .set(PEOPLE_FQN, List([personEntity]));
+
+    const personDetails :Map = dataByFQN.getIn([PERSON_DETAILS_FQN, 0, 'neighborDetails'], Map());
+
+    const formData = fromJS(constructFormDataFromNeighbors(dataByFQN, schema));
+    const entityIndexToIdMap = getEntityIndexToIdMapFromNeighbors(dataByFQN, schema);
+
     if (!personData.isEmpty()) {
-
-      const personProperties = [
-        FQN.PERSON_DOB_FQN,
-        FQN.PERSON_ETHNICITY_FQN,
-        FQN.PERSON_FIRST_NAME_FQN,
-        FQN.PERSON_LAST_NAME_FQN,
-        FQN.PERSON_MIDDLE_NAME_FQN,
-        FQN.PERSON_RACE_FQN,
-        FQN.PERSON_SEX_FQN,
-      ];
-
-      const aliases = personData.get(FQN.PERSON_NICK_NAME_FQN) || List();
-
-      const personEKID = personData.getIn([OPENLATTICE_ID_FQN, 0]);
-
-      const personFormData :Map = getFormDataFromEntity(
-        personData,
-        PEOPLE_FQN,
-        personProperties,
-        0
-      );
-
-      response.entityIndexToIdMap = Map().setIn([PEOPLE_FQN, 0], personEKID);
-      response.formData = Map()
-        .set(getPageSectionKey(1, 1), personFormData)
-        .setIn([
-          getPageSectionKey(1, 1),
-          getEntityAddressKey(0, PEOPLE_FQN, FQN.PERSON_NICK_NAME_FQN),
-        ], aliases);
+      response.entityIndexToIdMap = entityIndexToIdMap;
+      response.formData = formData;
+      response[PERSON_DETAILS_FQN] = personDetails;
     }
 
     response.data = personData;
@@ -124,13 +167,123 @@ function* getBasicsWatcher() :Generator<any, any, any> {
   yield takeLatest(GET_BASICS, getBasicsWorker);
 }
 
+function* createMissingPersonDetailsWorker(action :SequenceAction) :Generator<any, any, any> {
+  const response = {};
+  try {
+    const { value } = action;
+    if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
+    yield put(createMissingPersonDetails.request(action.id));
+
+    const {
+      entityIndexToIdMap,
+      formData,
+      path,
+    } = value;
+    const section = path[0];
+    const personDetailsAddress = getEntityAddressKey(0, PERSON_DETAILS_FQN, VETERAN_STATUS_FQN);
+    const hasPersonDetailsData = hasIn(formData, [section, personDetailsAddress]);
+    const hasPersonDetailsEntityKey = hasIn(entityIndexToIdMap, [PERSON_DETAILS_FQN, 0]);
+    if (hasPersonDetailsData && !hasPersonDetailsEntityKey) {
+      const entitySetIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
+      const propertyTypeIds = yield select((state) => state.getIn(['edm', 'fqnToIdMap'], Map()));
+
+      const personDetailsFormData = fromJS({
+        [section]: {
+          [personDetailsAddress]: getIn(formData, [section, personDetailsAddress])
+        }
+      });
+
+      const entityData = processEntityData(personDetailsFormData, entitySetIds, propertyTypeIds);
+
+      const personEKID = getIn(entityIndexToIdMap, [PEOPLE_FQN, 0]);
+
+      const NOW_DATA = { [COMPLETED_DT_FQN]: [DateTime.local().toISO()] };
+      const associationEntityData = processAssociationEntityData(
+        [[REPORTED_FQN, personEKID, PEOPLE_FQN, 0, PERSON_DETAILS_FQN, NOW_DATA]],
+        entitySetIds,
+        propertyTypeIds
+      );
+
+      const dataGraphResponse = yield call(
+        submitDataGraphWorker,
+        submitDataGraph({
+          entityData,
+          associationEntityData,
+        })
+      );
+      if (dataGraphResponse.error) throw dataGraphResponse.error;
+
+      const appTypeFqnsByIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds']).flip());
+
+      const newEntityIndexToIdMap = getEntityIndexToIdMapFromDataGraphResponse(
+        fromJS(dataGraphResponse.data),
+        schema,
+        appTypeFqnsByIds
+      );
+
+      response.data = {
+        formData: fromJS(removeIn(formData, [section, personDetailsAddress])),
+        entityIndexToIdMap: newEntityIndexToIdMap
+      };
+    }
+
+    yield put(createMissingPersonDetails.success(action.id, response.data));
+  }
+  catch (error) {
+    LOG.error(action.type, error);
+    response.error = error;
+    yield put(createMissingPersonDetails.failure(action.id));
+  }
+  finally {
+    yield put(createMissingPersonDetails.finally(action.id));
+  }
+  return response;
+}
+
+function* createMissingPersonDetailsWatcher() :Generator<any, any, any> {
+  yield takeEvery(CREATE_MISSING_PERSON_DETAILS, createMissingPersonDetailsWorker);
+}
+
 function* updateBasicsWorker(action :SequenceAction) :Generator<any, any, any> {
   try {
     const { value } = action;
     if (!isDefined(value)) throw ERR_ACTION_VALUE_NOT_DEFINED;
 
     yield put(updateBasics.request(action.id, value));
-    const response = yield call(submitPartialReplaceWorker, submitPartialReplace(value));
+
+    const createMissingPersonDetailsResponse = yield call(
+      createMissingPersonDetailsWorker,
+      createMissingPersonDetails(value)
+    );
+    if (createMissingPersonDetailsResponse.error) throw createMissingPersonDetailsResponse.error;
+
+    let { entityData } = value;
+    const adjustedFormData = createMissingPersonDetailsResponse?.data?.formData;
+    if (adjustedFormData) {
+      const draftWithKeys = replaceEntityAddressKeys(
+        adjustedFormData,
+        findEntityAddressKeyFromMap(value.entityIndexToIdMap)
+      );
+
+      const originalWithKeys = replaceEntityAddressKeys(
+        {},
+        findEntityAddressKeyFromMap(value.entityIndexToIdMap)
+      );
+
+      const entitySetIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
+      const propertyTypeIds = yield select((state) => state.getIn(['edm', 'fqnToIdMap'], Map()));
+      entityData = processEntityDataForPartialReplace(
+        draftWithKeys,
+        originalWithKeys,
+        entitySetIds,
+        propertyTypeIds,
+      );
+    }
+
+    const response = yield call(submitPartialReplaceWorker, submitPartialReplace({
+      ...value,
+      entityData,
+    }));
 
     if (response.error) throw response.error;
 
@@ -214,10 +367,12 @@ function* getBasicInformationWatcher() :Generator<any, any, any> {
 }
 
 export {
+  createMissingPersonDetailsWatcher,
+  createMissingPersonDetailsWorker,
   getBasicInformationWatcher,
   getBasicInformationWorker,
   getBasicsWatcher,
   getBasicsWorker,
   updateBasicsWatcher,
-  updateBasicsWorker
+  updateBasicsWorker,
 };

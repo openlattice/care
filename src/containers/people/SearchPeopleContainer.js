@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { useReducer, useState } from 'react';
 
 import styled from 'styled-components';
 import { faExclamationTriangle } from '@fortawesome/pro-solid-svg-icons';
@@ -26,7 +26,7 @@ import AdvancedHeader from './AdvancedHeader';
 import MetaphoneLabel from './MetaphoneLabel';
 import PersonResult from './PersonResult';
 import ReportSelectionModal from './ReportSelectionModal';
-import { clearSearchResults, searchPeople } from './PeopleActions';
+import { searchPeople } from './PeopleActions';
 
 import Accordion from '../../components/accordion';
 import { BreadcrumbLink } from '../../components/breadcrumbs';
@@ -127,10 +127,6 @@ const SearchPeopleContainer = () => {
   const [race, setRace] = useState(searchInputs.get('race'));
   const [sex, setSex] = useState(searchInputs.get('sex'));
   const [includeRMS, setRMS] = useState(searchInputs.get('includeRMS', !integratedRMS));
-
-  useEffect(() => () => {
-    dispatch(clearSearchResults(!integratedRMS));
-  }, [dispatch, integratedRMS]);
 
   const hasSearched = fetchState !== RequestStates.STANDBY;
   const isLoading = fetchState === RequestStates.PENDING;
