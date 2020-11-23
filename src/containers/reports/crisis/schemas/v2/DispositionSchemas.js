@@ -10,6 +10,7 @@ import {
   SELECT_ONLY_ONE,
   TECHNIQUES,
   YES_NO,
+  YES_NO_NA,
 } from '../constants';
 
 const {
@@ -18,6 +19,7 @@ const {
   OFFENSE_FQN,
   CHARGE_EVENT_FQN,
   CHARGE_FQN,
+  CRISIS_REPORT_FQN,
 } = APP_TYPES_FQNS;
 
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
@@ -39,6 +41,12 @@ const schema = {
           },
           // minItems: 1,
           uniqueItems: true
+        },
+        [getEntityAddressKey(0, CRISIS_REPORT_FQN, FQN.CUSTODY_DIVERTED_FQN)]: {
+          type: 'string',
+          title: 'Was criminal custody diverted?',
+          description: SELECT_ONLY_ONE,
+          enum: YES_NO_NA
         },
         [getEntityAddressKey(0, DISPOSITION_FQN, FQN.CJ_DISPOSITION_FQN)]: {
           type: 'array',
