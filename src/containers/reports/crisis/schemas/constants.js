@@ -36,21 +36,39 @@ const BEHAVIORS = [
   'Suicide behaviors',
 ];
 
+const COMPLETED_BY = [
+  'CIT Officer',
+  'MHFA Officer',
+  'JDP Clinician',
+  'Forensic Peer',
+  'ESP/Crisis Team',
+];
+
 const DISCRETIONARY_ARREST = [
   'Meets criteria for discretionary arrest',
   'Does not meet criteria for discretionary arrest',
 ];
 
+const NATURE_OF_CALL = [
+  'Accident',
+  'Criminal',
+  'Domestic',
+  'Follow Up',
+  'General Disturbance',
+  'Psych Situation',
+  'Suicide Attempt',
+  'Wellness',
+];
+
 const NATURE_OF_CRISIS = [
   'Acute stress',
+  'Co-Occuring MH and SA',
   'Cognitive issues',
   'Developmental disorder',
   'Substance use disorder',
   'Psychotic disorder',
   'Mental health issues',
-  'Suicide attempt',
-  'Self-harm',
-  'Homicidal thoughts',
+  'Mood disorder',
   'Unknown',
 ];
 
@@ -243,6 +261,16 @@ const POINT_OF_INTERVENTION = [
   'Re-entry',
 ];
 
+const REFERRAL_SOURCES = [
+  'Comm\'ty Treatm\'t Provider',
+  'Court Clinic',
+  'Court Personnel',
+  'Family/Private Citizen',
+  'Police/Law Enforcement',
+  'School',
+  'State Agency',
+];
+
 const ASSESSMENT_LOCATION = [
   'Community',
   'Court',
@@ -297,6 +325,7 @@ export {
   BILLED_SERVICES,
   CLINICIAN_DISPOSITION,
   CLINICIAN_REFERRALS,
+  COMPLETED_BY,
   CRISIS_REPORT,
   CRISIS_REPORT_CLINICIAN,
   DISCRETIONARY_ARREST,
@@ -309,12 +338,14 @@ export {
   HOUSING,
   INSURANCE,
   KNOWN_CLIENT,
+  NATURE_OF_CALL,
   NATURE_OF_CRISIS,
   NO_RESPONSE,
   POINT_OF_INTERVENTION,
   PRIOR_ARREST_HISTORY,
   PURPOSE_OF_JDP,
   REFERRAL_SOURCE,
+  REFERRAL_SOURCES,
   REPORT_TYPE_OPTIONS,
   RESIDES_WITH,
   SELECT_ALL_THAT_APPLY,
