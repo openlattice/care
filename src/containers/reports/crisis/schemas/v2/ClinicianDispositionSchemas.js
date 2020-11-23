@@ -42,13 +42,13 @@ const schema = {
           // minItems: 1,
           uniqueItems: true
         },
-        // change this to disposition
         [getEntityAddressKey(0, CRISIS_REPORT_CLINICIAN_FQN, FQN.CUSTODY_DIVERTED_FQN)]: {
           type: 'string',
           title: 'Was criminal custody diverted?',
           description: SELECT_ONLY_ONE,
           enum: YES_NO_NA
         },
+        // change this to disposition
         [getEntityAddressKey(0, DISPOSITION_CLINICIAN_FQN, FQN.CJ_DISPOSITION_FQN)]: {
           type: 'array',
           description: SELECT_ALL_THAT_APPLY,
