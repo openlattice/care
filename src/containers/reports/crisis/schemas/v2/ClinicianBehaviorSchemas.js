@@ -9,6 +9,7 @@ import {
   NATURE_OF_CALL,
   NATURE_OF_CRISIS,
   POINT_OF_INTERVENTION,
+  REFERRAL_SOURCES,
   SELECT_ALL_THAT_APPLY,
   SELECT_ONLY_ONE,
 } from '../constants';
@@ -49,12 +50,12 @@ const schema = {
           description: SELECT_ONLY_ONE,
           enum: POINT_OF_INTERVENTION,
         },
-        // [getEntityAddressKey(0, REFERRAL_SOURCE_FQN, FQN.ORGANIZATION_NAME_FQN)]: {
-        //   title: 'Referral source',
-        //   type: 'string',
-        //   description: SELECT_ONLY_ONE,
-        //   enum: REFERRAL_SOURCES,
-        // },
+        [getEntityAddressKey(0, REFERRAL_SOURCE_FQN, FQN.ORGANIZATION_NAME_FQN)]: {
+          title: 'Referral source',
+          type: 'string',
+          description: SELECT_ONLY_ONE,
+          enum: REFERRAL_SOURCES,
+        },
         [getEntityAddressKey(0, CRISIS_REPORT_CLINICIAN_FQN, FQN.NATURE_OF_CRISIS_FQN)]: {
           title: 'Presenting Psychiatric Issue',
           type: 'array',
@@ -87,7 +88,7 @@ const schema = {
         getEntityAddressKey(0, EMPLOYEE_FQN, FQN.CATEGORY_FQN),
         getEntityAddressKey(0, CALL_FOR_SERVICE_FQN, FQN.TYPE_FQN),
         getEntityAddressKey(0, ENCOUNTER_FQN, FQN.SERVICE_TYPE_FQN),
-        // getEntityAddressKey(0, REFERRAL_SOURCE_FQN, FQN.ORGANIZATION_NAME_FQN),
+        getEntityAddressKey(0, REFERRAL_SOURCE_FQN, FQN.ORGANIZATION_NAME_FQN),
         getEntityAddressKey(0, CRISIS_REPORT_CLINICIAN_FQN, FQN.NATURE_OF_CRISIS_FQN),
         getEntityAddressKey(0, BEHAVIOR_CLINICIAN_FQN, FQN.OBSERVED_BEHAVIOR_FQN),
       ]
