@@ -14,10 +14,11 @@ import {
 } from '../constants';
 
 const {
+  CRISIS_REPORT_CLINICIAN_FQN,
   DISPOSITION_CLINICIAN_FQN,
   ENCOUNTER_DETAILS_FQN,
-  INVOICE_FQN,
   INTERACTION_STRATEGY_FQN,
+  INVOICE_FQN,
   REFERRAL_REQUEST_FQN,
 } = APP_TYPES_FQNS;
 
@@ -42,6 +43,12 @@ const schema = {
           uniqueItems: true
         },
         // change this to disposition
+        [getEntityAddressKey(0, CRISIS_REPORT_CLINICIAN_FQN, FQN.CUSTODY_DIVERTED_FQN)]: {
+          type: 'string',
+          title: 'Was criminal custody diverted?',
+          description: SELECT_ONLY_ONE,
+          enum: YES_NO_NA
+        },
         [getEntityAddressKey(0, DISPOSITION_CLINICIAN_FQN, FQN.CJ_DISPOSITION_FQN)]: {
           type: 'array',
           description: SELECT_ALL_THAT_APPLY,
@@ -100,6 +107,7 @@ const schema = {
       },
       required: [
         getEntityAddressKey(0, INTERACTION_STRATEGY_FQN, FQN.TECHNIQUES_FQN),
+        getEntityAddressKey(0, CRISIS_REPORT_CLINICIAN_FQN, FQN.CUSTODY_DIVERTED_FQN),
         getEntityAddressKey(0, DISPOSITION_CLINICIAN_FQN, FQN.CJ_DISPOSITION_FQN),
         getEntityAddressKey(0, REFERRAL_REQUEST_FQN, FQN.SERVICE_TYPE_FQN),
         getEntityAddressKey(0, ENCOUNTER_DETAILS_FQN, FQN.LAW_ENFORCEMENT_INVOLVEMENT_FQN),
@@ -120,6 +128,14 @@ const uiSchema = {
     [getEntityAddressKey(0, INTERACTION_STRATEGY_FQN, FQN.TECHNIQUES_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
+      'ui:options': {
+        mode: 'button',
+        row: true,
+      }
+    },
+    [getEntityAddressKey(0, CRISIS_REPORT_CLINICIAN_FQN, FQN.CUSTODY_DIVERTED_FQN)]: {
+      classNames: 'column-span-12',
+      'ui:widget': 'radio',
       'ui:options': {
         mode: 'button',
         row: true,
