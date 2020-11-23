@@ -194,13 +194,18 @@ const TECHNIQUES = [
 ];
 
 const CLINICIAN_DISPOSITION = [
-  'Inpatient',
-  'Day Treatment',
-  'Detox',
-  'New Outpatient',
-  'CCS',
-  'ESP / Mobile',
   'CBAT',
+  'CCS',
+  'Day Treatment',
+  'De-escalated on Scene',
+  'Detox',
+  'ESP / Mobile',
+  'Medical Hospital',
+  'New Outpatient',
+  'Section 12',
+  'Section 18',
+  'Section 35',
+  'Voluntary ER Eval',
 ];
 
 const DISPOSITION = [
