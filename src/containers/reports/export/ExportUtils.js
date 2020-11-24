@@ -10,7 +10,18 @@ import * as FQN from '../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { NEIGHBOR_DETAILS } from '../../../utils/constants/EntityConstants';
 import { TEXT_XML, XML_HEADER } from '../../../utils/constants/FileTypeConstants';
-import { UNKNOWN } from '../crisis/schemas/constants';
+import {
+  CURRENT,
+  EMS,
+  EMS_FIRE,
+  FIRE,
+  NO,
+  NONE,
+  OTHER,
+  PAST,
+  UNKNOWN,
+  YES,
+} from '../crisis/schemas/constants';
 
 const { isNonEmptyString } = LangUtils;
 const { calculateAge } = DateTimeUtils;
@@ -61,35 +72,25 @@ type JDPRecord = {
 
 const {
   CRISIS_REPORT_CLINICIAN_FQN,
-  CRISIS_REPORT_FQN,
-  PART_OF_FQN,
-  REPORTED_FQN,
-  BEHAVIOR_FQN,
+  // CRISIS_REPORT_FQN,
+  // REPORTED_FQN,
   CALL_FOR_SERVICE_FQN,
-  CHARGE_FQN,
-  DIAGNOSIS_FQN,
-  DISPOSITION_FQN,
+  // CHARGE_FQN,
+  // DISPOSITION_FQN,
   EMPLOYEE_FQN,
-  ENCOUNTER_DETAILS_FQN,
+  // ENCOUNTER_DETAILS_FQN,
   ENCOUNTER_FQN,
   GENERAL_PERSON_FQN,
-  HOUSING_FQN,
+  // HOUSING_FQN,
   INCIDENT_FQN,
-  INCOME_FQN,
-  INJURY_FQN,
-  INSURANCE_FQN,
-  INTERACTION_STRATEGY_FQN,
-  INVOICE_FQN,
+  // INCOME_FQN,
+  // INSURANCE_FQN,
+  // INVOICE_FQN,
   LOCATION_FQN,
-  MEDICATION_STATEMENT_FQN,
-  OCCUPATION_FQN,
-  OFFENSE_FQN,
-  REFERRAL_REQUEST_FQN,
-  SELF_HARM_FQN,
-  STAFF_FQN,
-  SUBSTANCE_FQN,
-  VIOLENT_BEHAVIOR_FQN,
-  WEAPON_FQN,
+  // OCCUPATION_FQN,
+  // OFFENSE_FQN,
+  // REFERRAL_REQUEST_FQN,
+  SUBSTANCE_CLINICIAN_FQN,
 } = APP_TYPES_FQNS;
 
 const pipe = (...fns) => (init) => fns.reduce((piped, f) => f(piped), init);
@@ -220,7 +221,7 @@ const insertNatureOfCall = (xmlPayload :XMLPayload) => {
 const insertPointOfIntervention = (xmlPayload :XMLPayload) => {
   const { clinicianReportData } = xmlPayload.reportData;
   const pointOfIntervention = clinicianReportData
-    .getIn([ENCOUNTER_FQN, 0, NEIGHBOR_DETAILS, FQN.SERVICE_TYPE_FQN], List());
+    .getIn([ENCOUNTER_FQN, 0, NEIGHBOR_DETAILS, FQN.SERVICE_TYPE_FQN, 0]);
 
   if (isNonEmptyString(pointOfIntervention)) {
     xmlPayload.jdpRecord.PoIOpt = pointOfIntervention;
@@ -264,7 +265,7 @@ const insertGender = (xmlPayload :XMLPayload) => {
   }
   else {
     xmlPayload.jdpRecord.GndrOpt = UNKNOWN;
-    xmlPayload.errors.push(`Missing sex. Defaulting to ${UNKNOWN}`);
+    xmlPayload.errors.push(`Invalid sex. Defaulting to "${UNKNOWN}"`);
   }
   return xmlPayload;
 };
@@ -278,8 +279,85 @@ const insertMilitaryService = (xmlPayload :XMLPayload) => {
   }
   else {
     xmlPayload.jdpRecord.MilSrvOpt = UNKNOWN;
-    xmlPayload.errors.push(`Missing history of military service. Defaulting to ${UNKNOWN}`);
+    xmlPayload.errors.push(`Invalid history of military service. Defaulting to "${UNKNOWN}"`);
   }
+  return xmlPayload;
+};
+
+const getYesNoUnknownFromList = (list :List<string>) :?string => {
+  const hasNone = list.includes(NONE);
+  const hasUnknown = list.includes(UNKNOWN);
+
+  if (!list.size) return undefined;
+  if (hasNone) return NO;
+  if (hasUnknown) return UNKNOWN;
+  return YES;
+};
+
+const insertSubstance = (xmlPayload :XMLPayload) => {
+  const { clinicianReportData } = xmlPayload.reportData;
+  const substances = clinicianReportData
+    .get(SUBSTANCE_CLINICIAN_FQN, List())
+    .map((neighbor) => neighbor.get(NEIGHBOR_DETAILS, Map()));
+
+  const currentEntity = substances
+    .find((neighbor) => neighbor.getIn([FQN.TEMPORAL_STATUS_FQN, 0]) === CURRENT) || Map();
+
+  const currentType :List = currentEntity.get(FQN.TYPE_FQN, List());
+  const current = getYesNoUnknownFromList(currentType);
+  if (current) {
+    xmlPayload.jdpRecord.SAcurrtOpt = current;
+  }
+  else {
+    xmlPayload.jdpRecord.SAcurrtOpt = UNKNOWN;
+    xmlPayload.errors.push(`Invalid "Substance use during incident". Defaulting to "${UNKNOWN}"`);
+  }
+
+  const historyEntity = substances
+    .find((neighbor) => neighbor.getIn([FQN.TEMPORAL_STATUS_FQN, 0]) === PAST) || Map();
+
+  const historyType :List = historyEntity.get(FQN.TYPE_FQN, List());
+  const history = getYesNoUnknownFromList(historyType);
+  if (history) {
+    xmlPayload.jdpRecord.SubOpt = history;
+  }
+  else {
+    xmlPayload.jdpRecord.SubOpt = UNKNOWN;
+    xmlPayload.errors.push(`Invalid "History of substance abuse/treatment". Defaulting to "${UNKNOWN}"`);
+  }
+
+  return xmlPayload;
+};
+
+const getAdditionalSupportFromList = (list :List<string>) :?string => {
+  const hasNone = list.includes(NONE);
+  const hasFire = list.includes(FIRE);
+  const hasEMS = list.includes(EMS);
+  const hasOther = list.inclues(OTHER);
+
+  if (hasNone) return NONE;
+  if (hasEMS && hasFire) return EMS_FIRE;
+  if (hasEMS) return EMS;
+  if (hasFire) return FIRE;
+  if (hasOther || list.size) return OTHER;
+
+  return undefined;
+};
+
+const insertAdditionalSupport = (xmlPayload :XMLPayload) => {
+  const { crisisReportData } = xmlPayload.reportData;
+  const additionalSupport = crisisReportData
+    .getIn([GENERAL_PERSON_FQN, 0, NEIGHBOR_DETAILS, FQN.CATEGORY_FQN]);
+
+  const support = getAdditionalSupportFromList(additionalSupport);
+  if (support) {
+    xmlPayload.jdpRecord.AddlSptOSOpt = support;
+  }
+  else {
+    xmlPayload.jdpRecord.AddlSptOSOpt = NONE;
+    xmlPayload.errors.push(`Invalid "Assistance on scene". Defaulting to ${NONE}`);
+  }
+
   return xmlPayload;
 };
 
@@ -305,6 +383,8 @@ const generateXMLFromReportData = (reportData :ReportData) :string[] => {
     insertAgeRange,
     insertGender,
     insertMilitaryService,
+    insertSubstance,
+    insertAdditionalSupport,
     insertNotes,
   )(initialPayload);
 

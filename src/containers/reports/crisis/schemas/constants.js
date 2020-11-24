@@ -72,9 +72,13 @@ const NATURE_OF_CRISIS = [
   'Unknown',
 ];
 
+const EMS = 'EMS';
+const FIRE = 'FIRE';
+const EMS_FIRE = 'EMS/FIRE';
+
 const ASSISTANCE_ON_SCENE = [
-  'EMS',
-  'Fire',
+  EMS,
+  FIRE,
   'Case Manager',
   'Service Provider',
   'Family',
@@ -82,6 +86,9 @@ const ASSISTANCE_ON_SCENE = [
   'Neighbor',
   'Spouse or Partner',
 ];
+
+const PAST = 'past';
+const CURRENT = 'current';
 
 const DRUGS_ALCOHOL = [
   'Alcohol',
@@ -91,10 +98,12 @@ const DRUGS_ALCOHOL = [
   'Unknown',
 ];
 
-const YES = 'Yes';
-const NO = 'No';
-const UNKNOWN = 'Unknown';
 const NA = 'N/A';
+const NO = 'No';
+const NONE = 'None';
+const OTHER = 'Other';
+const UNKNOWN = 'Unknown';
+const YES = 'Yes';
 
 const YES_NO_UNKNOWN = [
   YES,
@@ -323,19 +332,28 @@ export {
   COMPLETED_BY,
   CRISIS_REPORT,
   CRISIS_REPORT_CLINICIAN,
+  CURRENT,
   DISCRETIONARY_ARREST,
   DISPOSITION,
   DRUGS_ALCOHOL,
   EMPLOYMENT,
+  EMS,
+  EMS_FIRE,
+  FIRE,
   FOLLOW_UP_DISPOSITON,
   FOLLOW_UP_NATURE,
   FOLLOW_UP_REPORT,
   HOUSING,
   INSURANCE,
   KNOWN_CLIENT,
+  NA,
   NATURE_OF_CALL,
   NATURE_OF_CRISIS,
+  NO,
+  NONE,
   NO_RESPONSE,
+  OTHER,
+  PAST,
   POINT_OF_INTERVENTION,
   PRIOR_ARREST_HISTORY,
   PURPOSE_OF_JDP,
@@ -349,6 +367,7 @@ export {
   UNKNOWN,
   VIOLENCE_TARGET,
   WEAPON_TYPE,
+  YES,
   YES_NO,
   YES_NO_NA,
   YES_NO_UNKNOWN,
