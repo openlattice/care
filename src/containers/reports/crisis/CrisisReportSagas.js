@@ -143,6 +143,7 @@ const {
   DIAGNOSIS_FQN,
   DISPOSITION_CLINICIAN_FQN,
   DISPOSITION_FQN,
+  EMPLOYEE_FQN,
   ENCOUNTER_DETAILS_FQN,
   ENCOUNTER_FQN,
   FOLLOW_UP_REPORT_FQN,
@@ -267,9 +268,11 @@ function* getReportsV2NeighborsWorker(action :SequenceAction) :Generator<any, an
       REPORTED_FQN,
       // report contents
       BEHAVIOR_FQN,
+      CALL_FOR_SERVICE_FQN,
       CHARGE_FQN,
       DIAGNOSIS_FQN,
       DISPOSITION_FQN,
+      EMPLOYEE_FQN,
       ENCOUNTER_DETAILS_FQN,
       ENCOUNTER_FQN,
       GENERAL_PERSON_FQN,
@@ -630,6 +633,7 @@ function* getCrisisReportV2Worker(action :SequenceAction) :Generator<any, any, a
       subjectData,
       reporterData,
       reportData: fromJS(reportResponse.data),
+      [reportFQN]: reportDataByFQN
     }));
   }
   catch (error) {

@@ -36,27 +36,49 @@ const BEHAVIORS = [
   'Suicide behaviors',
 ];
 
+const COMPLETED_BY = [
+  'CIT Officer',
+  'MHFA Officer',
+  'JDP Clinician',
+  'Forensic Peer',
+  'ESP/Crisis Team',
+];
+
 const DISCRETIONARY_ARREST = [
   'Meets criteria for discretionary arrest',
   'Does not meet criteria for discretionary arrest',
 ];
 
+const NATURE_OF_CALL = [
+  'Accident',
+  'Criminal',
+  'Domestic',
+  'Follow Up',
+  'General Disturbance',
+  'Psych Situation',
+  'Suicide Attempt',
+  'Wellness',
+];
+
 const NATURE_OF_CRISIS = [
   'Acute stress',
+  'Co-Occuring MH and SA',
   'Cognitive issues',
   'Developmental disorder',
   'Substance use disorder',
   'Psychotic disorder',
   'Mental health issues',
-  'Suicide attempt',
-  'Self-harm',
-  'Homicidal thoughts',
+  'Mood disorder',
   'Unknown',
 ];
 
+const EMS = 'EMS';
+const FIRE = 'FIRE';
+const EMS_FIRE = 'EMS/FIRE';
+
 const ASSISTANCE_ON_SCENE = [
-  'EMS',
-  'Fire',
+  EMS,
+  FIRE,
   'Case Manager',
   'Service Provider',
   'Family',
@@ -64,6 +86,9 @@ const ASSISTANCE_ON_SCENE = [
   'Neighbor',
   'Spouse or Partner',
 ];
+
+const PAST = 'past';
+const CURRENT = 'current';
 
 const DRUGS_ALCOHOL = [
   'Alcohol',
@@ -73,10 +98,12 @@ const DRUGS_ALCOHOL = [
   'Unknown',
 ];
 
-const YES = 'Yes';
-const NO = 'No';
-const UNKNOWN = 'Unknown';
 const NA = 'N/A';
+const NO = 'No';
+const NONE = 'None';
+const OTHER = 'Other';
+const UNKNOWN = 'Unknown';
+const YES = 'Yes';
 
 const YES_NO_UNKNOWN = [
   YES,
@@ -162,11 +189,12 @@ const SELF_INJURY = [
 ];
 
 const INSURANCE = [
+  'MBHP',
   'Medicare',
   'Medicaid',
   'Private',
   'Veterans Affairs',
-  'Unknown'
+  'Unknown',
 ];
 
 const TECHNIQUES = [
@@ -176,17 +204,21 @@ const TECHNIQUES = [
 ];
 
 const CLINICIAN_DISPOSITION = [
-  'Inpatient',
-  'Day Treatment',
-  'Detox',
-  'New Outpatient',
-  'CCS',
-  'ESP / Mobile',
   'CBAT',
+  'CCS',
+  'Day Treatment',
+  'De-escalated on Scene',
+  'Detox',
+  'ESP / Mobile',
+  'Medical Hospital',
+  'New Outpatient',
+  'Section 12',
+  'Section 18',
+  'Section 35',
+  'Voluntary ER Eval',
 ];
 
 const DISPOSITION = [
-  'Administered naloxone',
   'Arrestable offense',
   'Community Impact Referral',
   'Courtesy Transport',
@@ -255,7 +287,7 @@ const ASSESSMENT_LOCATION = [
   'School',
 ];
 
-const REFERRAL_SOURCE = [
+const REFERRAL_SOURCES = [
   'Community Treatment Provider',
   'Court Clinic',
   'Court Personnel',
@@ -297,32 +329,45 @@ export {
   BILLED_SERVICES,
   CLINICIAN_DISPOSITION,
   CLINICIAN_REFERRALS,
+  COMPLETED_BY,
   CRISIS_REPORT,
   CRISIS_REPORT_CLINICIAN,
+  CURRENT,
   DISCRETIONARY_ARREST,
   DISPOSITION,
   DRUGS_ALCOHOL,
   EMPLOYMENT,
+  EMS,
+  EMS_FIRE,
+  FIRE,
   FOLLOW_UP_DISPOSITON,
   FOLLOW_UP_NATURE,
   FOLLOW_UP_REPORT,
   HOUSING,
   INSURANCE,
   KNOWN_CLIENT,
+  NA,
+  NATURE_OF_CALL,
   NATURE_OF_CRISIS,
+  NO,
+  NONE,
   NO_RESPONSE,
+  OTHER,
+  PAST,
   POINT_OF_INTERVENTION,
   PRIOR_ARREST_HISTORY,
   PURPOSE_OF_JDP,
-  REFERRAL_SOURCE,
+  REFERRAL_SOURCES,
   REPORT_TYPE_OPTIONS,
   RESIDES_WITH,
   SELECT_ALL_THAT_APPLY,
   SELECT_ONLY_ONE,
   SELF_INJURY,
   TECHNIQUES,
+  UNKNOWN,
   VIOLENCE_TARGET,
   WEAPON_TYPE,
+  YES,
   YES_NO,
   YES_NO_NA,
   YES_NO_UNKNOWN,
