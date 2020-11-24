@@ -633,6 +633,7 @@ function* getCrisisReportV2Worker(action :SequenceAction) :Generator<any, any, a
       subjectData,
       reporterData,
       reportData: fromJS(reportResponse.data),
+      [reportFQN]: reportDataByFQN
     }));
   }
   catch (error) {

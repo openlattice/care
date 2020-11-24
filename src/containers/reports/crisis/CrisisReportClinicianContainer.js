@@ -1,6 +1,7 @@
 // @flow
 import React, { useCallback, useEffect, useMemo } from 'react';
 
+import styled from 'styled-components';
 import { Map } from 'immutable';
 import { Form } from 'lattice-fabricate';
 import {
@@ -23,6 +24,7 @@ import {
 import { v2 } from './schemas';
 
 import BlameCard from '../shared/BlameCard';
+import ReportMenuButton from '../export/ReportMenuButton';
 import Unauthorized from '../../../components/warnings/Unauthorized';
 import * as FQN from '../../../edm/DataModelFqns';
 import { BreadcrumbItem, BreadcrumbLink } from '../../../components/breadcrumbs';
@@ -43,6 +45,12 @@ import { generateReviewSchema } from '../../../utils/SchemaUtils';
 const {
   CRISIS_REPORT_CLINICIAN_FQN,
 } = APP_TYPES_FQNS;
+
+const CrumbsWrapper = styled.div`
+  align-items: flex-start;
+  display: flex;
+  justify-content: space-between;
+`;
 
 const CrisisReportClinicianContainer = () => {
   const dispatch = useDispatch();
@@ -132,10 +140,13 @@ const CrisisReportClinicianContainer = () => {
     <ContentOuterWrapper>
       <ContentWrapper>
         <CardStack>
-          <Breadcrumbs>
-            <BreadcrumbLink to={profilePath}>{name}</BreadcrumbLink>
-            <BreadcrumbItem>{reportData.getIn([FQN.TYPE_FQN, 0], 'Report')}</BreadcrumbItem>
-          </Breadcrumbs>
+          <CrumbsWrapper>
+            <Breadcrumbs>
+              <BreadcrumbLink to={profilePath}>{name}</BreadcrumbLink>
+              <BreadcrumbItem>{reportData.getIn([FQN.TYPE_FQN, 0], 'Report')}</BreadcrumbItem>
+            </Breadcrumbs>
+            <ReportMenuButton />
+          </CrumbsWrapper>
           <BlameCard reporterData={reporterData} />
           <Card>
             <Form
