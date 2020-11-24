@@ -180,11 +180,12 @@ const SELF_INJURY = [
 ];
 
 const INSURANCE = [
+  'MBHP',
   'Medicare',
   'Medicaid',
   'Private',
   'Veterans Affairs',
-  'Unknown'
+  'Unknown',
 ];
 
 const TECHNIQUES = [
