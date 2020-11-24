@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import type { Dispatch } from 'redux';
 
-import { downloadForms } from './DownloadsActionFactory';
+import { downloadForms } from './DownloadActions';
 
 import DateTimeRange from '../../components/controls/DateTimeRange';
 

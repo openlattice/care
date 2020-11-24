@@ -4,7 +4,7 @@
 
 import Immutable from 'immutable';
 
-import { downloadForms } from './DownloadsActionFactory';
+import { downloadForms } from './DownloadActions';
 
 const INITIAL_STATE :Immutable.Map<*, *> = Immutable.Map().withMutations((map :Immutable.Map<*, *>) => {
   map.set('downloading', false);

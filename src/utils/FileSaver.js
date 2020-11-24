@@ -9,26 +9,16 @@ export default class FileSaver {
   static saveFile(
     entityData :Blob | File | string,
     name :string,
-    datatype :string,
-    success ?:(datatype :string) => void,
+    contentType :string,
+    success ?:(name :string, contentType :string) => void,
   ) {
-    let contentType = 'application/json';
-    let data = entityData;
-
-    if (datatype === 'json') {
-      contentType = 'text/json';
-      data = JSON.stringify(entityData);
-    }
-
-    const blob = new Blob([data], {
+    const blob = new Blob([entityData], {
       type: contentType
     });
 
-    FS.saveAs(blob, name.concat(
-      (datatype === 'json') ? '.json' : '.csv'
-    ));
+    FS.saveAs(blob, name);
     if (success && success !== undefined) {
-      success(datatype);
+      success(name, contentType);
     }
   }
 }

@@ -24,7 +24,7 @@ import type { SequenceAction } from 'redux-reqseq';
 import {
   DOWNLOAD_FORMS,
   downloadForms
-} from './DownloadsActionFactory';
+} from './DownloadActions';
 
 import FileSaver from '../../utils/FileSaver';
 import * as FQN from '../../edm/DataModelFqns';
@@ -274,9 +274,9 @@ function* downloadFormsWorker(action :SequenceAction) :Generator<*, *, *> {
       data: jsonResults.toJS()
     });
 
-    const name = `BHRs-${startDT.toISODate()}-to-${endDT.toISODate()}`;
+    const name = `BHRs-${startDT.toISODate()}-to-${endDT.toISODate()}.csv`;
 
-    FileSaver.saveFile(csv, name, 'csv');
+    FileSaver.saveFile(csv, name, 'text/csv');
 
     yield put(downloadForms.success(action.id));
   }
