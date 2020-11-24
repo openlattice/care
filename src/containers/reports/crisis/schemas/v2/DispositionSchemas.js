@@ -75,6 +75,7 @@ const schema = {
       },
       required: [
         getEntityAddressKey(0, INTERACTION_STRATEGY_FQN, FQN.TECHNIQUES_FQN),
+        getEntityAddressKey(0, CRISIS_REPORT_FQN, FQN.CUSTODY_DIVERTED_FQN),
         getEntityAddressKey(0, DISPOSITION_FQN, FQN.CJ_DISPOSITION_FQN),
         getEntityAddressKey(0, OFFENSE_FQN, FQN.NOTES_FQN),
         getEntityAddressKey(0, OFFENSE_FQN, FQN.DESCRIPTION_FQN),
@@ -116,6 +117,14 @@ const uiSchema = {
     [getEntityAddressKey(0, INTERACTION_STRATEGY_FQN, FQN.TECHNIQUES_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'checkboxes',
+      'ui:options': {
+        mode: 'button',
+        row: true,
+      }
+    },
+    [getEntityAddressKey(0, CRISIS_REPORT_FQN, FQN.CUSTODY_DIVERTED_FQN)]: {
+      classNames: 'column-span-12',
+      'ui:widget': 'radio',
       'ui:options': {
         mode: 'button',
         row: true,
