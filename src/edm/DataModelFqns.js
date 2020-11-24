@@ -15,9 +15,13 @@ export const AFFILIATION_FQN = FQN.of('bhr.affiliation');
 const ROLE_FQN = FQN.of('ol.role');
 export { ROLE_FQN };
 
-/* offense */
+/* interaction report */
 const NATURE_OF_CRISIS_FQN = FQN.of('ol.natureofcrisis');
-export { NATURE_OF_CRISIS_FQN };
+const CUSTODY_DIVERTED_FQN = FQN.of('ol.custodydiverted');
+export {
+  CUSTODY_DIVERTED_FQN,
+  NATURE_OF_CRISIS_FQN,
+};
 
 /* offense */
 const DIVERSION_STATUS_FQN = FQN.of('ol.diversionstatus');

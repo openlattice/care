@@ -15,7 +15,16 @@ import {
   updateCrisisReport,
 } from './CrisisActions';
 
+import { APP_TYPES_FQNS } from '../../../shared/Consts';
+
+const {
+  CRISIS_REPORT_CLINICIAN_FQN,
+  CRISIS_REPORT_FQN,
+} = APP_TYPES_FQNS;
+
 const INITIAL_STATE :Map = fromJS({
+  [CRISIS_REPORT_CLINICIAN_FQN]: Map(),
+  [CRISIS_REPORT_FQN]: Map(),
   entityIndexToIdMap: Map(),
   fetchState: RequestStates.STANDBY,
   formData: Map(),
