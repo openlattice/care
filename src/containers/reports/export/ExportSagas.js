@@ -168,7 +168,6 @@ function* exportCrisisXMLWorker(action :SequenceAction) :Saga<void> {
       personDetails,
       title,
     });
-    console.log(errors);
 
     yield put(exportCrisisXML.success(action.id, errors));
   }
