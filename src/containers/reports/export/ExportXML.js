@@ -5,12 +5,10 @@ import { IconSplash, Spinner } from 'lattice-ui-kit';
 import { useRequestState } from 'lattice-utils';
 import { useDispatch } from 'react-redux';
 
-import { exportCrisisXML } from './ExportActions';
-
-import { EXPORT_XML } from '../crisis/CrisisActions';
+import { EXPORT_CRISIS_XML, exportCrisisXML } from './ExportActions';
 
 const ExportXML = () => {
-  const requestState = useRequestState(['crisisReport', EXPORT_XML]);
+  const requestState = useRequestState(['crisisReport', EXPORT_CRISIS_XML]);
 
   const dispatch = useDispatch();
   useEffect(() => {

@@ -20,12 +20,13 @@ import type { Saga } from '@redux-saga/core';
 import type { SequenceAction } from 'redux-reqseq';
 
 import { EXPORT_CRISIS_XML, exportCrisisXML } from './ExportActions';
+import { generateXMLFromReportData } from './ExportUtils';
 
-import { OPENLATTICE_ID_FQN } from '../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { getESIDsFromApp } from '../../../utils/AppUtils';
 import { getEntityKeyId, groupNeighborsByFQNs } from '../../../utils/DataUtils';
 import { ERR_UNEXPECTED } from '../../../utils/Errors';
+import { NEIGHBOR_DETAILS, NEIGHBOR_ID } from '../../../utils/constants/EntityConstants';
 import { getChargeEvents } from '../crisis/CrisisActions';
 import { getChargeEventsWorker } from '../crisis/CrisisReportSagas';
 
@@ -53,15 +54,18 @@ function* exportCrisisXMLWorker(action :SequenceAction) :Saga<void> {
   try {
     yield put(exportCrisisXML.request(action.id));
     const app :Map = yield select((state) => state.get('app', Map()));
-    const clinicianReportDataByFQN :Map = yield select(
-      (store) => store.getIn(['crisisReport', CRISIS_REPORT_CLINICIAN_FQN])
+    const clinicianReportData :Map = yield select(
+      (state) => state.getIn(['crisisReport', CRISIS_REPORT_CLINICIAN_FQN])
     );
-    const subjectData :Map = yield select((store) => store.getIn('crisisReport', 'subjectData'));
-    const subjectEKID = getEntityKeyId(subjectData);
+    const selectedOrganizationId = yield select((state) => state.getIn(['app', 'selectedOrganizationId']));
+    const title = yield select((state) => state.getIn(['app', 'organizations', selectedOrganizationId, 'title']));
 
-    if (!clinicianReportDataByFQN || !subjectEKID) throw ERR_UNEXPECTED;
+    const person :Map = yield select((state) => state.getIn(['crisisReport', 'subjectData']));
+    const subjectEKID = getEntityKeyId(person);
 
-    const incident = clinicianReportDataByFQN.getIn([INCIDENT_FQN, 0, 'neighborDetails']);
+    if (!clinicianReportData || !subjectEKID) throw ERR_UNEXPECTED;
+
+    const incident = clinicianReportData.getIn([INCIDENT_FQN, 0, NEIGHBOR_DETAILS]);
     const incidentEKID = getEntityKeyId(incident);
 
     const entitySetFQNs = [
@@ -108,8 +112,8 @@ function* exportCrisisXMLWorker(action :SequenceAction) :Saga<void> {
         filter: {
           entityKeyIds: [incidentEKID],
           edgeEntitySetIds: [partOfESID],
-          destinationEntitySetIds: [],
-          sourceEntitySetIds: [crisisReportESID],
+          destinationEntitySetIds: [crisisReportESID],
+          sourceEntitySetIds: [],
         },
       })
     );
@@ -120,10 +124,10 @@ function* exportCrisisXMLWorker(action :SequenceAction) :Saga<void> {
     ]);
 
     const personDetails = fromJS(personDetailsResponse.data || {})
-      .getIn([subjectEKID, 0, 'neighborDetails'], Map());
+      .getIn([subjectEKID, 0, NEIGHBOR_DETAILS], Map());
     const crisisReport = fromJS(reportResponse.data || {})
-      .getIn([incidentEKID, 0, 'neighborDetails'], Map());
-    const crisisReportEKID = crisisReport.getIn(['neighborDetails', OPENLATTICE_ID_FQN, 0]);
+      .getIn([incidentEKID, 0, NEIGHBOR_DETAILS], Map());
+    const crisisReportEKID = getEntityKeyId(crisisReport);
 
     const neighborsResponse = yield call(
       searchEntityNeighborsWithFilterWorker,
@@ -143,7 +147,7 @@ function* exportCrisisXMLWorker(action :SequenceAction) :Saga<void> {
     const neighborsByFQN = groupNeighborsByFQNs(neighbors, appTypeFqnsByIds);
     const chargeEKIDs = neighborsByFQN
       .get(CHARGE_FQN, List())
-      .map((charge) => charge.getIn(['neighborDetails', OPENLATTICE_ID_FQN, 0]))
+      .map((charge) => charge.get(NEIGHBOR_ID))
       .toJS();
 
     const chargeEventsResponse = yield call(
@@ -154,12 +158,19 @@ function* exportCrisisXMLWorker(action :SequenceAction) :Saga<void> {
     const chargeEventsData = chargeEKIDs
       .map((chargeEKID) => chargeEventsResponse.data.getIn([chargeEKID, 0], Map()));
 
-    const crisisReportDataByFQN = neighborsByFQN
+    const crisisReportData = neighborsByFQN
       .set(CHARGE_EVENT_FQN.toString(), chargeEventsData);
 
-    console.log(clinicianReportDataByFQN, crisisReportDataByFQN, personDetails);
+    const errors = generateXMLFromReportData({
+      clinicianReportData,
+      crisisReportData,
+      person,
+      personDetails,
+      title,
+    });
+    console.log(errors);
 
-    yield put(exportCrisisXML.success(action.id));
+    yield put(exportCrisisXML.success(action.id, errors));
   }
   catch (error) {
     LOG.error(action.type, error);
