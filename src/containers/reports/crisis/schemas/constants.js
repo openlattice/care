@@ -210,7 +210,6 @@ const CLINICIAN_DISPOSITION = [
 ];
 
 const DISPOSITION = [
-  'Administered naloxone',
   'Arrestable offense',
   'Community Impact Referral',
   'Courtesy Transport',
@@ -267,16 +266,6 @@ const POINT_OF_INTERVENTION = [
   'Re-entry',
 ];
 
-const REFERRAL_SOURCES = [
-  'Comm\'ty Treatm\'t Provider',
-  'Court Clinic',
-  'Court Personnel',
-  'Family/Private Citizen',
-  'Police/Law Enforcement',
-  'School',
-  'State Agency',
-];
-
 const ASSESSMENT_LOCATION = [
   'Community',
   'Court',
@@ -289,7 +278,7 @@ const ASSESSMENT_LOCATION = [
   'School',
 ];
 
-const REFERRAL_SOURCE = [
+const REFERRAL_SOURCES = [
   'Community Treatment Provider',
   'Court Clinic',
   'Court Personnel',
@@ -350,7 +339,6 @@ export {
   POINT_OF_INTERVENTION,
   PRIOR_ARREST_HISTORY,
   PURPOSE_OF_JDP,
-  REFERRAL_SOURCE,
   REFERRAL_SOURCES,
   REPORT_TYPE_OPTIONS,
   RESIDES_WITH,

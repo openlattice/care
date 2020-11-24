@@ -7,7 +7,7 @@ import {
   FOLLOW_UP_NATURE,
   FOLLOW_UP_REPORT,
   POINT_OF_INTERVENTION,
-  REFERRAL_SOURCE,
+  REFERRAL_SOURCES,
   SELECT_ALL_THAT_APPLY,
   SELECT_ONLY_ONE
 } from '../constants';
@@ -63,7 +63,7 @@ const schema = {
           description: SELECT_ALL_THAT_APPLY,
           items: {
             type: 'string',
-            enum: REFERRAL_SOURCE,
+            enum: REFERRAL_SOURCES,
           },
           // minItems: 1,
           uniqueItems: true,
