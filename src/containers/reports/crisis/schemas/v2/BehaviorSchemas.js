@@ -32,7 +32,7 @@ const schema = {
       title: 'Observations',
       properties: {
         [getEntityAddressKey(0, EMPLOYEE_FQN, FQN.CATEGORY_FQN)]: {
-          title: 'Assessment Completed by',
+          title: 'Assessment Completed By',
           type: 'string',
           description: SELECT_ONLY_ONE,
           enum: COMPLETED_BY,
@@ -50,7 +50,7 @@ const schema = {
           enum: POINT_OF_INTERVENTION,
         },
         [getEntityAddressKey(0, REFERRAL_SOURCE_FQN, FQN.ORGANIZATION_NAME_FQN)]: {
-          title: 'Referral source',
+          title: 'Referral Source',
           type: 'string',
           description: SELECT_ONLY_ONE,
           enum: REFERRAL_SOURCES,
