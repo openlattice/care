@@ -577,10 +577,8 @@ const insertResidence = (xmlPayload :XMLPayload) => {
 
 const insertPriorArrests = (xmlPayload :XMLPayload) => {
   const { crisisReportData } = xmlPayload.reportData;
-  console.log(crisisReportData);
   const priorArrests = crisisReportData
     .getIn([OFFENSE_FQN, 0, NEIGHBOR_DETAILS, FQN.NOTES_FQN, 0], '');
-  console.log(priorArrests)
 
   xmlPayload.jdpRecord.PriorOpt = priorArrests;
   if (!priorArrests) xmlPayload.errors.push('Invalid "Prior Arrests"');
