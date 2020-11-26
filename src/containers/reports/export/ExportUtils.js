@@ -648,6 +648,10 @@ const generateXMLFromReportData = (reportData :ReportData) :string[] => {
     insertNotes,
     insertTimestamp,
   )(initialPayload);
+  const { clinicianReportData } = reportData;
+  const incidentID = clinicianReportData
+    .getIn([INCIDENT_FQN, 0, NEIGHBOR_DETAILS, FQN.CRIMINALJUSTICE_CASE_NUMBER_FQN, 0]);
+  const today = DateTime.local().toISODate();
 
   const xml = new Parser().parse({
     dataroot: {
@@ -661,7 +665,7 @@ const generateXMLFromReportData = (reportData :ReportData) :string[] => {
   });
 
   const xmlWithHeader = XML_HEADER.concat(xml);
-  FileSaver.saveFile(xmlWithHeader, 'testWithHeader.xml', TEXT_XML);
+  FileSaver.saveFile(xmlWithHeader, `${incidentID}_${today}.xml`, TEXT_XML);
 
   return errors;
 };
