@@ -20,7 +20,7 @@ const {
   CRISIS_REPORT_CLINICIAN_FQN,
   EMPLOYEE_FQN,
   ENCOUNTER_FQN,
-  REFERRAL_REQUEST_FQN,
+  REFERRAL_SOURCE_FQN,
 } = APP_TYPES_FQNS;
 
 const { getEntityAddressKey, getPageSectionKey } = DataProcessingUtils;
@@ -50,7 +50,7 @@ const schema = {
           description: SELECT_ONLY_ONE,
           enum: POINT_OF_INTERVENTION,
         },
-        [getEntityAddressKey(0, REFERRAL_REQUEST_FQN, FQN.SOURCE_FQN)]: {
+        [getEntityAddressKey(0, REFERRAL_SOURCE_FQN, FQN.SOURCE_FQN)]: {
           title: 'Referral Source',
           type: 'string',
           description: SELECT_ONLY_ONE,
@@ -88,7 +88,7 @@ const schema = {
         getEntityAddressKey(0, EMPLOYEE_FQN, FQN.CATEGORY_FQN),
         getEntityAddressKey(0, CALL_FOR_SERVICE_FQN, FQN.TYPE_FQN),
         getEntityAddressKey(0, ENCOUNTER_FQN, FQN.SERVICE_TYPE_FQN),
-        getEntityAddressKey(0, REFERRAL_REQUEST_FQN, FQN.SOURCE_FQN),
+        getEntityAddressKey(0, REFERRAL_SOURCE_FQN, FQN.SOURCE_FQN),
         getEntityAddressKey(0, CRISIS_REPORT_CLINICIAN_FQN, FQN.NATURE_OF_CRISIS_FQN),
         getEntityAddressKey(0, BEHAVIOR_CLINICIAN_FQN, FQN.OBSERVED_BEHAVIOR_FQN),
       ]
@@ -127,7 +127,7 @@ const uiSchema = {
         row: true,
       },
     },
-    [getEntityAddressKey(0, REFERRAL_REQUEST_FQN, FQN.SOURCE_FQN)]: {
+    [getEntityAddressKey(0, REFERRAL_SOURCE_FQN, FQN.SOURCE_FQN)]: {
       classNames: 'column-span-12',
       'ui:widget': 'radio',
       'ui:options': {
