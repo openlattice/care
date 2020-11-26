@@ -10,15 +10,19 @@ import * as FQN from '../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { NEIGHBOR_DETAILS } from '../../../utils/constants/EntityConstants';
 import { TEXT_XML, XML_HEADER } from '../../../utils/constants/FileTypeConstants';
+import { HISPANIC, NON_HISPANIC } from '../../profile/constants';
 import {
   CURRENT,
   EMS,
   EMS_FIRE,
   FIRE,
+  NA,
   NO,
   NONE,
   OTHER,
   PAST,
+  PRIMARY,
+  SECONDARY,
   UNKNOWN,
   YES,
 } from '../crisis/schemas/constants';
@@ -73,23 +77,24 @@ type JDPRecord = {
 const {
   CRISIS_REPORT_CLINICIAN_FQN,
   // CRISIS_REPORT_FQN,
-  // REPORTED_FQN,
   CALL_FOR_SERVICE_FQN,
-  // CHARGE_FQN,
-  // DISPOSITION_FQN,
+  CHARGE_FQN,
+  CHARGE_EVENT_FQN,
+  DISPOSITION_CLINICIAN_FQN,
   EMPLOYEE_FQN,
-  // ENCOUNTER_DETAILS_FQN,
+  ENCOUNTER_DETAILS_FQN,
   ENCOUNTER_FQN,
   GENERAL_PERSON_FQN,
-  // HOUSING_FQN,
+  HOUSING_FQN,
   INCIDENT_FQN,
-  // INCOME_FQN,
-  // INSURANCE_FQN,
-  // INVOICE_FQN,
+  INCOME_FQN,
+  INSURANCE_FQN,
+  INVOICE_FQN,
   LOCATION_FQN,
-  // OCCUPATION_FQN,
-  // OFFENSE_FQN,
-  // REFERRAL_REQUEST_FQN,
+  OCCUPATION_FQN,
+  OFFENSE_FQN,
+  REFERRAL_REQUEST_FQN,
+  REFERRAL_SOURCE_FQN,
   SUBSTANCE_CLINICIAN_FQN,
 } = APP_TYPES_FQNS;
 
@@ -333,7 +338,7 @@ const getAdditionalSupportFromList = (list :List<string>) :?string => {
   const hasNone = list.includes(NONE);
   const hasFire = list.includes(FIRE);
   const hasEMS = list.includes(EMS);
-  const hasOther = list.inclues(OTHER);
+  const hasOther = list.includes(OTHER);
 
   if (hasNone) return NONE;
   if (hasEMS && hasFire) return EMS_FIRE;
@@ -361,12 +366,255 @@ const insertAdditionalSupport = (xmlPayload :XMLPayload) => {
   return xmlPayload;
 };
 
+const insertJailDiversion = (xmlPayload :XMLPayload) => {
+  const { clinicianReportData } = xmlPayload.reportData;
+  const encounterDetails = clinicianReportData
+    .getIn([ENCOUNTER_DETAILS_FQN, 0, NEIGHBOR_DETAILS], Map());
+
+  const jailDiversion = encounterDetails.getIn([FQN.LAW_ENFORCEMENT_INVOLVEMENT_FQN, 0]);
+  xmlPayload.jdpRecord.JDOpt = jailDiversion ? 'Yes' : 'No';
+  if (jailDiversion === undefined) {
+    xmlPayload.errors.push(`Invalid "Was jail diversion an option?". Defaulting to ${NO}`);
+  }
+
+  const reasonProperty = encounterDetails.get(FQN.REASON_FQN, List());
+  xmlPayload.jdpRecord.PurpOpt = '';
+  xmlPayload.jdpRecord.PurpOth = '';
+
+  if (!reasonProperty.size) {
+    xmlPayload.errors.push('Invalid "Reason for JDP intervention"');
+  }
+  else if (reasonProperty.size === 1) {
+    xmlPayload.jdpRecord.PurpOpt = reasonProperty.first();
+  }
+  else if (reasonProperty.size > 1) {
+    xmlPayload.jdpRecord.PurpOpt = OTHER;
+    xmlPayload.jdpRecord.PurpOth = reasonProperty.filter((v) => v !== OTHER).toJS().join(', ');
+  }
+
+  const preventER = encounterDetails.getIn([FQN.LEVEL_OF_CARE_FQN, 0], '');
+  xmlPayload.jdpRecord.EROpt = preventER;
+  if (!preventER) xmlPayload.errors.push('Invalid "Did JDP intervention prevent ER visit?"');
+
+  return xmlPayload;
+};
+
+const insertCharges = (xmlPayload :XMLPayload) => {
+  const { crisisReportData } = xmlPayload.reportData;
+  const charges = crisisReportData.get(CHARGE_FQN, List());
+  const chargeEvents = crisisReportData.get(CHARGE_EVENT_FQN, List());
+  if (!charges.size) {
+    xmlPayload.jdpRecord.CDCharge = '';
+    xmlPayload.jdpRecord.CDOpt = NA;
+  }
+  else {
+    const chargeNames = charges.map((charge) => charge.getIn([NEIGHBOR_DETAILS, FQN.NAME_FQN, 0])).toJS().join(', ');
+    const chargesDiverted = chargeEvents
+      .reduce((status, event) => {
+        if (status === YES) return status;
+        const diverted = event.getIn([NEIGHBOR_DETAILS, FQN.DIVERSION_STATUS_FQN, 0], '');
+        return diverted;
+      }, NA);
+    xmlPayload.jdpRecord.CDCharge = chargeNames;
+    xmlPayload.jdpRecord.CDOpt = chargesDiverted;
+  }
+
+  return xmlPayload;
+};
+
+const insertCustodyDiversion = (xmlPayload :XMLPayload) => {
+  const { clinicianReportData } = xmlPayload.reportData;
+  const custodyDiverted = clinicianReportData
+    .getIn([CRISIS_REPORT_CLINICIAN_FQN, 0, NEIGHBOR_DETAILS, FQN.CUSTODY_DIVERTED_FQN, 0], '');
+  if (!custodyDiverted) xmlPayload.errors.push('Invalid "Was criminal custody diverted"');
+  xmlPayload.jdpRecord.ACCOpt = custodyDiverted;
+  xmlPayload.jdpRecord.CAOpt = '';
+  xmlPayload.jdpRecord.CAOth = '';
+
+  const disposition = clinicianReportData
+    .getIn([DISPOSITION_CLINICIAN_FQN, 0, NEIGHBOR_DETAILS, FQN.CJ_DISPOSITION_FQN], List());
+
+  if (!disposition.size) {
+    xmlPayload.errors.push('Invalid "Disposition"');
+  }
+  else if (disposition.size === 1) {
+    xmlPayload.jdpRecord.CAOpt = disposition.first();
+  }
+  else if (disposition.size > 1) {
+    xmlPayload.jdpRecord.CAOpt = OTHER;
+    xmlPayload.jdpRecord.CAOth = disposition.filter((v) => v !== OTHER).toJS().join(', ');
+  }
+
+  return xmlPayload;
+};
+
+const insertInsurance = (xmlPayload :XMLPayload) => {
+  const { clinicianReportData } = xmlPayload.reportData;
+  const insurances = clinicianReportData
+    .get(INSURANCE_FQN, List())
+    .map((neighbor) => neighbor.get(NEIGHBOR_DETAILS, Map()));
+
+  const primaryEntity = insurances
+    .find((neighbor) => neighbor.getIn([FQN.GENERAL_STATUS_FQN, 0]) === PRIMARY) || Map();
+
+  const primary :string = primaryEntity.getIn([FQN.ORGANIZATION_NAME_FQN, 0], '');
+  if (primary) {
+    xmlPayload.jdpRecord.PrimSrcOpt = primary;
+  }
+  else {
+    xmlPayload.jdpRecord.PrimSrcOpt = UNKNOWN;
+    xmlPayload.errors.push(`Invalid "Primary Insurance". Defaulting to "${UNKNOWN}"`);
+  }
+
+  const secondaryEntity = insurances
+    .find((neighbor) => neighbor.getIn([FQN.GENERAL_STATUS_FQN, 0]) === SECONDARY) || Map();
+
+  const secondary :string = secondaryEntity.getIn([FQN.ORGANIZATION_NAME_FQN, 0], '');
+  if (secondary) {
+    xmlPayload.jdpRecord.SecSrcOpt = secondary;
+  }
+  else {
+    xmlPayload.jdpRecord.SecSrcOpt = UNKNOWN;
+    xmlPayload.errors.push(`Invalid "Secondary Insurance". Defaulting to "${UNKNOWN}"`);
+  }
+  return xmlPayload;
+};
+
+const insertBilledServices = (xmlPayload :XMLPayload) => {
+  const { clinicianReportData } = xmlPayload.reportData;
+  const billedServices = clinicianReportData
+    .getIn([INVOICE_FQN, 0, NEIGHBOR_DETAILS, FQN.LINE_ITEM_FQN], List());
+
+  const billed = getYesNoUnknownFromList(billedServices);
+  if (billed) {
+    xmlPayload.jdpRecord.BillOpt = billed;
+  }
+  else {
+    xmlPayload.jdpRecord.BillOpt = NA;
+    xmlPayload.errors.push(`Invalid "Billed services". Defaulting to "${NA}"`);
+  }
+
+  const services = billedServices
+    .filter((service) => !(service === NONE || service === OTHER)).toJS().join(', ');
+  xmlPayload.jdpRecord.WhatSrvOpt = services;
+
+  return xmlPayload;
+};
+
+const insertReferralSource = (xmlPayload :XMLPayload) => {
+  const { clinicianReportData } = xmlPayload.reportData;
+  const referralSource = clinicianReportData.getIn([REFERRAL_SOURCE_FQN, 0, NEIGHBOR_DETAILS, FQN.SOURCE_FQN, 0], '');
+
+  xmlPayload.jdpRecord.RefSrcOpt = referralSource;
+  if (!referralSource) xmlPayload.errors.push('Invalid "Referral source"');
+
+  return xmlPayload;
+};
+
+const insertStateService = (xmlPayload :XMLPayload) => {
+  const { clinicianReportData } = xmlPayload.reportData;
+  const stateServices = clinicianReportData.getIn([INCOME_FQN, 0, NEIGHBOR_DETAILS, FQN.TYPE_FQN], List());
+
+  const serviceNames = stateServices
+    .filter((service) => service !== OTHER)
+    .toJS().join(', ');
+
+  xmlPayload.jdpRecord.KnownOpt = serviceNames || UNKNOWN;
+  return xmlPayload;
+};
+
+const insertRaceEthnicity = (xmlPayload :XMLPayload) => {
+  const { person } = xmlPayload.reportData;
+  const ethnicity = person.getIn([FQN.PERSON_ETHNICITY_FQN, 0], '');
+  const race = person.getIn([FQN.PERSON_RACE_FQN, 0], UNKNOWN);
+
+  if (ethnicity === HISPANIC) xmlPayload.jdpRecord.HPOpt = YES;
+  else if (ethnicity === NON_HISPANIC) xmlPayload.jdpRecord.HPOpt = NO;
+  else xmlPayload.jdpRecord.HPOpt = UNKNOWN;
+
+  xmlPayload.jdpRecord.RaceOpt = race || UNKNOWN;
+
+  return xmlPayload;
+};
+
+const insertEmployment = (xmlPayload :XMLPayload) => {
+  const { clinicianReportData } = xmlPayload.reportData;
+  const employmentOptions = clinicianReportData.getIn([OCCUPATION_FQN, 0, NEIGHBOR_DETAILS, FQN.TYPE_FQN], List());
+
+  if (!employmentOptions.size) xmlPayload.errors.push(`Invalid "Occupation". Defaulting to ${UNKNOWN}`);
+
+  xmlPayload.jdpRecord.EmpSrcOpt = employmentOptions
+    .filter((option) => option !== OTHER).first(UNKNOWN);
+
+  return xmlPayload;
+};
+
+const insertResidence = (xmlPayload :XMLPayload) => {
+  const { clinicianReportData } = xmlPayload.reportData;
+  const housingEntity = clinicianReportData.getIn([HOUSING_FQN, 0, NEIGHBOR_DETAILS], Map());
+  const type :List = housingEntity.get(FQN.TYPE_FQN, List());
+  if (type.isEmpty()) xmlPayload.errors.push(`Invalid "Current Housing Situation". Defaulting to ${UNKNOWN}`);
+  xmlPayload.jdpRecord.LivOpt = type.first(UNKNOWN);
+
+  const livesWith :List = housingEntity.get(FQN.DESCRIPTION_FQN, List());
+  if (livesWith.isEmpty()) xmlPayload.errors.push('Invalid "Resides With"');
+
+  const hasOther = livesWith.includes(OTHER);
+  const livesWithOther = livesWith
+    .filter((option) => option !== OTHER)
+    .toJS().join(', ');
+
+  if (hasOther) {
+    xmlPayload.jdpRecord.WithOpt = OTHER;
+    xmlPayload.jdpRecord.WithOth = livesWithOther;
+  }
+  else {
+    xmlPayload.jdpRecord.WithOpt = livesWith.first();
+    xmlPayload.jdpRecord.WithOth = '';
+  }
+  return xmlPayload;
+};
+
+const insertPriorArrests = (xmlPayload :XMLPayload) => {
+  const { crisisReportData } = xmlPayload.reportData;
+  console.log(crisisReportData);
+  const priorArrests = crisisReportData
+    .getIn([OFFENSE_FQN, 0, NEIGHBOR_DETAILS, FQN.NOTES_FQN, 0], '');
+  console.log(priorArrests)
+
+  xmlPayload.jdpRecord.PriorOpt = priorArrests;
+  if (!priorArrests) xmlPayload.errors.push('Invalid "Prior Arrests"');
+
+  return xmlPayload;
+};
+
+const insertPresenceOfPsychiatricIssue = (xmlPayload :XMLPayload) => {
+  const { clinicianReportData } = xmlPayload.reportData;
+  const psychIssue = clinicianReportData
+    .getIn([CRISIS_REPORT_CLINICIAN_FQN, 0, NEIGHBOR_DETAILS, FQN.NATURE_OF_CRISIS_FQN, 0], '');
+
+  if (psychIssue) {
+    xmlPayload.jdpRecord.PresOpt = psychIssue;
+  }
+  else {
+    xmlPayload.jdpRecord.PresOpt = UNKNOWN;
+    xmlPayload.errors.push(`Invalid "Presenting Psychiatric Issue". Defaulting to ${UNKNOWN}`);
+  }
+
+  return xmlPayload;
+};
+
 const insertNotes = (xmlPayload :XMLPayload) => {
   const { clinicianReportData } = xmlPayload.reportData;
   const notes = clinicianReportData
     .getIn([INCIDENT_FQN, 0, NEIGHBOR_DETAILS, FQN.DESCRIPTION_FQN, 0]);
 
   xmlPayload.jdpRecord.Note = notes;
+  return xmlPayload;
+};
+
+const insertTimestamp = (xmlPayload :XMLPayload) => {
+  xmlPayload.jdpRecord.DocSent = DateTime.local().toFormat('d/M/y_H:m:s');
   return xmlPayload;
 };
 
@@ -385,7 +633,20 @@ const generateXMLFromReportData = (reportData :ReportData) :string[] => {
     insertMilitaryService,
     insertSubstance,
     insertAdditionalSupport,
+    insertJailDiversion,
+    insertCharges,
+    insertCustodyDiversion,
+    insertInsurance,
+    insertBilledServices,
+    insertReferralSource,
+    insertStateService,
+    insertRaceEthnicity,
+    insertEmployment,
+    insertResidence,
+    insertPriorArrests,
+    insertPresenceOfPsychiatricIssue,
     insertNotes,
+    insertTimestamp,
   )(initialPayload);
 
   const xml = new Parser().parse({
