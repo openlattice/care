@@ -18,8 +18,9 @@ import { exportCrisisXML, resetExportCrisisXML } from './ExportActions';
 const { GREEN, YELLOW } = Colors;
 
 const Wrapper = styled.div`
-  width: 500px;
+  max-width: 100%;
   padding-bottom: 30px;
+  width: 500px;
 `;
 
 const SuccessIcon = (size) => <FontAwesomeIcon icon={faCheckCircle} color={GREEN.G300} size={size} />;
