@@ -50,7 +50,7 @@ const schema = {
         },
         [getEntityAddressKey(0, DISPOSITION_FQN, FQN.CJ_DISPOSITION_FQN)]: {
           type: 'array',
-          description: SELECT_ONLY_ONE,
+          description: SELECT_ALL_THAT_APPLY,
           title: 'Disposition',
           items: {
             type: 'string',
@@ -132,11 +132,12 @@ const uiSchema = {
     },
     [getEntityAddressKey(0, DISPOSITION_FQN, FQN.CJ_DISPOSITION_FQN)]: {
       classNames: 'column-span-12',
-      'ui:widget': 'OtherRadioWidget',
+      'ui:widget': 'checkboxes',
       'ui:options': {
         mode: 'button',
         row: true,
         withNone: true,
+        withOther: true,
       }
     },
     [getEntityAddressKey(0, OFFENSE_FQN, FQN.NOTES_FQN)]: {

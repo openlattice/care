@@ -89,9 +89,12 @@ const HAIR_COLOR_VALUES = [
 ];
 const hairOptions = generateOptions(HAIR_COLOR_VALUES);
 
+const HISPANIC = 'Hispanic';
+const NON_HISPANIC = 'Non-Hispanic';
+
 const ETHNICITY_VALUES = [
-  'Non-Hispanic',
-  'Hispanic',
+  NON_HISPANIC,
+  HISPANIC,
   'Unknown',
   'Declined'
 ];
@@ -119,6 +122,8 @@ export {
   ETHNICITY_VALUES,
   EYE_COLOR_VALUES,
   HAIR_COLOR_VALUES,
+  HISPANIC,
+  NON_HISPANIC,
   RACE_VALUES,
   SEX_VALUES,
   ethnicityOptions,
