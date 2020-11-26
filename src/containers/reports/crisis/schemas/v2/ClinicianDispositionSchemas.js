@@ -51,7 +51,7 @@ const schema = {
         // change this to disposition
         [getEntityAddressKey(0, DISPOSITION_CLINICIAN_FQN, FQN.CJ_DISPOSITION_FQN)]: {
           type: 'array',
-          description: SELECT_ALL_THAT_APPLY,
+          description: SELECT_ONLY_ONE,
           title: 'Disposition',
           items: {
             type: 'string',
@@ -143,7 +143,7 @@ const uiSchema = {
     },
     [getEntityAddressKey(0, DISPOSITION_CLINICIAN_FQN, FQN.CJ_DISPOSITION_FQN)]: {
       classNames: 'column-span-12',
-      'ui:widget': 'checkboxes',
+      'ui:widget': 'OtherRadioWidget',
       'ui:options': {
         mode: 'button',
         row: true,
