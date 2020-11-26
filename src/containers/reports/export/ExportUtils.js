@@ -618,7 +618,7 @@ const insertTimestamp = (xmlPayload :XMLPayload) => {
   return xmlPayload;
 };
 
-const generateXMLFromReportData = (reportData :ReportData) :string[] => {
+const generateXMLFromReportData = (reportData :ReportData) :Object => {
   const initialPayload :XMLPayload = { reportData, jdpRecord: {}, errors: [] };
   const { jdpRecord, errors } = pipe(
     insertEntryDate,
@@ -652,6 +652,7 @@ const generateXMLFromReportData = (reportData :ReportData) :string[] => {
   const incidentID = clinicianReportData
     .getIn([INCIDENT_FQN, 0, NEIGHBOR_DETAILS, FQN.CRIMINALJUSTICE_CASE_NUMBER_FQN, 0]);
   const today = DateTime.local().toISODate();
+  const filename = `${incidentID}_${today}.xml`;
 
   const xml = new Parser().parse({
     dataroot: {
@@ -665,9 +666,12 @@ const generateXMLFromReportData = (reportData :ReportData) :string[] => {
   });
 
   const xmlWithHeader = XML_HEADER.concat(xml);
-  FileSaver.saveFile(xmlWithHeader, `${incidentID}_${today}.xml`, TEXT_XML);
+  FileSaver.saveFile(xmlWithHeader, filename, TEXT_XML);
 
-  return errors;
+  return ({
+    errors: List(errors),
+    filename
+  });
 };
 
 export {
