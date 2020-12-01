@@ -24,6 +24,7 @@ import {
 import { v2 } from './schemas';
 
 import BlameCard from '../shared/BlameCard';
+import ReportMenuButton from '../export/ReportMenuButton';
 import Unauthorized from '../../../components/warnings/Unauthorized';
 import * as FQN from '../../../edm/DataModelFqns';
 import { BreadcrumbItem, BreadcrumbLink } from '../../../components/breadcrumbs';
@@ -144,6 +145,7 @@ const CrisisReportClinicianContainer = () => {
               <BreadcrumbLink to={profilePath}>{name}</BreadcrumbLink>
               <BreadcrumbItem>{reportData.getIn([FQN.TYPE_FQN, 0], 'Report')}</BreadcrumbItem>
             </Breadcrumbs>
+            <ReportMenuButton />
           </CrumbsWrapper>
           <BlameCard reporterData={reporterData} />
           <Card>

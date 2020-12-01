@@ -2,7 +2,12 @@ import { DataProcessingUtils } from 'lattice-fabricate';
 
 import * as FQN from '../../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
-import { INSURANCE, SELECT_ONLY_ONE } from '../constants';
+import {
+  INSURANCE,
+  PRIMARY,
+  SECONDARY,
+  SELECT_ONLY_ONE
+} from '../constants';
 
 const { INSURANCE_FQN } = APP_TYPES_FQNS;
 
@@ -22,13 +27,13 @@ const schema = {
           enum: INSURANCE,
           sharedProperty: {
             property: FQN.GENERAL_STATUS_FQN,
-            value: 'Primary',
+            value: PRIMARY,
           }
         },
         [getEntityAddressKey(0, INSURANCE_FQN, FQN.GENERAL_STATUS_FQN)]: {
           type: 'string',
           title: 'Type',
-          default: 'Primary',
+          default: PRIMARY,
           skipPopulate: true,
         },
         [getEntityAddressKey(1, INSURANCE_FQN, FQN.ORGANIZATION_NAME_FQN)]: {
@@ -38,13 +43,13 @@ const schema = {
           enum: INSURANCE,
           sharedProperty: {
             property: FQN.GENERAL_STATUS_FQN,
-            value: 'Secondary',
+            value: SECONDARY,
           }
         },
         [getEntityAddressKey(1, INSURANCE_FQN, FQN.GENERAL_STATUS_FQN)]: {
           type: 'string',
           title: 'Type',
-          default: 'Secondary',
+          default: SECONDARY,
           skipPopulate: true,
         },
       },

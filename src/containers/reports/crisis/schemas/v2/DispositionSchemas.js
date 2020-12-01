@@ -136,8 +136,8 @@ const uiSchema = {
       'ui:options': {
         mode: 'button',
         row: true,
-        withOther: true,
         withNone: true,
+        withOther: true,
       }
     },
     [getEntityAddressKey(0, OFFENSE_FQN, FQN.NOTES_FQN)]: {

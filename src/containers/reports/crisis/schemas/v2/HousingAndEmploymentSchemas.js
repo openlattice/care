@@ -8,6 +8,7 @@ import {
   KNOWN_CLIENT,
   RESIDES_WITH,
   SELECT_ALL_THAT_APPLY,
+  SELECT_ONLY_ONE,
 } from '../constants';
 
 const {
@@ -28,7 +29,7 @@ const schema = {
         [getEntityAddressKey(0, HOUSING_FQN, FQN.TYPE_FQN)]: {
           title: 'Current Housing Situation',
           type: 'array',
-          description: SELECT_ALL_THAT_APPLY,
+          description: SELECT_ONLY_ONE,
           items: {
             type: 'string',
             enum: HOUSING,
@@ -39,7 +40,7 @@ const schema = {
         [getEntityAddressKey(0, HOUSING_FQN, FQN.DESCRIPTION_FQN)]: {
           title: 'Resides With',
           type: 'array',
-          description: SELECT_ALL_THAT_APPLY,
+          description: SELECT_ONLY_ONE,
           items: {
             type: 'string',
             enum: RESIDES_WITH,
@@ -50,12 +51,11 @@ const schema = {
         [getEntityAddressKey(0, OCCUPATION_FQN, FQN.TYPE_FQN)]: {
           title: 'Employment',
           type: 'array',
-          description: SELECT_ALL_THAT_APPLY,
+          description: SELECT_ONLY_ONE,
           items: {
             type: 'string',
             enum: EMPLOYMENT,
           },
-          // minItems: 1,
           uniqueItems: true
         },
         [getEntityAddressKey(0, INCOME_FQN, FQN.TYPE_FQN)]: {
@@ -88,30 +88,27 @@ const uiSchema = {
     },
     [getEntityAddressKey(0, HOUSING_FQN, FQN.TYPE_FQN)]: {
       classNames: 'column-span-12',
-      'ui:widget': 'checkboxes',
+      'ui:widget': 'OtherRadioWidget',
       'ui:options': {
         mode: 'button',
         row: true,
-        withOther: true,
       }
     },
     [getEntityAddressKey(0, HOUSING_FQN, FQN.DESCRIPTION_FQN)]: {
       classNames: 'column-span-12',
-      'ui:widget': 'checkboxes',
+      'ui:widget': 'OtherRadioWidget',
       'ui:options': {
         mode: 'button',
         row: true,
         withNone: true,
-        withOther: true,
       }
     },
     [getEntityAddressKey(0, OCCUPATION_FQN, FQN.TYPE_FQN)]: {
       classNames: 'column-span-12',
-      'ui:widget': 'checkboxes',
+      'ui:widget': 'OtherRadioWidget',
       'ui:options': {
         mode: 'button',
         row: true,
-        withOther: true,
       }
     },
     [getEntityAddressKey(0, INCOME_FQN, FQN.TYPE_FQN)]: {
