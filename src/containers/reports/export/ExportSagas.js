@@ -161,7 +161,7 @@ function* exportCrisisXMLWorker(action :SequenceAction) :Saga<void> {
     const crisisReportData = neighborsByFQN
       .set(CHARGE_EVENT_FQN.toString(), chargeEventsData);
 
-    const errors = generateXMLFromReportData({
+    const payload = generateXMLFromReportData({
       clinicianReportData,
       crisisReportData,
       person,
@@ -169,7 +169,7 @@ function* exportCrisisXMLWorker(action :SequenceAction) :Saga<void> {
       title,
     });
 
-    yield put(exportCrisisXML.success(action.id, errors));
+    yield put(exportCrisisXML.success(action.id, payload));
   }
   catch (error) {
     LOG.error(action.type, error);

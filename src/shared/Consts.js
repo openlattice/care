@@ -61,6 +61,7 @@ export const APP_TYPES_FQNS = {
   ENCOUNTER_DETAILS_FQN: FQN.of('app.encounterdetails'),
   INVOICE_FQN: FQN.of('app.invoice'),
   REFERRAL_REQUEST_FQN: FQN.of('app.referralrequest'),
+  REFERRAL_SOURCE_FQN: FQN.of('app.referralsource'),
   CRISIS_REPORT_CLINICIAN_FQN: FQN.of('app.crisisreport_clinician'),
   CRISIS_REPORT_FQN: FQN.of('app.crisisreport_officer'),
   FOLLOW_UP_REPORT_FQN: FQN.of('app.followupreport'),
