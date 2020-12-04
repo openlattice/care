@@ -1,7 +1,6 @@
 // @flow
 import React from 'react';
 
-// import { AppContainer } from '@openlattice/lattice-community-restorative-court';
 import {
   Redirect,
   Route,
@@ -9,7 +8,7 @@ import {
 } from 'react-router';
 
 import CRCContainer from './crc/CRCContainer';
-// import Helpline from './helpline/Helpline';
+import Helpline from './helpline/Helpline';
 import PremiumProfileRouter from './premium/PremiumProfileRouter';
 import ProfileContainer from './ProfileContainer';
 
@@ -22,11 +21,22 @@ const ProfileRouter = () => {
   const profileModule = settings.get('profileModule', 'crisis');
   const crisisComponent = premium ? PremiumProfileRouter : ProfileContainer;
 
-  // const profileComponent = profileModule === 'crc' ? AppContainer : crisisComponent;
+  let profileComponent = crisisComponent;
+
+  switch (profileModule) {
+    case 'crisis':
+      profileComponent = crisisComponent;
+      break;
+    case 'crc':
+      profileComponent = CRCContainer;
+      break;
+    default:
+      profileComponent = Helpline;
+  }
 
   return (
     <Switch>
-      <Route strict path={PROFILE_VIEW_PATH} component={CRCContainer} />
+      <Route strict path={PROFILE_VIEW_PATH} component={profileComponent} />
       <Redirect to={HOME_PATH} />
     </Switch>
   );
