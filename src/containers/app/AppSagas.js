@@ -103,12 +103,13 @@ function* loadAppWorker(action :SequenceAction) :Saga<*> {
     const appConfigs :Object[] = appConfigsResponse.data;
 
     let selectedOrganizationId :string = '';
-    if (appConfigs.length) {
-      selectedOrganizationId = appConfigs[0].organization.id;
-    }
     const storedOrganizationId :?string = AccountUtils.retrieveOrganizationId();
-    if (storedOrganizationId) {
+    const hasConfig = !!appConfigs.find((config) => config?.organization?.id === storedOrganizationId);
+    if (storedOrganizationId && hasConfig) {
       selectedOrganizationId = storedOrganizationId;
+    }
+    else {
+      selectedOrganizationId = appConfigs[0].organization.id;
     }
 
     const appSettingsESIDByOrgId = Map().withMutations((mutable) => {
