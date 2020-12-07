@@ -22,7 +22,6 @@ const ProfileRouter = () => {
   const crisisComponent = premium ? PremiumProfileRouter : ProfileContainer;
 
   let profileComponent = crisisComponent;
-
   switch (profileModule) {
     case 'crisis':
       profileComponent = crisisComponent;
@@ -30,8 +29,11 @@ const ProfileRouter = () => {
     case 'crc':
       profileComponent = CRCContainer;
       break;
-    default:
+    case 'helpline':
       profileComponent = Helpline;
+      break;
+    default:
+      profileComponent = crisisComponent;
   }
 
   return (
