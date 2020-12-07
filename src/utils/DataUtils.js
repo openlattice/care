@@ -265,11 +265,23 @@ const removeEntitiesFromEntityIndexToIdMap = (
 ) => {
   const newEntityIndexToIdMap = entityIndexToIdMap.map((entityType :Map) => {
     const newEntityType = entityType.map((entityKeyIds) => {
-      const entityKeyIdSet = Set(entityKeyIds).asMutable();
-      Object.values(deletedEntityData).forEach((deletedEntityKeyIds) => {
-        entityKeyIdSet.subtract(deletedEntityKeyIds);
+      // entityKeyIds is a List of UUIDs
+      if (List.isList(entityKeyIds)) {
+        const entityKeyIdSet = Set(entityKeyIds).asMutable();
+        Object.values(deletedEntityData).forEach((deletedEntityKeyIds) => {
+          entityKeyIdSet.subtract(deletedEntityKeyIds);
+        });
+        return entityKeyIdSet.toList();
+      }
+      // entityKeyIds is a UUID
+      let markForRemoval = false;
+      Object.values(deletedEntityData).forEach((deletedEntityKeyIds :Set) => {
+        if (deletedEntityKeyIds.has(entityKeyIds)) markForRemoval = true;
       });
-      return entityKeyIdSet.toList();
+
+      if (markForRemoval) return undefined;
+
+      return entityKeyIds;
     });
     return newEntityType;
   });
