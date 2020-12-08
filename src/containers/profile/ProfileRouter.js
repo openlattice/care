@@ -7,6 +7,7 @@ import {
   Switch,
 } from 'react-router';
 
+import CRCContainer from './crc/CRCContainer';
 import Helpline from './helpline/Helpline';
 import PremiumProfileRouter from './premium/PremiumProfileRouter';
 import ProfileContainer from './ProfileContainer';
@@ -20,7 +21,20 @@ const ProfileRouter = () => {
   const profileModule = settings.get('profileModule', 'crisis');
   const crisisComponent = premium ? PremiumProfileRouter : ProfileContainer;
 
-  const profileComponent = profileModule === 'crisis' ? crisisComponent : Helpline;
+  let profileComponent = crisisComponent;
+  switch (profileModule) {
+    case 'crisis':
+      profileComponent = crisisComponent;
+      break;
+    case 'crc':
+      profileComponent = CRCContainer;
+      break;
+    case 'helpline':
+      profileComponent = Helpline;
+      break;
+    default:
+      profileComponent = crisisComponent;
+  }
 
   return (
     <Switch>
