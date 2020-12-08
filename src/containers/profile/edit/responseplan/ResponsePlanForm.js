@@ -65,6 +65,7 @@ type Props = {
   match :Match;
   propertyTypeIds :Map;
   responsePlanEKID :UUID;
+  submitState :RequestState;
 };
 
 type State = {
@@ -99,10 +100,12 @@ class ResponsePlanForm extends Component<Props, State> {
       actions,
       formData,
       match,
+      responsePlanEKID,
     } = this.props;
     const {
       formData: prevFormData,
       match: prevMatch,
+      responsePlanEKID: prevResponsePlanEKID,
     } = prevProps;
     const personEKID = match.params[PROFILE_ID_PARAM];
     const prevPersonEKID = prevMatch.params[PROFILE_ID_PARAM];
@@ -110,7 +113,7 @@ class ResponsePlanForm extends Component<Props, State> {
       actions.getResponsePlan(personEKID);
     }
 
-    if (!formData.equals(prevFormData)) {
+    if (!formData.equals(prevFormData) || responsePlanEKID !== prevResponsePlanEKID) {
       this.initializeFormData();
     }
   }
@@ -234,6 +237,7 @@ class ResponsePlanForm extends Component<Props, State> {
       entitySetIds,
       fetchState,
       propertyTypeIds,
+      submitState,
     } = this.props;
 
     const formContext = {
@@ -267,6 +271,7 @@ class ResponsePlanForm extends Component<Props, State> {
             disabled={prepopulated}
             formContext={formContext}
             formData={formData}
+            isSubmitting={submitState === RequestStates.PENDING}
             onChange={this.updateItemIndicies}
             onSubmit={this.handleSubmit}
             schema={schema}
@@ -283,6 +288,7 @@ const mapStateToProps = (state) => ({
   formData: state.getIn(['profile', 'responsePlan', 'formData']),
   propertyTypeIds: state.getIn(['edm', 'fqnToIdMap'], Map()),
   responsePlanEKID: state.getIn(['profile', 'responsePlan', 'entityIndexToIdMap', RESPONSE_PLAN_FQN, 0]),
+  submitState: state.getIn(['profile', 'responsePlan', 'submitState'], RequestStates.STANDBY),
 });
 
 const mapDispatchToProps = (dispatch :Dispatch<any>) => ({
