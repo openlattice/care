@@ -1,7 +1,7 @@
 {
-  "name": "bhr",
+  "name": "care",
   "version": "0.0.0",
-  "homepage": "https://github.com/Lattice-Works/bhr",
+  "homepage": "https://github.com/openlattice/care",
   "description": "OpenLattice - CARE",
   "author": {
     "name": "OpenLattice, Inc.",
@@ -24,10 +24,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Lattice-Works/bhr.git"
+    "url": "git+https://github.com/openlattice/care.git"
   },
   "bugs": {
-    "url": "https://github.com/Lattice-Works/bhr/issues"
+    "url": "https://github.com/openlattice/care/issues"
   },
   "license": "UNLICENSED",
   "dependencies": {
