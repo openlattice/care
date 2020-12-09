@@ -37,7 +37,7 @@ const { isNonEmptyString } = LangUtils;
 
 const MAX_HITS = 20;
 const INITIAL_STATE = {
-  page: 0,
+  page: 1,
   start: 0,
   selectedOption: undefined
 };
@@ -62,7 +62,7 @@ const reducer = (state, action) => {
   switch (action.type) {
     case 'selectLocation': {
       return {
-        page: 0,
+        page: 1,
         selectedOption: action.payload,
         start: 0
       };

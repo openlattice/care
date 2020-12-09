@@ -79,7 +79,7 @@ const LongBeachPeopleContainer = () => {
   const [firstName, setFirstName] = useInput(searchInputs.get('firstName'));
   const [lastName, setLastName] = useInput(searchInputs.get('lastName'));
   const [metaphone, setSimilar] = useState(searchInputs.get('metaphone', false));
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [race, setRace] = useState(searchInputs.get('race'));
   const [sex, setSex] = useState(searchInputs.get('sex'));
 
@@ -111,7 +111,7 @@ const LongBeachPeopleContainer = () => {
   const handleOnSearch = (e :SyntheticEvent<HTMLButtonElement>) => {
     e.preventDefault();
     dispatchSearch();
-    setPage(0);
+    setPage(1);
   };
 
   const handleOnSimilar = (e :SyntheticEvent<HTMLInputElement>) => {
