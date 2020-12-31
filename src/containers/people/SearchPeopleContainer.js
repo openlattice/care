@@ -123,7 +123,7 @@ const SearchPeopleContainer = () => {
   const [firstName, setFirstName] = useInput(searchInputs.get('firstName'));
   const [lastName, setLastName] = useInput(searchInputs.get('lastName'));
   const [metaphone, setSimilar] = useState(searchInputs.get('metaphone', false));
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [race, setRace] = useState(searchInputs.get('race'));
   const [sex, setSex] = useState(searchInputs.get('sex'));
   const [includeRMS, setRMS] = useState(searchInputs.get('includeRMS', !integratedRMS));
@@ -157,14 +157,14 @@ const SearchPeopleContainer = () => {
   const handleOnSearch = (e :SyntheticEvent<HTMLButtonElement>) => {
     e.preventDefault();
     dispatchSearch();
-    setPage(0);
+    setPage(1);
   };
 
   const handleToggleRMS = (e :SyntheticEvent<HTMLButtonElement>) => {
     e.preventDefault();
     dispatchSearch(0, !includeRMS);
     setRMS(!includeRMS);
-    setPage(0);
+    setPage(1);
   };
 
   const handleOnSimilar = (e :SyntheticEvent<HTMLInputElement>) => {

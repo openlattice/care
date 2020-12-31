@@ -68,7 +68,7 @@ const SearchReportsContainer = () => {
   const [dateEnd, setDateEnd] = useState();
   const [dateStart, setDateStart] = useState();
   const [reportType, setReportType] = useState(REPORT_TYPE_OPTIONS[0]);
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const settings = useAppSettings();
 
   const getReportsAction = settings.get('v2') ? getReportsByDateRangeV2 : getReportsByDateRange;
@@ -99,7 +99,7 @@ const SearchReportsContainer = () => {
   const handleOnSearch = (e :SyntheticEvent<HTMLButtonElement>) => {
     e.preventDefault();
     dispatchSearch();
-    setPage(0);
+    setPage(1);
   };
 
   const onPageChange = ({ page: newPage, start }) => {
