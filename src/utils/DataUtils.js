@@ -299,7 +299,7 @@ const getEKIDsFromEntryValues = (neighborMap :Map) => neighborMap
 // Map({
 //   <entityKeyId>: List([<neighborEntityKeyId>])
 // })
-const getEKIDsFromNeighborResponseData = (neighborResponseData) => neighborResponseData
+const getEKIDsFromNeighborResponseData = (neighborResponseData :Map) => neighborResponseData
   .map((neighbors) => neighbors
     .map((neighbor) => getEntityKeyId(neighbor.get('neighborDetails')))
     .toSet()
@@ -309,7 +309,7 @@ const getEKIDsFromNeighborResponseData = (neighborResponseData) => neighborRespo
 // Map({
 //   <neighborEntityKeyId>: Map(<neighborDetails>)
 // })
-const getNeighborDetailsFromNeighborResponseData = (neighborResponseData) => Map()
+const getNeighborDetailsFromNeighborResponseData = (neighborResponseData :Map) => Map()
   .withMutations((mutable) => {
     neighborResponseData.forEach((neighbors) => {
       neighbors.forEach((neighbor) => {
