@@ -53,7 +53,7 @@
     "lattice": "~0.82.3",
     "lattice-auth": "~0.22.0",
     "lattice-fabricate": "~0.14.5",
-    "lattice-sagas": "~0.59.0",
+    "lattice-sagas": "~0.61.0",
     "lattice-ui-kit": "~0.39.1",
     "lattice-utils": "~0.6.0",
     "lodash": "~4.17.20",
