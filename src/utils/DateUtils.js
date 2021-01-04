@@ -26,6 +26,7 @@ const isNowValid = (start :string, end :string) => {
   const startDT = DateTime.fromISO(start);
   const endDT = DateTime.fromISO(end);
   const now = DateTime.local();
+  // $FlowFixMe
   return (startDT < now) && (now < endDT);
 };
 
