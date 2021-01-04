@@ -16,13 +16,3 @@
 declare module 'fast-xml-parser' {
   declare module.exports: any;
 }
-
-/**
- * We include stubs for each file inside this npm package in case you need to
- * require those files directly. Feel free to delete any files that aren't
- * needed.
- */
-
-declare module 'fast-xml-parser/src/json2xml' {
-  declare module.exports: any;
-}
