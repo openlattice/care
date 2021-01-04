@@ -44,7 +44,7 @@ export default class FileUpload extends React.Component<Props, State> {
     };
   }
 
-  onDrop = (files) => {
+  onDrop = (files :Object[]) => {
     const { mediaIndex } = this.state;
     const { onUpload } = this.props;
 
@@ -58,6 +58,9 @@ export default class FileUpload extends React.Component<Props, State> {
       const reader = new FileReader();
 
       reader.onload = (event) => {
+        // event.target.result is legit:
+        // https://developer.mozilla.org/en-US/docs/Web/API/FileReader/load_event
+        // $FlowFixMe
         const base64 = event.target.result;
 
         extractDocumentText(type, base64).then((text) => {
