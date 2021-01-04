@@ -15,7 +15,7 @@ const DayAndTimeHeatMap = ({ counts } :Props) => {
 
   const colValues = [];
   for (let i = 0; i < 24; i += 1) {
-    colValues.push(i);
+    colValues.push(i.toString());
   }
 
   const colHeaderFormatter = (value) => {
