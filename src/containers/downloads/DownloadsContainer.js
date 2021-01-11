@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { DownloadsContainer as HelplineDownloadsContainer } from '@lattice-works/lattice-helpline-center';
+import { DownloadsContainer as CRCDownloadsContainer } from '@openlattice/lattice-community-restorative-court';
 import { useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router';
 
@@ -19,11 +20,15 @@ const DownloadsContainer = () => {
   let component = null;
 
   switch (profileModule) {
-    case 'helpline': {
+    case 'crisis':
+      component = <CrisisReportDownloadsContainer />;
+      break;
+    case 'crc':
+      component = <CRCDownloadsContainer root={DOWNLOADS_PATH} match={match} organizationId={organizationId} />;
+      break;
+    case 'helpline':
       component = <HelplineDownloadsContainer root={DOWNLOADS_PATH} match={match} organizationId={organizationId} />;
       break;
-    }
-    case 'crisis':
     default:
       component = <CrisisReportDownloadsContainer />;
       break;
