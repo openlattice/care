@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { DownloadsContainer as HelplineDownloadsContainer } from '@lattice-works/lattice-helpline-center';
 import { DownloadsContainer as CRCDownloadsContainer } from '@openlattice/lattice-community-restorative-court';
+import { DownloadsContainer as HelplineDownloadsContainer } from '@openlattice/lattice-helpline-center';
 import { useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router';
 
