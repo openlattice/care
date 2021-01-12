@@ -10,24 +10,19 @@ import CrisisReportDashboardContainer from './CrisisReportDashboardContainer';
 import { useAppSettings } from '../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../components/layout';
 import { DASHBOARD_PATH } from '../../core/router/Routes';
+import { CRC, CRISIS } from '../../shared/ModuleConstants';
 
 const DashboardContainer = () => {
   const settings = useAppSettings();
-  const profileModule = settings.get('profileModule', 'crisis');
+  const profileModule = settings.get('profileModule', CRISIS);
   const organizationId = useSelector((state) => state.getIn(['app', 'selectedOrganizationId']));
   const match = useRouteMatch();
 
   let component = null;
 
   switch (profileModule) {
-    case 'crisis':
-      component = <CrisisReportDashboardContainer />;
-      break;
-    case 'crc':
+    case CRC:
       component = <CRCDashboardContainer root={DASHBOARD_PATH} match={match} organizationId={organizationId} />;
-      break;
-    case 'helpline':
-      component = <CrisisReportDashboardContainer />;
       break;
     default:
       component = <CrisisReportDashboardContainer />;
