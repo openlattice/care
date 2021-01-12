@@ -16,6 +16,7 @@ import {
   EMS,
   EMS_FIRE,
   FIRE,
+  NA,
   NO,
   NONE,
   OTHER,
@@ -26,7 +27,9 @@ import {
   YES,
 } from '../crisis/schemas/constants';
 
-const NA = 'NA';
+const N_A = 'NA';
+
+const transformNA = (value :string) :string => (value === NA ? N_A : value);
 
 const { isNonEmptyString } = LangUtils;
 const { calculateAge } = DateTimeUtils;
@@ -371,8 +374,8 @@ const insertCharges = (xmlPayload :XMLPayload) => {
   const charges = crisisReportData.get(CHARGE_FQN, List());
   const chargeEvents = crisisReportData.get(CHARGE_EVENT_FQN, List());
   if (!charges.size) {
+    xmlPayload.jdpRecord.CDOpt = N_A;
     xmlPayload.jdpRecord.CDCharge = '';
-    xmlPayload.jdpRecord.CDOpt = NA;
   }
   else {
     const chargeNames = charges.map((charge) => charge.getIn([NEIGHBOR_DETAILS, FQN.NAME_FQN, 0])).toJS().join(', ');
@@ -381,7 +384,7 @@ const insertCharges = (xmlPayload :XMLPayload) => {
         if (status === YES) return status;
         const diverted = event.getIn([NEIGHBOR_DETAILS, FQN.DIVERSION_STATUS_FQN, 0], '');
         return diverted;
-      }, NA);
+      }, N_A);
     xmlPayload.jdpRecord.CDOpt = chargesDiverted;
     xmlPayload.jdpRecord.CDCharge = chargeNames;
   }
@@ -394,7 +397,7 @@ const insertCustodyDiversion = (xmlPayload :XMLPayload) => {
   const custodyDiverted = clinicianReportData
     .getIn([CRISIS_REPORT_CLINICIAN_FQN, 0, NEIGHBOR_DETAILS, FQN.CUSTODY_DIVERTED_FQN, 0], '');
   if (!custodyDiverted) xmlPayload.errors.push('Invalid "Was criminal custody diverted"');
-  xmlPayload.jdpRecord.ACCOpt = custodyDiverted;
+  xmlPayload.jdpRecord.ACCOpt = transformNA(custodyDiverted);
   xmlPayload.jdpRecord.CAOpt = '';
   xmlPayload.jdpRecord.CAOth = '';
 
@@ -436,7 +439,7 @@ const insertPurpose = (xmlPayload :XMLPayload) => {
   }
 
   const preventER = encounterDetails.getIn([FQN.LEVEL_OF_CARE_FQN, 0], '');
-  xmlPayload.jdpRecord.EROpt = preventER;
+  xmlPayload.jdpRecord.EROpt = transformNA(preventER);
   if (!preventER) xmlPayload.errors.push('Invalid "Did JDP intervention prevent ER visit?"');
 
   return xmlPayload;
@@ -484,8 +487,8 @@ const insertBilledServices = (xmlPayload :XMLPayload) => {
     xmlPayload.jdpRecord.BillOpt = billed;
   }
   else {
-    xmlPayload.jdpRecord.BillOpt = NA;
-    xmlPayload.errors.push(`Invalid "Billed services". Defaulting to "${NA}"`);
+    xmlPayload.jdpRecord.BillOpt = N_A;
+    xmlPayload.errors.push(`Invalid "Billed services". Defaulting to "${N_A}"`);
   }
 
   const services = billedServices
