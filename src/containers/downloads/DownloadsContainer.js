@@ -10,6 +10,7 @@ import CrisisReportDownloadsContainer from './CrisisReportDownloadsContainer';
 import { useAppSettings } from '../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../components/layout';
 import { DOWNLOADS_PATH } from '../../core/router/Routes';
+import { CRC, CRISIS, HELPLINE } from '../../shared/ModuleConstants';
 
 const DownloadsContainer = () => {
   const settings = useAppSettings();
@@ -20,13 +21,13 @@ const DownloadsContainer = () => {
   let component = null;
 
   switch (profileModule) {
-    case 'crisis':
+    case CRISIS:
       component = <CrisisReportDownloadsContainer />;
       break;
-    case 'crc':
+    case CRC:
       component = <CRCDownloadsContainer root={DOWNLOADS_PATH} match={match} organizationId={organizationId} />;
       break;
-    case 'helpline':
+    case HELPLINE:
       component = <HelplineDownloadsContainer root={DOWNLOADS_PATH} match={match} organizationId={organizationId} />;
       break;
     default:
