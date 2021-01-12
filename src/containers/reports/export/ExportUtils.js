@@ -16,7 +16,6 @@ import {
   EMS,
   EMS_FIRE,
   FIRE,
-  NA,
   NO,
   NONE,
   OTHER,
@@ -26,6 +25,8 @@ import {
   UNKNOWN,
   YES,
 } from '../crisis/schemas/constants';
+
+const NA = 'NA';
 
 const { isNonEmptyString } = LangUtils;
 const { calculateAge } = DateTimeUtils;
@@ -131,7 +132,6 @@ const insertEntryDate = (xmlPayload :XMLPayload) => {
 
 const insertJDP = (xmlPayload :XMLPayload) => {
   const { clinicianReportData, title } = xmlPayload.reportData;
-  xmlPayload.jdpRecord.JDPOpt = title;
 
   const incidentID = clinicianReportData
     .getIn([INCIDENT_FQN, 0, NEIGHBOR_DETAILS, FQN.CRIMINALJUSTICE_CASE_NUMBER_FQN, 0]);
@@ -143,6 +143,7 @@ const insertJDP = (xmlPayload :XMLPayload) => {
     xmlPayload.jdpRecord.JDPID = '';
     xmlPayload.errors.push('Invalid "Incident #"');
   }
+  xmlPayload.jdpRecord.JDPOpt = title;
 
   return xmlPayload;
 };
@@ -205,8 +206,8 @@ const insertNatureOfCall = (xmlPayload :XMLPayload) => {
   const { clinicianReportData } = xmlPayload.reportData;
   const natureOfCall = clinicianReportData
     .getIn([CALL_FOR_SERVICE_FQN, 0, NEIGHBOR_DETAILS, FQN.TYPE_FQN], List());
-  const natureOfCallValue = natureOfCall.get(0);
-  const natureOfCallOther = natureOfCall.get(1);
+  const natureOfCallValue = natureOfCall.get(0, '');
+  const natureOfCallOther = natureOfCall.get(1, '');
 
   if (isNonEmptyString(natureOfCallValue)) {
     xmlPayload.jdpRecord.NoCOpt = natureOfCallValue;
@@ -242,12 +243,12 @@ const insertAgeRange = (xmlPayload :XMLPayload) => {
   const age = calculateAge(dob);
   if (age !== -1) {
     let ageRange = '66+';
-    if (age < 66) ageRange = '46 to 65';
-    if (age < 46) ageRange = '27 to 45';
-    if (age < 27) ageRange = '22 to 26';
-    if (age < 22) ageRange = '17 to 21';
-    if (age < 17) ageRange = '12 to 16';
-    if (age < 12) ageRange = '3 to 11';
+    if (age < 66) ageRange = '46-65';
+    if (age < 46) ageRange = '27-45';
+    if (age < 27) ageRange = '22-26';
+    if (age < 22) ageRange = '17-21';
+    if (age < 17) ageRange = '12-16';
+    if (age < 12) ageRange = '3-11';
     // younger than 3 not spec'd
     xmlPayload.jdpRecord.AgeOpt = ageRange;
   }
@@ -316,19 +317,6 @@ const insertSubstance = (xmlPayload :XMLPayload) => {
     xmlPayload.errors.push(`Invalid "Substance use during incident". Defaulting to "${UNKNOWN}"`);
   }
 
-  const historyEntity = substances
-    .find((neighbor) => neighbor.getIn([FQN.TEMPORAL_STATUS_FQN, 0]) === PAST) || Map();
-
-  const historyType :List = historyEntity.get(FQN.TYPE_FQN, List());
-  const history = getYesNoUnknownFromList(historyType);
-  if (history) {
-    xmlPayload.jdpRecord.SubOpt = history;
-  }
-  else {
-    xmlPayload.jdpRecord.SubOpt = UNKNOWN;
-    xmlPayload.errors.push(`Invalid "History of substance abuse/treatment". Defaulting to "${UNKNOWN}"`);
-  }
-
   return xmlPayload;
 };
 
@@ -375,25 +363,6 @@ const insertJailDiversion = (xmlPayload :XMLPayload) => {
     xmlPayload.errors.push(`Invalid "Was jail diversion an option?". Defaulting to ${NO}`);
   }
 
-  const reasonProperty = encounterDetails.get(FQN.REASON_FQN, List());
-  xmlPayload.jdpRecord.PurpOpt = '';
-  xmlPayload.jdpRecord.PurpOth = '';
-
-  if (!reasonProperty.size) {
-    xmlPayload.errors.push('Invalid "Reason for JDP intervention"');
-  }
-  else if (reasonProperty.size === 1) {
-    xmlPayload.jdpRecord.PurpOpt = reasonProperty.first();
-  }
-  else if (reasonProperty.size > 1) {
-    xmlPayload.jdpRecord.PurpOpt = OTHER;
-    xmlPayload.jdpRecord.PurpOth = reasonProperty.filter((v) => v !== OTHER).toJS().join(', ');
-  }
-
-  const preventER = encounterDetails.getIn([FQN.LEVEL_OF_CARE_FQN, 0], '');
-  xmlPayload.jdpRecord.EROpt = preventER;
-  if (!preventER) xmlPayload.errors.push('Invalid "Did JDP intervention prevent ER visit?"');
-
   return xmlPayload;
 };
 
@@ -413,8 +382,8 @@ const insertCharges = (xmlPayload :XMLPayload) => {
         const diverted = event.getIn([NEIGHBOR_DETAILS, FQN.DIVERSION_STATUS_FQN, 0], '');
         return diverted;
       }, NA);
-    xmlPayload.jdpRecord.CDCharge = chargeNames;
     xmlPayload.jdpRecord.CDOpt = chargesDiverted;
+    xmlPayload.jdpRecord.CDCharge = chargeNames;
   }
 
   return xmlPayload;
@@ -442,6 +411,33 @@ const insertCustodyDiversion = (xmlPayload :XMLPayload) => {
     xmlPayload.jdpRecord.CAOpt = OTHER;
     xmlPayload.jdpRecord.CAOth = disposition.filter((v) => v !== OTHER).toJS().join(', ');
   }
+
+  return xmlPayload;
+};
+
+const insertPurpose = (xmlPayload :XMLPayload) => {
+  const { clinicianReportData } = xmlPayload.reportData;
+  const encounterDetails = clinicianReportData
+    .getIn([ENCOUNTER_DETAILS_FQN, 0, NEIGHBOR_DETAILS], Map());
+
+  const reasonProperty = encounterDetails.get(FQN.REASON_FQN, List());
+  xmlPayload.jdpRecord.PurpOpt = '';
+  xmlPayload.jdpRecord.PurpOth = '';
+
+  if (!reasonProperty.size) {
+    xmlPayload.errors.push('Invalid "Reason for JDP intervention"');
+  }
+  else if (reasonProperty.size === 1) {
+    xmlPayload.jdpRecord.PurpOpt = reasonProperty.first();
+  }
+  else if (reasonProperty.size > 1) {
+    xmlPayload.jdpRecord.PurpOpt = OTHER;
+    xmlPayload.jdpRecord.PurpOth = reasonProperty.filter((v) => v !== OTHER).toJS().join(', ');
+  }
+
+  const preventER = encounterDetails.getIn([FQN.LEVEL_OF_CARE_FQN, 0], '');
+  xmlPayload.jdpRecord.EROpt = preventER;
+  if (!preventER) xmlPayload.errors.push('Invalid "Did JDP intervention prevent ER visit?"');
 
   return xmlPayload;
 };
@@ -584,6 +580,28 @@ const insertPriorArrests = (xmlPayload :XMLPayload) => {
   return xmlPayload;
 };
 
+const insertSubstanceHistory = (xmlPayload :XMLPayload) => {
+  const { clinicianReportData } = xmlPayload.reportData;
+  const substances = clinicianReportData
+    .get(SUBSTANCE_CLINICIAN_FQN, List())
+    .map((neighbor) => neighbor.get(NEIGHBOR_DETAILS, Map()));
+
+  const historyEntity = substances
+    .find((neighbor) => neighbor.getIn([FQN.TEMPORAL_STATUS_FQN, 0]) === PAST) || Map();
+
+  const historyType :List = historyEntity.get(FQN.TYPE_FQN, List());
+  const history = getYesNoUnknownFromList(historyType);
+  if (history) {
+    xmlPayload.jdpRecord.SubOpt = history;
+  }
+  else {
+    xmlPayload.jdpRecord.SubOpt = UNKNOWN;
+    xmlPayload.errors.push(`Invalid "History of substance abuse/treatment". Defaulting to "${UNKNOWN}"`);
+  }
+
+  return xmlPayload;
+};
+
 const insertPresenceOfPsychiatricIssue = (xmlPayload :XMLPayload) => {
   const { clinicianReportData } = xmlPayload.reportData;
   const psychIssue = clinicianReportData
@@ -632,6 +650,7 @@ const generateXMLFromReportData = (reportData :ReportData) :Object => {
     insertJailDiversion,
     insertCharges,
     insertCustodyDiversion,
+    insertPurpose,
     insertInsurance,
     insertBilledServices,
     insertReferralSource,
@@ -640,6 +659,7 @@ const generateXMLFromReportData = (reportData :ReportData) :Object => {
     insertEmployment,
     insertResidence,
     insertPriorArrests,
+    insertSubstanceHistory,
     insertPresenceOfPsychiatricIssue,
     insertNotes,
     insertTimestamp,
