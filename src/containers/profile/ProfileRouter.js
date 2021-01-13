@@ -14,6 +14,7 @@ import ProfileContainer from './ProfileContainer';
 
 import { useAppSettings } from '../../components/hooks';
 import { HOME_PATH, PROFILE_VIEW_PATH } from '../../core/router/Routes';
+import { CRC, CRISIS, HELPLINE } from '../../shared/ModuleConstants';
 
 const ProfileRouter = () => {
   const settings = useAppSettings();
@@ -23,13 +24,13 @@ const ProfileRouter = () => {
 
   let profileComponent = crisisComponent;
   switch (profileModule) {
-    case 'crisis':
+    case CRISIS:
       profileComponent = crisisComponent;
       break;
-    case 'crc':
+    case CRC:
       profileComponent = CRCContainer;
       break;
-    case 'helpline':
+    case HELPLINE:
       profileComponent = Helpline;
       break;
     default:

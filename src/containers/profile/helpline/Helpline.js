@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { HelplineContainer } from '@lattice-works/lattice-helpline-center';
+import { HelplineContainer } from '@openlattice/lattice-helpline-center';
 import { useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router';
 
