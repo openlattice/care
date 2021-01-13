@@ -60,7 +60,7 @@
     "loglevel": "~1.6.8",
     "luxon": "~1.25.0",
     "mapbox-gl": "~1.11.1",
-    "papaparse": "~5.2.0",
+    "papaparse": "~5.3.0",
     "pdfjs-dist": "~2.5.207",
     "pizzip": "~3.0.6",
     "polished": "~3.6.6",
