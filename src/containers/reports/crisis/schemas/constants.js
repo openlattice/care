@@ -40,7 +40,7 @@ const COMPLETED_BY = [
   'CIT Officer',
   'MHFA Officer',
   'JDP Clinician',
-  'Forensic Peer',
+  'Forensic peer',
   'ESP/Crisis Team',
 ];
 
@@ -73,8 +73,8 @@ const NATURE_OF_CRISIS = [
 ];
 
 const EMS = 'EMS';
-const FIRE = 'FIRE';
-const EMS_FIRE = 'EMS/FIRE';
+const FIRE = 'Fire';
+const EMS_FIRE = `${EMS} and ${FIRE}`;
 
 const ASSISTANCE_ON_SCENE = [
   EMS,
@@ -277,7 +277,7 @@ const POINT_OF_INTERVENTION = [
 ];
 
 const ASSESSMENT_LOCATION = [
-  'Community',
+  'Community/Street',
   'Court',
   'Crisis Office',
   'Hospital',
