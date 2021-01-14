@@ -10,7 +10,12 @@ import * as FQN from '../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { NEIGHBOR_DETAILS } from '../../../utils/constants/EntityConstants';
 import { TEXT_XML, XML_HEADER } from '../../../utils/constants/FileTypeConstants';
-import { FEMALE, HISPANIC, MALE, NON_HISPANIC } from '../../profile/constants';
+import {
+  FEMALE,
+  HISPANIC,
+  MALE,
+  NON_HISPANIC
+} from '../../profile/constants';
 import {
   COMMUNITY,
   COURT,
@@ -58,7 +63,11 @@ const otherValueFromList = (list :List) :[string, string] => {
   return values;
 };
 
-const transformValue = (value :string, map :Object, defaultValue ?:string = '') => (map[value] || defaultValue);
+const transformValue = (
+  value :string,
+  dict :Map<string, string>,
+  defaultValue ?:string = ''
+) :[string, boolean] => [dict.get(value, defaultValue), dict.has(value)];
 
 const { isNonEmptyString } = LangUtils;
 const { calculateAge } = DateTimeUtils;
@@ -223,8 +232,9 @@ const insertLocation = (xmlPayload :XMLPayload) => {
   const { clinicianReportData } = xmlPayload.reportData;
   const locationCategory = clinicianReportData
     .getIn([LOCATION_FQN, 0, NEIGHBOR_DETAILS, FQN.TYPE_FQN, 0]);
+  xmlPayload.jdpRecord.LocationOpt = '';
 
-  const transformMap = {
+  const transformMap = Map({
     [COMMUNITY]: 'Community/Street',
     [COURT]: COURT,
     [CRISIS_OFFICE]: 'Crisis/ESP Office',
@@ -235,13 +245,14 @@ const insertLocation = (xmlPayload :XMLPayload) => {
     [RESIDENCE]: RESIDENCE,
     [SCHOOL]: SCHOOL,
     [OTHER]: OTHER
-  };
+  });
 
-  if (isNonEmptyString(locationCategory)) {
-    xmlPayload.jdpRecord.LocationOpt = transformValue(locationCategory, transformMap, OTHER);
+  const [value, hit] = transformValue(locationCategory, transformMap, OTHER);
+  if (hit) {
+    xmlPayload.jdpRecord.LocationOpt = value;
   }
   else {
-    xmlPayload.errors.push('Invalid "Location Category"');
+    xmlPayload.errors.push(`Invalid "Location Category". Defaulting to ${OTHER}`);
   }
 
   return xmlPayload;
@@ -279,9 +290,9 @@ const insertPointOfIntervention = (xmlPayload :XMLPayload) => {
     [RE_ENTRY]: 'Re-Entry',
   };
 
-  const poi = transformValue(pointOfIntervention, transformMap);
+  const [poi, hit] = transformValue(pointOfIntervention, transformMap);
 
-  if (isNonEmptyString(poi)) {
+  if (hit) {
     xmlPayload.jdpRecord.PoIOpt = poi;
   }
   else {
