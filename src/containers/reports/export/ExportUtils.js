@@ -17,16 +17,23 @@ import {
   NON_HISPANIC
 } from '../../profile/constants';
 import {
+  CCS,
   COMMUNITY,
   COURT,
   CRISIS_OFFICE,
   CURRENT,
+  DAY_TREATMENT,
+  DEESCALATED_ON_SCENE,
+  DETOX,
   EMS,
   EMS_FIRE,
+  ESP_MOBILE,
   FIRE,
   HOSPITAL,
   INCARCERATION_FACILITY,
+  MEDICAL_HOSPITAL,
   NA,
+  NEW_OUTPATIENT,
   NO,
   NONE,
   NON_CRIMINAL,
@@ -41,7 +48,11 @@ import {
   RE_ENTRY,
   SCHOOL,
   SECONDARY,
+  SECTION_12,
+  SECTION_18,
+  SECTION_35,
   UNKNOWN,
+  VOLUNTARY_ER_EVAL,
   YES,
 } from '../crisis/schemas/constants';
 
@@ -68,6 +79,16 @@ const transformValue = (
   dict :Map<string, string>,
   defaultValue ?:string = ''
 ) :[string, boolean] => [dict.get(value, defaultValue), dict.has(value)];
+
+const getYesNoUnknownFromList = (list :List<string>) :?string => {
+  const hasNone = list.includes(NONE);
+  const hasUnknown = list.includes(UNKNOWN);
+
+  if (!list.size) return undefined;
+  if (hasNone) return NO;
+  if (hasUnknown) return UNKNOWN;
+  return YES;
+};
 
 const { isNonEmptyString } = LangUtils;
 const { calculateAge } = DateTimeUtils;
@@ -252,7 +273,7 @@ const insertLocation = (xmlPayload :XMLPayload) => {
     xmlPayload.jdpRecord.LocationOpt = value;
   }
   else {
-    xmlPayload.errors.push(`Invalid "Location Category". Defaulting to ${OTHER}`);
+    xmlPayload.errors.push(`Invalid "Location Category". Defaulting to "${OTHER}"`);
   }
 
   return xmlPayload;
@@ -351,16 +372,6 @@ const insertMilitaryService = (xmlPayload :XMLPayload) => {
     xmlPayload.errors.push(`Invalid history of military service. Defaulting to "${UNKNOWN}"`);
   }
   return xmlPayload;
-};
-
-const getYesNoUnknownFromList = (list :List<string>) :?string => {
-  const hasNone = list.includes(NONE);
-  const hasUnknown = list.includes(UNKNOWN);
-
-  if (!list.size) return undefined;
-  if (hasNone) return NO;
-  if (hasUnknown) return UNKNOWN;
-  return YES;
 };
 
 const insertSubstance = (xmlPayload :XMLPayload) => {
@@ -466,15 +477,28 @@ const insertCustodyDiversion = (xmlPayload :XMLPayload) => {
   const disposition = clinicianReportData
     .getIn([DISPOSITION_CLINICIAN_FQN, 0, NEIGHBOR_DETAILS, FQN.CJ_DISPOSITION_FQN], List());
 
-  if (!disposition.size) {
-    xmlPayload.errors.push('Invalid "Disposition"');
-  }
-  else if (disposition.size === 1) {
-    xmlPayload.jdpRecord.CAOpt = disposition.first();
-  }
-  else if (disposition.size > 1) {
-    xmlPayload.jdpRecord.CAOpt = OTHER;
-    xmlPayload.jdpRecord.CAOth = disposition.filter((v) => v !== OTHER).toJS().join(', ');
+  const [value, other] = otherValueFromList(disposition);
+
+  const transformMap = Map({
+    [CCS]: CCS,
+    [DAY_TREATMENT]: DAY_TREATMENT,
+    [DEESCALATED_ON_SCENE]: DEESCALATED_ON_SCENE,
+    [DETOX]: DETOX,
+    [ESP_MOBILE]: 'ESP/Mobile',
+    [MEDICAL_HOSPITAL]: MEDICAL_HOSPITAL,
+    [NEW_OUTPATIENT]: 'New Outpatient Referral',
+    [SECTION_12]: SECTION_12,
+    [SECTION_18]: SECTION_18,
+    [SECTION_35]: SECTION_35,
+    [VOLUNTARY_ER_EVAL]: 'Voluntary ER eval',
+    [OTHER]: OTHER
+  });
+
+  const [transformed, hit] = transformValue(value, transformMap);
+  xmlPayload.jdpRecord.CAOpt = transformed;
+  xmlPayload.jdpRecord.CAOth = other;
+  if (!disposition.size || !hit) {
+    xmlPayload.errors.push('Invalid "Disposition".');
   }
 
   return xmlPayload;
