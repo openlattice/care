@@ -141,12 +141,11 @@ const uiSchema = {
     },
     [getEntityAddressKey(0, CRISIS_REPORT_CLINICIAN_FQN, FQN.NATURE_OF_CRISIS_FQN)]: {
       classNames: 'column-span-12',
-      'ui:widget': 'checkboxes',
+      'ui:widget': 'OtherRadioWidget',
       'ui:options': {
         mode: 'button',
         row: true,
         withNone: true,
-        withOther: true,
       }
     },
     [getEntityAddressKey(0, BEHAVIOR_CLINICIAN_FQN, FQN.OBSERVED_BEHAVIOR_FQN)]: {
