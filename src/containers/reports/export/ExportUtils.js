@@ -17,21 +17,29 @@ import {
   NON_HISPANIC
 } from '../../profile/constants';
 import {
+  AGENCY_ASSISTANCE,
+  CCIT_CASE_CONFERENCE,
   CCS,
   COMMUNITY,
+  COMMUNITY_OUTREACH,
   COURT,
   CRISIS_OFFICE,
   CURRENT,
   DAY_TREATMENT,
+  DEATH_NOTIFICATION,
   DEESCALATED_ON_SCENE,
   DETOX,
   EMS,
   EMS_FIRE,
   ESP_MOBILE,
+  FAMILY_SUPPORT,
   FIRE,
   HOSPITAL,
   INCARCERATION_FACILITY,
+  MBHP,
+  MEDICAID,
   MEDICAL_HOSPITAL,
+  MEDICARE,
   NA,
   NEW_OUTPATIENT,
   NO,
@@ -44,14 +52,20 @@ import {
   POST_ARREST,
   PRE_ARREST,
   PRIMARY,
+  PRIVATE,
+  PSYCH_EVAL,
   RESIDENCE,
+  RETURN_VISIT,
   RE_ENTRY,
+  SAFETY_CHECK,
   SCHOOL,
   SECONDARY,
   SECTION_12,
   SECTION_18,
   SECTION_35,
   UNKNOWN,
+  VETERANS_AFFAIRS,
+  VICTIM_ASSITANCE,
   VOLUNTARY_ER_EVAL,
   YES,
 } from '../crisis/schemas/constants';
@@ -498,7 +512,7 @@ const insertCustodyDiversion = (xmlPayload :XMLPayload) => {
   xmlPayload.jdpRecord.CAOpt = transformed;
   xmlPayload.jdpRecord.CAOth = other;
   if (!disposition.size || !hit) {
-    xmlPayload.errors.push('Invalid "Disposition".');
+    xmlPayload.errors.push('Invalid "Disposition"');
   }
 
   return xmlPayload;
@@ -513,15 +527,26 @@ const insertPurpose = (xmlPayload :XMLPayload) => {
   xmlPayload.jdpRecord.PurpOpt = '';
   xmlPayload.jdpRecord.PurpOth = '';
 
-  if (!reasonProperty.size) {
+  const [value, other] = otherValueFromList(reasonProperty);
+
+  const transformMap = Map({
+    [AGENCY_ASSISTANCE]: AGENCY_ASSISTANCE,
+    [CCIT_CASE_CONFERENCE]: CCIT_CASE_CONFERENCE,
+    [COMMUNITY_OUTREACH]: COMMUNITY_OUTREACH,
+    [DEATH_NOTIFICATION]: DEATH_NOTIFICATION,
+    [FAMILY_SUPPORT]: FAMILY_SUPPORT,
+    [PSYCH_EVAL]: 'Psych Evaluation',
+    [RETURN_VISIT]: RETURN_VISIT,
+    [SAFETY_CHECK]: SAFETY_CHECK,
+    [VICTIM_ASSITANCE]: VICTIM_ASSITANCE,
+    [OTHER]: OTHER
+  });
+
+  const [transformed, hit] = transformValue(value, transformMap);
+  xmlPayload.jdpRecord.PurpOpt = transformed;
+  xmlPayload.jdpRecord.PurpOth = other;
+  if (!reasonProperty.size || !hit) {
     xmlPayload.errors.push('Invalid "Reason for JDP intervention"');
-  }
-  else if (reasonProperty.size === 1) {
-    xmlPayload.jdpRecord.PurpOpt = reasonProperty.first();
-  }
-  else if (reasonProperty.size > 1) {
-    xmlPayload.jdpRecord.PurpOpt = OTHER;
-    xmlPayload.jdpRecord.PurpOth = reasonProperty.filter((v) => v !== OTHER).toJS().join(', ');
   }
 
   const preventER = encounterDetails.getIn([FQN.LEVEL_OF_CARE_FQN, 0], '');
@@ -540,24 +565,32 @@ const insertInsurance = (xmlPayload :XMLPayload) => {
   const primaryEntity = insurances
     .find((neighbor) => neighbor.getIn([FQN.GENERAL_STATUS_FQN, 0]) === PRIMARY) || Map();
 
-  const primary :string = primaryEntity.getIn([FQN.ORGANIZATION_NAME_FQN, 0], '');
-  if (primary) {
-    xmlPayload.jdpRecord.PrimSrcOpt = primary;
-  }
-  else {
-    xmlPayload.jdpRecord.PrimSrcOpt = UNKNOWN;
+  const primaryList :string = primaryEntity.getIn([FQN.ORGANIZATION_NAME_FQN], List());
+  const [primaryRaw] = otherValueFromList(primaryList);
+  const transformMap = Map({
+    [MBHP]: MBHP,
+    [MEDICARE]: MEDICARE,
+    [MEDICAID]: MEDICAID,
+    [PRIVATE]: PRIVATE,
+    [VETERANS_AFFAIRS]: 'Vet Admin/Tri-Care',
+    [UNKNOWN]: UNKNOWN,
+    [NONE]: 'Uninsured',
+    [OTHER]: OTHER
+  });
+  const [primary, primaryHit] = transformValue(primaryRaw, transformMap, UNKNOWN);
+  xmlPayload.jdpRecord.PrimSrcOpt = primary;
+  if (!primaryHit) {
     xmlPayload.errors.push(`Invalid "Primary Insurance". Defaulting to "${UNKNOWN}"`);
   }
 
   const secondaryEntity = insurances
     .find((neighbor) => neighbor.getIn([FQN.GENERAL_STATUS_FQN, 0]) === SECONDARY) || Map();
 
-  const secondary :string = secondaryEntity.getIn([FQN.ORGANIZATION_NAME_FQN, 0], '');
-  if (secondary) {
-    xmlPayload.jdpRecord.SecSrcOpt = secondary;
-  }
-  else {
-    xmlPayload.jdpRecord.SecSrcOpt = UNKNOWN;
+  const secondaryList :string = secondaryEntity.getIn([FQN.ORGANIZATION_NAME_FQN], List());
+  const [secondaryRaw] = otherValueFromList(secondaryList);
+  const [secondary, secondaryHit] = transformValue(secondaryRaw, transformMap, UNKNOWN);
+  xmlPayload.jdpRecord.SecSrcOpt = secondary;
+  if (!secondaryHit) {
     xmlPayload.errors.push(`Invalid "Secondary Insurance". Defaulting to "${UNKNOWN}"`);
   }
   return xmlPayload;
