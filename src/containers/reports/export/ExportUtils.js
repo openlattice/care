@@ -12,16 +12,29 @@ import { NEIGHBOR_DETAILS } from '../../../utils/constants/EntityConstants';
 import { TEXT_XML, XML_HEADER } from '../../../utils/constants/FileTypeConstants';
 import { HISPANIC, NON_HISPANIC } from '../../profile/constants';
 import {
+  COMMUNITY,
+  COURT,
+  CRISIS_OFFICE,
   CURRENT,
   EMS,
   EMS_FIRE,
   FIRE,
+  HOSPITAL,
+  INCARCERATION_FACILITY,
   NA,
   NO,
   NONE,
+  NON_CRIMINAL,
   OTHER,
   PAST,
+  POLICE_LOCK_UP,
+  POLICE_STATION,
+  POST_ARREST,
+  PRE_ARREST,
   PRIMARY,
+  RESIDENCE,
+  RE_ENTRY,
+  SCHOOL,
   SECONDARY,
   UNKNOWN,
   YES,
@@ -30,6 +43,22 @@ import {
 const N_A = 'NA';
 
 const transformNA = (value :string) :string => (value === NA ? N_A : value);
+
+const otherValueFromList = (list :List) :[string, string] => {
+  let values = [];
+
+  if (list.size > 1) {
+    const value :string = list.filter((v) => v !== OTHER).toJS().join(', ') || '';
+    values = [OTHER, value];
+  }
+  else {
+    values = [list.get(0), ''];
+  }
+
+  return values;
+};
+
+const transformValue = (value :string, map :Object, defaultValue ?:string = '') => (map[value] || defaultValue);
 
 const { isNonEmptyString } = LangUtils;
 const { calculateAge } = DateTimeUtils;
@@ -195,8 +224,21 @@ const insertLocation = (xmlPayload :XMLPayload) => {
   const locationCategory = clinicianReportData
     .getIn([LOCATION_FQN, 0, NEIGHBOR_DETAILS, FQN.TYPE_FQN, 0]);
 
+  const transformMap = {
+    [COMMUNITY]: 'Community/Street',
+    [COURT]: COURT,
+    [CRISIS_OFFICE]: 'Crisis/ESP Office',
+    [HOSPITAL]: 'Hospital ER',
+    [INCARCERATION_FACILITY]: 'Jail/Prison',
+    [POLICE_LOCK_UP]: 'Police Lock Up',
+    [POLICE_STATION]: POLICE_STATION,
+    [RESIDENCE]: RESIDENCE,
+    [SCHOOL]: SCHOOL,
+    [OTHER]: OTHER
+  };
+
   if (isNonEmptyString(locationCategory)) {
-    xmlPayload.jdpRecord.LocationOpt = locationCategory;
+    xmlPayload.jdpRecord.LocationOpt = transformValue(locationCategory, transformMap, OTHER);
   }
   else {
     xmlPayload.errors.push('Invalid "Location Category"');
@@ -209,16 +251,15 @@ const insertNatureOfCall = (xmlPayload :XMLPayload) => {
   const { clinicianReportData } = xmlPayload.reportData;
   const natureOfCall = clinicianReportData
     .getIn([CALL_FOR_SERVICE_FQN, 0, NEIGHBOR_DETAILS, FQN.TYPE_FQN], List());
-  const natureOfCallValue = natureOfCall.get(0, '');
-  const natureOfCallOther = natureOfCall.get(1, '');
+  xmlPayload.jdpRecord.NoCOpt = '';
+  xmlPayload.jdpRecord.NoCOther = '';
 
-  if (isNonEmptyString(natureOfCallValue)) {
-    xmlPayload.jdpRecord.NoCOpt = natureOfCallValue;
-    xmlPayload.jdpRecord.NoCOther = natureOfCallOther;
+  const [value, other] = otherValueFromList(natureOfCall);
+  if (isNonEmptyString(value)) {
+    xmlPayload.jdpRecord.NoCOpt = value;
+    xmlPayload.jdpRecord.NoCOther = other;
   }
   else {
-    xmlPayload.jdpRecord.NoCOpt = '';
-    xmlPayload.jdpRecord.NoCOther = '';
     xmlPayload.errors.push('Invalid "Nature of Call"');
   }
 
@@ -229,12 +270,19 @@ const insertPointOfIntervention = (xmlPayload :XMLPayload) => {
   const { clinicianReportData } = xmlPayload.reportData;
   const pointOfIntervention = clinicianReportData
     .getIn([ENCOUNTER_FQN, 0, NEIGHBOR_DETAILS, FQN.SERVICE_TYPE_FQN, 0]);
+  xmlPayload.jdpRecord.PoIOpt = '';
+
+  const transformMap = {
+    [NON_CRIMINAL]: 'Non-Criminal',
+    [PRE_ARREST]: 'Pre Arrest',
+    [POST_ARREST]: 'Post Arrest',
+    [RE_ENTRY]: 'Re-Entry',
+  };
 
   if (isNonEmptyString(pointOfIntervention)) {
-    xmlPayload.jdpRecord.PoIOpt = pointOfIntervention;
+    xmlPayload.jdpRecord.PoIOpt = transformValue(pointOfIntervention, transformMap);
   }
   else {
-    xmlPayload.jdpRecord.PoIOpt = '';
     xmlPayload.errors.push('Invalid "Point of Intervention"');
   }
   return xmlPayload;
