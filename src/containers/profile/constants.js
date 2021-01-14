@@ -33,10 +33,12 @@ const generateOptions = (list :string[]) :Object[] => list.map((value) => ({
   value
 }));
 
+const FEMALE = 'Female';
+const MALE = 'Male';
 // https://nief.org/attribute-registry/codesets/NCICSexCode/
 const SEX_VALUES = [
-  'Male',
-  'Female',
+  MALE,
+  FEMALE,
   'Unknown',
   'Other'
 ];
@@ -121,8 +123,10 @@ const physicalAppearanceFqnsByName = {
 export {
   ETHNICITY_VALUES,
   EYE_COLOR_VALUES,
+  FEMALE,
   HAIR_COLOR_VALUES,
   HISPANIC,
+  MALE,
   NON_HISPANIC,
   RACE_VALUES,
   SEX_VALUES,

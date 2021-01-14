@@ -10,7 +10,7 @@ import * as FQN from '../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { NEIGHBOR_DETAILS } from '../../../utils/constants/EntityConstants';
 import { TEXT_XML, XML_HEADER } from '../../../utils/constants/FileTypeConstants';
-import { HISPANIC, NON_HISPANIC } from '../../profile/constants';
+import { FEMALE, HISPANIC, MALE, NON_HISPANIC } from '../../profile/constants';
 import {
   COMMUNITY,
   COURT,
@@ -279,8 +279,10 @@ const insertPointOfIntervention = (xmlPayload :XMLPayload) => {
     [RE_ENTRY]: 'Re-Entry',
   };
 
-  if (isNonEmptyString(pointOfIntervention)) {
-    xmlPayload.jdpRecord.PoIOpt = transformValue(pointOfIntervention, transformMap);
+  const poi = transformValue(pointOfIntervention, transformMap);
+
+  if (isNonEmptyString(poi)) {
+    xmlPayload.jdpRecord.PoIOpt = poi;
   }
   else {
     xmlPayload.errors.push('Invalid "Point of Intervention"');
@@ -292,6 +294,7 @@ const insertAgeRange = (xmlPayload :XMLPayload) => {
   const { person } = xmlPayload.reportData;
   const dob = person.getIn([FQN.PERSON_DOB_FQN, 0]);
   const age = calculateAge(dob);
+  xmlPayload.jdpRecord.AgeOpt = '';
   if (age !== -1) {
     let ageRange = '66+';
     if (age < 66) ageRange = '46-65';
@@ -304,7 +307,6 @@ const insertAgeRange = (xmlPayload :XMLPayload) => {
     xmlPayload.jdpRecord.AgeOpt = ageRange;
   }
   else {
-    xmlPayload.jdpRecord.AgeOpt = '';
     xmlPayload.errors.push('Invalid date of birth/age range. Update subject profile.');
   }
 
@@ -314,13 +316,14 @@ const insertAgeRange = (xmlPayload :XMLPayload) => {
 const insertGender = (xmlPayload :XMLPayload) => {
   const { person } = xmlPayload.reportData;
   const sex = person.getIn([FQN.PERSON_SEX_FQN, 0]);
+  xmlPayload.jdpRecord.GndrOpt = '';
+  const acceptedValues = [MALE, FEMALE];
 
-  if (isNonEmptyString(sex)) {
+  if (acceptedValues.includes(sex)) {
     xmlPayload.jdpRecord.GndrOpt = sex;
   }
   else {
-    xmlPayload.jdpRecord.GndrOpt = UNKNOWN;
-    xmlPayload.errors.push(`Invalid sex. Defaulting to "${UNKNOWN}"`);
+    xmlPayload.errors.push('Invalid sex.');
   }
   return xmlPayload;
 };
