@@ -21,6 +21,7 @@ import {
   CCIT_CASE_CONFERENCE,
   CCS,
   COMMUNITY,
+  COMMUNITY_EVALUATION,
   COMMUNITY_OUTREACH,
   COURT,
   CRISIS_OFFICE,
@@ -31,6 +32,7 @@ import {
   DETOX,
   EMS,
   EMS_FIRE,
+  ER_EVALUATION,
   ESP_MOBILE,
   FAMILY_SUPPORT,
   FIRE,
@@ -318,12 +320,12 @@ const insertPointOfIntervention = (xmlPayload :XMLPayload) => {
     .getIn([ENCOUNTER_FQN, 0, NEIGHBOR_DETAILS, FQN.SERVICE_TYPE_FQN, 0]);
   xmlPayload.jdpRecord.PoIOpt = '';
 
-  const transformMap = {
+  const transformMap = Map({
     [NON_CRIMINAL]: 'Non-Criminal',
     [PRE_ARREST]: 'Pre Arrest',
     [POST_ARREST]: 'Post Arrest',
     [RE_ENTRY]: 'Re-Entry',
-  };
+  });
 
   const [poi, hit] = transformValue(pointOfIntervention, transformMap);
 
@@ -606,13 +608,20 @@ const insertBilledServices = (xmlPayload :XMLPayload) => {
     xmlPayload.jdpRecord.BillOpt = billed;
   }
   else {
-    xmlPayload.jdpRecord.BillOpt = N_A;
-    xmlPayload.errors.push(`Invalid "Billed services". Defaulting to "${N_A}"`);
+    xmlPayload.jdpRecord.BillOpt = NO;
   }
 
-  const services = billedServices
-    .filter((service) => !(service === NONE || service === OTHER)).toJS().join(', ');
-  xmlPayload.jdpRecord.WhatSrvOpt = services;
+  const transformMap = Map({
+    [COMMUNITY_EVALUATION]: COMMUNITY_EVALUATION,
+    [ER_EVALUATION]: ER_EVALUATION,
+  });
+
+  const [service, hit] = transformValue(billedServices.get(0), transformMap);
+
+  xmlPayload.jdpRecord.WhatSrvOpt = service;
+  if (!hit || !billed) {
+    xmlPayload.errors.push('Invalid "Billed services"');
+  }
 
   return xmlPayload;
 };

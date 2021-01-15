@@ -94,15 +94,10 @@ const schema = {
           enum: YES_NO_NA
         },
         [getEntityAddressKey(0, INVOICE_FQN, FQN.LINE_ITEM_FQN)]: {
-          type: 'array',
+          type: 'string',
           description: SELECT_ALL_THAT_APPLY,
           title: 'Billed services',
-          items: {
-            type: 'string',
-            enum: BILLED_SERVICES
-          },
-          // minItems: 1,
-          uniqueItems: true
+          enum: BILLED_SERVICES
         },
       },
       required: [
@@ -186,12 +181,11 @@ const uiSchema = {
     },
     [getEntityAddressKey(0, INVOICE_FQN, FQN.LINE_ITEM_FQN)]: {
       classNames: 'column-span-12',
-      'ui:widget': 'checkboxes',
+      'ui:widget': 'radio',
       'ui:options': {
         mode: 'button',
         row: true,
         withNone: true,
-        withOther: true,
       }
     },
   }
