@@ -44,16 +44,25 @@ const SEX_VALUES = [
 ];
 const sexOptions = generateOptions(SEX_VALUES);
 
+export const WHITE = 'White';
+export const BLACK = 'Black';
+export const NATIVE_AMERICAN = 'Native American';
+export const ASIAN = 'Asian';
+export const PACIFIC_ISLANDER = 'Pacific Islander';
+export const OTHER = 'Other';
+export const MULTIRACIAL = 'Multiracial';
+export const UNKNOWN = 'Unknown';
+export const DECLINED = 'Declined';
 const RACE_VALUES = [
-  'White',
-  'Black',
-  'Native American',
-  'Asian',
-  'Pacific Islander',
-  'Other',
-  'Multiracial',
-  'Unknown',
-  'Declined'
+  WHITE,
+  BLACK,
+  NATIVE_AMERICAN,
+  ASIAN,
+  PACIFIC_ISLANDER,
+  OTHER,
+  MULTIRACIAL,
+  UNKNOWN,
+  DECLINED,
 ];
 const raceOptions = generateOptions(RACE_VALUES);
 

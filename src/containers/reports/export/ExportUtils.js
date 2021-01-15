@@ -11,10 +11,15 @@ import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { NEIGHBOR_DETAILS } from '../../../utils/constants/EntityConstants';
 import { TEXT_XML, XML_HEADER } from '../../../utils/constants/FileTypeConstants';
 import {
+  ASIAN,
+  BLACK,
   FEMALE,
   HISPANIC,
   MALE,
-  NON_HISPANIC
+  NATIVE_AMERICAN,
+  NON_HISPANIC,
+  PACIFIC_ISLANDER,
+  WHITE,
 } from '../../profile/constants';
 import {
   AGENCY_ASSISTANCE,
@@ -23,13 +28,19 @@ import {
   COMMUNITY,
   COMMUNITY_EVALUATION,
   COMMUNITY_OUTREACH,
+  COMMUNITY_TREATMENT_PROVIDER,
   COURT,
+  COURT_CLINIC,
+  COURT_PERSONNEL,
   CRISIS_OFFICE,
   CURRENT,
   DAY_TREATMENT,
+  DCF,
+  DDS,
   DEATH_NOTIFICATION,
   DEESCALATED_ON_SCENE,
   DETOX,
+  DMH,
   EMS,
   EMS_FIRE,
   ER_EVALUATION,
@@ -38,6 +49,7 @@ import {
   FIRE,
   HOSPITAL,
   INCARCERATION_FACILITY,
+  LAW_ENFORCEMENT,
   MBHP,
   MEDICAID,
   MEDICAL_HOSPITAL,
@@ -55,6 +67,7 @@ import {
   PRE_ARREST,
   PRIMARY,
   PRIVATE,
+  PRIVATE_CITIZEN,
   PSYCH_EVAL,
   RESIDENCE,
   RETURN_VISIT,
@@ -65,6 +78,7 @@ import {
   SECTION_12,
   SECTION_18,
   SECTION_35,
+  STATE_AGENCY,
   UNKNOWN,
   VETERANS_AFFAIRS,
   VICTIM_ASSITANCE,
@@ -628,10 +642,25 @@ const insertBilledServices = (xmlPayload :XMLPayload) => {
 
 const insertReferralSource = (xmlPayload :XMLPayload) => {
   const { clinicianReportData } = xmlPayload.reportData;
-  const referralSource = clinicianReportData.getIn([REFERRAL_SOURCE_FQN, 0, NEIGHBOR_DETAILS, FQN.SOURCE_FQN, 0], '');
+  const referralSource = clinicianReportData.getIn([REFERRAL_SOURCE_FQN, 0, NEIGHBOR_DETAILS, FQN.SOURCE_FQN], List());
 
-  xmlPayload.jdpRecord.RefSrcOpt = referralSource;
-  if (!referralSource) xmlPayload.errors.push('Invalid "Referral source"');
+  const [value] = otherValueFromList(referralSource);
+
+  const transformMap = Map({
+    [COMMUNITY_TREATMENT_PROVIDER]: "Comm'ty Treatm't Provider",
+    [COURT_CLINIC]: COURT_CLINIC,
+    [COURT_PERSONNEL]: COURT_PERSONNEL,
+    [LAW_ENFORCEMENT]: 'Police/Law Enforcement',
+    [PRIVATE_CITIZEN]: 'Family/Private Citizen',
+    [SCHOOL]: SCHOOL,
+    [STATE_AGENCY]: STATE_AGENCY,
+    [OTHER]: OTHER
+  });
+
+  const [source, hit] = transformValue(value, transformMap, OTHER);
+
+  xmlPayload.jdpRecord.RefSrcOpt = source;
+  if (!hit) xmlPayload.errors.push('Invalid "Referral source"');
 
   return xmlPayload;
 };
@@ -639,25 +668,56 @@ const insertReferralSource = (xmlPayload :XMLPayload) => {
 const insertStateService = (xmlPayload :XMLPayload) => {
   const { clinicianReportData } = xmlPayload.reportData;
   const stateServices = clinicianReportData.getIn([INCOME_FQN, 0, NEIGHBOR_DETAILS, FQN.TYPE_FQN], List());
+  const [value] = otherValueFromList(stateServices);
 
-  const serviceNames = stateServices
-    .filter((service) => service !== OTHER)
-    .toJS().join(', ');
+  const transformMap = Map({
+    [DCF]: DCF,
+    [DDS]: DDS,
+    [DMH]: DMH,
+    [UNKNOWN]: UNKNOWN,
+    [OTHER]: OTHER
+  });
 
-  xmlPayload.jdpRecord.KnownOpt = serviceNames || UNKNOWN;
+  const [serviceName, hit] = transformValue(value, transformMap, UNKNOWN);
+
+  xmlPayload.jdpRecord.KnownOpt = serviceName;
+  if (!hit) {
+    xmlPayload.errors.push(`Invalid "Client of State Service". Defaulting to ${UNKNOWN}`);
+  }
   return xmlPayload;
 };
 
 const insertRaceEthnicity = (xmlPayload :XMLPayload) => {
   const { person } = xmlPayload.reportData;
-  const ethnicity = person.getIn([FQN.PERSON_ETHNICITY_FQN, 0], '');
-  const race = person.getIn([FQN.PERSON_RACE_FQN, 0], UNKNOWN);
+  const ethnicityRaw = person.getIn([FQN.PERSON_ETHNICITY_FQN, 0], '');
+  const raceRaw = person.getIn([FQN.PERSON_RACE_FQN, 0], UNKNOWN);
 
-  if (ethnicity === HISPANIC) xmlPayload.jdpRecord.HPOpt = YES;
-  else if (ethnicity === NON_HISPANIC) xmlPayload.jdpRecord.HPOpt = NO;
-  else xmlPayload.jdpRecord.HPOpt = UNKNOWN;
+  const ethnicityMap = Map({
+    [HISPANIC]: YES,
+    [NON_HISPANIC]: NO,
+    [UNKNOWN]: UNKNOWN
+  });
 
-  xmlPayload.jdpRecord.RaceOpt = race || UNKNOWN;
+  const [ethnicity, ethnicityHit] = transformValue(ethnicityRaw, ethnicityMap, UNKNOWN);
+  xmlPayload.jdpRecord.HPOpt = ethnicity;
+  if (!ethnicityHit) {
+    xmlPayload.errors.push(`Invalid "Ethnicity". Defaulting to ${UNKNOWN}`);
+  }
+
+  const raceMap = Map({
+    [WHITE]: WHITE,
+    [BLACK]: 'Black/African American',
+    [NATIVE_AMERICAN]: 'American Indian/Alaska Native',
+    [ASIAN]: ASIAN,
+    [PACIFIC_ISLANDER]: 'Native Hawaiian/Pacific Islander',
+    [UNKNOWN]: UNKNOWN,
+  });
+  const [race, raceHit] = transformValue(raceRaw, raceMap, UNKNOWN);
+
+  xmlPayload.jdpRecord.RaceOpt = race;
+  if (!raceHit) {
+    xmlPayload.errors.push(`Invalid "Race". Defaulting to ${UNKNOWN}`);
+  }
 
   return xmlPayload;
 };
