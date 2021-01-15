@@ -95,7 +95,7 @@ const schema = {
         },
         [getEntityAddressKey(0, INVOICE_FQN, FQN.LINE_ITEM_FQN)]: {
           type: 'string',
-          description: SELECT_ALL_THAT_APPLY,
+          description: SELECT_ONLY_ONE,
           title: 'Billed services',
           enum: BILLED_SERVICES
         },
