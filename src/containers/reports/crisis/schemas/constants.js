@@ -182,15 +182,17 @@ export const PARENT = 'Parent';
 export const SPOUSE_OR_PARTNER = 'Spouse or Partner';
 export const ROOMMATE = 'Roommate';
 export const FRIENDS = 'Friend(s)';
+export const SELF = 'Self';
 export const RESIDES_WITH = [
   CAREGIVER,
   CHILDREN,
-  PARENT,
   FAMILY,
-  SPOUSE_OR_PARTNER,
-  ROOMMATE,
   FRIENDS,
-  UNKNOWN
+  PARENT,
+  ROOMMATE,
+  SELF,
+  SPOUSE_OR_PARTNER,
+  UNKNOWN,
 ];
 export const FULL_TIME = 'Full-time';
 export const PART_TIME = 'Part-time';
@@ -256,12 +258,14 @@ export const MEDICARE = 'Medicare';
 export const MEDICAID = 'Medicaid';
 export const PRIVATE = 'Private';
 export const VETERANS_AFFAIRS = 'Veterans Affairs';
+export const UNINSURED = 'Uninsured';
 export const INSURANCE = [
   MBHP,
   MEDICARE,
   MEDICAID,
   PRIVATE,
   VETERANS_AFFAIRS,
+  UNINSURED,
   UNKNOWN,
 ];
 
@@ -328,6 +332,7 @@ export const PRIOR_ARREST_HISTORY = [
   ONE,
   TWO_FIVE,
   SIX_PLUS,
+  UNKNOWN,
 ];
 
 export const CURRENT_PROVIDERS = 'Current Providers';

@@ -22,12 +22,14 @@ import {
   WHITE,
 } from '../../profile/constants';
 import {
+  ACUTE_STRESS,
   AGENCY_ASSISTANCE,
   ASSISTED_CARE,
   CAREGIVER,
   CCIT_CASE_CONFERENCE,
   CCS,
   CHILDREN,
+  COGNITIVE_ISSUES,
   COMMUNITY,
   COMMUNITY_EVALUATION,
   COMMUNITY_OUTREACH,
@@ -35,6 +37,7 @@ import {
   COURT,
   COURT_CLINIC,
   COURT_PERSONNEL,
+  CO_OCCURING_MH_AND_SA,
   CRISIS_OFFICE,
   CURRENT,
   DAY_TREATMENT,
@@ -43,6 +46,7 @@ import {
   DEATH_NOTIFICATION,
   DEESCALATED_ON_SCENE,
   DETOX,
+  DEVELOPMENTAL_DISORDER,
   DMH,
   EMS,
   EMS_FIRE,
@@ -64,11 +68,14 @@ import {
   MEDICAID,
   MEDICAL_HOSPITAL,
   MEDICARE,
+  MENTAL_HEALTH_ISSUES,
+  MOOD_DISORDER,
   NA,
   NEW_OUTPATIENT,
   NO,
   NONE,
   NON_CRIMINAL,
+  ONE,
   OTHER,
   PARENT,
   PART_TIME,
@@ -81,6 +88,7 @@ import {
   PRIMARY,
   PRIVATE,
   PRIVATE_CITIZEN,
+  PSYCHOTIC_DISORDER,
   PSYCH_EVAL,
   RECEIVES_BENEFITS,
   RESIDENCE,
@@ -94,19 +102,25 @@ import {
   SECTION_12,
   SECTION_18,
   SECTION_35,
+  SELF,
   SERVICE_PROVIDER,
+  SIX_PLUS,
   SPOUSE_OR_PARTNER,
   STABLE_HOUSING,
   STATE_AGENCY,
   STUDENT,
+  SUBSTANCE_USE_DISORDER,
   TEMPORARY,
+  TWO_FIVE,
   UNEMPLOYED,
+  UNINSURED,
   UNKNOWN,
   UNSHELTERED_HOMELESS,
   VETERANS_AFFAIRS,
   VICTIM_ASSITANCE,
   VOLUNTARY_ER_EVAL,
   YES,
+  ZERO,
 } from '../crisis/schemas/constants';
 
 const N_A = 'NA';
@@ -326,7 +340,7 @@ const insertLocation = (xmlPayload :XMLPayload) => {
     xmlPayload.jdpRecord.LocationOpt = value;
   }
   else {
-    xmlPayload.errors.push(`Invalid "Location Category". Defaulting to "${OTHER}"`);
+    xmlPayload.errors.push(`Invalid "Location Category" - Defaulting to "${OTHER}"`);
   }
 
   return xmlPayload;
@@ -443,7 +457,7 @@ const insertSubstance = (xmlPayload :XMLPayload) => {
   }
   else {
     xmlPayload.jdpRecord.SAcurrtOpt = UNKNOWN;
-    xmlPayload.errors.push(`Invalid "Substance use during incident". Defaulting to "${UNKNOWN}"`);
+    xmlPayload.errors.push(`Invalid "Substance use during incident" - Defaulting to "${UNKNOWN}"`);
   }
 
   return xmlPayload;
@@ -475,7 +489,7 @@ const insertAdditionalSupport = (xmlPayload :XMLPayload) => {
   }
   else {
     xmlPayload.jdpRecord.AddlSptOSOpt = NONE;
-    xmlPayload.errors.push(`Invalid "Assistance on scene". Defaulting to ${NONE}`);
+    xmlPayload.errors.push(`Invalid "Assistance on scene" - Defaulting to ${NONE}`);
   }
 
   return xmlPayload;
@@ -489,7 +503,7 @@ const insertJailDiversion = (xmlPayload :XMLPayload) => {
   const jailDiversion = encounterDetails.getIn([FQN.LAW_ENFORCEMENT_INVOLVEMENT_FQN, 0]);
   xmlPayload.jdpRecord.JDOpt = jailDiversion ? 'Yes' : 'No';
   if (jailDiversion === undefined) {
-    xmlPayload.errors.push(`Invalid "Was jail diversion an option?". Defaulting to ${NO}`);
+    xmlPayload.errors.push(`Invalid "Was jail diversion an option?" - Defaulting to ${NO}`);
   }
 
   return xmlPayload;
@@ -613,13 +627,13 @@ const insertInsurance = (xmlPayload :XMLPayload) => {
     [PRIVATE]: PRIVATE,
     [VETERANS_AFFAIRS]: 'Vet Admin/Tri-Care',
     [UNKNOWN]: UNKNOWN,
-    [NONE]: 'Uninsured',
+    [UNINSURED]: UNINSURED,
     [OTHER]: OTHER
   });
   const [primary, primaryHit] = transformValue(primaryRaw, transformMap, UNKNOWN);
 
   xmlPayload.jdpRecord.PrimSrcOpt = primary;
-  if (!primaryHit) xmlPayload.errors.push(`Invalid "Primary Insurance". Defaulting to "${UNKNOWN}"`);
+  if (!primaryHit) xmlPayload.errors.push(`Invalid "Primary Insurance" - Defaulting to "${UNKNOWN}"`);
 
   const secondaryEntity = insurances
     .find((neighbor) => neighbor.getIn([FQN.GENERAL_STATUS_FQN, 0]) === SECONDARY) || Map();
@@ -629,7 +643,7 @@ const insertInsurance = (xmlPayload :XMLPayload) => {
   const [secondary, secondaryHit] = transformValue(secondaryRaw, transformMap, UNKNOWN);
 
   xmlPayload.jdpRecord.SecSrcOpt = secondary;
-  if (!secondaryHit) xmlPayload.errors.push(`Invalid "Secondary Insurance". Defaulting to "${UNKNOWN}"`);
+  if (!secondaryHit) xmlPayload.errors.push(`Invalid "Secondary Insurance" - Defaulting to "${UNKNOWN}"`);
 
   return xmlPayload;
 };
@@ -652,10 +666,10 @@ const insertBilledServices = (xmlPayload :XMLPayload) => {
     [ER_EVALUATION]: ER_EVALUATION,
   });
 
-  const [service, hit] = transformValue(billedServices.get(0), transformMap);
+  const [service] = transformValue(billedServices.get(0), transformMap);
 
   xmlPayload.jdpRecord.WhatSrvOpt = service;
-  if (!hit || !billed) xmlPayload.errors.push('Invalid "Billed services"');
+  if (!billed) xmlPayload.errors.push('Invalid "Billed services"');
 
   return xmlPayload;
 };
@@ -674,7 +688,7 @@ const insertReferralSource = (xmlPayload :XMLPayload) => {
     [PRIVATE_CITIZEN]: 'Family/Private Citizen',
     [SCHOOL]: SCHOOL,
     [STATE_AGENCY]: STATE_AGENCY,
-    [OTHER]: OTHER
+    [OTHER]: OTHER,
   });
 
   const [source, hit] = transformValue(value, transformMap, OTHER);
@@ -694,14 +708,15 @@ const insertStateService = (xmlPayload :XMLPayload) => {
     [DCF]: DCF,
     [DDS]: DDS,
     [DMH]: DMH,
+    [NONE]: 'No Service',
     [UNKNOWN]: UNKNOWN,
-    [OTHER]: OTHER
+    [OTHER]: OTHER,
   });
 
   const [serviceName, hit] = transformValue(value, transformMap, UNKNOWN);
 
   xmlPayload.jdpRecord.KnownOpt = serviceName;
-  if (!hit) xmlPayload.errors.push(`Invalid "Client of State Service". Defaulting to ${UNKNOWN}`);
+  if (!hit) xmlPayload.errors.push(`Invalid "Client of State Service" - Defaulting to ${UNKNOWN}`);
 
   return xmlPayload;
 };
@@ -719,7 +734,7 @@ const insertRaceEthnicity = (xmlPayload :XMLPayload) => {
 
   const [ethnicity, ethnicityHit] = transformValue(ethnicityRaw, ethnicityMap, UNKNOWN);
   xmlPayload.jdpRecord.HPOpt = ethnicity;
-  if (!ethnicityHit) xmlPayload.errors.push(`Invalid "Ethnicity". Defaulting to ${UNKNOWN}`);
+  if (!ethnicityHit) xmlPayload.errors.push(`Invalid "Ethnicity" - Defaulting to ${UNKNOWN}`);
 
   const raceMap = Map({
     [WHITE]: WHITE,
@@ -732,7 +747,7 @@ const insertRaceEthnicity = (xmlPayload :XMLPayload) => {
   const [race, raceHit] = transformValue(raceRaw, raceMap, UNKNOWN);
 
   xmlPayload.jdpRecord.RaceOpt = race;
-  if (!raceHit) xmlPayload.errors.push(`Invalid "Race". Defaulting to ${UNKNOWN}`);
+  if (!raceHit) xmlPayload.errors.push(`Invalid "Race" - Defaulting to ${UNKNOWN}`);
 
   return xmlPayload;
 };
@@ -755,7 +770,7 @@ const insertEmployment = (xmlPayload :XMLPayload) => {
   const [employment, hit] = transformValue(employmentValue, transformMap, UNKNOWN);
   xmlPayload.jdpRecord.EmpSrcOpt = employment;
 
-  if (!hit) xmlPayload.errors.push(`Invalid "Occupation". Defaulting to ${UNKNOWN}`);
+  if (!hit) xmlPayload.errors.push(`Invalid "Occupation" - Defaulting to ${UNKNOWN}`);
 
   return xmlPayload;
 };
@@ -768,22 +783,22 @@ const insertResidence = (xmlPayload :XMLPayload) => {
 
   const SHELTER_TEMP_HOUSING = 'Shelter/Temp Housing';
   const typeMap = Map({
-    [PERMANENT_RESIDENCE]: PERMANENT_RESIDENCE,
-    [STABLE_HOUSING]: OTHER,
-    [SERVICE_PROVIDER]: OTHER,
-    [TEMPORARY]: SHELTER_TEMP_HOUSING,
     [ASSISTED_CARE]: ASSISTED_CARE,
-    [HOMELESS_SHELTER]: SHELTER_TEMP_HOUSING,
-    [UNSHELTERED_HOMELESS]: 'Homeless',
     [FAMILY]: OTHER,
     [FRIEND]: OTHER,
     [GROUP_HOME]: GROUP_HOME,
+    [HOMELESS_SHELTER]: SHELTER_TEMP_HOUSING,
+    [PERMANENT_RESIDENCE]: PERMANENT_RESIDENCE,
+    [SERVICE_PROVIDER]: OTHER,
+    [STABLE_HOUSING]: OTHER,
+    [TEMPORARY]: SHELTER_TEMP_HOUSING,
     [UNKNOWN]: UNKNOWN,
+    [UNSHELTERED_HOMELESS]: 'Homeless',
   });
   const [type, typeHit] = transformValue(typeValue, typeMap, UNKNOWN);
 
   xmlPayload.jdpRecord.LivOpt = type;
-  if (!typeHit) xmlPayload.errors.push(`Invalid "Current Housing Situation". Defaulting to ${UNKNOWN}`);
+  if (!typeHit) xmlPayload.errors.push(`Invalid "Current Housing Situation" - Defaulting to ${UNKNOWN}`);
 
   const livesWithOptions :List = housingEntity.get(FQN.DESCRIPTION_FQN, List());
   const [livesWithRaw, other] = otherValueFromList(livesWithOptions);
@@ -792,29 +807,40 @@ const insertResidence = (xmlPayload :XMLPayload) => {
   const livesWithMap = Map({
     [CAREGIVER]: PARENT_CAREGIVER,
     [CHILDREN]: CHILDREN,
-    [PARENT]: PARENT_CAREGIVER,
     [FAMILY]: FAMILY,
-    [SPOUSE_OR_PARTNER]: 'Spouse/Significant Other',
-    [ROOMMATE]: ROOMMATE,
     [FRIENDS]: OTHER,
+    [NONE]: SELF,
+    [PARENT]: PARENT_CAREGIVER,
+    [ROOMMATE]: ROOMMATE,
+    [SELF]: SELF,
+    [SPOUSE_OR_PARTNER]: 'Spouse/Significant Other',
     [UNKNOWN]: UNKNOWN,
   });
 
   const [livesWith, livesWithHit] = transformValue(livesWithRaw, livesWithMap, UNKNOWN);
   xmlPayload.jdpRecord.WithOpt = livesWith;
   xmlPayload.jdpRecord.WithOth = other;
-  if (!livesWithHit) xmlPayload.errors.push(`Invalid "Resides With". Defaulting to ${UNKNOWN}`);
+  if (!livesWithHit) xmlPayload.errors.push(`Invalid "Resides With" - Defaulting to ${UNKNOWN}`);
 
   return xmlPayload;
 };
 
 const insertPriorArrests = (xmlPayload :XMLPayload) => {
   const { crisisReportData } = xmlPayload.reportData;
-  const priorArrests = crisisReportData
+  const priorArrestRaw = crisisReportData
     .getIn([OFFENSE_FQN, 0, NEIGHBOR_DETAILS, FQN.NOTES_FQN, 0], '');
 
+  const transformMap = Map({
+    [ZERO]: ZERO,
+    [ONE]: ONE,
+    [TWO_FIVE]: '2-5',
+    [SIX_PLUS]: SIX_PLUS,
+    [UNKNOWN]: UNKNOWN,
+  });
+
+  const [priorArrests, hits] = transformValue(priorArrestRaw, transformMap, UNKNOWN);
   xmlPayload.jdpRecord.PriorOpt = priorArrests;
-  if (!priorArrests) xmlPayload.errors.push('Invalid "Prior Arrests"');
+  if (!hits) xmlPayload.errors.push(`Invalid "Prior Arrests" - Defaulting to ${UNKNOWN}`);
 
   return xmlPayload;
 };
@@ -835,7 +861,7 @@ const insertSubstanceHistory = (xmlPayload :XMLPayload) => {
   }
   else {
     xmlPayload.jdpRecord.SubOpt = UNKNOWN;
-    xmlPayload.errors.push(`Invalid "History of substance abuse/treatment". Defaulting to "${UNKNOWN}"`);
+    xmlPayload.errors.push(`Invalid "History of substance abuse/treatment" - Defaulting to "${UNKNOWN}"`);
   }
 
   return xmlPayload;
@@ -846,13 +872,20 @@ const insertPresenceOfPsychiatricIssue = (xmlPayload :XMLPayload) => {
   const psychIssue = clinicianReportData
     .getIn([CRISIS_REPORT_CLINICIAN_FQN, 0, NEIGHBOR_DETAILS, FQN.NATURE_OF_CRISIS_FQN, 0], '');
 
-  if (psychIssue) {
-    xmlPayload.jdpRecord.PresOpt = psychIssue;
-  }
-  else {
-    xmlPayload.jdpRecord.PresOpt = UNKNOWN;
-    xmlPayload.errors.push(`Invalid "Presenting Psychiatric Issue". Defaulting to ${UNKNOWN}`);
-  }
+  const transformMap = Map({
+    [ACUTE_STRESS]: 'Acute stress reaction/situational',
+    [CO_OCCURING_MH_AND_SA]: CO_OCCURING_MH_AND_SA,
+    [COGNITIVE_ISSUES]: 'Cognitive issues',
+    [DEVELOPMENTAL_DISORDER]: DEVELOPMENTAL_DISORDER,
+    [SUBSTANCE_USE_DISORDER]: 'Substance abuse disorder only',
+    [PSYCHOTIC_DISORDER]: 'Psychotic disorder only',
+    [MENTAL_HEALTH_ISSUES]: UNKNOWN,
+    [MOOD_DISORDER]: 'Mood Disorder Only',
+    [UNKNOWN]: UNKNOWN,
+  });
+  const [presenting, hit] = transformValue(psychIssue, transformMap, UNKNOWN);
+  xmlPayload.jdpRecord.PresOpt = presenting;
+  if (!hit) xmlPayload.errors.push(`Invalid "Presenting Psychiatric Issue" - Defaulting to ${UNKNOWN}`);
 
   return xmlPayload;
 };
