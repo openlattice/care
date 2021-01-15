@@ -23,8 +23,11 @@ import {
 } from '../../profile/constants';
 import {
   AGENCY_ASSISTANCE,
+  ASSISTED_CARE,
+  CAREGIVER,
   CCIT_CASE_CONFERENCE,
   CCS,
+  CHILDREN,
   COMMUNITY,
   COMMUNITY_EVALUATION,
   COMMUNITY_OUTREACH,
@@ -45,8 +48,15 @@ import {
   EMS_FIRE,
   ER_EVALUATION,
   ESP_MOBILE,
+  EXTRALEGAL,
+  FAMILY,
   FAMILY_SUPPORT,
   FIRE,
+  FRIEND,
+  FRIENDS,
+  FULL_TIME,
+  GROUP_HOME,
+  HOMELESS_SHELTER,
   HOSPITAL,
   INCARCERATION_FACILITY,
   LAW_ENFORCEMENT,
@@ -60,7 +70,10 @@ import {
   NONE,
   NON_CRIMINAL,
   OTHER,
+  PARENT,
+  PART_TIME,
   PAST,
+  PERMANENT_RESIDENCE,
   POLICE_LOCK_UP,
   POLICE_STATION,
   POST_ARREST,
@@ -69,17 +82,27 @@ import {
   PRIVATE,
   PRIVATE_CITIZEN,
   PSYCH_EVAL,
+  RECEIVES_BENEFITS,
   RESIDENCE,
+  RETIRED,
   RETURN_VISIT,
   RE_ENTRY,
+  ROOMMATE,
   SAFETY_CHECK,
   SCHOOL,
   SECONDARY,
   SECTION_12,
   SECTION_18,
   SECTION_35,
+  SERVICE_PROVIDER,
+  SPOUSE_OR_PARTNER,
+  STABLE_HOUSING,
   STATE_AGENCY,
+  STUDENT,
+  TEMPORARY,
+  UNEMPLOYED,
   UNKNOWN,
+  UNSHELTERED_HOMELESS,
   VETERANS_AFFAIRS,
   VICTIM_ASSITANCE,
   VOLUNTARY_ER_EVAL,
@@ -594,10 +617,9 @@ const insertInsurance = (xmlPayload :XMLPayload) => {
     [OTHER]: OTHER
   });
   const [primary, primaryHit] = transformValue(primaryRaw, transformMap, UNKNOWN);
+
   xmlPayload.jdpRecord.PrimSrcOpt = primary;
-  if (!primaryHit) {
-    xmlPayload.errors.push(`Invalid "Primary Insurance". Defaulting to "${UNKNOWN}"`);
-  }
+  if (!primaryHit) xmlPayload.errors.push(`Invalid "Primary Insurance". Defaulting to "${UNKNOWN}"`);
 
   const secondaryEntity = insurances
     .find((neighbor) => neighbor.getIn([FQN.GENERAL_STATUS_FQN, 0]) === SECONDARY) || Map();
@@ -605,10 +627,10 @@ const insertInsurance = (xmlPayload :XMLPayload) => {
   const secondaryList :string = secondaryEntity.getIn([FQN.ORGANIZATION_NAME_FQN], List());
   const [secondaryRaw] = otherValueFromList(secondaryList);
   const [secondary, secondaryHit] = transformValue(secondaryRaw, transformMap, UNKNOWN);
+
   xmlPayload.jdpRecord.SecSrcOpt = secondary;
-  if (!secondaryHit) {
-    xmlPayload.errors.push(`Invalid "Secondary Insurance". Defaulting to "${UNKNOWN}"`);
-  }
+  if (!secondaryHit) xmlPayload.errors.push(`Invalid "Secondary Insurance". Defaulting to "${UNKNOWN}"`);
+
   return xmlPayload;
 };
 
@@ -633,9 +655,7 @@ const insertBilledServices = (xmlPayload :XMLPayload) => {
   const [service, hit] = transformValue(billedServices.get(0), transformMap);
 
   xmlPayload.jdpRecord.WhatSrvOpt = service;
-  if (!hit || !billed) {
-    xmlPayload.errors.push('Invalid "Billed services"');
-  }
+  if (!hit || !billed) xmlPayload.errors.push('Invalid "Billed services"');
 
   return xmlPayload;
 };
@@ -681,9 +701,8 @@ const insertStateService = (xmlPayload :XMLPayload) => {
   const [serviceName, hit] = transformValue(value, transformMap, UNKNOWN);
 
   xmlPayload.jdpRecord.KnownOpt = serviceName;
-  if (!hit) {
-    xmlPayload.errors.push(`Invalid "Client of State Service". Defaulting to ${UNKNOWN}`);
-  }
+  if (!hit) xmlPayload.errors.push(`Invalid "Client of State Service". Defaulting to ${UNKNOWN}`);
+
   return xmlPayload;
 };
 
@@ -700,9 +719,7 @@ const insertRaceEthnicity = (xmlPayload :XMLPayload) => {
 
   const [ethnicity, ethnicityHit] = transformValue(ethnicityRaw, ethnicityMap, UNKNOWN);
   xmlPayload.jdpRecord.HPOpt = ethnicity;
-  if (!ethnicityHit) {
-    xmlPayload.errors.push(`Invalid "Ethnicity". Defaulting to ${UNKNOWN}`);
-  }
+  if (!ethnicityHit) xmlPayload.errors.push(`Invalid "Ethnicity". Defaulting to ${UNKNOWN}`);
 
   const raceMap = Map({
     [WHITE]: WHITE,
@@ -715,9 +732,7 @@ const insertRaceEthnicity = (xmlPayload :XMLPayload) => {
   const [race, raceHit] = transformValue(raceRaw, raceMap, UNKNOWN);
 
   xmlPayload.jdpRecord.RaceOpt = race;
-  if (!raceHit) {
-    xmlPayload.errors.push(`Invalid "Race". Defaulting to ${UNKNOWN}`);
-  }
+  if (!raceHit) xmlPayload.errors.push(`Invalid "Race". Defaulting to ${UNKNOWN}`);
 
   return xmlPayload;
 };
@@ -726,10 +741,21 @@ const insertEmployment = (xmlPayload :XMLPayload) => {
   const { clinicianReportData } = xmlPayload.reportData;
   const employmentOptions = clinicianReportData.getIn([OCCUPATION_FQN, 0, NEIGHBOR_DETAILS, FQN.TYPE_FQN], List());
 
-  if (!employmentOptions.size) xmlPayload.errors.push(`Invalid "Occupation". Defaulting to ${UNKNOWN}`);
+  const [employmentValue] = otherValueFromList(employmentOptions);
+  const transformMap = Map({
+    [FULL_TIME]: 'Full Time',
+    [PART_TIME]: 'Part Time',
+    [RETIRED]: RETIRED,
+    [STUDENT]: STUDENT,
+    [EXTRALEGAL]: UNKNOWN,
+    [RECEIVES_BENEFITS]: RECEIVES_BENEFITS,
+    [UNEMPLOYED]: UNEMPLOYED,
+    [UNKNOWN]: UNKNOWN,
+  });
+  const [employment, hit] = transformValue(employmentValue, transformMap, UNKNOWN);
+  xmlPayload.jdpRecord.EmpSrcOpt = employment;
 
-  xmlPayload.jdpRecord.EmpSrcOpt = employmentOptions
-    .filter((option) => option !== OTHER).first(UNKNOWN);
+  if (!hit) xmlPayload.errors.push(`Invalid "Occupation". Defaulting to ${UNKNOWN}`);
 
   return xmlPayload;
 };
@@ -737,26 +763,48 @@ const insertEmployment = (xmlPayload :XMLPayload) => {
 const insertResidence = (xmlPayload :XMLPayload) => {
   const { clinicianReportData } = xmlPayload.reportData;
   const housingEntity = clinicianReportData.getIn([HOUSING_FQN, 0, NEIGHBOR_DETAILS], Map());
-  const type :List = housingEntity.get(FQN.TYPE_FQN, List());
-  if (type.isEmpty()) xmlPayload.errors.push(`Invalid "Current Housing Situation". Defaulting to ${UNKNOWN}`);
-  xmlPayload.jdpRecord.LivOpt = type.first(UNKNOWN);
+  const typeOptions :List = housingEntity.get(FQN.TYPE_FQN, List());
+  const [typeValue] = otherValueFromList(typeOptions);
 
-  const livesWith :List = housingEntity.get(FQN.DESCRIPTION_FQN, List());
-  if (livesWith.isEmpty()) xmlPayload.errors.push('Invalid "Resides With"');
+  const SHELTER_TEMP_HOUSING = 'Shelter/Temp Housing';
+  const typeMap = Map({
+    [PERMANENT_RESIDENCE]: PERMANENT_RESIDENCE,
+    [STABLE_HOUSING]: OTHER,
+    [SERVICE_PROVIDER]: OTHER,
+    [TEMPORARY]: SHELTER_TEMP_HOUSING,
+    [ASSISTED_CARE]: ASSISTED_CARE,
+    [HOMELESS_SHELTER]: SHELTER_TEMP_HOUSING,
+    [UNSHELTERED_HOMELESS]: 'Homeless',
+    [FAMILY]: OTHER,
+    [FRIEND]: OTHER,
+    [GROUP_HOME]: GROUP_HOME,
+    [UNKNOWN]: UNKNOWN,
+  });
+  const [type, typeHit] = transformValue(typeValue, typeMap, UNKNOWN);
 
-  const hasOther = livesWith.includes(OTHER);
-  const livesWithOther = livesWith
-    .filter((option) => option !== OTHER)
-    .toJS().join(', ');
+  xmlPayload.jdpRecord.LivOpt = type;
+  if (!typeHit) xmlPayload.errors.push(`Invalid "Current Housing Situation". Defaulting to ${UNKNOWN}`);
 
-  if (hasOther) {
-    xmlPayload.jdpRecord.WithOpt = OTHER;
-    xmlPayload.jdpRecord.WithOth = livesWithOther;
-  }
-  else {
-    xmlPayload.jdpRecord.WithOpt = livesWith.first();
-    xmlPayload.jdpRecord.WithOth = '';
-  }
+  const livesWithOptions :List = housingEntity.get(FQN.DESCRIPTION_FQN, List());
+  const [livesWithRaw, other] = otherValueFromList(livesWithOptions);
+
+  const PARENT_CAREGIVER = 'Parents/Caregiver';
+  const livesWithMap = Map({
+    [CAREGIVER]: PARENT_CAREGIVER,
+    [CHILDREN]: CHILDREN,
+    [PARENT]: PARENT_CAREGIVER,
+    [FAMILY]: FAMILY,
+    [SPOUSE_OR_PARTNER]: 'Spouse/Significant Other',
+    [ROOMMATE]: ROOMMATE,
+    [FRIENDS]: OTHER,
+    [UNKNOWN]: UNKNOWN,
+  });
+
+  const [livesWith, livesWithHit] = transformValue(livesWithRaw, livesWithMap, UNKNOWN);
+  xmlPayload.jdpRecord.WithOpt = livesWith;
+  xmlPayload.jdpRecord.WithOth = other;
+  if (!livesWithHit) xmlPayload.errors.push(`Invalid "Resides With". Defaulting to ${UNKNOWN}`);
+
   return xmlPayload;
 };
 

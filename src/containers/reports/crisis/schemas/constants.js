@@ -178,7 +178,6 @@ export const HOUSING = [
 
 export const CAREGIVER = 'Caregiver';
 export const CHILDREN = 'Children';
-export const DEPENDENT = 'Dependent';
 export const PARENT = 'Parent';
 export const SPOUSE_OR_PARTNER = 'Spouse or Partner';
 export const ROOMMATE = 'Roommate';
@@ -186,12 +185,11 @@ export const FRIENDS = 'Friend(s)';
 export const RESIDES_WITH = [
   CAREGIVER,
   CHILDREN,
-  DEPENDENT,
   PARENT,
   FAMILY,
   SPOUSE_OR_PARTNER,
   ROOMMATE,
-  FRIENDS, // remove
+  FRIENDS,
   UNKNOWN
 ];
 export const FULL_TIME = 'Full-time';
