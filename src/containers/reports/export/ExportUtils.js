@@ -10,22 +10,152 @@ import * as FQN from '../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { NEIGHBOR_DETAILS } from '../../../utils/constants/EntityConstants';
 import { TEXT_XML, XML_HEADER } from '../../../utils/constants/FileTypeConstants';
-import { HISPANIC, NON_HISPANIC } from '../../profile/constants';
 import {
+  ASIAN,
+  BLACK,
+  FEMALE,
+  HISPANIC,
+  MALE,
+  NATIVE_AMERICAN,
+  NON_HISPANIC,
+  PACIFIC_ISLANDER,
+  WHITE,
+} from '../../profile/constants';
+import {
+  ACUTE_STRESS,
+  AGENCY_ASSISTANCE,
+  ASSISTED_CARE,
+  CAREGIVER,
+  CCIT_CASE_CONFERENCE,
+  CCS,
+  CHILDREN,
+  COGNITIVE_ISSUES,
+  COMMUNITY,
+  COMMUNITY_EVALUATION,
+  COMMUNITY_OUTREACH,
+  COMMUNITY_TREATMENT_PROVIDER,
+  COURT,
+  COURT_CLINIC,
+  COURT_PERSONNEL,
+  CO_OCCURING_MH_AND_SA,
+  CRISIS_OFFICE,
   CURRENT,
+  DAY_TREATMENT,
+  DCF,
+  DDS,
+  DEATH_NOTIFICATION,
+  DEESCALATED_ON_SCENE,
+  DETOX,
+  DEVELOPMENTAL_DISORDER,
+  DMH,
   EMS,
   EMS_FIRE,
+  ER_EVALUATION,
+  ESP_MOBILE,
+  EXTRALEGAL,
+  FAMILY,
+  FAMILY_SUPPORT,
   FIRE,
+  FRIEND,
+  FRIENDS,
+  FULL_TIME,
+  GROUP_HOME,
+  HOMELESS_SHELTER,
+  HOSPITAL,
+  INCARCERATION_FACILITY,
+  LAW_ENFORCEMENT,
+  MBHP,
+  MEDICAID,
+  MEDICAL_HOSPITAL,
+  MEDICARE,
+  MENTAL_HEALTH_ISSUES,
+  MOOD_DISORDER,
   NA,
+  NEW_OUTPATIENT,
   NO,
   NONE,
+  NON_CRIMINAL,
+  ONE,
   OTHER,
+  PARENT,
+  PART_TIME,
   PAST,
+  PERMANENT_RESIDENCE,
+  POLICE_LOCK_UP,
+  POLICE_STATION,
+  POST_ARREST,
+  PRE_ARREST,
   PRIMARY,
+  PRIVATE,
+  PRIVATE_CITIZEN,
+  PSYCHOTIC_DISORDER,
+  PSYCH_EVAL,
+  RECEIVES_BENEFITS,
+  RESIDENCE,
+  RETIRED,
+  RETURN_VISIT,
+  RE_ENTRY,
+  ROOMMATE,
+  SAFETY_CHECK,
+  SCHOOL,
   SECONDARY,
+  SECTION_12,
+  SECTION_18,
+  SECTION_35,
+  SELF,
+  SERVICE_PROVIDER,
+  SIX_PLUS,
+  SPOUSE_OR_PARTNER,
+  STABLE_HOUSING,
+  STATE_AGENCY,
+  STUDENT,
+  SUBSTANCE_USE_DISORDER,
+  TEMPORARY,
+  TWO_FIVE,
+  UNEMPLOYED,
+  UNINSURED,
   UNKNOWN,
+  UNSHELTERED_HOMELESS,
+  VETERANS_AFFAIRS,
+  VICTIM_ASSITANCE,
+  VOLUNTARY_ER_EVAL,
   YES,
+  ZERO,
 } from '../crisis/schemas/constants';
+
+const N_A = 'NA';
+
+const transformNA = (value :string) :string => (value === NA ? N_A : value);
+
+const otherValueFromList = (list :List) :[string, string] => {
+  let values = [];
+
+  if (list.size > 1) {
+    const value :string = list.filter((v) => v !== OTHER).toJS().join(', ') || '';
+    values = [OTHER, value];
+  }
+  else {
+    values = [list.get(0), ''];
+  }
+
+  return values;
+};
+
+const transformValue = (
+  value :string,
+  dict :Map<string, string>,
+  defaultValue ?:string = ''
+) :[string, boolean] => [dict.get(value, defaultValue), dict.has(value)];
+
+const getYesNoUnknownFromList = (list :List<string>) :?string => {
+  const hasNone = list.includes(NONE);
+  const hasUnknown = list.includes(UNKNOWN);
+
+  if (!list.size) return undefined;
+  if (hasNone) return NO;
+  if (hasUnknown) return UNKNOWN;
+  return YES;
+};
 
 const { isNonEmptyString } = LangUtils;
 const { calculateAge } = DateTimeUtils;
@@ -131,7 +261,6 @@ const insertEntryDate = (xmlPayload :XMLPayload) => {
 
 const insertJDP = (xmlPayload :XMLPayload) => {
   const { clinicianReportData, title } = xmlPayload.reportData;
-  xmlPayload.jdpRecord.JDPOpt = title;
 
   const incidentID = clinicianReportData
     .getIn([INCIDENT_FQN, 0, NEIGHBOR_DETAILS, FQN.CRIMINALJUSTICE_CASE_NUMBER_FQN, 0]);
@@ -143,6 +272,7 @@ const insertJDP = (xmlPayload :XMLPayload) => {
     xmlPayload.jdpRecord.JDPID = '';
     xmlPayload.errors.push('Invalid "Incident #"');
   }
+  xmlPayload.jdpRecord.JDPOpt = title;
 
   return xmlPayload;
 };
@@ -190,12 +320,27 @@ const insertLocation = (xmlPayload :XMLPayload) => {
   const { clinicianReportData } = xmlPayload.reportData;
   const locationCategory = clinicianReportData
     .getIn([LOCATION_FQN, 0, NEIGHBOR_DETAILS, FQN.TYPE_FQN, 0]);
+  xmlPayload.jdpRecord.LocationOpt = '';
 
-  if (isNonEmptyString(locationCategory)) {
-    xmlPayload.jdpRecord.LocationOpt = locationCategory;
+  const transformMap = Map({
+    [COMMUNITY]: 'Community/Street',
+    [COURT]: COURT,
+    [CRISIS_OFFICE]: 'Crisis/ESP Office',
+    [HOSPITAL]: 'Hospital ER',
+    [INCARCERATION_FACILITY]: 'Jail/Prison',
+    [POLICE_LOCK_UP]: 'Police Lock Up',
+    [POLICE_STATION]: POLICE_STATION,
+    [RESIDENCE]: RESIDENCE,
+    [SCHOOL]: SCHOOL,
+    [OTHER]: OTHER
+  });
+
+  const [value, hit] = transformValue(locationCategory, transformMap, OTHER);
+  if (hit) {
+    xmlPayload.jdpRecord.LocationOpt = value;
   }
   else {
-    xmlPayload.errors.push('Invalid "Location Category"');
+    xmlPayload.errors.push(`Invalid "Location Category" - Defaulting to "${OTHER}"`);
   }
 
   return xmlPayload;
@@ -205,16 +350,15 @@ const insertNatureOfCall = (xmlPayload :XMLPayload) => {
   const { clinicianReportData } = xmlPayload.reportData;
   const natureOfCall = clinicianReportData
     .getIn([CALL_FOR_SERVICE_FQN, 0, NEIGHBOR_DETAILS, FQN.TYPE_FQN], List());
-  const natureOfCallValue = natureOfCall.get(0);
-  const natureOfCallOther = natureOfCall.get(1);
+  xmlPayload.jdpRecord.NoCOpt = '';
+  xmlPayload.jdpRecord.NoCOther = '';
 
-  if (isNonEmptyString(natureOfCallValue)) {
-    xmlPayload.jdpRecord.NoCOpt = natureOfCallValue;
-    xmlPayload.jdpRecord.NoCOther = natureOfCallOther;
+  const [value, other] = otherValueFromList(natureOfCall);
+  if (isNonEmptyString(value)) {
+    xmlPayload.jdpRecord.NoCOpt = value;
+    xmlPayload.jdpRecord.NoCOther = other;
   }
   else {
-    xmlPayload.jdpRecord.NoCOpt = '';
-    xmlPayload.jdpRecord.NoCOther = '';
     xmlPayload.errors.push('Invalid "Nature of Call"');
   }
 
@@ -225,12 +369,21 @@ const insertPointOfIntervention = (xmlPayload :XMLPayload) => {
   const { clinicianReportData } = xmlPayload.reportData;
   const pointOfIntervention = clinicianReportData
     .getIn([ENCOUNTER_FQN, 0, NEIGHBOR_DETAILS, FQN.SERVICE_TYPE_FQN, 0]);
+  xmlPayload.jdpRecord.PoIOpt = '';
 
-  if (isNonEmptyString(pointOfIntervention)) {
-    xmlPayload.jdpRecord.PoIOpt = pointOfIntervention;
+  const transformMap = Map({
+    [NON_CRIMINAL]: 'Non-Criminal',
+    [PRE_ARREST]: 'Pre Arrest',
+    [POST_ARREST]: 'Post Arrest',
+    [RE_ENTRY]: 'Re-Entry',
+  });
+
+  const [poi, hit] = transformValue(pointOfIntervention, transformMap);
+
+  if (hit) {
+    xmlPayload.jdpRecord.PoIOpt = poi;
   }
   else {
-    xmlPayload.jdpRecord.PoIOpt = '';
     xmlPayload.errors.push('Invalid "Point of Intervention"');
   }
   return xmlPayload;
@@ -240,19 +393,19 @@ const insertAgeRange = (xmlPayload :XMLPayload) => {
   const { person } = xmlPayload.reportData;
   const dob = person.getIn([FQN.PERSON_DOB_FQN, 0]);
   const age = calculateAge(dob);
+  xmlPayload.jdpRecord.AgeOpt = '';
   if (age !== -1) {
     let ageRange = '66+';
-    if (age < 66) ageRange = '46 to 65';
-    if (age < 46) ageRange = '27 to 45';
-    if (age < 27) ageRange = '22 to 26';
-    if (age < 22) ageRange = '17 to 21';
-    if (age < 17) ageRange = '12 to 16';
-    if (age < 12) ageRange = '3 to 11';
+    if (age < 66) ageRange = '46-65';
+    if (age < 46) ageRange = '27-45';
+    if (age < 27) ageRange = '22-26';
+    if (age < 22) ageRange = '17-21';
+    if (age < 17) ageRange = '12-16';
+    if (age < 12) ageRange = '3-11';
     // younger than 3 not spec'd
     xmlPayload.jdpRecord.AgeOpt = ageRange;
   }
   else {
-    xmlPayload.jdpRecord.AgeOpt = '';
     xmlPayload.errors.push('Invalid date of birth/age range. Update subject profile.');
   }
 
@@ -262,13 +415,14 @@ const insertAgeRange = (xmlPayload :XMLPayload) => {
 const insertGender = (xmlPayload :XMLPayload) => {
   const { person } = xmlPayload.reportData;
   const sex = person.getIn([FQN.PERSON_SEX_FQN, 0]);
+  xmlPayload.jdpRecord.GndrOpt = '';
+  const acceptedValues = [MALE, FEMALE];
 
-  if (isNonEmptyString(sex)) {
+  if (acceptedValues.includes(sex)) {
     xmlPayload.jdpRecord.GndrOpt = sex;
   }
   else {
-    xmlPayload.jdpRecord.GndrOpt = UNKNOWN;
-    xmlPayload.errors.push(`Invalid sex. Defaulting to "${UNKNOWN}"`);
+    xmlPayload.errors.push('Invalid sex.');
   }
   return xmlPayload;
 };
@@ -287,16 +441,6 @@ const insertMilitaryService = (xmlPayload :XMLPayload) => {
   return xmlPayload;
 };
 
-const getYesNoUnknownFromList = (list :List<string>) :?string => {
-  const hasNone = list.includes(NONE);
-  const hasUnknown = list.includes(UNKNOWN);
-
-  if (!list.size) return undefined;
-  if (hasNone) return NO;
-  if (hasUnknown) return UNKNOWN;
-  return YES;
-};
-
 const insertSubstance = (xmlPayload :XMLPayload) => {
   const { clinicianReportData } = xmlPayload.reportData;
   const substances = clinicianReportData
@@ -313,20 +457,7 @@ const insertSubstance = (xmlPayload :XMLPayload) => {
   }
   else {
     xmlPayload.jdpRecord.SAcurrtOpt = UNKNOWN;
-    xmlPayload.errors.push(`Invalid "Substance use during incident". Defaulting to "${UNKNOWN}"`);
-  }
-
-  const historyEntity = substances
-    .find((neighbor) => neighbor.getIn([FQN.TEMPORAL_STATUS_FQN, 0]) === PAST) || Map();
-
-  const historyType :List = historyEntity.get(FQN.TYPE_FQN, List());
-  const history = getYesNoUnknownFromList(historyType);
-  if (history) {
-    xmlPayload.jdpRecord.SubOpt = history;
-  }
-  else {
-    xmlPayload.jdpRecord.SubOpt = UNKNOWN;
-    xmlPayload.errors.push(`Invalid "History of substance abuse/treatment". Defaulting to "${UNKNOWN}"`);
+    xmlPayload.errors.push(`Invalid "Substance use during incident" - Defaulting to "${UNKNOWN}"`);
   }
 
   return xmlPayload;
@@ -358,7 +489,7 @@ const insertAdditionalSupport = (xmlPayload :XMLPayload) => {
   }
   else {
     xmlPayload.jdpRecord.AddlSptOSOpt = NONE;
-    xmlPayload.errors.push(`Invalid "Assistance on scene". Defaulting to ${NONE}`);
+    xmlPayload.errors.push(`Invalid "Assistance on scene" - Defaulting to ${NONE}`);
   }
 
   return xmlPayload;
@@ -372,27 +503,8 @@ const insertJailDiversion = (xmlPayload :XMLPayload) => {
   const jailDiversion = encounterDetails.getIn([FQN.LAW_ENFORCEMENT_INVOLVEMENT_FQN, 0]);
   xmlPayload.jdpRecord.JDOpt = jailDiversion ? 'Yes' : 'No';
   if (jailDiversion === undefined) {
-    xmlPayload.errors.push(`Invalid "Was jail diversion an option?". Defaulting to ${NO}`);
+    xmlPayload.errors.push(`Invalid "Was jail diversion an option?" - Defaulting to ${NO}`);
   }
-
-  const reasonProperty = encounterDetails.get(FQN.REASON_FQN, List());
-  xmlPayload.jdpRecord.PurpOpt = '';
-  xmlPayload.jdpRecord.PurpOth = '';
-
-  if (!reasonProperty.size) {
-    xmlPayload.errors.push('Invalid "Reason for JDP intervention"');
-  }
-  else if (reasonProperty.size === 1) {
-    xmlPayload.jdpRecord.PurpOpt = reasonProperty.first();
-  }
-  else if (reasonProperty.size > 1) {
-    xmlPayload.jdpRecord.PurpOpt = OTHER;
-    xmlPayload.jdpRecord.PurpOth = reasonProperty.filter((v) => v !== OTHER).toJS().join(', ');
-  }
-
-  const preventER = encounterDetails.getIn([FQN.LEVEL_OF_CARE_FQN, 0], '');
-  xmlPayload.jdpRecord.EROpt = preventER;
-  if (!preventER) xmlPayload.errors.push('Invalid "Did JDP intervention prevent ER visit?"');
 
   return xmlPayload;
 };
@@ -402,8 +514,8 @@ const insertCharges = (xmlPayload :XMLPayload) => {
   const charges = crisisReportData.get(CHARGE_FQN, List());
   const chargeEvents = crisisReportData.get(CHARGE_EVENT_FQN, List());
   if (!charges.size) {
+    xmlPayload.jdpRecord.CDOpt = N_A;
     xmlPayload.jdpRecord.CDCharge = '';
-    xmlPayload.jdpRecord.CDOpt = NA;
   }
   else {
     const chargeNames = charges.map((charge) => charge.getIn([NEIGHBOR_DETAILS, FQN.NAME_FQN, 0])).toJS().join(', ');
@@ -412,9 +524,9 @@ const insertCharges = (xmlPayload :XMLPayload) => {
         if (status === YES) return status;
         const diverted = event.getIn([NEIGHBOR_DETAILS, FQN.DIVERSION_STATUS_FQN, 0], '');
         return diverted;
-      }, NA);
-    xmlPayload.jdpRecord.CDCharge = chargeNames;
+      }, N_A);
     xmlPayload.jdpRecord.CDOpt = chargesDiverted;
+    xmlPayload.jdpRecord.CDCharge = chargeNames;
   }
 
   return xmlPayload;
@@ -425,23 +537,74 @@ const insertCustodyDiversion = (xmlPayload :XMLPayload) => {
   const custodyDiverted = clinicianReportData
     .getIn([CRISIS_REPORT_CLINICIAN_FQN, 0, NEIGHBOR_DETAILS, FQN.CUSTODY_DIVERTED_FQN, 0], '');
   if (!custodyDiverted) xmlPayload.errors.push('Invalid "Was criminal custody diverted"');
-  xmlPayload.jdpRecord.ACCOpt = custodyDiverted;
+  xmlPayload.jdpRecord.ACCOpt = transformNA(custodyDiverted);
   xmlPayload.jdpRecord.CAOpt = '';
   xmlPayload.jdpRecord.CAOth = '';
 
   const disposition = clinicianReportData
     .getIn([DISPOSITION_CLINICIAN_FQN, 0, NEIGHBOR_DETAILS, FQN.CJ_DISPOSITION_FQN], List());
 
-  if (!disposition.size) {
+  const [value, other] = otherValueFromList(disposition);
+
+  const transformMap = Map({
+    [CCS]: CCS,
+    [DAY_TREATMENT]: DAY_TREATMENT,
+    [DEESCALATED_ON_SCENE]: DEESCALATED_ON_SCENE,
+    [DETOX]: DETOX,
+    [ESP_MOBILE]: 'ESP/Mobile',
+    [MEDICAL_HOSPITAL]: MEDICAL_HOSPITAL,
+    [NEW_OUTPATIENT]: 'New Outpatient Referral',
+    [SECTION_12]: SECTION_12,
+    [SECTION_18]: SECTION_18,
+    [SECTION_35]: SECTION_35,
+    [VOLUNTARY_ER_EVAL]: 'Voluntary ER eval',
+    [OTHER]: OTHER
+  });
+
+  const [transformed, hit] = transformValue(value, transformMap);
+  xmlPayload.jdpRecord.CAOpt = transformed;
+  xmlPayload.jdpRecord.CAOth = other;
+  if (!disposition.size || !hit) {
     xmlPayload.errors.push('Invalid "Disposition"');
   }
-  else if (disposition.size === 1) {
-    xmlPayload.jdpRecord.CAOpt = disposition.first();
+
+  return xmlPayload;
+};
+
+const insertPurpose = (xmlPayload :XMLPayload) => {
+  const { clinicianReportData } = xmlPayload.reportData;
+  const encounterDetails = clinicianReportData
+    .getIn([ENCOUNTER_DETAILS_FQN, 0, NEIGHBOR_DETAILS], Map());
+
+  const reasonProperty = encounterDetails.get(FQN.REASON_FQN, List());
+  xmlPayload.jdpRecord.PurpOpt = '';
+  xmlPayload.jdpRecord.PurpOth = '';
+
+  const [value, other] = otherValueFromList(reasonProperty);
+
+  const transformMap = Map({
+    [AGENCY_ASSISTANCE]: AGENCY_ASSISTANCE,
+    [CCIT_CASE_CONFERENCE]: CCIT_CASE_CONFERENCE,
+    [COMMUNITY_OUTREACH]: COMMUNITY_OUTREACH,
+    [DEATH_NOTIFICATION]: DEATH_NOTIFICATION,
+    [FAMILY_SUPPORT]: FAMILY_SUPPORT,
+    [PSYCH_EVAL]: 'Psych Evaluation',
+    [RETURN_VISIT]: RETURN_VISIT,
+    [SAFETY_CHECK]: SAFETY_CHECK,
+    [VICTIM_ASSITANCE]: VICTIM_ASSITANCE,
+    [OTHER]: OTHER
+  });
+
+  const [transformed, hit] = transformValue(value, transformMap);
+  xmlPayload.jdpRecord.PurpOpt = transformed;
+  xmlPayload.jdpRecord.PurpOth = other;
+  if (!reasonProperty.size || !hit) {
+    xmlPayload.errors.push('Invalid "Reason for JDP intervention"');
   }
-  else if (disposition.size > 1) {
-    xmlPayload.jdpRecord.CAOpt = OTHER;
-    xmlPayload.jdpRecord.CAOth = disposition.filter((v) => v !== OTHER).toJS().join(', ');
-  }
+
+  const preventER = encounterDetails.getIn([FQN.LEVEL_OF_CARE_FQN, 0], '');
+  xmlPayload.jdpRecord.EROpt = transformNA(preventER);
+  if (!preventER) xmlPayload.errors.push('Invalid "Did JDP intervention prevent ER visit?"');
 
   return xmlPayload;
 };
@@ -455,26 +618,33 @@ const insertInsurance = (xmlPayload :XMLPayload) => {
   const primaryEntity = insurances
     .find((neighbor) => neighbor.getIn([FQN.GENERAL_STATUS_FQN, 0]) === PRIMARY) || Map();
 
-  const primary :string = primaryEntity.getIn([FQN.ORGANIZATION_NAME_FQN, 0], '');
-  if (primary) {
-    xmlPayload.jdpRecord.PrimSrcOpt = primary;
-  }
-  else {
-    xmlPayload.jdpRecord.PrimSrcOpt = UNKNOWN;
-    xmlPayload.errors.push(`Invalid "Primary Insurance". Defaulting to "${UNKNOWN}"`);
-  }
+  const primaryList :string = primaryEntity.getIn([FQN.ORGANIZATION_NAME_FQN], List());
+  const [primaryRaw] = otherValueFromList(primaryList);
+  const transformMap = Map({
+    [MBHP]: MBHP,
+    [MEDICARE]: MEDICARE,
+    [MEDICAID]: MEDICAID,
+    [PRIVATE]: PRIVATE,
+    [VETERANS_AFFAIRS]: 'Vet Admin/Tri-Care',
+    [UNKNOWN]: UNKNOWN,
+    [UNINSURED]: UNINSURED,
+    [OTHER]: OTHER
+  });
+  const [primary, primaryHit] = transformValue(primaryRaw, transformMap, UNKNOWN);
+
+  xmlPayload.jdpRecord.PrimSrcOpt = primary;
+  if (!primaryHit) xmlPayload.errors.push(`Invalid "Primary Insurance" - Defaulting to "${UNKNOWN}"`);
 
   const secondaryEntity = insurances
     .find((neighbor) => neighbor.getIn([FQN.GENERAL_STATUS_FQN, 0]) === SECONDARY) || Map();
 
-  const secondary :string = secondaryEntity.getIn([FQN.ORGANIZATION_NAME_FQN, 0], '');
-  if (secondary) {
-    xmlPayload.jdpRecord.SecSrcOpt = secondary;
-  }
-  else {
-    xmlPayload.jdpRecord.SecSrcOpt = UNKNOWN;
-    xmlPayload.errors.push(`Invalid "Secondary Insurance". Defaulting to "${UNKNOWN}"`);
-  }
+  const secondaryList :string = secondaryEntity.getIn([FQN.ORGANIZATION_NAME_FQN], List());
+  const [secondaryRaw] = otherValueFromList(secondaryList);
+  const [secondary, secondaryHit] = transformValue(secondaryRaw, transformMap, UNKNOWN);
+
+  xmlPayload.jdpRecord.SecSrcOpt = secondary;
+  if (!secondaryHit) xmlPayload.errors.push(`Invalid "Secondary Insurance" - Defaulting to "${UNKNOWN}"`);
+
   return xmlPayload;
 };
 
@@ -488,23 +658,43 @@ const insertBilledServices = (xmlPayload :XMLPayload) => {
     xmlPayload.jdpRecord.BillOpt = billed;
   }
   else {
-    xmlPayload.jdpRecord.BillOpt = NA;
-    xmlPayload.errors.push(`Invalid "Billed services". Defaulting to "${NA}"`);
+    xmlPayload.jdpRecord.BillOpt = NO;
   }
 
-  const services = billedServices
-    .filter((service) => !(service === NONE || service === OTHER)).toJS().join(', ');
-  xmlPayload.jdpRecord.WhatSrvOpt = services;
+  const transformMap = Map({
+    [COMMUNITY_EVALUATION]: COMMUNITY_EVALUATION,
+    [ER_EVALUATION]: ER_EVALUATION,
+  });
+
+  const [service] = transformValue(billedServices.get(0), transformMap);
+
+  xmlPayload.jdpRecord.WhatSrvOpt = service;
+  if (!billed) xmlPayload.errors.push('Invalid "Billed services"');
 
   return xmlPayload;
 };
 
 const insertReferralSource = (xmlPayload :XMLPayload) => {
   const { clinicianReportData } = xmlPayload.reportData;
-  const referralSource = clinicianReportData.getIn([REFERRAL_SOURCE_FQN, 0, NEIGHBOR_DETAILS, FQN.SOURCE_FQN, 0], '');
+  const referralSource = clinicianReportData.getIn([REFERRAL_SOURCE_FQN, 0, NEIGHBOR_DETAILS, FQN.SOURCE_FQN], List());
 
-  xmlPayload.jdpRecord.RefSrcOpt = referralSource;
-  if (!referralSource) xmlPayload.errors.push('Invalid "Referral source"');
+  const [value] = otherValueFromList(referralSource);
+
+  const transformMap = Map({
+    [COMMUNITY_TREATMENT_PROVIDER]: "Comm'ty Treatm't Provider",
+    [COURT_CLINIC]: COURT_CLINIC,
+    [COURT_PERSONNEL]: COURT_PERSONNEL,
+    [LAW_ENFORCEMENT]: 'Police/Law Enforcement',
+    [PRIVATE_CITIZEN]: 'Family/Private Citizen',
+    [SCHOOL]: SCHOOL,
+    [STATE_AGENCY]: STATE_AGENCY,
+    [OTHER]: OTHER,
+  });
+
+  const [source, hit] = transformValue(value, transformMap, OTHER);
+
+  xmlPayload.jdpRecord.RefSrcOpt = source;
+  if (!hit) xmlPayload.errors.push('Invalid "Referral source"');
 
   return xmlPayload;
 };
@@ -512,25 +702,52 @@ const insertReferralSource = (xmlPayload :XMLPayload) => {
 const insertStateService = (xmlPayload :XMLPayload) => {
   const { clinicianReportData } = xmlPayload.reportData;
   const stateServices = clinicianReportData.getIn([INCOME_FQN, 0, NEIGHBOR_DETAILS, FQN.TYPE_FQN], List());
+  const [value] = otherValueFromList(stateServices);
 
-  const serviceNames = stateServices
-    .filter((service) => service !== OTHER)
-    .toJS().join(', ');
+  const transformMap = Map({
+    [DCF]: DCF,
+    [DDS]: DDS,
+    [DMH]: DMH,
+    [NONE]: 'No Service',
+    [UNKNOWN]: UNKNOWN,
+    [OTHER]: OTHER,
+  });
 
-  xmlPayload.jdpRecord.KnownOpt = serviceNames || UNKNOWN;
+  const [serviceName, hit] = transformValue(value, transformMap, UNKNOWN);
+
+  xmlPayload.jdpRecord.KnownOpt = serviceName;
+  if (!hit) xmlPayload.errors.push(`Invalid "Client of State Service" - Defaulting to ${UNKNOWN}`);
+
   return xmlPayload;
 };
 
 const insertRaceEthnicity = (xmlPayload :XMLPayload) => {
   const { person } = xmlPayload.reportData;
-  const ethnicity = person.getIn([FQN.PERSON_ETHNICITY_FQN, 0], '');
-  const race = person.getIn([FQN.PERSON_RACE_FQN, 0], UNKNOWN);
+  const ethnicityRaw = person.getIn([FQN.PERSON_ETHNICITY_FQN, 0], '');
+  const raceRaw = person.getIn([FQN.PERSON_RACE_FQN, 0], UNKNOWN);
 
-  if (ethnicity === HISPANIC) xmlPayload.jdpRecord.HPOpt = YES;
-  else if (ethnicity === NON_HISPANIC) xmlPayload.jdpRecord.HPOpt = NO;
-  else xmlPayload.jdpRecord.HPOpt = UNKNOWN;
+  const ethnicityMap = Map({
+    [HISPANIC]: YES,
+    [NON_HISPANIC]: NO,
+    [UNKNOWN]: UNKNOWN
+  });
 
-  xmlPayload.jdpRecord.RaceOpt = race || UNKNOWN;
+  const [ethnicity, ethnicityHit] = transformValue(ethnicityRaw, ethnicityMap, UNKNOWN);
+  xmlPayload.jdpRecord.HPOpt = ethnicity;
+  if (!ethnicityHit) xmlPayload.errors.push(`Invalid "Ethnicity" - Defaulting to ${UNKNOWN}`);
+
+  const raceMap = Map({
+    [WHITE]: WHITE,
+    [BLACK]: 'Black/African American',
+    [NATIVE_AMERICAN]: 'American Indian/Alaska Native',
+    [ASIAN]: ASIAN,
+    [PACIFIC_ISLANDER]: 'Native Hawaiian/Pacific Islander',
+    [UNKNOWN]: UNKNOWN,
+  });
+  const [race, raceHit] = transformValue(raceRaw, raceMap, UNKNOWN);
+
+  xmlPayload.jdpRecord.RaceOpt = race;
+  if (!raceHit) xmlPayload.errors.push(`Invalid "Race" - Defaulting to ${UNKNOWN}`);
 
   return xmlPayload;
 };
@@ -539,10 +756,21 @@ const insertEmployment = (xmlPayload :XMLPayload) => {
   const { clinicianReportData } = xmlPayload.reportData;
   const employmentOptions = clinicianReportData.getIn([OCCUPATION_FQN, 0, NEIGHBOR_DETAILS, FQN.TYPE_FQN], List());
 
-  if (!employmentOptions.size) xmlPayload.errors.push(`Invalid "Occupation". Defaulting to ${UNKNOWN}`);
+  const [employmentValue] = otherValueFromList(employmentOptions);
+  const transformMap = Map({
+    [FULL_TIME]: 'Full Time',
+    [PART_TIME]: 'Part Time',
+    [RETIRED]: RETIRED,
+    [STUDENT]: STUDENT,
+    [EXTRALEGAL]: UNKNOWN,
+    [RECEIVES_BENEFITS]: RECEIVES_BENEFITS,
+    [UNEMPLOYED]: UNEMPLOYED,
+    [UNKNOWN]: UNKNOWN,
+  });
+  const [employment, hit] = transformValue(employmentValue, transformMap, UNKNOWN);
+  xmlPayload.jdpRecord.EmpSrcOpt = employment;
 
-  xmlPayload.jdpRecord.EmpSrcOpt = employmentOptions
-    .filter((option) => option !== OTHER).first(UNKNOWN);
+  if (!hit) xmlPayload.errors.push(`Invalid "Occupation" - Defaulting to ${UNKNOWN}`);
 
   return xmlPayload;
 };
@@ -550,36 +778,91 @@ const insertEmployment = (xmlPayload :XMLPayload) => {
 const insertResidence = (xmlPayload :XMLPayload) => {
   const { clinicianReportData } = xmlPayload.reportData;
   const housingEntity = clinicianReportData.getIn([HOUSING_FQN, 0, NEIGHBOR_DETAILS], Map());
-  const type :List = housingEntity.get(FQN.TYPE_FQN, List());
-  if (type.isEmpty()) xmlPayload.errors.push(`Invalid "Current Housing Situation". Defaulting to ${UNKNOWN}`);
-  xmlPayload.jdpRecord.LivOpt = type.first(UNKNOWN);
+  const typeOptions :List = housingEntity.get(FQN.TYPE_FQN, List());
+  const [typeValue] = otherValueFromList(typeOptions);
 
-  const livesWith :List = housingEntity.get(FQN.DESCRIPTION_FQN, List());
-  if (livesWith.isEmpty()) xmlPayload.errors.push('Invalid "Resides With"');
+  const SHELTER_TEMP_HOUSING = 'Shelter/Temp Housing';
+  const typeMap = Map({
+    [ASSISTED_CARE]: ASSISTED_CARE,
+    [FAMILY]: OTHER,
+    [FRIEND]: OTHER,
+    [GROUP_HOME]: GROUP_HOME,
+    [HOMELESS_SHELTER]: SHELTER_TEMP_HOUSING,
+    [PERMANENT_RESIDENCE]: PERMANENT_RESIDENCE,
+    [SERVICE_PROVIDER]: OTHER,
+    [STABLE_HOUSING]: OTHER,
+    [TEMPORARY]: SHELTER_TEMP_HOUSING,
+    [UNKNOWN]: UNKNOWN,
+    [UNSHELTERED_HOMELESS]: 'Homeless',
+  });
+  const [type, typeHit] = transformValue(typeValue, typeMap, UNKNOWN);
 
-  const hasOther = livesWith.includes(OTHER);
-  const livesWithOther = livesWith
-    .filter((option) => option !== OTHER)
-    .toJS().join(', ');
+  xmlPayload.jdpRecord.LivOpt = type;
+  if (!typeHit) xmlPayload.errors.push(`Invalid "Current Housing Situation" - Defaulting to ${UNKNOWN}`);
 
-  if (hasOther) {
-    xmlPayload.jdpRecord.WithOpt = OTHER;
-    xmlPayload.jdpRecord.WithOth = livesWithOther;
-  }
-  else {
-    xmlPayload.jdpRecord.WithOpt = livesWith.first();
-    xmlPayload.jdpRecord.WithOth = '';
-  }
+  const livesWithOptions :List = housingEntity.get(FQN.DESCRIPTION_FQN, List());
+  const [livesWithRaw, other] = otherValueFromList(livesWithOptions);
+
+  const PARENT_CAREGIVER = 'Parents/Caregiver';
+  const livesWithMap = Map({
+    [CAREGIVER]: PARENT_CAREGIVER,
+    [CHILDREN]: CHILDREN,
+    [FAMILY]: FAMILY,
+    [FRIENDS]: OTHER,
+    [NONE]: SELF,
+    [PARENT]: PARENT_CAREGIVER,
+    [ROOMMATE]: ROOMMATE,
+    [SELF]: SELF,
+    [SPOUSE_OR_PARTNER]: 'Spouse/Significant Other',
+    [UNKNOWN]: UNKNOWN,
+  });
+
+  const [livesWith, livesWithHit] = transformValue(livesWithRaw, livesWithMap, UNKNOWN);
+  xmlPayload.jdpRecord.WithOpt = livesWith;
+  xmlPayload.jdpRecord.WithOth = other;
+  if (!livesWithHit) xmlPayload.errors.push(`Invalid "Resides With" - Defaulting to ${UNKNOWN}`);
+
   return xmlPayload;
 };
 
 const insertPriorArrests = (xmlPayload :XMLPayload) => {
   const { crisisReportData } = xmlPayload.reportData;
-  const priorArrests = crisisReportData
+  const priorArrestRaw = crisisReportData
     .getIn([OFFENSE_FQN, 0, NEIGHBOR_DETAILS, FQN.NOTES_FQN, 0], '');
 
+  const transformMap = Map({
+    [ZERO]: ZERO,
+    [ONE]: ONE,
+    [TWO_FIVE]: '2-5',
+    [SIX_PLUS]: SIX_PLUS,
+    [UNKNOWN]: UNKNOWN,
+  });
+
+  const [priorArrests, hits] = transformValue(priorArrestRaw, transformMap, UNKNOWN);
   xmlPayload.jdpRecord.PriorOpt = priorArrests;
-  if (!priorArrests) xmlPayload.errors.push('Invalid "Prior Arrests"');
+  if (!hits) xmlPayload.errors.push(`Invalid "Prior Arrests" - Defaulting to ${UNKNOWN}`);
+
+  return xmlPayload;
+};
+
+const insertSubstanceHistory = (xmlPayload :XMLPayload) => {
+  const { clinicianReportData } = xmlPayload.reportData;
+  const substances = clinicianReportData
+    .get(SUBSTANCE_CLINICIAN_FQN, List())
+    .map((neighbor) => neighbor.get(NEIGHBOR_DETAILS, Map()));
+
+  const historyEntity = substances
+    .find((neighbor) => neighbor.getIn([FQN.TEMPORAL_STATUS_FQN, 0]) === PAST) || Map();
+
+  const historyType :List = historyEntity.get(FQN.TYPE_FQN, List());
+  const history = getYesNoUnknownFromList(historyType);
+  if (history) {
+    xmlPayload.jdpRecord.SubOpt = history;
+  }
+  else {
+    xmlPayload.jdpRecord.SubOpt = UNKNOWN;
+    xmlPayload.errors.push(`Invalid "History of substance abuse/treatment" - Defaulting to "${UNKNOWN}"`);
+  }
 
   return xmlPayload;
 };
@@ -589,13 +872,20 @@ const insertPresenceOfPsychiatricIssue = (xmlPayload :XMLPayload) => {
   const psychIssue = clinicianReportData
     .getIn([CRISIS_REPORT_CLINICIAN_FQN, 0, NEIGHBOR_DETAILS, FQN.NATURE_OF_CRISIS_FQN, 0], '');
 
-  if (psychIssue) {
-    xmlPayload.jdpRecord.PresOpt = psychIssue;
-  }
-  else {
-    xmlPayload.jdpRecord.PresOpt = UNKNOWN;
-    xmlPayload.errors.push(`Invalid "Presenting Psychiatric Issue". Defaulting to ${UNKNOWN}`);
-  }
+  const transformMap = Map({
+    [ACUTE_STRESS]: 'Acute stress reaction/situational',
+    [CO_OCCURING_MH_AND_SA]: CO_OCCURING_MH_AND_SA,
+    [COGNITIVE_ISSUES]: 'Cognitive issues',
+    [DEVELOPMENTAL_DISORDER]: DEVELOPMENTAL_DISORDER,
+    [SUBSTANCE_USE_DISORDER]: 'Substance abuse disorder only',
+    [PSYCHOTIC_DISORDER]: 'Psychotic disorder only',
+    [MENTAL_HEALTH_ISSUES]: UNKNOWN,
+    [MOOD_DISORDER]: 'Mood Disorder Only',
+    [UNKNOWN]: UNKNOWN,
+  });
+  const [presenting, hit] = transformValue(psychIssue, transformMap, UNKNOWN);
+  xmlPayload.jdpRecord.PresOpt = presenting;
+  if (!hit) xmlPayload.errors.push(`Invalid "Presenting Psychiatric Issue" - Defaulting to ${UNKNOWN}`);
 
   return xmlPayload;
 };
@@ -632,6 +922,7 @@ const generateXMLFromReportData = (reportData :ReportData) :Object => {
     insertJailDiversion,
     insertCharges,
     insertCustodyDiversion,
+    insertPurpose,
     insertInsurance,
     insertBilledServices,
     insertReferralSource,
@@ -640,6 +931,7 @@ const generateXMLFromReportData = (reportData :ReportData) :Object => {
     insertEmployment,
     insertResidence,
     insertPriorArrests,
+    insertSubstanceHistory,
     insertPresenceOfPsychiatricIssue,
     insertNotes,
     insertTimestamp,
