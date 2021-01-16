@@ -38,7 +38,6 @@ const schema = {
           type: 'string',
           format: 'date-time',
         },
-        // Update property to match prod
         [getEntityAddressKey(0, FOLLOW_UP_REPORT_FQN, FQN.NATURE_OF_CRISIS_FQN)]: {
           title: 'Nature of Follow-up',
           type: 'string',

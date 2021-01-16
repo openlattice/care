@@ -21,14 +21,18 @@ const schema = {
       title: 'Insurance',
       properties: {
         [getEntityAddressKey(0, INSURANCE_FQN, FQN.ORGANIZATION_NAME_FQN)]: {
-          type: 'string',
+          type: 'array',
           title: 'Primary Insurance',
           description: SELECT_ONLY_ONE,
-          enum: INSURANCE,
+          items: {
+            type: 'string',
+            enum: INSURANCE,
+          },
           sharedProperty: {
             property: FQN.GENERAL_STATUS_FQN,
             value: PRIMARY,
-          }
+          },
+          uniqueItems: true
         },
         [getEntityAddressKey(0, INSURANCE_FQN, FQN.GENERAL_STATUS_FQN)]: {
           type: 'string',
@@ -37,14 +41,18 @@ const schema = {
           skipPopulate: true,
         },
         [getEntityAddressKey(1, INSURANCE_FQN, FQN.ORGANIZATION_NAME_FQN)]: {
-          type: 'string',
+          type: 'array',
           title: 'Secondary Insurance',
           description: SELECT_ONLY_ONE,
-          enum: INSURANCE,
+          items: {
+            type: 'string',
+            enum: INSURANCE,
+          },
           sharedProperty: {
             property: FQN.GENERAL_STATUS_FQN,
             value: SECONDARY,
-          }
+          },
+          uniqueItems: true
         },
         [getEntityAddressKey(1, INSURANCE_FQN, FQN.GENERAL_STATUS_FQN)]: {
           type: 'string',
@@ -71,12 +79,10 @@ const uiSchema = {
     },
     [getEntityAddressKey(0, INSURANCE_FQN, FQN.ORGANIZATION_NAME_FQN)]: {
       classNames: 'column-span-12',
-      'ui:widget': 'radio',
+      'ui:widget': 'OtherRadioWidget',
       'ui:options': {
         mode: 'button',
         row: true,
-        withOther: true,
-        withNone: true,
       }
     },
     [getEntityAddressKey(0, INSURANCE_FQN, FQN.GENERAL_STATUS_FQN)]: {
@@ -84,12 +90,10 @@ const uiSchema = {
     },
     [getEntityAddressKey(1, INSURANCE_FQN, FQN.ORGANIZATION_NAME_FQN)]: {
       classNames: 'column-span-12',
-      'ui:widget': 'radio',
+      'ui:widget': 'OtherRadioWidget',
       'ui:options': {
         mode: 'button',
         row: true,
-        withOther: true,
-        withNone: true,
       }
     },
     [getEntityAddressKey(1, INSURANCE_FQN, FQN.GENERAL_STATUS_FQN)]: {

@@ -39,9 +39,13 @@ const schema = {
         },
         [getEntityAddressKey(0, CALL_FOR_SERVICE_FQN, FQN.TYPE_FQN)]: {
           title: 'Nature of Call',
-          type: 'string',
+          type: 'array',
+          items: {
+            type: 'string',
+            enum: NATURE_OF_CALL,
+          },
+          uniqueItems: true,
           description: SELECT_ONLY_ONE,
-          enum: NATURE_OF_CALL,
         },
         [getEntityAddressKey(0, ENCOUNTER_FQN, FQN.SERVICE_TYPE_FQN)]: {
           title: 'Point of Intervention',
@@ -98,11 +102,10 @@ const uiSchema = {
     },
     [getEntityAddressKey(0, CALL_FOR_SERVICE_FQN, FQN.TYPE_FQN)]: {
       classNames: 'column-span-12',
-      'ui:widget': 'radio',
+      'ui:widget': 'OtherRadioWidget',
       'ui:options': {
         mode: 'button',
         row: true,
-        withOther: true,
       }
     },
     [getEntityAddressKey(0, ENCOUNTER_FQN, FQN.SERVICE_TYPE_FQN)]: {
