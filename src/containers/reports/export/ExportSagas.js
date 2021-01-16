@@ -58,7 +58,9 @@ function* exportCrisisXMLWorker(action :SequenceAction) :Saga<void> {
       (state) => state.getIn(['crisisReport', CRISIS_REPORT_CLINICIAN_FQN])
     );
     const selectedOrganizationId = yield select((state) => state.getIn(['app', 'selectedOrganizationId']));
-    const title = yield select((state) => state.getIn(['app', 'organizations', selectedOrganizationId, 'title']));
+    const title = yield select(
+      (state) => state.getIn(['app', 'organizations', selectedOrganizationId, 'title'], '').split(' ')[0]
+    );
 
     const person :Map = yield select((state) => state.getIn(['crisisReport', 'subjectData']));
     const subjectEKID = getEntityKeyId(person);
