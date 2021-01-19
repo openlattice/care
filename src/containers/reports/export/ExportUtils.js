@@ -900,7 +900,7 @@ const insertNotes = (xmlPayload :XMLPayload) => {
 };
 
 const insertTimestamp = (xmlPayload :XMLPayload) => {
-  xmlPayload.jdpRecord.DocSent = DateTime.local().toFormat('d/M/y_H:m:s');
+  xmlPayload.jdpRecord.DocSent = DateTime.local().toFormat('M/d/y_H:m:s');
   return xmlPayload;
 };
 
