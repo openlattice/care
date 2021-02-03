@@ -40,9 +40,13 @@ const schema = {
         },
         [getEntityAddressKey(0, CALL_FOR_SERVICE_FQN, FQN.TYPE_FQN)]: {
           title: 'Nature of Call',
-          type: 'string',
+          type: 'array',
+          items: {
+            type: 'string',
+            enum: NATURE_OF_CALL,
+          },
+          uniqueItems: true,
           description: SELECT_ONLY_ONE,
-          enum: NATURE_OF_CALL,
         },
         [getEntityAddressKey(0, ENCOUNTER_FQN, FQN.SERVICE_TYPE_FQN)]: {
           title: 'Point of Intervention',
@@ -112,11 +116,10 @@ const uiSchema = {
     },
     [getEntityAddressKey(0, CALL_FOR_SERVICE_FQN, FQN.TYPE_FQN)]: {
       classNames: 'column-span-12',
-      'ui:widget': 'radio',
+      'ui:widget': 'OtherRadioWidget',
       'ui:options': {
         mode: 'button',
         row: true,
-        withOther: true,
       }
     },
     [getEntityAddressKey(0, ENCOUNTER_FQN, FQN.SERVICE_TYPE_FQN)]: {
@@ -138,12 +141,11 @@ const uiSchema = {
     },
     [getEntityAddressKey(0, CRISIS_REPORT_CLINICIAN_FQN, FQN.NATURE_OF_CRISIS_FQN)]: {
       classNames: 'column-span-12',
-      'ui:widget': 'checkboxes',
+      'ui:widget': 'OtherRadioWidget',
       'ui:options': {
         mode: 'button',
         row: true,
         withNone: true,
-        withOther: true,
       }
     },
     [getEntityAddressKey(0, BEHAVIOR_CLINICIAN_FQN, FQN.OBSERVED_BEHAVIOR_FQN)]: {

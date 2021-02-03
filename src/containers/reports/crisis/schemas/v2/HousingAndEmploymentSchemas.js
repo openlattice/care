@@ -7,7 +7,6 @@ import {
   HOUSING,
   KNOWN_CLIENT,
   RESIDES_WITH,
-  SELECT_ALL_THAT_APPLY,
   SELECT_ONLY_ONE,
 } from '../constants';
 
@@ -61,7 +60,7 @@ const schema = {
         [getEntityAddressKey(0, INCOME_FQN, FQN.TYPE_FQN)]: {
           title: 'Client of State Service',
           type: 'array',
-          description: SELECT_ALL_THAT_APPLY,
+          description: SELECT_ONLY_ONE,
           items: {
             type: 'string',
             enum: KNOWN_CLIENT,
@@ -100,7 +99,6 @@ const uiSchema = {
       'ui:options': {
         mode: 'button',
         row: true,
-        withNone: true,
       }
     },
     [getEntityAddressKey(0, OCCUPATION_FQN, FQN.TYPE_FQN)]: {
@@ -113,7 +111,7 @@ const uiSchema = {
     },
     [getEntityAddressKey(0, INCOME_FQN, FQN.TYPE_FQN)]: {
       classNames: 'column-span-12',
-      'ui:widget': 'checkboxes',
+      'ui:widget': 'OtherRadioWidget',
       'ui:options': {
         mode: 'button',
         row: true,
