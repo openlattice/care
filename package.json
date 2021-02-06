@@ -32,7 +32,7 @@
   "license": "UNLICENSED",
   "dependencies": {
     "@babel/polyfill": "~7.11.5",
-    "@babel/runtime": "~7.11.2",
+    "@babel/runtime": "~7.12.13",
     "@fortawesome/fontawesome-svg-core": "~1.2.32",
     "@fortawesome/free-solid-svg-icons": "~5.15.1",
     "@fortawesome/pro-duotone-svg-icons": "~5.15.1",
@@ -40,7 +40,7 @@
     "@fortawesome/pro-regular-svg-icons": "~5.15.1",
     "@fortawesome/pro-solid-svg-icons": "~5.15.1",
     "@fortawesome/react-fontawesome": "~0.1.12",
-    "@openlattice/lattice-community-restorative-court": "~0.6.1",
+    "@openlattice/lattice-community-restorative-court": "~0.6.2",
     "@openlattice/lattice-helpline-center": "~0.2.1",
     "@redux-saga/core": "~1.1.3",
     "axios": "~0.21.1",
