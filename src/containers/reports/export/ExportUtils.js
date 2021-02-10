@@ -904,9 +904,9 @@ const insertTimestamp = (xmlPayload :XMLPayload) => {
   return xmlPayload;
 };
 
-const generateXMLFromReportData = (reportData :ReportData) :Object => {
+const createJDPRecord = (reportData :ReportData) :XMLPayload => {
   const initialPayload :XMLPayload = { reportData, jdpRecord: {}, errors: [] };
-  const { jdpRecord, errors } = pipe(
+  return pipe(
     insertEntryDate,
     insertJDP,
     insertIncidentDate,
@@ -936,6 +936,10 @@ const generateXMLFromReportData = (reportData :ReportData) :Object => {
     insertNotes,
     insertTimestamp,
   )(initialPayload);
+};
+
+const generateXMLFromReportData = (reportData :ReportData) :Object => {
+  const { jdpRecord, errors } = createJDPRecord(reportData);
   const { clinicianReportData } = reportData;
   const incidentID = clinicianReportData
     .getIn([INCIDENT_FQN, 0, NEIGHBOR_DETAILS, FQN.CRIMINALJUSTICE_CASE_NUMBER_FQN, 0]);
