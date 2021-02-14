@@ -64,7 +64,7 @@
     "pdfjs-dist": "~2.5.207",
     "pizzip": "~3.0.6",
     "polished": "~3.6.6",
-    "query-string": "~6.13.1",
+    "query-string": "~6.14.0",
     "react": "~16.13.1",
     "react-dom": "~16.13.1",
     "react-dropzone": "~11.1.0",
