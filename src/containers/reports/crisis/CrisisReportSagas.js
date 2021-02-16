@@ -541,24 +541,17 @@ function* getChargeEventsWatcher() :Generator<any, any, any> {
   yield takeLatest(GET_CHARGE_EVENTS, getChargeEventsWorker);
 }
 
-function* getCrisisReportV2DataWorker(action :{ reportEKID :UUID, reportFQN :FQN }) :Saga<Object> {
+function* getCrisisReportV2DataWorker(action :{ reportEKID :UUID, reportFQN :FQN, reportData ?:Map }) :Saga<Object> {
   const {
     reportEKID,
     reportFQN = CRISIS_REPORT_CLINICIAN_FQN,
+    reportData
   } = action;
   if (!isValidUUID(reportEKID) || !FQN.isValid(reportFQN)) throw ERR_ACTION_VALUE_TYPE;
   const app :Map = yield select((state) => state.get('app', Map()));
   const reportESID = getESIDFromApp(app, reportFQN);
 
-  const reportRequest = call(
-    getEntityDataWorker,
-    getEntityData({
-      entitySetId: reportESID,
-      entityKeyId: reportEKID
-    })
-  );
-
-  const neighborsRequest = call(
+  const neighborsResponse = yield call(
     getReportsV2NeighborsWorker,
     getReportsV2Neighbors({
       reportEKIDs: [reportEKID],
@@ -566,12 +559,6 @@ function* getCrisisReportV2DataWorker(action :{ reportEKID :UUID, reportFQN :FQN
     })
   );
 
-  const [reportResponse, neighborsResponse] = yield all([
-    reportRequest,
-    neighborsRequest,
-  ]);
-
-  if (reportResponse.error) throw reportResponse.error;
   if (neighborsResponse.error) throw neighborsResponse.error;
 
   const neighbors = neighborsResponse.data.get(reportEKID) || List();
@@ -612,15 +599,30 @@ function* getCrisisReportV2DataWorker(action :{ reportEKID :UUID, reportFQN :FQN
   const chargeEventsData = chargeEKIDs
     .map((chargeEKID) => chargeEventsResponse.data.getIn([chargeEKID, 0], Map()));
 
+  // fetch report if not provided
+  let report = reportData;
+  if (!report) {
+    const reportResponse = yield call(
+      getEntityDataWorker,
+      getEntityData({
+        entitySetId: reportESID,
+        entityKeyId: reportEKID
+      })
+    );
+
+    if (reportResponse.error) throw reportResponse.error;
+    report = fromJS(reportResponse.data);
+  }
+
   // include report and location in neighbors
-  const reportEntity = fromJS({ neighborDetails: reportResponse.data });
+  const reportEntity = fromJS({ neighborDetails: report });
   const reportDataByFQN = neighborsByFQN
     .set(reportFQN.toString(), List([reportEntity]))
     .set(LOCATION_FQN.toString(), locationData)
     .set(CHARGE_EVENT_FQN.toString(), chargeEventsData);
 
   const response = {
-    reportData: fromJS(reportResponse.data),
+    reportData: report,
     reportDataByFQN,
     subjectData,
   };
@@ -1236,6 +1238,7 @@ export {
   deleteCrisisReportContentWorker,
   getChargeEventsWatcher,
   getChargeEventsWorker,
+  getCrisisReportV2DataWorker,
   getCrisisReportV2Watcher,
   getCrisisReportV2Worker,
   getCrisisReportWatcher,

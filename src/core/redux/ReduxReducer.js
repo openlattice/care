@@ -16,6 +16,7 @@ import documentsReducer from '../../containers/documents/DocumentsReducer';
 import downloadsReducer from '../../containers/downloads/DownloadsReducer';
 import edmReducer from '../../edm/EdmReducer';
 import exploreReducer from '../../containers/explore/ExploreReducer';
+import exportBulkReducer from '../../containers/reports/export/ExportBulkReducer';
 import exportReducer from '../../containers/reports/export/ExportReducer';
 import formSchemasReducer from '../../containers/reports/FormSchemasReducer';
 import hospitalsReducer from '../../containers/form/HospitalsReducer';
@@ -49,6 +50,7 @@ export default function reduxReducer(routerHistory :any) {
     edm: edmReducer,
     explore: exploreReducer,
     export: exportReducer,
+    exportBulk: exportBulkReducer,
     formSchemas: formSchemasReducer,
     hospitals: hospitalsReducer,
     incidents: incidentsReducer,
