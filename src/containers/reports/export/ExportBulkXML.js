@@ -1,5 +1,5 @@
 // @flow
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import styled from 'styled-components';
 import { faCheckCircle, faExclamationTriangle } from '@fortawesome/pro-regular-svg-icons';
@@ -9,11 +9,10 @@ import {
   IconSplash,
   Spinner,
 } from 'lattice-ui-kit';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
 import ExportIssues from './ExportIssues';
-import { resetExportCrisisXML } from './ExportActions';
 
 const { GREEN, YELLOW } = Colors;
 
