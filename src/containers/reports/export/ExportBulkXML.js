@@ -9,11 +9,12 @@ import {
   IconSplash,
   Spinner,
 } from 'lattice-ui-kit';
+import { ReduxUtils } from 'lattice-utils';
 import { useSelector } from 'react-redux';
-import { RequestStates } from 'redux-reqseq';
 
 import ExportIssues from './ExportIssues';
 
+const { isSuccess, isFailure } = ReduxUtils;
 const { GREEN, YELLOW } = Colors;
 
 const Wrapper = styled.div`
@@ -35,10 +36,10 @@ const ExportBulkXML = () => {
 
   let splash = <IconSplash icon={() => <Spinner size="3x" />} caption={CAPTION} />;
 
-  if (requestState === RequestStates.SUCCESS) {
+  if (isSuccess(requestState)) {
     splash = <IconSplash icon={SuccessIcon} caption={`Success! Check your downloads folder for "${filename}"`} />;
   }
-  else if (requestState === RequestStates.FAILURE) {
+  else if (isFailure(requestState)) {
     splash = (
       <IconSplash
           icon={FailureIcon}
