@@ -25,7 +25,7 @@ export const DownloadsWrapper = styled.div`
 
 export const FormWrapper = styled.div`
   align-items: center;
-  border: solid 1px ${NEUTRAL.N100};
+  border: 1px solid ${NEUTRAL.N100};
   display: flex;
   flex-direction: column;
   margin: 30px auto;
