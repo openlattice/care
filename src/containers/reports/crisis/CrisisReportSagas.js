@@ -29,6 +29,7 @@ import {
 } from 'lattice-sagas';
 import { LangUtils, Logger, ValidationUtils } from 'lattice-utils';
 import { DateTime } from 'luxon';
+import type { Saga } from '@redux-saga/core';
 import type { UUID } from 'lattice';
 import type { SequenceAction } from 'redux-reqseq';
 
@@ -540,6 +541,95 @@ function* getChargeEventsWatcher() :Generator<any, any, any> {
   yield takeLatest(GET_CHARGE_EVENTS, getChargeEventsWorker);
 }
 
+function* getCrisisReportV2DataWorker(action :{ reportEKID :UUID, reportFQN :FQN, reportData ?:Map }) :Saga<Object> {
+  const {
+    reportEKID,
+    reportFQN = CRISIS_REPORT_CLINICIAN_FQN,
+    reportData
+  } = action;
+  if (!isValidUUID(reportEKID) || !FQN.isValid(reportFQN)) throw ERR_ACTION_VALUE_TYPE;
+  const app :Map = yield select((state) => state.get('app', Map()));
+  const reportESID = getESIDFromApp(app, reportFQN);
+
+  const neighborsResponse = yield call(
+    getReportsV2NeighborsWorker,
+    getReportsV2Neighbors({
+      reportEKIDs: [reportEKID],
+      reportFQN,
+    })
+  );
+
+  if (neighborsResponse.error) throw neighborsResponse.error;
+
+  const neighbors = neighborsResponse.data.get(reportEKID) || List();
+  const appTypeFqnsByIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds']).flip());
+  const neighborsByFQN = groupNeighborsByFQNs(neighbors, appTypeFqnsByIds);
+  const incidentEKID = neighborsByFQN.getIn([INCIDENT_FQN, 0, 'neighborDetails', OPENLATTICE_ID_FQN, 0]);
+  const chargeEKIDs = neighborsByFQN
+    .get(CHARGE_FQN, List())
+    .map((charge) => charge.getIn(['neighborDetails', OPENLATTICE_ID_FQN, 0]))
+    .toJS();
+
+  const locationRequest = call(
+    getLocationOfIncidentWorker,
+    getLocationOfIncident(incidentEKID)
+  );
+
+  const subjectRequest = call(
+    getSubjectOfIncidentWorker,
+    getSubjectOfIncident(incidentEKID)
+  );
+
+  const chargeEventsRequest = call(
+    getChargeEventsWorker,
+    getChargeEvents(chargeEKIDs)
+  );
+
+  const [subjectResponse, locationResponse, chargeEventsResponse] = yield all([
+    subjectRequest,
+    locationRequest,
+    chargeEventsRequest
+  ]);
+
+  if (subjectResponse.error) throw subjectResponse.error;
+  if (locationResponse.error) throw locationResponse.error;
+  if (chargeEventsResponse.error) throw chargeEventsResponse.error;
+  const subjectData = subjectResponse.data.getIn([incidentEKID, 0, 'neighborDetails'], Map());
+  const locationData = locationResponse.data.get(incidentEKID, List());
+  const chargeEventsData = chargeEKIDs
+    .map((chargeEKID) => chargeEventsResponse.data.getIn([chargeEKID, 0], Map()));
+
+  // fetch report if not provided
+  let report = reportData;
+  if (!report) {
+    const reportResponse = yield call(
+      getEntityDataWorker,
+      getEntityData({
+        entitySetId: reportESID,
+        entityKeyId: reportEKID
+      })
+    );
+
+    if (reportResponse.error) throw reportResponse.error;
+    report = fromJS(reportResponse.data);
+  }
+
+  // include report and location in neighbors
+  const reportEntity = fromJS({ neighborDetails: report });
+  const reportDataByFQN = neighborsByFQN
+    .set(reportFQN.toString(), List([reportEntity]))
+    .set(LOCATION_FQN.toString(), locationData)
+    .set(CHARGE_EVENT_FQN.toString(), chargeEventsData);
+
+  const response = {
+    reportData: report,
+    reportDataByFQN,
+    subjectData,
+  };
+
+  return response;
+}
+
 function* getCrisisReportV2Worker(action :SequenceAction) :Generator<any, any, any> {
   const response = {};
   try {
@@ -554,87 +644,21 @@ function* getCrisisReportV2Worker(action :SequenceAction) :Generator<any, any, a
     if (!isValidUUID(reportEKID) || !FQN.isValid(reportFQN)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getCrisisReportV2.request(action.id));
 
-    const app :Map = yield select((state) => state.get('app', Map()));
-    const reportESID = getESIDFromApp(app, reportFQN);
-
-    const reportRequest = call(
-      getEntityDataWorker,
-      getEntityData({
-        entitySetId: reportESID,
-        entityKeyId: reportEKID
-      })
-    );
-
-    const neighborsRequest = call(
-      getReportsV2NeighborsWorker,
-      getReportsV2Neighbors({
-        reportEKIDs: [reportEKID],
-        reportFQN,
-      })
-    );
-
-    const [reportResponse, neighborsResponse] = yield all([
-      reportRequest,
-      neighborsRequest,
-    ]);
-
-    if (reportResponse.error) throw reportResponse.error;
-    if (neighborsResponse.error) throw neighborsResponse.error;
-
-    const neighbors = neighborsResponse.data.get(reportEKID) || List();
-    const appTypeFqnsByIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds']).flip());
-    const neighborsByFQN = groupNeighborsByFQNs(neighbors, appTypeFqnsByIds);
-    const incidentEKID = neighborsByFQN.getIn([INCIDENT_FQN, 0, 'neighborDetails', OPENLATTICE_ID_FQN, 0]);
-    const chargeEKIDs = neighborsByFQN
-      .get(CHARGE_FQN, List())
-      .map((charge) => charge.getIn(['neighborDetails', OPENLATTICE_ID_FQN, 0]))
-      .toJS();
-    const reporterData = neighborsByFQN.getIn([STAFF_FQN, 0], Map());
-
-    const locationRequest = call(
-      getLocationOfIncidentWorker,
-      getLocationOfIncident(incidentEKID)
-    );
-
-    const subjectRequest = call(
-      getSubjectOfIncidentWorker,
-      getSubjectOfIncident(incidentEKID)
-    );
-
-    const chargeEventsRequest = call(
-      getChargeEventsWorker,
-      getChargeEvents(chargeEKIDs)
-    );
-
-    const [subjectResponse, locationResponse, chargeEventsResponse] = yield all([
-      subjectRequest,
-      locationRequest,
-      chargeEventsRequest
-    ]);
-
-    if (subjectResponse.error) throw subjectResponse.error;
-    if (locationResponse.error) throw locationResponse.error;
-    if (chargeEventsResponse.error) throw chargeEventsResponse.error;
-    const subjectData = subjectResponse.data.getIn([incidentEKID, 0, 'neighborDetails'], Map());
-    const locationData = locationResponse.data.get(incidentEKID, List());
-    const chargeEventsData = chargeEKIDs
-      .map((chargeEKID) => chargeEventsResponse.data.getIn([chargeEKID, 0], Map()));
-
-    // include report and location in neighbors
-    const reportEntity = fromJS({ neighborDetails: reportResponse.data });
-    const reportDataByFQN = neighborsByFQN
-      .set(reportFQN.toString(), List([reportEntity]))
-      .set(LOCATION_FQN.toString(), locationData)
-      .set(CHARGE_EVENT_FQN.toString(), chargeEventsData);
+    const {
+      subjectData,
+      reportDataByFQN,
+      reportData,
+    } = yield call(getCrisisReportV2DataWorker, { reportEKID, reportFQN });
+    const reporterData = reportDataByFQN.getIn([STAFF_FQN, 0], Map());
     const formData = fromJS(constructFormDataFromNeighbors(reportDataByFQN, reviewSchema));
     const entityIndexToIdMap = getEntityIndexToIdMapFromNeighbors(reportDataByFQN, reviewSchema);
 
     yield put(getCrisisReportV2.success(action.id, {
-      formData,
       entityIndexToIdMap,
-      subjectData,
+      formData,
+      reportData,
       reporterData,
-      reportData: fromJS(reportResponse.data),
+      subjectData,
       [reportFQN]: reportDataByFQN
     }));
   }
@@ -1214,6 +1238,7 @@ export {
   deleteCrisisReportContentWorker,
   getChargeEventsWatcher,
   getChargeEventsWorker,
+  getCrisisReportV2DataWorker,
   getCrisisReportV2Watcher,
   getCrisisReportV2Worker,
   getCrisisReportWatcher,
