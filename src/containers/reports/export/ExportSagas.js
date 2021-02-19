@@ -17,18 +17,26 @@ import {
 } from 'lattice-sagas';
 import { Logger } from 'lattice-utils';
 import type { Saga } from '@redux-saga/core';
+import type { WorkerResponse } from 'lattice-sagas';
 import type { SequenceAction } from 'redux-reqseq';
 
-import { EXPORT_CRISIS_XML, exportCrisisXML } from './ExportActions';
-import { generateXMLFromReportData } from './ExportUtils';
+import {
+  EXPORT_CRISIS_XML,
+  EXPORT_CRISIS_XML_BY_DATE_RANGE,
+  exportCrisisXML,
+  exportCrisisXMLByDateRange,
+  getAdjacentCrisisData
+} from './ExportActions';
+import { generateXMLFromReportData, generateXMLFromReportRange } from './ExportUtils';
 
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { getESIDsFromApp } from '../../../utils/AppUtils';
 import { getEntityKeyId, groupNeighborsByFQNs } from '../../../utils/DataUtils';
 import { ERR_UNEXPECTED } from '../../../utils/Errors';
 import { NEIGHBOR_DETAILS, NEIGHBOR_ID } from '../../../utils/constants/EntityConstants';
+import { searchReportsByDateRange } from '../ReportsSagas';
 import { getChargeEvents } from '../crisis/CrisisActions';
-import { getChargeEventsWorker } from '../crisis/CrisisReportSagas';
+import { getChargeEventsWorker, getCrisisReportV2DataWorker } from '../crisis/CrisisReportSagas';
 
 const LOG = new Logger('ExportSagas');
 
@@ -50,26 +58,22 @@ const {
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
 const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
 
-function* exportCrisisXMLWorker(action :SequenceAction) :Saga<void> {
+function* getAdjacentCrisisDataWorker(action :SequenceAction) :Saga<WorkerResponse> {
+  const response = {
+    data: {
+      personDetails: Map(),
+      crisisReportData: Map()
+    }
+  };
+
   try {
-    yield put(exportCrisisXML.request(action.id));
+    const {
+      subjectEKID,
+      incidentEKID,
+    } = action.value;
+
+    yield put(getAdjacentCrisisData.request(action.id));
     const app :Map = yield select((state) => state.get('app', Map()));
-    const clinicianReportData :Map = yield select(
-      (state) => state.getIn(['crisisReport', CRISIS_REPORT_CLINICIAN_FQN])
-    );
-    const selectedOrganizationId = yield select((state) => state.getIn(['app', 'selectedOrganizationId']));
-    const title = yield select(
-      (state) => state.getIn(['app', 'organizations', selectedOrganizationId, 'title'], '').split(' ')[0]
-    );
-
-    const person :Map = yield select((state) => state.getIn(['crisisReport', 'subjectData']));
-    const subjectEKID = getEntityKeyId(person);
-
-    if (!clinicianReportData || !subjectEKID) throw ERR_UNEXPECTED;
-
-    const incident = clinicianReportData.getIn([INCIDENT_FQN, 0, NEIGHBOR_DETAILS]);
-    const incidentEKID = getEntityKeyId(incident);
-
     const entitySetFQNs = [
       CRISIS_REPORT_FQN,
       INCIDENT_FQN,
@@ -163,6 +167,51 @@ function* exportCrisisXMLWorker(action :SequenceAction) :Saga<void> {
     const crisisReportData = neighborsByFQN
       .set(CHARGE_EVENT_FQN.toString(), chargeEventsData);
 
+    response.data = {
+      personDetails,
+      crisisReportData
+    };
+
+  }
+  catch (error) {
+    yield put(getAdjacentCrisisData.failure(action.id), error);
+  }
+  finally {
+    yield put(getAdjacentCrisisData.finally(action.id));
+  }
+
+  return response;
+}
+
+function* exportCrisisXMLWorker(action :SequenceAction) :Saga<void> {
+  try {
+    yield put(exportCrisisXML.request(action.id));
+    const clinicianReportData :Map = yield select(
+      (state) => state.getIn(['crisisReport', CRISIS_REPORT_CLINICIAN_FQN])
+    );
+    const selectedOrganizationId = yield select((state) => state.getIn(['app', 'selectedOrganizationId']));
+    const title = yield select(
+      (state) => state.getIn(['app', 'organizations', selectedOrganizationId, 'title'], '').split(' ')[0]
+    );
+
+    const person :Map = yield select((state) => state.getIn(['crisisReport', 'subjectData']));
+    const subjectEKID = getEntityKeyId(person);
+
+    if (!clinicianReportData || !subjectEKID) throw ERR_UNEXPECTED;
+
+    const incident = clinicianReportData.getIn([INCIDENT_FQN, 0, NEIGHBOR_DETAILS]);
+    const incidentEKID = getEntityKeyId(incident);
+
+    const adjacentResponse = yield call(getAdjacentCrisisDataWorker, getAdjacentCrisisData({
+      incidentEKID,
+      subjectEKID,
+    }));
+
+    const {
+      crisisReportData,
+      personDetails,
+    } = adjacentResponse.data;
+
     const payload = generateXMLFromReportData({
       clinicianReportData,
       crisisReportData,
@@ -179,7 +228,6 @@ function* exportCrisisXMLWorker(action :SequenceAction) :Saga<void> {
   }
   finally {
     yield put(exportCrisisXML.finally(action.id));
-
   }
 }
 
@@ -187,7 +235,85 @@ function* exportCrisisXMLWatcher() :Saga<void> {
   yield takeLatest(EXPORT_CRISIS_XML, exportCrisisXMLWorker);
 }
 
+function* exportCrisisXMLByDateRangeWorker(action :SequenceAction) :Saga<void> {
+  try {
+    const {
+      dateStart,
+      dateEnd,
+    } = action.value;
+
+    yield put(exportCrisisXMLByDateRange.request(action.id));
+
+    const selectedOrganizationId = yield select((state) => state.getIn(['app', 'selectedOrganizationId']));
+    const title = yield select(
+      (state) => state.getIn(['app', 'organizations', selectedOrganizationId, 'title'], '').split(' ')[0]
+    );
+
+    const response = yield call(
+      searchReportsByDateRange,
+      {
+        dateEnd,
+        dateStart,
+        maxHits: 10000,
+        reportFQN: CRISIS_REPORT_CLINICIAN_FQN,
+        start: 0,
+      }
+    );
+
+    if (response.error) throw response.error;
+
+    const clinicianReportRequests = response.data.hits.map((report) => call(getCrisisReportV2DataWorker, {
+      reportEKID: getEntityKeyId(report),
+      reportFQN: CRISIS_REPORT_CLINICIAN_FQN,
+      reportData: fromJS(report)
+    }));
+
+    const clinicianReportResponses = yield all(clinicianReportRequests);
+    const adjacentRequests = clinicianReportResponses.map((clinicianResponse) => {
+      const { reportDataByFQN, subjectData } = clinicianResponse;
+      const subjectEKID = getEntityKeyId(subjectData);
+      const incident = reportDataByFQN.getIn([INCIDENT_FQN, 0, NEIGHBOR_DETAILS]);
+      const incidentEKID = getEntityKeyId(incident);
+
+      return call(getAdjacentCrisisDataWorker, getAdjacentCrisisData({
+        subjectEKID,
+        incidentEKID,
+      }));
+    });
+
+    const adjacentResponses = yield all(adjacentRequests);
+
+    const jdpRecordData = clinicianReportResponses.map((clinicianResponse, index) => {
+      const { reportDataByFQN, subjectData } = clinicianResponse;
+      const { personDetails, crisisReportData } = adjacentResponses[index].data;
+      return {
+        clinicianReportData: reportDataByFQN,
+        crisisReportData,
+        person: subjectData,
+        personDetails,
+        title,
+      };
+    });
+
+    const payload = generateXMLFromReportRange(jdpRecordData, dateStart, dateEnd);
+
+    yield put(exportCrisisXMLByDateRange.success(action.id, payload));
+  }
+  catch (error) {
+    yield put(exportCrisisXMLByDateRange.failure(action.id, error));
+  }
+  finally {
+    yield put(exportCrisisXMLByDateRange.finally(action.id));
+  }
+}
+
+function* exportCrisisXMLByDateRangeWatcher() :Saga<void> {
+  yield takeLatest(EXPORT_CRISIS_XML_BY_DATE_RANGE, exportCrisisXMLByDateRangeWorker);
+}
+
 export {
-  exportCrisisXMLWorker,
+  exportCrisisXMLByDateRangeWatcher,
+  exportCrisisXMLByDateRangeWorker,
   exportCrisisXMLWatcher,
+  exportCrisisXMLWorker,
 };

@@ -7,6 +7,7 @@ import { useRouteMatch } from 'react-router';
 
 import CrisisReportDownloadsContainer from './CrisisReportDownloadsContainer';
 
+import ExportBulkXMLContainer from '../reports/export/ExportBulkXMLContainer';
 import { useAppSettings } from '../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../components/layout';
 import { DOWNLOADS_PATH } from '../../core/router/Routes';
@@ -15,6 +16,7 @@ import { CRC, CRISIS, HELPLINE } from '../../shared/ModuleConstants';
 const DownloadsContainer = () => {
   const settings = useAppSettings();
   const profileModule = settings.get('profileModule', 'crisis');
+  const v2 = settings.get('v2', false);
   const organizationId = useSelector((state) => state.getIn(['app', 'selectedOrganizationId']));
   const match = useRouteMatch();
 
@@ -34,6 +36,8 @@ const DownloadsContainer = () => {
       component = <CrisisReportDownloadsContainer />;
       break;
   }
+
+  if (v2) component = <ExportBulkXMLContainer />;
 
   return (
     <ContentOuterWrapper>

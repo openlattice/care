@@ -261,5 +261,6 @@ export default function* sagas() :Generator<*, *, *> {
     fork(ProfileDocumentsSagas.getProfileDocumentsWatcher),
 
     fork(ExportSagas.exportCrisisXMLWatcher),
+    fork(ExportSagas.exportCrisisXMLByDateRangeWatcher),
   ]);
 }
