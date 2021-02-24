@@ -125,6 +125,11 @@ import {
 
 const N_A = 'NA';
 
+const escapeXML = (value) => value
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;');
+
 const transformNA = (value :string) :string => (value === NA ? N_A : value);
 
 const otherValueFromList = (list :List) :[string, string] => {
@@ -904,9 +909,9 @@ const insertTimestamp = (xmlPayload :XMLPayload) => {
   return xmlPayload;
 };
 
-const generateXMLFromReportData = (reportData :ReportData) :Object => {
+const createJDPRecord = (reportData :ReportData) :XMLPayload => {
   const initialPayload :XMLPayload = { reportData, jdpRecord: {}, errors: [] };
-  const { jdpRecord, errors } = pipe(
+  return pipe(
     insertEntryDate,
     insertJDP,
     insertIncidentDate,
@@ -936,21 +941,24 @@ const generateXMLFromReportData = (reportData :ReportData) :Object => {
     insertNotes,
     insertTimestamp,
   )(initialPayload);
+};
+
+const generateXMLFromReportData = (reportData :ReportData) :Object => {
+  const { jdpRecord, errors } = createJDPRecord(reportData);
   const { clinicianReportData } = reportData;
   const incidentID = clinicianReportData
     .getIn([INCIDENT_FQN, 0, NEIGHBOR_DETAILS, FQN.CRIMINALJUSTICE_CASE_NUMBER_FQN, 0]);
   const today = DateTime.local().toISODate();
   const filename = `${incidentID}_${today}.xml`;
 
-  const xml = new Parser().parse({
+  const xml = new Parser({
+    tagValueProcessor: escapeXML
+  }).parse({
     dataroot: {
       JDPRecord: [
         jdpRecord
       ]
     }
-  }, {
-    format: false,
-    suppressEmptyNode: true,
   });
 
   const xmlWithHeader = XML_HEADER.concat(xml);
@@ -962,6 +970,54 @@ const generateXMLFromReportData = (reportData :ReportData) :Object => {
   });
 };
 
+const generateXMLFromReportRange = (reportData :ReportData[], dateStart :string, dateEnd :string) :Object => {
+  const xmlPayloads = reportData.map(createJDPRecord);
+
+  const errors = [];
+  const jdpRecords = [];
+  xmlPayloads.forEach((payload) => {
+
+    if (payload.errors.length) {
+      const { clinicianReportData } = payload.reportData;
+      const incidentID = clinicianReportData
+        .getIn([INCIDENT_FQN, 0, NEIGHBOR_DETAILS, FQN.CRIMINALJUSTICE_CASE_NUMBER_FQN, 0]);
+      const reportEKID = clinicianReportData
+        .getIn([CRISIS_REPORT_CLINICIAN_FQN, 0, NEIGHBOR_DETAILS, FQN.OPENLATTICE_ID_FQN, 0]);
+
+      const msg = `Report ${reportEKID} for Incident ${incidentID} was excluded for errors.`;
+      errors.push(msg);
+    }
+    else {
+      jdpRecords.push(payload.jdpRecord);
+    }
+
+  });
+
+  const startDay = DateTime.fromISO(dateStart).toISODate();
+  const endDay = DateTime.fromISO(dateEnd).toISODate();
+
+  const filename = `jdp_records_${startDay}-${endDay}.xml`;
+
+  const xml = new Parser({
+    tagValueProcessor: escapeXML
+  }).parse({
+    dataroot: {
+      JDPRecord: jdpRecords
+    }
+  });
+
+  const xmlWithHeader = XML_HEADER.concat(xml);
+  FileSaver.saveFile(xmlWithHeader, filename, TEXT_XML);
+
+  return ({
+    errors,
+    filename
+  });
+
+};
+
 export {
-  generateXMLFromReportData
+  createJDPRecord,
+  generateXMLFromReportData,
+  generateXMLFromReportRange,
 };

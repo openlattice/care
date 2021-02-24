@@ -27,6 +27,7 @@ import {
 } from 'lattice-sagas';
 import { LangUtils, Logger, ValidationUtils } from 'lattice-utils';
 import { DateTime } from 'luxon';
+import type { Saga } from '@redux-saga/core';
 import type { UUID } from 'lattice';
 import type { WorkerResponse } from 'lattice-sagas';
 import type { SequenceAction } from 'redux-reqseq';
@@ -326,6 +327,67 @@ function* getReportWatcher() :Generator<*, *, *> {
   yield takeEvery(GET_REPORT, getReportWorker);
 }
 
+type SearchReportsByDateRangeAction = {
+  dateEnd :string,
+  dateStart :string,
+  maxHits :number,
+  reportFQN :FQN,
+  start :number,
+};
+
+function* searchReportsByDateRange(action :SearchReportsByDateRangeAction) :Saga<WorkerResponse> {
+
+  const {
+    dateEnd,
+    dateStart,
+    maxHits = 10000,
+    reportFQN,
+    start = 0,
+  } = action;
+
+  const edm :Map = yield select((state) => state.get('edm'));
+  const app = yield select((state) => state.get('app', Map()));
+
+  const startDT = DateTime.fromISO(dateStart);
+  const endDT = DateTime.fromISO(dateEnd);
+
+  const reportESID :UUID = getESIDFromApp(app, reportFQN);
+  const datetimePTID :UUID = edm.getIn(['fqnToIdMap', FQN.COMPLETED_DT_FQN]);
+
+  const startTerm = startDT.isValid ? startDT.startOf('day').toISO() : '*';
+  const endTerm = endDT.isValid ? endDT.endOf('day').toISO() : '*';
+  const searchTerm = getSearchTerm(datetimePTID, `[${startTerm} TO ${endTerm}]`);
+
+  // search for reports within date range
+  const searchConstraints = {
+    entitySetIds: [reportESID],
+    start,
+    maxHits,
+    constraints: [{
+      constraints: [{
+        type: 'advanced',
+        searchFields: [
+          {
+            searchTerm,
+            property: datetimePTID
+          }
+        ]
+      }]
+    }],
+    sort: {
+      propertyTypeId: datetimePTID,
+      type: 'field'
+    }
+  };
+
+  const response :WorkerResponse = yield call(
+    searchEntitySetDataWorker,
+    searchEntitySetData(searchConstraints)
+  );
+
+  return response;
+}
+
 /*
  *
  * ReportsActions.getReportsByDateRangeV2()
@@ -340,11 +402,7 @@ function* getReportsByDateRangeV2Worker(action :SequenceAction) :Generator<*, *,
 
     yield put(getReportsByDateRangeV2.request(action.id));
 
-    const edm :Map = yield select((state) => state.get('edm'));
     const app = yield select((state) => state.get('app', Map()));
-
-    const startDT = DateTime.fromISO(searchInputs.get('dateStart'));
-    const endDT = DateTime.fromISO(searchInputs.get('dateEnd'));
     const type = searchInputs.getIn(['reportType', 'value']);
 
     // set entity set to match reportType value
@@ -356,37 +414,16 @@ function* getReportsByDateRangeV2Worker(action :SequenceAction) :Generator<*, *,
     const partOfESID :UUID = getESIDFromApp(app, PART_OF_FQN);
     const involvedInESID :UUID = getESIDFromApp(app, INVOLVED_IN_FQN);
 
-    const datetimePTID :UUID = edm.getIn(['fqnToIdMap', FQN.COMPLETED_DT_FQN]);
-
-    const startTerm = startDT.isValid ? startDT.toISO() : '*';
-    const endTerm = endDT.isValid ? endDT.endOf('day').toISO() : '*';
-    const searchTerm = getSearchTerm(datetimePTID, `[${startTerm} TO ${endTerm}]`);
-
     // search for reports within date range
-    const searchConstraints = {
-      entitySetIds: [reportESID],
-      start,
-      maxHits,
-      constraints: [{
-        constraints: [{
-          type: 'advanced',
-          searchFields: [
-            {
-              searchTerm,
-              property: datetimePTID
-            }
-          ]
-        }]
-      }],
-      sort: {
-        propertyTypeId: datetimePTID,
-        type: 'field'
-      }
-    };
-
     const response :WorkerResponse = yield call(
-      searchEntitySetDataWorker,
-      searchEntitySetData(searchConstraints)
+      searchReportsByDateRange,
+      {
+        dateStart: searchInputs.get('dateStart'),
+        dateEnd: searchInputs.get('dateEnd'),
+        reportFQN: type,
+        start,
+        maxHits,
+      }
     );
 
     if (response.error) throw response.error;
@@ -1304,10 +1341,11 @@ export {
   getReportersForReportsWatcher,
   getReportsBehaviorAndSafetyWatcher,
   getReportsBehaviorAndSafetyWorker,
-  getReportsByDateRangeWatcher,
-  getReportsByDateRangeWorker,
   getReportsByDateRangeV2Watcher,
   getReportsByDateRangeV2Worker,
+  getReportsByDateRangeWatcher,
+  getReportsByDateRangeWorker,
+  searchReportsByDateRange,
   submitReportWatcher,
   submitReportWorker,
   updateReportWatcher,
