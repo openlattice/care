@@ -31,7 +31,7 @@ const {
 
 const getContactAssociations = (
   formData :Object,
-  nowAsIsoString :String,
+  nowAsIsoString :string,
   personEKID :UUID | number
 ) => {
   const contacts = get(formData, getPageSectionKey(1, 1), []);
