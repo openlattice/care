@@ -58,6 +58,8 @@ jobs:
         run: npm run test
 
       - name: npm run build:prod
+        env:
+          NODE_OPTIONS: --max_old_space_size=4096
         run: npm run build:prod
 
       - name: codecov
