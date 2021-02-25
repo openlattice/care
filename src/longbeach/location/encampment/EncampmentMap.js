@@ -143,9 +143,12 @@ const EncampmentMap = (props :Props) => {
     zoom,
   } = state;
 
-  const locationData = useMemo(() => searchResults
-    .map((resultEKID) => encampmentLocations.get(resultEKID, Map())),
-  [searchResults, encampmentLocations]);
+  const locationData = useMemo(() => {
+    if (searchResults) {
+      return searchResults.map((resultEKID) => encampmentLocations.get(resultEKID, Map()));
+    }
+    return List();
+  }, [searchResults, encampmentLocations]);
 
   const confirmLocation = () => {
     setConfirmedLocation(currentCenter);
