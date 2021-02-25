@@ -8,6 +8,7 @@ import {
   faMapMarkerAlt,
   faPhoneAlt
 } from '@fortawesome/pro-solid-svg-icons';
+import { Map } from 'immutable';
 import {
   Card,
   CardSegment,
