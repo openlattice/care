@@ -337,7 +337,7 @@ class PeopleSelection extends React.Component<Props, State> {
     return (
       <div>
         {this.renderSelectedPeople()}
-        <Search onSearch={this.onSearch} isLoading={isLoading} />
+        <Search onSearch={this.onSearch} isLoading={isLoading} title="" />
         {this.renderSearchResults()}
       </div>
     );
