@@ -79,6 +79,7 @@ const SuccessSplash = ({ reportType, selectedPerson } :Props) => {
       <CardSegment>
         <IconSplash
             icon={FileCheck}
+            // $FlowFixMe
             caption={Message} />
       </CardSegment>
     </Card>
