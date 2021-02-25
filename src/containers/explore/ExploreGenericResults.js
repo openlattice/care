@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import type { ComponentType } from 'react';
 
-import { List, Map } from 'immutable';
+import { List } from 'immutable';
 import {
   PaginationToolbar,
   SearchResults,
@@ -16,20 +16,13 @@ import type { RequestSequence } from 'redux-reqseq';
 import { ExploreResultsWrapper, NoResults } from './styled';
 
 import Accordion from '../../components/accordion';
+import type { SearchResultProps } from '../../types';
 
 const MAX_HITS = 10;
 
-type ResultProps = {
-  className ?:string;
-  result :Map;
-  resultColumns ?:number;
-  resultLabels ?:Map;
-  onClick ?:(result :Map) => void;
-};
-
 type Props = {
   appType :FQN;
-  resultComponent :ComponentType<ResultProps>;
+  resultComponent :ComponentType<SearchResultProps>;
   searchAction :RequestSequence;
   title :string;
 }
