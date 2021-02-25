@@ -1,8 +1,8 @@
 // @flow
 import React, { useEffect, useState } from 'react';
-import type { Node } from 'react';
+import type { ComponentType } from 'react';
 
-import { List } from 'immutable';
+import { List, Map } from 'immutable';
 import {
   PaginationToolbar,
   SearchResults,
@@ -10,6 +10,8 @@ import {
 } from 'lattice-ui-kit';
 import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
+import type { FQN } from 'lattice';
+import type { RequestSequence } from 'redux-reqseq';
 
 import { ExploreResultsWrapper, NoResults } from './styled';
 
@@ -17,9 +19,17 @@ import Accordion from '../../components/accordion';
 
 const MAX_HITS = 10;
 
+type ResultProps = {
+  className ?:string;
+  result :Map;
+  resultColumns ?:number;
+  resultLabels ?:Map;
+  onClick ?:(result :Map) => void;
+};
+
 type Props = {
   appType :FQN;
-  resultComponent :Node;
+  resultComponent :ComponentType<ResultProps>;
   searchAction :RequestSequence;
   title :string;
 }
