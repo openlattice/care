@@ -138,6 +138,7 @@ function* uploadDocumentsWorker(action :SequenceAction) :Generator<*, *, *> {
     const entities = { [filesEntitySetId]: fileEntities };
     const associations = { [includesEntitySetId]: includesAssociations };
 
+    // $FlowFixMe
     yield call(DataApi.createEntityAndAssociationData, { entities, associations });
 
     onSuccess();

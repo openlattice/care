@@ -262,12 +262,14 @@ class OriginalCrisisReportContainer extends React.Component<Props, State> {
     history.push(HOME_PATH);
   }
 
-  handlePageChange = (path :string) => {
+  handlePageChange = (path :?string) => {
     const { history } = this.props;
-    history.push(path);
-    window.scrollTo({
-      top: 0
-    });
+    if (path) {
+      history.push(path);
+      window.scrollTo({
+        top: 0
+      });
+    }
   }
 
   handleSubmit = (event :SyntheticEvent<*>) => {
@@ -285,11 +287,12 @@ class OriginalCrisisReportContainer extends React.Component<Props, State> {
     let submission = {
       [POST_PROCESS_FIELDS.FORM_NAME]: FORM_NAME.CRISIS_REPORT,
       [POST_PROCESS_FIELDS.TIMESTAMP]: DateTime.local().toISO(),
-      [POST_PROCESS_FIELDS.USER_EMAIL]: AuthUtils.getUserInfo().email
+      [POST_PROCESS_FIELDS.USER_EMAIL]: AuthUtils.getUserInfo()?.email
     };
 
     PAGES.forEach((page) => {
       const { postProcessor, stateField } = page;
+      // $FlowFixMe
       submission = { ...submission, ...postProcessor(state.get(stateField)) };
     });
 

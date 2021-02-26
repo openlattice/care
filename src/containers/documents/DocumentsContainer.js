@@ -110,14 +110,14 @@ class DocumentsContainer extends React.Component<Props, State> {
     this.setState({ [field]: newDate });
   }
 
-  onUpload = ({ file }) => {
+  onUpload = ({ file } :Object) => {
     const { files } = this.state;
     this.setState({ files: [...files, file] });
   }
 
   renderUploadedFiles = () => {
     const { files } = this.state;
-    return files.map((file, idx) => {
+    return files.map<Node>((file, idx) => {
       const onDelete = () => {
         files.splice(idx, 1);
         this.setState({ files });

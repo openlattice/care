@@ -93,7 +93,7 @@ function* getGeoOptionsWorker(action :SequenceAction) :Generator<*, *, *> {
 
     const { address, currentPosition } = action.value;
 
-    const params = {
+    const params :Object = {
       access_token: __MAPBOX_TOKEN__,
       autocomplete: true,
     };
@@ -202,9 +202,8 @@ function* getEncampmentLocationsNeighborsWatcher() :Generator<any, any, any> {
 }
 
 function* searchEncampmentLocationsWorker(action :SequenceAction) :Generator<any, any, any> {
-  const response = {
-    data: {}
-  };
+
+  let response;
 
   try {
     const { value } = action;
@@ -260,6 +259,8 @@ function* searchEncampmentLocationsWorker(action :SequenceAction) :Generator<any
     const { hits, numHits } = searchResponse.data;
     const locationsEKIDs = hits.map((location) => getIn(location, [FQN.OPENLATTICE_ID_FQN, 0]));
     const locationsByEKID = Map(hits.map((entity) => [getIn(entity, [FQN.OPENLATTICE_ID_FQN, 0]), fromJS(entity)]));
+
+    response = { data: {} };
     response.data.hits = fromJS(locationsEKIDs);
     response.data.totalHits = numHits;
     response.data.encampmentLocations = locationsByEKID;
@@ -281,7 +282,7 @@ function* searchEncampmentLocationsWorker(action :SequenceAction) :Generator<any
   }
   catch (error) {
     LOG.error(action.id, error);
-    response.error = error;
+    response = { error };
     yield put(searchEncampmentLocations.failure(action.id));
   }
   finally {

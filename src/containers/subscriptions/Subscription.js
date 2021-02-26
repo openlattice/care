@@ -203,7 +203,7 @@ export default class Subscription extends React.Component<Props, State> {
 
   }
 
-  handleDateChange = (date) => {
+  handleDateChange = (date :string) => {
     const eod = DateTime.fromISO(date).endOf('day').toISO();
     this.setState({ expiration: eod });
   }

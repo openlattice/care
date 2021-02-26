@@ -613,10 +613,7 @@ function* getProfileCitationsWorker(action :SequenceAction) :Saga<void> {
       const employeeResponseData = fromJS(employeeResponse.data);
       const employeesByHitEKID = getEKIDsFromNeighborResponseData(employeeResponseData);
       const employeesByEKID = getNeighborDetailsFromNeighborResponseData(employeeResponseData);
-      payload = Object.assign(payload, {
-        employeesByHitEKID,
-        employeesByEKID,
-      });
+      payload = { ...payload, employeesByHitEKID, employeesByEKID };
 
       if (peopleResponse.error) throw peopleResponse.error;
       payload = Object.assign(payload, peopleResponse.data);

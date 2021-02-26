@@ -124,6 +124,7 @@ const OverviewCharts = ({ dashboardCounts, months } :Props) => {
       .keySeq()
       .sortBy((dateStr1) => DateTime.fromISO(dateStr1).valueOf())
       .map((dateStr) => ({
+        // $FlowFixMe
         [title]: formatAsNumber(dateStr),
         count: countMap.get(dateStr)
       })).toJS();

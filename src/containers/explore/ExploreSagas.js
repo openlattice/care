@@ -618,10 +618,7 @@ export function* exploreContactInformationWorker(action :SequenceAction) :Saga<v
       const peopleResponseData = fromJS(peopleResponse.data);
       const peopleByHitEKID = getEKIDsFromNeighborResponseData(peopleResponseData);
       const peopleByEKID = getNeighborDetailsFromNeighborResponseData(peopleResponseData);
-      payload = Object.assign(payload, {
-        peopleByHitEKID,
-        peopleByEKID,
-      });
+      payload = { ...payload, peopleByHitEKID, peopleByEKID };
     }
 
     yield put(exploreContactInformation.success(action.id, payload));
@@ -699,10 +696,7 @@ export function* exploreLocationWorker(action :SequenceAction) :Saga<void> {
       const peopleResponseData = fromJS(peopleResponse.data);
       const peopleByHitEKID = getEKIDsFromNeighborResponseData(peopleResponseData);
       const peopleByEKID = getNeighborDetailsFromNeighborResponseData(peopleResponseData);
-      payload = Object.assign(payload, {
-        peopleByHitEKID,
-        peopleByEKID,
-      });
+      payload = { ...payload, peopleByHitEKID, peopleByEKID };
     }
 
     yield put(exploreLocation.success(action.id, payload));
@@ -853,10 +847,7 @@ export function* exploreCitationsWorker(action :SequenceAction) :Saga<void> {
       const employeeResponseData = fromJS(employeeResponse.data);
       const employeesByHitEKID = getEKIDsFromNeighborResponseData(employeeResponseData);
       const employeesByEKID = getNeighborDetailsFromNeighborResponseData(employeeResponseData);
-      payload = Object.assign(payload, {
-        employeesByHitEKID,
-        employeesByEKID,
-      });
+      payload = { ...payload, employeesByHitEKID, employeesByEKID };
 
       if (peopleResponse.error) throw peopleResponse.error;
       payload = Object.assign(payload, peopleResponse.data);

@@ -55,10 +55,11 @@ const countCrisisCalls = (reports :List<Map>, timeFQN :FQN = DATE_TIME_OCCURRED_
       const durationInWeeks = dtOccurred
         .until(DateTime.local()).toDuration(['weeks'])
         .toObject()
+        // $FlowIgnore
         .weeks;
 
-      if (durationInYears <= 1) total += 1;
-      if (durationInWeeks <= 1) recent += 1;
+      if (durationInYears && durationInYears <= 1) total += 1;
+      if (durationInWeeks && durationInWeeks <= 1) recent += 1;
     }
   });
 

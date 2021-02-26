@@ -99,9 +99,12 @@ const StayAwayMap = (props :Props) => {
     zoom,
   } = state;
 
-  const stayAwayData = useMemo(() => searchResults
-    .map((resultEKID) => stayAwayLocations.get(resultEKID)),
-  [searchResults, stayAwayLocations]);
+  const stayAwayData = useMemo(() => {
+    if (searchResults) {
+      return searchResults.map((resultEKID) => stayAwayLocations.get(resultEKID));
+    }
+    return List();
+  }, [searchResults, stayAwayLocations]);
 
   useEffect(() => {
     stateDispatch({
