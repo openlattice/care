@@ -50,7 +50,7 @@
     "file-saver": "~2.0.2",
     "history": "~4.10.1",
     "immutable": "4.0.0-rc.10",
-    "lattice": "~0.82.3",
+    "lattice": "~0.90.0",
     "lattice-auth": "~0.22.0",
     "lattice-fabricate": "~0.14.6",
     "lattice-sagas": "~0.59.0",
