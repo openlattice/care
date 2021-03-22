@@ -1,6 +1,7 @@
 // @flow
+
 import React from 'react';
-import type { Node } from 'react';
+import type { ComponentType } from 'react';
 
 import { List } from 'immutable';
 import {
@@ -14,10 +15,11 @@ import { useSelector } from 'react-redux';
 
 import { Header } from '../../../components/layout';
 import { CardSkeleton } from '../../../components/skeletons';
+import type { SearchResultProps } from '../../../types';
 
 type Props = {
   storePath :string[];
-  resultComponent :Node;
+  resultComponent :ComponentType<SearchResultProps>;
   title :string;
 };
 

@@ -27,6 +27,7 @@ const PrivateRoute = (props :Props) => {
 
   return (
     /* eslint-disable react/jsx-props-no-spreading */
+    // $FlowIgnore
     <Route
         {...rest} // eslint-disable-line indent
         render={(ownProps :any) => (

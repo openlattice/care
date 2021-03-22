@@ -16,6 +16,7 @@ const usePosition = (timeout ?:number) :[Position, PositionError] => {
   useEffect(() => {
     const geo = navigator.geolocation;
     if (!geo) {
+      // $FlowFixMe
       setError('Geolocation is not supported');
       return;
     }
@@ -23,6 +24,8 @@ const usePosition = (timeout ?:number) :[Position, PositionError] => {
     geo.getCurrentPosition(onChange, onError, options);
   }, [timeout]);
 
+  // TODO: switch to useGeo in lattice-utils
+  // $FlowFixMe
   return [position, error];
 };
 

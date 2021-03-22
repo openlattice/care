@@ -73,7 +73,7 @@ export default function reduxReducer(routerHistory :any) {
     [STATE.SUBSCRIPTIONS]: subscriptionReducer
   });
 
-  const rootReducer = (state, action) => {
+  const rootReducer = (state :any, action :any) => {
     // reset app state when switching
     if (action.type === SWITCH_ORGANIZATION) {
       return allReducers(undefined, action);

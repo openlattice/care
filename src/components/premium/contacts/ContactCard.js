@@ -31,12 +31,12 @@ const StyledCard = styled(Card)`
 `;
 
 type Props = {
-  extension ? :string;
-  name ? :string;
-  phoneNumber ? :string;
-  phoneType ? :string;
-  relationship ? :string;
-}
+  extension :string;
+  name :string;
+  phoneNumber :string;
+  phoneType :string;
+  relationship :string;
+};
 
 const ContactCard = (props :Props) => {
   const {

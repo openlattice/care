@@ -1,24 +1,16 @@
 // @flow
 import React from 'react';
-import type { Node } from 'react';
 
 import { Button } from 'lattice-ui-kit';
+import type { ButtonProps } from 'lattice-ui-kit';
 
 import { useGoToPath } from '../hooks';
 
-type Props = {
-  children :Node;
-  className ? :string;
-  color ? :string;
-  disabled ? :boolean;
-  fullWidth ? :boolean;
-  isLoading ? :boolean;
-  size ? :string;
-  startIcon ? :Node;
-  state ? :any;
+type Props = ButtonProps & {
+  fullWidth ?:boolean;
+  state ?:any;
   to :string;
-  variant ? :string;
-}
+};
 
 const LinkButton = (props :Props) => {
   const {

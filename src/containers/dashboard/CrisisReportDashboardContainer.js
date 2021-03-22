@@ -136,7 +136,7 @@ class DashboardContainer extends React.Component<Props, State> {
         break;
     }
 
-    const viewOptions = Object.values(LAYOUTS).map((value) => ({
+    const viewOptions = (Object.values(LAYOUTS) :any).map((value :string) => ({
       label: value,
       value,
       onClick: () => this.setState({ layout: value })
