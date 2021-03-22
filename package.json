@@ -65,7 +65,7 @@
     "pizzip": "~3.0.6",
     "polished": "~3.6.6",
     "query-string": "~6.13.1",
-    "react": "~16.13.1",
+    "react": "~17.0.1",
     "react-dom": "~16.13.1",
     "react-dropzone": "~11.1.0",
     "react-mapbox-gl": "~4.8.6",
