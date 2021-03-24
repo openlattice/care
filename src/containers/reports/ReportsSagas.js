@@ -1242,7 +1242,7 @@ function* getIncidentReportsSummaryWorker(action :SequenceAction) :Generator<any
         });
       })
         .sortBy((report :Map) :number => {
-          const time = DateTime.fromISO(report.getIn([FQN.COMPLETED_DT_FQN, 0]));
+          const time = DateTime.fromISO(report.getIn([FQN.DATETIME_START_FQN, 0]));
 
           return -time.valueOf();
         });
