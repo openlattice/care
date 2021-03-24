@@ -75,6 +75,7 @@ import {
   NO,
   NONE,
   NON_CRIMINAL,
+  NO_SECONDARY,
   ONE,
   OTHER,
   PARENT,
@@ -629,6 +630,7 @@ const insertInsurance = (xmlPayload :XMLPayload) => {
     [MBHP]: MBHP,
     [MEDICARE]: MEDICARE,
     [MEDICAID]: MEDICAID,
+    [NO_SECONDARY]: NO_SECONDARY,
     [PRIVATE]: PRIVATE,
     [VETERANS_AFFAIRS]: 'Vet Admin/Tri-Care',
     [UNKNOWN]: UNKNOWN,
@@ -896,11 +898,7 @@ const insertPresenceOfPsychiatricIssue = (xmlPayload :XMLPayload) => {
 };
 
 const insertNotes = (xmlPayload :XMLPayload) => {
-  const { clinicianReportData } = xmlPayload.reportData;
-  const notes = clinicianReportData
-    .getIn([INCIDENT_FQN, 0, NEIGHBOR_DETAILS, FQN.DESCRIPTION_FQN, 0]);
-
-  xmlPayload.jdpRecord.Note = notes;
+  xmlPayload.jdpRecord.Note = '';
   return xmlPayload;
 };
 
