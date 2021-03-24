@@ -256,6 +256,7 @@ export const SELF_INJURY = [
 export const MBHP = 'MBHP';
 export const MEDICARE = 'Medicare';
 export const MEDICAID = 'Medicaid';
+export const NO_SECONDARY = 'No Secondary';
 export const PRIVATE = 'Private';
 export const VETERANS_AFFAIRS = 'Veterans Affairs';
 export const UNINSURED = 'Uninsured';
@@ -263,6 +264,16 @@ export const INSURANCE = [
   MBHP,
   MEDICARE,
   MEDICAID,
+  PRIVATE,
+  VETERANS_AFFAIRS,
+  UNINSURED,
+  UNKNOWN,
+];
+export const INSURANCE_NO_SECONDARY = [
+  MBHP,
+  MEDICARE,
+  MEDICAID,
+  NO_SECONDARY,
   PRIVATE,
   VETERANS_AFFAIRS,
   UNINSURED,
