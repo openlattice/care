@@ -166,7 +166,7 @@ class ProfileContainer extends Component<Props, State> {
           .toObject()
           .years;
 
-        if (durationInYears <= 1) count += 1;
+        if (durationInYears && durationInYears <= 1) count += 1;
       }
     });
 

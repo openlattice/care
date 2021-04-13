@@ -16,7 +16,7 @@ const layout = { 'icon-image': 'mapPin' };
 
 type Props = {
   stayAwayLocations :List;
-  onFeatureClick ? :(data, feature) => void;
+  onFeatureClick ?:(data :any, feature :any) => void;
 };
 
 const StayAwayLocationLayer = (props :Props) => {
@@ -43,7 +43,9 @@ const StayAwayLocationLayer = (props :Props) => {
           };
 
           const handleClick = (payload) => {
-            onFeatureClick(location, payload);
+            if (onFeatureClick) {
+              onFeatureClick(location, payload);
+            }
           };
 
           return (

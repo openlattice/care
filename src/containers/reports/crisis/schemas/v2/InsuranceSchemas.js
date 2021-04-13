@@ -4,6 +4,7 @@ import * as FQN from '../../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
 import {
   INSURANCE,
+  INSURANCE_NO_SECONDARY,
   PRIMARY,
   SECONDARY,
   SELECT_ONLY_ONE
@@ -46,7 +47,7 @@ const schema = {
           description: SELECT_ONLY_ONE,
           items: {
             type: 'string',
-            enum: INSURANCE,
+            enum: INSURANCE_NO_SECONDARY,
           },
           sharedProperty: {
             property: FQN.GENERAL_STATUS_FQN,

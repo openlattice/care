@@ -1,5 +1,6 @@
 // @flow
 import React, { Component } from 'react';
+import type { Node } from 'react';
 
 import isPlainObject from 'lodash/isPlainObject';
 import styled from 'styled-components';
@@ -23,11 +24,11 @@ const IconWrapper = styled.span`
 `;
 
 type Props = {
-  className ? :string;
-  content ? :string;
-  icon ? :IconDefinition;
-  isLoading ? :boolean;
-}
+  className ?:string;
+  content ?:Node;
+  icon ?:IconDefinition;
+  isLoading ?:boolean;
+};
 
 class IconDetail extends Component<Props> {
   static defaultProps = {

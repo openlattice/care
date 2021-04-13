@@ -1,6 +1,6 @@
 // @flow
 import React, { useEffect, useState } from 'react';
-import type { Node } from 'react';
+import type { ComponentType } from 'react';
 
 import { List } from 'immutable';
 import {
@@ -10,16 +10,19 @@ import {
 } from 'lattice-ui-kit';
 import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
+import type { FQN } from 'lattice';
+import type { RequestSequence } from 'redux-reqseq';
 
 import { ExploreResultsWrapper, NoResults } from './styled';
 
 import Accordion from '../../components/accordion';
+import type { SearchResultProps } from '../../types';
 
 const MAX_HITS = 10;
 
 type Props = {
   appType :FQN;
-  resultComponent :Node;
+  resultComponent :ComponentType<SearchResultProps>;
   searchAction :RequestSequence;
   title :string;
 }

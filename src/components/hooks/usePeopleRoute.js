@@ -2,6 +2,7 @@
 import { useEffect } from 'react';
 
 import { useRouteMatch } from 'react-router';
+import type { UUID } from 'lattice';
 
 import { PROFILE_ID_PARAM } from '../../core/router/Routes';
 

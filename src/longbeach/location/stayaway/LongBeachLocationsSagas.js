@@ -62,7 +62,7 @@ function* getGeoOptionsWorker(action :SequenceAction) :Generator<*, *, *> {
 
     const { address, currentPosition } = action.value;
 
-    const params = {
+    const params :Object = {
       access_token: __MAPBOX_TOKEN__,
       autocomplete: true,
     };

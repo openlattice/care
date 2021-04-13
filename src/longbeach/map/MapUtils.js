@@ -15,8 +15,8 @@ const getCoordinates = (entity :Map) :[number, number] => {
 
 const getBoundsFromPointsOfInterest = (
   pointsOfInterest :List,
-  defaultBounds :number[][]
-) :number[][] => {
+  defaultBounds ?:number[][]
+) :?number[][] => {
 
   if (List.isList(pointsOfInterest) && pointsOfInterest.isEmpty()) return defaultBounds;
 

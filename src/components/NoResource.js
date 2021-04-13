@@ -30,11 +30,15 @@ type Props = {
 
 const DEFAULT_MESSAGE = 'The resource you requested could not be found.';
 
-const NoResource = ({ message = DEFAULT_MESSAGE } :Props) => (
+const NoResource = ({ message } :Props) => (
   <ErrorWrapper>
     <FontAwesomeIcon color={PURPLE} icon={faFileTimes} size="5x" />
     <div>{message}</div>
   </ErrorWrapper>
 );
+
+NoResource.defaultProps = {
+  message: DEFAULT_MESSAGE
+};
 
 export default NoResource;

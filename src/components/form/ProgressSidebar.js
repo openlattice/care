@@ -22,7 +22,7 @@ const {
 
 type Step = {
   title :string;
-  status :string;
+  status ?:string;
   onClick :() => void;
   disabled :boolean;
 }

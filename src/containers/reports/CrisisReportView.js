@@ -14,6 +14,7 @@ import { withRouter } from 'react-router';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { RequestStates } from 'redux-reqseq';
+import type { UUID } from 'lattice';
 import type { Match, RouterHistory } from 'react-router';
 import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
@@ -216,12 +217,14 @@ class CrisisReportView extends React.Component<Props, State> {
     actions.clearReport();
   }
 
-  handlePageChange = (path :string) => {
+  handlePageChange = (path :?string) => {
     const { history } = this.props;
-    history.push(path);
-    window.scrollTo({
-      top: 0
-    });
+    if (path) {
+      history.push(path);
+      window.scrollTo({
+        top: 0
+      });
+    }
   }
 
   handleEditClick = () => {
@@ -279,7 +282,7 @@ class CrisisReportView extends React.Component<Props, State> {
     let submission = {
       [POST_PROCESS_FIELDS.FORM_TYPE]: FORM_NAME.CRISIS_REPORT,
       [POST_PROCESS_FIELDS.TIMESTAMP]: DateTime.local().toISO(),
-      [POST_PROCESS_FIELDS.USER_EMAIL]: AuthUtils.getUserInfo().email
+      [POST_PROCESS_FIELDS.USER_EMAIL]: AuthUtils.getUserInfo()?.email
     };
 
     PAGES.forEach((page :any) => {

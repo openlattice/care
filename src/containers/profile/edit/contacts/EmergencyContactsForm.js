@@ -103,7 +103,7 @@ class ContactsForm extends Component<Props, State> {
 
   getAssociations = (formData :Object) => {
     const { match } = this.props;
-    const personEKID = match.params[PROFILE_ID_PARAM];
+    const personEKID = match.params[PROFILE_ID_PARAM] || '';
     const nowAsIsoString :string = DateTime.local().toISO();
     return [
       ...getContactAssociations(

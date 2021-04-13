@@ -27,7 +27,7 @@ const paint = {
 
 type Props = {
   encampmentLocations :List;
-  onFeatureClick ? :(data, feature) => void;
+  onFeatureClick ? :(data :any, feature :any) => void;
 };
 
 const EncampmentLayer = (props :Props) => {
@@ -55,7 +55,9 @@ const EncampmentLayer = (props :Props) => {
           };
 
           const handleClick = (payload) => {
-            onFeatureClick(location, payload);
+            if (onFeatureClick) {
+              onFeatureClick(location, payload);
+            }
           };
 
           return (
