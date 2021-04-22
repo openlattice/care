@@ -4,6 +4,7 @@ import * as FQN from '../../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../../shared/Consts';
 import {
   ASSESSMENT_LOCATION,
+  CLINICIAN_REFERRALS,
   FOLLOW_UP_NATURE,
   FOLLOW_UP_REPORT,
   POINT_OF_INTERVENTION,
@@ -67,6 +68,16 @@ const schema = {
           // minItems: 1,
           uniqueItems: true,
         },
+        [getEntityAddressKey(0, REFERRAL_REQUEST_FQN, FQN.SERVICE_TYPE_FQN)]: {
+          type: 'array',
+          title: 'Referred to:',
+          description: SELECT_ALL_THAT_APPLY,
+          items: {
+            type: 'string',
+            enum: CLINICIAN_REFERRALS
+          },
+          uniqueItems: true
+        },
         [getEntityAddressKey(0, ENCOUNTER_FQN, FQN.CHECKED_IN_FQN)]: {
           title: 'Unable to Contact',
           type: 'boolean',
@@ -82,6 +93,7 @@ const schema = {
         getEntityAddressKey(0, ENCOUNTER_FQN, FQN.SERVICE_TYPE_FQN),
         getEntityAddressKey(0, LOCATION_FQN, FQN.TYPE_FQN),
         getEntityAddressKey(0, REFERRAL_REQUEST_FQN, FQN.SOURCE_FQN),
+        getEntityAddressKey(0, REFERRAL_REQUEST_FQN, FQN.SERVICE_TYPE_FQN),
       ]
     }
   }
@@ -131,6 +143,16 @@ const uiSchema = {
         row: true,
         withNone: true,
         withOther: true,
+      }
+    },
+    [getEntityAddressKey(0, REFERRAL_REQUEST_FQN, FQN.SERVICE_TYPE_FQN)]: {
+      classNames: 'column-span-12',
+      'ui:widget': 'checkboxes',
+      'ui:options': {
+        mode: 'button',
+        row: true,
+        withOther: true,
+        withNone: true,
       }
     },
     [getEntityAddressKey(0, ENCOUNTER_FQN, FQN.CHECKED_IN_FQN)]: {
