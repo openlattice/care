@@ -57,7 +57,7 @@
     "lattice-ui-kit": "~0.43.1",
     "lattice-utils": "~0.6.0",
     "lodash": "~4.17.20",
-    "loglevel": "~1.6.8",
+    "loglevel": "~1.7.1",
     "luxon": "~1.25.0",
     "mapbox-gl": "~1.11.1",
     "papaparse": "~5.2.0",
