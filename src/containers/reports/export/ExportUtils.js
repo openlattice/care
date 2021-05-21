@@ -688,7 +688,7 @@ const insertReferralSource = (xmlPayload :XMLPayload) => {
   const [value] = otherValueFromList(referralSource);
 
   const transformMap = Map({
-    [COMMUNITY_TREATMENT_PROVIDER]: "Comm'ty Treatm't Provider",
+    [COMMUNITY_TREATMENT_PROVIDER]: COMMUNITY_TREATMENT_PROVIDER,
     [COURT_CLINIC]: COURT_CLINIC,
     [COURT_PERSONNEL]: COURT_PERSONNEL,
     [LAW_ENFORCEMENT]: 'Police/Law Enforcement',
