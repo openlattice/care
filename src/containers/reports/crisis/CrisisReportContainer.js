@@ -14,6 +14,7 @@ import { RequestStates } from 'redux-reqseq';
 
 import {
   clearCrisisReport,
+  deleteCrisisReport,
   getCrisisReport,
   updateCrisisReport,
 } from './CrisisActions';
@@ -86,6 +87,13 @@ const CrisisReportContainer = () => {
     return <Spinner size="3x" />;
   }
 
+  const handleDeleteCrisisReport = () => {
+    dispatch(deleteCrisisReport({
+      entityKeyId: reportId,
+      reportFQN: BEHAVIORAL_HEALTH_REPORT_FQN,
+    }));
+  };
+
   const handleUpdateCrisisReport = (params) => {
     dispatch(updateCrisisReport({
       ...params,
@@ -113,6 +121,7 @@ const CrisisReportContainer = () => {
             <BreadcrumbItem>{reportData.getIn([FQN.TYPE_FQN, 0], 'Report')}</BreadcrumbItem>
           </Breadcrumbs>
           <BlameCard reporterData={reporterData} />
+          <button type="button" onClick={handleDeleteCrisisReport}>Delete Report</button>
           <Card>
             <Form
                 disabled

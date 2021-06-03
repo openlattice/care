@@ -17,7 +17,7 @@ import {
   removeIn,
   setIn,
 } from 'immutable';
-import { Models } from 'lattice';
+import { Models, Types } from 'lattice';
 import { DataProcessingUtils } from 'lattice-fabricate';
 import {
   AuthorizationsApiActions,
@@ -36,6 +36,7 @@ import type { SequenceAction } from 'redux-reqseq';
 import {
   ADD_OPTIONAL_CRISIS_REPORT_CONTENT,
   CREATE_MISSING_CALL_FOR_SERVICE,
+  DELETE_CRISIS_REPORT,
   DELETE_CRISIS_REPORT_CONTENT,
   GET_CHARGE_EVENTS,
   GET_CRISIS_REPORT,
@@ -49,6 +50,7 @@ import {
   UPDATE_CRISIS_REPORT,
   addOptionalCrisisReportContent,
   createMissingCallForService,
+  deleteCrisisReport,
   deleteCrisisReportContent,
   getChargeEvents,
   getCrisisReport,
@@ -110,6 +112,7 @@ import { getFormSchema } from '../FormSchemasActions';
 import { getFormSchemaWorker } from '../FormSchemasSagas';
 
 const { FQN } = Models;
+const { DeleteTypes } = Types;
 const { isDefined } = LangUtils;
 const { isValidUUID } = ValidationUtils;
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
@@ -117,9 +120,9 @@ const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
 const { getAuthorizationsWorker } = AuthorizationsApiSagas;
 const { getAuthorizations } = AuthorizationsApiActions;
 
-const { getEntityData } = DataApiActions;
+const { getEntityData, deleteEntityAndNeighborData } = DataApiActions;
 
-const { getEntityDataWorker } = DataApiSagas;
+const { getEntityDataWorker, deleteEntityAndNeighborDataWorker } = DataApiSagas;
 
 const {
   findEntityAddressKeyFromMap,
@@ -326,7 +329,7 @@ function* getReportsV2NeighborsWorker(action :SequenceAction) :Generator<any, an
         DIAGNOSIS_CLINICIAN_FQN,
         SUBSTANCE_CLINICIAN_FQN,
         SELF_HARM_CLINICIAN_FQN,
-        BEHAVIOR_CLINICIAN_FQN
+        BEHAVIOR_CLINICIAN_FQN,
       ]);
     }
 
@@ -1229,6 +1232,86 @@ function* deleteCrisisReportContentWatcher() :Generator<any, any, any> {
   yield takeEvery(DELETE_CRISIS_REPORT_CONTENT, deleteCrisisReportContentWorker);
 }
 
+function* deleteCrisisReportWorker(action :SequenceAction) :Generator<any, any, any> {
+  const response = {};
+  try {
+    yield put(deleteCrisisReport.request(action.id));
+    const { entityKeyId, reportFQN } = action.value;
+    if (!isValidUUID(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
+
+    const app :Map = yield select((state) => state.get('app', Map()));
+    const entitySetFQNs = [
+      // report
+      reportFQN,
+      PART_OF_FQN,
+      // report contents
+      BEHAVIOR_FQN,
+      CALL_FOR_SERVICE_FQN,
+      CHARGE_FQN,
+      DIAGNOSIS_FQN,
+      DISPOSITION_FQN,
+      EMPLOYEE_FQN,
+      ENCOUNTER_DETAILS_FQN,
+      ENCOUNTER_FQN,
+      GENERAL_PERSON_FQN,
+      HOUSING_FQN,
+      INCOME_FQN,
+      INJURY_FQN,
+      INTERACTION_STRATEGY_FQN,
+      INVOICE_FQN,
+      MEDICATION_STATEMENT_FQN,
+      OCCUPATION_FQN,
+      OFFENSE_FQN,
+      REFERRAL_REQUEST_FQN,
+      REFERRAL_SOURCE_FQN,
+      SELF_HARM_FQN,
+      SUBSTANCE_FQN,
+      VIOLENT_BEHAVIOR_FQN,
+      WEAPON_FQN,
+      // clinician only
+      BEHAVIOR_CLINICIAN_FQN,
+      DIAGNOSIS_CLINICIAN_FQN,
+      DISPOSITION_CLINICIAN_FQN,
+      INSURANCE_FQN,
+      MEDICATION_STATEMENT_CLINICIAN_FQN,
+      SELF_HARM_CLINICIAN_FQN,
+      SUBSTANCE_CLINICIAN_FQN,
+    ];
+    const [reportESID, partOfESID, ...reportContentESIDs] = getESIDsFromApp(app, entitySetFQNs);
+    const filter = {
+      entityKeyIds: [entityKeyId],
+      src: reportContentESIDs,
+      edge: [partOfESID],
+    };
+
+    console.log(reportESID, entityKeyId, filter);
+
+    debugger;
+    const deleteResponse = yield call(deleteEntityAndNeighborDataWorker, deleteEntityAndNeighborData({
+      deleteType: DeleteTypes.Soft,
+      entitySetId: reportESID,
+      filter,
+    }));
+
+    // if (deleteResponse.error) throw deleteResponse.error;
+
+    // yield put(deleteCrisisReport.success(action.id, { path, entityIndexToIdMap: newEntityIndexToIdMap }));
+  }
+  catch (error) {
+    response.error = error;
+    LOG.error(action.type, error);
+    yield put(deleteCrisisReport.failure(action.id, error));
+  }
+  finally {
+    yield put(deleteCrisisReport.finally(action.id));
+  }
+  return response;
+}
+
+function* deleteCrisisReportWatcher() :Generator<any, any, any> {
+  yield takeEvery(DELETE_CRISIS_REPORT, deleteCrisisReportWorker);
+}
+
 export {
   addOptionalCrisisReportContentWatcher,
   addOptionalCrisisReportContentWorker,
@@ -1258,4 +1341,6 @@ export {
   updateCrisisReportWatcher,
   updateCrisisReportWorker,
   updatePersonReportCountWorker,
+  deleteCrisisReportWorker,
+  deleteCrisisReportWatcher,
 };

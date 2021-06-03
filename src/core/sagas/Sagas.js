@@ -208,6 +208,7 @@ export default function* sagas() :Generator<*, *, *> {
 
     fork(CrisisReportSagas.addOptionalCrisisReportContentWatcher),
     fork(CrisisReportSagas.deleteCrisisReportContentWatcher),
+    fork(CrisisReportSagas.deleteCrisisReportWatcher),
     fork(CrisisReportSagas.getCrisisReportV2Watcher),
     fork(CrisisReportSagas.getCrisisReportWatcher),
     fork(CrisisReportSagas.getReportsNeighborsWatcher),
