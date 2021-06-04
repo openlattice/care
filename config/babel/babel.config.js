@@ -5,6 +5,11 @@ module.exports = {
     '@babel/plugin-transform-runtime',
     'babel-plugin-styled-components',
     ['babel-plugin-transform-imports', {
+      '@fortawesome/free-solid-svg-icons': {
+        transform: (importName) => `@fortawesome/free-solid-svg-icons/${importName}`,
+        preventFullImport: true,
+        skipDefaultConversion: true
+      },
       '@fortawesome/pro-duotone-svg-icons': {
         transform: (importName) => `@fortawesome/pro-duotone-svg-icons/${importName}`,
         preventFullImport: true,
@@ -29,9 +34,12 @@ module.exports = {
   ],
   presets: [
     ['@babel/preset-env', {
-      targets: { ie: '11' }
+      corejs: '3.12',
+      useBuiltIns: 'entry',
+    }],
+    ['@babel/preset-react', {
+      runtime: 'automatic',
     }],
     '@babel/preset-flow',
-    '@babel/preset-react',
   ],
 };
