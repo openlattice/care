@@ -42,7 +42,6 @@ const ButtonGroup = styled.div`
 
 const MobileFab = styled(Fab)`
   display: none;
-
   ${media.phone`
     display: inline-flex;
     position: fixed;
