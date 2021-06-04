@@ -8,7 +8,7 @@ import { useRouteMatch } from 'react-router';
 import CrisisReportDashboardContainer from './CrisisReportDashboardContainer';
 
 import { useAppSettings } from '../../components/hooks';
-import { ContentOuterWrapper, ContentWrapper } from '../../components/layout';
+import { ContentOuterWrapper } from '../../components/layout';
 import { DASHBOARD_PATH } from '../../core/router/Routes';
 import { CRC, CRISIS } from '../../shared/ModuleConstants';
 
@@ -31,9 +31,7 @@ const DashboardContainer = () => {
 
   return (
     <ContentOuterWrapper>
-      <ContentWrapper>
-        {component}
-      </ContentWrapper>
+      {component}
     </ContentOuterWrapper>
   );
 };
