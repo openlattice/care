@@ -50,8 +50,10 @@ const IncidentSelection = (props :Props) => {
     const incidentNumber = incidentData.getIn([FQN.CRIMINALJUSTICE_CASE_NUMBER_FQN, 0]);
     const incidentDatetime = incidentData.getIn([FQN.DATETIME_START_FQN, 0]);
     const formattedDateTime = getDateShortFromIsoDate(incidentDatetime);
+
+    const label = incidentNumber ? `${formattedDateTime} (#${incidentNumber})` : formattedDateTime;
     return {
-      label: `#${incidentNumber} (${formattedDateTime})`,
+      label,
       value: incidentData
     };
   });

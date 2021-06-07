@@ -6,25 +6,26 @@ import React, {
   useMemo,
   useState
 } from 'react';
-import { DateTime } from 'luxon';
-import { Form, DataProcessingUtils } from 'lattice-fabricate';
+
+import { Map } from 'immutable';
+import { DataProcessingUtils, Form } from 'lattice-fabricate';
 import {
   Card,
   CardHeader,
   CardSegment,
   Spinner
 } from 'lattice-ui-kit';
-import { Map } from 'immutable';
-import { bindActionCreators } from 'redux';
+import { DateTime } from 'luxon';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { RequestStates } from 'redux-reqseq';
 import type { Dispatch } from 'redux';
 import type { RequestSequence, RequestState } from 'redux-reqseq';
 
-import { useFormData } from '../../../../components/hooks';
-import { schema, uiSchema } from './schemas/ScarsMarksTattoosSchemas';
 import { submitScarsMarksTattoos, updateScarsMarksTattoos } from './actions/ScarsMarksTattoosActions';
+import { schema, uiSchema } from './schemas/ScarsMarksTattoosSchemas';
 
+import { useFormData } from '../../../../components/hooks';
 import { COMPLETED_DT_FQN } from '../../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../../shared/Consts';
 
@@ -91,7 +92,7 @@ const ScarsForm = (props :Props) => {
     const { formData: newFormData } = payload;
     const nowAsIsoString :string = DateTime.local().toISO();
 
-    const associations = [
+    const associations :any[][] = [
       [OBSERVED_IN_FQN, 0, IDENTIFYING_CHARACTERISTICS_FQN, personEKID, PEOPLE_FQN, {
         [COMPLETED_DT_FQN]: [nowAsIsoString]
       }]

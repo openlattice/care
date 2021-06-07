@@ -86,7 +86,7 @@ class AddressForm extends Component<Props, State> {
     formData: {}
   }
 
-  getAssociations = () => {
+  getAssociations = () :any[][] => {
     const { personEKID } = this.props;
     const nowAsIsoString :string = DateTime.local().toISO();
     return [

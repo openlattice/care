@@ -1,2 +1,8 @@
+build/storybook
 coverage/
+docs/
 flow-typed/
+__snapshots__
+*.LICENSE.txt
+*.stories.js
+*.test.js

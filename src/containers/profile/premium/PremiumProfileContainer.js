@@ -127,9 +127,6 @@ const BreadcrumbWrapper = styled.div`
 
 const ActionBar = styled.div`
   display: flex;
-  ${media.tablet`
-    flex-direction: column;
-  `}
 `;
 
 type Props = {

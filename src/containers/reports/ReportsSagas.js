@@ -906,7 +906,7 @@ function* submitReportWorker(action :SequenceAction) :Generator<*, *, *> {
       (state) => state.getIn(['staff', 'currentUser', 'data', OPENLATTICE_ID_FQN, 0], '')
     );
 
-    const associations = [
+    const associations :any[][] = [
       [REPORTED_FQN, staffEKID, STAFF_FQN, 0, BEHAVIORAL_HEALTH_REPORT_FQN, {
         [FQN.DATE_TIME_FQN]: [formData[POST_PROCESS_FIELDS.TIMESTAMP]]
       }],

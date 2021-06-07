@@ -19,6 +19,10 @@ module.exports = {
     __PACKAGE__: PACKAGE.name,
     __VERSION__: PACKAGE.version,
   },
+  moduleNameMapper: {
+    'core-js/library/fn/array/fill': '<rootDir>/node_modules/core-js-pure/features/array/fill',
+    'core-js/library/fn/array/includes': '<rootDir>/node_modules/core-js-pure/features/array/includes',
+  },
   modulePathIgnorePatterns: [
     '<rootDir>/build/',
     '<rootDir>/flow-typed/',
@@ -26,9 +30,6 @@ module.exports = {
   rootDir: '../..',
   setupFiles: [
     '<rootDir>/config/jest/enzyme.config.js',
-  ],
-  setupFilesAfterEnv: [
-    '<rootDir>/config/jest/test.config.js',
   ],
   testEnvironment: '<rootDir>/config/jest/jsdom.config.js',
   testURL: 'http://localhost',

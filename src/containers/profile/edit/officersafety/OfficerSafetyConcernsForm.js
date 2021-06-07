@@ -102,7 +102,7 @@ class OfficerSafetyConcernsForm extends Component<Props, State> {
     });
   }
 
-  getAssociations = (formData :Object) => {
+  getAssociations = (formData :Object) :any[][] => {
     const { personEKID, responsePlanEKID } = this.props;
     const nowAsIsoString :string = DateTime.local().toISO();
     const safetyAssociations = this.getOfficerSafetyAssocations(
