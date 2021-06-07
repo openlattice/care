@@ -439,7 +439,7 @@ const getEntityAddressIndexByFQN = (schema) => {
     const sectionProperties = getSectionProperties(sectionSchema);
     Object.keys(sectionProperties).forEach((entityAddressKey) => {
       const { entityIndex, entitySetName } = parseEntityAddressKey(entityAddressKey);
-      if (entityIndex < 0) {
+      if (typeof entityIndex === 'number' && entityIndex < 0) {
         entityAddressIndexByFQN[entitySetName] = entityIndex;
       }
     });
@@ -528,7 +528,7 @@ const constructFormDataFromNeighbors = (neighborsByFQN :Map, schema :Object) :Ob
       } = parseEntityAddressKey(entityAddressKey);
 
       // if sectionType is an array, iterate over neighbors of matching type
-      if (sectionType === 'array' && entityIndex < 0) {
+      if (sectionType === 'array' && typeof entityIndex === 'number' && entityIndex < 0) {
         const neighbors = neighborsByFQN.get(entitySetName, List());
         neighbors.forEach((neighbor, index) => {
           let value = neighbor.getIn(['neighborDetails', propertyTypeFQN], List()).toJS();

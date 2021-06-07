@@ -84,7 +84,7 @@ class AppearanceForm extends Component<Props, State> {
     });
   }
 
-  getAssociations = () => {
+  getAssociations = () :any[][] => {
     const { personEKID } = this.props;
     const nowAsIsoString :string = DateTime.local().toISO();
     return [
