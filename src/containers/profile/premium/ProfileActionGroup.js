@@ -7,11 +7,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Map, getIn } from 'immutable';
 import {
   Button,
+  Fab,
   Hooks,
   IconButton,
   Menu,
   MenuItem,
   NestedMenuItem,
+  StyleUtils,
 } from 'lattice-ui-kit';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router';
@@ -26,6 +28,8 @@ import { getEntityKeyId } from '../../../utils/DataUtils';
 import { putProfileVisibility } from '../edit/visibility/VisibilityActions';
 import type { VisibilityType } from '../edit/visibility/VisibilityTypes';
 
+const { media } = StyleUtils;
+
 const { useBoolean } = Hooks;
 
 const ButtonGroup = styled.div`
@@ -35,6 +39,24 @@ const ButtonGroup = styled.div`
     margin-right: 5px;
   }
 `;
+
+const MobileFab = styled(Fab)`
+  display: none;
+  ${media.phone`
+    display: inline-flex;
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    z-index: 1;
+  `}
+`;
+
+const DesktopButton = styled(Button)`
+  ${media.phone`
+    display: none;
+  `}
+`;
+
 type Props = {
   isAuthorized :boolean;
 };
@@ -81,7 +103,8 @@ const ProfileActionGroup = ({ isAuthorized } :Props) => {
 
   return (
     <ButtonGroup>
-      <Button color="primary" onClick={openReportSelection}>Create Report</Button>
+      <DesktopButton color="primary" onClick={openReportSelection}>Create Report</DesktopButton>
+      <MobileFab color="primary" variant="extended" onClick={openReportSelection}>Create Report</MobileFab>
       <IconButton
           aria-controls={isMenuOpen ? 'button-action-menu' : undefined}
           aria-expanded={isMenuOpen ? 'true' : undefined}

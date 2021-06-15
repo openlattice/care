@@ -1066,8 +1066,12 @@ function* createMissingCallForServiceWorker(action :SequenceAction) :Generator<a
         const reportEKID = getIn(entityIndexToIdMap, [BEHAVIORAL_HEALTH_REPORT_FQN, 0]);
 
         const NOW_DATA = { [COMPLETED_DT_FQN]: [DateTime.local().toISO()] };
+
+        const associations :any[][] = [
+          [REGISTERED_FOR_FQN, reportEKID, BEHAVIORAL_HEALTH_REPORT_FQN, 0, CALL_FOR_SERVICE_FQN, NOW_DATA]
+        ];
         const associationEntityData = processAssociationEntityData(
-          [[REGISTERED_FOR_FQN, reportEKID, BEHAVIORAL_HEALTH_REPORT_FQN, 0, CALL_FOR_SERVICE_FQN, NOW_DATA]],
+          associations,
           entitySetIds,
           propertyTypeIds
         );

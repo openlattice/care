@@ -198,8 +198,9 @@ function* createMissingPersonDetailsWorker(action :SequenceAction) :Generator<an
       const personEKID = getIn(entityIndexToIdMap, [PEOPLE_FQN, 0]);
 
       const NOW_DATA = { [COMPLETED_DT_FQN]: [DateTime.local().toISO()] };
+      const associations :any[][] = [[REPORTED_FQN, personEKID, PEOPLE_FQN, 0, PERSON_DETAILS_FQN, NOW_DATA]];
       const associationEntityData = processAssociationEntityData(
-        [[REPORTED_FQN, personEKID, PEOPLE_FQN, 0, PERSON_DETAILS_FQN, NOW_DATA]],
+        associations,
         entitySetIds,
         propertyTypeIds
       );

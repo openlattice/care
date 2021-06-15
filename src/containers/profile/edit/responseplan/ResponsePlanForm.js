@@ -132,7 +132,7 @@ class ResponsePlanForm extends Component<Props, State> {
     });
   }
 
-  getAssociations = (formData :Object) => {
+  getAssociations = (formData :Object) :any[][] => {
     const { match } = this.props;
     const personEKID = match.params[PROFILE_ID_PARAM];
     const nowAsIsoString :string = DateTime.local().toISO();

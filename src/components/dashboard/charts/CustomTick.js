@@ -53,7 +53,7 @@ type Props = {
 const CustomTick = ({ payload, y } :Props) => {
   const { value } = payload;
 
-  const lines = splitText(value);
+  const lines = splitText(String(value));
   const yInit = y - (lines.length * 6);
 
   return (
