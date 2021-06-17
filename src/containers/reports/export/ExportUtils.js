@@ -845,7 +845,6 @@ const insertPriorArrests = (xmlPayload :XMLPayload) => {
     [UNKNOWN]: UNKNOWN,
   });
 
-  debugger;
   const [priorArrests, hits] = transformValue(priorArrestRaw, transformMap, UNKNOWN);
   xmlPayload.jdpRecord.PriorOpt = priorArrests;
   if (!hits) xmlPayload.errors.push(`Invalid "Prior Arrests" - Defaulting to ${UNKNOWN}`);
