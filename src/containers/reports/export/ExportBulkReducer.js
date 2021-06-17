@@ -23,9 +23,11 @@ export default function reducer(state :Map = INITIAL_STATE, action :Object) {
       return exportCrisisXMLByDateRange.reducer(state, action, {
         REQUEST: () => state.set('fetchState', RequestStates.PENDING),
         SUCCESS: () => {
-          const { errors, filename } = action.value;
+          const { errors, filename, skipped } = action.value;
+          const SKIPPED_COUNT = `Failed to load ${skipped.length} reports.`;
+          const allErrors = skipped.length ? errors.push(SKIPPED_COUNT) : errors;
           return state
-            .set('errors', errors)
+            .set('errors', allErrors)
             .set('filename', filename)
             .set('fetchState', RequestStates.SUCCESS);
         },

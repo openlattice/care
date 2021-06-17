@@ -1008,7 +1008,7 @@ const generateXMLFromReportRange = (reportData :ReportData[], dateStart :string,
   FileSaver.saveFile(xmlWithHeader, filename, TEXT_XML);
 
   return ({
-    errors,
+    errors: List(errors),
     filename
   });
 
