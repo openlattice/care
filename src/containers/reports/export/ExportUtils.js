@@ -487,7 +487,7 @@ const getAdditionalSupportFromList = (list :List<string>) :?string => {
 const insertAdditionalSupport = (xmlPayload :XMLPayload) => {
   const { crisisReportData } = xmlPayload.reportData;
   const additionalSupport = crisisReportData
-    .getIn([GENERAL_PERSON_FQN, 0, NEIGHBOR_DETAILS, FQN.CATEGORY_FQN]);
+    .getIn([GENERAL_PERSON_FQN, 0, NEIGHBOR_DETAILS, FQN.CATEGORY_FQN], List());
 
   const support = getAdditionalSupportFromList(additionalSupport);
   if (support) {
@@ -845,6 +845,7 @@ const insertPriorArrests = (xmlPayload :XMLPayload) => {
     [UNKNOWN]: UNKNOWN,
   });
 
+  debugger;
   const [priorArrests, hits] = transformValue(priorArrestRaw, transformMap, UNKNOWN);
   xmlPayload.jdpRecord.PriorOpt = priorArrests;
   if (!hits) xmlPayload.errors.push(`Invalid "Prior Arrests" - Defaulting to ${UNKNOWN}`);
