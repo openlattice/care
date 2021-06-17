@@ -27,10 +27,15 @@ import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
-import { LangUtils, Logger, ValidationUtils } from 'lattice-utils';
+import {
+  LangUtils,
+  Logger,
+  ValidationUtils
+} from 'lattice-utils';
 import { DateTime } from 'luxon';
 import type { Saga } from '@redux-saga/core';
 import type { UUID } from 'lattice';
+import type { WorkerResponse } from 'lattice-sagas';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
@@ -120,9 +125,9 @@ const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
 const { getAuthorizationsWorker } = AuthorizationsApiSagas;
 const { getAuthorizations } = AuthorizationsApiActions;
 
-const { getEntityData, deleteEntityAndNeighborData } = DataApiActions;
+const { getEntityData, deleteEntityData } = DataApiActions;
 
-const { getEntityDataWorker, deleteEntityAndNeighborDataWorker } = DataApiSagas;
+const { getEntityDataWorker, deleteEntityDataWorker } = DataApiSagas;
 
 const {
   findEntityAddressKeyFromMap,
@@ -544,92 +549,105 @@ function* getChargeEventsWatcher() :Generator<any, any, any> {
   yield takeLatest(GET_CHARGE_EVENTS, getChargeEventsWorker);
 }
 
-function* getCrisisReportV2DataWorker(action :{ reportEKID :UUID, reportFQN :FQN, reportData ?:Map }) :Saga<Object> {
-  const {
-    reportEKID,
-    reportFQN = CRISIS_REPORT_CLINICIAN_FQN,
-    reportData
-  } = action;
-  if (!isValidUUID(reportEKID) || !FQN.isValid(reportFQN)) throw ERR_ACTION_VALUE_TYPE;
-  const app :Map = yield select((state) => state.get('app', Map()));
-  const reportESID = getESIDFromApp(app, reportFQN);
+function* getCrisisReportV2DataWorker(
+  action :{ reportEKID :UUID, reportFQN :FQN, reportData ?:Map }
+) :Saga<WorkerResponse> {
+  let response = {};
+  try {
+    const {
+      reportEKID,
+      reportFQN = CRISIS_REPORT_CLINICIAN_FQN,
+      reportData
+    } = action;
+    if (!isValidUUID(reportEKID) || !FQN.isValid(reportFQN)) throw ERR_ACTION_VALUE_TYPE;
+    const app :Map = yield select((state) => state.get('app', Map()));
+    const reportESID = getESIDFromApp(app, reportFQN);
 
-  const neighborsResponse = yield call(
-    getReportsV2NeighborsWorker,
-    getReportsV2Neighbors({
-      reportEKIDs: [reportEKID],
-      reportFQN,
-    })
-  );
-
-  if (neighborsResponse.error) throw neighborsResponse.error;
-
-  const neighbors = neighborsResponse.data.get(reportEKID) || List();
-  const appTypeFqnsByIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds']).flip());
-  const neighborsByFQN = groupNeighborsByFQNs(neighbors, appTypeFqnsByIds);
-  const incidentEKID = neighborsByFQN.getIn([INCIDENT_FQN, 0, 'neighborDetails', OPENLATTICE_ID_FQN, 0]);
-  const chargeEKIDs = neighborsByFQN
-    .get(CHARGE_FQN, List())
-    .map((charge) => charge.getIn(['neighborDetails', OPENLATTICE_ID_FQN, 0]))
-    .toJS();
-
-  const locationRequest = call(
-    getLocationOfIncidentWorker,
-    getLocationOfIncident(incidentEKID)
-  );
-
-  const subjectRequest = call(
-    getSubjectOfIncidentWorker,
-    getSubjectOfIncident(incidentEKID)
-  );
-
-  const chargeEventsRequest = call(
-    getChargeEventsWorker,
-    getChargeEvents(chargeEKIDs)
-  );
-
-  const [subjectResponse, locationResponse, chargeEventsResponse] = yield all([
-    subjectRequest,
-    locationRequest,
-    chargeEventsRequest
-  ]);
-
-  if (subjectResponse.error) throw subjectResponse.error;
-  if (locationResponse.error) throw locationResponse.error;
-  if (chargeEventsResponse.error) throw chargeEventsResponse.error;
-  const subjectData = subjectResponse.data.getIn([incidentEKID, 0, 'neighborDetails'], Map());
-  const locationData = locationResponse.data.get(incidentEKID, List());
-  const chargeEventsData = chargeEKIDs
-    .map((chargeEKID) => chargeEventsResponse.data.getIn([chargeEKID, 0], Map()));
-
-  // fetch report if not provided
-  let report = reportData;
-  if (!report) {
-    const reportResponse = yield call(
-      getEntityDataWorker,
-      getEntityData({
-        entitySetId: reportESID,
-        entityKeyId: reportEKID
+    const neighborsResponse = yield call(
+      getReportsV2NeighborsWorker,
+      getReportsV2Neighbors({
+        reportEKIDs: [reportEKID],
+        reportFQN,
       })
     );
 
-    if (reportResponse.error) throw reportResponse.error;
-    report = fromJS(reportResponse.data);
+    if (neighborsResponse.error) throw neighborsResponse.error;
+
+    const neighbors = neighborsResponse.data.get(reportEKID) || List();
+    const appTypeFqnsByIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds']).flip());
+    const neighborsByFQN = groupNeighborsByFQNs(neighbors, appTypeFqnsByIds);
+    const incidentEKID = neighborsByFQN.getIn([INCIDENT_FQN, 0, 'neighborDetails', OPENLATTICE_ID_FQN, 0]);
+    if (!isValidUUID(incidentEKID)) throw Error(`invalid incident for report ${reportEKID}`);
+
+    const chargeEKIDs = neighborsByFQN
+      .get(CHARGE_FQN, List())
+      .map((charge) => charge.getIn(['neighborDetails', OPENLATTICE_ID_FQN, 0]))
+      .toJS();
+
+    const locationRequest = call(
+      getLocationOfIncidentWorker,
+      getLocationOfIncident(incidentEKID)
+    );
+    const subjectRequest = call(
+      getSubjectOfIncidentWorker,
+      getSubjectOfIncident(incidentEKID)
+    );
+
+    const chargeEventsRequest = call(
+      getChargeEventsWorker,
+      getChargeEvents(chargeEKIDs)
+    );
+
+    const [subjectResponse, locationResponse, chargeEventsResponse] = yield all([
+      subjectRequest,
+      locationRequest,
+      chargeEventsRequest
+    ]);
+
+    if (subjectResponse.error) throw Error(`Failed to load subject for report ${reportEKID}`);
+    if (locationResponse.error) throw Error(`Failed to load location for report ${reportEKID}`);
+    if (chargeEventsResponse.error) throw Error(`Failed to load charges for report ${reportEKID}`);
+    const subjectData = subjectResponse.data.getIn([incidentEKID, 0, 'neighborDetails'], Map());
+    const locationData = locationResponse.data.get(incidentEKID, List());
+    const chargeEventsData = chargeEKIDs
+      .map((chargeEKID) => chargeEventsResponse.data.getIn([chargeEKID, 0], Map()));
+
+    // fetch report if not provided
+    let report = reportData;
+    if (!report) {
+      const reportResponse = yield call(
+        getEntityDataWorker,
+        getEntityData({
+          entitySetId: reportESID,
+          entityKeyId: reportEKID
+        })
+      );
+
+      if (reportResponse.error) throw reportResponse.error;
+      report = fromJS(reportResponse.data);
+    }
+
+    // include report and location in neighbors
+    const reportEntity = fromJS({ neighborDetails: report });
+    const reportDataByFQN = neighborsByFQN
+      .set(reportFQN.toString(), List([reportEntity]))
+      .set(LOCATION_FQN.toString(), locationData)
+      .set(CHARGE_EVENT_FQN.toString(), chargeEventsData);
+
+    response = {
+      data: {
+        reportData: report,
+        reportDataByFQN,
+        subjectData,
+      }
+    };
+
   }
-
-  // include report and location in neighbors
-  const reportEntity = fromJS({ neighborDetails: report });
-  const reportDataByFQN = neighborsByFQN
-    .set(reportFQN.toString(), List([reportEntity]))
-    .set(LOCATION_FQN.toString(), locationData)
-    .set(CHARGE_EVENT_FQN.toString(), chargeEventsData);
-
-  const response = {
-    reportData: report,
-    reportDataByFQN,
-    subjectData,
-  };
-
+  catch (error) {
+    response = {
+      error
+    };
+  }
   return response;
 }
 
@@ -647,11 +665,13 @@ function* getCrisisReportV2Worker(action :SequenceAction) :Generator<any, any, a
     if (!isValidUUID(reportEKID) || !FQN.isValid(reportFQN)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getCrisisReportV2.request(action.id));
 
+    const crisisReportDataResponse = yield call(getCrisisReportV2DataWorker, { reportEKID, reportFQN });
+    if (crisisReportDataResponse.error) throw crisisReportDataResponse.error;
     const {
       subjectData,
       reportDataByFQN,
       reportData,
-    } = yield call(getCrisisReportV2DataWorker, { reportEKID, reportFQN });
+    } = crisisReportDataResponse.data;
     const reporterData = reportDataByFQN.getIn([STAFF_FQN, 0], Map());
     const formData = fromJS(constructFormDataFromNeighbors(reportDataByFQN, reviewSchema));
     const entityIndexToIdMap = getEntityIndexToIdMapFromNeighbors(reportDataByFQN, reviewSchema);
@@ -1240,14 +1260,14 @@ function* deleteCrisisReportWorker(action :SequenceAction) :Generator<any, any, 
   const response = {};
   try {
     yield put(deleteCrisisReport.request(action.id));
-    const { entityKeyId, reportFQN } = action.value;
+    const { entityKeyId, reportFQN, entityIndexToIdMap } = action.value;
     if (!isValidUUID(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
 
     const app :Map = yield select((state) => state.get('app', Map()));
     const entitySetFQNs = [
       // report
       reportFQN,
-      PART_OF_FQN,
+      // PART_OF_FQN,
       // report contents
       BEHAVIOR_FQN,
       CALL_FOR_SERVICE_FQN,
@@ -1281,21 +1301,33 @@ function* deleteCrisisReportWorker(action :SequenceAction) :Generator<any, any, 
       SELF_HARM_CLINICIAN_FQN,
       SUBSTANCE_CLINICIAN_FQN,
     ];
-    const [reportESID, partOfESID, ...reportContentESIDs] = getESIDsFromApp(app, entitySetFQNs);
-    const filter = {
-      entityKeyIds: [entityKeyId],
-      src: reportContentESIDs,
-      edge: [partOfESID],
-    };
+    const [reportESID, /* partOfESID, */ ...reportContentESIDs] = getESIDsFromApp(app, entitySetFQNs);
+    // const filter = {
+    //   entityKeyIds: [entityKeyId],
+    //   src: reportContentESIDs,
+    //   dst: [reportESID],
+    //   edge: [partOfESID],
+    // };
 
-    console.log(reportESID, entityKeyId, filter);
+    const entityIndex = entityIndexToIdMap.delete(INCIDENT_FQN).delete(STAFF_FQN);
+    const deleteCalls = [];
+    entityIndex.entrySeq().forEach(([fqn, ids]) => {
+      const entitySetId = getESIDFromApp(app, fqn);
+      const entityKeyIds = ids.valueSeq().toArray();
+      deleteCalls.push(call(
+        deleteEntityDataWorker,
+        deleteEntityData({
+          entityKeyIds,
+          entitySetId,
+          deleteType: DeleteTypes.Soft
+        })
+      ));
+    });
+
+    console.log(reportESID, entityKeyId, entityIndexToIdMap, entityIndex, deleteCalls);
 
     debugger;
-    const deleteResponse = yield call(deleteEntityAndNeighborDataWorker, deleteEntityAndNeighborData({
-      deleteType: DeleteTypes.Soft,
-      entitySetId: reportESID,
-      filter,
-    }));
+    const deleteResponse = yield all(deleteCalls);
 
     // if (deleteResponse.error) throw deleteResponse.error;
 

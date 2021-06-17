@@ -16,6 +16,7 @@ import { RequestStates } from 'redux-reqseq';
 import {
   addOptionalCrisisReportContent,
   clearCrisisReport,
+  deleteCrisisReport,
   deleteCrisisReportContent,
   getCrisisReportV2,
   updateCrisisReport,
@@ -108,6 +109,14 @@ const CrisisReportContainerV2 = () => {
     }));
   };
 
+  const handleDeleteReport = () => {
+    dispatch(deleteCrisisReport({
+      entityKeyId: reportId,
+      reportFQN: CRISIS_REPORT_FQN,
+      entityIndexToIdMap,
+    }));
+  };
+
   const name = getFirstLastFromPerson(subjectData);
   const formContext = {
     addActions: {
@@ -131,6 +140,7 @@ const CrisisReportContainerV2 = () => {
             <BreadcrumbItem>{reportData.getIn([FQN.TYPE_FQN, 0], 'Report')}</BreadcrumbItem>
           </Breadcrumbs>
           <BlameCard reporterData={reporterData} />
+          <button type="button" onClick={handleDeleteReport}>delete report</button>
           <Card>
             <Form
                 disabled
