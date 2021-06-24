@@ -487,7 +487,7 @@ const getAdditionalSupportFromList = (list :List<string>) :?string => {
 const insertAdditionalSupport = (xmlPayload :XMLPayload) => {
   const { crisisReportData } = xmlPayload.reportData;
   const additionalSupport = crisisReportData
-    .getIn([GENERAL_PERSON_FQN, 0, NEIGHBOR_DETAILS, FQN.CATEGORY_FQN]);
+    .getIn([GENERAL_PERSON_FQN, 0, NEIGHBOR_DETAILS, FQN.CATEGORY_FQN], List());
 
   const support = getAdditionalSupportFromList(additionalSupport);
   if (support) {
@@ -1008,7 +1008,7 @@ const generateXMLFromReportRange = (reportData :ReportData[], dateStart :string,
   FileSaver.saveFile(xmlWithHeader, filename, TEXT_XML);
 
   return ({
-    errors,
+    errors: List(errors),
     filename
   });
 
