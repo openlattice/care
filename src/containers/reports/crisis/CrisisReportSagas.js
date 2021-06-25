@@ -118,7 +118,7 @@ import { getFormSchemaWorker } from '../FormSchemasSagas';
 
 const { FQN } = Models;
 const { DeleteTypes } = Types;
-const { isDefined } = LangUtils;
+const { isDefined, isNonEmptyArray } = LangUtils;
 const { isValidUUID } = ValidationUtils;
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
 const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
@@ -1309,27 +1309,41 @@ function* deleteCrisisReportWorker(action :SequenceAction) :Generator<any, any, 
     //   edge: [partOfESID],
     // };
 
-    const entityIndex = entityIndexToIdMap.delete(INCIDENT_FQN).delete(STAFF_FQN);
+    const entityIndex = entityIndexToIdMap
+      .delete(reportFQN)
+      .delete(INCIDENT_FQN)
+      .delete(STAFF_FQN);
     const deleteCalls = [];
+
+    deleteCalls.push(call(
+      deleteEntityDataWorker,
+      deleteEntityData({
+        entityKeyIds: [entityKeyId],
+        entitySetId: reportESID,
+        deleteType: DeleteTypes.Soft,
+        block: true,
+      })
+    ));
+
     entityIndex.entrySeq().forEach(([fqn, ids]) => {
       const entitySetId = getESIDFromApp(app, fqn);
-      const entityKeyIds = ids.valueSeq().toArray();
-      deleteCalls.push(call(
-        deleteEntityDataWorker,
-        deleteEntityData({
-          entityKeyIds,
-          entitySetId,
-          deleteType: DeleteTypes.Soft
-        })
-      ));
+      const entityKeyIds = ids.valueSeq().flatten().toJS();
+      if (isNonEmptyArray(entityKeyIds)) {
+        deleteCalls.push(call(
+          deleteEntityDataWorker,
+          deleteEntityData({
+            entityKeyIds,
+            entitySetId,
+            deleteType: DeleteTypes.Soft,
+            block: false,
+          })
+        ));
+      }
     });
 
-    console.log(reportESID, entityKeyId, entityIndexToIdMap, entityIndex, deleteCalls);
-
-    debugger;
     const deleteResponse = yield all(deleteCalls);
 
-    // if (deleteResponse.error) throw deleteResponse.error;
+    if (deleteResponse.error) throw deleteResponse.error;
 
     // yield put(deleteCrisisReport.success(action.id, { path, entityIndexToIdMap: newEntityIndexToIdMap }));
   }
