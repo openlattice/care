@@ -586,7 +586,9 @@ const insertPurpose = (xmlPayload :XMLPayload) => {
   xmlPayload.jdpRecord.PurpOpt = '';
   xmlPayload.jdpRecord.PurpOth = '';
 
+  /* eslint-disable-next-line no-unused-vars */
   const [value, other] = otherValueFromList(reasonProperty);
+  const firstValue = reasonProperty.first();
 
   const transformMap = Map({
     [AGENCY_ASSISTANCE]: AGENCY_ASSISTANCE,
@@ -601,9 +603,9 @@ const insertPurpose = (xmlPayload :XMLPayload) => {
     [OTHER]: OTHER
   });
 
-  const [transformed, hit] = transformValue(value, transformMap);
+  const [transformed, hit] = transformValue(firstValue, transformMap);
   xmlPayload.jdpRecord.PurpOpt = transformed;
-  xmlPayload.jdpRecord.PurpOth = other;
+  xmlPayload.jdpRecord.PurpOth = firstValue === OTHER ? other : '';
   if (!reasonProperty.size || !hit) {
     xmlPayload.errors.push('Invalid "Reason for JDP intervention"');
   }
