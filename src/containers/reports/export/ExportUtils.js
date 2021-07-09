@@ -632,7 +632,7 @@ const insertInsurance = (xmlPayload :XMLPayload) => {
     [MEDICAID]: MEDICAID,
     [NO_SECONDARY]: NO_SECONDARY,
     [PRIVATE]: PRIVATE,
-    [VETERANS_AFFAIRS]: 'Vet Admin/Tri-Care',
+    [VETERANS_AFFAIRS]: 'Vet Admin/ Tri-Care',
     [UNKNOWN]: UNKNOWN,
     [UNINSURED]: UNINSURED,
     [OTHER]: OTHER
