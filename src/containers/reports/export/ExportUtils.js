@@ -905,7 +905,7 @@ const insertNotes = (xmlPayload :XMLPayload) => {
 };
 
 const insertTimestamp = (xmlPayload :XMLPayload) => {
-  xmlPayload.jdpRecord.DocSent = DateTime.local().toFormat('LL/dd/y_H:m:s');
+  xmlPayload.jdpRecord.DocSent = DateTime.local().toFormat('LL/dd/y_H:mm:ss');
   return xmlPayload;
 };
 
