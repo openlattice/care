@@ -255,7 +255,7 @@ const insertEntryDate = (xmlPayload :XMLPayload) => {
     .getIn([CRISIS_REPORT_CLINICIAN_FQN, 0, NEIGHBOR_DETAILS, FQN.COMPLETED_DT_FQN, 0]);
   const entryDateDT = DateTime.fromISO(entryDate);
   if (entryDateDT.isValid) {
-    xmlPayload.jdpRecord.EntryDate = entryDateDT.toLocaleString(DateTime.DATE_SHORT);
+    xmlPayload.jdpRecord.EntryDate = entryDateDT.toFormat('LL/dd/yyyy');
   }
   else {
     xmlPayload.jdpRecord.EntryDate = '';
@@ -296,7 +296,7 @@ const insertIncidentDate = (xmlPayload :XMLPayload) => {
     if (hour < 16) shift = 'Daytime';
     if (hour < 8) shift = 'Overnight';
 
-    xmlPayload.jdpRecord.IncDate = incidentDT.toLocaleString(DateTime.DATE_SHORT);
+    xmlPayload.jdpRecord.IncDate = incidentDT.toFormat('LL/dd/yyyy');
     xmlPayload.jdpRecord.IncOpt = shift;
   }
   else {
@@ -903,7 +903,7 @@ const insertNotes = (xmlPayload :XMLPayload) => {
 };
 
 const insertTimestamp = (xmlPayload :XMLPayload) => {
-  xmlPayload.jdpRecord.DocSent = DateTime.local().toFormat('M/d/y_H:m:s');
+  xmlPayload.jdpRecord.DocSent = DateTime.local().toFormat('LL/dd/y_H:m:s');
   return xmlPayload;
 };
 
