@@ -5,7 +5,13 @@
 import React, { useState } from 'react';
 
 import styled from 'styled-components';
-import { Button, Colors } from 'lattice-ui-kit';
+import {
+  Button,
+  DatePicker,
+  Label,
+  Select,
+  StyleUtils
+} from 'lattice-ui-kit';
 import { ReduxUtils } from 'lattice-utils';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RequestState } from 'redux-reqseq';
@@ -13,24 +19,23 @@ import type { RequestState } from 'redux-reqseq';
 import ExportBulkXMLModal from './ExportBulkXMLModal';
 import { exportCrisisXMLByDateRange } from './ExportActions';
 
-import DateTimeRange from '../../../components/controls/DateTimeRange';
+import { Header } from '../../../components/layout';
+import { REPORT_TYPE_OPTIONS } from '../crisis/schemas/constants';
 
-const { NEUTRAL } = Colors;
 const { isPending } = ReduxUtils;
+const { media } = StyleUtils;
 
-export const DownloadsWrapper = styled.div`
-  display: flex;
-  width: 100%;
-`;
-
-export const FormWrapper = styled.div`
-  align-items: center;
-  border: 1px solid ${NEUTRAL.N100};
-  display: flex;
-  flex-direction: column;
-  margin: 30px auto;
-  padding: 30px 0;
-  width: 100%;
+const DateRangeContainer = styled.div`
+  align-items: flex-start;
+  display: grid;
+  flex: 1;
+  grid-auto-flow: column;
+  grid-gap: 10px;
+  ${media.phone`
+    grid-gap: 5px;
+    grid-auto-flow: row;
+    grid-template-columns: none;
+  `}
 `;
 
 const ButtonRow = styled.div`
@@ -38,10 +43,24 @@ const ButtonRow = styled.div`
   text-align: center;
 `;
 
+const DatePickerWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+`;
+const CSV = 'CSV';
+const XML = 'XML';
+const FORMAT_OPTIONS = [
+  { label: XML, value: XML },
+  { label: CSV, value: CSV },
+];
+
 const ExportBulkXMLContainer = () => {
   const dispatch = useDispatch();
   const [dateEnd, setDateEnd] = useState('');
   const [dateStart, setDateStart] = useState('');
+  const [reportType, setReportType] = useState(REPORT_TYPE_OPTIONS[0]);
+  const [format, setFormat] = useState(FORMAT_OPTIONS[0]);
   const [isVisible, setIsVisible] = useState(false);
   const fetchState :RequestState = useSelector((state) => state.getIn(['exportBulk', 'fetchState']));
 
@@ -57,26 +76,60 @@ const ExportBulkXMLContainer = () => {
   const pending = isPending(fetchState);
 
   return (
-    <DownloadsWrapper>
-      <FormWrapper>
-        <DateTimeRange
-            label="Crisis Downloads"
-            startDate={dateStart}
-            endDate={dateEnd}
-            onStartChange={(date) => setDateStart(date)}
-            onEndChange={(date) => setDateEnd(date)} />
+    <>
+      <Header>
+        Crisis Downloads
+      </Header>
+      <form>
+        <DateRangeContainer>
+          <DatePickerWrapper>
+            <Label htmlFor="format">Format</Label>
+            <Select
+                inputId="format"
+                onChange={(option) => setFormat(option)}
+                options={FORMAT_OPTIONS}
+                value={format} />
+          </DatePickerWrapper>
+          <DatePickerWrapper>
+            <Label htmlFor="start-date">Start Date</Label>
+            <DatePicker
+                id="start-date"
+                onChange={(date) => setDateStart(date)}
+                value={dateStart} />
+          </DatePickerWrapper>
+          <DatePickerWrapper>
+            <Label htmlFor="end-date">End Date</Label>
+            <DatePicker
+                id="end-date"
+                onChange={(date) => setDateEnd(date)}
+                value={dateEnd} />
+          </DatePickerWrapper>
+          {
+            format.value === CSV && (
+              <DatePickerWrapper>
+                <Label htmlFor="report-type">Report Type</Label>
+                <Select
+                    inputId="report-type"
+                    onChange={(option) => setReportType(option)}
+                    options={REPORT_TYPE_OPTIONS}
+                    value={reportType} />
+              </DatePickerWrapper>
+            )
+          }
+        </DateRangeContainer>
         <ButtonRow>
           <Button
               color="primary"
               disabled={pending || !dateStart || !dateEnd}
               isLoading={pending}
-              onClick={handleExport}>
-            Export XML
+              onClick={handleExport}
+              type="submit">
+            Download
           </Button>
         </ButtonRow>
-      </FormWrapper>
+      </form>
       <ExportBulkXMLModal isVisible={isVisible} onClose={handleClose} />
-    </DownloadsWrapper>
+    </>
   );
 };
 
