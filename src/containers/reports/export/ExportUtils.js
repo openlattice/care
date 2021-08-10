@@ -1016,8 +1016,13 @@ const generateXMLFromReportRange = (reportData :ReportData[], dateStart :string,
 
 };
 
+const generateCSVFromReportRange = () => {
+
+};
+
 export {
   createJDPRecord,
+  generateCSVFromReportRange,
   generateXMLFromReportData,
   generateXMLFromReportRange,
 };

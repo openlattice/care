@@ -16,8 +16,8 @@ import { ReduxUtils } from 'lattice-utils';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RequestState } from 'redux-reqseq';
 
-import ExportBulkXMLModal from './ExportBulkXMLModal';
-import { exportCrisisXMLByDateRange } from './ExportActions';
+import ExportBulkModal from './ExportBulkModal';
+import { exportCrisisCSVByDateRange, exportCrisisXMLByDateRange } from './ExportActions';
 
 import { Header } from '../../../components/layout';
 import { REPORT_TYPE_OPTIONS } from '../crisis/schemas/constants';
@@ -55,7 +55,7 @@ const FORMAT_OPTIONS = [
   { label: CSV, value: CSV },
 ];
 
-const ExportBulkXMLContainer = () => {
+const ExportBulkContainer = () => {
   const dispatch = useDispatch();
   const [dateEnd, setDateEnd] = useState('');
   const [dateStart, setDateStart] = useState('');
@@ -66,7 +66,16 @@ const ExportBulkXMLContainer = () => {
 
   const handleExport = () => {
     setIsVisible(true);
-    dispatch(exportCrisisXMLByDateRange({ dateEnd, dateStart }));
+    if (format.value === CSV) {
+      dispatch(exportCrisisCSVByDateRange({
+        dateEnd,
+        dateStart,
+        reportType: reportType.value
+      }));
+    }
+    else {
+      dispatch(exportCrisisXMLByDateRange({ dateEnd, dateStart }));
+    }
   };
 
   const handleClose = () => {
@@ -128,10 +137,10 @@ const ExportBulkXMLContainer = () => {
           </Button>
         </ButtonRow>
       </form>
-      <ExportBulkXMLModal isVisible={isVisible} onClose={handleClose} />
+      <ExportBulkModal isVisible={isVisible} onClose={handleClose} />
     </>
   );
 };
 
 // $FlowFixMe
-export default ExportBulkXMLContainer;
+export default ExportBulkContainer;

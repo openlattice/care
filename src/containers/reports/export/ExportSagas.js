@@ -21,13 +21,15 @@ import type { WorkerResponse } from 'lattice-sagas';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
+  EXPORT_CRISIS_CSV_BY_DATE_RANGE,
   EXPORT_CRISIS_XML,
   EXPORT_CRISIS_XML_BY_DATE_RANGE,
+  exportCrisisCSVByDateRange,
   exportCrisisXML,
   exportCrisisXMLByDateRange,
   getAdjacentCrisisData
 } from './ExportActions';
-import { generateXMLFromReportData, generateXMLFromReportRange } from './ExportUtils';
+import { generateCSVFromReportRange, generateXMLFromReportData, generateXMLFromReportRange } from './ExportUtils';
 
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { getESIDsFromApp } from '../../../utils/AppUtils';
@@ -322,7 +324,69 @@ function* exportCrisisXMLByDateRangeWatcher() :Saga<void> {
   yield takeLatest(EXPORT_CRISIS_XML_BY_DATE_RANGE, exportCrisisXMLByDateRangeWorker);
 }
 
+function* exportCrisisCSVByDateRangeWorker(action :SequenceAction) :Saga<void> {
+  try {
+    const {
+      dateStart,
+      dateEnd,
+      reportType
+    } = action.value;
+
+    yield put(exportCrisisCSVByDateRange.request(action.id));
+
+    const response = yield call(
+      searchReportsByDateRange,
+      {
+        dateEnd,
+        dateStart,
+        maxHits: 10000,
+        reportFQN: reportType,
+        start: 0,
+      }
+    );
+
+    if (response.error) throw response.error;
+
+    const reportRequests = response.data.hits.map((report) => call(getCrisisReportV2DataWorker, {
+      reportEKID: getEntityKeyId(report),
+      reportFQN: reportType,
+      reportData: fromJS(report)
+    }));
+
+    const reportResponses = yield all(reportRequests);
+    const filteredReportResponses = [];
+    const skipped = [];
+    reportResponses.forEach((reportResponse) => {
+      if (reportResponse.data) {
+        filteredReportResponses.push(reportResponse);
+      }
+      else if (reportResponse.error) {
+        skipped.push(reportResponse.error);
+      }
+    });
+
+    const reports = filteredReportResponses.map((reportResponse) => reportResponse.data);
+    console.log(reports);
+
+    const payload = generateCSVFromReportRange(reports, dateStart, dateEnd);
+
+    yield put(exportCrisisCSVByDateRange.success(action.id, { ...payload, skipped }));
+  }
+  catch (error) {
+    yield put(exportCrisisCSVByDateRange.failure(action.id, error));
+  }
+  finally {
+    yield put(exportCrisisCSVByDateRange.finally(action.id));
+  }
+}
+
+function* exportCrisisCSVByDateRangeWatcher() :Saga<void> {
+  yield takeLatest(EXPORT_CRISIS_CSV_BY_DATE_RANGE, exportCrisisCSVByDateRangeWorker);
+}
+
 export {
+  exportCrisisCSVByDateRangeWatcher,
+  exportCrisisCSVByDateRangeWorker,
   exportCrisisXMLByDateRangeWatcher,
   exportCrisisXMLByDateRangeWorker,
   exportCrisisXMLWatcher,

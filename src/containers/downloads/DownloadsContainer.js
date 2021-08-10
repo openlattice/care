@@ -7,7 +7,7 @@ import { useRouteMatch } from 'react-router';
 
 import CrisisReportDownloadsContainer from './CrisisReportDownloadsContainer';
 
-import ExportBulkXMLContainer from '../reports/export/ExportBulkXMLContainer';
+import ExportBulkContainer from '../reports/export/ExportBulkContainer';
 import { useAppSettings } from '../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../components/layout';
 import { DOWNLOADS_PATH } from '../../core/router/Routes';
@@ -37,7 +37,7 @@ const DownloadsContainer = () => {
       break;
   }
 
-  if (v2) component = <ExportBulkXMLContainer />;
+  if (v2) component = <ExportBulkContainer />;
 
   return (
     <ContentOuterWrapper>
