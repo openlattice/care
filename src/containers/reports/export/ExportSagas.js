@@ -366,9 +366,8 @@ function* exportCrisisCSVByDateRangeWorker(action :SequenceAction) :Saga<void> {
     });
 
     const reports = filteredReportResponses.map((reportResponse) => reportResponse.data);
-    console.log(reports);
 
-    const payload = generateCSVFromReportRange(reports, dateStart, dateEnd);
+    const payload = generateCSVFromReportRange(reports, dateStart, dateEnd, reportType);
 
     yield put(exportCrisisCSVByDateRange.success(action.id, { ...payload, skipped }));
   }
