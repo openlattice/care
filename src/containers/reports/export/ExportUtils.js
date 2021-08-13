@@ -6,7 +6,7 @@ import {
   List,
   Map,
   OrderedMap,
-  OrderedSet,
+  Set,
 } from 'immutable';
 import { DateTimeUtils, LangUtils } from 'lattice-utils';
 import { DateTime } from 'luxon';
@@ -222,6 +222,8 @@ const {
   CHARGE_FQN,
   CRISIS_REPORT_CLINICIAN_FQN,
   CRISIS_REPORT_FQN,
+  DIAGNOSIS_CLINICIAN_FQN,
+  DIAGNOSIS_FQN,
   DISPOSITION_CLINICIAN_FQN,
   EMPLOYEE_FQN,
   ENCOUNTER_DETAILS_FQN,
@@ -234,10 +236,14 @@ const {
   INSURANCE_FQN,
   INVOICE_FQN,
   LOCATION_FQN,
+  MEDICATION_STATEMENT_CLINICIAN_FQN,
+  MEDICATION_STATEMENT_FQN,
   OCCUPATION_FQN,
   OFFENSE_FQN,
+  PEOPLE_FQN,
   REFERRAL_SOURCE_FQN,
   SUBSTANCE_CLINICIAN_FQN,
+  SUBSTANCE_FQN,
 } = APP_TYPES_FQNS;
 
 const pipe = (...fns) => (init) => fns.reduce((piped, f) => f(piped), init);
@@ -1027,29 +1033,57 @@ const generateXMLFromReportRange = (reportData :ReportData[], dateStart :string,
 // map non standard app type names to entity type names
 // coincidentally is also a whitelist of entity sets to include ids
 // TODO: fetch actual entity type names from edm?
-
 const APP_TO_ENTITY_TYPE = Map({
   [CRISIS_REPORT_CLINICIAN_FQN]: 'ol.interactionreport',
   [CRISIS_REPORT_FQN]: 'ol.interactionreport',
   [FOLLOW_UP_REPORT_FQN]: 'ol.interactionreport',
   [INCIDENT_FQN]: 'ol.incident',
+  [PEOPLE_FQN]: 'general.person',
 });
+
+// Set of app types that have multiple associations to interaction report
+const MULTIPLE_ENTITIES = Set([
+  CHARGE_EVENT_FQN,
+  CHARGE_FQN,
+  DIAGNOSIS_CLINICIAN_FQN,
+  DIAGNOSIS_FQN,
+  MEDICATION_STATEMENT_CLINICIAN_FQN,
+  MEDICATION_STATEMENT_FQN,
+  SUBSTANCE_CLINICIAN_FQN,
+  SUBSTANCE_FQN,
+]);
 
 const addPropertyToRow = (
   mutable :Map,
-  baseHeader :string,
+  appType :string,
   propertyValue :List,
   propertyType :string,
   includeOLNamespace :boolean = false
 ) => {
-  // avoid openlattice namespaced properties
+
+  let prefix = APP_TO_ENTITY_TYPE.get(appType);
+  if (!prefix) {
+    prefix = `ol.${appType.split('.')[1]}`;
+  }
+
   if (propertyType.startsWith('openlattice.@')) {
+    // avoid openlattice namespaced properties
     if (!includeOLNamespace) {
       return;
     }
   }
-  const fullHeader = `${baseHeader}_${propertyType}`;
-  mutable.set(fullHeader, propertyValue);
+
+  // add numbered suffix to repeat property in row
+  let header = `${prefix}_${propertyType}`;
+  if (MULTIPLE_ENTITIES.has(appType)) {
+    let suffix = 1;
+    while (mutable.has(`${header}_${suffix}`)) {
+      suffix += 1;
+    }
+    header = `${header}_${suffix}`;
+  }
+
+  mutable.set(header, propertyValue);
 };
 
 const getCSVRow = (report) => {
@@ -1060,19 +1094,21 @@ const getCSVRow = (report) => {
 
   const row = OrderedMap().withMutations((mutable) => {
     subjectData.forEach((propertyValue, propertyType) => {
-      addPropertyToRow(mutable, 'general.person', propertyValue, propertyType, true);
+      addPropertyToRow(
+        mutable,
+        PEOPLE_FQN,
+        propertyValue,
+        propertyType,
+        true
+      );
     });
 
     reportDataByFQN.forEach((entities, appType) => {
-      let baseHeader = APP_TO_ENTITY_TYPE.get(appType);
-      if (!baseHeader) {
-        baseHeader = `ol.${appType.split('.')[1]}`;
-      }
       entities.forEach((entity) => {
         const neighborDetails = entity.get('neighborDetails', Map());
         const includeIds = APP_TO_ENTITY_TYPE.includes(appType);
         neighborDetails.forEach((propertyValue, propertyType) => {
-          addPropertyToRow(mutable, baseHeader, propertyValue, propertyType, includeIds);
+          addPropertyToRow(mutable, appType, propertyValue, propertyType, includeIds);
         });
       });
     });
@@ -1094,7 +1130,7 @@ const generateCSVFromReportRange = (
   const filename = `${reportType.name}-${startDT.toISODate()}-to-${endDT.toISODate()}.csv`;
 
   let csvData = List();
-  let fields = OrderedSet();
+  let fields = Set();
 
   reports.forEach((report) => {
     const row = getCSVRow(report);
