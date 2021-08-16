@@ -16,11 +16,16 @@ const resetExportCrisisXML = () => ({
 const GET_ADJACENT_CRISIS_DATA :'GET_ADJACENT_CRISIS_DATA' = 'GET_ADJACENT_CRISIS_DATA';
 const getAdjacentCrisisData :RequestSequence = newRequestSequence(GET_ADJACENT_CRISIS_DATA);
 
+const EXPORT_CRISIS_CSV_BY_DATE_RANGE :'EXPORT_CRISIS_CSV_BY_DATE_RANGE' = 'EXPORT_CRISIS_CSV_BY_DATE_RANGE';
+const exportCrisisCSVByDateRange :RequestSequence = newRequestSequence(EXPORT_CRISIS_CSV_BY_DATE_RANGE);
+
 export {
+  EXPORT_CRISIS_CSV_BY_DATE_RANGE,
   EXPORT_CRISIS_XML,
   EXPORT_CRISIS_XML_BY_DATE_RANGE,
   GET_ADJACENT_CRISIS_DATA,
   RESET_EXPORT_CRISIS_XML,
+  exportCrisisCSVByDateRange,
   exportCrisisXML,
   exportCrisisXMLByDateRange,
   getAdjacentCrisisData,

@@ -27,9 +27,9 @@ const SuccessIcon = (size) => <FontAwesomeIcon icon={faCheckCircle} color={GREEN
 
 const FailureIcon = (size) => <FontAwesomeIcon icon={faExclamationTriangle} color={YELLOW.Y300} size={size} />;
 
-const CAPTION = 'Generating XML. This could take several minutes.';
+const CAPTION = 'Generating report. This could take several minutes.';
 
-const ExportBulkXML = () => {
+const ExportBulk = () => {
   const requestState = useSelector((store) => store.getIn(['exportBulk', 'fetchState']));
   const errors = useSelector((store) => store.getIn(['exportBulk', 'errors']));
   const filename = useSelector((store) => store.getIn(['exportBulk', 'filename']));
@@ -55,4 +55,4 @@ const ExportBulkXML = () => {
   );
 };
 
-export default ExportBulkXML;
+export default ExportBulk;

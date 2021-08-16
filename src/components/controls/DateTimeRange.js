@@ -5,7 +5,7 @@
 import React from 'react';
 
 import styled from 'styled-components';
-import { DateTimePicker, Label } from 'lattice-ui-kit';
+import { DatePicker, Label } from 'lattice-ui-kit';
 
 type Props = {
   startDate :?string,
@@ -51,13 +51,13 @@ const DateTimeRange = ({
     <DateRangeContainer>
       <DatePickerWrapper>
         <Label>Start Date</Label>
-        <DateTimePicker
+        <DatePicker
             onChange={onStartChange}
             value={startDate} />
       </DatePickerWrapper>
       <DatePickerWrapper>
         <Label>End Date</Label>
-        <DateTimePicker
+        <DatePicker
             onChange={onEndChange}
             value={endDate} />
       </DatePickerWrapper>
