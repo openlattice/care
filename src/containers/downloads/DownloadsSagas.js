@@ -170,11 +170,15 @@ function* downloadFormsWorker(action :SequenceAction) :Generator<*, *, *> {
     });
     const datetimePTID = edm.getIn(['fqnToIdMap', FQN.DATE_TIME_OCCURRED_FQN]);
 
+    const startTerm = startDT.isValid ? startDT.startOf('day').toISO() : '*';
+    const endTerm = endDT.isValid ? endDT.endOf('day').toISO() : '*';
+    const searchTerm = getSearchTerm(datetimePTID, `[${startTerm} TO ${endTerm}]`);
+
     const searchConstraints = {
       constraints: [{
         constraints: [{
           fuzzy: false,
-          searchTerm: getSearchTerm(datetimePTID, `[${startDT.toString()} TO ${endDT.toString()}]`),
+          searchTerm,
         }]
       }],
       entitySetIds: [reportESID],
