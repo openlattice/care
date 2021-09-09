@@ -260,6 +260,7 @@ type XMLPayload = {|
   errors :string[];
   jdpRecord :JDPRecord;
   reportData :ReportData;
+  warnings :string[];
 |};
 
 /* eslint-disable no-param-reassign */
@@ -360,7 +361,7 @@ const insertLocation = (xmlPayload :XMLPayload) => {
     xmlPayload.jdpRecord.LocationOpt = value;
   }
   else {
-    xmlPayload.errors.push(`Invalid "Location Category" - Defaulting to "${OTHER}"`);
+    xmlPayload.warnings.push(`Invalid "Location Category" - Defaulting to "${OTHER}"`);
   }
 
   return xmlPayload;
@@ -456,7 +457,7 @@ const insertMilitaryService = (xmlPayload :XMLPayload) => {
   }
   else {
     xmlPayload.jdpRecord.MilSrvOpt = UNKNOWN;
-    xmlPayload.errors.push(`Invalid history of military service. Defaulting to "${UNKNOWN}"`);
+    xmlPayload.warnings.push(`Invalid history of military service. Defaulting to "${UNKNOWN}"`);
   }
   return xmlPayload;
 };
@@ -477,7 +478,7 @@ const insertSubstance = (xmlPayload :XMLPayload) => {
   }
   else {
     xmlPayload.jdpRecord.SAcurrtOpt = UNKNOWN;
-    xmlPayload.errors.push(`Invalid "Substance use during incident" - Defaulting to "${UNKNOWN}"`);
+    xmlPayload.warnings.push(`Invalid "Substance use during incident" - Defaulting to "${UNKNOWN}"`);
   }
 
   return xmlPayload;
@@ -509,7 +510,7 @@ const insertAdditionalSupport = (xmlPayload :XMLPayload) => {
   }
   else {
     xmlPayload.jdpRecord.AddlSptOSOpt = NONE;
-    xmlPayload.errors.push(`Invalid "Assistance on scene" - Defaulting to ${NONE}`);
+    xmlPayload.warnings.push(`Invalid "Assistance on scene" - Defaulting to ${NONE}`);
   }
 
   return xmlPayload;
@@ -523,7 +524,7 @@ const insertJailDiversion = (xmlPayload :XMLPayload) => {
   const jailDiversion = encounterDetails.getIn([FQN.LAW_ENFORCEMENT_INVOLVEMENT_FQN, 0]);
   xmlPayload.jdpRecord.JDOpt = jailDiversion ? 'Yes' : 'No';
   if (jailDiversion === undefined) {
-    xmlPayload.errors.push(`Invalid "Was jail diversion an option?" - Defaulting to ${NO}`);
+    xmlPayload.warnings.push(`Invalid "Was jail diversion an option?" - Defaulting to ${NO}`);
   }
 
   return xmlPayload;
@@ -656,7 +657,7 @@ const insertInsurance = (xmlPayload :XMLPayload) => {
   const [primary, primaryHit] = transformValue(primaryRaw, transformMap, UNKNOWN);
 
   xmlPayload.jdpRecord.PrimSrcOpt = primary;
-  if (!primaryHit) xmlPayload.errors.push(`Invalid "Primary Insurance" - Defaulting to "${UNKNOWN}"`);
+  if (!primaryHit) xmlPayload.warnings.push(`Invalid "Primary Insurance" - Defaulting to "${UNKNOWN}"`);
 
   const secondaryEntity = insurances
     .find((neighbor) => neighbor.getIn([FQN.GENERAL_STATUS_FQN, 0]) === SECONDARY) || Map();
@@ -666,7 +667,7 @@ const insertInsurance = (xmlPayload :XMLPayload) => {
   const [secondary, secondaryHit] = transformValue(secondaryRaw, transformMap, UNKNOWN);
 
   xmlPayload.jdpRecord.SecSrcOpt = secondary;
-  if (!secondaryHit) xmlPayload.errors.push(`Invalid "Secondary Insurance" - Defaulting to "${UNKNOWN}"`);
+  if (!secondaryHit) xmlPayload.warnings.push(`Invalid "Secondary Insurance" - Defaulting to "${UNKNOWN}"`);
 
   return xmlPayload;
 };
@@ -739,7 +740,7 @@ const insertStateService = (xmlPayload :XMLPayload) => {
   const [serviceName, hit] = transformValue(value, transformMap, UNKNOWN);
 
   xmlPayload.jdpRecord.KnownOpt = serviceName;
-  if (!hit) xmlPayload.errors.push(`Invalid "Client of State Service" - Defaulting to ${UNKNOWN}`);
+  if (!hit) xmlPayload.warnings.push(`Invalid "Client of State Service" - Defaulting to ${UNKNOWN}`);
 
   return xmlPayload;
 };
@@ -757,7 +758,7 @@ const insertRaceEthnicity = (xmlPayload :XMLPayload) => {
 
   const [ethnicity, ethnicityHit] = transformValue(ethnicityRaw, ethnicityMap, UNKNOWN);
   xmlPayload.jdpRecord.HPOpt = ethnicity;
-  if (!ethnicityHit) xmlPayload.errors.push(`Invalid "Ethnicity" - Defaulting to ${UNKNOWN}`);
+  if (!ethnicityHit) xmlPayload.warnings.push(`Invalid "Ethnicity" - Defaulting to ${UNKNOWN}`);
 
   const raceMap = Map({
     [WHITE]: WHITE,
@@ -770,7 +771,7 @@ const insertRaceEthnicity = (xmlPayload :XMLPayload) => {
   const [race, raceHit] = transformValue(raceRaw, raceMap, UNKNOWN);
 
   xmlPayload.jdpRecord.RaceOpt = race;
-  if (!raceHit) xmlPayload.errors.push(`Invalid "Race" - Defaulting to ${UNKNOWN}`);
+  if (!raceHit) xmlPayload.warnings.push(`Invalid "Race" - Defaulting to ${UNKNOWN}`);
 
   return xmlPayload;
 };
@@ -793,7 +794,7 @@ const insertEmployment = (xmlPayload :XMLPayload) => {
   const [employment, hit] = transformValue(employmentValue, transformMap, UNKNOWN);
   xmlPayload.jdpRecord.EmpSrcOpt = employment;
 
-  if (!hit) xmlPayload.errors.push(`Invalid "Occupation" - Defaulting to ${UNKNOWN}`);
+  if (!hit) xmlPayload.warnings.push(`Invalid "Occupation" - Defaulting to ${UNKNOWN}`);
 
   return xmlPayload;
 };
@@ -821,7 +822,7 @@ const insertResidence = (xmlPayload :XMLPayload) => {
   const [type, typeHit] = transformValue(typeValue, typeMap, UNKNOWN);
 
   xmlPayload.jdpRecord.LivOpt = type;
-  if (!typeHit) xmlPayload.errors.push(`Invalid "Current Housing Situation" - Defaulting to ${UNKNOWN}`);
+  if (!typeHit) xmlPayload.warnings.push(`Invalid "Current Housing Situation" - Defaulting to ${UNKNOWN}`);
 
   const livesWithOptions :List = housingEntity.get(FQN.DESCRIPTION_FQN, List());
   const [livesWithRaw, other] = otherValueFromList(livesWithOptions);
@@ -843,7 +844,7 @@ const insertResidence = (xmlPayload :XMLPayload) => {
   const [livesWith, livesWithHit] = transformValue(livesWithRaw, livesWithMap, UNKNOWN);
   xmlPayload.jdpRecord.WithOpt = livesWith;
   xmlPayload.jdpRecord.WithOth = other;
-  if (!livesWithHit) xmlPayload.errors.push(`Invalid "Resides With" - Defaulting to ${UNKNOWN}`);
+  if (!livesWithHit) xmlPayload.warnings.push(`Invalid "Resides With" - Defaulting to ${UNKNOWN}`);
 
   return xmlPayload;
 };
@@ -863,7 +864,7 @@ const insertPriorArrests = (xmlPayload :XMLPayload) => {
 
   const [priorArrests, hits] = transformValue(priorArrestRaw, transformMap, UNKNOWN);
   xmlPayload.jdpRecord.PriorOpt = priorArrests;
-  if (!hits) xmlPayload.errors.push(`Invalid "Prior Arrests" - Defaulting to ${UNKNOWN}`);
+  if (!hits) xmlPayload.warnings.push(`Invalid "Prior Arrests" - Defaulting to ${UNKNOWN}`);
 
   return xmlPayload;
 };
@@ -884,7 +885,7 @@ const insertSubstanceHistory = (xmlPayload :XMLPayload) => {
   }
   else {
     xmlPayload.jdpRecord.SubOpt = UNKNOWN;
-    xmlPayload.errors.push(`Invalid "History of substance abuse/treatment" - Defaulting to "${UNKNOWN}"`);
+    xmlPayload.warnings.push(`Invalid "History of substance abuse/treatment" - Defaulting to "${UNKNOWN}"`);
   }
 
   return xmlPayload;
@@ -908,7 +909,7 @@ const insertPresenceOfPsychiatricIssue = (xmlPayload :XMLPayload) => {
   });
   const [presenting, hit] = transformValue(psychIssue, transformMap, UNKNOWN);
   xmlPayload.jdpRecord.PresOpt = presenting;
-  if (!hit) xmlPayload.errors.push(`Invalid "Presenting Psychiatric Issue" - Defaulting to ${UNKNOWN}`);
+  if (!hit) xmlPayload.warnings.push(`Invalid "Presenting Psychiatric Issue" - Defaulting to ${UNKNOWN}`);
 
   return xmlPayload;
 };
@@ -924,7 +925,13 @@ const insertTimestamp = (xmlPayload :XMLPayload) => {
 };
 
 const createJDPRecord = (reportData :ReportData) :XMLPayload => {
-  const initialPayload :XMLPayload = { reportData, jdpRecord: {}, errors: [] };
+  const initialPayload :XMLPayload = {
+    errors: [],
+    jdpRecord: {},
+    reportData,
+    warnings: [],
+  };
+
   return pipe(
     insertEntryDate,
     insertJDP,
@@ -958,7 +965,7 @@ const createJDPRecord = (reportData :ReportData) :XMLPayload => {
 };
 
 const generateXMLFromReportData = (reportData :ReportData) :Object => {
-  const { jdpRecord, errors } = createJDPRecord(reportData);
+  const { errors, jdpRecord, warnings } = createJDPRecord(reportData);
   const { clinicianReportData } = reportData;
   const incidentID = clinicianReportData
     .getIn([INCIDENT_FQN, 0, NEIGHBOR_DETAILS, FQN.CRIMINALJUSTICE_CASE_NUMBER_FQN, 0]);
@@ -980,6 +987,7 @@ const generateXMLFromReportData = (reportData :ReportData) :Object => {
 
   return ({
     errors: List(errors),
+    warnings: List(warnings),
     filename
   });
 };
