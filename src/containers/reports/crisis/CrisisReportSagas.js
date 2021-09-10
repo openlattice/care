@@ -637,6 +637,7 @@ function* getCrisisReportV2DataWorker(
 
   }
   catch (error) {
+    error.metadata = action;
     response = {
       error
     };

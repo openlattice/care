@@ -20,6 +20,7 @@ import type { Saga } from '@redux-saga/core';
 import type { WorkerResponse } from 'lattice-sagas';
 import type { SequenceAction } from 'redux-reqseq';
 
+import getExportErrorAccordion from './ExportErrorAccordion';
 import {
   EXPORT_CRISIS_CSV_BY_DATE_RANGE,
   EXPORT_CRISIS_XML,
@@ -290,7 +291,12 @@ function* exportCrisisXMLByDateRangeWorker(action :SequenceAction) :Saga<void> {
         filteredClinicianReportResponses.push(clinicianResponse);
       }
       else if (clinicianResponse.error) {
-        skipped.push(clinicianResponse.error);
+        const { reportEKID } = clinicianResponse.error.metadata;
+        skipped.push(getExportErrorAccordion({
+          headline: 'Failed',
+          errors: [clinicianResponse.error.message],
+          reportEKID
+        }));
       }
     });
 

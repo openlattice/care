@@ -26,8 +26,7 @@ export default function reducer(state :Map = INITIAL_STATE, action :Object) {
           .set('fetchState', RequestStates.PENDING),
         SUCCESS: () => {
           const { errors, filename, skipped } = action.value;
-          const SKIPPED_COUNT = `Failed to load ${skipped.length} reports.`;
-          const allErrors = skipped.length ? errors.push(SKIPPED_COUNT) : errors;
+          const allErrors = skipped.length ? errors.concat(skipped) : errors;
           return state
             .set('errors', allErrors)
             .set('filename', filename)
