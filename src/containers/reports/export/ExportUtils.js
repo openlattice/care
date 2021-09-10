@@ -1,4 +1,5 @@
 // @flow
+import React from 'react';
 
 import Papa from 'papaparse';
 import { j2xParser as Parser } from 'fast-xml-parser';
@@ -10,9 +11,14 @@ import {
 } from 'immutable';
 import { DateTimeUtils, LangUtils } from 'lattice-utils';
 import { DateTime } from 'luxon';
+import { Link } from 'react-router-dom';
 
+import ExportErrorAccordion from './ExportErrorAccordion';
+
+import Accordion from '../../../components/accordion';
 import FileSaver from '../../../utils/FileSaver';
 import * as FQN from '../../../edm/DataModelFqns';
+import { CRISIS_REPORT_CLINICIAN_PATH, REPORT_ID_PATH } from '../../../core/router/Routes';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { NEIGHBOR_DETAILS } from '../../../utils/constants/EntityConstants';
 import { TEXT_XML, XML_HEADER } from '../../../utils/constants/FileTypeConstants';
@@ -998,18 +1004,31 @@ const generateXMLFromReportRange = (reportData :ReportData[], dateStart :string,
   const errors = [];
   const jdpRecords = [];
   xmlPayloads.forEach((payload) => {
-
+    const { clinicianReportData } = payload.reportData;
+    const reportEKID = clinicianReportData
+      .getIn([CRISIS_REPORT_CLINICIAN_FQN, 0, NEIGHBOR_DETAILS, FQN.OPENLATTICE_ID_FQN, 0]);
+    const path = CRISIS_REPORT_CLINICIAN_PATH.replace(REPORT_ID_PATH, reportEKID);
     if (payload.errors.length) {
-      const { clinicianReportData } = payload.reportData;
-      const incidentID = clinicianReportData
-        .getIn([INCIDENT_FQN, 0, NEIGHBOR_DETAILS, FQN.CRIMINALJUSTICE_CASE_NUMBER_FQN, 0]);
-      const reportEKID = clinicianReportData
-        .getIn([CRISIS_REPORT_CLINICIAN_FQN, 0, NEIGHBOR_DETAILS, FQN.OPENLATTICE_ID_FQN, 0]);
-
-      const msg = `Report ${reportEKID} for Incident ${incidentID} was excluded for errors.`;
-      errors.push(msg);
+      const element = (
+        <ExportErrorAccordion
+            errors={payload.errors}
+            headline="Excluded"
+            path={path}
+            reportEKID={reportEKID} />
+      );
+      errors.push(element);
     }
     else {
+      if (payload.warnings.length) {
+        const element = (
+          <ExportErrorAccordion
+              errors={payload.warnings}
+              headline="Warning"
+              path={path}
+              reportEKID={reportEKID} />
+        );
+        errors.push(element);
+      }
       jdpRecords.push(payload.jdpRecord);
     }
 
