@@ -11,14 +11,11 @@ import {
 } from 'immutable';
 import { DateTimeUtils, LangUtils } from 'lattice-utils';
 import { DateTime } from 'luxon';
-import { Link } from 'react-router-dom';
 
 import ExportErrorAccordion from './ExportErrorAccordion';
 
-import Accordion from '../../../components/accordion';
 import FileSaver from '../../../utils/FileSaver';
 import * as FQN from '../../../edm/DataModelFqns';
-import { CRISIS_REPORT_CLINICIAN_PATH, REPORT_ID_PATH } from '../../../core/router/Routes';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { NEIGHBOR_DETAILS } from '../../../utils/constants/EntityConstants';
 import { TEXT_XML, XML_HEADER } from '../../../utils/constants/FileTypeConstants';
