@@ -1007,13 +1007,11 @@ const generateXMLFromReportRange = (reportData :ReportData[], dateStart :string,
     const { clinicianReportData } = payload.reportData;
     const reportEKID = clinicianReportData
       .getIn([CRISIS_REPORT_CLINICIAN_FQN, 0, NEIGHBOR_DETAILS, FQN.OPENLATTICE_ID_FQN, 0]);
-    const path = CRISIS_REPORT_CLINICIAN_PATH.replace(REPORT_ID_PATH, reportEKID);
     if (payload.errors.length) {
       const element = (
         <ExportErrorAccordion
             errors={payload.errors}
             headline="Excluded"
-            path={path}
             reportEKID={reportEKID} />
       );
       errors.push(element);
@@ -1024,7 +1022,6 @@ const generateXMLFromReportRange = (reportData :ReportData[], dateStart :string,
           <ExportErrorAccordion
               errors={payload.warnings}
               headline="Warning"
-              path={path}
               reportEKID={reportEKID} />
         );
         errors.push(element);

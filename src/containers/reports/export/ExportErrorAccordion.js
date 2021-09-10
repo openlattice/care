@@ -7,12 +7,13 @@ import { Link } from 'react-router-dom';
 import type { UUID } from 'lattice';
 
 import Accordion from '../../../components/accordion';
+import { CRISIS_REPORT_CLINICIAN_PATH, REPORT_ID_PATH } from '../../../core/router/Routes';
 
 type Props = {
   caption ?:Node;
   errors :string[];
   headline :Node;
-  path :string;
+  path ?:string;
   reportEKID :UUID;
 };
 
@@ -23,10 +24,11 @@ const ExportErrorAccordion = ({
   path,
   reportEKID,
 } :Props) => {
-  const subtitle = caption || <Link target="_blank" to={path}>{reportEKID}</Link>;
+  const defaultPath = CRISIS_REPORT_CLINICIAN_PATH.replace(REPORT_ID_PATH, reportEKID);
+  const defaultCaption = <Link target="_blank" to={path || defaultPath}>{reportEKID}</Link>;
   return (
     <Accordion>
-      <div caption={subtitle} headline={headline}>
+      <div caption={caption || defaultCaption} headline={headline}>
         <ul>
           { errors.map((msg, idx) => (<li key={idx}>{msg}</li>))}
         </ul>
@@ -37,6 +39,7 @@ const ExportErrorAccordion = ({
 
 ExportErrorAccordion.defaultProps = {
   caption: '',
+  path: ''
 };
 
 export default ExportErrorAccordion;
