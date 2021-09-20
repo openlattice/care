@@ -1,7 +1,7 @@
 // @flow
 import React, { useReducer, useRef } from 'react';
 
-import { faEllipsisH } from '@fortawesome/pro-regular-svg-icons';
+import { faEllipsisV } from '@fortawesome/pro-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   IconButton,
@@ -78,7 +78,7 @@ const ReportMenuButton = () => {
           onClick={handleOpenMenu}
           ref={anchorRef}
           variant="text">
-        <FontAwesomeIcon icon={faEllipsisH} />
+        <FontAwesomeIcon icon={faEllipsisV} fixedWidth />
       </IconButton>
       <Menu
           anchorEl={anchorRef.current}
