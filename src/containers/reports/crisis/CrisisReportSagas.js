@@ -1261,78 +1261,36 @@ function* deleteCrisisReportWorker(action :SequenceAction) :Generator<any, any, 
   const response = {};
   try {
     yield put(deleteCrisisReport.request(action.id));
-    const { entityKeyId, reportFQN, entityIndexToIdMap } = action.value;
+    const { entityKeyId, entityIndexToIdMap } = action.value;
     if (!isValidUUID(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
 
     const app :Map = yield select((state) => state.get('app', Map()));
-    const entitySetFQNs = [
-      // report
-      reportFQN,
-      // PART_OF_FQN,
-      // report contents
-      BEHAVIOR_FQN,
-      CALL_FOR_SERVICE_FQN,
-      CHARGE_FQN,
-      DIAGNOSIS_FQN,
-      DISPOSITION_FQN,
-      EMPLOYEE_FQN,
-      ENCOUNTER_DETAILS_FQN,
-      ENCOUNTER_FQN,
-      GENERAL_PERSON_FQN,
-      HOUSING_FQN,
-      INCOME_FQN,
-      INJURY_FQN,
-      INTERACTION_STRATEGY_FQN,
-      INVOICE_FQN,
-      MEDICATION_STATEMENT_FQN,
-      OCCUPATION_FQN,
-      OFFENSE_FQN,
-      REFERRAL_REQUEST_FQN,
-      REFERRAL_SOURCE_FQN,
-      SELF_HARM_FQN,
-      SUBSTANCE_FQN,
-      VIOLENT_BEHAVIOR_FQN,
-      WEAPON_FQN,
-      // clinician only
-      BEHAVIOR_CLINICIAN_FQN,
-      DIAGNOSIS_CLINICIAN_FQN,
-      DISPOSITION_CLINICIAN_FQN,
-      INSURANCE_FQN,
-      MEDICATION_STATEMENT_CLINICIAN_FQN,
-      SELF_HARM_CLINICIAN_FQN,
-      SUBSTANCE_CLINICIAN_FQN,
-    ];
-    const [reportESID, /* partOfESID, */ ...reportContentESIDs] = getESIDsFromApp(app, entitySetFQNs);
-    // const filter = {
-    //   entityKeyIds: [entityKeyId],
-    //   src: reportContentESIDs,
-    //   dst: [reportESID],
-    //   edge: [partOfESID],
-    // };
 
-    const entityIndex = entityIndexToIdMap.delete(INCIDENT_FQN).delete(STAFF_FQN);
+    // do not delete incident or staff
+
+    const entityIndex = entityIndexToIdMap
+      .delete(INCIDENT_FQN)
+      .delete(STAFF_FQN);
     const deleteCalls = [];
     entityIndex.entrySeq().forEach(([fqn, ids]) => {
       const entitySetId = getESIDFromApp(app, fqn);
       const entityKeyIds = ids.valueSeq().toArray();
-      deleteCalls.push(call(
-        deleteEntityDataWorker,
-        deleteEntityData({
-          entityKeyIds,
-          entitySetId,
-          deleteType: DeleteTypes.Soft
-        })
-      ));
+      if (entityKeyIds.length) {
+        deleteCalls.push(call(
+          deleteEntityDataWorker,
+          deleteEntityData({
+            entityKeyIds,
+            entitySetId,
+            deleteType: DeleteTypes.Soft
+          })
+        ));
+      }
     });
-
-    console.log(reportESID, entityKeyId, entityIndexToIdMap, entityIndex, deleteCalls);
-
-    debugger;
     const deleteResponse = yield all(deleteCalls);
 
-    // if (deleteResponse.error) throw deleteResponse.error;
+    if (deleteResponse.error) throw deleteResponse.error;
 
-    // yield put(deleteCrisisReport.success(action.id, { path, entityIndexToIdMap: newEntityIndexToIdMap }));
+    yield put(deleteCrisisReport.success(action.id));
   }
   catch (error) {
     response.error = error;
