@@ -1,9 +1,18 @@
 // @flow
+import React from 'react';
 
+import Papa from 'papaparse';
 import { j2xParser as Parser } from 'fast-xml-parser';
-import { List, Map } from 'immutable';
+import {
+  List,
+  Map,
+  OrderedMap,
+  Set,
+} from 'immutable';
 import { DateTimeUtils, LangUtils } from 'lattice-utils';
 import { DateTime } from 'luxon';
+
+import ExportErrorAccordion from './ExportErrorAccordion';
 
 import FileSaver from '../../../utils/FileSaver';
 import * as FQN from '../../../edm/DataModelFqns';
@@ -211,14 +220,18 @@ type JDPRecord = {
 }
 
 const {
-  CRISIS_REPORT_CLINICIAN_FQN,
   CALL_FOR_SERVICE_FQN,
-  CHARGE_FQN,
   CHARGE_EVENT_FQN,
+  CHARGE_FQN,
+  CRISIS_REPORT_CLINICIAN_FQN,
+  CRISIS_REPORT_FQN,
+  DIAGNOSIS_CLINICIAN_FQN,
+  DIAGNOSIS_FQN,
   DISPOSITION_CLINICIAN_FQN,
   EMPLOYEE_FQN,
   ENCOUNTER_DETAILS_FQN,
   ENCOUNTER_FQN,
+  FOLLOW_UP_REPORT_FQN,
   GENERAL_PERSON_FQN,
   HOUSING_FQN,
   INCIDENT_FQN,
@@ -226,10 +239,14 @@ const {
   INSURANCE_FQN,
   INVOICE_FQN,
   LOCATION_FQN,
+  MEDICATION_STATEMENT_CLINICIAN_FQN,
+  MEDICATION_STATEMENT_FQN,
   OCCUPATION_FQN,
   OFFENSE_FQN,
+  PEOPLE_FQN,
   REFERRAL_SOURCE_FQN,
   SUBSTANCE_CLINICIAN_FQN,
+  SUBSTANCE_FQN,
 } = APP_TYPES_FQNS;
 
 const pipe = (...fns) => (init) => fns.reduce((piped, f) => f(piped), init);
@@ -246,6 +263,7 @@ type XMLPayload = {|
   errors :string[];
   jdpRecord :JDPRecord;
   reportData :ReportData;
+  warnings :string[];
 |};
 
 /* eslint-disable no-param-reassign */
@@ -255,7 +273,7 @@ const insertEntryDate = (xmlPayload :XMLPayload) => {
     .getIn([CRISIS_REPORT_CLINICIAN_FQN, 0, NEIGHBOR_DETAILS, FQN.COMPLETED_DT_FQN, 0]);
   const entryDateDT = DateTime.fromISO(entryDate);
   if (entryDateDT.isValid) {
-    xmlPayload.jdpRecord.EntryDate = entryDateDT.toLocaleString(DateTime.DATE_SHORT);
+    xmlPayload.jdpRecord.EntryDate = entryDateDT.toFormat('LL/dd/yyyy');
   }
   else {
     xmlPayload.jdpRecord.EntryDate = '';
@@ -296,7 +314,7 @@ const insertIncidentDate = (xmlPayload :XMLPayload) => {
     if (hour < 16) shift = 'Daytime';
     if (hour < 8) shift = 'Overnight';
 
-    xmlPayload.jdpRecord.IncDate = incidentDT.toLocaleString(DateTime.DATE_SHORT);
+    xmlPayload.jdpRecord.IncDate = incidentDT.toFormat('LL/dd/yyyy');
     xmlPayload.jdpRecord.IncOpt = shift;
   }
   else {
@@ -346,7 +364,7 @@ const insertLocation = (xmlPayload :XMLPayload) => {
     xmlPayload.jdpRecord.LocationOpt = value;
   }
   else {
-    xmlPayload.errors.push(`Invalid "Location Category" - Defaulting to "${OTHER}"`);
+    xmlPayload.warnings.push(`Invalid "Location Category" - Defaulting to "${OTHER}"`);
   }
 
   return xmlPayload;
@@ -442,7 +460,7 @@ const insertMilitaryService = (xmlPayload :XMLPayload) => {
   }
   else {
     xmlPayload.jdpRecord.MilSrvOpt = UNKNOWN;
-    xmlPayload.errors.push(`Invalid history of military service. Defaulting to "${UNKNOWN}"`);
+    xmlPayload.warnings.push(`Invalid history of military service. Defaulting to "${UNKNOWN}"`);
   }
   return xmlPayload;
 };
@@ -463,7 +481,7 @@ const insertSubstance = (xmlPayload :XMLPayload) => {
   }
   else {
     xmlPayload.jdpRecord.SAcurrtOpt = UNKNOWN;
-    xmlPayload.errors.push(`Invalid "Substance use during incident" - Defaulting to "${UNKNOWN}"`);
+    xmlPayload.warnings.push(`Invalid "Substance use during incident" - Defaulting to "${UNKNOWN}"`);
   }
 
   return xmlPayload;
@@ -487,7 +505,7 @@ const getAdditionalSupportFromList = (list :List<string>) :?string => {
 const insertAdditionalSupport = (xmlPayload :XMLPayload) => {
   const { crisisReportData } = xmlPayload.reportData;
   const additionalSupport = crisisReportData
-    .getIn([GENERAL_PERSON_FQN, 0, NEIGHBOR_DETAILS, FQN.CATEGORY_FQN]);
+    .getIn([GENERAL_PERSON_FQN, 0, NEIGHBOR_DETAILS, FQN.CATEGORY_FQN], List());
 
   const support = getAdditionalSupportFromList(additionalSupport);
   if (support) {
@@ -495,7 +513,7 @@ const insertAdditionalSupport = (xmlPayload :XMLPayload) => {
   }
   else {
     xmlPayload.jdpRecord.AddlSptOSOpt = NONE;
-    xmlPayload.errors.push(`Invalid "Assistance on scene" - Defaulting to ${NONE}`);
+    xmlPayload.warnings.push(`Invalid "Assistance on scene" - Defaulting to ${NONE}`);
   }
 
   return xmlPayload;
@@ -509,7 +527,7 @@ const insertJailDiversion = (xmlPayload :XMLPayload) => {
   const jailDiversion = encounterDetails.getIn([FQN.LAW_ENFORCEMENT_INVOLVEMENT_FQN, 0]);
   xmlPayload.jdpRecord.JDOpt = jailDiversion ? 'Yes' : 'No';
   if (jailDiversion === undefined) {
-    xmlPayload.errors.push(`Invalid "Was jail diversion an option?" - Defaulting to ${NO}`);
+    xmlPayload.warnings.push(`Invalid "Was jail diversion an option?" - Defaulting to ${NO}`);
   }
 
   return xmlPayload;
@@ -586,7 +604,9 @@ const insertPurpose = (xmlPayload :XMLPayload) => {
   xmlPayload.jdpRecord.PurpOpt = '';
   xmlPayload.jdpRecord.PurpOth = '';
 
+  /* eslint-disable-next-line no-unused-vars */
   const [value, other] = otherValueFromList(reasonProperty);
+  const firstValue = reasonProperty.first();
 
   const transformMap = Map({
     [AGENCY_ASSISTANCE]: AGENCY_ASSISTANCE,
@@ -601,9 +621,9 @@ const insertPurpose = (xmlPayload :XMLPayload) => {
     [OTHER]: OTHER
   });
 
-  const [transformed, hit] = transformValue(value, transformMap);
+  const [transformed, hit] = transformValue(firstValue, transformMap);
   xmlPayload.jdpRecord.PurpOpt = transformed;
-  xmlPayload.jdpRecord.PurpOth = other;
+  xmlPayload.jdpRecord.PurpOth = firstValue === OTHER ? other : '';
   if (!reasonProperty.size || !hit) {
     xmlPayload.errors.push('Invalid "Reason for JDP intervention"');
   }
@@ -632,7 +652,7 @@ const insertInsurance = (xmlPayload :XMLPayload) => {
     [MEDICAID]: MEDICAID,
     [NO_SECONDARY]: NO_SECONDARY,
     [PRIVATE]: PRIVATE,
-    [VETERANS_AFFAIRS]: 'Vet Admin/Tri-Care',
+    [VETERANS_AFFAIRS]: 'Vet Admin/ Tri-Care',
     [UNKNOWN]: UNKNOWN,
     [UNINSURED]: UNINSURED,
     [OTHER]: OTHER
@@ -640,7 +660,7 @@ const insertInsurance = (xmlPayload :XMLPayload) => {
   const [primary, primaryHit] = transformValue(primaryRaw, transformMap, UNKNOWN);
 
   xmlPayload.jdpRecord.PrimSrcOpt = primary;
-  if (!primaryHit) xmlPayload.errors.push(`Invalid "Primary Insurance" - Defaulting to "${UNKNOWN}"`);
+  if (!primaryHit) xmlPayload.warnings.push(`Invalid "Primary Insurance" - Defaulting to "${UNKNOWN}"`);
 
   const secondaryEntity = insurances
     .find((neighbor) => neighbor.getIn([FQN.GENERAL_STATUS_FQN, 0]) === SECONDARY) || Map();
@@ -650,7 +670,7 @@ const insertInsurance = (xmlPayload :XMLPayload) => {
   const [secondary, secondaryHit] = transformValue(secondaryRaw, transformMap, UNKNOWN);
 
   xmlPayload.jdpRecord.SecSrcOpt = secondary;
-  if (!secondaryHit) xmlPayload.errors.push(`Invalid "Secondary Insurance" - Defaulting to "${UNKNOWN}"`);
+  if (!secondaryHit) xmlPayload.warnings.push(`Invalid "Secondary Insurance" - Defaulting to "${UNKNOWN}"`);
 
   return xmlPayload;
 };
@@ -723,7 +743,7 @@ const insertStateService = (xmlPayload :XMLPayload) => {
   const [serviceName, hit] = transformValue(value, transformMap, UNKNOWN);
 
   xmlPayload.jdpRecord.KnownOpt = serviceName;
-  if (!hit) xmlPayload.errors.push(`Invalid "Client of State Service" - Defaulting to ${UNKNOWN}`);
+  if (!hit) xmlPayload.warnings.push(`Invalid "Client of State Service" - Defaulting to ${UNKNOWN}`);
 
   return xmlPayload;
 };
@@ -741,7 +761,7 @@ const insertRaceEthnicity = (xmlPayload :XMLPayload) => {
 
   const [ethnicity, ethnicityHit] = transformValue(ethnicityRaw, ethnicityMap, UNKNOWN);
   xmlPayload.jdpRecord.HPOpt = ethnicity;
-  if (!ethnicityHit) xmlPayload.errors.push(`Invalid "Ethnicity" - Defaulting to ${UNKNOWN}`);
+  if (!ethnicityHit) xmlPayload.warnings.push(`Invalid "Ethnicity" - Defaulting to ${UNKNOWN}`);
 
   const raceMap = Map({
     [WHITE]: WHITE,
@@ -754,7 +774,7 @@ const insertRaceEthnicity = (xmlPayload :XMLPayload) => {
   const [race, raceHit] = transformValue(raceRaw, raceMap, UNKNOWN);
 
   xmlPayload.jdpRecord.RaceOpt = race;
-  if (!raceHit) xmlPayload.errors.push(`Invalid "Race" - Defaulting to ${UNKNOWN}`);
+  if (!raceHit) xmlPayload.warnings.push(`Invalid "Race" - Defaulting to ${UNKNOWN}`);
 
   return xmlPayload;
 };
@@ -777,7 +797,7 @@ const insertEmployment = (xmlPayload :XMLPayload) => {
   const [employment, hit] = transformValue(employmentValue, transformMap, UNKNOWN);
   xmlPayload.jdpRecord.EmpSrcOpt = employment;
 
-  if (!hit) xmlPayload.errors.push(`Invalid "Occupation" - Defaulting to ${UNKNOWN}`);
+  if (!hit) xmlPayload.warnings.push(`Invalid "Occupation" - Defaulting to ${UNKNOWN}`);
 
   return xmlPayload;
 };
@@ -805,7 +825,7 @@ const insertResidence = (xmlPayload :XMLPayload) => {
   const [type, typeHit] = transformValue(typeValue, typeMap, UNKNOWN);
 
   xmlPayload.jdpRecord.LivOpt = type;
-  if (!typeHit) xmlPayload.errors.push(`Invalid "Current Housing Situation" - Defaulting to ${UNKNOWN}`);
+  if (!typeHit) xmlPayload.warnings.push(`Invalid "Current Housing Situation" - Defaulting to ${UNKNOWN}`);
 
   const livesWithOptions :List = housingEntity.get(FQN.DESCRIPTION_FQN, List());
   const [livesWithRaw, other] = otherValueFromList(livesWithOptions);
@@ -827,7 +847,7 @@ const insertResidence = (xmlPayload :XMLPayload) => {
   const [livesWith, livesWithHit] = transformValue(livesWithRaw, livesWithMap, UNKNOWN);
   xmlPayload.jdpRecord.WithOpt = livesWith;
   xmlPayload.jdpRecord.WithOth = other;
-  if (!livesWithHit) xmlPayload.errors.push(`Invalid "Resides With" - Defaulting to ${UNKNOWN}`);
+  if (!livesWithHit) xmlPayload.warnings.push(`Invalid "Resides With" - Defaulting to ${UNKNOWN}`);
 
   return xmlPayload;
 };
@@ -847,7 +867,7 @@ const insertPriorArrests = (xmlPayload :XMLPayload) => {
 
   const [priorArrests, hits] = transformValue(priorArrestRaw, transformMap, UNKNOWN);
   xmlPayload.jdpRecord.PriorOpt = priorArrests;
-  if (!hits) xmlPayload.errors.push(`Invalid "Prior Arrests" - Defaulting to ${UNKNOWN}`);
+  if (!hits) xmlPayload.warnings.push(`Invalid "Prior Arrests" - Defaulting to ${UNKNOWN}`);
 
   return xmlPayload;
 };
@@ -868,7 +888,7 @@ const insertSubstanceHistory = (xmlPayload :XMLPayload) => {
   }
   else {
     xmlPayload.jdpRecord.SubOpt = UNKNOWN;
-    xmlPayload.errors.push(`Invalid "History of substance abuse/treatment" - Defaulting to "${UNKNOWN}"`);
+    xmlPayload.warnings.push(`Invalid "History of substance abuse/treatment" - Defaulting to "${UNKNOWN}"`);
   }
 
   return xmlPayload;
@@ -892,7 +912,7 @@ const insertPresenceOfPsychiatricIssue = (xmlPayload :XMLPayload) => {
   });
   const [presenting, hit] = transformValue(psychIssue, transformMap, UNKNOWN);
   xmlPayload.jdpRecord.PresOpt = presenting;
-  if (!hit) xmlPayload.errors.push(`Invalid "Presenting Psychiatric Issue" - Defaulting to ${UNKNOWN}`);
+  if (!hit) xmlPayload.warnings.push(`Invalid "Presenting Psychiatric Issue" - Defaulting to ${UNKNOWN}`);
 
   return xmlPayload;
 };
@@ -903,12 +923,18 @@ const insertNotes = (xmlPayload :XMLPayload) => {
 };
 
 const insertTimestamp = (xmlPayload :XMLPayload) => {
-  xmlPayload.jdpRecord.DocSent = DateTime.local().toFormat('M/d/y_H:m:s');
+  xmlPayload.jdpRecord.DocSent = DateTime.local().toFormat('LL/dd/y_H:mm:ss');
   return xmlPayload;
 };
 
 const createJDPRecord = (reportData :ReportData) :XMLPayload => {
-  const initialPayload :XMLPayload = { reportData, jdpRecord: {}, errors: [] };
+  const initialPayload :XMLPayload = {
+    errors: [],
+    jdpRecord: {},
+    reportData,
+    warnings: [],
+  };
+
   return pipe(
     insertEntryDate,
     insertJDP,
@@ -942,7 +968,7 @@ const createJDPRecord = (reportData :ReportData) :XMLPayload => {
 };
 
 const generateXMLFromReportData = (reportData :ReportData) :Object => {
-  const { jdpRecord, errors } = createJDPRecord(reportData);
+  const { errors, jdpRecord, warnings } = createJDPRecord(reportData);
   const { clinicianReportData } = reportData;
   const incidentID = clinicianReportData
     .getIn([INCIDENT_FQN, 0, NEIGHBOR_DETAILS, FQN.CRIMINALJUSTICE_CASE_NUMBER_FQN, 0]);
@@ -964,6 +990,7 @@ const generateXMLFromReportData = (reportData :ReportData) :Object => {
 
   return ({
     errors: List(errors),
+    warnings: List(warnings),
     filename
   });
 };
@@ -974,18 +1001,28 @@ const generateXMLFromReportRange = (reportData :ReportData[], dateStart :string,
   const errors = [];
   const jdpRecords = [];
   xmlPayloads.forEach((payload) => {
-
+    const { clinicianReportData } = payload.reportData;
+    const reportEKID = clinicianReportData
+      .getIn([CRISIS_REPORT_CLINICIAN_FQN, 0, NEIGHBOR_DETAILS, FQN.OPENLATTICE_ID_FQN, 0]);
     if (payload.errors.length) {
-      const { clinicianReportData } = payload.reportData;
-      const incidentID = clinicianReportData
-        .getIn([INCIDENT_FQN, 0, NEIGHBOR_DETAILS, FQN.CRIMINALJUSTICE_CASE_NUMBER_FQN, 0]);
-      const reportEKID = clinicianReportData
-        .getIn([CRISIS_REPORT_CLINICIAN_FQN, 0, NEIGHBOR_DETAILS, FQN.OPENLATTICE_ID_FQN, 0]);
-
-      const msg = `Report ${reportEKID} for Incident ${incidentID} was excluded for errors.`;
-      errors.push(msg);
+      const element = (
+        <ExportErrorAccordion
+            errors={payload.errors}
+            headline="Excluded"
+            reportEKID={reportEKID} />
+      );
+      errors.push(element);
     }
     else {
+      if (payload.warnings.length) {
+        const element = (
+          <ExportErrorAccordion
+              errors={payload.warnings}
+              headline="Warning"
+              reportEKID={reportEKID} />
+        );
+        errors.push(element);
+      }
       jdpRecords.push(payload.jdpRecord);
     }
 
@@ -1008,14 +1045,136 @@ const generateXMLFromReportRange = (reportData :ReportData[], dateStart :string,
   FileSaver.saveFile(xmlWithHeader, filename, TEXT_XML);
 
   return ({
-    errors,
+    errors: List(errors),
     filename
   });
 
 };
 
+// map non standard app type names to entity type names
+// coincidentally is also a whitelist of entity sets to include ids
+// TODO: fetch actual entity type names from edm?
+const APP_TO_ENTITY_TYPE = Map({
+  [CRISIS_REPORT_CLINICIAN_FQN]: 'ol.interactionreport',
+  [CRISIS_REPORT_FQN]: 'ol.interactionreport',
+  [FOLLOW_UP_REPORT_FQN]: 'ol.interactionreport',
+  [INCIDENT_FQN]: 'ol.incident',
+  [PEOPLE_FQN]: 'general.person',
+});
+
+// Set of app types that have multiple associations to interaction report
+const MULTIPLE_ENTITIES = Set([
+  CHARGE_EVENT_FQN,
+  CHARGE_FQN,
+  DIAGNOSIS_CLINICIAN_FQN,
+  DIAGNOSIS_FQN,
+  MEDICATION_STATEMENT_CLINICIAN_FQN,
+  MEDICATION_STATEMENT_FQN,
+  SUBSTANCE_CLINICIAN_FQN,
+  SUBSTANCE_FQN,
+]);
+
+const addPropertyToRow = (
+  mutable :Map,
+  appType :string,
+  propertyValue :List,
+  propertyType :string,
+  includeOLNamespace :boolean = false
+) => {
+
+  let prefix = APP_TO_ENTITY_TYPE.get(appType);
+  if (!prefix) {
+    prefix = `ol.${appType.split('.')[1]}`;
+  }
+
+  if (propertyType.startsWith('openlattice.@')) {
+    // avoid openlattice namespaced properties
+    if (!includeOLNamespace) {
+      return;
+    }
+  }
+
+  // add numbered suffix to repeat property in row
+  let header = `${prefix}_${propertyType}`;
+  if (MULTIPLE_ENTITIES.has(appType)) {
+    let suffix = 1;
+    while (mutable.has(`${header}_${suffix}`)) {
+      suffix += 1;
+    }
+    header = `${header}_${suffix}`;
+  }
+
+  mutable.set(header, propertyValue);
+};
+
+const getCSVRow = (report) => {
+  const {
+    reportDataByFQN,
+    subjectData,
+  } = report;
+
+  const row = OrderedMap().withMutations((mutable) => {
+    subjectData.forEach((propertyValue, propertyType) => {
+      addPropertyToRow(
+        mutable,
+        PEOPLE_FQN,
+        propertyValue,
+        propertyType,
+        true
+      );
+    });
+
+    reportDataByFQN.forEach((entities, appType) => {
+      entities.forEach((entity) => {
+        const neighborDetails = entity.get('neighborDetails', Map());
+        const includeIds = APP_TO_ENTITY_TYPE.includes(appType);
+        neighborDetails.forEach((propertyValue, propertyType) => {
+          addPropertyToRow(mutable, appType, propertyValue, propertyType, includeIds);
+        });
+      });
+    });
+  });
+
+  return row;
+};
+
+const generateCSVFromReportRange = (
+  reports :any[],
+  dateStart :string,
+  dateEnd :string,
+  reportType :any,
+) => {
+
+  const errors = List();
+  const startDT = DateTime.fromISO(dateStart);
+  const endDT = DateTime.fromISO(dateEnd);
+  const filename = `${reportType.name}-${startDT.toISODate()}-to-${endDT.toISODate()}.csv`;
+
+  let csvData = List();
+  let fields = Set();
+
+  reports.forEach((report) => {
+    const row = getCSVRow(report);
+    csvData = csvData.push(row);
+    fields = fields.union(row.keys());
+  });
+
+  const csv = Papa.unparse({
+    fields: fields.sort().toJS(),
+    data: csvData.toJS()
+  });
+
+  FileSaver.saveFile(csv, filename, 'text/csv');
+
+  return {
+    errors,
+    filename
+  };
+};
+
 export {
   createJDPRecord,
+  generateCSVFromReportRange,
   generateXMLFromReportData,
   generateXMLFromReportRange,
 };

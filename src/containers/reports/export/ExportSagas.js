@@ -20,14 +20,17 @@ import type { Saga } from '@redux-saga/core';
 import type { WorkerResponse } from 'lattice-sagas';
 import type { SequenceAction } from 'redux-reqseq';
 
+import getExportErrorAccordion from './ExportErrorAccordion';
 import {
+  EXPORT_CRISIS_CSV_BY_DATE_RANGE,
   EXPORT_CRISIS_XML,
   EXPORT_CRISIS_XML_BY_DATE_RANGE,
+  exportCrisisCSVByDateRange,
   exportCrisisXML,
   exportCrisisXMLByDateRange,
   getAdjacentCrisisData
 } from './ExportActions';
-import { generateXMLFromReportData, generateXMLFromReportRange } from './ExportUtils';
+import { generateCSVFromReportRange, generateXMLFromReportData, generateXMLFromReportRange } from './ExportUtils';
 
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { getESIDsFromApp } from '../../../utils/AppUtils';
@@ -269,22 +272,38 @@ function* exportCrisisXMLByDateRangeWorker(action :SequenceAction) :Saga<void> {
     }));
 
     const clinicianReportResponses = yield all(clinicianReportRequests);
-    const adjacentRequests = clinicianReportResponses.map((clinicianResponse) => {
-      const { reportDataByFQN, subjectData } = clinicianResponse;
-      const subjectEKID = getEntityKeyId(subjectData);
-      const incident = reportDataByFQN.getIn([INCIDENT_FQN, 0, NEIGHBOR_DETAILS]);
-      const incidentEKID = getEntityKeyId(incident);
+    const filteredClinicianReportResponses = [];
+    const adjacentRequests = [];
+    const skipped = [];
+    clinicianReportResponses.forEach((clinicianResponse) => {
+      if (clinicianResponse.data) {
+        const { reportDataByFQN, subjectData } = clinicianResponse.data;
+        const subjectEKID = getEntityKeyId(subjectData);
+        const incident = reportDataByFQN.getIn([INCIDENT_FQN, 0, NEIGHBOR_DETAILS]);
+        const incidentEKID = getEntityKeyId(incident);
 
-      return call(getAdjacentCrisisDataWorker, getAdjacentCrisisData({
-        subjectEKID,
-        incidentEKID,
-      }));
+        adjacentRequests.push(
+          call(getAdjacentCrisisDataWorker, getAdjacentCrisisData({
+            subjectEKID,
+            incidentEKID,
+          }))
+        );
+        filteredClinicianReportResponses.push(clinicianResponse);
+      }
+      else if (clinicianResponse.error) {
+        const { reportEKID } = clinicianResponse.error.metadata;
+        skipped.push(getExportErrorAccordion({
+          headline: 'Failed',
+          errors: [clinicianResponse.error.message],
+          reportEKID
+        }));
+      }
     });
 
     const adjacentResponses = yield all(adjacentRequests);
 
-    const jdpRecordData = clinicianReportResponses.map((clinicianResponse, index) => {
-      const { reportDataByFQN, subjectData } = clinicianResponse;
+    const jdpRecordData = filteredClinicianReportResponses.map((clinicianResponse, index) => {
+      const { reportDataByFQN, subjectData } = clinicianResponse.data;
       const { personDetails, crisisReportData } = adjacentResponses[index].data;
       return {
         clinicianReportData: reportDataByFQN,
@@ -297,7 +316,7 @@ function* exportCrisisXMLByDateRangeWorker(action :SequenceAction) :Saga<void> {
 
     const payload = generateXMLFromReportRange(jdpRecordData, dateStart, dateEnd);
 
-    yield put(exportCrisisXMLByDateRange.success(action.id, payload));
+    yield put(exportCrisisXMLByDateRange.success(action.id, { ...payload, skipped }));
   }
   catch (error) {
     yield put(exportCrisisXMLByDateRange.failure(action.id, error));
@@ -311,7 +330,68 @@ function* exportCrisisXMLByDateRangeWatcher() :Saga<void> {
   yield takeLatest(EXPORT_CRISIS_XML_BY_DATE_RANGE, exportCrisisXMLByDateRangeWorker);
 }
 
+function* exportCrisisCSVByDateRangeWorker(action :SequenceAction) :Saga<void> {
+  try {
+    const {
+      dateStart,
+      dateEnd,
+      reportType
+    } = action.value;
+
+    yield put(exportCrisisCSVByDateRange.request(action.id));
+
+    const response = yield call(
+      searchReportsByDateRange,
+      {
+        dateEnd,
+        dateStart,
+        maxHits: 10000,
+        reportFQN: reportType,
+        start: 0,
+      }
+    );
+
+    if (response.error) throw response.error;
+
+    const reportRequests = response.data.hits.map((report) => call(getCrisisReportV2DataWorker, {
+      reportEKID: getEntityKeyId(report),
+      reportFQN: reportType,
+      reportData: fromJS(report)
+    }));
+
+    const reportResponses = yield all(reportRequests);
+    const filteredReportResponses = [];
+    const skipped = [];
+    reportResponses.forEach((reportResponse) => {
+      if (reportResponse.data) {
+        filteredReportResponses.push(reportResponse);
+      }
+      else if (reportResponse.error) {
+        skipped.push(reportResponse.error);
+      }
+    });
+
+    const reports = filteredReportResponses.map((reportResponse) => reportResponse.data);
+
+    const payload = generateCSVFromReportRange(reports, dateStart, dateEnd, reportType);
+
+    yield put(exportCrisisCSVByDateRange.success(action.id, { ...payload, skipped }));
+  }
+  catch (error) {
+    yield put(exportCrisisCSVByDateRange.failure(action.id, error));
+  }
+  finally {
+    yield put(exportCrisisCSVByDateRange.finally(action.id));
+  }
+}
+
+function* exportCrisisCSVByDateRangeWatcher() :Saga<void> {
+  yield takeLatest(EXPORT_CRISIS_CSV_BY_DATE_RANGE, exportCrisisCSVByDateRangeWorker);
+}
+
 export {
+  exportCrisisCSVByDateRangeWatcher,
+  exportCrisisCSVByDateRangeWorker,
   exportCrisisXMLByDateRangeWatcher,
   exportCrisisXMLByDateRangeWorker,
   exportCrisisXMLWatcher,

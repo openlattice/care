@@ -577,7 +577,7 @@ function* getCrisisReportV2DataWorker(
     const appTypeFqnsByIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds']).flip());
     const neighborsByFQN = groupNeighborsByFQNs(neighbors, appTypeFqnsByIds);
     const incidentEKID = neighborsByFQN.getIn([INCIDENT_FQN, 0, 'neighborDetails', OPENLATTICE_ID_FQN, 0]);
-    if (!isValidUUID(incidentEKID)) throw Error(`invalid incident for report ${reportEKID}`);
+    if (!isValidUUID(incidentEKID)) throw Error(`Failed to load content for report ${reportEKID}`);
 
     const chargeEKIDs = neighborsByFQN
       .get(CHARGE_FQN, List())
@@ -644,6 +644,7 @@ function* getCrisisReportV2DataWorker(
 
   }
   catch (error) {
+    error.metadata = action;
     response = {
       error
     };

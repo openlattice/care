@@ -3,7 +3,7 @@ import React from 'react';
 
 import { Modal } from 'lattice-ui-kit';
 
-import ExportBulkXML from './ExportBulkXML';
+import ExportBulk from './ExportBulk';
 
 type Props = {
   isVisible :boolean;
@@ -14,10 +14,10 @@ const ExportBulkXMLModal = ({ isVisible, onClose } :Props) => (
   <Modal
       isVisible={isVisible}
       onClose={onClose}
-      textTitle="Export as XML"
+      textTitle="Download Report"
       viewportScrolling
       withFooter={false}>
-    <ExportBulkXML />
+    <ExportBulk />
   </Modal>
 );
 
