@@ -11,12 +11,17 @@ import {
 
 import ExportXMLModal from './ExportXMLModal';
 
+import DeleteReportModal from '../crisis/DeleteReportModal';
+
 const CLOSE_XML_EXPORT = 'CLOSE_XML_EXPORT';
 const CLOSE_MENU = 'CLOSE_MENU';
 const OPEN_XML_EXPORT = 'OPEN_XML_EXPORT';
 const OPEN_MENU = 'OPEN_MENU';
+const OPEN_DELETE_REPORT = 'OPEN_DELETE_REPORT';
+const CLOSE_DELETE_REPORT = 'CLOSE_DELETE_REPORT';
 
 const INITIAL_STATE = {
+  deleteReportOpen: false,
   menuOpen: false,
   xmlExportOpen: false,
 };
@@ -40,15 +45,37 @@ const reducer = (state, action) => {
       };
     case OPEN_XML_EXPORT:
       return {
+        ...state,
         menuOpen: false,
         xmlExportOpen: true,
+      };
+    case OPEN_DELETE_REPORT:
+      return {
+        ...state,
+        menuOpen: false,
+        deleteReportOpen: true,
+      };
+    case CLOSE_DELETE_REPORT:
+      return {
+        ...state,
+        deleteReportOpen: false,
       };
     default:
       return state;
   }
 };
 
-const ReportMenuButton = () => {
+type Props = {
+  onDeleteReport :() => any;
+  isAuthorized :boolean;
+  noExport ?:boolean;
+};
+
+const ReportMenuButton = ({
+  isAuthorized,
+  onDeleteReport,
+  noExport,
+} :Props) => {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
   const anchorRef = useRef(null);
 
@@ -66,6 +93,14 @@ const ReportMenuButton = () => {
 
   const handleCloseXMLExport = () => {
     dispatch({ type: CLOSE_XML_EXPORT });
+  };
+
+  const handleOpenDeleteReport = () => {
+    dispatch({ type: OPEN_DELETE_REPORT });
+  };
+
+  const handleCloseDeleteReport = () => {
+    dispatch({ type: CLOSE_DELETE_REPORT });
   };
 
   return (
@@ -95,15 +130,29 @@ const ReportMenuButton = () => {
             horizontal: 'right',
             vertical: 'top',
           }}>
-        <MenuItem onClick={handleOpenXMLExport}>
-          Export as XML
+        {
+          !noExport && (
+            <MenuItem onClick={handleOpenXMLExport}>
+              Export as XML
+            </MenuItem>
+          )
+        }
+        <MenuItem disabled={!isAuthorized} onClick={handleOpenDeleteReport}>
+          Delete Report
         </MenuItem>
       </Menu>
       <ExportXMLModal
           isVisible={state.xmlExportOpen}
           onClose={handleCloseXMLExport} />
+      <DeleteReportModal
+          isVisible={state.deleteReportOpen}
+          onClose={handleCloseDeleteReport} />
     </>
   );
+};
+
+ReportMenuButton.defaultProps = {
+  noExport: false,
 };
 
 export default ReportMenuButton;

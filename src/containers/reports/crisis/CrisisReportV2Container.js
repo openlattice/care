@@ -1,7 +1,6 @@
 // @flow
 import React, { useCallback, useEffect, useMemo } from 'react';
 
-import styled from 'styled-components';
 import { Map } from 'immutable';
 import { Form } from 'lattice-fabricate';
 import {
@@ -27,7 +26,7 @@ import { v2 } from './schemas';
 import BlameCard from '../shared/BlameCard';
 import ReportMenuButton from '../export/ReportMenuButton';
 import * as FQN from '../../../edm/DataModelFqns';
-import { BreadcrumbItem, BreadcrumbLink } from '../../../components/breadcrumbs';
+import { BreadcrumbItem, BreadcrumbLink, BreadcrumbsWrapper } from '../../../components/breadcrumbs';
 import { useAppSettings, useAuthorization } from '../../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
 import {
@@ -43,12 +42,6 @@ import { getFirstLastFromPerson } from '../../../utils/PersonUtils';
 import { generateReviewSchema } from '../../../utils/SchemaUtils';
 
 const { CRISIS_REPORT_FQN } = APP_TYPES_FQNS;
-
-const CrumbsWrapper = styled.div`
-  align-items: flex-start;
-  display: flex;
-  justify-content: space-between;
-`;
 
 const CrisisReportContainerV2 = () => {
   const settings = useAppSettings();
@@ -143,13 +136,13 @@ const CrisisReportContainerV2 = () => {
     <ContentOuterWrapper>
       <ContentWrapper>
         <CardStack>
-          <CrumbsWrapper>
+          <BreadcrumbsWrapper>
             <Breadcrumbs>
               <BreadcrumbLink to={profilePath}>{name}</BreadcrumbLink>
               <BreadcrumbItem>{reportData.getIn([FQN.TYPE_FQN, 0], 'Report')}</BreadcrumbItem>
             </Breadcrumbs>
-            <ReportMenuButton />
-          </CrumbsWrapper>
+            <ReportMenuButton noExport isAuthorized={isAuthorized} onDeleteReport={handleDeleteReport} />
+          </BreadcrumbsWrapper>
           <BlameCard reporterData={reporterData} />
           <button type="button" onClick={handleDeleteReport}>delete report</button>
           <Card>
