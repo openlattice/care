@@ -149,9 +149,8 @@ const CrisisReportClinicianContainer = () => {
               <BreadcrumbItem>{reportData.getIn([FQN.TYPE_FQN, 0], 'Report')}</BreadcrumbItem>
             </Breadcrumbs>
             <ReportMenuButton
-                profilePath={profilePath}
-                isAuthorized={isAuthorized}
-                onDeleteReport={handleDeleteReport} />
+                onDeleteReport={handleDeleteReport}
+                profilePath={profilePath} />
           </BreadcrumbsWrapper>
           <BlameCard reporterData={reporterData} />
           <Card>

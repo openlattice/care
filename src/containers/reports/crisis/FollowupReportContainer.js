@@ -141,7 +141,6 @@ const FollowupReportContainer = () => {
               <BreadcrumbItem>{reportData.getIn([FQN.TYPE_FQN, 0], 'Report')}</BreadcrumbItem>
             </Breadcrumbs>
             <ReportMenuButton
-                isAuthorized={isAuthorized}
                 noExport
                 onDeleteReport={handleDeleteReport}
                 profilePath={profilePath} />
