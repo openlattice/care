@@ -12,6 +12,8 @@ import {
 import ExportXMLModal from './ExportXMLModal';
 
 import DeleteReportModal from '../crisis/DeleteReportModal';
+import { useAuthorization } from '../../../components/hooks';
+import { PRIVATE_SETTINGS } from '../../admin/constants';
 
 const CLOSE_XML_EXPORT = 'CLOSE_XML_EXPORT';
 const CLOSE_MENU = 'CLOSE_MENU';
@@ -66,18 +68,19 @@ const reducer = (state, action) => {
 };
 
 type Props = {
-  onDeleteReport :() => any;
-  isAuthorized :boolean;
   noExport ?:boolean;
+  onDeleteReport :() => any;
+  profilePath :string;
 };
 
 const ReportMenuButton = ({
-  isAuthorized,
-  onDeleteReport,
   noExport,
+  onDeleteReport,
+  profilePath,
 } :Props) => {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
   const anchorRef = useRef(null);
+  const [isAuthorized] = useAuthorization(PRIVATE_SETTINGS.deleteReports);
 
   const handleOpenMenu = () => {
     dispatch({ type: OPEN_MENU });
@@ -146,7 +149,9 @@ const ReportMenuButton = ({
           onClose={handleCloseXMLExport} />
       <DeleteReportModal
           isVisible={state.deleteReportOpen}
-          onClose={handleCloseDeleteReport} />
+          onClickPrimary={onDeleteReport}
+          onClose={handleCloseDeleteReport}
+          profilePath={profilePath} />
     </>
   );
 };

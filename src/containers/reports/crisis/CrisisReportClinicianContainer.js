@@ -41,6 +41,7 @@ import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { getEntityKeyId } from '../../../utils/DataUtils';
 import { getFirstLastFromPerson } from '../../../utils/PersonUtils';
 import { generateReviewSchema } from '../../../utils/SchemaUtils';
+import { PRIVATE_SETTINGS } from '../../admin/constants';
 
 const {
   CRISIS_REPORT_CLINICIAN_FQN,
@@ -54,7 +55,7 @@ const CrisisReportClinicianContainer = () => {
     dispatch(getAuthorization());
   }, [dispatch]);
 
-  const [isAuthorized] = useAuthorization('profile', dispatchGetAuthorization);
+  const [isAuthorized] = useAuthorization(PRIVATE_SETTINGS.profile, dispatchGetAuthorization);
 
   const schemaVersion = v2.clinician;
 
@@ -147,7 +148,10 @@ const CrisisReportClinicianContainer = () => {
               <BreadcrumbLink to={profilePath}>{name}</BreadcrumbLink>
               <BreadcrumbItem>{reportData.getIn([FQN.TYPE_FQN, 0], 'Report')}</BreadcrumbItem>
             </Breadcrumbs>
-            <ReportMenuButton isAuthorized={isAuthorized} onDeleteReport={handleDeleteReport} />
+            <ReportMenuButton
+                profilePath={profilePath}
+                isAuthorized={isAuthorized}
+                onDeleteReport={handleDeleteReport} />
           </BreadcrumbsWrapper>
           <BlameCard reporterData={reporterData} />
           <Card>

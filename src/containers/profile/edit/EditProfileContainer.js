@@ -43,6 +43,7 @@ import {
 } from '../../../core/router/Routes';
 import { getAuthorization } from '../../../core/sagas/authorize/AuthorizeActions';
 import { TITLE_FQN } from '../../../edm/DataModelFqns';
+import { PRIVATE_SETTINGS } from '../../admin/constants';
 
 const StickyCard = styled(Card)`
   position: sticky;
@@ -131,27 +132,27 @@ const EditProfileContainer = (props :Props) => {
             <PrivateRoute
                 authorize={actions.getAuthorization}
                 component={BasicInformationContainer}
-                feature="profile"
+                feature={PRIVATE_SETTINGS.profile}
                 path={`${match.path}${BASIC_PATH}`} />
             <PrivateRoute
                 authorize={actions.getAuthorization}
                 component={OfficerSafetyContainer}
-                feature="profile"
+                feature={PRIVATE_SETTINGS.profile}
                 path={`${match.path}${OFFICER_SAFETY_PATH}`} />
             <PrivateRoute
                 authorize={actions.getAuthorization}
                 component={ResponsePlanForm}
-                feature="profile"
+                feature={PRIVATE_SETTINGS.profile}
                 path={`${match.path}${RESPONSE_PLAN_PATH}`} />
             <PrivateRoute
                 authorize={actions.getAuthorization}
                 component={EmergencyContactsForm}
-                feature="profile"
+                feature={PRIVATE_SETTINGS.profile}
                 path={`${match.path}${CONTACTS_PATH}`} />
             <PrivateRoute
                 authorize={actions.getAuthorization}
                 component={AboutForm}
-                feature="profile"
+                feature={PRIVATE_SETTINGS.profile}
                 path={`${match.path}${ABOUT_PATH}`} />
             <Redirect to={PROFILE_VIEW_PATH} />
           </Switch>

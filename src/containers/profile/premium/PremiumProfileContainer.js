@@ -51,6 +51,7 @@ import { getImageDataFromEntity } from '../../../utils/BinaryUtils';
 import { getEntityKeyId } from '../../../utils/DataUtils';
 import { getFirstLastFromPerson } from '../../../utils/PersonUtils';
 import { reduceRequestStates } from '../../../utils/StateUtils';
+import { PRIVATE_SETTINGS } from '../../admin/constants';
 import { getAllSymptomsReports } from '../../reports/symptoms/SymptomsReportActions';
 import { getProfileCitations, getProfilePoliceCAD, getProfileReports } from '../ProfileActions';
 import { getIncidentReportsSummary } from '../actions/ReportActions';
@@ -237,7 +238,7 @@ const PremiumProfileContainer = (props :Props) => {
   usePeopleRoute(reportAction);
 
   const [tab, setTab] = useState('response');
-  const [isAuthorized] = useAuthorization('profile', actions.getAuthorization);
+  const [isAuthorized] = useAuthorization(PRIVATE_SETTINGS.profile, actions.getAuthorization);
   const isLoadingIntro = fetchAboutState !== RequestStates.SUCCESS;
   const isLoadingAboutPlan = fetchAboutPlanState !== RequestStates.SUCCESS;
 

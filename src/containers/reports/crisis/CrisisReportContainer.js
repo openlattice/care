@@ -36,6 +36,7 @@ import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { getEntityKeyId } from '../../../utils/DataUtils';
 import { getFirstLastFromPerson } from '../../../utils/PersonUtils';
 import { generateReviewSchema } from '../../../utils/SchemaUtils';
+import { PRIVATE_SETTINGS } from '../../admin/constants';
 
 const {
   BEHAVIORAL_HEALTH_REPORT_FQN,
@@ -49,7 +50,7 @@ const CrisisReportContainer = () => {
     dispatch(getAuthorization());
   }, [dispatch]);
 
-  const [isAuthorized] = useAuthorization('profile', dispatchGetAuthorization);
+  const [isAuthorized] = useAuthorization(PRIVATE_SETTINGS.profile, dispatchGetAuthorization);
 
   const entityIndexToIdMap = useSelector((store) => store.getIn(['crisisReport', 'entityIndexToIdMap']));
   const entitySetIds = useSelector((store) => store.getIn(['app', 'selectedOrgEntitySetIds']));

@@ -40,6 +40,7 @@ import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { getEntityKeyId } from '../../../utils/DataUtils';
 import { getFirstLastFromPerson } from '../../../utils/PersonUtils';
 import { generateReviewSchema } from '../../../utils/SchemaUtils';
+import { PRIVATE_SETTINGS } from '../../admin/constants';
 
 const { CRISIS_REPORT_FQN } = APP_TYPES_FQNS;
 
@@ -52,7 +53,7 @@ const CrisisReportContainerV2 = () => {
     dispatch(getAuthorization());
   }, [dispatch]);
 
-  const [isAuthorized] = useAuthorization('profile', dispatchGetAuthorization);
+  const [isAuthorized] = useAuthorization(PRIVATE_SETTINGS.profile, dispatchGetAuthorization);
 
   const schemaVersion = v2.officer;
 
@@ -141,10 +142,13 @@ const CrisisReportContainerV2 = () => {
               <BreadcrumbLink to={profilePath}>{name}</BreadcrumbLink>
               <BreadcrumbItem>{reportData.getIn([FQN.TYPE_FQN, 0], 'Report')}</BreadcrumbItem>
             </Breadcrumbs>
-            <ReportMenuButton noExport isAuthorized={isAuthorized} onDeleteReport={handleDeleteReport} />
+            <ReportMenuButton
+                isAuthorized={isAuthorized}
+                noExport
+                onDeleteReport={handleDeleteReport}
+                profilePath={profilePath} />
           </BreadcrumbsWrapper>
           <BlameCard reporterData={reporterData} />
-          <button type="button" onClick={handleDeleteReport}>delete report</button>
           <Card>
             <Form
                 disabled
