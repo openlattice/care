@@ -1286,9 +1286,11 @@ function* deleteCrisisReportWorker(action :SequenceAction) :Generator<any, any, 
         ));
       }
     });
-    const deleteResponse = yield all(deleteCalls);
+    const deleteResponses = yield all(deleteCalls);
 
-    if (deleteResponse.error) throw deleteResponse.error;
+    deleteResponses.forEach((deleteResponse) => {
+      if (deleteResponse.error) throw deleteResponse.error;
+    });
 
     yield put(deleteCrisisReport.success(action.id));
   }
