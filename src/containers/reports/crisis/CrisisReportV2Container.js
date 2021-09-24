@@ -16,6 +16,7 @@ import { RequestStates } from 'redux-reqseq';
 import {
   addOptionalCrisisReportContent,
   clearCrisisReport,
+  deleteCrisisReport,
   deleteCrisisReportContent,
   getCrisisReportV2,
   updateCrisisReport,
@@ -23,8 +24,9 @@ import {
 import { v2 } from './schemas';
 
 import BlameCard from '../shared/BlameCard';
+import ReportMenuButton from '../export/ReportMenuButton';
 import * as FQN from '../../../edm/DataModelFqns';
-import { BreadcrumbItem, BreadcrumbLink } from '../../../components/breadcrumbs';
+import { BreadcrumbItem, BreadcrumbLink, BreadcrumbsWrapper } from '../../../components/breadcrumbs';
 import { useAppSettings, useAuthorization } from '../../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
 import {
@@ -38,6 +40,7 @@ import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { getEntityKeyId } from '../../../utils/DataUtils';
 import { getFirstLastFromPerson } from '../../../utils/PersonUtils';
 import { generateReviewSchema } from '../../../utils/SchemaUtils';
+import { PRIVATE_SETTINGS } from '../../admin/constants';
 
 const { CRISIS_REPORT_FQN } = APP_TYPES_FQNS;
 
@@ -50,7 +53,7 @@ const CrisisReportContainerV2 = () => {
     dispatch(getAuthorization());
   }, [dispatch]);
 
-  const [isAuthorized] = useAuthorization('profile', dispatchGetAuthorization);
+  const [isAuthorized] = useAuthorization(PRIVATE_SETTINGS.profile, dispatchGetAuthorization);
 
   const schemaVersion = v2.officer;
 
@@ -108,6 +111,14 @@ const CrisisReportContainerV2 = () => {
     }));
   };
 
+  const handleDeleteReport = () => {
+    dispatch(deleteCrisisReport({
+      entityKeyId: reportId,
+      reportFQN: CRISIS_REPORT_FQN,
+      entityIndexToIdMap,
+    }));
+  };
+
   const name = getFirstLastFromPerson(subjectData);
   const formContext = {
     addActions: {
@@ -126,10 +137,16 @@ const CrisisReportContainerV2 = () => {
     <ContentOuterWrapper>
       <ContentWrapper>
         <CardStack>
-          <Breadcrumbs>
-            <BreadcrumbLink to={profilePath}>{name}</BreadcrumbLink>
-            <BreadcrumbItem>{reportData.getIn([FQN.TYPE_FQN, 0], 'Report')}</BreadcrumbItem>
-          </Breadcrumbs>
+          <BreadcrumbsWrapper>
+            <Breadcrumbs>
+              <BreadcrumbLink to={profilePath}>{name}</BreadcrumbLink>
+              <BreadcrumbItem>{reportData.getIn([FQN.TYPE_FQN, 0], 'Report')}</BreadcrumbItem>
+            </Breadcrumbs>
+            <ReportMenuButton
+                noExport
+                onDeleteReport={handleDeleteReport}
+                profilePath={profilePath} />
+          </BreadcrumbsWrapper>
           <BlameCard reporterData={reporterData} />
           <Card>
             <Form

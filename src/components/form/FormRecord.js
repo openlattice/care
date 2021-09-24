@@ -7,6 +7,7 @@ import { Button } from 'lattice-ui-kit';
 import { DateTime } from 'luxon';
 import type { RequestSequence } from 'redux-reqseq';
 
+import { PRIVATE_SETTINGS } from '../../containers/admin/constants';
 import { MEDIA_QUERY_LG } from '../../core/style/Sizes';
 import {
   DATE_TIME_FQN,
@@ -102,7 +103,7 @@ const FormRecord = ({
   submitted,
 } :FormRecordProps) => {
 
-  const [isAuthorized] = useAuthorization('profile', authorize);
+  const [isAuthorized] = useAuthorization(PRIVATE_SETTINGS.profile, authorize);
 
   const submittedTime = submitted.getIn(['associationDetails', DATE_TIME_FQN, 0], '');
   const submittedEmail = submitted.getIn(['neighborDetails', PERSON_ID_FQN, 0], '');

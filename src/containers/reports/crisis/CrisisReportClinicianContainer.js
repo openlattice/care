@@ -1,7 +1,6 @@
 // @flow
 import React, { useCallback, useEffect, useMemo } from 'react';
 
-import styled from 'styled-components';
 import { Map } from 'immutable';
 import { Form } from 'lattice-fabricate';
 import {
@@ -17,6 +16,7 @@ import { RequestStates } from 'redux-reqseq';
 import {
   addOptionalCrisisReportContent,
   clearCrisisReport,
+  deleteCrisisReport,
   deleteCrisisReportContent,
   getCrisisReportV2,
   updateCrisisReport
@@ -27,7 +27,7 @@ import BlameCard from '../shared/BlameCard';
 import ReportMenuButton from '../export/ReportMenuButton';
 import Unauthorized from '../../../components/warnings/Unauthorized';
 import * as FQN from '../../../edm/DataModelFqns';
-import { BreadcrumbItem, BreadcrumbLink } from '../../../components/breadcrumbs';
+import { BreadcrumbItem, BreadcrumbLink, BreadcrumbsWrapper } from '../../../components/breadcrumbs';
 import { useAuthorization } from '../../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
 import {
@@ -41,16 +41,11 @@ import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { getEntityKeyId } from '../../../utils/DataUtils';
 import { getFirstLastFromPerson } from '../../../utils/PersonUtils';
 import { generateReviewSchema } from '../../../utils/SchemaUtils';
+import { PRIVATE_SETTINGS } from '../../admin/constants';
 
 const {
   CRISIS_REPORT_CLINICIAN_FQN,
 } = APP_TYPES_FQNS;
-
-const CrumbsWrapper = styled.div`
-  align-items: flex-start;
-  display: flex;
-  justify-content: space-between;
-`;
 
 const CrisisReportClinicianContainer = () => {
   const dispatch = useDispatch();
@@ -60,7 +55,7 @@ const CrisisReportClinicianContainer = () => {
     dispatch(getAuthorization());
   }, [dispatch]);
 
-  const [isAuthorized] = useAuthorization('profile', dispatchGetAuthorization);
+  const [isAuthorized] = useAuthorization(PRIVATE_SETTINGS.profile, dispatchGetAuthorization);
 
   const schemaVersion = v2.clinician;
 
@@ -109,6 +104,14 @@ const CrisisReportClinicianContainer = () => {
     dispatch(deleteCrisisReportContent(params));
   };
 
+  const handleDeleteReport = () => {
+    dispatch(deleteCrisisReport({
+      entityKeyId: reportId,
+      reportFQN: CRISIS_REPORT_CLINICIAN_FQN,
+      entityIndexToIdMap,
+    }));
+  };
+
   const handleAddOptionalContent = (params) => {
     const existingEKIDs = {
       [CRISIS_REPORT_CLINICIAN_FQN]: reportId,
@@ -140,13 +143,15 @@ const CrisisReportClinicianContainer = () => {
     <ContentOuterWrapper>
       <ContentWrapper>
         <CardStack>
-          <CrumbsWrapper>
+          <BreadcrumbsWrapper>
             <Breadcrumbs>
               <BreadcrumbLink to={profilePath}>{name}</BreadcrumbLink>
               <BreadcrumbItem>{reportData.getIn([FQN.TYPE_FQN, 0], 'Report')}</BreadcrumbItem>
             </Breadcrumbs>
-            <ReportMenuButton />
-          </CrumbsWrapper>
+            <ReportMenuButton
+                onDeleteReport={handleDeleteReport}
+                profilePath={profilePath} />
+          </BreadcrumbsWrapper>
           <BlameCard reporterData={reporterData} />
           <Card>
             <Form
