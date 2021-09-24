@@ -6,11 +6,12 @@ import { Route } from 'react-router-dom';
 
 import Unauthorized from '../warnings/Unauthorized';
 import { useAuthorization } from '../hooks';
+import type { PrivateSetting } from '../../containers/admin/constants';
 
 type Props = {
   authorize :() => any;
   component :ComponentType<any>;
-  feature :string;
+  feature :PrivateSetting;
   unauthorizedComponent :ComponentType<any>;
 };
 

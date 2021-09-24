@@ -5,8 +5,10 @@ import { RequestStates } from 'redux-reqseq';
 
 import {
   CLEAR_CRISIS_REPORT,
+  DELETE_CRISIS_REPORT,
   addOptionalCrisisReportContent,
   createMissingCallForService,
+  deleteCrisisReport,
   deleteCrisisReportContent,
   getCrisisReport,
   getCrisisReportV2,
@@ -15,6 +17,9 @@ import {
   updateCrisisReport,
 } from './CrisisActions';
 
+import resetRequestStatesReducer from '../../../core/redux/reducers/resetRequestStatesReducer';
+import { RESET_REQUEST_STATES } from '../../../core/redux/actions';
+import { REQUEST_STATE, RS_INITIAL_STATE } from '../../../core/redux/constants';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
 
 const {
@@ -23,6 +28,7 @@ const {
 } = APP_TYPES_FQNS;
 
 const INITIAL_STATE :Map = fromJS({
+  [DELETE_CRISIS_REPORT]: RS_INITIAL_STATE,
   [CRISIS_REPORT_CLINICIAN_FQN]: Map(),
   [CRISIS_REPORT_FQN]: Map(),
   entityIndexToIdMap: Map(),
@@ -129,8 +135,20 @@ export default function crisisReportReducer(state :Map = INITIAL_STATE, action :
       });
     }
 
+    case deleteCrisisReport.case(action.type): {
+      return deleteCrisisReport.reducer(state, action, {
+        REQUEST: () => state.setIn([DELETE_CRISIS_REPORT, REQUEST_STATE], RequestStates.PENDING),
+        SUCCESS: () => state.setIn([DELETE_CRISIS_REPORT, REQUEST_STATE], RequestStates.SUCCESS),
+        FAILURE: () => state.setIn([DELETE_CRISIS_REPORT, REQUEST_STATE], RequestStates.FAILURE),
+      });
+    }
+
     case CLEAR_CRISIS_REPORT: {
       return INITIAL_STATE;
+    }
+
+    case RESET_REQUEST_STATES: {
+      return resetRequestStatesReducer(state, action);
     }
 
     default:

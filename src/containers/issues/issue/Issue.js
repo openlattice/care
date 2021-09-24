@@ -23,6 +23,7 @@ import LinkButton from '../../../components/buttons/LinkButton';
 import { useAuthorization } from '../../../components/hooks';
 import { ISSUES_PATH } from '../../../core/router/Routes';
 import { getAuthorization } from '../../../core/sagas/authorize/AuthorizeActions';
+import { PRIVATE_SETTINGS } from '../../admin/constants';
 
 const Centered = styled.div`
   display: flex;
@@ -38,7 +39,7 @@ const Issue = () => {
   const dispatch = useDispatch();
 
   const authorize = useCallback(() => dispatch(getAuthorization()), [dispatch]);
-  const [authorized, isAuthorizing] = useAuthorization('profile', authorize);
+  const [authorized, isAuthorizing] = useAuthorization(PRIVATE_SETTINGS.profile, authorize);
 
   const match = useRouteMatch();
   const { issueId } = match.params;

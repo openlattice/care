@@ -17,7 +17,7 @@ import {
   removeIn,
   setIn,
 } from 'immutable';
-import { Models } from 'lattice';
+import { Models, Types } from 'lattice';
 import { DataProcessingUtils } from 'lattice-fabricate';
 import {
   AuthorizationsApiActions,
@@ -27,7 +27,11 @@ import {
   SearchApiActions,
   SearchApiSagas,
 } from 'lattice-sagas';
-import { LangUtils, Logger, ValidationUtils } from 'lattice-utils';
+import {
+  LangUtils,
+  Logger,
+  ValidationUtils
+} from 'lattice-utils';
 import { DateTime } from 'luxon';
 import type { Saga } from '@redux-saga/core';
 import type { UUID } from 'lattice';
@@ -37,6 +41,7 @@ import type { SequenceAction } from 'redux-reqseq';
 import {
   ADD_OPTIONAL_CRISIS_REPORT_CONTENT,
   CREATE_MISSING_CALL_FOR_SERVICE,
+  DELETE_CRISIS_REPORT,
   DELETE_CRISIS_REPORT_CONTENT,
   GET_CHARGE_EVENTS,
   GET_CRISIS_REPORT,
@@ -50,6 +55,7 @@ import {
   UPDATE_CRISIS_REPORT,
   addOptionalCrisisReportContent,
   createMissingCallForService,
+  deleteCrisisReport,
   deleteCrisisReportContent,
   getChargeEvents,
   getCrisisReport,
@@ -111,6 +117,7 @@ import { getFormSchema } from '../FormSchemasActions';
 import { getFormSchemaWorker } from '../FormSchemasSagas';
 
 const { FQN } = Models;
+const { DeleteTypes } = Types;
 const { isDefined } = LangUtils;
 const { isValidUUID } = ValidationUtils;
 const { searchEntityNeighborsWithFilter } = SearchApiActions;
@@ -118,9 +125,9 @@ const { searchEntityNeighborsWithFilterWorker } = SearchApiSagas;
 const { getAuthorizationsWorker } = AuthorizationsApiSagas;
 const { getAuthorizations } = AuthorizationsApiActions;
 
-const { getEntityData } = DataApiActions;
+const { getEntityData, deleteEntityData } = DataApiActions;
 
-const { getEntityDataWorker } = DataApiSagas;
+const { getEntityDataWorker, deleteEntityDataWorker } = DataApiSagas;
 
 const {
   findEntityAddressKeyFromMap,
@@ -327,7 +334,7 @@ function* getReportsV2NeighborsWorker(action :SequenceAction) :Generator<any, an
         DIAGNOSIS_CLINICIAN_FQN,
         SUBSTANCE_CLINICIAN_FQN,
         SELF_HARM_CLINICIAN_FQN,
-        BEHAVIOR_CLINICIAN_FQN
+        BEHAVIOR_CLINICIAN_FQN,
       ]);
     }
 
@@ -1250,6 +1257,58 @@ function* deleteCrisisReportContentWatcher() :Generator<any, any, any> {
   yield takeEvery(DELETE_CRISIS_REPORT_CONTENT, deleteCrisisReportContentWorker);
 }
 
+function* deleteCrisisReportWorker(action :SequenceAction) :Generator<any, any, any> {
+  const response = {};
+  try {
+    yield put(deleteCrisisReport.request(action.id));
+    const { entityKeyId, entityIndexToIdMap } = action.value;
+    if (!isValidUUID(entityKeyId)) throw ERR_ACTION_VALUE_TYPE;
+
+    const app :Map = yield select((state) => state.get('app', Map()));
+
+    // do not delete incident or staff
+
+    const entityIndex = entityIndexToIdMap
+      .delete(INCIDENT_FQN)
+      .delete(STAFF_FQN);
+    const deleteCalls = [];
+    entityIndex.entrySeq().forEach(([fqn, ids]) => {
+      const entitySetId = getESIDFromApp(app, fqn);
+      const entityKeyIds = ids.valueSeq().toArray();
+      if (entityKeyIds.length) {
+        deleteCalls.push(call(
+          deleteEntityDataWorker,
+          deleteEntityData({
+            entityKeyIds,
+            entitySetId,
+            deleteType: DeleteTypes.Soft
+          })
+        ));
+      }
+    });
+    const deleteResponses = yield all(deleteCalls);
+
+    deleteResponses.forEach((deleteResponse) => {
+      if (deleteResponse.error) throw deleteResponse.error;
+    });
+
+    yield put(deleteCrisisReport.success(action.id));
+  }
+  catch (error) {
+    response.error = error;
+    LOG.error(action.type, error);
+    yield put(deleteCrisisReport.failure(action.id, error));
+  }
+  finally {
+    yield put(deleteCrisisReport.finally(action.id));
+  }
+  return response;
+}
+
+function* deleteCrisisReportWatcher() :Generator<any, any, any> {
+  yield takeEvery(DELETE_CRISIS_REPORT, deleteCrisisReportWorker);
+}
+
 export {
   addOptionalCrisisReportContentWatcher,
   addOptionalCrisisReportContentWorker,
@@ -1279,4 +1338,6 @@ export {
   updateCrisisReportWatcher,
   updateCrisisReportWorker,
   updatePersonReportCountWorker,
+  deleteCrisisReportWorker,
+  deleteCrisisReportWatcher,
 };

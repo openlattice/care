@@ -14,6 +14,7 @@ import { RequestStates } from 'redux-reqseq';
 
 import {
   clearCrisisReport,
+  deleteCrisisReport,
   getCrisisReport,
   updateCrisisReport,
 } from './CrisisActions';
@@ -35,6 +36,7 @@ import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { getEntityKeyId } from '../../../utils/DataUtils';
 import { getFirstLastFromPerson } from '../../../utils/PersonUtils';
 import { generateReviewSchema } from '../../../utils/SchemaUtils';
+import { PRIVATE_SETTINGS } from '../../admin/constants';
 
 const {
   BEHAVIORAL_HEALTH_REPORT_FQN,
@@ -48,7 +50,7 @@ const CrisisReportContainer = () => {
     dispatch(getAuthorization());
   }, [dispatch]);
 
-  const [isAuthorized] = useAuthorization('profile', dispatchGetAuthorization);
+  const [isAuthorized] = useAuthorization(PRIVATE_SETTINGS.profile, dispatchGetAuthorization);
 
   const entityIndexToIdMap = useSelector((store) => store.getIn(['crisisReport', 'entityIndexToIdMap']));
   const entitySetIds = useSelector((store) => store.getIn(['app', 'selectedOrgEntitySetIds']));
@@ -86,6 +88,13 @@ const CrisisReportContainer = () => {
     return <Spinner size="3x" />;
   }
 
+  const handleDeleteCrisisReport = () => {
+    dispatch(deleteCrisisReport({
+      entityKeyId: reportId,
+      reportFQN: BEHAVIORAL_HEALTH_REPORT_FQN,
+    }));
+  };
+
   const handleUpdateCrisisReport = (params) => {
     dispatch(updateCrisisReport({
       ...params,
@@ -113,6 +122,7 @@ const CrisisReportContainer = () => {
             <BreadcrumbItem>{reportData.getIn([FQN.TYPE_FQN, 0], 'Report')}</BreadcrumbItem>
           </Breadcrumbs>
           <BlameCard reporterData={reporterData} />
+          <button type="button" onClick={handleDeleteCrisisReport}>Delete Report</button>
           <Card>
             <Form
                 disabled
