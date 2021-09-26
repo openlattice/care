@@ -45,7 +45,7 @@
     "axios": "~0.21.1",
     "connected-react-router": "~6.9.1",
     "docxtemplater": "~3.22.3",
-    "fast-xml-parser": "~3.19.0",
+    "fast-xml-parser": "~3.20.3",
     "file-saver": "~2.0.5",
     "history": "~4.10.1",
     "immutable": "4.0.0-rc.10",
