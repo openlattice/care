@@ -17,6 +17,9 @@ const getCrisisReportV2 :RequestSequence = newRequestSequence(GET_CRISIS_REPORT_
 const DELETE_CRISIS_REPORT_CONTENT :'DELETE_CRISIS_REPORT_CONTENT' = 'DELETE_CRISIS_REPORT_CONTENT';
 const deleteCrisisReportContent :RequestSequence = newRequestSequence(DELETE_CRISIS_REPORT_CONTENT);
 
+const DELETE_CRISIS_REPORT :'DELETE_CRISIS_REPORT' = 'DELETE_CRISIS_REPORT';
+const deleteCrisisReport :RequestSequence = newRequestSequence(DELETE_CRISIS_REPORT);
+
 const ADD_OPTIONAL_CRISIS_REPORT_CONTENT :'ADD_OPTIONAL_CRISIS_REPORT_CONTENT' = 'ADD_OPTIONAL_CRISIS_REPORT_CONTENT';
 const addOptionalCrisisReportContent :RequestSequence = newRequestSequence(ADD_OPTIONAL_CRISIS_REPORT_CONTENT);
 
@@ -53,6 +56,7 @@ export {
   ADD_OPTIONAL_CRISIS_REPORT_CONTENT,
   CLEAR_CRISIS_REPORT,
   CREATE_MISSING_CALL_FOR_SERVICE,
+  DELETE_CRISIS_REPORT,
   DELETE_CRISIS_REPORT_CONTENT,
   GET_CHARGE_EVENTS,
   GET_CRISIS_REPORT,
@@ -68,6 +72,7 @@ export {
   addOptionalCrisisReportContent,
   clearCrisisReport,
   createMissingCallForService,
+  deleteCrisisReport,
   deleteCrisisReportContent,
   getChargeEvents,
   getCrisisReport,

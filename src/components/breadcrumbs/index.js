@@ -25,7 +25,14 @@ const BreadcrumbItem = styled.span`
   color: ${NEUTRALS[1]};
 `;
 
+const BreadcrumbsWrapper = styled.div`
+  align-items: flex-start;
+  display: flex;
+  justify-content: space-between;
+`;
+
 export {
   BreadcrumbItem,
   BreadcrumbLink,
+  BreadcrumbsWrapper,
 };

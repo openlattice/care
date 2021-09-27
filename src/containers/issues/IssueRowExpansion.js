@@ -1,19 +1,22 @@
 // @flow
 import React, { useCallback } from 'react';
+
 import styled from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
-import { useRouteMatch } from 'react-router';
 import { Map } from 'immutable';
 import {
   Colors,
   Spinner
 } from 'lattice-ui-kit';
+import { useDispatch, useSelector } from 'react-redux';
+import { useRouteMatch } from 'react-router';
 import { RequestStates } from 'redux-reqseq';
 import type { RequestState } from 'redux-reqseq';
 
 import IssueDetails from './IssueDetails';
+
 import { useAuthorization } from '../../components/hooks';
 import { getAuthorization } from '../../core/sagas/authorize/AuthorizeActions';
+import { PRIVATE_SETTINGS } from '../admin/constants';
 
 const { NEUTRALS } = Colors;
 
@@ -43,7 +46,7 @@ const IssueRowExpansion = () => {
   const dispatch = useDispatch();
 
   const authorize = useCallback(() => dispatch(getAuthorization()), [dispatch]);
-  const [authorized, isAuthorizing] = useAuthorization('profile', authorize);
+  const [authorized, isAuthorizing] = useAuthorization(PRIVATE_SETTINGS.profile, authorize);
 
   const match = useRouteMatch();
 
