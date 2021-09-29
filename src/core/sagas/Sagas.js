@@ -80,6 +80,7 @@ export default function* sagas() :Generator<*, *, *> {
     fork(AppSagas.switchOrganizationWatcher),
 
     fork(SettingsSagas.getAppSettingsWatcher),
+    fork(SettingsSagas.updateAppSettingsWatcher),
 
     // DataSagas
     fork(DataSagas.createOrReplaceAssociationWatcher),

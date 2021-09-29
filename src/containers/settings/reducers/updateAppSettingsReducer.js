@@ -15,7 +15,9 @@ import {
 export default function updateAppSettingsReducer(state :Map, action :SequenceAction) {
 
   return updateAppSettings.reducer(state, action, {
-    REQUEST: () => state.setIn([UPDATE_APP_SETTINGS, REQUEST_STATE], RequestStates.PENDING),
+    REQUEST: () => state
+      .setIn([UPDATE_APP_SETTINGS, REQUEST_STATE], RequestStates.PENDING)
+      .merge(action.value),
     SUCCESS: () => state.setIn([UPDATE_APP_SETTINGS, REQUEST_STATE], RequestStates.SUCCESS),
     FAILURE: () => state.setIn([UPDATE_APP_SETTINGS, REQUEST_STATE], RequestStates.FAILURE),
   });
