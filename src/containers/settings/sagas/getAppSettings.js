@@ -17,9 +17,9 @@ import type { Saga } from '@redux-saga/core';
 import type { WorkerResponse } from 'lattice-sagas';
 import type { SequenceAction } from 'redux-reqseq';
 
+import { selectEntitySetId } from '../../../core/redux/selectors';
 import { APP_DETAILS_FQN } from '../../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
-import { getESIDFromApp } from '../../../utils/AppUtils';
 import { ERR_ACTION_VALUE_TYPE } from '../../../utils/Errors';
 import { GET_APP_SETTINGS, getAppSettings } from '../actions';
 
@@ -38,8 +38,7 @@ function* getAppSettingsWorker(action :SequenceAction) :Saga<WorkerResponse> {
   try {
     yield put(getAppSettings.request(action.id));
 
-    const app = yield select((state) => state.get('app', Map()));
-    const appSettingsESID = action.value || getESIDFromApp(app, APP_SETTINGS_FQN);
+    const appSettingsESID = yield select(selectEntitySetId(APP_SETTINGS_FQN));
     if (!isValidUUID(appSettingsESID)) throw ERR_ACTION_VALUE_TYPE;
 
     const appSettingsResponse = yield call(
