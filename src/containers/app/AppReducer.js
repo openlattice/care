@@ -24,7 +24,6 @@ const INITIAL_STATE :Map<*, *> = fromJS({
   organizations: Map(),
   selectedOrgEntitySetIds: Map(),
   selectedOrganizationId: '',
-  selectedOrganizationSettings: Map(),
 });
 
 export default function reducer(state :Map<*, *> = INITIAL_STATE, action :Object) {

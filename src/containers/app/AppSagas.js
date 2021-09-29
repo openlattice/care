@@ -37,7 +37,6 @@ import {
 } from './AppActions';
 
 import * as Routes from '../../core/router/Routes';
-import { SETTINGS } from '../../core/redux/constants';
 import { APP_NAME, APP_TYPES_FQNS } from '../../shared/Consts';
 import { ERR_ACTION_VALUE_TYPE, ERR_WORKER_SAGA } from '../../utils/Errors';
 import { getAppSettings } from '../settings/actions';
@@ -122,7 +121,6 @@ function* loadAppWorker(action :SequenceAction) :Saga<*> {
     const appSettingsESID = appSettingsESIDByOrgId.get(selectedOrganizationId);
     const appSettingsResponse = yield call(getAppSettingsWorker, getAppSettings(appSettingsESID));
     if (appSettingsResponse.error) throw appSettingsResponse.error;
-    const settings = appSettingsResponse.data.get(SETTINGS);
 
     const organizations = {};
     let selectedOrgEntitySetIds = {};
@@ -143,7 +141,6 @@ function* loadAppWorker(action :SequenceAction) :Saga<*> {
       organizations,
       selectedOrgEntitySetIds,
       selectedOrganizationId,
-      selectedOrganizationSettings: settings,
     });
 
     yield put(loadApp.success(action.id, workerResponse.data));
