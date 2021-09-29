@@ -38,7 +38,8 @@ function* getAppSettingsWorker(action :SequenceAction) :Saga<WorkerResponse> {
   try {
     yield put(getAppSettings.request(action.id));
 
-    const appSettingsESID = yield select(selectEntitySetId(APP_SETTINGS_FQN));
+    const entitySetId = yield select(selectEntitySetId(APP_SETTINGS_FQN));
+    const appSettingsESID = action.value || entitySetId;
     if (!isValidUUID(appSettingsESID)) throw ERR_ACTION_VALUE_TYPE;
 
     const appSettingsResponse = yield call(

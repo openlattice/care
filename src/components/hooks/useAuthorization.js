@@ -6,11 +6,14 @@ import { List, Set } from 'immutable';
 import { useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
+import useAppSettings from './useAppSettings';
+
 import type { PrivateSetting } from '../../containers/settings/constants';
 
 const useAuthorization = (feature :PrivateSetting, callback :any) => {
   const [isAuthorized, setAuthorization] = useState(false);
   const [isLoading, setLoading] = useState(true);
+  const [settings] = useAppSettings();
 
   useEffect(() => {
     if (callback instanceof Function) {
@@ -18,8 +21,8 @@ const useAuthorization = (feature :PrivateSetting, callback :any) => {
     }
   }, [callback]);
 
-  const allowedPrincipals :List<string> = useSelector((state) => state
-    .getIn(['app', 'selectedOrganizationSettings', 'private', feature.name]));
+  const allowedPrincipals :List<string> = settings
+    .getIn(['private', feature.name]);
 
   const currentPrincipalIds :Set<string> = useSelector((state) => state
     .getIn(['authorization', 'currentPrincipalIds'])) || Set();

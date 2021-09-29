@@ -3,7 +3,6 @@
  */
 
 import { List, Map, fromJS } from 'immutable';
-import { AccountUtils } from 'lattice-auth';
 import { RequestStates } from 'redux-reqseq';
 
 import {
@@ -14,7 +13,9 @@ import {
   submitNewPerson
 } from './PeopleActions';
 
-import { loadApp } from '../app/AppActions';
+import { SETTINGS } from '../../core/redux/constants';
+import { getAppSettings } from '../settings/actions';
+import { INTEGRATED_RMS } from '../settings/constants';
 
 const INITIAL_STATE :Map = fromJS({
   createdPerson: Map(),
@@ -32,6 +33,7 @@ const INITIAL_STATE :Map = fromJS({
     ethnicity: undefined,
     race: undefined,
     sex: undefined,
+    includeRMS: true,
   }),
   submitState: RequestStates.STANDBY,
   totalHits: 0,
@@ -41,20 +43,14 @@ export default function peopleReducer(state :Map = INITIAL_STATE, action :Object
 
   switch (action.type) {
 
-    case loadApp.case(action.type): {
-      return loadApp.reducer(state, action, {
+    case getAppSettings.case(action.type):
+      return getAppSettings.reducer(state, action, {
         SUCCESS: () => {
-          const organizationId = AccountUtils.retrieveOrganizationId();
-          if (organizationId) {
-            const { value } = action;
-            const appSettings = value.get('selectedOrganizationSettings');
-            const integratedRMS = appSettings.get('integratedRMS', false);
-            return state.setIn(['searchInputs', 'includeRMS'], !integratedRMS);
-          }
-          return state.setIn(['searchInputs', 'includeRMS'], true);
-        },
+          const settings = action.value.get(SETTINGS);
+          const integratedRMS = settings.get(INTEGRATED_RMS, false);
+          return state.setIn(['searchInputs', 'includeRMS'], !integratedRMS);
+        }
       });
-    }
 
     case searchPeople.case(action.type): {
       return searchPeople.reducer(state, action, {

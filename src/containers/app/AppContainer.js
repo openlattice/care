@@ -48,6 +48,7 @@ import SearchPeopleContainer from '../people/SearchPeopleContainer';
 import SettingsContainer from '../settings/SettingsContainer';
 import SubscriptionContainer from '../subscriptions/SubscriptionContainer';
 import TrackContactReportContainer from '../reports/interaction/TrackContactReportContainer';
+import { SETTINGS } from '../../core/redux/constants';
 import {
   CRISIS_PATH,
   DASHBOARD_PATH,
@@ -134,7 +135,7 @@ type Props = {
   initializeState :RequestState;
   organizations :Map;
   selectedOrganizationId :UUID;
-  selectedOrganizationSettings :Map;
+  settings :Map;
 };
 
 class AppContainer extends Component<Props> {
@@ -158,7 +159,7 @@ class AppContainer extends Component<Props> {
 
     const {
       organizations,
-      selectedOrganizationSettings,
+      settings,
       selectedOrganizationId,
       initializeState
     } = this.props;
@@ -175,7 +176,7 @@ class AppContainer extends Component<Props> {
     }
 
     /* <===== BEGIN LONG BEACH HACK =====> */
-    if (selectedOrganizationSettings.get('longBeach', false)) {
+    if (settings.get('longBeach', false)) {
       return (<LongBeachRouter />);
     }
     /* <===== END LONG BEACH HACK =====> */
@@ -233,7 +234,7 @@ function mapStateToProps(state :Map<*, *>) :Object {
     initializeState: state.getIn(['app', 'initializeState']),
     organizations: state.getIn(['app', 'organizations'], Map()),
     selectedOrganizationId: state.getIn(['app', 'selectedOrganizationId'], ''),
-    selectedOrganizationSettings: state.getIn(['app', 'selectedOrganizationSettings'], Map()),
+    settings: state.getIn([SETTINGS, SETTINGS], Map()),
   };
 }
 

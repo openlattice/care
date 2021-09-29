@@ -19,11 +19,12 @@ const INITIAL_STATE :Map<*, *> = fromJS({
     loadApp: Map(),
   },
   app: Map(),
+  initializeState: RequestStates.STANDBY,
   isLoadingApp: true,
   organizations: Map(),
+  selectedOrgEntitySetIds: Map(),
   selectedOrganizationId: '',
   selectedOrganizationSettings: Map(),
-  initializeState: RequestStates.STANDBY,
 });
 
 export default function reducer(state :Map<*, *> = INITIAL_STATE, action :Object) {

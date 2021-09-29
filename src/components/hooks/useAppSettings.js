@@ -3,13 +3,11 @@ import { useSelector } from 'react-redux';
 import type { Map } from 'immutable';
 import type { UUID } from 'lattice';
 
-import { SETTINGS } from '../../core/redux/constants';
+import { selectAppSettings, selectAppSettingsId } from '../../core/redux/selectors';
 
 const useAppSettings = () => {
-  const settings :Map = useSelector((state) => state
-    .getIn([SETTINGS, SETTINGS]));
-
-  const id :UUID = useSelector((state) => state.getIn([SETTINGS, 'id']));
+  const settings :Map = useSelector(selectAppSettings());
+  const id :UUID = useSelector(selectAppSettingsId());
 
   return [settings, id];
 };

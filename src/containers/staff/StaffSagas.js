@@ -39,6 +39,7 @@ import {
 } from './StaffActions';
 
 import * as FQN from '../../edm/DataModelFqns';
+import { selectAppSettings } from '../../core/redux/selectors';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { getESIDFromApp, getStaffESId } from '../../utils/AppUtils';
 import { getSearchTerm } from '../../utils/DataUtils';
@@ -204,9 +205,8 @@ function* getResponsibleUserOptionsWorker(action :SequenceAction) :Generator<any
     const entitySetId :UUID = getESIDFromApp(app, STAFF_FQN);
     const personIdPTId :UUID = yield select((state) => state.getIn(['edm', 'fqnToIdMap', FQN.PERSON_ID_FQN]));
     const organizationId :UUID = yield select((state) => state.getIn(['app', 'selectedOrganizationId']));
-    const roleIds :List<UUID> = yield select(
-      (state) => state.getIn(['app', 'selectedOrganizationSettings', 'private', 'profile'], List())
-    );
+    const settings = yield select(selectAppSettings());
+    const roleIds :List<UUID> = settings.getIn(['private', 'profile'], List());
     const responsibleUserOptions = yield select((state) => state.getIn(['staff', 'responsibleUsers', 'data'], List()));
 
     let responseData = responsibleUserOptions;
