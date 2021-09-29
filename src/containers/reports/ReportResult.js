@@ -58,7 +58,7 @@ type Props = {
 const ReportResult = (props :Props) => {
   const dispatch = useDispatch();
   const { result, resultLabels } = props;
-  const settings = useAppSettings();
+  const [settings] = useAppSettings();
 
   const reportType = result.get('reportType', '');
   const occurred = result.get('occurred', '');

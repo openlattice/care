@@ -6,7 +6,7 @@ import { List, Set } from 'immutable';
 import { useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
-import type { PrivateSetting } from '../../containers/admin/constants';
+import type { PrivateSetting } from '../../containers/settings/constants';
 
 const useAuthorization = (feature :PrivateSetting, callback :any) => {
   const [isAuthorized, setAuthorization] = useState(false);

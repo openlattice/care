@@ -45,6 +45,7 @@ import NewSymptomsReportContainer from '../reports/symptoms/NewSymptomsReportCon
 import OriginalCrisisReportContainer from '../reports/OriginalCrisisReportContainer';
 import ProfileRouter from '../profile/ProfileRouter';
 import SearchPeopleContainer from '../people/SearchPeopleContainer';
+import SettingsContainer from '../settings/SettingsContainer';
 import SubscriptionContainer from '../subscriptions/SubscriptionContainer';
 import TrackContactReportContainer from '../reports/interaction/TrackContactReportContainer';
 import {
@@ -65,6 +66,7 @@ import {
   PROFILE_PATH,
   PROVIDER_PATH,
   REPORTS_PATH,
+  SETTINGS_PATH,
   SUBSCRIPTIONS_PATH,
   TRACK_CONTACT_PATH,
 } from '../../core/router/Routes';
@@ -199,6 +201,7 @@ class AppContainer extends Component<Props> {
         <Route path={PROFILE_PATH} component={ProfileRouter} />
         <Route path={ISSUES_PATH} component={IssuesContainer} />
         <Route path={EXPLORE_PATH} component={ExploreContainer} />
+        <Route path={SETTINGS_PATH} component={SettingsContainer} />
         <Redirect to={HOME_PATH} />
       </Switch>
     );

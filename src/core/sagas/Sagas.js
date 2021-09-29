@@ -46,6 +46,7 @@ import * as ReportsSagas from '../../containers/reports/ReportsSagas';
 import * as ResponsePlanSagas from '../../containers/profile/edit/responseplan/ResponsePlanSagas';
 import * as RoutingSagas from '../router/RoutingSagas';
 import * as ScarsMarksTattoosSagas from '../../containers/profile/edit/basicinformation/sagas/ScarsMarksTattoosSagas';
+import * as SettingsSagas from '../../containers/settings/sagas';
 import * as StaffSagas from '../../containers/staff/StaffSagas';
 import * as SubscriptionSagas from '../../containers/subscriptions/SubscriptionSagas';
 import * as SymptomsReportSagas from '../../containers/reports/symptoms/SymptomsReportSagas';
@@ -77,6 +78,8 @@ export default function* sagas() :Generator<*, *, *> {
     fork(AppSagas.loadAppWatcher),
     fork(AppSagas.loadHospitalsWatcher),
     fork(AppSagas.switchOrganizationWatcher),
+
+    fork(SettingsSagas.getAppSettingsWatcher),
 
     // DataSagas
     fork(DataSagas.createOrReplaceAssociationWatcher),

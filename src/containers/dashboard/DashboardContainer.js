@@ -13,7 +13,7 @@ import { DASHBOARD_PATH } from '../../core/router/Routes';
 import { CRC, CRISIS } from '../../shared/ModuleConstants';
 
 const DashboardContainer = () => {
-  const settings = useAppSettings();
+  const [settings] = useAppSettings();
   const profileModule = settings.get('profileModule', CRISIS);
   const organizationId = useSelector((state) => state.getIn(['app', 'selectedOrganizationId']));
   const match = useRouteMatch();

@@ -6,7 +6,7 @@ import { Route } from 'react-router-dom';
 
 import Unauthorized from '../warnings/Unauthorized';
 import { useAuthorization } from '../hooks';
-import type { PrivateSetting } from '../../containers/admin/constants';
+import type { PrivateSetting } from '../../containers/settings/constants';
 
 type Props = {
   authorize :() => any;
