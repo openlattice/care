@@ -24,7 +24,7 @@ import { getFirstLastFromPerson } from '../../../utils/PersonUtils';
 
 const NewCrisisReportContainer = () => {
   const location = useLocation();
-  const settings = useAppSettings();
+  const [settings] = useAppSettings();
   const pageRef = useRef<HTMLDivElement | null>(null);
 
   const isV2 = settings.get('v2', false);

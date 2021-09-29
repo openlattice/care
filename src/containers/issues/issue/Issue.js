@@ -23,7 +23,7 @@ import LinkButton from '../../../components/buttons/LinkButton';
 import { useAuthorization } from '../../../components/hooks';
 import { ISSUES_PATH } from '../../../core/router/Routes';
 import { getAuthorization } from '../../../core/sagas/authorize/AuthorizeActions';
-import { PRIVATE_SETTINGS } from '../../admin/constants';
+import { PRIVATE_SETTINGS } from '../../settings/constants';
 
 const Centered = styled.div`
   display: flex;

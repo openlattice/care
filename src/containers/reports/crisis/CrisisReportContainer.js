@@ -36,7 +36,7 @@ import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { getEntityKeyId } from '../../../utils/DataUtils';
 import { getFirstLastFromPerson } from '../../../utils/PersonUtils';
 import { generateReviewSchema } from '../../../utils/SchemaUtils';
-import { PRIVATE_SETTINGS } from '../../admin/constants';
+import { PRIVATE_SETTINGS } from '../../settings/constants';
 
 const {
   BEHAVIORAL_HEALTH_REPORT_FQN,

@@ -16,7 +16,7 @@ import IssueDetails from './IssueDetails';
 
 import { useAuthorization } from '../../components/hooks';
 import { getAuthorization } from '../../core/sagas/authorize/AuthorizeActions';
-import { PRIVATE_SETTINGS } from '../admin/constants';
+import { PRIVATE_SETTINGS } from '../settings/constants';
 
 const { NEUTRALS } = Colors;
 
