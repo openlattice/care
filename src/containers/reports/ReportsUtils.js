@@ -1,10 +1,13 @@
 // @flow
 
-import { List, Map } from 'immutable';
+import { List, Map, fromJS } from 'immutable';
 import { Logger } from 'lattice-utils';
 import { DateTime } from 'luxon';
 
+import { NONE } from './crisis/schemas/constants';
+
 import * as FQN from '../../edm/DataModelFqns';
+import { APP_TYPES_FQNS } from '../../shared/Consts';
 import { getLastFirstMiFromPerson } from '../../utils/PersonUtils';
 import {
   CRISIS_NATURE,
@@ -22,6 +25,13 @@ import {
   RESOURCES_DECLINED,
   UNABLE_TO_CONTACT,
 } from '../pages/disposition/Constants';
+
+const {
+  INJURY_FQN,
+  SELF_HARM_FQN,
+  VIOLENT_BEHAVIOR_FQN,
+  WEAPON_FQN,
+} = APP_TYPES_FQNS;
 
 const LOG = new Logger('ReportsUtils');
 
@@ -175,6 +185,38 @@ const getEntityDataFromFields = (formData :Object, fields :Object, propertyTypeI
   return entityData;
 };
 
+const getProfileV2SafetySummary = (groupedNeighborsByType :Map<string, List>) => {
+
+  const injuries = groupedNeighborsByType.get(INJURY_FQN, List());
+  const selfHarms = groupedNeighborsByType.get(SELF_HARM_FQN, List());
+  const violentBehaviors = groupedNeighborsByType.get(VIOLENT_BEHAVIOR_FQN, List());
+  const weapons = groupedNeighborsByType.get(WEAPON_FQN, List());
+
+  const injuryCount = injuries
+    .countBy((injury) => injury.getIn([FQN.PERSON_INJURED_FQN, 0]) !== NONE)
+    .get(true, 0);
+
+  const selfHarmCount = selfHarms
+    .countBy((selfHarm) => selfHarm.getIn([FQN.ACTION_FQN, 0]) !== NONE)
+    .get(true, 0);
+
+  const violenceCount = violentBehaviors
+    .countBy((violence) => violence.getIn([FQN.DIRECTED_AGAINST_RELATION_FQN, 0]) !== NONE)
+    .get(true, 0);
+
+  const weaponCount = weapons
+    .countBy((weapon) => weapon.getIn([FQN.TYPE_FQN, 0]) !== NONE)
+    .get(true, 0);
+
+  return fromJS([
+    { name: 'Injuries', count: injuryCount },
+    { name: 'Self-harm', count: selfHarmCount },
+    { name: 'Violence', count: violenceCount },
+    { name: 'Armed', count: weaponCount },
+  ])
+    .sortBy((category) => category.get('count'), (valueA, valueB) => valueB - valueA);
+};
+
 export {
   compileDispositionData,
   compileNatureOfCrisisData,
@@ -182,4 +224,5 @@ export {
   compileOfficerSafetyData,
   compileSubjectData,
   getEntityDataFromFields,
+  getProfileV2SafetySummary,
 };

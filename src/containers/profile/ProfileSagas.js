@@ -43,7 +43,7 @@ import {
   updateProfileAbout,
 } from './ProfileActions';
 import { personFqnsByName, physicalAppearanceFqnsByName } from './constants';
-import { countCrisisCalls, countPropertyOccurrance, countSafetyIncidents } from './premium/Utils';
+import { countCrisisCalls, countPropertyOccurrance, countSafetyIncidents, countTopBehaviors } from './premium/Utils';
 
 import * as FQN from '../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
@@ -217,16 +217,7 @@ function* getProfileReportsWorker(action :SequenceAction) :Generator<any, any, a
         return -time.valueOf();
       });
 
-    const behaviorSummary = countPropertyOccurrance(reportsData, FQN.OBSERVED_BEHAVIORS_FQN)
-      .sortBy((count) => count, (valueA, valueB) => valueB - valueA)
-      .toArray()
-      .map(([name, count]) => ({ name, count }))
-      .map((datum) => {
-        const { name } = datum;
-        const transformedName = BEHAVIOR_LABEL_MAP[name] || name;
-        return { ...datum, name: transformedName };
-      });
-
+    const behaviorSummary = countTopBehaviors(reportsData, FQN.OBSERVED_BEHAVIORS_FQN);
     const crisisSummary = countCrisisCalls(reportsData, FQN.DATE_TIME_OCCURRED_FQN);
     const safetySummary = countSafetyIncidents(reportsData);
 
