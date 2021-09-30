@@ -43,7 +43,7 @@ import {
   updateProfileAbout,
 } from './ProfileActions';
 import { personFqnsByName, physicalAppearanceFqnsByName } from './constants';
-import { countCrisisCalls, countPropertyOccurrance, countSafetyIncidents, countTopBehaviors } from './premium/Utils';
+import { countCrisisCalls, countSafetyIncidents, countTopBehaviors } from './premium/Utils';
 
 import * as FQN from '../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
@@ -57,7 +57,6 @@ import {
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
 import { getInvolvedPeople } from '../explore/ExploreActions';
 import { getInvolvedPeopleWorker } from '../explore/ExploreSagas';
-import { BEHAVIOR_LABEL_MAP } from '../reports/crisis/schemas/v1/constants';
 
 const LOG = new Logger('ProfileSagas');
 
