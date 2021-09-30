@@ -15,6 +15,11 @@ const deleteReports :PrivateSetting = {
   name: 'deleteReports',
 };
 
+const adminOnly :PrivateSetting = {
+  label: 'Admin Only',
+  name: 'adminOnly'
+};
+
 const PRIVATE_SETTINGS = Object.freeze({
   deleteReports,
   profile,
@@ -28,6 +33,7 @@ const THRESHOLD = 'threshold';
 const MONTHS = 'months';
 
 export {
+  adminOnly,
   CRISIS_PROFILE_REPORT_THRESHOLD,
   INTEGRATED_RMS,
   MONTHS,

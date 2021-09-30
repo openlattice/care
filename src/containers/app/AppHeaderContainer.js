@@ -155,7 +155,7 @@ const AppHeaderContainer = (props :Props) => {
         </StyledNavLink>
         <StyledNavLink to={SETTINGS_PATH} hidden={isLongBeach || hiddenFeatures.get('settings')}>
           <FontAwesomeIcon size="lg" fixedWidth icon={faCog} />
-          <NavLabel>Settings</NavLabel>
+          <NavLabel>Application Settings</NavLabel>
         </StyledNavLink>
         <a
             href="https://support.openlattice.com/servicedesk/customer/portal/1"

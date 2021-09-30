@@ -8,6 +8,8 @@ import { RequestStates } from 'redux-reqseq';
 
 import useAppSettings from './useAppSettings';
 
+import { adminOnly } from '../../containers/settings/constants';
+import { selectAdminRolePrincipleId, selectCurrentOrganizationId } from '../../core/redux/selectors';
 import type { PrivateSetting } from '../../containers/settings/constants';
 
 const useAuthorization = (feature :PrivateSetting, callback :any) => {
@@ -21,13 +23,20 @@ const useAuthorization = (feature :PrivateSetting, callback :any) => {
     }
   }, [callback]);
 
-  const allowedPrincipals :List<string> = settings
-    .getIn(['private', feature.name]);
-
   const currentPrincipalIds :Set<string> = useSelector((state) => state
     .getIn(['authorization', 'currentPrincipalIds'])) || Set();
 
+  const organizationId = useSelector(selectCurrentOrganizationId());
+  const adminPrincipleId = useSelector(selectAdminRolePrincipleId(organizationId));
+
   const fetchState = useSelector((state) => state.getIn(['authorization', 'fetchState']));
+
+  let allowedPrincipals :List<string> = settings
+    .getIn(['private', feature.name]);
+
+  if (feature === adminOnly) {
+    allowedPrincipals = List([adminPrincipleId]);
+  }
 
   useEffect(() => {
     const loadState = fetchState === RequestStates.PENDING;

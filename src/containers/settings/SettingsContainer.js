@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useState } from 'react';
+import React from 'react';
 
 import {
   Divider,
@@ -88,19 +88,11 @@ const SettingsContainer = () => {
     }));
   };
 
-  const handleOpenThreshold = (e :SyntheticEvent<HTMLInputElement>) => {
-
-  };
-
-  const handleOpenMonths = (e :SyntheticEvent<HTMLInputElement>) => {
-
-  };
-
   return (
     <ContentOuterWrapper>
       <ContentWrapper>
         <Header>
-          Settings
+          Application Settings
         </Header>
         <List>
           <ListSubheader>Crisis Report Version</ListSubheader>
@@ -145,12 +137,12 @@ const SettingsContainer = () => {
                   onChange={handlePrivacyThreshold} />
             </ListItemSecondaryAction>
           </ListItem>
-          <ListItem button disabled={!privacyThreshold} name={THRESHOLD}>
+          <ListItem disabled={!privacyThreshold} name={THRESHOLD}>
             <ListItemText
                 primary="Report Count"
                 secondary={threshold} />
           </ListItem>
-          <ListItem button disabled={!privacyThreshold} name={MONTHS}>
+          <ListItem disabled={!privacyThreshold} name={MONTHS}>
             <ListItemText
                 primary="Threshold Window"
                 secondary={months} />

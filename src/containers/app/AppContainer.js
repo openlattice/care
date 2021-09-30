@@ -43,6 +43,7 @@ import NewFollowupReportContainer from '../reports/crisis/NewFollowupReportConta
 import NewPersonContainer from '../people/NewPersonContainer';
 import NewSymptomsReportContainer from '../reports/symptoms/NewSymptomsReportContainer';
 import OriginalCrisisReportContainer from '../reports/OriginalCrisisReportContainer';
+import PrivateRoute from '../../components/route/PrivateRoute';
 import ProfileRouter from '../profile/ProfileRouter';
 import SearchPeopleContainer from '../people/SearchPeopleContainer';
 import SettingsContainer from '../settings/SettingsContainer';
@@ -71,6 +72,7 @@ import {
   SUBSCRIPTIONS_PATH,
   TRACK_CONTACT_PATH,
 } from '../../core/router/Routes';
+import { getAuthorization } from '../../core/sagas/authorize/AuthorizeActions';
 import {
   APP_CONTAINER_MAX_WIDTH,
   APP_CONTENT_PADDING,
@@ -78,6 +80,7 @@ import {
   MEDIA_QUERY_MD,
   MEDIA_QUERY_TECH_SM
 } from '../../core/style/Sizes';
+import { adminOnly } from '../settings/constants';
 
 /*
  * styled components
@@ -130,6 +133,7 @@ const MissingOrgsWrapper = styled.div`
 
 type Props = {
   actions :{
+    getAuthorization :RequestSequence;
     initializeApplication :RequestSequence;
   };
   initializeState :RequestState;
@@ -158,10 +162,11 @@ class AppContainer extends Component<Props> {
   renderAppContent = () => {
 
     const {
+      actions,
+      initializeState,
       organizations,
-      settings,
       selectedOrganizationId,
-      initializeState
+      settings,
     } = this.props;
 
     if (initializeState === RequestStates.PENDING) {
@@ -202,7 +207,11 @@ class AppContainer extends Component<Props> {
         <Route path={PROFILE_PATH} component={ProfileRouter} />
         <Route path={ISSUES_PATH} component={IssuesContainer} />
         <Route path={EXPLORE_PATH} component={ExploreContainer} />
-        <Route path={SETTINGS_PATH} component={SettingsContainer} />
+        <PrivateRoute
+            authorize={actions.getAuthorization}
+            feature={adminOnly}
+            path={SETTINGS_PATH}
+            component={SettingsContainer} />
         <Redirect to={HOME_PATH} />
       </Switch>
     );
@@ -241,6 +250,7 @@ function mapStateToProps(state :Map<*, *>) :Object {
 function mapDispatchToProps(dispatch :Function) :Object {
 
   const actions = {
+    getAuthorization,
     initializeApplication,
   };
 
