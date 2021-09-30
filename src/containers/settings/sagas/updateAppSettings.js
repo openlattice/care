@@ -42,11 +42,6 @@ function* updateAppSettingsWorker(action :SequenceAction) :Saga<WorkerResponse> 
     yield put(updateAppSettings.request(action.id, action.value));
     const appSettingsESID :UUID = yield select(selectEntitySetId(APP_SETTINGS_FQN));
     const appDetailsPTID :UUID = yield select(selectPropertyTypeId(APP_DETAILS_FQN));
-    const appDetailsPTID2 :UUID = yield select((state) => state.getIn(['edm', 'fqnToIdMap', APP_DETAILS_FQN]));
-
-    console.log(appDetailsPTID, appDetailsPTID2);
-
-    debugger;
 
     const updateResponse = yield call(
       updateEntityDataWorker,
