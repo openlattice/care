@@ -38,6 +38,7 @@ import {
 } from './PeopleActions';
 
 import * as FQN from '../../edm/DataModelFqns';
+import { selectAppSettings } from '../../core/redux/selectors';
 import { submitDataGraph } from '../../core/sagas/data/DataActions';
 import { submitDataGraphWorker } from '../../core/sagas/data/DataSagas';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
@@ -124,7 +125,7 @@ export function* getRecentIncidentsWorker(action :SequenceAction) :Generator<any
     const appearsInESID :UUID = getESIDFromApp(app, APPEARS_IN_FQN);
     const involvedInESID :UUID = getESIDFromApp(app, INVOLVED_IN_FQN);
     const incidentESID :UUID = getESIDFromApp(app, INCIDENT_FQN);
-    const settings :Map = app.get('selectedOrganizationSettings', Map());
+    const settings :Map = yield select(selectAppSettings());
 
     const isV2 = settings.get('v2');
 

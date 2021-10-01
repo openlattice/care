@@ -12,7 +12,6 @@ import {
 } from '@redux-saga/core/effects';
 import { push } from 'connected-react-router';
 import { Map, fromJS } from 'immutable';
-import { Constants } from 'lattice';
 import { AccountUtils } from 'lattice-auth';
 import {
   AppApiActions,
@@ -21,8 +20,6 @@ import {
   DataApiSagas,
   EntityDataModelApiActions,
   EntityDataModelApiSagas,
-  SearchApiActions,
-  SearchApiSagas,
 } from 'lattice-sagas';
 import { Logger, ValidationUtils } from 'lattice-utils';
 import type { Saga } from '@redux-saga/core';
@@ -40,13 +37,13 @@ import {
 } from './AppActions';
 
 import * as Routes from '../../core/router/Routes';
-import { APP_DETAILS_FQN } from '../../edm/DataModelFqns';
 import { APP_NAME, APP_TYPES_FQNS } from '../../shared/Consts';
 import { ERR_ACTION_VALUE_TYPE, ERR_WORKER_SAGA } from '../../utils/Errors';
+import { getAppSettings } from '../settings/actions';
+import { getAppSettingsWorker } from '../settings/sagas';
 import { getCurrentUserStaffMemberData } from '../staff/StaffActions';
 import { getCurrentUserStaffMemberDataWorker } from '../staff/StaffSagas';
 
-const { OPENLATTICE_ID_FQN } = Constants;
 const { isValidUUID } = ValidationUtils;
 const { getApp, getAppConfigs } = AppApiActions;
 const { getAppWorker, getAppConfigsWorker } = AppApiSagas;
@@ -54,8 +51,6 @@ const { getAllPropertyTypes } = EntityDataModelApiActions;
 const { getAllPropertyTypesWorker } = EntityDataModelApiSagas;
 const { getEntitySetData } = DataApiActions;
 const { getEntitySetDataWorker } = DataApiSagas;
-const { searchEntitySetData } = SearchApiActions;
-const { searchEntitySetDataWorker } = SearchApiSagas;
 
 const { HOSPITALS_FQN, APP_SETTINGS_FQN } = APP_TYPES_FQNS;
 
@@ -124,38 +119,8 @@ function* loadAppWorker(action :SequenceAction) :Saga<*> {
     });
 
     const appSettingsESID = appSettingsESIDByOrgId.get(selectedOrganizationId);
-
-    const appSettingsResponse = yield call(
-      searchEntitySetDataWorker,
-      searchEntitySetData({
-        entitySetIds: [appSettingsESID],
-        constraints: [{
-          constraints: [{
-            searchTerm: '*'
-          }],
-        }],
-        maxHits: 10000,
-        start: 0,
-      })
-    );
-
+    const appSettingsResponse = yield call(getAppSettingsWorker, getAppSettings(appSettingsESID));
     if (appSettingsResponse.error) throw appSettingsResponse.error;
-
-    let selectedOrganizationSettings = Map();
-    const appSettingsHit = fromJS(appSettingsResponse?.data?.hits || []).first();
-    if (appSettingsHit) {
-      const appDetails = appSettingsHit.getIn([APP_DETAILS_FQN, 0]);
-      const settingsEKID = appSettingsHit.getIn([OPENLATTICE_ID_FQN, 0]);
-      try {
-        const parsedAppDetails = JSON.parse(appDetails);
-        const parsedAppSettings = fromJS(parsedAppDetails)
-          .set(OPENLATTICE_ID_FQN, settingsEKID);
-        selectedOrganizationSettings = parsedAppSettings;
-      }
-      catch (error) {
-        LOG.error('could not parse app details');
-      }
-    }
 
     const organizations = {};
     let selectedOrgEntitySetIds = {};
@@ -176,10 +141,10 @@ function* loadAppWorker(action :SequenceAction) :Saga<*> {
       organizations,
       selectedOrgEntitySetIds,
       selectedOrganizationId,
-      selectedOrganizationSettings,
     });
 
     yield put(loadApp.success(action.id, workerResponse.data));
+
   }
   catch (error) {
     LOG.error(action.type, error);

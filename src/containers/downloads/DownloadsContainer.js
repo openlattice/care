@@ -14,7 +14,7 @@ import { DOWNLOADS_PATH } from '../../core/router/Routes';
 import { CRC, CRISIS, HELPLINE } from '../../shared/ModuleConstants';
 
 const DownloadsContainer = () => {
-  const settings = useAppSettings();
+  const [settings] = useAppSettings();
   const profileModule = settings.get('profileModule', 'crisis');
   const v2 = settings.get('v2', false);
   const organizationId = useSelector((state) => state.getIn(['app', 'selectedOrganizationId']));

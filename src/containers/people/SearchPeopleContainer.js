@@ -114,7 +114,7 @@ const SearchPeopleContainer = () => {
   const fetchState = useSelector((store) => store.getIn(['people', 'fetchState']));
   const searchInputs = useSelector((store) => store.getIn(['people', 'searchInputs']));
   const dispatch = useDispatch();
-  const appSettings = useAppSettings();
+  const [appSettings] = useAppSettings();
   const integratedRMS = appSettings.get('integratedRMS', false);
 
   const [modalState, modalDispatch] = useReducer(reducer, INITIAL_STATE);

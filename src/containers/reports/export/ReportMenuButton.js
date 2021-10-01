@@ -13,7 +13,7 @@ import ExportXMLModal from './ExportXMLModal';
 
 import DeleteReportModal from '../crisis/DeleteReportModal';
 import { useAuthorization } from '../../../components/hooks';
-import { PRIVATE_SETTINGS } from '../../admin/constants';
+import { PRIVATE_SETTINGS } from '../../settings/constants';
 
 const CLOSE_XML_EXPORT = 'CLOSE_XML_EXPORT';
 const CLOSE_MENU = 'CLOSE_MENU';

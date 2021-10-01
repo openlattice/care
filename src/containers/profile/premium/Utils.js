@@ -16,6 +16,7 @@ import {
   TYPE_FQN,
 } from '../../../edm/DataModelFqns';
 import { CRISIS_REPORT } from '../../reports/crisis/schemas/constants';
+import { BEHAVIOR_LABEL_MAP } from '../../reports/crisis/schemas/v1/constants';
 
 const incrementValueAtKey = (mutable :Map, key :string, value :boolean) => {
   if (value) {
@@ -65,6 +66,16 @@ const countCrisisCalls = (reports :List<Map>, timeFQN :FQN = DATE_TIME_OCCURRED_
 
   return { recent, total };
 };
+
+const countTopBehaviors = (entities :List<Map>, fqn :FQN) => countPropertyOccurrance(entities, fqn)
+  .sortBy((count) => count, (valueA, valueB) => valueB - valueA)
+  .toArray()
+  .map(([name, count]) => ({ name, count }))
+  .map((datum) => {
+    const { name } = datum;
+    const transformedName = BEHAVIOR_LABEL_MAP[name] || name;
+    return { ...datum, name: transformedName };
+  });
 
 const countSafetyIncidents = (reports :List) :Map => Map()
   .withMutations((mutable) => {
@@ -129,6 +140,7 @@ export {
   countCrisisCalls,
   countPropertyOccurrance,
   countSafetyIncidents,
+  countTopBehaviors,
   incrementValueAtKey,
   meetsCrisisProfileReportThreshold,
 };

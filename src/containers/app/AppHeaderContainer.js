@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import {
   faBell,
   faCampground,
+  faCog,
   faDownload,
   faFileAlt,
   faFileExclamation,
@@ -34,7 +35,8 @@ import {
   ISSUES_PATH,
   LOGOUT_PATH,
   REPORTS_PATH,
-  SUBSCRIPTIONS_PATH
+  SETTINGS_PATH,
+  SUBSCRIPTIONS_PATH,
 } from '../../core/router/Routes';
 import {
   ENCAMPMENTS_PATH,
@@ -74,7 +76,7 @@ const AppHeaderContainer = (props :Props) => {
   const [selectedOrganizationId, isLoading, switchOrganization] = useOrganization();
 
   /* <===== BEGIN LONG BEACH HACK =====> */
-  const appSettings :Map = useAppSettings();
+  const [appSettings] :Map = useAppSettings();
 
   const isLongBeach = appSettings.get('longBeach', false);
   const stayAway = isLongBeach || appSettings.get('stayAway', false);
@@ -150,6 +152,10 @@ const AppHeaderContainer = (props :Props) => {
         <StyledNavLink to={ISSUES_PATH} hidden={isLongBeach || hiddenFeatures.get('issues')}>
           <FontAwesomeIcon size="lg" fixedWidth icon={faFileExclamation} />
           <NavLabel>Manage Issues</NavLabel>
+        </StyledNavLink>
+        <StyledNavLink to={SETTINGS_PATH} hidden={isLongBeach || hiddenFeatures.get('settings')}>
+          <FontAwesomeIcon size="lg" fixedWidth icon={faCog} />
+          <NavLabel>Application Settings</NavLabel>
         </StyledNavLink>
         <a
             href="https://support.openlattice.com/servicedesk/customer/portal/1"
