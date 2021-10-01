@@ -5,20 +5,20 @@ type PrivateSetting = {|
   name :string;
 |};
 
-const profile :PrivateSetting = {
+const profile :PrivateSetting = Object.freeze({
   label: 'Profile',
   name: 'profile'
-};
+});
 
-const deleteReports :PrivateSetting = {
+const deleteReports :PrivateSetting = Object.freeze({
   label: 'Delete Reports',
   name: 'deleteReports',
-};
+});
 
-const adminOnly :PrivateSetting = {
+const adminOnly :PrivateSetting = Object.freeze({
   label: 'Admin Only',
   name: 'adminOnly'
-};
+});
 
 const PRIVATE_SETTINGS = Object.freeze({
   deleteReports,
