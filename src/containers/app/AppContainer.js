@@ -43,10 +43,13 @@ import NewFollowupReportContainer from '../reports/crisis/NewFollowupReportConta
 import NewPersonContainer from '../people/NewPersonContainer';
 import NewSymptomsReportContainer from '../reports/symptoms/NewSymptomsReportContainer';
 import OriginalCrisisReportContainer from '../reports/OriginalCrisisReportContainer';
+import PrivateRoute from '../../components/route/PrivateRoute';
 import ProfileRouter from '../profile/ProfileRouter';
 import SearchPeopleContainer from '../people/SearchPeopleContainer';
+import SettingsContainer from '../settings/SettingsContainer';
 import SubscriptionContainer from '../subscriptions/SubscriptionContainer';
 import TrackContactReportContainer from '../reports/interaction/TrackContactReportContainer';
+import { SETTINGS } from '../../core/redux/constants';
 import {
   CRISIS_PATH,
   DASHBOARD_PATH,
@@ -65,9 +68,11 @@ import {
   PROFILE_PATH,
   PROVIDER_PATH,
   REPORTS_PATH,
+  SETTINGS_PATH,
   SUBSCRIPTIONS_PATH,
   TRACK_CONTACT_PATH,
 } from '../../core/router/Routes';
+import { getAuthorization } from '../../core/sagas/authorize/AuthorizeActions';
 import {
   APP_CONTAINER_MAX_WIDTH,
   APP_CONTENT_PADDING,
@@ -75,6 +80,7 @@ import {
   MEDIA_QUERY_MD,
   MEDIA_QUERY_TECH_SM
 } from '../../core/style/Sizes';
+import { adminOnly } from '../settings/constants';
 
 /*
  * styled components
@@ -127,12 +133,13 @@ const MissingOrgsWrapper = styled.div`
 
 type Props = {
   actions :{
+    getAuthorization :RequestSequence;
     initializeApplication :RequestSequence;
   };
   initializeState :RequestState;
   organizations :Map;
   selectedOrganizationId :UUID;
-  selectedOrganizationSettings :Map;
+  settings :Map;
 };
 
 class AppContainer extends Component<Props> {
@@ -155,10 +162,11 @@ class AppContainer extends Component<Props> {
   renderAppContent = () => {
 
     const {
+      actions,
+      initializeState,
       organizations,
-      selectedOrganizationSettings,
       selectedOrganizationId,
-      initializeState
+      settings,
     } = this.props;
 
     if (initializeState === RequestStates.PENDING) {
@@ -173,7 +181,7 @@ class AppContainer extends Component<Props> {
     }
 
     /* <===== BEGIN LONG BEACH HACK =====> */
-    if (selectedOrganizationSettings.get('longBeach', false)) {
+    if (settings.get('longBeach', false)) {
       return (<LongBeachRouter />);
     }
     /* <===== END LONG BEACH HACK =====> */
@@ -199,6 +207,11 @@ class AppContainer extends Component<Props> {
         <Route path={PROFILE_PATH} component={ProfileRouter} />
         <Route path={ISSUES_PATH} component={IssuesContainer} />
         <Route path={EXPLORE_PATH} component={ExploreContainer} />
+        <PrivateRoute
+            authorize={actions.getAuthorization}
+            feature={adminOnly}
+            path={SETTINGS_PATH}
+            component={SettingsContainer} />
         <Redirect to={HOME_PATH} />
       </Switch>
     );
@@ -230,13 +243,14 @@ function mapStateToProps(state :Map<*, *>) :Object {
     initializeState: state.getIn(['app', 'initializeState']),
     organizations: state.getIn(['app', 'organizations'], Map()),
     selectedOrganizationId: state.getIn(['app', 'selectedOrganizationId'], ''),
-    selectedOrganizationSettings: state.getIn(['app', 'selectedOrganizationSettings'], Map()),
+    settings: state.getIn([SETTINGS, SETTINGS], Map()),
   };
 }
 
 function mapDispatchToProps(dispatch :Function) :Object {
 
   const actions = {
+    getAuthorization,
     initializeApplication,
   };
 

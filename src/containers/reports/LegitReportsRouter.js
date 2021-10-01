@@ -27,7 +27,7 @@ import {
 } from '../../core/router/Routes';
 
 const LegitReportsRouter = () => {
-  const settings = useAppSettings();
+  const [settings] = useAppSettings();
   const isV2 = settings.get('v2', false);
   return (
     <Switch>

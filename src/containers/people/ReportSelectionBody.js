@@ -39,7 +39,7 @@ type Props = {
 const ReportSelectionBody = (props :Props) => {
   const { selectedPerson } = props;
 
-  const settings = useAppSettings();
+  const [settings] = useAppSettings();
   const crisisPath = (settings.get('v1') || settings.get('v2')) ? NEW_CRISIS_PATH : `${CRISIS_PATH}/1`;
   const name = getFirstLastFromPerson(selectedPerson);
   const [state, setState] = useState();

@@ -57,7 +57,7 @@ const CrisisReportSubscriptions = (props :Props) => {
     veteranQuery,
   } = props;
 
-  const settings = useAppSettings();
+  const [settings] = useAppSettings();
   const hasAffiliateSubscription = settings
     .getIn(['additionalSubscriptions', ADDITIONAL_ALERT_TYPES.UNIVERSITY_OF_IOWA_AFFILIATE], false);
 

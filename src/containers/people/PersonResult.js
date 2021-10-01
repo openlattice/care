@@ -110,7 +110,7 @@ const PersonResult = (props :Props) => {
   const isLoading = useSelector((store) => store
     .getIn(['people', 'recentIncidentsByEKID', 'fetchState']) !== RequestStates.SUCCESS);
 
-  const settings = useAppSettings();
+  const [settings] = useAppSettings();
   const profileModule = settings.get('profileModule', 'crisis');
 
   const showDetails = profileModule !== 'helpline';

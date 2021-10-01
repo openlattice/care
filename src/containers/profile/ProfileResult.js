@@ -50,7 +50,7 @@ type Props = {
 
 const ProfileResult = (props :Props) => {
   const dispatch = useDispatch();
-  const settings = useAppSettings();
+  const [settings] = useAppSettings();
 
   const { result } = props;
   const reportType = result.getIn([TYPE_FQN, 0], '');

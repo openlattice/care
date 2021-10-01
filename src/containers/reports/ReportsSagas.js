@@ -52,11 +52,11 @@ import {
   compileObservedBehaviorData,
   compileOfficerSafetyData,
   compileSubjectData,
-  getEntityDataFromFields
+  getEntityDataFromFields,
+  getProfileV2SafetySummary
 } from './ReportsUtils';
 import { updatePersonReportCount } from './crisis/CrisisActions';
 import { updatePersonReportCountWorker } from './crisis/CrisisReportSagas';
-import { BEHAVIOR_LABEL_MAP } from './crisis/schemas/v1/constants';
 
 import * as FQN from '../../edm/DataModelFqns';
 import { BHR_CONFIG, PEOPLE_CONFIG } from '../../config/formconfig/CrisisReportConfig';
@@ -92,7 +92,7 @@ import {
   getReportersForReports,
   getReportsBehaviorAndSafety,
 } from '../profile/actions/ReportActions';
-import { countCrisisCalls, countPropertyOccurrance } from '../profile/premium/Utils';
+import { countCrisisCalls, countTopBehaviors } from '../profile/premium/Utils';
 
 const { isDefined } = LangUtils;
 const { processAssociationEntityData } = DataProcessingUtils;
@@ -1279,28 +1279,10 @@ function* getIncidentReportsSummaryWorker(action :SequenceAction) :Generator<any
     }
 
     const behaviors = groupedNeighborsByType.get(BEHAVIOR_FQN, List());
-    const injuries = groupedNeighborsByType.get(INJURY_FQN, List());
-    const selfHarms = groupedNeighborsByType.get(SELF_HARM_FQN, List());
-    const violentBehaviors = groupedNeighborsByType.get(VIOLENT_BEHAVIOR_FQN, List());
-    const weapons = groupedNeighborsByType.get(WEAPON_FQN, List());
 
-    const behaviorSummary = countPropertyOccurrance(behaviors, FQN.OBSERVED_BEHAVIOR_FQN)
-      .sortBy((count) => count, (valueA, valueB) => valueB - valueA)
-      .toArray()
-      .map(([name, count]) => ({ name, count }))
-      .map((datum) => {
-        const { name } = datum;
-        const transformedName = BEHAVIOR_LABEL_MAP[name] || name;
-        return { ...datum, name: transformedName };
-      });
-
+    const behaviorSummary = countTopBehaviors(behaviors, FQN.OBSERVED_BEHAVIOR_FQN);
     const crisisSummary = countCrisisCalls(incidentsData, FQN.DATETIME_START_FQN);
-    const safetySummary = fromJS([
-      { name: 'Injuries', count: injuries.count() },
-      { name: 'Self-harm', count: selfHarms.count() },
-      { name: 'Violence', count: violentBehaviors.count() },
-      { name: 'Armed', count: weapons.count() },
-    ]);
+    const safetySummary = getProfileV2SafetySummary(groupedNeighborsByType);
 
     const reportSummary = fromJS({
       behaviorSummary,

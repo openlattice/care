@@ -43,7 +43,7 @@ import {
   updateProfileAbout,
 } from './ProfileActions';
 import { personFqnsByName, physicalAppearanceFqnsByName } from './constants';
-import { countCrisisCalls, countPropertyOccurrance, countSafetyIncidents } from './premium/Utils';
+import { countCrisisCalls, countSafetyIncidents, countTopBehaviors } from './premium/Utils';
 
 import * as FQN from '../../edm/DataModelFqns';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
@@ -57,7 +57,6 @@ import {
 import { ERR_ACTION_VALUE_NOT_DEFINED, ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
 import { getInvolvedPeople } from '../explore/ExploreActions';
 import { getInvolvedPeopleWorker } from '../explore/ExploreSagas';
-import { BEHAVIOR_LABEL_MAP } from '../reports/crisis/schemas/v1/constants';
 
 const LOG = new Logger('ProfileSagas');
 
@@ -217,16 +216,7 @@ function* getProfileReportsWorker(action :SequenceAction) :Generator<any, any, a
         return -time.valueOf();
       });
 
-    const behaviorSummary = countPropertyOccurrance(reportsData, FQN.OBSERVED_BEHAVIORS_FQN)
-      .sortBy((count) => count, (valueA, valueB) => valueB - valueA)
-      .toArray()
-      .map(([name, count]) => ({ name, count }))
-      .map((datum) => {
-        const { name } = datum;
-        const transformedName = BEHAVIOR_LABEL_MAP[name] || name;
-        return { ...datum, name: transformedName };
-      });
-
+    const behaviorSummary = countTopBehaviors(reportsData, FQN.OBSERVED_BEHAVIORS_FQN);
     const crisisSummary = countCrisisCalls(reportsData, FQN.DATE_TIME_OCCURRED_FQN);
     const safetySummary = countSafetyIncidents(reportsData);
 

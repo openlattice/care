@@ -7,7 +7,7 @@ import { Button } from 'lattice-ui-kit';
 import { DateTime } from 'luxon';
 import type { RequestSequence } from 'redux-reqseq';
 
-import { PRIVATE_SETTINGS } from '../../containers/admin/constants';
+import { PRIVATE_SETTINGS } from '../../containers/settings/constants';
 import { MEDIA_QUERY_LG } from '../../core/style/Sizes';
 import {
   DATE_TIME_FQN,

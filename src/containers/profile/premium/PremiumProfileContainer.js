@@ -51,8 +51,8 @@ import { getImageDataFromEntity } from '../../../utils/BinaryUtils';
 import { getEntityKeyId } from '../../../utils/DataUtils';
 import { getFirstLastFromPerson } from '../../../utils/PersonUtils';
 import { reduceRequestStates } from '../../../utils/StateUtils';
-import { PRIVATE_SETTINGS } from '../../admin/constants';
 import { getAllSymptomsReports } from '../../reports/symptoms/SymptomsReportActions';
+import { PRIVATE_SETTINGS } from '../../settings/constants';
 import { getProfileCitations, getProfilePoliceCAD, getProfileReports } from '../ProfileActions';
 import { getIncidentReportsSummary } from '../actions/ReportActions';
 import { getAboutPlan } from '../edit/about/AboutActions';
@@ -221,7 +221,7 @@ const PremiumProfileContainer = (props :Props) => {
   } = props;
 
   const [showContent, onShowContent] = useBoolean(false);
-  const settings = useAppSettings();
+  const [settings] = useAppSettings();
   const reportAction = settings.get('v2') ? actions.getIncidentReportsSummary : actions.getProfileReports;
 
   usePeopleRoute(actions.getAboutPlan);

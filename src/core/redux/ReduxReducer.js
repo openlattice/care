@@ -30,6 +30,7 @@ import peopleReducer from '../../containers/people/PeopleReducer';
 import profileReducer from '../../containers/profile/reducers/ProfileReducer';
 import recentInteractionReducer from '../../containers/reports/interaction/RecentInteractionReducer';
 import reportsReducer from '../../containers/reports/ReportsReducer';
+import settingsReducer from '../../containers/settings/reducers';
 import staffReducer from '../../containers/staff/StaffReducer';
 import subjectInformationReducer from '../../containers/pages/subjectinformation/Reducer';
 import subscriptionReducer from '../../containers/subscriptions/SubscriptionReducer';
@@ -63,6 +64,7 @@ export default function reduxReducer(routerHistory :any) {
     router: connectRouter(routerHistory),
     staff: staffReducer,
     symptomsReport: symptomsReportReducer,
+    settings: settingsReducer,
 
     // page reducers
     [STATE.DISPOSITION]: dispositionReducer,

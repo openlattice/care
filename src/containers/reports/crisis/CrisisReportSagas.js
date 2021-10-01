@@ -87,6 +87,7 @@ import {
 } from './CrisisReportUtils';
 import { v1 } from './schemas';
 
+import { selectAppSettings } from '../../../core/redux/selectors';
 import {
   deleteBulkEntities,
   submitDataGraph,
@@ -1148,13 +1149,12 @@ function* updateCrisisReportWorker(action :SequenceAction) :Generator<any, any, 
 
     const entitySetIds = yield select((state) => state.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
     const propertyTypeIds = yield select((state) => state.getIn(['edm', 'fqnToIdMap'], Map()));
-    const settings :Map = yield select((state) => state.getIn(['app', 'selectedOrganizationSettings'], Map()));
+    const settings :Map = yield select(selectAppSettings());
 
     const { path, formData, entityIndexToIdMap } = value;
 
     const section = path[0];
     let preFormData = fromJS(formData).mapKeys(() => section);
-
     let processedFormData = formData;
 
     // post process section that matches path only if V1

@@ -43,7 +43,7 @@ import {
 } from '../../../core/router/Routes';
 import { getAuthorization } from '../../../core/sagas/authorize/AuthorizeActions';
 import { TITLE_FQN } from '../../../edm/DataModelFqns';
-import { PRIVATE_SETTINGS } from '../../admin/constants';
+import { PRIVATE_SETTINGS } from '../../settings/constants';
 
 const StickyCard = styled(Card)`
   position: sticky;

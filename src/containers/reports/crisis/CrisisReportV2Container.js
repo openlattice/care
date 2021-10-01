@@ -40,12 +40,12 @@ import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { getEntityKeyId } from '../../../utils/DataUtils';
 import { getFirstLastFromPerson } from '../../../utils/PersonUtils';
 import { generateReviewSchema } from '../../../utils/SchemaUtils';
-import { PRIVATE_SETTINGS } from '../../admin/constants';
+import { PRIVATE_SETTINGS } from '../../settings/constants';
 
 const { CRISIS_REPORT_FQN } = APP_TYPES_FQNS;
 
 const CrisisReportContainerV2 = () => {
-  const settings = useAppSettings();
+  const [settings] = useAppSettings();
   const dispatch = useDispatch();
   const match = useRouteMatch(CRISIS_REPORT_PATH);
 
