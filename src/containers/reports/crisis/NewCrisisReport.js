@@ -14,7 +14,7 @@ import { RequestStates } from 'redux-reqseq';
 
 import { clearCrisisReport, submitCrisisReport } from './CrisisActions';
 import { v1 } from './schemas';
-import { CRISIS_REPORT } from './schemas/constants';
+import { CRISIS_REPORT, CRISIS_REPORT_TYPE } from './schemas/constants';
 
 import SuccessSplash from '../shared/SuccessSplash';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
@@ -38,7 +38,7 @@ type Props = {
 const NewCrisisReport = ({ pageRef, selectedPerson } :Props) => {
   const dispatch = useDispatch();
   const submitState = useSelector((store) => store.getIn(['crisisReport', 'submitState']));
-  const remoteSchemas = useSelector((store) => store.getIn(['formSchemas', 'schemas', 'CRISIS_REPORT']));
+  const remoteSchemas = useSelector((store) => store.getIn(['formSchemas', 'schemas', CRISIS_REPORT_TYPE]));
   const fetchState = useSelector((store) => store.getIn(['formSchemas', 'fetchState']));
 
   const allSchemas = useMemo(
@@ -64,7 +64,7 @@ const NewCrisisReport = ({ pageRef, selectedPerson } :Props) => {
   }));
 
   useEffect(() => {
-    dispatch(getFormSchema('CRISIS_REPORT'));
+    dispatch(getFormSchema(CRISIS_REPORT_TYPE));
 
     return () => dispatch(clearCrisisReport());
   }, [dispatch]);
