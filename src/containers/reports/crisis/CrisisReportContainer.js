@@ -19,10 +19,12 @@ import {
   updateCrisisReport,
 } from './CrisisActions';
 import { v1 } from './schemas';
+import { CRISIS_REPORT_TYPE } from './schemas/constants';
 
 import BlameCard from '../shared/BlameCard';
+import ReportMenuButton from '../export/ReportMenuButton';
 import * as FQN from '../../../edm/DataModelFqns';
-import { BreadcrumbItem, BreadcrumbLink } from '../../../components/breadcrumbs';
+import { BreadcrumbItem, BreadcrumbLink, BreadcrumbsWrapper } from '../../../components/breadcrumbs';
 import { useAuthorization } from '../../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
 import {
@@ -60,7 +62,7 @@ const CrisisReportContainer = () => {
   const reporterData = useSelector((store) => store.getIn(['crisisReport', 'reporterData']));
   const reportData = useSelector((store) => store.getIn(['crisisReport', 'reportData']));
   const subjectData = useSelector((store) => store.getIn(['crisisReport', 'subjectData']));
-  const remoteSchemas = useSelector((store) => store.getIn(['formSchemas', 'schemas', 'CRISIS_REPORT']));
+  const remoteSchemas = useSelector((store) => store.getIn(['formSchemas', 'schemas', CRISIS_REPORT_TYPE]));
 
   const { [REPORT_ID_PARAM]: reportId } = match.params;
 
@@ -117,12 +119,17 @@ const CrisisReportContainer = () => {
     <ContentOuterWrapper>
       <ContentWrapper>
         <CardStack>
-          <Breadcrumbs>
-            <BreadcrumbLink to={profilePath}>{name}</BreadcrumbLink>
-            <BreadcrumbItem>{reportData.getIn([FQN.TYPE_FQN, 0], 'Report')}</BreadcrumbItem>
-          </Breadcrumbs>
+          <BreadcrumbsWrapper>
+            <Breadcrumbs>
+              <BreadcrumbLink to={profilePath}>{name}</BreadcrumbLink>
+              <BreadcrumbItem>{reportData.getIn([FQN.TYPE_FQN, 0], 'Report')}</BreadcrumbItem>
+            </Breadcrumbs>
+            <ReportMenuButton
+                noExport
+                onDeleteReport={handleDeleteCrisisReport}
+                profilePath={profilePath} />
+          </BreadcrumbsWrapper>
           <BlameCard reporterData={reporterData} />
-          <button type="button" onClick={handleDeleteCrisisReport}>Delete Report</button>
           <Card>
             <Form
                 disabled
