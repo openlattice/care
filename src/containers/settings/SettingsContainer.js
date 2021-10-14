@@ -12,6 +12,7 @@ import {
   Switch,
 } from 'lattice-ui-kit';
 import { useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 import { updateAppSettings } from './actions';
 import {
@@ -25,6 +26,7 @@ import {
 
 import { useAppSettings } from '../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper, Header } from '../../components/layout';
+import { SETTINGS_EDITOR_PATH } from '../../core/router/Routes';
 
 const SettingsContainer = () => {
   const dispatch = useDispatch();
@@ -113,6 +115,9 @@ const SettingsContainer = () => {
                   name={V2}
                   onChange={handleV2Change} />
             </ListItemSecondaryAction>
+          </ListItem>
+          <ListItem button component={Link} to={SETTINGS_EDITOR_PATH}>
+            <ListItemText>Form Schemas</ListItemText>
           </ListItem>
           <Divider />
           <ListSubheader>Integration Settings</ListSubheader>

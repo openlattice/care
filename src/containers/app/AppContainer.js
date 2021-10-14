@@ -45,6 +45,7 @@ import NewSymptomsReportContainer from '../reports/symptoms/NewSymptomsReportCon
 import OriginalCrisisReportContainer from '../reports/OriginalCrisisReportContainer';
 import PrivateRoute from '../../components/route/PrivateRoute';
 import ProfileRouter from '../profile/ProfileRouter';
+import SchemaEditorContainer from '../settings/SchemaEditorContainer';
 import SearchPeopleContainer from '../people/SearchPeopleContainer';
 import SettingsContainer from '../settings/SettingsContainer';
 import SubscriptionContainer from '../subscriptions/SubscriptionContainer';
@@ -68,6 +69,7 @@ import {
   PROFILE_PATH,
   PROVIDER_PATH,
   REPORTS_PATH,
+  SETTINGS_EDITOR_PATH,
   SETTINGS_PATH,
   SUBSCRIPTIONS_PATH,
   TRACK_CONTACT_PATH,
@@ -207,6 +209,11 @@ class AppContainer extends Component<Props> {
         <Route path={PROFILE_PATH} component={ProfileRouter} />
         <Route path={ISSUES_PATH} component={IssuesContainer} />
         <Route path={EXPLORE_PATH} component={ExploreContainer} />
+        <PrivateRoute
+            authorize={actions.getAuthorization}
+            feature={adminOnly}
+            path={SETTINGS_EDITOR_PATH}
+            component={SchemaEditorContainer} />
         <PrivateRoute
             authorize={actions.getAuthorization}
             feature={adminOnly}
