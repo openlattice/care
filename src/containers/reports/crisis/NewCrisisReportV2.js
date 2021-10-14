@@ -13,11 +13,12 @@ import { RequestStates } from 'redux-reqseq';
 
 import { clearCrisisReport, submitCrisisReportV2 } from './CrisisActions';
 import { v2 } from './schemas';
-import { CRISIS_REPORT } from './schemas/constants';
+import { CRISIS_REPORT, CRISIS_REPORT_TYPE } from './schemas/constants';
 
 import SuccessSplash from '../shared/SuccessSplash';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { generateReviewSchema } from '../../../utils/SchemaUtils';
+import { getFormSchema } from '../FormSchemasActions';
 
 const { CRISIS_REPORT_FQN } = APP_TYPES_FQNS;
 
@@ -57,6 +58,10 @@ const NewCrisisReportV2 = ({ incident, pageRef, selectedPerson } :Props) => {
     reportFQN: CRISIS_REPORT_FQN,
     selectedPerson,
   }));
+
+  useEffect(() => {
+    dispatch(getFormSchema(CRISIS_REPORT_TYPE));
+  }, [dispatch]);
 
   useEffect(() => () => dispatch(clearCrisisReport()), [dispatch]);
 

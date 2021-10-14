@@ -86,6 +86,7 @@ import {
   preProcessCrisisReportV1,
 } from './CrisisReportUtils';
 import { v1 } from './schemas';
+import { CRISIS_REPORT_TYPE } from './schemas/constants';
 
 import { selectAppSettings } from '../../../core/redux/selectors';
 import {
@@ -993,7 +994,7 @@ function* getCrisisReportWorker(action :SequenceAction) :Generator<any, any, any
 
     const formSchemaRequest = call(
       getFormSchemaWorker,
-      getFormSchema('CRISIS_REPORT')
+      getFormSchema(CRISIS_REPORT_TYPE)
     );
 
     const neighborsRequest = call(
