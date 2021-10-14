@@ -2,6 +2,7 @@
 
 const path = require('path');
 const webpack = require('webpack');
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
 const PACKAGE = require('../../package.json');
 const {
@@ -41,8 +42,8 @@ module.exports = (env) => {
     test: /\.js$/,
     exclude: (module) => (
       /node_modules/.test(module)
-        // && !/node_modules\/kdbush/.test(module)
-        // && !/node_modules\/supercluster/.test(module)
+      // && !/node_modules\/kdbush/.test(module)
+      // && !/node_modules\/supercluster/.test(module)
     ),
     include: [
       SOURCE,
@@ -82,6 +83,10 @@ module.exports = (env) => {
     __VERSION__: JSON.stringify(`v${PACKAGE.version}`),
   });
 
+  const MONACO_WEBPACK_PLUGIN = new MonacoWebpackPlugin({
+    languages: ['json']
+  });
+
   //
   // base webpack config
   //
@@ -104,9 +109,10 @@ module.exports = (env) => {
                 : 'static/assets/[name][ext]'
             )
           },
-          test: /\.(gif|ico|jpg|jpeg|png|svg|webp)(\?.*)?$/,
+          test: /\.(gif|ico|jpg|jpeg|png|svg|webp|ttf)(\?.*)?$/,
           type: 'asset/resource',
         },
+        // MONACO_CSS_LOADER,
       ],
     },
     optimization: {
@@ -122,6 +128,7 @@ module.exports = (env) => {
     plugins: [
       DEFINE_PLUGIN,
       BANNER_PLUGIN,
+      MONACO_WEBPACK_PLUGIN,
     ],
     resolve: {
       alias: {
