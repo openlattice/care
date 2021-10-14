@@ -1,3 +1,4 @@
+import { RequestStates } from 'redux-reqseq';
 import { css } from 'styled-components';
 
 const sizes = {
@@ -18,4 +19,20 @@ const media = Object.keys(sizes).reduce((acc, label) => {
   return acc;
 }, {});
 
-export { media }; // eslint-disable-line import/prefer-default-export
+const getButtonColor = (requestState) => {
+  switch (requestState) {
+    case RequestStates.SUCCESS: {
+      return 'success';
+    }
+    case RequestStates.FAILURE: {
+      return 'error';
+    }
+    default:
+      return 'primary';
+  }
+};
+
+export {
+  getButtonColor,
+  media
+};

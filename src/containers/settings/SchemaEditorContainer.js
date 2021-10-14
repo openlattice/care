@@ -1,54 +1,48 @@
 // @flow
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect } from 'react';
 
+import { faExclamationTriangle } from '@fortawesome/pro-regular-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { fromJS } from 'immutable';
 import {
   Breadcrumbs,
-  Button,
   CardStack,
-  Grid
+  IconSplash,
+  Spinner,
 } from 'lattice-ui-kit';
-import { useDispatch } from 'react-redux';
+import { ReduxUtils } from 'lattice-utils';
+import { useDispatch, useSelector } from 'react-redux';
 
-import JSONEditor from './JSONEditor';
-import SchemaPreview from './SchemaPreview';
+import SchemaEditor from './SchemaEditor';
 
 import { BreadcrumbItem, BreadcrumbLink, BreadcrumbsWrapper } from '../../components/breadcrumbs';
 import { ContentOuterWrapper, ContentWrapper } from '../../components/layout';
+import { resetRequestStates } from '../../core/redux/actions';
+import { FORM_SCHEMAS, REQUEST_STATE } from '../../core/redux/constants';
+import { selectFormSchemas } from '../../core/redux/selectors';
 import { SETTINGS_PATH } from '../../core/router/Routes';
-import { getFormSchema } from '../reports/FormSchemasActions';
-import { clearCrisisReport } from '../reports/crisis/CrisisActions';
-import { v2 } from '../reports/crisis/schemas';
+import { GET_FORM_SCHEMA, getFormSchema } from '../reports/FormSchemasActions';
 import { CRISIS_REPORT_TYPE } from '../reports/crisis/schemas/constants';
 
-const toJson = (code) => JSON.stringify(code, null, 2);
+const { isFailure, isPending, isSuccess } = ReduxUtils;
+
+const EMPTY_SCHEMAS = fromJS({
+  schemas: [{}],
+  uiSchemas: [{}]
+});
+
+const FailureIcon = (size) => <FontAwesomeIcon icon={faExclamationTriangle} size={size} />;
 
 const SchemaEditorContainer = () => {
   const dispatch = useDispatch();
-  const pageRef = useRef(null);
-  const [schemas, setSchemas] = useState(v2.officer.schemas);
-  const [uiSchemas, setUiSchemas] = useState(v2.officer.uiSchemas);
-  const [invalidSchema, setInvalidSchema] = useState(false);
-  const [invalidUiSchema, setInvalidUiSchema] = useState(false);
+  const jsonSchemas = useSelector(selectFormSchemas(CRISIS_REPORT_TYPE)) || EMPTY_SCHEMAS;
+  const schemaRS = useSelector((store) => store.getIn([FORM_SCHEMAS, GET_FORM_SCHEMA, REQUEST_STATE]));
 
   useEffect(() => {
     dispatch(getFormSchema(CRISIS_REPORT_TYPE));
 
-    return () => dispatch(clearCrisisReport());
+    return () => dispatch(resetRequestStates([GET_FORM_SCHEMA]));
   }, [dispatch]);
-
-  const handleSchemaOnChange = (payload) => {
-    setSchemas(payload);
-    setInvalidSchema(false);
-  };
-
-  const handleUiSchemaOnChange = (payload) => {
-    setUiSchemas(payload);
-    setInvalidUiSchema(false);
-  };
-
-  const handleSaveSchemas = () => {
-    console.log({ schemas, uiSchemas });
-  };
 
   return (
     <ContentOuterWrapper>
@@ -60,45 +54,19 @@ const SchemaEditorContainer = () => {
               <BreadcrumbItem>Crisis Schema Editor</BreadcrumbItem>
             </Breadcrumbs>
           </BreadcrumbsWrapper>
-          <Grid container spacing={2}>
-            <Grid
-                alignContent="flex-start"
-                container
-                item
-                sm={6}
-                spacing={2}
-                xs={12}>
-              <Grid item xs={12}>
-                <JSONEditor
-                    code={toJson(schemas)}
-                    label="JSON Schema"
-                    onChange={handleSchemaOnChange}
-                    onError={setInvalidSchema} />
-              </Grid>
-              <Grid item xs={12}>
-                <JSONEditor
-                    code={toJson(uiSchemas)}
-                    label="UI Schema"
-                    onChange={handleUiSchemaOnChange}
-                    onError={setInvalidUiSchema} />
-              </Grid>
-              <Grid item xs={12}>
-                <Button
-                    color="primary"
-                    disabled={invalidSchema || invalidUiSchema}
-                    fullWidth
-                    onClick={handleSaveSchemas}>
-                  Save Schemas
-                </Button>
-              </Grid>
-            </Grid>
-            <Grid item xs={12} sm={6} ref={pageRef}>
-              <SchemaPreview
-                  pageRef={pageRef}
-                  schemas={schemas}
-                  uiSchemas={uiSchemas} />
-            </Grid>
-          </Grid>
+          {
+            isPending(schemaRS) && <Spinner size="3x" />
+          }
+          {
+            isFailure(schemaRS) && (
+              <IconSplash
+                  icon={FailureIcon}
+                  caption="An unexpected error occurred. Please try again or contact support." />
+            )
+          }
+          {
+            isSuccess(schemaRS) && <SchemaEditor jsonSchemas={jsonSchemas} />
+          }
         </CardStack>
       </ContentWrapper>
     </ContentOuterWrapper>
