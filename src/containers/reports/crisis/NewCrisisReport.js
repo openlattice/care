@@ -9,6 +9,7 @@ import {
   Card,
   Spinner
 } from 'lattice-ui-kit';
+import { ReduxUtils } from 'lattice-utils';
 import { useDispatch, useSelector } from 'react-redux';
 import { RequestStates } from 'redux-reqseq';
 
@@ -17,11 +18,14 @@ import { v1 } from './schemas';
 import { CRISIS_REPORT, CRISIS_REPORT_TYPE } from './schemas/constants';
 
 import SuccessSplash from '../shared/SuccessSplash';
+import { REQUEST_STATE } from '../../../core/redux/constants';
+import { selectFormSchemas } from '../../../core/redux/selectors';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { generateReviewSchema } from '../../../utils/SchemaUtils';
-import { getFormSchema } from '../FormSchemasActions';
+import { GET_FORM_SCHEMA, getFormSchema } from '../FormSchemasActions';
 
 const { CRISIS_REPORT_FQN } = APP_TYPES_FQNS;
+const { isSuccess, isPending } = ReduxUtils;
 
 const ActionRow = styled.div`
   display: flex;
@@ -38,8 +42,8 @@ type Props = {
 const NewCrisisReport = ({ pageRef, selectedPerson } :Props) => {
   const dispatch = useDispatch();
   const submitState = useSelector((store) => store.getIn(['crisisReport', 'submitState']));
-  const remoteSchemas = useSelector((store) => store.getIn(['formSchemas', 'schemas', CRISIS_REPORT_TYPE]));
-  const fetchState = useSelector((store) => store.getIn(['formSchemas', 'fetchState']));
+  const remoteSchemas = useSelector(selectFormSchemas(CRISIS_REPORT_TYPE));
+  const fetchState = useSelector((store) => store.getIn([GET_FORM_SCHEMA, REQUEST_STATE]));
 
   const allSchemas = useMemo(
     () => {
@@ -71,11 +75,11 @@ const NewCrisisReport = ({ pageRef, selectedPerson } :Props) => {
 
   const isLoading = submitState === RequestStates.PENDING;
 
-  if (fetchState === RequestStates.PENDING) {
+  if (isPending(fetchState)) {
     return <Spinner size="3x" />;
   }
 
-  if (submitState === RequestStates.SUCCESS) {
+  if (isSuccess(submitState)) {
     return (
       <SuccessSplash reportType={CRISIS_REPORT} selectedPerson={selectedPerson} />
     );

@@ -27,6 +27,7 @@ import * as FQN from '../../../edm/DataModelFqns';
 import { BreadcrumbItem, BreadcrumbLink, BreadcrumbsWrapper } from '../../../components/breadcrumbs';
 import { useAuthorization } from '../../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
+import { selectFormSchemas } from '../../../core/redux/selectors';
 import {
   CRISIS_REPORT_PATH,
   PROFILE_ID_PATH,
@@ -62,7 +63,7 @@ const CrisisReportContainer = () => {
   const reporterData = useSelector((store) => store.getIn(['crisisReport', 'reporterData']));
   const reportData = useSelector((store) => store.getIn(['crisisReport', 'reportData']));
   const subjectData = useSelector((store) => store.getIn(['crisisReport', 'subjectData']));
-  const remoteSchemas = useSelector((store) => store.getIn(['formSchemas', 'schemas', CRISIS_REPORT_TYPE]));
+  const remoteSchemas = useSelector(selectFormSchemas(CRISIS_REPORT_TYPE));
 
   const { [REPORT_ID_PARAM]: reportId } = match.params;
 
