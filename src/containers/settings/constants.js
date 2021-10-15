@@ -31,9 +31,10 @@ const INTEGRATED_RMS = 'integratedRMS';
 const CRISIS_PROFILE_REPORT_THRESHOLD = 'crisisProfileReportThreshold';
 const THRESHOLD = 'threshold';
 const MONTHS = 'months';
+const CLINICIAN_REPORTS = 'clinicianReports';
 
 export {
-  adminOnly,
+  CLINICIAN_REPORTS,
   CRISIS_PROFILE_REPORT_THRESHOLD,
   INTEGRATED_RMS,
   MONTHS,
@@ -41,6 +42,7 @@ export {
   THRESHOLD,
   V1,
   V2,
+  adminOnly,
 };
 
 export type {

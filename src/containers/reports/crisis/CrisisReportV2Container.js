@@ -9,9 +9,9 @@ import {
   CardStack,
   Spinner,
 } from 'lattice-ui-kit';
+import { ReduxUtils } from 'lattice-utils';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router';
-import { RequestStates } from 'redux-reqseq';
 
 import {
   addOptionalCrisisReportContent,
@@ -22,13 +22,17 @@ import {
   updateCrisisReport,
 } from './CrisisActions';
 import { v2 } from './schemas';
+import { CRISIS_REPORT_TYPE } from './schemas/constants';
 
 import BlameCard from '../shared/BlameCard';
 import ReportMenuButton from '../export/ReportMenuButton';
 import * as FQN from '../../../edm/DataModelFqns';
 import { BreadcrumbItem, BreadcrumbLink, BreadcrumbsWrapper } from '../../../components/breadcrumbs';
-import { useAppSettings, useAuthorization } from '../../../components/hooks';
+import { useAuthorization } from '../../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper } from '../../../components/layout';
+import { resetRequestStates } from '../../../core/redux/actions';
+import { FORM_SCHEMAS, REQUEST_STATE } from '../../../core/redux/constants';
+import { selectFormSchemas } from '../../../core/redux/selectors';
 import {
   CRISIS_REPORT_PATH,
   PROFILE_ID_PATH,
@@ -41,11 +45,12 @@ import { getEntityKeyId } from '../../../utils/DataUtils';
 import { getFirstLastFromPerson } from '../../../utils/PersonUtils';
 import { generateReviewSchema } from '../../../utils/SchemaUtils';
 import { PRIVATE_SETTINGS } from '../../settings/constants';
+import { GET_FORM_SCHEMA, getFormSchema } from '../FormSchemasActions';
 
 const { CRISIS_REPORT_FQN } = APP_TYPES_FQNS;
+const { isPending } = ReduxUtils;
 
 const CrisisReportContainerV2 = () => {
-  const [settings] = useAppSettings();
   const dispatch = useDispatch();
   const match = useRouteMatch(CRISIS_REPORT_PATH);
 
@@ -53,24 +58,27 @@ const CrisisReportContainerV2 = () => {
     dispatch(getAuthorization());
   }, [dispatch]);
 
+  const remoteSchemas = useSelector(selectFormSchemas(CRISIS_REPORT_TYPE));
   const [isAuthorized] = useAuthorization(PRIVATE_SETTINGS.profile, dispatchGetAuthorization);
 
-  const schemaVersion = v2.officer;
+  useEffect(() => {
+    dispatch(getFormSchema(CRISIS_REPORT_TYPE));
+
+    return () => {
+      dispatch(resetRequestStates([GET_FORM_SCHEMA]));
+    };
+  }, [dispatch]);
 
   const reviewSchemas = useMemo(
-    () => generateReviewSchema(schemaVersion.schemas, schemaVersion.uiSchemas, !isAuthorized),
-    [schemaVersion, isAuthorized]
+    () => {
+      let schemaVersion = v2.officer;
+      if (remoteSchemas) {
+        schemaVersion = remoteSchemas.toJS();
+      }
+      return generateReviewSchema(schemaVersion.schemas, schemaVersion.uiSchemas, !isAuthorized);
+    },
+    [remoteSchemas, isAuthorized]
   );
-
-  const entityIndexToIdMap = useSelector((store) => store.getIn(['crisisReport', 'entityIndexToIdMap']));
-  const entitySetIds = useSelector((store) => store.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
-  const formData = useSelector((store) => store.getIn(['crisisReport', 'formData']));
-  const fetchState = useSelector((store) => store.getIn(['crisisReport', 'fetchState']));
-  const propertyTypeIds = useSelector((store) => store.getIn(['edm', 'fqnToIdMap'], Map()));
-  const reporterData = useSelector((store) => store.getIn(['crisisReport', 'reporterData']));
-  const reportData = useSelector((store) => store.getIn(['crisisReport', 'reportData']));
-  const subjectData = useSelector((store) => store.getIn(['crisisReport', 'subjectData']));
-
   const { [REPORT_ID_PARAM]: reportId } = match.params;
 
   useEffect(() => {
@@ -80,10 +88,22 @@ const CrisisReportContainerV2 = () => {
       reviewSchema: reviewSchemas.schema
     }));
 
-    return () => dispatch(clearCrisisReport());
-  }, [dispatch, reportId, settings, reviewSchemas]);
+    return () => {
+      dispatch(clearCrisisReport());
+    };
+  }, [dispatch, reportId, reviewSchemas]);
 
-  if (fetchState === RequestStates.PENDING) {
+  const entityIndexToIdMap = useSelector((store) => store.getIn(['crisisReport', 'entityIndexToIdMap']));
+  const entitySetIds = useSelector((store) => store.getIn(['app', 'selectedOrgEntitySetIds'], Map()));
+  const formData = useSelector((store) => store.getIn(['crisisReport', 'formData']));
+  const getReportRS = useSelector((store) => store.getIn(['crisisReport', 'fetchState']));
+  const getFormSchemaRS = useSelector((store) => store.getIn([FORM_SCHEMAS, GET_FORM_SCHEMA, REQUEST_STATE]));
+  const propertyTypeIds = useSelector((store) => store.getIn(['edm', 'fqnToIdMap'], Map()));
+  const reporterData = useSelector((store) => store.getIn(['crisisReport', 'reporterData']));
+  const reportData = useSelector((store) => store.getIn(['crisisReport', 'reportData']));
+  const subjectData = useSelector((store) => store.getIn(['crisisReport', 'subjectData']));
+
+  if (isPending(getReportRS) || isPending(getFormSchemaRS)) {
     return <Spinner size="3x" />;
   }
 

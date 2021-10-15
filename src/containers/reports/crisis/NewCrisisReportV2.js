@@ -13,11 +13,13 @@ import { RequestStates } from 'redux-reqseq';
 
 import { clearCrisisReport, submitCrisisReportV2 } from './CrisisActions';
 import { v2 } from './schemas';
-import { CRISIS_REPORT } from './schemas/constants';
+import { CRISIS_REPORT, CRISIS_REPORT_TYPE } from './schemas/constants';
 
 import SuccessSplash from '../shared/SuccessSplash';
+import { selectFormSchemas } from '../../../core/redux/selectors';
 import { APP_TYPES_FQNS } from '../../../shared/Consts';
 import { generateReviewSchema } from '../../../utils/SchemaUtils';
+import { getFormSchema } from '../FormSchemasActions';
 
 const { CRISIS_REPORT_FQN } = APP_TYPES_FQNS;
 
@@ -37,18 +39,31 @@ type Props = {
 const NewCrisisReportV2 = ({ incident, pageRef, selectedPerson } :Props) => {
   const dispatch = useDispatch();
   const submitState = useSelector((store) => store.getIn(['crisisReport', 'submitState']));
+  const remoteSchemas = useSelector(selectFormSchemas(CRISIS_REPORT_TYPE));
 
-  const schemaVersion = v2.officer;
-  let { schemas, uiSchemas } = schemaVersion;
+  useEffect(() => {
+    dispatch(getFormSchema(CRISIS_REPORT_TYPE));
+  }, [dispatch]);
 
-  if (!incident.isEmpty()) {
-    schemas = schemas.slice(1);
-    uiSchemas = uiSchemas.slice(1);
-  }
+  useEffect(() => () => dispatch(clearCrisisReport()), [dispatch]);
 
-  const reviewSchemas = useMemo(
-    () => generateReviewSchema(schemas, uiSchemas, true),
-    [schemas, uiSchemas]
+  const { schemas, uiSchemas, reviewSchemas } = useMemo(
+    () => {
+      let schemaVersion = v2.officer;
+      if (remoteSchemas) {
+        schemaVersion = remoteSchemas.toJS();
+      }
+      if (!incident.isEmpty()) {
+        schemaVersion.schemas = schemaVersion.schemas.slice(1);
+        schemaVersion.uiSchemas = schemaVersion.uiSchemas.slice(1);
+      }
+      return {
+        reviewSchemas: generateReviewSchema(schemaVersion.schemas, schemaVersion.uiSchemas, true),
+        schemas: schemaVersion.schemas,
+        uiSchemas: schemaVersion.uiSchemas,
+      };
+    },
+    [remoteSchemas, incident]
   );
 
   const getVersionSubmit = (formData :Object) => () => dispatch(submitCrisisReportV2({
@@ -57,8 +72,6 @@ const NewCrisisReportV2 = ({ incident, pageRef, selectedPerson } :Props) => {
     reportFQN: CRISIS_REPORT_FQN,
     selectedPerson,
   }));
-
-  useEffect(() => () => dispatch(clearCrisisReport()), [dispatch]);
 
   const isLoading = submitState === RequestStates.PENDING;
 

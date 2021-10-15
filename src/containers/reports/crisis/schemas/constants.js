@@ -1,5 +1,6 @@
 import { APP_TYPES_FQNS as APP } from '../../../../shared/Consts';
 
+export const CRISIS_REPORT_TYPE = 'CRISIS_REPORT';
 export const CRISIS_REPORT = 'Crisis Report';
 export const CRISIS_REPORT_CLINICIAN = 'Crisis Report (Clinician)';
 export const FOLLOW_UP_REPORT = 'Follow-up Report';

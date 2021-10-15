@@ -223,6 +223,7 @@ export default function* sagas() :Generator<*, *, *> {
     fork(CrisisReportSagas.updateCrisisReportWatcher),
 
     fork(FormSchemasSagas.getFormSchemaWatcher),
+    fork(FormSchemasSagas.submitFormSchemaWatcher),
 
     fork(EncampmentSagas.addPersonToEncampmentWatcher),
     fork(EncampmentSagas.getEncampmentOccupantsWatcher),

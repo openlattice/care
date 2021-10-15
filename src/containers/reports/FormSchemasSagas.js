@@ -1,8 +1,8 @@
-// @flow
 import {
   call,
   put,
   select,
+  takeEvery,
   takeLatest,
 } from '@redux-saga/core/effects';
 import {
@@ -10,39 +10,50 @@ import {
   fromJS,
   getIn,
 } from 'immutable';
-import { SearchApiActions, SearchApiSagas } from 'lattice-sagas';
+import {
+  DataApiActions,
+  DataApiSagas,
+  SearchApiActions,
+  SearchApiSagas
+} from 'lattice-sagas';
 import { LangUtils, Logger } from 'lattice-utils';
+// @flow
+import { DateTime } from 'luxon';
+import type { Saga } from '@redux-saga/core';
 import type { WorkerResponse } from 'lattice-sagas';
 import type { SequenceAction } from 'redux-reqseq';
 
 import {
   GET_FORM_SCHEMA,
+  SUBMIT_FORM_SCHEMA,
   getFormSchema,
+  submitFormSchema,
 } from './FormSchemasActions';
 
 import * as FQN from '../../edm/DataModelFqns';
+import { selectEntitySetId, selectPropertyTypeId } from '../../core/redux/selectors';
 import { APP_TYPES_FQNS } from '../../shared/Consts';
-import { getESIDFromApp } from '../../utils/AppUtils';
 import { ERR_ACTION_VALUE_TYPE } from '../../utils/Errors';
 
 const { isEmptyString } = LangUtils;
 const { searchEntitySetData } = SearchApiActions;
 const { searchEntitySetDataWorker } = SearchApiSagas;
+
+const { createOrMergeEntityData } = DataApiActions;
+const { createOrMergeEntityDataWorker } = DataApiSagas;
 const { FORMS_FQN } = APP_TYPES_FQNS;
 
 const LOG = new Logger('FormSchemasSagas');
 
-function* getFormSchemaWorker(action :SequenceAction) :Generator<any, any, any> {
+function* getFormSchemaWorker(action :SequenceAction) :Saga<WorkerResponse> {
   const response :Object = {};
   try {
     const { value } = action;
     if (isEmptyString(value)) throw ERR_ACTION_VALUE_TYPE;
     yield put(getFormSchema.request(action.id, value));
 
-    const edm :Map = yield select((state) => state.get('edm'));
-    const app :Map = yield select((state) => state.get('app', Map()));
-    const formESID = getESIDFromApp(app, FORMS_FQN);
-    const typePTID = edm.getIn(['fqnToIdMap', FQN.TYPE_FQN]);
+    const formESID :Map = yield select(selectEntitySetId(FORMS_FQN));
+    const typePTID :Map = yield select(selectPropertyTypeId(FQN.TYPE_FQN));
 
     const searchConstraints = {
       entitySetIds: [formESID],
@@ -68,12 +79,25 @@ function* getFormSchemaWorker(action :SequenceAction) :Generator<any, any, any> 
     );
 
     if (searchResponse.error) throw searchResponse.error;
-    const form = searchResponse.data.hits[0];
-    if (searchResponse.data.hits.length > 1) {
+
+    // use most recent schema if multiple
+    const { hits } = searchResponse.data;
+    if (hits > 1) {
       LOG.warn(action.type, 'more than one form schema found');
     }
 
-    const jsonSchema = getIn(form, [FQN.JSON_SCHEMA_FQN, 0]);
+    const sortedForms = hits.sort((formA, formB) => {
+      const timeA = getIn(formA, [FQN.DATE_TIME_FQN, 0]);
+      const timeB = getIn(formB, [FQN.DATE_TIME_FQN, 0]);
+
+      const dateTimeA = DateTime.fromISO(timeA);
+      const dateTimeB = DateTime.fromISO(timeB);
+      return dateTimeB - dateTimeA;
+    });
+
+    const recentForm = sortedForms[0];
+
+    const jsonSchema = getIn(recentForm, [FQN.JSON_SCHEMA_FQN, 0]);
     const parsedSchemas = jsonSchema ? JSON.parse(jsonSchema) : undefined;
     response.data = parsedSchemas;
 
@@ -84,6 +108,7 @@ function* getFormSchemaWorker(action :SequenceAction) :Generator<any, any, any> 
   }
   catch (error) {
     LOG.error(action.type, error);
+    response.error = error;
     yield put(getFormSchema.failure(action.id, error));
   }
   finally {
@@ -96,7 +121,59 @@ function* getFormSchemaWatcher() :Generator<any, any, any> {
   yield takeLatest(GET_FORM_SCHEMA, getFormSchemaWorker);
 }
 
+function* submitFormSchemaWorker(action :SequenceAction) :Saga<WorkerResponse> {
+  const response = {};
+  try {
+    const { jsonSchemas, name, type } = action.value;
+    if (isEmptyString(name)) throw ERR_ACTION_VALUE_TYPE;
+    if (isEmptyString(type)) throw ERR_ACTION_VALUE_TYPE;
+    if (!(jsonSchemas.schemas && jsonSchemas.uiSchemas)) throw ERR_ACTION_VALUE_TYPE;
+    yield put(submitFormSchema.request(action.id));
+
+    const formESID = yield select(selectEntitySetId(FORMS_FQN));
+    const dateTimePTID = yield select(selectPropertyTypeId(FQN.DATE_TIME_FQN));
+    const jsonSchemaPTID = yield select(selectPropertyTypeId(FQN.JSON_SCHEMA_FQN));
+    const namePTID = yield select(selectPropertyTypeId(FQN.NAME_FQN));
+    const typePTID = yield select(selectPropertyTypeId(FQN.TYPE_FQN));
+
+    const entity = {
+      [dateTimePTID]: [DateTime.local().toISO()],
+      [jsonSchemaPTID]: [JSON.stringify(jsonSchemas)],
+      [namePTID]: [name],
+      [typePTID]: [type],
+    };
+
+    const createFormResponse = yield call(
+      createOrMergeEntityDataWorker,
+      createOrMergeEntityData({
+        entitySetId: formESID,
+        entityData: [entity]
+      })
+    );
+
+    if (createFormResponse.error) throw createFormResponse.error;
+
+    yield put(submitFormSchema.success(action.id));
+  }
+  catch (error) {
+    LOG.error(action.type, error);
+    response.error = error;
+    yield put(submitFormSchema.failure(action.id));
+  }
+  finally {
+    yield put(submitFormSchema.finally(action.id));
+
+  }
+  return response;
+}
+
+function* submitFormSchemaWatcher() :Saga<void> {
+  yield takeEvery(SUBMIT_FORM_SCHEMA, submitFormSchemaWorker);
+}
+
 export {
   getFormSchemaWatcher,
   getFormSchemaWorker,
+  submitFormSchemaWatcher,
+  submitFormSchemaWorker,
 };
