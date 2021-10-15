@@ -21,6 +21,7 @@ import {
 } from '@fortawesome/pro-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Map } from 'immutable';
+import { AuthUtils } from 'lattice-auth';
 import { AppHeaderWrapper, AppNavigationWrapper } from 'lattice-ui-kit';
 import { NavLink } from 'react-router-dom';
 
@@ -153,7 +154,7 @@ const AppHeaderContainer = (props :Props) => {
           <FontAwesomeIcon size="lg" fixedWidth icon={faFileExclamation} />
           <NavLabel>Manage Issues</NavLabel>
         </StyledNavLink>
-        <StyledNavLink to={SETTINGS_PATH} hidden={isLongBeach || hiddenFeatures.get('settings')}>
+        <StyledNavLink to={SETTINGS_PATH} hidden={!AuthUtils.isAdmin()}>
           <FontAwesomeIcon size="lg" fixedWidth icon={faCog} />
           <NavLabel>Application Settings</NavLabel>
         </StyledNavLink>
