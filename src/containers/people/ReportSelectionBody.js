@@ -49,12 +49,20 @@ const ReportSelectionBody = (props :Props) => {
   let content = (
     <ActionWrapper>
       {
-        settings.get(V2) && (
-          <Button
-              onClick={() => setState({ type: CRISIS_REPORT, path: crisisPath, person: selectedPerson })}>
-            Crisis Report
-          </Button>
-        )
+        settings.get(V2)
+          ? (
+            <Button
+                onClick={() => setState({ type: CRISIS_REPORT, path: crisisPath, person: selectedPerson })}>
+              Crisis Report
+            </Button>
+          )
+          : (
+            <LinkButton
+                to={crisisPath}
+                state={{ selectedPerson }}>
+              Crisis Report
+            </LinkButton>
+          )
       }
       {
         (settings.get(V2) && hasClinicianReports) && (
