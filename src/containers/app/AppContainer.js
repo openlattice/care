@@ -27,6 +27,7 @@ import {
   initializeApplication,
 } from './AppActions';
 
+import Auth0AdminRoute from '../../components/route/Auth0AdminRoute';
 import DashboardContainer from '../dashboard/DashboardContainer';
 import DocumentsContainer from '../documents/DocumentsContainer';
 import DownloadsContainer from '../downloads/DownloadsContainer';
@@ -43,7 +44,6 @@ import NewFollowupReportContainer from '../reports/crisis/NewFollowupReportConta
 import NewPersonContainer from '../people/NewPersonContainer';
 import NewSymptomsReportContainer from '../reports/symptoms/NewSymptomsReportContainer';
 import OriginalCrisisReportContainer from '../reports/OriginalCrisisReportContainer';
-import PrivateRoute from '../../components/route/PrivateRoute';
 import ProfileRouter from '../profile/ProfileRouter';
 import SchemaEditorContainer from '../settings/SchemaEditorContainer';
 import SearchPeopleContainer from '../people/SearchPeopleContainer';
@@ -82,7 +82,6 @@ import {
   MEDIA_QUERY_MD,
   MEDIA_QUERY_TECH_SM
 } from '../../core/style/Sizes';
-import { adminOnly } from '../settings/constants';
 
 /*
  * styled components
@@ -164,7 +163,6 @@ class AppContainer extends Component<Props> {
   renderAppContent = () => {
 
     const {
-      actions,
       initializeState,
       organizations,
       selectedOrganizationId,
@@ -209,14 +207,10 @@ class AppContainer extends Component<Props> {
         <Route path={PROFILE_PATH} component={ProfileRouter} />
         <Route path={ISSUES_PATH} component={IssuesContainer} />
         <Route path={EXPLORE_PATH} component={ExploreContainer} />
-        <PrivateRoute
-            authorize={actions.getAuthorization}
-            feature={adminOnly}
+        <Auth0AdminRoute
             path={SETTINGS_EDITOR_PATH}
             component={SchemaEditorContainer} />
-        <PrivateRoute
-            authorize={actions.getAuthorization}
-            feature={adminOnly}
+        <Auth0AdminRoute
             path={SETTINGS_PATH}
             component={SettingsContainer} />
         <Redirect to={HOME_PATH} />
