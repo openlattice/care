@@ -12,9 +12,11 @@ import {
   Switch,
 } from 'lattice-ui-kit';
 import { useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 import { updateAppSettings } from './actions';
 import {
+  CLINICIAN_REPORTS,
   CRISIS_PROFILE_REPORT_THRESHOLD,
   INTEGRATED_RMS,
   MONTHS,
@@ -25,12 +27,14 @@ import {
 
 import { useAppSettings } from '../../components/hooks';
 import { ContentOuterWrapper, ContentWrapper, Header } from '../../components/layout';
+import { SETTINGS_EDITOR_PATH } from '../../core/router/Routes';
 
 const SettingsContainer = () => {
   const dispatch = useDispatch();
   const [settings, settingsEKID] = useAppSettings();
-  const v1 = settings.get(V1) || false;
-  const v2 = settings.get(V2) || false;
+  const v1 = settings.get(V1, false);
+  const v2 = settings.get(V2, false);
+  const clinicianReports = settings.get(CLINICIAN_REPORTS, true);
   const integratedRMS = settings.get(INTEGRATED_RMS) || false;
   const threshold = settings.getIn([CRISIS_PROFILE_REPORT_THRESHOLD, THRESHOLD], 6);
   const months = settings.getIn([CRISIS_PROFILE_REPORT_THRESHOLD, MONTHS], 6);
@@ -52,8 +56,19 @@ const SettingsContainer = () => {
     const { checked } = e.currentTarget;
     let newSettings = settings.set(V2, checked);
     if (checked) {
-      newSettings = newSettings.delete(V1);
+      newSettings = newSettings
+        .delete(V1)
+        .delete(CLINICIAN_REPORTS);
     }
+    dispatch(updateAppSettings({
+      id: settingsEKID,
+      settings: newSettings,
+    }));
+  };
+
+  const handleClinicianReportsChange = (e :SyntheticEvent<HTMLInputElement>) => {
+    const { checked } = e.currentTarget;
+    const newSettings = settings.set(CLINICIAN_REPORTS, checked);
     dispatch(updateAppSettings({
       id: settingsEKID,
       settings: newSettings,
@@ -62,7 +77,6 @@ const SettingsContainer = () => {
 
   const handleIntegratedRMS = (e :SyntheticEvent<HTMLInputElement>) => {
     const { checked } = e.currentTarget;
-    // setIntegratedRMS(checked);
     const newSettings = settings.set(INTEGRATED_RMS, checked);
     dispatch(updateAppSettings({
       id: settingsEKID,
@@ -72,7 +86,6 @@ const SettingsContainer = () => {
 
   const handlePrivacyThreshold = (e :SyntheticEvent<HTMLInputElement>) => {
     const { checked } = e.currentTarget;
-    // setPrivacyThreshold(checked);
     let newSettings = settings;
     if (checked) {
       newSettings = settings
@@ -113,6 +126,22 @@ const SettingsContainer = () => {
                   name={V2}
                   onChange={handleV2Change} />
             </ListItemSecondaryAction>
+          </ListItem>
+          {
+            v2 && (
+              <ListItem>
+                <ListItemText primary="Clinician Reports" secondary="Requires V2" />
+                <ListItemSecondaryAction>
+                  <Switch
+                      checked={clinicianReports}
+                      name={CLINICIAN_REPORTS}
+                      onChange={handleClinicianReportsChange} />
+                </ListItemSecondaryAction>
+              </ListItem>
+            )
+          }
+          <ListItem button component={Link} to={SETTINGS_EDITOR_PATH}>
+            <ListItemText>Form Schemas</ListItemText>
           </ListItem>
           <Divider />
           <ListSubheader>Integration Settings</ListSubheader>

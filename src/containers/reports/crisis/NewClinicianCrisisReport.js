@@ -34,7 +34,7 @@ type Props = {
   selectedPerson :Map;
 };
 
-const NewCrisisReport = ({ incident, pageRef, selectedPerson } :Props) => {
+const NewClinicianCrisisReport = ({ incident, pageRef, selectedPerson } :Props) => {
   const dispatch = useDispatch();
   const submitState = useSelector((store) => store.getIn(['crisisReport', 'submitState']));
 
@@ -135,4 +135,4 @@ const NewCrisisReport = ({ incident, pageRef, selectedPerson } :Props) => {
 
 };
 
-export default NewCrisisReport;
+export default NewClinicianCrisisReport;

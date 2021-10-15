@@ -31,6 +31,7 @@ export const ISSUE_ID_PARAM :string = 'issueId';
 export const ISSUE_PATH :string = `${ISSUES_PATH}/:${ISSUE_ID_PARAM}`;
 export const EXPLORE_PATH :string = '/explore';
 export const SETTINGS_PATH :string = '/settings';
+export const SETTINGS_EDITOR_PATH :string = `${SETTINGS_PATH}/editor`;
 
 export const REPORT_ID_PARAM :string = 'reportId';
 export const REPORT_ID_PATH :string = `:${REPORT_ID_PARAM}`;

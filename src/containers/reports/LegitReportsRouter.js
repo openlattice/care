@@ -25,24 +25,29 @@ import {
   REPORTS_PATH,
   REPORT_VIEW_PATH,
 } from '../../core/router/Routes';
+import { CLINICIAN_REPORTS, V2 } from '../settings/constants';
 
 const LegitReportsRouter = () => {
   const [settings] = useAppSettings();
-  const isV2 = settings.get('v2', false);
+  const isV2 = settings.get(V2, false);
+  const hasClinicianReports = settings.get(CLINICIAN_REPORTS, true);
+
   return (
     <Switch>
       <Route exact path={REPORTS_PATH} component={SearchReportsContainer} />
       <Route path={REPORT_VIEW_PATH} component={CrisisReportView} />
       {
         isV2
-          ? (
-            <>
-              <Route path={CRISIS_REPORT_PATH} component={CrisisReportV2Container} />
-              <Route path={CRISIS_REPORT_CLINICIAN_PATH} component={CrisisReportClinicianContainer} />
-              <Route path={FOLLOW_UP_REPORT_PATH} component={FollowupReportContainer} />
-            </>
-          )
-          : <Route path={CRISIS_REPORT_PATH} component={CrisisReportContainer} />
+          ? <Route exact path={CRISIS_REPORT_PATH} component={CrisisReportV2Container} />
+          : <Route exact path={CRISIS_REPORT_PATH} component={CrisisReportContainer} />
+      }
+      {
+        (isV2 && hasClinicianReports) && (
+          <Route exact path={CRISIS_REPORT_CLINICIAN_PATH} component={CrisisReportClinicianContainer} />
+        )
+      }
+      {
+        isV2 && <Route exact path={FOLLOW_UP_REPORT_PATH} component={FollowupReportContainer} />
       }
       <Redirect to={REPORTS_PATH} />
     </Switch>

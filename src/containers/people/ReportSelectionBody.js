@@ -19,6 +19,7 @@ import {
 } from '../../core/router/Routes';
 import { getFirstLastFromPerson } from '../../utils/PersonUtils';
 import { CRISIS_REPORT, CRISIS_REPORT_CLINICIAN, FOLLOW_UP_REPORT } from '../reports/crisis/schemas/constants';
+import { CLINICIAN_REPORTS, V1, V2 } from '../settings/constants';
 
 const BodyWrapper = styled.div`
   max-width: 100%;
@@ -40,37 +41,20 @@ const ReportSelectionBody = (props :Props) => {
   const { selectedPerson } = props;
 
   const [settings] = useAppSettings();
-  const crisisPath = (settings.get('v1') || settings.get('v2')) ? NEW_CRISIS_PATH : `${CRISIS_PATH}/1`;
+  const crisisPath = (settings.get(V1) || settings.get(V2)) ? NEW_CRISIS_PATH : `${CRISIS_PATH}/1`;
+  const hasClinicianReports = settings.get(CLINICIAN_REPORTS, true);
   const name = getFirstLastFromPerson(selectedPerson);
   const [state, setState] = useState();
 
   let content = (
     <ActionWrapper>
       {
-        settings.get('v2')
+        settings.get(V2)
           ? (
-            <>
-              <Button
-                  onClick={() => setState({ type: CRISIS_REPORT, path: crisisPath, person: selectedPerson })}>
-                Crisis Report
-              </Button>
-              <Button
-                  onClick={() => (
-                    setState({
-                      path: NEW_CRISIS_CLINICIAN_PATH,
-                      person: selectedPerson,
-                      type: CRISIS_REPORT_CLINICIAN,
-                    })
-                  )}>
-                Crisis Report (Clinician)
-              </Button>
-              <Button
-                  onClick={() => (
-                    setState({ type: FOLLOW_UP_REPORT, path: NEW_FOLLOW_UP_PATH, person: selectedPerson })
-                  )}>
-                Follow-up
-              </Button>
-            </>
+            <Button
+                onClick={() => setState({ type: CRISIS_REPORT, path: crisisPath, person: selectedPerson })}>
+              Crisis Report
+            </Button>
           )
           : (
             <LinkButton
@@ -79,6 +63,30 @@ const ReportSelectionBody = (props :Props) => {
               Crisis Report
             </LinkButton>
           )
+      }
+      {
+        (settings.get(V2) && hasClinicianReports) && (
+          <Button
+              onClick={() => (
+                setState({
+                  path: NEW_CRISIS_CLINICIAN_PATH,
+                  person: selectedPerson,
+                  type: CRISIS_REPORT_CLINICIAN,
+                })
+              )}>
+            Crisis Report (Clinician)
+          </Button>
+        )
+      }
+      {
+        settings.get(V2) && (
+          <Button
+              onClick={() => (
+                setState({ type: FOLLOW_UP_REPORT, path: NEW_FOLLOW_UP_PATH, person: selectedPerson })
+              )}>
+            Follow-up
+          </Button>
+        )
       }
       <LinkButton
           to={NEW_SYMPTOMS_PATH}
