@@ -41,7 +41,7 @@ const SchemaPreview = ({
           const isReviewPage = page === totalPages - 1;
 
           const validate = isReviewPage
-            ? () => console.log(pagedData)
+            ? () => {} // disabling final submit is intentional for preview
             : validateAndSubmit;
 
           const scrollToContentTop = () => {
@@ -81,6 +81,7 @@ const SchemaPreview = ({
                 <span>{`${page + 1} of ${totalPages}`}</span>
                 <Button
                     color="primary"
+                    disabled={isReviewPage} // disabling final submit is intentional for preview
                     onClick={validate}>
                   { isReviewPage ? 'Submit' : 'Next' }
                 </Button>
