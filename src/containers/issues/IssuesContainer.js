@@ -17,7 +17,7 @@ const IssuesContainer = () => (
       <CardStack>
         <Switch>
           <Route path={ISSUES_PATH} exact strict component={FilteredIssues} />
-          <Route path={ISSUE_PATH} component={Issue} />
+          <Route exact path={ISSUE_PATH} component={Issue} />
           <Redirect to={ISSUES_PATH} />
         </Switch>
       </CardStack>
