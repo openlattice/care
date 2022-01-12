@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router';
 
 import CrisisReportDownloadsContainer from './CrisisReportDownloadsContainer';
+import ResponsePlanDownloadsContainer from './ResponsePlanDownloadsContainer';
 
 import ExportBulkContainer from '../reports/export/ExportBulkContainer';
 import { useAppSettings } from '../../components/hooks';
@@ -43,6 +44,7 @@ const DownloadsContainer = () => {
     <ContentOuterWrapper>
       <ContentWrapper>
         {component}
+        <ResponsePlanDownloadsContainer />
       </ContentWrapper>
     </ContentOuterWrapper>
   );
