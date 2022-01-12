@@ -1079,7 +1079,8 @@ const addPropertyToRow = (
   appType :string,
   propertyValue :List,
   propertyType :string,
-  includeOLNamespace :boolean = false
+  includeOLNamespace :boolean = false,
+  multipleEntities :boolean = false
 ) => {
 
   let prefix = APP_TO_ENTITY_TYPE.get(appType);
@@ -1094,20 +1095,20 @@ const addPropertyToRow = (
     }
   }
 
-  // add numbered suffix to repeat property in row
+  // add numbered count to repeat entities in row
   let header = `${prefix}_${propertyType}`;
-  if (MULTIPLE_ENTITIES.has(appType)) {
-    let suffix = 1;
-    while (mutable.has(`${header}_${suffix}`)) {
-      suffix += 1;
+  if (MULTIPLE_ENTITIES.has(appType) || multipleEntities) {
+    let count = 1;
+    while (mutable.has(`${prefix}_${count}_${propertyType}`)) {
+      count += 1;
     }
-    header = `${header}_${suffix}`;
+    header = `${prefix}_${count}_${propertyType}`;
   }
 
   mutable.set(header, propertyValue);
 };
 
-const getCSVRow = (report) => {
+const getCSVRowFromReport = (report) => {
   const {
     reportDataByFQN,
     subjectData,
@@ -1154,7 +1155,7 @@ const generateCSVFromReportRange = (
   let fields = Set();
 
   reports.forEach((report) => {
-    const row = getCSVRow(report);
+    const row = getCSVRowFromReport(report);
     csvData = csvData.push(row);
     fields = fields.union(row.keys());
   });
@@ -1173,6 +1174,7 @@ const generateCSVFromReportRange = (
 };
 
 export {
+  addPropertyToRow,
   createJDPRecord,
   generateCSVFromReportRange,
   generateXMLFromReportData,
