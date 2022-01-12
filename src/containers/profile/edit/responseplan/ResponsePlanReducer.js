@@ -6,6 +6,7 @@ import type { SequenceAction } from 'redux-reqseq';
 
 import {
   deleteInteractionStrategies,
+  getAllResponsePlansExport,
   getResponsePlan,
   submitResponsePlan,
   updateResponsePlan,
@@ -15,6 +16,7 @@ const { getPageSectionKey } = DataProcessingUtils;
 
 const INITIAL_STATE :Map = fromJS({
   data: Map(),
+  downloadState: RequestStates.STANDBY,
   deleteState: RequestStates.STANDBY,
   entityIndexToIdMap: Map(),
   fetchState: RequestStates.STANDBY,
@@ -93,6 +95,14 @@ const responsePlanReducer = (state :Map = INITIAL_STATE, action :SequenceAction)
             .deleteIn(['formData', ...path]);
         },
         FAILURE: () => state.set('deleteState', RequestStates.FAILURE)
+      });
+    }
+
+    case getAllResponsePlansExport.case(action.type): {
+      return getAllResponsePlansExport.reducer(state, action, {
+        REQUEST: () => state.set('downloadState', RequestStates.PENDING),
+        SUCCESS: () => state.set('downloadState', RequestStates.SUCCESS),
+        FAILURE: () => state.set('downloadState', RequestStates.FAILURE),
       });
     }
 
